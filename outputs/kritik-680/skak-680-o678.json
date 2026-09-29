@@ -1,0 +1,355 @@
+{
+ "ver": "o678",
+ "net": 0,
+ "fejl": [],
+ "m": {
+  "360": {
+   "start": {
+    "ord": 64,
+    "tal": 10,
+    "knapper": 13,
+    "hoejdeSkaerme": 3.42,
+    "vandret": false,
+    "braet": {
+     "top": 290,
+     "bund": 634,
+     "b": 344
+    },
+    "mindreEnd40": [],
+    "skrift": "16px"
+   },
+   "startFane": "Gåder",
+   "bibliotek": {
+    "ord": 119,
+    "tal": 6,
+    "knapper": 17,
+    "hoejdeSkaerme": 7.18,
+    "vandret": false,
+    "braet": {
+     "top": 0,
+     "bund": 0,
+     "b": 0
+    },
+    "mindreEnd40": [
+     "Brættet og brikkerne 147x36",
+     "Slag, skak og mat 127x36",
+     "Rokade, en passant, fo 246x36",
+     "De første mønstre 130x36",
+     "Principperne 98x36",
+     "Åbninger 77x36",
+     "Slutspil 66x36",
+     "Spil de første 10 træk 151x36"
+    ],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Biblioteket Her er alt det, du kan blive god til. Vælg én ting og tryk Træn. Når du har 5 rigtige i træk uden hint, sidder det (★★★★★). 0 af 28 kompetencer sidder. NÆSTE FOR DIG Lær skak Du kender brættet, brikkerne og alle reglerne - trin for trin. Træn Brikkerne og reglerne Start her, hvis du er ny. Lær skak Du kender brættet, brikkerne og alle reglerne - trin for trin. Niveau 1 · 32 trin Åbn Brættet og brikkerne Slag, skak og mat Rokade, en passant, forvandling, patt De første mønstre Principperne Åbninger Slutspil Spil de første 10 træk Matmønstre 0 af 5 sidder Sæt kongen mat. Mat i 1 med dronning og tårn Du tjekker alle dine skak og finder det der er mat. ☆☆☆☆☆ Niveau 1 · 10 øvelser Træn Dronningemat Du sætter mat med dronning og konge mod en konge på kanten. ☆☆☆☆☆ Niveau 1 · 8 øvelser Træn Tår"
+   },
+   "laer": {
+    "ord": 69,
+    "tal": 7,
+    "knapper": 10,
+    "hoejdeSkaerme": 1.85,
+    "vandret": false,
+    "braet": {
+     "top": 442,
+     "bund": 786,
+     "b": 344
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Vælg dit niveau Du kan altid skifte det senere. Jeg er ny Fra bunden: brættet, brikkerne og reglerne Jeg kan reglerne Springer brikker og regler over: starter ved principperne Jeg spiller allerede Springer regler og principper over: starter ved åbningerne 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Lær skak Avanceret Del Licenser for bundlede biblioteker"
+   },
+   "taktik": {
+    "ord": 79,
+    "tal": 14,
+    "knapper": 7,
+    "hoejdeSkaerme": 2.95,
+    "vandret": false,
+    "braet": {
+     "top": 358,
+     "bund": 702,
+     "b": 344
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Mønster 1 af 11 · eksempel 1 af 3 Slå den ubeskyttede brik Kig efter en brik som ingen passer på. Kan du slå den uden at miste noget, så gør det. Se: Springeren på d5 er ikke dækket - slå den (Txd5). 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Taktik Spring dette mønster over Vælg et mønster at øve. ✓ = lært (4 af de sidste 5 rigtige i første forsøg). 1. Slå den ubeskyttede brik 2. Red din brik Lær først: Slå den ubeskyttede brik 3. Mat i 1 med dronning og tårn 4. Baglinjemat Lær først: Mat i 1 med dronning og tårn 5. Gaffel med springeren Lær først: Slå den ubeskyttede brik 6. Gaffel med andre brikker Lær først: Gaffel med springeren 7. Binding Lær først: Slå den ubeskyttede brik 8. Spyd Lær først: Slå den ubeskyttede brik 9. Afdækket angreb Lær først"
+   },
+   "spil": {
+    "ord": 63,
+    "tal": 9,
+    "knapper": 10,
+    "hoejdeSkaerme": 2.67,
+    "vandret": false,
+    "braet": {
+     "top": 321,
+     "bund": 665,
+     "b": 344
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Hvem vil du spille mod? Mod computeren Mod en makker Niveau 1 er for begyndere. Niveau og farve står under brættet. 8 7 6 5 4 3 2 a 1 b c d e f g h Hvad spiller man her? ⏮ ◀ ▶ ⏭ Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Spil Mod en makker Mod computeren Lyd: træk, skak og partislut Forhåndstræk: vælg dit træk, mens modstanderen tænker Klassens turnering Skakur Intet 3+0 4+0 5+0 10+0 5+3 Frit Fortryd Vis et hint Start forfra Giv op Trækliste Øv en åbning Koordinater: find, skriv, hvor står brikken Avanceret Del Licenser for bundlede biblioteker"
+   },
+   "gaader": {
+    "ord": 60,
+    "tal": 10,
+    "knapper": 13,
+    "hoejdeSkaerme": 3.39,
+    "vandret": false,
+    "braet": {
+     "top": 270,
+     "bund": 614,
+     "b": 344
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Hvid trækker. Sort trækker Vi finder dit niveau: 0 af 10 Storm 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Tegn Hvad sker der Udseende Løs gåder Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder. Rigtige i træk giver ekstra tid. Ingen rekord endnu på denne enhed. Sæt den første! Tema Blandet Mat Gafler Spyd Bindinger Slutspil Dagens storm (29/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode. Find det bedste træk. Rigtigt træk fører videre - forkert viser hvad der skete, og du kan tage det tilbage og prøve igen. Din gåde-rating (start 800) flytter sig med dig, så gåderne følger med. Temaet (fx \"gaffel\" eller \"mat "
+   },
+   "opstil": {
+    "ord": 75,
+    "tal": 8,
+    "knapper": 13,
+    "hoejdeSkaerme": 2.5,
+    "vandret": false,
+    "braet": {
+     "top": 224,
+     "bund": 568,
+     "b": 344
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Opstil brikkerne på brættet, og skift så til Spil eller Opgave. 8 7 6 5 4 3 2 a 1 b c d e f g h Vælg en brik til højre, eller klik en brik på brættet for at flytte den. Vend brættet Tavle (T) Tegnelag: til Tegn Hvad sker der Udseende Opstil Klik på en brik her, og klik så på de felter du vil sætte den på - brikken bliver ved med at være valgt. Du kan også trække en brik ind på brættet. Flyt brikker Slet brik Hvem trækker Hvid Sort Tom tavle Startopstilling Spejlvend Stillingen er lovlig og klar til Spil og Opgave. Gør til opgave Mere: vis hvad det gør Avanceret Del Licenser for bundlede biblioteker"
+   }
+  },
+  "390": {
+   "start": {
+    "ord": 65,
+    "tal": 10,
+    "knapper": 14,
+    "hoejdeSkaerme": 2.97,
+    "vandret": false,
+    "braet": {
+     "top": 290,
+     "bund": 664,
+     "b": 374
+    },
+    "mindreEnd40": [],
+    "skrift": "16px"
+   },
+   "startFane": "Gåder",
+   "bibliotek": {
+    "ord": 127,
+    "tal": 8,
+    "knapper": 17,
+    "hoejdeSkaerme": 6.08,
+    "vandret": false,
+    "braet": {
+     "top": 0,
+     "bund": 0,
+     "b": 0
+    },
+    "mindreEnd40": [
+     "Brættet og brikkerne 147x36",
+     "Slag, skak og mat 127x36",
+     "Rokade, en passant, fo 246x36",
+     "De første mønstre 130x36",
+     "Principperne 98x36",
+     "Åbninger 77x36",
+     "Slutspil 66x36",
+     "Spil de første 10 træk 151x36"
+    ],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Biblioteket Her er alt det, du kan blive god til. Vælg én ting og tryk Træn. Når du har 5 rigtige i træk uden hint, sidder det (★★★★★). 0 af 28 kompetencer sidder. NÆSTE FOR DIG Lær skak Du kender brættet, brikkerne og alle reglerne - trin for trin. Træn Brikkerne og reglerne Start her, hvis du er ny. Lær skak Du kender brættet, brikkerne og alle reglerne - trin for trin. Niveau 1 · 32 trin Åbn Brættet og brikkerne Slag, skak og mat Rokade, en passant, forvandling, patt De første mønstre Principperne Åbninger Slutspil Spil de første 10 træk Matmønstre 0 af 5 sidder Sæt kongen mat. Mat i 1 med dronning og tårn Du tjekker alle dine skak og finder det der er mat. ☆☆☆☆☆ Niveau 1 · 10 øvelser Træn Dronningemat Du sætter mat med dronning og konge mod en konge på kanten. ☆☆☆☆☆ Niveau 1 · 8 øvelser Træn Tår"
+   },
+   "laer": {
+    "ord": 78,
+    "tal": 8,
+    "knapper": 13,
+    "hoejdeSkaerme": 1.64,
+    "vandret": false,
+    "braet": {
+     "top": 425,
+     "bund": 799,
+     "b": 374
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Vælg dit niveau Du kan altid skifte det senere. Jeg er ny Fra bunden: brættet, brikkerne og reglerne Jeg kan reglerne Springer brikker og regler over: starter ved principperne Jeg spiller allerede Springer regler og principper over: starter ved åbningerne 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Lær skak Avanceret Del Licenser for bundlede biblioteker"
+   },
+   "taktik": {
+    "ord": 88,
+    "tal": 14,
+    "knapper": 11,
+    "hoejdeSkaerme": 2.62,
+    "vandret": false,
+    "braet": {
+     "top": 358,
+     "bund": 732,
+     "b": 374
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Mønster 1 af 11 · eksempel 1 af 3 Slå den ubeskyttede brik Kig efter en brik som ingen passer på. Kan du slå den uden at miste noget, så gør det. Se: Springeren på d5 er ikke dækket - slå den (Txd5). 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Taktik Spring dette mønster over Vælg et mønster at øve. ✓ = lært (4 af de sidste 5 rigtige i første forsøg). 1. Slå den ubeskyttede brik 2. Red din brik Lær først: Slå den ubeskyttede brik 3. Mat i 1 med dronning og tårn 4. Baglinjemat Lær først: Mat i 1 med dronning og tårn 5. Gaffel med springeren Lær først: Slå den ubeskyttede brik 6. Gaffel med andre brikker Lær først: Gaffel med springeren 7. Binding Lær først: Slå den ubeskyttede brik 8. Spyd Lær først: Slå den ubeskyttede brik 9. Afdækket angreb Lær først"
+   },
+   "spil": {
+    "ord": 69,
+    "tal": 9,
+    "knapper": 17,
+    "hoejdeSkaerme": 2.38,
+    "vandret": false,
+    "braet": {
+     "top": 321,
+     "bund": 695,
+     "b": 374
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Hvem vil du spille mod? Mod computeren Mod en makker Niveau 1 er for begyndere. Niveau og farve står under brættet. 8 7 6 5 4 3 2 a 1 b c d e f g h Hvad spiller man her? ⏮ ◀ ▶ ⏭ Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Spil Mod en makker Mod computeren Lyd: træk, skak og partislut Forhåndstræk: vælg dit træk, mens modstanderen tænker Klassens turnering Skakur Intet 3+0 4+0 5+0 10+0 5+3 Frit Fortryd Vis et hint Start forfra Giv op Trækliste Øv en åbning Koordinater: find, skriv, hvor står brikken Avanceret Del Licenser for bundlede biblioteker"
+   },
+   "gaader": {
+    "ord": 62,
+    "tal": 10,
+    "knapper": 14,
+    "hoejdeSkaerme": 2.95,
+    "vandret": false,
+    "braet": {
+     "top": 270,
+     "bund": 644,
+     "b": 374
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Hvid trækker. Hvid trækker Vi finder dit niveau: 0 af 10 Storm 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Tegn Hvad sker der Udseende Løs gåder Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder. Rigtige i træk giver ekstra tid. Ingen rekord endnu på denne enhed. Sæt den første! Tema Blandet Mat Gafler Spyd Bindinger Slutspil Dagens storm (29/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode. Find det bedste træk. Rigtigt træk fører videre - forkert viser hvad der skete, og du kan tage det tilbage og prøve igen. Din gåde-rating (start 800) flytter sig med dig, så gåderne følger med. Temaet (fx \"gaffel\" eller \"mat "
+   },
+   "opstil": {
+    "ord": 76,
+    "tal": 8,
+    "knapper": 14,
+    "hoejdeSkaerme": 2.18,
+    "vandret": false,
+    "braet": {
+     "top": 224,
+     "bund": 598,
+     "b": 374
+    },
+    "mindreEnd40": [],
+    "skrift": "16px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Opstil brikkerne på brættet, og skift så til Spil eller Opgave. 8 7 6 5 4 3 2 a 1 b c d e f g h Vælg en brik til højre, eller klik en brik på brættet for at flytte den. Vend brættet Tavle (T) Tegnelag: til Tegn Hvad sker der Udseende Opstil Klik på en brik her, og klik så på de felter du vil sætte den på - brikken bliver ved med at være valgt. Du kan også trække en brik ind på brættet. Flyt brikker Slet brik Hvem trækker Hvid Sort Tom tavle Startopstilling Spejlvend Stillingen er lovlig og klar til Spil og Opgave. Gør til opgave Mere: vis hvad det gør Avanceret Del Licenser for bundlede biblioteker"
+   }
+  },
+  "1280": {
+   "start": {
+    "ord": 197,
+    "tal": 17,
+    "knapper": 24,
+    "hoejdeSkaerme": 2.16,
+    "vandret": false,
+    "braet": {
+     "top": 237,
+     "bund": 774,
+     "b": 537
+    },
+    "mindreEnd40": [],
+    "skrift": "17px"
+   },
+   "startFane": "Gåder",
+   "bibliotek": {
+    "ord": 233,
+    "tal": 11,
+    "knapper": 27,
+    "hoejdeSkaerme": 5.18,
+    "vandret": false,
+    "braet": {
+     "top": 0,
+     "bund": 0,
+     "b": 0
+    },
+    "mindreEnd40": [
+     "Brættet og brikkerne 156x36",
+     "Slag, skak og mat 135x36",
+     "Rokade, en passant, fo 261x36",
+     "De første mønstre 138x36",
+     "Principperne 104x36",
+     "Åbninger 82x36",
+     "Slutspil 70x36",
+     "Spil de første 10 træk 160x36"
+    ],
+    "skrift": "17px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Biblioteket Her er alt det, du kan blive god til. Vælg én ting og tryk Træn. Når du har 5 rigtige i træk uden hint, sidder det (★★★★★). 0 af 28 kompetencer sidder. NÆSTE FOR DIG Lær skak Du kender brættet, brikkerne og alle reglerne - trin for trin. Træn Brikkerne og reglerne Start her, hvis du er ny. Lær skak Du kender brættet, brikkerne og alle reglerne - trin for trin. Niveau 1 · 32 trin Åbn Brættet og brikkerne Slag, skak og mat Rokade, en passant, forvandling, patt De første mønstre Principperne Åbninger Slutspil Spil de første 10 træk Matmønstre 0 af 5 sidder Sæt kongen mat. Mat i 1 med dronning og tårn Du tjekker alle dine skak og finder det der er mat. ☆☆☆☆☆ Niveau 1 · 10 øvelser Træn Dronningemat Du sætter mat med dronning og konge mod en konge på kanten. ☆☆☆☆☆ Niveau 1 · 8 øvelser Træn Tår"
+   },
+   "laer": {
+    "ord": 168,
+    "tal": 8,
+    "knapper": 20,
+    "hoejdeSkaerme": 1.3,
+    "vandret": false,
+    "braet": {
+     "top": 246,
+     "bund": 783,
+     "b": 537
+    },
+    "mindreEnd40": [],
+    "skrift": "17px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Vælg dit niveau Du kan altid skifte det senere. Jeg er ny Fra bunden: brættet, brikkerne og reglerne Jeg kan reglerne Springer brikker og regler over: starter ved principperne Jeg spiller allerede Springer regler og principper over: starter ved åbningerne 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Lær skak Avanceret Del Licenser for bundlede biblioteker"
+   },
+   "taktik": {
+    "ord": 172,
+    "tal": 28,
+    "knapper": 18,
+    "hoejdeSkaerme": 1.73,
+    "vandret": false,
+    "braet": {
+     "top": 282,
+     "bund": 818,
+     "b": 537
+    },
+    "mindreEnd40": [],
+    "skrift": "17px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Mønster 1 af 11 · eksempel 1 af 3 Slå den ubeskyttede brik Kig efter en brik som ingen passer på. Kan du slå den uden at miste noget, så gør det. Se: Springeren på d5 er ikke dækket - slå den (Txd5). 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Taktik Spring dette mønster over Vælg et mønster at øve. ✓ = lært (4 af de sidste 5 rigtige i første forsøg). 1. Slå den ubeskyttede brik 2. Red din brik Lær først: Slå den ubeskyttede brik 3. Mat i 1 med dronning og tårn 4. Baglinjemat Lær først: Mat i 1 med dronning og tårn 5. Gaffel med springeren Lær først: Slå den ubeskyttede brik 6. Gaffel med andre brikker Lær først: Gaffel med springeren 7. Binding Lær først: Slå den ubeskyttede brik 8. Spyd Lær først: Slå den ubeskyttede brik 9. Afdækket angreb Lær først"
+   },
+   "spil": {
+    "ord": 105,
+    "tal": 18,
+    "knapper": 35,
+    "hoejdeSkaerme": 1.47,
+    "vandret": false,
+    "braet": {
+     "top": 140,
+     "bund": 677,
+     "b": 537
+    },
+    "mindreEnd40": [],
+    "skrift": "17px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Hvid trækker. 8 7 6 5 4 3 2 a 1 b c d e f g h Hvad spiller man her? ⏮ ◀ ▶ ⏭ Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Spil Mod en makker Mod computeren Lyd: træk, skak og partislut Forhåndstræk: vælg dit træk, mens modstanderen tænker Klassens turnering Skakur Intet 3+0 4+0 5+0 10+0 5+3 Frit Fortryd Vis et hint Start forfra Giv op Trækliste Øv en åbning Koordinater: find, skriv, hvor står brikken Avanceret Del Licenser for bundlede biblioteker"
+   },
+   "gaader": {
+    "ord": 193,
+    "tal": 17,
+    "knapper": 24,
+    "hoejdeSkaerme": 2.16,
+    "vandret": false,
+    "braet": {
+     "top": 237,
+     "bund": 774,
+     "b": 537
+    },
+    "mindreEnd40": [],
+    "skrift": "17px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Hvid trækker. Sort trækker Vi finder dit niveau: 0 af 10 Flyt Pil Ring Viskelæder Ryd tegning 8 7 6 5 4 3 2 a 1 b c d e f g h Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Løs gåder Gåde-storm: 3 minutter Løs så mange gåder du kan. De starter lette og bliver sværere. Forkert træk koster 10 sekunder. Rigtige i træk giver ekstra tid. Ingen rekord endnu på denne enhed. Sæt den første! Tema Blandet Mat Gafler Spyd Bindinger Slutspil Dagens storm (29/9) Tilfældig storm Dagens storm: hele klassen får de samme gåder i dag. Start, når læreren siger til. Tilfældig storm: dine egne gåder, uden kode. Find det bedste træk. Rigtigt træk fører videre - forkert viser hvad der skete, og du kan tage det tilbage og prøve igen. Din gåde-rating (start 800) flytter sig med dig, så gåderne følger med. Temae"
+   },
+   "opstil": {
+    "ord": 141,
+    "tal": 8,
+    "knapper": 40,
+    "hoejdeSkaerme": 1.41,
+    "vandret": false,
+    "braet": {
+     "top": 193,
+     "bund": 729,
+     "b": 537
+    },
+    "mindreEnd40": [],
+    "skrift": "17px",
+    "tekst": "L K S B D T L K S B D T Skak Til undervisning Bibliotek Lær skak Taktik Spil Gåder Opstil Opstil brikkerne på brættet, og skift så til Spil eller Opgave. Flyt Pil Ring Viskelæder Ryd tegning 8 7 6 5 4 3 2 a 1 b c d e f g h Vælg en brik til højre, eller klik en brik på brættet for at flytte den. Vend brættet Tavle (T) Tegnelag: til Hvad sker der Udseende Opstil Klik på en brik her, og klik så på de felter du vil sætte den på - brikken bliver ved med at være valgt. Du kan også trække en brik ind på brættet. Flyt brikker Slet brik Hvem trækker Hvid Sort Tom tavle Startopstilling Spejlvend Stillingen er lovlig og klar til Spil og Opgave. Gør til opgave Mere: vis hvad det gør Avanceret Del Licenser for bundlede biblioteker"
+   }
+  }
+ }
+}

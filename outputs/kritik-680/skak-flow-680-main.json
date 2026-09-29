@@ -1,0 +1,38 @@
+{
+ "net": 0,
+ "fejl": [],
+ "m": {
+  "360": {
+   "gaadeStatus": "Sort trækker. Find det bedste træk.",
+   "startkort": true,
+   "status0": "Hvid trækker.",
+   "status1": "Computeren spillede e7-e5. Din tur.",
+   "status2": "Computeren spillede f8-e7. Din tur.",
+   "status3": "Computeren spillede e7-f6. Din tur.",
+   "antalBrikkerSynlige": 32,
+   "traekliste": "Trækliste Øv en åbning Koordinater: find, skriv, hvor står brikken Avanceret Del Licenser for bundlede biblioteker",
+   "braet": {
+    "top": 224,
+    "bund": 568,
+    "b": 344,
+    "vinduH": 740
+   }
+  },
+  "1280": {
+   "gaadeStatus": "Sort trækker. Find det bedste træk.",
+   "startkort": true,
+   "status0": "Hvid trækker.",
+   "status1": "Computeren spillede e7-e5. Din tur.",
+   "status2": "Computeren spillede g7-g5. Din tur.",
+   "status3": "Computeren spillede d7-d5. Din tur.",
+   "antalBrikkerSynlige": 32,
+   "traekliste": "Trækliste e4e5 Sf3g5 Lc4d5 Del partiet (PGN) Øv en åbning Koordinater: find, skriv, hvor står brikken Avanceret Del Licenser for bundlede biblioteker",
+   "braet": {
+    "top": 140,
+    "bund": 677,
+    "b": 537,
+    "vinduH": 800
+   }
+  }
+ }
+}
