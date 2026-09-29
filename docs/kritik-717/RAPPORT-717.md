@@ -94,3 +94,15 @@ Nyt, der opstod, mens de blev lukket: banneret "Niveau op" og klaret-kortet stå
 
 - `docs/kritik-717/RAPPORT-717.md` (denne)
 - `outputs/kritik-717/mat-717.mjs`, `mat-717.json` og 38 skærmbilleder `M717-390-*.png` og `M717-1280-*.png`
+
+## Hvad ændret
+
+Intet i matematikspillet (kritik, kun læsning). I dette træ: `docs/kritik-717/RAPPORT-717.md`, `outputs/kritik-717/` (script, måletal, 38 skærmbilleder).
+
+## Testresultat
+
+Ingen tests i appen berørt. Elev-scriptet kørte rent på `main` @ `634d0a8`: 0 netkald, 0 sidefejl, niveau-op og klaret-forløb nået på både 390 og 1280. Rent træ efter commit.
+
+## Hvad er næste
+
+De tre rettelser til Ganita ligger i første linje og i afsnit 5: sammenlæg niveau-banner og klaret-kort, gør Hånd forståelig uden Grusgraven, og lad helten blive stærkere som en hændelse.
