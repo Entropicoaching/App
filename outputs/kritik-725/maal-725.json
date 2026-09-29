@@ -1,0 +1,497 @@
+[
+ {
+  "tag": "360x560",
+  "navn": "00-foerste",
+  "note": "",
+  "braet": {
+   "t": 198,
+   "b": 478,
+   "l": 40,
+   "r": 320,
+   "w": 280
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker. Find det bedste træk."
+ },
+ {
+  "tag": "360x560",
+  "navn": "01-spil",
+  "note": "",
+  "braet": {
+   "t": 208,
+   "b": 548,
+   "l": 10,
+   "r": 350,
+   "w": 340
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "360x560",
+  "navn": "02-computer-start",
+  "note": "",
+  "braet": {
+   "t": 173,
+   "b": 493,
+   "l": 20,
+   "r": 340,
+   "w": 320
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "360x560",
+  "navn": "03-e2-valgt",
+  "note": "",
+  "braet": {
+   "t": 173,
+   "b": 493,
+   "l": 20,
+   "r": 340,
+   "w": 320
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "360x560",
+  "navn": "04-efter-e4-og-svar",
+  "note": "",
+  "braet": {
+   "t": 173,
+   "b": 493,
+   "l": 20,
+   "r": 340,
+   "w": 320
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Computeren spillede e7-e5. Din tur."
+ },
+ {
+  "tag": "360x560",
+  "navn": "05-bund-af-siden",
+  "note": "",
+  "braet": {
+   "t": -1042,
+   "b": -722,
+   "l": 20,
+   "r": 340,
+   "w": 320
+  },
+  "hscroll": false,
+  "scrollY": 1215,
+  "status": "Computeren spillede e7-e5. Din tur."
+ },
+ {
+  "tag": "360x560",
+  "navn": "10-makker-start",
+  "note": "",
+  "braet": {
+   "t": 173,
+   "b": 493,
+   "l": 20,
+   "r": 340,
+   "w": 320
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "360x560",
+  "navn": "11-makker-ur-valg",
+  "note": "",
+  "braet": {
+   "t": 173,
+   "b": 493,
+   "l": 20,
+   "r": 340,
+   "w": 320
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "360x560",
+  "navn": "20-gaade",
+  "note": "",
+  "braet": {
+   "t": 198,
+   "b": 478,
+   "l": 40,
+   "r": 320,
+   "w": 280
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker. Find det bedste træk."
+ },
+ {
+  "tag": "360x560",
+  "navn": "21-gaade-tryk",
+  "note": "",
+  "braet": {
+   "t": 198,
+   "b": 478,
+   "l": 40,
+   "r": 320,
+   "w": 280
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker. Find det bedste træk."
+ },
+ {
+  "tag": "360x560",
+  "navn": "30-laer",
+  "note": "",
+  "braet": {
+   "t": 385,
+   "b": 665,
+   "l": 40,
+   "r": 320,
+   "w": 280
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "390x844",
+  "navn": "00-foerste",
+  "note": "",
+  "braet": {
+   "t": 290,
+   "b": 664,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Sort trækker. Find det bedste træk."
+ },
+ {
+  "tag": "390x844",
+  "navn": "01-spil",
+  "note": "",
+  "braet": {
+   "t": 321,
+   "b": 695,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "390x844",
+  "navn": "02-computer-start",
+  "note": "",
+  "braet": {
+   "t": 205,
+   "b": 579,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "390x844",
+  "navn": "03-e2-valgt",
+  "note": "",
+  "braet": {
+   "t": 205,
+   "b": 579,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "390x844",
+  "navn": "04-efter-e4-og-svar",
+  "note": "",
+  "braet": {
+   "t": 224,
+   "b": 598,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Computeren spillede e7-e5. Din tur."
+ },
+ {
+  "tag": "390x844",
+  "navn": "05-bund-af-siden",
+  "note": "",
+  "braet": {
+   "t": -812,
+   "b": -438,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 1036,
+  "status": "Computeren spillede e7-e5. Din tur."
+ },
+ {
+  "tag": "390x844",
+  "navn": "10-makker-start",
+  "note": "",
+  "braet": {
+   "t": 205,
+   "b": 579,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "390x844",
+  "navn": "11-makker-ur-valg",
+  "note": "",
+  "braet": {
+   "t": 205,
+   "b": 579,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "390x844",
+  "navn": "20-gaade",
+  "note": "",
+  "braet": {
+   "t": 290,
+   "b": 664,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker. Find det bedste træk."
+ },
+ {
+  "tag": "390x844",
+  "navn": "21-gaade-tryk",
+  "note": "",
+  "braet": {
+   "t": 290,
+   "b": 664,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker. Find det bedste træk."
+ },
+ {
+  "tag": "390x844",
+  "navn": "30-laer",
+  "note": "",
+  "braet": {
+   "t": 425,
+   "b": 799,
+   "l": 8,
+   "r": 382,
+   "w": 374
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "00-foerste",
+  "note": "",
+  "braet": {
+   "t": 237,
+   "b": 774,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Sort trækker. Find det bedste træk."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "01-spil",
+  "note": "",
+  "braet": {
+   "t": 140,
+   "b": 677,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "02-computer-start",
+  "note": "",
+  "braet": {
+   "t": 140,
+   "b": 677,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "03-e2-valgt",
+  "note": "",
+  "braet": {
+   "t": 140,
+   "b": 677,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "04-efter-e4-og-svar",
+  "note": "",
+  "braet": {
+   "t": 140,
+   "b": 677,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Sort trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "05-bund-af-siden",
+  "note": "",
+  "braet": {
+   "t": -308,
+   "b": 229,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 448,
+  "status": "Sort trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "10-makker-start",
+  "note": "",
+  "braet": {
+   "t": 140,
+   "b": 677,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Sort trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "11-makker-ur-valg",
+  "note": "",
+  "braet": {
+   "t": 140,
+   "b": 677,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Sort trækker."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "20-gaade",
+  "note": "",
+  "braet": {
+   "t": 237,
+   "b": 774,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker. Find det bedste træk."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "21-gaade-tryk",
+  "note": "",
+  "braet": {
+   "t": 237,
+   "b": 774,
+   "l": 135,
+   "r": 671,
+   "w": 537
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker. Find det bedste træk."
+ },
+ {
+  "tag": "1280x800",
+  "navn": "30-laer",
+  "note": "",
+  "braet": {
+   "t": 246,
+   "b": 744,
+   "l": 154,
+   "r": 652,
+   "w": 498
+  },
+  "hscroll": false,
+  "scrollY": 0,
+  "status": "Hvid trækker."
+ }
+]
