@@ -1,0 +1,45 @@
+{
+ "net": 0,
+ "fejl": [],
+ "trin": [],
+ "modal": {
+  "synlig": true,
+  "tekst": "Giv op? Modstanderen vinder partiet.\n\nJa, giv op\nAnnuller",
+  "bekraeft": {
+   "top": 277,
+   "bund": 321,
+   "h": 44
+  }
+ },
+ "giv": {
+  "skaerm": "L\nK\nS\nB\nD\nT\nL\nK\nS\nB\nD\nT\nSkak\nUndervisning\nBibliotek\nLær skak\nTaktik\nSpil\nGåder\nOpstil\n\nHvid gav op. Sort vinder.\n\n8\n7\n6\n5\n4\n3\n2\na\n1\nb\nc\nd\ne\nf\ng\nh\nGennemse partiet\nNyt parti\n\nKongebondeparti\n\nHvad spiller man her?\n⏮\n◀\n▶\n⏭\n\nDu: ingen fejl. Nøjagtighed 100 %. Computeren: ingen fejl. Nøjagtighed 100 %.\n\nDu\nComputeren\nNøjagtighed\n100 %\n100 %\n?! Unøjagtigheder\n0\n0\n? Fejl\n0\n0\n?? Bukke\n0\n0\n\nNøjagtighed: h",
+  "slut": {
+   "top": 496,
+   "bund": 540,
+   "h": 44,
+   "paaSkaerm": true
+  },
+  "nyt": {
+   "top": 496,
+   "bund": 540,
+   "h": 44,
+   "paaSkaerm": true
+  },
+  "gennemse": {
+   "top": 496,
+   "bund": 540,
+   "h": 44,
+   "paaSkaerm": true
+  },
+  "braet": {
+   "top": 146,
+   "bund": 490,
+   "pct": 100
+  }
+ },
+ "trin2": {
+  "titel": "Kongen",
+  "besked": "",
+  "videre": false
+ }
+}

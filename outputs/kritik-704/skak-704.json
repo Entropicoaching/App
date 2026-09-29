@@ -1,0 +1,1333 @@
+{
+  "ref": "b519a17",
+  "v": {
+    "360x560": {
+      "foerste": {
+        "aktivFane": "Gåder",
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 246,
+          "bund": 510,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [],
+        "ord": 284
+      },
+      "c-start": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 208,
+          "bund": 548,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "spil-startkort": {
+          "top": 114,
+          "bund": 200,
+          "h": 86,
+          "b": 344,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-start-computer": {
+          "top": 123,
+          "bund": 167,
+          "h": 44,
+          "b": 155,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 118
+      },
+      "c-foer-traek": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 161,
+          "bund": 505,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "strimmel-hint": {
+          "top": 511,
+          "bund": 555,
+          "h": 44,
+          "b": 110,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "strimmel-fortryd": {
+          "top": 511,
+          "bund": 555,
+          "h": 44,
+          "b": 110,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "strimmel-giv-op": {
+          "top": 511,
+          "bund": 555,
+          "h": 44,
+          "b": 110,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "spil-strimmel": {
+          "top": 511,
+          "bund": 555,
+          "h": 44,
+          "b": 344,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-spil-hint": {
+          "top": 1325,
+          "bund": 1369,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "knap-spil-giv-op": {
+          "top": 1377,
+          "bund": 1421,
+          "h": 44,
+          "b": 83,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 128,
+        "niveauSeg": {
+          "top": 1217,
+          "h": 52,
+          "paaSkaermVedTop": false
+        },
+        "farveSeg": {
+          "top": 1127,
+          "h": 52,
+          "paaSkaermVedTop": false
+        }
+      },
+      "c-efter-traek": {
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 180,
+          "bund": 524,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "knap-spil-hint": {
+          "top": 1369,
+          "bund": 1413,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "knap-spil-giv-op": {
+          "top": 1421,
+          "bund": 1465,
+          "h": 44,
+          "b": 83,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 132
+      },
+      "m-foer-ur": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 161,
+          "bund": 505,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [],
+        "ord": 110,
+        "urValg": {
+          "top": 1187,
+          "h": 52,
+          "paaSkaermVedTop": false
+        }
+      },
+      "m-ur-valgt": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 161,
+          "bund": 505,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "ur-strimmel": {
+          "top": 511,
+          "bund": 555,
+          "h": 44,
+          "b": 224,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "ur-strimmel-hvid": {
+          "top": 511,
+          "bund": 555,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "skakur": {
+          "top": 1306,
+          "bund": 1576,
+          "h": 270,
+          "b": 310,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 144,
+        "besked": "Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt."
+      },
+      "m-efter-2-traek": {
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 161,
+          "bund": 505,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "ur-strimmel": {
+          "top": 511,
+          "bund": 555,
+          "h": 44,
+          "b": 224,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 133,
+        "tider": [
+          "5:00",
+          "5:00"
+        ]
+      },
+      "m-ur-3s": [
+        "4:57",
+        "5:00"
+      ],
+      "g-start": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 246,
+          "bund": 510,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "gaade-tur-tekst": {
+          "top": 188,
+          "bund": 230,
+          "h": 42,
+          "b": 63,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-gaade-hint": {
+          "top": 1996,
+          "bund": 2040,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 284,
+        "titel": "Hvid trækker",
+        "hint": {
+          "top": 1996,
+          "h": 44,
+          "paaSkaermVedTop": false
+        }
+      },
+      "gaadeIBank": true,
+      "g-forkert": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 246,
+          "bund": 510,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "gaade-strimmel-fortryd": {
+          "top": 516,
+          "bund": 560,
+          "h": 44,
+          "b": 169,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "gaade-strimmel-hint": {
+          "top": 516,
+          "bund": 560,
+          "h": 44,
+          "b": 169,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-gaade-fortryd": {
+          "top": 1996,
+          "bund": 2040,
+          "h": 44,
+          "b": 176,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 293,
+        "status": [
+          "Hvid trækker",
+          "Ingen rekord endnu på denne enhed. Sæt den første!"
+        ]
+      },
+      "g-hint": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 226,
+          "bund": 490,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [],
+        "ord": 283,
+        "tekst": "Hvid trækker"
+      },
+      "g-rigtigt": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 226,
+          "bund": 490,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [],
+        "ord": 281,
+        "status": [
+          "Hvid trækker",
+          "Ingen rekord endnu på denne enhed. Sæt den første!"
+        ]
+      },
+      "l-start": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 385,
+          "bund": 665,
+          "synligtPct": 62
+        },
+        "vandret": false,
+        "segment-laer-niveau": {
+          "top": 167,
+          "bund": 374,
+          "h": 207,
+          "b": 323,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 95
+      },
+      "l-trin1": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 207,
+          "bund": 487,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "laer-titel": {
+          "top": 136,
+          "bund": 155,
+          "h": 19,
+          "b": 323,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "laer-tekst": {
+          "top": 155,
+          "bund": 192,
+          "h": 37,
+          "b": 323,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-laer-videre": null,
+        "smaa": [],
+        "ord": 94,
+        "titel": "Brættet",
+        "tekst": "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.",
+        "videre": null
+      },
+      "l-efter-e4": {
+        "vindue": [
+          360,
+          560
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 254,
+          "bund": 534,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "knap-laer-videre": {
+          "top": 183,
+          "bund": 227,
+          "h": 44,
+          "b": 93,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "laer-besked": {
+          "top": 155,
+          "bund": 177,
+          "h": 22,
+          "b": 323,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 91,
+        "besked": "Rigtigt! Det er e4: linje e, række 4.",
+        "videre": {
+          "top": 183,
+          "h": 44,
+          "paaSkaermVedTop": true
+        }
+      },
+      "l-trin": [
+        {
+          "i": 0,
+          "titel": "Kongen",
+          "videre": null,
+          "braetSynligt": 100
+        }
+      ]
+    },
+    "390x844": {
+      "foerste": {
+        "aktivFane": "Gåder",
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 290,
+          "bund": 664,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [],
+        "ord": 285
+      },
+      "c-start": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 321,
+          "bund": 695,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "spil-startkort": {
+          "top": 158,
+          "bund": 313,
+          "h": 155,
+          "b": 374,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-start-computer": {
+          "top": 204,
+          "bund": 248,
+          "h": 44,
+          "b": 170,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 129
+      },
+      "c-foer-traek": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 205,
+          "bund": 579,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "strimmel-hint": {
+          "top": 585,
+          "bund": 629,
+          "h": 44,
+          "b": 120,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "strimmel-fortryd": {
+          "top": 585,
+          "bund": 629,
+          "h": 44,
+          "b": 120,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "strimmel-giv-op": {
+          "top": 585,
+          "bund": 629,
+          "h": 44,
+          "b": 120,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "spil-strimmel": {
+          "top": 585,
+          "bund": 629,
+          "h": 44,
+          "b": 374,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-spil-hint": {
+          "top": 1399,
+          "bund": 1443,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "knap-spil-giv-op": {
+          "top": 1451,
+          "bund": 1495,
+          "h": 44,
+          "b": 83,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 129,
+        "niveauSeg": {
+          "top": 1291,
+          "h": 52,
+          "paaSkaermVedTop": false
+        },
+        "farveSeg": {
+          "top": 1201,
+          "h": 52,
+          "paaSkaermVedTop": false
+        }
+      },
+      "c-efter-traek": {
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 224,
+          "bund": 598,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "knap-spil-hint": {
+          "top": 1443,
+          "bund": 1487,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "knap-spil-giv-op": {
+          "top": 1495,
+          "bund": 1539,
+          "h": 44,
+          "b": 83,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 133
+      },
+      "m-foer-ur": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 205,
+          "bund": 579,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [],
+        "ord": 111,
+        "urValg": {
+          "top": 1261,
+          "h": 52,
+          "paaSkaermVedTop": false
+        }
+      },
+      "m-ur-valgt": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 205,
+          "bund": 579,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "ur-strimmel": {
+          "top": 585,
+          "bund": 629,
+          "h": 44,
+          "b": 224,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "ur-strimmel-hvid": {
+          "top": 585,
+          "bund": 629,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "skakur": {
+          "top": 1380,
+          "bund": 1650,
+          "h": 270,
+          "b": 340,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 145,
+        "besked": "Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt."
+      },
+      "m-efter-2-traek": {
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 205,
+          "bund": 579,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "ur-strimmel": {
+          "top": 585,
+          "bund": 629,
+          "h": 44,
+          "b": 224,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 134,
+        "tider": [
+          "5:00",
+          "5:00"
+        ]
+      },
+      "m-ur-3s": [
+        "4:57",
+        "5:00"
+      ],
+      "g-start": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 290,
+          "bund": 664,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "gaade-tur-tekst": {
+          "top": 232,
+          "bund": 274,
+          "h": 42,
+          "b": 72,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-gaade-hint": {
+          "top": 2094,
+          "bund": 2138,
+          "h": 44,
+          "b": 109,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [],
+        "ord": 285,
+        "titel": "Hvid trækker",
+        "hint": {
+          "top": 2094,
+          "h": 44,
+          "paaSkaermVedTop": false
+        }
+      },
+      "gaadeIBank": false,
+      "g-hint": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 270,
+          "bund": 644,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [],
+        "ord": 284,
+        "tekst": "Hvid trækker"
+      },
+      "l-start": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 425,
+          "bund": 799,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "segment-laer-niveau": {
+          "top": 218,
+          "bund": 408,
+          "h": 190,
+          "b": 340,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 96
+      },
+      "l-trin1": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 292,
+          "bund": 666,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "laer-titel": {
+          "top": 207,
+          "bund": 227,
+          "h": 20,
+          "b": 340,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "laer-tekst": {
+          "top": 230,
+          "bund": 272,
+          "h": 42,
+          "b": 340,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-laer-videre": null,
+        "smaa": [],
+        "ord": 95,
+        "titel": "Brættet",
+        "tekst": "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.",
+        "videre": null
+      },
+      "l-efter-e4": {
+        "vindue": [
+          390,
+          844
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 335,
+          "bund": 709,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "knap-laer-videre": {
+          "top": 258,
+          "bund": 302,
+          "h": 44,
+          "b": 93,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "laer-besked": {
+          "top": 230,
+          "bund": 253,
+          "h": 22,
+          "b": 340,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 92,
+        "besked": "Rigtigt! Det er e4: linje e, række 4.",
+        "videre": {
+          "top": 258,
+          "h": 44,
+          "paaSkaermVedTop": true
+        }
+      },
+      "l-trin": [
+        {
+          "i": 0,
+          "titel": "Kongen",
+          "videre": null,
+          "braetSynligt": 100
+        }
+      ]
+    },
+    "1280x800": {
+      "foerste": {
+        "aktivFane": "Gåder",
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 237,
+          "bund": 774,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [
+          "Grøn 40x44",
+          "Rød 40x44",
+          "Blå 40x44",
+          "Blandet 122x40",
+          "Mat 122x40",
+          "Gafler 122x40",
+          "Spyd 122x40",
+          "Bindinger 122x40",
+          "Slutspil 122x40"
+        ],
+        "ord": 286
+      },
+      "c-start": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 140,
+          "bund": 677,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "spil-startkort": null,
+        "knap-start-computer": null,
+        "smaa": [
+          "Mod en makker 201x40",
+          "Mod computeren 201x40",
+          "spil-lyd 13x13",
+          "spil-forhaand 13x13",
+          "Intet 56x40",
+          "3+0 56x40",
+          "4+0 56x40",
+          "5+0 56x40",
+          "10+0 56x40",
+          "5+3 56x40",
+          "Frit 56x40"
+        ],
+        "ord": 110
+      },
+      "c-foer-traek": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 140,
+          "bund": 677,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "strimmel-hint": null,
+        "strimmel-fortryd": null,
+        "strimmel-giv-op": null,
+        "spil-strimmel": null,
+        "knap-spil-hint": {
+          "top": 541,
+          "bund": 585,
+          "h": 44,
+          "b": 116,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-spil-giv-op": {
+          "top": 594,
+          "bund": 638,
+          "h": 44,
+          "b": 89,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [
+          "Mod en makker 201x40",
+          "Mod computeren 201x40",
+          "spil-lyd 13x13",
+          "spil-forhaand 13x13",
+          "Hvid 65x40",
+          "Sort 62x40",
+          "Tilfældig 95x40",
+          "1 49x40",
+          "2 49x40",
+          "3 49x40",
+          "4 49x40",
+          "5 49x40",
+          "6 49x40",
+          "7 49x40",
+          "8 49x40"
+        ],
+        "ord": 125,
+        "niveauSeg": {
+          "top": 455,
+          "h": 48,
+          "paaSkaermVedTop": true
+        },
+        "farveSeg": {
+          "top": 366,
+          "h": 48,
+          "paaSkaermVedTop": true
+        }
+      },
+      "c-efter-traek": {
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 140,
+          "bund": 677,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "knap-spil-hint": {
+          "top": 541,
+          "bund": 585,
+          "h": 44,
+          "b": 116,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-spil-giv-op": {
+          "top": 594,
+          "bund": 638,
+          "h": 44,
+          "b": 89,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [
+          "Mod en makker 201x40",
+          "Mod computeren 201x40",
+          "spil-lyd 13x13",
+          "spil-forhaand 13x13",
+          "Hvid 65x40",
+          "Sort 62x40",
+          "Tilfældig 95x40",
+          "1 49x40",
+          "2 49x40",
+          "3 49x40",
+          "4 49x40",
+          "5 49x40",
+          "6 49x40",
+          "7 49x40",
+          "8 49x40",
+          "e4 54x32",
+          "e5 54x32"
+        ],
+        "ord": 133
+      },
+      "m-foer-ur": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 140,
+          "bund": 677,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [
+          "Mod en makker 201x40",
+          "Mod computeren 201x40",
+          "spil-lyd 13x13",
+          "spil-forhaand 13x13",
+          "Intet 56x40",
+          "3+0 56x40",
+          "4+0 56x40",
+          "5+0 56x40",
+          "10+0 56x40",
+          "5+3 56x40",
+          "Frit 56x40"
+        ],
+        "ord": 110,
+        "urValg": {
+          "top": 430,
+          "h": 48,
+          "paaSkaermVedTop": true
+        }
+      },
+      "m-ur-valgt": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 140,
+          "bund": 677,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "ur-strimmel": null,
+        "ur-strimmel-hvid": null,
+        "skakur": {
+          "top": 495,
+          "bund": 753,
+          "h": 258,
+          "b": 412,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [
+          "Mod en makker 201x40",
+          "Mod computeren 201x40",
+          "spil-lyd 13x13",
+          "spil-forhaand 13x13",
+          "Intet 56x40",
+          "3+0 56x40",
+          "4+0 56x40",
+          "5+0 56x40",
+          "10+0 56x40",
+          "5+3 56x40",
+          "Frit 56x40",
+          "skakur-lyd 13x13"
+        ],
+        "ord": 140,
+        "besked": "Uret starter, når hvid har trukket. Den der har trukket, trykker på sit eget felt."
+      },
+      "m-efter-2-traek": {
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 140,
+          "bund": 677,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "ur-strimmel": null,
+        "smaa": [
+          "Mod en makker 201x40",
+          "Mod computeren 201x40",
+          "spil-lyd 13x13",
+          "spil-forhaand 13x13",
+          "Intet 56x40",
+          "3+0 56x40",
+          "4+0 56x40",
+          "5+0 56x40",
+          "10+0 56x40",
+          "5+3 56x40",
+          "Frit 56x40",
+          "skakur-lyd 13x13"
+        ],
+        "ord": 133,
+        "tider": [
+          "5:00",
+          "5:00"
+        ]
+      },
+      "m-ur-3s": [
+        "4:57",
+        "5:00"
+      ],
+      "g-start": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 237,
+          "bund": 774,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "gaade-tur-tekst": {
+          "top": 147,
+          "bund": 169,
+          "h": 22,
+          "b": 104,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-gaade-hint": {
+          "top": 1270,
+          "bund": 1314,
+          "h": 44,
+          "b": 116,
+          "paaSkaerm": false,
+          "delvis": false
+        },
+        "smaa": [
+          "Grøn 40x44",
+          "Rød 40x44",
+          "Blå 40x44",
+          "Blandet 122x40",
+          "Mat 122x40",
+          "Gafler 122x40",
+          "Spyd 122x40",
+          "Bindinger 122x40",
+          "Slutspil 122x40"
+        ],
+        "ord": 286,
+        "titel": "Hvid trækker",
+        "hint": {
+          "top": 1270,
+          "h": 44,
+          "paaSkaermVedTop": false
+        }
+      },
+      "gaadeIBank": false,
+      "g-hint": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 237,
+          "bund": 774,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "smaa": [
+          "Grøn 40x44",
+          "Rød 40x44",
+          "Blå 40x44",
+          "Blandet 122x40",
+          "Mat 122x40",
+          "Gafler 122x40",
+          "Spyd 122x40",
+          "Bindinger 122x40",
+          "Slutspil 122x40"
+        ],
+        "ord": 285,
+        "tekst": "Hvid trækker"
+      },
+      "l-start": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 246,
+          "bund": 783,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "segment-laer-niveau": {
+          "top": 154,
+          "bund": 228,
+          "h": 74,
+          "b": 636,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [],
+        "ord": 96
+      },
+      "l-trin1": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 210,
+          "bund": 747,
+          "synligtPct": 100
+        },
+        "vandret": false,
+        "laer-titel": {
+          "top": 142,
+          "bund": 163,
+          "h": 21,
+          "b": 636,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "laer-tekst": {
+          "top": 167,
+          "bund": 189,
+          "h": 22,
+          "b": 636,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "knap-laer-videre": null,
+        "smaa": [
+          "Biblioteket 72x21"
+        ],
+        "ord": 95,
+        "titel": "Brættet",
+        "tekst": "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.",
+        "videre": null
+      },
+      "l-efter-e4": {
+        "vindue": [
+          1280,
+          800
+        ],
+        "scrollY": 0,
+        "braet": {
+          "top": 276,
+          "bund": 812,
+          "synligtPct": 98
+        },
+        "vandret": false,
+        "knap-laer-videre": {
+          "top": 197,
+          "bund": 241,
+          "h": 44,
+          "b": 99,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "laer-besked": {
+          "top": 167,
+          "bund": 191,
+          "h": 24,
+          "b": 636,
+          "paaSkaerm": true,
+          "delvis": true
+        },
+        "smaa": [
+          "Biblioteket 72x21"
+        ],
+        "ord": 92,
+        "besked": "Rigtigt! Det er e4: linje e, række 4.",
+        "videre": {
+          "top": 197,
+          "h": 44,
+          "paaSkaermVedTop": true
+        }
+      },
+      "l-trin": [
+        {
+          "i": 0,
+          "titel": "Kongen",
+          "videre": null,
+          "braetSynligt": 100
+        }
+      ]
+    }
+  },
+  "fejl": [],
+  "net": 0
+}
