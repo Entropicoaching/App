@@ -1,0 +1,6 @@
+360x560 trin: Brættet@242 | Brættet@242 | Kongen@242 | Kongen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255
+360x560 distinkte braet-top: [242,255] nederste kant: 535 vindue 560
+390x844 trin: Brættet@335 | Brættet@335 | Kongen@335 | Kongen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335 | Dronningen@335
+390x844 distinkte braet-top: [335] nederste kant: 709 vindue 844
+1280x800 trin: Brættet@255 | Brættet@255 | Kongen@255 | Kongen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255 | Dronningen@255
+1280x800 distinkte braet-top: [255] nederste kant: 753 vindue 800
