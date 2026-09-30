@@ -10,6 +10,10 @@ Marcs domme holdt: nej (kun een: low bar ligger stadig 6,4 cm under high bar, "e
 
 Intet i løftemodellen, sitet eller appen. Kun nye filer: denne rapport, tre scripts og 117 filer i `outputs/kritik-815/`.
 
+## Testresultat
+
+Ingen tests kørt og ingen kode ændret. Målingerne: 117 billeder og `maaling-815.json` (0 netkald, 1 konsolfejl på 390, 0 på 1280).
+
 ## Holder figurerne Marcs domme?
 
 - **Bænk: ja.** Ved brystet står underarmen lodret og leddene stablet under stangen (`T815-390-baenk-bryst.png`). Tre buer i samme skala: kontakt 21,1 / 19,1 / 16,8 cm fra skulderen og lænd 7,3 / 9,0 / 10,6 cm (`A815-1280-baenk-tre-buer.png`): toppen tættere på halsen jo mere bue, og ikke alle lige meget. Stor bue i lockout: stangen over skulderleddet, underarmen lodret, lænden tydeligt hævet (`A815-390-baenk-stor-t2.png`).
