@@ -17,3 +17,16 @@ Syntetisk elev, headless, Math.random og ur laast; ingen rigtig 11-aarig har set
 
 ## Hara
 Ingen betydning for Hara.
+
+## Gren
+Gren: kritik-833
+Commits: se `git log kritik-833`.
+
+## Hvad ændret
+Kun filer under `docs/kritik-833/` og `outputs/kritik-833/`: elev-script, skærmbilleder, måletal og denne rapport. Intet i matematikspillet eller appen er ændret.
+
+## Testresultat
+Ingen kode-test (kritik). Elev-scriptet kørte mod main (51ccaf5): 0 net-kald, 0 fejl, niveau-op og klaret nået på både 390 og 1280.
+
+## Hvad er næste
+Ganita retter de tre ting i første linje: Hjerte/Haand og figurens stjerne, klaret-kortet nedkortet, Min helt kortere og forklaringen af Hoved/Haand/Hjerte på forsiden.
