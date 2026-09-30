@@ -1,0 +1,32 @@
+Marcs domme holdt: ja (alle tre loeft; squat: albue 17 cm bag og 19 cm under stang paa low bar, 1 cm bag og 26 cm under paa high bar, low bar 3,7 cm under skulderen; baenk: stangen rammer buens top med lodret underarm i bunden, kontakt 21,1 / 19,1 / 16,8 cm fra skulderen for lille / middel / stor bue; doedloeft: skinnebenet helt frem til stangen i start, fodbredde 32 / 49 / 82 cm). Ligner rigtige loeft: ja, naesten (kroppene og stillingerne holder; det der staar tilbage er tal og streger paa 390). De tre vigtigste ting Yantra retter naeste gang: (1) doedloeftens forfra-vindue viser "stand 49 cm . 24.7093023255814 grader ud" med et ikke-afrundet tal, og teksten er for bred til vinduet og klippes i venstre kant, paa semi-sumo (`A854-390-dl-semi-t0.png`, `A854-1280-dl-semi-t0.png`; `src/doedloeftFigurer.js` linje 412, `f.fodvinkel` skal rundes som `standbredde` lige foran) - den nye glidende fodbredde giver mellemtal, som den gamle tekst ikke var lavet til; (2) doedloeftens opstilling paa 390 (`T854-390-doedloeft-opstilling.png`; `src/doedloeftFigurer.js`): stregerne "laend 24,7 cm", "hofte 41,0 cm" og "knae 0,8 cm" gaar stadig tvaers gennem laar, ryg og skinneben (femte kritik i traek; ogsaa squat bund har streger gennem laaret, `S854-390-lowbar-bund.png`); saet tallene i en fast soejle uden for kroppen eller lav stregerne saa korte, at de kun ligger i luften; (3) sumo-spoegelsens tekst paa 390 (`A854-390-dl-sumo-bred-t0.png`, `A854-390-dl-semi-t0.png`; `src/embed/deadliftAnimation.js`): stadig brudt midt i tallene ("lavere" staar alene, "hofte 0,0 til 1,2 / cm lavere") og "1,4 grader mere lodret til 11,3 grader mere vandret" er svaer at laese (tredje kritik i traek); skriv een kort linje per tal, fx "hofte 3,7-9,5 cm lavere" og "ryg 1,4-11,3 grader mere vandret".
+
+## Gren
+
+`kritik-854` (fra `main`). Filer kun under `docs/kritik-854/` (denne rapport og tre scripts, kopieret fra 848 med nyt ordrenummer: `server-854.mjs`, `tur-854.mjs`, `squat-stang-854.mjs`) og `outputs/kritik-854/` (117 filer: `T854-` stille figurer, `A854-` animationer, `S854-` squat bund/sticking/lockout, `maaling-854.json`). Set paa Yantras `main` (0d8234f, ordre 840 merget; nyeste rapport `RAPPORT-ordre-840.md`), hentet med `git archive` (dist og demo) og serveret paa 127.0.0.1 i headless Chrome, 390 (touch) og 1280 (mus). 0 netkald ud af huset; paa 390 en 404 paa en ressource (samme som i 842 og 848, jeg fandt ikke hvilken), ingen JS-fejl. Min seneste figur-kritik foer denne er 848. `Til Marc\LAES-MODELLER-3.html` er kun laest som tekst, ikke aendret og ikke aabnet i browser. Syntetiske kroppe, ingen atletdata, ingen sub-agenter. Jeg har set et udvalg taet (ca. 20 af de 117), ikke alle.
+
+## Hvad aendret
+
+Intet i loeftmodellen, sitet eller appen. Kun nye filer: rapport, tre scripts og billeder.
+
+## Testresultat
+
+Ingen tests koert og ingen kode aendret. Maalingerne er de to scripts: `tur-854.mjs` (stille figurer og animationer, 390 og 1280) og `squat-stang-854.mjs` (squat bund, sticking, lockout, low og high bar). `maaling-854.json` har net og fejl: 0 netkald, en 404 paa 390. Fodbredden 65,6 cm blev taget (`A854-*-dl-sumo-smal-*`) men ikke set taet.
+
+## Holder figurerne Marcs domme?
+
+- **Baenk: ja, og mit fund fra 848 er lukket.** I bunden ligger stangen paa buens top med lodret underarm og stablede led (`A854-390-baenk-lille-t3.png`, `A854-1280-baenk-stor-t3.png`); i 848 var stangen ca. 8 cm fra prikken og underarmen skraa. Tre buer i samme skala: kontakt 21,1 / 19,1 / 16,8 cm fra skulderen, laend 7,3 / 9,0 / 10,6 cm (`A854-1280-baenk-tre-buer.png`): toppen taettere paa halsen jo mere bue, og ikke alle lige meget. Det der ser lidt stift ud for en coach: forfra-vinduet viser underarmene som et rent V med haenderne paa stangen, og omridset i "tre buer" er en blok uden baenk og uden hoved.
+- **Squat: ja.** Albuen under og bag stangen i alle set billeder: low bar bund 17 cm bag og 19 cm under (`S854-390-lowbar-bund.png`), animation low bar 13 cm bag og 19 cm under (`A854-390-squat-lowbar-t2.png`), high bar lockout 1 cm bag og 26 cm under (`A854-1280-squat-highbar-t2.png`). Ikke ved hovedet. Low bar 3,7 cm under skulderen: "et par cm" under high bar holder. Stangens sted er nu et spektrum i solveren (mixNN, ordre 840), men **kun som skyder i demoen**; De tre loeft-siden og de indbyggede animationer har stadig kun high bar / low bar / front som knapper, saa Marcs "intet er binaert" er kun halvt naaet for en bruger. Figurstoerrelsen paa 390 er bedre end i 848 (figuren fylder nu ca. 40 % af bredden i stedet for en fjerdedel), men forfra-vinduet og haandlupen fylder stadig toppen, og der er tom plads oeverst til venstre.
+- **Doedloeft: ja.** Skinnebenet er fremme ved stangen i start, konventionel (`A854-390-dl-konventionel-t0.png`) som sumo (`A854-390-dl-sumo-bred-t0.png`); fodbredden 32 / 49 / 82 cm med knae uden for armene ved sumo og inden for ved konventionel. Sumo set fra siden ligner konventionel (naturligt, siden forfra er det der viser bredden), og ryggen er Marcs dom, saa den roerer jeg ikke. Nyt paa 390 og 1280: mellemtal-fodbredden (semi) viser et ikke-afrundet tal i forfra-vinduet, se punkt 1 ovenfor.
+- **"Intet er binaert":** halvt. Buen i baenk er tre trin (lille, middel, stor) uden en skyder, squatens sted har skyder kun i demoen, doedloeftens fodbredde er en ægte skyder.
+
+## Hvad er naeste
+
+De tre ting staar i foerste linje. Ud over dem, i denne raekkefoelge: (a) flyt skyderen for squatens stangsted ind i De tre loeft og de indbyggede animationer, saa Marc kan proeve den; (b) giv baenkens bue en skyder som doedloeftens fodbredde; (c) squat-animationen paa 390: flyt haandlupen ind i samme raekke som forfra-vinduet, saa figuren kan fylde mere; (d) 360 px er ikke set af mig siden 807. Marcs svar er stadig "modeller ok" eller "modeller ret: ...".
+
+## Aerlige graenser
+
+- Alt er set som stille billeder fra headless Chrome, ikke som film paa en telefon; jeg kan ikke se om bevaegelsen mellem billederne foeles rigtig.
+- Jeg har kigget ca. 20 af 117 billeder taet. Fodbredden 65,6 cm og squat sticking-billederne er ikke set taet.
+- "Ligner rigtige loeft" er en coachs skoen paa tegningens stilling, ikke en maaling paa en atlet; jeg har ikke Marcs oeje, og hvad der ser stift ud kan vaere modellens bevidste forenkling.
+- Vinduet paa 390 er en 404 jeg ikke har sporet; det aendrer ikke figurerne.
+- Har arbejdet betydning for Hara: nej, intet i rapporten roerer Hara.
