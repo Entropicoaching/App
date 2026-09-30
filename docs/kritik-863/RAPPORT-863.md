@@ -4,11 +4,15 @@ Klar til klassen: ja, paa telefon og computer (skak main ddf5eac, uaendret siden
 
 `kritik-863` fra `main`. Skakken hentet med `git archive main` (ddf5eac) til en midlertidig mappe og koert headless (Playwright): touch paa 320 x 520, 360 x 560, 390 x 844 og mus paa 1280 x 800. Scripts genbrugt fra 857: `docs/kritik-863/elevtur-863.mjs`, `slut-863.mjs`, `ekstra-863.mjs`, `bund-863.mjs`. Rygdata og skaermbilleder i `outputs/kritik-863/` (`*.log` er scriptenes maal). Laest: RAPPORT-845 og RAPPORT-839 ("Hvad aendret" og "Hvad er naeste"), ranglisten i MOD-LICHESS og foerste linje af kritik 857. Vigtigt: siden 857 er der ikke merget noget i skak main; de to nyeste rapporter paa main er stadig 845 og 839. Alle tal er identiske med 857.
 
-## Kan en 11-aarig komme i gang uden hjaelp?
+## Hvad aendret
+
+Ingen aendring i skakken (kun kritik). Det, der er leveret, er dommen og maalingerne: skak main er uaendret siden kritik 857, og alle maal er identiske.
+
+### Kan en 11-aarig komme i gang uden hjaelp?
 
 Ja. Paa 360 x 560 staar braettet fra y=148 til 452 i parti mod computeren, makker-parti med ur, gaade og Laer skak trin 1; Fortryd / Vis et hint / Giv op ligger ca. 459-527 (i vinduet). I makker-partiet kommer der to urknapper "Hvid" og "Sort" (459-503) efter valg af 5+0. Laer skak trin 20 og 23 efter rigtigt svar: braettet 235-499 paa 320 x 520 og 235-515 paa 360 x 560, Videre 164-208, "Rigtigt! ..." er een linje. Paa 1280 x 800 er braettet 140-677 og Spil-panelet med ur staar til hoejre (urvalget 400-448). Ingen sidescroll paa nogen bredde. Eleven ser altid braettet og den knap, der skal trykkes paa; det eneste, eleven skal vide selv, er at uret skal vaelges.
 
-## Hvad er stadig besvaerligt eller rodet paa lav telefon
+### Hvad er stadig besvaerligt eller rodet paa lav telefon
 
 - Hovedet 148 px paa 320-360: titel, to raekker faner og linket "Undervisning". Braettet er 264 px paa 320 og 304 px paa 360.
 - Uret i makker-partiet: urvalget er y 596-648 paa 320 x 520 og 636-688 paa 360 x 560, gemt i folden "Skakur og valg". Et barn, der skal spille med ur, skal selv finde folden. Paa 390 x 844 er valget i vinduet (746-798).
@@ -17,9 +21,17 @@ Ja. Paa 360 x 560 staar braettet fra y=148 til 452 i parti mod computeren, makke
 - 1280 x 800: knaprakken 787-831 er uden for vinduet; siden er 1436 px hoej.
 - Gaaden: "Vis et hint" 483-527 paa 360 x 560, i vinduet; "Vend braettet" og Tegn 566-610 er under kanten, men er ikke noedvendige for en elev.
 
-## Er mine seneste fund lukket?
+### Er mine seneste fund lukket?
 
 Fundene fra 857: (1) hoved 148 px og ur i fold: **aaben** (kraever Marcs ja til fanenavne; urvalget som synlig linje kraever ikke ja). (2) Knaprakken paa 1280 x 800: **aaben paa main**; ordre 850 blok 2 (19rem-braet) skulle lukke den, men ligger kun paa `ordre-850`, saa jeg har ikke kunnet bekraefte det. (3) Laer skak-hop: **aabent** (9-28 px, uaendret maal). Fra 852 er Giv op-siden fortsat **lukket** (1838 px, ingen dobbelt knap). Ordre 850 blok 1 (Laer af dine fejl en gang) er heller ikke paa main. Intet er gaaet i stykker; intet nyt er lukket, fordi intet er merget.
+
+## Testresultat
+
+Ingen npm test (skakken er ikke min). Maalescripts: `node docs/kritik-863/elevtur-863.mjs <mappe>`, `slut-863.mjs`, `ekstra-863.mjs`; alle tre koerte til ende, men to klik fejlede (se graenser).
+
+## Hvad er naeste
+
+Merge ordre 850 og maal 1280 x 800 og Giv op igen; saa laeg urvalget som synlig linje og reserver rosepladsen i Laer skak.
 
 ## Aerlige graenser
 
