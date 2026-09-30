@@ -1,0 +1,28 @@
+{
+ "390": {
+  "fejl": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "net": [],
+  "knapper": {
+   "dl": [
+    "32.0",
+    "82.0",
+    "32",
+    "block"
+   ]
+  }
+ },
+ "1280": {
+  "fejl": [],
+  "net": [],
+  "knapper": {
+   "dl": [
+    "32.0",
+    "82.0",
+    "32",
+    "block"
+   ]
+  }
+ }
+}
