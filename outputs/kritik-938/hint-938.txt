@@ -1,0 +1,14 @@
+360x560 hint: {
+  status: 'Hint: ingen fare lige nu. Kan hvids springer på b1 komme i spil?',
+  marker: [ 'b1' ],
+  tekst: [
+    'knap-spil-hint:Vis et hint',
+    'spil-hint-besked:Hint: ingen fare lige nu. Kan hvids springer på b1 komme i spil?'
+  ]
+}
+1280x800 kunne ikke #strimmel-hint
+1280x800 hint: {
+  status: 'Computeren spillede e7-e5. Din tur.',
+  marker: [],
+  tekst: [ 'knap-spil-hint:Vis et hint' ]
+}
