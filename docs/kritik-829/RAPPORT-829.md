@@ -31,3 +31,12 @@ Headless Chromium, ingen rigtig telefon, ingen børn. Mit første script ramte i
 ## Betydning for Hara
 
 Ingen.
+
+## Hvad ændret
+Kun filer under `docs/kritik-829/` og `outputs/kritik-829/`: elev-scripts, skærmbilleder, måletal og denne rapport. Intet i skakken er ændret.
+
+## Testresultat
+Ingen kode-test (kritik). Scripts kørte headless mod skak main (6cf7380): 360 x 560 og 390 x 844 touch, 1280 x 800 mus; hint og Giv op virker på 360 og 1280.
+
+## Hvad er næste
+Chaturanga retter de tre ting i første linje: analysen efter Giv op nedkortet og kortet øverst, rækken under brættet på 1280 ombrudt, og hoved og Lær skak-kort så brættet får luft (kræver Marcs ja til nye fanenavne).
