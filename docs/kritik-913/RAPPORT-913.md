@@ -37,3 +37,12 @@ Ja, naesten. Foerste skaerm: "Hoved er at regne: dele, broeker og klokken. Haand
 
 ## Gren
 kritik-913, base main. Commits: se `git log --oneline main..kritik-913`.
+
+## Hvad aendret
+Kun filer under docs/kritik-913/ og outputs/kritik-913/: elev-script, fold-script, 39 skaermbilleder, elev-nu.json og denne rapport. Matematikspillet er ikke roert.
+
+## Testresultat
+`node docs/kritik-913/elev-913.mjs <mappe> nu`: 0 netkald, 0 sidefejl, ingen vandret rulning (390 og 1280). `node docs/kritik-913/fold-913.mjs <mappe>`: {aabenFoer:true, aabenEfter:false}.
+
+## Hvad er naeste
+Ganita: (1) Hoved-loftet ved 9 (spoerg Marc), (2) lad Hoved/Haand/Hjerte-tallet taelle op stort ved svaret og giv Hjerte et glimt ved foerste hjaelp, (3) skjul Mere og tal-linjer paa klaret-siden til efter en klar Naeste opgave-knap.
