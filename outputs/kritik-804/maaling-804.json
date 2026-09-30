@@ -1,0 +1,98 @@
+{
+ "390": {
+  "fejl": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "net": [],
+  "knapper": {
+   "tre": [
+    "squat|Squat",
+    "doedloeft|Dødløft",
+    "baenk|Bænkpres",
+    "|Marcs mål",
+    "|Gennemsnitlig løfter",
+    "|Lange lårben",
+    "|Korte lårben",
+    "|Lang torso",
+    "|Low bar",
+    "|High bar",
+    "|Front",
+    "bund|Bunden",
+    "sticking|Sticking point",
+    "lockout|Lockout",
+    "|Lås denne indstilling"
+   ],
+   "squat": [
+    "bund",
+    "sticking",
+    "lockout",
+    "bund"
+   ],
+   "baenk": [
+    "bryst",
+    "midt",
+    "lockout",
+    "bryst"
+   ],
+   "doedloeft": [
+    "opstilling",
+    "knaehoejde",
+    "lockout",
+    "opstilling"
+   ],
+   "dl": [
+    "32.0",
+    "82.0",
+    "32",
+    "block"
+   ]
+  }
+ },
+ "1280": {
+  "fejl": [],
+  "net": [],
+  "knapper": {
+   "tre": [
+    "squat|Squat",
+    "doedloeft|Dødløft",
+    "baenk|Bænkpres",
+    "|Marcs mål",
+    "|Gennemsnitlig løfter",
+    "|Lange lårben",
+    "|Korte lårben",
+    "|Lang torso",
+    "|Low bar",
+    "|High bar",
+    "|Front",
+    "bund|Bunden",
+    "sticking|Sticking point",
+    "lockout|Lockout",
+    "|Lås denne indstilling"
+   ],
+   "squat": [
+    "bund",
+    "sticking",
+    "lockout",
+    "bund"
+   ],
+   "baenk": [
+    "bryst",
+    "midt",
+    "lockout",
+    "bryst"
+   ],
+   "doedloeft": [
+    "opstilling",
+    "knaehoejde",
+    "lockout",
+    "opstilling"
+   ],
+   "dl": [
+    "32.0",
+    "82.0",
+    "32",
+    "block"
+   ]
+  }
+ }
+}
