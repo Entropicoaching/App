@@ -41,3 +41,8 @@ Mine tre fund fra 815 sammenholdt med `main` nu:
 Lukket ud over low bar: baenkens hals er nu en glat form som i squat og doedloeft (ordre 807).
 
 Har arbejdet betydning for Hara: nej.
+
+## Hvad er næste
+
+Yantra retter de tre punkter i dommen (squat-animation 390, doedloeftens streger 390, sumo-vinduet og spoegelsestekst 390). Marc svarer paa sumo-ryggens vinkel. Naeste kritik: se de tre 390-billeder igen efter rettelsen.
+
