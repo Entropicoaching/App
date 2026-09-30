@@ -1,0 +1,1114 @@
+[
+ {
+  "tag": "320x520",
+  "navn": "A1-makker-efter-valg",
+  "#braet": {
+   "t": 148,
+   "b": 396,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 450,
+   "b": 502,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 450,
+   "b": 558,
+   "synlig": true,
+   "iVindue": false
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 403,
+   "b": 447,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 403,
+   "b": 447,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "320x520",
+  "navn": "A2-ur-5-0",
+  "#braet": {
+   "t": 148,
+   "b": 396,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 450,
+   "b": 502,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 403,
+   "b": 447,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "320x520",
+  "navn": "A3-efter-2-traek",
+  "#braet": {
+   "t": 148,
+   "b": 396,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 403,
+   "b": 447,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel-sort": {
+   "t": 403,
+   "b": 447,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 403,
+   "b": 447,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 403,
+   "b": 447,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "320x520",
+  "navn": "A4-giv-op",
+  "#braet": {
+   "t": 148,
+   "b": 396,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#slut-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-nyt-parti": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-raad": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "320x520",
+  "navn": "B1-computer-traek",
+  "#braet": {
+   "t": 148,
+   "b": 412,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 419,
+   "b": 463,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-hint": {
+   "t": 419,
+   "b": 463,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 419,
+   "b": 463,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 466,
+   "b": 719,
+   "synlig": true,
+   "iVindue": false
+  }
+ },
+ {
+  "tag": "320x520",
+  "navn": "B2-hint",
+  "#braet": {
+   "t": 148,
+   "b": 412,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#status": {
+   "t": 101,
+   "b": 144,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "320x520",
+  "navn": "C1-laer-ny",
+  "#braet": {
+   "t": 235,
+   "b": 499,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-titel": {
+   "t": 136,
+   "b": 155,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-tekst": {
+   "t": 155,
+   "b": 192,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-laer-videre": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#laer-trin-oeverst": {
+   "t": 120,
+   "b": 224,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "320x520",
+  "navn": "D1-gaade",
+  "#braet": {
+   "t": 198,
+   "b": 462,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-strimmel": {
+   "t": 468,
+   "b": 512,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-strimmel-hint": {
+   "t": 468,
+   "b": 512,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-tur-tekst": {
+   "t": 158,
+   "b": 179,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-storm-genvej": {
+   "t": 147,
+   "b": 191,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "A1-makker-efter-valg",
+  "#braet": {
+   "t": 148,
+   "b": 436,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 490,
+   "b": 542,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 490,
+   "b": 598,
+   "synlig": true,
+   "iVindue": false
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 443,
+   "b": 487,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 443,
+   "b": 487,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "A2-ur-5-0",
+  "#braet": {
+   "t": 148,
+   "b": 436,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 490,
+   "b": 542,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 443,
+   "b": 487,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "A3-efter-2-traek",
+  "#braet": {
+   "t": 148,
+   "b": 436,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 443,
+   "b": 487,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel-sort": {
+   "t": 443,
+   "b": 487,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 443,
+   "b": 487,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 443,
+   "b": 487,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "A4-giv-op",
+  "#braet": {
+   "t": 148,
+   "b": 436,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#slut-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-nyt-parti": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-raad": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "B1-computer-traek",
+  "#braet": {
+   "t": 148,
+   "b": 452,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 459,
+   "b": 503,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-hint": {
+   "t": 459,
+   "b": 503,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 459,
+   "b": 503,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 506,
+   "b": 759,
+   "synlig": true,
+   "iVindue": false
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "B2-hint",
+  "#braet": {
+   "t": 148,
+   "b": 452,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#status": {
+   "t": 101,
+   "b": 144,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "C1-laer-ny",
+  "#braet": {
+   "t": 235,
+   "b": 515,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-titel": {
+   "t": 136,
+   "b": 155,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-tekst": {
+   "t": 155,
+   "b": 192,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-laer-videre": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#laer-trin-oeverst": {
+   "t": 120,
+   "b": 224,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "360x560",
+  "navn": "D1-gaade",
+  "#braet": {
+   "t": 198,
+   "b": 478,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-strimmel": {
+   "t": 484,
+   "b": 528,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-strimmel-hint": {
+   "t": 484,
+   "b": 528,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-tur-tekst": {
+   "t": 158,
+   "b": 179,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-storm-genvej": {
+   "t": 147,
+   "b": 191,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "A1-makker-efter-valg",
+  "#braet": {
+   "t": 228,
+   "b": 602,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 656,
+   "b": 708,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 656,
+   "b": 764,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "A2-ur-5-0",
+  "#braet": {
+   "t": 228,
+   "b": 602,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 656,
+   "b": 708,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "A3-efter-2-traek",
+  "#braet": {
+   "t": 228,
+   "b": 602,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel-sort": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "A4-giv-op",
+  "#braet": {
+   "t": 228,
+   "b": 602,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#slut-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-nyt-parti": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-raad": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "B1-computer-traek",
+  "#braet": {
+   "t": 228,
+   "b": 602,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-hint": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 609,
+   "b": 653,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 656,
+   "b": 889,
+   "synlig": true,
+   "iVindue": false
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "B2-hint",
+  "#braet": {
+   "t": 228,
+   "b": 602,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#status": {
+   "t": 158,
+   "b": 212,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "C1-laer-ny",
+  "#braet": {
+   "t": 312,
+   "b": 686,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-titel": {
+   "t": 207,
+   "b": 227,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-tekst": {
+   "t": 230,
+   "b": 272,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-laer-videre": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#laer-trin-oeverst": {
+   "t": 167,
+   "b": 295,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "390x844",
+  "navn": "D1-gaade",
+  "#braet": {
+   "t": 270,
+   "b": 644,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-strimmel": {
+   "t": 650,
+   "b": 694,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-strimmel-hint": {
+   "t": 650,
+   "b": 694,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-tur-tekst": {
+   "t": 223,
+   "b": 244,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-storm-genvej": {
+   "t": 211,
+   "b": 255,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "A1-makker-efter-valg",
+  "#braet": {
+   "t": 140,
+   "b": 617,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 400,
+   "b": 448,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "A2-ur-5-0",
+  "#braet": {
+   "t": 140,
+   "b": 617,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#segment-skakur": {
+   "t": 400,
+   "b": 448,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "A3-efter-2-traek",
+  "#braet": {
+   "t": 140,
+   "b": 617,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#ur-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-hvid": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#ur-strimmel-sort": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "A4-giv-op",
+  "#braet": {
+   "t": 140,
+   "b": 617,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#slut-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-nyt-parti": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#slut-raad": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "B1-computer-traek",
+  "#braet": {
+   "t": 140,
+   "b": 617,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#spil-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-fortryd": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-hint": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#strimmel-giv-op": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#spil-valg-fold": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "B2-hint",
+  "#braet": {
+   "t": 140,
+   "b": 617,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#status": {
+   "t": 91,
+   "b": 123,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "C1-laer-ny",
+  "#braet": {
+   "t": 251,
+   "b": 749,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-titel": {
+   "t": 142,
+   "b": 163,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#laer-tekst": {
+   "t": 167,
+   "b": 189,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-laer-videre": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#laer-trin-oeverst": {
+   "t": 100,
+   "b": 233,
+   "synlig": true,
+   "iVindue": true
+  }
+ },
+ {
+  "tag": "1280x800",
+  "navn": "D1-gaade",
+  "#braet": {
+   "t": 237,
+   "b": 774,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#gaade-strimmel": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#gaade-strimmel-hint": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  },
+  "#gaade-tur-tekst": {
+   "t": 147,
+   "b": 169,
+   "synlig": true,
+   "iVindue": true
+  },
+  "#knap-storm-genvej": {
+   "t": 0,
+   "b": 0,
+   "synlig": false,
+   "iVindue": true
+  }
+ }
+]
