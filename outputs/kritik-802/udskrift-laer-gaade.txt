@@ -1,0 +1,15 @@
+360x560 TRIN1 efter e4: titel 136-155 "Brættet" | tekst 0-0 "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4." | videre 183-227 "Videre ›"
+360x560 TRIN2: titel 136-155 "Kongen" | tekst 155-192 "Kongen går ét felt ad gangen. Tryk på kongen og gå hen til stjernerne." | braet 223-503 "8 7 6 ★ 5 ★ 4 ★ 3 2 a 1 b c d e f g h" | status mangler
+360x560 kunne ikke trykke #braet .felt[data-square="undefined"]
+360x560 GAADE efter forkert/tilfaeldigt traek: strimmel 484-528 "Vis et hint" | status 103-128 "Hvid trækker." | braet 198-478 "8 7 6 5 4 3 2 a 1 b c d e f g h"
+360x560 sidefejl: ingen
+390x844 TRIN1 efter e4: titel 207-227 "Brættet" | tekst 0-0 "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4." | videre 258-302 "Videre ›"
+390x844 TRIN2: titel 207-227 "Kongen" | tekst 230-272 "Kongen går ét felt ad gangen. Tryk på kongen og gå hen til stjernerne." | braet 314-688 "8 7 6 ★ 5 ★ 4 ★ 3 2 a 1 b c d e f g h" | status mangler
+390x844 kunne ikke trykke #braet .felt[data-square="undefined"]
+390x844 GAADE efter forkert/tilfaeldigt traek: strimmel 650-694 "Vis et hint" | status 158-189 "Hvid trækker." | braet 270-644 "8 7 6 5 4 3 2 a 1 b c d e f g h"
+390x844 sidefejl: ingen
+1280x800 TRIN1 efter e4: titel 142-163 "Brættet" | tekst 0-0 "Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4." | videre 197-241 "Videre ›"
+1280x800 TRIN2: titel 142-163 "Kongen" | tekst 167-189 "Kongen går ét felt ad gangen. Tryk på kongen og gå hen til stjernerne." | braet 233-731 "8 7 6 ★ 5 ★ 4 ★ 3 2 a 1 b c d e f g h" | status mangler
+1280x800 kunne ikke trykke #braet .felt[data-square="undefined"]
+1280x800 GAADE efter forkert/tilfaeldigt traek: strimmel 0-0 "Vis et hint Tag trækket tilbage" | status 91-123 "Hvid trækker." | braet 237-774 "8 7 6 5 4 3 2 a 1 b c d e f g h"
+1280x800 sidefejl: ingen
