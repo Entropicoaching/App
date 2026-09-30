@@ -1,0 +1,24 @@
+360x560 E0 {"braetTop":198,"braetB":478,"braetW":280,"vh":560,"sideH":2447,"status":"Find det bedste træk."}
+360x560 A3 {"braetTop":147,"braetB":451,"braetW":304,"vh":560,"sideH":1896,"status":"Computeren spillede e7-e5. Din tur."}
+360x560 M2 {"braetTop":147,"braetB":435,"braetW":288,"vh":560,"sideH":1893,"status":"Hvid trækker."}
+360x560 M-segment-ur synlig: false
+360x560 M3 knapper: ["slut-fortryd:Fortryd@492","slut-gennemse:Gennemse partiet@492","slut-nyt-parti:Nyt parti@492","knap-gennemse-start:⏮@593","knap-gennemse-tilbage:◀@593","knap-gennemse-frem:▶@593","knap-gennemse-nu:⏭@593"]
+360x560 G1 {"braetTop":198,"braetB":478,"braetW":280,"vh":560,"sideH":2447,"status":"Find det bedste træk."}
+360x560 L [242,242,242,242,242,242,242,242,242,242,242,242] tops: 1
+360x560 HOVED 90
+390x844 E0 {"braetTop":270,"braetB":644,"braetW":374,"vh":844,"sideH":2558,"status":"Find det bedste træk."}
+390x844 A3 {"braetTop":222,"braetB":596,"braetW":374,"vh":844,"sideH":2021,"status":"Computeren spillede e7-e5. Din tur."}
+390x844 M2 {"braetTop":222,"braetB":596,"braetW":374,"vh":844,"sideH":2054,"status":"Hvid trækker."}
+390x844 M-segment-ur synlig: false
+390x844 M3 knapper: ["slut-fortryd:Fortryd@680","slut-gennemse:Gennemse partiet@680","slut-nyt-parti:Nyt parti@680","knap-gennemse-start:⏮@1132","knap-gennemse-tilbage:◀@1132","knap-gennemse-frem:▶@1132","knap-gennemse-nu:⏭@1132"]
+390x844 G1 {"braetTop":270,"braetB":644,"braetW":374,"vh":844,"sideH":2558,"status":"Find det bedste træk."}
+390x844 L [335,335,335,335,335,335,335,335,335,335,335,335] tops: 1
+390x844 HOVED 134
+1280x800 E0 {"braetTop":237,"braetB":774,"braetW":537,"vh":800,"sideH":1800,"status":"Find det bedste træk."}
+1280x800 A3 {"braetTop":121,"braetB":602,"braetW":481,"vh":800,"sideH":1253,"status":"Computeren spillede e7-e5. Din tur."}
+1280x800 M2 {"braetTop":121,"braetB":602,"braetW":481,"vh":800,"sideH":1273,"status":"Hvid trækker."}
+1280x800 M-segment-ur synlig: false
+1280x800 M3 knapper: ["knap-gennemse-start:⏮@659","knap-gennemse-tilbage:◀@659","knap-gennemse-frem:▶@659","knap-gennemse-nu:⏭@659","knap-spil-nyt-parti:Nyt parti@315","knap-spil-gennemse:Gennemse partiet@315","knap-resultat-fortryd:Fortryd@368"]
+1280x800 G1 {"braetTop":237,"braetB":774,"braetW":537,"vh":800,"sideH":1800,"status":"Find det bedste træk."}
+1280x800 L [255,255,255,255,255,255,255,255,255,255,255,255] tops: 1
+1280x800 HOVED 48
