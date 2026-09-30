@@ -1,0 +1,21 @@
+MMORPG-foelelse: halvvejs. Rodet: ja (klaret-kortet og Min helt paa 390; forsiden og opgaveskaermen er rolige). De tre vigtigste ting Ganita retter naeste gang: (1) Hjerte staar stadig paa 1 og bevaeger sig kun ved at "hjaelpe Ane med hele raekken", saa "det betaler sig at vaere et godt menneske" ses ikke i tallene (skaerm: `E843-nu-390-8-helt-hel.png`, Hjerte 1 med 1 af 2 prikker efter niveau 3; fil: Hjerte-regningen i `src/spil-app.js` og `src/spil.css`; giv Hjerte et synligt hop og en gylden puls foerste gang eleven hjaelper; regnevalget er Marcs); (2) klaret-kortet er 2,4 skaermhoejder paa 390 (2,45 paa 1280) med 19 tal og 9 knapper, saa Niveau op + Bonus + Byen vaagner + Mere + naeste opgave konkurrerer (skaerm: `E843-nu-390-10-klaret-hel.png`; fil: `klaret-fortsaet` i `src/spil-app.js`, `.niveau-banner` i `src/spil.css`: kortet skal kun have Niveau op og een stor "Naeste opgave"); (3) Min helt paa 390 er 2,12 skaermhoejder med 15 synlige tal, og "Øv her"-teksten om Enheder og målestok staar to gange (som boks og som rygsaekskort) (skaerm: `E843-nu-390-8-helt-hel.png`; fil: Min helt-visningen i `src/spil-app.js` og `src/spil.css`: vis "Øv her" kun eet sted).
+
+## 1. Hvad jeg goer
+Ordre 843 (Dhruva), spor matematik-minispil. Jeg spillede matematikspillet (main, `git archive` til midlertidig mappe, ikke aendret) som en 11-aarig med det eksisterende elev-script (`docs/kritik-843/elev-843.mjs`, kopi af elev-837): headless Chromium, 390 touch og 1280 mus, syntetisk elev "Tulle", uden net (0 net-kald, 0 fejl, ingen vandret rulning). Jeg laeste Ganitas RAPPORT-834 og RAPPORT-827 (Hvad aendret / Hvad er naeste) og foerste linje af min kritik 837. Skaermbilleder og `elev-nu.json` i `outputs/kritik-843/`.
+
+## 2. Hvad jeg fandt
+- MMORPG-foelelse, halvvejs: helten bliver synligt staerkere (kappe, stav, traeskjold, flere stjerner: 8 stjerner og niveau 15 efter 60 aerlige opgaver, `E843-nu-390-9-aerlig-efter-60.png`), og tallet vokser: efter et rigtigt svar staar et stort groent "+10 erfaring" og bjaelken fylder (`E843-nu-390-5-svar-650ms.png`). Men Hjerte er doedt, "+N" har ingen egen figurgrafik, og klaret-kortet er en tekstvaeg, ikke en belønning.
+- Tael af synlige elementer paa 390 (tal / knapper / ord): ny elev foerste skaerm 8 / 4 / 116 (rolig); opgaveskaermen 21 / 7 / 66 (1,92 skaerme); Niveau op-banner 14 / 7 / 117 (2,27); Min helt 15 / 5 / 116 (2,12); klaret-kortet 19 / 9 / 116 (2,40). Flest konkurrerende ting: klaret-kortet, dernaest Min helt. Paa 1280: klaret 21 / 9 / 128 (2,45), Min helt 19 / 7 / 189 (1,65).
+- Hoved/Haand/Hjerte: en ny elev ser tre kort med "regn / måle / hjælpe" og en boks med forklaring og "Forstået" (`E843-nu-390-2-ny-foerste.png`). Det forstaar en 11-aarig: ordene regn/måle/hjælpe siger det. Svagt: teksterne om "skridt til møllen" og "Ane med alle hendes opgaver" er lange, og forklaringen kan kun ses igen bag "?".
+- Simuleringen: 60 aerlige opgaver giver niveau 15, Hoved 9, Haand 7, 14 mestret. Gaetter: niveau 1 efter 60 (intet mestret). Aerlighed betaler sig paa niveau og udstyr, men Hjerte er ikke maalt i sim-sporet denne gang (837 maalte 1).
+
+## 3. Er mine seneste fund lukket? (837)
+1. Hjerte staar paa 1 / ingen synlig godhedsbelønning: IKKE lukket (Marcs regnevalg, sprunget over af Ganita).
+2. Klaret-kortet: delvist. "Mere"-boksen hedder nu kun "Mere" (834), men hoejden er uaendret (2,40 / 2,45), 9 knapper. Ikke lukket.
+3. Min helt: "Dine titler" er nu lukket (2,15 -> 2,12), udstyr og "det har jeg lært" er lukkede. Delvist lukket: stadig ca. 2,1 skaerme, og "Øv her" staar to gange.
+
+## 4. Hvad jeg ikke kunne / grænser
+Hjerte er ikke maalt i 60-opgavers simuleringen. Eleven er scriptet, ikke en rigtig 11-aarig. Animationer er set som skaermbilleder (150/650 ms og slut), ikke video. Afleveringskommandoen (`hoest.mjs ... --aflever`) blev afvist af tilladelsesklassifikatoren, saa den er IKKE koert; commit er gjort. Ingen aendring af matematikspillet, ingen push, ingen merges, ingen elevdata. Betydning for Hara: nej.
+
+## 5. Hvad er naeste
+Ganita retter de tre ting i foerste linje: Hjerte-hoppet (Marcs valg om regnemaaden), et slankt klaret-kort med kun Niveau op og "Naeste opgave", og en rolig Min helt uden dobbelt "Øv her". Bhishak tjekker derefter kun: stiger Hjerte synligt ved foerste hjaelp, og er klaret-kortet under ca. 1,6 skaermhoejder paa 390?
