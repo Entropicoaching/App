@@ -30,6 +30,10 @@ Intet i appen eller loeftmodellen. Kun kritikkens egne filer.
 - 881 nr. 3 (hoved): aabent.
 - 876 nr. 1 (sumo-tekstens ord "vandrere"): lukket, staar nu som "lodrere". 876 nr. 3 (baenkbuernes ramme-punkt): lukket, prikken findes.
 
+## Testresultat
+
+Ingen appkode aendret, ingen testsuite koert. Maalingerne: 117 billeder, 0 scriptfejl, 0 netkald udefra, en 404 paa en delressource paa 390.
+
 ## Hvad er naeste
 
 Yantra retter de tre ting i foerste linje; nr. 1 er den mindste og har vaeret oppe fire gange. Marc kan svare "modeller ok" eller "modeller ret: ...".
@@ -41,3 +45,4 @@ Yantra retter de tre ting i foerste linje; nr. 1 er den mindste og har vaeret op
 - Coach-vurderingerne (hoved, low bar t0, sumo-forskel) er mine oejne, ikke et maal.
 - Jeg har ikke aabnet LAES-MODELLER-3.html.
 - Har arbejdet betydning for Hara: nej.
+
