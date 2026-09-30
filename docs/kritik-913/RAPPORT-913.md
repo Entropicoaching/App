@@ -46,3 +46,6 @@ Kun filer under docs/kritik-913/ og outputs/kritik-913/: elev-script, fold-scrip
 
 ## Hvad er naeste
 Ganita: (1) Hoved-loftet ved 9 (spoerg Marc), (2) lad Hoved/Haand/Hjerte-tallet taelle op stort ved svaret og giv Hjerte et glimt ved foerste hjaelp, (3) skjul Mere og tal-linjer paa klaret-siden til efter en klar Naeste opgave-knap.
+
+## Aerlige graenser
+Ikke set i bevaegelse: 899s groenne glimt (kun stills). Ikke testet paa rigtig telefon eller med rigtige 11-aarige; 390 er emuleret touch. Kun main i matematik-traeet (eb04799) er vurderet.
