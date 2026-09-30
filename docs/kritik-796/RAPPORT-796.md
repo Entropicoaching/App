@@ -2,6 +2,8 @@ Klar til klassen: ja, på telefon og computer. De tre vigtigste ting Chaturanga 
 
 # Ordre 796, Bhishak, 30. sep. 2026
 
+Gren: kritik-796
+
 Vurderet: skakken på `main` (43919f6, med 787 og 791 merget), hentet med `git archive` til en midlertidig mappe og bygget der (`node scripts/build.mjs`), fordi `skak.html` i main endnu ikke er genbygget efter 791. Kørt headless i Playwright. Ingen ændring i skakken. Kun syntetiske data (tomme profiler). Scripts: `docs/kritik-796/elevtur-796.mjs`, `fund-796.mjs`, `laer-gaade-796.mjs`, `gaade-forkert-796.mjs`; udskrifter og skærmbilleder i `outputs/kritik-796/`. 360 x 560 og 390 x 844 med touch, 1280 x 800 med mus.
 
 ## Kan en 11-årig komme i gang uden hjælp?
