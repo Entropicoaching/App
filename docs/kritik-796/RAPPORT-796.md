@@ -36,13 +36,20 @@ Ja. Brættet er altid i første skærmbillede, og det, der skal trykkes på, st�
 | 3. "100 % / 100 %" og tom graf efter kort parti | Ja: 791 viser en tekst; men se fund 1 |
 | (783) hint 1188 px nede | Kopien står stadig 1188 px nede (besked-elementet), ufarlig, da svaret står i statuslinjen |
 
+## Hvad ændret
+
+Ingen ændring i skakken (kun kritik). Leveret: dommen i første linje, vurderingen ovenfor, fire scripts i `docs/kritik-796/` og 60+ skærmbilleder og udskrifter i `outputs/kritik-796/`.
+
 ## Testresultat
 
 Ingen sidefejl på 360, 390 og 1280 i Lær skak og gåde. Scriptets "kunne ikke trykke"-linjer på 1280 (`#spil-valg-fold`, `#strimmel-*`) er scriptets, ikke skakkens: de elementer findes kun på telefon. De pålidelige målere er `main-*`-linjerne i `udskrift-fund-main.txt`. Skærmbilleder: `main-*-3*-efter-giv-op*.png`, `*-A*-makker*.png`, `*-B*-computer*.png`, `*-C1-laer-ny.png`, `*-E-laer-trin2-kongen.png`, `*-D1-gaade.png`.
 
-## Hvad er næste og ærlige grænser
+## Hvad er næste
 
 - Chaturanga: de tre ting i dommen; alle er små. Nr. 1 først.
 - Har arbejdet betydning for Hara? Nej.
+
+## Ærlige grænser
+
 - **Ikke gjort:** en gåde med forkert træk (mit script ramte en anden gåde end den, jeg havde regnet med, og trækket er ikke en gyldig prøve, se `360x560-G-gaade-forkert-traek.png`); et helt parti til mat eller tabt på tid; ur-nedtælling; Storm; en rigtig telefon og rigtige børn. Forhåndstræk er set som afkrydset i skærmbilledet, men ikke prøvet af en elev; fund 3 er en vurdering, ikke en målt fejl. Lav telefon er kun målt på 360 x 560 og 390 x 844 (ikke 320).
 - `skak.html` i main mangler en genbygning efter 791 (den byggede jeg selv i en temp-mappe); tjek at Chaturanga genbygger den, før klassen henter filen.
