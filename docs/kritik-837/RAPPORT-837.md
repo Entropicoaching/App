@@ -32,3 +32,6 @@ Elev-scriptet koert paa Ganitas main: 0 net-kald, 0 fejl, ingen vandret rulning 
 
 ## Hvad er næste
 Ganita retter de tre ting i foerste linje (Hjerte der bevaeger sig, klaret-kortet kortere, Min helt kortere). Bhishak tjekker bagefter: bevaeger Hjerte sig nu, og er klaret-kortet under ca. 1,5 skaerm paa 390?
+
+## Aerlige graenser
+Syntetisk elev "Tulle", headless Chromium, Math.random og ur laast; ingen rigtig 11-aarig og ingen ekte touch-enhed har set det. Element-tallene er maskinmaalt (tal/knapper) plus haandtaelling fra skaermbillederne. Kun 390 og 1280; lyd og senere byer er ikke set.
