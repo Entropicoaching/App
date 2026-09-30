@@ -1,0 +1,231 @@
+{
+ "ver": "tmp.FXkhUqSX8R",
+ "net": 0,
+ "fejl": [],
+ "m": {
+  "390": {
+   "nyElevFoerst": {
+    "ord": 115,
+    "tal": 8,
+    "knapper": 4,
+    "hoejdeSkaerme": 2.63,
+    "vandret": false
+   },
+   "nyElevHhh": "Hoved, Hånd og Hjerte Hoved er at regne: dele, brøker og klokken. Hånd er at bruge matematikken: mål og regn om, fx meter. Hjerte er at hjælpe andre med opgaver, til alle er løst. Forstået",
+   "nyElevSide": "1 Tulle Niveau 1 Næste niveau: mestr et forløb eller hjælp en person. 0 erfaring Hoved 1 regn Hånd 1 bruge Hjerte 1 hjælp ? Hoved, Hånd og Hjerte Hoved er at regne: dele, brøker og klokken. Hånd er at bruge matematikken: mål og regn om, fx meter. Hjerte er at hjælpe andre med opgaver, til alle er løst. Forstået Min helt Kortet 12 indbyggere Lyd: fra Skoven og Søen Møllen Kirken og Landsbygaden Grusgraven 🔒 Mestr Møllens forløb 1-2 Sporvognen 🔒 Mestr Grusgravens forløb 1-2 1 MØLLEREN Forløb 1 af 8 Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" Lige store dele 🔒 Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. Opgave 1 af 3 Få 3 stjerner: rigtigt i første forsøg. Brøker 0 Bageren har bagt 5 lige store brød, og 1 er solgt: ▰▱▱▱▱. Hvor stor en del af brødene er solgt? 4/5 1/5 1/4 Kortgrundlag: OpenStreetMap-bidragydere",
+   "kort": {
+    "ord": 66,
+    "tal": 21,
+    "knapper": 7,
+    "hoejdeSkaerme": 1.92,
+    "vandret": false
+   },
+   "kortSide": "2 Tulle Niveau 2 Næste niveau: mestr et forløb eller hjælp en person. 30 erfaring Hoved 2 regn Hånd 1 bruge Hjerte 1 hjælp ? Min helt 1 ny quest Kortet 19 indbyggere Lyd: fra Skoven og Søen ! Møllen Kirken og Landsbygaden Grusgraven 🔒 Mestr Møllens forløb 1-2 Sporvognen 🔒 Mestr Grusgravens forløb 1-2 2 MØLLEREN Forløb 2 af 8 Del ligeligt Opgave 1 af 4 Brøker 60 Bageren deler 1 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? 5/1 1/5 2/5 Kortgrundlag: OpenStreetMap-bidragydere",
+   "opgave": {
+    "ord": 66,
+    "tal": 21,
+    "knapper": 7,
+    "hoejdeSkaerme": 1.92,
+    "vandret": false
+   },
+   "opgaveSide": "2 Tulle Niveau 2 Næste niveau: mestr et forløb eller hjælp en person. 30 erfaring Hoved 2 regn Hånd 1 bruge Hjerte 1 hjælp ? Min helt 1 ny quest Kortet 19 indbyggere Lyd: fra Skoven og Søen ! Møllen Kirken og Landsbygaden Grusgraven 🔒 Mestr Møllens forløb 1-2 Sporvognen 🔒 Mestr Grusgravens forløb 1-2 2 MØLLEREN Forløb 2 af 8 Del ligeligt Opgave 1 af 4 Brøker 60 Bageren deler 1 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? 5/1 1/5 2/5 Kortgrundlag: OpenStreetMap-bidragydere",
+   "svarTekst": "Rigtigt!",
+   "banner": true,
+   "bannerTekst": "NIVEAU OP! Niveau 3 · Lærling Din figur er blevet klogere: Hoved er nu 3. Du har fået et træskjold.",
+   "bannerMaal": {
+    "ord": 113,
+    "tal": 12,
+    "knapper": 5,
+    "hoejdeSkaerme": 2.67,
+    "vandret": false
+   },
+   "helt": {
+    "ord": 108,
+    "tal": 15,
+    "knapper": 5,
+    "hoejdeSkaerme": 2.81,
+    "vandret": false
+   },
+   "heltHvile": {
+    "ord": 105,
+    "tal": 6,
+    "knapper": 6,
+    "hoejdeSkaerme": 2.75,
+    "vandret": false
+   },
+   "heltSide": "Tilbage til kortet Min helt Journalen Questbogen 1 ny Tulle NIVEAU 3 Lærling Næste niveau: mestr et forløb eller hjælp en person. 70 erfaring Kappen har kobberkant. Mestr og hjælp, så får den sølvkant. Du bærer en vandrestav og et træskjold. Hoved 3 Regn, så vokser den Hånd 1 Mål og regn om, så vokser den Hjerte 1 Hjælp én, så vokser den ? Øv her Enheder og målestok er det, du har mindst af. Øv det, så vokser det. Når du kommer til Grusgraven, kan du øve enheder og målestok dér. Gå til Grusgraven Du har ikke hjulpet nogen endnu: løs alle en persons opgaver. Find en, du kan hjælpe Dit udstyr 1 af 9 Det, du har, bærer din figur på kortet. Det grå kan du få. På hovedet 0 af 5 🔒 Bagerhuen Hjælp Ane, bagerkonen, med »Brød til alle«. Se 4 mere, du kan få Om halsen 0 af 1 🔒 Halstørklædet Hjælp Søren, skomageren, med »Kassen skal stemme«. I hånden 1 af 3 Målestokken Ét ekstra forsøg på Grusgravens opgaver. 🔒 Pengeposen Klar alle forløb på Landsbygaden. Se 1 mere, du kan få Rygsækken: mine færdigheder Tallet vokser, når du løser opgaver af den slags, og du får en bonus, når forløbet eller questen er klaret. Det falder aldrig. Brøker 140 point Niveau 1 · Begynder · 60 til Øvet lige store dele, del ligeligt, sammenlign, forlæng og forkort Enheder og målestok 0 point Ikke begyndt · Løs en opgave af den slags linealen, mm, cm, m og km, regn om, kort i målestok Øv her Når du kommer til Grusgraven, kan du øve enheder og målestok dér. Gå til Grusgraven Se 5 mere, du ikke er begyndt på Vis min kode Rygsækken: det har jeg lært 1 af 23 Dine titler 1 Lærling",
+   "klaret": true,
+   "klaretMaal": {
+    "ord": 82,
+    "tal": 13,
+    "knapper": 6,
+    "hoejdeSkaerme": 2.67,
+    "vandret": false
+   },
+   "klaretSide": "3 Tulle Niveau 3+1 · Lærling Næste niveau: mestr et forløb eller hjælp en person. 70 erfaring I denne time: +40 erfaring · +1 niveau Hoved 3 +1 regn Hånd 1 bruge Hjerte 1 hjælp ? Min helt 1 ny quest Kortet 27 indbyggere Lyd: fra Grusgraven: 0 af 6 · 0 læs grus Skoven og Søen ! Møllen Kirken og Landsbygaden Grusgraven Sporvognen 🔒 Mestr Grusgravens forløb 1-2 3 Niveau 3! NIVEAU OP! Niveau 3 · Lærling Din figur er blevet klogere: Hoved er nu 3. Du har fået et træskjold. MØLLEREN Forløb 3 af 8 3 Forløbet »Del ligeligt« er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\" Bonus i rygsækken: +40 Brøker (nu 140) HVOR NU? Byen vågner: indbyggere 25. Gå til Grusgraven Gå til Landsbygaden Se det på kortet Mere: Mølleren fortæller Brøker 140 En sæk mel deles ligeligt mellem 3 bagere, en anden mellem 4 bagere. Hvilken portion er størst? Lige store 1/3 sæk 1/4 sæk Kortgrundlag: OpenStreetMap-bidragydere",
+   "sim": {
+    "aerlig": [
+     {
+      "opgaver": 10,
+      "niveau": 3,
+      "erfaring": 100,
+      "hoved": 3,
+      "haand": 1,
+      "mestret": 2
+     },
+     {
+      "opgaver": 20,
+      "niveau": 6,
+      "erfaring": 200,
+      "hoved": 6,
+      "haand": 1,
+      "mestret": 5
+     },
+     {
+      "opgaver": 30,
+      "niveau": 8,
+      "erfaring": 300,
+      "hoved": 8,
+      "haand": 1,
+      "mestret": 7
+     },
+     {
+      "opgaver": 40,
+      "niveau": 10,
+      "erfaring": 400,
+      "hoved": 9,
+      "haand": 2,
+      "mestret": 9
+     },
+     {
+      "opgaver": 50,
+      "niveau": 13,
+      "erfaring": 500,
+      "hoved": 9,
+      "haand": 5,
+      "mestret": 12
+     },
+     {
+      "opgaver": 60,
+      "niveau": 15,
+      "erfaring": 600,
+      "hoved": 9,
+      "haand": 7,
+      "mestret": 14
+     }
+    ],
+    "gaetter": [
+     {
+      "opgaver": 10,
+      "niveau": 1,
+      "erfaring": 50,
+      "hoved": 1,
+      "haand": 1,
+      "mestret": 0
+     },
+     {
+      "opgaver": 20,
+      "niveau": 1,
+      "erfaring": 95,
+      "hoved": 1,
+      "haand": 1,
+      "mestret": 0
+     },
+     {
+      "opgaver": 30,
+      "niveau": 1,
+      "erfaring": 125,
+      "hoved": 1,
+      "haand": 1,
+      "mestret": 0
+     },
+     {
+      "opgaver": 40,
+      "niveau": 1,
+      "erfaring": 195,
+      "hoved": 1,
+      "haand": 1,
+      "mestret": 0
+     },
+     {
+      "opgaver": 50,
+      "niveau": 1,
+      "erfaring": 265,
+      "hoved": 1,
+      "haand": 1,
+      "mestret": 0
+     },
+     {
+      "opgaver": 60,
+      "niveau": 1,
+      "erfaring": 325,
+      "hoved": 1,
+      "haand": 1,
+      "mestret": 0
+     }
+    ]
+   }
+  },
+  "1280": {
+   "nyElevFoerst": {
+    "ord": 140,
+    "tal": 10,
+    "knapper": 4,
+    "hoejdeSkaerme": 2.5,
+    "vandret": false
+   },
+   "nyElevHhh": "Hoved, Hånd og Hjerte Hoved er at regne: dele, brøker og klokken. Hånd er at bruge matematikken: mål og regn om, fx meter. Hjerte er at hjælpe andre med opgaver, til alle er løst. Forstået",
+   "nyElevSide": "1 Tulle Niveau 1 Næste niveau: mestr et forløb eller hjælp en person. 0 erfaring Hoved 1 regn Hånd 1 bruge Hjerte 1 hjælp ? Hoved, Hånd og Hjerte Hoved er at regne: dele, brøker og klokken. Hånd er at bruge matematikken: mål og regn om, fx meter. Hjerte er at hjælpe andre med opgaver, til alle er løst. Forstået Min helt Kortet 12 indbyggere Lyd: fra Skoven og Søen Møllen Kirken og Landsbygaden Grusgraven 🔒 Mestr Møllens forløb 1-2 Sporvognen 🔒 Mestr Grusgravens forløb 1-2 1 MØLLEREN Forløb 1 af 8 Tulle kommer ned ad vejen til Møllen. Mølleren står i døren, hvid af mel. Mølleren: \"Godt, du kom. Hjulet er gået i stå, og Ane, bagerkonen, har intet mel til morgenbrødet.\" Mølleren: \"Hjælp mig med »Lige store dele«, så kan vi male igen, og så kan du hjælpe Ane.\" Lige store dele 🔒 Ane, bagerkonen, venter med »Mel til bageren«. Klar »Lige store dele«, så står Ane med et ! ved møllen. Opgave 1 af 3 Få 3 stjerner: rigtigt i første forsøg. Brøker 0 Bageren har bagt 5 lige store brød, og 1 er solgt: ▰▱▱▱▱. Hvor stor en del af brødene er solgt? 4/5 1/5 1/4 Kortgrundlag: OpenStreetMap-bidragydere",
+   "kort": {
+    "ord": 66,
+    "tal": 21,
+    "knapper": 7,
+    "hoejdeSkaerme": 2.01,
+    "vandret": false
+   },
+   "kortSide": "2 Tulle Niveau 2 Næste niveau: mestr et forløb eller hjælp en person. 30 erfaring Hoved 2 regn Hånd 1 bruge Hjerte 1 hjælp ? Min helt 1 ny quest Kortet 19 indbyggere Lyd: fra Skoven og Søen ! Møllen Kirken og Landsbygaden Grusgraven 🔒 Mestr Møllens forløb 1-2 Sporvognen 🔒 Mestr Grusgravens forløb 1-2 2 MØLLEREN Forløb 2 af 8 Del ligeligt Opgave 1 af 4 Brøker 60 Bageren deler 1 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? 5/1 1/5 2/5 Kortgrundlag: OpenStreetMap-bidragydere",
+   "opgave": {
+    "ord": 66,
+    "tal": 21,
+    "knapper": 7,
+    "hoejdeSkaerme": 2.01,
+    "vandret": false
+   },
+   "opgaveSide": "2 Tulle Niveau 2 Næste niveau: mestr et forløb eller hjælp en person. 30 erfaring Hoved 2 regn Hånd 1 bruge Hjerte 1 hjælp ? Min helt 1 ny quest Kortet 19 indbyggere Lyd: fra Skoven og Søen ! Møllen Kirken og Landsbygaden Grusgraven 🔒 Mestr Møllens forløb 1-2 Sporvognen 🔒 Mestr Grusgravens forløb 1-2 2 MØLLEREN Forløb 2 af 8 Del ligeligt Opgave 1 af 4 Brøker 60 Bageren deler 1 brød ligeligt mellem 5 karle på møllen. Hvor meget brød får hver karl? 5/1 1/5 2/5 Kortgrundlag: OpenStreetMap-bidragydere",
+   "svarTekst": "Rigtigt!",
+   "banner": true,
+   "bannerTekst": "NIVEAU OP! Niveau 3 · Lærling Din figur er blevet klogere: Hoved er nu 3. Du har fået et træskjold.",
+   "bannerMaal": {
+    "ord": 122,
+    "tal": 16,
+    "knapper": 8,
+    "hoejdeSkaerme": 2.6,
+    "vandret": false
+   },
+   "helt": {
+    "ord": 147,
+    "tal": 19,
+    "knapper": 6,
+    "hoejdeSkaerme": 2.32,
+    "vandret": false
+   },
+   "heltHvile": {
+    "ord": 134,
+    "tal": 10,
+    "knapper": 6,
+    "hoejdeSkaerme": 2.29,
+    "vandret": false
+   },
+   "heltSide": "Tilbage til kortet Min helt Journalen Questbogen 1 ny Tulle NIVEAU 3 Lærling Næste niveau: mestr et forløb eller hjælp en person. 70 erfaring Kappen har kobberkant. Mestr og hjælp, så får den sølvkant. Du bærer en vandrestav og et træskjold. Hoved 3 Regn, så vokser den Hånd 1 Mål og regn om, så vokser den Hjerte 1 Hjælp én, så vokser den ? Øv her Enheder og målestok er det, du har mindst af. Øv det, så vokser det. Når du kommer til Grusgraven, kan du øve enheder og målestok dér. Gå til Grusgraven Du har ikke hjulpet nogen endnu: løs alle en persons opgaver. Find en, du kan hjælpe Dit udstyr 1 af 9 Det, du har, bærer din figur på kortet. Det grå kan du få. På hovedet 0 af 5 🔒 Bagerhuen Hjælp Ane, bagerkonen, med »Brød til alle«. Se 4 mere, du kan få Om halsen 0 af 1 🔒 Halstørklædet Hjælp Søren, skomageren, med »Kassen skal stemme«. I hånden 1 af 3 Målestokken Ét ekstra forsøg på Grusgravens opgaver. 🔒 Pengeposen Klar alle forløb på Landsbygaden. Se 1 mere, du kan få Rygsækken: mine færdigheder Tallet vokser, når du løser opgaver af den slags, og du får en bonus, når forløbet eller questen er klaret. Det falder aldrig. Brøker 140 point Niveau 1 · Begynder · 60 til Øvet lige store dele, del ligeligt, sammenlign, forlæng og forkort Enheder og målestok 0 point Ikke begyndt · Løs en opgave af den slags linealen, mm, cm, m og km, regn om, kort i målestok Øv her Når du kommer til Grusgraven, kan du øve enheder og målestok dér. Gå til Grusgraven Se 5 mere, du ikke er begyndt på Vis min kode Rygsækken: det har jeg lært 1 af 23 Dine titler 1 Lærling",
+   "klaret": true,
+   "klaretMaal": {
+    "ord": 103,
+    "tal": 19,
+    "knapper": 6,
+    "hoejdeSkaerme": 2.6,
+    "vandret": false
+   },
+   "klaretSide": "3 Tulle Niveau 3+1 · Lærling Næste niveau: mestr et forløb eller hjælp en person. 70 erfaring I denne time: +40 erfaring · +1 niveau Hoved 3 +1 regn Hånd 1 bruge Hjerte 1 hjælp ? Min helt 1 ny quest Kortet 27 indbyggere Lyd: fra Grusgraven: 0 af 6 · 0 læs grus Skoven og Søen ! Møllen Kirken og Landsbygaden Grusgraven Sporvognen 🔒 Mestr Grusgravens forløb 1-2 3 Niveau 3! NIVEAU OP! Niveau 3 · Lærling Din figur er blevet klogere: Hoved er nu 3. Du har fået et træskjold. MØLLEREN Forløb 3 af 8 3 Forløbet »Del ligeligt« er klaret. Mølleren: \"Tak skal du have. Nu har alle fået lige meget.\" Bonus i rygsækken: +40 Brøker (nu 140) HVOR NU? Byen vågner: indbyggere 25. Gå til Grusgraven Gå til Landsbygaden Se det på kortet Mere: Mølleren fortæller Brøker 140 En sæk mel deles ligeligt mellem 3 bagere, en anden mellem 4 bagere. Hvilken portion er størst? Lige store 1/3 sæk 1/4 sæk Kortgrundlag: OpenStreetMap-bidragydere"
+  }
+ }
+}
