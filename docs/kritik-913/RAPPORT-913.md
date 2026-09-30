@@ -34,3 +34,6 @@ Ja, naesten. Foerste skaerm: "Hoved er at regne: dele, broeker og klokken. Haand
 - Levering via hoest.mjs: se afslutningen i chatten; rapporten er committet paa kritik-913.
 - Hara: intet i dette arbejde roerer Hara. Ingen Supabase, ingen miljoevariabler skrevet, intet aendret i matematikspillet eller appen.
 - Ingen elevdata eller rigtige navne; kun syntetisk "Tulle" og "Ane" (spillets egen figur).
+
+## Gren
+kritik-913, base main. Commits: se `git log --oneline main..kritik-913`.
