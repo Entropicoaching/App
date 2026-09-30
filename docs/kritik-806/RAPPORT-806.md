@@ -43,6 +43,10 @@ MMORPG-følelse: halvvejs. Rodet: ja (helt-skærmen og niveau-op-/klaret-skærme
 - Kun de tre vigtigste skærme; Questbogen og Journalen er ikke gennemgået. 1280 er set via mål og få billeder, ikke pixel for pixel.
 - Ingen push, ingen merges, ingen sub-agenter, ingen elevdata. Ingen betydning for Hara.
 
+## Hvad er næste
+
+Ganita retter de tre ting i dommen i den rækkefølge. Bhishak tjekker bagefter: (1) ny ting eller animation på selve figuren pr. rigtige svar (`E806-main-390-5-svar-650ms.png`), (2) ét kort med én knap ved niveau-op (`E806-main-390-6-niveauop-hel.png`, og at 797 er i main), (3) Min helt under ca. 20 ting og "måle" under Hånd. Marc vælger, hvordan Hjerte vokser af ærlig regning.
+
 ## Testresultat
 
 Intet nyt at teste (kritik, ingen ændring af spillet). Målekommando: `node outputs/kritik-806/elev-806.mjs <git archive af main> main` gav net 0, tom fejl-liste, banner og klaret nået på 390 og 1280, simulering 60 opgaver: ærlig niveau 15, gætter niveau 1.
