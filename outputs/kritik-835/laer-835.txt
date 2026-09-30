@@ -1,0 +1,52 @@
+320x520 {"n":"trin7-start","trin":"Trin 7 af 32","braet":"242-506","besked":"skjult","videre":"skjult","vh":520,"sw":320}
+320x520 {"n":"trin7-loest","trin":"Trin 7 af 32","braet":"255-519","besked":"Godt klaret! Alle stjerner på 3 træk - færrest mulige.","videre":"183-227","vh":520,"sw":320}
+320x520 {"n":"trin8-start","trin":"Trin 8 af 32","braet":"226-490","besked":"skjult","videre":"skjult","vh":520,"sw":320}
+320x520 {"n":"trin8-loest","trin":"Trin 8 af 32","braet":"255-519","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"183-227","vh":520,"sw":320}
+320x520 {"n":"trin9-start","trin":"Trin 9 af 32","braet":"226-490","besked":"skjult","videre":"skjult","vh":520,"sw":320}
+320x520 {"n":"trin9-loest","trin":"Trin 9 af 32","braet":"255-519","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"183-227","vh":520,"sw":320}
+320x520 {"n":"trin10-start","trin":"Trin 10 af 32","braet":"226-490","besked":"skjult","videre":"skjult","vh":520,"sw":320}
+320x520 {"n":"trin10-loest","trin":"Trin 10 af 32","braet":"235-499","besked":"Rigtigt! Skakmat - partiet er vundet!","videre":"164-208","vh":520,"sw":320}
+320x520 {"n":"trin11-start","trin":"Trin 11 af 32","braet":"226-490","besked":"skjult","videre":"skjult","vh":520,"sw":320}
+320x520 {"n":"trin11-loest","trin":"Trin 11 af 32","braet":"235-499","besked":"Rigtigt! Kongen er ude af skak.","videre":"164-208","vh":520,"sw":320}
+320x520 {"n":"trin12-start","trin":"Trin 12 af 32","braet":"226-490","besked":"skjult","videre":"skjult","vh":520,"sw":320}
+320x520 {"n":"trin12-loest","trin":"Trin 12 af 32","braet":"255-519","besked":"Rigtigt! Kongen står sikkert, og tårnet er kommet ud.","videre":"183-227","vh":520,"sw":320}
+320x520 {"n":"efter-trin12","trin":"Trin 13 af 32","braet":"226-490","besked":"skjult","videre":"skjult","vh":520,"sw":320}
+360x560 {"n":"trin7-start","trin":"Trin 7 af 32","braet":"242-522","besked":"skjult","videre":"skjult","vh":560,"sw":360}
+360x560 {"n":"trin7-loest","trin":"Trin 7 af 32","braet":"255-535","besked":"Godt klaret! Alle stjerner på 3 træk - færrest mulige.","videre":"183-227","vh":560,"sw":360}
+360x560 {"n":"trin8-start","trin":"Trin 8 af 32","braet":"207-487","besked":"skjult","videre":"skjult","vh":560,"sw":360}
+360x560 {"n":"trin8-loest","trin":"Trin 8 af 32","braet":"235-515","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"164-208","vh":560,"sw":360}
+360x560 {"n":"trin9-start","trin":"Trin 9 af 32","braet":"226-506","besked":"skjult","videre":"skjult","vh":560,"sw":360}
+360x560 {"n":"trin9-loest","trin":"Trin 9 af 32","braet":"235-515","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"164-208","vh":560,"sw":360}
+360x560 {"n":"trin10-start","trin":"Trin 10 af 32","braet":"226-506","besked":"skjult","videre":"skjult","vh":560,"sw":360}
+360x560 {"n":"trin10-loest","trin":"Trin 10 af 32","braet":"235-515","besked":"Rigtigt! Skakmat - partiet er vundet!","videre":"164-208","vh":560,"sw":360}
+360x560 {"n":"trin11-start","trin":"Trin 11 af 32","braet":"226-506","besked":"skjult","videre":"skjult","vh":560,"sw":360}
+360x560 {"n":"trin11-loest","trin":"Trin 11 af 32","braet":"235-515","besked":"Rigtigt! Kongen er ude af skak.","videre":"164-208","vh":560,"sw":360}
+360x560 {"n":"trin12-start","trin":"Trin 12 af 32","braet":"226-506","besked":"skjult","videre":"skjult","vh":560,"sw":360}
+360x560 {"n":"trin12-loest","trin":"Trin 12 af 32","braet":"255-535","besked":"Rigtigt! Kongen står sikkert, og tårnet er kommet ud.","videre":"183-227","vh":560,"sw":360}
+360x560 {"n":"efter-trin12","trin":"Trin 13 af 32","braet":"207-487","besked":"skjult","videre":"skjult","vh":560,"sw":360}
+390x844 {"n":"trin7-start","trin":"Trin 7 af 32","braet":"335-709","besked":"skjult","videre":"skjult","vh":844,"sw":390}
+390x844 {"n":"trin7-loest","trin":"Trin 7 af 32","braet":"335-709","besked":"Godt klaret! Alle stjerner på 3 træk - færrest mulige.","videre":"255-299","vh":844,"sw":390}
+390x844 {"n":"trin8-start","trin":"Trin 8 af 32","braet":"292-666","besked":"skjult","videre":"skjult","vh":844,"sw":390}
+390x844 {"n":"trin8-loest","trin":"Trin 8 af 32","braet":"312-686","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"235-279","vh":844,"sw":390}
+390x844 {"n":"trin9-start","trin":"Trin 9 af 32","braet":"313-687","besked":"skjult","videre":"skjult","vh":844,"sw":390}
+390x844 {"n":"trin9-loest","trin":"Trin 9 af 32","braet":"313-687","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"235-279","vh":844,"sw":390}
+390x844 {"n":"trin10-start","trin":"Trin 10 af 32","braet":"313-687","besked":"skjult","videre":"skjult","vh":844,"sw":390}
+390x844 {"n":"trin10-loest","trin":"Trin 10 af 32","braet":"313-687","besked":"Rigtigt! Skakmat - partiet er vundet!","videre":"235-279","vh":844,"sw":390}
+390x844 {"n":"trin11-start","trin":"Trin 11 af 32","braet":"313-687","besked":"skjult","videre":"skjult","vh":844,"sw":390}
+390x844 {"n":"trin11-loest","trin":"Trin 11 af 32","braet":"313-687","besked":"Rigtigt! Kongen er ude af skak.","videre":"235-279","vh":844,"sw":390}
+390x844 {"n":"trin12-start","trin":"Trin 12 af 32","braet":"313-687","besked":"skjult","videre":"skjult","vh":844,"sw":390}
+390x844 {"n":"trin12-loest","trin":"Trin 12 af 32","braet":"332-706","besked":"Rigtigt! Kongen står sikkert, og tårnet er kommet ud.","videre":"255-299","vh":844,"sw":390}
+390x844 {"n":"efter-trin12","trin":"Trin 13 af 32","braet":"313-687","besked":"skjult","videre":"skjult","vh":844,"sw":390}
+1280x800 {"n":"trin7-start","trin":"Trin 7 af 32","braet":"255-753","besked":"skjult","videre":"skjult","vh":800,"sw":1280}
+1280x800 {"n":"trin7-loest","trin":"Trin 7 af 32","braet":"255-753","besked":"Godt klaret! Alle stjerner på 3 træk - færrest mulige.","videre":"172-216","vh":800,"sw":1280}
+1280x800 {"n":"trin8-start","trin":"Trin 8 af 32","braet":"232-731","besked":"skjult","videre":"skjult","vh":800,"sw":1280}
+1280x800 {"n":"trin8-loest","trin":"Trin 8 af 32","braet":"251-749","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"172-216","vh":800,"sw":1280}
+1280x800 {"n":"trin9-start","trin":"Trin 9 af 32","braet":"232-731","besked":"skjult","videre":"skjult","vh":800,"sw":1280}
+1280x800 {"n":"trin9-loest","trin":"Trin 9 af 32","braet":"251-749","besked":"Rigtigt! Brikken er slået og taget af brættet.","videre":"172-216","vh":800,"sw":1280}
+1280x800 {"n":"trin10-start","trin":"Trin 10 af 32","braet":"232-731","besked":"skjult","videre":"skjult","vh":800,"sw":1280}
+1280x800 {"n":"trin10-loest","trin":"Trin 10 af 32","braet":"251-749","besked":"Rigtigt! Skakmat - partiet er vundet!","videre":"172-216","vh":800,"sw":1280}
+1280x800 {"n":"trin11-start","trin":"Trin 11 af 32","braet":"232-731","besked":"skjult","videre":"skjult","vh":800,"sw":1280}
+1280x800 {"n":"trin11-loest","trin":"Trin 11 af 32","braet":"251-749","besked":"Rigtigt! Kongen er ude af skak.","videre":"172-216","vh":800,"sw":1280}
+1280x800 {"n":"trin12-start","trin":"Trin 12 af 32","braet":"232-731","besked":"skjult","videre":"skjult","vh":800,"sw":1280}
+1280x800 {"n":"trin12-loest","trin":"Trin 12 af 32","braet":"251-749","besked":"Rigtigt! Kongen står sikkert, og tårnet er kommet ud.","videre":"172-216","vh":800,"sw":1280}
+1280x800 {"n":"efter-trin12","trin":"Trin 13 af 32","braet":"232-731","besked":"skjult","videre":"skjult","vh":800,"sw":1280}
