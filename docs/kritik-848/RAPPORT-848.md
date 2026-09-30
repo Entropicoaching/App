@@ -10,6 +10,10 @@ Marcs domme holdt: nej (baenk: i animationen naar stangen ikke brystpunktet i bu
 
 Intet i appen eller løftmodellen (jeg retter aldrig i det, jeg kritiserer). Nyt er kun kritikkens egne filer: rapporten, tre scripts og 117 skærmbilleder/målinger under `docs/kritik-848/` og `outputs/kritik-848/`.
 
+## Testresultat
+
+Ingen tests kørt, for der er ingen kode ændret. Målingen er de tre scripts: `tur-848.mjs` (stille figurer og animationer, 390 og 1280, 0 netkald, ingen JS-fejl) og `squat-stang-848.mjs` (squat bund/sticking/lockout, low og high bar). Resultatet ligger i `outputs/kritik-848/maaling-848.json`.
+
 ## Holder figurerne Marcs domme?
 
 - Squat: ja. Albuen ligger under og bag stangen i alle set billeder (low bar bunden: albue 17 cm bag, 19 cm under stang; high bar bunden: 11 cm bag, 23 cm under; animation: 6 cm bag, 22 cm under). Low bar er 3,7 cm under skulderen, high bar 1,1 cm over: 4,8 cm, altsaa "et par cm". Stangens sted er nu et spektrum. Set paa 390 og 1280, side og forfra.
