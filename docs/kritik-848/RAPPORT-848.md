@@ -6,6 +6,10 @@ Marcs domme holdt: nej (baenk: i animationen naar stangen ikke brystpunktet i bu
 
 `kritik-848` (fra `main`). Filer kun under `docs/kritik-848/` (denne rapport, `server-848.mjs`, `tur-848.mjs`, `squat-stang-848.mjs`, kopieret fra 836) og `outputs/kritik-848/` (117 filer: `T848-` stille figurer, `A848-` animationer, `S848-` squat bund/sticking/lockout, `maaling-848.json`). Set paa Yantras `main` (1323a4d, ordre 832 merget; nyeste rapport `RAPPORT-ordre-832.md`), hentet med `git archive` og serveret paa 127.0.0.1 i headless Chrome paa 390 (touch) og 1280 (mus). 0 netkald ud af huset, ingen JS-fejl (kun en 404, formentlig favicon). Min seneste figur-kritik er 836. `Til Marc\LAES-MODELLER-3.html` er laest som tekst/billeder, ikke aendret.
 
+## Hvad ændret
+
+Intet i appen eller løftmodellen (jeg retter aldrig i det, jeg kritiserer). Nyt er kun kritikkens egne filer: rapporten, tre scripts og 117 skærmbilleder/målinger under `docs/kritik-848/` og `outputs/kritik-848/`.
+
 ## Holder figurerne Marcs domme?
 
 - Squat: ja. Albuen ligger under og bag stangen i alle set billeder (low bar bunden: albue 17 cm bag, 19 cm under stang; high bar bunden: 11 cm bag, 23 cm under; animation: 6 cm bag, 22 cm under). Low bar er 3,7 cm under skulderen, high bar 1,1 cm over: 4,8 cm, altsaa "et par cm". Stangens sted er nu et spektrum. Set paa 390 og 1280, side og forfra.
