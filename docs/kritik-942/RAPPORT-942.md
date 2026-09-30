@@ -2,6 +2,8 @@ Marcs domme holdt: ja (ingen brudt). Ligner rigtige loeft: ja. De tre vigtigste 
 
 # Rapport: Ordre 942, loeftfigurerne som de staar nu (Bhishak)
 
+Gren: kritik-942
+
 ## 1. Dom
 
 Marcs domme holder, og figurerne ligner rigtige loeft for en coach paa stille billeder. Det der staar tilbage er stoerrelse og layout (squat 1280, doedloeft-frontvindue 390), og to tegnevalg Marc skal tage (hoved i baenkens frontvindue, sumo-hoftens regel). Intet er nyt siden 928 paa den daarlige led; to ting er blevet bedre.
