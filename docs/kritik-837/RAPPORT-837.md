@@ -19,3 +19,5 @@ Ingen rigtig 11-aarig og ingen ekte touch-enhed; alt er emuleret i headless Chro
 
 ## 5. Hara
 Ingen betydning for Hara. Ingen elevdata (kun syntetisk "Tulle"), intet roert i matematikspillet eller appen.
+
+Gren: kritik-837
