@@ -16,7 +16,7 @@ Hentede matematikspillet fra main (`git archive`, hoved 0a9f2f5 = ordre 849) til
 Kun fund 1 er roert, og Min helt blev 0,04 skaerm laengere.
 
 ## 4. Hvad jeg ikke kunne / grænser
-Syntetisk elev og headless Chromium; ingen rigtig 11-aarig har set spillet. Lyd og sidste animationsframes er ikke bedomt. Kun 390 og 1280. Hjerte er ikke proevet efter en rigtig hjaelp. Intet er aendret i spillet, ingen push, ingen merges, ingen elevdata, ingen sub-agenter. Arbejdet har ingen betydning for Hara.
+Leveringen med `hoest.mjs --aflever` blev afvist af tilladelsessystemet og er derfor ikke koert; rapporten ligger committet paa kritik-862. Syntetisk elev og headless Chromium; ingen rigtig 11-aarig har set spillet. Lyd og sidste animationsframes er ikke bedomt. Kun 390 og 1280. Hjerte er ikke proevet efter en rigtig hjaelp. Intet er aendret i spillet, ingen push, ingen merges, ingen elevdata, ingen sub-agenter. Arbejdet har ingen betydning for Hara.
 
 ## 5. Hvad er næste
 Ganita retter de tre ting i foerste linje. Hvis Marc kun vil vaelge een ting til klassen: lad Hoved blive ved at stige, for det er dér "tallet bliver stoerre og helten staerkere" gaar i staa midt i spillet. Bhishak tjekker derefter: stiger Hoved hele 60-opgavers koerslen, ligger foerste opgave inden for foerste skaerm paa 390 for en ny elev, og ses Hjerte hoppe efter en rigtig hjaelp.
