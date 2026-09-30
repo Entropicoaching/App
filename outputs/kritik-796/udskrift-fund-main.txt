@@ -1,0 +1,22 @@
+main-360x560 HINT status: 101-144 (vindue 560) tekst="Ingen fare lige nu, spil dit plan." | besked: 1188-1211 (vindue 560) tekst="Ingen fare lige nu, spil dit plan." | braet 148-452 (vindue 560) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | scrollY 0
+main-360x560 LYD-tekster: ["","Lyd i partiet (træk, skak, slut)","Forhåndstræk: vælg dit træk, mens modstanderen tænker"]
+main-360x560 GIVOP status: 101-144 (vindue 560) tekst="Hvid gav op. Sort vinder." | vendepunkter: 595-655 (vindue 560) tekst="" | nyt parti 455-499 (vindue 560) tekst="Nyt parti" | braet 148-448 (vindue 560) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h"
+main-360x560 MAKKER foer valg: braet 148-452 (vindue 560) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur-valg 620-672 (vindue 560) tekst="" | fold 506-550 (vindue 560) tekst="Valg: intet ur"
+main-360x560 MAKKER fold aaben: braet 16-320 (vindue 560) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur-valg 504-556 (vindue 560) tekst="Intet 3+0 4+0 5+0 10+0 5+3 Frit" | scrollY 132
+main-360x560 UR-knapper Intet:46x44 3+0:46x44 4+0:46x44 5+0:46x44 10+0:46x44 5+3:46x44 Frit:46x44
+main-360x560 MAKKER med ur: braet 148-452 (vindue 560) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur 459-503 (vindue 560) tekst="Hvid 5:00"
+main-390x844 HINT status: 158-212 (vindue 844) tekst="Ingen fare lige nu, spil dit plan." | besked: 1339-1361 (vindue 844) tekst="Ingen fare lige nu, spil dit plan." | braet 228-602 (vindue 844) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | scrollY 0
+main-390x844 LYD-tekster: ["","Lyd i partiet (træk, skak, slut)","Forhåndstræk: vælg dit træk, mens modstanderen tænker"]
+main-390x844 GIVOP status: 158-212 (vindue 844) tekst="Hvid gav op. Sort vinder." | vendepunkter: 777-837 (vindue 844) tekst="" | nyt parti 686-730 (vindue 844) tekst="Nyt parti" | braet 228-602 (vindue 844) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h"
+main-390x844 MAKKER foer valg: braet 228-602 (vindue 844) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur-valg 771-823 (vindue 844) tekst="" | fold 656-700 (vindue 844) tekst="Valg: intet ur"
+main-390x844 MAKKER fold aaben: braet 228-602 (vindue 844) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur-valg 787-839 (vindue 844) tekst="Intet 3+0 4+0 5+0 10+0 5+3 Frit" | scrollY 0
+main-390x844 UR-knapper Intet:51x44 3+0:51x44 4+0:51x44 5+0:51x44 10+0:51x44 5+3:51x44 Frit:51x44
+main-390x844 MAKKER med ur: braet 228-602 (vindue 844) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur 609-653 (vindue 844) tekst="Hvid 5:00"
+main-1280x800 HINT status: 91-123 (vindue 800) tekst="Ingen fare lige nu, spil dit plan." | besked: 625-648 (vindue 800) tekst="Ingen fare lige nu, spil dit plan." | braet 140-677 (vindue 800) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | scrollY 0
+main-1280x800 LYD-tekster: ["","Lyd i partiet (træk, skak, slut)","Forhåndstræk: vælg dit træk, mens modstanderen tænker"]
+main-1280x800 GIVOP status: 91-123 (vindue 800) tekst="Hvid gav op. Sort vinder." | vendepunkter: 508-574 (vindue 800) tekst="Tre steder hvor partiet vendte Partiet er slut. Vil du se, hvad du kunne have gjort? Motoren fandt intet enkelt træk, de" | nyt parti skjult | braet 140-677 (vindue 800) tekst="8 7 6 5 4 3 2 a 1 b c d e 
+main-1280x800 MAKKER foer valg: braet 140-677 (vindue 800) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur-valg 400-448 (vindue 800) tekst="Intet 3+0 4+0 5+0 10+0 5+3 Frit" | fold skjult
+main-1280x800 kunne ikke trykke #spil-valg-fold summary
+main-1280x800 MAKKER fold aaben: braet 140-677 (vindue 800) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur-valg 400-448 (vindue 800) tekst="Intet 3+0 4+0 5+0 10+0 5+3 Frit" | scrollY 0
+main-1280x800 UR-knapper Intet:56x40 3+0:56x40 4+0:56x40 5+0:56x40 10+0:56x40 5+3:56x40 Frit:56x40
+main-1280x800 MAKKER med ur: braet 140-677 (vindue 800) tekst="8 7 6 5 4 3 2 a 1 b c d e f g h" | ur mangler
