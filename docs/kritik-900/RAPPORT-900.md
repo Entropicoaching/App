@@ -14,13 +14,15 @@ Intet er aendret i loeftmodellen eller sitet; her er hvad jeg saa, loeft for loe
 
 **Doedloeft (konventionel, semi-sumo 49 cm, sumo 66 og 82 cm, animationen, 390 og 1280).** Skinnebenet er helt frem til stangen i start i alle fire fodbredder, og stangen er over midtfod. Fodbredden er et spektrum (32, 49, 66, 82 cm) med tydeligt forskellig hofte og ryg. Det der fejler er teksten (se punkt 1) og at sumo bred stadig har en ret lang torso over hoften, men det er et tegneindtryk, ikke et brud paa Marcs dom.
 
-## Er mine seneste fund lukket?
+## Testresultat
+
+Ingen automatiske tests koert (kritiker, ingen kodeaendring). Maalt ved at se: 105 billeder, ingen sidefejl. Er mine seneste fund lukket?
 
 - Lukket: high bar-albuen lige bag stangen staaende (881-forbeholdet): nu 3,0 til 3,2 cm i alle faser (ordre 882, blok 2). Sumo-tekstens skrift: nu 13 px (var 8 til 9 px), maalt og set.
 - Delvist: sumo-teksten. Skriften er stor nok, men stedet er forkert: den staar i hoejre kant hvor figurens hoved og skulder ogsaa er i semi-sumo og sumo smal, saa "ryg 1,6 grader lodrere" og "ryg 4,9 grader lodrere" staar oven paa figuren. "op til:" staar stadig sidst paa den foerste linje; laesbart, men to fragmenter.
 - Aabent: squat-formatet paa 390 (1/3 bredde, haandcirkel og frontvindue over figuren), hovedet i squat og sumo (seks kritikker i traek), og Yantras punkt om "H" og dobbeltstreg paa laar og skinneben i squat-lockout, som jeg ikke har undersoegt i dag.
 
-## Hvad der staar som hoejst nu
+## Hvad er naeste
 
 Figurerne holder Marcs domme; det der er tilbage er kosmetik og laesbarhed, ikke anatomi. Den eneste ting der paa 390 direkte skjuler figuren er sumo-teksten; den er lille at rette. Squat-layoutet er det punkt der har staaet laengst; Yantra skriver i 882 at det kraever Marcs ja. Boer Dhruva stille spoergsmaalet som ja/nej: "skal haandcirklen skjules paa smal skaerm?".
 
