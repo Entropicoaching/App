@@ -1,0 +1,4 @@
+foer {"status":"Computeren spillede e7-e5. Din tur.","klasser":"","pile":0}
+disabled [ false, false, false ]
+efter {"status":"Computeren spillede e7-e5. Din tur.","klasser":"","pile":0}
+besked {"tekst":"Ingen tydelig fare eller svaghed at pege på lige nu.","top":1188,"bund":1230,"vindueH":560,"scrollY":0}
