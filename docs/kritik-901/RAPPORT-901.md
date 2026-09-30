@@ -28,3 +28,5 @@ Simulering (aerlig): opg. 40 niveau 10 Hoved 9 Haand 2; opg. 60 niveau 15 Hoved 
 
 ## 5. Hvad Ganita skal goere naeste gang, og Hara
 Se de tre punkter i foerste linje. Kraever Marc: Hoved-loftet ("fuldt, nu vokser Haand"), og om HHH-boksen maa foldes ind fra start. Bonus, hvis tid: en synlig "helten er staerkere"-linje ved niveau op ud over Hoved-tallet (fx nyt udstyr som billede i banneret). Jeg har ikke roert spillet. Kunne ikke: maale paa rigtige elever; alt er syntetisk. Betydning for Hara: ingen.
+
+Gren: kritik-901
