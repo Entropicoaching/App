@@ -1,0 +1,11 @@
+360x560 braet foer ur 173-453 (scrollY 0, sidehoej 1711) urvalg 649-701 (scrollY 0, sidehoej 1711)
+360x560 ikke tryk #segment-skakur .segment-knap:has-text("5+0")
+360x560 efter tryk 5+0: braet 173-453 (scrollY 0, sidehoej 1711) urvalg 649-701 (scrollY 0, sidehoej 1711)
+360x560 slut: braet 173-461 (scrollY 0, sidehoej 2287)
+360x560 vendepunkter ["DETAILS 513-557","SUMMARY 513-557"] knap nyt parti ["468-512","1715-1759"]
+1280x800 braet foer ur 140-677 (scrollY 0, sidehoej 1172) urvalg 430-478 (scrollY 0, sidehoej 1172)
+1280x800 efter tryk 5+0: braet 140-677 (scrollY 0, sidehoej 1447) urvalg 430-478 (scrollY 0, sidehoej 1447)
+1280x800 ikke tryk #strimmel-giv-op
+1280x800 ikke tryk text=Ja, giv op
+1280x800 slut: braet 140-677 (scrollY 0, sidehoej 1503)
+1280x800 vendepunkter [] knap nyt parti []
