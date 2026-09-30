@@ -34,3 +34,18 @@ Ja, naesten. Foerste skaerm: "Hoved er at regne: dele, broeker og klokken. Haand
 - Levering via hoest.mjs: se afslutningen i chatten.
 - Hara: intet i dette arbejde roerer Hara. Ingen Supabase, ingen miljoevariabler skrevet, intet aendret i matematikspillet eller appen.
 - Ingen elevdata eller rigtige navne; kun syntetisk "Tulle" og "Ane" (spillets egen figur).
+
+## Gren
+kritik-920, base main. Commits: se `git log --oneline main..kritik-920`.
+
+## Hvad aendret
+Kun filer under docs/kritik-920/ og outputs/kritik-920/: elev-script, fold-script, skaermbilleder, elev-nu.json og denne rapport. Matematikspillet er ikke roert.
+
+## Testresultat
+`node docs/kritik-920/elev-920.mjs <mappe> nu`: 0 netkald, 0 sidefejl, ingen vandret rulning (390 og 1280). `node docs/kritik-920/fold-920.mjs <mappe>`: {aabenFoer:true, aabenEfter:false}.
+
+## Hvad er naeste
+Ganita: (1) Hoved-loftet ved 9 (spoerg Marc), (2) lad Hoved/Haand/Hjerte-tallet taelle op stort ved svaret og giv Hjerte et glimt ved foerste hjaelp, (3) ryd klaret-siden: "+N" uden overlap, "Mere" efter en klar Naeste opgave-knap.
+
+## Aerlige graenser
+Kun stills, ikke bevaegelse; emuleret touch, ingen rigtig telefon eller rigtige 11-aarige; kun main i matematik-traeet (b615fae) er vurderet.
