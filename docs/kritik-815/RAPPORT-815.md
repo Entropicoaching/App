@@ -39,6 +39,14 @@ Mine tre fund fra 804 sammenholdt med `main` nu:
 
 Lukket siden sidst (ordre 793): sumo har nu konventionel som stiplet spøgelse med tal (godt, og det svarer på mit fund om at sumo lignede konventionel fra siden), og halsen i squat og dødløft er en glat form uden firkantede hjørner (`S815-1280-lowbar-bund.png`: nakken går blødt ind i skulderen).
 
+## Hvad er næste
+
+Marc afgør low bar ("et par cm": 2, 3 eller 4-5 cm), så Yantra kan rette punkt 1. Derefter punkt 2 og 3 (layout på 390), som ikke afhænger af Marc. Sumo-ryggens vinkel er også Marcs dom.
+
+## Ærlige grænser
+
+Se næste afsnit: udvalg af billeder, kun stille billeder, kun sidemodel.
+
 ## Hvad jeg ikke kunne, og Hara
 
 - Ikke set: hver enkelt af de 117 billeder, og ingen film på rigtig telefon (kun stille billeder fra headless Chrome). Konsolfejl: én 404 på 390 (formentlig ikon, ikke løftesiden; ikke undersøgt), ingen på 1280.
