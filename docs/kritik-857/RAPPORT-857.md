@@ -1,0 +1,27 @@
+Klar til klassen: ja, paa telefon og computer (skak main ddf5eac, inkl. ordre 845). De tre vigtigste ting Chaturanga retter naeste gang: (1) hovedet fylder stadig 148 px paa 320-360, saa braettet kun er 264-304 px bredt, og i makker-partiet er valget af ur skjult i folden "Skakur og valg: intet ur" (skaerm: Spil, Mod en makker, `outputs/kritik-857/360x560-A1-makker-efter-valg.png`; fil: hoved-markup i `src/skak.template.html` og urvalget i Spil-panelet; hovedet kraever Marcs ja til nye fanenavne, men urvalget kan vaere en synlig linje uden Marcs ja); (2) paa 1280 x 800 ligger raekken "Vend braettet / Tavle / Pile og streger / Hvad sker der" stadig under vindueskanten (y 787-831 af 800), og siden er 1264-1436 px hoej (skaerm: Spil, Mod computeren, d4, `outputs/kritik-857/1280x800-B1-computer-traek.png`; fil: braetraekkens CSS i `src/styles.css`; goer braettet ca. 45 px mindre paa lave skaerme); (3) i Laer skak springer braettet 9-28 px ned, naar eleven svarer rigtigt (360 x 560 trin 20: 207-487 foer, 235-515 efter; trin 23: 226-506 foer, 235-515 efter), fordi rosen og Videre kommer ind over braettet; det staar stadig helt i vinduet, men eleven mister sit trykmaal midt i traek (skaerm: Laer skak, Jeg er ny, trin 20, `outputs/kritik-857/360x560-I20-laer-loest.png`; fil: `src/laerskak.js` og `src/styles.css`; reserver pladsen til rosen, saa braettet staar fast).
+
+## Gren
+
+`kritik-857` fra `main`. Skakken hentet med `git archive main` (ddf5eac) til en midlertidig mappe og koert headless (Playwright): touch paa 320 x 520, 360 x 560, 390 x 844 og mus paa 1280 x 800. Scripts: `docs/kritik-857/elevtur-857.mjs`, `slut-857.mjs`, `bund-857.mjs` (genbrugt fra 852) og nyt `ekstra-857.mjs` (1280 med knapper efter tekst, Laer skak trin 20 og 23 efter loesning, gaade med hint). Skaermbilleder og maal i `outputs/kritik-857/`. Laest: RAPPORT-845 og RAPPORT-839 ("Hvad aendret" og "Hvad er naeste"), ranglisten i MOD-LICHESS og foerste linje af kritik 852. Siden 852 er 845 merget (Laer skak trin 19-27).
+
+## Kan en 11-aarig komme i gang uden hjaelp?
+
+Ja. Paa 360 x 560 staar braettet fra y=148 til 452 og er helt synligt i parti mod computeren, makker-parti med ur, gaade og Laer skak trin 1. Fortryd / Vis et hint / Giv op ligger 459-503 (i vinduet); i makker-partiet er der to urknapper "Hvid" og "Sort" ved siden af Fortryd og Giv op efter valg af 5+0. Gaadens "Vis et hint" ligger 484-528 paa 360 og 468-512 paa 320. Laer skak trin 1 siger "Klik e4" og Videre staar oeverst (164-208). Efter et rigtigt svar i trin 20 og 23 er braettet helt i vinduet paa 320 x 520 (235-499) og 360 x 560 (235-515), og "Rigtigt! ..." er en linje. Paa 1280 x 800 er braettet 140-677 og Spil-panelet med ur, Fortryd, Hint og Giv op ligger til hoejre. Der er ingen sidescroll paa nogen bredde. En elev kan altsaa altid se braettet og den knap, der skal trykkes paa; det, der kraever at eleven ved noget, er uret (se nedenfor).
+
+## Hvad er stadig besvaerligt eller rodet paa lav telefon
+
+- Hovedet 148 px paa 320-360: titel + to raekker faner (Bibliotek / Laer skak / Taktik og Spil / Gaader / Opstil) plus linket "Undervisning". Braettet er 264 px paa 320 og 304 px paa 360.
+- Uret i makker-partiet: foer eleven har valgt, er urvalget (5+0 osv.) y 596-648 paa 320 x 520 og 636-688 paa 360 x 560, altsaa uden for vinduet, gemt i folden "Skakur og valg: intet ur". Et barn, der skal spille med ur, skal selv finde folden. Paa 390 x 844 er valget i vinduet.
+- Efter Giv op er siden nu 1838 px paa 360 x 560 (var 2059): resultatet staar ved braettet, en primaer knap "Nyt parti" og "Prøv niveau 1 igen", aabningsnavnet og graf er beholdt, og "Laer af dine fejl" er ikke doblet, naar der ingen fejl er (skaerm `360x560-E3-efter-giv-op-hel.png`). Stadig meget scroll, og paa 1280 x 800 er siden 1699 px.
+- Laer skak: braettet hopper 9-28 px ned ved rigtigt svar (fund 3 ovenfor).
+- Braet-hop i gaaden er ikke maalt efter et loest traek (se graenser).
+
+Paa 1280 x 800: raekken "Vend braettet / Tavle (T) / Pile og streger / Hvad sker der" staar 787-831, uden for vinduet, mens aabningsnavnet og pilene (734-778) er i vinduet. Det er en mus-elev paa en lav baerbar, der ikke ser raekken uden at scrolle.
+
+## Er mine seneste fund lukket?
+
+Fundene fra 852: (1) Giv op-siden 2059 px og doblet "Laer af dine fejl" + tom vendepunkts-overskrift: **lukket paa telefon** (1838 px, ingen dobbelt knap, ingen tom overskrift; skaerm `360x560-E3-efter-giv-op-hel.png`), men siden er stadig lang. (2) Raekken under braettet paa 1280 x 800: **aaben** (787-831). (3) Hovedet 148 px og uret i folden: **aaben** (kraever Marcs ja til fanenavne; #29 ogsaa). Fra 845 er trin 19-27-hoppet rettet delvist: titlen viger og rosen er en linje, men braettet flytter sig stadig 9-28 px ved rigtigt svar. Nyt fund: 2 af 3 gamle fund er stadig aabne; intet nyt er gaaet i stykker.
+
+## Aerlige graenser
+
+Headless Chromium, ingen rigtig telefon, ingen boern; "en 11-aarigs oejne" er min tolkning, ikke en test. Paa 1280 findes knapperne med tekst i sidepanelet, men to af mine klik (Mod computeren, Start forfra, Vis et hint efter et makker-parti) blev ikke trykket af scriptet, saa 1280-tallene for hint og Giv op mod computeren er kun set paa skaermbilleder fra 852-scriptet (`1280x800-B1-computer-traek.png`). Gaaden efter forkert og rigtigt traek og et helt parti er ikke maalt (tilfaeldigt). Sidehoejden svinger med computerens traek. Kun syntetiske data, ingen elevdata. Betydning for Hara: ingen; kun skak-kritikken, ingen skrivning, og jeg har ikke roert miljoevariabler.
