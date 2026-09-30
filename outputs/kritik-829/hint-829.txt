@@ -1,0 +1,8 @@
+360x560 hint-knapper synlige 2
+360x560 status efter hint: Hint: se den fremhævede brik.
+360x560 Giv op synlige 2
+360x560 sidehoejde 1644
+1280x800 hint-knapper synlige 1
+1280x800 status efter hint: Hint: se den fremhævede brik.
+1280x800 Giv op synlige 1
+1280x800 sidehoejde 1023

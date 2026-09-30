@@ -1,0 +1,14 @@
+360x560 sidehoejde efter giv op 2415
+360x560 ["Du gav op mod niveau 1."]
+360x560 trin1 Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.
+360x560 videre {"t":183,"b":227,"vis":true}
+360x560 kunne ikke trykke button:has-text("Vis et hint"), #gaade-strimmel-hint
+360x560 gaade Hvid gav op. Sort vinder.
+1280x800 kunne ikke trykke button:has-text("Giv op")
+1280x800 kunne ikke trykke button:has-text("Ja, giv op")
+1280x800 sidehoejde efter giv op 1296
+1280x800 null
+1280x800 trin1 Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.
+1280x800 videre {"t":197,"b":241,"vis":true}
+1280x800 kunne ikke trykke button:has-text("Vis et hint"), #gaade-strimmel-hint
+1280x800 gaade Computeren spillede g7-g6. Din tur.
