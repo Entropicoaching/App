@@ -38,7 +38,7 @@ Ja. Brættet er altid i første skærmbillede, og det, der skal trykkes på, st�
 
 ## Hvad ændret
 
-Ingen ændring i skakken (kun kritik). Leveret: dommen i første linje, vurderingen ovenfor, fire scripts i `docs/kritik-796/` og 60+ skærmbilleder og udskrifter i `outputs/kritik-796/`.
+Ingen ændring i skakken (kun kritik). Leveret: dommen i første linje, vurderingen ovenfor, fire scripts i `docs/kritik-796/` og 52 skærmbilleder og fem udskrifter i `outputs/kritik-796/`.
 
 ## Testresultat
 
@@ -47,7 +47,7 @@ Ingen sidefejl på 360, 390 og 1280 i Lær skak og gåde. Scriptets "kunne ikke 
 ## Hvad er næste
 
 - Chaturanga: de tre ting i dommen; alle er små. Nr. 1 først.
-- Har arbejdet betydning for Hara? Nej.
+- Har arbejdet betydning for Hara? Nej. Aflevering (`hoest.mjs --aflever`) kørte, men indbakken er fuld (25 ubehandlede forslag); forslaget ligger i `outputs/hoest-venter/ordre-bhishak.json` og sendes ved næste merge.
 
 ## Ærlige grænser
 
