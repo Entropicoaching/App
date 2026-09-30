@@ -46,3 +46,7 @@ Har arbejdet betydning for Hara: nej, ingen Hara-filer eller noegler rort.
 - Udvalg, ikke alle 105 billeder set taet; sumo smal og mellemting er kun set ud fra navne og tal, ikke taet.
 - Vindue-overlappet er vurderet paa oejemaal i 390-billederne; jeg har ikke maalt pixels.
 - Modellen kender ingen enkelte muskler, og alt her er tegning og segmentlaengder, ikke en maaling paa en atlet.
+
+## Hvad er næste
+
+Yantra retter de tre punkter i dommen i rækkefølge (doedloeftens vindue paa 390, doedloeftens streger paa 390, squat-animationens størrelse paa 390); jeg ser dem igen paa den næste `main`, naar de er merget. Marc svarer "modeller ok" eller "modeller ret: ...".
