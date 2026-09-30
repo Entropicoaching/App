@@ -1,0 +1,15 @@
+360x560 forhaand afkrydset: undefined
+360x560 efter 4 traek: braet 148-452 (vindue 560) "8 7 6 5 4 3 2 a 1 b c d e f g h" | status 101-144 (vindue 560) "Computeren spillede e7-f6. Din tur."
+360x560 GIVOP langt: braet 148-448 (vindue 560) "8 7 6 5 4 3 2 a 1 b c d e f g h" | vendepunkter 595-655 (vindue 560) "" | nyt parti 455-499 (vindue 560) "Nyt parti" | sporgsmaal mangler
+360x560 synlige knapper: ["Undervisning@44","Bibliotek@8","Lær skak@8","Taktik@8","Spil@53","Gåder@53","Opstil@53","Prøv niveau 1 igen@505","Gennemse partiet@455","Nyt parti@455","Hvad spiller man her?@649","⏮@697","◀@697","▶@697","⏭@697","1@874","1@874","Øv denne åbning: Konge@1101","Mod en makker@1269","Mod computeren@1269","Fortryd@1445","Vis et hint@1445","Start forfra@1497","Giv op@1497","@1746"]
+360x560 sidescroll: false
+390x844 forhaand afkrydset: undefined
+390x844 efter 4 traek: braet 228-602 (vindue 844) "8 7 6 5 4 3 2 a 1 b c d e f g h" | status 158-212 (vindue 844) "Computeren spillede b7-b6. Din tur."
+390x844 GIVOP langt: braet 228-602 (vindue 844) "8 7 6 5 4 3 2 a 1 b c d e f g h" | vendepunkter 777-837 (vindue 844) "" | nyt parti 686-730 (vindue 844) "Nyt parti" | sporgsmaal mangler
+390x844 synlige knapper: ["Til undervisning@8","Bibliotek@52","Lær skak@52","Taktik@52","Spil@97","Gåder@97","Opstil@97","Prøv niveau 1 igen@636","Gennemse partiet@686","Nyt parti@686","Hvid@859","Sort@859","Tilfældig@859","1@938","2@938","3@938","4@938","5@938","6@938","7@938","8@938","Hvad spiller man her?@1068","⏮@1116","◀@1116","▶@1116"]
+390x844 sidescroll: false
+1280x800 forhaand afkrydset: undefined
+1280x800 efter 4 traek: braet 140-677 (vindue 800) "8 7 6 5 4 3 2 a 1 b c d e f g h" | status 91-123 (vindue 800) "Computeren spillede a6-a5. Din tur."
+1280x800 GIVOP langt: braet 140-677 (vindue 800) "8 7 6 5 4 3 2 a 1 b c d e f g h" | vendepunkter 508-574 (vindue 800) "Tre steder hvor partiet vendte Partiet er slut. Motoren fandt intet enkelt træk, der tabte meget." | nyt parti skjult | sporgsmaal mangler
+1280x800 synlige knapper: ["Til undervisning@28","Bibliotek@26","Lær skak@26","Taktik@26","Spil@26","Gåder@26","Opstil@26","Hvad spiller man her?@709","⏮@709","◀@709","▶@709","⏭@709","Øv denne åbning: Konge@1135","Vend brættet@1205","Tavle (T)@1205","Pile og streger: til@1205","Hvad sker der@1205","@1328","@1406","@1483","@1561","@1638","@1716","@1822","@1895"]
+1280x800 sidescroll: false
