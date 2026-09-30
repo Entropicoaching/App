@@ -24,3 +24,15 @@ Ingen betydning for Hara.
 ## Gren
 Gren: kritik-828
 Commits: se `git log kritik-828`.
+
+## Hvad ændret
+Kun filer under `docs/kritik-828/` og `outputs/kritik-828/`: elev-script, skærmbilleder, måletal og denne rapport. Intet i matematikspillet eller appen er ændret.
+
+## Testresultat
+Ingen kode-test (kritik). Elev-scriptet kørte mod main (d5037f9): 0 net-kald, 0 fejl, niveau-op og klaret nået på både 390 og 1280.
+
+## Hvad er næste
+Ganita retter de tre ting i første linje: styrke-plet på selve figuren, klaret-kortet nedkortet, resten af "quest" på Min helt.
+
+## Ærlige grænser
+Se afsnittet ovenfor: syntetisk elev, headless, ikke alle billeder set.
