@@ -1,0 +1,49 @@
+﻿360x560 E1 Trin 1 af 32 Brættet Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.
+360x560 E2 efter tryk paa e4: Trin 1 af 32 Brættet Rigtigt! Det er e4: linje e, række 4. Videre › | videre 183-227 | braet 254-534
+360x560 E3 Trin 2 af 32 Kongen Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt. Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4) | braet 242-522 | videre skjult
+360x560 E4 Trin 2 af 32 Kongen Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt. Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4) | braet 242-522
+360x560 sidefejl ingen
+360x560 F1 Hvid trækker | Find det bedste træk.
+360x560 foerste felt med brik c8
+360x560 F2 efter hint: Hint: se den fremhævede brik. | mangler
+360x560 F3 efter 2. hint: Hint: trækket er vist på brættet.
+360x560 sidefejl ingen
+360x560 G1 Computeren spillede e7-e5. Din tur.
+360x560 G2 efter hint: Computeren spillede e7-e5. Din tur. | mangler
+360x560 G3 Computeren spillede e7-e5. Din tur. | slut skjult skjult skjult
+360x560 kunne ikke trykke #strimmel-giv-op
+360x560 G4 Computeren spillede e7-e5. Din tur. | slut skjult skjult skjult | braet 148-452
+360x560 sidefejl ingen
+390x844 E1 Trin 1 af 32 Brættet Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.
+390x844 E2 efter tryk paa e4: Trin 1 af 32 Brættet Rigtigt! Det er e4: linje e, række 4. Videre › | videre 258-302 | braet 335-709
+390x844 E3 Trin 2 af 32 Kongen Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt. Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4) | braet 335-709 | videre skjult
+390x844 E4 Trin 2 af 32 Kongen Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt. Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4) | braet 335-709
+390x844 sidefejl ingen
+390x844 F1 Sort trækker | Find det bedste træk.
+390x844 foerste felt med brik h1
+390x844 F2 efter hint: Hint: se den fremhævede brik. | mangler
+390x844 F3 efter 2. hint: Hint: trækket er vist på brættet.
+390x844 sidefejl ingen
+390x844 G1 Computeren spillede e7-e5. Din tur.
+390x844 G2 efter hint: Computeren spillede e7-e5. Din tur. | mangler
+390x844 G3 Computeren spillede e7-e5. Din tur. | slut skjult skjult skjult
+390x844 kunne ikke trykke #strimmel-giv-op
+390x844 G4 Computeren spillede e7-e5. Din tur. | slut skjult skjult skjult | braet 228-602
+390x844 sidefejl ingen
+1280x800 E1 Trin 1 af 32 Brættet Felterne har navne: bogstav for linjen (a-h), tal for rækken (1-8). Klik e4.
+1280x800 E2 efter tryk paa e4: Trin 1 af 32 Brættet Rigtigt! Det er e4: linje e, række 4. Videre › | videre 197-241 | braet 276-774
+1280x800 E3 Trin 2 af 32 Kongen Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt. Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4) | braet 255-753 | videre skjult
+1280x800 E4 Trin 2 af 32 Kongen Du er hvid. Kongen går ét felt i alle retninger. Tryk på kongen (i ringen), og saml alle stjernerne - på så få træk som muligt. Stjerner: 0 af 4 · Træk: 0 (færrest mulige: 4) | braet 255-753
+1280x800 sidefejl ingen
+1280x800 F1 Hvid trækker | Find det bedste træk.
+1280x800 foerste felt med brik a8
+1280x800 F2 efter hint: Hint: se den fremhævede brik. | mangler
+1280x800 F3 efter 2. hint: Hint: trækket er vist på brættet.
+1280x800 sidefejl ingen
+1280x800 G1 Computeren spillede e7-e5. Din tur.
+1280x800 kunne ikke trykke #knap-hint
+1280x800 G2 efter hint: Computeren spillede e7-e5. Din tur. | mangler
+1280x800 G3 Computeren spillede e7-e5. Din tur. | slut skjult skjult skjult
+1280x800 kunne ikke trykke #knap-spil-giv-op
+1280x800 G4 Computeren spillede e7-e5. Din tur. | slut skjult skjult skjult | braet 140-677
+1280x800 sidefejl ingen
