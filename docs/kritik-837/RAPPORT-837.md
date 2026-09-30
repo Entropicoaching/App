@@ -23,3 +23,12 @@ Ingen betydning for Hara. Ingen elevdata (kun syntetisk "Tulle"), intet roert i 
 ## Gren
 Gren: kritik-837
 Commits: se `git log kritik-837`.
+
+## Hvad ændret
+Kun filer under `docs/kritik-837/` og `outputs/kritik-837/`: rapport, `elev-837.mjs`, skaermbilleder og `elev-nu.json`. Intet i matematikspillet eller appen er aendret.
+
+## Testresultat
+Elev-scriptet koert paa Ganitas main: 0 net-kald, 0 fejl, ingen vandret rulning paa 390 og 1280. Klaret-skaerm 390: 2,40 skaermhoejder; Min helt 390: 2,15. 60 aerlige opgaver: niveau 15, Hoved 9, Haand 7, 14 mestret; gaettende: niveau 1.
+
+## Hvad er næste
+Ganita retter de tre ting i foerste linje (Hjerte der bevaeger sig, klaret-kortet kortere, Min helt kortere). Bhishak tjekker bagefter: bevaeger Hjerte sig nu, og er klaret-kortet under ca. 1,5 skaerm paa 390?
