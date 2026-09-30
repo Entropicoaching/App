@@ -25,3 +25,7 @@ Ingen kodetest koert (jeg aendrer intet). Maaling: 0 sideudefra-kald; paa 390 ee
 ## Hvad er naeste
 
 Yantra tager de tre punkter i foerste linje i den raekkefoelge; det er de samme som i 822, og 1 kraever en genkalibrering og er en ordre for sig. Bænkens hoved og hals og 360 px er ikke set denne gang. Haerlige graenser: headless Chrome, stille billeder og fem tidspunkter pr. animation, ikke film paa en telefon; jeg har set et udvalg af de 116 billeder, ikke alle; 11,3 graders ryg og 8 cm hofte staar i figurens egen tekst, ikke maalt af mig paa en atlet. Hvis sumo-ryggens retning afgoeres af Marc, er det hans dom, ikke min. Arbejdet har ingen betydning for Hara.
+
+## Ærlige grænser
+
+Headless Chrome, stille billeder og fem tidspunkter pr. animation, ikke film på en telefon. Jeg har set et udvalg af de 116 billeder tæt, ikke alle; bænkens hoved og hals og 360 px er ikke set. Tallene (11,3 graders ryg, 8 cm hofte) står i figurens egen tekst, ikke målt af mig på en atlet. Sumo-ryggens retning afgøres af Marc.
