@@ -46,3 +46,10 @@ Har arbejdet betydning for Hara: nej.
 
 Yantra retter de tre punkter i dommen (squat-animation 390, doedloeftens streger 390, sumo-vinduet og spoegelsestekst 390). Marc svarer paa sumo-ryggens vinkel. Naeste kritik: se de tre 390-billeder igen efter rettelsen.
 
+
+## Ærlige grænser
+
+- Jeg har set et udvalg af de 117 billeder taet, ikke alle.
+- Stille billeder fra headless Chrome, ikke film paa en telefon; syntetiske kroppe, ingen rigtige atleter.
+- Jeg er ikke coach: Marcs domme er maalestokken, og sumo-ryggen overlader jeg til ham.
+
