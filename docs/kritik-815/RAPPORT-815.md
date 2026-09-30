@@ -6,6 +6,10 @@ Marcs domme holdt: nej (kun een: low bar ligger stadig 6,4 cm under high bar, "e
 
 `kritik-815` (fra `main`). Filer kun under `docs/kritik-815/` (denne rapport og mine scripts `tur-815.mjs`, `squat-stang-815.mjs`, `server-815.mjs`, kopieret fra 804 med nyt ordrenummer) og `outputs/kritik-815/` (117 filer: `T815-` stille figurer, `A815-` animationer, `S815-` squat bund/sticking/lockout, `maaling-815.json`). Set på Yantras `main` (88b46a4, ordre 793 merget; nyeste rapport `RAPPORT-ordre-793.md`), hentet med `git archive` og serveret på 127.0.0.1 i headless Chrome på 390 (touch) og 1280. 0 netkald sluppet ud, syntetiske kroppe. Ingen rettelser i løftemodellen eller sitet. `Til Marc\LAES-MODELLER-3.html` er kun læst som kontekst (dens billeder svarer til de samme figurer; jeg har målt selv i stedet for at stole på den). Tid: under 30 minutter, så jeg har set et udvalg af de 117 billeder tæt (squat bund low/high, squat-animation 390, bænk tre buer, bænk bryst og stor bue i lockout, dødløft opstilling, sumo bred), ikke alle.
 
+## Hvad ændret
+
+Intet i løftemodellen, sitet eller appen. Kun nye filer: denne rapport, tre scripts og 117 filer i `outputs/kritik-815/`.
+
 ## Holder figurerne Marcs domme?
 
 - **Bænk: ja.** Ved brystet står underarmen lodret og leddene stablet under stangen (`T815-390-baenk-bryst.png`). Tre buer i samme skala: kontakt 21,1 / 19,1 / 16,8 cm fra skulderen og lænd 7,3 / 9,0 / 10,6 cm (`A815-1280-baenk-tre-buer.png`): toppen tættere på halsen jo mere bue, og ikke alle lige meget. Stor bue i lockout: stangen over skulderleddet, underarmen lodret, lænden tydeligt hævet (`A815-390-baenk-stor-t2.png`).
