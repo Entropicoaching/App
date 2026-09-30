@@ -20,3 +20,7 @@ Jeg spillede som syntetisk 11-aarig "Tulle" paa 390 (touch) og 1280 (mus) med `d
 
 ## Hara
 Ingen betydning for Hara.
+
+## Gren
+Gren: kritik-828
+Commits: se `git log kritik-828`.
