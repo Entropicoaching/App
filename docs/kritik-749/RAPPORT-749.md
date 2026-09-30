@@ -12,13 +12,13 @@ Ja. Et parti mod computeren: brættet står altid helt i vinduet (173-493 af 560
 
 - Skakuret (fund 1): på 360 x 560 og 390 x 844 er valget 129 og 99 px under kanten. Uret vises først, når man har valgt det; en elev der ikke ved at det findes, finder det ikke. Mit script kunne ikke trykke "5+0" uden at rulle først (`mat.txt`, `slut.txt`).
 - Efter et parti på 360 x 560: overskriften "Tre steder hvor partiet vendte" er kun 3 px inde, og brættet skrumper til 288 px. På 390 x 844 står den 656-700 og er fin. 320 x 520 er ikke målt (ikke bedt om).
-- Knapperne er 44 px høje overalt; brættet er 320 px på 360 x 560 (287 px på 390 x 844 er ikke relevant, det er 374 px).
+- Knapperne er 44 px høje overalt; brættet er 320 px på 360 x 560 og 374 px på 390 x 844.
 - Efter et parti på 1280 x 800 ligger vendepunkterne nu inde (overskrift og minibræt synlige uden at rulle, `1280x800-M2-efter-mat.png`), men "Tren dette"-knappen ligger langt nede (Chaturanga kender den).
 
 ## Er mine seneste fund lukket? (732)
 
 - Fund 1, skakur-valget: **åbent.** Målt igen: 689-741 på 360 x 560, uændret siden 732.
-- Fund 2, vendepunkternes overskrift 3 px fra kanten på 360 x 560: **åbent.** Chaturangas 735 sigter på 513-557 og har målt det som "helt inde"; 557 af 560 er stadig kun 3 px luft, og en elev med adresselinje eller tastatur mister den. Jeg regner det som lukket i teknisk forstand og åbent i praksis.
+- Fund 2, vendepunkternes overskrift 3 px fra kanten på 360 x 560: **åbent.** Chaturangas 735 målte 513-557 som "helt inde", og det er rigtigt, men 557 af 560 er kun 3 px luft; jeg regner det som lukket i teknisk forstand og åbent i praksis.
 - Fund 3, "Giv op" på 1280 x 800: **delvist lukket.** 739 skjuler ur, farve og niveau efter et parti, men under partiet ligger "Giv op" stadig 802-846 (Fortryd / Hint / Start forfra 750-794).
 
 ## Testresultat
@@ -27,4 +27,4 @@ Ingen kode ændret (skakkens `main`, ikke rørt), så `npm run lint` og verify-s
 
 ## Hvad er næste og ærlige grænser
 
-Chaturanga: ret de tre ting øverst i rækkefølgen (1) ur-valget synligt eller en tekst på brættet ("Vil du have ur? Tryk her"), (2) "Giv op" inde på 1280 x 800, (3) mere luft under fold-overskriften på 360 x 560. Kan ikke afgøre: om et parti med ur på en rigtig telefon opleves som besværligt (ingen rigtig telefon, ingen børn). Det stiller Hara-delmålet "Appen mærkbart bedre" (skolen) bedre: Marcs klasse kan spille nu; ur og "Giv op" er de to ting en elev kan sidde fast i. Grænser: headless Chromium, touch som `tap()`, "ja" er min vurdering; makker-parti med ur er spillet med ur kun på 1280 x 800 (scriptet ramte ikke urvalget på telefon uden at rulle); gåde og Lær skak er set med ét forsøg pr. størrelse; 320 x 520 er ikke målt. Den midlertidige kildemappe ligger uden for repoet.
+Chaturanga: ret de tre ting øverst i rækkefølgen (1) ur-valget synligt eller en tekst på brættet ("Vil du have ur? Tryk her"), (2) "Giv op" inde på 1280 x 800, (3) mere luft under fold-overskriften på 360 x 560. Kan ikke afgøre: om et parti med ur på en rigtig telefon opleves som besværligt (ingen rigtig telefon, ingen børn). Det støtter Hara-delmålet "Appen mærkbart bedre" (skolen) bedre: Marcs klasse kan spille nu; ur og "Giv op" er de to ting en elev kan sidde fast i. Grænser: headless Chromium, touch som `tap()`, "ja" er min vurdering; makker-parti med ur er spillet med ur kun på 1280 x 800 (scriptet ramte ikke urvalget på telefon uden at rulle); gåde og Lær skak er set med ét forsøg pr. størrelse; 320 x 520 er ikke målt. Den midlertidige kildemappe ligger uden for repoet.
