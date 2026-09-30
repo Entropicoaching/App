@@ -1,0 +1,32 @@
+Klar til klassen: ja, på telefon og computer; mine tre fund fra 749 er lukket, og det der står tilbage er smått. De tre ting Chaturanga retter næste gang: (1) når man åbner valgfolden på 360 x 560, rulles brættet helt ud af skærmen (-334 til -54), og ur-knapperne er så trange at "Intet" løber ud af sin knap og "10+0" og "5+3" rører hinanden (skærm: Spil, Mod en makker, åbn "Valg: intet ur", `360x560-F1-fold-aaben.png`; fil: `#spil-valg-fold` og `#segment-skakur`, mobil-CSS i `src/styles.css`); (2) hjælpeknapperne under brættet på telefon har voksensprog en 11-årig ikke forstår: "Tavle (T)", "Tegnelag: til", "Hvad sker der", "Udseende" (skærm: samme, `360x560-F1-fold-aaben.png`; fil: knaprækken under `#braet` i `src/skak.template.html`); (3) gåde-skærmen siger "Vi finder dit niveau: 0 af 10" i en lille boks ved siden af "Storm", som ikke forklarer, hvad tallet er, og to-linjet "Hvid trækker" fylder halvdelen af boksen (skærm: Gåder, `360x560-D1-gaade.png`; fil: `#gaade-tur-tekst` og gåde-topbjælken i `src/skak.template.html`).
+
+# Ordre 762, Bhishak, 30. sep. 2026
+
+Skakken på `main` (`4e77326`, hentet med `git archive` til en midlertidig mappe uden for repoet; skakens eget arbejdstræ har ucommittede ændringer i `skak.html`, `src/skak.template.html` og `src/styles.css`, dem har jeg ikke set). Set som en 11-årig på 360 x 560 og 390 x 844 (touch) og 1280 x 800 (mus), frisk browserprofil, headless, syntetiske træk. Gren `kritik-762`. Filer kun under `docs/kritik-762/` (scripts `elevtur2-762.mjs`, `mat-762.mjs`, `fold-762.mjs`) og `outputs/kritik-762/` (skærmbilleder og måletekst). Læst: Chaturangas to nyeste rapporter (743 og 748, "Hvad ændret" og "Hvad er næste"), `docs/MOD-LICHESS.md` (ranglisten) og første linje af min egen seneste skak-kritik (749).
+
+## Kan en 11-årig komme i gang uden hjælp?
+
+Ja. Et parti mod computeren: brættet står helt i vinduet (173-453 af 560, nu 280 px mod 320 før 743), og Fortryd / Hint / Giv op ligger 460-504, lige under; under dem står "Valg: intet ur" 507-551 (`360x560-B1-computer-traek.png`). Makker-parti med ur: valgfoldens overskrift er synlig, så eleven kan se, at der findes et ur; efter valg af 5+0 står Hvids og Sorts ur som store felter på hver side af Fortryd og Giv op, og brættet er urørt (`360x560-A2-ur-5-0.png`, `360x560-A3-efter-2-traek.png`). Spillet til skakmat (skolemat) på alle tre størrelser: status "Skakmat! Hvid vinder.", "Gennemse partiet" og "Nyt parti" 456-500 af 560 (390 x 844: 609-653; 1280 x 800: 355-399), og "Tre steder hvor partiet vendte" 501-545 (`360x560-M2-efter-mat.png`). Gåde: brættet og "Vis et hint" står inde på alle tre (`360x560-D1-gaade.png`). Lær skak, "Jeg er ny": teksten øverst, brættet under, en grøn cirkel på e4, så eleven kan se, hvad der skal trykkes på (`360x560-C1-laer-ny.png`). På 1280 x 800 står brættet 140-677 med Spil-panelet ved siden af, og "Giv op" 736-780 (inde). Ingen sidescroll og ingen sidefejl på nogen størrelse. Ny siden 749: åbningsnavn under brættet ("Kongebondeparti") og en knap "Hvad spiller man her?".
+
+## Hvad er stadig besværligt eller rodet på lav telefon?
+
+- Åbner man valgfolden på 360 x 560 (eller 390 x 844), rulles siden 507 (656) px, så brættet står -334 til -54, altså helt uden for skærmen; man ser uret, men ikke brættet. Ur-valget er en række på 6-7 knapper i 260 px, "Intet" løber ud af sin knap og "10+0" og "5+3" står side om side uden luft (`360x560-F1-fold-aaben.png`, `fold.txt`).
+- Under brættet står fem små tekstknapper: "Vend brættet", "Tavle (T)", "Tegnelag: til", "Hvad sker der", "Udseende". De er ikke kasser, kun grå tekst; en 11-årig ved ikke, hvad "Tavle" og "Tegnelag" er.
+- Gåde på 360 x 560: "Vi finder dit niveau: 0 af 10" er uforklaret, og "Hvid trækker" brydes over to linjer (`360x560-D1-gaade.png`).
+- Efter et parti på 360 x 560 er brættet 276 px, altså 44 px mindre end de 320 px, det kunne være; 15 px luft under fold-overskriften (nu synligt inde).
+- På 1280 x 800 ligger navigationsknapperne under brættet (afspil-pilene) nederst på skærmen, ca. 730-800 aflæst på skærmbilledet, lige på kanten, og den lange knaprække "Fortryd / Vis et hint / Start forfra / Giv op" fylder halvdelen af Spil-panelet (`1280x800-A3-efter-2-traek.png`); det virker, men er tæt.
+
+## Er mine seneste fund lukket? (749)
+
+- Fund 1, skakur-valget under kanten: **lukket.** "Valg: intet ur" / "ur 5+0" står 507-551 af 560; det er synligt uden at rulle. Lukket i 743.
+- Fund 2, vendepunkternes overskrift 3 px fra kanten: **lukket.** Nu 501-545 af 560, 15 px luft (748).
+- Fund 3, "Giv op" på 1280 x 800: **lukket.** Nu 736-780 af 800 med ur valgt (748), 20 px luft. Mine locators `#strimmel-giv-op` og `#strimmel-hint` findes stadig kun på telefon, ikke en fejl i skakken.
+- Nyt, afledt af lukningen: for at få uret synligt på lav telefon blev brættet 40 px mindre, og selve valget ligger nu bag et tryk, der scroller brættet væk (punkt 1 ovenfor).
+
+## Testresultat
+
+Ingen kode ændret (skakkens `main`, ikke rørt), så `npm run lint` og verify-scripts er ikke relevante; afleveringen er docs og outputs. Målescripts kørt uden sidefejl: `elevtur2.txt` (alle tre størrelser, makker med ur, computer med hint, Lær skak, gåde), `mat.txt` (skolemat og målte knapper) og `fold.txt` (åben valgfold). Locators der ikke ramte: `#segment-skakur .segment-knap:has-text("5+0")` i `mat-762.mjs` på 360 x 560 og 390 x 844 (folden er lukket, mit script åbnede den ikke; `elevtur2-762.mjs` åbner den og rammer), og `#strimmel-*` på 1280 x 800 (findes kun på telefon). Ingen af dem er fejl i skakken.
+
+## Hvad er næste og ærlige grænser
+
+Chaturanga: (1) rul brættet ikke væk, når valgfolden åbnes, og giv ur-knapperne mere plads eller to rækker på 360 x 560; (2) omdøb eller forklar de fem tekstknapper under brættet ("Tavle", "Tegnelag", "Hvad sker der") eller gem dem for eleven; (3) forklar "niveau: 0 af 10" på gåde-skærmen og lad "Hvid trækker" stå på én linje. Det støtter Hara-delmålet "Appen mærkbart bedre" (skolen): Marcs klasse kan spille nu, og de tre gamle hængepartier er lukket; det der er tilbage, er sprog og plads, ikke at eleven sidder fast. Grænser: headless Chromium, touch som `tap()`, "ja" er min vurdering; ingen rigtig telefon og ingen børn; jeg har ikke spillet et helt parti mod computeren på alle niveauer, kun tre træk og et hint; Lær skak er kun set ved trin 1 af 32; gåde er set uden at løse den; 320 x 520 er ikke målt (ikke bedt om); skakens arbejdstræ har ucommittede ændringer, som jeg ikke har set. Den midlertidige kildemappe ligger uden for repoet.
