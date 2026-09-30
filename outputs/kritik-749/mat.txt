@@ -1,0 +1,14 @@
+360x560 ikke tryk #segment-skakur .segment-knap:has-text("5+0")
+360x560 foer matt: braet 173-493 (320 px) knapper ["Fortryd 500-544 h44 inde","Giv op 500-544 h44 inde","Fortryd 1164-1208 h44 UDE","Vis et hint 1164-1208 h44 UDE","Start forfra 1216-1260 h44 UDE","Giv op 1216-1260 h44 UDE"]
+360x560 efter matt: braet 173-461 (288 px) status "Skakmat! Hvid vinder." scrollY 0 sidehoej 2501
+360x560 knapper efter ["Gennemse partiet 468-512 h44 inde","Nyt parti 468-512 h44 inde","Gennemse partiet 1754-1798 h44 UDE","Nyt parti 1754-1798 h44 UDE","Del partiet (PGN) 2008-2052 h44 UDE","Del (kopiér kode) 2500-2544 h44 UDE"]
+360x560 vendepunkter ["DETAILS 513-557","SUMMARY 513-557"] sidescroll false
+390x844 ikke tryk #segment-skakur .segment-knap:has-text("5+0")
+390x844 foer matt: braet 228-602 (374 px) knapper ["Fortryd 609-653 h44 inde","Giv op 609-653 h44 inde","Fortryd 1273-1317 h44 UDE","Vis et hint 1273-1317 h44 UDE","Start forfra 1273-1317 h44 UDE","Giv op 1325-1369 h44 UDE"]
+390x844 efter matt: braet 228-602 (374 px) status "Skakmat! Hvid vinder." scrollY 0 sidehoej 2691
+390x844 knapper efter ["Gennemse partiet 609-653 h44 inde","Nyt parti 609-653 h44 inde","Gennemse partiet 1944-1988 h44 UDE","Nyt parti 1944-1988 h44 UDE","Del partiet (PGN) 2198-2242 h44 UDE","Del (kopiér kode) 2670-2714 h44 UDE"]
+390x844 vendepunkter ["DETAILS 656-700","SUMMARY 656-700"] sidescroll false
+1280x800 foer matt: braet 140-677 (537 px) knapper ["Fortryd 750-794 h44 inde","Vis et hint 750-794 h44 inde","Start forfra 750-794 h44 inde","Giv op 802-846 h44 UDE"]
+1280x800 efter matt: braet 140-677 (537 px) status "Skakmat! Hvid vinder." scrollY 0 sidehoej 1880
+1280x800 knapper efter ["Gennemse partiet 385-429 h44 inde","Nyt parti 385-429 h44 inde","Del partiet (PGN) 1261-1305 h44 UDE","Del (kopiér kode) 1839-1883 h44 UDE"]
+1280x800 vendepunkter ["P 456-474"] sidescroll false
