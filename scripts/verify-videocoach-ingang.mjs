@@ -33,8 +33,9 @@ const CLIPS = [
   { name: 'kontrol-720p.mp4', mime: 'video/mp4', device: 'Pixel 7', channel: 'chrome', make: p => ff(['-i', baseClip, '-c', 'copy', p]) },
   { name: 'long60.mp4', mime: 'video/mp4', device: 'Pixel 7', channel: 'chrome', make: p => ff(['-stream_loop', '2', '-i', baseClip, '-vf', 'scale=1080:1920', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '24', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', p]) },
 ]
-CLIPS.push({ name: 'exp-android-norm.mp4', mime: 'video/mp4', device: 'Pixel 7', channel: 'chrome', make: () => {} }, { name: 'exp-iphone-norm.mp4', mime: 'video/mp4', device: 'Pixel 7', channel: 'chrome', make: () => {} })
+CLIPS.push({ name: 'iphone-hevc.mov', label: 'iphone-hevc-uden-hevc-i-browseren', mime: 'video/quicktime', device: 'iPhone 13', bundled: true, expectMessage: true, make: () => {} })
 const only = process.argv.includes('--kun') ? process.argv[process.argv.indexOf('--kun') + 1] : null
+const onlyLabel = c => c.label || c.name
 
 const html = readFileSync(join(root, 'public', 'videocoach.html'))
 const srv = createServer((req, res) => {
@@ -48,18 +49,19 @@ const origin = `http://127.0.0.1:${srv.address().port}`
 
 const results = []
 for (const c of CLIPS) {
-  if (only && c.name !== only) continue
+  if (only && onlyLabel(c) !== only) continue
   const path = join(work, c.name)
   if (!existsSync(path)) c.make(path)
-  const out = { clip: c.name, device: c.device, mb: +(statSync(path).size / 1048576).toFixed(1) }
+  const out = { clip: c.label || c.name, device: c.device, mb: +(statSync(path).size / 1048576).toFixed(1) }
   let browser
-  try { browser = await chromium.launch({ headless: true, channel: c.channel }) }
+  try { browser = await chromium.launch({ headless: true, channel: c.bundled ? undefined : c.channel }) }
   catch (e) { browser = await chromium.launch({ headless: true }); out.note = 'ingen system-Chrome, bundlet Chromium' }
   const ctx = await browser.newContext({ ...devices[c.device] })
   const page = await ctx.newPage()
   page.on('dialog', d => d.dismiss())
   page.on('pageerror', e => { out.pageerror = e.message })
   await page.goto(`${origin}/videocoach.html?mode=athlete&instant=1`)
+  if (process.env.VC_FORCE_RECORDER) await page.evaluate(() => { vcNorm.forceRecorder = true })
   const t0 = Date.now()
   await page.setInputFiles('#fileInput', { name: c.name, mimeType: c.mime, buffer: readFileSync(path) })
   const loaded = await page.waitForFunction(() => (document.getElementById('canvas')?.width > 0 && !document.getElementById('canvas').hidden) ||
@@ -85,5 +87,7 @@ for (const c of CLIPS) {
 }
 srv.close()
 console.log(JSON.stringify(results, null, 1))
-console.log(`forventet reps: ${gt.repWindows.length} (klippet gentages x3 i long60)`)
-process.exit(0)
+const want = r => (r.clip === 'long60.mp4' ? 3 : 1) * gt.repWindows.length
+const bad = results.filter(r => (r.clip.includes('uden-hevc') ? r.result !== 'BESKED' : r.reps !== want(r)))
+console.log(bad.length ? `FEJL: ${bad.map(r => r.clip).join(', ')}` : `GRØN: alle klip giver forventede reps (${gt.repWindows.length}, 3x for long60) eller en klar besked`)
+process.exit(bad.length ? 1 : 0)

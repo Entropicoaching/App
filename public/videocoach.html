@@ -1718,36 +1718,15 @@ let curUrl = null;
 // på rå 4K/1080p/60 fps gav samme klip 1 og 3 reps mod de rigtige 5 (se
 // docs/RAPPORT-1022.md). Her afspilles klippet ÉN gang i normal fart, hvert frame
 // tegnes i trin-halvering (boks-filter, ingen aliasering) i højst 1280 px på den
-// lange led og højst 30 fps, og MediaRecorder gemmer et nyt, jævnt klip. Sporeren
+// lange led og højst 30 fps, og WebCodecs (MediaRecorder som reserve) gemmer et nyt, jævnt klip. Sporeren
 // får det nye klip som `video.src` og røres ikke. Originalfilen (til upload) er
 // uændret. Kan klippet ikke normaliseres, bruges originalen, og atleten får det at vide.
-const VC_NORM_MAX_SIDE = 1280, VC_NORM_MAX_FPS = 30.5;
-const vcNorm = { via: null, forceRecorder: false, done: false, busy: false, fps: null, used: false, error: null };
+const VC_NORM_MAX_SIDE = 1280;
+const vcNorm = { via: null, forceRecorder: false, done: false, busy: false, used: false, error: null };
 function vcNormMime() {
   if (typeof MediaRecorder === 'undefined' || !HTMLCanvasElement.prototype.captureStream) return null;
   return ['video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
     .find(t => MediaRecorder.isTypeSupported(t)) || null;
-}
-// frames/sek ud fra de første rVFC-frames (0 = ikke målbart)
-function vcProbeFps(src) {
-  return new Promise(resolve => {
-    if (!('requestVideoFrameCallback' in HTMLVideoElement.prototype)) return resolve(0);
-    const v = document.createElement('video');
-    v.muted = true; v.playsInline = true; v.preload = 'auto';
-    const ts = [];
-    let settled = false;
-    const done = () => {
-      if (settled) return; settled = true;
-      v.pause(); v.removeAttribute('src'); v.load();
-      const d = ts.slice(1).map((t, i) => t - ts[i]).filter(x => x > 0).sort((a, b) => a - b);
-      resolve(d.length >= 4 ? 1 / d[Math.floor(d.length / 2)] : 0);
-    };
-    const tick = (_n, m) => { ts.push(m.mediaTime); if (ts.length >= 14) done(); else v.requestVideoFrameCallback(tick); };
-    setTimeout(done, 2500);
-    v.onloadeddata = () => { v.requestVideoFrameCallback(tick); v.play().catch(done); };
-    v.onerror = () => { settled = true; resolve(0); };
-    v.src = src;
-  });
 }
 function vcNormTarget(w, h) {
   const k = Math.min(1, VC_NORM_MAX_SIDE / Math.max(w, h));
@@ -1911,17 +1890,16 @@ function vcNormFixDuration() {
   };
   video.addEventListener('loadedmetadata', fix, { once: true });
 }
-// kaldt fra begin(): true = normalisering er sat i gang (begin() kaldes igen bagefter)
+// kaldt fra begin(): true = normalisering er sat i gang (begin() kaldes igen bagefter).
+// Kun klip større end ${VC_NORM_MAX_SIDE} px på den lange led normaliseres (alle 4K/1080p-telefonklip);
+// mindre klip går som hidtil direkte videre, uden ventetid og uden ændring.
 function vcNormMaybeStart(resumeFn) {
   if (vcNorm.done) return false;
   if (vcNorm.busy) return true;
+  if (Math.max(video.videoWidth, video.videoHeight) <= VC_NORM_MAX_SIDE) { vcNorm.done = true; return false; }
   vcNorm.busy = true;
-  const big = Math.max(video.videoWidth, video.videoHeight) > VC_NORM_MAX_SIDE;
   const src = video.currentSrc || video.src;
   (async () => {
-    const fps = big ? 0 : await vcProbeFps(src);
-    vcNorm.fps = fps;
-    if (!big && !(fps > VC_NORM_MAX_FPS)) { vcNorm.done = true; vcNorm.busy = false; resumeFn(); return; }
     const secs = Math.round(video.duration || 0);
     const msg = p => say(`Gør klippet klar til analysen (${secs} s) ... ${Math.round(p * 100)} %`);
     msg(0);
@@ -2060,7 +2038,7 @@ function loadFile(file, remoteUrl = null) {
     if (COACHWEB) document.body.dataset.coachState = 'setup';
     say(c === 4
       ? 'Formatet understøttes ikke på denne enhed (typisk HEVC). Optag i ' +
-        '"Mest kompatibel"/H.264 og prøv igen.'
+        '"Mest kompatibel"/H.264 (iPhone: Indstillinger > Kamera > Formater) og prøv igen.'
       : `Videoen kunne ikke læses (fejlkode ${c || '?'}). Prøv at vælge den igen.`);
     setTimeout(() => say(''), 10000);
   };
@@ -10250,13 +10228,11 @@ function hasSeenFilmGuide(storage = globalThis.localStorage) {
 function markFilmGuideSeen(storage = globalThis.localStorage) {
   try { if (storage) storage.setItem(FILM_GUIDE_SEEN_KEY, '1'); } catch { /* privat vindue/fuld storage - ingen huskeevne, ikke fatalt */ }
 }
+// ORDRE 1022: tre linjer, bygget på Til Marc\VIDEO-FILMPROTOKOL.html (opstilling, billedet, kameraet).
 const FILM_GUIDE_POINTS = [
-  'Kamera fra siden, i hoftehøjde — ikke skråt.',
-  'Hele kroppen i billedet hele vejen, også i bunden.',
-  'Hænder og fødder fri af skiver og rack.',
-  'Ét løft, eller et kort sæt — ikke hele træningen.',
-  'Stramt tøj, ikke løse shorts eller T-shirt.',
-  'Godt, jævnt lys — undgå modlys.',
+  'Telefonen stille i hoftehøjde, ren sidevisning, 3–5 meter fra skiven.',
+  'Hele skiven og hele kroppen i billedet fra start til slut. Ét sæt, godt lys.',
+  'Kameraet: 30 eller 60 billeder i sekundet, ikke slowmotion, og vælg "Mest kompatibel" (H.264).',
 ];
 const FILM_GUIDE_FOOTER = 'Det coachen ikke kan se, kan han ikke vurdere.';
 function filmGuideFullHtml() {
@@ -10268,11 +10244,7 @@ function filmGuideFullHtml() {
 // kogt yderligere ned til tre linjer (ordren beder om "kort, tre linjer").
 // Vises altid fuldt ud - flowet er i sig selv nyt/sjældnere brugt end
 // standardvejen, så der er ingen "vis igen"-tilstand at spare væk til.
-const FILM_GUIDE_INSTANT_POINTS = [
-  'Kamera fra siden, i hoftehøjde — ikke skråt.',
-  'Hele kroppen og skiven fri af rack og andre skiver.',
-  'Ét sæt ad gangen, i godt og jævnt lys.',
-];
+const FILM_GUIDE_INSTANT_POINTS = FILM_GUIDE_POINTS;
 function filmGuideInstantHtml() {
   return '<span class="athFilmGuideTitle">📷 Før du filmer</span>' +
     '<ul>' + FILM_GUIDE_INSTANT_POINTS.map(p => `<li>${p}</li>`).join('') + '</ul>';
