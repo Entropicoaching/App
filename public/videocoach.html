@@ -1722,7 +1722,7 @@ let curUrl = null;
 // får det nye klip som `video.src` og røres ikke. Originalfilen (til upload) er
 // uændret. Kan klippet ikke normaliseres, bruges originalen, og atleten får det at vide.
 const VC_NORM_MAX_SIDE = 1280;
-const vcNorm = { via: null, forceRecorder: false, done: false, busy: false, used: false, error: null };
+const vcNorm = { via: null, forceRecorder: false, done: false, busy: false, used: false, error: null, job: 0, cancel: null, warning: '' };
 function vcNormMime() {
   if (typeof MediaRecorder === 'undefined' || !HTMLCanvasElement.prototype.captureStream) return null;
   return ['video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
@@ -1776,9 +1776,10 @@ async function vcSinkWebCodecs(w, h) {
     },
     error: () => { failed = true; },
   });
-  enc.configure(cfg);
+  try { enc.configure(cfg); } catch { try { enc.close(); } catch {} return null; }   // opsætningsfejl -> reserven
   return {
     mime: 'video/mp4;wc',
+    abort() { try { if (enc.state !== 'closed') enc.close(); } catch {} },
     frame(mediaTime, canvas) {
       if (failed) return;
       const slot = Math.round(mediaTime * 30);          // 30 fps-gitter
@@ -1789,7 +1790,7 @@ async function vcSinkWebCodecs(w, h) {
     },
     async end() {
       if (failed) return { error: 'record' };
-      try { await enc.flush(); enc.close(); } catch { return { error: 'record' }; }
+      try { await enc.flush(); enc.close(); } catch { try { enc.close(); } catch {} return { error: 'record' }; }
       if (!samples.length || !avcC || failed) return { error: 'record' };
       const t0 = samples[0].ts; samples.forEach(s => { s.ts -= t0; });
       return { blob: vcMp4Mux(w, h, avcC, samples) };
@@ -1805,14 +1806,15 @@ function vcSinkRecorder(out) {
   let rec;
   try { rec = new MediaRecorder(new MediaStream([track]), { mimeType: mime, videoBitsPerSecond: 4e6 }); } catch { return null; }
   rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
-  rec.start(1000);
+  try { rec.start(1000); } catch { try { track.stop(); } catch {} return null; }
   let lastSlot = -1;
   return {
     mime,
+    abort() { try { if (rec.state !== 'inactive') rec.stop(); } catch {} try { track.stop(); } catch {} },
     frame(mediaTime) { const s = Math.round(mediaTime * 30); if (s > lastSlot) { lastSlot = s; if (track.requestFrame) track.requestFrame(); } },
     end() {
       return new Promise(res => {
-        rec.onstop = () => res(chunks.length ? { blob: new Blob(chunks, { type: mime.split(';')[0] }) } : { error: 'record' });
+        rec.onstop = () => { try { track.stop(); } catch {} res(chunks.length ? { blob: new Blob(chunks, { type: mime.split(';')[0] }) } : { error: 'record' }); };
         rec.onerror = () => res({ error: 'record' });
         setTimeout(() => { try { rec.stop(); } catch { res({ error: 'record' }); } }, 150);
       });
@@ -1820,7 +1822,7 @@ function vcSinkRecorder(out) {
   };
 }
 // Returnerer { blob, via } eller { error }. onProgress(0..1).
-function vcNormalizeClip(src, onProgress) {
+function vcNormalizeClip(src, onProgress, registerCancel) {
   return new Promise(resolve => {
     const v = document.createElement('video');
     v.muted = true; v.playsInline = true; v.preload = 'auto';
@@ -1829,10 +1831,19 @@ function vcNormalizeClip(src, onProgress) {
     const finish = r => {
       if (finished) return; finished = true; clearInterval(watchdog);
       try { v.pause(); } catch {}
-      v.removeAttribute('src'); v.load(); resolve(r);
+      if (sink && sink.abort && !(r && r.blob)) { try { sink.abort(); } catch {} }   // frigiv encoder/recorder ved alle fejlgange
+      v.onended = null; v.onerror = null; v.onloadedmetadata = null;
+      v.removeAttribute('src'); try { v.load(); } catch {} resolve(r);
     };
+    if (registerCancel) registerCancel(() => finish({ error: 'cancelled' }));
+    // vagthund fra start (ikke først efter opsætningen): ingen fremdrift i 8 s = opgiv
+    let lastProg = performance.now(), lastCT = -1;
+    watchdog = setInterval(() => {
+      if (v.currentTime !== lastCT) { lastCT = v.currentTime; lastProg = performance.now(); }
+      else if (performance.now() - lastProg > 8000) finish({ error: 'stalled' });
+    }, 1000);
     v.onerror = () => finish({ error: 'decode' });
-    v.onloadedmetadata = async () => {
+    v.onloadedmetadata = async () => { try {
       if (!v.videoWidth || !isFinite(v.duration)) return finish({ error: 'decode' });
       const t = vcNormTarget(v.videoWidth, v.videoHeight);
       const out = document.createElement('canvas'); out.width = t.w; out.height = t.h;
@@ -1847,7 +1858,9 @@ function vcNormalizeClip(src, onProgress) {
         const x = c.getContext('2d', { alpha: false }); x.imageSmoothingQuality = 'high';
         steps.push({ c, x });
       }
+      if (typeof v.requestVideoFrameCallback !== 'function') return finish({ error: 'no-frame-api' });   // ingen jævn frame-levering: brug originalen
       sink = (vcNorm.forceRecorder ? null : await vcSinkWebCodecs(t.w, t.h)) || vcSinkRecorder(out);
+      if (finished) { if (sink && sink.abort) sink.abort(); return; }   // annulleret mens encoderen blev sat op
       if (!sink) return finish({ error: 'no-recorder' });
       const via = sink.mime.startsWith('video/mp4;wc') ? 'webcodecs' : 'mediarecorder';
       let lastMT = -1;
@@ -1864,19 +1877,13 @@ function vcNormalizeClip(src, onProgress) {
         v.requestVideoFrameCallback(frame);
       };
       v.onended = async () => {
-        if (ended) return; ended = true;
-        const r = await sink.end();
+        if (ended || finished) return; ended = true;
+        let r; try { r = await sink.end(); } catch { r = { error: 'record' }; }
         finish(r.blob ? { blob: r.blob, via } : r);
       };
-      // vagthund: i normal fart tager det ca. klippets længde; ingen fremdrift = opgiv
-      let lastProg = performance.now(), lastCT = -1;
-      watchdog = setInterval(() => {
-        if (v.currentTime !== lastCT) { lastCT = v.currentTime; lastProg = performance.now(); }
-        else if (performance.now() - lastProg > 8000) finish({ error: 'stalled' });
-      }, 1000);
       v.requestVideoFrameCallback(frame);
       v.play().catch(() => finish({ error: 'play' }));
-    };
+    } catch { finish({ error: 'setup' }); } };
     v.src = src;
   });
 }
@@ -1893,17 +1900,34 @@ function vcNormFixDuration() {
 // kaldt fra begin(): true = normalisering er sat i gang (begin() kaldes igen bagefter).
 // Kun klip større end ${VC_NORM_MAX_SIDE} px på den lange led normaliseres (alle 4K/1080p-telefonklip);
 // mindre klip går som hidtil direkte videre, uden ventetid og uden ændring.
+// Fallback-advarslen skal overleve begin(): egen linje, ikke den fælles statusbesked.
+function vcNormWarn(txt) {
+  vcNorm.warning = txt || '';
+  let el = document.getElementById('vcNormWarn');
+  if (!el && txt) {
+    el = document.createElement('div'); el.id = 'vcNormWarn'; el.setAttribute('role', 'alert');
+    el.style.cssText = 'position:fixed;left:8px;right:8px;top:8px;z-index:60;padding:8px 12px;border-radius:8px;background:#3b2f10;color:#ffe9a8;font-size:13px;line-height:1.35';
+    el.onclick = () => vcNormWarn('');
+    document.body.appendChild(el);
+  }
+  if (el) { el.textContent = txt || ''; el.hidden = !txt; }
+}
 function vcNormMaybeStart(resumeFn) {
   if (vcNorm.done) return false;
   if (vcNorm.busy) return true;
   if (Math.max(video.videoWidth, video.videoHeight) <= VC_NORM_MAX_SIDE) { vcNorm.done = true; return false; }
   vcNorm.busy = true;
+  const job = ++vcNorm.job;                    // kun det nyeste job må skrive til fælles tilstand
+  const mine = () => vcNorm.job === job;
   const src = video.currentSrc || video.src;
   (async () => {
     const secs = Math.round(video.duration || 0);
-    const msg = p => say(`Gør klippet klar til analysen (${secs} s) ... ${Math.round(p * 100)} %`);
+    const msg = p => { if (mine()) say(`Gør klippet klar til analysen (${secs} s) ... ${Math.round(p * 100)} %`); };
     msg(0);
-    const res = await vcNormalizeClip(src, msg);
+    let res;
+    try { res = await vcNormalizeClip(src, msg, c => { vcNorm.cancel = c; }); } catch { res = { error: 'setup' }; }
+    if (!mine()) return;                       // nyt klip valgt imens: kasser resultatet, rør ikke det nye klips tilstand
+    vcNorm.cancel = null;
     vcNorm.done = true; vcNorm.busy = false;
     if (res.blob) {
       if (curUrl) URL.revokeObjectURL(curUrl);
@@ -1914,10 +1938,12 @@ function vcNormMaybeStart(resumeFn) {
       video.src = curUrl; video.load();   // onloadedmetadata -> begin() igen
     } else {
       vcNorm.error = res.error;
-      say(res.error === 'decode'
-        ? 'Dit kamera-format kan ikke åbnes her. Optag i "Mest kompatibel"/H.264 (iPhone: Indstillinger > Kamera > Formater) og vælg klippet igen.'
-        : 'Klippet kunne ikke gøres klar; bruger originalen (analysen kan være mindre præcis).');
-      setTimeout(() => say(''), 9000);
+      if (res.error === 'decode') {
+        say('Dit kamera-format kan ikke åbnes her. Optag i "Mest kompatibel"/H.264 (iPhone: Indstillinger > Kamera > Formater) og vælg klippet igen.');
+        setTimeout(() => { if (mine()) say(''); }, 9000);
+      } else {
+        vcNormWarn('Klippet kunne ikke gøres klar, så analysen bruger originalen og kan være mindre præcis. Optag gerne i 1080p/30 fps og prøv igen.');
+      }
       resumeFn();
     }
   })();
@@ -1942,6 +1968,8 @@ function loadFile(file, remoteUrl = null) {
   if (setCoachLayer) setCoachLayer(1);                // ny video → ren Lag 1
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
+  if (vcNorm.cancel) { try { vcNorm.cancel(); } catch {} }   // ORDRE 1044 · stop gammelt job
+  vcNorm.job++; vcNorm.cancel = null; vcNormWarn('');
   vcNorm.done = false; vcNorm.busy = false; vcNorm.used = false; vcNorm.error = null;   // ORDRE 1022
   vcTiming = { videoLoadedAt:null, setupClicks:0, trackingStartedAt:null };
   vcPriorSetup = null;
