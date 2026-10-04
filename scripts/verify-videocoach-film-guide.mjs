@@ -33,6 +33,7 @@ const root = join(here, '..')
 
 const htmlBuffer = readFileSync(join(root, 'public', 'videocoach.html'))
 const zoomJsBuffer = readFileSync(join(root, 'public', 'videocoach-zoom.js'))
+const velocityJsBuffer = readFileSync(join(root, 'public', 'videocoach-velocity.js'))
 
 // ORDRE 221 · commit 4 — skrev tidligere direkte over leverance-facit i
 // outputs/film-foer-du-sender/ (fundet i docs/RAPPORT-211.md's "Hvad er
@@ -48,6 +49,8 @@ function startServer() {
     const url = req.url.split('?')[0]
     if (url === '/videocoach.html') { res.writeHead(200, { 'content-type': 'text/html' }); res.end(htmlBuffer); return }
     if (url === '/videocoach-zoom.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(zoomJsBuffer); return }
+
+    if (url === '/videocoach-velocity.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(velocityJsBuffer); return }
     // /icon.svg og /sw.js (favicon, service worker-registrering) er uden
     // betydning for denne test - stubbes så konsol-fejl-tjekket nedenfor kun
     // fanger ÆGTE JS-fejl, ikke støj fra manglende statiske filer i denne

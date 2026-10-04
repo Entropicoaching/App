@@ -10,6 +10,8 @@
 export const VC_VEL_HALF_WINDOW_S = 1 / 24
 export const VC_VEL_MIN_VALID_FRACTION = 0.7
 export const VC_VEL_MIN_SAMPLES = 3
+export const VC_VEL_MOVING_MS = 0.05
+export const VC_VEL_EDGE_FRACTION = 0.3 // udelader kant-frames hvor stangen endnu ikke/ikke laengere loeftes for alvor
 
 function halfWindowFrames(t) {
   const dts = []
@@ -50,10 +52,13 @@ export function repSpeeds({ y, t, valid, cmPerPx, reps }) {
     const v = pointVelocities({ y: y.slice(from, to + 1), t: t.slice(from, to + 1),
       valid: valid.slice(from, to + 1), cmPerPx })
     const vals = v.filter(Number.isFinite)
+    // som appens MCV: middel over de punkter der faktisk bevaeger sig opad (> 0,05 m/s), saa stille kant-frames i vinduet ikke traekker ned
+    const top = Math.max(0, ...vals)
+    const moving = vals.filter(x => x > Math.max(VC_VEL_MOVING_MS, top * VC_VEL_EDGE_FRACTION))
     const inner = Math.max(1, len - 2 * h)
-    if (vals.length < VC_VEL_MIN_SAMPLES || vals.length / inner < VC_VEL_MIN_VALID_FRACTION)
+    if (moving.length < VC_VEL_MIN_SAMPLES || vals.length / inner < VC_VEL_MIN_VALID_FRACTION)
       return { mean: null, peak: null }
-    return { mean: vals.reduce((s, x) => s + x, 0) / vals.length, peak: Math.max(...vals) }
+    return { mean: moving.reduce((s, x) => s + x, 0) / moving.length, peak: Math.max(...moving) }
   })
   return { reps: perRep, lossPct: setVelocityLoss(perRep.map(r => r.mean)) }
 }

@@ -21,6 +21,7 @@ const srv = createServer((req, res) => {
   const u = req.url.split('?')[0]
   if (u === '/videocoach.html') { res.setHeader('content-type', 'text/html'); return res.end(html) }
   if (u === '/videocoach-zoom.js') { res.setHeader('content-type', 'text/javascript'); return res.end(readFileSync(join(root, 'public', 'videocoach-zoom.js'))) }
+  if (u === '/videocoach-velocity.js') { res.setHeader('content-type', 'text/javascript'); return res.end(readFileSync(join(root, 'public', 'videocoach-velocity.js'))) }
   res.statusCode = 404; res.end()
 })
 await new Promise(r => srv.listen(0, '127.0.0.1', r))

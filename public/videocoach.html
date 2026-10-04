@@ -95,6 +95,16 @@
     border-color:var(--accent); }
   .vcMetricCards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
   .vcMetricCards[hidden] { display:none !important; }
+  /* ORDRE 1064: rolig fart-tabel under banen */
+  .vcSpeedTable { grid-column:1 / -1; max-width:420px; margin-top:4px; font:12px 'IBM Plex Mono',monospace; color:var(--text); }
+  .vcSpeedTable[hidden] { display:none !important; }
+  .vcSpeedTable table { width:100%; border-collapse:collapse; }
+  .vcSpeedTable th { color:var(--dim); font:600 8px system-ui,sans-serif; letter-spacing:.08em;
+    text-transform:uppercase; text-align:right; padding:2px 6px; }
+  .vcSpeedTable td { text-align:right; white-space:nowrap; padding:2px 6px; border-top:1px solid rgba(237,234,226,.075); }
+  .vcSpeedTable th:first-child, .vcSpeedTable td:first-child { text-align:left; }
+  .vcSpeedTable tr.sel td { color:var(--accent); }
+  .vcSpeedTable .vcSpeedNote { margin-top:4px; color:var(--dim); font:10px system-ui,sans-serif; }
   .vcMetric { min-width:0; padding:8px; border:1px solid rgba(237,234,226,.075);
     border-radius:10px; background:rgba(237,234,226,.025); }
   .vcMetric small { display:block; color:var(--dim); font-size:7px; letter-spacing:.08em;
@@ -1082,6 +1092,7 @@
     <button id="vcToggleMetrics" class="active" type="button">Metrics</button>
   </div>
   <p id="vcOlderRepsHint" class="vcOlderRepsHint" role="status" hidden>Kræver mindst 2 analyserede reps</p>
+  <div id="vcSpeedTable" class="vcSpeedTable" hidden></div>
 </section>
 <section id="exportPreview" hidden aria-modal="true" role="dialog" aria-label="Exportpreview">
   <div class="vcExportCard">
@@ -1194,6 +1205,7 @@
      lægger funktionerne på window, FØR hovedscriptet nedenfor kører sine
      event-handlere (som først kalder dem ved brugerinput, altså efter load). -->
 <script type="module" src="videocoach-zoom.js"></script>
+<script type="module" src="videocoach-velocity.js"></script>
 <script>
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -1479,6 +1491,7 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
     document.getElementById('vcPhaseLegend').textContent = '';
     document.getElementById('vcRepSelector').textContent = '';
     document.getElementById('vcMetricCards').textContent = '';
+    vcRenderSpeedTable(null);
     return;
   }
   hud.hidden = false;
@@ -1518,6 +1531,7 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   ] : [['Gns. fart','—'],['Løftevej','—'],['Tempo','—']];
   metrics.innerHTML = values.map(([label,value]) =>
     `<div class="vcMetric"><small>${label}</small><b>${value}</b></div>`).join('');
+  vcRenderSpeedTable(path, repIndex);
   if (TRACKER_BENCHMARK) window.__vcCleanRebuildAudit = {
     session:path.analysisSession, raw:{count:path.raw.pts.length,times:path.raw.times.length,
       confidence:path.raw.confidence.length,valid:path.raw.valid.length,
@@ -1539,6 +1553,26 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
     review:{start:trimStart,end:trimEndEff()}, currentRep:repIndex
   };
   vcSyncSystem();
+}
+
+// ORDRE 1064: fart pr. rep og fartstab pr. saet. Laeser kun den allerede beregnede
+// analyse (udglattet bane, valid-flag, rep-vinduer); regnekoden ligger i videocoach-velocity.js.
+function vcRenderSpeedTable(path, selected = -1) {
+  const box = document.getElementById('vcSpeedTable');
+  if (!box) return;
+  const reps = path?.analysis?.reps || [];
+  if (!path?.raw || !cmPerPx || !reps.length || !window.vcVelocity) { box.hidden = true; box.textContent = ''; return; }
+  const res = window.vcVelocity.repSpeeds({
+    y: path.analysis.pts.map(p => p.y), t: path.raw.times, valid: path.raw.valid,
+    cmPerPx, reps: reps.map(r => ({ start: r.start, end: r.end })) });
+  const loss = window.vcVelocity.repLossPct(res.reps.map(r => r.mean));
+  const fmt = (v, d) => Number.isFinite(v) ? v.toFixed(d) : '-';
+  const rows = res.reps.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` +
+    `<td>${fmt(r.mean, 2)}</td><td>${fmt(r.peak, 2)}</td><td>${fmt(loss[i], 0)}</td></tr>`).join('');
+  box.innerHTML = '<table><thead><tr><th>Rep</th><th>m/s gns.</th><th>m/s top</th><th>Tab %</th></tr></thead>' +
+    `<tbody>${rows}</tbody></table>` +
+    (res.lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${res.lossPct.toFixed(0)} % (bedste mod sidste rep)</div>`);
+  box.hidden = false;
 }
 
 function olderRepsAvailable(path) {

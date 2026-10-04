@@ -41,6 +41,7 @@ if (!existsSync(clipPath)) {
 const clipBuffer = readFileSync(clipPath)
 const htmlBuffer = readFileSync(join(root, 'public', 'videocoach.html'))
 const zoomJsBuffer = readFileSync(join(root, 'public', 'videocoach-zoom.js'))
+const velocityJsBuffer = readFileSync(join(root, 'public', 'videocoach-velocity.js'))
 
 const outDir = join(root, 'outputs', 'vis-mig-nu-realtid')
 mkdirSync(outDir, { recursive: true })
@@ -50,6 +51,8 @@ function startServer() {
     const url = req.url.split('?')[0]
     if (url === '/videocoach.html') { res.writeHead(200, { 'content-type': 'text/html' }); res.end(htmlBuffer); return }
     if (url === '/videocoach-zoom.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(zoomJsBuffer); return }
+
+    if (url === '/videocoach-velocity.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(velocityJsBuffer); return }
     if (url === '/clip.mp4') { res.writeHead(200, { 'content-type': 'video/mp4' }); res.end(clipBuffer); return }
     res.writeHead(404); res.end()
   })
