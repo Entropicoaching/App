@@ -74,6 +74,8 @@
     border-radius:16px; background:rgba(18,17,14,.86); backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px); box-shadow:0 18px 48px rgba(0,0,0,.38); }
   #barPathHUD[hidden] { display:none; }
+  /* ORDRE 1092: HUD og fartstabel maa aldrig ligge oven paa velkomstkortet (tomt atlet-trin) */
+  body[data-athlete-state="empty"] #barPathHUD { display:none !important; }
   .vcHudHead { display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .vcHudTitle { color:var(--text); font:600 12px system-ui,sans-serif; letter-spacing:-.01em; }
   .vcHudQuality { color:#78d89a; font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
@@ -1565,13 +1567,18 @@ function vcRenderSpeedTable(path, selected = -1) {
   const res = window.vcVelocity.repSpeeds({
     y: path.analysis.pts.map(p => p.y), t: path.raw.times, valid: path.raw.valid,
     cmPerPx, reps: reps.map(r => ({ start: r.start, end: r.end })) });
-  const loss = window.vcVelocity.repLossPct(res.reps.map(r => r.mean));
+  // ORDRE 1092: gns./top vises fra SAMME tal som HUD'en (analysis.reps[i].mcv/peak); repSpeeds
+  // bestemmer kun, om repen er sikker nok til at vise et tal. Tab regnes paa de viste tal.
+  const shown = res.reps.map((r, i) => Number.isFinite(r.mean) && Number.isFinite(reps[i].mcv)
+    ? { mean: reps[i].mcv, peak: reps[i].peak } : { mean: null, peak: null });
+  const loss = window.vcVelocity.repLossPct(shown.map(r => r.mean));
+  const lossPct = window.vcVelocity.setVelocityLoss(shown.map(r => r.mean));
   const fmt = (v, d) => Number.isFinite(v) ? v.toFixed(d) : '-';
-  const rows = res.reps.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` +
+  const rows = shown.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` +
     `<td>${fmt(r.mean, 2)}</td><td>${fmt(r.peak, 2)}</td><td>${fmt(loss[i], 0)}</td></tr>`).join('');
   box.innerHTML = '<table><thead><tr><th>Rep</th><th>m/s gns.</th><th>m/s top</th><th>Tab %</th></tr></thead>' +
     `<tbody>${rows}</tbody></table>` +
-    (res.lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${res.lossPct.toFixed(0)} % (bedste mod sidste rep)</div>`);
+    (lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${lossPct.toFixed(0)} % (bedste mod sidste rep)</div>`);
   box.hidden = false;
 }
 
