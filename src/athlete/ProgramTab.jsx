@@ -11,6 +11,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { remainingSeconds } from '../restTimer'
 import { parseRepsPrescription } from '../repsPrescription'
+import { fixedRepsEntry } from '../fixedRepsEntry'
 import CountdownRing from './CountdownRing'
 import { s } from '../athleteShared'
 
@@ -679,11 +680,11 @@ export default function ProgramTab({
 
                                     const input = logInputs[key] || { weight: '', note: '', rpe: '', reps: '' }
                                     const plannedRpe = parsePlannedRpe(ex.intensity)
-                                    // Interval ("4-6") eller "frit" ordination → atleten logger de reps der
-                                    // faktisk blev lavet, sæt for sæt. Fast ordination opfører sig som før.
+                                    // Numeric, range and free prescriptions log actual reps per set.
+                                    // Text prescriptions retain their existing display.
                                     const repsPrescription = parseRepsPrescription(ex.reps)
-                                    const repsIsEditable = repsPrescription.type !== 'fixed'
-                                    const repsDefault = repsPrescription.type === 'range' ? String(repsPrescription.min) : ''
+                                    const repsIsEditable = repsPrescription.type !== 'fixed' || fixedRepsEntry(ex.reps) !== null
+                                    const repsDefault = fixedRepsEntry(ex.reps) ?? (repsPrescription.type === 'range' ? String(repsPrescription.min) : '')
                                     const repsValue = input.reps || repsDefault
                                     const repsToLog = repsIsEditable ? repsValue : ex.reps
 

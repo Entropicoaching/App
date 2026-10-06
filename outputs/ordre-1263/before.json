@@ -1,0 +1,1123 @@
+{
+  "label": "before",
+  "method": "390x844, cold context each run, gzip production assets, 150ms latency, 1.6Mbps down/750kbps up, CPU x4; localhost mocks; external requests blocked; click-to-ready includes Playwright actionability and two paint frames",
+  "syntheticClipBytes": 14830,
+  "results": [
+    {
+      "run": 1,
+      "timings": {
+        "login_first": 1284,
+        "home_first": 1683,
+        "program_first": 947,
+        "home_return": 161,
+        "program_return": 293,
+        "feedback_first": 395,
+        "video_first": 1516,
+        "video_upload": 673,
+        "video_return": 1235
+      },
+      "findings": {
+        "nextSetDraftReps": "5",
+        "expectedNextSetDraftReps": "5",
+        "doubleClickRows": 1,
+        "accidentalThirdSet": false,
+        "calendarPrematurelyDone": false,
+        "programPrematurelyDone": false,
+        "horizontalOverflow": false,
+        "exerciseWriteRequests": 2,
+        "unloggedDraftAfterReload": "80",
+        "expectedDraftAfterReload": "91"
+      },
+      "errors": [
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: net::ERR_FAILED"
+      ],
+      "blocked": [
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.googleapis.com/css2"
+      ],
+      "requests": [
+        {
+          "url": "/",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-BKWy3jYD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-nqMpL4T3.css",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242642019",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/auth/v1/token?grant_type=password",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/profiles?select=role&id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/AthleteView-NiKCfQsZ.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ugenoegle-Cz0lROPu.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/videoCoachUpload-B1GBay3j.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/athleteSilentFailLog-Cv3iZoLk.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/athletes?select=*&user_id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=eq.2026-10-05",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=logged_date%2Creadiness_score%2Csleep_hours%2Csore_zones&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=14",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/custom_foods?select=*&order=name.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=date%2Ckcal&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-07&order=date.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=meal%2Ckcal%2Cprotein%2Ccarb%2Cfat%2Cdate&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-05&order=date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/messages?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=30",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/personal_records?select=exercise_name%2Cweight%2Creps%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/warmup_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_plans?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/rpc/get_my_shared_video_analyses_v3",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Crpe_actual%2Clogged_at%2Cset_number%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc&limit=1500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&logged_at=gte.2026-07-13T23%3A24%3A03.715Z&order=logged_at.asc&limit=4000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=0&limit=1000",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ProgramTab-7SyCj8QN.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/CountdownRing-CB_C_JSD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id%2Clogged_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=eq.66666666-6666-4666-8666-666666666666&set_number=eq.1&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id%2Clogged_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=eq.66666666-6666-4666-8666-666666666666&set_number=eq.2&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach.html?mode=athlete&bridge=athlete-v1&v=20260815-product-hardening",
+          "method": "GET"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach-zoom.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/storage/v1/object/videocoach-uploads/33333333-3333-4333-8333-333333333333/bd3171cd-6592-4d76-8f8d-aef09cbe4dc7.mp4",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/video_analyses",
+          "method": "POST"
+        },
+        {
+          "url": "/videocoach.html?mode=athlete&bridge=athlete-v1&v=20260815-product-hardening",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242651642",
+          "method": "GET"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach-zoom.js",
+          "method": "GET"
+        },
+        {
+          "url": "/",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242653325",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-BKWy3jYD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-nqMpL4T3.css",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/AthleteView-NiKCfQsZ.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ugenoegle-Cz0lROPu.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/videoCoachUpload-B1GBay3j.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/athleteSilentFailLog-Cv3iZoLk.js",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242654520",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/profiles?select=role&id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/athletes?select=*&user_id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=eq.2026-10-05",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=logged_date%2Creadiness_score%2Csleep_hours%2Csore_zones&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=14",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/custom_foods?select=*&order=name.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=date%2Ckcal&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-07&order=date.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=meal%2Ckcal%2Cprotein%2Ccarb%2Cfat%2Cdate&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-05&order=date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/messages?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=30",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/personal_records?select=exercise_name%2Cweight%2Creps%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/warmup_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_plans?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/rpc/get_my_shared_video_analyses_v3",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Crpe_actual%2Clogged_at%2Cset_number%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc&limit=1500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&logged_at=gte.2026-07-13T23%3A24%3A15.264Z&order=logged_at.asc&limit=4000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=0&limit=1000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=2&limit=1000",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "timings": {
+        "login_first": 1171,
+        "home_first": 1509,
+        "program_first": 944,
+        "home_return": 148,
+        "program_return": 293,
+        "feedback_first": 403,
+        "video_first": 1439,
+        "video_upload": 639,
+        "video_return": 1203
+      },
+      "findings": {
+        "nextSetDraftReps": "5",
+        "expectedNextSetDraftReps": "5",
+        "doubleClickRows": 1,
+        "accidentalThirdSet": false,
+        "calendarPrematurelyDone": false,
+        "programPrematurelyDone": false,
+        "horizontalOverflow": false,
+        "exerciseWriteRequests": 2,
+        "unloggedDraftAfterReload": "80",
+        "expectedDraftAfterReload": "91"
+      },
+      "errors": [
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: net::ERR_FAILED"
+      ],
+      "blocked": [
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.googleapis.com/css2"
+      ],
+      "requests": [
+        {
+          "url": "/",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-BKWy3jYD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-nqMpL4T3.css",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242656979",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/auth/v1/token?grant_type=password",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/profiles?select=role&id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/AthleteView-NiKCfQsZ.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ugenoegle-Cz0lROPu.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/videoCoachUpload-B1GBay3j.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/athleteSilentFailLog-Cv3iZoLk.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/athletes?select=*&user_id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=eq.2026-10-05",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=logged_date%2Creadiness_score%2Csleep_hours%2Csore_zones&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=14",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/custom_foods?select=*&order=name.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=date%2Ckcal&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-07&order=date.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=meal%2Ckcal%2Cprotein%2Ccarb%2Cfat%2Cdate&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-05&order=date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/messages?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=30",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/personal_records?select=exercise_name%2Cweight%2Creps%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/warmup_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_plans?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/rpc/get_my_shared_video_analyses_v3",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Crpe_actual%2Clogged_at%2Cset_number%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc&limit=1500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&logged_at=gte.2026-07-13T23%3A24%3A18.573Z&order=logged_at.asc&limit=4000",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ProgramTab-7SyCj8QN.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/CountdownRing-CB_C_JSD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=0&limit=1000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id%2Clogged_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=eq.66666666-6666-4666-8666-666666666666&set_number=eq.1&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id%2Clogged_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=eq.66666666-6666-4666-8666-666666666666&set_number=eq.2&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach.html?mode=athlete&bridge=athlete-v1&v=20260815-product-hardening",
+          "method": "GET"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach-zoom.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/storage/v1/object/videocoach-uploads/33333333-3333-4333-8333-333333333333/8d371225-758e-42ca-9343-532e0b3d4dfc.mp4",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/video_analyses",
+          "method": "POST"
+        },
+        {
+          "url": "/videocoach.html?mode=athlete&bridge=athlete-v1&v=20260815-product-hardening",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242666404",
+          "method": "GET"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach-zoom.js",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242667939",
+          "method": "GET"
+        },
+        {
+          "url": "/",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-BKWy3jYD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-nqMpL4T3.css",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/AthleteView-NiKCfQsZ.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ugenoegle-Cz0lROPu.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/videoCoachUpload-B1GBay3j.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/athleteSilentFailLog-Cv3iZoLk.js",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242669138",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/profiles?select=role&id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/athletes?select=*&user_id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=eq.2026-10-05",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=logged_date%2Creadiness_score%2Csleep_hours%2Csore_zones&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=14",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/custom_foods?select=*&order=name.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=date%2Ckcal&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-07&order=date.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=meal%2Ckcal%2Cprotein%2Ccarb%2Cfat%2Cdate&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-05&order=date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/messages?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=30",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/personal_records?select=exercise_name%2Cweight%2Creps%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/warmup_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_plans?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/rpc/get_my_shared_video_analyses_v3",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Crpe_actual%2Clogged_at%2Cset_number%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc&limit=1500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&logged_at=gte.2026-07-13T23%3A24%3A29.873Z&order=logged_at.asc&limit=4000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=0&limit=1000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=2&limit=1000",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "timings": {
+        "login_first": 1152,
+        "home_first": 1509,
+        "program_first": 400,
+        "home_return": 125,
+        "program_return": 298,
+        "feedback_first": 353,
+        "video_first": 1477,
+        "video_upload": 595,
+        "video_return": 1226
+      },
+      "findings": {
+        "nextSetDraftReps": "5",
+        "expectedNextSetDraftReps": "5",
+        "doubleClickRows": 1,
+        "accidentalThirdSet": false,
+        "calendarPrematurelyDone": false,
+        "programPrematurelyDone": false,
+        "horizontalOverflow": false,
+        "exerciseWriteRequests": 2,
+        "unloggedDraftAfterReload": "80",
+        "expectedDraftAfterReload": "91"
+      },
+      "errors": [
+        "Failed to load resource: net::ERR_FAILED",
+        "Failed to load resource: net::ERR_FAILED"
+      ],
+      "blocked": [
+        "https://fonts.googleapis.com/css2",
+        "https://fonts.googleapis.com/css2"
+      ],
+      "requests": [
+        {
+          "url": "/",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-BKWy3jYD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-nqMpL4T3.css",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242671585",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/auth/v1/token?grant_type=password",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/profiles?select=role&id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/AthleteView-NiKCfQsZ.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ugenoegle-Cz0lROPu.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/videoCoachUpload-B1GBay3j.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/athleteSilentFailLog-Cv3iZoLk.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/athletes?select=*&user_id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=eq.2026-10-05",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=logged_date%2Creadiness_score%2Csleep_hours%2Csore_zones&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=14",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/custom_foods?select=*&order=name.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=date%2Ckcal&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-07&order=date.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=meal%2Ckcal%2Cprotein%2Ccarb%2Cfat%2Cdate&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-05&order=date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/messages?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=30",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/personal_records?select=exercise_name%2Cweight%2Creps%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/warmup_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_plans?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/rpc/get_my_shared_video_analyses_v3",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Crpe_actual%2Clogged_at%2Cset_number%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc&limit=1500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&logged_at=gte.2026-07-13T23%3A24%3A33.169Z&order=logged_at.asc&limit=4000",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ProgramTab-7SyCj8QN.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/CountdownRing-CB_C_JSD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=0&limit=1000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id%2Clogged_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=eq.66666666-6666-4666-8666-666666666666&set_number=eq.1&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id%2Clogged_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=eq.66666666-6666-4666-8666-666666666666&set_number=eq.2&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=id",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach.html?mode=athlete&bridge=athlete-v1&v=20260815-product-hardening",
+          "method": "GET"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach-zoom.js",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/storage/v1/object/videocoach-uploads/33333333-3333-4333-8333-333333333333/b346759b-292c-43ee-be68-c7428601c89a.mp4",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/video_analyses",
+          "method": "POST"
+        },
+        {
+          "url": "/videocoach.html?mode=athlete&bridge=athlete-v1&v=20260815-product-hardening",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242680125",
+          "method": "GET"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+          "method": "GET"
+        },
+        {
+          "url": "/videocoach-zoom.js",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242681650",
+          "method": "GET"
+        },
+        {
+          "url": "/",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-BKWy3jYD.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/index-nqMpL4T3.css",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/AthleteView-NiKCfQsZ.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/ugenoegle-Cz0lROPu.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/videoCoachUpload-B1GBay3j.js",
+          "method": "GET"
+        },
+        {
+          "url": "/assets/athleteSilentFailLog-Cv3iZoLk.js",
+          "method": "GET"
+        },
+        {
+          "url": "/version.json?ts=1791242682862",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/profiles?select=role&id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/athletes?select=*&user_id=eq.22222222-2222-4222-8222-222222222222",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=eq.2026-10-05",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=1",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/readiness_logs?select=logged_date%2Creadiness_score%2Csleep_hours%2Csore_zones&athlete_id=eq.33333333-3333-4333-8333-333333333333&logged_date=lt.2026-10-05&order=logged_date.desc&limit=14",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/custom_foods?select=*&order=name.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=date%2Ckcal&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-07&order=date.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=meal%2Ckcal%2Cprotein%2Ccarb%2Cfat%2Cdate&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=gte.2026-09-05&order=date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/messages?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=30",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/personal_records?select=exercise_name%2Cweight%2Creps%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/warmup_templates?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_plans?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/meal_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&date=eq.2026-10-05&order=created_at.asc",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/rpc/get_my_shared_video_analyses_v3",
+          "method": "POST"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&exercise_id=in.%2866666666-6666-4666-8666-666666666666%29",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Crpe_actual%2Clogged_at%2Cset_number%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc&limit=1500",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=weight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&logged_at=gte.2026-07-13T23%3A24%3A43.584Z&order=logged_at.asc&limit=4000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=0&limit=1000",
+          "method": "GET"
+        },
+        {
+          "url": "/mock/rest/v1/exercise_logs?select=exercise_id%2Cweight%2Creps_completed%2Clogged_at%2Cexercises%28name%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&skipped=eq.false&weight=gt.0&order=logged_at.desc%2Cid.desc&offset=2&limit=1000",
+          "method": "GET"
+        }
+      ]
+    }
+  ]
+}

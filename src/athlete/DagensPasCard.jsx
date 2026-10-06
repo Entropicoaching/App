@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { lastHeaviestSet } from '../nextSet'
 import { loadShowNextSetPreview, saveShowNextSetPreview } from '../nextSetPreview'
 import { parseRepsPrescription } from '../repsPrescription'
+import { fixedRepsEntry } from '../fixedRepsEntry'
 import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInputs, autoFillSetInput } from '../setLogDefaults'
 import { s } from '../athleteShared'
 import { parsePlannedRpe } from './ugeHjaelp'
@@ -93,12 +94,12 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
     // ORDRE 456 (A1): uden historik (ikke hentet uden net) vægten fra ugens seneste sæt.
     const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr) || ugensSenesteSaet(exerciseLogs, ex.id)
     const repsPrescription = parseRepsPrescription(ex.reps)
-    const repsIsEditable = repsPrescription.type !== 'fixed'
+    const repsIsEditable = repsPrescription.type !== 'fixed' || fixedRepsEntry(ex.reps) !== null
     const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
     // ORDRE 419 (I1): coachens anbefalede vægt først, så sidste gang, så appens forslag.
     const weightDefault = defaultSetWeight('', { coachWeight: ex.recommended_weight, lastWeight: last?.weight, recommendedWeight: suggestion?.weight })
     const repsDefaultValue = repsIsEditable
-      ? defaultSetReps('', { lastReps: last?.reps, planReps: repsPrescription.type === 'range' ? repsPrescription.min : null })
+      ? (fixedRepsEntry(ex.reps) ?? defaultSetReps('', { lastReps: last?.reps, planReps: repsPrescription.type === 'range' ? repsPrescription.min : null }))
       : ''
     const lastAuto = autoFilledRef.current[key]
     const touched = touchedRef.current.has(key)
@@ -236,8 +237,8 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   const input = logInputs[key] || { weight: '', note: '', rpe: '', reps: '' }
   const plannedRpe = parsePlannedRpe(ex.intensity)
   const repsPrescription = parseRepsPrescription(ex.reps)
-  const repsIsEditable = repsPrescription.type !== 'fixed'
-  const repsDefault = repsPrescription.type === 'range' ? String(repsPrescription.min) : ''
+  const repsIsEditable = repsPrescription.type !== 'fixed' || fixedRepsEntry(ex.reps) !== null
+  const repsDefault = fixedRepsEntry(ex.reps) ?? (repsPrescription.type === 'range' ? String(repsPrescription.min) : '')
   const repsValue = input.reps || repsDefault
   const repsToLog = repsIsEditable ? repsValue : ex.reps
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
@@ -262,7 +263,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // åbent til redigering); ellers én linje, der også bærer "fortryd".
   const priorSetsOpen = showPriorSetsFor === ex.id || editingSet != null
   const undoInline = priorSetNumbers.length > 0 && !priorSetsOpen && lastLoggedSet && lastLoggedSet.exerciseId === ex.id
-  const nextSetReps = repsIsEditable ? (last?.reps ?? (repsPrescription.type === 'range' ? repsPrescription.min : null)) : ex.reps
+  const nextSetReps = fixedRepsEntry(ex.reps) ?? (repsIsEditable ? (last?.reps ?? (repsPrescription.type === 'range' ? repsPrescription.min : null)) : ex.reps)
   const nextSetWeight = ex.recommended_weight ?? suggestion?.weight ?? last?.weight ?? null
 
   return (
