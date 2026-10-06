@@ -40,7 +40,8 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const lastSetTapRef = useRef(-Infinity)
   // ORDRE 1459: forklaringen vises kun, til pausen har kørt én gang.
   const [pauseForklaret, setPauseForklaret] = useState(() => harSetPauseForklaring())
-  useEffect(() => { if (pauseAktiv) { markerPauseForklaring(); setPauseForklaret(true) } }, [pauseAktiv])
+  if (pauseAktiv && !pauseForklaret) setPauseForklaret(true)
+  useEffect(() => { if (pauseAktiv) markerPauseForklaring() }, [pauseAktiv])
   function acceptSetTap() {
     const now = performance.now()
     if (!canAcceptSetTap(lastSetTapRef.current, now)) return false
