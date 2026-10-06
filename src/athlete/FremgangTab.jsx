@@ -14,7 +14,7 @@ import { exerciseSetView } from '../exerciseSetView'
 // vælges og vise "Ingen logninger endnu." — listede den kun logs, ville en
 // tom øvelse aldrig kunne stå i listen overhovedet.
 import { useMemo, useState } from 'react'
-import { bestHeavySetPerDay, erTungtSaet, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
+import { bestHeavySetPerDay, erTungtSaet, grupperOevelsesnavne, hovedloeftFamilie, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
 import { rekordListe, tidligereSaet, ugensSaet, grupperRekorder } from './rekorder'
 
@@ -163,7 +163,7 @@ function HovedRaekke({ h, sidst }) {
             {r.type === 'e1rm' ? `${h.navn} e1RM ${r.e1rm} kg` : `${h.navn} ${kgTal(r.weight)} kg × ${r.reps}`}
           </span>
           <span style={{ display: 'block', fontFamily: mono, fontSize: '0.6rem', color: '#7a7770', marginTop: '0.1rem' }}>
-            {r.type === 'e1rm' ? `bedste sæt: ${kgTal(r.weight)} kg × ${r.reps}` : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
+            {r.type === 'e1rm' ? `nået første gang med ${kgTal(r.weight)} kg × ${r.reps}` : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
           </span>
         </span>
         {flere && (
@@ -213,6 +213,14 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
   // knapperne), og falder kun tilbage til en ulogget øvelse hvis intet er
   // logget endnu overhovedet.
   const foersteValg = useMemo(() => {
+    // Ordre 1475: fanen aabner paa det hovedloeft atleten loggede senest (efter en baenkdag staar baenkkurven,
+    // ikke squat), hvis det har logs; ellers som foer.
+    const senest = (fremgangLogs || []).reduce((b, l) => (l.exercises?.name && (!b || String(l.logged_at) > String(b.logged_at)) ? l : b), null)
+    if (senest && hovedloeftFamilie(senest.exercises.name)) {
+      const k = exerciseSetView(senest.exercises.name).key
+      const navn = alleNavne.find(n => exerciseSetView(n).key === k)
+      if (navn) return navn
+    }
     for (const familie of HOVEDLOEFT_FAMILIER) {
       const navneIFamilie = grupper[familie.key]
       if (navneIFamilie.length === 0) continue
@@ -226,7 +234,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
       if (navn) return navn
     }
     return andreSorteret[0] || null
-  }, [grupper, andreSorteret, navneMedLogs])
+  }, [grupper, andreSorteret, navneMedLogs, fremgangLogs, alleNavne])
 
   const [valgtOevelse, setValgtOevelse] = useState(foersteValg)
   // Første valg afhænger af data der ankommer asynkront (fremgangLogs hentes

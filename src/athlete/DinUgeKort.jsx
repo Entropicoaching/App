@@ -4,7 +4,7 @@
 // andet nyt.
 import { useState } from 'react'
 import { s } from '../athleteShared'
-import { tonnageTekst, erUgeLinjeSendt, markerUgeLinjeSendt } from './dinUge'
+import { tonnageTekst, tonnageForklaring, erUgeLinjeSendt, markerUgeLinjeSendt } from './dinUge'
 
 const mono = "'IBM Plex Mono', monospace"
 const kg = (n) => String(n).replace('.', ',')
@@ -47,6 +47,7 @@ function DinUgeKort({ uge, athleteId, weekId, sendUgeLinje }) {
         <Tal label="Tonnage" vaerdi={tonnageTekst(uge.tonnage).replace(/ kg$/, '')} enhed="kg" />
         <Tal label="Rekorder" vaerdi={rekorder ? String(rekorder.length) : '–'} />
       </div>
+      <div data-din-uge-forklaring style={{ fontFamily: mono, fontSize: '0.6rem', color: '#a8a498', lineHeight: 1.5, margin: '-0.4rem 0 1rem' }}>{tonnageForklaring(uge.sprunget)}</div>
 
       {rekorder && rekorder.length > 0 && (
         <div data-din-uge-rekorder={rekorder.length} style={{ marginBottom: '1rem' }}>

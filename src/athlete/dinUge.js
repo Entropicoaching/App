@@ -20,6 +20,7 @@ export function dinUge({ week, allWeeks, exerciseLogs, fremgangLogs, rekordGrund
     const exIds = new Set(s.exercises.map(e => e.id))
     return gennemfoert.some(l => exIds.has(l.exercise_id))
   }).length
+  const sprunget = ugensLogs.length - gennemfoert.length
   const tonnage = Math.round(gennemfoert.reduce((sum, l) => sum + (Number(l.weight) || 0) * (Number(l.reps_completed) || 0), 0))
 
   // Ugens rekorder: samme regel som fejringen (rekorder.js). Kendes historikken
@@ -36,7 +37,12 @@ export function dinUge({ week, allWeeks, exerciseLogs, fremgangLogs, rekordGrund
   const frisk = new Map((allWeeks || []).flatMap(w => w.sessions || []).map(s => [s.id, s]))
   const vurderinger = sessioner.map(s => ({ id: s.id, titel: s.title || 'Pas', rating: frisk.get(s.id)?.athlete_rating ?? s.athlete_rating ?? null }))
 
-  return { ugeNr: week.week_number ?? null, pasKlaret, pasIalt: sessioner.length, tonnage, rekorder, vurderinger }
+  return { ugeNr: week.week_number ?? null, pasKlaret, pasIalt: sessioner.length, tonnage, sprunget, rekorder, vurderinger }
+}
+
+// Ordre 1475: tonnagen skal kunne forklares uden at atleten regner efter.
+export function tonnageForklaring(sprunget = 0) {
+  return `Tonnage = vægt × reps, lagt sammen for hvert gennemført sæt.${sprunget > 0 ? ` ${sprunget === 1 ? '1 sprunget sæt' : `${sprunget} sprungne sæt`} tæller ikke med.` : ''}`
 }
 
 export function tonnageTekst(kg) {

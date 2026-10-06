@@ -1,7 +1,7 @@
 // ORDRE 439 · blok 2: "din uge" (dinUge.js). node --test src/athlete/dinUge.test.js
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { dinUge, tonnageTekst, ugeBesked, erUgeLinjeSendt, markerUgeLinjeSendt } from './dinUge.js'
+import { dinUge, tonnageForklaring, tonnageTekst, ugeBesked, erUgeLinjeSendt, markerUgeLinjeSendt } from './dinUge.js'
 
 const week = {
   id: 'u4', week_number: 4, sessions: [
@@ -61,4 +61,12 @@ test('"sendt" huskes pr. atlet og uge, og en utilgængelig storage vælter intet
   const kaster = { getItem() { throw new Error('nej') }, setItem() { throw new Error('nej') } }
   assert.equal(erUgeLinjeSendt('a1', 'u4', kaster), false)
   markerUgeLinjeSendt('a1', 'u4', kaster)
+})
+
+test('ordre 1475: sprungne saet taelles og forklares, tonnagen taeller dem ikke', () => {
+  const u = dinUge({ week, allWeeks: [week], exerciseLogs: [log('sq', 1, 100, 5), log('sq', 2, 0, 0, true), log('bp', 1, 80, 8)], fremgangLogs: [] })
+  assert.equal(u.sprunget, 1)
+  assert.equal(u.tonnage, 100 * 5 + 80 * 8)
+  assert.match(tonnageForklaring(u.sprunget), /vægt × reps.*1 sprunget sæt tæller ikke med/)
+  assert.equal(tonnageForklaring(0), 'Tonnage = vægt × reps, lagt sammen for hvert gennemført sæt.')
 })

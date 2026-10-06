@@ -9,7 +9,7 @@
 // visning (hub-linje, Log, Staevne) viser samme tal og navne.
 // `node e2e/fremgang-1451.spec.mjs` (efter) / `FREMGANG_FOER=1 ...` (kun skaermbilleder fra gammel kode).
 import assert from 'node:assert/strict'
-import { join } from 'node:path'
+import { join, basename } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { ATHLETE_USER, COACH_USER, ATHLETE_ID, buildSeed } from './fixtures.mjs'
 
@@ -223,4 +223,4 @@ async function main() {
   } catch (err) { console.error('\nFEJL:', err.message); process.exitCode = 1 }
   finally { await browser.close(); await mock.close(); await vite.stop() }
 }
-main()
+if (process.argv[1] && import.meta.url.endsWith('/' + basename(process.argv[1]))) main()

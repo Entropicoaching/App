@@ -145,3 +145,11 @@ test('en rettelse vinder over den genererede kortlægning', () => {
   assert.equal(satAfMarc, true)
   assert.deepEqual(grupper, [{ gruppe: 'triceps', andel: MEDVIRKENDE }])
 })
+
+test('ordre 1475: Front squat og Militærpres er kendt (samme kort som Frontbøjning og Skulderpres)', () => {
+  const fs = slaaOevelseOp('Front squat'), fb = slaaOevelseOp('Frontbøjning')
+  assert.equal(fs.kendt, true); assert.deepEqual(fs.grupper, fb.grupper)
+  const mp = slaaOevelseOp('Militærpres'), sp = slaaOevelseOp('Skulderpres')
+  assert.equal(mp.kendt, true); assert.deepEqual(mp.grupper, sp.grupper)
+  assert.ok(mp.grupper.some(g => g.gruppe === 'anteriorDeltoid'))
+})

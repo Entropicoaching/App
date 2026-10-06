@@ -232,6 +232,11 @@ const RAA_KORT = {
   },
 }
 
+// Ordre 1475 (uge-gennemgang): de to navne atleterne faktisk skriver. Samme kortlaegning som
+// 'Frontbøjning' og 'Skulderpres', ellers staar "Forreste skulder 0" efter en uge med militaerpres.
+RAA_KORT['Front squat'] = RAA_KORT['Frontbøjning']
+RAA_KORT['Militærpres'] = RAA_KORT['Skulderpres']
+
 /** Fold+afkort samme vej som exerciseNames.js, så "Bænkpres - topsæt" og
  * "Baenkpres" rammer samme post som "Bænkpres". Eksporteret (ordre 185,
  * commit 3) så src/volume/rettelser.js kan nøgle sine gemte rettelser på
