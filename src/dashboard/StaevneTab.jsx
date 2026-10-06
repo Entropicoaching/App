@@ -139,7 +139,7 @@ export default function StaevneTab({
                           <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', color: '#edeae2', fontWeight: 300 }}>{exerciseSetView(pr.exercise_name).name}</span>
                           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', color: '#c8923a' }}>{pr.weight} kg</span>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{pr.logged_at.slice(0, 10)}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', color: '#a8a498', letterSpacing: '0.06em' }}>{pr.logged_at.slice(0, 10)}</span>
                           </div>
                         </div>
                       ))}

@@ -97,7 +97,7 @@ function Ramme({
         <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
           {backBtn}
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844' }}>{today()}</div>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#a8a498' }}>{today()}</div>
           {/* BUG (ORDRE 20): denne konto-menu fandtes slet ikke før — en atlet
               (eller en coach der ved en fejl var havnet her) havde ingen vej ud
               af appen uden at rydde browser-data manuelt. Log ud skal ALTID
@@ -109,7 +109,7 @@ function Ramme({
               <button
                 onClick={() => setAccountMenuOpen(o => !o)}
                 aria-label="Konto"
-                style={{ background: 'transparent', border: 'none', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', cursor: 'pointer', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ background: 'transparent', border: 'none', color: '#a8a498', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', cursor: 'pointer', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >⋯</button>
               {accountMenuOpen && (
                 <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '0.4rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.1)', borderRadius: 6, padding: '0.35rem', minWidth: '190px', zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>

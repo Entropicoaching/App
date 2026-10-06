@@ -105,7 +105,7 @@ function FremgangGraf({ punkter, valgt, onVaelg }) {
       </text>
       <text x={x(punkter.length - 1)} y={ly} textAnchor="end" fill="#edeae2" fontFamily={mono}>
         <tspan fontSize="15">{sidste.e1rm} kg</tspan>
-        <tspan fontSize="12" fill="#a8a498"> {sidste.weight}×{sidste.reps}</tspan>
+        <tspan fontSize="14" fill="#a8a498"> {sidste.weight}×{sidste.reps}</tspan>
       </text>
       <text x={PL} y={H - 6} textAnchor="start" fontSize="13" fill="#a8a498" fontFamily={mono}>{kortDato(forste.dag)}</text>
       <text x={W - PR} y={H - 6} textAnchor="end" fontSize="13" fill="#a8a498" fontFamily={mono}>{kortDato(sidste.dag)}</text>
@@ -168,7 +168,7 @@ function HovedRaekke({ h, sidst }) {
         </span>
         {flere && (
           <button type="button" data-rekord-historik-knap={h.key} aria-expanded={aaben} onClick={() => setAaben(v => !v)}
-            style={{ background: 'none', border: '1px solid rgba(237,234,226,0.15)', color: '#a8a59c', fontFamily: mono, fontSize: '0.58rem', padding: '0.3rem 0.5rem', cursor: 'pointer', minHeight: 32 }}>
+            style={{ background: 'none', border: '1px solid rgba(237,234,226,0.15)', color: '#a8a59c', fontFamily: mono, fontSize: '0.66rem', padding: '0.3rem 0.5rem', cursor: 'pointer', minHeight: 32 }}>
             {aaben ? 'Skjul' : `Historik (${h.historik.length})`}
           </button>
         )}
@@ -284,7 +284,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                 const hovednavn = hovednavnForFamilie(familie, navnEnFamilie)
                 const aktiv = navnEnFamilie.includes(oevelse)
                 return (
-                  <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={{ ...(aktiv ? s.btnPrimary : s.btnGhost), minHeight: '44px' }}>
+                  <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={{ ...(aktiv ? s.btnPrimary : { ...s.btnGhost, color: '#c4c0b4' }), fontSize: '0.68rem', minHeight: '44px' }}>
                     {familie.label}
                   </button>
                 )
@@ -332,7 +332,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
 
       {rekorder && (
         <div style={s.card}>
-          <div style={s.cardLabel}>Dine rekorder</div>
+          <div style={{ ...s.cardLabel, fontSize: '0.66rem' }}>Dine rekorder</div>
           <RekordListe rekorder={rekorder} />
           <div style={{ fontSize: '0.66rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
             Rekorder tæller kun tunge sæt (højst 8 reps, ikke backoff, teknik eller volumen).

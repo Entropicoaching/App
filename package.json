@@ -19,6 +19,7 @@
     "e2e:traening-1446": "node e2e/traening-1446.spec.mjs",
     "e2e:fremgang-1451": "node e2e/fremgang-1451.spec.mjs",
     "e2e:uge-1475": "node e2e/uge-gennemgang-1475.spec.mjs",
+    "e2e:sumo-1485": "node e2e/sumo-1485.spec.mjs",
     "e2e:taelling-1451": "node e2e/taelling-1451.spec.mjs",
     "e2e:film-et-saet": "node e2e/athlete-film-et-saet.mjs",
     "e2e:coach-ser-maaling": "node e2e/coach-ser-maaling.mjs",

@@ -692,14 +692,14 @@ function HjemTab({
               <div style={s.card}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
                   <div style={{ ...s.cardLabel, marginBottom: 0 }}>Styrkeudvikling</div>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#a8a498', letterSpacing: '0.06em', textTransform: 'uppercase' }}>bedste e1RM pr. uge, kg</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', color: '#a8a498', letterSpacing: '0.06em', textTransform: 'uppercase' }}>bedste e1RM pr. uge, kg</span>
                 </div>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#a8a498', lineHeight: 1.5, marginBottom: '0.5rem' }}>
                   e1RM er et regnestykke ud fra din vægt og dine reps, der viser hvor stærk du cirka er lige nu — ikke et forsøg du faktisk har taget.
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '0.5rem' }}>
                   {liftProgress.filter(sr => sr.points.length >= 2).map(sr => (
-                    <span key={sr.label} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#a8a498' }}>
+                    <span key={sr.label} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#a8a498' }}>
                       <span style={{ width: 10, height: 2, background: sr.color, display: 'inline-block' }} />{sr.label}
                     </span>
                   ))}
