@@ -9,7 +9,7 @@ import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athle
 import { runGuardedRead } from '../athleteReadGuard'
 import { clearReadinessDraft } from '../readinessDraft'
 import { loadRestPause } from '../restPause'
-import { estimatedOneRepMax, erTungtSaet, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
+import { estimatedOneRepMax, erTungtSaet, erDeloadLog, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
 import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery, hentAlleSider } from '../fremgangLogs'
 import { today } from '../athleteShared'
 import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp'
@@ -519,7 +519,7 @@ export function lavLaesninger({
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('exercise_logs')
-        .select('weight, reps_completed, logged_at, exercises(name)')
+        .select('weight, reps_completed, logged_at, exercises(name, sessions(weeks(block_name)))')
         .eq('athlete_id', athleteId)
         .eq('skipped', false)
         .gt('weight', 0)
@@ -545,7 +545,7 @@ export function lavLaesninger({
       const name = (l.exercises?.name || '').toLowerCase()
       const reps = l.reps_completed || 0
       // Ordre 1421: kun tunge saet i hovedloeft-kurven (samme regel som Fremgang).
-      if (name && erTungtSaet(name, reps)) {
+      if (name && !erDeloadLog(l) && erTungtSaet(name, reps)) {
         const e1rm = estimatedOneRepMax(l.weight, reps)
         HOVEDLOEFT_FAMILIER.forEach((lift, i) => {
           if (lift.match(name) && e1rm > (liftByWeek[i][key] || 0)) liftByWeek[i][key] = e1rm

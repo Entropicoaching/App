@@ -56,3 +56,14 @@ test('rekorder bruger samme regel: lette saet og 9+ reps er aldrig rekord', () =
   ])
   assert.deepEqual(liste.map(r => r.dato), ['2026-09-08'])
 })
+
+test('deload-blok: SQL-regexet og erDeloadBlok er ens, og deload-saet tæller ikke', async () => {
+  const { erDeloadBlok, bestHeavySetPerDay } = await import('./exerciseProgress.js')
+  const re = new RegExp(sql.match(/~\* '([^']+)' deload/)[1], 'i')
+  assert.match(sql, /reps between 1 and 8 and not deload/)
+  for (const b of ['Deload', 'deload uge', 'Aflastning', 'Taper', 'Base', 'Peak', 'Stævne', '', null, 'Opbygning 2'])
+    assert.equal(re.test(b ?? ''), erDeloadBlok(b), String(b))
+  const log = (blok, kg) => ({ weight: kg, reps_completed: 3, logged_at: '2026-09-10T10:00:00Z', exercises: { name: 'Bænkpres topsæt', sessions: { weeks: { block_name: blok } } } })
+  assert.equal(bestHeavySetPerDay([log('Deload', 70)]).length, 0)
+  assert.equal(bestHeavySetPerDay([log('Base', 100)]).length, 1)
+})

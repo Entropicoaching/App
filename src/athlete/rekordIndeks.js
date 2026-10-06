@@ -14,6 +14,7 @@
 // Rene funktioner, storage som parameter, enhver fejl sluger sig selv (samme
 // mønster som offlineSnapshot.js).
 import { laegTil, normaliserGrundlag } from './rekorder.js'
+import { erDeloadLog } from '../exerciseProgress.js'
 
 // Nøglens præfiks står i offlineSnapshot.js, som rydder indekset ved log ud
 // (uden at hovedbundtet skal have rekorder.js med).
@@ -107,7 +108,7 @@ export function laegRaekkerTil(indeks, rows, allWeeks, currentWeek) {
   const uger = { ...indeks.uger }
   let til = indeks.til
   for (const r of rows || []) {
-    const saet = { navn: r?.exercises?.name, weight: r?.weight, reps: r?.reps_completed, skipped: !!r?.skipped }
+    const saet = { navn: r?.exercises?.name, weight: r?.weight, reps: r?.reps_completed, skipped: !!r?.skipped, deload: erDeloadLog(r) }
     const u = r?.exercise_id ? kort.get(r.exercise_id) : null
     if (u && idx >= 0 && u.idx === idx) continue
     if (u && idx >= 0 && u.idx > idx) { uger[u.weekId] = laegTil({ ...(uger[u.weekId] || {}) }, saet); continue }

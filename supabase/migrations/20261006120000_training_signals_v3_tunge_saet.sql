@@ -8,6 +8,8 @@
 --  * Ordre 1451: loeft-klassifikationen (CTE "logs") er nu PRAECIS de fire hovedloeft
 --    (SUF-regexet), ikke "navnet indeholder squat/bench/doedloeft". Front squat, pause,
 --    close-grip, RDL m.fl. er varianter og indgaar ikke i stagnation/RPE-drift, som i appen.
+--  * Ordre 1451: sæt fra en uge hvis blok hedder deload/aflast/taper tæller ikke som tungt sæt
+--    (erDeloadBlok i src/exerciseProgress.js), saa en bevidst let uge ikke laeses som fald.
 --  * Alt andet er tegn for tegn v2 (samme funktionsnavn, kolonner, grant).
 --    Dropout, RPE-drift, smerte og PR-detektorerne er uroerte.
 -- Effekt: coachens SQL-signal og profilens stagnationslinje bliver enige;
@@ -103,6 +105,7 @@ begin
   logs as (
     select el.athlete_id aid, el.logged_at::date d, el.weight, el.reps_completed reps,
       el.rpe_planned, el.rpe_actual, lower(coalesce(ex.name,'')) nm, ex.session_id sid,
+      coalesce(wk_b.block_name,'') ~* 'deload|aflast|taper' deload,
       case
         when lower(coalesce(ex.name,'')) ~ ('^(back |competition )?squat' || SUF || '$') then 'Squat'
         when lower(coalesce(ex.name,'')) ~ ('^(bænk(pres)?|baenk(pres)?|bench( press)?)' || SUF || '$') then 'Bænk'
@@ -112,6 +115,8 @@ begin
     from public.exercise_logs el
     join my on my.id = el.athlete_id
     left join public.exercises ex on ex.id = el.exercise_id
+    left join public.sessions se_b on se_b.id = ex.session_id
+    left join public.weeks wk_b on wk_b.id = se_b.week_id
     where not coalesce(el.skipped,false) and el.weight is not null
   ),
 
@@ -136,7 +141,7 @@ begin
   e as (
     select aid, lift, date_trunc('week',d)::date w, weight, reps, rpe_actual, rpe_planned,
       weight*(1+reps/30.0) e1rm
-    from logs where lift is not null and reps between 1 and 8
+    from logs where lift is not null and reps between 1 and 8 and not deload
       and nm !~ 'back[ -]?off|volumen|teknik[ -]?(single|singler|singles|sæt|saet)|sekund(ae|æ)r|\ysek\y|\ysekund\y'
   ),
   ew as (

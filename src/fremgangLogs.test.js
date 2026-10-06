@@ -86,7 +86,7 @@ test('rekordRaekkerQuery (ORDRE 450): kun rækker fra "siden", ellers alt; samme
   }
   rekordRaekkerQuery(lav(), 'atlet-1', '2026-09-01T00:00:00.000Z')
   assert.ok(kald.some(k => k[0] === 'gte' && k[1] === 'logged_at' && k[2] === '2026-09-01T00:00:00.000Z'))
-  assert.ok(kald.some(k => k[0] === 'select' && k[1].includes('exercises(name)') && k[1].includes('exercise_id')))
+  assert.ok(kald.some(k => k[0] === 'select' && k[1].includes('exercises(name') && k[1].includes('exercise_id')))
   assert.ok(kald.some(k => k[0] === 'limit' && k[1] === FREMGANG_LOG_LIMIT))
   kald.length = 0
   rekordRaekkerQuery(lav(), 'atlet-1', null)

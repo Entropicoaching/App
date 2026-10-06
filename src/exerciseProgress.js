@@ -119,6 +119,13 @@ export function erTungtSaet(navn, reps) {
   return !erLetSaetNavn(navn) && r > 0 && r <= MAX_TUNGE_REPS
 }
 
+// Ordre 1451: en deload-uge er med vilje let og maaler ikke styrke. Et sæt fra en uge hvis
+// blokname er deload/aflastning/taper tæller derfor ikke som tungt sæt (samme regel i Fremgang,
+// rekorder, forsidens styrkeudvikling, coachens visning og SQL). Blokken kommer fra
+// log.exercises.sessions.weeks.block_name; mangler den, er sættet ikke deload.
+export const erDeloadBlok = (blokNavn) => /deload|aflast|taper/i.test(String(blokNavn ?? ''))
+export const erDeloadLog = (log) => erDeloadBlok(log?.exercises?.sessions?.weeks?.block_name)
+
 const dagNoegle = (iso) => {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return null
@@ -136,7 +143,7 @@ export function bestHeavySetPerDay(logs) {
   const best = new Map()
   for (const log of logs || []) {
     const weight = Number(log.weight), reps = Number(log.reps_completed)
-    if (log.skipped || !(weight > 0) || !erTungtSaet(log.exercises?.name ?? log.navn, reps)) continue
+    if (log.skipped || !(weight > 0) || erDeloadLog(log) || !erTungtSaet(log.exercises?.name ?? log.navn, reps)) continue
     const dag = dagNoegle(log.logged_at)
     if (!dag) continue
     const val = estimatedOneRepMax(weight, reps)
