@@ -1,0 +1,113 @@
+// Ordre 1429: coachens fremgang med SAMME regler som atletens Fremgang (ordre
+// 1421): eet navn pr. hovedloeft (exerciseSetView), hoejeste e1RM pr. dag, kun
+// fra tunge saet (bestHeavySetPerDay). Hver atlet sammenlignes kun med sig
+// selv (aldrig atlet mod atlet). Rene funktioner, ingen React/Supabase.
+//
+// styrkeLinje() er den ene korte linje oeverst paa atletprofilen: hvad goer
+// atleten staerkere nu (svageste hovedloeft, stagnation, smerte-noter). Hvert
+// tal kan forklares fra loggen; mangler grundlaget, siger linjen det.
+import { exerciseSetView } from './exerciseSetView.js'
+import { bestHeavySetPerDay } from './exerciseProgress.js'
+import { bodyPartOf, mentionsPain } from './coachBriefingRules.js'
+
+const DAG = 24 * 3600 * 1000
+const HOVEDLOEFT = ['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft']
+const VINDUE_DAGE = 28
+const FOER_DAGE = 84
+const STAGNATION_UGER = 3
+const MIN_PUNKTER = 3
+const SMERTE_DAGE = 14
+
+const dagMs = (dag) => Date.parse(`${dag}T12:00:00Z`)
+const rd = (n) => Math.round(n)
+
+function loeftNavn(log) {
+  const v = exerciseSetView(log.exercises?.name ?? log.navn)
+  return HOVEDLOEFT.includes(v.name) ? v.name : null
+}
+
+/**
+ * Pr. hovedloeft: dagskurven (hoejeste e1RM pr. dag fra tunge saet) og tallene
+ * linjen bygger paa. nu = hoejeste e1RM de seneste 28 dage; foer = hoejeste
+ * 28-84 dage tilbage; stagneret = uger siden seneste NYE top (>0,5 % over alt
+ * foer). Loeft uden nok tunge dage faar kun punkterne.
+ */
+export function hovedloeftStatus(logs, today = new Date().toISOString().slice(0, 10)) {
+  const nu = dagMs(today)
+  const perLoeft = new Map()
+  for (const log of logs || []) {
+    const navn = loeftNavn(log)
+    if (!navn) continue
+    if (!perLoeft.has(navn)) perLoeft.set(navn, [])
+    perLoeft.get(navn).push(log)
+  }
+  const ud = []
+  for (const navn of HOVEDLOEFT) {
+    if (!perLoeft.has(navn)) continue
+    const punkter = bestHeavySetPerDay(perLoeft.get(navn)).filter(p => dagMs(p.dag) <= nu)
+    const status = { navn, punkter, nu: null, foer: null, aendring: null, stagneretUger: null, sidsteTop: null }
+    const maks = (fra, til) => {
+      const v = punkter.filter(p => nu - dagMs(p.dag) >= fra * DAG && nu - dagMs(p.dag) < til * DAG).map(p => p.e1rm)
+      return v.length ? Math.max(...v) : null
+    }
+    status.nu = maks(0, VINDUE_DAGE)
+    status.foer = maks(VINDUE_DAGE, FOER_DAGE)
+    if (status.nu != null && status.foer != null) status.aendring = Math.round(((status.nu - status.foer) / status.foer) * 1000) / 10
+    if (punkter.length >= MIN_PUNKTER) {
+      let top = null
+      for (const p of punkter) if (!top || p.e1rm > top.e1rm * 1.005) top = p
+      status.sidsteTop = top
+      status.stagneretUger = Math.floor((nu - dagMs(top.dag)) / (7 * DAG))
+    }
+    ud.push(status)
+  }
+  return ud
+}
+
+/** Smerte-noter: kun kropsdel og dato, kommentaren citeres aldrig. */
+export function smerteNoter(logs, today = new Date().toISOString().slice(0, 10)) {
+  const nu = dagMs(today)
+  const set = new Map()
+  for (const log of logs || []) {
+    const sess = log.exercises?.sessions
+    if (!sess?.athlete_comment || !mentionsPain(sess.athlete_comment)) continue
+    const dag = String(log.logged_at || '').slice(0, 10)
+    if (!dag || nu - dagMs(dag) > SMERTE_DAGE * DAG || dagMs(dag) > nu) continue
+    const nogle = `${sess.id}|${dag}`
+    if (!set.has(nogle)) set.set(nogle, { dag, del: bodyPartOf(sess.athlete_comment), loeft: loeftNavn(log) })
+  }
+  return [...set.values()].sort((a, b) => b.dag.localeCompare(a.dag))
+}
+
+const MAANEDER = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
+const dagTekst = (dag) => `${Number(dag.slice(8, 10))}. ${MAANEDER[Number(dag.slice(5, 7)) - 1]}`
+
+/**
+ * { dele: [{ type, tekst }], tekst } eller null naar der hverken er tunge saet
+ * eller smerte at sige noget om. Raekkefoelge: smerte, stagnation, svageste.
+ */
+export function styrkeLinje(logs, today = new Date().toISOString().slice(0, 10)) {
+  const dele = []
+  const smerte = smerteNoter(logs, today)
+  if (smerte.length) {
+    const s = smerte[0]
+    dele.push({ type: 'smerte', tekst: `Smerte: ${s.del ? `${s.del} nævnt` : 'nævnt'} i pas-kommentar ${dagTekst(s.dag)}${s.loeft ? ` (${s.loeft.toLowerCase()})` : ''}. Ingen stigning, før du har talt med atleten` })
+  }
+  const status = hovedloeftStatus(logs, today)
+  const stagneret = status.filter(s => s.stagneretUger != null && s.stagneretUger >= STAGNATION_UGER)
+    .sort((a, b) => b.stagneretUger - a.stagneretUger)[0]
+  if (stagneret) {
+    dele.push({ type: 'stagnation', tekst: `${stagneret.navn}: ingen ny top i ${stagneret.stagneretUger} uger (e1RM ${rd(stagneret.sidsteTop.e1rm)} kg, ${dagTekst(stagneret.sidsteTop.dag)})` })
+  }
+  const maalbare = status.filter(s => s.aendring != null && s !== stagneret)
+  const svageste = [...maalbare].sort((a, b) => a.aendring - b.aendring)[0]
+  if (svageste && svageste.aendring < 2) {
+    const t = svageste.aendring
+    dele.push({ type: 'svageste', tekst: `Svageste hovedløft: ${svageste.navn} (e1RM ${svageste.foer} → ${svageste.nu} kg, ${t > 0 ? '+' : ''}${String(t).replace('.', ',')} % mod 1-3 mdr. før)` })
+  }
+  if (!dele.length) {
+    const nok = status.some(s => s.aendring != null)
+    dele.push({ type: 'ok', tekst: nok ? 'Alle hovedløft stiger eller holder; ingen smerte-noter' : 'Endnu ikke nok tunge sæt til en styrketendens (kræver tunge sæt både seneste 4 uger og 1-3 mdr. før)' })
+  }
+  return { dele, tekst: dele.map(d => d.tekst).join(' · ') }
+}

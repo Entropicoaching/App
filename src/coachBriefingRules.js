@@ -1,4 +1,5 @@
 import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
+import { erTungtSaet } from './exerciseProgress.js'
 // ORDRE 370 · Coach Briefingens regler som ren JS-funktion.
 //
 // detectSignalsV1 er en tro port af supabase/sql/training-signals-v1.sql
@@ -173,7 +174,7 @@ const BODY_PARTS = [
   [/lænd|ryg|back/i, 'ryggen'], [/skulder|shoulder/i, 'skulderen'], [/albue|elbow/i, 'albuen'],
   [/håndled|haandled|wrist/i, 'håndleddet'], [/ankel|ankle/i, 'anklen'], [/nakke|neck/i, 'nakken'],
 ]
-const bodyPartOf = text => BODY_PARTS.find(([pattern]) => pattern.test(text))?.[1] || null
+export const bodyPartOf = text => BODY_PARTS.find(([pattern]) => pattern.test(text))?.[1] || null
 
 const mostCommon = values => {
   const counts = new Map()
@@ -279,7 +280,8 @@ function detectStagnation({ athlete, weeks = [] }, L) {
   const weekNumber = new Map(weeks.map(week => [mondayOf(toDay(week.start_date)), week.week_number]))
   const byLift = new Map()
   for (const log of L) {
-    if (!log.lift || log.reps < 1 || log.reps > 12) continue
+    // Ordre 1429: kun tunge saet (samme regel som atletens Fremgang), ikke backoff/teknik/volumen.
+    if (!log.lift || !erTungtSaet(log.name, log.reps)) continue
     const perWeek = byLift.get(log.lift) || new Map()
     const week = mondayOf(log.d)
     const entry = perWeek.get(week) || { week, best: 0, top: null, vol: 0 }

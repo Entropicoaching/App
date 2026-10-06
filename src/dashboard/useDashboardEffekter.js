@@ -51,7 +51,7 @@ export function useDashboardEffekter({
   // profilen lukkes (se effekten nedenfor), så et senere genbesøg altid
   // henter friskt.
   useEffect(() => {
-    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
+    if ((activeTab === 'hub' || activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
       if (weeksLogsLoadedForRef.current === selectedAthlete.id) return
       weeksLogsLoadedForRef.current = selectedAthlete.id
       fetchWeeks(selectedAthlete.id)

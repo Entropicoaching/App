@@ -1,4 +1,5 @@
 import { exerciseSetView } from './exerciseSetView.js'
+import { erTungtSaet } from './exerciseProgress.js'
 // ORDRE 456 (A5 i docs/kritik-446): personal_records har dubletter fra før 456
 // (samme øvelse, vægt og reps skrevet 2-3 gange, når næste sæt blev logget,
 // før registreringen var færdig). Rækkerne slettes ikke; visningen viser hver
@@ -30,3 +31,8 @@ export function bedsteRekorder(rows) {
   }
   return [...best.values()]
 }
+
+// Ordre 1429: coachens rekordlister bruger samme regel som atletens Fremgang
+// (ordre 1421): kun tunge saet (ikke backoff/teknik-single/volumen, hoejst 8
+// reps). Filtreres paa det RAA navn, foer normaliserRekorder folder det.
+export const tungeRekorder = (rows) => (rows || []).filter(r => erTungtSaet(r?.exercise_name, r?.reps))

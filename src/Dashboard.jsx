@@ -584,7 +584,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             <ProfilHoved {...{
-              a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
+              a, activeTab, athleteLogs, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
             }} />

@@ -1,15 +1,22 @@
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilens hoved: tilbage/kø-kontekst, aktuel opgave, profilkort, sektions-navigation.
 // Samme navne som props som i Dashboard; linjerne står i et fragment (ingen DOM-ændring).
+import { useMemo } from 'react'
 import { s, initials, formatLastSeen } from '../dashboardShared'
+import { styrkeLinje } from '../coachFremgang'
 import { statusLabels } from './coachKonstanter'
 import { HUB_SECTIONS } from './hubSektioner'
 
 export default function ProfilHoved({
-  a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
+  a, activeTab, athleteLogs = [], isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
   setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
 }) {
+  // Ordre 1429: logs fra en tidligere profil (direkte atletskift i koen) vises aldrig.
+  const styrke = useMemo(() => {
+    const egne = (athleteLogs || []).filter(l => l.athlete_id === a.id)
+    return egne.length ? styrkeLinje(egne) : null
+  }, [athleteLogs, a.id])
   return (
     <>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.75rem' }}>
@@ -44,6 +51,18 @@ export default function ProfilHoved({
                 </div>
                 <div style={{ color: '#d8d4ca', fontSize: '0.72rem', lineHeight: 1.45 }}>{profilePriorityContext.summary}</div>
                 {profilePriorityContext.detail && <div style={{ color: '#7a7770', fontSize: '0.64rem', lineHeight: 1.45, marginTop: '0.22rem' }}>{profilePriorityContext.detail}</div>}
+              </div>
+            )}
+
+            {styrke && (
+              <div data-styrke-linje={styrke.dele.map(d => d.type).join(',')} style={{ ...s.card, marginBottom: '1rem', padding: '0.7rem 0.85rem', borderColor: styrke.dele[0].type === 'smerte' ? '#e0555538' : 'rgba(200,146,58,0.22)' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.3rem' }}>Hvad gør atleten stærkere nu</div>
+                <div style={{ color: '#d8d4ca', fontSize: isMobile ? '0.78rem' : '0.74rem', lineHeight: 1.45 }}>
+                  {styrke.dele.map((d, i) => (
+                    <div key={d.type} style={{ color: d.type === 'smerte' ? '#e05555' : d.type === 'ok' ? '#7a7770' : '#d8d4ca', marginTop: i ? '0.2rem' : 0 }}>{d.tekst}</div>
+                  ))}
+                </div>
+                <div style={{ color: '#4a4844', fontSize: '0.58rem', marginTop: '0.3rem' }}>Kun tunge sæt (højst 8 reps, ikke backoff/teknik/volumen); sammenlignet med atletens egen historik.</div>
               </div>
             )}
 

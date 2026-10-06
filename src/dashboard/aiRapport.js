@@ -1,4 +1,5 @@
 import { exerciseSetView } from '../exerciseSetView.js'
+import { erTungtSaet } from '../exerciseProgress.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // "AI-rapport" på Analyse-fanen: bygger teksten coachen kopierer til en AI
 // (instruktion, nøgletal, e1RM/tonnage-digest, træningslog, PR, parathed,
@@ -249,9 +250,12 @@ export function lavAiRapport({
           const e = epley(Number(set.weight), Number(set.reps))
           const view = exerciseSetView(ex.name)
           const lift = view.key
-          liftLabels[lift] ||= view.name
-          if (!e1rmByCat[lift]) e1rmByCat[lift] = {}
-          if (!(sess.date in e1rmByCat[lift]) || e > e1rmByCat[lift][sess.date]) e1rmByCat[lift][sess.date] = e
+          // Ordre 1429: e1RM kun fra tunge saet (som atletens Fremgang); tonnage taeller alle.
+          if (erTungtSaet(ex.name, Number(set.reps))) {
+            liftLabels[lift] ||= view.name
+            if (!e1rmByCat[lift]) e1rmByCat[lift] = {}
+            if (!(sess.date in e1rmByCat[lift]) || e > e1rmByCat[lift][sess.date]) e1rmByCat[lift][sess.date] = e
+          }
           const wk = isoMon(sess.date)
           weekKeysSet.add(wk)
           if (cat) {
@@ -274,7 +278,7 @@ export function lavAiRapport({
       e1rmLines.push(`  ${pad(lbl, Math.max(10, lbl.length + 2))}${pts.join(' · ')}${trend}`)
     }
     if (e1rmLines.length) {
-      lines.push('── EST. 1RM-UDVIKLING (Epley, bedste sæt pr. dag) ──────')
+      lines.push('── EST. 1RM-UDVIKLING (Epley, højeste pr. dag, kun tunge sæt) ──────')
       lines.push('')
       lines.push(...e1rmLines)
       lines.push('')

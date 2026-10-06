@@ -1,4 +1,5 @@
 import { exerciseSetView } from '../exerciseSetView.js'
+import { erTungtSaet } from '../exerciseProgress.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Log: træningslog pr. uge og øvelsesfilter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -53,6 +54,7 @@ export default function LogTab({
                 if (!grouped[key].exerciseMap[exId]) {
                   grouped[key].exerciseMap[exId] = {
                     name: exerciseSetView(ex?.name).name || '—',
+                    rawName: ex?.name,
                     plannedSets: ex?.sets || 0,
                     plannedReps: ex?.reps || '',
                     intensity: ex?.intensity || '',
@@ -95,7 +97,9 @@ export default function LogTab({
                 const sets = entries.flatMap(e => e.sets).filter(s => !s.skipped && (s.weight || 0) > 0)
                 if (!sets.length) return null
                 const sortedSets = [...sets].sort((a, b) => a.n - b.n)
-                const best = sets.reduce((m, s) => (e1rmOf(s) > m.v ? { v: e1rmOf(s), s } : m), { v: 0, s: null })
+                // Ordre 1429: e1RM kun fra tunge saet (som atletens Fremgang); lette saet vises, men taeller ikke.
+                const tunge = entries.flatMap(e => e.sets.filter(s => !s.skipped && (s.weight || 0) > 0 && erTungtSaet(e.rawName, s.reps)))
+                const best = tunge.reduce((m, s) => (e1rmOf(s) > m.v ? { v: e1rmOf(s), s } : m), { v: 0, s: null })
                 const planText = [entries[0].plannedSets && `${entries[0].plannedSets} sæt`, entries[0].plannedReps && `× ${entries[0].plannedReps}`, entries[0].intensity].filter(Boolean).join(' · ')
                 return { date: sess.date, weekNum: sess.weekNum, sortedSets, e1rm: Math.round(best.v * 10) / 10, planText }
               }).filter(Boolean) : []

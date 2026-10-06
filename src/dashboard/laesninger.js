@@ -10,7 +10,7 @@ import { filterOpenAutomationAlerts } from '../automationAlerts'
 import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
 import { planlagteReps, taellerIKg } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
-import { normaliserRekorder, bedsteRekorder } from '../personalRecords'
+import { normaliserRekorder, bedsteRekorder, tungeRekorder } from '../personalRecords'
 import { danskDag } from '../danskDato'
 
 export function lavLaesninger({
@@ -394,7 +394,7 @@ export function lavLaesninger({
   async function fetchAthleteLogs(athleteId) {
     const { data } = await supabase
       .from('exercise_logs')
-      .select('id, set_number, weight, reps_completed, note, logged_at, rpe_actual, rpe_planned, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
+      .select('id, athlete_id, set_number, weight, reps_completed, note, logged_at, rpe_actual, rpe_planned, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
       .limit(ATHLETE_LOGS_LIMIT)
@@ -456,10 +456,11 @@ export function lavLaesninger({
       .order('logged_at', { ascending: false })
     if (!data) { setAthletePRs([]); setAthletePRHistory([]); return }
     // ORDRE 456 (A5): dubletter fra før 456 vises kun én gang (personalRecords.js).
-    setAthletePRHistory(normaliserRekorder(data))
+    const tunge = tungeRekorder(data)
+    setAthletePRHistory(normaliserRekorder(tunge))
     // Vis den tungeste registrering pr. øvelse som rekord — ikke blot den seneste —
     // så et lavere (fx stævne-)løft aldrig vises som aktuel rekord.
-    setAthletePRs(bedsteRekorder(data))
+    setAthletePRs(bedsteRekorder(tunge))
   }
 
   async function fetchMeetResults(athleteId) {
