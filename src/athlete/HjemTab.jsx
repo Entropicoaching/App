@@ -16,6 +16,8 @@ import DagensPasCard from './DagensPasCard'
 import DinUgeKort from './DinUgeKort'
 import { dinUge } from './dinUge'
 import RestPauseFooter from './RestPauseFooter'
+import { restSecondsForExercise } from '../restBetweenSets'
+import { startRestPause } from '../restPause'
 import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGrafer'
 
 function HjemTab({
@@ -109,6 +111,12 @@ function HjemTab({
                     logInputs={logInputs}
                     setLogInputs={setLogInputs}
                     onLogSet={logDagensPasSet}
+                    pauseAktiv={!!restPause}
+                    onStartPause={role === 'athlete' && athlete?.id ? (ex) => {
+                      const sek = restSecondsForExercise(ex)
+                      startRestPause(athlete.id, sek, ex?.name)
+                      setRestPause({ startedAt: Date.now(), durationSeconds: sek, label: ex?.name || null, aabnPopup: true })
+                    } : null}
                     skipSet={skipSet}
                     suggestNextWeight={suggestNextWeight}
                     onOpenSession={(id) => { setTab('program'); openSession(id) }}

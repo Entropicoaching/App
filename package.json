@@ -30,6 +30,7 @@
     "e2e:coach-automation-alerts": "node e2e/coach-automation-alerts.spec.mjs",
     "e2e:saet-nu": "node e2e/saet-nu.spec.mjs",
     "e2e:hvile-popup": "node e2e/hvile-popup.spec.mjs",
+    "e2e:timer-1459": "node e2e/timer-1459.spec.mjs",
     "e2e:ret-saet": "node e2e/ret-saet.spec.mjs",
     "e2e:coach-briefing-seen": "node e2e/coach-briefing-seen.spec.mjs",
     "e2e:rolig-forside": "node e2e/rolig-forside.spec.mjs",

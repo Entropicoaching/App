@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { remainingSeconds } from '../restTimer'
 import { clearRestPause } from '../restPause'
 import CountdownRing from './CountdownRing'
+import { visTid } from './pauseLinje'
 
 // ORDRE 263 · commit 2 — pausen der starter af sig selv når et sæt logges
 // (se logSet). Samme tidsstempel-baserede mønster som ProgramTab.jsx's
@@ -26,10 +27,10 @@ import CountdownRing from './CountdownRing'
 // opvarmningen. Timerlogikken (liveSeconds ovenfor) er uændret og deles af
 // linjen og pop-up'en — ingen ekstra interval, ingen ny tidskilde.
 // 89 sek. staar som 1:29 (under et minut: 45s), saa atleten ikke regner selv.
-const visTid = (sek) => sek >= 60 ? `${Math.floor(sek / 60)}:${String(sek % 60).padStart(2, '0')}` : `${sek}s`
 
 function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
-  const [open, setOpen] = useState(false)
+  // ORDRE 1459: pausen startet fra linjen paa saet-kortet aabner pop-up'en med det samme.
+  const [open, setOpen] = useState(!!pause.aabnPopup)
   const [liveSeconds, setLiveSeconds] = useState(() => remainingSeconds(pause.durationSeconds, pause.startedAt))
 
   useEffect(() => {
