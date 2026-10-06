@@ -69,7 +69,7 @@ function fremgangLinje(navn, punkter) {
 // Ordre 422: etiketterne står inden for grafen (sidste punkts tal til
 // venstre for punktet, første punkts til højre) og er store nok til at læse
 // i 390 px; før stod de uden for højre kant med 7–8 px og blev skåret af.
-function FremgangGraf({ punkter }) {
+function FremgangGraf({ punkter, valgt, onVaelg }) {
   if (punkter.length < 2) return null
   const W = 400, H = 190, PL = 10, PR = 10, PT = 34, PB = 26
   const vals = punkter.map(p => p.e1rm)
@@ -94,8 +94,11 @@ function FremgangGraf({ punkter }) {
       <line x1={PL} y1={H - PB} x2={W - PR} y2={H - PB} stroke="rgba(237,234,226,0.08)" strokeWidth="1" />
       <polyline points={pts} fill="none" stroke="#c8923a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
       {punkter.map((p, i) => (
-        <circle key={p.dag} cx={x(i)} cy={y(p.e1rm)} r={i === punkter.length - 1 ? 4.5 : 2.5}
-          fill={i === punkter.length - 1 ? '#edeae2' : '#c8923a'} />
+        <g key={p.dag} data-punkt={p.dag} data-e1rm={p.e1rm} onClick={() => onVaelg(i)} style={{ cursor: 'pointer' }}>
+          <circle cx={x(i)} cy={y(p.e1rm)} r="16" fill="transparent" />
+          <circle cx={x(i)} cy={y(p.e1rm)} r={i === valgt ? 5.5 : 2.5}
+            fill={i === valgt ? '#edeae2' : '#c8923a'} stroke={i === valgt ? '#c8923a' : 'none'} strokeWidth="2" />
+        </g>
       ))}
       <text x={x(0)} y={fy} textAnchor="start" fontSize="14" fill="#7a7770" fontFamily={mono}>
         {forste.e1rm} kg
@@ -117,6 +120,8 @@ function kortDato(iso) {
   return Number.isNaN(d.getTime()) ? '' : `${d.getDate()}. ${MDR[d.getMonth()]}`
 }
 const kgTal = (n) => String(n).replace('.', ',')
+// Sættypen er en egenskab ved sættet, ikke et nyt øvelsesnavn: "topsæt", "backoff" eller bare "sæt".
+const saetTypeOrd = (raaNavn) => { const l = exerciseSetView(raaNavn).label; return l === 'Top' ? 'topsæt' : l === 'Backoff' ? 'backoff' : 'sæt' }
 
 // Rekorderne (nyeste først) med dato. Samme regel som fejringen i Dagens pas
 // (rekorder.js); ugens sæt tages fra exerciseLogs, så et sæt logget uden net
@@ -184,6 +189,11 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
     return bestHeavySetPerDay(logsForOevelse)
   }, [fremgangLogs, oevelse])
 
+  // Ordre 1451: tryk på et punkt viser hvilket sæt det er (standard: det nyeste).
+  const [valgtPunkt, setValgtPunkt] = useState(null)
+  const valgtIdx = valgtPunkt && valgtPunkt.oevelse === oevelse && valgtPunkt.idx < punkter.length ? valgtPunkt.idx : punkter.length - 1
+  const valgtSaet = punkter[valgtIdx]
+
   const harLogs = useMemo(() => !!oevelse && (fremgangLogs || []).some(l => exerciseSetView(l.exercises?.name).key === exerciseSetView(oevelse).key), [fremgangLogs, oevelse])
 
   const rekorder = useMemo(() => {
@@ -216,29 +226,11 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                 const aktiv = navnEnFamilie.includes(oevelse)
                 return (
                   <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={{ ...(aktiv ? s.btnPrimary : s.btnGhost), minHeight: '44px' }}>
-                    {navnEnFamilie.length === 1 ? hovednavn : familie.label}
+                    {familie.label}
                   </button>
                 )
               })}
             </div>
-
-            {HOVEDLOEFT_FAMILIER.map(familie => {
-              const navneIFamilie = grupper[familie.key]
-              if (navneIFamilie.length < 2 || !navneIFamilie.includes(oevelse)) return null
-              return (
-                <div key={familie.key} style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
-                  {navneIFamilie.map(navn => (
-                    <button key={navn} onClick={() => setValgtOevelse(navn)}
-                      style={{
-                        ...s.btnGhost, padding: '0.3rem 0.6rem', fontSize: '0.54rem', minHeight: '44px',
-                        color: navn === oevelse ? '#c8923a' : '#7a7770',
-                        borderColor: navn === oevelse ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.13)',
-                      }}
-                    >{navn}</button>
-                  ))}
-                </div>
-              )
-            })}
 
             {andreSorteret.length > 0 && (
               <div style={{ marginBottom: '1rem' }}>
@@ -263,7 +255,12 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                   <div data-fremgang-linje style={{ fontSize: '0.95rem', color: '#edeae2', marginBottom: '0.7rem', lineHeight: 1.35 }}>
                     {fremgangLinje(oevelse, punkter)}
                   </div>
-                  <FremgangGraf punkter={punkter} />
+                  <FremgangGraf punkter={punkter} valgt={valgtIdx} onVaelg={idx => setValgtPunkt({ oevelse, idx })} />
+                  {valgtSaet && (
+                    <div data-punkt-forklaring style={{ fontFamily: mono, fontSize: '0.7rem', color: '#c8b98a', marginTop: '0.5rem', lineHeight: 1.5 }}>
+                      {kortDato(valgtSaet.dag)}: {kgTal(valgtSaet.weight)} kg × {valgtSaet.reps} ({saetTypeOrd(valgtSaet.navn)}) giver e1RM {valgtSaet.e1rm} kg. Tryk på et punkt for at se dets sæt.
+                    </div>
+                  )}
                   <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
                     Ét punkt pr. træningsdag: dagens højeste e1RM (Epley: vægt × (1 + reps/30)), kun fra tunge sæt på højst 8 reps. Backoff, teknik-singler og volumensæt tæller ikke med, så lette sæt aldrig trækker kurven ned.
                   </div>

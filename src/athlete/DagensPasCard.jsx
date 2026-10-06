@@ -260,6 +260,9 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // ORDRE 314 · blok 1 — sæt 1..setNumber-1 på DENNE øvelse er altid logget
   // (nextSetInSession finder det første ULOGGEDE sæt i rækkefølge, så der kan
   // ikke være huller foran "next"). Vises som kompakte linjer, ikke fulde felter.
+  // Ordre 1451: én tælling pr. kort. Er øvelsen delt i flere rækker (top + backoff), står
+  // antallet kun i "Sæt 1/4" øverst; rækken viser reps og intensitet, ikke sin egen "2 sæt".
+  const flereRaekker = (viewRow?.totalSets || 0) > (Number(ex.sets) || 0)
   const priorSetNumbers = Array.from({ length: setNumber - 1 }, (_, i) => i + 1)
   const nextSetNumber = setNumber + 1
   // ORDRE 339 · blok 1 (F3) — klarede sæt foldet ud (tryk, eller et sæt står
@@ -275,7 +278,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       {rateLine}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <div style={s.cardLabel}>Dagens pas</div>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>{view.label !== 'Sæt' && `${view.label} ${setNumber} · `}Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>{view.label !== 'Sæt' && `${view.label} · `}Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}</div>
       </div>
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
@@ -294,7 +297,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
         </div>
       ) : null}
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.85rem' }}>
-        {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}${/^[\d\s\-–]+$/.test(String(ex.reps)) ? ' reps' : ''}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
+        {[ex.sets && !flereRaekker && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}${/^[\d\s\-–]+$/.test(String(ex.reps)) ? ' reps' : ''}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
       </div>
 
       {/* ORDRE 314 · blok 1, rettet i ORDRE 320 · blok 1 — klarede sæt på DENNE

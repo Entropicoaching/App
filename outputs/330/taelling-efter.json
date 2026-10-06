@@ -4,39 +4,53 @@
     "width": 390,
     "height": 844,
     "blocks": 5,
-    "things": 30,
-    "thingsTotal": 30,
+    "things": 32,
+    "thingsTotal": 32,
     "fold": 844,
-    "fullHeight": 892,
+    "fullHeight": 948,
     "scrollWidth": 390,
-    "heading": "Onsdag · Dag 1 — Squat",
+    "heading": "Tirsdag · Dag 1 — Squat",
+    "stripFonts": {
+      "ugedag": 10.4,
+      "status": 9.6
+    },
+    "cellWidth": 48.34375,
     "secondary": 3,
     "prToast": {
-      "top": 61.59375,
-      "bottom": 107.578125,
-      "left": 31.15625,
-      "right": 358.84375
+      "top": 408.15625,
+      "bottom": 439.46875,
+      "left": 38,
+      "right": 352
     },
-    "topbarBottom": 53
+    "topbarBottom": 53,
+    "h1Top": 77,
+    "chipsBottomMidtIPas": 745.15625
   },
   {
     "tag": "360x780",
     "width": 360,
     "height": 780,
-    "blocks": 5,
-    "things": 30,
-    "thingsTotal": 30,
+    "blocks": 4,
+    "things": 31,
+    "thingsTotal": 32,
     "fold": 780,
-    "fullHeight": 892,
+    "fullHeight": 948,
     "scrollWidth": 360,
-    "heading": "Onsdag · Dag 1 — Squat",
+    "heading": "Tirsdag · Dag 1 — Squat",
+    "stripFonts": {
+      "ugedag": 10.4,
+      "status": 9.6
+    },
+    "cellWidth": 44.0625,
     "secondary": 3,
     "prToast": {
-      "top": 61.59375,
-      "bottom": 107.578125,
-      "left": 16.15625,
-      "right": 343.84375
+      "top": 408.15625,
+      "bottom": 454.78125,
+      "left": 38,
+      "right": 322
     },
-    "topbarBottom": 53
+    "topbarBottom": 53,
+    "h1Top": 77,
+    "chipsBottomMidtIPas": 745.15625
   }
 ]

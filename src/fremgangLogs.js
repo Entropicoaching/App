@@ -12,7 +12,7 @@ export function fremgangLogsQuery(client, athleteId, { fra = null, til = null } 
     .from('exercise_logs')
     // ORDRE 439: exercise_id, så ugens egne sæt kan tages fra exerciseLogs
     // i stedet (rekorder.js), uden at et sæt tælles to gange.
-    .select('exercise_id, weight, reps_completed, logged_at, exercises(name)')
+    .select('exercise_id, weight, reps_completed, logged_at, exercises(name, sessions(weeks(block_name)))')
     .eq('athlete_id', athleteId)
     .eq('skipped', false)
     .gt('weight', 0)
@@ -32,7 +32,7 @@ export function fremgangLogsKronologisk(rows) {
 export function rekordRaekkerQuery(client, athleteId, siden = null, { fra = null, til = null } = {}) {
   let q = client
     .from('exercise_logs')
-    .select('exercise_id, weight, reps_completed, logged_at, exercises(name)')
+    .select('exercise_id, weight, reps_completed, logged_at, exercises(name, sessions(weeks(block_name)))')
     .eq('athlete_id', athleteId)
     .eq('skipped', false)
     .gt('weight', 0)

@@ -18,6 +18,7 @@ import {
 } from '../offlineSetQueue'
 import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession'
 import { parsePlannedRpe, logFrontendError } from './ugeHjaelp'
+import { erDeloadBlok } from '../exerciseProgress.js'
 import { bygGrundlag, findRekord, rekordTekst, ugensSaet, ugensOevelsesIds } from './rekorder'
 
 // ORDRE 397 (docs/OFFLINE-PAS.md): uden net forsøges ingen skrivning; den
@@ -57,7 +58,7 @@ export function lavSaetSkrivning({
   function rekordForSaet(exerciseId, key, navn, payload) {
     if (!rekordGrundlagFoer || !ugensOevelsesIds(currentWeek).has(exerciseId)) return null
     const grundlag = bygGrundlag(ugensSaet(exerciseLogs, currentWeek, allWeeks, key), rekordGrundlagFoer)
-    return findRekord(grundlag, { navn, weight: payload.weight, reps: payload.reps_completed })
+    return findRekord(grundlag, { navn, weight: payload.weight, reps: payload.reps_completed, deload: erDeloadBlok(currentWeek?.block_name) })
   }
 
   // Én fejring pr. sæt og værdi: køens senere afsendelse, en genhentning

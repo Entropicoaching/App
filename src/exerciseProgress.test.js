@@ -11,11 +11,15 @@ test('estimatedOneRepMax bruger Epley (vægt × (1 + reps/30))', () => {
 test('hovedloeftFamilie genkender Squat/Bænk/Dødløft, stavemåde- og store/små bogstaver-uafhængigt', () => {
   assert.equal(hovedloeftFamilie('Squat'), 'squat')
   assert.equal(hovedloeftFamilie('squat'), 'squat')
-  assert.equal(hovedloeftFamilie('Frontsquat'), 'squat')
+  assert.equal(hovedloeftFamilie('Frontsquat'), null) // variant, ikke hovedløft (Marcs dom 6. okt V17)
+  assert.equal(hovedloeftFamilie('Bænkpres top set'), 'baenk')
+  assert.equal(hovedloeftFamilie('baenk teknik single'), 'baenk')
+  assert.equal(hovedloeftFamilie('Bench'), 'baenk')
+  assert.equal(hovedloeftFamilie('Sumo dødløft'), 'sumo')
   assert.equal(hovedloeftFamilie('Bænkpres'), 'baenk')
   assert.equal(hovedloeftFamilie('Bench press'), 'baenk')
   assert.equal(hovedloeftFamilie('Dødløft'), 'doedloeft')
-  assert.equal(hovedloeftFamilie('Rumænsk dødløft'), 'doedloeft')
+  assert.equal(hovedloeftFamilie('Rumænsk dødløft'), null)
   assert.equal(hovedloeftFamilie('Deadlift'), 'doedloeft')
 })
 
@@ -31,13 +35,13 @@ test('hovedloeftFamilie giver null for øvelser der ikke er et hovedløft', () =
   assert.equal(hovedloeftFamilie(undefined), null)
 })
 
-test('grupperOevelsesnavne sorterer i de tre familier + andre', () => {
+test('grupperOevelsesnavne: de fire hovedløft + andre (varianter og assistance)', () => {
   const navne = ['Squat', 'Frontsquat', 'Bænkpres', 'Dødløft', 'Bicep curl', 'Leg press']
   const grupper = grupperOevelsesnavne(navne)
-  assert.deepEqual(grupper.squat, ['Squat', 'Frontsquat'])
+  assert.deepEqual(grupper.squat, ['Squat'])
   assert.deepEqual(grupper.baenk, ['Bænkpres'])
   assert.deepEqual(grupper.doedloeft, ['Dødløft'])
-  assert.deepEqual(grupper.andre, ['Bicep curl', 'Leg press'])
+  assert.deepEqual(grupper.andre, ['Frontsquat', 'Bicep curl', 'Leg press'])
 })
 
 test('heaviestSetPerWeek vælger det tungeste sæt pr. kalenderuge, ældste først', () => {

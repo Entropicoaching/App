@@ -80,7 +80,7 @@ async function main() {
     }
     const knapper = await page.evaluate(() => [...document.querySelectorAll('button')].filter(b => !b.closest('nav')).map(b => b.textContent.trim()))
     const linjeTekst = () => page.evaluate(() => document.querySelector('[data-fremgang-linje]')?.textContent ?? null)
-    const punkterAntal = () => page.evaluate(() => document.querySelectorAll('svg circle').length)
+    const punkterAntal = () => page.evaluate(() => document.querySelectorAll('svg [data-punkt]').length)
     const kurveY = () => page.evaluate(() => (document.querySelector('svg polyline')?.getAttribute('points') || '').split(' ').map(p => Number(p.split(',')[1])))
 
     await udover('Bænkpres')
@@ -93,7 +93,7 @@ async function main() {
     for (const n of ['Bænkpres', 'Squat', 'Dødløft']) assert.equal(knapper.filter(t => t === n).length, 1, `${n} skal staa praecis een gang`)
     // Hele siden (rekordlisten inkl.) maa ikke have suffiks-navn; de to forklarende linjer undtaget.
     const side = await page.evaluate(() => [...document.querySelectorAll('div, span, button, option')].filter(e => !e.children.length && !e.closest('nav')).map(e => e.textContent).join('\n'))
-    const udenForklaring = side.split('\n').filter(l => !/tæller ikke med|Rekorder tæller kun/.test(l)).join('\n')
+    const udenForklaring = side.split('\n').filter(l => !/tæller ikke med|Rekorder tæller kun|giver e1RM/.test(l)).join('\n')
     assert.ok(!SUFF.test(udenForklaring), `suffiks-navn paa Fremgang: ${udenForklaring.match(SUFF)?.[0]}`)
 
     // 2) Bænk: kurven. Forventet fra data (tunge saet <= 8 reps, ikke lette navne):

@@ -5,6 +5,11 @@
 --    styrkelinje (src/exerciseProgress.js erTungtSaet + MAX_TUNGE_REPS = 8,
 --    src/exerciseNames.js LET_SAET): hoejst 8 reps, og ikke backoff, volumen,
 --    teknik-single(r)/saet eller sekundaer. Foer: alle saet op til 12 reps.
+--  * Ordre 1451: loeft-klassifikationen (CTE "logs") er nu PRAECIS de fire hovedloeft
+--    (SUF-regexet), ikke "navnet indeholder squat/bench/doedloeft". Front squat, pause,
+--    close-grip, RDL m.fl. er varianter og indgaar ikke i stagnation/RPE-drift, som i appen.
+--  * Ordre 1451: sæt fra en uge hvis blok hedder deload/aflast/taper tæller ikke som tungt sæt
+--    (erDeloadBlok i src/exerciseProgress.js), saa en bevidst let uge ikke laeses som fald.
 --  * Alt andet er tegn for tegn v2 (samme funktionsnavn, kolonner, grant).
 --    Dropout, RPE-drift, smerte og PR-detektorerne er uroerte.
 -- Effekt: coachens SQL-signal og profilens stagnationslinje bliver enige;
@@ -82,6 +87,12 @@ language plpgsql stable security definer
 set search_path to pg_catalog, public as $$
 declare
   NB constant text := 'belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt';
+  -- Ordre 1451: hovedloeft er PRAECIS fire (squat, baenkpres, doedloeft, sumo som doedloeft), som
+  -- mainLiftName()/exerciseSetView i appen. Navnet maa kun have saettype-suffikser efter loeftet
+  -- (topsaet, backoff, volumen, teknik single, primaer, sek, comp, straight, saet N); front squat,
+  -- pause, close-grip, goblet, RDL osv. er varianter og taeller ikke. Testet mod appen i
+  -- src/tungtSaetRegel.test.js (regexene laeses ud af denne fil).
+  SUF constant text := '(\s*[-–:,]?\s*\(?(tops(æ|ae)t|top[ -]?set|back[ -]?off|volumen|teknik[ -]?(singler|singles|single|sæt|saet)|prim(æ|ae)r|sekund(æ|ae)r|sek|comp|competition|straight|sæt\s*\d+|\d+)\)?)*';
   PAIN constant text := 'smert|ondt|skade|stikker|jager|pain|hurt|injur';
   PAIN_NEGATED constant text := '(ingen|uden|ikke noget|ikke)\s+(smert\w*|ondt)|smertefri\w*|no pain';
   MONTHS constant text[] := array['jan.','feb.','mar.','apr.','maj','jun.','jul.','aug.','sep.','okt.','nov.','dec.'];
@@ -94,16 +105,18 @@ begin
   logs as (
     select el.athlete_id aid, el.logged_at::date d, el.weight, el.reps_completed reps,
       el.rpe_planned, el.rpe_actual, lower(coalesce(ex.name,'')) nm, ex.session_id sid,
+      coalesce(wk_b.block_name,'') ~* 'deload|aflast|taper' deload,
       case
-        when lower(coalesce(ex.name,'')) ~ NB then null
-        when lower(coalesce(ex.name,'')) like '%squat%' then 'Squat'
-        when lower(coalesce(ex.name,'')) like '%bænk%' or lower(coalesce(ex.name,'')) like '%bench%' then 'Bænk'
-        when lower(coalesce(ex.name,'')) like '%dødløft%' or lower(coalesce(ex.name,'')) like '%deadlift%'
-          or lower(coalesce(ex.name,'')) ~ '(^|\s)dl(\s|$)' then 'Dødløft'
+        when lower(coalesce(ex.name,'')) ~ ('^(back |competition )?squat' || SUF || '$') then 'Squat'
+        when lower(coalesce(ex.name,'')) ~ ('^(bænk(pres)?|baenk(pres)?|bench( press)?)' || SUF || '$') then 'Bænk'
+        when lower(coalesce(ex.name,'')) ~ ('^(dødløft|doedloeft|deadlift|dl|konventionel dødløft|konventionel doedloeft|conventional deadlift'
+          || '|sumo dødløft|sumo doedloeft|sumo deadlift|dødløft\s*[-–(]?\s*sumo\)?|doedloeft\s*[-–(]?\s*sumo\)?)' || SUF || '$') then 'Dødløft'
       end lift
     from public.exercise_logs el
     join my on my.id = el.athlete_id
     left join public.exercises ex on ex.id = el.exercise_id
+    left join public.sessions se_b on se_b.id = ex.session_id
+    left join public.weeks wk_b on wk_b.id = se_b.week_id
     where not coalesce(el.skipped,false) and el.weight is not null
   ),
 
@@ -128,7 +141,7 @@ begin
   e as (
     select aid, lift, date_trunc('week',d)::date w, weight, reps, rpe_actual, rpe_planned,
       weight*(1+reps/30.0) e1rm
-    from logs where lift is not null and reps between 1 and 8
+    from logs where lift is not null and reps between 1 and 8 and not deload
       and nm !~ 'back[ -]?off|volumen|teknik[ -]?(single|singler|singles|sæt|saet)|sekund(ae|æ)r|\ysek\y|\ysekund\y'
   ),
   ew as (

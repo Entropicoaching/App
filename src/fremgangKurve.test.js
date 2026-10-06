@@ -81,7 +81,7 @@ test('kurven er hoejeste e1RM pr. dag fra tunge saet og falder ikke af lette sae
   assert.deepEqual(k.map(p => p.dag), ['2026-08-31', '2026-09-07', '2026-09-21', '2026-09-28', '2026-10-05'])
   assert.deepEqual(k.map(p => p.e1rm), [110, 113, 112, 119, 118])
   // Hvert tal kan forklares: dagens tungeste e1RM blandt saet <= 8 reps der ikke er lette.
-  assert.deepEqual(k[0], { dag: '2026-08-31', weight: 100, reps: 3, e1rm: 110 })
+  assert.deepEqual(k[0], { dag: '2026-08-31', weight: 100, reps: 3, navn: 'Bænkpres topsæt', e1rm: 110 })
   assert.equal(k[2].weight, 105) // comp 105x2 vinder, ikke backoff 85x6
 })
 

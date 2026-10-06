@@ -1,5 +1,5 @@
 import { exerciseSetView } from '../exerciseSetView.js'
-import { erTungtSaet } from '../exerciseProgress.js'
+import { erTungtSaet, erDeloadBlok } from '../exerciseProgress.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Log: træningslog pr. uge og øvelsesfilter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -49,7 +49,7 @@ export default function LogTab({
                 const date = danskDag(log.logged_at)
                 const sessId = sess?.id || 'unknown'
                 const key = `${date}|${sessId}`
-                if (!grouped[key]) grouped[key] = { date, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, sessionRating: sess?.athlete_rating ?? null, sessionComment: sess?.athlete_comment ?? null, exerciseMap: {} }
+                if (!grouped[key]) grouped[key] = { date, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, blok: sess?.weeks?.block_name, sessionRating: sess?.athlete_rating ?? null, sessionComment: sess?.athlete_comment ?? null, exerciseMap: {} }
                 const exId = log.exercise_id
                 if (!grouped[key].exerciseMap[exId]) {
                   grouped[key].exerciseMap[exId] = {
@@ -98,7 +98,8 @@ export default function LogTab({
                 if (!sets.length) return null
                 const sortedSets = [...sets].sort((a, b) => a.n - b.n)
                 // Ordre 1429: e1RM kun fra tunge saet (som atletens Fremgang); lette saet vises, men taeller ikke.
-                const tunge = entries.flatMap(e => e.sets.filter(s => !s.skipped && (s.weight || 0) > 0 && erTungtSaet(e.rawName, s.reps)))
+                // Ordre 1451: en deload-uge giver intet e1RM (samme regel som Fremgang).
+                const tunge = erDeloadBlok(sess.blok) ? [] : entries.flatMap(e => e.sets.filter(s => !s.skipped && (s.weight || 0) > 0 && erTungtSaet(e.rawName, s.reps)))
                 const best = tunge.reduce((m, s) => (e1rmOf(s) > m.v ? { v: e1rmOf(s), s } : m), { v: 0, s: null })
                 const planText = [entries[0].plannedSets && `${entries[0].plannedSets} sæt`, entries[0].plannedReps && `× ${entries[0].plannedReps}`, entries[0].intensity].filter(Boolean).join(' · ')
                 return { date: sess.date, weekNum: sess.weekNum, sortedSets, e1rm: Math.round(best.v * 10) / 10, planText }
