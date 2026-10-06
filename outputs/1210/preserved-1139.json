@@ -1,0 +1,13 @@
+{
+  "src/dashboard/VideoReviewModal.jsx": "726f71796a0e7e5721d169772798e643d9256e11bb7cb74cf1f9e29801aa62a2",
+  "src/dashboard/AnalysePakkeReview.jsx": "532fdf85dcb75328637bd7ae02b20b8a0ea8c4a9caf746b09fca100f5f1602ef",
+  "src/dashboard/analysePakke.js": "5aafc77fa5247b64965758e3fe81329c72b28cd075a5ee36620ebf46f78ccc79",
+  "src/dashboard/analysePakke.test.js": "b984d21c942f93eb1510588f8cbcce46e6e7f087ac9c0d1c3ad9194fea50ddbb",
+  "scripts/verify-analyse-pakke-review.mjs": "bc8ea2a0058ef531071264879ed79ce1da0f0efd4830935a2149943fc7db0ff3",
+  "scripts/byg-analyse-pakke-fixture.mjs": "557cc193daf59afd1f84a88c86f00bab333612c46a63d1ca672450b87b2f3708",
+  "test/analyse-pakke/index.html": "187f5b8fdddb2a79ce2593843fa4daa3ef6a2f0ecbd49b19c9c75982dd35d843",
+  "test/analyse-pakke/main.jsx": "6eef8d9fea04bcc228f9ad44af093b8d053c4226e337e9ae88394254016eabb6",
+  "test/analyse-pakke/review.jsx": "cc75eddddc854a58b1b35b19d16e14f1acbb2fffd7ecdadbbb9fab78a163aba2",
+  "test/fixtures/analyse-pakke/syntetisk.json": "460403ca2541cf7dc6c0365ccb4eed786af5ddc02e8c3e37cba0dabc7b47671c",
+  "docs/ANALYSE-PAKKE-REVIEW.md": "3cce8aa7d8dc2afd07b9d02ef892150e0632e34afa6dd951efc994fe1056db7e"
+}

@@ -1,0 +1,73 @@
+{
+  "format": "analyse-pakke-v1",
+  "klipId": "syntetisk-d5",
+  "loeft": "squat",
+  "dato": "2026-10-04",
+  "reps": [
+    {
+      "rep": 1,
+      "meanMs": 0.6,
+      "topMs": 0.9,
+      "tabPct": 0
+    },
+    {
+      "rep": 2,
+      "meanMs": null,
+      "topMs": null,
+      "tabPct": null
+    },
+    {
+      "rep": 3,
+      "meanMs": 0.51,
+      "topMs": 0.8,
+      "tabPct": 15
+    }
+  ],
+  "saet": [
+    {
+      "reps": [
+        1,
+        2,
+        3
+      ],
+      "tabPct": 15
+    }
+  ],
+  "fund": [
+    {
+      "type": "sticking",
+      "billede": 90,
+      "tal": {
+        "fartCmS": 12
+      },
+      "sikkerhed": "lav",
+      "linje": "Hypotese: stangen mister fart midt i rep 3."
+    },
+    {
+      "type": "sticking",
+      "billede": 100,
+      "tal": {
+        "fartCmS": 15
+      },
+      "sikkerhed": "middel",
+      "linje": "Hypotese: sammenlign det langsomme område med rep 1."
+    }
+  ],
+  "ikkeRegnet": [
+    "Stangdrift: balancepunktet kendes ikke.",
+    "Hofte og dybde: ingen led i pakken."
+  ],
+  "kvalitet": {
+    "skala": "raa-45cm-skive",
+    "seed": "givet",
+    "billeder": 180,
+    "fps": 30
+  },
+  "kilde": {
+    "bane": "9560c0746313b368",
+    "hastighed": "e007a61809d9154c",
+    "fund": "14c96cf80760d68c",
+    "tracker": "0123456789abcdef"
+  },
+  "forbehold": "Hypoteser til Marc, ikke domme til atleten. Tal er stangens (skivens plan), ikke kroppens. Kun en stangbane: ingen led, muskler eller teknik-dom."
+}

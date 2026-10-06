@@ -1,0 +1,13 @@
+{
+  "width": 1280,
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'http://127.0.0.1:8996/rest/v1/video_analyses?select=session_context%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc&limit=20',\n+   'http://127.0.0.1:8996/rest/v1/video_analyses?select=session_context%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc&limit=20'\n+ ]\n- []\n",
+  "errors": [],
+  "external": [],
+  "checks": [
+    "real-dashboard-entry",
+    "manual-context-starts-empty",
+    "manual-athlete-and-decimal-kg",
+    "explicit-ephemeral-message",
+    "new-file-clears-manual-context"
+  ]
+}
