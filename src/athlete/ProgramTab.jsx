@@ -435,7 +435,7 @@ export default function ProgramTab({
                                 )}
                               </div>
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                                {exerciseViewGroups(session.exercises).length} øvelser · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
+                                {exerciseViewGroups(session.exercises).length} {exerciseViewGroups(session.exercises).length === 1 ? 'øvelse' : 'øvelser'} · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
