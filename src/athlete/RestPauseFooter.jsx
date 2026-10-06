@@ -25,6 +25,9 @@ import CountdownRing from './CountdownRing'
 // uændret og nu en knap; et tryk åbner pop-up'en med samme CountdownRing som
 // opvarmningen. Timerlogikken (liveSeconds ovenfor) er uændret og deles af
 // linjen og pop-up'en — ingen ekstra interval, ingen ny tidskilde.
+// 89 sek. staar som 1:29 (under et minut: 45s), saa atleten ikke regner selv.
+const visTid = (sek) => sek >= 60 ? `${Math.floor(sek / 60)}:${String(sek % 60).padStart(2, '0')}` : `${sek}s`
+
 function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
   const [open, setOpen] = useState(false)
   const [liveSeconds, setLiveSeconds] = useState(() => remainingSeconds(pause.durationSeconds, pause.startedAt))
@@ -61,7 +64,7 @@ function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a', whiteSpace: 'nowrap' }}>
           {done ? 'Pause slut' : 'Pause'}{pause.label ? ` · ${pause.label}` : ''}
         </span>
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', lineHeight: 1, whiteSpace: 'nowrap' }}>{done ? '✓' : `${liveSeconds}s`}</span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', lineHeight: 1, whiteSpace: 'nowrap' }}>{done ? '✓' : visTid(liveSeconds)}</span>
         {nextLabel && (
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
             {nextLabel}
@@ -72,7 +75,7 @@ function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
           type="button"
           aria-label="Skjul pausetimer"
           onClick={clear}
-          style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px', flexShrink: 0 }}
+          style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '44px', minHeight: '44px', flexShrink: 0 }}
         >✕</button>
       </div>
       {open && createPortal(

@@ -1,7 +1,7 @@
 // ORDRE 293 · blok 2 (F3) — første øvelse i Dagens pas skal forudfyldes med
 // "sidste gang" når historikken ankommer, ikke kun med planens tal, og må
 // aldrig overskrive noget atleten selv har gjort. Bhishaks fund: kortet viste
-// "Sidste gang: 95kg × 5" men feltet stod på planens 80/4, fordi effekten kun
+// "Sidste gang: 95 kg × 5" men feltet stod på planens 80/4, fordi effekten kun
 // kørte når øvelse/sæt skiftede, og historikken på første åbning endnu ikke
 // var hentet.
 //
@@ -80,7 +80,7 @@ export async function runDagensPasHistorik(page, { appUrl, outDir }) {
   }
   const releaseAndWaitForHistory = async () => {
     release()
-    await page.getByText('Sidste gang: 95kg × 5', { exact: false }).waitFor({ state: 'visible', timeout: 10000 })
+    await page.getByText('Sidste gang: 95 kg × 5', { exact: false }).waitFor({ state: 'visible', timeout: 10000 })
   }
 
   await page.goto(appUrl)

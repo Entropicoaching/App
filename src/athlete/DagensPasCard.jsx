@@ -187,7 +187,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       ].filter(g => g.sets.length > 0).map(g => (
         <div key={g.why} data-parkerede-saet={g.sets.length} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#c8923a', marginTop: '0.5rem', textAlign: 'center' }}>
           {g.sets.length} sæt kunne ikke sendes, {g.why}. Skriv tallene til din coach:{' '}
-          {g.sets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${p.payload?.weight ?? 0}kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
+          {g.sets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${p.payload?.weight ?? 0} kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
         </div>
       ))}
       {pendingSyncCount > 0 && (
@@ -275,7 +275,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       {rateLine}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <div style={s.cardLabel}>Dagens pas</div>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>{view.label} {setNumber} · Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>{view.label !== 'Sæt' && `${view.label} ${setNumber} · `}Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}</div>
       </div>
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
@@ -283,18 +283,18 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       </div>
       {last && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.04em', marginBottom: '0.3rem' }}>
-          Sidste gang: {last.weight}kg × {last.reps}{last.rpe ? ` @${last.rpe}` : ''}
+          Sidste gang: {last.weight} kg × {last.reps}{last.rpe ? ` @${last.rpe}` : ''}
         </div>
       )}
       {ex.recommended_weight != null ? (
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>Anbefalet: {ex.recommended_weight}kg</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>Anbefalet: {ex.recommended_weight} kg</div>
       ) : suggestion ? (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>
-          Forslag: {suggestion.weight}kg <span style={{ color: '#7a7770' }}>(RPE {suggestion.fromRpe})</span>
+          Forslag: {suggestion.weight} kg <span style={{ color: '#7a7770' }}>(RPE {suggestion.fromRpe})</span>
         </div>
       ) : null}
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.85rem' }}>
-        {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
+        {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}${/^[\d\s\-–]+$/.test(String(ex.reps)) ? ' reps' : ''}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
       </div>
 
       {/* ORDRE 314 · blok 1, rettet i ORDRE 320 · blok 1 — klarede sæt på DENNE
@@ -314,7 +314,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
         return (
           <div data-klarede-saet="kollapset" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.75rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
             <span style={{ flex: 1, minWidth: 0 }}>
-              ✓ {priorSetNumbers.length} sæt klaret{lastPrior && !lastPrior.skipped ? ` · senest ${lastPrior.weight}kg × ${lastPrior.reps_completed}` : ''}
+              ✓ {priorSetNumbers.length} sæt klaret{lastPrior && !lastPrior.skipped ? ` · senest ${lastPrior.weight} kg × ${lastPrior.reps_completed}` : ''}
               {/* ORDRE 397: sæt fra denne øvelse der venter på net. */}
               {(() => {
                 const waiting = priorSetNumbers.filter(n => pendingSyncKeys.includes(`${ex.id}_${n}`)).length
@@ -422,7 +422,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
             return (
               <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
                 <span style={{ textAlign: 'left' }}>
-                  {view.label} {n}: {log.skipped ? 'Sprunget over' : `${log.weight}kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${log.rpe_actual}` : ''}`}
+                  {view.label} {n}: {log.skipped ? 'Sprunget over' : `${log.weight} kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${log.rpe_actual}` : ''}`}
                   {pendingSyncKeys.includes(`${ex.id}_${n}`) && (
                     <>{' '}<span data-venter-paa-net="1" style={{ color: '#c8923a', whiteSpace: 'nowrap' }}>· ☁ sendes når du har net</span></>
                   )}

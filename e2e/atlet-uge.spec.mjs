@@ -159,7 +159,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
 
   // ---- 3) "Sidste gang"-linjen: stadig 100kg × 5 (14 dage tilbage) — ikke
   // forvekslet med de tre sæt der lige blev logget i dag ----
-  await page.getByText('Sidste gang: 100kg × 5', { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
+  await page.getByText('Sidste gang: 100 kg × 5', { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
   await shot('04-sidste-gang')
 
   // ---- 4) Volumen-fanen — samme assertion mod et beregnet tal som atlet.spec.mjs (ordre 259) ----
@@ -237,7 +237,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
   assert.equal(savedRow.source_mode, 'athlete_submission')
   await shot('10-maalingen-gemt')
 
-  console.log(`\nGRØN: en atlets uge, i rækkefølge — Dagens pas (Sæt 1/4) → tre sæt logget (pausetimeren talte ned) → "Sidste gang: 100kg × 5" uændret → Volumen (3/3 Knæ-strækkere) → check-in gemt → Film et sæt (${repCount} rep(s) målt) → målingen gemt (video_analyses-række ${savedRow.id}).`)
+  console.log(`\nGRØN: en atlets uge, i rækkefølge — Dagens pas (Sæt 1/4) → tre sæt logget (pausetimeren talte ned) → "Sidste gang: 100 kg × 5" uændret → Volumen (3/3 Knæ-strækkere) → check-in gemt → Film et sæt (${repCount} rep(s) målt) → målingen gemt (video_analyses-række ${savedRow.id}).`)
 }
 
 async function main() {
