@@ -1,13 +1,13 @@
 {
   "src/dashboard/VideoReviewModal.jsx": "726f71796a0e7e5721d169772798e643d9256e11bb7cb74cf1f9e29801aa62a2",
-  "src/dashboard/AnalysePakkeReview.jsx": "532fdf85dcb75328637bd7ae02b20b8a0ea8c4a9caf746b09fca100f5f1602ef",
-  "src/dashboard/analysePakke.js": "5aafc77fa5247b64965758e3fe81329c72b28cd075a5ee36620ebf46f78ccc79",
-  "src/dashboard/analysePakke.test.js": "b984d21c942f93eb1510588f8cbcce46e6e7f087ac9c0d1c3ad9194fea50ddbb",
-  "scripts/verify-analyse-pakke-review.mjs": "bc8ea2a0058ef531071264879ed79ce1da0f0efd4830935a2149943fc7db0ff3",
-  "scripts/byg-analyse-pakke-fixture.mjs": "557cc193daf59afd1f84a88c86f00bab333612c46a63d1ca672450b87b2f3708",
-  "test/analyse-pakke/index.html": "187f5b8fdddb2a79ce2593843fa4daa3ef6a2f0ecbd49b19c9c75982dd35d843",
-  "test/analyse-pakke/main.jsx": "6eef8d9fea04bcc228f9ad44af093b8d053c4226e337e9ae88394254016eabb6",
-  "test/analyse-pakke/review.jsx": "cc75eddddc854a58b1b35b19d16e14f1acbb2fffd7ecdadbbb9fab78a163aba2",
-  "test/fixtures/analyse-pakke/syntetisk.json": "460403ca2541cf7dc6c0365ccb4eed786af5ddc02e8c3e37cba0dabc7b47671c",
-  "docs/ANALYSE-PAKKE-REVIEW.md": "3cce8aa7d8dc2afd07b9d02ef892150e0632e34afa6dd951efc994fe1056db7e"
+  "src/dashboard/AnalysePakkeReview.jsx": "254df5e32ffd2e8bec2706b0b4499bacd99eddd0ce114c8f250abb7413a205f0",
+  "src/dashboard/analysePakke.js": "444f04bb8be3b44578be9b280fad599f6c620b3dd05b43277f4cf691b012fcd7",
+  "src/dashboard/analysePakke.test.js": "38ea1a9b5e657f40b6c5fab1db47573b5602a29d65b4c77e3856f52f535a5cb6",
+  "scripts/verify-analyse-pakke-review.mjs": "e31ac6648be983e9beb8e9c134083e39e83f50d4a8d80265df3e79c745b2644a",
+  "scripts/byg-analyse-pakke-fixture.mjs": "fae5488b71fe012bf072da83fdef24887458e799d6be67ce4c17b747bd3a396c",
+  "test/analyse-pakke/index.html": "06419e25835ecbba3c3fc932a79b80196503aceeb24d6503c1685783a83de7db",
+  "test/analyse-pakke/main.jsx": "cc3024573a5f554eea60b344dda91dc19abe32b38e233b7b2bc1053b1ac5a747",
+  "test/analyse-pakke/review.jsx": "343c9ef9b06074bc46aa05dfb5de8503f7cf1ae9dc696df10bffe686e6f9df69",
+  "test/fixtures/analyse-pakke/syntetisk.json": "3612799949fe2b7d2655772f7d6e812144cb749344153a21b892a59e2e77d632",
+  "docs/ANALYSE-PAKKE-REVIEW.md": "76be98a7f1f4cee7f9dd1ce2170623357b4296a254a4f9fe6bb4ea7f67d3d516"
 }

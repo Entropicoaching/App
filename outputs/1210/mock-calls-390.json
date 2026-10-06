@@ -71,7 +71,7 @@
   },
   {
     "method": "GET",
-    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T13%3A02%3A52.364Z&order=logged_at.desc",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T16%3A40%3A24.507Z&order=logged_at.desc",
     "body": ""
   },
   {
@@ -281,7 +281,7 @@
   },
   {
     "method": "GET",
-    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T13%3A02%3A54.695Z&order=logged_at.desc",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T16%3A40%3A26.779Z&order=logged_at.desc",
     "body": ""
   },
   {
@@ -341,7 +341,7 @@
   },
   {
     "method": "GET",
-    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T13%3A02%3A54.716Z&order=logged_at.desc",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T16%3A40%3A26.797Z&order=logged_at.desc",
     "body": ""
   },
   {

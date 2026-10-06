@@ -43,7 +43,7 @@ export default function AnalysePakkeReview() {
     setKg('')
   }
   return (
-    <section aria-label="Lokal analyse-pakke" style={{ marginTop: '0.9rem', border: '1px solid rgba(200,146,58,0.2)', background: 'rgba(200,146,58,0.035)', padding: '0.8rem', color: '#b8b4a8', fontSize: '0.75rem', lineHeight: 1.5, overflowWrap: 'anywhere' }}>
+    <section aria-label="Lokal analyse-pakke" style={{ marginTop: '0.9rem', border: '1px solid rgba(200,146,58,0.2)', background: 'rgba(200,146,58,0.035)', padding: '0.8rem', color: '#b8b4a8', fontSize: '0.75rem', lineHeight: 1.5, overflowWrap: 'anywhere', textAlign: 'left' }}>
       <h3 style={{ color: '#edeae2', fontSize: '0.95rem', margin: '0 0 0.4rem' }}>Fart og tab</h3>
       <p style={{ margin: '0 0 0.6rem' }}>Kun lokalt i dette review. Analyse, atlet og kg gemmes eller sendes ikke. Alt forsvinder, når du genindlæser siden, lukker eller skifter review.</p>
       <button type="button" onClick={() => filInput.current?.click()} style={{ minHeight: 44, background: '#141410', border: '1px solid #7a7770', color: '#edeae2', padding: '0.45rem 0.75rem' }}>Hent analyse</button>
