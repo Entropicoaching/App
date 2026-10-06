@@ -321,8 +321,8 @@ export default function ProgramTab({
                             : viewingWeekIdx > activeWeekIdx
                               ? <span style={{ color: '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
                               : <span style={{ color: '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
-                          {viewedRange && <span style={{ color: '#4a4844' }}> · {viewedRange}</span>}
-                          <span style={{ color: '#4a4844' }}> · total {activeWeekIdx + 1}/{totalWeeks}</span>
+                          {viewedRange && <span style={{ color: '#a8a498' }}> · {viewedRange}</span>}
+                          <span style={{ color: '#a8a498' }}> · aktiv uge {activeWeekIdx + 1} af {totalWeeks}</span>
                         </div>
                       </div>
                     )

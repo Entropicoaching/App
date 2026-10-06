@@ -96,7 +96,7 @@ ${await tekst()}`)
       dumps.push(`===== ${dag[i]} FREMGANG =====\n${await tekst()}`)
       await shot(`uge-${i + 1}-${dag[i]}-c-fremgang`)
       if (i === 4) { await page.getByText('Program', { exact: true }).last().click(); await page.waitForTimeout(1200); dumps.push(`===== fre PROGRAM =====
-${await tekst()}`); if (process.env.UGE_ASSERT) assert.doesNotMatch(await tekst(), /1 øvelser/i, '"1 øvelser" i Program-fanen'); await shot('uge-5-fre-e-program') }
+${await tekst()}`); if (process.env.UGE_ASSERT) { const pt = await tekst(); assert.doesNotMatch(pt, /1 øvelser/i, '"1 øvelser" i Program-fanen'); assert.doesNotMatch(pt, /total \d+\/\d+/i, 'uforklaret "total x/y"'); assert.match(pt, /aktiv uge \d+ af \d+/i) } await shot('uge-5-fre-e-program') }
       if (i === 4) { await page.getByText('Volumen', { exact: true }).last().click(); await page.waitForTimeout(1500); dumps.push(`===== fre VOLUMEN =====
 ${await tekst()}`); await shot('uge-5-fre-d-volumen')
         if (process.env.UGE_ASSERT) { const v = await tekst(); assert.doesNotMatch(v, /Forreste skulder\s+0\//, 'militaerpres taeller i forreste skulder'); assert.match(v, /Forreste skulder/); assert.doesNotMatch(v, /6 sæt denne uge er på øvelser/, 'front squat/militaerpres staar som ukortlagt') } }
