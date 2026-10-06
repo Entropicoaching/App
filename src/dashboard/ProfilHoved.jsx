@@ -21,7 +21,6 @@ export default function ProfilHoved({
   const [styrkeLogs, setStyrkeLogs] = useState([])
   useEffect(() => {
     let ignore = false
-    setStyrkeLogs([])
     const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
     supabase.from('exercise_logs')
       .select('athlete_id, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
