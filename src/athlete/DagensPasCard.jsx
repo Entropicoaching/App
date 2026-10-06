@@ -11,6 +11,8 @@ import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInput
 import { s } from '../athleteShared'
 import { parsePlannedRpe } from './ugeHjaelp'
 import { canAcceptSetTap } from './setTapGuard'
+import { restSecondsForExercise } from '../restBetweenSets'
+import { visTid, harSetPauseForklaring, markerPauseForklaring } from './pauseLinje'
 
 // ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
 // samme øvelse (også et sæt, der venter i køen), det kortet viser som
@@ -33,9 +35,12 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession, rekordFejring = null, onVarmOp = null }) {
+function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession, rekordFejring = null, onVarmOp = null }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
   const lastSetTapRef = useRef(-Infinity)
+  // ORDRE 1459: forklaringen vises kun, til pausen har kørt én gang.
+  const [pauseForklaret, setPauseForklaret] = useState(() => harSetPauseForklaring())
+  useEffect(() => { if (pauseAktiv) { markerPauseForklaring(); setPauseForklaret(true) } }, [pauseAktiv])
   function acceptSetTap() {
     const now = performance.now()
     if (!canAcceptSetTap(lastSetTapRef.current, now)) return false
@@ -572,6 +577,22 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           onClick={() => { if (acceptSetTap()) skipSet(ex.id, setNumber, plannedRpe) }}
         >Spring over</button>
       </div>
+      {/* ORDRE 1459 — pausetimeren skal kunne findes FOER foerste sæt er godkendt:
+          én lille linje med pausens længde; et tryk starter den og åbner
+          pop-up'en (samme som efter Godkendt). Første gang står der hvornår
+          pausen ellers starter. Skjult mens en pause allerede kører (så er
+          den synlige linje nederst vejen ind). */}
+      {onStartPause && !pauseAktiv && (
+        <button
+          type="button"
+          data-testid="pause-start-linje"
+          onClick={() => onStartPause(ex)}
+          style={{ display: 'block', width: '100%', minHeight: '44px', boxSizing: 'border-box', background: 'none', border: 'none', padding: '0.3rem 0', marginTop: '0.2rem', cursor: 'pointer', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', lineHeight: 1.5 }}
+        >
+          <span style={{ color: '#c8923a' }}>Pause {visTid(restSecondsForExercise(ex))}</span> · tryk for at starte
+          {!pauseForklaret && <span style={{ display: 'block', fontSize: '0.54rem', color: '#4a4844' }}>Pausen starter også af sig selv, når du godkender et sæt.</span>}
+        </button>
+      )}
       {spoergNulKg && nulKgSpurgt === key && (
         <div data-nul-kg={key} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', marginTop: '0.5rem' }}>
           Vægtfeltet er tomt. Skriv vægten, eller tryk Godkendt igen for at gemme sættet uden vægt (0 kg).
