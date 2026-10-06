@@ -12,6 +12,7 @@ import { useState, useEffect, useRef } from 'react'
 import { remainingSeconds } from '../restTimer'
 import { parseRepsPrescription } from '../repsPrescription'
 import { fixedRepsEntry } from '../fixedRepsEntry'
+import { exerciseViewGroups, exerciseViewRows } from '../exerciseSetView'
 import CountdownRing from './CountdownRing'
 import { s } from '../athleteShared'
 
@@ -432,7 +433,7 @@ export default function ProgramTab({
                                 )}
                               </div>
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                                {(session.exercises || []).length} øvelser · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
+                                {exerciseViewGroups(session.exercises).length} øvelser · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -460,13 +461,13 @@ export default function ProgramTab({
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
 
 
-                            {(session.exercises || []).map((ex, exIdx) => {
+                            {exerciseViewRows(session.exercises).map(({ ex, name, label, startsGroup, endsGroup }, exIdx) => {
                               const isLast = exIdx === session.exercises.length - 1
                               return (
-                                <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast ? 0 : '1.25rem', borderBottom: isLast ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
+                                <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast || !endsGroup ? 0 : '1.25rem', borderBottom: isLast || !endsGroup ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
                                   <div style={{ marginBottom: '0.6rem' }}>
                                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.1rem' }}>
-                                      <div style={{ fontSize: '1.05rem', color: '#edeae2' }}>{ex.name}</div>
+                                      {startsGroup && <div data-exercise-heading={name} style={{ fontSize: '1.05rem', color: '#edeae2' }}>{name}</div>}
                                       {isCurrentWeek && (() => {
                                         const allSetsLogged = Array.from({ length: ex.sets || 0 }, (_, i) => i + 1)
                                           .every(setNum => exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum))
@@ -488,7 +489,7 @@ export default function ProgramTab({
                                           <button
                                             style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
                                             onClick={() => setSkipConfirmEx(ex.id)}
-                                          >Spring øvelse over</button>
+                                          >Spring {label.toLowerCase()} over</button>
                                         )
                                       })()}
                                     </div>
@@ -662,7 +663,7 @@ export default function ProgramTab({
                                     if (!isCurrentWeek) {
                                       return (
                                         <div key={setNum} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>Sæt {setNum}</div>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>{label} {setNum}</div>
                                           {logged?.skipped ? (
                                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844' }}>✕ Sprunget over</span>
                                           ) : logged ? (
@@ -690,7 +691,7 @@ export default function ProgramTab({
 
                                     if (logged?.skipped) return (
                                       <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>Sæt {setNum}</div>
+                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>{label} {setNum}</div>
                                         <span style={{ color: '#4a4844', fontSize: '1rem' }}>✕</span>
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
                                         <button
@@ -704,7 +705,7 @@ export default function ProgramTab({
                                       <div key={setNum} style={{ marginBottom: '0.75rem' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
                                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>
-                                            Sæt {setNum}
+                                            {label} {setNum}
                                           </div>
                                           <input
                                             aria-label={`Vægt, sæt ${setNum}`}

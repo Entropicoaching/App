@@ -1,0 +1,32 @@
+[
+  {
+    "width": 390,
+    "headings": 1,
+    "topWeight": 100,
+    "backoffWeight": 80,
+    "originalIDs": true,
+    "historicalWeights": [
+      100,
+      80,
+      60
+    ],
+    "historicalSkipped": true,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1280,
+    "headings": 1,
+    "topWeight": 100,
+    "backoffWeight": 80,
+    "originalIDs": true,
+    "historicalWeights": [
+      100,
+      80,
+      60
+    ],
+    "historicalSkipped": true,
+    "overflow": false,
+    "errors": []
+  }
+]

@@ -1,3 +1,4 @@
+import { exerciseSetView, exerciseViewGroups, exerciseViewRows } from '../exerciseSetView'
 // "Dagens pas"-kortet paa forsiden (egen tilstand: naeste-saet-visning,
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Skrivefunktionerne kommer stadig ind som props fra AthleteView.
@@ -219,7 +220,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
             </div>
             <div style={{ fontSize: '0.9rem', color: '#edeae2' }}>{up.session.title}</div>
             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.2rem' }}>
-              {(up.session.exercises || []).map(e => e.name).join(' · ')}
+              {exerciseViewGroups(up.session.exercises).map(e => e.name).join(' · ')}
             </div>
           </button>
         ) : (
@@ -247,8 +248,10 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
   // appens forslag kender en vægt. Kropsvægtøvelser (Planke, Pull-ups) spørges ikke.
   const vaegtOevelse = Number(ex.recommended_weight) > 0 || Number(last?.weight) > 0 || !!ugensSenesteSaet(exerciseLogs, ex.id) || Number(suggestion?.weight) > 0
   const spoergNulKg = vaegtOevelse && !(parseFloat(input.weight) > 0)
-  const sessionExercises = session.exercises || []
-  const exIdx = sessionExercises.findIndex(e => e.id === ex.id)
+  const view = exerciseSetView(ex.name)
+  const viewRow = exerciseViewRows(session.exercises).find(row => row.ex.id === ex.id)
+  const sessionExercises = exerciseViewGroups(session.exercises)
+  const exIdx = sessionExercises.findIndex(group => group.rows.some(row => row.ex.id === ex.id))
   const nextExercise = exIdx >= 0 ? sessionExercises[exIdx + 1] || null : null
   const laterCount = exIdx >= 0 ? Math.max(0, sessionExercises.length - exIdx - 2) : 0
   const stepWeightBy = delta => { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } })) }
@@ -272,11 +275,11 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       {rateLine}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <div style={s.cardLabel}>Dagens pas</div>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {setNumber}/{totalSets}</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>{view.label} {setNumber} · Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}</div>
       </div>
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
-        {ex.name}
+        {view.name}
       </div>
       {last && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', letterSpacing: '0.04em', marginBottom: '0.3rem' }}>
@@ -419,7 +422,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
             return (
               <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#7a7770' }}>
                 <span style={{ textAlign: 'left' }}>
-                  Sæt {n}: {log.skipped ? 'Sprunget over' : `${log.weight}kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${log.rpe_actual}` : ''}`}
+                  {view.label} {n}: {log.skipped ? 'Sprunget over' : `${log.weight}kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${log.rpe_actual}` : ''}`}
                   {pendingSyncKeys.includes(`${ex.id}_${n}`) && (
                     <>{' '}<span data-venter-paa-net="1" style={{ color: '#c8923a', whiteSpace: 'nowrap' }}>· ☁ sendes når du har net</span></>
                   )}
@@ -613,7 +616,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       {nextExercise && (
         <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', letterSpacing: '0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           Næste øvelse: <span style={{ color: '#b8b4a8' }}>{nextExercise.name}</span>
-          {[nextExercise.sets && ` · ${nextExercise.sets} sæt`, nextExercise.reps && ` × ${nextExercise.reps}`].filter(Boolean).join('')}
+          {[nextExercise.totalSets && ` · ${nextExercise.totalSets} sæt`, nextExercise.rows.length === 1 && nextExercise.rows[0].ex.reps && ` × ${nextExercise.rows[0].ex.reps}`].filter(Boolean).join('')}
           {laterCount > 0 ? ` (+${laterCount})` : ''}
         </div>
       )}
