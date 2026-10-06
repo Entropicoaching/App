@@ -35,12 +35,13 @@ async function main() {
     await linje.scrollIntoViewIfNeeded()
     await shot('c2-pauselinje-paa-kortet')
     await linje.click()
-    const popup = page.getByTestId('rest-pause-popup')
+    const popup = page.getByTestId('foerste-saet-popup')
     await popup.waitFor({ state: 'visible', timeout: 3000 })
     const popTxt = await popup.innerText()
-    assert.match(popTxt, /Første sæt/); assert.doesNotMatch(popTxt, /Næste:/)
+    assert.match(popTxt, /Første sæt: .+, \d+ reps/); assert.doesNotMatch(popTxt, /Næste:/)
+    assert.equal(await popup.locator('svg').count(), 0, 'ingen taeller foer foerste saet')
     await shot('c3-popup-foer-foerste-saet')
-    await page.getByTestId('rest-pause-close').click()
+    await page.getByTestId('foerste-saet-start').click()
 
     // 2) Log hele passet med kun "Godkendt".
     let antal = 0

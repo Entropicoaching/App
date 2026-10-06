@@ -38,8 +38,8 @@ async function main() {
     await linje.waitFor({ state: 'visible', timeout: 5000 })
     const tekst = await linje.innerText()
     assert.match(tekst, /Pause 1:30/, `linjen skal vise pausens længde: ${tekst}`)
-    assert.match(tekst, /tryk for at starte/i)
-    assert.match(tekst, /starter også af sig selv, når du godkender/i, 'forklaring første gang')
+    assert.match(tekst, /tryk for at se/i, 'foer foerste saet: ingen "start" paa en pause')
+    assert.match(tekst, /starter af sig selv, når du godkender/i, 'forklaring')
     const box = await linje.boundingBox()
     assert.ok(box.height >= 44, `tryk-flade ≥ 44 px, fik ${box.height}`)
     assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'ingen pause kører endnu')
@@ -62,18 +62,50 @@ async function main() {
     console.log('KONTRAST', JSON.stringify(kontraster))
     for (const k of kontraster) assert.ok(k.ratio >= 4.5, `kontrast under 4.5:1 paa "${k.tekst}": ${k.ratio}`)
     assert.ok(kontraster.every(k => k.px >= 10), `tekst under 10 px: ${JSON.stringify(kontraster)}`)
+    // Ordre 1475 (QA 1474 fund 6): "Næste: 4 reps @ 80 kg" og "Vis næste sæt" min. 4,5:1 mod den effektive baggrund.
+    const naesteKontrast = await page.evaluate(() => {
+      const parse = (c) => { const m = c.match(/[\d.]+/g).map(Number); return { r: m[0], g: m[1], b: m[2], a: m[3] ?? 1 } }
+      const blend = (top, bot) => ({ r: top.r * top.a + bot.r * (1 - top.a), g: top.g * top.a + bot.g * (1 - top.a), b: top.b * top.a + bot.b * (1 - top.a), a: 1 })
+      const lum = ({ r, g, b }) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b) }
+      const bg = (node) => { const lag = []; for (let n = node; n; n = n.parentElement) lag.push(parse(getComputedStyle(n).backgroundColor)); let c = { r: 10, g: 10, b: 8, a: 1 }; for (const l of lag.reverse()) c = blend(l, c); return c }
+      const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05) }
+      const ud = []
+      for (const el of document.querySelectorAll('div, span')) {
+        if (el.children.length > 0 && el.tagName === 'DIV' && !/^Næste: \d/.test(el.textContent)) continue
+        const t = el.textContent.trim()
+        if (!/^Næste: [\d—]/.test(t) && t !== 'Vis næste sæt') continue
+        if (el.children.length > 0) continue
+        const c = bg(el)
+        ud.push({ tekst: t.slice(0, 30), ratio: Math.round(ratio(blend(parse(getComputedStyle(el).color), c), c) * 100) / 100 })
+      }
+      return ud
+    })
+    console.log('KONTRAST-NAESTE', JSON.stringify(naesteKontrast))
+    assert.ok(naesteKontrast.some(k => /^Næste:/.test(k.tekst)), 'fandt ikke "Næste: ... reps"-linjen')
+    for (const k of naesteKontrast) assert.ok(k.ratio >= 4.5, `kontrast under 4.5:1 paa "${k.tekst}": ${k.ratio}`)
     await shot('1-linje-paa-saet-kortet')
 
-    // 2) Tryk starter pausen og åbner pop-up'en
+    // 2) Ordre 1475: foer foerste saet siger pop-up'en hvad der skal ske, uden taeller; pausen starter ved Godkendt.
     await linje.click()
+    const foerste = page.getByTestId('foerste-saet-popup')
+    await foerste.waitFor({ state: 'visible', timeout: 3000 })
+    const ft = await foerste.innerText()
+    assert.match(ft, /Første sæt: Squat, \d+ reps( @ [\d,]+ kg)?/, `foerste-saet-pop-up: ${ft}`)
+    assert.equal(await foerste.locator('svg').count(), 0, 'ingen taeller-ring foer foerste saet')
+    assert.doesNotMatch(ft, /\d:\d\d|90/, 'ingen nedtaelling foer foerste saet')
+    assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'ingen pause kører endnu')
+    await shot('2a-foerste-saet-popup')
+    await page.getByTestId('foerste-saet-start').click()
+    await foerste.waitFor({ state: 'detached', timeout: 3000 })
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).first().click()
+    await page.getByTestId('rest-pause-open').click()
     const popup = page.getByTestId('rest-pause-popup')
     await popup.waitFor({ state: 'visible', timeout: 3000 })
     const sek = async () => Number((await popup.locator('svg + div span').first().innerText()).trim())
     const a = await sek()
     assert.ok(a > 80 && a <= 90, `pausen starter på ca. 90 s, fik ${a}`)
     const popTxt = await popup.innerText()
-    assert.match(popTxt, /Første sæt: Squat · sæt 1\/4/, `pop-up før første sæt: ${popTxt}`)
-    assert.doesNotMatch(popTxt, /Næste:/, 'ingen "Næste" før noget er logget')
+    assert.match(popTxt, /Næste: Squat · sæt 2\/4/, `pop-up efter foerste saet: ${popTxt}`)
     await shot('2-popup-aabnet-fra-linjen')
     await page.getByTestId('rest-pause-close').click()
     await popup.waitFor({ state: 'detached', timeout: 3000 })

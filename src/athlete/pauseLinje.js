@@ -18,3 +18,10 @@ export function markerPauseForklaring(storage = globalThis.localStorage) {
 // ellers ligner pop-up'en at et sæt allerede er lavet.
 export const naesteLabel = ({ navn, saetNr, total, intetLogget }) =>
   `${intetLogget ? 'Første sæt' : 'Næste'}: ${navn} · sæt ${saetNr}/${total}`
+
+// Ordre 1475: pop-up'en foer foerste saet siger kort hvad der skal ske, uden tael og uden pause.
+// "Første sæt: Squat, 4 reps @ 80 kg" (vaegt udelades for kropsvaegt).
+export const foersteSaetTekst = ({ navn, reps, kg }) => {
+  const w = Number(kg)
+  return `Første sæt: ${navn}${reps ? `, ${reps} reps` : ''}${w > 0 ? ` @ ${String(w).replace('.', ',')} kg` : ''}`
+}

@@ -3,6 +3,7 @@ import { exerciseSetView, exerciseViewGroups, exerciseViewRows } from '../exerci
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Skrivefunktionerne kommer stadig ind som props fra AthleteView.
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { lastHeaviestSet } from '../nextSet'
 import { loadShowNextSetPreview, saveShowNextSetPreview } from '../nextSetPreview'
 import { parseRepsPrescription } from '../repsPrescription'
@@ -12,7 +13,7 @@ import { s } from '../athleteShared'
 import { parsePlannedRpe } from './ugeHjaelp'
 import { canAcceptSetTap } from './setTapGuard'
 import { restSecondsForExercise } from '../restBetweenSets'
-import { visTid, harSetPauseForklaring, markerPauseForklaring } from './pauseLinje'
+import { visTid, harSetPauseForklaring, markerPauseForklaring, foersteSaetTekst } from './pauseLinje'
 
 // ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
 // samme øvelse (også et sæt, der venter i køen), det kortet viser som
@@ -40,6 +41,8 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const lastSetTapRef = useRef(-Infinity)
   // ORDRE 1459: forklaringen vises kun, til pausen har kørt én gang.
   const [pauseForklaret, setPauseForklaret] = useState(() => harSetPauseForklaring())
+  // Ordre 1475: foer foerste saet er der ingen pause at starte; pop-up'en siger hvad der skal ske.
+  const [foersteAaben, setFoersteAaben] = useState(false)
   if (pauseAktiv && !pauseForklaret) setPauseForklaret(true)
   useEffect(() => { if (pauseAktiv) markerPauseForklaring() }, [pauseAktiv])
   function acceptSetTap() {
@@ -249,6 +252,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const repsValue = input.reps || repsDefault
   const repsToLog = repsIsEditable ? repsValue : ex.reps
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
+  const intetLogget = !(exerciseLogs || []).some(l => session.exercises.some(e => e.id === l.exercise_id))
   const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
   // ORDRE 456 (A1): en vægtøvelse = coachen, historikken, ugens sæt eller
   // appens forslag kender en vægt. Kropsvægtøvelser (Planke, Pull-ups) spørges ikke.
@@ -590,12 +594,28 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         <button
           type="button"
           data-testid="pause-start-linje"
-          onClick={() => onStartPause(ex)}
+          onClick={() => (intetLogget ? setFoersteAaben(true) : onStartPause(ex))}
           style={{ display: 'block', width: '100%', minHeight: '44px', boxSizing: 'border-box', background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.4)', padding: '0.5rem 0.75rem', marginTop: '0.5rem', cursor: 'pointer', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.74rem', color: '#d4d0c4', lineHeight: 1.5 }}
         >
-          <span style={{ color: '#e0a94c', fontWeight: 600 }}>Pause {visTid(restSecondsForExercise(ex))}</span> · tryk for at starte
-          {!pauseForklaret && <span style={{ display: 'block', fontSize: '0.64rem', color: '#a8a498' }}>Pausen starter også af sig selv, når du godkender et sæt.</span>}
+          <span style={{ color: '#e0a94c', fontWeight: 600 }}>Pause {visTid(restSecondsForExercise(ex))}</span> · {intetLogget ? 'tryk for at se' : 'tryk for at starte'}
+          {(intetLogget || !pauseForklaret) && <span style={{ display: 'block', fontSize: '0.64rem', color: '#a8a498' }}>Pausen starter af sig selv, når du godkender et sæt.</span>}
         </button>
+      )}
+      {foersteAaben && createPortal(
+        <div
+          role="dialog" aria-modal="true" aria-label="Første sæt" data-testid="foerste-saet-popup"
+          onClick={(e) => { if (e.target === e.currentTarget) setFoersteAaben(false) }}
+          style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(10,10,8,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        >
+          <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.75rem', width: '100%', maxWidth: '360px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <h2 data-testid="foerste-saet-tekst" style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', fontWeight: 400, color: '#edeae2', margin: 0, textAlign: 'center', lineHeight: 1.3 }}>
+              {foersteSaetTekst({ navn: view.name, reps: repsToLog, kg: input.weight || ex.recommended_weight || last?.weight || suggestion?.weight })}
+            </h2>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#b8b4a8', textAlign: 'center', lineHeight: 1.5 }}>Pausen ({visTid(restSecondsForExercise(ex))}) starter, når du godkender sættet.</div>
+            <button type="button" data-testid="foerste-saet-start" onClick={() => setFoersteAaben(false)} style={{ background: '#c8923a', border: 'none', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 600, padding: '0.5rem 2rem', minHeight: '48px', cursor: 'pointer' }}>Start</button>
+          </div>
+        </div>,
+        document.body
       )}
       {spoergNulKg && nulKgSpurgt === key && (
         <div data-nul-kg={key} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', marginTop: '0.5rem' }}>
@@ -620,7 +640,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       {nextSetNumber <= totalSets && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '0.6rem' }}>
           {showNextPreview ? (
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.02em' }}>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#a8a498', letterSpacing: '0.02em' }}>
               Næste: {nextSetReps || '—'} reps{nextSetWeight != null ? ` @ ${nextSetWeight} kg` : ''}
             </div>
           ) : <span />}
@@ -630,7 +650,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
               onChange={e => { setShowNextPreview(e.target.checked); saveShowNextSetPreview(e.target.checked) }}
               style={{ accentColor: '#c8923a', width: '13px', height: '13px' }}
             />
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844' }}>Vis næste sæt</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#a8a498' }}>Vis næste sæt</span>
           </label>
         </div>
       )}
