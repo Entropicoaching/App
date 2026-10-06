@@ -29,6 +29,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { ATHLETE_USER, ATHLETE_ID, EXERCISE_ID, buildSeed } from './fixtures.mjs'
 import { filmSaetUpTilDone } from './athlete-film-et-saet.mjs'
+import { laesPauseSek } from './pause-tid.mjs'
 
 const LAST_TIME_LOG_ID = '99999999-9999-4999-8999-999999999920'
 const PAST_WEEK_ID = '99999999-9999-4999-8999-999999999921'
@@ -132,16 +133,16 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
     if (setNum === 1) {
       // Beviser at pausen rent faktisk TÆLLER NED (ikke bare vises) —
       // samme metode som dagens-pas.spec.mjs (ordre 263 · commit 4).
-      await page.getByText('Pause', { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
-      const secondsText = () => page.getByText(/^\d+s$/).first().textContent()
-      const firstReading = parseInt(await secondsText(), 10)
+      await page.getByTestId('rest-pause-open').waitFor({ state: 'visible', timeout: 5000 })
+      const firstReading = await laesPauseSek(page)
       assert.ok(Number.isFinite(firstReading) && firstReading > 0, `pausen skal starte med et positivt sekundtal, fik "${firstReading}"`)
       await page.waitForFunction(
-        (prev) => {
-          const el = [...document.querySelectorAll('*')].find(e => e.children.length === 0 && /^\d+s$/.test(e.textContent || ''))
-          if (!el) return false
-          return parseInt(el.textContent, 10) < prev
-        },
+        async (prev) => {
+        const el = document.querySelector('[data-testid="rest-pause-open"] > span:nth-of-type(2)')
+        if (!el) return false
+        const m = /^(\d+):(\d{2})$/.exec(el.textContent.trim())
+        return (m ? Number(m[1]) * 60 + Number(m[2]) : parseInt(el.textContent, 10)) < prev
+      },
         firstReading,
         { timeout: 5000 },
       )

@@ -17,6 +17,7 @@
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { ATHLETE_USER, ATHLETE_ID, EXERCISE_ID } from './fixtures.mjs'
+import { laesPauseSek } from './pause-tid.mjs'
 
 async function readTable(mockUrl, name) {
   const res = await fetch(`${mockUrl}/__e2e/table?name=${encodeURIComponent(name)}`)
@@ -48,7 +49,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   await page.getByText('Squat', { exact: true }).waitFor({ state: 'visible' })
   await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   // Ingen pause før noget er logget.
-  assert.equal(await page.getByText('Pause', { exact: false }).count(), 0, 'ingen pausetimer må vises før et sæt er logget')
+  assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'ingen pausetimer må vises før et sæt er logget')
   await shot('01-naeste-saet')
 
   // ORDRE 280 · commit 1 — vægt/reps skal stå udfyldt af sig selv (planens
@@ -91,20 +92,20 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   // Pausetimeren starter automatisk — synlig med det samme, ingen navigation.
   // (teksten er "Pause · Squat" — øvelsesnavnet står med i samme span, se
   // RestPauseFooter i AthleteView.jsx — deraf exact: false.)
-  await page.getByText('Pause', { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
-  const secondsText = () => page.getByText(/^\d+s$/).first().textContent()
-  const firstReading = parseInt(await secondsText(), 10)
+  await page.getByTestId('rest-pause-open').waitFor({ state: 'visible', timeout: 5000 })
+  const firstReading = await laesPauseSek(page)
   assert.ok(Number.isFinite(firstReading) && firstReading > 0 && firstReading <= 90,
     `pausen skal starte med et positivt sekundtal (≤ 90s standard), fik "${firstReading}"`)
   await shot('02-pause-startet')
 
   // Den skal faktisk tælle ned (ikke stå stille) — vent til uret har rykket sig.
   await page.waitForFunction(
-    (prev) => {
-      const el = [...document.querySelectorAll('*')].find(e => e.children.length === 0 && /^\d+s$/.test(e.textContent || ''))
-      if (!el) return false
-      return parseInt(el.textContent, 10) < prev
-    },
+    async (prev) => {
+        const el = document.querySelector('[data-testid="rest-pause-open"] > span:nth-of-type(2)')
+        if (!el) return false
+        const m = /^(\d+):(\d{2})$/.exec(el.textContent.trim())
+        return (m ? Number(m[1]) * 60 + Number(m[2]) : parseInt(el.textContent, 10)) < prev
+      },
     firstReading,
     { timeout: 5000 },
   )
@@ -159,7 +160,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   await page.reload()
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText(/Sæt 3\/4$/).waitFor({ state: 'visible', timeout: 10000 })
-  assert.equal(await page.getByText('Pause', { exact: false }).count(), 0, 'det fortrudte sæts pause må ikke overleve en genindlæsning')
+  assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'det fortrudte sæts pause må ikke overleve en genindlæsning')
   const logsAfterReload = await readTable(mockUrl, 'exercise_logs')
   const loggedAfterReload = logsAfterReload.filter(l => l.exercise_id === EXERCISE_ID && !l.skipped)
   assert.equal(loggedAfterReload.length, 2, 'præcis to sæt skal overleve genindlæsning (det tredje blev fortrudt)')
