@@ -7,11 +7,12 @@
 // aldrig fejres), eller flest reps på en vægt, der er løftet før. Øvelsens
 // allerførste sæt er ingen rekord: der er intet at slå. Et fortrudt sæt er
 // væk fra loggen og tæller derfor heller ikke.
+import { exerciseSetView } from '../exerciseSetView.js'
 import { estimatedOneRepMax } from '../exerciseProgress.js'
 
 export const e1rmKg = (weight, reps) => Math.round(estimatedOneRepMax(weight, reps))
 
-const noegle = (navn) => String(navn || '').trim().toLowerCase()
+const noegle = (navn) => exerciseSetView(navn).key
 const vaegtNoegle = (weight) => String(Number(weight))
 
 export function gyldigtSaet(saet) {
@@ -34,7 +35,7 @@ export function laegTil(grundlag, saet) {
 }
 
 export function bygGrundlag(saetListe, start = {}) {
-  const g = { ...start }
+  const g = normaliserGrundlag(start)
   for (const s of saetListe || []) laegTil(g, s)
   return g
 }
@@ -42,13 +43,14 @@ export function bygGrundlag(saetListe, start = {}) {
 // null, eller { type: 'e1rm', navn, e1rm, plus } | { type: 'reps', navn, weight, reps, plus }.
 export function findRekord(grundlag, saet) {
   if (!gyldigtSaet(saet)) return null
-  const cur = grundlag?.[noegle(saet.navn)]
+  const cur = normaliserGrundlag(grundlag)[noegle(saet.navn)]
+  const navn = exerciseSetView(saet.navn).name
   if (!cur) return null
   const ny = e1rmKg(saet.weight, saet.reps)
   const bedst = Math.round(cur.e1rm)
-  if (ny > bedst) return { type: 'e1rm', navn: saet.navn, e1rm: ny, plus: ny - bedst, weight: Number(saet.weight), reps: Number(saet.reps) }
+  if (ny > bedst) return { type: 'e1rm', navn, e1rm: ny, plus: ny - bedst, weight: Number(saet.weight), reps: Number(saet.reps) }
   const foer = cur.vaegte[vaegtNoegle(saet.weight)]
-  if (foer && Number(saet.reps) > foer) return { type: 'reps', navn: saet.navn, weight: Number(saet.weight), reps: Number(saet.reps), plus: Number(saet.reps) - foer }
+  if (foer && Number(saet.reps) > foer) return { type: 'reps', navn, weight: Number(saet.weight), reps: Number(saet.reps), plus: Number(saet.reps) - foer }
   return null
 }
 
@@ -65,7 +67,7 @@ export function rekordTekst(r) {
 // start (ORDRE 450): et grundlag fra før listen (rekord-indekset); ændres ikke.
 export function rekordListe(saetListe, start = {}) {
   const sorteret = [...(saetListe || [])].filter(gyldigtSaet).sort((a, b) => String(a.dato || '').localeCompare(String(b.dato || '')))
-  const g = { ...start }
+  const g = normaliserGrundlag(start)
   const ud = []
   for (const s of sorteret) {
     const r = findRekord(g, s)
@@ -104,4 +106,17 @@ export function ugensSaet(exerciseLogs, week, allWeeks, udenNoegle = null) {
   return (exerciseLogs || [])
     .filter(l => ids.has(l.exercise_id) && `${l.exercise_id}_${l.set_number}` !== udenNoegle)
     .map(l => ({ navn: navne.get(l.exercise_id), weight: l.weight, reps: l.reps_completed, dato: l.logged_at || '9999', skipped: !!l.skipped, denneUge: true, noegle: `${l.exercise_id}_${l.set_number}` }))
+}
+
+export function normaliserGrundlag(input = {}) {
+  const out = {}
+  for (const [name, value] of Object.entries(input || {})) {
+    const key = noegle(name)
+    const cur = out[key] || { e1rm: 0, vaegte: {} }
+    const vaegte = { ...cur.vaegte }
+    for (const [weight, reps] of Object.entries(value.vaegte || {}))
+      vaegte[weight] = Math.max(vaegte[weight] || 0, reps)
+    out[key] = { e1rm: Math.max(cur.e1rm, value.e1rm || 0), vaegte }
+  }
+  return out
 }

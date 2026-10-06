@@ -1,3 +1,4 @@
+import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
 // Delt mellem Dashboard.jsx og dens lazy-loadede underfaner (src/dashboard/*).
 // Udskilt i ordre 130 · commit 2, så underfanerne kan importere disse rene
 // stilarter/hjælpefunktioner UDEN at trække resten af Dashboard.jsx (og dermed
@@ -175,6 +176,8 @@ export function buildLiftSeries(logs, keyword, nameToCat, category) {
   const useCategory = nameToCat && category && Object.keys(nameToCat).length > 0
   const matched = logs.filter(l => {
     const name = l.exercises?.name || ''
+    if (l.skipped) return false
+    if (mainLiftName(category)) return exerciseSetView(name).key === exerciseSetView(category).key && l.weight > 0
     if (useCategory) return kategoriFor(name, nameToCat) === category && l.weight > 0
     return name.toLowerCase().includes(keyword) && l.weight > 0
   })

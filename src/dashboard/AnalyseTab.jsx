@@ -39,11 +39,13 @@ export default function AnalyseTab({
               const deadS = buildLiftSeries(athleteLogs, 'dødl', nameToCat, 'Dødløft')
               // OHP vises kun for atleter der faktisk træner det (keyword-match, ingen
               // egen kategori) — så intet ændrer sig for rene SBD-atleter.
+              const sumoS = buildLiftSeries(athleteLogs, 'sumo', nameToCat, 'Sumo dødløft')
               const ohpS = buildLiftSeries(athleteLogs, 'ohp', nameToCat, '')
               const lifts = [
                 { label: 'Squat', s: squatS },
                 { label: 'Bænkpres', s: benchS },
                 { label: 'Dødløft', s: deadS },
+                ...(sumoS.hasData ? [{ label: 'Sumo dødløft', s: sumoS }] : []),
                 ...(ohpS.hasData ? [{ label: 'OHP', s: ohpS }] : []),
               ]
 

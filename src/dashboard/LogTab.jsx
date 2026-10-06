@@ -1,3 +1,4 @@
+import { exerciseSetView } from '../exerciseSetView.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Log: træningslog pr. uge og øvelsesfilter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -13,7 +14,7 @@ export default function LogTab({
               // Build trend index: exName → sorted [{ date, avg }]
               const trendEntries = {}
               for (const log of athleteLogs) {
-                const name = log.exercises?.name
+                const name = exerciseSetView(log.exercises?.name).key
                 if (!name) continue
                 const date = danskDag(log.logged_at)
                 const tk = `${name}|${date}`
@@ -28,7 +29,7 @@ export default function LogTab({
               for (const arr of Object.values(trendIndex)) arr.sort((a, b) => a.date.localeCompare(b.date))
 
               function getTrend(exName, currentDate) {
-                const history = (trendIndex[exName] || []).filter(e => e.date <= currentDate)
+                const history = (trendIndex[exerciseSetView(exName).key] || []).filter(e => e.date <= currentDate)
                 if (history.length < 2) return null
                 const curr = history[history.length - 1]
                 const prev = history[history.length - 2]
@@ -51,7 +52,7 @@ export default function LogTab({
                 const exId = log.exercise_id
                 if (!grouped[key].exerciseMap[exId]) {
                   grouped[key].exerciseMap[exId] = {
-                    name: ex?.name || '—',
+                    name: exerciseSetView(ex?.name).name || '—',
                     plannedSets: ex?.sets || 0,
                     plannedReps: ex?.reps || '',
                     intensity: ex?.intensity || '',
@@ -84,12 +85,12 @@ export default function LogTab({
               })
 
               // Øvelses-filter: liste over loggede øvelser + progression for den valgte
-              const exerciseNames = [...new Set(athleteLogs.map(l => l.exercises?.name).filter(Boolean))]
+              const exerciseNames = [...new Map(athleteLogs.map(l => exerciseSetView(l.exercises?.name)).filter(v => v.key).map(v => [v.key, v.name])).values()]
                 .sort((a, b) => a.localeCompare(b, 'da'))
               const filterName = logExerciseFilter && exerciseNames.includes(logExerciseFilter) ? logExerciseFilter : null
               const e1rmOf = s => (s.weight || 0) * (1 + (s.reps || 1) / 30)
               const progression = filterName ? logSessions.map(sess => {
-                const entries = Object.values(sess.exerciseMap).filter(ex => ex.name === filterName)
+                const entries = Object.values(sess.exerciseMap).filter(ex => exerciseSetView(ex.name).key === exerciseSetView(filterName).key)
                 if (!entries.length) return null
                 const sets = entries.flatMap(e => e.sets).filter(s => !s.skipped && (s.weight || 0) > 0)
                 if (!sets.length) return null

@@ -13,7 +13,7 @@
 //
 // Rene funktioner, storage som parameter, enhver fejl sluger sig selv (samme
 // mønster som offlineSnapshot.js).
-import { laegTil } from './rekorder.js'
+import { laegTil, normaliserGrundlag } from './rekorder.js'
 
 // Nøglens præfiks står i offlineSnapshot.js, som rydder indekset ved log ud
 // (uden at hovedbundtet skal have rekorder.js med).
@@ -40,7 +40,7 @@ export function loadRekordIndeks(userId, athleteId = null, storage = globalThis.
     const x = raw ? JSON.parse(raw) : null
     if (!x || x.v !== VERSION || typeof x.base !== 'object' || typeof x.uger !== 'object') return null
     if (athleteId && x.athleteId && x.athleteId !== athleteId) return null
-    return x
+    return { ...x, base: normaliserGrundlag(x.base), uger: Object.fromEntries(Object.entries(x.uger).map(([id, g]) => [id, normaliserGrundlag(g)])) }
   } catch {
     return null
   }
@@ -58,8 +58,8 @@ export function saveRekordIndeks(userId, indeks, storage = globalThis.localStora
 
 // To grundlag lagt sammen (maksima). Ændrer ingen af dem.
 export function flet(a, b) {
-  const ud = { ...(a || {}) }
-  for (const [k, v] of Object.entries(b || {})) {
+  const ud = normaliserGrundlag(a)
+  for (const [k, v] of Object.entries(normaliserGrundlag(b))) {
     const cur = ud[k]
     if (!cur) { ud[k] = v; continue }
     const vaegte = { ...cur.vaegte }
@@ -133,7 +133,7 @@ export function medUgensSaet(indeks, ugensGrundlag, allWeeks, currentWeek) {
 // rekorder.js's findRekord/rekordListe tager som start.
 export function grundlagFoer(indeks, currentWeek) {
   if (!indeks?.bygget || !currentWeek?.id) return null
-  let g = indeks.base
+  let g = normaliserGrundlag(indeks.base)
   for (const [weekId, ug] of Object.entries(indeks.uger || {})) if (weekId !== currentWeek.id) g = flet(g, ug)
   return g
 }

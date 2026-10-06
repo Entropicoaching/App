@@ -65,7 +65,7 @@ test('E: PR paa baenk -> fremgang med tal og forrige bedste, lav prioritet (cont
   const signal = only(fixtures.e)
   assert.equal(signal.detector, 'pr')
   assert.equal(signal.severity, 'context')
-  assert.equal(signal.headline, 'Atlet E: PR på Bænk 100×3 (22. sep.; før 97,5×3)')
+  assert.equal(signal.headline, 'Atlet E: PR på Bænkpres 100×3 (22. sep.; før 97,5×3)')
   assert.match(signal.detail, /Anerkend/)
   hasAction(signal)
 })

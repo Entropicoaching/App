@@ -1,16 +1,42 @@
-import { foldNavn } from './exerciseNames.js'
+import { foldNavn, grundnavn } from './exerciseNames.js'
 
-// Presentation only. Never change names/IDs used by history, defaults or writes.
-const TYPE = '(top(?:[ -]?(?:s(?:\u00e6|ae)t|set))?|back[ -]?off(?:[ -]?(?:s(?:\u00e6|ae)t|set))?|straight(?:[ -]?(?:s(?:\u00e6|ae)t|sets?))?)'
+// Read-time lift identity. Original row names and IDs remain unchanged for writes.
+const NUM = '(?:\\s*\\d+)?'
+const TYPE = '(top(?:[ -]?(?:s(?:æ|ae)t|set))?' + NUM + '|back[ -]?off(?:[ -]?(?:s(?:æ|ae)t|set))?' + NUM +
+  '|straight(?:[ -]?(?:s(?:æ|ae)t|sets?))?' + NUM + '|s(?:æ|ae)t\\s*\\d+)'
 const suffix = new RegExp(`(?:\\s*[-\u2013:,]\\s*|\\s+)${TYPE}\\s*$`, 'i')
 const parentheses = new RegExp(`\\s*\\(${TYPE}\\)\\s*$`, 'i')
 const prefix = new RegExp(`^${TYPE}(?:\\s*[-\u2013:,]\\s*|\\s+)(.+)$`, 'i')
 
-export function exerciseSetView(name) {
-  const raw = String(name ?? '').trim()
+const LIFT_ALIASES = {
+  squat: 'Squat', 'back squat': 'Squat', 'competition squat': 'Squat', baenk: 'Bænkpres', baenkpres: 'Bænkpres',
+  bench: 'Bænkpres', 'bench press': 'Bænkpres',
+  doedloeft: 'Dødløft', deadlift: 'Dødløft', dl: 'Dødløft',
+  'konventionel doedloeft': 'Dødløft', 'conventional deadlift': 'Dødløft',
+  'sumo doedloeft': 'Sumo dødløft', 'sumo deadlift': 'Sumo dødløft',
+}
+
+// Programlaegningens egne suffikser ("(comp)", "- volumen") foeles ind via
+// grundnavn(); "Doedloeft (sumo)" / "Doedloeft - sumo" er sumo, ikke konventionel.
+const SUMO_SUFFIX = /^(d(?:oe|ø)dl(?:oe|ø)ft|deadlift)\s*(?:[-–]\s*sumo|\(\s*sumo\s*\)|sumo)$/i
+function foldBase(base) {
+  let s = base
+  for (let i = 0; i < 4; i++) {
+    const g = grundnavn(s).replace(/\s*\((?:comp|competition)\)\s*$/i, '').trim()
+    const t = g.replace(suffix, '').replace(parentheses, '').trim()
+    const next = t || g
+    if (next === s) break
+    s = next
+  }
+  return SUMO_SUFFIX.test(s) ? 'Sumo dødløft' : s
+}
+
+export function exerciseSetView(input) {
+  const raw = String(input ?? '').trim()
   const leading = raw.match(prefix)
   const match = raw.match(parentheses) || raw.match(suffix) || leading
-  const base = leading && match === leading ? leading[2].trim() : match ? raw.slice(0, match.index).trim() : raw
+  const base0 = leading && match === leading ? leading[2].trim() : match ? raw.slice(0, match.index).trim() : raw
+  const base = base0 ? foldBase(base0) : base0
   // A bare "Topsaet" is ambiguous; never infer an exercise from its neighbour.
   if (!base) return { name: raw, key: foldNavn(raw), type: 'straight', label: 'Sæt' }
   const token = foldNavn(match?.[1] || '')
@@ -19,7 +45,9 @@ export function exerciseSetView(name) {
     .replace(/oe/gi, m => m[0] === 'O' ? 'Ø' : 'ø')
   // Transliteration is deliberately limited to the common lift names below.
   const known = /^(?:baenkpres|doedloeft|sumo doedloeft|konventionel doedloeft)$/i.test(base)
-  return { name: known ? display : base, key: foldNavn(base), type,
+  const alias = LIFT_ALIASES[foldNavn(base)]
+  const name = alias || (known ? display : base)
+  return { name, key: foldNavn(name), type,
     label: type === 'top' ? 'Top' : type === 'backoff' ? 'Backoff' : 'Sæt' }
 }
 
@@ -63,4 +91,9 @@ export function bestExerciseRecords(records = []) {
       best.set(view.key, { name: view.name, weight, reps })
   }
   return [...best.values()]
+}
+
+export function mainLiftName(name) {
+  const view = exerciseSetView(name)
+  return ['squat', 'baenkpres', 'doedloeft', 'sumo doedloeft'].includes(view.key) ? view.name : null
 }

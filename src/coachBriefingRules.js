@@ -1,3 +1,4 @@
+import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
 // ORDRE 370 · Coach Briefingens regler som ren JS-funktion.
 //
 // detectSignalsV1 er en tro port af supabase/sql/training-signals-v1.sql
@@ -28,14 +29,9 @@ const avg = values => values.reduce((sum, value) => sum + value, 0) / values.len
 export const epley = (weight, reps) => weight * (1 + reps / 30)
 
 // Samme klassifikation som SQL'ens CASE: kun barbell-hovedloeft.
-const NOT_BARBELL = /belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt/
 export function liftOf(exerciseName) {
-  const nm = String(exerciseName || '').toLowerCase()
-  if (NOT_BARBELL.test(nm)) return null
-  if (nm.includes('squat')) return 'Squat'
-  if (nm.includes('bænk') || nm.includes('bench')) return 'Bænk'
-  if (nm.includes('dødløft') || nm.includes('deadlift') || /(^|\s)dl(\s|$)/.test(nm)) return 'Dødløft'
-  return null
+  const name = mainLiftName(exerciseName)
+  return name === 'Bænkpres' ? 'Bænk' : name
 }
 
 export function normalizeLogs(logs = []) {
@@ -401,9 +397,9 @@ function detectPr({ athlete, personal_records: records = [] }, T) {
   if (!recent.length) return null
   const parts = recent.slice(-2).map(record => {
     const previous = records
-      .filter(other => other.exercise_name === record.exercise_name && Date.parse(other.created_at) < Date.parse(record.created_at))
+      .filter(other => exerciseSetView(other.exercise_name).key === exerciseSetView(record.exercise_name).key && Date.parse(other.created_at) < Date.parse(record.created_at))
       .sort((a, b) => epley(b.weight, b.reps) - epley(a.weight, a.reps))[0]
-    return `${record.exercise_name} ${setText(record.weight, record.reps)} (${dayText(toDay(record.created_at))}${previous ? `; før ${setText(previous.weight, previous.reps)}` : ''})`
+    return `${exerciseSetView(record.exercise_name).name} ${setText(record.weight, record.reps)} (${dayText(toDay(record.created_at))}${previous ? `; før ${setText(previous.weight, previous.reps)}` : ''})`
   })
   return signal(athlete, 'pr', 'context', `PR på ${parts.join(' og ')}`,
     'Anerkend det i en kort besked; planen virker, ingen ændring nødvendig', { prs_7d: recent.length })

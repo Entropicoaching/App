@@ -10,7 +10,7 @@ import { filterOpenAutomationAlerts } from '../automationAlerts'
 import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
 import { planlagteReps, taellerIKg } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
-import { unikkeRekorder } from '../personalRecords'
+import { normaliserRekorder, bedsteRekorder } from '../personalRecords'
 import { danskDag } from '../danskDato'
 
 export function lavLaesninger({
@@ -456,15 +456,10 @@ export function lavLaesninger({
       .order('logged_at', { ascending: false })
     if (!data) { setAthletePRs([]); setAthletePRHistory([]); return }
     // ORDRE 456 (A5): dubletter fra før 456 vises kun én gang (personalRecords.js).
-    setAthletePRHistory(unikkeRekorder(data))
+    setAthletePRHistory(normaliserRekorder(data))
     // Vis den tungeste registrering pr. øvelse som rekord — ikke blot den seneste —
     // så et lavere (fx stævne-)løft aldrig vises som aktuel rekord.
-    const bestByName = {}
-    for (const pr of data) {
-      const cur = bestByName[pr.exercise_name]
-      if (!cur || (pr.weight || 0) > (cur.weight || 0)) bestByName[pr.exercise_name] = pr
-    }
-    setAthletePRs(Object.values(bestByName))
+    setAthletePRs(bedsteRekorder(data))
   }
 
   async function fetchMeetResults(athleteId) {

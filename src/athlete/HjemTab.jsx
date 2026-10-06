@@ -684,7 +684,7 @@ function HjemTab({
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '0.5rem' }}>
                   e1RM er et regnestykke ud fra din vægt og dine reps, der viser hvor stærk du cirka er lige nu — ikke et forsøg du faktisk har taget.
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '0.5rem' }}>
                   {liftProgress.filter(sr => sr.points.length >= 2).map(sr => (
                     <span key={sr.label} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
                       <span style={{ width: 10, height: 2, background: sr.color, display: 'inline-block' }} />{sr.label}

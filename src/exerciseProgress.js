@@ -10,14 +10,12 @@
 // tre steder er ordrens egen betingelse ("efter samme formel som resten af
 // appen bruger"), ikke en ny formel.
 //
-// GRÆNSE: hovedløft-familierne (SQUAT/BAENK/DOEDLOEFT nedenfor) er kun til
-// at ORGANISERE øvelsesvælgeren (blok 2's "Squat, bænk og dødløft øverst,
-// variationer hører til") — hver eksakt øvelsesnavn (fx "Squat" og
-// "Frontsquat") får sin EGEN kurve i heaviestSetPerWeek, de blandes aldrig
-// sammen. NON_BARBELL-udelukkelsen er samme liste som den eksisterende
-// hovedløfts-widget allerede brugte (maskiner/håndvægte giver misvisende
-// høje 1RM-tal for et hovedløft).
+// The four main-lift series match exact normalized lifts. Picker families can
+// organize variants, but estimates for a variant never enter a main-lift series.
+// Strength curves use bestEstimatedSetPerWeek; heaviestSetPerWeek remains the
+// weight-only summary API for existing consumers.
 
+import { exerciseSetView } from './exerciseSetView.js'
 import { ugenoegle } from './volume/ugenoegle.js'
 
 /** Epley: vægt × (1 + reps / 30). Samme formel i hele appen — se filens egen note. */
@@ -30,9 +28,10 @@ export function estimatedOneRepMax(weight, reps) {
 const NON_BARBELL = /belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt/
 
 export const HOVEDLOEFT_FAMILIER = [
-  { key: 'squat', label: 'Squat', color: '#4e8fcf', match: n => n.includes('squat') && !NON_BARBELL.test(n) },
-  { key: 'baenk', label: 'Bænk', color: '#c8923a', match: n => (n.includes('bænk') || n.includes('bench')) && !NON_BARBELL.test(n) },
-  { key: 'doedloeft', label: 'Dødløft', color: '#6cba6c', match: n => (n.includes('dødløft') || n.includes('deadlift') || /(^|\s)dl(\s|$)/.test(n)) && !NON_BARBELL.test(n) },
+  { key: 'squat', label: 'Squat', color: '#4e8fcf', match: n => exerciseSetView(n).key === 'squat' },
+  { key: 'baenk', label: 'Bænkpres', color: '#c8923a', match: n => exerciseSetView(n).key === 'baenkpres' },
+  { key: 'doedloeft', label: 'Dødløft', color: '#6cba6c', match: n => exerciseSetView(n).key === 'doedloeft' },
+  { key: 'sumo', label: 'Sumo dødløft', color: '#b68bd1', match: n => exerciseSetView(n).key === 'sumo doedloeft' },
 ]
 
 /**
@@ -40,8 +39,13 @@ export const HOVEDLOEFT_FAMILIER = [
  * øvelsesvælgeren) — null hvis navnet ikke matcher nogen af de tre.
  */
 export function hovedloeftFamilie(navn) {
-  const n = String(navn ?? '').toLowerCase()
-  return HOVEDLOEFT_FAMILIER.find(f => f.match(n))?.key ?? null
+  const n = exerciseSetView(navn).name.toLowerCase()
+  if (NON_BARBELL.test(n)) return null
+  if (HOVEDLOEFT_FAMILIER[3].match(n)) return 'sumo'
+  if (n.includes('squat')) return 'squat'
+  if (n.includes('bænk') || n.includes('bench')) return 'baenk'
+  if (n.includes('dødløft') || n.includes('deadlift') || /(^|\s)dl(\s|$)/.test(n)) return 'doedloeft'
+  return null
 }
 
 /**
@@ -54,7 +58,7 @@ export function hovedloeftFamilie(navn) {
  * @returns {{ squat: string[], baenk: string[], doedloeft: string[], andre: string[] }}
  */
 export function grupperOevelsesnavne(navne) {
-  const grupper = { squat: [], baenk: [], doedloeft: [], andre: [] }
+  const grupper = { squat: [], baenk: [], doedloeft: [], sumo: [], andre: [] }
   for (const navn of navne || []) {
     const familie = hovedloeftFamilie(navn)
     grupper[familie || 'andre'].push(navn)
@@ -88,4 +92,20 @@ export function heaviestSetPerWeek(logs) {
   return [...bedst.values()]
     .sort((a, b) => (a.uge < b.uge ? -1 : 1))
     .map(p => ({ ...p, e1rm: Math.round(estimatedOneRepMax(p.weight, p.reps)) }))
+}
+
+// Strength estimate uses the best estimate, which can come from a lighter backoff.
+export function bestEstimatedSetPerWeek(logs) {
+  const best = new Map()
+  for (const log of logs || []) {
+    const weight = Number(log.weight), reps = Number(log.reps_completed)
+    if (log.skipped || !(weight > 0) || !(reps > 0)) continue
+    const uge = ugenoegle(log.logged_at)
+    const val = estimatedOneRepMax(weight, reps)
+    const cur = best.get(uge)
+    if (!cur || val > cur.val || (val === cur.val && weight > cur.weight))
+      best.set(uge, { uge, weight, reps, val })
+  }
+  return [...best.values()].sort((a, b) => a.uge.localeCompare(b.uge))
+    .map(({ val, ...p }) => ({ ...p, e1rm: Math.round(val) }))
 }

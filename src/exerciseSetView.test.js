@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { exerciseSetView, exerciseViewGroups, exerciseViewRows, bestExerciseRecords } from './exerciseSetView.js'
+import { exerciseSetView, exerciseViewGroups, exerciseViewRows, bestExerciseRecords, mainLiftName } from './exerciseSetView.js'
 import { nextSetInSession } from './nextSet.js'
 
 for (const [input, name, type] of [
@@ -28,7 +28,7 @@ for (const [input, name, type] of [
 })
 
 test('only set-type suffixes removed; variations/comp/notes stay distinct', () => {
-  for (const name of ['Front squat', 'Bænkpres (comp)', 'Bænkpres - teknik-singler', 'Squat - volumen', 'Topsaet', 'Backoff', 'Step-up'])
+  for (const name of ['Front squat', 'Pause baenkpres', 'Rumaensk doedloeft', 'Topsaet', 'Backoff', 'Step-up'])
     assert.equal(exerciseSetView(name).name, name)
   assert.equal(exerciseViewGroups([{ name: 'Squat' }, { name: 'Pause squat' }]).length, 2)
 })
@@ -102,4 +102,34 @@ test('identical adjacent prescriptions display once; differing prescriptions sta
     { ...base, name: 'Baenkpres', recommended_weight: 80 },
   ])
   assert.deepEqual(rows.map(r => r.showPrescription), [true, false, false, true])
+})
+
+// Ordre 1390 (QA 1378 fund 1+2): programlaegningens egne suffikser og tilfaeldige
+// stavemaader skal ende i det rigtige hovedloeft - ellers falder de ud af 1RM-kurverne.
+for (const [input, lift] of [
+  ['Baenkpres (comp)', 'Bænkpres'], ['Bænkpres - comp', 'Bænkpres'], ['Baenkpres - volumen', 'Bænkpres'],
+  ['Bænkpres - primaer', 'Bænkpres'], ['Baenkpres - teknik-singler', 'Bænkpres'],
+  ['Squat (comp)', 'Squat'], ['Squat - comp', 'Squat'], ['Squat - volumen', 'Squat'],
+  ['Squat - primær', 'Squat'], ['Squat - teknik-singler', 'Squat'],
+  ['Doedloeft (comp)', 'Dødløft'], ['Doedloeft - primaer', 'Dødløft'], ['Dødløft - volumen', 'Dødløft'],
+  ['Konventionel doedloeft - comp', 'Dødløft'], ['Konventionel doedloeft - teknik-singler', 'Dødløft'],
+  ['Sumo doedloeft (comp)', 'Sumo dødløft'], ['Sumo doedloeft - volumen', 'Sumo dødløft'],
+  ['Sumo doedloeft - primaer', 'Sumo dødløft'], ['Sumo dødløft - teknik-singler', 'Sumo dødløft'],
+  ['Squat (comp) - topsaet', 'Squat'], ['Baenkpres topsaet 1', 'Bænkpres'], ['Squat backoff 2', 'Squat'],
+  ['Baenkpres - saet 2', 'Bænkpres'], ['Doedloeft (sumo)', 'Sumo dødløft'],
+  ['Doedloeft - sumo topsaet', 'Sumo dødløft'], ['Back squat', 'Squat'], ['Competition squat', 'Squat'],
+]) test(`main lift folds: ${input}`, () => assert.equal(mainLiftName(input), lift))
+
+test('varianter med suffiks er stadig ikke hovedloeft', () => {
+  for (const n of ['Pause baenkpres - primaer', 'Front squat - volumen', 'Rumaensk doedloeft (comp)', 'Close-grip baenkpres - comp', 'Topsaet'])
+    assert.equal(mainLiftName(n), null)
+})
+
+test('bestExerciseRecords samler suffiks-navne i eet loeft', () => {
+  const best = bestExerciseRecords([
+    { exercise_name: 'Squat - volumen', weight: 100, reps: 5 },
+    { exercise_name: 'Squat (comp)', weight: 120, reps: 3 },
+    { exercise_name: 'Squat', weight: 110, reps: 3 },
+  ])
+  assert.deepEqual(best, [{ name: 'Squat', weight: 120, reps: 3 }])
 })

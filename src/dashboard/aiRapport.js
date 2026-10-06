@@ -1,3 +1,4 @@
+import { exerciseSetView } from '../exerciseSetView.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // "AI-rapport" på Analyse-fanen: bygger teksten coachen kopierer til en AI
 // (instruktion, nøgletal, e1RM/tonnage-digest, træningslog, PR, parathed,
@@ -236,36 +237,41 @@ export function lavAiRapport({
       const d = new Date(dateStr + 'T12:00:00'); const day = d.getDay() || 7
       d.setDate(d.getDate() - day + 1); return d.toISOString().slice(0, 10)
     }
+    const liftLabels = {}
     const e1rmByCat = {}     // cat -> { date -> bedste e1RM }
     const tonByCatWeek = {}  // cat -> { mandagsnøgle -> kg-volumen }
     const weekKeysSet = new Set()
     for (const sess of sessions) {
       for (const ex of Object.values(sess.exercises)) {
         const cat = catFor(ex.name)
-        if (!cat) continue
         for (const set of ex.sets) {
           if (set.skipped || !set.weight || !set.reps) continue
           const e = epley(Number(set.weight), Number(set.reps))
-          if (!e1rmByCat[cat]) e1rmByCat[cat] = {}
-          if (!(sess.date in e1rmByCat[cat]) || e > e1rmByCat[cat][sess.date]) e1rmByCat[cat][sess.date] = e
+          const view = exerciseSetView(ex.name)
+          const lift = view.key
+          liftLabels[lift] ||= view.name
+          if (!e1rmByCat[lift]) e1rmByCat[lift] = {}
+          if (!(sess.date in e1rmByCat[lift]) || e > e1rmByCat[lift][sess.date]) e1rmByCat[lift][sess.date] = e
           const wk = isoMon(sess.date)
           weekKeysSet.add(wk)
-          if (!tonByCatWeek[cat]) tonByCatWeek[cat] = {}
-          tonByCatWeek[cat][wk] = (tonByCatWeek[cat][wk] || 0) + Number(set.weight) * Number(set.reps)
+          if (cat) {
+            if (!tonByCatWeek[cat]) tonByCatWeek[cat] = {}
+            tonByCatWeek[cat][wk] = (tonByCatWeek[cat][wk] || 0) + Number(set.weight) * Number(set.reps)
+          }
         }
       }
     }
 
     const e1rmLines = []
-    for (const [lbl, cat] of mainCats) {
-      const m = e1rmByCat[cat]
+    for (const [key, m] of Object.entries(e1rmByCat)) {
+      const lbl = liftLabels[key]
       if (!m) continue
       const dates = Object.keys(m).sort()
       const pts = dates.map(d => `${Math.round(m[d])} (${fmtDatoShort(d)})`)
       const first = Math.round(m[dates[0]]), last = Math.round(m[dates[dates.length - 1]])
       const delta = last - first, pct = first ? Math.round((delta / first) * 100) : 0
       const trend = dates.length > 1 ? `   Δ ${delta > 0 ? '+' : ''}${delta}kg (${pct > 0 ? '+' : ''}${pct}%)` : ''
-      e1rmLines.push(`  ${pad(lbl, 10)}${pts.join(' · ')}${trend}`)
+      e1rmLines.push(`  ${pad(lbl, Math.max(10, lbl.length + 2))}${pts.join(' · ')}${trend}`)
     }
     if (e1rmLines.length) {
       lines.push('── EST. 1RM-UDVIKLING (Epley, bedste sæt pr. dag) ──────')
@@ -330,7 +336,7 @@ export function lavAiRapport({
       lines.push('── PERSONLIGE REKORDER (i perioden) ────────────────────')
       lines.push('')
       for (const pr of filteredPRs) {
-        lines.push(`  ${pad(pr.exercise_name, 20)} ${pr.weight}kg × ${pr.reps}  (${fmtDatoShort(pr.logged_at.slice(0, 10))})`)
+        lines.push(`  ${pad(exerciseSetView(pr.exercise_name).name, 20)} ${pr.weight}kg × ${pr.reps}  (${fmtDatoShort(pr.logged_at.slice(0, 10))})`)
       }
       lines.push('')
     }

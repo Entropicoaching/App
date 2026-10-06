@@ -1,6 +1,6 @@
 import { exerciseSetView } from '../exerciseSetView'
 // Fremgang-fanen (ordre 284) — "er squatten rent faktisk blevet stærkere
-// siden marts", for ÉN øvelse ad gangen: tungeste sæt pr. uge og det
+// siden marts", for ÉN øvelse ad gangen: bedste e1RM-sæt pr. uge og det
 // beregnede énrepetitionsmaksimum. Al regnelogik (herunder hovedløfts-
 // familierne til øvelsesvælgeren) bor i ../exerciseProgress.js — denne fil
 // er kun visning + hvilken øvelse der er valgt, samme arbejdsdeling som
@@ -14,7 +14,7 @@ import { exerciseSetView } from '../exerciseSetView'
 // vælges og vise "Ingen logninger endnu." — listede den kun logs, ville en
 // tom øvelse aldrig kunne stå i listen overhovedet.
 import { useMemo, useState } from 'react'
-import { heaviestSetPerWeek, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
+import { bestEstimatedSetPerWeek, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
 import { rekordListe, tidligereSaet, ugensSaet } from './rekorder'
 
@@ -68,7 +68,7 @@ function fremgangLinje(navn, punkter) {
 // Linjegraf over ugentligt bedste e1RM — samme visuelle sprog som
 // AthleteView.jsx's E1RMChart/ReadinessSparkline (én linje, ingen akser med
 // tal ud over start/slut), men for ÉN øvelse og med vægt×reps synlig pr.
-// punkt (ordrens "tungeste sæt pr. uge", ikke kun det udregnede tal).
+// punkt (ordrens "bedste e1RM-sæt pr. uge", ikke kun det udregnede tal).
 // Ordre 422: etiketterne står inden for grafen (sidste punkts tal til
 // venstre for punktet, første punkts til højre) og er store nok til at læse
 // i 390 px; før stod de uden for højre kant med 7–8 px og blev skåret af.
@@ -148,7 +148,7 @@ function RekordListe({ rekorder }) {
 }
 
 export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }) {
-  const alleNavne = useMemo(() => navneFraProgram(allWeeks), [allWeeks])
+  const alleNavne = useMemo(() => [...new Map([...navneFraProgram(allWeeks), ...navneFraLogs(fremgangLogs)].map(n => [exerciseSetView(n).key, n])).values()], [allWeeks, fremgangLogs])
   const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
   const andreSorteret = useMemo(() => [...grupper.andre].sort((a, b) => a.localeCompare(b, 'da')), [grupper.andre])
@@ -182,7 +182,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
   const punkter = useMemo(() => {
     if (!oevelse) return []
     const logsForOevelse = (fremgangLogs || []).filter(l => exerciseSetView(l.exercises?.name).key === exerciseSetView(oevelse).key)
-    return heaviestSetPerWeek(logsForOevelse)
+    return bestEstimatedSetPerWeek(logsForOevelse)
   }, [fremgangLogs, oevelse])
 
   const rekorder = useMemo(() => {
@@ -261,7 +261,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                   </div>
                   <FremgangGraf punkter={punkter} />
                   <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
-                    Tungeste gennemførte sæt pr. uge, og det beregnede énrepetitionsmaksimum (Epley).
+                    Sættet med højest e1RM pr. uge, og det beregnede énrepetitionsmaksimum (Epley).
                   </div>
                 </>
               )}
