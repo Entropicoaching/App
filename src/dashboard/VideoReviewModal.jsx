@@ -8,6 +8,7 @@ import { videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineForAnalysi
 import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality'
 import { videoCoachBaselineReviewImpact } from '../videoCoachBaselineProgress'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels'
+import AnalysePakkeReview from './AnalysePakkeReview'
 
 export default function VideoReviewModal({
   closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
@@ -134,6 +135,8 @@ export default function VideoReviewModal({
                   {plateCalibrationText && <div style={{ color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.35rem' }}>{plateCalibrationText}</div>}
                 </div>
               </div>
+
+              <AnalysePakkeReview key={analysis.id} />
 
               {athleteNote && (
                 <div style={{ marginTop: '0.9rem', borderLeft: '2px solid #67dff5', background: 'rgba(103,223,245,0.04)', padding: '0.7rem 0.8rem' }}>
