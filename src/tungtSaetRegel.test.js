@@ -8,7 +8,7 @@ import { erTungtSaet, MAX_TUNGE_REPS } from './exerciseProgress.js'
 import { mainLiftName } from './exerciseSetView.js'
 import { rekordListe, findRekord, bygGrundlag } from './athlete/rekorder.js'
 
-const sql = readFileSync(new URL('../supabase/migrations/20261006120000_training_signals_v3_tunge_saet.sql', import.meta.url), 'utf8')
+const sql = readFileSync(new URL('../supabase/migrations/20261006120000_training_signals_v3_tunge_saet.sql', import.meta.url), 'utf8').replace(/\r\n/g, '\n') // Windows-checkout (autocrlf) giver CRLF
 const SUF = sql.match(/SUF constant text := '(.+)';/)[1]
 const LET = new RegExp(sql.match(/nm !~ '([^']+)'/)[1].replace(/\\y/g, '\\b'))
 const maxReps = Number(sql.match(/reps between 1 and (\d+)/)[1])
