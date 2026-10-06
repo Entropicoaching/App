@@ -254,7 +254,7 @@ function HjemTab({
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                       {(() => {
-                        const sessDone = s => (s.exercises || []).length > 0 && (s.exercises || []).every(ex => exerciseLogs.some(l => l.exercise_id === ex.id))
+                        const sessDone = s => isSessionDone(s, exerciseLogs)
                         const nextS = (currentWeek.sessions || []).find(s => !sessDone(s))
                         return (currentWeek.sessions || []).map(sess => {
                         const done = sessDone(sess)

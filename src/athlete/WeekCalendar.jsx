@@ -1,5 +1,6 @@
 // Ugestrimlen paa forsiden — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 import { WEEKDAYS_LONG, WEEKDAYS_SHORT } from './ugeHjaelp'
+import { isSessionDone } from '../nextSet'
 
 // Ugekalender på forsiden: 7 celler (man-søn) med ugens sessioner placeret på
 // deres weekday. Klik på en dag med session åbner den i Program-fanen.
@@ -17,8 +18,7 @@ import { WEEKDAYS_LONG, WEEKDAYS_SHORT } from './ugeHjaelp'
 function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd }) {
   const sessions = week?.sessions || []
   if (!sessions.length) return null
-  const sessDone = s => (s.exercises || []).length > 0 &&
-    (s.exercises || []).every(ex => exerciseLogs.some(l => l.exercise_id === ex.id))
+  const sessDone = s => isSessionDone(s, exerciseLogs)
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const todayWd = (today.getDay() + 6) % 7
   const days = [...Array(7)].map((_, wd) => {

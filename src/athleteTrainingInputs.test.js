@@ -27,6 +27,11 @@ test('reps carries IKKE over til næste sæt — hvert nyt sæt starter uden for
   assert.equal(next.reps, '')
 })
 
+test('logging a previous set preserves the next set draft, including reps and zero weight', () => {
+  const draft = { weight: '0', reps: '6', note: 'synthetic draft', rpe: '7.5' }
+  assert.deepEqual(nextAthleteSetInput({ weight: '80', reps: '4' }, draft), draft)
+})
+
 test('en allerede logget række med afvigende reps vinder over det atleten står og skriver', () => {
   const previous = { ex1_1: { weight: '100', reps: '5' } }
   const rows = [{ exercise_id: 'ex1', set_number: 1, weight: 100, reps_completed: 6 }]

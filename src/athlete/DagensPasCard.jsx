@@ -8,6 +8,7 @@ import { parseRepsPrescription } from '../repsPrescription'
 import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInputs, autoFillSetInput } from '../setLogDefaults'
 import { s } from '../athleteShared'
 import { parsePlannedRpe } from './ugeHjaelp'
+import { canAcceptSetTap } from './setTapGuard'
 
 // ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
 // samme øvelse (også et sæt, der venter i køen), det kortet viser som
@@ -32,6 +33,13 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
 function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession, rekordFejring = null }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
+  const lastSetTapRef = useRef(-Infinity)
+  function acceptSetTap() {
+    const now = performance.now()
+    if (!canAcceptSetTap(lastSetTapRef.current, now)) return false
+    lastSetTapRef.current = now
+    return true
+  }
 
   // ORDRE 314 · blok 1 — Marcs dom: man kunne se det næste sæt, men ikke
   // hvilket sæt man var på. Løsning: kun det AKTUELLE sæt har fulde felter,
@@ -550,13 +558,14 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           style={{ ...s.btnPrimary, flex: 1, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.85rem' }}
           onClick={() => {
             if (spoergNulKg && nulKgSpurgt !== key) { setNulKgSpurgt(key); return }
+            if (!acceptSetTap()) return
             setNulKgSpurgt(null)
             onLogSet(ex, setNumber, totalSets, repsToLog, plannedRpe)
           }}
         >Godkendt</button>
         <button
           style={{ ...s.btnGhost, minHeight: '60px', boxSizing: 'border-box', fontSize: '0.6rem' }}
-          onClick={() => skipSet(ex.id, setNumber, plannedRpe)}
+          onClick={() => { if (acceptSetTap()) skipSet(ex.id, setNumber, plannedRpe) }}
         >Spring over</button>
       </div>
       {spoergNulKg && nulKgSpurgt === key && (

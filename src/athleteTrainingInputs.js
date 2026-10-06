@@ -20,9 +20,8 @@ export function nextAthleteSetInput(current = {}, next = {}) {
     weight: next.weight || current.weight || '',
     note: next.note || '',
     rpe: next.rpe || '',
-    // Reps carries IKKE over fra forrige sæt — næste sæts felt skal starte
-    // ved ordinationens nederste tal (sat af sæt-loggeren selv), ikke ved
-    // hvad atleten lige har logget.
-    reps: '',
+    // Bevar et allerede udfyldt næste sæt. Ellers starter feltet ved
+    // ordinationens nederste tal, aldrig med forrige sæts reps.
+    reps: next.reps || '',
   }
 }
