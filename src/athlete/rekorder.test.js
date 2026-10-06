@@ -1,7 +1,7 @@
 // ORDRE 439 · blok 1: rekord-reglerne (rekorder.js). node --test src/athlete/rekorder.test.js
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { bygGrundlag, findRekord, rekordTekst, rekordListe, tidligereSaet, ugensSaet, e1rmKg } from './rekorder.js'
+import { bygGrundlag, findRekord, rekordTekst, rekordListe, tidligereSaet, ugensSaet, e1rmKg, grupperRekorder } from './rekorder.js'
 
 const saet = (navn, weight, reps, dato = '2026-09-01T10:00:00Z', ekstra = {}) => ({ navn, weight, reps, dato, ...ekstra })
 
@@ -81,4 +81,15 @@ test('ugens sæt fra exerciseLogs: fortrudt sæt er væk, sendt sæt tælles ikk
   assert.equal(rekordListe([...tidligereSaet(fremgang, week), ...ugensSaet([], week, [week])]).length, 0)
   // Sættet selv holdes ude, når det testes mod resten.
   assert.equal(ugensSaet(logs, week, [week], 'ex-sq_1').length, 0)
+})
+
+test('grupperRekorder: de fire hovedloeft foerst, varianter og assistance for sig', () => {
+  const liste = [
+    { navn: 'Militærpres', dato: '5' }, { navn: 'Bænkpres', dato: '4' }, { navn: 'Pause squat', dato: '3' },
+    { navn: 'Sumo dødløft', dato: '2' }, { navn: 'Dødløft', dato: '1' }, { navn: 'Squat', dato: '0' },
+  ].map(r => ({ ...r, type: 'e1rm' }))
+  const g = grupperRekorder(liste)
+  assert.deepEqual(g.hoved.map(r => r.navn), ['Bænkpres', 'Sumo dødløft', 'Dødløft', 'Squat'])
+  assert.deepEqual(g.andre.map(r => r.navn), ['Militærpres', 'Pause squat'])
+  assert.equal(grupperRekorder(null).hoved.length, 0)
 })

@@ -12,7 +12,7 @@
 // allerførste sæt er ingen rekord: der er intet at slå. Et fortrudt sæt er
 // væk fra loggen og tæller derfor heller ikke.
 import { exerciseSetView } from '../exerciseSetView.js'
-import { estimatedOneRepMax, erTungtSaet, erDeloadBlok, erDeloadLog } from '../exerciseProgress.js'
+import { estimatedOneRepMax, erTungtSaet, erDeloadBlok, erDeloadLog, hovedloeftFamilie } from '../exerciseProgress.js'
 
 export const e1rmKg = (weight, reps) => Math.round(estimatedOneRepMax(weight, reps))
 
@@ -123,4 +123,13 @@ export function normaliserGrundlag(input = {}) {
     out[key] = { e1rm: Math.max(cur.e1rm, value.e1rm || 0), vaegte }
   }
   return out
+}
+
+// Ordre 1469 (1467-5): "Dine rekorder" viser de fire hovedloeft (squat, baenkpres,
+// konventionel og sumo doedloeft) foerst, varianter og assistance samlet nederst.
+// Sumo og konventionel er to loeft, som i Fremgangs faner. Listen er nyeste foerst.
+export function grupperRekorder(rekorder, { hoved = 8, andre = 4 } = {}) {
+  const h = [], a = []
+  for (const r of rekorder || []) (hovedloeftFamilie(r.navn) ? h : a).push(r)
+  return { hoved: h.slice(0, hoved), andre: a.slice(0, andre) }
 }

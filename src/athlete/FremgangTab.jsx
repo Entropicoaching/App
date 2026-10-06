@@ -16,7 +16,7 @@ import { exerciseSetView } from '../exerciseSetView'
 import { useMemo, useState } from 'react'
 import { bestHeavySetPerDay, erTungtSaet, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
-import { rekordListe, tidligereSaet, ugensSaet } from './rekorder'
+import { rekordListe, tidligereSaet, ugensSaet, grupperRekorder } from './rekorder'
 
 const mono = "'IBM Plex Mono', monospace"
 
@@ -126,12 +126,9 @@ const saetTypeOrd = (raaNavn) => { const l = exerciseSetView(raaNavn).label; ret
 // Rekorderne (nyeste først) med dato. Samme regel som fejringen i Dagens pas
 // (rekorder.js); ugens sæt tages fra exerciseLogs, så et sæt logget uden net
 // står her med det samme og kun én gang, også når det senere er sendt.
-function RekordListe({ rekorder }) {
-  if (rekorder.length === 0) {
-    return <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder endnu. Slår du dit bedste sæt på en øvelse, står det her.</div>
-  }
+function RekordRaekker({ rekorder, attr }) {
   return (
-    <div data-rekord-liste={rekorder.length} style={{ display: 'flex', flexDirection: 'column' }}>
+    <div {...{ [attr]: rekorder.length }} style={{ display: 'flex', flexDirection: 'column' }}>
       {rekorder.map((r, i) => (
         <div key={`${r.navn}-${r.dato}-${i}`} data-rekord={r.type} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rekorder.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
           <span style={{ fontFamily: mono, fontSize: '0.62rem', color: '#7a7770', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
@@ -148,6 +145,28 @@ function RekordListe({ rekorder }) {
         </div>
       ))}
     </div>
+  )
+}
+
+// Ordre 1469: hovedløftene (squat, bænkpres, dødløft, sumo) først; varianter og
+// assistance samlet nederst under egen overskrift (Marcs dom 6. okt: præcis fire hovedløft).
+function RekordListe({ rekorder }) {
+  if (rekorder.length === 0) {
+    return <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder endnu. Slår du dit bedste sæt på en øvelse, står det her.</div>
+  }
+  const { hoved, andre } = grupperRekorder(rekorder)
+  return (
+    <>
+      {hoved.length > 0
+        ? <RekordRaekker rekorder={hoved} attr="data-rekord-liste" />
+        : <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder på de fire hovedløft endnu.</div>}
+      {andre.length > 0 && (
+        <div data-rekord-varianter style={{ marginTop: '1rem' }}>
+          <div style={{ fontFamily: mono, fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.25rem' }}>Varianter og assistance</div>
+          <RekordRaekker rekorder={andre} attr="data-rekord-varianter-liste" />
+        </div>
+      )}
+    </>
   )
 }
 
@@ -201,7 +220,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
     // Ordre 1421: rekorder bygges som kurven kun af tunge saet (raa navn tjekkes foer det foldes).
     return rekordListe([...tidligereSaet(fremgangLogs, currentWeek), ...ugensSaet(exerciseLogs, currentWeek, allWeeks)]
       .filter(s => erTungtSaet(s.navn, s.reps ?? s.reps_completed))
-      .map(s => ({ ...s, navn: exerciseSetView(s.navn).name }))).reverse().slice(0, 10)
+      .map(s => ({ ...s, navn: exerciseSetView(s.navn).name }))).reverse()
   }, [fremgangLogs, exerciseLogs, currentWeek, allWeeks])
 
   return (
