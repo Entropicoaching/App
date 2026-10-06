@@ -94,7 +94,7 @@ function FremgangGraf({ punkter, valgt, onVaelg }) {
       <line x1={PL} y1={H - PB} x2={W - PR} y2={H - PB} stroke="rgba(237,234,226,0.08)" strokeWidth="1" />
       <polyline points={pts} fill="none" stroke="#c8923a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
       {punkter.map((p, i) => (
-        <g key={p.dag} data-punkt={p.dag} onClick={() => onVaelg(i)} style={{ cursor: 'pointer' }}>
+        <g key={p.dag} data-punkt={p.dag} data-e1rm={p.e1rm} onClick={() => onVaelg(i)} style={{ cursor: 'pointer' }}>
           <circle cx={x(i)} cy={y(p.e1rm)} r="16" fill="transparent" />
           <circle cx={x(i)} cy={y(p.e1rm)} r={i === valgt ? 5.5 : 2.5}
             fill={i === valgt ? '#edeae2' : '#c8923a'} stroke={i === valgt ? '#c8923a' : 'none'} strokeWidth="2" />
