@@ -50,16 +50,16 @@ async function runViewport(page, { tag, width, height, mockUrl, outDir }) {
   await page.getByRole('button', { name: 'Log ind' }).click()
 
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText('Sæt 1/4', { exact: true }).waitFor({ state: 'visible' })
+  await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
 
   // Log sæt 1-3 med de forudfyldte værdier — samme mønster som
   // e2e/saet-nu.spec.mjs, denne prøve bryr sig ikke om de eksakte tal, kun om
   // at sæt 2's linje ikke forsvinder/dubleres efter en "ret".
   for (const setNum of [1, 2, 3]) {
-    await page.getByText(`Sæt ${setNum}/4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
-    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+    await page.getByText(`Sæt ${setNum}/4`, { exact: false }).first().waitFor({ state: 'visible', timeout: 5000 })
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
   }
-  await page.getByText('Sæt 4/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+  await page.getByText(/Sæt 4\/4$/).waitFor({ state: 'visible', timeout: 5000 })
   await checkOverflow(page, `${tag} efter sæt 1-3, før ret`)
   await shot('00-tre-saet-logget')
 
@@ -83,7 +83,7 @@ async function runViewport(page, { tag, width, height, mockUrl, outDir }) {
 
   // Sæt 4/4 (det aktuelle sæt) er UÆNDRET — kortet sprang ikke tilbage til
   // det redigerede sæt, og heller ikke frem forbi det aktuelle.
-  await page.getByText('Sæt 4/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+  await page.getByText(/Sæt 4\/4$/).waitFor({ state: 'visible', timeout: 5000 })
   // Sæt 3 er stadig synligt som klaret linje (blev IKKE "usynligt", fund 3).
   await setNumSaetLinje(3).waitFor({ state: 'visible', timeout: 5000 })
   await checkOverflow(page, `${tag} efter "ret" sæt 2 er gemt`)

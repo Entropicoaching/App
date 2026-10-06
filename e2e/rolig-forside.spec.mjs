@@ -66,7 +66,7 @@ async function runViewport(page, { tag, width, height }) {
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText('Sæt 1/4', { exact: true }).waitFor({ state: 'visible' })
+  await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   // Lad de oevrige hentninger (besked, rekorder, vaegt ...) lande, saa
   // taellingen er for den faerdige forside, ikke en halvt indlaest.
   await page.waitForTimeout(1500)
@@ -154,11 +154,14 @@ async function runViewport(page, { tag, width, height }) {
   // ORDRE 439: fejringen ("Ny rekord: ...") staar nu paa Dagens pas-kortet,
   // ikke i toast-pladsen; de samme krav (under topbaren, inden for skaermen,
   // daekker hverken overskrift eller strimmel) gaelder stadig.
-  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
-  await page.getByText('Sæt 2/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+  // ORDRE 450: rekord-indekset bygges af Fremgangs historik; uden det fejres intet.
+  await page.getByText('Fremgang', { exact: true }).click(); await page.waitForTimeout(1500)
+  await page.getByText('Hjem', { exact: true }).click(); await page.waitForTimeout(500)
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
+  await page.getByText(/Sæt 2\/4$/).waitFor({ state: 'visible', timeout: 5000 })
   await page.waitForTimeout(1000)
   await page.getByLabel('Vægt, sæt 2').fill('200')
-  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
   const toast = page.getByText('Ny rekord:', { exact: false })
   let toastBox = null
   try {
@@ -193,8 +196,8 @@ async function runViewport(page, { tag, width, height }) {
 
     // ORDRE 339 · blok 1 (F3): midt i et pas (tre saet logget) ligger de
     // sekundaere chips stadig over folden, fordi "ret"-raekkerne er kollapset.
-    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
-    await page.getByText('Sæt 4/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
+    await page.getByText(/Sæt 4\/4$/).waitFor({ state: 'visible', timeout: 5000 })
     await page.getByText('Ny rekord:', { exact: false }).first().waitFor({ state: 'detached', timeout: 6000 }).catch(() => {})
     await page.evaluate(() => window.scrollTo(0, 0))
     await page.waitForTimeout(300)

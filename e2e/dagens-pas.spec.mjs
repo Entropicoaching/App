@@ -46,7 +46,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   // navigation til Program-fanen nødvendig.
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText('Squat', { exact: true }).waitFor({ state: 'visible' })
-  await page.getByText('Sæt 1/4', { exact: true }).waitFor({ state: 'visible' })
+  await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   // Ingen pause før noget er logget.
   assert.equal(await page.getByText('Pause', { exact: false }).count(), 0, 'ingen pausetimer må vises før et sæt er logget')
   await shot('01-naeste-saet')
@@ -70,7 +70,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
     await writeHeld
     return route.continue()
   })
-  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
   const queuedAtOnce = await readQueue()
   assert.deepEqual(Object.keys(queuedAtOnce), [`${EXERCISE_ID}_1`], 'sæt 1 skal ligge i den lokale kø med det samme, mens skrivningen stadig er undervejs')
   assert.equal(queuedAtOnce[`${EXERCISE_ID}_1`].payload.weight, 80)
@@ -115,7 +115,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   // over (samme øvelse), reps genudfyldt fra ordinationen. Stadig ingen
   // .fill(), kun "Godkendt".
   for (const setNum of [2, 3]) {
-    await page.getByText(`Sæt ${setNum}/4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+    await page.getByText(`Sæt ${setNum}/4`, { exact: false }).first().waitFor({ state: 'visible', timeout: 5000 })
     assert.equal(await page.getByLabel(`Vægt, sæt ${setNum}`).inputValue(), '80', `vægten skal føres med til sæt ${setNum} uden at taste`)
     assert.equal(await page.getByLabel(`Reps, sæt ${setNum}`).inputValue(), '4', `reps skal genudfyldes for sæt ${setNum} uden at taste`)
     if (setNum === 2) {
@@ -131,7 +131,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
       await page.getByRole('button', { name: '1 rep mere', exact: true }).click()
       assert.equal(await page.getByLabel('Reps, sæt 2').inputValue(), '4')
     }
-    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
     await waitForLoggedRows(setNum)
   }
   await shot('04-tre-saet-logget')
@@ -150,7 +150,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
     mockUrl,
     { timeout: 10000 },
   )
-  await page.getByText('Sæt 3/4', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+  await page.getByText(/Sæt 3\/4$/).waitFor({ state: 'visible', timeout: 5000 })
   await shot('05-fortrudt')
 
   // Genindlæs siden — det fortrudte sæt må ikke være der, de to andre skal
@@ -158,7 +158,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   // fortrudte sæt.
   await page.reload()
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText('Sæt 3/4', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  await page.getByText(/Sæt 3\/4$/).waitFor({ state: 'visible', timeout: 10000 })
   assert.equal(await page.getByText('Pause', { exact: false }).count(), 0, 'det fortrudte sæts pause må ikke overleve en genindlæsning')
   const logsAfterReload = await readTable(mockUrl, 'exercise_logs')
   const loggedAfterReload = logsAfterReload.filter(l => l.exercise_id === EXERCISE_ID && !l.skipped)
@@ -172,7 +172,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   // Åbnes appen igen (samme browser-kontekst = samme localStorage), skal
   // sættet ligge i mocken præcis ÉN gang.
   await page.route('**/rest/v1/exercise_logs*', route => route.request().method() === 'POST' ? route.abort('connectionfailed') : route.continue())
-  await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+  await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
   await page.waitForTimeout(1000)
   const queuedBeforeKill = await page.evaluate(k => JSON.parse(localStorage.getItem(k) || '{}'), queueKey)
   assert.deepEqual(Object.keys(queuedBeforeKill), [`${EXERCISE_ID}_3`], 'sæt 3 skal ligge i køen efter 1 s, mens skrivningen stadig prøver igen')

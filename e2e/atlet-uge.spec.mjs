@@ -110,7 +110,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
   // ---- 1) Dagens pas: næste sæt vises øverst, med det samme ----
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText('Squat', { exact: true }).waitFor({ state: 'visible' })
-  await page.getByText('Sæt 1/4', { exact: true }).waitFor({ state: 'visible' })
+  await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   await shot('01-dagens-pas')
 
   // ---- 2) Log tre sæt fra Dagens pas-kortet — pausetimeren starter af sig selv og tæller ned ----
@@ -119,7 +119,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
     const setNum = i + 1
     await page.getByLabel(`Vægt, sæt ${setNum}`).fill('80')
     await page.getByLabel(`Reps, sæt ${setNum}`).fill(String(repsPerSet[i]))
-    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
     await page.waitForFunction(
       async ([url, expectedSetNum]) => {
         const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)

@@ -40,7 +40,7 @@ async function runViewport(page, { tag, width, height, outDir }) {
   await page.getByRole('button', { name: 'Log ind' }).click()
 
   await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText('Sæt 1/4', { exact: true }).waitFor({ state: 'visible' })
+  await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   await checkOverflow(page, `${tag} før sæt 1`)
   await shot('00-foer-saet-1')
 
@@ -53,14 +53,14 @@ async function runViewport(page, { tag, width, height, outDir }) {
   await page.getByText(NEXT_SET_PREVIEW_TEXT, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
 
   for (const setNum of [1, 2, 3]) {
-    await page.getByText(`Sæt ${setNum}/4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+    await page.getByText(`Sæt ${setNum}/4`, { exact: false }).first().waitFor({ state: 'visible', timeout: 5000 })
     await checkOverflow(page, `${tag} lige før "Godkendt" på sæt ${setNum}`)
     await shot(`${String(setNum).padStart(2, '0')}a-foer-godkendt-saet-${setNum}`)
 
-    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
+    await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
 
     if (setNum < 4) {
-      await page.getByText(`Sæt ${setNum + 1}/4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+      await page.getByText(`Sæt ${setNum + 1}/4`, { exact: false }).first().waitFor({ state: 'visible', timeout: 5000 })
     }
     await checkOverflow(page, `${tag} lige efter "Godkendt" på sæt ${setNum}`)
     await shot(`${String(setNum).padStart(2, '0')}b-efter-godkendt-saet-${setNum}`)

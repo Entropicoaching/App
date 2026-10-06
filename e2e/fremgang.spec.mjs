@@ -65,19 +65,19 @@ export async function runFremgang(page, { appUrl, outDir }) {
   await page.getByRole('button', { name: 'Fremgang', exact: true }).click()
   await page.getByText('Bliver du stærkere?', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
   await page.getByRole('button', { name: 'Squat', exact: true }).waitFor({ state: 'visible' })
-  await page.getByText(/kg e1RM/, { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
+  await page.locator('[data-fremgang-linje]').first().waitFor({ state: 'visible', timeout: 5000 })
   await page.getByText('85×5', { exact: false }).waitFor({ state: 'visible' })
   await shot('01-squat-kurve')
 
   // ---- 2) Skift til en øvelse uden logs — "Ingen logninger endnu." ----
   await page.locator('select').selectOption({ label: 'Bicep curl' })
   await page.getByText('Ingen logninger endnu.', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
-  assert.equal(await page.getByText(/kg e1RM/, { exact: false }).count(), 0, 'en tom øvelse skal ikke vise en kurve')
+  assert.equal(await page.locator('[data-fremgang-linje]').count(), 0, 'en tom øvelse skal ikke vise en kurve')
   await shot('02-tom-oevelse')
 
   // ---- 3) Kom tilbage til Squat — kurven er der stadig, uændret ----
   await page.getByRole('button', { name: 'Squat', exact: true }).click()
-  await page.getByText(/kg e1RM/, { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
+  await page.locator('[data-fremgang-linje]').first().waitFor({ state: 'visible', timeout: 5000 })
   await page.getByText('85×5', { exact: false }).waitFor({ state: 'visible' })
   assert.equal(await page.getByText('Ingen logninger endnu.', { exact: true }).count(), 0, 'Squats kurve skal være tilbage, ikke tomtilstanden')
   await shot('03-tilbage-til-squat')

@@ -73,7 +73,7 @@ export async function runDagensPasHistorik(page, { appUrl, outDir }) {
     hold()
     await page.reload()
     await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
-    await page.getByText('Sæt 1/4', { exact: true }).waitFor({ state: 'visible' })
+    await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
     // Historikken er holdt tilbage: kortet står på planens tal og har ingen "Sidste gang".
     await page.waitForFunction(() => document.querySelector('[aria-label="Vægt, sæt 1"]')?.value === '80', null, { timeout: 5000 })
     assert.equal(await page.getByText('Sidste gang:', { exact: false }).count(), 0, 'historikken er holdt tilbage — ingen "Sidste gang" endnu')
