@@ -20,6 +20,8 @@ const SMERTE_DAGE = 14
 const DELOAD_DAGE = 10
 const DELOAD_NAVN = /deload|aflast|taper|stævne|staevne|peak/i
 
+// Samme dagsgraense som dagNoegle i exerciseProgress (lokal tid): UTC-dato gav 7 i stedet for 8 uger mellem 00 og 02 dansk tid.
+export const lokalDag = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 const dagMs = (dag) => Date.parse(`${dag}T12:00:00Z`)
 const rd = (n) => Math.round(n)
 
@@ -34,7 +36,7 @@ function loeftNavn(log) {
  * 28-84 dage tilbage; stagneret = uger siden seneste NYE top (>0,5 % over alt
  * foer). Loeft uden nok tunge dage faar kun punkterne.
  */
-export function hovedloeftStatus(logs, today = new Date().toISOString().slice(0, 10)) {
+export function hovedloeftStatus(logs, today = lokalDag()) {
   const nu = dagMs(today)
   const perLoeft = new Map()
   for (const log of logs || []) {
@@ -67,7 +69,7 @@ export function hovedloeftStatus(logs, today = new Date().toISOString().slice(0,
 }
 
 /** Smerte-noter: kun kropsdel og dato, kommentaren citeres aldrig. */
-export function smerteNoter(logs, today = new Date().toISOString().slice(0, 10)) {
+export function smerteNoter(logs, today = lokalDag()) {
   const nu = dagMs(today)
   const set = new Map()
   for (const log of logs || []) {
@@ -86,7 +88,7 @@ export function smerteNoter(logs, today = new Date().toISOString().slice(0, 10))
  * de seneste logs. Der er ingen "ingen ny top" at sige i en uge, hvor der med
  * vilje ikke loeftes tungt; deload og blokskifte designes med Marc (hans dom).
  */
-export function planlagtLetUge(logs, today = new Date().toISOString().slice(0, 10)) {
+export function planlagtLetUge(logs, today = lokalDag()) {
   const nu = dagMs(today)
   return (logs || []).some(log => {
     const navn = log.exercises?.sessions?.weeks?.block_name
@@ -102,7 +104,7 @@ const dagTekst = (dag) => `${Number(dag.slice(8, 10))}. ${MAANEDER[Number(dag.sl
  * { dele: [{ type, tekst }], tekst } eller null naar der hverken er tunge saet
  * eller smerte at sige noget om. Raekkefoelge: smerte, stagnation, svageste.
  */
-export function styrkeLinje(logs, today = new Date().toISOString().slice(0, 10)) {
+export function styrkeLinje(logs, today = lokalDag()) {
   const dele = []
   const smerte = smerteNoter(logs, today)
   if (smerte.length) {
