@@ -37,9 +37,9 @@ async function main() {
     const linje = page.getByTestId('pause-start-linje')
     await linje.waitFor({ state: 'visible', timeout: 5000 })
     const tekst = await linje.innerText()
-    assert.match(tekst, /Pause 1:30/, `linjen skal vise pausens længde: ${tekst}`)
+    // Ordre 1485 (QA 1481 fund 2): foer foerste saet intet pausetal; pausen naevnes foerst efter foerste saet.
     assert.match(tekst, /tryk for at se/i, 'foer foerste saet: ingen "start" paa en pause')
-    assert.match(tekst, /starter af sig selv, når du godkender/i, 'forklaring')
+    assert.doesNotMatch(tekst, /pause|d:dd/i, `ingen pausetal foer foerste saet: ${tekst}`)
     const box = await linje.boundingBox()
     assert.ok(box.height >= 44, `tryk-flade ≥ 44 px, fik ${box.height}`)
     assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'ingen pause kører endnu')

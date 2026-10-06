@@ -597,8 +597,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           onClick={() => (intetLogget ? setFoersteAaben(true) : onStartPause(ex))}
           style={{ display: 'block', width: '100%', minHeight: '44px', boxSizing: 'border-box', background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.4)', padding: '0.5rem 0.75rem', marginTop: '0.5rem', cursor: 'pointer', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.74rem', color: '#d4d0c4', lineHeight: 1.5 }}
         >
-          <span style={{ color: '#e0a94c', fontWeight: 600 }}>Pause {visTid(restSecondsForExercise(ex))}</span> · {intetLogget ? 'tryk for at se' : 'tryk for at starte'}
-          {(intetLogget || !pauseForklaret) && <span style={{ display: 'block', fontSize: '0.64rem', color: '#a8a498' }}>Pausen starter af sig selv, når du godkender et sæt.</span>}
+          {intetLogget
+            ? <span style={{ color: '#e0a94c', fontWeight: 600 }}>Første sæt · tryk for at se</span>
+            : <><span style={{ color: '#e0a94c', fontWeight: 600 }}>Pause {visTid(restSecondsForExercise(ex))}</span> · tryk for at starte</>}
+          {!intetLogget && !pauseForklaret && <span style={{ display: 'block', fontSize: '0.64rem', color: '#a8a498' }}>Pausen starter af sig selv, når du godkender et sæt.</span>}
         </button>
       )}
       {foersteAaben && createPortal(
@@ -611,7 +613,6 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             <h2 data-testid="foerste-saet-tekst" style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', fontWeight: 400, color: '#edeae2', margin: 0, textAlign: 'center', lineHeight: 1.3 }}>
               {foersteSaetTekst({ navn: view.name, reps: repsToLog, kg: input.weight || ex.recommended_weight || last?.weight || suggestion?.weight })}
             </h2>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#b8b4a8', textAlign: 'center', lineHeight: 1.5 }}>Pausen ({visTid(restSecondsForExercise(ex))}) starter, når du godkender sættet.</div>
             <button type="button" data-testid="foerste-saet-start" onClick={() => setFoersteAaben(false)} style={{ background: '#c8923a', border: 'none', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 600, padding: '0.5rem 2rem', minHeight: '48px', cursor: 'pointer' }}>Start</button>
           </div>
         </div>,
