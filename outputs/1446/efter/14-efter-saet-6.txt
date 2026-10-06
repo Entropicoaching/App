@@ -1,14 +1,14 @@
 Entropi.
 2026-10-06
 ⋯
-Tirsdag · Ugens pas er klaret
-I DAG · 6. OKTOBER
+Onsdag · Ugens pas er klaret
+I DAG · 7. OKTOBER
 MAN
 HVILE
 TIR
-✓
-ONS
 HVILE
+ONS
+✓
 TOR
 HVILE
 FRE
@@ -35,6 +35,7 @@ PAS
 TONNAGE
 –
 REKORDER
+Tonnage = vægt × reps, lagt sammen for hvert gennemført sæt.
 DINE VURDERINGER
 Dag 1 — Squat
 –

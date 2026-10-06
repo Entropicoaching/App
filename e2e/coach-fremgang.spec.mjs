@@ -150,7 +150,8 @@ async function main() {
       log('B linje:', lb.tekst.replace(/\n/g, ' | '))
       assert.match(lb.typer, /^smerte,stagnation/, lb.typer)
       assert.match(lb.tekst, /Smerte: skulderen nævnt/)
-      assert.match(lb.tekst, /Bænkpres: ingen ny top i 8 uger \(e1RM 113 kg/)
+      // Ordre 1485: seedets datoer er relative til nu, saa uge-tallet er 7 eller 8 omkring doegnskiftet (UTC mod lokal tid).
+      assert.match(lb.tekst, /Bænkpres: ingen ny top i [78] uger \(e1RM 113 kg/)
       assert.ok(!/stikker/.test(lb.tekst), 'kommentaren citeres ikke')
       await shot('b-hub')
       const sw = await page.evaluate(() => document.documentElement.scrollWidth)

@@ -5,11 +5,11 @@ Entropi.
 Log dagens parathed for en tilpasset anbefaling →
 Base
 1
-● DU ER HER · UGE 1 · TOTAL 1/1
+● DU ER HER · UGE 1 · AKTIV UGE 1 AF 1
 UGE 1
 Base.
 DAG 1 — SQUAT
-TIRSDAG
+ONSDAG
 2 ØVELSER · 6/6 SÆT LOGGET
 FÆRDIG ✓
 ▼

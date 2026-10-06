@@ -1,14 +1,14 @@
 Entropi.
 2026-10-06
 ⋯
-Tirsdag · Dag 1 — Squat
-I DAG · 6. OKTOBER
+Onsdag · Dag 1 — Squat
+I DAG · 7. OKTOBER
 MAN
 HVILE
 TIR
-●
-ONS
 HVILE
+ONS
+●
 TOR
 HVILE
 FRE
@@ -18,10 +18,10 @@ HVILE
 SØN
 HVILE
 DAGENS PAS
-Backoff 1 · Sæt 3/4
+Backoff · Sæt 3/4
 Squat
 Anbefalet: 100 kg
-2 SÆT · × 6 REPS · RPE 7
+× 6 REPS · RPE 7
 −
 +
 + note
