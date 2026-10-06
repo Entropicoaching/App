@@ -590,10 +590,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           type="button"
           data-testid="pause-start-linje"
           onClick={() => onStartPause(ex)}
-          style={{ display: 'block', width: '100%', minHeight: '44px', boxSizing: 'border-box', background: 'none', border: 'none', padding: '0.3rem 0', marginTop: '0.2rem', cursor: 'pointer', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770', lineHeight: 1.5 }}
+          style={{ display: 'block', width: '100%', minHeight: '44px', boxSizing: 'border-box', background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.4)', padding: '0.5rem 0.75rem', marginTop: '0.5rem', cursor: 'pointer', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.74rem', color: '#d4d0c4', lineHeight: 1.5 }}
         >
-          <span style={{ color: '#c8923a' }}>Pause {visTid(restSecondsForExercise(ex))}</span> · tryk for at starte
-          {!pauseForklaret && <span style={{ display: 'block', fontSize: '0.54rem', color: '#4a4844' }}>Pausen starter også af sig selv, når du godkender et sæt.</span>}
+          <span style={{ color: '#e0a94c', fontWeight: 600 }}>Pause {visTid(restSecondsForExercise(ex))}</span> · tryk for at starte
+          {!pauseForklaret && <span style={{ display: 'block', fontSize: '0.64rem', color: '#a8a498' }}>Pausen starter også af sig selv, når du godkender et sæt.</span>}
         </button>
       )}
       {spoergNulKg && nulKgSpurgt === key && (

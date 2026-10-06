@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { visTid, harSetPauseForklaring, markerPauseForklaring } from './pauseLinje.js'
+import { visTid, harSetPauseForklaring, markerPauseForklaring, naesteLabel } from './pauseLinje.js'
 import { remainingSeconds } from '../restTimer.js'
 
 const lager = () => { const m = new Map(); return { getItem: k => m.get(k) ?? null, setItem: (k, v) => m.set(k, v) } }
@@ -24,4 +24,9 @@ test('ordre 1459: tiden regnes fra starttid, 40 s i baggrunden giver 50 s tilbag
   const start = 1_000_000
   assert.equal(remainingSeconds(90, start, start + 40_000), 50)
   assert.equal(remainingSeconds(90, start, start + 500_000), 0)
+})
+
+test('naesteLabel: foer foerste saet staar der Foerste saet, ikke Naeste', () => {
+  assert.equal(naesteLabel({ navn: 'Squat', saetNr: 1, total: 4, intetLogget: true }), 'Første sæt: Squat · sæt 1/4')
+  assert.equal(naesteLabel({ navn: 'Squat', saetNr: 2, total: 4, intetLogget: false }), 'Næste: Squat · sæt 2/4')
 })

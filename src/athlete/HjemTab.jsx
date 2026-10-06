@@ -59,7 +59,8 @@ function HjemTab({
               const next = dagensPas?.status === 'open' ? dagensPas.next : null
               // Samme taelling som kortet (Dagens pas): sæt i hele loeftet, ikke i raekken.
               const nextRow = next ? exerciseViewRows(dagensPas.session.exercises).find(r => r.ex.id === next.exercise?.id) : null
-              const nextLabel = next ? `Næste: ${exerciseSetView(next.exercise?.name).name} · sæt ${(nextRow?.offset || 0) + next.setNumber}/${nextRow?.totalSets || next.totalSets}` : null
+              const intetLogget = !!dagensPas?.session && !(exerciseLogs || []).some(l => dagensPas.session.exercises.some(e => e.id === l.exercise_id))
+              const nextLabel = next ? naesteLabel({ navn: exerciseSetView(next.exercise?.name).name, saetNr: (nextRow?.offset || 0) + next.setNumber, total: nextRow?.totalSets || next.totalSets, intetLogget }) : null
               // ORDRE 330 · blok 1 — én tydelig overskrift øverst: hvilken dags
               // pas er det man ser ("Onsdag · Dag 1 — Squat"). Dagen er passets
               // faste ugedag; uden fast ugedag (fleksibelt pas) er det i dag.

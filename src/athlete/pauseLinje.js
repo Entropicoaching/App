@@ -13,3 +13,8 @@ export function harSetPauseForklaring(storage = globalThis.localStorage) {
 export function markerPauseForklaring(storage = globalThis.localStorage) {
   try { storage?.setItem(FORKLARET_KEY, '1') } catch { /* ingen storage: forklaringen vises igen, ufarligt */ }
 }
+
+// Ordre 1469 (1464-2): foer noget er logget i passet staar der "Første sæt", ikke "Næste",
+// ellers ligner pop-up'en at et sæt allerede er lavet.
+export const naesteLabel = ({ navn, saetNr, total, intetLogget }) =>
+  `${intetLogget ? 'Første sæt' : 'Næste'}: ${navn} · sæt ${saetNr}/${total}`
