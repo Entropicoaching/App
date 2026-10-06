@@ -55,7 +55,7 @@ ${txt.slice(0, 1800)}`)
     await snap('hjem')
     const hjemTxt = await p.evaluate(() => document.body.innerText)
     assert.ok(await p.getByTestId('varm-op-link').isVisible(), 'Varm op-link mangler foer foerste saet')
-    assert.match(hjemTxt, /Anbefalet: 120 kg/); assert.match(hjemTxt, /2 SÆT · × 3 REPS/i); assert.ok(!/Sæt 1 · Sæt/.test(hjemTxt))
+    assert.match(hjemTxt, /Anbefalet: 120 kg/); assert.match(hjemTxt, /× 3 REPS · RPE 8/i); assert.ok(!/2 SÆT ·/i.test(hjemTxt), 'antal saet staar kun i Saet 1/4 (1451)'); assert.ok(!/Sæt 1 · Sæt/.test(hjemTxt))
     // Opvarmning (Mobilitet -> Varm op)
     const klik = async (loc, ms = 800) => { await loc.first().click({ timeout: 4000 }).catch(e => console.log('KLIK-FEJL', String(e).slice(0, 120))); await p.waitForTimeout(ms) }
     await klik(p.getByRole('button', { name: 'Mobilitet', exact: true }))
