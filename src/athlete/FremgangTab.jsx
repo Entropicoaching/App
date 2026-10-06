@@ -100,15 +100,15 @@ function FremgangGraf({ punkter, valgt, onVaelg }) {
             fill={i === valgt ? '#edeae2' : '#c8923a'} stroke={i === valgt ? '#c8923a' : 'none'} strokeWidth="2" />
         </g>
       ))}
-      <text x={x(0)} y={fy} textAnchor="start" fontSize="14" fill="#7a7770" fontFamily={mono}>
+      <text x={x(0)} y={fy} textAnchor="start" fontSize="14" fill="#a8a498" fontFamily={mono}>
         {forste.e1rm} kg
       </text>
       <text x={x(punkter.length - 1)} y={ly} textAnchor="end" fill="#edeae2" fontFamily={mono}>
         <tspan fontSize="15">{sidste.e1rm} kg</tspan>
-        <tspan fontSize="12" fill="#7a7770"> {sidste.weight}×{sidste.reps}</tspan>
+        <tspan fontSize="12" fill="#a8a498"> {sidste.weight}×{sidste.reps}</tspan>
       </text>
-      <text x={PL} y={H - 6} textAnchor="start" fontSize="13" fill="#7a7770" fontFamily={mono}>{kortDato(forste.dag)}</text>
-      <text x={W - PR} y={H - 6} textAnchor="end" fontSize="13" fill="#7a7770" fontFamily={mono}>{kortDato(sidste.dag)}</text>
+      <text x={PL} y={H - 6} textAnchor="start" fontSize="13" fill="#a8a498" fontFamily={mono}>{kortDato(forste.dag)}</text>
+      <text x={W - PR} y={H - 6} textAnchor="end" fontSize="13" fill="#a8a498" fontFamily={mono}>{kortDato(sidste.dag)}</text>
     </svg>
   )
 }
@@ -131,12 +131,12 @@ function RekordRaekker({ rekorder, attr }) {
     <div {...{ [attr]: rekorder.length }} style={{ display: 'flex', flexDirection: 'column' }}>
       {rekorder.map((r, i) => (
         <div key={`${r.navn}-${r.dato}-${i}`} data-rekord={r.type} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rekorder.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
-          <span style={{ fontFamily: mono, fontSize: '0.62rem', color: '#7a7770', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
+          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
           <span style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
             <span style={{ display: 'block', fontSize: '0.88rem', color: '#edeae2' }}>
               {r.type === 'e1rm' ? `${r.navn} e1RM ${r.e1rm} kg` : `${r.navn} ${kgTal(r.weight)} kg × ${r.reps}`}
             </span>
-            <span style={{ display: 'block', fontFamily: mono, fontSize: '0.6rem', color: '#7a7770', marginTop: '0.1rem' }}>
+            <span style={{ display: 'block', fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', marginTop: '0.1rem' }}>
               {r.type === 'e1rm'
                 ? `+${r.plus} kg · ${kgTal(r.weight)} kg × ${r.reps}`
                 : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
@@ -157,12 +157,12 @@ function HovedRaekke({ h, sidst }) {
   return (
     <div data-rekord-hoved={h.key} style={{ padding: '0.5rem 0', borderBottom: sidst ? 'none' : '1px solid rgba(237,234,226,0.05)' }}>
       <div data-rekord={r.type} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem' }}>
-        <span style={{ fontFamily: mono, fontSize: '0.62rem', color: '#7a7770', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
+        <span style={{ fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
         <span style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
           <span style={{ display: 'block', fontSize: '0.88rem', color: '#edeae2' }}>
             {r.type === 'e1rm' ? `${h.navn} e1RM ${r.e1rm} kg` : `${h.navn} ${kgTal(r.weight)} kg × ${r.reps}`}
           </span>
-          <span style={{ display: 'block', fontFamily: mono, fontSize: '0.6rem', color: '#7a7770', marginTop: '0.1rem' }}>
+          <span style={{ display: 'block', fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', marginTop: '0.1rem' }}>
             {r.type === 'e1rm' ? `nået første gang med ${kgTal(r.weight)} kg × ${r.reps}` : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
           </span>
         </span>
@@ -184,17 +184,17 @@ function HovedRaekke({ h, sidst }) {
 
 function RekordListe({ rekorder }) {
   if (rekorder.length === 0) {
-    return <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder endnu. Slår du dit bedste sæt på en øvelse, står det her.</div>
+    return <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Ingen rekorder endnu. Slår du dit bedste sæt på en øvelse, står det her.</div>
   }
   const { hoved, andre } = grupperRekorder(rekorder)
   return (
     <>
       {hoved.length > 0
         ? <div data-rekord-liste={hoved.length} style={{ display: 'flex', flexDirection: 'column' }}>{hoved.map((h, i) => <HovedRaekke key={h.key} h={h} sidst={i === hoved.length - 1} />)}</div>
-        : <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder på de fire hovedløft endnu.</div>}
+        : <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Ingen rekorder på de fire hovedløft endnu.</div>}
       {andre.length > 0 && (
         <div data-rekord-varianter style={{ marginTop: '1rem' }}>
-          <div style={{ fontFamily: mono, fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.25rem' }}>Varianter og assistance</div>
+          <div style={{ fontFamily: mono, fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.25rem' }}>Varianter og assistance</div>
           <RekordRaekker rekorder={andre} attr="data-rekord-varianter-liste" />
         </div>
       )}
@@ -266,15 +266,15 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
   return (
     <>
       <div style={{ marginBottom: '1rem' }}>
-        <div style={{ fontFamily: mono, fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Fremgang</div>
+        <div style={{ fontFamily: mono, fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.5rem' }}>Fremgang</div>
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Bliver du stærkere?</h1>
       </div>
 
       <div style={s.card}>
         {fremgangLoading ? (
-          <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Henter…</div>
+          <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Henter…</div>
         ) : alleNavne.length === 0 ? (
-          <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen logninger endnu.</div>
+          <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Ingen logninger endnu.</div>
         ) : (
           <>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
@@ -293,7 +293,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
 
             {andreSorteret.length > 0 && (
               <div style={{ marginBottom: '1rem' }}>
-                <div style={s.fieldLabel}>Andre øvelser</div>
+                <div style={{ ...s.fieldLabel, color: '#a8a498', fontSize: '0.66rem' }}>Andre øvelser</div>
                 <select value={andreSorteret.includes(oevelse) ? oevelse : ''} onChange={e => e.target.value && setValgtOevelse(e.target.value)} style={s.fieldInput}>
                   <option value="" disabled>Vælg øvelse…</option>
                   {andreSorteret.map(navn => <option key={navn} value={navn}>{navn}</option>)}
@@ -304,9 +304,9 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
             <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
               <div style={{ fontSize: '0.72rem', color: '#c8b98a', marginBottom: '0.6rem' }}>{oevelse}</div>
               {punkter.length === 0 ? (
-                <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>{harLogs ? 'Kun lette sæt logget endnu (backoff, teknik eller volumen), så der er intet tungt sæt at tegne en kurve af.' : 'Ingen logninger endnu.'}</div>
+                <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>{harLogs ? 'Kun lette sæt logget endnu (backoff, teknik eller volumen), så der er intet tungt sæt at tegne en kurve af.' : 'Ingen logninger endnu.'}</div>
               ) : punkter.length === 1 ? (
-                <div style={{ fontSize: '0.8rem', color: '#7a7770' }}>
+                <div style={{ fontSize: '0.8rem', color: '#a8a498' }}>
                   {punkter[0].weight} kg × {punkter[0].reps} (e1RM {punkter[0].e1rm} kg) — for få tunge dage endnu til en kurve.
                 </div>
               ) : (
@@ -320,7 +320,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                       {kortDato(valgtSaet.dag)}: {kgTal(valgtSaet.weight)} kg × {valgtSaet.reps} ({saetTypeOrd(valgtSaet.navn)}) giver e1RM {valgtSaet.e1rm} kg. Tryk på et punkt for at se dets sæt.
                     </div>
                   )}
-                  <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
+                  <div style={{ fontSize: '0.66rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
                     Ét punkt pr. træningsdag: dagens højeste e1RM (Epley: vægt × (1 + reps/30)), kun fra tunge sæt på højst 8 reps. Backoff, teknik-singler og volumensæt tæller ikke med, så lette sæt aldrig trækker kurven ned.
                   </div>
                 </>
@@ -334,7 +334,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
         <div style={s.card}>
           <div style={s.cardLabel}>Dine rekorder</div>
           <RekordListe rekorder={rekorder} />
-          <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
+          <div style={{ fontSize: '0.66rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
             Rekorder tæller kun tunge sæt (højst 8 reps, ikke backoff, teknik eller volumen).
           </div>
         </div>
