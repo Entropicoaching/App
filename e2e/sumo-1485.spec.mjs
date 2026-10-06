@@ -48,7 +48,7 @@ export function seed1485() {
 }
 
 // Kontrast: hver synlig tekst-node (HTML eller SVG) mod sin effektive baggrund (alpha blandet ned).
-const MAAL_KONTRAST = () => {
+const MAAL_KONTRAST = (medNav = false) => {
   const parse = (c) => { const m = (c.match(/[\d.]+/g) || [0, 0, 0]).map(Number); return { r: m[0], g: m[1], b: m[2], a: m[3] ?? 1 } }
   const blend = (t, b) => ({ r: t.r * t.a + b.r * (1 - t.a), g: t.g * t.a + b.g * (1 - t.a), b: t.b * t.a + b.b * (1 - t.a), a: 1 })
   const lum = ({ r, g, b }) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b) }
@@ -56,7 +56,7 @@ const MAAL_KONTRAST = () => {
   const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05) }
   const ud = []
   for (const el of document.querySelectorAll('#root *')) {
-    if (el.closest('nav')) continue
+    if (!medNav && el.closest('nav')) continue
     const egen = [...el.childNodes].filter(c => c.nodeType === 3 && c.textContent.trim()).map(c => c.textContent.trim()).join(' ')
     if (!egen) continue
     const cs = getComputedStyle(el); const r = el.getBoundingClientRect()
@@ -64,7 +64,7 @@ const MAAL_KONTRAST = () => {
     const svg = el instanceof SVGElement
     const fg = parse(svg ? cs.fill : cs.color)
     const px = svg ? parseFloat(cs.fontSize) * (r.width / (el.getBBox?.().width || r.width)) : parseFloat(cs.fontSize)
-    ud.push({ tekst: egen.slice(0, 40), ratio: Math.round(ratio(blend(fg, bg(el)), bg(el)) * 100) / 100, px: Math.round(px * 10) / 10 })
+    ud.push({ nav: !!el.closest('nav'), tekst: egen.slice(0, 40), ratio: Math.round(ratio(blend(fg, bg(el)), bg(el)) * 100) / 100, px: Math.round(px * 10) / 10 })
   }
   return ud
 }
@@ -125,13 +125,23 @@ async function main() {
 
       // 5) Kontrast og stoerrelse paa ALLE tekster i Fremgang + rekorder.
       await udover('Sumo dødløft')
-      const m = await page.evaluate(MAAL_KONTRAST)
+      const m = await page.evaluate(MAAL_KONTRAST, false)
       const daarlige = m.filter(t => t.ratio < 4.5 || t.px < 10)
       log(`KONTRAST ${bredde}: ${m.length} tekster, laveste ${Math.min(...m.map(t => t.ratio))}:1, mindste ${Math.min(...m.map(t => t.px))} px`)
       assert.ok(m.length > 15, 'for faa tekster maalt: ' + m.length)
       assert.deepEqual(daarlige, [], `tekst under 4,5:1 eller 10 px paa Fremgang: ${JSON.stringify(daarlige)}`)
       assert.ok((await page.evaluate(() => document.documentElement.scrollWidth)) <= bredde, 'vandret overflow paa Fremgang')
 
+      // 5b) Fase C: bundnavigationen (hovednavigationen) laeses og klippes ikke, paa de rigtige farver.
+      const nav = await page.evaluate((maal) => {
+        const f = new Function('return (' + maal + ')')()
+        return { alle: f(true), klippet: [...document.querySelectorAll('nav button')].filter(b => b.scrollWidth > b.clientWidth + 1 || [...b.querySelectorAll('span')].some(s => s.getBoundingClientRect().width > b.getBoundingClientRect().width + 1)).map(b => b.textContent) }
+      }, MAAL_KONTRAST.toString())
+      const navLav = nav.alle.filter(t => t.nav && t.ratio < 4.5)
+      assert.deepEqual(navLav, [], 'bundnavigationens labels under 4,5:1: ' + JSON.stringify(navLav))
+      assert.deepEqual(nav.klippet, [], 'bundnavigationens labels klippes: ' + nav.klippet)
+      assert.ok(nav.alle.filter(t => t.nav).length >= 6, 'bundnavigationen blev ikke maalt')
+      await shot('bundnav')
       // 6) Forsiden: Styrkeudvikling har samme fire navne og samme kontrastkrav.
       await page.getByText('Hjem', { exact: true }).last().click().catch(() => {}); await page.waitForTimeout(800)
       await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 8000 }).catch(() => {}); await page.waitForTimeout(800)
@@ -139,7 +149,7 @@ async function main() {
       assert.ok(leg.includes('Sumo dødløft') && leg.includes('Dødløft') && leg.includes('Squat'), `forsidens legender: ${leg.slice(0, 220)}`)
       assert.ok(!/(Deficit|topsæt|backoff)/i.test(leg), 'variant/suffiks paa forsiden')
       await page.getByText(/styrkeudvikling/i).first().scrollIntoViewIfNeeded().catch(() => {})
-      const mh = await page.evaluate(MAAL_KONTRAST)
+      const mh = await page.evaluate(MAAL_KONTRAST, false)
       const hLav = mh.filter(t => /bedste e1RM|regnestykke|^(SQUAT|Squat|Bænkpres|Dødløft|Sumo dødløft)$/i.test(t.tekst) && (t.ratio < 4.5 || t.px < 10))
       assert.deepEqual(hLav, [], 'forsidens styrkeudvikling: hjaelpetekst under 4,5:1 eller 10 px: ' + JSON.stringify(hLav))
       await shot('hjem-styrkeudvikling')

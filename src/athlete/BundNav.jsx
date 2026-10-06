@@ -25,10 +25,10 @@ function BundNav({
               justifyContent: 'center',
               gap: '0.3rem',
               padding: '0.7rem 0',
-              color: tab === key ? '#c8923a' : '#4a4844',
+              color: tab === key ? '#c8923a' : '#a8a498',
               fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '0.46rem',
-              letterSpacing: '0.1em',
+              fontSize: '0.52rem',
+              letterSpacing: '0.04em',
               textTransform: 'uppercase',
               transition: 'color 0.15s ease',
             }}
