@@ -43,6 +43,25 @@ async function main() {
     const box = await linje.boundingBox()
     assert.ok(box.height >= 44, `tryk-flade ≥ 44 px, fik ${box.height}`)
     assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'ingen pause kører endnu')
+    // Ordre 1469 (1464-1): kontrast maalt paa de rigtige farver (tekst mod effektiv baggrund, alpha blandet ned).
+    const kontraster = await linje.evaluate((el) => {
+      const parse = (c) => { const m = c.match(/[\d.]+/g).map(Number); return { r: m[0], g: m[1], b: m[2], a: m[3] ?? 1 } }
+      const blend = (top, bot) => ({ r: top.r * top.a + bot.r * (1 - top.a), g: top.g * top.a + bot.g * (1 - top.a), b: top.b * top.a + bot.b * (1 - top.a), a: 1 })
+      const lum = ({ r, g, b }) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b) }
+      const bg = (node) => { const lag = []; for (let n = node; n; n = n.parentElement) lag.push(parse(getComputedStyle(n).backgroundColor)); let c = { r: 10, g: 10, b: 8, a: 1 }; for (const l of lag.reverse()) c = blend(l, c); return c }
+      const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05) }
+      const ud = []
+      for (const t of el.querySelectorAll('span')) {
+        const fg = parse(getComputedStyle(t).color)
+        ud.push({ tekst: t.textContent.slice(0, 24), ratio: Math.round(ratio(blend(fg, bg(t)), bg(t)) * 100) / 100, px: parseFloat(getComputedStyle(t).fontSize) })
+      }
+      const fg = parse(getComputedStyle(el).color)
+      ud.push({ tekst: 'linje', ratio: Math.round(ratio(blend(fg, bg(el)), bg(el)) * 100) / 100, px: parseFloat(getComputedStyle(el).fontSize) })
+      return ud
+    })
+    console.log('KONTRAST', JSON.stringify(kontraster))
+    for (const k of kontraster) assert.ok(k.ratio >= 4.5, `kontrast under 4.5:1 paa "${k.tekst}": ${k.ratio}`)
+    assert.ok(kontraster.every(k => k.px >= 10), `tekst under 10 px: ${JSON.stringify(kontraster)}`)
     await shot('1-linje-paa-saet-kortet')
 
     // 2) Tryk starter pausen og åbner pop-up'en
@@ -52,6 +71,9 @@ async function main() {
     const sek = async () => Number((await popup.locator('svg + div span').first().innerText()).trim())
     const a = await sek()
     assert.ok(a > 80 && a <= 90, `pausen starter på ca. 90 s, fik ${a}`)
+    const popTxt = await popup.innerText()
+    assert.match(popTxt, /Første sæt: Squat · sæt 1\/4/, `pop-up før første sæt: ${popTxt}`)
+    assert.doesNotMatch(popTxt, /Næste:/, 'ingen "Næste" før noget er logget')
     await shot('2-popup-aabnet-fra-linjen')
     await page.getByTestId('rest-pause-close').click()
     await popup.waitFor({ state: 'detached', timeout: 3000 })
