@@ -108,7 +108,9 @@ async function main() {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
     page.on('console', msg => { if (msg.type() === 'error') console.error('[console.error]', msg.text()) })
     await runCoachReview(page, { appUrl: APP_URL, outDir: OUT_DIR })
-    await runMinTraeningPreview(page, { appUrl: APP_URL, outDir: OUT_DIR })
+    // Egen frisk side (egen login) som i run-all.mjs; den foerste er allerede logget ind.
+    const page2 = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+    await runMinTraeningPreview(page2, { appUrl: APP_URL, outDir: OUT_DIR })
     console.log('\nGRØN: coachen ser atletlisten, ugens tre sæt, dagens readiness, Analyse-fanen, indbakken og "Min træning" uden fejl.')
     process.exitCode = 0
   } catch (err) {
