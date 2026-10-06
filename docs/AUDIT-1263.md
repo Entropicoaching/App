@@ -54,8 +54,9 @@ Both have no page errors or horizontal overflow, with 390px screenshots.
 
 The recorded baseline is preserved. Re-running the fixed runner with 'before'
 on delivered code intentionally fails: that mode requires the pre-1263 UI.
-There is no committed 1230 snapshot, so do not reset the tree to reconstruct it.
-Compare the small current changes with the task report and the original 1230 audit.
+Order 1298 committed the reconstructed 1230 snapshot as e0312e0a and the isolated
+1263 change as 11e4deca. Inspect their diff without resetting this worktree.
+See docs/AUDIT-1298.md for the commit split and remaining protected work.
 
 The timing medians cannot establish a general speed improvement from this small
 UI change. Host load, module/browser cache and scroll/actionability vary. The

@@ -1,0 +1,101 @@
+{
+  "label": "after",
+  "results": [
+    {
+      "screen": "home",
+      "editable": true,
+      "errors": [],
+      "fewerReps": {
+        "id": "8b6aee78-6579-4a90-b34c-fe63a76d35ba",
+        "created_at": "2026-10-06T01:53:57.207Z",
+        "exercise_id": "66666666-6666-4666-8666-666666666666",
+        "athlete_id": "33333333-3333-4333-8333-333333333333",
+        "set_number": 1,
+        "logged_at": "2026-10-06T01:53:57.179Z",
+        "weight": 80,
+        "reps_completed": 3,
+        "note": null,
+        "rpe_actual": 8,
+        "rpe_planned": 8,
+        "skipped": false
+      },
+      "zeroReps": {
+        "id": "4f512f85-a01a-4e7c-96f3-6d545aed83ab",
+        "created_at": "2026-10-06T01:53:57.998Z",
+        "exercise_id": "66666666-6666-4666-8666-666666666666",
+        "athlete_id": "33333333-3333-4333-8333-333333333333",
+        "set_number": 2,
+        "logged_at": "2026-10-06T01:53:57.978Z",
+        "weight": 80,
+        "reps_completed": 0,
+        "note": null,
+        "rpe_actual": 8,
+        "rpe_planned": 8,
+        "skipped": false
+      },
+      "unchangedPlan": {
+        "id": "cdaf7d32-5589-49b2-9b4b-0b51c82715b1",
+        "created_at": "2026-10-06T01:53:58.783Z",
+        "exercise_id": "66666666-6666-4666-8666-666666666666",
+        "athlete_id": "33333333-3333-4333-8333-333333333333",
+        "set_number": 3,
+        "logged_at": "2026-10-06T01:53:58.745Z",
+        "weight": 80,
+        "reps_completed": 8,
+        "note": null,
+        "rpe_actual": 8,
+        "rpe_planned": 8,
+        "skipped": false
+      },
+      "horizontalOverflow": false
+    },
+    {
+      "screen": "program",
+      "editable": true,
+      "errors": [],
+      "fewerReps": {
+        "id": "9e553287-f20b-4f9d-accd-4421a656bedf",
+        "created_at": "2026-10-06T01:54:01.363Z",
+        "exercise_id": "66666666-6666-4666-8666-666666666666",
+        "athlete_id": "33333333-3333-4333-8333-333333333333",
+        "set_number": 1,
+        "logged_at": "2026-10-06T01:54:01.346Z",
+        "weight": 80,
+        "reps_completed": 3,
+        "note": null,
+        "rpe_actual": 8,
+        "rpe_planned": 8,
+        "skipped": false
+      },
+      "zeroReps": {
+        "id": "364af85e-f4b3-4f54-83aa-8e1552ef6cce",
+        "created_at": "2026-10-06T01:54:02.145Z",
+        "exercise_id": "66666666-6666-4666-8666-666666666666",
+        "athlete_id": "33333333-3333-4333-8333-333333333333",
+        "set_number": 2,
+        "logged_at": "2026-10-06T01:54:02.128Z",
+        "weight": 80,
+        "reps_completed": 0,
+        "note": null,
+        "rpe_actual": 8,
+        "rpe_planned": 8,
+        "skipped": false
+      },
+      "unchangedPlan": {
+        "id": "f0a7e595-1b01-4347-b042-1194d0db2f12",
+        "created_at": "2026-10-06T01:54:02.897Z",
+        "exercise_id": "66666666-6666-4666-8666-666666666666",
+        "athlete_id": "33333333-3333-4333-8333-333333333333",
+        "set_number": 3,
+        "logged_at": "2026-10-06T01:54:02.879Z",
+        "weight": 80,
+        "reps_completed": 8,
+        "note": null,
+        "rpe_actual": 8,
+        "rpe_planned": 8,
+        "skipped": false
+      },
+      "horizontalOverflow": false
+    }
+  ]
+}

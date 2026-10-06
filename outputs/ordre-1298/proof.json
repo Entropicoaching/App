@@ -1,0 +1,141 @@
+{
+  "base": "b08337d3e7b28062a2ddbab89989c63c26aaa590",
+  "baseline": "e0312e0ad7501162c3e18c83933341fe777a8e54",
+  "reps": "11e4deca68ecfdb52f41d49c78a32c7ce3523067",
+  "checkedHead": "11e4deca68ecfdb52f41d49c78a32c7ce3523067",
+  "repsProductFiles": [
+    "src/athlete/DagensPasCard.jsx",
+    "src/athlete/ProgramTab.jsx",
+    "src/fixedRepsEntry.js",
+    "src/fixedRepsEntry.test.js"
+  ],
+  "hashes": [
+    {
+      "path": "src/App.jsx",
+      "baseSHA256": "bff7a0870917a087a4117c7f857a34f86425251c99e986263bc3cf9e6e59b6d8",
+      "workingSHA256": "bff7a0870917a087a4117c7f857a34f86425251c99e986263bc3cf9e6e59b6d8",
+      "unchanged": true
+    },
+    {
+      "path": "src/Auth.jsx",
+      "baseSHA256": "18db2b230796db2452d36283395de274c8190753766102b76a36fbaf1963ea81",
+      "workingSHA256": "18db2b230796db2452d36283395de274c8190753766102b76a36fbaf1963ea81",
+      "unchanged": true
+    },
+    {
+      "path": "src/SetNewPassword.jsx",
+      "baseSHA256": "a487dd1e13eb2e9edce43ea46a103dfda22bdcf87a12d962bf2e508f5775936b",
+      "workingSHA256": "a487dd1e13eb2e9edce43ea46a103dfda22bdcf87a12d962bf2e508f5775936b",
+      "unchanged": true
+    },
+    {
+      "path": "src/supabase.js",
+      "baseSHA256": "d36c986d19984ec1debdc992e2b25f53b1286701af9cc34575df15a736fa3dbe",
+      "workingSHA256": "d36c986d19984ec1debdc992e2b25f53b1286701af9cc34575df15a736fa3dbe",
+      "unchanged": true
+    },
+    {
+      "path": "src/authSignOut.js",
+      "baseSHA256": "4f4c6bb7593a578a6dda3f5250ad2c1e2bff31d9b698b9195a4c489d39f9d146",
+      "workingSHA256": "4f4c6bb7593a578a6dda3f5250ad2c1e2bff31d9b698b9195a4c489d39f9d146",
+      "unchanged": true
+    },
+    {
+      "path": "src/roleCache.js",
+      "baseSHA256": "87f31ee41ddefc63dd1dd9a3bb98a9e415aadd01bb7cdc71af6db11e52cf09cd",
+      "workingSHA256": "87f31ee41ddefc63dd1dd9a3bb98a9e415aadd01bb7cdc71af6db11e52cf09cd",
+      "unchanged": true
+    },
+    {
+      "path": "src/offlineSession.js",
+      "baseSHA256": "c015e457589d58c800f1925be3ac1733b9a07c400cf2fdf3d03e83f2a49fbe54",
+      "workingSHA256": "c015e457589d58c800f1925be3ac1733b9a07c400cf2fdf3d03e83f2a49fbe54",
+      "unchanged": true
+    },
+    {
+      "path": "src/offlineSetQueue.js",
+      "baseSHA256": "56593617877b83521260024d9876d489de09a03dc74ccdace77e6baa38b43224",
+      "workingSHA256": "56593617877b83521260024d9876d489de09a03dc74ccdace77e6baa38b43224",
+      "unchanged": true
+    },
+    {
+      "path": "src/athleteWriteGuard.js",
+      "baseSHA256": "90164499a74a9500ecb14e8fa4ca1567e040fe8fd7c79e48b21a5f6572cb1a55",
+      "workingSHA256": "90164499a74a9500ecb14e8fa4ca1567e040fe8fd7c79e48b21a5f6572cb1a55",
+      "unchanged": true
+    },
+    {
+      "path": "src/athleteReadGuard.js",
+      "baseSHA256": "7f78584c7c48e09e8cb2275bb8fa7888cf81559a6e47987bfc6a9b08abd861a0",
+      "workingSHA256": "7f78584c7c48e09e8cb2275bb8fa7888cf81559a6e47987bfc6a9b08abd861a0",
+      "unchanged": true
+    },
+    {
+      "path": "src/videoCoachSubmission.js",
+      "baseSHA256": "0186694b5b249bbfcd12de0aa355d3459e4f29e05b4645356248e91b7f239622",
+      "workingSHA256": "0186694b5b249bbfcd12de0aa355d3459e4f29e05b4645356248e91b7f239622",
+      "unchanged": true
+    },
+    {
+      "path": "src/videoCoachUpload.js",
+      "baseSHA256": "d976a233b5406fd92b29dff668350a52d07bedaa943b6be2f9d36d3149bc4df1",
+      "workingSHA256": "d976a233b5406fd92b29dff668350a52d07bedaa943b6be2f9d36d3149bc4df1",
+      "unchanged": true
+    },
+    {
+      "path": "src/athlete/saetSkrivning.js",
+      "baseSHA256": "1986ba5b8a1040c8c28ab7847391bf34dd941e060a2c7f5f67bc859dfa8248a6",
+      "workingSHA256": "1986ba5b8a1040c8c28ab7847391bf34dd941e060a2c7f5f67bc859dfa8248a6",
+      "unchanged": true
+    },
+    {
+      "path": "src/athlete/laesninger.js",
+      "baseSHA256": "3bb86c577fc06a925b40fc38392cee9cda442a7dba3e8c7a9d93bb50b9153f3f",
+      "workingSHA256": "3bb86c577fc06a925b40fc38392cee9cda442a7dba3e8c7a9d93bb50b9153f3f",
+      "unchanged": true
+    },
+    {
+      "path": "src/athlete/offlineSnapshot.js",
+      "baseSHA256": "459548fac2d5912012238858287a145a455a478019637c61cd9488dbfab57c79",
+      "workingSHA256": "459548fac2d5912012238858287a145a455a478019637c61cd9488dbfab57c79",
+      "unchanged": true
+    },
+    {
+      "path": "src/athlete/useVideoCoachBro.js",
+      "baseSHA256": "ecab1c46910a89d7bbf54671dcf29735cc3841352f10653b160c895aff4671aa",
+      "workingSHA256": "ecab1c46910a89d7bbf54671dcf29735cc3841352f10653b160c895aff4671aa",
+      "unchanged": true
+    },
+    {
+      "path": "src/athlete/videoCoachBro.js",
+      "baseSHA256": "f8c8b10af09fa0760cb1daf29033ba06d2748a974e9be3ad55ce74d0343eebf4",
+      "workingSHA256": "f8c8b10af09fa0760cb1daf29033ba06d2748a974e9be3ad55ce74d0343eebf4",
+      "unchanged": true
+    },
+    {
+      "path": "public/sw.js",
+      "baseSHA256": "a041fd0a4f64166a0f5fa8065fa4c3cdcaee8890008fac9db8a0a58fe76440dc",
+      "workingSHA256": "a041fd0a4f64166a0f5fa8065fa4c3cdcaee8890008fac9db8a0a58fe76440dc",
+      "unchanged": true
+    },
+    {
+      "path": "public/videocoach.html",
+      "baseSHA256": "734bf2e0eb247c8a6bed2f138d818c560be74a5f94df2c426622ff85ed3cf28d",
+      "workingSHA256": "734bf2e0eb247c8a6bed2f138d818c560be74a5f94df2c426622ff85ed3cf28d",
+      "unchanged": true
+    },
+    {
+      "path": "vite.config.js",
+      "baseSHA256": "a37518cb910992e3c21a0df1e53f4dccf8c453de0778540222b2ce6173cd2824",
+      "workingSHA256": "a37518cb910992e3c21a0df1e53f4dccf8c453de0778540222b2ce6173cd2824",
+      "unchanged": true
+    }
+  ],
+  "protectedDiff": "EMPTY (both delivery commits, HEAD and working tree)",
+  "rpeDisposition": "OPEN: untouched planned RPE still recorded as actual; requires Marc",
+  "fixedScreens": [
+    "home",
+    "program"
+  ],
+  "note": "Synthetic local mock only; no live data, push, merge, migration or deploy."
+}

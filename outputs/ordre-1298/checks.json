@@ -1,0 +1,63 @@
+{
+  "order": 1298,
+  "product": "Entropi Coach",
+  "branch": "ordre-1298",
+  "focused": {
+    "tests": 53,
+    "pass": 53,
+    "fail": 0,
+    "scope": "38 fixed-reps/defaults/tap/input tests plus 15 nextSet tests"
+  },
+  "fullSuite": {
+    "command": "npm test",
+    "tests": 467,
+    "pass": 467,
+    "fail": 0,
+    "skipped": 0,
+    "concurrency": 1,
+    "otherObservedTestProcesses": 0
+  },
+  "build": {
+    "command": "node scripts/audit-fixed-reps-1263.mjs after ordre-1298",
+    "passed": true,
+    "envDir": false,
+    "localMockOnly": true
+  },
+  "browser": {
+    "screens": 2,
+    "viewport": "390x844",
+    "expectedActualReps": [
+      3,
+      0,
+      8
+    ],
+    "pageErrors": 0,
+    "horizontalOverflow": false,
+    "screenshotsInspected": true
+  },
+  "eslint": {
+    "passed": true,
+    "errors": 0,
+    "warnings": 0
+  },
+  "verifiers": [
+    "verify:athlete-training-inputs",
+    "verify:athlete-write-failures",
+    "verify-order-1298"
+  ],
+  "openProductFindings": [
+    "offline Program",
+    "draft lifetime",
+    "untouched RPE saved as actual",
+    "VideoCoach reopening"
+  ],
+  "limitations": [
+    "headless Chromium, no physical phone",
+    "existing dependencies, no clean npm ci",
+    "no live RLS/schema or protected-write changes"
+  ],
+  "pushed": false,
+  "merged": false,
+  "migrated": false,
+  "deployed": false
+}

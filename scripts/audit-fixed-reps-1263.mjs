@@ -13,7 +13,9 @@ import { launchBrowser, ensureSyntheticClip } from '../e2e/harness.mjs'
 const label = process.argv[2] || 'before'
 assert.match(label, /^(before|after)$/)
 const root = resolve(import.meta.dirname, '..')
-const out = resolve(root, 'outputs', 'ordre-1263')
+const outputOrder = process.argv[3] || 'ordre-1263'
+assert.match(outputOrder, /^ordre-\d+$/)
+const out = resolve(root, 'outputs', outputOrder)
 mkdirSync(out, { recursive: true })
 const appUrl = 'http://127.0.0.1:5230/'
 const mockUrl = 'http://127.0.0.1:9230'

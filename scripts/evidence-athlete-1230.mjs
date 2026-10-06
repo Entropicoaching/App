@@ -8,7 +8,7 @@ const root = resolve(import.meta.dirname, '..')
 const out = resolve(root, 'outputs/ordre-1230')
 const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim()
 const base = 'b08337d3e7b28062a2ddbab89989c63c26aaa590'
-assert.equal(git(['rev-parse', 'HEAD']), base)
+git(['merge-base', '--is-ancestor', base, 'HEAD'])
 const protectedPaths = [
   'src/App.jsx', 'src/Auth.jsx', 'src/SetNewPassword.jsx', 'src/supabase.js',
   'src/authSignOut.js', 'src/roleCache.js', 'src/offlineSession.js', 'src/offlineSetQueue.js',
@@ -47,6 +47,7 @@ const rows = Object.keys(before.results[0].timings).map(screen => ({ screen,
 writeFileSync(resolve(out, 'proof.json'), JSON.stringify({ base, branch: git(['branch', '--show-current']), hashes,
   protectedDiff: 'EMPTY', schemaAndWorkflowDiff: 'EMPTY', screenMedians: rows,
   trackedChanges: git(['diff', '--name-only']), newFiles: git(['ls-files', '--others', '--exclude-standard']),
-  note: 'SHA256 over UTF-8 source with CRLF normalized to LF. No commit, push, merge, migration or deploy.' }, null, 2))
+  head: git(['rev-parse', 'HEAD']),
+  note: 'SHA256 over UTF-8 source with CRLF normalized to LF. Local commits allowed; no push, merge, migration or deploy.' }, null, 2))
 writeFileSync(resolve(out, 'timings.md'), '| Screen | Before median ms | After median ms |\n|---|---:|---:|\n' + rows.map(r => `| ${r.screen} | ${r.beforeMs} | ${r.afterMs} |`).join('\n') + '\n')
 console.log(`PASS: ${hashes.length} protected hashes, empty protected/schema/workflow diff, 6 browser runs, no unexpected console errors, regression assertions.`)
