@@ -1,0 +1,26 @@
+[
+  {
+    "width": 390,
+    "identical": false,
+    "originalIDs": true,
+    "prescriptions": 3,
+    "unifiedRestPause": true,
+    "unifiedRecords": true,
+    "unifiedProgress": true,
+    "noWrap": "nowrap",
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "identical": true,
+    "originalIDs": true,
+    "prescriptions": 1,
+    "unifiedRestPause": true,
+    "unifiedRecords": true,
+    "unifiedProgress": true,
+    "noWrap": "nowrap",
+    "overflow": false,
+    "errors": []
+  }
+]

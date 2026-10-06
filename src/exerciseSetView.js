@@ -1,14 +1,16 @@
 import { foldNavn } from './exerciseNames.js'
 
 // Presentation only. Never change names/IDs used by history, defaults or writes.
-const TYPE = '(top(?:s(?:æ|ae)t|set)?|back[ -]?off(?:[ -]?(?:s(?:æ|ae)t|set))?|straight(?:[ -]?(?:s(?:æ|ae)t|sets?))?)'
-const suffix = new RegExp(`(?:\\s*[-–:]\\s*|\\s+)${TYPE}\\s*$`, 'i')
+const TYPE = '(top(?:[ -]?(?:s(?:\u00e6|ae)t|set))?|back[ -]?off(?:[ -]?(?:s(?:\u00e6|ae)t|set))?|straight(?:[ -]?(?:s(?:\u00e6|ae)t|sets?))?)'
+const suffix = new RegExp(`(?:\\s*[-\u2013:,]\\s*|\\s+)${TYPE}\\s*$`, 'i')
 const parentheses = new RegExp(`\\s*\\(${TYPE}\\)\\s*$`, 'i')
+const prefix = new RegExp(`^${TYPE}(?:\\s*[-\u2013:,]\\s*|\\s+)(.+)$`, 'i')
 
 export function exerciseSetView(name) {
   const raw = String(name ?? '').trim()
-  const match = raw.match(parentheses) || raw.match(suffix)
-  const base = match ? raw.slice(0, match.index).trim() : raw
+  const leading = raw.match(prefix)
+  const match = raw.match(parentheses) || raw.match(suffix) || leading
+  const base = leading && match === leading ? leading[2].trim() : match ? raw.slice(0, match.index).trim() : raw
   // A bare "Topsaet" is ambiguous; never infer an exercise from its neighbour.
   if (!base) return { name: raw, key: foldNavn(raw), type: 'straight', label: 'Sæt' }
   const token = foldNavn(match?.[1] || '')
@@ -43,5 +45,22 @@ export function exerciseViewRows(exercises) {
   return exerciseViewGroups(exercises).flatMap(group => group.rows.map((row, i) => ({
     ...row, name: group.name, startsGroup: i === 0, endsGroup: i === group.rows.length - 1,
     totalSets: group.totalSets,
+    showPrescription: i === 0 || prescriptionKey(row.ex) !== prescriptionKey(group.rows[i - 1].ex),
   })))
+}
+
+// Only collapse identical adjacent prescriptions; differing loads/reps stay visible.
+const prescriptionKey = ex => JSON.stringify([ex.sets, ex.reps, ex.intensity,
+  ex.recommended_weight ?? null, ex.recommended_weight == null ? ex.name : null])
+
+export function bestExerciseRecords(records = []) {
+  const best = new Map()
+  for (const r of records) {
+    const view = exerciseSetView(r.exercise_name)
+    const cur = best.get(view.key)
+    const weight = Number(r.weight) || 0, reps = Number(r.reps) || 0
+    if (!cur || weight > cur.weight || (weight === cur.weight && reps > cur.reps))
+      best.set(view.key, { name: view.name, weight, reps })
+  }
+  return [...best.values()]
 }

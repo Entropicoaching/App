@@ -1,3 +1,4 @@
+import { exerciseSetView } from '../exerciseSetView'
 // Fremgang-fanen (ordre 284) — "er squatten rent faktisk blevet stærkere
 // siden marts", for ÉN øvelse ad gangen: tungeste sæt pr. uge og det
 // beregnede énrepetitionsmaksimum. Al regnelogik (herunder hovedløfts-
@@ -24,7 +25,7 @@ function navneFraProgram(allWeeks) {
   for (const week of allWeeks || []) {
     for (const session of week.sessions || []) {
       for (const exercise of session.exercises || []) {
-        if (exercise.name) set.add(exercise.name)
+        if (exercise.name) set.add(exerciseSetView(exercise.name).name)
       }
     }
   }
@@ -35,7 +36,7 @@ function navneFraLogs(logs) {
   const set = new Set()
   for (const log of logs || []) {
     const navn = log.exercises?.name
-    if (navn) set.add(navn)
+    if (navn) set.add(exerciseSetView(navn).name)
   }
   return set
 }
@@ -180,13 +181,13 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
 
   const punkter = useMemo(() => {
     if (!oevelse) return []
-    const logsForOevelse = (fremgangLogs || []).filter(l => l.exercises?.name === oevelse)
+    const logsForOevelse = (fremgangLogs || []).filter(l => exerciseSetView(l.exercises?.name).key === exerciseSetView(oevelse).key)
     return heaviestSetPerWeek(logsForOevelse)
   }, [fremgangLogs, oevelse])
 
   const rekorder = useMemo(() => {
     if (!fremgangLogs) return null
-    return rekordListe([...tidligereSaet(fremgangLogs, currentWeek), ...ugensSaet(exerciseLogs, currentWeek, allWeeks)]).reverse().slice(0, 10)
+    return rekordListe([...tidligereSaet(fremgangLogs, currentWeek), ...ugensSaet(exerciseLogs, currentWeek, allWeeks)].map(s => ({ ...s, navn: exerciseSetView(s.navn).name }))).reverse().slice(0, 10)
   }, [fremgangLogs, exerciseLogs, currentWeek, allWeeks])
 
   return (
@@ -211,7 +212,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                 const aktiv = navnEnFamilie.includes(oevelse)
                 return (
                   <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={aktiv ? s.btnPrimary : s.btnGhost}>
-                    {familie.label}
+                    {navnEnFamilie.length === 1 ? hovednavn : familie.label}
                   </button>
                 )
               })}

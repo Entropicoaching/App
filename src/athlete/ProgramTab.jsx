@@ -461,7 +461,7 @@ export default function ProgramTab({
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
 
 
-                            {exerciseViewRows(session.exercises).map(({ ex, name, label, startsGroup, endsGroup }, exIdx) => {
+                            {exerciseViewRows(session.exercises).map(({ ex, name, label, startsGroup, endsGroup, showPrescription }, exIdx) => {
                               const isLast = exIdx === session.exercises.length - 1
                               return (
                                 <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast || !endsGroup ? 0 : '1.25rem', borderBottom: isLast || !endsGroup ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
@@ -495,7 +495,7 @@ export default function ProgramTab({
                                     </div>
                                     {isCurrentWeek && (
                                       <>
-                                        {ex.recommended_weight != null ? (
+                                        {showPrescription && (ex.recommended_weight != null ? (
                                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
                                             Anbefalet: {ex.recommended_weight}kg
                                           </div>
@@ -509,7 +509,7 @@ export default function ProgramTab({
                                               Forslag: {s.weight} kg <span style={{ color: '#7a7770' }}>({diffStr} kg · RPE {s.fromRpe})</span>
                                             </div>
                                           )
-                                        })()}
+                                        })())}
                                         {(exerciseHistory[ex.name?.toLowerCase()] || []).map(({ date, sets }) => {
                                           const d = new Date(date + 'T12:00:00')
                                           const label = `${d.getDate()}/${d.getMonth() + 1}`
@@ -522,9 +522,9 @@ export default function ProgramTab({
                                         })}
                                       </>
                                     )}
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
+                                    {showPrescription && <div data-exercise-prescription style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
                                       {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
-                                    </div>
+                                    </div>}
                                     {ex.note && (
                                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginTop: '0.1rem', fontStyle: 'italic' }}>{ex.note}</div>
                                     )}
@@ -663,7 +663,7 @@ export default function ProgramTab({
                                     if (!isCurrentWeek) {
                                       return (
                                         <div key={setNum} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>{label} {setNum}</div>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
                                           {logged?.skipped ? (
                                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844' }}>✕ Sprunget over</span>
                                           ) : logged ? (
@@ -691,7 +691,7 @@ export default function ProgramTab({
 
                                     if (logged?.skipped) return (
                                       <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>{label} {setNum}</div>
+                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
                                         <span style={{ color: '#4a4844', fontSize: '1rem' }}>✕</span>
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
                                         <button
@@ -703,8 +703,8 @@ export default function ProgramTab({
 
                                     return (
                                       <div key={setNum} style={{ marginBottom: '0.75rem' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '52px' }}>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>
                                             {label} {setNum}
                                           </div>
                                           <input
@@ -751,7 +751,7 @@ export default function ProgramTab({
                                             onClick={() => skipSet(ex.id, setNum, plannedRpe)}
                                           >Spring over</button>
                                         </div>
-                                        <div style={{ paddingLeft: 'calc(52px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <div style={{ paddingLeft: 'calc(80px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                           <div style={{ position: 'relative' }}>
                                             <button
                                               onClick={() => setOpenRpePicker(openRpePicker === key ? null : key)}
@@ -829,7 +829,7 @@ export default function ProgramTab({
                                         </div>
                                         {setConfirm[key] && (
                                           <div style={{
-                                            paddingLeft: 'calc(52px + 0.5rem)',
+                                            paddingLeft: 'calc(80px + 0.5rem)',
                                             fontFamily: "'IBM Plex Mono', monospace",
                                             fontSize: '0.52rem',
                                             letterSpacing: '0.08em',

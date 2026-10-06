@@ -1,3 +1,4 @@
+import { exerciseSetView, bestExerciseRecords } from '../exerciseSetView'
 // HJEM-fanen (ferie-skaermen og forsiden: overskrift, ugestrimmel, Dagens pas,
 // pauselinje, chips og alt bag "Mere") — JSX'en flyttet uaendret ud af
 // AthleteView.jsx (ordre 373). Ikke lazy: det er standardfanen. Ingen egen
@@ -54,7 +55,7 @@ function HjemTab({
             {(() => {
               const dagensPas = findDagensPas(allWeeks, currentWeek, exerciseLogs)
               const next = dagensPas?.status === 'open' ? dagensPas.next : null
-              const nextLabel = next ? `Næste: ${next.exercise?.name || ''} · sæt ${next.setNumber}/${next.totalSets}` : null
+              const nextLabel = next ? `Næste: ${exerciseSetView(next.exercise?.name).name} · sæt ${next.setNumber}/${next.totalSets}` : null
               // ORDRE 330 · blok 1 — én tydelig overskrift øverst: hvilken dags
               // pas er det man ser ("Onsdag · Dag 1 — Squat"). Dagen er passets
               // faste ugedag; uden fast ugedag (fleksibelt pas) er det i dag.
@@ -160,7 +161,7 @@ function HjemTab({
                   {restPause && (
                     <RestPauseFooter
                       athleteId={athlete?.id}
-                      pause={restPause}
+                      pause={{ ...restPause, label: exerciseSetView(restPause.label).name }}
                       onClear={() => setRestPause(null)}
                       nextLabel={nextLabel}
                     />
@@ -616,16 +617,8 @@ function HjemTab({
             {/* Dine rekorder — maks + bedste løft pr. øvelse (motivation; data findes allerede) */}
             {(() => {
               const hasMax = athlete.squat || athlete.bench || athlete.deadlift
-              const bestByEx = {}
-              for (const r of prs) {
-                const cur = bestByEx[r.exercise_name]
-                if (!cur || (r.weight || 0) > cur.weight) bestByEx[r.exercise_name] = { weight: r.weight || 0, reps: r.reps || 0 }
-              }
-              // Prioritér hovedløft/konkurrenceløft (squat/bænk/dødløft + varianter) før
-              // accessory: ellers kan et tungt assistance-løft skubbe et mere relevant løft
-              // ud af top-6. Inden for hver gruppe sorteres efter vægt.
-              const bestList = Object.entries(bestByEx)
-                .map(([name, v]) => ({ name, ...v, main: isMainLift(name) }))
+              const bestList = bestExerciseRecords(prs)
+                .map(v => ({ ...v, main: isMainLift(v.name) }))
                 .sort((a, b) => (b.main - a.main) || (b.weight - a.weight))
                 .slice(0, 6)
               if (!hasMax && !bestList.length && !prsError) return null

@@ -1,0 +1,109 @@
+{
+  "base": "90cdf711a758afb23a3ff14da5cccc7efa5ddbb1",
+  "branch": "ordre-1328",
+  "hashes": [
+    {
+      "path": "src/App.jsx",
+      "before": "49f23ca2b47728198791ffb286af221ad456a2a0bfab64e726417b9f5be43006",
+      "after": "49f23ca2b47728198791ffb286af221ad456a2a0bfab64e726417b9f5be43006"
+    },
+    {
+      "path": "src/Auth.jsx",
+      "before": "74dbf250aebe1b11296de339c7d6117a4d657ffb6b0ac8d58a6e55e5b5b3a1eb",
+      "after": "74dbf250aebe1b11296de339c7d6117a4d657ffb6b0ac8d58a6e55e5b5b3a1eb"
+    },
+    {
+      "path": "src/SetNewPassword.jsx",
+      "before": "6723ddb3319456c26413ae324bebd327b04f23c92af74bc6e0ca11d02405b9cb",
+      "after": "6723ddb3319456c26413ae324bebd327b04f23c92af74bc6e0ca11d02405b9cb"
+    },
+    {
+      "path": "src/supabase.js",
+      "before": "5ebf14becd1639e9d9ab80bd748184e6a047c44d914f0431e628e053bab8252c",
+      "after": "5ebf14becd1639e9d9ab80bd748184e6a047c44d914f0431e628e053bab8252c"
+    },
+    {
+      "path": "src/authSignOut.js",
+      "before": "357d7d8b2d3e3660092a06a6560f5fd4d83cf436487d853fd1289749a1bbce68",
+      "after": "357d7d8b2d3e3660092a06a6560f5fd4d83cf436487d853fd1289749a1bbce68"
+    },
+    {
+      "path": "src/roleCache.js",
+      "before": "4c512d4fe9eb0f929b01550de89ec98449ae70648218f89592a8512e44f08127",
+      "after": "4c512d4fe9eb0f929b01550de89ec98449ae70648218f89592a8512e44f08127"
+    },
+    {
+      "path": "src/offlineSession.js",
+      "before": "e7c14cdfeb5477e3d9395c351e1c803c747e8424cc6ec8ecaddde1fc9bdca751",
+      "after": "e7c14cdfeb5477e3d9395c351e1c803c747e8424cc6ec8ecaddde1fc9bdca751"
+    },
+    {
+      "path": "src/offlineSetQueue.js",
+      "before": "cddb835f93785e32f5fa3f28f446c7a16de8f93eadf14327b48d5d2d33d490fb",
+      "after": "cddb835f93785e32f5fa3f28f446c7a16de8f93eadf14327b48d5d2d33d490fb"
+    },
+    {
+      "path": "src/athleteWriteGuard.js",
+      "before": "29ed0ce254e159e35e0e9b96021e79b97c86fef7f16bc8a617f882bbfbf9248d",
+      "after": "29ed0ce254e159e35e0e9b96021e79b97c86fef7f16bc8a617f882bbfbf9248d"
+    },
+    {
+      "path": "src/athleteReadGuard.js",
+      "before": "c0ebbdae10a89a803eb7c6e4f35d71422b0e87ae6634dbfff479b47ab6552561",
+      "after": "c0ebbdae10a89a803eb7c6e4f35d71422b0e87ae6634dbfff479b47ab6552561"
+    },
+    {
+      "path": "src/videoCoachSubmission.js",
+      "before": "779e43afab5c0bf5e617e9475bb9aca76ced959a49e9acd0ca9bb43fc02ecede",
+      "after": "779e43afab5c0bf5e617e9475bb9aca76ced959a49e9acd0ca9bb43fc02ecede"
+    },
+    {
+      "path": "src/videoCoachUpload.js",
+      "before": "c70ef2d7b09343275abd6bb7d06f02e107c2ef0dc22116c83d1c2d1c0320a251",
+      "after": "c70ef2d7b09343275abd6bb7d06f02e107c2ef0dc22116c83d1c2d1c0320a251"
+    },
+    {
+      "path": "src/athlete/saetSkrivning.js",
+      "before": "af279ff4555de24e5a0ca08c199ad853a4165922608022dd6388b41efc37fc94",
+      "after": "af279ff4555de24e5a0ca08c199ad853a4165922608022dd6388b41efc37fc94"
+    },
+    {
+      "path": "src/athlete/laesninger.js",
+      "before": "332dc2a53eca1a0f2fec87bd032f54b32d960badbb5b48f4b49ae25aeca12fb1",
+      "after": "332dc2a53eca1a0f2fec87bd032f54b32d960badbb5b48f4b49ae25aeca12fb1"
+    },
+    {
+      "path": "src/athlete/offlineSnapshot.js",
+      "before": "ebe77030ca6fa9365f4d70416a0351e344b47e76ea3b81253a01aa7d5aa03481",
+      "after": "ebe77030ca6fa9365f4d70416a0351e344b47e76ea3b81253a01aa7d5aa03481"
+    },
+    {
+      "path": "src/athlete/useVideoCoachBro.js",
+      "before": "209fe0a7e3ad504208963ac1497c78f3673ad498a91e13fda5e71888a14a967b",
+      "after": "209fe0a7e3ad504208963ac1497c78f3673ad498a91e13fda5e71888a14a967b"
+    },
+    {
+      "path": "src/athlete/videoCoachBro.js",
+      "before": "c8305f65370eec8c5c6ea2108dd54aff090c47d70c16f16e3f24721c03e9f70f",
+      "after": "c8305f65370eec8c5c6ea2108dd54aff090c47d70c16f16e3f24721c03e9f70f"
+    },
+    {
+      "path": "public/sw.js",
+      "before": "a37651a0b624420011bf3e2da1813e39aff7b1b9c4d33b3fc79f408f5ca9f3fd",
+      "after": "a37651a0b624420011bf3e2da1813e39aff7b1b9c4d33b3fc79f408f5ca9f3fd"
+    },
+    {
+      "path": "public/videocoach.html",
+      "before": "9e2bb8344da1105511c36d8561aa83667881f75caf7169c6ceb591d2931f20ba",
+      "after": "9e2bb8344da1105511c36d8561aa83667881f75caf7169c6ceb591d2931f20ba"
+    },
+    {
+      "path": "vite.config.js",
+      "before": "fc1a6cfa92d8f288ec4cc1ceefadf8a18ab01a050ae2eb28e5aa72fa5bf59cff",
+      "after": "fc1a6cfa92d8f288ec4cc1ceefadf8a18ab01a050ae2eb28e5aa72fa5bf59cff"
+    }
+  ],
+  "protectedDiff": "EMPTY",
+  "migrationFilesChanged": false,
+  "actions": "Local branch and commits authorized; no push, merge, deploy or migration."
+}

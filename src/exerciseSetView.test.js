@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { exerciseSetView, exerciseViewGroups, exerciseViewRows } from './exerciseSetView.js'
+import { exerciseSetView, exerciseViewGroups, exerciseViewRows, bestExerciseRecords } from './exerciseSetView.js'
 import { nextSetInSession } from './nextSet.js'
 
 for (const [input, name, type] of [
@@ -67,4 +67,39 @@ test('circuits keep order; null and empty names do not merge', () => {
   assert.deepEqual(groups.map(g => g.name), ['Bænkpres', 'Squat', 'Bænkpres'])
   assert.deepEqual(exerciseViewGroups(null), [])
   assert.equal(exerciseViewGroups([{ name: null }, { name: '' }]).length, 2)
+})
+
+for (const [input, type] of [
+  ['Baenkpres Top set', 'top'], ['Baenkpres (top set)', 'top'],
+  ['Back-off Baenkpres', 'backoff'], ['Topsaet Baenkpres', 'top'],
+  ['Baenkpres, top', 'top'],
+]) test(`QA 1317 parser: ${input}`, () => {
+  assert.equal(exerciseSetView(input).name, 'B\u00e6nkpres')
+  assert.equal(exerciseSetView(input).type, type)
+})
+
+test('home records combine set types and preserve the best original load/reps', () => {
+  const records = [
+    { exercise_name: 'Baenkpres Top set', weight: 100, reps: 3 },
+    { exercise_name: 'Back-off Baenkpres', weight: 80, reps: 5 },
+    { exercise_name: 'Baenkpres', weight: 100, reps: 4 },
+    { exercise_name: 'Pause squat', weight: 60, reps: 5 },
+  ]
+  const copy = structuredClone(records)
+  assert.deepEqual(bestExerciseRecords(records), [
+    { name: 'B\u00e6nkpres', weight: 100, reps: 4 },
+    { name: 'Pause squat', weight: 60, reps: 5 },
+  ])
+  assert.deepEqual(records, copy)
+})
+
+test('identical adjacent prescriptions display once; differing prescriptions stay visible', () => {
+  const base = { sets: 1, reps: '3', intensity: 'RPE 8', recommended_weight: 100 }
+  const rows = exerciseViewRows([
+    { ...base, name: 'Baenkpres Top set' },
+    { ...base, name: 'Back-off Baenkpres' },
+    { ...base, name: 'Baenkpres' },
+    { ...base, name: 'Baenkpres', recommended_weight: 80 },
+  ])
+  assert.deepEqual(rows.map(r => r.showPrescription), [true, false, false, true])
 })
