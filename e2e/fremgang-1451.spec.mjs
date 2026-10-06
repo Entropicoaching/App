@@ -99,8 +99,8 @@ async function main() {
 
       if (FOER) {
         await udover('Bænkpres').catch(() => {}); await shot('fremgang-baenk')
-        log(`FOER ${bredde}: knapper =`, (await knapper()).join(' | ')); await ctx.close(); continue
-      }
+        log(`FOER ${bredde}: knapper =`, (await knapper()).join(' | ')); await ctx.close()
+      } else {
 
       // 1) Praecis fire hovedloeft-faner (kun dem med data); varianter og assistance under "Andre oevelser".
       const k = await knapper()
@@ -165,7 +165,9 @@ async function main() {
       await page.getByText(/styrkeudvikling/i).first().scrollIntoViewIfNeeded().catch(() => {})
       await shot('hjem-styrkeudvikling')
       await ctx.close()
+      }
 
+      const ck = FOER ? new Proxy({}, { get: () => () => {} }) : assert
       // ---------- Coach: samme regel og navne
       const cctx = await browser.newContext({ viewport: { width: bredde, height: hoejde } })
       const cp = await cctx.newPage()
@@ -185,20 +187,20 @@ async function main() {
       await cp.waitForSelector('[data-styrke-linje]', { timeout: 8000 })
       const sl = await cp.evaluate(() => document.querySelector('[data-styrke-linje]').innerText)
       log(`Coach hub-linje ${bredde}:`, sl.replace(/\n/g, ' | '))
-      assert.ok(!/(topsæt|top set|backoff|teknik|Rumænsk|Front)/i.test(sl.split('Kun tunge')[0]), 'suffiks/variant i coachens styrkelinje')
+      ck.ok(!/(topsæt|top set|backoff|teknik|Rumænsk|Front)/i.test(sl.split('Kun tunge')[0]), 'suffiks/variant i coachens styrkelinje')
       await cshot('coach-hub')
       await tab('Log')
       await cp.locator('select').first().selectOption('Bænkpres'); await cp.waitForTimeout(500)
       const e1 = [...(await cp.evaluate(() => document.body.innerText)).matchAll(/e1RM (\d+(?:\.\d)?)kg/g)].map(m => Number(m[1]))
       log(`Coach Log baenk e1RM ${bredde}:`, e1.join(', '))
-      assert.equal(Math.round(e1[0]), atletTal['Bænkpres'], 'coach-Log baenk = atletens Fremgang')
-      assert.deepEqual(e1.map(Math.round), [...FORVENTET_BAENK].reverse(), 'coach-Log: samme syv tunge dage som atletens kurve, deload-dagen har intet e1RM')
+      ck.equal(Math.round(e1[0]), atletTal['Bænkpres'], 'coach-Log baenk = atletens Fremgang')
+      ck.deepEqual(e1.map(Math.round), [...FORVENTET_BAENK].reverse(), 'coach-Log: samme syv tunge dage som atletens kurve, deload-dagen har intet e1RM')
       await cshot('coach-log-baenk')
       await tab('Stævne')
       const crek = await cp.evaluate(() => document.body.innerText)
-      assert.ok(!/(topsæt|backoff|teknik|volumen)/i.test(crek.split('Rekorder')[1] || ''), 'suffiks-navn i coachens rekorder')
+      ck.ok(!/(topsæt|backoff|teknik|volumen)/i.test(crek.split('Rekorder')[1] || ''), 'suffiks-navn i coachens rekorder')
       await cshot('coach-rekorder')
-      assert.ok((await cp.evaluate(() => document.documentElement.scrollWidth)) <= bredde, 'vandret overflow hos coach')
+      ck.ok((await cp.evaluate(() => document.documentElement.scrollWidth)) <= bredde, 'vandret overflow hos coach')
       await cctx.close()
     }
     if (FOER) return

@@ -278,7 +278,7 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
       {rateLine}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
         <div style={s.cardLabel}>Dagens pas</div>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}{view.label !== 'Sæt' && ` · ${view.label}`}</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>{view.label !== 'Sæt' && `${view.label} · `}Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}</div>
       </div>
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
