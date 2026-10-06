@@ -22,6 +22,7 @@
     "e2e:coach-afvigelse": "node e2e/coach-afvigelse.spec.mjs",
     "e2e:fremgang": "node e2e/fremgang.spec.mjs",
     "e2e:coach-fremgang": "node e2e/coach-fremgang.spec.mjs",
+    "e2e:regression-1440": "node e2e/regression-1440.spec.mjs",
     "e2e:coach-mandagsrunden": "node e2e/coach-mandagsrunden.spec.mjs",
     "e2e:coach-automation-alerts": "node e2e/coach-automation-alerts.spec.mjs",
     "e2e:saet-nu": "node e2e/saet-nu.spec.mjs",
