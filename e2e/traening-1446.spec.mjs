@@ -53,6 +53,9 @@ ${txt.slice(0, 1800)}`)
     await p.getByRole('button', { name: 'Log ind' }).click()
     await p.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
     await snap('hjem')
+    const hjemTxt = await p.evaluate(() => document.body.innerText)
+    assert.ok(await p.getByTestId('varm-op-link').isVisible(), 'Varm op-link mangler foer foerste saet')
+    assert.match(hjemTxt, /Anbefalet: 120 kg/); assert.match(hjemTxt, /2 SÆT · × 3 REPS/i); assert.ok(!/Sæt 1 · Sæt/.test(hjemTxt))
     // Opvarmning (Mobilitet -> Varm op)
     const klik = async (loc, ms = 800) => { await loc.first().click({ timeout: 4000 }).catch(e => console.log('KLIK-FEJL', String(e).slice(0, 120))); await p.waitForTimeout(ms) }
     await klik(p.getByRole('button', { name: 'Mobilitet', exact: true }))
@@ -70,6 +73,7 @@ ${txt.slice(0, 1800)}`)
       if (sidste) break
     }
     await snap('opvarmning-slut')
+    assert.ok(await p.getByRole('button', { name: /Til dagens pas/ }).isVisible(), 'Til dagens pas-knap mangler efter opvarmning')
     await klik(p.getByRole('button', { name: 'Hjem', exact: true }))
     for (let i = 1; i <= 7; i++) {
       const g = p.getByRole('button', { name: 'Godkendt', exact: true })
@@ -86,10 +90,11 @@ ${txt.slice(0, 1800)}`)
       await p.waitForTimeout(1000); await snap(id)
     }
     if (process.env.EXPLORE) { await p.waitForTimeout(600000) }
+  } catch (e) { console.error('ASSERT-FEJL', e); process.exitCode = 1
   } finally {
     console.log('FEJL:', JSON.stringify(fejl))
     await browser.close(); await mock.close?.(); vite.kill?.()
-    process.exit(0)
+    process.exit(process.exitCode || (fejl.length ? 1 : 0))
   }
 }
 main().catch(e => { console.error(e); process.exit(1) })
