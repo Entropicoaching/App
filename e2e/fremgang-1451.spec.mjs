@@ -134,6 +134,12 @@ async function main() {
       const rek = await page.evaluate(() => document.querySelector('[data-rekord-liste]')?.innerText ?? '')
       assert.match(rek, /Bænkpres/); assert.ok(!SUFF.test(rek), `suffiks i rekorder: ${rek}`)
       assert.ok(!/ 90 kg × 10| 80 kg × 15| 85 kg × 8/.test(rek.replace(/,/g, '.')), 'let-saet-rekord vist')
+      // Ordre 1469 (1467-5): hovedloeft foerst, varianter/assistance samlet nederst.
+      const vari = await page.evaluate(() => document.querySelector('[data-rekord-varianter]')?.innerText ?? '')
+      assert.match(vari, /Varianter og assistance/i); assert.match(vari, /Militærpres/, vari)
+      assert.ok(!/Militærpres/.test(rek), 'variant staar mellem hovedloeftene: ' + rek)
+      assert.ok(await page.evaluate(() => { const h = document.querySelector('[data-rekord-liste]'); const v = document.querySelector('[data-rekord-varianter]'); return !!h && !!v && !!(h.compareDocumentPosition(v) & Node.DOCUMENT_POSITION_FOLLOWING) }), 'varianter skal staa efter hovedloeftene')
+      await page.locator('[data-rekord-liste]').scrollIntoViewIfNeeded(); await shot('fremgang-rekorder')
 
       // 5) Squat og Doedloeft: samme regler. Squat: 150x3 = 165, foerste 130x3 = 143 (deload 100x5 tæller ikke). Doedloeft: 175x2 = 187.
       await udover('Squat')
