@@ -2,13 +2,17 @@
 // (exercise_logs: Fremgangs historik + ugens sæt). Intet nyt i databasen.
 // Rene funktioner, samme mønster som ugeStatus.js, så de testes uden browser.
 //
+// Ordre 1451: kun TUNGE sæt kan sætte eller slå en rekord (erTungtSaet, samme
+// regel som Fremgang-kurven, forsidens styrkelinje og coachens visning): højst
+// 8 reps, ikke backoff/volumen/teknik-single. Navnet skal være det RÅ navn.
+//
 // En rekord er et gennemført sæt (vægt > 0, reps > 0, ikke sprunget over), der
 // enten giver øvelsens højeste e1RM (Epley, afrundet til hele kg, så "+0 kg"
 // aldrig fejres), eller flest reps på en vægt, der er løftet før. Øvelsens
 // allerførste sæt er ingen rekord: der er intet at slå. Et fortrudt sæt er
 // væk fra loggen og tæller derfor heller ikke.
 import { exerciseSetView } from '../exerciseSetView.js'
-import { estimatedOneRepMax } from '../exerciseProgress.js'
+import { estimatedOneRepMax, erTungtSaet } from '../exerciseProgress.js'
 
 export const e1rmKg = (weight, reps) => Math.round(estimatedOneRepMax(weight, reps))
 
@@ -16,7 +20,7 @@ const noegle = (navn) => exerciseSetView(navn).key
 const vaegtNoegle = (weight) => String(Number(weight))
 
 export function gyldigtSaet(saet) {
-  return !!saet && !saet.skipped && Number(saet.weight) > 0 && Number(saet.reps) > 0 && !!noegle(saet.navn)
+  return !!saet && !saet.skipped && Number(saet.weight) > 0 && Number(saet.reps) > 0 && !!noegle(saet.navn) && erTungtSaet(saet.navn, saet.reps)
 }
 
 // Grundlaget er kun maksima (bedste e1RM og flest reps pr. vægt pr. øvelse),

@@ -87,7 +87,7 @@ test('rekordListe med indeksets grundlag = 439 over hele historikken (ugens reko
   const logs = [
     { exercise_id: 'ex3', set_number: 1, weight: 100, reps_completed: 5, skipped: false, logged_at: '2026-09-15T10:00:00Z' },
     { exercise_id: 'ex3', set_number: 2, weight: 100, reps_completed: 5, skipped: false, logged_at: '2026-09-15T10:03:00Z' },
-    { exercise_id: 'ex3', set_number: 3, weight: 90, reps_completed: 9, skipped: false, logged_at: '2026-09-15T10:06:00Z' },
+    { exercise_id: 'ex3', set_number: 3, weight: 95, reps_completed: 8, skipped: false, logged_at: '2026-09-15T10:06:00Z' },
   ]
   const ix = laegRaekkerTil(tomtIndeks('a1'), historik, allWeeks, u3)
   const nye = rekordListe(ugensSaet(logs, u3, allWeeks), grundlagFoer(ix, u3)).filter(r => r.denneUge)

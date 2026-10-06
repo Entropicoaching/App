@@ -26,8 +26,6 @@ export function estimatedOneRepMax(weight, reps) {
   return w * (1 + r / 30)
 }
 
-const NON_BARBELL = /belt|hack|split|bulgar|goblet|smith|pendul|maskine|machine|leg press|sissy|db |dumbbell|håndvægt/
-
 export const HOVEDLOEFT_FAMILIER = [
   { key: 'squat', label: 'Squat', color: '#4e8fcf', match: n => exerciseSetView(n).key === 'squat' },
   { key: 'baenk', label: 'Bænkpres', color: '#c8923a', match: n => exerciseSetView(n).key === 'baenkpres' },
@@ -36,27 +34,25 @@ export const HOVEDLOEFT_FAMILIER = [
 ]
 
 /**
- * Hvilken hovedløft-familie hører et øvelsesnavn til (kun til at organisere
- * øvelsesvælgeren) — null hvis navnet ikke matcher nogen af de tre.
+ * Hvilken hovedløft-familie et øvelsesnavn hører til: PRÆCIS de fire (Marcs dom
+ * 6. okt, V17: "Hovedløft er præcis fire: squat, bænkpres, konventionel
+ * dødløft og sumo dødløft. Alt andet (front squat, pause, close-grip, goblet,
+ * RDL osv.) er varianter/assistance"). Sættype-suffikser og stavemåder
+ * ("Bænkpres top set", "baenk teknik single", "Bench") foldes til samme løft.
+ * Varianter giver null og havner under "Andre øvelser".
  */
 export function hovedloeftFamilie(navn) {
-  const n = exerciseSetView(navn).name.toLowerCase()
-  if (NON_BARBELL.test(n)) return null
-  if (HOVEDLOEFT_FAMILIER[3].match(n)) return 'sumo'
-  if (n.includes('squat')) return 'squat'
-  if (n.includes('bænk') || n.includes('bench')) return 'baenk'
-  if (n.includes('dødløft') || n.includes('deadlift') || /(^|\s)dl(\s|$)/.test(n)) return 'doedloeft'
-  return null
+  return HOVEDLOEFT_FAMILIER.find(f => f.match(navn))?.key ?? null
 }
 
 /**
  * Grupperer en liste af ØVELSESNAVNE (typisk alle distinkte navne atleten
- * har logget) til øvelsesvælgeren: de tre hovedløft-familier (hver med sine
- * matchende navne, inkl. varianter som "Frontsquat"), og "andre" — resten,
+ * har logget) til øvelsesvælgeren: de fire hovedløft (ét navn hver) og
+ * "andre" (varianter og assistance) — resten,
  * i den rækkefølge de kom ind (kaldestedet sorterer selv om nødvendigt).
  *
  * @param {string[]} navne
- * @returns {{ squat: string[], baenk: string[], doedloeft: string[], andre: string[] }}
+ * @returns {{ squat: string[], baenk: string[], doedloeft: string[], sumo: string[], andre: string[] }}
  */
 export function grupperOevelsesnavne(navne) {
   const grupper = { squat: [], baenk: [], doedloeft: [], sumo: [], andre: [] }
@@ -145,7 +141,7 @@ export function bestHeavySetPerDay(logs) {
     if (!dag) continue
     const val = estimatedOneRepMax(weight, reps)
     const cur = best.get(dag)
-    if (!cur || val > cur.val || (val === cur.val && weight > cur.weight)) best.set(dag, { dag, weight, reps, val })
+    if (!cur || val > cur.val || (val === cur.val && weight > cur.weight)) best.set(dag, { dag, weight, reps, val, navn: log.exercises?.name ?? log.navn })
   }
   return [...best.values()].sort((a, b) => a.dag.localeCompare(b.dag))
     .map(({ val, ...p }) => ({ ...p, e1rm: Math.round(val) }))
