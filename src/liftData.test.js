@@ -24,7 +24,7 @@ test('three historical set names share record baseline, estimates and rep record
   assert.deepEqual(sets, source)
 })
 
-test('lighter backoff can win e1RM; skipped and zero-rep logs never win', () => {
+test('uge-estimatet (ikke kurven) kan stadig vinde paa et let saet; skipped og 0 reps vinder aldrig', () => {
   const logs = sets.map(s => ({ weight: s.weight, reps_completed: s.reps, logged_at: s.dato }))
   logs.push({ weight: 500, reps_completed: 1, logged_at: sets[0].dato, skipped: true }, { weight: 500, reps_completed: 0, logged_at: sets[0].dato })
   assert.deepEqual(bestEstimatedSetPerWeek(logs), [{ uge: '2026-W39', weight: 90, reps: 10, e1rm: 120 }])

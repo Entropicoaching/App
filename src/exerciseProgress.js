@@ -16,6 +16,7 @@
 // weight-only summary API for existing consumers.
 
 import { exerciseSetView } from './exerciseSetView.js'
+import { erLetSaetNavn } from './exerciseNames.js'
 import { ugenoegle } from './volume/ugenoegle.js'
 
 /** Epley: vægt × (1 + reps / 30). Samme formel i hele appen — se filens egen note. */
@@ -107,5 +108,45 @@ export function bestEstimatedSetPerWeek(logs) {
       best.set(uge, { uge, weight, reps, val })
   }
   return [...best.values()].sort((a, b) => a.uge.localeCompare(b.uge))
+    .map(({ val, ...p }) => ({ ...p, e1rm: Math.round(val) }))
+}
+
+// Ordre 1421: styrke-kurven (Fremgang og forsidens hovedloeft-graf) bygges kun
+// af RIGTIGE TUNGE saet. Et saet taeller ikke hvis det er et let saet efter
+// navnet (backoff, teknik-single(r), volumen, sekundaer) eller har mere end
+// MAX_TUNGE_REPS reps (Epley er upaalidelig langt ude, og det er opvarmning/
+// volumen, ikke et styrketal). Saa kan et let saet aldrig traekke kurven ned.
+export const MAX_TUNGE_REPS = 8
+
+export function erTungtSaet(navn, reps) {
+  const r = Number(reps)
+  return !erLetSaetNavn(navn) && r > 0 && r <= MAX_TUNGE_REPS
+}
+
+const dagNoegle = (iso) => {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return null
+  const p = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
+}
+
+/**
+ * Hoejeste e1RM pr. DAG, kun fra tunge saet. Logs er raekker med
+ * exercises.name (det RAA navn, saa saettypen kan ses), weight, reps_completed,
+ * logged_at. Dage uden et tungt saet faar intet punkt (hul, ikke et lavt tal).
+ * Aeldste dag foerst.
+ */
+export function bestHeavySetPerDay(logs) {
+  const best = new Map()
+  for (const log of logs || []) {
+    const weight = Number(log.weight), reps = Number(log.reps_completed)
+    if (log.skipped || !(weight > 0) || !erTungtSaet(log.exercises?.name ?? log.navn, reps)) continue
+    const dag = dagNoegle(log.logged_at)
+    if (!dag) continue
+    const val = estimatedOneRepMax(weight, reps)
+    const cur = best.get(dag)
+    if (!cur || val > cur.val || (val === cur.val && weight > cur.weight)) best.set(dag, { dag, weight, reps, val })
+  }
+  return [...best.values()].sort((a, b) => a.dag.localeCompare(b.dag))
     .map(({ val, ...p }) => ({ ...p, e1rm: Math.round(val) }))
 }

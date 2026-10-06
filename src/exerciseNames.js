@@ -28,12 +28,15 @@ export const foldNavn = (s) =>
  */
 // Bindestregen er valgfri: basen har baade "Baenkpres - backoff" og
 // "Doedloeft back-off". Suffikset skal staa SIDST og vaere et helt ord.
-const SUFFIKS = /(?:\s*-\s*|\s+)(?:tops(?:æ|ae)t|back-?off|volumen|teknik-singler|prim(?:æ|ae)r|sek(?:und(?:æ|ae)r)?|comp)\s*$|\s*\((?:comp|\d+\.\s*eksp\.?)\)\s*$/i
+// Ordre 1421: alle stavemaader af saettype/rolle foldes (teknik single/-singler,
+// back off, bindestreg/tankestreg/mellemrum/parentes, store/smaa bogstaver).
+const ORD = '(?:tops(?:æ|ae)t|top[ -]?set|back[ -]?off|volumen|teknik[ -]?(?:singler|singles|single)|prim(?:æ|ae)r|sek(?:und(?:æ|ae)r)?|comp(?:etition)?)'
+const SUFFIKS = new RegExp(`(?:\\s*[-–]\\s*|\\s+)${ORD}\\s*$|\\s*\\(\\s*(?:${ORD}|\\d+\\.\\s*eksp\\.?)\\s*\\)\\s*$`, 'i')
 
 export function grundnavn(name) {
   let s = String(name ?? '').trim()
   for (let i = 0; i < 4 && SUFFIKS.test(s); i++) {
-    const kortere = s.replace(SUFFIKS, '').trim()
+    const kortere = s.replace(SUFFIKS, '').replace(/[\s\-–:,]+$/, '').trim()
     // Skael aldrig navnet helt vaek - saa var "suffikset" hele oevelsen.
     if (!kortere) break
     s = kortere
@@ -76,3 +79,11 @@ export function erHovedloeft(name) {
   return n.includes('squat') || n.includes('baenk') || n.includes('bench') ||
          n.includes('doedl') || n.includes('deadlift')
 }
+
+/**
+ * Ordre 1421: er navnet et LET saet (backoff, teknik-single(r), volumen,
+ * sekundaer)? Bruges kun til at holde lette saet ude af styrke-kurverne -
+ * navnet aendres aldrig, og saettypen er en egenskab ved saettet.
+ */
+const LET_SAET = /back[ -]?off|volumen|teknik[ -]?(?:single|singler|singles|saet)|sekundaer|\bsek\b|\bsekund\b/
+export const erLetSaetNavn = (name) => LET_SAET.test(foldNavn(name))

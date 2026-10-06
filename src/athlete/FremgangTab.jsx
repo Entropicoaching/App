@@ -14,7 +14,7 @@ import { exerciseSetView } from '../exerciseSetView'
 // vælges og vise "Ingen logninger endnu." — listede den kun logs, ville en
 // tom øvelse aldrig kunne stå i listen overhovedet.
 import { useMemo, useState } from 'react'
-import { bestEstimatedSetPerWeek, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
+import { bestHeavySetPerDay, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
 import { rekordListe, tidligereSaet, ugensSaet } from './rekorder'
 
@@ -52,17 +52,14 @@ function hovednavnForFamilie(familie, navneIFamilie) {
 
 // "Squat e1RM 117 kg, +7 kg siden uge 36" (ordre 422, I4): tallet atleten
 // leder efter står i normal størrelse over grafen, ikke kun som 7 px-etiket
-// i grafens hjørne. Ugen er kalenderugen fra ugenoegle ("2026-W36" → 36).
-function ugeNr(uge) {
-  return Number(String(uge).split('-W')[1]) || uge
-}
+// i grafens hjørne. Ordre 1421: datoen er første tunge træningsdag i kurven.
 
 function fremgangLinje(navn, punkter) {
   if (punkter.length < 2) return null
   const forste = punkter[0], sidste = punkter[punkter.length - 1]
   const diff = sidste.e1rm - forste.e1rm
   const aendring = diff > 0 ? `+${diff} kg` : diff < 0 ? `−${-diff} kg` : 'uændret'
-  return `${navn} e1RM ${sidste.e1rm} kg, ${aendring} siden uge ${ugeNr(forste.uge)}`
+  return `${navn} e1RM ${sidste.e1rm} kg, ${aendring} siden ${kortDato(forste.dag)}`
 }
 
 // Linjegraf over ugentligt bedste e1RM — samme visuelle sprog som
@@ -78,7 +75,9 @@ function FremgangGraf({ punkter }) {
   const vals = punkter.map(p => p.e1rm)
   const minV = Math.min(...vals), maxV = Math.max(...vals)
   const range = (maxV - minV) || 1
-  const x = i => PL + (i / (punkter.length - 1)) * (W - PL - PR)
+  const dagNr = p => Date.parse(`${p.dag}T12:00:00Z`) / 86400000
+  const d0 = dagNr(punkter[0]), dSpan = (dagNr(punkter[punkter.length - 1]) - d0) || 1
+  const x = i => PL + ((dagNr(punkter[i]) - d0) / dSpan) * (W - PL - PR)
   const y = v => PT + (1 - (v - minV) / range) * (H - PT - PB)
   const pts = punkter.map((p, i) => `${x(i).toFixed(1)},${y(p.e1rm).toFixed(1)}`).join(' ')
   const forste = punkter[0]
@@ -95,7 +94,7 @@ function FremgangGraf({ punkter }) {
       <line x1={PL} y1={H - PB} x2={W - PR} y2={H - PB} stroke="rgba(237,234,226,0.08)" strokeWidth="1" />
       <polyline points={pts} fill="none" stroke="#c8923a" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
       {punkter.map((p, i) => (
-        <circle key={p.uge} cx={x(i)} cy={y(p.e1rm)} r={i === punkter.length - 1 ? 4.5 : 2.5}
+        <circle key={p.dag} cx={x(i)} cy={y(p.e1rm)} r={i === punkter.length - 1 ? 4.5 : 2.5}
           fill={i === punkter.length - 1 ? '#edeae2' : '#c8923a'} />
       ))}
       <text x={x(0)} y={fy} textAnchor="start" fontSize="14" fill="#7a7770" fontFamily={mono}>
@@ -105,8 +104,8 @@ function FremgangGraf({ punkter }) {
         <tspan fontSize="15">{sidste.e1rm} kg</tspan>
         <tspan fontSize="12" fill="#7a7770"> {sidste.weight}×{sidste.reps}</tspan>
       </text>
-      <text x={PL} y={H - 6} textAnchor="start" fontSize="13" fill="#7a7770" fontFamily={mono}>uge {ugeNr(forste.uge)}</text>
-      <text x={W - PR} y={H - 6} textAnchor="end" fontSize="13" fill="#7a7770" fontFamily={mono}>uge {ugeNr(sidste.uge)}</text>
+      <text x={PL} y={H - 6} textAnchor="start" fontSize="13" fill="#7a7770" fontFamily={mono}>{kortDato(forste.dag)}</text>
+      <text x={W - PR} y={H - 6} textAnchor="end" fontSize="13" fill="#7a7770" fontFamily={mono}>{kortDato(sidste.dag)}</text>
     </svg>
   )
 }
@@ -114,7 +113,7 @@ function FremgangGraf({ punkter }) {
 // ORDRE 439 · blok 1: "12. sep".
 const MDR = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
 function kortDato(iso) {
-  const d = new Date(iso)
+  const d = new Date(/^\d{4}-\d\d-\d\d$/.test(iso) ? `${iso}T12:00:00` : iso)
   return Number.isNaN(d.getTime()) ? '' : `${d.getDate()}. ${MDR[d.getMonth()]}`
 }
 const kgTal = (n) => String(n).replace('.', ',')
@@ -182,7 +181,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
   const punkter = useMemo(() => {
     if (!oevelse) return []
     const logsForOevelse = (fremgangLogs || []).filter(l => exerciseSetView(l.exercises?.name).key === exerciseSetView(oevelse).key)
-    return bestEstimatedSetPerWeek(logsForOevelse)
+    return bestHeavySetPerDay(logsForOevelse)
   }, [fremgangLogs, oevelse])
 
   const rekorder = useMemo(() => {
@@ -249,10 +248,10 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
             <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
               <div style={{ fontSize: '0.72rem', color: '#c8b98a', marginBottom: '0.6rem' }}>{oevelse}</div>
               {punkter.length === 0 ? (
-                <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen logninger endnu.</div>
+                <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen tunge sæt logget endnu.</div>
               ) : punkter.length === 1 ? (
                 <div style={{ fontSize: '0.8rem', color: '#7a7770' }}>
-                  {punkter[0].weight} kg × {punkter[0].reps} (e1RM {punkter[0].e1rm} kg) — for få uger endnu til en kurve.
+                  {punkter[0].weight} kg × {punkter[0].reps} (e1RM {punkter[0].e1rm} kg) — for få tunge dage endnu til en kurve.
                 </div>
               ) : (
                 <>
@@ -261,7 +260,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                   </div>
                   <FremgangGraf punkter={punkter} />
                   <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
-                    Sættet med højest e1RM pr. uge, og det beregnede énrepetitionsmaksimum (Epley).
+                    Ét punkt pr. træningsdag: dagens højeste e1RM (Epley: vægt × (1 + reps/30)), kun fra tunge sæt på højst 8 reps. Backoff, teknik-singler og volumensæt tæller ikke med, så lette sæt aldrig trækker kurven ned.
                   </div>
                 </>
               )}

@@ -9,7 +9,7 @@ import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athle
 import { runGuardedRead } from '../athleteReadGuard'
 import { clearReadinessDraft } from '../readinessDraft'
 import { loadRestPause } from '../restPause'
-import { estimatedOneRepMax, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
+import { estimatedOneRepMax, erTungtSaet, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
 import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery, hentAlleSider } from '../fremgangLogs'
 import { today } from '../athleteShared'
 import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp'
@@ -544,7 +544,8 @@ export function lavLaesninger({
       byWeek[key] = (byWeek[key] || 0) + (l.weight || 0) * (l.reps_completed || 0)
       const name = (l.exercises?.name || '').toLowerCase()
       const reps = l.reps_completed || 0
-      if (name && reps >= 1 && reps <= 12) {
+      // Ordre 1421: kun tunge saet i hovedloeft-kurven (samme regel som Fremgang).
+      if (name && erTungtSaet(name, reps)) {
         const e1rm = estimatedOneRepMax(l.weight, reps)
         HOVEDLOEFT_FAMILIER.forEach((lift, i) => {
           if (lift.match(name) && e1rm > (liftByWeek[i][key] || 0)) liftByWeek[i][key] = e1rm
