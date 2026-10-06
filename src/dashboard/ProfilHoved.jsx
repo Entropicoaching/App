@@ -1,22 +1,39 @@
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilens hoved: tilbage/kø-kontekst, aktuel opgave, profilkort, sektions-navigation.
 // Samme navne som props som i Dashboard; linjerne står i et fragment (ingen DOM-ændring).
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { supabase } from '../supabase'
 import { s, initials, formatLastSeen } from '../dashboardShared'
 import { styrkeLinje } from '../coachFremgang'
 import { statusLabels } from './coachKonstanter'
 import { HUB_SECTIONS } from './hubSektioner'
 
+const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
+
 export default function ProfilHoved({
-  a, activeTab, athleteLogs = [], isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
+  a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
   setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
 }) {
-  // Ordre 1429: logs fra en tidligere profil (direkte atletskift i koen) vises aldrig.
+  // Ordre 1440: linjen henter sin egen smalle logrække (kun de felter og de seneste
+  // STYRKE_LOG_DAGE dage den bruger), så Hjem ikke trækker de op til 2000 fulde rækker
+  // som Log-fanen. Rækker fra en tidligere profil vises aldrig (ignore-flag + athlete_id).
+  const [styrkeLogs, setStyrkeLogs] = useState([])
+  useEffect(() => {
+    let ignore = false
+    setStyrkeLogs([])
+    const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
+    supabase.from('exercise_logs')
+      .select('athlete_id, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
+      .eq('athlete_id', a.id).gte('logged_at', fra)
+      .order('logged_at', { ascending: false }).limit(2000)
+      .then(({ data }) => { if (!ignore) setStyrkeLogs(data || []) }, () => {})
+    return () => { ignore = true }
+  }, [a.id])
   const styrke = useMemo(() => {
-    const egne = (athleteLogs || []).filter(l => l.athlete_id === a.id)
+    const egne = styrkeLogs.filter(l => l.athlete_id === a.id)
     return egne.length ? styrkeLinje(egne) : null
-  }, [athleteLogs, a.id])
+  }, [styrkeLogs, a.id])
   return (
     <>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.75rem' }}>
@@ -59,7 +76,7 @@ export default function ProfilHoved({
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.3rem' }}>Hvad gør atleten stærkere nu</div>
                 <div style={{ color: '#d8d4ca', fontSize: isMobile ? '0.78rem' : '0.74rem', lineHeight: 1.45 }}>
                   {styrke.dele.map((d, i) => (
-                    <div key={d.type} style={{ color: d.type === 'smerte' ? '#e05555' : d.type === 'ok' ? '#7a7770' : '#d8d4ca', marginTop: i ? '0.2rem' : 0 }}>{d.tekst}</div>
+                    <div key={d.type} style={{ color: d.type === 'smerte' ? '#e05555' : (d.type === 'ok' || d.type === 'let-uge') ? '#7a7770' : '#d8d4ca', marginTop: i ? '0.2rem' : 0 }}>{d.tekst}</div>
                   ))}
                 </div>
                 <div style={{ color: '#4a4844', fontSize: '0.58rem', marginTop: '0.3rem' }}>Kun tunge sæt (højst 8 reps, ikke backoff/teknik/volumen); sammenlignet med atletens egen historik.</div>

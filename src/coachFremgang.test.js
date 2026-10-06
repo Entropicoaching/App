@@ -109,3 +109,20 @@ test('stagnations-detektoren tæller ikke lette sæt (backoff 12 reps ville elle
   assert.match(st.headline, /Bænk/)
   assert.equal(st.metrics.top_weight, 100)
 })
+
+// Ordre 1440 (QA 1437 fund 2): planlagt deload/taper tier stille om stagnation.
+const medBlok = (l, blok) => ({ ...l, exercises: { ...l.exercises, sessions: { id: 's1', weeks: { block_name: blok } } } })
+test('deload-uge: ingen stagnation- eller svageste-vurdering, kun en rolig linje', () => {
+  const normal = styrkeLinje(BAENK, TODAY)
+  assert.ok(normal.dele.some(d => d.type === 'stagnation'), 'uden deload staar der stagnation')
+  const deload = styrkeLinje(BAENK.map((l, i) => i === BAENK.length - 1 ? medBlok(l, 'Deload') : l), TODAY)
+  assert.deepEqual(deload.dele.map(d => d.type), ['let-uge'])
+})
+test('gammel deload (over 10 dage) taler ikke; smerte staar stadig i en deload-uge', () => {
+  const gammel = BAENK.map((l, i) => i === 4 ? medBlok(l, 'Deload') : l)
+  assert.ok(styrkeLinje(gammel, TODAY).dele.some(d => d.type === 'stagnation'))
+  const smerte = { ...medBlok(BAENK[6], 'Taper'), exercises: { name: 'Bænkpres topsæt', sessions: { id: 's2', athlete_comment: 'ondt i skulderen', weeks: { block_name: 'Taper' } } } }
+  const t = styrkeLinje([...BAENK.slice(0, 6), smerte], TODAY).dele.map(d => d.type)
+  assert.equal(t[0], 'smerte')
+  assert.ok(!t.includes('stagnation'))
+})

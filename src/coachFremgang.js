@@ -17,6 +17,8 @@ const FOER_DAGE = 84
 const STAGNATION_UGER = 3
 const MIN_PUNKTER = 3
 const SMERTE_DAGE = 14
+const DELOAD_DAGE = 10
+const DELOAD_NAVN = /deload|aflast|taper|stævne|staevne|peak/i
 
 const dagMs = (dag) => Date.parse(`${dag}T12:00:00Z`)
 const rd = (n) => Math.round(n)
@@ -79,6 +81,20 @@ export function smerteNoter(logs, today = new Date().toISOString().slice(0, 10))
   return [...set.values()].sort((a, b) => b.dag.localeCompare(a.dag))
 }
 
+/**
+ * Planlagt let uge (deload, taper, peak, staevne) set paa ugens/blokkens navn i
+ * de seneste logs. Der er ingen "ingen ny top" at sige i en uge, hvor der med
+ * vilje ikke loeftes tungt; deload og blokskifte designes med Marc (hans dom).
+ */
+export function planlagtLetUge(logs, today = new Date().toISOString().slice(0, 10)) {
+  const nu = dagMs(today)
+  return (logs || []).some(log => {
+    const navn = log.exercises?.sessions?.weeks?.block_name
+    const dag = String(log.logged_at || '').slice(0, 10)
+    return navn && DELOAD_NAVN.test(navn) && dag && nu - dagMs(dag) <= DELOAD_DAGE * DAG && dagMs(dag) <= nu
+  })
+}
+
 const MAANEDER = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec']
 const dagTekst = (dag) => `${Number(dag.slice(8, 10))}. ${MAANEDER[Number(dag.slice(5, 7)) - 1]}`
 
@@ -94,16 +110,20 @@ export function styrkeLinje(logs, today = new Date().toISOString().slice(0, 10))
     dele.push({ type: 'smerte', tekst: `Smerte: ${s.del ? `${s.del} nævnt` : 'nævnt'} i pas-kommentar ${dagTekst(s.dag)}${s.loeft ? ` (${s.loeft.toLowerCase()})` : ''}. Ingen stigning, før du har talt med atleten` })
   }
   const status = hovedloeftStatus(logs, today)
-  const stagneret = status.filter(s => s.stagneretUger != null && s.stagneretUger >= STAGNATION_UGER)
+  const letUge = planlagtLetUge(logs, today)
+  const stagneret = letUge ? null : status.filter(s => s.stagneretUger != null && s.stagneretUger >= STAGNATION_UGER)
     .sort((a, b) => b.stagneretUger - a.stagneretUger)[0]
   if (stagneret) {
     dele.push({ type: 'stagnation', tekst: `${stagneret.navn}: ingen ny top i ${stagneret.stagneretUger} uger (e1RM ${rd(stagneret.sidsteTop.e1rm)} kg, ${dagTekst(stagneret.sidsteTop.dag)})` })
   }
   const maalbare = status.filter(s => s.aendring != null && s !== stagneret)
   const svageste = [...maalbare].sort((a, b) => a.aendring - b.aendring)[0]
-  if (svageste && svageste.aendring < 2) {
+  if (svageste && svageste.aendring < 2 && !letUge) {
     const t = svageste.aendring
     dele.push({ type: 'svageste', tekst: `Svageste hovedløft: ${svageste.navn} (e1RM ${svageste.foer} → ${svageste.nu} kg, ${t > 0 ? '+' : ''}${String(t).replace('.', ',')} % mod 1-3 mdr. før)` })
+  }
+  if (letUge && !dele.some(d => d.type === 'smerte')) {
+    dele.push({ type: 'let-uge', tekst: 'Planlagt let uge (deload/taper/peak): ingen stagnation- eller svageste-løft-vurdering nu' })
   }
   if (!dele.length) {
     const nok = status.some(s => s.aendring != null)
