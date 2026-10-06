@@ -3,7 +3,8 @@
 // så en almindelig kørsel efterlod et beskidt træ. Prøverne skriver nu til
 // den git-ignorerede outputs/_seneste/ i stedet; leverancemappen opdateres
 // kun når kaldet får flaget --opdater-leverance (en ordre der udtrykkeligt
-// beder om nye leverancebilleder).
+// beder om nye leverancebilleder). ORDRE 1458: billeder under outputs/ er
+// git-ignorerede, så "leverance" er lokale filer, ikke noget der committes.
 import { cpSync, mkdirSync, rmSync } from 'node:fs'
 
 export function harLeveranceFlag(argv = process.argv) {

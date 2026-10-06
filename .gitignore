@@ -60,6 +60,7 @@ test-clips/
 outputs/_seneste/
 
 # ORDRE 1458 — test-skaermbilleder/video maa aldrig i git (et push fyldte 1 GB).
+# Ogsaa avif/bmp/mkv/avi/zip (Playwright-trace)/pdf/har (ORDRE 1466).
 # De ligger lokalt i outputs/. Maalinger (.json/.md/.txt) og verify-scripts
 # (outputs/**/*.mjs, kaldt fra package.json) forbliver sporet.
 outputs/**/*.png
@@ -70,5 +71,16 @@ outputs/**/*.gif
 outputs/**/*.mp4
 outputs/**/*.webm
 outputs/**/*.mov
+outputs/**/*.avif
+outputs/**/*.bmp
+outputs/**/*.tif
+outputs/**/*.tiff
+outputs/**/*.svg
+outputs/**/*.mkv
+outputs/**/*.avi
+outputs/**/*.m4v
+outputs/**/*.zip
+outputs/**/*.pdf
+outputs/**/*.har
 test-results/
 playwright-report/

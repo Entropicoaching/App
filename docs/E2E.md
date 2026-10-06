@@ -63,15 +63,15 @@ suiten langsom.
 
 `npm run e2e`, `npm run maal:telefon` og `npm run maal:coach-telefon`
 skriver alle til den git-ignorerede `outputs/_seneste/` (`e2e/`, `maal/`,
-`maal-coach/`) — en almindelig kørsel efterlader derfor et rent træ. De
-committede leverancebilleder (`outputs/e2e/`, `outputs/maal/`,
-`outputs/maal-coach/`) er facit fra tidligere ordrer og røres ikke af det.
+`maal-coach/`) — en almindelig kørsel efterlader derfor et rent træ.
 
-Skal facit opdateres, fordi en ordre udtrykkeligt beder om nye
-leverancebilleder: tilføj `--opdater-leverance`, fx
-`npm run e2e -- --opdater-leverance` eller
-`npm run maal:telefon -- --opdater-leverance` (label kan stadig gives, i
-vilkårlig rækkefølge med flaget). Se `scripts/leverance-sti.mjs`.
+Skærmbilleder og video (png, jpg, webp, avif, mp4, zip-trace m.fl.) under
+`outputs/` er git-ignorerede siden ORDRE 1458 og må aldrig committes (et
+push fyldte 1 GB). Kun målinger (.json/.md/.txt) og verify-scripts
+(`outputs/**/*.mjs`) er sporet. `--opdater-leverance` kopierer stadig ind i
+`outputs/e2e|maal|maal-coach/`, men billederne bliver lokale facit og kommer
+ikke i git; gem dokumentation som tal/tekst, ikke som committede billeder.
+Se `scripts/leverance-sti.mjs`.
 
 ## Sådan tilføjes et nyt skridt
 
