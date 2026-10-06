@@ -33,6 +33,17 @@ const transport = {
 }
 const vite = await createServer({ configFile: false, envDir: false, root: process.cwd(), plugins: [transport, react()], optimizeDeps: { noDiscovery: true, include: ['react', 'react-dom/client', '@supabase/auth-js', '@supabase/postgrest-js', '@supabase/storage-js'] }, resolve: { dedupe: ['react', 'react-dom'] }, server: { host: '127.0.0.1', port: 5210, strictPort: true, watch: { ignored: ['**/outputs/**'] } } })
 const browser = await chromium.launch({ headless: true })
+const isBaselineGet = (method, url) => {
+  if (method !== 'GET') return false
+  const u = new URL(url)
+  if (u.origin !== mockOrigin || u.pathname !== '/rest/v1/video_analyses') return false
+  const keys = [...u.searchParams.keys()].sort().join(',')
+  return keys === 'athlete_id,limit,order,select' &&
+    u.searchParams.get('select') === 'session_context,created_at' &&
+    u.searchParams.get('order') === 'created_at.desc' &&
+    u.searchParams.get('limit') === '20' &&
+    /^eq\.[0-9a-f-]+$/i.test(u.searchParams.get('athlete_id') || '')
+}
 const results = []
 try {
   await vite.listen()
@@ -111,8 +122,16 @@ try {
       check('explicit-ephemeral-message', () => {})
       assert.match(await section.innerText(), /genindl\u00e6ser siden/)
       // Block every request during local re-import and context edits.
-      const localNetwork = []
-      const denyLocal = route => { localNetwork.push(route.request().url()); return route.abort() }
+      // Marcs valg 1 (6. okt 2026, domme/MARCS-DOMME-coaching.md): appen goer ved sidens opstart den
+      // kendte basislinje-GET af session_context (laesning, ingen skrivning). Testen tillader netop den
+      // (metode, sti, select, limit og parametre matchet stramt); alt andet er stadig forbudt.
+      const localNetwork = [], baselineSeen = []
+      const denyLocal = route => {
+        const req = route.request()
+        if (isBaselineGet(req.method(), req.url())) { baselineSeen.push(req.url()); return route.continue() }
+        localNetwork.push(req.url())
+        return route.abort()
+      }
       await context.route('**/*', denyLocal)
       await load()
       assert.equal(await athleteField.inputValue(), '')
@@ -122,6 +141,41 @@ try {
       await athleteField.fill('Syntetisk testatlet 1210')
       await context.unroute('**/*', denyLocal)
       check('local-context-and-import-no-network', () => assert.deepEqual(localNetwork, []))
+      // Negativ test: undtagelsen er smal. Samme afgoerelse skal afvise alt andet end basislinje-GET'en.
+      const baseUrl = `${mockOrigin}/rest/v1/video_analyses?select=session_context%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc&limit=20`
+      check('baseline-exception-is-narrow', () => {
+        assert.equal(isBaselineGet('GET', baseUrl), true)
+        const forbidden = [
+          ['POST', baseUrl], ['PATCH', baseUrl], ['DELETE', baseUrl], ['HEAD', baseUrl],
+          ['GET', baseUrl.replace('session_context%2Ccreated_at', '*')],
+          ['GET', baseUrl.replace('session_context%2Ccreated_at', 'session_context%2Ccreated_at%2Cathlete_id')],
+          ['GET', baseUrl.replace('limit=20', 'limit=21')],
+          ['GET', baseUrl + '&extra=1'],
+          ['GET', baseUrl.replace('/video_analyses', '/athletes')],
+          ['GET', baseUrl.replace('/rest/v1/', '/storage/v1/')],
+          ['GET', baseUrl.replace(mockOrigin, 'https://example.com')],
+        ]
+        for (const [m, u] of forbidden) assert.equal(isBaselineGet(m, u), false, `${m} ${u}`)
+      })
+      // Samme afvisning i selve browseren: en sonde med anden metode/select naar aldrig mocken.
+      const probeDeny = []
+      const probeRoute = route => {
+        const req = route.request()
+        if (isBaselineGet(req.method(), req.url())) return route.continue()
+        probeDeny.push(req.method() + ' ' + req.url())
+        return route.abort()
+      }
+      await context.route('**/*', probeRoute)
+      const probeCallsBefore = calls.length
+      await page.evaluate(async base => {
+        await fetch(base.replace('session_context%2Ccreated_at', '*')).catch(() => {})
+        await fetch(base, { method: 'POST', body: '{}' }).catch(() => {})
+      }, baseUrl)
+      await context.unroute('**/*', probeRoute)
+      check('other-requests-still-forbidden', () => {
+        assert.equal(probeDeny.length, 2)
+        assert.equal(calls.length, probeCallsBefore)
+      })
       const text = await section.innerText()
       check('reps-and-set-loss', () => { assert.match(text, /3 reps/); assert.match(text, /15,0 %/); assert.match(text, /0,600/); assert.match(text, /0,900/) })
       check('findings-and-limits', () => { for (const f of fixture.fund) assert.ok(text.includes(f.linje)); assert.match(text, /Ikke regnet/); assert.match(text, /R\u00e5 skala/) })

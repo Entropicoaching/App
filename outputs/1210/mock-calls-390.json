@@ -1,0 +1,392 @@
+[
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=role&id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athletes?select=*&order=name.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_library?select=*&order=category.asc%2Cname.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=last_backup_at&id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athletes?select=*&order=name.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_library?select=*&order=category.asc%2Cname.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=last_backup_at&id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=id%2Clast_seen&id=in.%2822222222-2222-4222-8222-222222222222%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=athlete_id%2Cweek_number%2Cblock_name%2Cstart_date%2Csessions%28id%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&skipped=eq.false&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=id%2Clast_seen&id=in.%2822222222-2222-4222-8222-222222222222%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=athlete_id%2Cweek_number%2Cblock_name%2Cstart_date%2Csessions%28id%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&skipped=eq.false&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=id%2Cathlete_id%2Cweek_number%2Cblock_name%2Cstart_date%2Csessions%28id%2Csession_order%2Cathlete_rating%2Cathlete_comment%2Cexercises%28id%2Csets%2Creps%2Crecommended_weight%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T13%3A02%3A52.364Z&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at&logged_at=gte.2026-10-06&limit=2000",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Clift%2Cvariation%2Cload_kg%2Creps_count%2Crep_details%2Cmetrics%2Cbar_path%2Canalyzed_at%2Ccreated_at%2Csource_mode%2Cstatus%2Csession_context%2Canalysis_state%2Cvideo_path&status=eq.draft&order=created_at.desc&limit=50",
+    "body": ""
+  },
+  {
+    "method": "POST",
+    "path": "/rest/v1/rpc/entropi_training_signals_v1",
+    "body": "{}"
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/coach_signal_actions?select=athlete_id%2Cdetector%2Csignal_fingerprint%2Csnoozed_until",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/automation_alerts?select=id%2Cworkflow_id%2Cworkflow_name%2Cfailed_node%2Cexecution_id%2Cmode%2Coccurred_at%2Cresolved_at&resolved_at=is.null&order=occurred_at.desc&limit=50",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/coach_briefing_seen?select=point_key%2Cseen_at&coach_id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/messages?select=*&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&order=created_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=id%2Cset_number%2Cweight%2Creps_completed%2Cnote%2Clogged_at%2Crpe_actual%2Crpe_planned%2Cskipped%2Cexercise_id%2Cexercises%28id%2Cname%2Csets%2Creps%2Cintensity%2Crecommended_weight%2Csession_id%2Csessions%28id%2Ctitle%2Cathlete_rating%2Cathlete_comment%2Cweeks%28week_number%2Cblock_name%29%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=2000",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=90",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_date.desc&limit=90",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/personal_records?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Ccreated_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cathlete_feedback%2Cfindings%2Cengine_version%2Ctracker_version%2Canalysis_state%2Cvideo_path&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=analyzed_at.desc&limit=30",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athlete_baselines_v3?select=lift%2Cvariation%2Cmetric_key%2Cmetric_method%2Cbaseline_version%2Cmedian%2Cmad%2Cn_analyses%2Cn_reps%2Clast_analyzed_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&baseline_version=eq.approved_median_mad_v2_confident&order=last_analyzed_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cfindings%2Cathlete_feedback%2Cbar_path%2Csession_context%2Cengine_version%2Ctracker_version%2Cskeleton_version%2Cfeedback_version&id=eq.77777777-7777-4777-8777-777777777777&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=session_context%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc&limit=20",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=session_context%2Ccreated_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=created_at.desc&limit=20",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cfindings%2Cathlete_feedback%2Cbar_path%2Csession_context%2Cengine_version%2Ctracker_version%2Cskeleton_version%2Cfeedback_version&id=eq.99999999-9999-4999-8999-999999999999&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cfindings%2Cathlete_feedback%2Cbar_path%2Csession_context%2Cengine_version%2Ctracker_version%2Cskeleton_version%2Cfeedback_version&id=eq.77777777-7777-4777-8777-777777777777&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cfindings%2Cathlete_feedback%2Cbar_path%2Csession_context%2Cengine_version%2Ctracker_version%2Cskeleton_version%2Cfeedback_version&id=eq.99999999-9999-4999-8999-999999999999&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+    "body": ""
+  },
+  {
+    "method": "PATCH",
+    "path": "/rest/v1/video_analyses?id=eq.99999999-9999-4999-8999-999999999999&athlete_id=eq.33333333-3333-4333-8333-333333333333&client_analysis_id=eq.aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa&select=id%2Cclient_analysis_id%2Cathlete_id%2Cstatus%2Cathlete_feedback%2Cfeedback_version",
+    "body": "{\"athlete_feedback\":{\"works\":[{\"text\":\"Stangen holdes roligt gennem hele saettet.\",\"evidence_refs\":[\"coach_review\"]}],\"focus\":[{\"text\":\"Hold spaendet i bunden af naeste squat.\",\"evidence_refs\":[\"coach_review\"]}],\"next_set\":[{\"text\":\"Tag luft og spaend maven foer hver gentagelse.\",\"evidence_refs\":[\"coach_review\"]}]},\"feedback_version\":\"coach-edited-personal-baseline-v1-2026-07-30\"}"
+  },
+  {
+    "method": "PATCH",
+    "path": "/rest/v1/video_analyses?id=eq.99999999-9999-4999-8999-999999999999&athlete_id=eq.33333333-3333-4333-8333-333333333333&client_analysis_id=eq.aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa&select=id%2Cclient_analysis_id%2Cathlete_id%2Cstatus",
+    "body": "{\"status\":\"coach_approved\"}"
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Ccreated_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cathlete_feedback%2Cfindings%2Cengine_version%2Ctracker_version%2Canalysis_state%2Cvideo_path&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=analyzed_at.desc&limit=30",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athlete_baselines_v3?select=lift%2Cvariation%2Cmetric_key%2Cmetric_method%2Cbaseline_version%2Cmedian%2Cmad%2Cn_analyses%2Cn_reps%2Clast_analyzed_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&baseline_version=eq.approved_median_mad_v2_confident&order=last_analyzed_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Clift%2Cvariation%2Cload_kg%2Creps_count%2Crep_details%2Cmetrics%2Cbar_path%2Canalyzed_at%2Ccreated_at%2Csource_mode%2Cstatus%2Csession_context%2Canalysis_state%2Cvideo_path&status=eq.draft&order=created_at.desc&limit=50",
+    "body": ""
+  },
+  {
+    "method": "PATCH",
+    "path": "/rest/v1/video_analyses?id=eq.99999999-9999-4999-8999-999999999999&athlete_id=eq.33333333-3333-4333-8333-333333333333&client_analysis_id=eq.aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa&select=id%2Cclient_analysis_id%2Cathlete_id%2Cstatus",
+    "body": "{\"status\":\"shared\"}"
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Ccreated_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cathlete_feedback%2Cfindings%2Cengine_version%2Ctracker_version%2Canalysis_state%2Cvideo_path&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=analyzed_at.desc&limit=30",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athlete_baselines_v3?select=lift%2Cvariation%2Cmetric_key%2Cmetric_method%2Cbaseline_version%2Cmedian%2Cmad%2Cn_analyses%2Cn_reps%2Clast_analyzed_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&baseline_version=eq.approved_median_mad_v2_confident&order=last_analyzed_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Clift%2Cvariation%2Cload_kg%2Creps_count%2Crep_details%2Cmetrics%2Cbar_path%2Canalyzed_at%2Ccreated_at%2Csource_mode%2Cstatus%2Csession_context%2Canalysis_state%2Cvideo_path&status=eq.draft&order=created_at.desc&limit=50",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=role&id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athletes?select=*&order=name.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_library?select=*&order=category.asc%2Cname.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=last_backup_at&id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athletes?select=*&order=name.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_library?select=*&order=category.asc%2Cname.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=last_backup_at&id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=id%2Clast_seen&id=in.%2822222222-2222-4222-8222-222222222222%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=athlete_id%2Cweek_number%2Cblock_name%2Cstart_date%2Csessions%28id%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&skipped=eq.false&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=id%2Cathlete_id%2Cweek_number%2Cblock_name%2Cstart_date%2Csessions%28id%2Csession_order%2Cathlete_rating%2Cathlete_comment%2Cexercises%28id%2Csets%2Creps%2Crecommended_weight%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T13%3A02%3A54.695Z&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at&logged_at=gte.2026-10-06&limit=2000",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Clift%2Cvariation%2Cload_kg%2Creps_count%2Crep_details%2Cmetrics%2Cbar_path%2Canalyzed_at%2Ccreated_at%2Csource_mode%2Cstatus%2Csession_context%2Canalysis_state%2Cvideo_path&status=eq.draft&order=created_at.desc&limit=50",
+    "body": ""
+  },
+  {
+    "method": "POST",
+    "path": "/rest/v1/rpc/entropi_training_signals_v1",
+    "body": "{}"
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/coach_signal_actions?select=athlete_id%2Cdetector%2Csignal_fingerprint%2Csnoozed_until",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/automation_alerts?select=id%2Cworkflow_id%2Cworkflow_name%2Cfailed_node%2Cexecution_id%2Cmode%2Coccurred_at%2Cresolved_at&resolved_at=is.null&order=occurred_at.desc&limit=50",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/coach_briefing_seen?select=point_key%2Cseen_at&coach_id=eq.11111111-1111-4111-8111-111111111111",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/messages?select=*&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&order=created_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/profiles?select=id%2Clast_seen&id=in.%2822222222-2222-4222-8222-222222222222%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=athlete_id%2Cweek_number%2Cblock_name%2Cstart_date%2Csessions%28id%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&skipped=eq.false&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=id%2Cathlete_id%2Cweek_number%2Cblock_name%2Cstart_date%2Csessions%28id%2Csession_order%2Cathlete_rating%2Cathlete_comment%2Cexercises%28id%2Csets%2Creps%2Crecommended_weight%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=athlete_id%2Clogged_at%2Cweight%2Creps_completed%2Cskipped%2Cnote%2Cexercises%28reps%2Crecommended_weight%2Csessions%28id%2Csession_order%2Cweeks%28week_number%29%29%29&athlete_id=in.%2833333333-3333-4333-8333-333333333333%29&logged_at=gte.2026-04-09T13%3A02%3A54.716Z&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weeks?select=*%2Csessions%28*%2Cexercises%28*%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=week_number.asc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/exercise_logs?select=id%2Cset_number%2Cweight%2Creps_completed%2Cnote%2Clogged_at%2Crpe_actual%2Crpe_planned%2Cskipped%2Cexercise_id%2Cexercises%28id%2Cname%2Csets%2Creps%2Cintensity%2Crecommended_weight%2Csession_id%2Csessions%28id%2Ctitle%2Cathlete_rating%2Cathlete_comment%2Cweeks%28week_number%2Cblock_name%29%29%29&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=2000",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/weight_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc&limit=90",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/readiness_logs?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_date.desc&limit=90",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/personal_records?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=logged_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/meet_results?select=*&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=meet_date.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Ccreated_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cathlete_feedback%2Cfindings%2Cengine_version%2Ctracker_version%2Canalysis_state%2Cvideo_path&athlete_id=eq.33333333-3333-4333-8333-333333333333&order=analyzed_at.desc&limit=30",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/athlete_baselines_v3?select=lift%2Cvariation%2Cmetric_key%2Cmetric_method%2Cbaseline_version%2Cmedian%2Cmad%2Cn_analyses%2Cn_reps%2Clast_analyzed_at&athlete_id=eq.33333333-3333-4333-8333-333333333333&baseline_version=eq.approved_median_mad_v2_confident&order=last_analyzed_at.desc",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/rest/v1/video_analyses?select=id%2Cclient_analysis_id%2Cathlete_id%2Csource_mode%2Clift%2Cvariation%2Cload_kg%2Crpe%2Creps_count%2Cstatus%2Canalyzed_at%2Clow_conf_pct%2Cposition_quality_pct%2Cquality_flags%2Cmetrics%2Cfindings%2Cathlete_feedback%2Cbar_path%2Csession_context%2Cengine_version%2Ctracker_version%2Cskeleton_version%2Cfeedback_version&id=eq.77777777-7777-4777-8777-777777777777&athlete_id=eq.33333333-3333-4333-8333-333333333333",
+    "body": ""
+  }
+]
