@@ -83,13 +83,28 @@ test('ugens sæt fra exerciseLogs: fortrudt sæt er væk, sendt sæt tælles ikk
   assert.equal(ugensSaet(logs, week, [week], 'ex-sq_1').length, 0)
 })
 
-test('grupperRekorder: de fire hovedloeft foerst, varianter og assistance for sig', () => {
+test('grupperRekorder: en raekke pr. hovedloeft med bedste vaerdi, historik bag, varianter for sig', () => {
+  const r = (navn, dato, e1rm, type = 'e1rm') => ({ navn, dato, e1rm, type, weight: 100, reps: 5, plus: 1 })
   const liste = [
-    { navn: 'Militærpres', dato: '5' }, { navn: 'Bænkpres', dato: '4' }, { navn: 'Pause squat', dato: '3' },
-    { navn: 'Sumo dødløft', dato: '2' }, { navn: 'Dødløft', dato: '1' }, { navn: 'Squat', dato: '0' },
-  ].map(r => ({ ...r, type: 'e1rm' }))
+    r('Militærpres', '6', 60), r('Squat', '5', 165), r('Bænkpres', '4', 127), r('Pause squat', '3', 140),
+    r('Sumo dødløft', '2', 200), r('Squat', '1', 162), r('Squat', '0', 160),
+  ]
   const g = grupperRekorder(liste)
-  assert.deepEqual(g.hoved.map(r => r.navn), ['Bænkpres', 'Sumo dødløft', 'Dødløft', 'Squat'])
-  assert.deepEqual(g.andre.map(r => r.navn), ['Militærpres', 'Pause squat'])
+  assert.deepEqual(g.hoved.map(x => x.navn), ['Squat', 'Bænkpres', 'Sumo dødløft'])
+  assert.equal(g.hoved[0].bedst.e1rm, 165)
+  assert.equal(g.hoved[0].bedst.dato, '5')
+  assert.deepEqual(g.hoved[0].historik.map(x => x.e1rm), [165, 162, 160])
+  assert.deepEqual(g.andre.map(x => x.navn), ['Militærpres', 'Pause squat'])
   assert.equal(grupperRekorder(null).hoved.length, 0)
+})
+
+test('grupperRekorder: bedste er hoejeste e1RM, ikke nyeste reps-rekord', () => {
+  const liste = [
+    { navn: 'Squat', dato: '9', type: 'reps', weight: 80, reps: 6, plus: 1 },
+    { navn: 'Squat', dato: '5', type: 'e1rm', e1rm: 165, weight: 140, reps: 5, plus: 3 },
+  ]
+  const g = grupperRekorder(liste)
+  assert.equal(g.hoved.length, 1)
+  assert.equal(g.hoved[0].bedst.e1rm, 165)
+  assert.equal(g.hoved[0].historik.length, 2)
 })

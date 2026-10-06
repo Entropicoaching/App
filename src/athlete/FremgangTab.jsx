@@ -148,8 +148,40 @@ function RekordRaekker({ rekorder, attr }) {
   )
 }
 
-// Ordre 1469: hovedløftene (squat, bænkpres, dødløft, sumo) først; varianter og
-// assistance samlet nederst under egen overskrift (Marcs dom 6. okt: præcis fire hovedløft).
+// Ordre 1475: en række pr. hovedløft (squat, bænkpres, dødløft, sumo) med bedste værdi og dato;
+// løftets tidligere rekorder ligger bag et tryk. Varianter og assistance nederst (Marcs dom 6. okt).
+function HovedRaekke({ h, sidst }) {
+  const [aaben, setAaben] = useState(false)
+  const r = h.bedst
+  const flere = h.historik.length > 1
+  return (
+    <div data-rekord-hoved={h.key} style={{ padding: '0.5rem 0', borderBottom: sidst ? 'none' : '1px solid rgba(237,234,226,0.05)' }}>
+      <div data-rekord={r.type} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem' }}>
+        <span style={{ fontFamily: mono, fontSize: '0.62rem', color: '#7a7770', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
+        <span style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+          <span style={{ display: 'block', fontSize: '0.88rem', color: '#edeae2' }}>
+            {r.type === 'e1rm' ? `${h.navn} e1RM ${r.e1rm} kg` : `${h.navn} ${kgTal(r.weight)} kg × ${r.reps}`}
+          </span>
+          <span style={{ display: 'block', fontFamily: mono, fontSize: '0.6rem', color: '#7a7770', marginTop: '0.1rem' }}>
+            {r.type === 'e1rm' ? `bedste sæt: ${kgTal(r.weight)} kg × ${r.reps}` : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
+          </span>
+        </span>
+        {flere && (
+          <button type="button" data-rekord-historik-knap={h.key} aria-expanded={aaben} onClick={() => setAaben(v => !v)}
+            style={{ background: 'none', border: '1px solid rgba(237,234,226,0.15)', color: '#a8a59c', fontFamily: mono, fontSize: '0.58rem', padding: '0.3rem 0.5rem', cursor: 'pointer', minHeight: 32 }}>
+            {aaben ? 'Skjul' : `Historik (${h.historik.length})`}
+          </button>
+        )}
+      </div>
+      {flere && aaben && (
+        <div style={{ marginTop: '0.4rem', paddingLeft: '0.5rem', borderLeft: '1px solid rgba(237,234,226,0.1)' }}>
+          <RekordRaekker rekorder={h.historik} attr="data-rekord-historik" />
+        </div>
+      )}
+    </div>
+  )
+}
+
 function RekordListe({ rekorder }) {
   if (rekorder.length === 0) {
     return <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder endnu. Slår du dit bedste sæt på en øvelse, står det her.</div>
@@ -158,7 +190,7 @@ function RekordListe({ rekorder }) {
   return (
     <>
       {hoved.length > 0
-        ? <RekordRaekker rekorder={hoved} attr="data-rekord-liste" />
+        ? <div data-rekord-liste={hoved.length} style={{ display: 'flex', flexDirection: 'column' }}>{hoved.map((h, i) => <HovedRaekke key={h.key} h={h} sidst={i === hoved.length - 1} />)}</div>
         : <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen rekorder på de fire hovedløft endnu.</div>}
       {andre.length > 0 && (
         <div data-rekord-varianter style={{ marginTop: '1rem' }}>

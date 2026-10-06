@@ -140,6 +140,15 @@ async function main() {
       assert.ok(!/Militærpres/.test(rek), 'variant staar mellem hovedloeftene: ' + rek)
       assert.ok(await page.evaluate(() => { const h = document.querySelector('[data-rekord-liste]'); const v = document.querySelector('[data-rekord-varianter]'); return !!h && !!v && !!(h.compareDocumentPosition(v) & Node.DOCUMENT_POSITION_FOLLOWING) }), 'varianter skal staa efter hovedloeftene')
       await page.locator('[data-rekord-liste]').scrollIntoViewIfNeeded(); await shot('fremgang-rekorder')
+      // Ordre 1475 (QA 1474 fund 4): een raekke pr. hovedloeft, historik bag et tryk.
+      const hoved = await page.evaluate(() => [...document.querySelectorAll('[data-rekord-hoved]')].map(e => e.getAttribute('data-rekord-hoved')))
+      assert.equal(new Set(hoved).size, hoved.length, 'et hovedloeft staar flere gange: ' + hoved)
+      assert.ok(hoved.includes('squat') && hoved.includes('baenk'), 'squat og baenk skal have hver sin raekke: ' + hoved)
+      assert.equal(await page.locator('[data-rekord-historik]').count(), 0, 'historik skal vaere skjult som start')
+      await page.locator('[data-rekord-historik-knap="squat"]').click(); await page.waitForTimeout(150)
+      assert.ok(await page.locator('[data-rekord-historik]').count() >= 1, 'historik aabner ved tryk')
+      await page.locator('[data-rekord-liste]').scrollIntoViewIfNeeded(); await shot('fremgang-rekorder-historik')
+      await page.locator('[data-rekord-historik-knap="squat"]').click(); await page.waitForTimeout(150)
 
       // 5) Squat og Doedloeft: samme regler. Squat: 150x3 = 165, foerste 130x3 = 143 (deload 100x5 tæller ikke). Doedloeft: 175x2 = 187.
       await udover('Squat')
