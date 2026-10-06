@@ -411,8 +411,10 @@ export default function ProgramTab({
                     const sessionExIds = (session.exercises || []).map(e => e.id)
                     const sessionLogs = logsForView.filter(l => sessionExIds.includes(l.exercise_id))
                     const totalSets = (session.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
-                    const loggedSets = sessionLogs.filter(l => !l.skipped).length
-                    const isDone = totalSets > 0 && sessionLogs.length >= totalSets
+                    // Et sæt taeller een gang (oevelse + saetnummer), saa et rettet/gen-logget saet
+                    // aldrig giver "5/4".
+                    const loggedSets = new Set(sessionLogs.filter(l => !l.skipped).map(l => `${l.exercise_id}|${l.set_number}`)).size
+                    const isDone = totalSets > 0 && new Set(sessionLogs.map(l => `${l.exercise_id}|${l.set_number}`)).size >= totalSets
 
                     return (
                       <div

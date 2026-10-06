@@ -7,6 +7,7 @@ import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles }
 import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality'
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels'
 import { byggKategoriOpslag, kategoriFor } from '../exerciseNames'
+import { exerciseSetView } from '../exerciseSetView'
 import {
   s, VIDEOCOACH_STATUS, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline,
   videoCoachMetricText, videoCoachBaselineText, parsePlannedRpe, buildLiftSeries,
@@ -563,8 +564,9 @@ export default function AnalyseTab({
                     const fmtPRDate = d => { const dt = new Date(d + 'T12:00:00'); return `${dt.getDate()} ${['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'][dt.getMonth()]} ${dt.getFullYear()}` }
                     const grouped = {}
                     for (const pr of athletePRHistory) {
-                      if (!grouped[pr.exercise_name]) grouped[pr.exercise_name] = []
-                      grouped[pr.exercise_name].push(pr)
+                      const navn = exerciseSetView(pr.exercise_name).name // eet loeft = eet navn
+                      if (!grouped[navn]) grouped[navn] = []
+                      grouped[navn].push(pr)
                     }
                     const mainEntries = Object.entries(grouped).filter(([name]) => isMain(name))
                     const otherEntries = Object.entries(grouped).filter(([name]) => !isMain(name))

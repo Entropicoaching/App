@@ -2,6 +2,7 @@
 // Profilfanen Stævne: stævneplan, historik og rekorder.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { s } from '../dashboardShared'
+import { exerciseSetView } from '../exerciseSetView'
 import { supabase } from '../supabase'
 
 export default function StaevneTab({
@@ -135,7 +136,7 @@ export default function StaevneTab({
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                       {athletePRs.map(pr => (
                         <div key={pr.id} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
-                          <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', color: '#edeae2', fontWeight: 300 }}>{pr.exercise_name}</span>
+                          <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', color: '#edeae2', fontWeight: 300 }}>{exerciseSetView(pr.exercise_name).name}</span>
                           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', color: '#c8923a' }}>{pr.weight} kg</span>
                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{pr.logged_at.slice(0, 10)}</span>

@@ -1,6 +1,7 @@
 // Pauselinjen nederst paa forsiden — flyttet uaendret ud af AthleteView.jsx
 // (ordre 373). Se kommentaren nedenfor for moenstret (verify:athlete-rest-timer-drift).
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { remainingSeconds } from '../restTimer'
 import { clearRestPause } from '../restPause'
 import CountdownRing from './CountdownRing'
@@ -74,7 +75,7 @@ function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
           style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', minWidth: '32px', minHeight: '32px', flexShrink: 0 }}
         >✕</button>
       </div>
-      {open && (
+      {open && createPortal(
         <div
           role="dialog"
           aria-modal="true"
@@ -93,7 +94,8 @@ function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
               <button type="button" onClick={clear} style={{ background: 'none', border: '1px solid rgba(237,234,226,0.1)', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '0.5rem 1.25rem', minHeight: '44px', cursor: 'pointer' }}>Skjul pausen</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       {!done && (
         <div style={{ height: '2px', background: 'rgba(237,234,226,0.08)' }}>
