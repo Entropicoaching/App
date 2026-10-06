@@ -14,7 +14,7 @@ import { exerciseSetView } from '../exerciseSetView'
 // vælges og vise "Ingen logninger endnu." — listede den kun logs, ville en
 // tom øvelse aldrig kunne stå i listen overhovedet.
 import { useMemo, useState } from 'react'
-import { bestHeavySetPerDay, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
+import { bestHeavySetPerDay, erTungtSaet, grupperOevelsesnavne, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared'
 import { rekordListe, tidligereSaet, ugensSaet } from './rekorder'
 
@@ -184,9 +184,14 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
     return bestHeavySetPerDay(logsForOevelse)
   }, [fremgangLogs, oevelse])
 
+  const harLogs = useMemo(() => !!oevelse && (fremgangLogs || []).some(l => exerciseSetView(l.exercises?.name).key === exerciseSetView(oevelse).key), [fremgangLogs, oevelse])
+
   const rekorder = useMemo(() => {
     if (!fremgangLogs) return null
-    return rekordListe([...tidligereSaet(fremgangLogs, currentWeek), ...ugensSaet(exerciseLogs, currentWeek, allWeeks)].map(s => ({ ...s, navn: exerciseSetView(s.navn).name }))).reverse().slice(0, 10)
+    // Ordre 1421: rekorder bygges som kurven kun af tunge saet (raa navn tjekkes foer det foldes).
+    return rekordListe([...tidligereSaet(fremgangLogs, currentWeek), ...ugensSaet(exerciseLogs, currentWeek, allWeeks)]
+      .filter(s => erTungtSaet(s.navn, s.reps ?? s.reps_completed))
+      .map(s => ({ ...s, navn: exerciseSetView(s.navn).name }))).reverse().slice(0, 10)
   }, [fremgangLogs, exerciseLogs, currentWeek, allWeeks])
 
   return (
@@ -248,7 +253,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
             <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
               <div style={{ fontSize: '0.72rem', color: '#c8b98a', marginBottom: '0.6rem' }}>{oevelse}</div>
               {punkter.length === 0 ? (
-                <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen tunge sæt logget endnu.</div>
+                <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>{harLogs ? 'Kun lette sæt logget endnu (backoff, teknik eller volumen), så der er intet tungt sæt at tegne en kurve af.' : 'Ingen logninger endnu.'}</div>
               ) : punkter.length === 1 ? (
                 <div style={{ fontSize: '0.8rem', color: '#7a7770' }}>
                   {punkter[0].weight} kg × {punkter[0].reps} (e1RM {punkter[0].e1rm} kg) — for få tunge dage endnu til en kurve.
@@ -273,6 +278,9 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
         <div style={s.card}>
           <div style={s.cardLabel}>Dine rekorder</div>
           <RekordListe rekorder={rekorder} />
+          <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
+            Rekorder tæller kun tunge sæt (højst 8 reps, ikke backoff, teknik eller volumen).
+          </div>
         </div>
       )}
     </>
