@@ -58,3 +58,17 @@ test-clips/
 # maal:coach-telefon). Leverancebilleder ligger i outputs/e2e|maal|maal-coach/
 # og opdateres kun via --opdater-leverance, se scripts/leverance-sti.mjs.
 outputs/_seneste/
+
+# ORDRE 1458 — test-skaermbilleder/video maa aldrig i git (et push fyldte 1 GB).
+# De ligger lokalt i outputs/. Maalinger (.json/.md/.txt) og verify-scripts
+# (outputs/**/*.mjs, kaldt fra package.json) forbliver sporet.
+outputs/**/*.png
+outputs/**/*.jpg
+outputs/**/*.jpeg
+outputs/**/*.webp
+outputs/**/*.gif
+outputs/**/*.mp4
+outputs/**/*.webm
+outputs/**/*.mov
+test-results/
+playwright-report/
