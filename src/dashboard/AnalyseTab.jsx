@@ -464,7 +464,7 @@ export default function AnalyseTab({
 
                   {/* 3. Primære løft */}
                   <div style={s.card}>
-                    <div style={s.cardLabel}>Primære løft — sværeste sæt per session</div>
+                    <div style={s.cardLabel}>Primære løft — tungeste tunge sæt per dag (kg)</div>
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${lifts.length}, 1fr)`, gap: '1.5rem' }}>
                       {lifts.map(({ label, s: ls }) => (
                         <div key={label}>

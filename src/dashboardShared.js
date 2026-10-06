@@ -1,11 +1,12 @@
 import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
+import { erTungtSaet, erDeloadLog } from './exerciseProgress.js'
 // Delt mellem Dashboard.jsx og dens lazy-loadede underfaner (src/dashboard/*).
 // Udskilt i ordre 130 · commit 2, så underfanerne kan importere disse rene
 // stilarter/hjælpefunktioner UDEN at trække resten af Dashboard.jsx (og dermed
 // hele coach-monolitten) ind i deres egen chunk. Ren udflytning - ingen
 // logikændring.
-import { videoCoachVariationIdentity } from './videoCoachLabels'
-import { kategoriFor } from './exerciseNames'
+import { videoCoachVariationIdentity } from './videoCoachLabels.js'
+import { kategoriFor } from './exerciseNames.js'
 
 export const BLOCK_NAMES = ['Akkumulering', 'Intensificering', 'Peak', 'Deload', 'GPP', 'Hypertrofi', 'Styrke', 'Transition']
 
@@ -177,7 +178,9 @@ export function buildLiftSeries(logs, keyword, nameToCat, category) {
   const matched = logs.filter(l => {
     const name = l.exercises?.name || ''
     if (l.skipped) return false
-    if (mainLiftName(category)) return exerciseSetView(name).key === exerciseSetView(category).key && l.weight > 0
+    // Ordre 1485 (Fase B): hovedloeftene foelger samme regel som atletens Fremgang: kun tunge saet (hoejst 8 reps,
+    // ikke backoff/teknik/volumen) og aldrig en deload-uge, saa lette saet ikke traekker kurven ned hos coachen.
+    if (mainLiftName(category)) return exerciseSetView(name).key === exerciseSetView(category).key && l.weight > 0 && !erDeloadLog(l) && erTungtSaet(name, l.reps_completed)
     if (useCategory) return kategoriFor(name, nameToCat) === category && l.weight > 0
     return name.toLowerCase().includes(keyword) && l.weight > 0
   })
