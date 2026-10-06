@@ -142,6 +142,11 @@ async function main() {
       assert.deepEqual(nav.klippet, [], 'bundnavigationens labels klippes: ' + nav.klippet)
       assert.ok(nav.alle.filter(t => t.nav).length >= 6, 'bundnavigationen blev ikke maalt')
       await shot('bundnav')
+      // Ordre 1492 (fund 1+2): selvstaendigt billede af selve navigationen og en forklaring paa knaptallet.
+      const navKnapper = await page.evaluate(() => [...document.querySelectorAll('nav button')].map(b => ({ tekst: b.textContent.trim(), px: parseFloat(getComputedStyle(b.querySelector('span')).fontSize) })))
+      log('BUNDNAV ' + bredde + ': ' + navKnapper.length + ' knapper (' + navKnapper.map(k => k.tekst).join(', ') + '), label ' + navKnapper[0].px.toFixed(1) + ' px. Staevne vises kun med staevnedato/-plan, derfor 7 uden og 8 med.')
+      assert.ok(navKnapper.length === 7 || navKnapper.length === 8, 'uventet antal bundnav-knapper: ' + navKnapper.length)
+      await page.locator('nav').first().screenshot({ path: join(OUT_DIR, 'bundnav-kun-nav-' + bredde + '.png') })
       // 6) Forsiden: Styrkeudvikling har samme fire navne og samme kontrastkrav.
       await page.getByText('Hjem', { exact: true }).last().click().catch(() => {}); await page.waitForTimeout(800)
       await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 8000 }).catch(() => {}); await page.waitForTimeout(800)
@@ -195,7 +200,7 @@ async function main() {
       await cshot('coach-rekorder')
       await tab('Analyse'); await cp.waitForTimeout(800)
       const analyse = await cp.evaluate(() => document.body.innerText)
-      assert.match(analyse, /tungeste tunge sæt/i, 'coachens Analyse bruger tunge-saet-reglen')
+      assert.match(analyse, /e1RM af tungeste tunge sæt/i, 'coachens Analyse viser e1RM af tunge saet som atletens kurve (fund 3)')
       assert.match(analyse, /Sumo dødløft/i, 'sumo har sin egen serie hos coachen')
       await cshot('coach-analyse')
       assert.ok((await cp.evaluate(() => document.documentElement.scrollWidth)) <= bredde, 'vandret overflow hos coach')
