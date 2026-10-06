@@ -36,7 +36,7 @@ function assertNoHorizontalOverflow(width) {
 }
 
 function parseSetLineWeight(text) {
-  const m = /Sæt \d+: ([\d.,]+)kg/.exec(text || '')
+  const m = /Sæt \d+: ([\d.,]+)\s*kg/.exec(text || '')
   return m ? parseFloat(m[1].replace(',', '.')) : null
 }
 
