@@ -1,5 +1,5 @@
 import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
-import { erTungtSaet, erDeloadLog } from './exerciseProgress.js'
+import { erTungtSaet, erDeloadLog, bestHeavySetPerDay } from './exerciseProgress.js'
 // Delt mellem Dashboard.jsx og dens lazy-loadede underfaner (src/dashboard/*).
 // Udskilt i ordre 130 · commit 2, så underfanerne kan importere disse rene
 // stilarter/hjælpefunktioner UDEN at trække resten af Dashboard.jsx (og dermed
@@ -184,7 +184,7 @@ export function buildLiftSeries(logs, keyword, nameToCat, category) {
     if (useCategory) return kategoriFor(name, nameToCat) === category && l.weight > 0
     return name.toLowerCase().includes(keyword) && l.weight > 0
   })
-  if (!matched.length) return { hasData: false, actualData: [], plannedData: [] }
+  if (!matched.length) return { hasData: false, actualData: [], plannedData: [], e1rmData: [] }
   const byDate = {}
   for (const log of matched) {
     const date = log.logged_at.slice(0, 10)
@@ -195,8 +195,11 @@ export function buildLiftSeries(logs, keyword, nameToCat, category) {
   }
   const sorted = Object.entries(byDate).sort(([a], [b]) => a.localeCompare(b))
   const lbl = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+  // Ordre 1492 (fund 3): hovedloeftene vises i e1RM som paa atletens Fremgang (samme funktion), ikke i kg.
+  const e1rmData = mainLiftName(category) ? bestHeavySetPerDay(matched).map(p => ({ y: p.e1rm, label: lbl(p.dag) })) : []
   return {
     hasData: true,
+    e1rmData,
     actualData: sorted.map(([date, d]) => ({ y: d.max, label: lbl(date) })),
     plannedData: sorted.filter(([, d]) => d.planned != null).map(([date, d]) => ({ y: d.planned, label: lbl(date) })),
   }

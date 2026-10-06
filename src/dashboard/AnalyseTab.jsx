@@ -464,12 +464,12 @@ export default function AnalyseTab({
 
                   {/* 3. Primære løft */}
                   <div style={s.card}>
-                    <div style={s.cardLabel}>Primære løft — tungeste tunge sæt per dag (kg)</div>
+                    <div style={s.cardLabel}>Primære løft — e1RM af tungeste tunge sæt per dag (kg)</div>
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${lifts.length}, 1fr)`, gap: '1.5rem' }}>
                       {lifts.map(({ label, s: ls }) => (
                         <div key={label}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
-                          <LineChart series={[{ data: ls.actualData, color: '#c8923a' }]} />
+                          <LineChart series={[{ data: ls.e1rmData.length ? ls.e1rmData : ls.actualData, color: '#c8923a' }]} />
                         </div>
                       ))}
                     </div>

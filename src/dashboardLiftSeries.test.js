@@ -3,6 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { buildLiftSeries } from './dashboardShared.js'
+import { bestHeavySetPerDay } from './exerciseProgress.js'
 
 const log = (name, weight, reps, dag, blok = 'Base') => ({
   weight, reps_completed: reps, skipped: false, logged_at: `${dag}T10:00:00Z`,
@@ -27,4 +28,14 @@ test('sumo og doedloeft er hver sin serie; variant (Deficit sumo) er ingen af de
   const dl = buildLiftSeries(LOGS, 'dødl', {}, 'Dødløft')
   assert.deepEqual(sumo.actualData.map(p => p.y), [200])
   assert.deepEqual(dl.actualData.map(p => p.y), [170])
+})
+
+// Ordre 1492 (fund 3): coachens hovedloeft-kurve har samme tal som atletens (e1RM pr. tungt dag), ikke kg.
+test('e1rmData = atletens bestHeavySetPerDay (samme tal), kg ligger separat', () => {
+  const s = buildLiftSeries(LOGS, 'bænk', {}, 'Bænkpres')
+  const atlet = bestHeavySetPerDay(LOGS.filter(l => /nkpres|baenk/i.test(l.exercises.name)))
+  assert.equal(s.e1rmData.length, 2)
+  assert.deepEqual(s.e1rmData.map(p => p.y), atlet.map(p => p.e1rm))
+  assert.ok(s.e1rmData.every(p => p.y > 100), 'e1RM, ikke kg-tal')
+  assert.deepEqual(s.actualData.map(p => p.y), [100, 105])
 })
