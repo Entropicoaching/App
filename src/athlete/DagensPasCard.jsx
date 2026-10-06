@@ -33,7 +33,7 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession, rekordFejring = null }) {
+function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession, rekordFejring = null, onVarmOp = null }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
   const lastSetTapRef = useRef(-Infinity)
   function acceptSetTap() {
@@ -619,6 +619,15 @@ function DagensPasCard({ pas, exerciseHistory, exerciseLogs, logInputs, setLogIn
           {[nextExercise.totalSets && ` · ${nextExercise.totalSets} sæt`, nextExercise.rows.length === 1 && nextExercise.rows[0].ex.reps && ` × ${nextExercise.rows[0].ex.reps}`].filter(Boolean).join('')}
           {laterCount > 0 ? ` (+${laterCount})` : ''}
         </div>
+      )}
+
+      {/* Ordre 1446: opvarmningen laa tre fane-skift væk fra passet. Et enkelt
+          link, kun før det første sæt, og ingen ny chip på forsiden (ordre 330). */}
+      {onVarmOp && activeNext && (viewRow?.offset || 0) + setNumber === 1 && (
+        <button
+          type="button" data-testid="varm-op-link" onClick={onVarmOp}
+          style={{ display: 'block', width: '100%', minHeight: '44px', marginTop: '0.4rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.06em', color: '#c8923a' }}
+        >Varm op først →</button>
       )}
     </div>
   )

@@ -868,7 +868,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
         <div style={{ marginBottom: '1rem' }}>
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Vælg øvelse · {areaLabel}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {opts.map((opt, i) => <button key={opt.id} onClick={() => onChoose(i)} style={{ background: i === choiceIdx ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${i === choiceIdx ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: i === choiceIdx ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, padding: '0.45rem 0.7rem', cursor: 'pointer', textAlign: 'left', lineHeight: 1.3 }}>{opt.name}</button>)}
+            {opts.map((opt, i) => <button key={opt.id} onClick={() => onChoose(i)} style={{ background: i === choiceIdx ? 'rgba(200,146,58,0.15)' : '#1c1c18', border: `1px solid ${i === choiceIdx ? '#c8923a' : 'rgba(237,234,226,0.1)'}`, color: i === choiceIdx ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, padding: '0.45rem 0.7rem', minHeight: '44px', cursor: 'pointer', textAlign: 'left', lineHeight: 1.3 }}>{opt.name}</button>)}
           </div>
         </div>
       )}
@@ -907,7 +907,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
 
 export default function MobiliseringTab({
   currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
-  readinessLog, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
+  readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
   setMobilityStep, setTimerActive, setTimerDone, setTimerSeconds, setWarmupChoice,
   setWarmupExercises, setWarmupFocus, setWarmupPhase, setWarmupProblems, setWarmupStep,
   setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,
@@ -947,7 +947,7 @@ export default function MobiliseringTab({
 
         {/* Tilbage til landing — vises over enhver valgt mode */}
         {mobilityMode && (
-          <button onClick={() => setMobilityMode(null)} style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', padding: '0 0 1rem 0' }}>‹ Mobilitet</button>
+          <button onClick={() => setMobilityMode(null)} style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', padding: 0, marginBottom: '0.5rem', minHeight: '44px', minWidth: '44px', textAlign: 'left' }}>‹ Mobilitet</button>
         )}
 
         {/* OPVARMNING (hub-mode) */}
@@ -1105,7 +1105,7 @@ export default function MobiliseringTab({
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.08em' }}>
                       {warmupFocus} · Øvelse {warmupStep + 1} af {warmupExercises.length}
                     </div>
-                    <button style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem' }} onClick={resetWarmup}>✕ Afslut</button>
+                    <button style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', minHeight: '44px', minWidth: '44px' }} onClick={resetWarmup}>✕ Afslut</button>
                   </div>
                   <div style={{ height: '2px', background: 'rgba(237,234,226,0.07)', borderRadius: '1px' }}>
                     <div style={{ height: '100%', background: '#c8923a', width: `${pct}%`, transition: 'width 0.3s ease' }} />
@@ -1130,7 +1130,7 @@ export default function MobiliseringTab({
                               border: `1px solid ${on ? '#c8923a' : 'rgba(237,234,226,0.1)'}`,
                               color: on ? '#c8923a' : '#7a7770',
                               fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500,
-                              letterSpacing: '0.03em', padding: '0.45rem 0.7rem', cursor: 'pointer',
+                              letterSpacing: '0.03em', padding: '0.45rem 0.7rem', minHeight: '44px', cursor: 'pointer',
                               textAlign: 'left', lineHeight: 1.3,
                             }}
                           >{opt.name}</button>
@@ -1196,7 +1196,8 @@ export default function MobiliseringTab({
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>
                 {warmupExercises.length} øvelser gennemført
               </div>
-              <button style={{ ...s.btnGhost, padding: '0.75rem 1.5rem' }} onClick={resetWarmup}>Start forfra</button>
+              <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', marginBottom: '0.75rem' }} onClick={() => { resetWarmup(); setMobilityMode(null); setTab('hjem') }}>Til dagens pas →</button>
+              <button style={{ ...s.btnGhost, padding: '0.75rem 1.5rem', minHeight: '44px' }} onClick={resetWarmup}>Start forfra</button>
             </div>
           )
         })()}

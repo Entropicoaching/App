@@ -604,7 +604,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday,
             openReadiness, openSession, parkedSets, pendingSyncCount, pendingSyncKeys, prs, prsError, readinessCardRef, readinessError, readinessHistory,
             readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
-            setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
+            setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setMobilityMode, setWeightInput,
             sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
             unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
             rekordFejring, rekordGrundlagFoer, sendUgeLinje,
@@ -686,7 +686,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             factory={mobiliseringFactory} label="Mobilitet" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
               currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
-              readinessLog, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
+              readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
               setMobilityStep, setTimerActive, setTimerDone, setTimerSeconds, setWarmupChoice,
               setWarmupExercises, setWarmupFocus, setWarmupPhase, setWarmupProblems, setWarmupStep,
               setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,

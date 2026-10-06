@@ -215,7 +215,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                 const hovednavn = hovednavnForFamilie(familie, navnEnFamilie)
                 const aktiv = navnEnFamilie.includes(oevelse)
                 return (
-                  <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={aktiv ? s.btnPrimary : s.btnGhost}>
+                  <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={{ ...(aktiv ? s.btnPrimary : s.btnGhost), minHeight: '44px' }}>
                     {navnEnFamilie.length === 1 ? hovednavn : familie.label}
                   </button>
                 )
@@ -230,7 +230,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
                   {navneIFamilie.map(navn => (
                     <button key={navn} onClick={() => setValgtOevelse(navn)}
                       style={{
-                        ...s.btnGhost, padding: '0.3rem 0.6rem', fontSize: '0.54rem',
+                        ...s.btnGhost, padding: '0.3rem 0.6rem', fontSize: '0.54rem', minHeight: '44px',
                         color: navn === oevelse ? '#c8923a' : '#7a7770',
                         borderColor: navn === oevelse ? 'rgba(200,146,58,0.45)' : 'rgba(237,234,226,0.13)',
                       }}

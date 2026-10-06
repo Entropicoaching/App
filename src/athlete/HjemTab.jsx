@@ -24,7 +24,7 @@ function HjemTab({
   logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday,
   openReadiness, openSession, parkedSets, pendingSyncCount, pendingSyncKeys, prs, prsError, readinessCardRef, readinessError, readinessHistory,
   readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
-  setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setWeightInput,
+  setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setMobilityMode, setWeightInput,
   sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
   unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
   rekordFejring, rekordGrundlagFoer, sendUgeLinje,
@@ -119,6 +119,7 @@ function HjemTab({
                     pendingSyncKeys={pendingSyncKeys}
                     parkedSets={parkedSets}
                     rekordFejring={rekordFejring}
+                    onVarmOp={setMobilityMode ? () => { setMobilityMode('opvarmning'); setTab('mobilisering') } : null}
                     todayStr={today()}
                     finishedSession={(() => {
                       // ORDRE 419 (I3): passet, hvis sidste sæt lige er logget fra
