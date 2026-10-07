@@ -118,13 +118,14 @@
   },
   "dependencies": {
     "@supabase/auth-js": "^2.112.3",
+    "@supabase/functions-js": "^2.112.3",
     "@supabase/postgrest-js": "^2.112.3",
     "@supabase/storage-js": "^2.112.3",
-    "@supabase/functions-js": "^2.112.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
