@@ -10,6 +10,9 @@
 --    close-grip, RDL m.fl. er varianter og indgaar ikke i stagnation/RPE-drift, som i appen.
 --  * Ordre 1451: sæt fra en uge hvis blok hedder deload/aflast/taper tæller ikke som tungt sæt
 --    (erDeloadBlok i src/exerciseProgress.js), saa en bevidst let uge ikke laeses som fald.
+--  * Ordre 1508: konventionel og sumo doedloeft er to loeft, som i klienten (V17,
+--    liftOf/mainLiftName: 'Doedloeft' og 'Sumo doedloeft'). Foer blev begge slaaet sammen til
+--    'Doedloeft', saa en sumo-fremgang kunne skjule en konventionel stagnation.
 --  * Alt andet er tegn for tegn v2 (samme funktionsnavn, kolonner, grant).
 --    Dropout, RPE-drift, smerte og PR-detektorerne er uroerte.
 -- Effekt: coachens SQL-signal og profilens stagnationslinje bliver enige;
@@ -109,8 +112,8 @@ begin
       case
         when lower(coalesce(ex.name,'')) ~ ('^(back |competition )?squat' || SUF || '$') then 'Squat'
         when lower(coalesce(ex.name,'')) ~ ('^(bænk(pres)?|baenk(pres)?|bench( press)?)' || SUF || '$') then 'Bænk'
-        when lower(coalesce(ex.name,'')) ~ ('^(dødløft|doedloeft|deadlift|dl|konventionel dødløft|konventionel doedloeft|conventional deadlift'
-          || '|sumo dødløft|sumo doedloeft|sumo deadlift|dødløft\s*[-–(]?\s*sumo\)?|doedloeft\s*[-–(]?\s*sumo\)?)' || SUF || '$') then 'Dødløft'
+        when lower(coalesce(ex.name,'')) ~ ('^(dødløft|doedloeft|deadlift|dl|konventionel dødløft|konventionel doedloeft|conventional deadlift)' || SUF || '$') then 'Dødløft'
+        when lower(coalesce(ex.name,'')) ~ ('^(sumo dødløft|sumo doedloeft|sumo deadlift|dødløft\s*[-–(]?\s*sumo\)?|doedloeft\s*[-–(]?\s*sumo\)?)' || SUF || '$') then 'Sumo dødløft'
       end lift
     from public.exercise_logs el
     join my on my.id = el.athlete_id
