@@ -19,7 +19,7 @@ const loeftRegex = caseBlok.split(/\n\s*when /).slice(1).map(w => {
   assert.equal(lits.at(-1), '$')
   return new RegExp(lits.slice(0, -1).join('') + SUF + '$')
 })
-assert.equal(loeftRegex.length, 3)
+assert.equal(loeftRegex.length, 4) // squat, baenk, konventionel og sumo doedloeft (ordre 1508)
 
 const sqlTungt = (navn, reps) => reps >= 1 && reps <= maxReps && !LET.test(navn.toLowerCase())
 const sqlLoeft = (navn) => loeftRegex.some(r => r.test(navn.toLowerCase()))
