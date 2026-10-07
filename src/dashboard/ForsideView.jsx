@@ -3,6 +3,7 @@
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { currentWeekNo, s, initials } from '../dashboardShared'
 import { beregnUgensAfvigelse, sorterEfterAfvigelse, ugensStemme } from './afvigelse'
+import { roligeAtleter, roligLinje } from '../roligeAtleter'
 import { coachBriefingPointKey } from '../coachBriefingSeen'
 import { supabase } from '../supabase'
 import { holidayInfo, ferieBadgeLabel } from './coachKonstanter'
@@ -60,6 +61,14 @@ export default function ForsideView({
           const ATHLETE_LIST_LIMIT = 25
           const cappedAthletes = showAllAthletes ? shownAthletes : shownAthletes.slice(0, ATHLETE_LIST_LIMIT)
           const priorityItems = coachPriorityItems
+          // ORDRE 1580 (D3): hvem er set igennem og kraever ikke noget.
+          // Ikke naar koeen er ufuldstaendig (indlaeser eller en kilde fejlede): saa maa en tom kasse ikke trøste.
+          const koeenKomplet = !loading && !(trainingSignalsError || videoReviewQueueError || messageInboxError || automationAlertsError)
+          const roligeLinjeTekst = !koeenKomplet ? null : roligLinje(roligeAtleter({
+            atleter: visibleAthletes,
+            aabneIds: priorityItems.map(item => item.athlete?.id).filter(Boolean),
+            ugeStatus: ugeStatusByAthleteId,
+          }), visibleAthletes.length)
           const inboxTotal = coachPriorityCount
           // ORDRE 325: sete punkter (coach_briefing_seen) synker til bunden af
           // forhåndsvisningen i stedet for at blive fjernet — samme rækkefølge
@@ -193,6 +202,12 @@ export default function ForsideView({
                         + {priorityItems.length - priorityPreview.length} flere i indbakken
                       </button>
                     )}
+                  </div>
+                )}
+
+                {roligeLinjeTekst && (
+                  <div data-rolige-linje style={{ padding: isMobile ? '0.55rem 0.85rem' : '0.6rem 1rem', borderTop: '1px solid rgba(237,234,226,0.06)', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.03em', lineHeight: 1.5 }}>
+                    {roligeLinjeTekst}
                   </div>
                 )}
 
