@@ -13,6 +13,7 @@ import {
   videoCoachMetricText, videoCoachBaselineText, parsePlannedRpe, buildLiftSeries,
 } from '../dashboardShared'
 import { BarChart, LineChart, ScatterPlot } from '../dashboardCharts'
+import { primaerKurve, primaerOverskrift } from './primaerKurve'
 import { danskDag } from '../danskDato' // ORDRE 456 (A8): PR-tidslinjen i dansk tid
 import AthleteSilentFailNote from '../AthleteSilentFailNote' // ORDRE 131 · commit 3, flyttet hertil ordre 137 · commit 1 (Dashboard.jsx splittet under 130) — eneste rendering, se RAPPORT-131.md
 
@@ -464,12 +465,12 @@ export default function AnalyseTab({
 
                   {/* 3. Primære løft */}
                   <div style={s.card}>
-                    <div style={s.cardLabel}>Primære løft — e1RM af tungeste tunge sæt per dag (kg)</div>
+                    <div style={s.cardLabel}>{primaerOverskrift(lifts)}</div>
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${lifts.length}, 1fr)`, gap: '1.5rem' }}>
                       {lifts.map(({ label, s: ls }) => (
                         <div key={label}>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
-                          <LineChart series={[{ data: ls.e1rmData.length ? ls.e1rmData : ls.actualData, color: '#c8923a' }]} />
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}{primaerKurve(ls).note ? ` · ${primaerKurve(ls).note}` : ''}</div>
+                          <LineChart series={[{ data: primaerKurve(ls).data, color: '#c8923a' }]} />
                         </div>
                       ))}
                     </div>
