@@ -19,6 +19,7 @@ import ToastPlads from './athlete/ToastPlads'
 import BundNav from './athlete/BundNav'
 import { lavSaetSkrivning } from './athlete/saetSkrivning'
 import { lavLaesninger } from './athlete/laesninger'
+import { udenForslagVedSmerte } from './athlete/smerteStop'
 import { lavBeskederOgVaegt } from './athlete/beskederOgVaegt'
 import { lavKostHandlinger } from './athlete/kostHandlinger'
 import { useVideoCoachBro, useAfbrudtUploadVarsel } from './athlete/useVideoCoachBro'
@@ -316,7 +317,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   })
 
   const {
-    fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
+    fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight: suggestNextWeightRaa,
     saveReadiness, fetchProgram, openSession, openReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
     fetchExerciseLogs,
   } = lavLaesninger({
@@ -330,6 +331,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
     setOfflineSnapshotAt, setUgensLogsHentet,
   })
+  // Ordre 1502: en smerte-note i seneste uger standser appens stigningsforslag (D3, V10 3A).
+  const suggestNextWeight = udenForslagVedSmerte(suggestNextWeightRaa, allWeeks)
 
   const {
     logSet, logDagensPasSet, flushOfflineSets, undoLoggedSet, updateLoggedSet, skipSet, skipExercise, unskipSet,
