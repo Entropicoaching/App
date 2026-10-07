@@ -111,12 +111,11 @@ if (process.env.PROEVE_UD) {
 }
 await db.close()
 
-// Kendt, forventet afvigelse: appens JS-regel kender ikke deload-blokke (Syn Delta). Alt andet skal vaere ens.
-const forventet = new Set(['Syn Delta'])
-const uventet = atleter.filter(a => js[a.athlete.name] !== sv3[a.athlete.name] && !forventet.has(a.athlete.name))
+// Ordre 1516: ingen kendte afvigelser; JS og SQL skal give samme signal for alle atleter (ogsaa deload).
+const uventet = atleter.filter(a => js[a.athlete.name] !== sv3[a.athlete.name])
 const sumoAdskilt = loeftSet(varianter.v3).includes('Sumo dødløft') && loeftSet(varianter.v3).includes('Dødløft')
 if (uventet.length || !sumoAdskilt || !rulning || !genkoersel || !andreUaendret) {
   console.error(`\nPROEVEN FEJLEDE: ${uventet.length ? `uventet afvigelse: ${uventet.map(a => a.athlete.name).join(', ')}; ` : ''}sumoAdskilt=${sumoAdskilt} rulning=${rulning} genkoersel=${genkoersel} andreUaendret=${andreUaendret}`)
   process.exit(1)
 }
-console.log('\nProeven er groen (kendt afvigelse: Syn Delta/deload, se rapporten).')
+console.log(`\nProeven er groen: JS og SQL v3 ens for alle ${atleter.length} atleter.`)

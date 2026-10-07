@@ -41,11 +41,27 @@ const ATLETER = [
       [...top('Squat', 120 + 5 * w, 5, 8), { name: 'Bænkpres - backoff', weight: 80 + 2.5 * w, reps: 8, rpe_planned: 7, rpe_actual: 7 }],
       lett('Close-grip bænkpres', 70, 8),
     ] },
-  { // D: deload-uge (uge 5) mellem to ens uger. SQL udelader deload, JS-reglen kender ikke blokken
+  { // D: deload-uge (uge 5) mellem to ens uger. SQL og JS udelader begge deload-uger (ordre 1516)
     navn: 'Syn Delta',
     blok: w => (w === 5 ? 'Deload' : 'Opbygning'),
     pas: w => [
       top('Squat', [120, 125, 130, 135, 135, 100, 135][w], 5, 8),
+      top('Bænkpres', 80 + 2.5 * w, 5, 8),
+      lett('Frontsquat', 90, 6),
+    ] },
+  { // F: deload i starten (uge 1), derefter et rigtigt plateau paa 130. Deload-ugen maa ikke skjule det
+    navn: 'Syn Foxtrot',
+    blok: w => (w === 0 ? 'Deload' : 'Opbygning'),
+    pas: w => [
+      top('Squat', [100, 120, 125, 130, 130, 130, 130][w], 5, 8),
+      top('Bænkpres', 80 + 2.5 * w, 5, 8),
+      lett('Frontsquat', 90, 6),
+    ] },
+  { // G: to deload-uger i traek (uge 5 og 6) mellem to ens uger. Skal ikke tælle som stilstand
+    navn: 'Syn Golf',
+    blok: w => (w === 4 || w === 5 ? 'Deload' : 'Opbygning'),
+    pas: w => [
+      top('Squat', [120, 125, 130, 135, 100, 100, 135][w], 5, 8),
       top('Bænkpres', 80 + 2.5 * w, 5, 8),
       lett('Frontsquat', 90, 6),
     ] },
