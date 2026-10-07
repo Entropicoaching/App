@@ -1,0 +1,1 @@
+async function e(e,t){let{error:n}=await e();return!n||(t(n),!1)}export{e as t};
