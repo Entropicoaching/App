@@ -19,6 +19,7 @@ import {
 import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession'
 import { parsePlannedRpe, logFrontendError } from './ugeHjaelp'
 import { erDeloadBlok } from '../exerciseProgress.js'
+import { rpeActualUdenValg } from './rpeValg.js'
 import { bygGrundlag, findRekord, rekordTekst, ugensSaet, ugensOevelsesIds } from './rekorder'
 
 // ORDRE 397 (docs/OFFLINE-PAS.md): uden net forsøges ingen skrivning; den
@@ -265,9 +266,9 @@ export function lavSaetSkrivning({
       weight: parseFloat(input.weight) || 0,
       reps_completed: parseInt(repsCompleted) || 0,
       note: input.note || null,
-      // Ingen egen RPE valgt → gem den planlagte RPE, så vi altid har data at
-      // autoregulere på. Rører atleten vælgeren, gemmes deres værdi i stedet.
-      rpe_actual: input.rpe ? parseFloat(input.rpe) : (plannedRpe ?? null),
+      // Ingen egen RPE valgt → planlagt RPE (flag RPE_TOM_UDEN_VALG fra) eller null (til).
+      // Rører atleten vælgeren, gemmes deres værdi i stedet.
+      rpe_actual: rpeActualUdenValg(input.rpe, plannedRpe),
       rpe_planned: plannedRpe ?? null,
       skipped: false,
     }
@@ -784,7 +785,7 @@ export function lavSaetSkrivning({
       const plannedRpe = parsePlannedRpe(ex.intensity)
       for (let n = 1; n <= (parseInt(ex.sets) || 0); n++) {
         if (logged.has(`${ex.id}_${n}`)) continue
-        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: plannedRpe ?? null, rpe_planned: plannedRpe ?? null, skipped: false })
+        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: rpeActualUdenValg('', plannedRpe), rpe_planned: plannedRpe ?? null, skipped: false })
       }
     }
 

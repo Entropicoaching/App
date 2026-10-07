@@ -4,6 +4,8 @@
 // browser-session (atleten) rent faktisk når frem til en anden (coachen) via
 // den fælles backend-form. Rydder op bagefter uanset udfald.
 
+import { spawnSync } from 'node:child_process'
+import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
 import { buildSeed } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR, LEVERANCE_DIR } from './harness.mjs'
@@ -82,6 +84,14 @@ async function main() {
     await browser.close()
     await vite.stop()
     await mock.close()
+  }
+  // Ordre 1526 (QA 1519 fund 1): smerte-stoppets region/dato-regel er med i run-all.
+  // Specerne starter egen mock+vite paa de samme porte, saa de koeres efter at denne koersels servere er lukket.
+  if (process.exitCode === 0) {
+    for (const spec of ['smerte-stop-1509.spec.mjs']) {
+      const r = spawnSync(process.execPath, [join(import.meta.dirname, spec)], { stdio: 'inherit' })
+      if (r.status !== 0) { console.error(`\nFEJL: ${spec} exit ${r.status}`); process.exitCode = 1 }
+    }
   }
 }
 
