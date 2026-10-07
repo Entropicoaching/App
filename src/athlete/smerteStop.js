@@ -9,9 +9,7 @@ export { ramtAfSmerte }
 const DAG = 86400000
 export const FRIST_DAGE = 14 // samme graense som coachens smerte-linje
 
-// Ordre 1509 fund 1 (ESKALERING): den rolige linje, bag flag og slaaet FRA.
-// Tavst (false) er standard, indtil Marc vaelger.
-export const SMERTE_BESKED_AKTIV = false
+// Ordre 1547 (Marcs V-SMERTE=B, 7. okt): den rolige linje er taendt (flaget fra 1509 er fjernet).
 export const SMERTE_BESKED = 'Ingen forslag i dag: tal med din coach om smerten'
 
 const dagMs = d => new Date(`${String(d).slice(0, 10)}T00:00:00Z`).getTime()
@@ -52,6 +50,6 @@ export function udenForslagVedSmerte(suggestNextWeight, weeks, historik = {}, nu
   return f
 }
 
-/** Den rolige linje: kun naar flaget er taendt og stoppet rammer netop dette loeft. */
-export const smerteBeskedFor = (suggestNextWeight, navn, aktiv = SMERTE_BESKED_AKTIV) =>
-  aktiv && suggestNextWeight?.smerteStop?.(navn) ? SMERTE_BESKED : null
+/** Den rolige linje: kun naar stoppet rammer netop dette loeft. */
+export const smerteBeskedFor = (suggestNextWeight, navn) =>
+  suggestNextWeight?.smerteStop?.(navn) ? SMERTE_BESKED : null

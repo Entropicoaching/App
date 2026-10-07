@@ -770,7 +770,7 @@ export default function ProgramTab({
                                                 cursor: 'pointer',
                                                 whiteSpace: 'nowrap',
                                               }}
-                                            >RPE {input.rpe || (plannedRpe != null ? plannedRpe : 8)}</button>
+                                            >RPE {input.rpe || (plannedRpe != null ? plannedRpe : '–')}</button>
                                             {openRpePicker === key && (
                                               <div
                                                 ref={node => { if (node) { const sel = node.querySelector('[data-selected="true"]'); if (sel) sel.scrollIntoView({ block: 'nearest', behavior: 'instant' }) } }}
@@ -789,7 +789,7 @@ export default function ProgramTab({
                                                 }}
                                               >
                                                 {RPE_VALUES.map(v => {
-                                                  const cur = parseFloat(input.rpe !== '' ? input.rpe : (plannedRpe != null ? plannedRpe : 8))
+                                                  const cur = parseFloat(input.rpe !== '' ? input.rpe : plannedRpe)
                                                   const isSelected = cur === v
                                                   return (
                                                     <button

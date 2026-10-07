@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { ramtAfSmerte, smerteStopAktiv, udenForslagVedSmerte, smerteBeskedFor, SMERTE_BESKED_AKTIV, SMERTE_BESKED } from './smerteStop.js'
+import { ramtAfSmerte, smerteStopAktiv, udenForslagVedSmerte, smerteBeskedFor, SMERTE_BESKED } from './smerteStop.js'
 
 const NU = new Date('2026-10-07T10:00:00Z').getTime()
 const uge = (start, kommentar, ovelser = ['Squat']) => ({
@@ -70,16 +70,11 @@ test('fremtidig uge, uge uden dato og tomme data ignoreres', () => {
   assert.equal(smerteStopAktiv(undefined, 'Squat', NU), false)
 })
 
-test('flag: den rolige linje er slaaet FRA som standard', () => {
-  assert.equal(SMERTE_BESKED_AKTIV, false)
-  const f = udenForslagVedSmerte(forslag, [uge('2026-10-05', 'ondt i knaeet')], {}, NU)
-  assert.equal(smerteBeskedFor(f, 'Squat'), null)
-})
-test('flag taendt: linjen vises kun for loeft, stoppet rammer', () => {
+test('V-SMERTE=B: den rolige linje vises kun for loeft, stoppet rammer', () => {
   const f = udenForslagVedSmerte(forslag, [uge('2026-10-05', 'ondt i knaeet', ['Squat', 'Bænkpres'])], {}, NU)
-  assert.equal(smerteBeskedFor(f, 'Squat', true), SMERTE_BESKED)
-  assert.equal(smerteBeskedFor(f, 'Bænkpres', true), null)
-  assert.equal(smerteBeskedFor(forslag, 'Squat', true), null)
+  assert.equal(smerteBeskedFor(f, 'Squat'), SMERTE_BESKED)
+  assert.equal(smerteBeskedFor(f, 'Bænkpres'), null)
+  assert.equal(smerteBeskedFor(forslag, 'Squat'), null)
 })
 
 test('coach-tekst: omfang i klartekst, uklar kropsdel = alle loeft', async () => {
