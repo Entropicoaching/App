@@ -14,6 +14,7 @@
     "e2e:coach": "node e2e/coach.spec.mjs",
     "e2e:dagens-pas": "node e2e/dagens-pas.spec.mjs",
     "e2e:smerte-stop-1502": "node e2e/smerte-stop-1502.spec.mjs",
+    "e2e:smerte-stop-1509": "node e2e/smerte-stop-1509.spec.mjs",
     "e2e:dagens-pas-historik": "node e2e/dagens-pas-historik.spec.mjs",
     "e2e:check-in": "node e2e/check-in.spec.mjs",
     "e2e": "node e2e/run-all.mjs",
