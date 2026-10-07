@@ -6,6 +6,9 @@
 //   3. ingen vurdering under 3 (1-5) i ugen.
 // 4. ORDRE 1588: ingen sprungne sæt og ingen sæt med færre reps end planlagt
 //    (inkl. fejlede sæt med 0 reps). Det er de RPE-uafhængige tegn.
+// Taerskler (vurdering 3 eller mere, mindst et pas, ingen skip/saet under plan)
+// er et AGENTVALG, ikke Marcs regel. Derfor siger linjen kun "trænet uden tegn
+// paa problemer" og aldrig "intet kraever dig" (ORDRE 1588 fund 2).
 // RPE indgaar ikke. Ikke-startede og tavse atleter er aldrig rolige.
 //   atleter:   [{ id, name }]
 //   aabneIds:  atlet-id'er med mindst en aaben ting i koeen
@@ -30,5 +33,5 @@ export function roligLinje(rolige, antalAtleter) {
   const navne = rolige.map(a => fornavn(a.name)).filter(Boolean)
   const vist = navne.slice(0, 3).join(', ')
   const rest = navne.length - 3
-  return `Set igennem, intet kræver dig: ${vist}${rest > 0 ? ` og ${rest} til` : ''} (${rolige.length} af ${antalAtleter})`
+  return `Trænet denne uge uden tegn på problemer: ${vist}${rest > 0 ? ` og ${rest} til` : ''} (${rolige.length} af ${antalAtleter})`
 }

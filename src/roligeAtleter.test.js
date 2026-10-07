@@ -53,7 +53,7 @@ test('fejlede sæt, færre reps end planlagt eller skip gør atleten ikke rolig 
 
 test('linjen: intet naar ingen, fornavne, maks tre og rest som tal', () => {
   assert.equal(roligLinje([], 6), null)
-  assert.equal(roligLinje([atleter[0], atleter[1]], 6), 'Set igennem, intet kræver dig: Alfa, Bravo (2 af 6)')
-  assert.equal(roligLinje(atleter.slice(0, 5), 6), 'Set igennem, intet kræver dig: Alfa, Bravo, Charlie og 2 til (5 af 6)')
+  assert.equal(roligLinje([atleter[0], atleter[1]], 6), 'Trænet denne uge uden tegn på problemer: Alfa, Bravo (2 af 6)')
+  assert.equal(roligLinje(atleter.slice(0, 5), 6), 'Trænet denne uge uden tegn på problemer: Alfa, Bravo, Charlie og 2 til (5 af 6)')
   assert.ok(!roligLinje(atleter, 6).includes('—'))
 })

@@ -45,7 +45,7 @@ async function main() {
       page.on('console', msg => { if (msg.type() === 'error') fejl.push(`console.error: ${msg.text()}`) })
       const { tekst } = await runRolige(page, { appUrl: APP_URL, outDir: OUT_DIR, seed, bredde })
       assert.ok(tekst, 'linjen skal findes')
-      assert.match(tekst, /^Set igennem, intet kræver dig: Alfa \(1 af 5\)$/)
+      assert.match(tekst, /^Trænet denne uge uden tegn på problemer: Alfa \(1 af 5\)$/)
       assert.ok(!tekst.includes('—'), 'ingen tankestreg')
       assert.ok(!/Charlie|Echo|Bravo|Delta/.test(tekst), `uroligt/utrænet atlet i linjen: ${tekst}`)
       assert.ok(!tekst.includes('Skarp smerte'), 'noter citeres ikke')
