@@ -104,8 +104,11 @@ const loeftSet = rows => [...new Set(rows.filter(r => r.o_detector === 'stagnati
 ud(`Loeft i stagnationsraekkerne, v3 foer ret: ${v3Foer ? loeftSet(varianter.v3Foer).join(', ') : 'n/a'}`)
 ud(`Loeft i stagnationsraekkerne, v3 rettet: ${loeftSet(varianter.v3).join(', ')}`)
 
-mkdirSync(join(rod, 'outputs', 'proeve-migration-v3'), { recursive: true })
-writeFileSync(join(rod, 'outputs', 'proeve-migration-v3', 'resultat.md'), linjer.join('\n') + '\n')
+// Valgfri: PROEVE_UD=<mappe> gemmer tabellen som resultat.md (aldrig inde i repoet).
+if (process.env.PROEVE_UD) {
+  mkdirSync(process.env.PROEVE_UD, { recursive: true })
+  writeFileSync(join(process.env.PROEVE_UD, 'resultat.md'), linjer.join('\n') + '\n')
+}
 await db.close()
 
 // Kendt, forventet afvigelse: appens JS-regel kender ikke deload-blokke (Syn Delta). Alt andet skal vaere ens.
