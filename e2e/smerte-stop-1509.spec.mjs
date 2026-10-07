@@ -39,7 +39,10 @@ async function koer(kommentar, navn, forventForslag, ugeDage, logDage) {
     const antal = await page.getByText(/Forslag: [\d.,]+ kg/).count()
     await page.screenshot({ path: join(OUT_DIR, `smerte-stop-1509-${navn}.png`), fullPage: true })
     assert.equal(antal > 0, forventForslag, `${navn}: Forslag-linjer = ${antal}`)
-    console.log(`${navn}: Forslag-linjer ${antal} (forventet ${forventForslag ? '>0' : '0'})`)
+    // Ordre 1547 (V-SMERTE=B): den rolige linje staar praecis der, hvor forslaget er standset.
+    const besked = await page.getByTestId('smerte-besked').count()
+    assert.equal(besked, forventForslag ? 0 : 1, `${navn}: smerte-linjer = ${besked}`)
+    console.log(`${navn}: Forslag-linjer ${antal} (forventet ${forventForslag ? '>0' : '0'}), smerte-linjer ${besked}`)
   } finally {
     await browser.close(); await vite.stop(); await mock.close()
   }
