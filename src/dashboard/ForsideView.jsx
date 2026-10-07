@@ -206,7 +206,7 @@ export default function ForsideView({
                 )}
 
                 {roligeLinjeTekst && (
-                  <div data-rolige-linje style={{ padding: isMobile ? '0.55rem 0.85rem' : '0.6rem 1rem', borderTop: '1px solid rgba(237,234,226,0.06)', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.03em', lineHeight: 1.5 }}>
+                  <div data-rolige-linje style={{ padding: isMobile ? '0.55rem 0.85rem' : '0.6rem 1rem', borderTop: '1px solid rgba(237,234,226,0.06)', color: '#b3afa4', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.02em', lineHeight: 1.5 }}>
                     {roligeLinjeTekst}
                   </div>
                 )}

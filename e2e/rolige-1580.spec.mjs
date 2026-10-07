@@ -45,6 +45,14 @@ async function main() {
       page.on('console', msg => { if (msg.type() === 'error') fejl.push(`console.error: ${msg.text()}`) })
       const { tekst } = await runRolige(page, { appUrl: APP_URL, outDir: OUT_DIR, seed, bredde })
       assert.ok(tekst, 'linjen skal findes')
+      // ORDRE 1588 fund 3: linjen skal kunne læses på 390 (mindst 11 px, lysere end #7a7770).
+      const stil = await page.locator('[data-rolige-linje]').first().evaluate(el => {
+        const cs = getComputedStyle(el)
+        return { px: parseFloat(cs.fontSize), farve: cs.color }
+      })
+      assert.ok(stil.px >= 11, `linjen er for lille: ${stil.px}px`)
+      const lys = stil.farve.match(/\d+/g).slice(0, 3).map(Number).reduce((a, b) => a + b, 0) / 3
+      assert.ok(lys >= 150, `linjen er for mørk: ${stil.farve}`)
       assert.match(tekst, /^Trænet denne uge uden tegn på problemer: Alfa \(1 af 5\)$/)
       assert.ok(!tekst.includes('—'), 'ingen tankestreg')
       assert.ok(!/Charlie|Echo|Bravo|Delta/.test(tekst), `uroligt/utrænet atlet i linjen: ${tekst}`)
