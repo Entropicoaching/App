@@ -53,12 +53,13 @@ export const defaultSession = (weekIndex, sessionIndex, { shift = () => 0 } = {}
 
 // Bygger en fixture. `session(weekIndex, sessionIndex)` returnerer
 // { sets, comment?, missed? } eller et array af saet; standard er defaultSession.
-export function buildAthlete({ id, name, about, status = 'aktiv', vacation_until = null, session, readiness = [], personal_records = [] }) {
+export function buildAthlete({ id, name, about, status = 'aktiv', vacation_until = null, session, block, readiness = [], personal_records = [] }) {
   const weeks = []
   const logs = []
   for (let w = 0; w < WEEKS; w += 1) {
     const start = addDays(FIRST_MONDAY, 7 * w)
     const week = { id: `${id}-w${w + 1}`, athlete_id: id, week_number: w + 1, start_date: start, sessions: [] }
+    if (block) week.block_name = block(w)
     for (let p = 0; p < 3; p += 1) {
       const date = addDays(start, 2 * p)
       const sessionId = `${week.id}-p${p + 1}`

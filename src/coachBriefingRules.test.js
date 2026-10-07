@@ -142,6 +142,30 @@ test('stagnation: et signal pr. atlet, selv naar flere loeft staar stille', () =
   assert.match(stagnation[0].headline, /\(\+1 løft mere fladt\)$/)
 })
 
+// Ordre 1516: en deload-uge er hverken bevis for eller imod et plateau (samme regel som SQL v3).
+const squatOnly = (tops, deloadWeeks) => buildAthlete({
+  id: 'syn-d', name: 'Atlet D',
+  block: w => (deloadWeeks.includes(w) ? 'Deload' : 'Opbygning'),
+  session: (w, p) => (p === 0 && tops[w] ? [{ name: 'Squat', weight: tops[w], reps: 5, rpe_planned: 8, rpe_actual: 8 }] : []),
+})
+const stagnationOf = fixture => detectSignalsV2(fixture).filter(s => s.detector === 'stagnation')
+
+test('deload midt i et plateau: skaber ikke et plateau (kun 2 ugers stilstand uden deload-ugen)', () => {
+  assert.deepEqual(stagnationOf(squatOnly([120, 125, 130, 135, 135, 100, 135], [5])), [])
+})
+
+test('deload i starten: skjuler ikke et rigtigt plateau efter den', () => {
+  const found = stagnationOf(squatOnly([100, 120, 125, 130, 130, 130, 130], [0]))
+  assert.equal(found.length, 1)
+  assert.match(found[0].headline, /Squat fladt 3 uger \(130×5 siden uge 4\)/)
+})
+
+test('to deload-uger i traek: de taeller ikke som stilstand; samme tal uden deload-navn giver plateau', () => {
+  const tops = [120, 125, 130, 135, 100, 100, 135]
+  assert.deepEqual(stagnationOf(squatOnly(tops, [4, 5])), [])
+  assert.equal(stagnationOf(squatOnly(tops, [])).length, 1, 'kontrol: uden blokken er det et plateau')
+})
+
 test('smerteord: negationer taeller ikke, rigtige meldinger goer', () => {
   for (const text of ['Ingen smerter i dag', 'Det gør ikke ondt længere', 'Helt smertefrit', 'uden smerte', null]) {
     assert.equal(mentionsPain(text), false, String(text))

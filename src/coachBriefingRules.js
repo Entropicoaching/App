@@ -1,5 +1,5 @@
 import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
-import { erTungtSaet } from './exerciseProgress.js'
+import { erTungtSaet, erDeloadBlok } from './exerciseProgress.js'
 // ORDRE 370 · Coach Briefingens regler som ren JS-funktion.
 //
 // detectSignalsV1 er en tro port af supabase/sql/training-signals-v1.sql
@@ -278,10 +278,15 @@ function detectDropout({ athlete }, L, T, onVacation) {
 // det tydeligste loeft; antallet af andre flade loeft staar i teksten.
 function detectStagnation({ athlete, weeks = [] }, L) {
   const weekNumber = new Map(weeks.map(week => [mondayOf(toDay(week.start_date)), week.week_number]))
+  // Ordre 1516: en deload-uge (blokken hedder deload/aflast/taper) er hverken bevis for eller imod et
+  // plateau: dens saet udelades helt, ogsaa som "uge uden ny top". Samme regel som SQL v3 (ordre 1451).
+  const deloadSessions = new Set(weeks.filter(week => erDeloadBlok(week.block_name))
+    .flatMap(week => (week.sessions || []).map(session => session.id)))
   const byLift = new Map()
   for (const log of L) {
     // Ordre 1429: kun tunge saet (samme regel som atletens Fremgang), ikke backoff/teknik/volumen.
     if (!log.lift || !erTungtSaet(log.name, log.reps)) continue
+    if (deloadSessions.has(log.session_id) || erDeloadBlok(log.block_name)) continue
     const perWeek = byLift.get(log.lift) || new Map()
     const week = mondayOf(log.d)
     const entry = perWeek.get(week) || { week, best: 0, top: null, vol: 0 }
