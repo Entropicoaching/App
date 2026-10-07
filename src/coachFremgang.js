@@ -72,13 +72,18 @@ export function hovedloeftStatus(logs, today = lokalDag()) {
 export function smerteNoter(logs, today = lokalDag()) {
   const nu = dagMs(today)
   const set = new Map()
+  // Ordre 1545: en smerte skrevet paa et enkelt saet taeller som pas-kommentaren
+  // (atleterne skriver ofte kun paa saettet); kilden staar i linjen.
+  const tilfoej = (nogle, log, tekst, kilde) => {
+    const dag = String(log.logged_at || '').slice(0, 10)
+    if (!dag || nu - dagMs(dag) > SMERTE_DAGE * DAG || dagMs(dag) > nu) return
+    const key = nogle(dag)
+    if (!set.has(key)) set.set(key, { dag, del: bodyPartOf(tekst), loeft: loeftNavn(log), kilde })
+  }
   for (const log of logs || []) {
     const sess = log.exercises?.sessions
-    if (!sess?.athlete_comment || !mentionsPain(sess.athlete_comment)) continue
-    const dag = String(log.logged_at || '').slice(0, 10)
-    if (!dag || nu - dagMs(dag) > SMERTE_DAGE * DAG || dagMs(dag) > nu) continue
-    const nogle = `${sess.id}|${dag}`
-    if (!set.has(nogle)) set.set(nogle, { dag, del: bodyPartOf(sess.athlete_comment), loeft: loeftNavn(log) })
+    if (sess?.athlete_comment && mentionsPain(sess.athlete_comment)) tilfoej(dag => `${sess.id}|${dag}`, log, sess.athlete_comment, 'pas-kommentar')
+    if (log.note && mentionsPain(log.note)) tilfoej(dag => `saet|${log.exercise_id ?? log.exercises?.name}|${dag}`, log, log.note, 'sæt-note')
   }
   return [...set.values()].sort((a, b) => b.dag.localeCompare(a.dag))
 }
@@ -109,7 +114,7 @@ export function styrkeLinje(logs, today = lokalDag()) {
   const smerte = smerteNoter(logs, today)
   if (smerte.length) {
     const s = smerte[0]
-    dele.push({ type: 'smerte', tekst: `Smerte: ${s.del ? `${s.del} nævnt` : 'nævnt'} i pas-kommentar ${dagTekst(s.dag)}${s.loeft ? ` (${s.loeft.toLowerCase()})` : ''}. Ingen stigning, før du har talt med atleten` })
+    dele.push({ type: 'smerte', tekst: `Smerte: ${s.del ? `${s.del} nævnt` : 'nævnt'} i ${s.kilde} ${dagTekst(s.dag)}${s.loeft ? ` (${s.loeft.toLowerCase()})` : ''}. Ingen stigning, før du har talt med atleten` })
   }
   const status = hovedloeftStatus(logs, today)
   const letUge = planlagtLetUge(logs, today)

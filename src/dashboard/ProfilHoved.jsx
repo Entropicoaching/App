@@ -23,7 +23,7 @@ export default function ProfilHoved({
     let ignore = false
     const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
     supabase.from('exercise_logs')
-      .select('athlete_id, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
+      .select('athlete_id, exercise_id, note, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
       .eq('athlete_id', a.id).gte('logged_at', fra)
       .order('logged_at', { ascending: false }).limit(2000)
       .then(({ data }) => { if (!ignore) setStyrkeLogs(data || []) }, () => {})
