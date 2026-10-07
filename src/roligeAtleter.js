@@ -4,16 +4,19 @@
 //   1. ingen aaben ting i koeen (signal, besked eller video),
 //   2. mindst et pas logget i den aktuelle uge,
 //   3. ingen vurdering under 3 (1-5) i ugen.
+// 4. ORDRE 1588: ingen sprungne sæt og ingen sæt med færre reps end planlagt
+//    (inkl. fejlede sæt med 0 reps). Det er de RPE-uafhængige tegn.
 // RPE indgaar ikke. Ikke-startede og tavse atleter er aldrig rolige.
 //   atleter:   [{ id, name }]
 //   aabneIds:  atlet-id'er med mindst en aaben ting i koeen
-//   ugeStatus: Map atlet-id -> { pasLogget, stemme: { laveste } | null }
+//   ugeStatus: Map atlet-id -> { pasLogget, saetUnderPlan, sprungneSaet, stemme: { laveste } | null }
 export function roligeAtleter({ atleter = [], aabneIds = [], ugeStatus = new Map() }) {
   const aabne = new Set(aabneIds)
   return atleter.filter(atlet => {
     if (aabne.has(atlet.id)) return false
     const status = ugeStatus.get(atlet.id)
     if (!status || !(status.pasLogget > 0)) return false
+    if (status.saetUnderPlan > 0 || status.sprungneSaet > 0) return false
     const laveste = status.stemme?.laveste
     return laveste == null || laveste >= 3
   })

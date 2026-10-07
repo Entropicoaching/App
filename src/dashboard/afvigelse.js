@@ -69,6 +69,25 @@ export function planlagteReps(reps) {
   return (lav + hoej) / 2
 }
 
+// ORDRE 1588: laveste planlagte reps ("4-6" giver 4). Et sæt under dette tal
+// er under planen; null hvis reps ikke er et tal/interval (tid, AMRAP).
+export function lavestePlanlagteReps(reps) {
+  const m = String(reps ?? '').trim().match(/^(\d+(?:[.,]\d+)?)/)
+  if (!m || planlagteReps(reps) == null) return null
+  return Number(m[1].replace(',', '.'))
+}
+
+// ORDRE 1588: RPE-uafhængige tegn i ét sæt-log: sprunget over, eller færre
+// reps end planlagt (0 reps = fejlet sæt). Sæt uden talværdi i planen
+// (tid, AMRAP) eller uden logget reps tæller ikke som under plan.
+export function logTegn(log) {
+  if (log?.skipped) return { sprunget: true, underPlan: false }
+  const plan = lavestePlanlagteReps(log?.exercises?.reps)
+  const loggede = log?.reps_completed
+  const underPlan = plan != null && loggede != null && Number(loggede) < plan
+  return { sprunget: false, underPlan }
+}
+
 // Tæller en øvelse med i kg-sammenligningen? Kun med anbefalet vægt og reps
 // der kan regnes (samme betingelse på begge sider).
 export function taellerIKg(exercise) {

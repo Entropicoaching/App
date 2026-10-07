@@ -1,7 +1,20 @@
 // ORDRE 277 · commit 1.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { beregnUgensAfvigelse, sorterEfterAfvigelse, planlagteReps, taellerIKg, ugensStemme } from './afvigelse.js'
+import { beregnUgensAfvigelse, sorterEfterAfvigelse, planlagteReps, taellerIKg, ugensStemme, lavestePlanlagteReps, logTegn } from './afvigelse.js'
+
+test('1588: laveste planlagte reps og tegn i et sæt-log', () => {
+  assert.equal(lavestePlanlagteReps('4-6'), 4)
+  assert.equal(lavestePlanlagteReps('5'), 5)
+  assert.equal(lavestePlanlagteReps('45s'), null)
+  const ex = { reps: '4-6' }
+  assert.deepEqual(logTegn({ skipped: true, exercises: ex }), { sprunget: true, underPlan: false })
+  assert.equal(logTegn({ reps_completed: 3, exercises: ex }).underPlan, true)
+  assert.equal(logTegn({ reps_completed: 0, exercises: ex }).underPlan, true, 'fejlet sæt')
+  assert.equal(logTegn({ reps_completed: 4, exercises: ex }).underPlan, false)
+  assert.equal(logTegn({ reps_completed: 2, exercises: { reps: 'AMRAP' } }).underPlan, false)
+  assert.equal(logTegn({ reps_completed: null, exercises: ex }).underPlan, false)
+})
 
 test('ingen planlagte sæt denne uge → ingen plan, ikke en afvigelse', () => {
   const r = beregnUgensAfvigelse({ plannedSets: 0, plannedTonnage: 0, completedSets: 0, completedTonnage: 0 })

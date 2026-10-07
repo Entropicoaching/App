@@ -40,6 +40,17 @@ test('RPE spiller ingen rolle', () => {
   assert.equal(roligeAtleter({ atleter, ugeStatus: s }).length, 1)
 })
 
+test('fejlede sæt, færre reps end planlagt eller skip gør atleten ikke rolig (1588)', () => {
+  const ok = { pasLogget: 2, stemme: { laveste: 4 } }
+  const s = new Map([
+    ['a', { ...ok, saetUnderPlan: 1 }],
+    ['b', { ...ok, sprungneSaet: 2 }],
+    ['c', { ...ok, saetUnderPlan: 0, sprungneSaet: 0 }],
+    ['d', ok],
+  ])
+  assert.deepEqual(roligeAtleter({ atleter, ugeStatus: s }).map(a => a.id), ['c', 'd'])
+})
+
 test('linjen: intet naar ingen, fornavne, maks tre og rest som tal', () => {
   assert.equal(roligLinje([], 6), null)
   assert.equal(roligLinje([atleter[0], atleter[1]], 6), 'Set igennem, intet kræver dig: Alfa, Bravo (2 af 6)')

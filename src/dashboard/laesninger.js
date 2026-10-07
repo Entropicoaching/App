@@ -9,7 +9,7 @@ import { supabase, withRetry } from '../supabase'
 import { filterOpenAutomationAlerts } from '../automationAlerts'
 import { saetSmerteSignaler, medSaetSmerte } from '../saetSmerte'
 import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
-import { planlagteReps, taellerIKg } from './afvigelse'
+import { planlagteReps, taellerIKg, logTegn } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
 import { normaliserRekorder, bedsteRekorder, tungeRekorder } from '../personalRecords'
 import { danskDag } from '../danskDato'
@@ -216,11 +216,15 @@ export function lavLaesninger({
       if (wn == null) continue
       const aid = log.athlete_id
       if (!completion[aid]) completion[aid] = {}
-      if (!completion[aid][wn]) completion[aid][wn] = { sets: 0, tonnage: 0, pas: 0, sessionIds: {}, notes: [] }
+      if (!completion[aid][wn]) completion[aid][wn] = { sets: 0, tonnage: 0, pas: 0, sprungneSaet: 0, saetUnderPlan: 0, sessionIds: {}, notes: [] }
       const c = completion[aid][wn]
       // ORDRE 428 (C2): sæt-noter tælles også fra sprungne sæt (atleten
       // skriver ofte hvorfor).
       if (log.note) c.notes.push({ order: log.exercises?.sessions?.session_order, note: log.note })
+      // ORDRE 1588: RPE-uafhængige tegn (skip, færre reps end planlagt).
+      const tegn = logTegn(log)
+      if (tegn.sprunget) c.sprungneSaet += 1
+      if (tegn.underPlan) c.saetUnderPlan += 1
       if (log.skipped) continue
       c.sets += 1
       // ORDRE 428 (C3): kun øvelser der også tæller i planlagt kg.

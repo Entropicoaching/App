@@ -47,7 +47,7 @@ export default function ForsideView({
             // ORDRE 428 (C2): ugens stemme (laveste vurdering, nyeste
             // kommentar/note) og antal pas med mindst ét logget sæt (C3).
             const stemme = ugensStemme(current?.session_voices, completion.notes)
-            return { athlete, afvigelse, current, stemme, pasLogget: completion.pas || 0 }
+            return { athlete, afvigelse, current, stemme, pasLogget: completion.pas || 0, sprungneSaet: completion.sprungneSaet || 0, saetUnderPlan: completion.saetUnderPlan || 0 }
           })
           const afvigelseByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.afvigelse]))
           const ugeStatusByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r]))
