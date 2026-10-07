@@ -13,6 +13,7 @@ import { s } from '../athleteShared'
 import { smerteBeskedFor } from './smerteStop'
 import { parsePlannedRpe } from './ugeHjaelp'
 import { canAcceptSetTap } from './setTapGuard'
+import { rpeVist } from './rpeValg'
 import { restSecondsForExercise } from '../restBetweenSets'
 import { visTid, harSetPauseForklaring, markerPauseForklaring, foersteSaetTekst } from './pauseLinje'
 
@@ -529,16 +530,16 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
               vælgeren nedenfor; uden valg gemmes den planlagte som før. */}
           <button
             type="button"
-            aria-label={`RPE, sæt ${setNumber}: ${input.rpe || plannedRpe || 'ikke valgt'}`}
+            aria-label={`RPE, sæt ${setNumber}: ${rpeVist(input.rpe, plannedRpe) || 'ikke valgt'}`}
             aria-expanded={rpeOpenFor === key}
             onClick={() => setRpeOpenFor(rpeOpenFor === key ? null : key)}
             style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: input.rpe ? '#c8923a' : '#7a7770', letterSpacing: '0.06em', background: input.rpe ? 'rgba(200,146,58,0.15)' : 'transparent', border: `1px solid ${input.rpe ? 'rgba(200,146,58,0.4)' : 'rgba(237,234,226,0.13)'}`, padding: '0.3rem 0.5rem', minWidth: '44px', minHeight: '52px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center', flexShrink: 0, cursor: 'pointer' }}
-          >RPE {input.rpe || plannedRpe || '–'} ▾</button>
+          >RPE {rpeVist(input.rpe, plannedRpe) || '–'} ▾</button>
         </div>
         {rpeOpenFor === key && (
           <div role="group" aria-label={`Vælg RPE, sæt ${setNumber}`} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
             {RPE_VALUES.map(v => {
-              const valgt = parseFloat(input.rpe || plannedRpe) === v
+              const valgt = parseFloat(rpeVist(input.rpe, plannedRpe)) === v
               return (
                 <button
                   key={v}

@@ -9,3 +9,9 @@ export const rpeActualUdenValg = (valgt, planlagt, tom = RPE_TOM_UDEN_VALG) => {
   if (valgt) return parseFloat(valgt)
   return tom ? null : (planlagt ?? null)
 }
+
+/** Hvad UI'et viser/forvaelger: samme regel som det gemte tal, saa skærm og data aldrig er uenige. */
+export const rpeVist = (valgt, planlagt, tom = RPE_TOM_UDEN_VALG) => {
+  if (valgt) return valgt
+  return tom ? '' : (planlagt ?? '')
+}

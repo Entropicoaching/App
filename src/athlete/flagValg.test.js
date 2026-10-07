@@ -59,3 +59,28 @@ test('skulder-smerte rammer bænk/overkrop, ikke squat eller dødløft', () => {
   for (const n of ['Bænkpres', 'Pause bænkpres', 'Militærpres', 'Pull-up', 'Face pull']) assert.equal(ramtAfSmerte(['skulderen'], n), true, n)
   for (const n of ['Squat', 'Front squat', 'Sumo dødløft']) assert.equal(ramtAfSmerte(['skulderen'], n), false, n)
 })
+
+// Ordre 1533 (QA 1529 fund 3+4): V-RPE=A (ingen gemt RPE) maa ikke give falske coach-signaler eller kast.
+import { detectSignalsV2 } from '../coachBriefingRules.js'
+import { fixtures } from '../../test/fixtures/briefing/index.mjs'
+import { rpeVist } from './rpeValg.js'
+
+const udenRpe = v => Array.isArray(v) ? v.map(udenRpe)
+  : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === 'rpe_actual' ? null : udenRpe(x)]))
+  : v
+
+test('V-RPE=A: skærmen forvælger ingen RPE; flag fra viser den planlagte som før', () => {
+  assert.equal(rpeVist('', 8, true), '')
+  assert.equal(rpeVist(undefined, 7.5, true), '')
+  assert.equal(rpeVist('', 8, false), 8)
+  assert.equal(rpeVist('9', 8, true), '9', 'atletens eget valg vises altid')
+})
+
+for (const [navn, fixture] of Object.entries(fixtures)) {
+  test(`coach-detektorer med null-RPE overalt (${navn}): ingen kast, intet rpe_drift-signal`, () => {
+    const signaler = detectSignalsV2(udenRpe(fixture))
+    assert.ok(Array.isArray(signaler))
+    assert.equal(signaler.filter(s => s.detector === 'rpe_drift').length, 0, 'uden RPE-tal ingen RPE-drift')
+    for (const s of signaler) assert.ok(!/NaN|undefined|null/.test(`${s.headline} ${s.detail}`), `ren tekst: ${s.headline}`)
+  })
+}
