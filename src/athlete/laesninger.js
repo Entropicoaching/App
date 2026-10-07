@@ -3,6 +3,8 @@
 // vaegtforslag, navigation (openSession/openReadiness) og onboarding-guidens
 // handlere — flyttet uaendret ud af AthleteView.jsx (ordre 373) som en fabrik,
 // samme moenster som kostHandlinger.js.
+import { smerteNoter } from '../coachFremgang'
+import { smerteStopFor, historikSomLogs } from '../saetSmerte'
 import { supabase, withRetry, queueWrite } from '../supabase'
 import { mergeAthleteSetInputs } from '../athleteTrainingInputs'
 import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athleteOnboardingGuide'
@@ -389,6 +391,9 @@ export function lavLaesninger({
   function suggestNextWeight(exName, intensity) {
     const targetRpe = parsePlannedRpe(intensity)
     if (!targetRpe) return null
+    // Ordre 1560 (V10 3A, V-SMERTE B): smerte i en saet-note standser forslaget paa de ramte loeft.
+    const stop = smerteStopFor(smerteNoter(historikSomLogs(exerciseHistory)), exName)
+    if (stop) return { stop: true, del: stop.del, dag: stop.dag }
     const hist = exerciseHistory[exName?.toLowerCase()] || []
     if (!hist.length) return null
     const lastSession = hist[0]
@@ -707,7 +712,7 @@ export function lavLaesninger({
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('exercise_logs')
-        .select('weight, reps_completed, rpe_actual, logged_at, set_number, exercises(name)')
+        .select('weight, reps_completed, rpe_actual, logged_at, set_number, note, exercises(name)')
         .eq('athlete_id', athleteId)
         .eq('skipped', false)
         .gt('weight', 0)
@@ -723,7 +728,7 @@ export function lavLaesninger({
       const date = log.logged_at.slice(0, 10)
       if (!byName[name]) byName[name] = {}
       if (!byName[name][date]) byName[name][date] = []
-      byName[name][date].push({ weight: log.weight, reps: log.reps_completed, rpe: log.rpe_actual, set: log.set_number })
+      byName[name][date].push({ weight: log.weight, reps: log.reps_completed, rpe: log.rpe_actual, set: log.set_number, ...(log.note ? { note: log.note } : {}) })
     }
     const history = {}
     for (const [name, dateMap] of Object.entries(byName)) {

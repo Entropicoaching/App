@@ -78,7 +78,7 @@ export function smerteNoter(logs, today = lokalDag()) {
     const dag = String(log.logged_at || '').slice(0, 10)
     if (!dag || nu - dagMs(dag) > SMERTE_DAGE * DAG || dagMs(dag) > nu) return
     const key = nogle(dag)
-    if (!set.has(key)) set.set(key, { dag, del: bodyPartOf(tekst), loeft: loeftNavn(log), kilde })
+    if (!set.has(key)) set.set(key, { dag, del: bodyPartOf(tekst), loeft: loeftNavn(log), navn: log.exercises?.name ?? log.navn ?? null, kilde })
   }
   for (const log of logs || []) {
     const sess = log.exercises?.sessions

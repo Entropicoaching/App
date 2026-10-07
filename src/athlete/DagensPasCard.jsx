@@ -14,6 +14,7 @@ import { parsePlannedRpe } from './ugeHjaelp'
 import { canAcceptSetTap } from './setTapGuard'
 import { restSecondsForExercise } from '../restBetweenSets'
 import { visTid, harSetPauseForklaring, markerPauseForklaring, foersteSaetTekst } from './pauseLinje'
+import { SMERTE_LINJE } from '../saetSmerte'
 
 // ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
 // samme øvelse (også et sæt, der venter i køen), det kortet viser som
@@ -301,6 +302,8 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       )}
       {ex.recommended_weight != null ? (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>Anbefalet: {ex.recommended_weight} kg</div>
+      ) : suggestion?.stop ? (
+        <div data-testid="smerte-stop" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', marginBottom: '0.5rem' }}>{SMERTE_LINJE}</div>
       ) : suggestion ? (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>
           Forslag: {suggestion.weight} kg <span style={{ color: '#7a7770' }}>(RPE {suggestion.fromRpe})</span>

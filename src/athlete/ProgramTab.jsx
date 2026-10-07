@@ -15,6 +15,7 @@ import { fixedRepsEntry } from '../fixedRepsEntry'
 import { exerciseViewGroups, exerciseViewRows } from '../exerciseSetView'
 import CountdownRing from './CountdownRing'
 import { s } from '../athleteShared'
+import { SMERTE_LINJE } from '../saetSmerte'
 
 const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 
@@ -504,6 +505,7 @@ export default function ProgramTab({
                                         ) : (() => {
                                           const s = suggestNextWeight(ex.name, ex.intensity)
                                           if (!s) return null
+                                          if (s.stop) return <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginBottom: '0.2rem' }}>{SMERTE_LINJE}</div>
                                           const diff = s.weight - s.baseWeight
                                           const diffStr = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : '='
                                           return (
