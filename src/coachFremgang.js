@@ -129,7 +129,14 @@ export function styrkeLinje(logs, today = lokalDag()) {
   }
   if (!dele.length) {
     const nok = status.some(s => s.aendring != null)
-    dele.push({ type: 'ok', tekst: nok ? 'Alle hovedløft stiger eller holder; ingen smerte-noter' : 'Endnu ikke nok tunge sæt til en styrketendens (kræver tunge sæt både seneste 4 uger og 1-3 mdr. før)' })
+    const tal = status.filter(s => s.aendring != null).map(s => `${s.navn} ${s.aendring > 0 ? '+' : ''}${String(s.aendring).replace('.', ',')} %`).join(', ')
+    dele.push({ type: 'ok', tekst: nok ? `Alle hovedløft stiger eller holder (e1RM mod 1-3 mdr. før: ${tal}); ingen smerte-noter` : 'Endnu ikke nok tunge sæt til en styrketendens (kræver tunge sæt både seneste 4 uger og 1-3 mdr. før)' })
   }
   return { dele, tekst: dele.map(d => d.tekst).join(' · ') }
+}
+
+/** Naar "Aktuel opgave" allerede er smerte-signalet, gentages kun reglen (ikke kropsdel og dato en gang til). */
+export function styrkeSmerteRegel(tekst) {
+  const i = String(tekst).indexOf('. Ingen stigning')
+  return i >= 0 ? tekst.slice(i + 2) : tekst
 }

@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { bestHeavySetPerDay } from './exerciseProgress.js'
-import { hovedloeftStatus, lokalDag, smerteNoter, styrkeLinje } from './coachFremgang.js'
+import { hovedloeftStatus, lokalDag, smerteNoter, styrkeLinje, styrkeSmerteRegel } from './coachFremgang.js'
 import { bedsteRekorder, normaliserRekorder, tungeRekorder } from './personalRecords.js'
 import { detectSignalsV2 } from './coachBriefingRules.js'
 
@@ -130,4 +130,20 @@ test('gammel deload (over 10 dage) taler ikke; smerte staar stadig i en deload-u
 test('lokalDag bruger lokal kalenderdag (som dagNoegle), ikke UTC-dato (ordre 1492)', () => {
   assert.equal(lokalDag(new Date(2026, 9, 7, 0, 30)), '2026-10-07')
   assert.equal(lokalDag(new Date(2026, 9, 7, 23, 59)), '2026-10-07')
+})
+
+test('ordre 1545: naar alt stiger, staar tallene i linjen (e1RM mod 1-3 mdr. foer), ikke kun en floskel', () => {
+  const stiger = [
+    log('Squat', 100, 5, 60), log('Squat', 100, 5, 40), log('Squat', 105, 5, 20), log('Squat', 110, 5, 3),
+    log('Bænkpres', 80, 5, 60), log('Bænkpres', 80, 5, 40), log('Bænkpres', 82.5, 5, 20), log('Bænkpres', 85, 5, 3),
+  ]
+  const l = styrkeLinje(stiger, TODAY)
+  assert.equal(l.dele[0].type, 'ok')
+  assert.match(l.tekst, /Alle hovedløft stiger eller holder \(e1RM mod 1-3 mdr\. før: Squat \+10 %, Bænkpres \+6,3 %\); ingen smerte-noter/)
+})
+
+test('ordre 1545: styrkeSmerteRegel gentager kun reglen, ikke kropsdel og dato', () => {
+  const tekst = 'Smerte: knæet nævnt i pas-kommentar 6. okt. Ingen stigning, før du har talt med atleten'
+  assert.equal(styrkeSmerteRegel(tekst), 'Ingen stigning, før du har talt med atleten')
+  assert.equal(styrkeSmerteRegel('anden tekst'), 'anden tekst')
 })

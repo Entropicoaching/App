@@ -5,7 +5,7 @@ import { readinessSignal, s } from '../dashboardShared'
 import { HUB_SECTIONS } from './hubSektioner'
 
 export default function HubTab({
-  a, athleteReadiness, isMobile, setActiveTab, setEditing, unreadCounts,
+  a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
   videoAnalyses, weeklyActivity,
 }) {
               const todayStr = new Date().toISOString().slice(0, 10)
@@ -18,7 +18,7 @@ export default function HubTab({
               const weeksToComp = compDate ? Math.ceil((new Date(compDate + 'T12:00:00') - new Date()) / (7 * 24 * 3600 * 1000)) : null
               const stat = [
                 sig && { label: 'Parathed i dag', value: todayR.readiness_score, sub: sig.text, color: sig.color },
-                { label: 'Træninger denne uge', value: trainings, sub: weeklyActivity[a.id]?.sets ? `${weeklyActivity[a.id].sets} sæt` : 'logget', color: '#edeae2' },
+                { label: 'Træninger denne uge', value: plannedPas != null ? `${trainings} af ${plannedPas}` : trainings, sub: weeklyActivity[a.id]?.sets ? `${weeklyActivity[a.id].sets} sæt` : 'logget', color: '#edeae2' },
                 { label: 'Ulæste beskeder', value: unread, sub: unread > 0 ? 'fra atleten' : 'ingen nye', color: unread > 0 ? '#c8923a' : '#7a7770' },
                 pendingVideoCount > 0 && { label: 'Målinger til review', value: pendingVideoCount, sub: 'afventer dig', color: '#67dff5' },
                 weeksToComp != null && { label: 'Til stævne', value: weeksToComp > 0 ? weeksToComp : '0', sub: weeksToComp > 0 ? 'uger' : 'passeret', color: '#c8923a' },

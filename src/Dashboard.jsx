@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import LazyBoundary from './LazyBoundary'
 import { coachInboxEntryIntent, createSingleFlightRunner } from './coachInboxState'
 import { withBlockPurposes } from './periodizationAssistant'
-import { s } from './dashboardShared'
+import { s, currentWeekNo } from './dashboardShared'
 import { lavLaesninger } from './dashboard/laesninger'
 import { lavNavigation } from './dashboard/navigation'
 import { lavIndbakkeHandlinger } from './dashboard/indbakkeHandlinger'
@@ -591,9 +591,13 @@ export default function Dashboard({ session, onPreviewAthlete }) {
 
             {/* TAB: HUB — coach-landingsside med status + sektionsnavigation */}
             {activeTab === 'hub' && (() => {
+              // Ordre 1545: "2 af 4" som forsiden, ikke kun "2".
+              const hubUger = calendarWeeks[a.id] || []
+              const hubNo = currentWeekNo(hubUger, athleteCurrentWeek[a.id] ?? null)
+              const plannedPas = hubUger.find(week => week.week_number === hubNo)?.session_count ?? null
               return (
                 <HubTab {...{
-                  a, athleteReadiness, isMobile, setActiveTab, setEditing, unreadCounts,
+                  a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
                   videoAnalyses, weeklyActivity,
                 }} />
               )
