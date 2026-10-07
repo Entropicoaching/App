@@ -1,25 +1,83 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { smerteStopAktiv, udenForslagVedSmerte } from './smerteStop.js'
+import { ramtAfSmerte, smerteStopAktiv, udenForslagVedSmerte, smerteBeskedFor, SMERTE_BESKED_AKTIV, SMERTE_BESKED } from './smerteStop.js'
 
 const NU = new Date('2026-10-07T10:00:00Z').getTime()
-const uge = (start, ...kommentarer) => ({ start_date: start, sessions: kommentarer.map(c => ({ athlete_comment: c })) })
+const uge = (start, kommentar, ovelser = ['Squat']) => ({
+  start_date: start, sessions: [{ athlete_comment: kommentar, exercises: ovelser.map(name => ({ name })) }],
+})
+const hist = (navn, dato) => ({ [navn.toLowerCase()]: [{ date: dato, sets: [] }] })
 const forslag = () => ({ weight: 100, fromRpe: 8, baseWeight: 97.5 })
 
-test('smerte-note i denne uge standser forslaget', () => {
-  assert.equal(smerteStopAktiv([uge('2026-10-05', 'Det gjorde ondt i knaeet')], NU), true)
-  assert.equal(udenForslagVedSmerte(forslag, [uge('2026-10-05', 'smerter i ryggen')], NU)('Squat', '@8'), null)
+test('region: knae rammer squat og ben, ikke baenk', () => {
+  assert.equal(ramtAfSmerte(['knæet'], 'Squat'), true)
+  assert.equal(ramtAfSmerte(['knæet'], 'Benpres'), true)
+  assert.equal(ramtAfSmerte(['knæet'], 'Bænkpres'), false)
+  assert.equal(ramtAfSmerte(['knæet'], 'Konventionel dødløft'), false)
 })
-test('uge uden smerte, eller med "ingen smerter", giver forslag', () => {
-  const w = [uge('2026-10-05', 'God uge', 'ingen smerter, fint pas')]
-  assert.equal(smerteStopAktiv(w, NU), false)
-  assert.equal(udenForslagVedSmerte(forslag, w, NU)('Squat', '@8').weight, 100)
+test('region: skulder rammer baenk og overkrop, ikke squat', () => {
+  assert.equal(ramtAfSmerte(['skulderen'], 'Bænkpres'), true)
+  assert.equal(ramtAfSmerte(['skulderen'], 'Pull-up'), true)
+  assert.equal(ramtAfSmerte(['skulderen'], 'Squat'), false)
 })
-test('gammel smerte-note (over 3 uger) standser ikke laengere', () => {
-  assert.equal(smerteStopAktiv([uge('2026-09-07', 'ondt i skulderen')], NU), false)
+test('region: ryg og hofte rammer squat og doedloeft', () => {
+  assert.equal(ramtAfSmerte(['ryggen'], 'Sumo dødløft'), true)
+  assert.equal(ramtAfSmerte(['hoften'], 'Squat'), true)
+  assert.equal(ramtAfSmerte(['ryggen'], 'Bænkpres'), false)
+})
+test('uklar region (ingen kropsdel) og uklassificeret loeft: sikker side', () => {
+  assert.equal(ramtAfSmerte([], 'Bænkpres'), true)
+  assert.equal(ramtAfSmerte(['knæet'], 'Planke'), true)
+  assert.equal(ramtAfSmerte(['nakken'], 'Bænkpres'), true)
+})
+
+test('knae-note standser squat-forslag, men ikke baenk-forslag', () => {
+  const w = [uge('2026-10-05', 'Det gjorde ondt i knaeet', ['Squat', 'Bænkpres'])]
+  assert.equal(smerteStopAktiv(w, 'Squat', NU), true)
+  assert.equal(smerteStopAktiv(w, 'Bænkpres', NU), false)
+  const pakket = udenForslagVedSmerte(forslag, w, {}, NU)
+  assert.equal(pakket('Squat', '@8'), null)
+  assert.equal(pakket('Bænkpres', '@8').weight, 100)
+})
+test('uklar region standser alle loeft', () => {
+  const w = [uge('2026-10-05', 'smerter efter passet', ['Squat', 'Bænkpres'])]
+  assert.equal(smerteStopAktiv(w, 'Bænkpres', NU), true)
+  assert.equal(smerteStopAktiv(w, 'Squat', NU), true)
+})
+test('"ingen smerter" og uge uden smerte giver forslag', () => {
+  assert.equal(smerteStopAktiv([uge('2026-10-05', 'ingen smerter i knaeet')], 'Squat', NU), false)
+  assert.equal(smerteStopAktiv([uge('2026-10-05', 'God uge')], 'Squat', NU), false)
+})
+test('dato: regnes fra seneste loggede saet, ikke ugens start (14 dage)', () => {
+  // Uge startet 21 dage foer, men passet med noten blev logget for 10 dage siden: stop.
+  const w = [uge('2026-09-14', 'ondt i knaeet')]
+  assert.equal(smerteStopAktiv(w, 'Squat', NU, hist('Squat', '2026-09-27')), true)
+  // Samme uge, passet logget for 20 dage siden: ikke laengere.
+  assert.equal(smerteStopAktiv(w, 'Squat', NU, hist('Squat', '2026-09-17')), false)
+  // Uden logs: ugens sidste dag (start+6 = 20. sep) er over 14 dage siden.
+  assert.equal(smerteStopAktiv(w, 'Squat', NU), false)
+  // Uden logs, men ugen startede for 10 dage siden (note ~ 3 dage siden): stop.
+  assert.equal(smerteStopAktiv([uge('2026-09-27', 'ondt i knaeet')], 'Squat', NU), true)
+})
+test('grænse: 14 dage fra notens dato er inkl., 15 er ude', () => {
+  const w = [uge('2026-09-14', 'ondt i knaeet')]
+  assert.equal(smerteStopAktiv(w, 'Squat', NU, hist('Squat', '2026-09-23')), true) // 14 dage
+  assert.equal(smerteStopAktiv(w, 'Squat', NU, hist('Squat', '2026-09-22')), false) // 15 dage
 })
 test('fremtidig uge, uge uden dato og tomme data ignoreres', () => {
-  assert.equal(smerteStopAktiv([uge('2026-10-19', 'smerte')], NU), false)
-  assert.equal(smerteStopAktiv([{ sessions: [{ athlete_comment: 'smerte' }] }], NU), false)
-  assert.equal(smerteStopAktiv(undefined, NU), false)
+  assert.equal(smerteStopAktiv([uge('2026-10-19', 'smerte')], 'Squat', NU), false)
+  assert.equal(smerteStopAktiv([{ sessions: [{ athlete_comment: 'smerte' }] }], 'Squat', NU), false)
+  assert.equal(smerteStopAktiv(undefined, 'Squat', NU), false)
+})
+
+test('flag: den rolige linje er slaaet FRA som standard', () => {
+  assert.equal(SMERTE_BESKED_AKTIV, false)
+  const f = udenForslagVedSmerte(forslag, [uge('2026-10-05', 'ondt i knaeet')], {}, NU)
+  assert.equal(smerteBeskedFor(f, 'Squat'), null)
+})
+test('flag taendt: linjen vises kun for loeft, stoppet rammer', () => {
+  const f = udenForslagVedSmerte(forslag, [uge('2026-10-05', 'ondt i knaeet', ['Squat', 'Bænkpres'])], {}, NU)
+  assert.equal(smerteBeskedFor(f, 'Squat', true), SMERTE_BESKED)
+  assert.equal(smerteBeskedFor(f, 'Bænkpres', true), null)
+  assert.equal(smerteBeskedFor(forslag, 'Squat', true), null)
 })

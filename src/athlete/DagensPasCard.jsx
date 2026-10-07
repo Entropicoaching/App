@@ -10,6 +10,7 @@ import { parseRepsPrescription } from '../repsPrescription'
 import { fixedRepsEntry } from '../fixedRepsEntry'
 import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInputs, autoFillSetInput } from '../setLogDefaults'
 import { s } from '../athleteShared'
+import { smerteBeskedFor } from './smerteStop'
 import { parsePlannedRpe } from './ugeHjaelp'
 import { canAcceptSetTap } from './setTapGuard'
 import { restSecondsForExercise } from '../restBetweenSets'
@@ -305,6 +306,8 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', marginBottom: '0.5rem' }}>
           Forslag: {suggestion.weight} kg <span style={{ color: '#7a7770' }}>(RPE {suggestion.fromRpe})</span>
         </div>
+      ) : smerteBeskedFor(suggestNextWeight, ex.name) ? (
+        <div data-testid="smerte-besked" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', marginBottom: '0.5rem' }}>{smerteBeskedFor(suggestNextWeight, ex.name)}</div>
       ) : null}
       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.85rem' }}>
         {[ex.sets && !flereRaekker && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}${/^[\d\s\-–]+$/.test(String(ex.reps)) ? ' reps' : ''}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}

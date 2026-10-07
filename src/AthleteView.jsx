@@ -332,7 +332,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setOfflineSnapshotAt, setUgensLogsHentet,
   })
   // Ordre 1502: en smerte-note i seneste uger standser appens stigningsforslag (D3, V10 3A).
-  const suggestNextWeight = udenForslagVedSmerte(suggestNextWeightRaa, allWeeks)
+  const suggestNextWeight = udenForslagVedSmerte(suggestNextWeightRaa, allWeeks, exerciseHistory)
 
   const {
     logSet, logDagensPasSet, flushOfflineSets, undoLoggedSet, updateLoggedSet, skipSet, skipExercise, unskipSet,

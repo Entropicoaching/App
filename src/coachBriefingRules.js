@@ -175,6 +175,8 @@ const BODY_PARTS = [
   [/håndled|haandled|wrist/i, 'håndleddet'], [/ankel|ankle/i, 'anklen'], [/nakke|neck/i, 'nakken'],
 ]
 export const bodyPartOf = text => BODY_PARTS.find(([pattern]) => pattern.test(text))?.[1] || null
+// Alle kropsdele en note naevner (Ordre 1509: smerte-stoppet er region-baseret).
+export const bodyPartsOf = text => BODY_PARTS.filter(([pattern]) => pattern.test(text)).map(([, navn]) => navn)
 
 const mostCommon = values => {
   const counts = new Map()
