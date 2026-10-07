@@ -646,7 +646,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           DENNE øvelse. */}
       {nextSetNumber <= totalSets && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '0.6rem' }}>
-          {showNextPreview ? (
+          {showNextPreview && !smerteBeskedFor(suggestNextWeight, ex.name) ? (
             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#a8a498', letterSpacing: '0.02em' }}>
               Næste: {nextSetReps || '—'} reps{nextSetWeight != null ? ` @ ${nextSetWeight} kg` : ''}
             </div>
