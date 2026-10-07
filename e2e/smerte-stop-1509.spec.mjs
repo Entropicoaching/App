@@ -42,6 +42,9 @@ async function koer(kommentar, navn, forventForslag, ugeDage, logDage) {
     // Ordre 1547 (V-SMERTE=B): den rolige linje staar praecis der, hvor forslaget er standset.
     const besked = await page.getByTestId('smerte-besked').count()
     assert.equal(besked, forventForslag ? 0 : 1, `${navn}: smerte-linjer = ${besked}`)
+    // Ordre 1579 (QA-fund 4): ved stop staar der ingen "Næste: x reps @ y kg" (ligner et forslag).
+    const naeste = await page.getByText(/Næste: .* reps/).count()
+    assert.equal(naeste > 0, forventForslag, `${navn}: Næste-linjer = ${naeste}`)
     console.log(`${navn}: Forslag-linjer ${antal} (forventet ${forventForslag ? '>0' : '0'}), smerte-linjer ${besked}`)
   } finally {
     await browser.close(); await vite.stop(); await mock.close()
