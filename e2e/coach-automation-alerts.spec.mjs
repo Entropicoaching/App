@@ -101,9 +101,9 @@ export async function runCoachAutomationAlerts(page, { appUrl, outDir, mock, vie
   await tilIndbakken(page)
 
   // ---- 1) rækkerne vises; den løste gør ikke ----
-  // Den ældste fejl er "Næste opgave"; den anden ligger under "Vis 1 øvrige".
+  // Den ældste fejl er "Næste opgave"; de øvrige (op til 5) er foldet ud uden klik (ordre 1545).
   await raekke(FEJL_AELDRE).waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText('Vis 1 øvrige opgave', { exact: true }).click()
+  await page.getByText('1 øvrige opgave', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
   await raekke(FEJL_NYERE).waitFor({ state: 'visible', timeout: 10000 })
   assert.equal(await raekke(FEJL_LOEST).count(), 0, 'den løste fejl må ikke vises')
 

@@ -7,6 +7,7 @@
 import { summarizeRefreshResults, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages } from '../coachInboxState'
 import { supabase, withRetry } from '../supabase'
 import { filterOpenAutomationAlerts } from '../automationAlerts'
+import { saetSmerteSignaler, medSaetSmerte } from '../saetSmerte'
 import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
 import { planlagteReps, taellerIKg } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
@@ -293,7 +294,16 @@ export function lavLaesninger({
       setTrainingSignalsError(actionsResult.error.message || 'Signalhandlinger kunne ikke hentes')
       return false
     }
-    setTrainingSignals(filterOpenTrainingSignals(signalsResult.data, actionsResult.data))
+    // Ordre 1560: smerte i saet-noter (14 dage) som signal med loeft og dato; en fejl her laesser aldrig de andre signaler.
+    let saetSignaler = []
+    try {
+      const siden = new Date(Date.now() - 15 * 24 * 3600 * 1000).toISOString()
+      const noteResult = await supabase.from('exercise_logs')
+        .select('athlete_id,note,logged_at,exercise_id,exercises(name)')
+        .not('note', 'is', null).gte('logged_at', siden).limit(2000)
+      if (!noteResult.error) saetSignaler = saetSmerteSignaler(noteResult.data, videoCoachAthletesRef.current)
+    } catch { /* signalerne uden saet-note-smerte vises stadig */ }
+    setTrainingSignals(filterOpenTrainingSignals(medSaetSmerte(signalsResult.data, saetSignaler), actionsResult.data))
     return true
   }
 

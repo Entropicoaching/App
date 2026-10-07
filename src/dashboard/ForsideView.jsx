@@ -282,7 +282,7 @@ export default function ForsideView({
                       const lastLogDate = athleteLastLogs?.[athlete.id]
                       // ORDRE 456 (A8): hele dage i dansk tid (før: et sæt i dag før kl. 12 gav "-1d siden").
                       const daysSinceLog = lastLogDate ? dageSiden(lastLogDate) : null
-                      const lastLogText = henterLogs ? 'henter …' : daysSinceLog == null ? 'Ingen logs' : daysSinceLog === 0 ? 'I dag' : daysSinceLog === 1 ? 'I går' : `${daysSinceLog}d siden`
+                      const lastLogText = henterLogs ? 'henter …' : daysSinceLog == null ? 'Ingen logs' : daysSinceLog <= 0 ? 'I dag' : daysSinceLog === 1 ? 'I går' : `${daysSinceLog}d siden`
                       // Gråt som standard, grønt kun når ugen er i mål eller
                       // foran — ALDRIG rødt/advarsel, uanset hvor stor
                       // afvigelsen er (ordrens egen grænse).

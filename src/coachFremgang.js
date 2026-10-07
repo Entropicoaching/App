@@ -72,13 +72,18 @@ export function hovedloeftStatus(logs, today = lokalDag()) {
 export function smerteNoter(logs, today = lokalDag()) {
   const nu = dagMs(today)
   const set = new Map()
+  // Ordre 1545: en smerte skrevet paa et enkelt saet taeller som pas-kommentaren
+  // (atleterne skriver ofte kun paa saettet); kilden staar i linjen.
+  const tilfoej = (nogle, log, tekst, kilde) => {
+    const dag = String(log.logged_at || '').slice(0, 10)
+    if (!dag || nu - dagMs(dag) > SMERTE_DAGE * DAG || dagMs(dag) > nu) return
+    const key = nogle(dag)
+    if (!set.has(key)) set.set(key, { dag, del: bodyPartOf(tekst), loeft: loeftNavn(log), navn: log.exercises?.name ?? log.navn ?? null, kilde })
+  }
   for (const log of logs || []) {
     const sess = log.exercises?.sessions
-    if (!sess?.athlete_comment || !mentionsPain(sess.athlete_comment)) continue
-    const dag = String(log.logged_at || '').slice(0, 10)
-    if (!dag || nu - dagMs(dag) > SMERTE_DAGE * DAG || dagMs(dag) > nu) continue
-    const nogle = `${sess.id}|${dag}`
-    if (!set.has(nogle)) set.set(nogle, { dag, del: bodyPartOf(sess.athlete_comment), loeft: loeftNavn(log) })
+    if (sess?.athlete_comment && mentionsPain(sess.athlete_comment)) tilfoej(dag => `${sess.id}|${dag}`, log, sess.athlete_comment, 'pas-kommentar')
+    if (log.note && mentionsPain(log.note)) tilfoej(dag => `saet|${log.exercise_id ?? log.exercises?.name}|${dag}`, log, log.note, 'sæt-note')
   }
   return [...set.values()].sort((a, b) => b.dag.localeCompare(a.dag))
 }
@@ -109,7 +114,7 @@ export function styrkeLinje(logs, today = lokalDag()) {
   const smerte = smerteNoter(logs, today)
   if (smerte.length) {
     const s = smerte[0]
-    dele.push({ type: 'smerte', tekst: `Smerte: ${s.del ? `${s.del} nævnt` : 'nævnt'} i pas-kommentar ${dagTekst(s.dag)}${s.loeft ? ` (${s.loeft.toLowerCase()})` : ''}. Ingen stigning, før du har talt med atleten` })
+    dele.push({ type: 'smerte', tekst: `Smerte: ${s.del ? `${s.del} nævnt` : 'nævnt'} i ${s.kilde} ${dagTekst(s.dag)}${s.loeft ? ` (${s.loeft.toLowerCase()})` : ''}. Ingen stigning, før du har talt med atleten` })
   }
   const status = hovedloeftStatus(logs, today)
   const letUge = planlagtLetUge(logs, today)
@@ -129,7 +134,14 @@ export function styrkeLinje(logs, today = lokalDag()) {
   }
   if (!dele.length) {
     const nok = status.some(s => s.aendring != null)
-    dele.push({ type: 'ok', tekst: nok ? 'Alle hovedløft stiger eller holder; ingen smerte-noter' : 'Endnu ikke nok tunge sæt til en styrketendens (kræver tunge sæt både seneste 4 uger og 1-3 mdr. før)' })
+    const tal = status.filter(s => s.aendring != null).map(s => `${s.navn} ${s.aendring > 0 ? '+' : ''}${String(s.aendring).replace('.', ',')} %`).join(', ')
+    dele.push({ type: 'ok', tekst: nok ? `Alle hovedløft stiger eller holder (e1RM mod 1-3 mdr. før: ${tal}); ingen smerte-noter` : 'Endnu ikke nok tunge sæt til en styrketendens (kræver tunge sæt både seneste 4 uger og 1-3 mdr. før)' })
   }
   return { dele, tekst: dele.map(d => d.tekst).join(' · ') }
+}
+
+/** Naar "Aktuel opgave" allerede er smerte-signalet, gentages kun reglen (ikke kropsdel og dato en gang til). */
+export function styrkeSmerteRegel(tekst) {
+  const i = String(tekst).indexOf('. Ingen stigning')
+  return i >= 0 ? tekst.slice(i + 2) : tekst
 }

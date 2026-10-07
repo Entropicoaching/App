@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../supabase'
 import { s, initials, formatLastSeen } from '../dashboardShared'
-import { styrkeLinje } from '../coachFremgang'
+import { styrkeLinje, styrkeSmerteRegel } from '../coachFremgang'
 import { statusLabels } from './coachKonstanter'
 import { HUB_SECTIONS } from './hubSektioner'
 
@@ -23,7 +23,7 @@ export default function ProfilHoved({
     let ignore = false
     const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
     supabase.from('exercise_logs')
-      .select('athlete_id, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
+      .select('athlete_id, exercise_id, note, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
       .eq('athlete_id', a.id).gte('logged_at', fra)
       .order('logged_at', { ascending: false }).limit(2000)
       .then(({ data }) => { if (!ignore) setStyrkeLogs(data || []) }, () => {})
@@ -75,7 +75,7 @@ export default function ProfilHoved({
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.3rem' }}>Hvad gør atleten stærkere nu</div>
                 <div style={{ color: '#d8d4ca', fontSize: isMobile ? '0.78rem' : '0.74rem', lineHeight: 1.45 }}>
                   {styrke.dele.map((d, i) => (
-                    <div key={d.type} style={{ color: d.type === 'smerte' ? '#e05555' : (d.type === 'ok' || d.type === 'let-uge') ? '#7a7770' : '#d8d4ca', marginTop: i ? '0.2rem' : 0 }}>{d.tekst}</div>
+                    <div key={d.type} style={{ color: d.type === 'smerte' ? '#e05555' : (d.type === 'ok' || d.type === 'let-uge') ? '#7a7770' : '#d8d4ca', marginTop: i ? '0.2rem' : 0 }}>{d.type === 'smerte' && profilePriorityContext?.label === 'Smerte' ? styrkeSmerteRegel(d.tekst) : d.tekst}</div>
                   ))}
                 </div>
                 <div style={{ color: '#4a4844', fontSize: '0.58rem', marginTop: '0.3rem' }}>Kun tunge sæt (højst 8 reps, ikke backoff/teknik/volumen); sammenlignet med atletens egen historik.</div>

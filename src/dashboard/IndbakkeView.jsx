@@ -177,9 +177,9 @@ export default function IndbakkeView({
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770' }}>Næste opgave</div>
               {renderPriorityItem(priorityFocus.currentItem)}
               {priorityFocus.remainingCount > 0 && (
-                <details style={{ marginTop: '0.15rem' }}>
+                <details open={priorityFocus.remainingCount <= 5} style={{ marginTop: '0.15rem' }}>
                   <summary style={{ minHeight: 38, display: 'flex', alignItems: 'center', cursor: 'pointer', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.04em', listStylePosition: 'inside' }}>
-                    Vis {priorityFocus.remainingCount} øvrige {priorityFocus.remainingCount === 1 ? 'opgave' : 'opgaver'}
+                    {priorityFocus.remainingCount} øvrige {priorityFocus.remainingCount === 1 ? 'opgave' : 'opgaver'}
                   </summary>
                   <div style={{ display: 'grid', gap: '0.4rem', marginTop: '0.3rem' }}>
                     {priorityFocus.remainingItems.map(renderPriorityItem)}

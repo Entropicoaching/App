@@ -168,7 +168,7 @@ const dayText = ms => `${new Date(ms).getUTCDate()}. ${MONTHS[new Date(ms).getUT
 
 const PAIN_WORDS = /smert|ondt|skade|stikker|jager|pain|hurt|injur/i
 // "ingen smerter", "gør ikke ondt", "smertefri" er det modsatte af en melding.
-const PAIN_NEGATED = /(ingen|uden|ikke noget|ikke)\s+(smert\w*|ondt)|smertefri\w*|no pain/gi
+const PAIN_NEGATED = /(ingen|uden|ikke noget|ikke)\s+(smert\w*|ondt)|smertefri\w*|no pain|(kunne|kan)\s+ikke\s+m[æa]rke\s+(nogen\s+)?smert\w*/gi
 export const mentionsPain = text => PAIN_WORDS.test(String(text || '').replace(PAIN_NEGATED, ''))
 const BODY_PARTS = [
   [/knæ|knae|knee/i, 'knæet'], [/hofte|hip/i, 'hoften'], [/lyske/i, 'lysken'],
