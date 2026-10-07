@@ -48,6 +48,7 @@ test('C: knaesmerte i pas-kommentar -> smerte-alert med kropsdel, uge og loeft; 
   assert.equal(signal.headline, 'Atlet C: melder ondt i knæet (pas-kommentar, uge 7, Pas 3 med squat); ømhed ≥4/5 i Ben 2 af de sidste 7 dage')
   assert.doesNotMatch(JSON.stringify(signal), /bunden af squat/, 'atletens egne ord maa ikke komme med')
   assert.match(signal.detail, /^Kontakt i dag, før næste squat-pas/)
+  assert.match(signal.detail, /Appen foreslår ingen vægt for squat og benøvelser i 14 dage/, 'Ordre 1509: coachen ser, hvad stoppet daekker')
   hasAction(signal)
 })
 

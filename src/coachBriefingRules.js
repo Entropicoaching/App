@@ -1,5 +1,6 @@
 import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
 import { erTungtSaet } from './exerciseProgress.js'
+import { omfangTekst } from './athlete/smerteRegion.js'
 // ORDRE 370 · Coach Briefingens regler som ren JS-funktion.
 //
 // detectSignalsV1 er en tro port af supabase/sql/training-signals-v1.sql
@@ -215,7 +216,7 @@ function detectPain({ athlete, weeks = [], readiness = [] }, L, T) {
     const liftWord = hit.lift ? `${hit.lift.toLowerCase()}-pas` : 'pas'
     return signal(athlete, 'pain', 'alert',
       `melder ondt i ${hit.part || 'kroppen'} (${where})${soreText ? `; ${soreText}` : ''}`,
-      `Kontakt i dag, før næste ${liftWord}. Skift til en smertefri variant og lavere vægt, indtil det er afklaret`,
+      `Kontakt i dag, før næste ${liftWord}. Skift til en smertefri variant og lavere vægt, indtil det er afklaret. Appen foreslår ingen vægt for ${omfangTekst(hit.part ? [hit.part] : [])} i 14 dage`,
       { ...metrics, body_part: hit.part, lift: hit.lift, week: hit.week })
   }
   if (sore.length >= 3) {

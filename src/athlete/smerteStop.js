@@ -2,6 +2,9 @@
 // Ordre 1509 (fund 2): stoppet rammer kun de loeft, som notens kropsdel handler om,
 // og regnes fra notens dato (ikke ugens start). Uklar kropsdel: alle loeft.
 import { bodyPartsOf, mentionsPain } from '../coachBriefingRules.js'
+import { ramtAfSmerte } from './smerteRegion.js'
+
+export { ramtAfSmerte }
 
 const DAG = 86400000
 export const FRIST_DAGE = 14 // samme graense som coachens smerte-linje
@@ -10,27 +13,6 @@ export const FRIST_DAGE = 14 // samme graense som coachens smerte-linje
 // Tavst (false) er standard, indtil Marc vaelger.
 export const SMERTE_BESKED_AKTIV = false
 export const SMERTE_BESKED = 'Ingen forslag i dag: tal med din coach om smerten'
-
-const BEN = /squat|b[øo]j|\bben\b|benpres|lunge|split|\bleg\b|hack|step|calf|l[æa]g|hip ?thrust|bridge/i
-const RYG_LOEFT = /d[øo]dl[øo]ft|deadlift|rdl|good ?morning|\brow\b|roning|hyperext|rygstr/i
-const OVERKROP = /b[æa]nk|bench|press|pres\b|skulder|shoulder|dips|pull-?up|chin|curl|triceps|fly|lateral|push-?up|face ?pull|pulldown|r[æa]kk|row|roning/i
-const GRUPPER = { ben: BEN, ryg: RYG_LOEFT, over: OVERKROP }
-const REGION_GRUPPER = {
-  'knæet': ['ben'], anklen: ['ben'], hoften: ['ben', 'ryg'], lysken: ['ben', 'ryg'],
-  ryggen: ['ben', 'ryg'], skulderen: ['over'], albuen: ['over'], 'håndleddet': ['over'],
-}
-
-/** Rammer en smerte i de naevnte kropsdele dette loeft? Uklar kropsdel eller uklassificeret loeft: ja (sikker side). */
-export function ramtAfSmerte(kropsdele, oevelsesnavn) {
-  if (!kropsdele?.length) return true
-  const navn = String(oevelsesnavn || '')
-  const klasse = Object.keys(GRUPPER).filter(g => GRUPPER[g].test(navn))
-  if (!klasse.length) return true
-  return kropsdele.some(del => {
-    const grupper = REGION_GRUPPER[del]
-    return !grupper || grupper.some(g => klasse.includes(g)) // nakken m.fl.: alle
-  })
-}
 
 const dagMs = d => new Date(`${String(d).slice(0, 10)}T00:00:00Z`).getTime()
 

@@ -81,3 +81,12 @@ test('flag taendt: linjen vises kun for loeft, stoppet rammer', () => {
   assert.equal(smerteBeskedFor(f, 'Bænkpres', true), null)
   assert.equal(smerteBeskedFor(forslag, 'Squat', true), null)
 })
+
+test('coach-tekst: omfang i klartekst, uklar kropsdel = alle loeft', async () => {
+  const { omfangTekst } = await import('./smerteRegion.js')
+  assert.equal(omfangTekst(['knæet']), 'squat og benøvelser')
+  assert.equal(omfangTekst(['skulderen']), 'bænk og overkrop')
+  assert.equal(omfangTekst(['ryggen']), 'squat og benøvelser, dødløft og rygøvelser')
+  assert.equal(omfangTekst([]), 'alle løft')
+  assert.equal(omfangTekst(['nakken']), 'alle løft')
+})
