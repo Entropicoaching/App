@@ -1,6 +1,6 @@
 const BEN = /squat|b[øo]j|\bben\b|benpres|lunge|split|\bleg\b|hack|step|calf|l[æa]g|hip ?thrust|bridge/i
 const RYG_LOEFT = /d[øo]dl[øo]ft|deadlift|rdl|good ?morning|\brow\b|roning|hyperext|rygstr/i
-const OVERKROP = /b[æa]nk|bench|press|pres\b|skulder|shoulder|dips|pull-?up|chin|curl|triceps|fly|lateral|push-?up|face ?pull|pulldown|r[æa]kk|row|roning/i
+const OVERKROP = /b[æa]nk|bench|press|pres\b|skulder|shoulder|dips|pull-?up|chin|curl|triceps|fly|lateral|push-?up|face ?pull|pulldown|r[æa]kk|browb|roning/i
 const GRUPPER = { ben: BEN, ryg: RYG_LOEFT, over: OVERKROP }
 const REGION_GRUPPER = {
   'knæet': ['ben'], anklen: ['ben'], hoften: ['ben', 'ryg'], lysken: ['ben', 'ryg'],
