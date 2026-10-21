@@ -14,6 +14,7 @@ import { parseRepsPrescription } from '../repsPrescription'
 import { fixedRepsEntry } from '../fixedRepsEntry'
 import { exerciseViewGroups, exerciseViewRows } from '../exerciseSetView'
 import CountdownRing from './CountdownRing'
+import BlokRoedTraad from './BlokRoedTraad'
 import { s } from '../athleteShared'
 import { SMERTE_LINJE } from '../saetSmerte'
 
@@ -400,12 +401,7 @@ export default function ProgramTab({
                     </div>
                   )}
 
-                  {viewedWeek.block_description && (
-                    <div style={{ borderLeft: '2px solid rgba(200,146,58,0.3)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>Fra din coach</div>
-                      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: '#7a7770', fontStyle: 'italic', lineHeight: 1.6 }}>{viewedWeek.block_description}</div>
-                    </div>
-                  )}
+                  <BlokRoedTraad allWeeks={allWeeks} viewedWeekId={viewedWeek.id} />
 
                   {(viewedWeek.sessions || []).map(session => {
                     const isOpen = progOpenSession === session.id

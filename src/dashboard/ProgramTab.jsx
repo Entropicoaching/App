@@ -9,6 +9,8 @@ import { blockPurpose, withBlockPurposes } from '../periodizationAssistant'
 import { targetPrescriptionForExercise } from '../../supabase/functions/_shared/progressionState.js'
 import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared'
 import { nextWeekStartDate } from '../weekDates'
+import UgeFeedbackKort from './UgeFeedbackKort.jsx'
+import VideoCoachNote from './VideoCoachNote.jsx'
 
 export default function ProgramTab({
   addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
@@ -27,6 +29,7 @@ export default function ProgramTab({
   setRenameValue, setRenamingBlock, setSendingDraft, setSessionForm, setShowBlockPlanner,
   setWeekDateFill, setWeekDraft, setWeekForm, showBlockPlanner, showFlash, updateExercise, updateSession,
   updateWeek, weekdayPicker, weekDateFill, weekDraft, weekForm, weeks,
+  videoCoachNotes = [],
 }) {
   return (
               <div>
@@ -809,6 +812,7 @@ export default function ProgramTab({
                     {/* Sessions (expanded week) */}
                     {openWeekId === week.id && (
                       <div style={{ marginLeft: isMobile ? '0.5rem' : '1.5rem', borderLeft: '2px solid rgba(200,146,58,0.15)', paddingLeft: isMobile ? '0.5rem' : '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem' }}>
+                        <UgeFeedbackKort week={week} athleteLogs={athleteLogs} />
                         {(week.sessions || []).map((session, sessionIdx, sessionsArr) => (
                           <div key={session.id} style={{ marginBottom: '0.5rem' }}>
                             {/* Session header */}
@@ -880,6 +884,7 @@ export default function ProgramTab({
                             {/* Exercises (expanded session) */}
                             {openSessionId === session.id && (
                               <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.06)', borderTop: 'none', padding: '0.75rem' }}>
+                                <VideoCoachNote notes={videoCoachNotes} athleteId={selectedAthlete?.id} sessionId={session.id} />
                                 {(session.exercises || []).map((ex, exIdx, exArr) => (
                                   <div key={ex.id}>
                                     {editingExercise === ex.id ? (
