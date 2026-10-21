@@ -123,7 +123,7 @@ function ForloebSoejler({ label, planlagtVaerdier, gennemfoertVaerdier, uger, fo
 
 function ForloebVisning({ uger, ugerUdenDato }) {
   if (!uger.length) {
-    return <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen daterede programuger endnu.</div>
+    return <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Der er ingen programuger med datoer endnu. Når din coach har sat datoer på, kan du følge forløbet her.</div>
   }
   const ugeNoegler = uger.map(u => u.uge)
   return (
@@ -139,11 +139,11 @@ function ForloebVisning({ uger, ugerUdenDato }) {
           formatVaerdi={formatKg} />
       </div>
       <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.9rem', lineHeight: 1.5 }}>
-        Tynd kontur = planlagt, solid søjle = gennemført, pr. uge. Tallet til højre er seneste uges gennemført/planlagt.
+        Den tynde ramme er det planlagte, den fyldte søjle er det du har gennemført. Der er én søjle pr. uge. Tallet til højre viser seneste uge: gennemført / planlagt.
       </div>
       {ugerUdenDato > 0 && (
         <div style={{ fontSize: '0.6rem', color: '#e0a555', marginTop: '0.6rem' }}>
-          Uger uden dato: {ugerUdenDato} (indgår ikke ovenfor)
+          {ugerUdenDato} uger har ingen dato og er ikke med i søjlerne ovenfor
         </div>
       )}
     </>
@@ -197,7 +197,7 @@ export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeek
     <div style={s.card}>
       <div style={s.cardLabel}>Ugen som planlagt</div>
       <div style={{ fontSize: '0.72rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '1rem' }}>
-        Gennemført mod planlagt — sæt og tonnage. Manglende dage er ikke en fejl, kun et gab.
+        Det du har nået, sammenlignet med det planlagte. Et sæt er en række gentagelser i træk, så to sæt á fem gentagelser er ti løft. Tonnage er samlet løftet vægt i kg. En dag uden træning er ikke en fejl.
       </div>
 
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.1rem', flexWrap: 'wrap' }}>
@@ -215,17 +215,17 @@ export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeek
       {visning === 'uge' || visning === 'sidste' ? (
         ingenPlanlagtOverhovedet ? (
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
-            Ingen træning planlagt denne uge endnu.
+            Din coach har ikke lagt træning ind i denne uge endnu. Det dukker op her, når det er klar.
           </div>
         ) : visning === 'sidste' && !forrigeUge ? (
-          <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen tidligere uge endnu.</div>
+          <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Du har ingen tidligere uge at sammenligne med endnu.</div>
         ) : visning === 'sidste' && (forloebLoading || !forloebLogs) ? (
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Henter…</div>
         ) : (
           <>
             {intetLoggetEndnu && (
               <div style={{ fontSize: '0.68rem', color: '#7a7770', fontStyle: 'italic', marginBottom: '0.6rem' }}>
-                Ingen sæt logget i ugen endnu — kom i gang i Dagens pas.
+                Der er ingen gennemførte sæt i ugen endnu. Det gælder både, hvis du ikke har logget noget, og hvis du kun har sprunget sæt over. Et oversprunget sæt er logget, men tæller ikke som gennemført. Begynd under Dagens pas.
               </div>
             )}
             <div style={{ display: 'flex', flexDirection: 'column' }}>

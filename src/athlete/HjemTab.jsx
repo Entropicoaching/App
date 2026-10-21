@@ -250,7 +250,7 @@ function HjemTab({
             <div style={s.card}>
               <div style={s.cardLabel}>Mit program</div>
               {!currentWeek ? (
-                <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Intet program tilknyttet endnu.</div>
+                <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Du har intet program endnu. Din coach tilknytter det, og så dukker det op her.</div>
               ) : (
                 <>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.75rem' }}>
@@ -264,7 +264,7 @@ function HjemTab({
                     )}
                   </div>
                   {(currentWeek.sessions || []).length === 0 ? (
-                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
+                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Der er ingen træninger i denne uge endnu.</div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                       {(() => {
@@ -511,7 +511,7 @@ function HjemTab({
               <div style={s.cardLabel}>Seneste besked fra coach</div>
               {(() => {
                 const lastCoach = [...messages].reverse().find(m => m.sender_role === 'coach')
-                if (!lastCoach) return <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu.</div>
+                if (!lastCoach) return <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu. Skriver din coach til dig, kan du læse det her.</div>
                 return (
                   <>
                     <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.6, marginBottom: '0.4rem' }}>{lastCoach.content}</div>

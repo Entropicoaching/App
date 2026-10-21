@@ -997,6 +997,39 @@
     .vcExportActions { width:100%; }
     .vcExportActions button { flex:1; }
   }
+
+  /* R1-VC-R1: content-sized timeline; reserve its measured height. */
+  @media(max-width:700px) {
+    body.slim.coachweb footer {
+      bottom:6px; height:110px; max-height:110px; overflow:auto;
+    }
+    body.slim.coachweb #scrubRow {
+      bottom:124px; height:auto; max-height:none; overflow:visible; align-content:start;
+    }
+    body.coachweb #moreBar {
+      bottom:calc(132px + var(--vc-r1-scrub-height, 142px));
+      max-height:182px;
+    }
+    body.coachweb #stage {
+      bottom:calc(132px + var(--vc-r1-scrub-height, 142px));
+    }
+    body.coachweb[data-vc-workspace="review"] #stage,
+    body.coachweb:has(#moreBar:not([hidden])) #stage {
+      right:0; bottom:calc(326px + var(--vc-r1-scrub-height, 142px));
+    }
+    body.coachweb[data-vc-workspace="review"] #barPathHUD {
+      inset:auto 8px calc(132px + var(--vc-r1-scrub-height, 142px));
+      width:auto; height:182px; max-height:182px;
+      min-height:0; overflow:auto; grid-template-columns:minmax(0,1fr);
+    }
+    /* An open tray and review HUD share the reserved band, without covering controls. */
+    body.coachweb[data-vc-workspace="review"] #moreBar {
+      right:calc(50% + 4px);
+    }
+    body.coachweb[data-vc-workspace="review"]:has(#moreBar:not([hidden])) #barPathHUD {
+      left:calc(50% + 4px);
+    }
+  }
 </style>
 </head>
 <body>
@@ -1995,7 +2028,13 @@ canvas.addEventListener('pointerdown', e => {
       plateDrag = { mode: 'move', ox: p.x - plateConfirm.x, oy: p.y - plateConfirm.y };
     else if (d <= plateConfirm.r * 1.5)
       plateDrag = { mode: 'resize' };
-    else wizardClick(p);          // klik langt væk = mål om et nyt sted
+    else {
+      // A confirmed ring may outlive its wizard; restart only the UI selection.
+      plateConfirm = null;
+      plateDrag = null;
+      if (!wizard) wizard = { step: 0, pts: [], auto: true };
+      wizardClick(p);             // klik langt væk = mål om et nyt sted
+    }
     return;
   }
   if (wizard) {
@@ -2093,6 +2132,8 @@ canvas.addEventListener('pointermove', e => {
   }
   if (plateDrag && plateConfirm) {       // juster skive-ringen i hånden
     const p = pos(e);
+    // A deliberate drag must not snap back to the automatic rim on release.
+    plateConfirm.manualOverride = true;
     if (plateDrag.mode === 'resize')
       plateConfirm.r = Math.max(10, Math.hypot(p.x - plateConfirm.x, p.y - plateConfirm.y));
     else { plateConfirm.x = p.x - plateDrag.ox; plateConfirm.y = p.y - plateDrag.oy; }
@@ -9897,6 +9938,16 @@ if (COACHWEB) {
   moreBar.id = 'moreBar';
   moreBar.hidden = true;
   document.body.appendChild(moreBar);
+  // Keep the reserved control band in sync with wrapping and optional buttons.
+  const r1ScrubRow = document.getElementById('scrubRow');
+  const r1SyncScrubHeight = () => {
+    document.body.style.setProperty('--vc-r1-scrub-height',
+      Math.ceil(r1ScrubRow.getBoundingClientRect().height) + 'px');
+  };
+  if (typeof ResizeObserver === 'function')
+    new ResizeObserver(r1SyncScrubHeight).observe(r1ScrubRow);
+  window.addEventListener('resize', r1SyncScrubHeight);
+  r1SyncScrubHeight();
   // LAG 3 (Fordyb): alt det avancerede i tray'en. Skelet + ghost flyttet HERIND
   // så Lag 1-bjælken er ren (kun transport + Tegn + ⚡). Rækkefølge = grupper:
   // analyse/vinkler · sammenlign · tegn · fund/gem/kort.

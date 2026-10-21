@@ -27,6 +27,32 @@ export const SILENT_FAIL_CODES = new Set([
   'silent:video-upload-interrupted', // G16 — app lukket/genindlæst midt i videoupload
 ])
 
+function timestamp(value) {
+  if (typeof value !== 'string' || !value.trim()) return null
+  const ms = Date.parse(value)
+  return Number.isFinite(ms) ? new Date(ms).toISOString() : null
+}
+function safeEntry(entry) {
+  if (!entry || !SILENT_FAIL_CODES.has(entry.code)) return null
+  const at = timestamp(entry.at)
+  return at === null ? null : { code: entry.code, at }
+}
+function boundedEntries(entries) {
+  return Array.isArray(entries) ? entries.map(safeEntry).filter(Boolean).slice(-MAX_PENDING) : []
+}
+function recent(at, now) {
+  if (!Number.isFinite(now)) return false
+  const time = timestamp(at)
+  if (time === null) return false
+  const age = now - Date.parse(time)
+  return age >= 0 && age <= MAX_AGE_MS
+}
+function safeInflight(value) {
+  if (!value || typeof value.requestId !== 'string' || !value.requestId.trim()) return null
+  const at = timestamp(value.at)
+  return at === null ? null : { requestId: value.requestId, at }
+}
+
 function pendingKey(athleteId) {
   return `${SILENT_FAIL_PREFIX}:${athleteId}`
 }
@@ -37,7 +63,7 @@ function readPending(athleteId, storage) {
     const raw = storage.getItem(pendingKey(athleteId))
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
+    return boundedEntries(parsed)
   } catch {
     return []
   }
@@ -53,9 +79,11 @@ function writePending(athleteId, storage, list) {
 // Kaldes lige efter en stille fejl er opdaget (fx en INSERT der fejlede uden
 // at atleten kan vises en besked der giver mening at rette lige nu).
 export function recordSilentFail(athleteId, code, storage = globalThis.localStorage, at = new Date().toISOString()) {
-  if (!athleteId || !SILENT_FAIL_CODES.has(code)) return false
+  if (!athleteId) return false
+  const entry = safeEntry({ code, at })
+  if (!entry) return false
   const list = readPending(athleteId, storage)
-  list.push({ code, at })
+  list.push(entry)
   writePending(athleteId, storage, list.slice(-MAX_PENDING))
   return true
 }
@@ -63,9 +91,7 @@ export function recordSilentFail(athleteId, code, storage = globalThis.localStor
 // Læs de sidste (endnu ikke tømte), ikke-forældede fejl — brugt af coach-
 // visningen når den er tømt ind i en session_context, og til test.
 export function pendingSilentFails(athleteId, storage = globalThis.localStorage, now = Date.now()) {
-  return readPending(athleteId, storage).filter(entry =>
-    entry && SILENT_FAIL_CODES.has(entry.code) &&
-    now - new Date(entry.at).getTime() <= MAX_AGE_MS)
+  return readPending(athleteId, storage).filter(entry => recent(entry.at, now))
 }
 
 // Lægger den ventende kø ind i en (endnu ikke gemt) video_analyses-rækkes
@@ -101,7 +127,9 @@ function uploadInflightKey(athleteId) {
 export function markUploadInflight(athleteId, requestId, storage = globalThis.localStorage, at = new Date().toISOString()) {
   try {
     if (!storage || !athleteId) return
-    storage.setItem(uploadInflightKey(athleteId), JSON.stringify({ requestId, at }))
+    const value = safeInflight({ requestId, at })
+    if (!value) return
+    storage.setItem(uploadInflightKey(athleteId), JSON.stringify(value))
   } catch { /* fuld/utilgængelig storage må aldrig vælte selve uploaden */ }
 }
 
@@ -121,13 +149,12 @@ export function takeStaleUploadInflight(athleteId, storage = globalThis.localSto
     if (!raw) return null
     storage.removeItem(uploadInflightKey(athleteId))
     const parsed = JSON.parse(raw)
-    return parsed && typeof parsed === 'object' ? parsed : null
+    return safeInflight(parsed)
   } catch {
     return null
   }
 }
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
 // ORDRE 131 · commit 3: bygger coachens étlinje-resumé ("Atleten havde
 // netproblemer 2 gange i denne uge") ud fra de seneste video_analyses-rækkers
@@ -135,15 +162,14 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 // bruger, kaldt fra Dashboard.jsx ét sted). Ren funktion (ingen Supabase-
 // afhængighed), så den kan enhedstestes uden en levende database.
 export function summarizeSilentFailsForCoach(rows, now = Date.now()) {
-  const cutoff = now - WEEK_MS
+  if (!Number.isFinite(now)) return null
   let total = 0
   for (const row of rows || []) {
     const fails = row?.session_context?.silent_fails
     if (!Array.isArray(fails)) continue
     for (const entry of fails) {
       if (!entry || !SILENT_FAIL_CODES.has(entry.code)) continue
-      const at = new Date(entry.at).getTime()
-      if (!Number.isFinite(at) || at < cutoff) continue
+      if (!recent(entry.at, now)) continue
       total++
     }
   }

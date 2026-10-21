@@ -3,6 +3,7 @@ import { exerciseSetView, exerciseViewGroups, exerciseViewRows } from '../exerci
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Skrivefunktionerne kommer stadig ind som props fra AthleteView.
 import { useState, useEffect, useRef } from 'react'
+import PasOverblik from './PasOverblik.jsx'
 import { createPortal } from 'react-dom'
 import { lastHeaviestSet } from '../nextSet'
 import { loadShowNextSetPreview, saveShowNextSetPreview } from '../nextSetPreview'
@@ -217,7 +218,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         {rateLine}
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.5rem' }}>
-          {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Intet pas i dag.'}
+          {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Der er intet pas i dag. Hvil er også en del af planen.'}
         </div>
         {rekordLinje}
         {up ? (
@@ -235,7 +236,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             </div>
           </button>
         ) : (
-          <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Der er ikke planlagt mere endnu.</div>
+          <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Der er ikke flere pas planlagt endnu. Din coach lægger dem ind, når de er klar.</div>
         )}
         {ventendeSaet}
       </div>
@@ -262,10 +263,6 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const spoergNulKg = vaegtOevelse && !(parseFloat(input.weight) > 0)
   const view = exerciseSetView(ex.name)
   const viewRow = exerciseViewRows(session.exercises).find(row => row.ex.id === ex.id)
-  const sessionExercises = exerciseViewGroups(session.exercises)
-  const exIdx = sessionExercises.findIndex(group => group.rows.some(row => row.ex.id === ex.id))
-  const nextExercise = exIdx >= 0 ? sessionExercises[exIdx + 1] || null : null
-  const laterCount = exIdx >= 0 ? Math.max(0, sessionExercises.length - exIdx - 2) : 0
   const stepWeightBy = delta => { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } })) }
   const stepRepsBy = delta => { touchedRef.current.add(key); setLogInputs(p => stepRepsInInputs(p, key, input, repsValue, delta)) }
 
@@ -292,6 +289,8 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         <div style={s.cardLabel}>Dagens pas</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770' }}>{view.label !== 'Sæt' && `${view.label} · `}Sæt {(viewRow?.offset || 0) + setNumber}/{viewRow?.totalSets || totalSets}</div>
       </div>
+
+      <PasOverblik key={session.id} session={session} logs={exerciseLogs} activeId={ex.id} />
 
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, marginBottom: '0.25rem' }}>
         {view.name}
@@ -539,7 +538,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           >RPE {input.rpe || plannedRpe || '–'} ▾</button>
         </div>
         {rpeOpenFor === key && (
-          <div role="group" aria-label={`Vælg RPE, sæt ${setNumber}`} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
+          <div role="group" aria-label={`Vælg RPE for sæt ${setNumber}. RPE er din egen vurdering af, hvor hårdt sættet føltes.`} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
             {RPE_VALUES.map(v => {
               const valgt = parseFloat(input.rpe || plannedRpe) === v
               return (
@@ -662,16 +661,6 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         </div>
       )}
 
-      {/* ORDRE 330 · blok 2 — forsiden skal være rolig: "Resten af passet"
-          (en liste over alle øvrige øvelser) er skåret ned til ÉN linje om
-          den næste øvelse efter denne. Hele passet ligger i Program-fanen. */}
-      {nextExercise && (
-        <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', letterSpacing: '0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          Næste øvelse: <span style={{ color: '#b8b4a8' }}>{nextExercise.name}</span>
-          {[nextExercise.totalSets && ` · ${nextExercise.totalSets} sæt`, nextExercise.rows.length === 1 && nextExercise.rows[0].ex.reps && ` × ${nextExercise.rows[0].ex.reps}`].filter(Boolean).join('')}
-          {laterCount > 0 ? ` (+${laterCount})` : ''}
-        </div>
-      )}
 
       {/* Ordre 1446: opvarmningen laa tre fane-skift væk fra passet. Et enkelt
           link, kun før det første sæt, og ingen ny chip på forsiden (ordre 330). */}

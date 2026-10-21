@@ -25,7 +25,7 @@ export function coachInboxFocusDecision({
     ready: true,
     // Mailens deep-link åbner en atlets profil; en automatiseringsfejl
     // (ordre 301) har ingen atlet, så første atlet-opgave vælges.
-    nextItem: refreshStatus.kind === 'success' ? (priorityItems.find(item => item?.kind !== 'automation') || null) : null,
+    nextItem: refreshStatus.kind === 'success' ? (priorityItems.find(item => item != null && item.kind !== 'automation') || null) : null,
   }
 }
 

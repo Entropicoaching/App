@@ -74,7 +74,7 @@ function DinUgeKort({ uge, athleteId, weekId, sendUgeLinje }) {
 
       {!sendUgeLinje ? null : sendt ? (
         <div data-din-uge-sendt="" style={{ fontFamily: mono, fontSize: '0.6rem', letterSpacing: '0.04em', color: '#7a7770' }}>
-          Sendt til din coach. Svaret kommer under Beskeder.
+          Sendt til din coach. Hvis coachen svarer, står det under Beskeder.
         </div>
       ) : (
         <div>
@@ -87,7 +87,7 @@ function DinUgeKort({ uge, athleteId, weekId, sendUgeLinje }) {
               value={tekst}
               onChange={e => setTekst(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') send() }}
-              placeholder="Én linje, hvis du vil"
+              placeholder="Skriv en enkelt linje, hvis du har lyst"
               maxLength={500}
               style={{ ...s.fieldInput, flex: 1, minWidth: 0, minHeight: '44px', boxSizing: 'border-box', fontSize: '16px' }}
             />

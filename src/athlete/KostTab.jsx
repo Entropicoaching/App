@@ -6,12 +6,13 @@
 // eksplicitte som props. Skrivefunktionerne (quickLogFood, deleteLog, ...)
 // bliver i AthleteView.jsx (verify:athlete-write-failures læser dem der).
 import { Fragment } from 'react'
+import KostUge from './KostUge.jsx'
 import { dateLabel, s, shiftDate, today, unitsForFood } from '../athleteShared'
 
 export default function KostTab({
   addFromSearch, amount, athlete, cKcal, cLen, circ, copyYesterday, createFood,
   deleteLog, deleteTemplate, editGrams, editMacros, editingLogId, fKcal, fLen,
-  frequentFoods, kostDate, logTemplate, logs, macroTotal, mealTemplates,
+  frequentFoods, kostDate, kostWeekInput, logTemplate, logs, macroTotal, mealTemplates,
   onSearchInput, pKcal, pLen, parseLoggedGrams, progressBars, quickAddSearchFood,
   quickLogFood, saveCustomFood, saveEditLog, saveTemplate, searchQuery,
   searchResults, selectFood, selectedFood, setAmount, setCreateFood, setEditGrams,
@@ -43,6 +44,8 @@ return (
       style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.35rem 0.8rem', opacity: kostDate >= today() ? 0.25 : 1 }}
     >→</button>
   </div>
+
+  <KostUge selectedDate={kostDate} input={kostWeekInput} />
 
   {progressBars}
 

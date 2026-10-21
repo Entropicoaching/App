@@ -184,7 +184,7 @@ function HovedRaekke({ h, sidst }) {
 
 function RekordListe({ rekorder }) {
   if (rekorder.length === 0) {
-    return <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Ingen rekorder endnu. Slår du dit bedste sæt på en øvelse, står det her.</div>
+    return <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Ingen rekorder endnu. Når du slår dit bedste sæt på en øvelse, står det her.</div>
   }
   const { hoved, andre } = grupperRekorder(rekorder)
   return (
@@ -274,7 +274,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
         {fremgangLoading ? (
           <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Henter…</div>
         ) : alleNavne.length === 0 ? (
-          <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Ingen logninger endnu.</div>
+          <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Der er ingen øvelser i dit program endnu. Din coach lægger dem ind, og så vises din udvikling her.</div>
         ) : (
           <>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
@@ -304,10 +304,10 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
             <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
               <div style={{ fontSize: '0.72rem', color: '#c8b98a', marginBottom: '0.6rem' }}>{oevelse}</div>
               {punkter.length === 0 ? (
-                <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>{harLogs ? 'Kun lette sæt logget endnu (backoff, teknik eller volumen), så der er intet tungt sæt at tegne en kurve af.' : 'Ingen logninger endnu.'}</div>
+                <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>{harLogs ? 'Kun lette sæt logget endnu (backoff, teknik eller volumen), så der er intet tungt sæt at tegne en kurve af.' : 'Du har ikke logget denne øvelse endnu. Når du har, vises din udvikling her.'}</div>
               ) : punkter.length === 1 ? (
                 <div style={{ fontSize: '0.8rem', color: '#a8a498' }}>
-                  {punkter[0].weight} kg × {punkter[0].reps} (e1RM {punkter[0].e1rm} kg) — for få tunge dage endnu til en kurve.
+                  {punkter[0].weight} kg × {punkter[0].reps} (e1RM {punkter[0].e1rm} kg, et skøn over det tungeste du kunne løfte én gang). Der skal være data fra flere tunge træningsdage, før der kan tegnes en kurve.
                 </div>
               ) : (
                 <>

@@ -823,6 +823,7 @@ export default function ProgramTab({
                                           </div>
                                           <button
                                             onClick={() => setShowRpeGuide(true)}
+                                            title="Hvad er RPE? Din egen vurdering af, hvor hårdt et sæt føltes. Det er subjektivt og afhænger af dig og dagsformen, så to personer kan give samme sæt forskellige tal."
                                             style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', padding: '0.3rem 0.2rem', lineHeight: 1, flexShrink: 0 }}
                                           >ℹ</button>
                                           <input

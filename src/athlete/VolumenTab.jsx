@@ -73,7 +73,7 @@ export default function VolumenTab({ volumeLogs, volumeLoading }) {
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Henter…</div>
         ) : ingenDataOverhovedet ? (
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
-            Ingen gennemførte sæt de seneste {ANTAL_UGER_TREND} uger endnu.
+            Du har ikke gennemført sæt de seneste {ANTAL_UGER_TREND} uger endnu. Når du logger, vises din træningsmængde her.
           </div>
         ) : (
           <>
@@ -90,7 +90,7 @@ export default function VolumenTab({ volumeLogs, volumeLoading }) {
               <>
                 {grupperDenneUge.length === 0 ? (
                   <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
-                    Ingen sæt gennemført denne uge endnu.
+                    Du har ikke gennemført sæt i denne uge endnu.
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -107,7 +107,7 @@ export default function VolumenTab({ volumeLogs, volumeLoading }) {
                 )}
                 {harUkendteDenneUge && (
                   <div style={{ fontSize: '0.68rem', color: '#e0a555', marginTop: '0.7rem' }}>
-                    {denneUge.ukendteSaet} sæt denne uge er på øvelser der ikke er kortlagt endnu, og tæller ikke med ovenfor.
+                    {denneUge.ukendteSaet} sæt denne uge er på øvelser, som endnu ikke er knyttet til en muskelgruppe i appen, og er derfor ikke talt med ovenfor.
                   </div>
                 )}
                 <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.85rem', lineHeight: 1.5 }}>
@@ -132,7 +132,7 @@ export default function VolumenTab({ volumeLogs, volumeLoading }) {
                 )}
                 {harUkendteTrend && (
                   <div style={{ fontSize: '0.68rem', color: '#e0a555', marginTop: '0.7rem' }}>
-                    Nogle sæt er på øvelser der ikke er kortlagt endnu, og tæller ikke med ovenfor.
+                    Nogle sæt er på øvelser, som endnu ikke er knyttet til en muskelgruppe i appen, og er derfor ikke talt med ovenfor.
                   </div>
                 )}
               </>
