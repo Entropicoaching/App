@@ -538,7 +538,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           >RPE {input.rpe || plannedRpe || '–'} ▾</button>
         </div>
         {rpeOpenFor === key && (
-          <div role="group" aria-label={`Vælg RPE for sæt ${setNumber}. RPE er din egen vurdering af, hvor hårdt sættet føltes.`} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
+          <div role="group" aria-label={`Vælg RPE for sæt ${setNumber}. RPE er din egen vurdering af, hvor hårdt sættet føltes. Tallet svarer til gentagelser i reserve: 10 betyder ingen tilbage, 9 én, 8 to, og så videre. Vurderingen kan ramme ved siden af, og i gennemsnit har man omkring én gentagelse mere tilbage, end man tror. Den bliver mere præcis, jo tættere på grænsen sættet er. Kilderne er uenige om erfaring: én finder, at øvede vurderer bedre, andre finder ingen forskel. Er du ny, så øv dig i at notere tallet, men lad det ikke stå alene.`} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
             {RPE_VALUES.map(v => {
               const valgt = parseFloat(input.rpe || plannedRpe) === v
               return (

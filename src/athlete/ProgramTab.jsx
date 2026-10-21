@@ -823,7 +823,7 @@ export default function ProgramTab({
                                           </div>
                                           <button
                                             onClick={() => setShowRpeGuide(true)}
-                                            title="Hvad er RPE? Din egen vurdering af, hvor hårdt et sæt føltes. Det er subjektivt og afhænger af dig og dagsformen, så to personer kan give samme sæt forskellige tal."
+                                            title="Hvad er RPE? Din egen vurdering af, hvor hårdt et sæt føltes. Det er subjektivt og afhænger af dig og dagsformen, så to personer kan give samme sæt forskellige tal. Tallet svarer til gentagelser i reserve: 10 betyder ingen tilbage, 9 én, 8 to, og så videre. Vurderingen kan ramme ved siden af, og i gennemsnit har man omkring én gentagelse mere tilbage, end man tror. Den bliver mere præcis, jo tættere på grænsen sættet er. Kilderne er uenige om erfaring: én finder, at øvede vurderer bedre, andre finder ingen forskel. Er du ny, så øv dig i at notere tallet, men lad det ikke stå alene."
                                             style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', padding: '0.3rem 0.2rem', lineHeight: 1, flexShrink: 0 }}
                                           >ℹ</button>
                                           <input
