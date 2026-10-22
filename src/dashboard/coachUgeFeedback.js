@@ -1,4 +1,6 @@
 import { summarizeWeek } from '../athlete/ugeFeedback.js'
+import { coachTekstForslag } from './coachTekstForslag.js'
+import { coachTekstTree } from './coachTekstTree.js'
 
 // Calendar closure, independent of log coverage. No guessed end for undated weeks.
 export function erAfsluttetUge(week, now) {
@@ -38,7 +40,7 @@ const STATUS = { tom: 'Ingen planlagte sæt', ingen_logs: 'Ingen registrerede s�
 const PAS_STATUS = { ingen_saet_planlagt: 'Ingen planlagte sæt', ikke_logget: 'Ikke logget', delvis: 'Delvist gennemført', gennemfoert: 'Gennemført' }
 
 // Pure element tree. React supplies h in the app; producer probes use a small fake.
-export function ugeFeedbackTree(h, feedback, ugeNr) {
+export function ugeFeedbackTree(h, feedback, ugeNr, scope = ugeNr, navne = {}) {
   if (!feedback) return null
   const list = (title, lines) => h('div', { key: title },
     h('h4', null, title),
@@ -54,7 +56,8 @@ export function ugeFeedbackTree(h, feedback, ugeNr) {
     h('h4', null, 'RPE'),
     h('p', null, r.kilde),
     h('p', null, `Gennemsnit: ${r.gennemsnit ?? 'ukendt'} · Maks: ${r.max ?? 'ukendt'} · Med RPE: ${r.saetMedRpe} · Uden RPE: ${r.saetUdenRpe} · Ugyldige: ${r.ugyldigeRpe}`),
-    list('Spørgsmål til coachen', feedback.spoergsmaal))
+    list('Spørgsmål til coachen', feedback.spoergsmaal),
+    coachTekstTree(h, coachTekstForslag(feedback, navne), scope))
 }
 
 export function coachUgeFeedback(week, athleteLogs, now) {

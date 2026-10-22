@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import { coachUgeFeedback, ugeFeedbackTree } from './coachUgeFeedback.js'
 
-export default function UgeFeedbackKort({ week, athleteLogs }) {
+export default function UgeFeedbackKort({ week, athleteLogs, atletNavn, coachNavn }) {
   const feedback = coachUgeFeedback(week, athleteLogs, new Date())
-  return ugeFeedbackTree(createElement, feedback, week.week_number)
+  return ugeFeedbackTree(createElement, feedback, week.week_number, week.id ?? week.start_date ?? week.week_number, { atlet: atletNavn, coach: coachNavn })
 }
