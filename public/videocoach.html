@@ -1031,6 +1031,19 @@
     }
   }
 </style>
+
+<style id="upload-film-guide-style">
+body.athlete #dropHint, body.coachweb #dropHint, #dropHint { box-sizing:border-box; max-height:calc(100vh - 180px); max-height:calc(100dvh - 180px); overflow-y:auto; width:min(calc(100vw - 32px),440px); padding:16px; }
+body.athlete #dropHint #athFilmGuide li::before { content:none; }
+#athFilmGuide { box-sizing:border-box; width:100%; max-width:38rem; margin:0 auto 18px; text-align:left; font-size:14px; line-height:1.5; overflow-wrap:anywhere; }
+#athFilmGuide .film-guide-toggle { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:44px; box-sizing:border-box; padding:8px; border:1px solid currentColor; background:transparent; color:inherit; font:inherit; font-weight:700; cursor:pointer; }
+#athFilmGuide .film-guide-toggle:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
+#athFilmGuide #film-guide-panel[hidden] { display:none; }
+#athFilmGuide h1 { font-size:1.1rem; }
+#athFilmGuide ol { padding-left:1.4rem; margin:8px 0; }
+#athFilmGuide li { margin:0 0 8px; }
+#athFilmGuide .note { font-size:0.9em; }
+</style>
 </head>
 <body>
 <nav id="vcSystemBar" aria-label="VideoCoach arbejdsflow">
@@ -10053,60 +10066,12 @@ if (COACHWEB) {
   layoutBars();
   setTimeout(layoutBars, 400);
 }
-// ORDRE 196 · commit 2: filmevejledning FØR atleten vælger fil - teksten er
-// docs/videocoach/FILMEVEJLEDNING.md, kogt ned fra FILM-ET-LOEFT.md (Drishti,
-// ordre 181) og appens egen TEST-CLIPS.md. Husket i localStorage med samme
-// injicerbare mønster som src/readinessDraft.js: storage sendes eksplicit
-// (default globalThis.localStorage), enhver fejl (privat vindue, fuld
-// storage) sluger sig selv i stedet for at vælte "upload og gå"-flowet.
-const FILM_GUIDE_SEEN_KEY = 'entropi_film_guide_seen';
-function hasSeenFilmGuide(storage = globalThis.localStorage) {
-  try { return !!storage && storage.getItem(FILM_GUIDE_SEEN_KEY) === '1'; } catch { return false; }
-}
-function markFilmGuideSeen(storage = globalThis.localStorage) {
-  try { if (storage) storage.setItem(FILM_GUIDE_SEEN_KEY, '1'); } catch { /* privat vindue/fuld storage - ingen huskeevne, ikke fatalt */ }
-}
-const FILM_GUIDE_POINTS = [
-  'Kamera fra siden, i hoftehøjde — ikke skråt.',
-  'Hele kroppen i billedet hele vejen, også i bunden.',
-  'Hænder og fødder fri af skiver og rack.',
-  'Ét løft, eller et kort sæt — ikke hele træningen.',
-  'Stramt tøj, ikke løse shorts eller T-shirt.',
-  'Godt, jævnt lys — undgå modlys.',
-];
-const FILM_GUIDE_FOOTER = 'Det coachen ikke kan se, kan han ikke vurdere.';
-function filmGuideFullHtml() {
-  return '<span class="athFilmGuideTitle">📷 Før du filmer</span>' +
-    '<ul>' + FILM_GUIDE_POINTS.map(p => `<li>${p}</li>`).join('') + '</ul>' +
-    `<span class="athFilmGuideFooter">${FILM_GUIDE_FOOTER}</span>`;
-}
-// ORDRE 262 · commit 1: "Film et sæt" - samme kilde (FILMEVEJLEDNING.md), men
-// kogt yderligere ned til tre linjer (ordren beder om "kort, tre linjer").
-// Vises altid fuldt ud - flowet er i sig selv nyt/sjældnere brugt end
-// standardvejen, så der er ingen "vis igen"-tilstand at spare væk til.
-const FILM_GUIDE_INSTANT_POINTS = [
-  'Kamera fra siden, i hoftehøjde — ikke skråt.',
-  'Hele kroppen og skiven fri af rack og andre skiver.',
-  'Ét sæt ad gangen, i godt og jævnt lys.',
-];
-function filmGuideInstantHtml() {
-  return '<span class="athFilmGuideTitle">📷 Før du filmer</span>' +
-    '<ul>' + FILM_GUIDE_INSTANT_POINTS.map(p => `<li>${p}</li>`).join('') + '</ul>';
-}
+// R1-APP-FG-INT: the shared public module mounts after this classic script.
 function renderFilmGuide() {
   const el = document.getElementById('athFilmGuide');
   if (!el) return;
-  if (VC_ATHLETE_INSTANT) { el.innerHTML = filmGuideInstantHtml(); return; }
-  if (!hasSeenFilmGuide()) {
-    el.innerHTML = filmGuideFullHtml();
-    markFilmGuideSeen();
-    return;
-  }
-  el.innerHTML = '<button type="button" id="athFilmGuideToggle" class="athFilmGuideToggle">📷 Filmtips — vis igen</button>';
-  document.getElementById('athFilmGuideToggle').onclick = e => {
-    e.stopPropagation();
-    el.innerHTML = filmGuideFullHtml();
-  };
+  el.innerHTML = "<button type=\"button\" id=\"film-guide-toggle\" class=\"film-guide-toggle\" aria-expanded=\"true\" aria-controls=\"film-guide-panel\">Sådan filmer du<span id=\"film-guide-arrow\" aria-hidden=\"true\">▾</span></button>\n<div id=\"film-guide-panel\">\n<h1>Sådan filmer du dit løft</h1>\n<p class=\"intro\">Gælder knæbøjning, bænkpres og dødløft.</p>\n<ol>\n  <li><strong>Film fra siden.</strong>\n    Telefonen står ved siden af løfteren og filmer vinkelret på stangen, set fra siden.</li>\n  <li><strong>Afstand og højde.</strong>\n    Som praktisk råd: stå 3 til 4 meter væk, med telefonen i højde med stangen eller hoften.</li>\n  <li><strong>Hele stang og skive i billedet.</strong>\n    Få hele kroppen med, og zoom ikke undervejs. Intet må dække skiven, for den bruges som målestok.</li>\n  <li><strong>Godt lys.</strong>\n    Tænd lyset i rummet, og undgå vindue lige bag dig.</li>\n  <li><strong>Stabil telefon.</strong>\n    Brug stativ, eller læn den mod noget tungt. Den må ikke bevæge sig.</li>\n  <li><strong>Hele løftet.</strong>\n    Start optagelsen, før du tager stangen. Stop først et par sekunder efter, at den er sat tilbage.</li>\n</ol>\n<p class=\"note\">Analysen er et skøn ud fra videoen. Vi lover ikke, at målene er nøjagtige.</p></div>";
+  el.onclick = event => event.stopPropagation();
 }
 if (ATHLETE) {
   document.body.classList.add('athlete');
@@ -10675,6 +10640,11 @@ function saveRec(mime, mic) {
   downloadLink.textContent = `💾 Hent færdig video (.${ext})`;
   downloadLink.hidden = false;
 }
+</script>
+
+<script type="module">
+import { mountUploadFilmGuide } from './videoFilmGuide.mjs';
+mountUploadFilmGuide(document, () => window.localStorage);
 </script>
 </body>
 </html>

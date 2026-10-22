@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sådan filmer du dit løft</title>
+<style>
+  body { font-family: system-ui, sans-serif; line-height: 1.5; margin: 0; padding: 16px; background: #fff; color: #1a1a1a; }
+  main { max-width: 38rem; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  p.intro { margin: 0 0 14px; }
+  ol { padding-left: 1.3rem; margin: 0; }
+  li { margin-bottom: 10px; }
+  li strong { display: block; }
+  .note { border-top: 1px solid #ccc; margin-top: 14px; padding-top: 10px; font-size: 0.92rem; color: #444; }
+  .film-guide-toggle { box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: 700; text-align: left; cursor: pointer; white-space: nowrap; }
+  .film-guide-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+  #film-guide-panel[hidden] { display: none; }
+</style>
+</head>
+<body>
+<main>
+<button type="button" id="film-guide-toggle" class="film-guide-toggle" aria-expanded="true" aria-controls="film-guide-panel">Sådan filmer du<span id="film-guide-arrow" aria-hidden="true">▾</span></button>
+<div id="film-guide-panel">
+<h1>Sådan filmer du dit løft</h1>
+<p class="intro">Gælder knæbøjning, bænkpres og dødløft.</p>
+<ol>
+  <li><strong>Film fra siden.</strong>
+    Telefonen står ved siden af løfteren og filmer vinkelret på stangen, set fra siden.</li>
+  <li><strong>Afstand og højde.</strong>
+    Som praktisk råd: stå 3 til 4 meter væk, med telefonen i højde med stangen eller hoften.</li>
+  <li><strong>Hele stang og skive i billedet.</strong>
+    Få hele kroppen med, og zoom ikke undervejs. Intet må dække skiven, for den bruges som målestok.</li>
+  <li><strong>Godt lys.</strong>
+    Tænd lyset i rummet, og undgå vindue lige bag dig.</li>
+  <li><strong>Stabil telefon.</strong>
+    Brug stativ, eller læn den mod noget tungt. Den må ikke bevæge sig.</li>
+  <li><strong>Hele løftet.</strong>
+    Start optagelsen, før du tager stangen. Stop først et par sekunder efter, at den er sat tilbage.</li>
+</ol>
+<p class="note">Analysen er et skøn ud fra videoen. Vi lover ikke, at målene er nøjagtige.</p>
+</div>
+</main>
+<script type="module">
+import { mountFilmGuide } from './videoFilmGuide.mjs';
+mountFilmGuide(document.getElementById('film-guide-toggle'),
+  document.getElementById('film-guide-panel'), document.getElementById('film-guide-arrow'),
+  () => window.localStorage);
+</script>
+</body>
+</html>
