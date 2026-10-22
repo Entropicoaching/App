@@ -1,0 +1,341 @@
+{
+  "schema": "va-k5-batch/v1",
+  "status": "synthetic_only",
+  "clips": [
+    {
+      "clip_id": "syntetisk-1",
+      "measurement": {
+        "schema": "va-k4-synthetic/v1",
+        "status": "synthetic_only",
+        "lift": "bench",
+        "setup_id": "synthetic-0",
+        "units": {
+          "time": "s",
+          "position": "px_x_anterior_y_down",
+          "angle": "deg_inner_0_180",
+          "scale": "cm_per_px"
+        },
+        "phase": {
+          "name": "concentric",
+          "start": 0,
+          "end": 3
+        },
+        "cm_per_px": 0.5,
+        "uncertainty": {
+          "x_px": 0,
+          "y_px": 0,
+          "body_y_px": 0,
+          "knee_deg": 0,
+          "scale_cm_per_px": 0,
+          "time_s": 0
+        },
+        "samples": [
+          {
+            "t_s": 0,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 200,
+            "hip_y_px": 180,
+            "shoulder_y_px": 80,
+            "knee_deg": 90
+          },
+          {
+            "t_s": 1,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 180,
+            "hip_y_px": 160,
+            "shoulder_y_px": 60,
+            "knee_deg": 110
+          },
+          {
+            "t_s": 2,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 160,
+            "hip_y_px": 140,
+            "shoulder_y_px": 40,
+            "knee_deg": 130
+          },
+          {
+            "t_s": 3,
+            "valid": true,
+            "bar_x_px": 28,
+            "bar_y_px": 140,
+            "hip_y_px": 120,
+            "shoulder_y_px": 20,
+            "knee_deg": 150
+          }
+        ]
+      }
+    },
+    {
+      "clip_id": "syntetisk-2",
+      "measurement": {
+        "schema": "va-k4-synthetic/v1",
+        "status": "synthetic_only",
+        "lift": "squat",
+        "setup_id": "synthetic-1",
+        "units": {
+          "time": "s",
+          "position": "px_x_anterior_y_down",
+          "angle": "deg_inner_0_180",
+          "scale": "cm_per_px"
+        },
+        "phase": {
+          "name": "concentric",
+          "start": 0,
+          "end": 3
+        },
+        "cm_per_px": 0.5,
+        "uncertainty": {
+          "x_px": 0,
+          "y_px": 0,
+          "body_y_px": 0,
+          "knee_deg": 0,
+          "scale_cm_per_px": 0,
+          "time_s": 0
+        },
+        "samples": [
+          {
+            "t_s": 0,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 200,
+            "hip_y_px": 180,
+            "shoulder_y_px": 80,
+            "knee_deg": 90
+          },
+          {
+            "t_s": 1,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 180,
+            "hip_y_px": 160,
+            "shoulder_y_px": 60,
+            "knee_deg": 110
+          },
+          {
+            "t_s": 2,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 160,
+            "hip_y_px": 130,
+            "shoulder_y_px": 40,
+            "knee_deg": 130
+          },
+          {
+            "t_s": 3,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 140,
+            "hip_y_px": 120,
+            "shoulder_y_px": 20,
+            "knee_deg": 150
+          }
+        ]
+      }
+    },
+    {
+      "clip_id": "syntetisk-3",
+      "measurement": {
+        "schema": "va-k4-synthetic/v1",
+        "status": "synthetic_only",
+        "lift": "deadlift",
+        "setup_id": "synthetic-2",
+        "units": {
+          "time": "s",
+          "position": "px_x_anterior_y_down",
+          "angle": "deg_inner_0_180",
+          "scale": "cm_per_px"
+        },
+        "phase": {
+          "name": "concentric",
+          "start": 0,
+          "end": 3
+        },
+        "cm_per_px": 0.5,
+        "uncertainty": {
+          "x_px": 0,
+          "y_px": 0,
+          "body_y_px": 0,
+          "knee_deg": 0,
+          "scale_cm_per_px": 0,
+          "time_s": 0
+        },
+        "samples": [
+          {
+            "t_s": 0,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 200,
+            "hip_y_px": 180,
+            "shoulder_y_px": 80,
+            "knee_deg": 90
+          },
+          {
+            "t_s": 1,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 180,
+            "hip_y_px": 160,
+            "shoulder_y_px": 60,
+            "knee_deg": 110
+          },
+          {
+            "t_s": 2,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 140,
+            "hip_y_px": 140,
+            "shoulder_y_px": 40,
+            "knee_deg": 130
+          },
+          {
+            "t_s": 3,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 140,
+            "hip_y_px": 120,
+            "shoulder_y_px": 20,
+            "knee_deg": 150
+          }
+        ]
+      }
+    },
+    {
+      "clip_id": "syntetisk-4",
+      "measurement": {
+        "schema": "va-k4-synthetic/v1",
+        "status": "synthetic_only",
+        "lift": "squat",
+        "setup_id": "synthetic-3",
+        "units": {
+          "time": "s",
+          "position": "px_x_anterior_y_down",
+          "angle": "deg_inner_0_180",
+          "scale": "cm_per_px"
+        },
+        "phase": {
+          "name": "concentric",
+          "start": 0,
+          "end": 3
+        },
+        "cm_per_px": 0.5,
+        "uncertainty": {
+          "x_px": 0,
+          "y_px": 0,
+          "body_y_px": 0,
+          "knee_deg": null,
+          "scale_cm_per_px": 0,
+          "time_s": 0
+        },
+        "samples": [
+          {
+            "t_s": 0,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 200,
+            "hip_y_px": 180,
+            "shoulder_y_px": 80,
+            "knee_deg": 90
+          },
+          {
+            "t_s": 1,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 180,
+            "hip_y_px": 160,
+            "shoulder_y_px": 60,
+            "knee_deg": 110
+          },
+          {
+            "t_s": 2,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 160,
+            "hip_y_px": 140,
+            "shoulder_y_px": 40,
+            "knee_deg": 95
+          },
+          {
+            "t_s": 3,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 140,
+            "hip_y_px": 120,
+            "shoulder_y_px": 20,
+            "knee_deg": 150
+          }
+        ]
+      }
+    },
+    {
+      "clip_id": "syntetisk-5",
+      "measurement": {
+        "schema": "va-k4-synthetic/v1",
+        "status": "synthetic_only",
+        "lift": "deadlift",
+        "setup_id": "synthetic-4",
+        "units": {
+          "time": "s",
+          "position": "px_x_anterior_y_down",
+          "angle": "deg_inner_0_180",
+          "scale": "cm_per_px"
+        },
+        "phase": {
+          "name": "concentric",
+          "start": 0,
+          "end": 3
+        },
+        "cm_per_px": 0.5,
+        "uncertainty": {
+          "x_px": 0,
+          "y_px": 0,
+          "body_y_px": 0,
+          "knee_deg": 0,
+          "scale_cm_per_px": 0,
+          "time_s": 0
+        },
+        "samples": [
+          {
+            "t_s": 0,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 200,
+            "hip_y_px": 180,
+            "shoulder_y_px": 80,
+            "knee_deg": 90
+          },
+          {
+            "t_s": 1,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 180,
+            "hip_y_px": 160,
+            "shoulder_y_px": 60,
+            "knee_deg": 110
+          },
+          {
+            "t_s": 2,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 160,
+            "hip_y_px": 140,
+            "shoulder_y_px": 40,
+            "knee_deg": 130
+          },
+          {
+            "t_s": 3,
+            "valid": true,
+            "bar_x_px": 20,
+            "bar_y_px": 140,
+            "hip_y_px": 120,
+            "shoulder_y_px": 20,
+            "knee_deg": 150
+          }
+        ]
+      }
+    }
+  ]
+}

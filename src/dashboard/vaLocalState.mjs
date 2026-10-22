@@ -3,7 +3,7 @@ export const initialLocalVideoState = Object.freeze({ open: false, tool: 'sessio
 export function localVideoTransition(state, action) {
   if (action === 'open') return { open: true, tool: 'session' }
   if (action === 'close') return { ...initialLocalVideoState }
-  if (state.open && (action === 'session' || action === 'model'))
+  if (state.open && (action === 'session' || action === 'model' || action === 'fund'))
     return { open: true, tool: action }
   return state
 }
