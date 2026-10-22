@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="da"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'none'; img-src 'none'; media-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-HYoQ+LKDtJke+gts7b329dQHabuySTFyB6N0WQaVQys='; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>VA-MARK2 syntetiske ledvinkler</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#10212c;color:#eff7fa;font:16px/1.5 system-ui}main{max-width:960px;margin:auto;padding:24px}section{background:#1d3340;padding:20px;border-radius:12px;margin:16px 0}button,select{font:inherit;padding:10px;margin:6px;max-width:100%}label{display:inline-block}svg{display:block;width:100%;height:auto;background:#e4edf0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}#message{border-left:4px solid #6ee0c4;padding:10px}td,th{padding:8px;text-align:left;border-bottom:1px solid #58717e}table{width:100%}</style>
+<main><h1>Marker kroppens led</h1>
+<p><strong>SYNTETISK</strong> | Opfundne billeder og modelpunkter. Fysisk VC-PASS er altid false. Usikkerhed er ukendt.</p>
+<section><h2>1. Vaelg billede og punkt</h2>
+<label>Klip <select id="clip"><option value="0">1: Squat, 0.2 px stoej</option><option value="1">2: Baenk, 1 px stoej</option><option value="2">3: Doedloeft, 12 px stoej</option></select></label>
+<label>Billede <select id="frame"><option value="0">1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option></select></label>
+<label>Punkt <select id="joint"><option value="hip" selected>Hofte</option><option value="knee">Knae</option><option value="ankle">Ankel</option><option value="shoulder">Skulder</option><option value="toe">Taa</option><option value="elbow">Albue</option></select></label>
+<p id="frameInfo"></p><p id="coverage"></p>
+<svg id="scene" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Opfundet venstre kropsside. Klik for at markere det valgte led.">
+<path d="M0 335 H640" stroke="#677c89"/><circle cx="120" cy="260" r="45" fill="#73a9bf" stroke="#164964" stroke-width="2"/>
+<path id="truthPath" fill="none" stroke="#164964" stroke-width="3"/><path id="markPath" fill="none" stroke="#c02040" stroke-width="2"/>
+<circle id="truth-hip" cx="-100" cy="-100" r="5" fill="#164964"><title>Hofte syntetisk reference</title></circle><circle id="mark-hip" cx="-100" cy="-100" r="8" fill="none" stroke="#c02040" stroke-width="2"><title>Hofte manuel</title></circle><circle id="truth-knee" cx="-100" cy="-100" r="5" fill="#164964"><title>Knae syntetisk reference</title></circle><circle id="mark-knee" cx="-100" cy="-100" r="8" fill="none" stroke="#c02040" stroke-width="2"><title>Knae manuel</title></circle><circle id="truth-ankle" cx="-100" cy="-100" r="5" fill="#164964"><title>Ankel syntetisk reference</title></circle><circle id="mark-ankle" cx="-100" cy="-100" r="8" fill="none" stroke="#c02040" stroke-width="2"><title>Ankel manuel</title></circle><circle id="truth-shoulder" cx="-100" cy="-100" r="5" fill="#164964"><title>Skulder syntetisk reference</title></circle><circle id="mark-shoulder" cx="-100" cy="-100" r="8" fill="none" stroke="#c02040" stroke-width="2"><title>Skulder manuel</title></circle><circle id="truth-toe" cx="-100" cy="-100" r="5" fill="#164964"><title>Taa syntetisk reference</title></circle><circle id="mark-toe" cx="-100" cy="-100" r="8" fill="none" stroke="#c02040" stroke-width="2"><title>Taa manuel</title></circle><circle id="truth-elbow" cx="-100" cy="-100" r="5" fill="#164964"><title>Albue syntetisk reference</title></circle><circle id="mark-elbow" cx="-100" cy="-100" r="8" fill="none" stroke="#c02040" stroke-width="2"><title>Albue manuel</title></circle><circle id="edge0" cx="-100" cy="-100" r="5" fill="#cd6500"/><circle id="edge1" cx="-100" cy="-100" r="5" fill="#cd6500"/>
+</svg><p>Blaa punkter er opfundne referencer. Roede ringe er dine markeringer. Marker hofte, knae, ankel og skulder samt taa og albue. De sidste to punkter definerer fod og overarm. Alle punkter er fra samme venstre side.</p>
+<p>Kildebilledet er 640 x 360 pixels: x mod hoejre, y nedad. Ens skalering og letterboxing bevarer geometrien. Modelpunkter vises ikke som markeringer.</p>
+<button id="clear" type="button">Fjern valgt ledpunkt</button></section>
+<section><h2>2. Marker skivens diameter</h2><p>Skiven er 45 cm. Klik knappen og marker to modsatte kanter. Ingen fri skalaindtastning.</p>
+<button id="calibrate" type="button">Marker diameter med to klik</button><p id="scaleInfo"></p>
+<p>Diameterinterval: 1 pixel til billedets korteste side. Midtpunkt hoejst 3 pixels fra skivens centrum; diameterafvigelse hoejst 5 procent af den opfundne 90 px skive. Graenser er inklusive. Dette er tekniske klikregler.</p></section>
+<section><h2>3. Sammenlign vinkler</h2>
+<table><tr><th>Vinkel</th><th>Tre punkter, midterste er toppunkt</th></tr><tr><td>Hofte</td><td>Skulder, hofte, knae</td></tr><tr><td>Knae</td><td>Hofte, knae, ankel</td></tr><tr><td>Ankel</td><td>Knae, ankel, taa</td></tr><tr><td>Skulder</td><td>Albue, skulder, hofte</td></tr></table>
+<p>Alle er indvendige projicerede 2D-vinkler fra 0 til 180 grader, ikke signerede boejevinkler. Ankel er her fod mod underben, ikke underbenets haeldning fra lodret. Skulder er overarm mod torso. Manuel og syntetisk model bruger samme definition.</p>
+<p>Vinkel = atan2(|u kryds v|, u prik v) i grader for normaliserede straaler. Vinkler er dimensionsloese: cm/px bortfalder fra begge vektorer. Skivekalibrering er stadig paakraevet som maaleprotokol. Den retter ikke perspektiv eller 3D-projektion.</p>
+<p>Fejl = modelgrader minus manuelle grader. PASS kraever maksimal absolut vinkelfejl hoejst 5 grader over alle fire vinkler og alle valgte billeder. RMSE beskriver fejl, men styrer ikke dommen. Ingen afrunding i dommen. Manglende led, ugyldige punkter eller vektorer kortere end 1e-9 pixel giver UFULDSTAENDIG.</p>
+<p>Samlet dom kraever praecis tre unikke gyldige klip; en mangel giver UFULDSTAENDIG, ogsaa sammen med FAIL. Resultater er kun nominelle syntetiske resultater.</p>
+<button id="compare" type="button">Fastlaas og sammenlign</button><button id="save" type="button">Gem klip lokalt</button><button id="restore" type="button">Gendan klip</button>
+<p id="message" role="status" aria-live="polite"></p><p>Rettelser ophÃƒÂ¦ver fastlaasning. En fejlet gendannelse fjerner gamle resultater. Lagring kan vaere utilgaengelig paa file-URL; fejl vises eksplicit. Ingen upload.</p>
+<h3>Valgt klip</h3><pre id="result"></pre><h3>Alle tre klip</h3><pre id="aggregate"></pre></section></main>
+<script>// Own pure VA-MARK2 synthetic contract. Original full modules remain inert.
+const need = (ok, why) => { if (!ok) throw new TypeError(why); };
+const finite = Number.isFinite;
+const positive = x => finite(x) && x > 0;
+const text = x => typeof x === 'string' && x.trim().length > 0;
+const SCHEMA = 'va-mark2-synthetic/v1';
+const JOINTS = Object.freeze(['shoulder', 'hip', 'knee', 'ankle', 'toe', 'elbow']);
+const DEFINITIONS = Object.freeze({
+  hip: Object.freeze(['shoulder', 'hip', 'knee']), knee: Object.freeze(['hip', 'knee', 'ankle']),
+  ankle: Object.freeze(['knee', 'ankle', 'toe']), shoulder: Object.freeze(['elbow', 'shoulder', 'hip'])
+});
+const LIMIT_DEG = 5;
+function canonical(x) {
+  if (x === null || typeof x !== 'object') return JSON.stringify(x);
+  return Array.isArray(x) ? '[' + x.map(canonical).join(',') + ']' :
+    '{' + Object.keys(x).sort().map(k => JSON.stringify(k) + ':' + canonical(x[k])).join(',') + '}';
+}
+const point = p => p && finite(p.x) && finite(p.y);
+const inImage = (p, image) => point(p) && p.x >= 0 && p.y >= 0 && p.x <= image.width && p.y <= image.height;
+// Interior projected 2D angle at b. Normalized vectors avoid product overflow.
+// Below 1e-9 source pixels is degenerate, matching the pinned angleAt floor.
+function angleDeg(a, b, c) {
+  need(point(a) && point(b) && point(c), 'missing_joint');
+  const ux = a.x-b.x, uy = a.y-b.y, vx = c.x-b.x, vy = c.y-b.y;
+  const u = Math.hypot(ux, uy), v = Math.hypot(vx, vy);
+  need(finite(u) && finite(v) && u >= 1e-9 && v >= 1e-9, 'degenerate_vector');
+  return Math.atan2(Math.abs((ux/u)*(vy/v)-(uy/u)*(vx/v)),
+    Math.max(-1, Math.min(1, (ux/u)*(vx/v)+(uy/u)*(vy/v)))) * 180/Math.PI;
+}
+function angles(pose) {
+  return Object.fromEntries(Object.entries(DEFINITIONS).map(([name, keys]) =>
+    [name, angleDeg(...keys.map(k => pose?.[k]))]));
+}
+function validateFixture(f) {
+  need(f && f.schema === SCHEMA && f.status === 'synthetic_only', 'synthetic_schema');
+  need(text(f.clip_id) && f.clip_id === f.clip_id.trim() && text(f.setup_id) && text(f.revision), 'identity');
+  need(['squat','bench','deadlift'].includes(f.lift) && f.side === 'left', 'lift_side');
+  need(f.image && positive(f.image.width) && positive(f.image.height), 'image');
+  need(f.axis === 'px_x_right_y_down' && f.time_unit === 's' && f.clock === 'actual_timestamps', 'axis_time_units');
+  need(Array.isArray(f.frames) && f.frames.length >= 2 && f.frames.length <= 1000, 'frames');
+  let previous = -1;
+  const ids = new Set();
+  for (const q of f.frames) {
+    need(q && Number.isInteger(q.frame_id) && q.frame_id >= 0 && !ids.has(q.frame_id), 'frame_id');
+    ids.add(q.frame_id);
+    need(finite(q.t_s) && q.t_s > previous && q.t_s >= 0, 'actual_time'); previous = q.t_s;
+    need(inImage(q.disc, f.image) && positive(q.disc_px) && q.disc_px >= 1 &&
+      q.disc_px <= Math.min(f.image.width, f.image.height), 'synthetic_disc');
+    need(q.disc.x >= q.disc_px/2 && q.disc.x+q.disc_px/2 <= f.image.width &&
+      q.disc.y >= q.disc_px/2 && q.disc.y+q.disc_px/2 <= f.image.height, 'disc_bounds');
+    for (const k of JOINTS) {
+      need(q.truth && inImage(q.truth[k], f.image), 'truth_bounds');
+      need(q.model && (q.model[k] === null || inImage(q.model[k], f.image)), 'model_bounds');
+    }
+    angles(q.truth);
+  }
+  return f;
+}
+function createSession(f) {
+  validateFixture(f);
+  return { schema: SCHEMA, basis: canonical(f), locked: false, calibration: null,
+    marks: f.frames.map(q => ({ frame_id: q.frame_id, t_s: q.t_s,
+      pose: Object.fromEntries(JOINTS.map(k => [k, null])) })) };
+}
+// Deliberate pure copy of VA-MARK1 calibration geometry and inclusive tolerances.
+function validateCalibration(f, c) {
+  need(c && c.unit === 'cm_per_px' && c.disc_cm === 45, 'calibration_mismatch');
+  const q = f.frames.find(q => q.frame_id === c.frame_id);
+  need(q && Array.isArray(c.endpoints) && c.endpoints.length === 2, 'calibration_frame');
+  const [a,b] = c.endpoints;
+  need(inImage(a,f.image) && inImage(b,f.image), 'diameter_bounds');
+  const px = Math.hypot(a.x-b.x,a.y-b.y);
+  need(finite(px) && px >= 1 && px <= Math.min(f.image.width,f.image.height), 'diameter_interval');
+  const centerError = Math.hypot((a.x+b.x)/2-q.disc.x,(a.y+b.y)/2-q.disc.y);
+  need(centerError <= 3 && Math.abs(px-q.disc_px) <= q.disc_px*0.05 && c.disc_px === px, 'calibration_mismatch');
+  return c;
+}
+function validateSession(f,s) {
+  validateFixture(f);
+  need(s && s.schema === SCHEMA && s.basis === canonical(f), 'basis_mismatch');
+  need(typeof s.locked === 'boolean', 'session_header');
+  if (s.calibration !== null) validateCalibration(f,s.calibration);
+  need(Array.isArray(s.marks) && s.marks.length === f.frames.length, 'sample_coverage');
+  s.marks.forEach((m,i) => {
+    need(m && m.frame_id === f.frames[i].frame_id && m.t_s === f.frames[i].t_s, 'frame_time_alignment');
+    for (const k of JOINTS) need(m.pose && (m.pose[k] === null || inImage(m.pose[k],f.image)), 'manual_bounds');
+  });
+  return s;
+}
+function mark(f,s,index,joint,p) {
+  validateSession(f,s);
+  need(Number.isInteger(index) && index >= 0 && index < f.frames.length && JOINTS.includes(joint), 'selection');
+  need(p === null || inImage(p,f.image), 'manual_bounds');
+  return { ...s, locked: false, marks: s.marks.map((m,i) => i === index ?
+    { ...m, pose: { ...m.pose, [joint]: p && {x:p.x,y:p.y} } } : m) };
+}
+function calibrate(f,s,frame_id,endpoints) {
+  validateSession(f,s);
+  need(Array.isArray(endpoints) && endpoints.length === 2 && endpoints.every(p => inImage(p,f.image)), 'diameter_mark_required');
+  const [a,b] = endpoints;
+  const calibration = { disc_cm:45, unit:'cm_per_px', frame_id,
+    disc_px:Math.hypot(a.x-b.x,a.y-b.y), endpoints:endpoints.map(p=>({x:p.x,y:p.y})) };
+  validateCalibration(f,calibration);
+  return {...s,locked:false,calibration};
+}
+function clearCalibration(f,s) {
+  validateSession(f,s); return {...s,locked:false,calibration:null};
+}
+function lock(f,s) {
+  validateSession(f,s);
+  need(s.calibration !== null,'missing_calibration');
+  s.marks.forEach(m=>angles(m.pose));
+  return {...s,locked:true};
+}
+const incomplete = reason => ({status:'INCOMPLETE',label:'UFULDSTAENDIG',reason,physical_vc_pass:false,residuals:[],metrics:null});
+function compare(f,s) {
+  try {
+    validateSession(f,s);
+    need(s.locked,'manual_not_locked'); need(s.calibration !== null,'missing_calibration');
+    const residuals = f.frames.flatMap((q,i)=> {
+      const manual = angles(s.marks[i].pose), model = angles(q.model);
+      return Object.keys(DEFINITIONS).map(joint=>({frame_id:q.frame_id,t_s:q.t_s,joint,
+        manual_deg:manual[joint],model_deg:model[joint],error_deg:model[joint]-manual[joint],
+        abs_error_deg:Math.abs(model[joint]-manual[joint])}));
+    });
+    const errors = residuals.map(r=>r.abs_error_deg);
+    const metrics = {max_abs_deg:Math.max(...errors),rmse_deg:Math.hypot(...errors)/Math.sqrt(errors.length),limit_deg:LIMIT_DEG};
+    const status = metrics.max_abs_deg <= LIMIT_DEG ? 'PASS':'FAIL';
+    return {status,label:status,reason:'synthetic_nominal_only',physical_vc_pass:false,residuals,metrics,
+      cm_per_px:45/s.calibration.disc_px,angle_unit:'deg',uncertainty:null};
+  } catch(e) { return incomplete(e.message); }
+}
+function aggregate(trials) {
+  if (!Array.isArray(trials) || trials.length !== 3) return incomplete('exactly_three_clips_required');
+  try {
+    const ids = new Set();
+    const results = trials.map(t=> {
+      validateSession(t.fixture,t.session);
+      need(!ids.has(t.fixture.clip_id),'duplicate_clip'); ids.add(t.fixture.clip_id);
+      return compare(t.fixture,t.session);
+    });
+    if (results.some(r=>r.status === 'INCOMPLETE')) return {...incomplete('invalid_clip'),clips:results};
+    const status = results.some(r=>r.status === 'FAIL') ? 'FAIL':'PASS';
+    return {status,label:status,physical_vc_pass:false,clips:results.map((r,i)=>({clip_id:trials[i].fixture.clip_id,...r}))};
+  } catch(e) { return incomplete(e.message); }
+}
+function pointerPoint(rect,image,clientX,clientY) {
+  need(rect && positive(rect.width) && positive(rect.height) && finite(rect.left) && finite(rect.top),'viewport');
+  need(image && positive(image.width) && positive(image.height) && finite(clientX) && finite(clientY),'pointer');
+  const scale = Math.min(rect.width/image.width,rect.height/image.height);
+  const p = {x:(clientX-rect.left-(rect.width-image.width*scale)/2)/scale,
+    y:(clientY-rect.top-(rect.height-image.height*scale)/2)/scale};
+  return inImage(p,image) ? p:null;
+}
+function save(storage,f,s) {
+  try { validateSession(f,s); storage.setItem('VA-MARK2:'+f.clip_id,JSON.stringify({session:s,integrity:canonical(s)})); return {ok:true}; }
+  catch(e) {return {ok:false,reason:e.message};}
+}
+function restore(storage,f) {
+  try {
+    const raw = storage.getItem('VA-MARK2:'+f.clip_id);
+    need(typeof raw === 'string' && raw.length <= 500000,'storage_size');
+    const e = JSON.parse(raw);
+    need(e && e.integrity === canonical(e.session),'storage_integrity');
+    validateSession(f,e.session);
+    return {ok:true,session:e.session};
+  } catch(e) {return {ok:false,reason:e.message};}
+}
+
+// Own invented left-side poses. No recordings and no trained model execution.
+function fixtures() {
+  return ['squat','bench','deadlift'].map((lift,c)=>({
+    schema:'va-mark2-synthetic/v1',status:'synthetic_only',clip_id:'va2-'+lift,
+    setup_id:'fixed-side-'+c,revision:'VA-MARK2-v1',lift,side:'left',
+    image:{width:640,height:360},axis:'px_x_right_y_down',time_unit:'s',clock:'actual_timestamps',
+    frames:[0,0.2,0.55,1.1].map((t_s,i)=> {
+      const d = i*4;
+      const truth = lift === 'bench' ? {shoulder:{x:240,y:170},hip:{x:340,y:170+d},
+        knee:{x:400,y:220},ankle:{x:420,y:300},toe:{x:460,y:300},elbow:{x:220+d,y:100}} :
+        {shoulder:{x:280+d,y:90},hip:{x:240+d,y:170},knee:{x:320,y:230-d},
+         ankle:{x:280,y:310},toe:{x:330,y:310},elbow:{x:350,y:130+d}};
+      // Deterministic known pixel noise. Its angular effect is measured, never asserted as physical evidence.
+      const noise = c === 0 ? 0.2 : c === 1 ? 1:12;
+      const model = Object.fromEntries(Object.entries(truth).map(([k,p])=>
+        [k,{x:p.x+(k==='knee'?noise:0),y:p.y+(k==='shoulder'?noise:0)}]));
+      return {frame_id:i*7,t_s,disc:{x:120,y:260},disc_px:90,truth,model};
+    })
+  }));
+}
+
+// Pure DOM controller with injected storage. No browser globals at module evaluation.
+function mount(dom,getStorage) {
+  const all=fixtures(), sessions=all.map(createSession), el=id=>dom.getElementById(id);
+  let clip=0,frame=0,joint='hip',diameter=null;
+  const f=()=>all[clip],s=()=>sessions[clip];
+  const message=t=>{el('message').textContent=t;};
+  function render() {
+    const q=f().frames[frame];
+    for (const k of JOINTS) {
+      for (const [prefix,p] of [['truth',q.truth[k]],['mark',s().marks[frame].pose[k]]]) {
+        el(prefix+'-'+k).setAttribute('cx',p?.x??-100);el(prefix+'-'+k).setAttribute('cy',p?.y??-100);
+      }
+    }
+    const ends=diameter?.length ? diameter : s().calibration?.frame_id===q.frame_id ? s().calibration.endpoints:[];
+    for (let i=0;i<2;i++) {el('edge'+i).setAttribute('cx',ends?.[i]?.x??-100);el('edge'+i).setAttribute('cy',ends?.[i]?.y??-100);}
+    for (const [prefix,pose] of [['truth',q.truth],['mark',s().marks[frame].pose]]) {
+      const chains=[['shoulder','hip','knee','ankle','toe'],['shoulder','elbow']];
+      const d=chains.map(keys=>keys.every(k=>pose[k]) ? keys.map((k,i)=>(i?'L':'M')+pose[k].x+' '+pose[k].y).join(' '):'').join(' ');
+      el(prefix+'Path').setAttribute('d',d);
+    }
+    const n=s().marks.reduce((n,m)=>n+JOINTS.filter(k=>m.pose[k]).length,0),total=f().frames.length*JOINTS.length;
+    el('coverage').textContent=n+'/'+total+' ledpunkter ('+(100*n/total).toFixed(1)+' %) | '+(s().locked?'fastlaast':'kladde');
+    el('frameInfo').textContent=f().clip_id+' | frame '+q.frame_id+' | '+q.t_s+' s | venstre side';
+    el('scaleInfo').textContent=s().calibration?'45 cm / '+s().calibration.disc_px+' px fra markeret diameter':'Ingen markeret diameter';
+    el('result').textContent=JSON.stringify(compare(f(),s()),null,2);
+    el('aggregate').textContent=JSON.stringify(aggregate(all.map((fixture,i)=>({fixture,session:sessions[i]}))),null,2);
+  }
+  const change=fn=>{try{fn();render();message('Kladde aendret. Fastlaas igen.');}catch(e){render();message('AFVIST: '+e.message);}};
+  el('scene').addEventListener('click',e=>change(()=>{
+    const p=pointerPoint(el('scene').getBoundingClientRect(),f().image,e.clientX,e.clientY);
+    if (!p) throw Error('outside_image');
+    if (diameter) {
+      diameter.push(p);
+      if(diameter.length===2) {const ends=diameter;diameter=null;sessions[clip]=calibrate(f(),s(),f().frames[frame].frame_id,ends);}
+    } else sessions[clip]=mark(f(),s(),frame,joint,p);
+  }));
+  el('clear').addEventListener('click',()=>change(()=>{diameter=null;sessions[clip]=mark(f(),s(),frame,joint,null);}));
+  el('calibrate').addEventListener('click',()=>change(()=>{sessions[clip]=clearCalibration(f(),s());diameter=[];}));
+  el('compare').addEventListener('click',()=>change(()=>{
+    if(diameter)throw Error('diameter_pending');sessions[clip]=lock(f(),s());
+  }));
+  for(const [id,max,set] of [['clip',all.length,n=>{clip=n;frame=0;el('frame').value='0';}],
+    ['frame',4,n=>{frame=n;}]]) el(id).addEventListener('change',()=>change(()=>{
+      const n=Number(el(id).value);if(!Number.isInteger(n)||n<0||n>=max)throw Error('selection');
+      diameter=null;set(n);
+    }));
+  el('joint').addEventListener('change',()=>change(()=>{
+    const k=el('joint').value;if(!JOINTS.includes(k))throw Error('joint');diameter=null;joint=k;
+  }));
+  el('save').addEventListener('click',()=>{
+    try{const r=save(getStorage(),f(),s());message(r.ok?'Gemt lokalt.':'IKKE GEMT: '+r.reason);}
+    catch(e){message('IKKE GEMT: '+e.message);}
+  });
+  el('restore').addEventListener('click',()=>{
+    diameter=null;sessions[clip]=createSession(f());
+    try{const r=restore(getStorage(),f());if(r.ok)sessions[clip]=r.session;render();message(r.ok?'Gendannet med eksakt basis.':'IKKE GENDANNET: '+r.reason);}
+    catch(e){render();message('IKKE GENDANNET: '+e.message);}
+  });
+  render();message('SYNTETISK: Marker seks punkter i hvert billede og skivens diameter med to klik.');
+}
+
+mount(document,()=>window.localStorage);
+</script></html>
