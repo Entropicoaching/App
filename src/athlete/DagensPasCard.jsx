@@ -39,7 +39,7 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, onRateSession, rekordFejring = null, onVarmOp = null }) {
+function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, overviewSession = null, onRateSession, rekordFejring = null, onVarmOp = null }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
   const lastSetTapRef = useRef(-Infinity)
   // ORDRE 1459: forklaringen vises kun, til pausen har kørt én gang.
@@ -212,6 +212,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
 
   if (pas.status !== 'open') {
     const up = pas.upcoming
+    const completedOverview = overviewSession || finishedSession || pas.session
     return (
       <div style={s.card}>
         {nudge}
@@ -221,9 +222,9 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Der er intet pas i dag. Hvil er også en del af planen.'}
         </div>
         {rekordLinje}
-        {pas.status === 'done' && (finishedSession?.exercises || pas.session?.exercises) && (
-          <PasOverblik key={(finishedSession?.exercises ? finishedSession : pas.session).id}
-            session={finishedSession?.exercises ? finishedSession : pas.session} logs={exerciseLogs} />
+        {pas.status === 'done' && completedOverview?.exercises && (
+          <PasOverblik key={completedOverview.id}
+            session={completedOverview} logs={exerciseLogs} />
         )}
         {up ? (
           <button

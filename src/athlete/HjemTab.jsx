@@ -131,6 +131,14 @@ function HjemTab({
                     rekordFejring={rekordFejring}
                     onVarmOp={setMobilityMode ? () => { setMobilityMode('opvarmning'); setTab('mobilisering') } : null}
                     todayStr={today()}
+                    overviewSession={(() => {
+                      // APP-OV3: laesevisning bevares ogsaa efter vurdering/genaabning.
+                      const sessions = currentWeek?.sessions || []
+                      const last = sessions.find(se => (se.exercises || []).some(e => e.id === lastLoggedSet?.exerciseId))
+                      if (last && isSessionDone(last, exerciseLogs)) return last
+                      if (dagensPas?.status !== 'done') return null
+                      return [...sessions].reverse().find(se => isSessionDone(se, exerciseLogs)) || null
+                    })()}
                     finishedSession={(() => {
                       // ORDRE 419 (I3): passet, hvis sidste sæt lige er logget fra
                       // kortet, og som ikke har en vurdering. Vurderingen læses fra
