@@ -124,8 +124,8 @@ test('summarizeSilentFailsForCoach: tæller på tværs af flere rækker, ental/f
     { session_context: { silent_fails: [{ code: 'silent:video-upload-interrupted', at: '2026-09-09T10:00:00.000Z' }] } },
     { session_context: { silent_fails: [{ code: 'silent:pr-insert-failed', at: '2026-09-08T10:00:00.000Z' }] } },
   ]
-  assert.equal(summarizeSilentFailsForCoach(rows, now), 'Atleten havde netproblemer 2 gange i denne uge.')
-  assert.equal(summarizeSilentFailsForCoach(rows.slice(0, 1), now), 'Atleten havde netproblemer 1 gang i denne uge.')
+  assert.equal(summarizeSilentFailsForCoach(rows, now), 'Atleten havde 2 registreringer af tekniske fejl de seneste 7 dage.')
+  assert.equal(summarizeSilentFailsForCoach(rows.slice(0, 1), now), 'Atleten havde 1 registrering af en teknisk fejl de seneste 7 dage.')
 })
 
 test('summarizeSilentFailsForCoach: ældre end 7 dage og ukendte koder tælles ikke med', () => {

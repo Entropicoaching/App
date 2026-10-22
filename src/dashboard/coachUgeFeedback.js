@@ -62,5 +62,7 @@ export function ugeFeedbackTree(h, feedback, ugeNr, scope = ugeNr, navne = {}) {
 
 export function coachUgeFeedback(week, athleteLogs, now) {
   if (!erAfsluttetUge(week, now) || !Array.isArray(athleteLogs)) return null
-  return summarizeWeek(week, logsForUge(week, athleteLogs))
+  // App logs store actual RPE in rpe_actual; the pure summary accepts rpe.
+  const logs = logsForUge(week, athleteLogs).map(log => ({ ...log, rpe: log.rpe_actual }))
+  return summarizeWeek(week, logs)
 }

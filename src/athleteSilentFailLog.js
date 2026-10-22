@@ -156,8 +156,8 @@ export function takeStaleUploadInflight(athleteId, storage = globalThis.localSto
 }
 
 
-// ORDRE 131 · commit 3: bygger coachens étlinje-resumé ("Atleten havde
-// netproblemer 2 gange i denne uge") ud fra de seneste video_analyses-rækkers
+// Bygger coachens étlinje-resumé af registrerede tekniske fejl fra de
+// seneste 7 dage ud fra de indlæste video_analyses-rækkers
 // session_context.silent_fails — se AthleteSilentFailNote.jsx (den eneste
 // bruger, kaldt fra Dashboard.jsx ét sted). Ren funktion (ingen Supabase-
 // afhængighed), så den kan enhedstestes uden en levende database.
@@ -174,5 +174,5 @@ export function summarizeSilentFailsForCoach(rows, now = Date.now()) {
     }
   }
   if (!total) return null
-  return `Atleten havde netproblemer ${total} ${total === 1 ? 'gang' : 'gange'} i denne uge.`
+  return `Atleten havde ${total} ${total === 1 ? 'registrering af en teknisk fejl' : 'registreringer af tekniske fejl'} de seneste 7 dage.`
 }
