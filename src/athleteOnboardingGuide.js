@@ -16,13 +16,13 @@ export const ATHLETE_ONBOARDING_GUIDE_STEPS = [
   },
   {
     key: 'find-session',
-    heading: 'Sådan finder du din træning.',
-    body: 'På Hjem ser du ugens program. Sessionen der står for tur er markeret som "Næste". Tryk på den, så folder den sig ud med dagens øvelser.',
+    heading: 'Sådan ser du din uge og dagens pas.',
+    body: 'På Hjem ser du, hvad din coach har planlagt for ugen. Dagens pas er markeret som "Næste". Tryk på det, så folder det sig ud med dagens øvelser.',
   },
   {
     key: 'log-saet',
-    heading: 'Sådan logger du et sæt.',
-    body: 'For hver øvelse skriver du vægten og reps du løftede, og vælger den RPE der passer. Gør det sæt for sæt, så følger programmet med.',
+    heading: 'Sådan logger du dagens pas.',
+    body: 'For hver øvelse skriver du vægten og antal gentagelser for hvert sæt, og vælger din RPE. RPE er dit eget skøn over, hvor hårdt sættet føltes, og der er ingen rigtige eller forkerte tal. Er du i tvivl om noget, så spørg din coach.',
   },
 ]
 
