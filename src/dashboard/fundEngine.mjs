@@ -1,6 +1,7 @@
 /* VA-K5: own small pure measurement functions; pinned full modules stay inert. */
 // ESM packaging of pinned VA-K5 rules; not executed during production.
 'use strict';
+import { gateAssessments } from './captureQuality.mjs';
 const bad=()=>{throw new TypeError('Ugyldigt syntetisk format eller svargrundlag');};
 const exact=(o,ks)=>o!==null&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===ks.length&&ks.every(k=>Object.hasOwn(o,k));
 const need=(v)=>{if(!v)bad();};
@@ -56,12 +57,12 @@ function analyze(d){
   values.SPEED_RANGE=[num(max(speeds)-Math.min(...speeds)),known?num(2*max(bs)):null,known?null:'unknown_or_unresolved_uncertainty'];
  }
  values.KNEE_REVERSAL=all('knee_deg')?[Math.max(0,max(p.slice(1).map((q,i)=>num(p[i].knee_deg-q.knee_deg)))),u.knee_deg===null?null:num(2*u.knee_deg),null]:[null,null,'missing_channel'];
- return defs.filter(r=>d.lift!=='bench'||['BAR_FORWARD','SPEED_RANGE'].includes(r[0])).map(([id,threshold,unit,reason,formula])=>{
+ return gateAssessments(defs.filter(r=>d.lift!=='bench'||['BAR_FORWARD','SPEED_RANGE'].includes(r[0])).map(([id,threshold,unit,reason,formula])=>{
   const [value,e,unavailable_reason]=values[id];return {id,threshold,unit,reason,formula,value,abs_error_bound:e,unavailable_reason,
    nominal_exceeds:value===null?null:value>threshold,
    robust_exceeds:value===null||e===null?null:num(value-e)>threshold?true:num(value+e)<=threshold?false:null,
    source:null,source_note:'VA-K4: input-01-VA-K4-regler.mjs og input-03-FUND-KATALOG.md. Ingen dokumenteret kilde til teknikgrænsen.',status:'afventer Marc'};
- });
+ }));
 }
 /* Sorted canonical full content binds answers without trusting hashes or clip labels alone. */
 function canonical(x){if(x===null||typeof x!=='object')return JSON.stringify(x);if(Array.isArray(x))return '['+Array.from(x,canonical).join(',')+']';return '{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}';}

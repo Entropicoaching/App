@@ -2,6 +2,7 @@ import { useReducer } from 'react'
 import { initialLocalVideoState, localVideoTransition } from './vaLocalState.mjs'
 import { sessionDocument, modelDocument } from './vaLocalDocuments'
 import FundReview from './FundReview'
+import { captureWarning } from './captureQuality.mjs'
 
 // Deliberately has no props: data and callbacks from the athlete review stay outside.
 export default function AnalyseLokaltVaerktoej() {
@@ -17,6 +18,7 @@ export default function AnalyseLokaltVaerktoej() {
       </button>
       {state.open && (
         <div id="va-int1-local">
+          <p role="alert" data-va-capture-quality="unknown">{captureWarning(null)}</p>
           <p>Kun syntetisk prøvegrundlag. Skift af værktøj, lukning eller atlet rydder arbejdet i visningen. Fundvurdering har særskilt lokal gemning og fileksport; gem før du forlader den. Målesession og løftmodel gemmes ikke.</p>
           <p>Målesession og løftmodel har hver sit inputformat. Der overføres ingen data mellem dem. Fund og cues afventer Marc; fysisk måleaccept og teknikaccept er false.</p>
           <nav aria-label="Lokale analyseværktøjer" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
