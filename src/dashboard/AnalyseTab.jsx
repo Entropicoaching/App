@@ -13,6 +13,7 @@ import {
   videoCoachMetricText, videoCoachBaselineText, parsePlannedRpe, buildLiftSeries,
 } from '../dashboardShared'
 import { BarChart, LineChart, ScatterPlot } from '../dashboardCharts'
+import AnalyseLokaltVaerktoej from './AnalyseLokaltVaerktoej'
 import { primaerKurve, primaerOverskrift } from './primaerKurve'
 import { danskDag } from '../danskDato' // ORDRE 456 (A8): PR-tidslinjen i dansk tid
 import AthleteSilentFailNote from '../AthleteSilentFailNote' // ORDRE 131 · commit 3, flyttet hertil ordre 137 · commit 1 (Dashboard.jsx splittet under 130) — eneste rendering, se RAPPORT-131.md
@@ -142,6 +143,7 @@ export default function AnalyseTab({
                     </div>
                   )}
 
+                  <AnalyseLokaltVaerktoej key={selectedAthlete?.id || 'no-athlete'} />
                   {/* VideoCoach v3 · individuel historik (read-only første lag) */}
                   <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.24)', background: 'linear-gradient(145deg, rgba(200,146,58,0.055), #1c1c18 38%)' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
