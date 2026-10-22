@@ -221,6 +221,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           {pas.status === 'done' ? 'Passet er færdigt. ✓' : 'Der er intet pas i dag. Hvil er også en del af planen.'}
         </div>
         {rekordLinje}
+        {pas.status === 'done' && (finishedSession?.exercises || pas.session?.exercises) && (
+          <PasOverblik key={(finishedSession?.exercises ? finishedSession : pas.session).id}
+            session={finishedSession?.exercises ? finishedSession : pas.session} logs={exerciseLogs} />
+        )}
         {up ? (
           <button
             type="button"

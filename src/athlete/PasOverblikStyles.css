@@ -1,41 +1,43 @@
-.pas-overblik {
-  margin: 0 0 0.85rem;
-  border-block: 1px solid rgba(237,234,226,0.07);
-  color: #b8b4a8;
+.pas-overblik { margin: 0 0 0.85rem; text-align: left; }
+.pas-overblik-trigger, .pas-overblik-sheet {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   line-height: 1.5;
-  text-align: left;
+  color: #b8b4a8;
 }
-.pas-overblik > summary {
-  cursor: pointer;
-  padding: 0.5rem 0;
-  min-height: 44px;
-  box-sizing: border-box;
+.pas-overblik-trigger, .pas-overblik-header button {
+  background: transparent; border: 1px solid rgba(237,234,226,0.13);
+  color: inherit; font: inherit; min-height: 44px; padding: 0.45rem 0.65rem; cursor: pointer;
+}
+.pas-overblik-sheet {
+  position: fixed; inset: auto 0 0; margin: auto auto 0;
+  width: 100%; max-width: 480px; max-height: 85vh; max-height: 85dvh;
+  box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain;
+  background: #1c1c18; border: 1px solid rgba(237,234,226,0.13);
+  border-radius: 12px 12px 0 0; padding: 0 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
   overflow-wrap: anywhere;
 }
-.pas-overblik-body { padding-bottom: 0.65rem; }
+.pas-overblik-sheet::backdrop { background: rgba(0,0,0,0.72); }
+.pas-overblik-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  position: sticky; top: 0; z-index: 1; background: #1c1c18;
+  min-height: 64px; padding-top: 0.35rem; touch-action: pan-x;
+}
+.pas-overblik-header > h2 { pointer-events: none; font-size: 0.85rem; font-weight: 400; color: #edeae2; margin: 0; }
+.pas-overblik-header button { flex-shrink: 0; }
+.pas-overblik-progress { display: flex; align-items: center; gap: 0.85rem; margin: 0.65rem 0 1rem; }
+.pas-overblik-ring {
+  width: 76px; height: 76px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(#c8923a var(--progress), rgba(237,234,226,0.13) 0);
+}
+.pas-overblik-ring > span {
+  display: grid; place-items: center; width: 66px; height: 66px; border-radius: 50%; background: #1c1c18; color: #edeae2;
+}
 .pas-overblik-list, .pas-overblik-sets { list-style: none; padding: 0; margin: 0; }
-.pas-overblik-row, .pas-overblik-return {
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid rgba(237,234,226,0.13);
-  box-sizing: border-box;
-  min-height: 44px;
-  width: 100%;
-  text-align: left;
-  padding: 0.45rem 0.6rem;
-  overflow-wrap: anywhere;
-}
-.pas-overblik-row { display: flex; flex-direction: column; gap: 0.1rem; margin-bottom: 0.25rem; }
-.pas-overblik-row[aria-current='step'] { color: #c8923a; }
-.pas-overblik-row[aria-pressed='true'] { border-color: #c8923a; background: rgba(200,146,58,0.05); }
-.pas-overblik-meta { font-size: 0.58rem; }
-.pas-overblik-preview { padding: 0.5rem 0; overflow-wrap: anywhere; }
-.pas-overblik-name { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.85rem; color: #edeae2; }
-.pas-overblik-sets { margin: 0.35rem 0; display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; }
-.pas-overblik-help { color: #a9a69e; font-size: 0.56rem; }
-.pas-overblik-return { margin-top: 0.4rem; width: auto; max-width: 100%; }
-.pas-overblik > summary:focus-visible, .pas-overblik button:focus-visible { outline: 2px solid #c8923a; outline-offset: 2px; }
+.pas-overblik-list > li { padding: 0.75rem 0; border-top: 1px solid rgba(237,234,226,0.07); }
+.pas-overblik-name { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.9rem; color: #edeae2; }
+.pas-overblik-meta { font-size: 0.65rem; }
+.pas-overblik-sets { display: flex; flex-wrap: wrap; gap: 0.35rem 0.85rem; margin-top: 0.45rem; }
+.pas-overblik-sets [data-status='Færdigt'] { color: #c8923a; }
+.pas-overblik-sr { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pas-overblik-trigger:focus-visible, .pas-overblik-sheet button:focus-visible { outline: 2px solid #c8923a; outline-offset: 2px; }

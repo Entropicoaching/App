@@ -1,46 +1,57 @@
-import { useState } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { pasOverblik } from './pasOverblikModel.mjs'
+import { bindPasOverblik } from './pasOverblikDialog.mjs'
 import './PasOverblikStyles.css'
 
-// Kun læsevisning: det aktive logkort og dets inputnøgle forbliver uændrede.
-// Parent giver key=session.id, så et nyt pas starter lukket uden gammelt valg.
+// Kun læsevisning. Ingen callbacks til logning eller ændring af aktivt sæt.
 export default function PasOverblik({ session, logs, activeId }) {
-  const [selectedId, setSelectedId] = useState(null)
-  const model = pasOverblik(session, logs, activeId, selectedId)
-  if (!model.rows.length) return null
+  const trigger = useRef(null)
+  const dialog = useRef(null)
+  const handle = useRef(null)
+  const close = useRef(null)
+  const titleId = useId()
+  const model = pasOverblik(session, logs, activeId)
+  const hasRows = model.rows.length > 0
+  useEffect(() => {
+    if (!hasRows) return
+    return bindPasOverblik({ trigger: trigger.current, dialog: dialog.current,
+      handle: handle.current, close: close.current })
+  }, [hasRows])
+  if (!hasRows) return null
   return (
-    <details className="pas-overblik">
-      <summary>{model.summary}</summary>
-      <div className="pas-overblik-body">
+    <div className="pas-overblik">
+      <button ref={trigger} type="button" className="pas-overblik-trigger"
+        aria-haspopup="dialog" aria-expanded="false">Se hele passet</button>
+      <dialog ref={dialog} className="pas-overblik-sheet" aria-labelledby={titleId}>
+        <header ref={handle} className="pas-overblik-header">
+          <h2 id={titleId}>Dagens pas</h2>
+          <button ref={close} type="button" autoFocus aria-label="Luk overblik">Luk</button>
+        </header>
+        <div className="pas-overblik-progress">
+          <div className="pas-overblik-ring" role="progressbar" aria-label="Afsluttede sæt"
+            aria-valuemin={0} aria-valuemax={100} aria-valuenow={model.percent}
+            aria-valuetext={`${model.percent} %, ${model.done} af ${model.total} sæt afsluttet`}
+            style={{ '--progress': `${model.percent}%` }}>
+            <span>{model.percent}%</span>
+          </div>
+          <span>{model.done}/{model.total} sæt afsluttet</span>
+        </div>
         <ol className="pas-overblik-list" aria-label="Øvelser i dagens pas">
           {model.rows.map(row => (
-            <li key={row.exercise.id}>
-              <button type="button" className="pas-overblik-row"
-                aria-current={row.current ? 'step' : undefined}
-                aria-pressed={model.selected?.exercise.id === row.exercise.id}
-                onClick={() => setSelectedId(row.exercise.id)}>
-                <span>{row.index + 1}. {row.exercise.name}</span>
-                <span className="pas-overblik-meta">
-                  {row.done}/{row.total} sæt klaret
-                  {row.current ? ' · Aktuel' : row.exercise.id === model.nextId ? ' · Næste' : ''}
-                </span>
-              </button>
+            <li key={row.exercise.id} aria-current={row.current ? 'step' : undefined}>
+              <div className="pas-overblik-name">{row.exercise.name}</div>
+              <div className="pas-overblik-meta">{[row.exercise.reps && `× ${row.exercise.reps}`, row.exercise.intensity].filter(Boolean).join(' · ')}</div>
+              <ul className="pas-overblik-sets">
+                {row.sets.map(set => <li key={set.number} data-status={set.status}>
+                  <span aria-hidden="true">{set.status === 'Færdigt' ? '✓ ' : set.status === 'Sprunget over' ? '↷ ' : '○ '}</span>
+                  Sæt {set.number}<span className="pas-overblik-sr">: {set.status}</span>
+                  {set.status === 'Sprunget over' && <span> · sprunget over</span>}
+                </li>)}
+              </ul>
             </li>
           ))}
         </ol>
-        <div className="pas-overblik-preview" aria-live="polite" aria-atomic="true">
-          <div className="pas-overblik-name">{model.selected.exercise.name}</div>
-          <div>{[model.selected.exercise.sets && `${model.selected.exercise.sets} sæt`, model.selected.exercise.reps && `× ${model.selected.exercise.reps}`, model.selected.exercise.intensity].filter(Boolean).join(' · ')}</div>
-          <ul className="pas-overblik-sets">
-            {model.selected.sets.map(set => <li key={set.number}>Sæt {set.number}: {set.status}</li>)}
-          </ul>
-          <div>Kun overblik · det igangværende sæt står nedenfor.</div>
-          {!model.selected.current && (
-            <button type="button" className="pas-overblik-return" onClick={() => setSelectedId(activeId)}>Vis aktuel øvelse</button>
-          )}
-        </div>
-        <div className="pas-overblik-help">Klaret omfatter også sæt sprunget over.</div>
-      </div>
-    </details>
+      </dialog>
+    </div>
   )
 }
