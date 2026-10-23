@@ -58,7 +58,7 @@ export function summarizeWeek(week, logs) {
   const rpes = done.map(l => validRpe(l.rpe)).filter(v => v !== null);
   const invalid = done.filter(l => l.rpe != null && l.rpe !== '' && validRpe(l.rpe) === null).length;
   out.rpe = {
-    kilde: 'selvrapporteret subjektiv RPE; ikke en objektiv maaling eller diagnose',
+    kilde: 'selvrapporteret subjektiv RPE; ikke en objektiv måling eller diagnose',
     saetMedRpe: rpes.length, saetUdenRpe: done.length - rpes.length - invalid, ugyldigeRpe: invalid,
     gennemsnit: rpes.length ? Math.round(rpes.reduce((a, b) => a + b, 0) / rpes.length * 10) / 10 : null,
     max: rpes.length ? Math.max(...rpes) : null,
@@ -69,20 +69,20 @@ export function summarizeWeek(week, logs) {
   else out.status = out.pas.every(p => p.status === 'gennemfoert') ? 'fuld' : 'delvis';
 
   const q = out.spoergsmaal;
-  if (out.status === 'tom') q.push('Ugen indeholder ingen planlagte saet. Er det tilsigtet, eller mangler programmet data?');
-  if (out.status === 'ingen_logs') q.push('Der er ingen loggede saet. Blev ugen traenet uden logning, eller blev den ikke gennemfoert?');
-  if (out.status === 'sprunget_over') q.push('Alle ' + skippedSets + ' registrerede saet er markeret som sprunget over. Hvorfor blev ugen sprunget over, og var det aftalt med atleten?');
-  if (out.status === 'delvis') q.push('Ugen blev kun delvist gennemfoert. Skal de manglende pas haandteres, eller er afvigelsen acceptabel?');
-  if (out.status === 'delvis' && uncovered.length) q.push('Oevelser uden fuld daekning: ' + uncovered.join(', ') + '. Skal de indhentes, eller er afvigelsen acceptabel?');
-  if (out.afvigelser.some(a => a.type === 'anden_vaegt' || a.type === 'faerre_reps')) q.push('Atleten afveg fra anbefalet vaegt/reps. Hvad er forklaringen, og er det relevant for naeste uges belastning?');
-  if (out.afvigelser.some(a => a.type === 'ukendt_ovelse_log')) q.push('Der er logs for oevelser uden for ugens program. Hvor hoerer de hjemme?');
-  if (out.noter.length) q.push('Atleten har skrevet noter. Kraever nogen af dem opfoelgning?');
+  if (out.status === 'tom') q.push('Ugen indeholder ingen planlagte sæt. Er det tilsigtet, eller mangler programmet data?');
+  if (out.status === 'ingen_logs') q.push('Der er ingen loggede sæt. Blev ugen trænet uden logning, eller blev den ikke gennemført?');
+  if (out.status === 'sprunget_over') q.push('Alle ' + skippedSets + ' registrerede sæt er markeret som sprunget over. Hvorfor blev ugen sprunget over, og var det aftalt med atleten?');
+  if (out.status === 'delvis') q.push('Ugen blev kun delvist gennemført. Skal de manglende pas håndteres, eller er afvigelsen acceptabel?');
+  if (out.status === 'delvis' && uncovered.length) q.push('Øvelser uden fuld dækning: ' + uncovered.join(', ') + '. Skal de indhentes, eller er afvigelsen acceptabel?');
+  if (out.afvigelser.some(a => a.type === 'anden_vaegt' || a.type === 'faerre_reps')) q.push('Atleten afveg fra anbefalet vægt/reps. Hvad er forklaringen, og er det relevant for næste uges belastning?');
+  if (out.afvigelser.some(a => a.type === 'ukendt_ovelse_log')) q.push('Der er logs for øvelser uden for ugens program. Hvor hører de hjemme?');
+  if (out.noter.length) q.push('Atleten har skrevet noter. Kræver nogen af dem opfølgning?');
   if (doneSets > 0) {
-    if (out.rpe.saetMedRpe === 0) q.push('RPE mangler helt for ugen. Skal atleten spoerges direkte?');
+    if (out.rpe.saetMedRpe === 0) q.push('RPE mangler helt for ugen. Skal atleten spørges direkte?');
     else {
       const missing = out.rpe.saetUdenRpe + out.rpe.ugyldigeRpe;
-      if (missing > 0) q.push('RPE mangler eller er ugyldig for ' + missing + ' saet; oversigten bygger kun paa de oevrige.');
-      if (out.rpe.gennemsnit >= RPE_HIGH) q.push('Selvrapporteret RPE var hoej (gns ' + out.rpe.gennemsnit + '). Hvordan vil coachen vurdere det sammen med atleten?');
+      if (missing > 0) q.push('RPE mangler eller er ugyldig for ' + missing + ' sæt; oversigten bygger kun på de øvrige.');
+      if (out.rpe.gennemsnit >= RPE_HIGH) q.push('Selvrapporteret RPE var høj (gns ' + out.rpe.gennemsnit + '). Hvordan vil coachen vurdere det sammen med atleten?');
     }
   }
   return out;
