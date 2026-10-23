@@ -183,6 +183,9 @@ test('APP-TEST3: statisk JSX-binding for antal, procent og knap bruger samme mod
   for (const text of [card, card.replace(/\r?\n/g, '\r\n')]) {
     assert.match(text, /session=\{session\}\s+logs=\{exerciseLogs\}\s+activeId=\{ex\.id\}/)
     assert.match(text, /triggerLabel=\{model => naesteKnapNavn\(naeste, model\.percent\)\}/)
-    assert.match(text, /naesteOevelse\(exerciseViewGroups\(session\.exercises\), ex\.id\)/)
+    // APP-PERF1: samme sessionsgrupper genbruges til raekke og naeste oevelse.
+    assert.match(text, /const viewGroups = exerciseViewGroups\(session\.exercises\)/)
+    assert.match(text, /const viewRow = dagensPasRaekke\(viewGroups, ex\.id\)/)
+    assert.match(text, /const naeste = naesteOevelse\(viewGroups, ex\.id\)/)
   }
 })

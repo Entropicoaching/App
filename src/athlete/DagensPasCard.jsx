@@ -1,4 +1,4 @@
-import { exerciseSetView, exerciseViewGroups, exerciseViewRows } from '../exerciseSetView'
+import { exerciseSetView, exerciseViewGroups } from '../exerciseSetView'
 // "Dagens pas"-kortet paa forsiden (egen tilstand: naeste-saet-visning,
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Skrivefunktionerne kommer stadig ind som props fra AthleteView.
@@ -18,7 +18,7 @@ import { canAcceptSetTap } from './setTapGuard'
 import { restSecondsForExercise } from '../restBetweenSets'
 import { visTid, harSetPauseForklaring, markerPauseForklaring, foersteSaetTekst } from './pauseLinje'
 import { SMERTE_LINJE } from '../saetSmerte'
-import { logStil, naesteKnapNavn, naesteOevelse, naesteOevelseDetalje, saetStreger, talBredde } from './dagensPasLayout.mjs'
+import { dagensPasRaekke, logStil, naesteKnapNavn, naesteOevelse, naesteOevelseDetalje, saetStreger, talBredde } from './dagensPasLayout.mjs'
 
 // ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
 // samme øvelse (også et sæt, der venter i køen), det kortet viser som
@@ -288,9 +288,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const vaegtOevelse = Number(ex.recommended_weight) > 0 || Number(last?.weight) > 0 || !!ugensSenesteSaet(exerciseLogs, ex.id) || Number(suggestion?.weight) > 0
   const spoergNulKg = vaegtOevelse && !(parseFloat(input.weight) > 0)
   const view = exerciseSetView(ex.name)
-  const viewRow = exerciseViewRows(session.exercises).find(row => row.ex.id === ex.id)
+  const viewGroups = exerciseViewGroups(session.exercises)
+  const viewRow = dagensPasRaekke(viewGroups, ex.id)
   // ORDRE 330 · blok 2 (main): øvelsen efter denne, til "Næste øvelse"-linjen (APP-OV4: genindsat).
-  const naeste = naesteOevelse(exerciseViewGroups(session.exercises), ex.id)
+  const naeste = naesteOevelse(viewGroups, ex.id)
   const stepWeightBy = delta => { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), weight: stepWeight(p[key]?.weight ?? input.weight, delta) } })) }
   const stepRepsBy = delta => { touchedRef.current.add(key); setLogInputs(p => stepRepsInInputs(p, key, input, repsValue, delta)) }
 

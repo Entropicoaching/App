@@ -26,6 +26,16 @@ export const T = {
   serif: "'Playfair Display', serif",
 }
 
+// APP-PERF1: kortet bruger kun forskydning og gruppens samlede antal saet.
+// Brug samme grupper som naesteOevelse, uden at bygge alle visningsraekker.
+export function dagensPasRaekke(groups, exerciseId) {
+  for (const group of groups || []) {
+    const row = group.rows.find(row => row.ex.id === exerciseId)
+    if (row) return { offset: row.offset, totalSets: group.totalSets }
+  }
+  return undefined
+}
+
 // ORDRE 330 · blok 2 (main): én linje om øvelsen EFTER den aktuelle, og hvor
 // mange der kommer efter den igen. Samme regler som main (68f43741), flyttet ud
 // som ren funktion. `groups` er exerciseViewGroups(session.exercises).
