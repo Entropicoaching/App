@@ -2,8 +2,9 @@ import { exerciseSetView, exerciseViewGroups, exerciseViewRows } from '../exerci
 // "Dagens pas"-kortet paa forsiden (egen tilstand: naeste-saet-visning,
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Skrivefunktionerne kommer stadig ind som props fra AthleteView.
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useId } from 'react'
 import PasOverblik from './PasOverblik.jsx'
+import { setAnnouncement, bindFirstSetFocus } from './logAccessibility.mjs'
 import { createPortal } from 'react-dom'
 import { lastHeaviestSet } from '../nextSet'
 import { loadShowNextSetPreview, saveShowNextSetPreview } from '../nextSetPreview'
@@ -43,10 +44,28 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, overviewSession = null, onRateSession, rekordFejring = null, onVarmOp = null, logVariant = 'A' }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
   const lastSetTapRef = useRef(-Infinity)
+  const logContextId = useId()
+  const firstTrigger = useRef(null)
+  const firstDialog = useRef(null)
+  const firstClose = useRef(null)
+  const announcementRef = useRef({ last: lastLoggedSet, text: '' })
+  const [announcement, setAnnouncementText] = useState('')
+  useEffect(() => {
+    const next = setAnnouncement(announcementRef.current, lastLoggedSet, exerciseLogs, pas?.session?.exercises)
+    announcementRef.current = next
+    setAnnouncementText(next.text)
+  }, [lastLoggedSet, exerciseLogs, pas?.session])
+  const liveStatus = <span key="log-status" role="status" aria-live="polite" aria-atomic="true"
+    style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap' }}>{announcement}</span>
   // ORDRE 1459: forklaringen vises kun, til pausen har kørt én gang.
   const [pauseForklaret, setPauseForklaret] = useState(() => harSetPauseForklaring())
   // Ordre 1475: foer foerste saet er der ingen pause at starte; pop-up'en siger hvad der skal ske.
   const [foersteAaben, setFoersteAaben] = useState(false)
+  useEffect(() => {
+    if (!foersteAaben || !firstDialog.current) return
+    return bindFirstSetFocus({ dialog: firstDialog.current, trigger: firstTrigger.current,
+      close: firstClose.current, dismiss: () => setFoersteAaben(false) })
+  }, [foersteAaben, activeNext?.exercise?.id, activeNext?.setNumber])
   if (pauseAktiv && !pauseForklaret) setPauseForklaret(true)
   useEffect(() => { if (pauseAktiv) markerPauseForklaring() }, [pauseAktiv])
   function acceptSetTap() {
@@ -216,6 +235,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
     const completedOverview = overviewSession || finishedSession || pas.session
     return (
       <div style={s.card}>
+        {liveStatus}
         {nudge}
         {rateLine}
         <div style={s.cardLabel}>Dagens pas</div>
@@ -350,6 +370,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
 
   return (
     <div style={{ ...s.card, textAlign: 'left' }} data-log-variant={st.variant}>
+      {liveStatus}
       {nudge}
       {rateLine}
       <div style={st.kortHoved}>
@@ -601,8 +622,11 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       </div>
       {/* ORDRE 280 · commit 2 (main) — "Godkendt" er den mest gentagne handling:
           stor, nederst, ingen dialog. Samme onClick som main. */}
+      <span id={logContextId}
+        style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap' }}>{`${view.name}, sæt ${saetNu} af ${saetIAlt}`}</span>
       <div style={st.handlinger}>
         <button
+          type="button" aria-describedby={logContextId}
           style={{ ...s.btnPrimary, ...st.godkendt }}
           onClick={() => {
             if (spoergNulKg && nulKgSpurgt !== key) { setNulKgSpurgt(key); return }
@@ -612,6 +636,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           }}
         >Godkendt</button>
         <button
+          type="button" aria-describedby={logContextId}
           style={{ ...s.btnGhost, ...st.springOver }}
           onClick={() => { if (acceptSetTap()) skipSet(ex.id, setNumber, plannedRpe) }}
         >Spring over</button>
@@ -620,6 +645,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       {onStartPause && !pauseAktiv && (
         <button
           type="button"
+          ref={firstTrigger}
           data-testid="pause-start-linje"
           onClick={() => (intetLogget ? setFoersteAaben(true) : onStartPause(ex))}
           style={{ display: 'block', width: '100%', minHeight: '48px', boxSizing: 'border-box', background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.35)', borderRadius: '2px', padding: '0.55rem 0.8rem', marginTop: '0.5rem', cursor: 'pointer', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.74rem', color: '#d4d0c4', lineHeight: 1.5 }}
@@ -632,7 +658,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       )}
       {foersteAaben && createPortal(
         <div
-          role="dialog" aria-modal="true" aria-label="Første sæt" data-testid="foerste-saet-popup"
+          ref={firstDialog} role="dialog" aria-modal="true" aria-label="Første sæt" data-testid="foerste-saet-popup"
           onClick={(e) => { if (e.target === e.currentTarget) setFoersteAaben(false) }}
           style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(10,10,8,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         >
@@ -640,7 +666,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             <h2 data-testid="foerste-saet-tekst" style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', fontWeight: 400, color: '#edeae2', margin: 0, textAlign: 'center', lineHeight: 1.3 }}>
               {foersteSaetTekst({ navn: view.name, reps: repsToLog, kg: input.weight || ex.recommended_weight || last?.weight || suggestion?.weight })}
             </h2>
-            <button type="button" data-testid="foerste-saet-start" onClick={() => setFoersteAaben(false)} style={{ background: '#c8923a', border: 'none', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 600, padding: '0.5rem 2rem', minHeight: '48px', cursor: 'pointer' }}>Start</button>
+            <button ref={firstClose} type="button" data-testid="foerste-saet-start" onClick={() => setFoersteAaben(false)} style={{ background: '#c8923a', border: 'none', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 600, padding: '0.5rem 2rem', minHeight: '48px', cursor: 'pointer' }}>Start</button>
           </div>
         </div>,
         document.body

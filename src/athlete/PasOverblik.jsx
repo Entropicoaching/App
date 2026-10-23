@@ -16,6 +16,7 @@ export default function PasOverblik({ session, logs, activeId, children, trigger
   const handle = useRef(null)
   const close = useRef(null)
   const titleId = useId()
+  const dialogId = useId()
   const model = pasOverblik(session, logs, activeId)
   const hasRows = model.rows.length > 0
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function PasOverblik({ session, logs, activeId, children, trigger
   return (
     <div className={custom ? 'pas-overblik pas-overblik--linje' : 'pas-overblik'}>
       <button ref={trigger} type="button" className={custom ? 'pas-overblik-trigger pas-overblik-trigger--linje' : 'pas-overblik-trigger'}
-        aria-haspopup="dialog" aria-expanded="false"
+        aria-haspopup="dialog" aria-expanded="false" aria-controls={dialogId}
         aria-label={triggerLabel ? triggerLabel(model) : undefined}>
         {custom ? children(model) : (
           <>
@@ -38,7 +39,7 @@ export default function PasOverblik({ session, logs, activeId, children, trigger
           </>
         )}
       </button>
-      <dialog ref={dialog} className="pas-overblik-sheet" aria-labelledby={titleId}>
+      <dialog ref={dialog} id={dialogId} className="pas-overblik-sheet" aria-labelledby={titleId}>
         <header ref={handle} className="pas-overblik-header">
           <span className="pas-overblik-greb" aria-hidden="true" />
           <h2 id={titleId}>Dagens pas</h2>

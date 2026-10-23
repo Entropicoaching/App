@@ -2,17 +2,21 @@
 // Ingen storage, globale listeners eller logprops. Testbar med små DOM-fakes.
 export function bindPasOverblik({ trigger, dialog, handle, close }) {
   let start = null
+  let disposed = false
   const reset = () => { start = null }
   const onClose = () => {
+    if (disposed || dialog.open) return
     reset()
     trigger.setAttribute('aria-expanded', 'false')
-    trigger.focus()
+    if (trigger.isConnected) trigger.focus()
   }
   const hide = () => { if (dialog.open) dialog.close() }
   const show = () => {
     if (!dialog.open) dialog.showModal()
     trigger.setAttribute('aria-expanded', 'true')
+    close.focus()
   }
+  const cancel = event => { event.preventDefault(); hide() }
   const backdrop = event => {
     const box = dialog.getBoundingClientRect()
     if (event.target === dialog && (event.clientX < box.left || event.clientX > box.right ||
@@ -32,11 +36,12 @@ export function bindPasOverblik({ trigger, dialog, handle, close }) {
     if (dy >= 60 && dy > dx) hide()
   }
   const listeners = [[trigger, 'click', show], [close, 'click', hide],
-    [dialog, 'click', backdrop], [dialog, 'close', onClose],
+    [dialog, 'click', backdrop], [dialog, 'close', onClose], [dialog, 'cancel', cancel],
     [handle, 'pointerdown', down], [handle, 'pointerup', up],
     [handle, 'pointercancel', reset], [handle, 'lostpointercapture', reset]]
   for (const [node, type, fn] of listeners) node.addEventListener(type, fn)
   return () => {
+    disposed = true
     hide()
     for (const [node, type, fn] of listeners) node.removeEventListener(type, fn)
     trigger.setAttribute('aria-expanded', 'false')
