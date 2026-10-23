@@ -136,3 +136,82 @@ export function logStil(variant) {
     naesteSaet: { fontFamily: T.mono, fontSize: '0.6rem', color: T.daempet, letterSpacing: '0.02em', textAlign: 'left' },
   }
 }
+
+// APP-OV5: bunden af loggen ("Næste øvelse", ringen og "Hele passet") og
+// bundarket, i to retninger der følger loggens A/B. A: ét kort med stor ring
+// til venstre og næste øvelse ved siden af. B: to fliser som loggens kg/reps,
+// ringen med "Hele passet" og næste øvelse med sine sætstreger.
+export const BUND_VARIANTER = ['A', 'B']
+export const bundVariant = v => (v === 'B' ? 'B' : 'A')
+
+// Ringens tal: helt tal fra 0 til 100, også ved skæve input.
+export function bundProcent(percent) {
+  const p = Math.round(Number(percent))
+  return Number.isFinite(p) ? Math.min(100, Math.max(0, p)) : 0
+}
+
+// "4 sæt × 5", "3 sæt × 8-10" eller "4 sæt" (top + backoff har ingen fælles reps).
+export function saetGangeReps(totalSets, reps) {
+  return [totalSets && `${totalSets} sæt`, reps && `× ${reps}`].filter(Boolean).join(' ')
+}
+
+// Felterne i bundens kort. Hvert synligt stykke tekst er en del af
+// naesteKnapNavn(n, percent), så knappens navn rummer alt, der står på den.
+export function naesteKort(n, model) {
+  return {
+    etiket: n ? 'Næste øvelse' : '',
+    navn: n ? n.name : 'Sidste øvelse i passet',
+    ordination: n ? saetGangeReps(n.totalSets, n.reps) : '',
+    efter: n && n.laterCount > 0 ? `(+${n.laterCount})` : '',
+    streger: n ? saetStreger({ setNumber: 0, total: n.totalSets }) : [],
+    procent: bundProcent(model?.percent),
+    handling: 'Hele passet',
+  }
+}
+
+// Bundarkets linje under navnet: samme felter og format som loggens
+// ordination ("4 sæt · × 5 reps · RPE 8").
+export function ordinationTekst(ex) {
+  if (!ex) return ''
+  return [ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}${/^[\d\s\-\u2013]+$/.test(String(ex.reps)) ? ' reps' : ''}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')
+}
+
+// Bundens stilarter (loggens farver og skrifter). Kun præsentation.
+export function bundStil(variant, percent) {
+  const v = bundVariant(variant)
+  const p = bundProcent(percent)
+  const ring = v === 'B' ? 76 : 60
+  const hul = v === 'B' ? 62 : 48
+  const flise = { background: T.flade, border: `1px solid ${T.kant}`, borderRadius: '2px', boxSizing: 'border-box', minWidth: 0 }
+  return {
+    variant: v,
+    ring: { width: `${ring}px`, height: `${ring}px`, flexShrink: 0, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `conic-gradient(${T.accent} ${p}%, rgba(237,234,226,0.10) 0)` },
+    ringHul: { width: `${hul}px`, height: `${hul}px`, borderRadius: '50%', background: T.flade, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1px', color: T.tekst },
+    ringTal: { fontFamily: T.sans, fontSize: v === 'B' ? '1.4rem' : '1.15rem', fontWeight: 500, lineHeight: 1, fontVariantNumeric: 'tabular-nums' },
+    ringEnhed: { fontFamily: T.sans, fontSize: '0.7rem', lineHeight: 1, color: T.daempet, alignSelf: 'flex-end', marginBottom: v === 'B' ? '0.3rem' : '0.25rem' },
+    oevelse: { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '0.2rem', textAlign: 'left' },
+    etiket: { fontFamily: T.mono, fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: T.stille },
+    navn: { fontFamily: T.serif, fontSize: v === 'B' ? '1.3rem' : '1.2rem', fontWeight: 400, lineHeight: 1.15, color: T.tekst, overflowWrap: 'anywhere' },
+    ordinationRaekke: { display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.4rem' },
+    ordination: { fontFamily: T.mono, fontSize: '0.66rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent },
+    efter: { fontFamily: T.sans, fontSize: '0.75rem', color: T.stille },
+    handling: { fontFamily: T.sans, fontSize: '0.8rem', fontWeight: 500, color: T.accent, flexShrink: 0 },
+    // A: hele knappen er ét kort (baggrund og kant kommer fra CSS'en).
+    kort: { display: 'flex', alignItems: 'center', gap: '0.9rem', width: '100%' },
+    // B: to fliser side om side, som loggens kg/reps.
+    fliser: { display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr)', gap: '0.5rem', width: '100%' },
+    ringFlise: { ...flise, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', padding: '0.7rem 0.75rem', minHeight: '128px' },
+    oevelseFlise: { ...flise, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '0.5rem', padding: '0.7rem 0.8rem', minHeight: '128px' },
+    streger: { display: 'flex', gap: '4px' },
+    streg: { flex: 1, height: '4px', borderRadius: '2px', background: 'rgba(237,234,226,0.10)' },
+  }
+}
+
+// R2-APP-OV5: bundarkets ene næste sæt, eksplicit ud fra modellen
+// (pasOverblik). Det første planlagte sæt i den første aktuelle øvelse; ellers
+// null. Højst ét sæt i hele passet, uanset rækkefølgen af statusser.
+export function naesteSaet(model) {
+  const row = (model?.rows || []).find(r => r.current)
+  const set = (row?.sets || []).find(s => s.status === 'Planlagt')
+  return set ? { index: row.index, number: set.number } : null
+}
