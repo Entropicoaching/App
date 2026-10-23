@@ -1,43 +1,102 @@
-.pas-overblik { margin: 0 0 0.85rem; text-align: left; }
+/* APP-OV4: overblikket løftet til samme niveau som resten af appen.
+   Ingen monospace: knap, ark og liste bruger appens brødtekst (IBM Plex Sans),
+   overskriften appens titelskrift (Playfair Display). Accent kun på ring,
+   klarede sæt og den aktuelle øvelse. */
+.pas-overblik { margin: 0; text-align: left; }
 .pas-overblik-trigger, .pas-overblik-sheet {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  line-height: 1.5;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.45;
   color: #b8b4a8;
 }
-.pas-overblik-trigger, .pas-overblik-header button {
-  background: transparent; border: 1px solid rgba(237,234,226,0.13);
-  color: inherit; font: inherit; min-height: 44px; padding: 0.45rem 0.65rem; cursor: pointer;
+
+/* Standardknappen (fx når passet er færdigt): én rolig række med mini-ring. */
+.pas-overblik-trigger {
+  display: flex; align-items: center; gap: 0.65rem; width: 100%;
+  background: rgba(237,234,226,0.03); border: 1px solid rgba(237,234,226,0.13); border-radius: 2px;
+  color: #edeae2; font: inherit; min-height: 52px; padding: 0.55rem 0.85rem; cursor: pointer; text-align: left;
+  margin: 0 0 0.85rem;
 }
+.pas-overblik-trigger-tal { margin-left: auto; color: #a8a498; font-variant-numeric: tabular-nums; }
+.pas-overblik-mini {
+  width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%;
+  background:
+    radial-gradient(closest-side, #1c1c18 72%, transparent 74%),
+    conic-gradient(#c8923a var(--progress), rgba(237,234,226,0.13) 0);
+}
+
+/* Linjeknappen nederst i loggen: "Næste øvelse" + "Hele passet" i ét tryk. */
+.pas-overblik--linje { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid rgba(237,234,226,0.07); }
+.pas-overblik-trigger--linje { margin: 0; background: transparent; border-color: rgba(237,234,226,0.10); min-height: 56px; }
+.pas-overblik-trigger--linje:active { background: rgba(200,146,58,0.06); }
+
 .pas-overblik-sheet {
   position: fixed; inset: auto 0 0; margin: auto auto 0;
   width: 100%; max-width: 480px; max-height: 85vh; max-height: 85dvh;
   box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain;
-  background: #1c1c18; border: 1px solid rgba(237,234,226,0.13);
-  border-radius: 12px 12px 0 0; padding: 0 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  background: #1c1c18; border: 1px solid rgba(237,234,226,0.10); border-bottom: none;
+  border-radius: 16px 16px 0 0; padding: 0 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -12px 40px rgba(0,0,0,0.45);
   overflow-wrap: anywhere;
 }
-.pas-overblik-sheet::backdrop { background: rgba(0,0,0,0.72); }
+.pas-overblik-sheet::backdrop { background: rgba(10,10,8,0.72); }
 .pas-overblik-header {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   position: sticky; top: 0; z-index: 1; background: #1c1c18;
-  min-height: 64px; padding-top: 0.35rem; touch-action: pan-x;
+  min-height: 68px; padding-top: 0.9rem; touch-action: pan-x;
 }
-.pas-overblik-header > h2 { pointer-events: none; font-size: 0.85rem; font-weight: 400; color: #edeae2; margin: 0; }
-.pas-overblik-header button { flex-shrink: 0; }
-.pas-overblik-progress { display: flex; align-items: center; gap: 0.85rem; margin: 0.65rem 0 1rem; }
+.pas-overblik-greb {
+  position: absolute; top: 0.45rem; left: 50%; width: 40px; height: 4px; margin-left: -20px;
+  border-radius: 2px; background: rgba(237,234,226,0.18); pointer-events: none;
+}
+.pas-overblik-header > h2 {
+  pointer-events: none; margin: 0;
+  font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 400; color: #edeae2; letter-spacing: 0;
+}
+.pas-overblik-header button {
+  flex-shrink: 0; background: transparent; border: 1px solid rgba(237,234,226,0.13); border-radius: 2px;
+  color: #edeae2; font: inherit; min-height: 44px; min-width: 64px; padding: 0.4rem 0.9rem; cursor: pointer;
+}
+
+.pas-overblik-progress {
+  display: flex; align-items: center; gap: 1.1rem; margin: 0.5rem 0 1.25rem;
+  padding: 1rem; background: #141410; border: 1px solid rgba(237,234,226,0.07); border-radius: 4px;
+}
 .pas-overblik-ring {
-  width: 76px; height: 76px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center;
-  background: conic-gradient(#c8923a var(--progress), rgba(237,234,226,0.13) 0);
+  width: 96px; height: 96px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(#c8923a var(--progress), rgba(237,234,226,0.10) 0);
 }
 .pas-overblik-ring > span {
-  display: grid; place-items: center; width: 66px; height: 66px; border-radius: 50%; background: #1c1c18; color: #edeae2;
+  display: flex; align-items: baseline; justify-content: center; gap: 0.1rem;
+  width: 80px; height: 80px; border-radius: 50%; background: #141410; color: #edeae2;
+  line-height: 80px;
 }
+.pas-overblik-ring strong { font-size: 1.6rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.pas-overblik-ring small { font-size: 0.8rem; color: #a8a498; }
+.pas-overblik-status-tal { font-size: 1.05rem; font-weight: 500; color: #edeae2; font-variant-numeric: tabular-nums; }
+.pas-overblik-status-tekst { font-size: 0.8rem; color: #7a7770; }
+
 .pas-overblik-list, .pas-overblik-sets { list-style: none; padding: 0; margin: 0; }
-.pas-overblik-list > li { padding: 0.75rem 0; border-top: 1px solid rgba(237,234,226,0.07); }
-.pas-overblik-name { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.9rem; color: #edeae2; }
-.pas-overblik-meta { font-size: 0.65rem; }
-.pas-overblik-sets { display: flex; flex-wrap: wrap; gap: 0.35rem 0.85rem; margin-top: 0.45rem; }
-.pas-overblik-sets [data-status='Færdigt'] { color: #c8923a; }
+.pas-overblik-list > li {
+  padding: 0.85rem 0 0.85rem 0.85rem; border-top: 1px solid rgba(237,234,226,0.07);
+  border-left: 2px solid transparent;
+}
+.pas-overblik-list > li[aria-current='step'] { border-left-color: #c8923a; background: rgba(200,146,58,0.04); }
+.pas-overblik-row-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; padding-right: 0.25rem; }
+.pas-overblik-name { font-size: 1rem; font-weight: 500; color: #edeae2; }
+.pas-overblik-list > li[data-faerdig='ja'] .pas-overblik-name { color: #a8a498; }
+.pas-overblik-count { font-size: 0.85rem; color: #a8a498; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.pas-overblik-meta { font-size: 0.8rem; color: #7a7770; margin-top: 0.1rem; }
+.pas-overblik-sets { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+.pas-overblik-sets > li {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  min-height: 30px; padding: 0 0.65rem; border-radius: 999px;
+  border: 1px solid rgba(237,234,226,0.13); color: #7a7770; font-size: 0.78rem;
+}
+.pas-overblik-set-tegn:empty { display: none; }
+.pas-overblik-sets [data-status='Færdigt'] { color: #141410; background: #c8923a; border-color: #c8923a; font-weight: 500; }
+.pas-overblik-sets [data-status='Sprunget over'] { color: #a8a498; border-style: dashed; }
+.pas-overblik-legend { margin: 0.75rem 0 0; font-size: 0.75rem; color: #7a7770; }
 .pas-overblik-sr { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .pas-overblik-trigger:focus-visible, .pas-overblik-sheet button:focus-visible { outline: 2px solid #c8923a; outline-offset: 2px; }
