@@ -49,9 +49,10 @@ export function lavProgramHandlinger({
   // Hvor meget har atleten logget i en session: grøn=fuldt, amber=i gang, grå=intet.
   function sessionLogStatus(session) {
     const total = (session.exercises || []).reduce((a, e) => a + (e.sets || 0), 0)
+    const exerciseIds = new Set((session.exercises || []).map(e => e.id))
     let logged = 0
     for (const log of athleteLogs) {
-      if (!log.skipped && log.exercises?.session_id === session.id) logged++
+      if (!log.skipped && log.exercises?.session_id === session.id && exerciseIds.has(log.exercise_id)) logged++
     }
     let kind
     if (total > 0) {
@@ -323,7 +324,7 @@ export function lavProgramHandlinger({
 
   async function addSession(weekId) {
     const week = weeks.find(w => w.id === weekId)
-    const nextOrder = week?.sessions?.length || 0
+    const nextOrder = (week?.sessions || []).reduce((max, s) => Math.max(max, s.session_order ?? -1), -1) + 1
     await supabase.from('sessions').insert({
       week_id: weekId,
       title: sessionForm.title || 'Træning',
@@ -384,6 +385,7 @@ export function lavProgramHandlinger({
       week_id: targetWeekId,
       title: session.title,
       session_order: nextOrder,
+      weekday: session.weekday ?? null,
     }).select().single()
     if (!newSession) return
     for (const ex of (session.exercises || [])) {
@@ -493,7 +495,7 @@ export function lavProgramHandlinger({
   async function addExercise(sessionId) {
     const week = weeks.find(w => w.sessions?.some(s => s.id === sessionId))
     const session = week?.sessions?.find(s => s.id === sessionId)
-    const nextOrder = session?.exercises?.length || 0
+    const nextOrder = (session?.exercises || []).reduce((max, e) => Math.max(max, e.exercise_order ?? -1), -1) + 1
     await supabase.from('exercises').insert({
       session_id: sessionId,
       name: canonicalName(exerciseForm.name) || 'Øvelse',
