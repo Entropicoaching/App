@@ -7,6 +7,7 @@ import { supabase } from '../supabase'
 import { runGuardedWrite } from '../athleteWriteGuard'
 import { runGuardedRead } from '../athleteReadGuard'
 import { shiftDate, unitsForFood } from '../athleteShared'
+import { mealTemplateItems } from './kostSkabeloner.mjs'
 import { LOCAL_FOODS } from './lokaleFoedevarer'
 import { parseInputNumber, nutritionValues, finiteTotal, calendarTime } from './kostNumbers.mjs'
 
@@ -92,7 +93,11 @@ export function lavKostHandlinger({
       onReadError('Skabelonerne', athleteId),
     )
     if (!ok) return
-    setMealTemplates(data || [])
+    setMealTemplates((data || []).flatMap(template => {
+      const items = mealTemplateItems(template?.items)
+      return items && typeof template.name === 'string' && template.name.trim()
+        ? [{ ...template, items }] : []
+    }))
   }
 
   async function copyYesterday() {
@@ -114,7 +119,8 @@ export function lavKostHandlinger({
 
   async function saveTemplate() {
     if (!templateNameInput.trim() || !logs.length || !athlete) return
-    const items = logs.map(({ meal, kcal, protein, carb, fat }) => ({ meal, kcal, protein, carb, fat }))
+    const items = mealTemplateItems(logs)
+    if (!items) return
     const ok = await runGuardedWrite(
       () => supabase.from('meal_templates').insert({ athlete_id: athlete.id, name: templateNameInput.trim(), items }),
       () => showFlash('Skabelonen blev ikke gemt. Tjek din forbindelse og prøv igen.', 'error'),
@@ -127,9 +133,11 @@ export function lavKostHandlinger({
 
   async function logTemplate(template) {
     if (!athlete) return
+    const items = mealTemplateItems(template?.items)
+    if (!items) return
     const ok = await runGuardedWrite(
       () => supabase.from('meal_logs').insert(
-        template.items.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
+        items.map(item => ({ ...item, athlete_id: athlete.id, date: kostDate }))
       ),
       () => showFlash('Skabelonen kunne ikke logges. Tjek din forbindelse og prøv igen.', 'error'),
     )
@@ -160,12 +168,13 @@ export function lavKostHandlinger({
     const q = e.target.value
     setSearchQuery(q)
     setSelectedFood(null)
-    if (q.length < 2) { setSearchResults([]); return }
-    const ql = q.toLowerCase()
+    const searchKey = value => value.normalize('NFC').trim().toLocaleLowerCase('da-DK')
+    const ql = searchKey(q)
+    if (ql.length < 2) { setSearchResults([]); return }
     const custom = customFoods
-      .filter(f => f.name.toLowerCase().includes(ql))
+      .filter(f => typeof f?.name === 'string' && searchKey(f.name).includes(ql))
       .map(f => ({ ...f, isCustom: f.mine, isShared: !f.mine }))
-    const builtin = LOCAL_FOODS.filter(f => f.name.toLowerCase().includes(ql))
+    const builtin = LOCAL_FOODS.filter(f => typeof f?.name === 'string' && searchKey(f.name).includes(ql))
     setSearchResults([...custom, ...builtin])
   }
 
