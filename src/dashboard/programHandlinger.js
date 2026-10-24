@@ -1,3 +1,6 @@
+import { parseInputNumber, optionalInput } from '../inputValues.js'
+import { addCalendarDays } from '../calendarDate.js'
+
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Program og kalender: blok-accordion, log-status pr. session, uge-/session-/
 // øvelsesskrivning (tilføj, ret, slet, flyt, kopiér), ugeudkast og
@@ -73,11 +76,11 @@ export function lavProgramHandlinger({
   async function setBlockStartDate(athleteId, blockWeeks, isoDate) {
     if (!isoDate || !blockWeeks?.length) return
     const sorted = [...blockWeeks].sort((a, b) => a.week_number - b.week_number)
-    const base = new Date(isoDate + 'T12:00:00')
+    if (!addCalendarDays(isoDate, 0)) return
     const firstNo = sorted[0].week_number
     await Promise.all(sorted.map(w => {
-      const d = new Date(base.getTime() + (w.week_number - firstNo) * 7 * 86400000)
-      const ds = d.toISOString().slice(0, 10)
+      const ds = addCalendarDays(isoDate, (w.week_number - firstNo) * 7)
+      if (!ds) return null
       return w.start_date === ds ? null : supabase.from('weeks').update({ start_date: ds }).eq('id', w.id)
     }))
     await fetchCalendarWeeks(athletes.map(a => a.id))
@@ -250,18 +253,19 @@ export function lavProgramHandlinger({
     const nextNum = existing.length > 0 ? Math.max(...existing.map(w => w.week_number)) + 1 : 1
     const rows = []
     let weekNum = nextNum
-    let currentDate = new Date(planStartDate + 'T12:00:00')
+    let currentDate = addCalendarDays(planStartDate, 0)
+    if (!currentDate) return
     for (const block of blockPlan) {
       for (let i = 0; i < (block.weeks || 1); i++) {
         rows.push({
           athlete_id: athleteId,
           week_number: weekNum++,
           block_name: block.name || null,
-          start_date: currentDate.toISOString().slice(0, 10),
+          start_date: currentDate,
           coach_note: null,
           block_description: block.description || blockPurpose(block.name),
         })
-        currentDate = new Date(currentDate.getTime() + 7 * 24 * 3600 * 1000)
+        currentDate = addCalendarDays(currentDate, 7)
       }
     }
     await supabase.from('weeks').insert(rows)
@@ -528,7 +532,8 @@ export function lavProgramHandlinger({
   }
 
   async function saveRecommendedWeight(exerciseId) {
-    const val = recommendedInput.trim() ? parseFloat(recommendedInput) : null
+    const val = parseInputNumber(recommendedInput)
+    if (val === null && !optionalInput(recommendedInput)) { showFlash('Brug en gyldig vægt.', 'error'); return }
     const { error } = await supabase.from('exercises').update({ recommended_weight: val }).eq('id', exerciseId)
     if (error) { showFlash(`Kunne ikke gemme: ${error.message}`, 'error'); return }
     setEditingRecommended(null)

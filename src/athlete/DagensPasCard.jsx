@@ -1,3 +1,5 @@
+import { parseInputNumber } from '../inputValues.js'
+
 import { exerciseSetView, exerciseViewGroups } from '../exerciseSetView'
 // "Dagens pas"-kortet paa forsiden (egen tilstand: naeste-saet-visning,
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
@@ -286,7 +288,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   // ORDRE 456 (A1): en vægtøvelse = coachen, historikken, ugens sæt eller
   // appens forslag kender en vægt. Kropsvægtøvelser (Planke, Pull-ups) spørges ikke.
   const vaegtOevelse = Number(ex.recommended_weight) > 0 || Number(last?.weight) > 0 || !!ugensSenesteSaet(exerciseLogs, ex.id) || Number(suggestion?.weight) > 0
-  const spoergNulKg = vaegtOevelse && !(parseFloat(input.weight) > 0)
+  const spoergNulKg = vaegtOevelse && !(parseInputNumber(input.weight) > 0)
   const view = exerciseSetView(ex.name)
   const viewGroups = exerciseViewGroups(session.exercises)
   const viewRow = dagensPasRaekke(viewGroups, ex.id)
@@ -591,7 +593,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         {rpeOpenFor === key && (
           <div role="group" aria-label={`Vælg RPE for sæt ${setNumber}. RPE er din egen vurdering af, hvor hårdt sættet føltes. Tallet svarer til gentagelser i reserve: 10 betyder ingen tilbage, 9 én, 8 to, og så videre. Vurderingen kan ramme ved siden af, og i gennemsnit har man omkring én gentagelse mere tilbage, end man tror. Den bliver mere præcis, jo tættere på grænsen sættet er. Kilderne er uenige om erfaring: én finder, at øvede vurderer bedre, andre finder ingen forskel. Er du ny, så øv dig i at notere tallet, men lad det ikke stå alene.`} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.35rem' }}>
             {RPE_VALUES.map(v => {
-              const valgt = parseFloat(input.rpe || plannedRpe) === v
+              const valgt = parseInputNumber(input.rpe || plannedRpe) === v
               return (
                 <button
                   key={v}

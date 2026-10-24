@@ -1,3 +1,5 @@
+import { parseInputNumber } from '../inputValues.js'
+
 // Program-fanen (ugeplan, sæt-logger, opvarmning, session-feedback) —
 // udskilt fra AthleteView.jsx (ordre 232 · commit 3) som sin egen
 // lazy-loadede chunk, samme LazyBoundary-mønster som Dashboard.jsx's fire
@@ -572,14 +574,14 @@ export default function ProgramTab({
                                                 onClick={e => e.stopPropagation()}
                                                 onKeyDown={e => {
                                                   if (e.key === 'Enter') {
-                                                    const val = parseFloat(e.target.value)
+                                                    const val = parseInputNumber(e.target.value)
                                                     if (val >= 20) setExWarmupWeightOverride(prev => ({ ...prev, [exKey]: val }))
                                                     setExWarmupWeightEditing(null)
                                                   }
                                                   if (e.key === 'Escape') setExWarmupWeightEditing(null)
                                                 }}
                                                 onBlur={e => {
-                                                  const val = parseFloat(e.target.value)
+                                                  const val = parseInputNumber(e.target.value)
                                                   if (val >= 20) setExWarmupWeightOverride(prev => ({ ...prev, [exKey]: val }))
                                                   setExWarmupWeightEditing(null)
                                                 }}
@@ -787,7 +789,7 @@ export default function ProgramTab({
                                                 }}
                                               >
                                                 {RPE_VALUES.map(v => {
-                                                  const cur = parseFloat(input.rpe !== '' ? input.rpe : plannedRpe)
+                                                  const cur = parseInputNumber(input.rpe !== '' ? input.rpe : plannedRpe)
                                                   const isSelected = cur === v
                                                   return (
                                                     <button

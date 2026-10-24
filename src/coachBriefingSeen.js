@@ -1,3 +1,5 @@
+import { calendarDay } from './calendarDate.js'
+
 // ORDRE 325 · commit 1 — "Set" på et punkt under "Kræver dit blik". Lukker
 // hullet RAPPORT-317 (n8n) fandt: entropi_coach_briefing_v1 havde intet
 // "set"-felt, så mailen kun kunne bruge alder til at afgøre om noget
@@ -31,7 +33,8 @@ export function coachBriefingPointKey(item) {
     const athleteId = item.athlete?.id
     const track = item.track
     if (!athleteId || !track) return null
-    const day = item.createdAt ? new Date(item.createdAt).toISOString().slice(0, 10) : 'ukendt-dato'
+    const time = item.createdAt && calendarDay(item.createdAt) ? new Date(item.createdAt).getTime() : NaN
+    const day = Number.isFinite(time) ? new Date(time).toISOString().slice(0, 10) : 'ukendt-dato'
     return `message-${athleteId}-${track}-${day}`
   }
   if (item.kind === 'automation') {

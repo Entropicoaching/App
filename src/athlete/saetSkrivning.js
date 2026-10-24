@@ -1,3 +1,5 @@
+import { parseInputNumber, inputInteger, optionalInput } from '../inputValues.js'
+
 // Saet-skrivningen: persistSetLog-kaeden, logSet (optimistisk, PR-detektion),
 // Dagens pas' log/fortryd/ret, offline-koeen, spring over, session-feedback og
 // udfyld/spring resten over — flyttet uaendret ud af AthleteView.jsx (ordre 373)
@@ -257,18 +259,25 @@ export function lavSaetSkrivning({
     // optimistisk række har ikke et gyldigt db-id at opdatere på.
     const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
+    const weight = parseInputNumber(input.weight, 0)
+    const reps = inputInteger(repsCompleted, 0)
+    const rpe = optionalInput(input.rpe) ? parseInputNumber(plannedRpe) : parseInputNumber(input.rpe)
+    if (weight === null || reps === null || (!optionalInput(input.rpe) && (rpe === null || rpe > 10))) {
+      showFlash('Brug gyldig vægt, hele reps og RPE fra 0 til 10.', 'error')
+      return false
+    }
     const payload = {
       // ORDRE 401: tidspunktet for "Godkendt" følger sættet ind i køen, så et
       // sæt sendt senere beholder sin tid hos coachen. Et sæt der allerede
       // står som logget, beholder sin første tid.
       logged_at: existing?.logged_at || new Date().toISOString(),
-      weight: parseFloat(input.weight) || 0,
-      reps_completed: parseInt(repsCompleted) || 0,
+      weight,
+      reps_completed: reps,
       note: input.note || null,
       // Ingen egen RPE valgt → gem den planlagte RPE, så vi altid har data at
       // autoregulere på. Rører atleten vælgeren, gemmes deres værdi i stedet.
-      rpe_actual: input.rpe ? parseFloat(input.rpe) : (plannedRpe ?? null),
-      rpe_planned: plannedRpe ?? null,
+      rpe_actual: rpe != null && rpe <= 10 ? rpe : null,
+      rpe_planned: parseInputNumber(plannedRpe),
       skipped: false,
     }
 
@@ -552,11 +561,17 @@ export function lavSaetSkrivning({
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     if (!existing) return false
     const realExistingId = existing._optimistic ? undefined : existing.id
+    const weight = parseInputNumber(updates.weight, 0)
+    const reps = inputInteger(updates.reps, 0)
+    if (weight === null || reps === null) {
+      showFlash('Brug gyldig vægt og hele reps.', 'error')
+      return false
+    }
     const payload = {
       // ORDRE 401: en rettelse flytter ikke sættet i tid.
       logged_at: existing.logged_at || new Date().toISOString(),
-      weight: parseFloat(updates.weight) || 0,
-      reps_completed: parseInt(updates.reps) || 0,
+      weight,
+      reps_completed: reps,
       note: existing.note ?? null,
       rpe_actual: existing.rpe_actual ?? null,
       rpe_planned: existing.rpe_planned ?? null,
@@ -604,7 +619,7 @@ export function lavSaetSkrivning({
     const key = `${exerciseId}_${setNumber}`
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const realExisting = existing && !existing._optimistic ? existing : null
-    const payload = { logged_at: new Date().toISOString(), skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: plannedRpe ?? null }
+    const payload = { logged_at: new Date().toISOString(), skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: parseInputNumber(plannedRpe) }
     const knownClientId = loadOfflineSets(athlete.id)[key]?.clientId || setWriteRef.current[key]?.clientId
     const clientId = knownClientId || newSetClientId()
     const exerciseName = allWeeks.flatMap(w => w.sessions || []).flatMap(se => se.exercises || []).find(e => e.id === exerciseId)?.name || null
@@ -645,7 +660,7 @@ export function lavSaetSkrivning({
     }
     // Lageret kunne ikke tage sættet: direkte, med garden, som før 456.
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
-    const payload = { skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: plannedRpe ?? null }
+    const payload = { skipped: true, weight: 0, reps_completed: 0, note: null, rpe_actual: null, rpe_planned: parseInputNumber(plannedRpe) }
     const ok = await runGuardedWrite(
       () => existing
         ? supabase.from('exercise_logs').update(payload).eq('id', existing.id)
@@ -674,7 +689,7 @@ export function lavSaetSkrivning({
     if (direkte.length === 0) return
     const ok = await runGuardedWrite(
       () => supabase.from('exercise_logs').insert(
-        direkte.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: plannedRpe ?? null }))
+        direkte.map(setNum => ({ exercise_id: ex.id, athlete_id: athlete.id, set_number: setNum, skipped: true, weight: 0, reps_completed: 0, rpe_planned: parseInputNumber(plannedRpe) }))
       ),
       () => showFlash('Øvelsen kunne ikke springes over. Tjek din forbindelse og prøv igen.', 'error'),
     )
@@ -778,13 +793,13 @@ export function lavSaetSkrivning({
     const rows = []
     for (const ex of (session.exercises || [])) {
       const last = lastLogByExerciseName[ex.name?.toLowerCase()]
-      const weight = last?.weight ?? parseFloat(ex.recommended_weight) ?? 0
-      const reps = last?.reps_completed ?? parseInt(ex.reps) ?? 0
+      const weight = parseInputNumber(last?.weight) ?? parseInputNumber(ex.recommended_weight) ?? 0
+      const reps = inputInteger(last?.reps_completed) ?? inputInteger(ex.reps) ?? 0
       // Ikke-skippede sæt får planlagt RPE som faktisk RPE (samme logik som logSet).
       const plannedRpe = parsePlannedRpe(ex.intensity)
-      for (let n = 1; n <= (parseInt(ex.sets) || 0); n++) {
+      for (let n = 1; n <= (inputInteger(ex.sets) || 0); n++) {
         if (logged.has(`${ex.id}_${n}`)) continue
-        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: plannedRpe ?? null, rpe_planned: plannedRpe ?? null, skipped: false })
+        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: plannedRpe ?? null, rpe_planned: parseInputNumber(plannedRpe), skipped: false })
       }
     }
 
@@ -824,7 +839,7 @@ export function lavSaetSkrivning({
     const logged = new Set((existing || []).map(l => `${l.exercise_id}_${l.set_number}`))
     const rows = []
     for (const ex of (session.exercises || [])) {
-      for (let n = 1; n <= (parseInt(ex.sets) || 0); n++) {
+      for (let n = 1; n <= (inputInteger(ex.sets) || 0); n++) {
         if (logged.has(`${ex.id}_${n}`)) continue
         rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight: null, reps_completed: null, note: null, rpe_actual: null, rpe_planned: null, skipped: true })
       }

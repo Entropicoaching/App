@@ -1,3 +1,5 @@
+import { calendarDay } from '../calendarDate.js'
+
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Hjem (hub): statuslinje og sektionsgitter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -8,7 +10,7 @@ export default function HubTab({
   a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
   videoAnalyses, weeklyActivity,
 }) {
-              const todayStr = new Date().toISOString().slice(0, 10)
+              const todayStr = calendarDay()
               const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
               const sig = todayR && todayR.readiness_score != null ? readinessSignal(todayR.readiness_score) : null
               const trainings = weeklyActivity[a.id]?.sessions ?? 0

@@ -1,3 +1,5 @@
+import { parseInputNumber, optionalInput } from '../inputValues.js'
+
 // Laesningerne (atlet, program, saet-logs, historik, parathed, PR, staevne,
 // volumen, fremgang, forloeb, opvarmning, delte videoer), parathed-gem,
 // vaegtforslag, navigation (openSession/openReadiness) og onboarding-guidens
@@ -411,7 +413,7 @@ export function lavLaesninger({
     // Vægtet model: hvert element scores 0-100 og vægtes til samlet parathed.
     // Neutrale svar (3/5 + 7-9t søvn) → ~63; kun friske svar nærmer sig 100.
     const sub = [] // [delscore, vægt]
-    const h = parseFloat(sleep) || 0
+    const h = parseInputNumber(sleep) || 0
     if (h > 0) {
       let sleepScore
       if (h >= 7 && h <= 9) sleepScore = 100
@@ -424,10 +426,10 @@ export function lavLaesninger({
     }
     const lin = v => ((v - 1) / 4) * 100 // 1→0, 3→50, 5→100 (højere = bedre)
     const inv = v => ((5 - v) / 4) * 100 // 1→100, 3→50, 5→0 (lavere = bedre)
-    if (energy) sub.push([lin(energy), 0.25])
-    if (motivation) sub.push([lin(motivation), 0.15])
-    if (stress) sub.push([inv(stress), 0.15])
-    if (soreness) sub.push([inv(soreness), 0.20])
+    if (parseInputNumber(energy) >= 1 && parseInputNumber(energy) <= 5) sub.push([lin(parseInputNumber(energy)), 0.25])
+    if (parseInputNumber(motivation) >= 1 && parseInputNumber(motivation) <= 5) sub.push([lin(parseInputNumber(motivation)), 0.15])
+    if (parseInputNumber(stress) >= 1 && parseInputNumber(stress) <= 5) sub.push([inv(parseInputNumber(stress)), 0.15])
+    if (parseInputNumber(soreness) >= 1 && parseInputNumber(soreness) <= 5) sub.push([inv(parseInputNumber(soreness)), 0.20])
     if (!sub.length) return null
     const totalW = sub.reduce((a, [, w]) => a + w, 0)
     const score = sub.reduce((a, [s, w]) => a + s * w, 0) / totalW
@@ -442,18 +444,27 @@ export function lavLaesninger({
     if (!readinessInput.stress) missing.push('stress')
     if (!readinessInput.soreness) missing.push('ømhed')
     if (missing.length) { setReadinessError('Mangler: ' + missing.join(', ')); return }
+    const sleep = parseInputNumber(readinessInput.sleep)
+    if ((!optionalInput(readinessInput.sleep) && sleep === null) ||
+        ['energy', 'motivation', 'stress', 'soreness'].some(k => {
+          const n = parseInputNumber(readinessInput[k])
+          return !Number.isInteger(n) || n < 1 || n > 5
+        })) {
+      setReadinessError('Brug gyldig søvn og hele svar fra 1 til 5.')
+      return
+    }
     setSavingReadiness(true)
     setReadinessError(null)
     const score = calcReadinessScore(readinessInput)
     const payload = {
       athlete_id: athlete.id,
       logged_date: today(),
-      sleep_hours: parseFloat(readinessInput.sleep) || null,
-      energy: readinessInput.energy,
-      motivation: readinessInput.motivation,
-      stress: readinessInput.stress,
-      soreness_level: readinessInput.soreness,
-      sore_zones: readinessInput.soreZones.length > 0 ? readinessInput.soreZones : null,
+      sleep_hours: sleep,
+      energy: parseInputNumber(readinessInput.energy),
+      motivation: parseInputNumber(readinessInput.motivation),
+      stress: parseInputNumber(readinessInput.stress),
+      soreness_level: parseInputNumber(readinessInput.soreness),
+      sore_zones: readinessInput.soreZones?.length > 0 ? readinessInput.soreZones : null,
       readiness_score: score,
     }
     const { error } = await supabase.from('readiness_logs').insert(payload)

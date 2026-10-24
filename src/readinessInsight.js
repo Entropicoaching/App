@@ -1,3 +1,6 @@
+import { parseInputNumber, finiteMean } from './inputValues.js'
+import { calendarDaysBetween } from './calendarDate.js'
+
 // ORDRE 100 — "parathed der svarer igen": parathedsloggen har hidtil ikke
 // spejlet noget tilbage til atleten — gemt log, ingen reaktion. Denne fil er
 // den rene sammenligningslogik (dagens score mod atletens eget snit for de
@@ -13,8 +16,8 @@ const MIN_HISTORY_FOR_COMPARISON = 5
 const FALLBACK_THRESHOLD = 3
 
 export function compareReadiness(todayScore, historyScores) {
-  const hist = (historyScores || []).filter(v => typeof v === 'number' && !Number.isNaN(v))
-  if (todayScore == null || hist.length < MIN_HISTORY_FOR_COMPARISON) {
+  const hist = (historyScores || []).filter(v => Number.isFinite(v))
+  if (!Number.isFinite(todayScore) || hist.length < MIN_HISTORY_FOR_COMPARISON) {
     return { status: 'insufficient', mean: null, sd: null, diff: null }
   }
   const n = hist.length
@@ -23,6 +26,7 @@ export function compareReadiness(todayScore, historyScores) {
   const sd = Math.sqrt(variance)
   const threshold = sd > 0.0001 ? sd * 0.5 : FALLBACK_THRESHOLD
   const diff = todayScore - mean
+  if (![mean, sd, diff].every(Number.isFinite)) return { status: 'insufficient', mean: null, sd: null, diff: null }
   const status = diff <= -threshold ? 'under' : diff >= threshold ? 'over' : 'normal'
   return { status, mean, sd, diff }
 }
@@ -59,9 +63,9 @@ const LOW_READINESS_THRESHOLD = 50
 export function summarizeReadinessForCoach(entries) {
   const list = (entries || []).filter(e => e && e.logged_date)
   if (!list.length) return null
-  const sleepEntries = list.filter(e => e.sleep_hours != null)
+  const sleepEntries = list.map(e => parseInputNumber(e.sleep_hours)).filter(v => v !== null)
   const avgSleep = sleepEntries.length > 0
-    ? Math.round(sleepEntries.reduce((sum, e) => sum + e.sleep_hours, 0) / sleepEntries.length * 10) / 10
+    ? ((n) => n <= Number.MAX_VALUE / 10 ? Math.round(n * 10) / 10 : n)(finiteMean(sleepEntries))
     : null
   const soreMap = {}
   for (const e of list) for (const zone of (e.sore_zones || [])) soreMap[zone] = (soreMap[zone] || 0) + 1
@@ -69,7 +73,8 @@ export function summarizeReadinessForCoach(entries) {
   const sorted = [...list].sort((a, b) => b.logged_date.localeCompare(a.logged_date))
   let lowStreak = 0
   for (const e of sorted) {
-    if (e.readiness_score == null || e.readiness_score >= LOW_READINESS_THRESHOLD) break
+    // En manglende eller ugyldig score afbryder serien.
+    if (!Number.isFinite(e.readiness_score) || e.readiness_score >= LOW_READINESS_THRESHOLD) break
     lowStreak++
   }
   return { logsCount: list.length, avgSleep, topZone, lowStreak }
@@ -101,7 +106,5 @@ export function lastCheckinDrivenChange(readinessEntries, weeks) {
 }
 
 function daysBetweenDates(fromStr, toStr) {
-  const a = new Date(fromStr + 'T12:00:00Z')
-  const b = new Date(toStr + 'T12:00:00Z')
-  return Math.round((b - a) / 86400000)
+  return calendarDaysBetween(fromStr, toStr) ?? Infinity
 }

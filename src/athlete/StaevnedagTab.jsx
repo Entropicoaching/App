@@ -1,3 +1,5 @@
+import { parseInputNumber, finiteAdd } from '../inputValues.js'
+
 // Stævnedag-fanen (sæt-loggeren til åbnere/attempts på stævnedagen) —
 // udskilt fra AthleteView.jsx (ordre 232 · commit 2) som sin egen
 // lazy-loadede chunk, samme LazyBoundary-mønster som Dashboard.jsx's fire
@@ -24,27 +26,28 @@ export default function StaevnedagTab({
           }
 
           function bestLift(lift) {
-            const good = meetAttempts[lift].filter(a => a.r === 'good' && parseFloat(a.w) > 0)
+            const good = (meetAttempts[lift] || []).filter(a => a?.r === 'good' && parseInputNumber(a.w) > 0)
             if (!good.length) return null
-            return Math.max(...good.map(a => parseFloat(a.w)))
+            return Math.max(...good.map(a => parseInputNumber(a.w)))
           }
 
           const lifts = meetType === 'sbd'
             ? [{ key: 'squat', label: 'Squat' }, { key: 'bench', label: 'Bænkpres' }, { key: 'deadlift', label: 'Dødløft' }]
             : [{ key: 'bench', label: 'Bænkpres' }]
 
-          const total = lifts.reduce((sum, l) => sum + (bestLift(l.key) || 0), 0)
+          const total = lifts.reduce((sum, l) => finiteAdd(sum, bestLift(l.key) || 0), 0)
           const allHaveBest = lifts.every(l => bestLift(l.key) !== null)
 
           async function markGoodAndSave(key, i) {
-            const current = meetAttempts[key]
+            const current = meetAttempts[key] || []
+            if (!current[i]) return
             const isAlreadyGood = current[i].r === 'good'
             setAttempt(key, i, 'r', isAlreadyGood ? null : 'good')
             if (!isAlreadyGood && athlete && !coachAthleteId) {
               const updated = current.map((a, j) => j === i ? { ...a, r: 'good' } : a)
-              const good = updated.filter(a => a.r === 'good' && parseFloat(a.w) > 0)
+              const good = updated.filter(a => a.r === 'good' && parseInputNumber(a.w) > 0)
               if (!good.length) return
-              const best = Math.max(...good.map(a => parseFloat(a.w)))
+              const best = Math.max(...good.map(a => parseInputNumber(a.w)))
               const colMap = { squat: 'squat', bench: 'bench', deadlift: 'deadlift' }
               const col = colMap[key]
               if (col) {

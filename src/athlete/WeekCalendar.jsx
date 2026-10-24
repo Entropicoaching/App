@@ -23,7 +23,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
   const todayWd = (today.getDay() + 6) % 7
   const days = [...Array(7)].map((_, wd) => {
     let date = null
-    if (weekStart) { date = new Date(weekStart.getTime() + wd * 86400000); date.setHours(0, 0, 0, 0) }
+    if (weekStart) { date = new Date(weekStart); date.setDate(date.getDate() + wd); date.setHours(0, 0, 0, 0) }
     return { wd, date, sessions: sessions.filter(s => s.weekday === wd) }
   })
   const flex = sessions.filter(s => s.weekday == null)

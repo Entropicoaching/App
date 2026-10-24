@@ -1,3 +1,5 @@
+import { parseInputNumber, inputInteger } from './inputValues.js'
+
 // ORDRE 280 · commit 1 — "at logge et sæt skal ikke kræve tastatur". Når et
 // sæt åbnes, skal vægt/reps stå udfyldt (sidste gang på samme øvelse, ellers
 // planens tal, ellers tomt), og kunne ændres med store plus/minus-tryk i
@@ -39,17 +41,19 @@ export function defaultSetReps(current, { lastReps, planReps } = {}) {
 // Vægt i spring på 2,5 kg. Regnet i tiendedele (heltal) for at undgå
 // float-støj (0.1 + 0.2-problemet) — 2,5 kg bliver 25 "tiendedele".
 export function stepWeight(current, deltaKg = 2.5) {
-  const n = parseFloat(String(current ?? '').replace(',', '.'))
-  const baseTenths = Number.isFinite(n) ? Math.round(n * 10) : 0
+  const n = parseInputNumber(current) ?? 0
+  if (!Number.isFinite(deltaKg)) return String(n)
+  const baseTenths = Math.round(n * 10)
   const nextTenths = Math.max(0, baseTenths + Math.round(deltaKg * 10))
-  return String(nextTenths / 10)
+  return Number.isSafeInteger(nextTenths) ? String(nextTenths / 10) : String(n)
 }
 
 // Gentagelser i spring på 1, aldrig under 0.
 export function stepReps(current, delta = 1) {
-  const n = parseInt(current, 10)
-  const base = Number.isFinite(n) ? n : 0
-  return String(Math.max(0, base + delta))
+  const base = inputInteger(current) ?? 0
+  if (!Number.isSafeInteger(delta)) return String(base)
+  const result = Math.max(0, base + delta)
+  return Number.isSafeInteger(result) ? String(result) : String(base)
 }
 
 // ORDRE 293 · blok 1 (F1) — selve trinnet på kaldstedet i Dagens pas. Næste

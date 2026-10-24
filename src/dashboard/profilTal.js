@@ -1,3 +1,5 @@
+import { parseInputNumber, finiteMean } from '../inputValues.js'
+
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Tal til profilen, regnet i hvert render ud fra hentede data: aktuel
 // kropsvægt og ugetrend, sidste sæt pr. øvelse og bedste log i samme
@@ -6,6 +8,13 @@
 export function lavProfilTal({
   athleteLogs, athleteWeightLogs,
 }) {
+  athleteLogs = (athleteLogs || []).filter(Boolean)
+  athleteWeightLogs = (athleteWeightLogs || []).filter(l => l && parseInputNumber(l.weight) > 0)
+    .map(l => ({ ...l, weight: parseInputNumber(l.weight) }))
+  const roundedMean = values => {
+    const mean = finiteMean(values)
+    return mean <= Number.MAX_VALUE / 10 ? Math.round(mean * 10) / 10 : mean
+  }
   const currentWeight = (() => {
     if (!athleteWeightLogs.length) return null
     const recent = athleteWeightLogs.slice(0, 5).map(l => l.weight)
@@ -13,7 +22,7 @@ export function lavProfilTal({
       const sorted = [...recent].sort((a, b) => a - b)
       return sorted[Math.floor(sorted.length / 2)]
     }
-    return Math.round((recent.reduce((s, v) => s + v, 0) / recent.length) * 10) / 10
+    return roundedMean(recent)
   })()
 
   const weightTrend = (() => {
@@ -24,9 +33,10 @@ export function lavProfilTal({
     const thisWeek = athleteWeightLogs.filter(l => new Date(l.logged_at) >= d7).map(l => l.weight)
     const prevWeek = athleteWeightLogs.filter(l => { const d = new Date(l.logged_at); return d >= d14 && d < d7 }).map(l => l.weight)
     if (!thisWeek.length || !prevWeek.length) return null
-    const thisAvg = thisWeek.reduce((s, v) => s + v, 0) / thisWeek.length
-    const prevAvg = prevWeek.reduce((s, v) => s + v, 0) / prevWeek.length
-    return Math.round((thisAvg - prevAvg) * 10) / 10
+    const thisAvg = finiteMean(thisWeek)
+    const prevAvg = finiteMean(prevWeek)
+    const difference = thisAvg - prevAvg
+    return Math.abs(difference) <= Number.MAX_VALUE / 10 ? Math.round(difference * 10) / 10 : difference
   })()
 
   const lastLogPerExercise = {}

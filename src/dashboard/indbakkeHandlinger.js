@@ -1,3 +1,5 @@
+import { formatMessageTime } from '../messageTime.js'
+
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Coach Briefing og beskeder: "Set" på et punkt, automatiseringsfejl,
 // træningssignaler (set/udsæt), læst-markering, send, fastgør og tidstekst.
@@ -130,16 +132,7 @@ export function lavIndbakkeHandlinger({
   }
 
   function formatMsgTime(ts) {
-    const d = new Date(ts)
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate())
-    const dayDiff = Math.floor((today - msgDay) / 86400000)
-    const time = d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
-    if (dayDiff === 0) return time
-    if (dayDiff === 1) return `I går ${time}`
-    if (dayDiff < 7) return d.toLocaleDateString('da-DK', { weekday: 'long' }) + ' ' + time
-    return d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) + ' ' + time
+    return formatMessageTime(ts)
   }
 
   return {

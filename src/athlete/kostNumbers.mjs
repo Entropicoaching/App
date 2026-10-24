@@ -21,7 +21,7 @@ export function nutritionValues(values, factor = 1) {
   if (!Number.isFinite(factor) || factor < 0) return null
   const result = {}
   for (const key of ['kcal', 'protein', 'carb', 'fat']) {
-    const value = parseInputNumber(values[key] ?? '', 0)
+    const value = parseInputNumber(values?.[key] ?? '', 0)
     if (value === null) return null
     const rounded = roundNutrition(value * factor)
     if (rounded === null) return null
@@ -32,8 +32,8 @@ export function nutritionValues(values, factor = 1) {
 
 // Display totals saturate at the largest finite number. Writes never saturate.
 export function finiteTotal(rows, key) {
-  return rows.reduce((sum, row) => {
-    const value = parseInputNumber(row[key], 0) ?? 0
+  return (rows || []).reduce((sum, row) => {
+    const value = parseInputNumber(row?.[key], 0) ?? 0
     return sum > Number.MAX_VALUE - value ? Number.MAX_VALUE : sum + value
   }, 0)
 }

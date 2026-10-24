@@ -1,3 +1,5 @@
+import { inputInteger, parseInputNumber, finiteAdd, finiteMean } from '../inputValues.js'
+
 // ORDRE 185 (14. sep), commit 1: planlagte sæt pr. muskelgruppe for DENNE
 // uge — talt fra PROGRAMMET (weeks→sessions→exercises.sets), ikke fra
 // loggen. Samme vægtning (PRIMÆR/MEDVIRKENDE) og samme kortlægning
@@ -29,9 +31,9 @@ import { ugenoegle } from './beregn.js'
  * hvordan et planlagt sæt tælles.
  */
 function laegPlanlagtUgeOveni(bucket, uge_, rettelser) {
-  for (const sess of uge_.sessions || []) {
-    for (const ex of sess.exercises || []) {
-      const antalSaet = Number(ex.sets) || 0
+  for (const sess of (uge_.sessions || []).filter(Boolean)) {
+    for (const ex of (sess.exercises || []).filter(Boolean)) {
+      const antalSaet = inputInteger(ex.sets) || 0
       if (antalSaet <= 0) continue
       const { kendt, grupper: exGrupper } = slaaOevelseOp(ex.name, rettelser)
       if (!kendt) {
@@ -53,7 +55,7 @@ function laegPlanlagtUgeOveni(bucket, uge_, rettelser) {
  * samme regel som beregn.js.
  */
 function laegGennemfoertRaekkeOveni(bucket, raekke, rettelser) {
-  if (raekke.skipped) return
+  if (!raekke || raekke.skipped) return
   const { kendt, grupper } = slaaOevelseOp(raekke.oevelseNavn, rettelser)
   if (!kendt) {
     bucket.ukendteSaet += 1
@@ -89,7 +91,7 @@ export function beregnPlanlagtDenneUge(weeks, { referenceDato = new Date(), rett
   let ugePlaceret = false
 
   for (const uge_ of weeks || []) {
-    if (!uge_.start_date || ugenoegle(uge_.start_date) !== uge) continue
+    if (!uge || !uge_?.start_date || ugenoegle(uge_.start_date) !== uge) continue
     ugePlaceret = true
     laegPlanlagtUgeOveni(bucket, uge_, rettelser)
   }
@@ -136,7 +138,7 @@ export function beregnPlanlagtPrUge(weeks, logs, { rettelser } = {}) {
   let ugerUdenDato = 0
 
   for (const uge_ of weeks || []) {
-    if (!uge_.start_date) { ugerUdenDato += 1; continue }
+    if (!uge_?.start_date || !ugenoegle(uge_.start_date)) { ugerUdenDato += 1; continue }
     const noegle = ugenoegle(uge_.start_date)
     if (!buckets.has(noegle)) {
       buckets.set(noegle, {
@@ -148,6 +150,7 @@ export function beregnPlanlagtPrUge(weeks, logs, { rettelser } = {}) {
   }
 
   for (const raekke of logs || []) {
+    if (!raekke) continue
     const noegle = ugenoegle(raekke.loggetDato)
     const bucket = buckets.get(noegle)
     if (!bucket) continue // ingen dateret programuge denne kalenderuge — intet at sammenligne mod
@@ -174,9 +177,9 @@ function ugeKort(ugenoegle_) {
 function samletGabIUge(uge, grupper) {
   let gab = 0
   for (const g of grupper) {
-    const planlagtIalt = uge.planlagt.grupper[g]?.ialt || 0
-    const gennemfoertIalt = uge.gennemfoert.grupper[g]?.ialt || 0
-    gab += Math.max(0, planlagtIalt - gennemfoertIalt)
+    const planlagtIalt = parseInputNumber(uge.planlagt?.grupper?.[g]?.ialt) || 0
+    const gennemfoertIalt = parseInputNumber(uge.gennemfoert?.grupper?.[g]?.ialt) || 0
+    gab = finiteAdd(gab, Math.max(0, planlagtIalt - gennemfoertIalt))
   }
   return gab
 }
@@ -195,7 +198,9 @@ function samletGabIUge(uge, grupper) {
  * @returns {string[]}
  */
 export function opsummerGab(uger, grupper, muskelgrupper) {
-  if (!uger.length || !grupper.length) return []
+  if (!uger?.length || !grupper?.length) return []
+  uger = uger.filter(Boolean)
+  muskelgrupper = muskelgrupper || {}
   const saetninger = []
 
   // 1) Gruppen der i flest uger lå under planen. Uafgjort brydes af
@@ -204,7 +209,7 @@ export function opsummerGab(uger, grupper, muskelgrupper) {
   let bedsteGruppe = null
   let bedsteAntal = 0
   for (const g of grupper) {
-    const antal = uger.filter(u => (u.gennemfoert.grupper[g]?.ialt || 0) < (u.planlagt.grupper[g]?.ialt || 0)).length
+    const antal = uger.filter(u => (parseInputNumber(u.gennemfoert?.grupper?.[g]?.ialt) || 0) < (parseInputNumber(u.planlagt?.grupper?.[g]?.ialt) || 0)).length
     if (antal > bedsteAntal) { bedsteAntal = antal; bedsteGruppe = g }
   }
   if (bedsteGruppe) {
@@ -229,8 +234,8 @@ export function opsummerGab(uger, grupper, muskelgrupper) {
     const midte = Math.floor(uger.length / 2)
     const foerste = uger.slice(0, midte)
     const anden = uger.slice(uger.length - midte)
-    const gnsFoerste = foerste.reduce((sum, u) => sum + samletGabIUge(u, grupper), 0) / foerste.length
-    const gnsAnden = anden.reduce((sum, u) => sum + samletGabIUge(u, grupper), 0) / anden.length
+    const gnsFoerste = finiteMean(foerste.map(u => samletGabIUge(u, grupper)))
+    const gnsAnden = finiteMean(anden.map(u => samletGabIUge(u, grupper)))
     const retning = gnsAnden > gnsFoerste ? 'vokser' : gnsAnden < gnsFoerste ? 'falder' : null
     if (retning) {
       saetninger.push(`Gabet ${retning} over vinduet: ${formatTal(gnsFoerste)} sæt/uge i starten, ${formatTal(gnsAnden)} sæt/uge nu.`)

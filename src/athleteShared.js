@@ -1,3 +1,5 @@
+import { calendarDay, addCalendarDays } from './calendarDate.js'
+
 // Delt mellem AthleteView.jsx og dens lazy-loadede underfaner (src/athlete/).
 // Udskilt i ordre 232 · commit 2/3, samme begrundelse som dashboardShared.js
 // (ordre 130): underfanerne skal kunne importere disse rene stilarter/
@@ -10,22 +12,21 @@
 import { parseInputNumber } from './athlete/kostNumbers.mjs'
 
 export function today() {
-  return new Date().toISOString().slice(0, 10)
+  return calendarDay()
 }
 
 // Forskyd en yyyy-mm-dd-streng med et antal dage (UTC, så det matcher today()).
 export function shiftDate(str, days) {
-  const d = new Date(str + 'T00:00:00Z')
-  d.setUTCDate(d.getUTCDate() + days)
-  return d.toISOString().slice(0, 10)
+  return addCalendarDays(str, days)
 }
 
 // Pæn dansk etiket for en kost-dato relativt til i dag.
 export function dateLabel(str) {
   if (str === today()) return 'I dag'
   if (str === shiftDate(today(), -1)) return 'I går'
+  if (!calendarDay(str)) return ''
   const d = new Date(str + 'T12:00:00Z')
-  return d.toLocaleDateString('da-DK', { weekday: 'short', day: 'numeric', month: 'short' })
+  return d.toLocaleDateString('da-DK', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
 }
 
 // Alternative portionsenheder for udvalgte fødevarer (ud over gram).

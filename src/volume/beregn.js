@@ -1,3 +1,5 @@
+import { calendarTime } from '../athlete/kostNumbers.mjs'
+
 // ORDRE 177 (13. sep), commit 2: regnestykket — givet en atlets loggede sæt,
 // hvor mange sæt lander de på hver muskelgruppe, pr. uge. Rene funktioner,
 // ingen Supabase-kald, ingen UI — se src/dashboard/VolumenKort.jsx for
@@ -30,8 +32,8 @@ export { ugenoegle }
 // Mandagen (UTC-midnat) i den kalenderuge en dato ligger i — bruges kun til
 // at gå N uger tilbage, ikke til selve ugenøglen (den er ISO-numrene ovenfor).
 function ugeMandag(loggetDato) {
-  const [aar, maaned, dag] = kalenderdato(loggetDato).split('-').map(Number)
-  const d = new Date(Date.UTC(aar, maaned - 1, dag))
+  const day = kalenderdato(loggetDato)
+  const d = new Date(day ? calendarTime(day) : NaN)
   const ugedagMandag0 = (d.getUTCDay() + 6) % 7
   d.setUTCDate(d.getUTCDate() - ugedagMandag0)
   return d
@@ -43,6 +45,7 @@ function ugeMandag(loggetDato) {
  */
 function seneste_ugenoegler(referenceDato, antalUger) {
   const startMandag = ugeMandag(referenceDato)
+  if (!Number.isFinite(startMandag.getTime()) || !Number.isSafeInteger(antalUger) || antalUger < 0) return []
   const noegler = []
   for (let i = 0; i < antalUger; i++) {
     const mandag = new Date(startMandag)
@@ -74,8 +77,8 @@ export function beregnVolumenPrUge(saet, { antalUger = 6, referenceDato = new Da
   const vinduet = new Set(ugenoegler)
   const buckets = new Map(ugenoegler.map(u => [u, { grupper: {}, ukendteSaet: 0 }]))
 
-  for (const raekke of saet) {
-    if (raekke.skipped) continue
+  for (const raekke of saet || []) {
+    if (!raekke || raekke.skipped) continue
     const uge = ugenoegle(raekke.loggetDato)
     if (!vinduet.has(uge)) continue // uden for det viste vindue
     const bucket = buckets.get(uge)

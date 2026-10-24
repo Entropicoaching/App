@@ -1,3 +1,5 @@
+import { parseInputNumber, inputInteger, finiteProduct, finiteAdd } from '../inputValues.js'
+
 // ORDRE 268 · commit 1 — atletens egen "planlagt mod gennemført", ugens 7
 // dage. Stå på skuldre af src/volume/planlagt.js (ordre 210): samme
 // grundregel — planlagt tælles fra PROGRAMMET (weeks→sessions→exercises),
@@ -30,21 +32,22 @@ function planlagtRepsForExercise(reps) {
 
 /** Planlagt sæt + tonnage for én øvelse. tonnage er null hvis vægt eller reps er ukendt. */
 function planlagtForExercise(ex) {
-  const saet = Number(ex.sets) || 0
+  const saet = inputInteger(ex.sets) || 0
   if (saet <= 0) return { saet: 0, tonnage: 0 }
-  const vaegt = ex.recommended_weight
+  const vaegt = parseInputNumber(ex.recommended_weight)
   const reps = planlagtRepsForExercise(ex.reps)
-  const tonnage = (vaegt != null && reps != null) ? saet * reps * vaegt : null
+  const product = (vaegt != null && reps != null) ? saet * reps * vaegt : null
+  const tonnage = Number.isFinite(product) ? product : null
   return { saet, tonnage }
 }
 
 /** Lægger én sessions øvelser oveni en { saet, tonnage, tonnageKendt }-bucket. */
 function laegSessionOveni(bucket, sess) {
-  for (const ex of sess.exercises || []) {
+  for (const ex of (sess.exercises || []).filter(Boolean)) {
     const { saet, tonnage } = planlagtForExercise(ex)
     bucket.saet += saet
     if (tonnage == null) bucket.tonnageKendt = false
-    else bucket.tonnage += tonnage
+    else bucket.tonnage = finiteAdd(bucket.tonnage, tonnage)
   }
 }
 
@@ -76,25 +79,25 @@ export function beregnUgeDage(week, weekStart, logs) {
   }))
   let flexSessioner = 0
 
-  for (const sess of week?.sessions || []) {
-    if (sess.weekday == null || sess.weekday < 0 || sess.weekday >= WEEKDAY_COUNT) { flexSessioner += 1; continue }
+  for (const sess of (week?.sessions || []).filter(Boolean)) {
+    if (!Number.isInteger(sess.weekday) || sess.weekday < 0 || sess.weekday >= WEEKDAY_COUNT) { flexSessioner += 1; continue }
     const bucket = buckets[sess.weekday]
     bucket.harSession = true
     if (sess.title) bucket.titler.push(sess.title)
     laegSessionOveni(bucket, sess)
-    for (const ex of sess.exercises || []) bucket.exerciseIds.add(ex.id)
+    for (const ex of (sess.exercises || []).filter(Boolean)) bucket.exerciseIds.add(ex.id)
   }
 
   const dage = buckets.map((bucket, weekday) => {
     let gennemfoertSaet = 0, gennemfoertTonnage = 0
     for (const log of logs || []) {
-      if (log.skipped || !bucket.exerciseIds.has(log.exercise_id)) continue
+      if (!log || log.skipped || !bucket.exerciseIds.has(log.exercise_id)) continue
       gennemfoertSaet += 1
-      gennemfoertTonnage += (Number(log.weight) || 0) * (Number(log.reps_completed) || 0)
+      gennemfoertTonnage = finiteAdd(gennemfoertTonnage, finiteProduct(log.weight, log.reps_completed))
     }
     return {
       weekday,
-      date: weekStart ? new Date(weekStart.getTime() + weekday * 86400000) : null,
+      date: weekStart && Number.isFinite(weekStart.getTime()) ? (() => { const d = new Date(weekStart); d.setDate(d.getDate() + weekday); return d })() : null,
       harSession: bucket.harSession,
       titler: bucket.titler,
       planlagtSaet: bucket.saet,
@@ -130,7 +133,7 @@ export function beregnForloebUger(weeks, logs) {
   let ugerUdenDato = 0
 
   for (const uge_ of weeks || []) {
-    if (!uge_.start_date) { ugerUdenDato += 1; continue }
+    if (!uge_?.start_date || !ugenoegle(uge_.start_date)) { ugerUdenDato += 1; continue }
     const noegle = ugenoegle(uge_.start_date)
     if (!buckets.has(noegle)) {
       buckets.set(noegle, {
@@ -139,15 +142,15 @@ export function beregnForloebUger(weeks, logs) {
       })
     }
     const bucket = buckets.get(noegle)
-    for (const sess of uge_.sessions || []) laegSessionOveni(bucket.planlagt, sess)
+    for (const sess of (uge_.sessions || []).filter(Boolean)) laegSessionOveni(bucket.planlagt, sess)
   }
 
   for (const log of logs || []) {
-    if (log.skipped) continue
+    if (!log || log.skipped) continue
     const bucket = buckets.get(ugenoegle(log.logged_at))
     if (!bucket) continue // ingen dateret programuge denne kalenderuge — intet at sammenligne mod
     bucket.gennemfoert.saet += 1
-    bucket.gennemfoert.tonnage += (Number(log.weight) || 0) * (Number(log.reps_completed) || 0)
+    bucket.gennemfoert.tonnage = finiteAdd(bucket.gennemfoert.tonnage, finiteProduct(log.weight, log.reps_completed))
   }
 
   const uger = [...buckets.entries()]

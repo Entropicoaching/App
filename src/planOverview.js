@@ -1,16 +1,15 @@
+import { calendarDay } from './calendarDate.js'
+import { calendarTime } from './athlete/kostNumbers.mjs'
+
 const DAY_MS = 24 * 60 * 60 * 1000
 
 function isoAtNoon(value) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return null
-  const date = new Date(`${value}T12:00:00`)
-  return Number.isNaN(date.getTime()) ? null : date
+  const time = calendarTime(value)
+  return time === null ? null : new Date(time + DAY_MS / 2)
 }
 
 function dateAtNoon(value) {
-  const date = value instanceof Date ? new Date(value) : isoAtNoon(value)
-  if (!date || Number.isNaN(date.getTime())) return null
-  date.setHours(12, 0, 0, 0)
-  return date
+  return isoAtNoon(calendarDay(value))
 }
 
 function isoDate(date) {
@@ -19,7 +18,7 @@ function isoDate(date) {
 
 function formatDate(iso) {
   const date = isoAtNoon(iso)
-  return date ? date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) : null
+  return date ? date.toLocaleDateString('da-DK', { day: 'numeric', month: 'short', timeZone: 'UTC' }) : null
 }
 
 function daysBetween(from, to) {
@@ -32,7 +31,8 @@ function weeksLabel(days) {
 }
 
 function entryForAthlete(athlete, weekRows, today) {
-  const datedWeeks = [...weekRows]
+  const datedWeeks = (Array.isArray(weekRows) ? weekRows : [])
+    .filter(Boolean)
     .map(week => ({ ...week, _date: isoAtNoon(week.start_date) }))
     .filter(week => week._date)
     .sort((left, right) => left._date - right._date || Number(left.week_number) - Number(right.week_number))
@@ -127,15 +127,16 @@ const PRIORITY = {
  * intet til databasen; brugeren åbner selv den enkelte atlets planassistent.
  */
 export function buildPlanOverview({ athletes = [], calendarWeeks = {}, today = new Date() }) {
-  const now = dateAtNoon(today) || new Date()
-  return athletes
-    .map(athlete => entryForAthlete(athlete, calendarWeeks[athlete.id] || [], now))
+  const now = dateAtNoon(today)
+  if (!now) return []
+  return (athletes || []).filter(Boolean)
+    .map(athlete => entryForAthlete(athlete, calendarWeeks?.[athlete.id] || [], now))
     .sort((left, right) => PRIORITY[left.status] - PRIORITY[right.status]
       || String(left.athlete.name || '').localeCompare(String(right.athlete.name || ''), 'da'))
 }
 
 export function planOverviewCounts(entries) {
-  return entries.reduce((counts, entry) => ({
+  return (entries || []).filter(Boolean).reduce((counts, entry) => ({
     ...counts,
     [entry.status]: (counts[entry.status] || 0) + 1,
   }), {})

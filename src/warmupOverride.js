@@ -1,3 +1,5 @@
+import { parseInputNumber } from './inputValues.js'
+
 // ORDRE 105 (commit 2) — atleten retter et opvarmningssæts vægt (eller
 // springer det over), uden at det tæller som arbejdssæt. Appen husker
 // rettelsen, og foreslår den igen næste gang samme øvelse+arbejdsvægt
@@ -45,7 +47,7 @@ export function applyWarmupCorrection(sets, index, { weight, skipped } = {}) {
       if (i !== index) return s
       const anbefalet = s.warmupOverride?.anbefalet ?? s.weight
       if (skipped) return { ...s, skipped: true, warmupOverride: { anbefalet, faktisk: null } }
-      const faktisk = Number(weight)
+      const faktisk = parseInputNumber(weight)
       if (!Number.isFinite(faktisk) || faktisk <= 0) return s
       return { ...s, weight: faktisk, warmupOverride: { anbefalet, faktisk } }
     })

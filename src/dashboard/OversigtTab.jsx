@@ -1,3 +1,5 @@
+import { calendarDay } from '../calendarDate.js'
+
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Oversigt: sidst aktiv, parathed, resultater, kostmål, stævne, volumenkort.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -24,7 +26,7 @@ export default function OversigtTab({
                 )
               })()}
               {(() => {
-                const todayStr = new Date().toISOString().slice(0, 10)
+                const todayStr = calendarDay()
                 const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
                 if (!todayR) return (
                   <div style={{ ...s.card, marginBottom: '1.5rem', color: '#7a7770', fontSize: '0.78rem' }}>

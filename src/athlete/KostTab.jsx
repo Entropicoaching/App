@@ -1,3 +1,6 @@
+import { parseInputNumber, nutritionValues } from './kostNumbers.mjs'
+import { finiteProduct } from '../inputValues.js'
+
 // Kost-fanen (kostlog, søgning, skabeloner, TDEE-estimat) — udskilt fra
 // AthleteView.jsx (ordre 232 · commit 3) som sin egen lazy-loadede chunk,
 // samme LazyBoundary-mønster som Dashboard.jsx's fire faner (130/163/228)
@@ -220,15 +223,16 @@ return (
     {selectedFood && (() => {
       const units = unitsForFood(selectedFood)
       const unit = units[unitIdx] || units[0]
-      const amt = parseFloat(amount) || 0
-      const grams = amt * unit.grams
+      const amt = parseInputNumber(amount) || 0
+      const grams = finiteProduct(amt, unit.grams)
       const ratio = grams / 100
+      const nutrients = nutritionValues(Object.fromEntries(['kcal', 'protein', 'carb', 'fat'].map(k => [k, selectedFood[k + '100']])), ratio)
       const quickAmounts = unit.label === 'g' ? [50, 100, 150, 200, 250] : [1, 2, 3, 4]
       return (
       <div style={{ background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.2)', padding: '1rem', marginBottom: '0.75rem' }}>
         <div style={{ fontSize: '0.88rem', color: '#edeae2', marginBottom: '0.4rem' }}>{selectedFood.name}</div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.75rem' }}>
-          {Math.round(selectedFood.kcal100 * ratio)} kcal · P: {Math.round(selectedFood.protein100 * ratio)}g · K: {Math.round(selectedFood.carb100 * ratio)}g · F: {Math.round(selectedFood.fat100 * ratio)}g
+          {(nutrients?.kcal ?? 0)} kcal · P: {(nutrients?.protein ?? 0)}g · K: {(nutrients?.carb ?? 0)}g · F: {(nutrients?.fat ?? 0)}g
           {unit.label !== 'g' && <span style={{ color: '#4a4844' }}> · {Math.round(grams)} g</span>}
         </div>
 

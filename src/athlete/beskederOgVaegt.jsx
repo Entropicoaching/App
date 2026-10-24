@@ -1,3 +1,5 @@
+import { formatMessageTime } from '../messageTime.js'
+
 // Kropsvaegt (hent/log), beskeder (hent, marker laest, send, tidsformat) og
 // coachens delte videofeedback som kort (renderSharedFeedbackCards, bruges paa
 // forsiden og i Beskeder) — flyttet uaendret ud af AthleteView.jsx (ordre 373)
@@ -126,16 +128,7 @@ export function lavBeskederOgVaegt({
   }
 
   function formatMsgTime(ts) {
-    const d = new Date(ts)
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate())
-    const dayDiff = Math.floor((today - msgDay) / 86400000)
-    const time = d.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
-    if (dayDiff === 0) return time
-    if (dayDiff === 1) return `I går ${time}`
-    if (dayDiff < 7) return d.toLocaleDateString('da-DK', { weekday: 'long' }) + ' ' + time
-    return d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' }) + ' ' + time
+    return formatMessageTime(ts)
   }
 
   // Coachens delte videofeedback som udfoldelige kort (én kilde: video_analyses).

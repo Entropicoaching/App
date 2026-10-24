@@ -1,3 +1,5 @@
+import { calendarDaysBetween } from './calendarDate.js'
+
 const BLOCK_PURPOSES = {
   Akkumulering: 'Byg robust volumen og teknisk arbejde.',
   Intensificering: 'Skub styrkespecificitet og tungere arbejde gradvist.',
@@ -13,24 +15,17 @@ export function blockPurpose(name) {
   return BLOCK_PURPOSES[name] || 'Beskriv blokkens formål før den oprettes.'
 }
 
-export function withBlockPurposes(blocks) {
-  return blocks.map(block => ({
+export function withBlockPurposes(blocks = []) {
+  return (blocks || []).filter(Boolean).map(block => ({
     ...block,
     description: String(block.description || '').trim() || blockPurpose(block.name),
   }))
 }
 
-function isoAtNoon(iso) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso || ''))) return null
-  const date = new Date(`${iso}T12:00:00`)
-  return Number.isNaN(date.getTime()) ? null : date
-}
-
 export function fullWeeksUntil({ startDate, competitionDate }) {
-  const start = isoAtNoon(startDate)
-  const competition = isoAtNoon(competitionDate)
-  if (!start || !competition) return null
-  const weeks = Math.floor((competition.getTime() - start.getTime()) / (7 * 86400000))
+  const days = calendarDaysBetween(startDate, competitionDate)
+  if (days === null) return null
+  const weeks = Math.floor(days / 7)
   return weeks > 0 ? weeks : null
 }
 

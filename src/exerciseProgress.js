@@ -1,3 +1,6 @@
+import { parseInputNumber } from './inputValues.js'
+import { calendarDay } from './calendarDate.js'
+
 // ORDRE 284 · commit 1 — "er squatten rent faktisk blevet stærkere siden
 // marts": for ÉN øvelse (ikke et hovedløft-bundt), det tungeste gennemførte
 // sæt pr. kalenderuge over tid, plus det beregnede énrepetitionsmaksimum.
@@ -21,9 +24,10 @@ import { ugenoegle } from './volume/ugenoegle.js'
 
 /** Epley: vægt × (1 + reps / 30). Samme formel i hele appen — se filens egen note. */
 export function estimatedOneRepMax(weight, reps) {
-  const w = Number(weight) || 0
-  const r = Number(reps) || 1
-  return w * (1 + r / 30)
+  const w = parseInputNumber(weight), r = parseInputNumber(reps)
+  if (!(w > 0) || !(r > 0)) return 0
+  const result = w * (1 + r / 30)
+  return Number.isFinite(result) ? result : 0
 }
 
 export const HOVEDLOEFT_FAMILIER = [
@@ -77,10 +81,11 @@ export function grupperOevelsesnavne(navne) {
 export function heaviestSetPerWeek(logs) {
   const bedst = new Map()
   for (const log of logs || []) {
-    const weight = Number(log.weight) || 0
-    const reps = Number(log.reps_completed) || 0
-    if (weight <= 0) continue
+    if (!log || log.skipped) continue
+    const weight = parseInputNumber(log.weight), reps = parseInputNumber(log.reps_completed)
+    if (!(estimatedOneRepMax(weight, reps) > 0)) continue
     const uge = ugenoegle(log.logged_at)
+    if (!uge) continue
     const current = bedst.get(uge)
     if (!current || weight > current.weight || (weight === current.weight && reps > current.reps)) {
       bedst.set(uge, { uge, weight, reps })
@@ -95,10 +100,13 @@ export function heaviestSetPerWeek(logs) {
 export function bestEstimatedSetPerWeek(logs) {
   const best = new Map()
   for (const log of logs || []) {
-    const weight = Number(log.weight), reps = Number(log.reps_completed)
+    if (!log) continue
+    const weight = parseInputNumber(log.weight), reps = parseInputNumber(log.reps_completed)
     if (log.skipped || !(weight > 0) || !(reps > 0)) continue
     const uge = ugenoegle(log.logged_at)
+    if (!uge) continue
     const val = estimatedOneRepMax(weight, reps)
+    if (!(val > 0)) continue
     const cur = best.get(uge)
     if (!cur || val > cur.val || (val === cur.val && weight > cur.weight))
       best.set(uge, { uge, weight, reps, val })
@@ -115,7 +123,7 @@ export function bestEstimatedSetPerWeek(logs) {
 export const MAX_TUNGE_REPS = 8
 
 export function erTungtSaet(navn, reps) {
-  const r = Number(reps)
+  const r = parseInputNumber(reps)
   return !erLetSaetNavn(navn) && r > 0 && r <= MAX_TUNGE_REPS
 }
 
@@ -127,6 +135,7 @@ export const erDeloadBlok = (blokNavn) => /deload|aflast|taper/i.test(String(blo
 export const erDeloadLog = (log) => erDeloadBlok(log?.exercises?.sessions?.weeks?.block_name)
 
 const dagNoegle = (iso) => {
+  if (!calendarDay(iso)) return null
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return null
   const p = n => String(n).padStart(2, '0')
@@ -142,11 +151,13 @@ const dagNoegle = (iso) => {
 export function bestHeavySetPerDay(logs) {
   const best = new Map()
   for (const log of logs || []) {
-    const weight = Number(log.weight), reps = Number(log.reps_completed)
+    if (!log) continue
+    const weight = parseInputNumber(log.weight), reps = parseInputNumber(log.reps_completed)
     if (log.skipped || !(weight > 0) || erDeloadLog(log) || !erTungtSaet(log.exercises?.name ?? log.navn, reps)) continue
     const dag = dagNoegle(log.logged_at)
     if (!dag) continue
     const val = estimatedOneRepMax(weight, reps)
+    if (!(val > 0)) continue
     const cur = best.get(dag)
     if (!cur || val > cur.val || (val === cur.val && weight > cur.weight)) best.set(dag, { dag, weight, reps, val, navn: log.exercises?.name ?? log.navn })
   }

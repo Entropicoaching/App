@@ -1,3 +1,5 @@
+import { calendarDay } from './calendarDate.js'
+
 import { useState, useEffect, useRef } from 'react'
 import LazyBoundary from './LazyBoundary'
 import { coachInboxEntryIntent, createSingleFlightRunner } from './coachInboxState'
@@ -188,7 +190,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     { id: 3, name: 'Peak', weeks: 2 },
     { id: 4, name: 'Deload', weeks: 1 },
   ]))
-  const [planStartDate, setPlanStartDate] = useState(() => new Date().toISOString().slice(0, 10))
+  const [planStartDate, setPlanStartDate] = useState(() => calendarDay())
   const [planAssistantFocus, setPlanAssistantFocus] = useState('competition')
   const [assignEdits, setAssignEdits] = useState({})
   const [sessionForm, setSessionForm] = useState({ title: '', weekday: null })

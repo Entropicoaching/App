@@ -1,3 +1,5 @@
+import { parseInputNumber, finiteAdd } from '../inputValues.js'
+
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Registrér stævneresultat-modalen.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -6,10 +8,10 @@ import { s } from '../dashboardShared'
 export default function StaevneResultatModal({
   meetResultForm, saveMeetResult, saving, selectedAthlete, setMeetResultForm,
 }) {
-        const f = meetResultForm
+        const f = { ...meetResultForm, contest: meetResultForm?.contest || {} }
         const set = (patch) => setMeetResultForm(p => ({ ...p, ...patch }))
         const picked = ['squat', 'bench', 'deadlift'].filter(k => f.contest[k])
-        const previewTotal = picked.reduce((sum, k) => sum + (parseFloat(f[k]) || 0), 0)
+        const previewTotal = picked.reduce((sum, k) => finiteAdd(sum, parseInputNumber(f[k]) || 0), 0)
         return (
           <div style={s.overlay} onClick={e => e.target === e.currentTarget && setMeetResultForm(null)}>
             <div style={{ ...s.modal, maxWidth: '480px', maxHeight: '88vh', overflowY: 'auto' }}>
@@ -28,7 +30,7 @@ export default function StaevneResultatModal({
               {[['squat', 'Squat'], ['bench', 'Bænkpres'], ['deadlift', 'Dødløft']].map(([k, label]) => (
                 <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: '130px', cursor: 'pointer', fontSize: '0.85rem', color: f.contest[k] ? '#edeae2' : '#7a7770' }}>
-                    <input type="checkbox" checked={f.contest[k]} onChange={() => setMeetResultForm(p => ({ ...p, contest: { ...p.contest, [k]: !p.contest[k] } }))} />
+                    <input type="checkbox" checked={f.contest[k]} onChange={() => setMeetResultForm(p => ({ ...p, contest: { ...p.contest, [k]: !p.contest?.[k] } }))} />
                     {label}
                   </label>
                   <input style={{ ...s.fieldInput, flex: 1, opacity: f.contest[k] ? 1 : 0.35 }} type="number" inputMode="decimal" placeholder="kg" disabled={!f.contest[k]} value={f.contest[k] ? f[k] : ''} onChange={e => set({ [k]: e.target.value })} />

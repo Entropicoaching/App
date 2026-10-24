@@ -1,3 +1,5 @@
+import { calendarDay } from '../calendarDate.js'
+
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (linje 30-33 og 195-213
 // før opdelingen, se docs/DASHBOARD-KORT.md): konstanter og ferie-hjælperne
 // på coachens side.
@@ -12,7 +14,7 @@ const statusLabels = { active: 'Aktiv', peaking: 'Peaking', offseason: 'Off-seas
 function holidayInfo(a) {
   if (a?.status !== 'ferie') return null
   const until = a.vacation_until || null
-  const onHoliday = !until || until >= new Date().toISOString().slice(0, 10)
+  const onHoliday = !until || until >= calendarDay()
   return { onHoliday, until }
 }
 function ferieBadgeLabel(info) {

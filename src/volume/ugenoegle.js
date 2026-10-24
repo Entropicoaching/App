@@ -1,10 +1,14 @@
+import { calendarTime } from '../athlete/kostNumbers.mjs'
+
 // ORDRE 387: flyttet uændret fra ./beregn.js (se kommentaren der om
 // ugenøgle = kalenderuge, ikke programuge). Egen fil uden imports, så
 // atletens forside ikke henter muskelkortet for at kende en ugenøgle.
 
 export function kalenderdato(loggetDato) {
-  const s = loggetDato instanceof Date ? loggetDato.toISOString() : String(loggetDato)
-  return s.slice(0, 10)
+  if (loggetDato instanceof Date && !Number.isFinite(loggetDato.getTime())) return ''
+  const s = loggetDato instanceof Date ? loggetDato.toISOString() : String(loggetDato ?? '')
+  const day = s.slice(0, 10)
+  return calendarTime(day) === null ? '' : day
 }
 
 /**
@@ -16,8 +20,9 @@ export function kalenderdato(loggetDato) {
  * @returns {string}
  */
 export function ugenoegle(loggetDato) {
-  const [aar, maaned, dag] = kalenderdato(loggetDato).split('-').map(Number)
-  const d = new Date(Date.UTC(aar, maaned - 1, dag))
+  const day = kalenderdato(loggetDato)
+  if (!day) return null
+  const d = new Date(calendarTime(day))
   const ugedagMandag0 = (d.getUTCDay() + 6) % 7 // 0=mandag..6=søndag
   d.setUTCDate(d.getUTCDate() - ugedagMandag0 + 3) // torsdag i samme uge
   const aarStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
