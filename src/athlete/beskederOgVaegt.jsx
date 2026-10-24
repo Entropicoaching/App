@@ -12,6 +12,7 @@ import { s, today } from '../athleteShared'
 import { athleteVideoPathPreview } from './videoCoachBro'
 import { logFrontendError } from './ugeHjaelp'
 import { ugeBesked } from './dinUge'
+import { parseInputNumber } from './kostNumbers.mjs'
 
 export function lavBeskederOgVaegt({
   athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
@@ -38,13 +39,15 @@ export function lavBeskederOgVaegt({
   // afslørede det, og kun hvis atleten selv lagde mærke til det.
   async function logWeight() {
     if (!weightInput || !athlete) return
+    const weight = parseInputNumber(weightInput)
+    if (weight === null || weight <= 0) return
     setSavingWeight(true)
     const todayStr = today()
     const existing = weightLogs.find(l => l.logged_at === todayStr)
     const ok = await runGuardedWrite(
       () => existing
-        ? supabase.from('weight_logs').update({ weight: parseFloat(weightInput) }).eq('id', existing.id)
-        : supabase.from('weight_logs').insert({ athlete_id: athlete.id, weight: parseFloat(weightInput), logged_at: todayStr }),
+        ? supabase.from('weight_logs').update({ weight }).eq('id', existing.id)
+        : supabase.from('weight_logs').insert({ athlete_id: athlete.id, weight, logged_at: todayStr }),
       error => {
         logFrontendError('logWeight fejlede', error, athlete.id)
         recordSilentFail(athlete.id, 'silent:weight-log-failed')

@@ -8,6 +8,7 @@ import { runGuardedWrite } from '../athleteWriteGuard'
 import { runGuardedRead } from '../athleteReadGuard'
 import { shiftDate, unitsForFood } from '../athleteShared'
 import { LOCAL_FOODS } from './lokaleFoedevarer'
+import { parseInputNumber, nutritionValues, finiteTotal, calendarTime } from './kostNumbers.mjs'
 
 export function lavKostHandlinger({
   amount, athlete, createFood, customFoods, editGrams, editMacros, historicalMealLogs, kostDate,
@@ -182,9 +183,13 @@ export function lavKostHandlinger({
     if (!selectedFood || !athlete) return
     const units = unitsForFood(selectedFood)
     const unit = units[unitIdx] || units[0]
-    const amt = parseFloat(amount) || 0
+    const amt = parseInputNumber(amount)
+    if (amt === null) return
     const grams = amt * unit.grams
+    if (!Number.isFinite(grams) || grams < 0) return
     const ratio = grams / 100
+    const nutrients = nutritionValues({ kcal: selectedFood.kcal100, protein: selectedFood.protein100, carb: selectedFood.carb100, fat: selectedFood.fat100 }, ratio)
+    if (!nutrients) return
     // Beskriv portionen i navnet når enheden ikke er gram, så loggen er læsbar.
     const label = unit.label === 'g'
       ? `${selectedFood.name} · ${Math.round(grams)} g`
@@ -194,10 +199,10 @@ export function lavKostHandlinger({
         athlete_id: athlete.id,
         date: kostDate,
         meal: label,
-        kcal: Math.round(selectedFood.kcal100 * ratio),
-        protein: Math.round(selectedFood.protein100 * ratio),
-        carb: Math.round(selectedFood.carb100 * ratio),
-        fat: Math.round(selectedFood.fat100 * ratio),
+        kcal: nutrients.kcal,
+        protein: nutrients.protein,
+        carb: nutrients.carb,
+        fat: nutrients.fat,
       }),
       () => showFlash('Fødevaren blev ikke logget. Tjek din forbindelse og prøv igen.', 'error'),
     )
@@ -215,7 +220,10 @@ export function lavKostHandlinger({
     const unit = units.length > 1 ? units[1] : units[0]
     const amt = unit.label === 'g' ? 100 : 1
     const grams = amt * unit.grams
+    if (!Number.isFinite(grams) || grams < 0) return
     const ratio = grams / 100
+    const nutrients = nutritionValues({ kcal: f.kcal100, protein: f.protein100, carb: f.carb100, fat: f.fat100 }, ratio)
+    if (!nutrients) return
     const label = unit.label === 'g'
       ? `${f.name} · ${Math.round(grams)} g`
       : `${f.name} · ${amt} ${unit.label} (${Math.round(grams)} g)`
@@ -224,10 +232,10 @@ export function lavKostHandlinger({
         athlete_id: athlete.id,
         date: kostDate,
         meal: label,
-        kcal: Math.round(f.kcal100 * ratio),
-        protein: Math.round(f.protein100 * ratio),
-        carb: Math.round(f.carb100 * ratio),
-        fat: Math.round(f.fat100 * ratio),
+        kcal: nutrients.kcal,
+        protein: nutrients.protein,
+        carb: nutrients.carb,
+        fat: nutrients.fat,
       }),
       () => showFlash(`${f.name} blev ikke logget. Tjek din forbindelse og prøv igen.`, 'error'),
     )
@@ -238,15 +246,16 @@ export function lavKostHandlinger({
 
   async function saveCustomFood() {
     if (!createFood.name.trim() || !athlete) return
+    const nutrients = Object.fromEntries(['kcal', 'protein', 'carb', 'fat'].map(key => [key + '100', parseInputNumber(createFood[key + '100'], 0)]))
+    const unitGrams = parseInputNumber(createFood.unit_grams)
+    if (Object.values(nutrients).some(value => value === null) ||
+      (String(createFood.unit_grams).trim() && (unitGrams === null || unitGrams <= 0))) return
     const food = {
       athlete_id: athlete.id,
       name: createFood.name.trim(),
-      kcal100: parseFloat(createFood.kcal100) || 0,
-      protein100: parseFloat(createFood.protein100) || 0,
-      carb100: parseFloat(createFood.carb100) || 0,
-      fat100: parseFloat(createFood.fat100) || 0,
+      ...nutrients,
       unit_label: createFood.unit_label.trim() || null,
-      unit_grams: parseFloat(createFood.unit_grams) || null,
+      unit_grams: unitGrams,
       is_shared: shareFood,
     }
     const { data } = await supabase.from('custom_foods').insert(food).select().maybeSingle()
@@ -292,10 +301,10 @@ export function lavKostHandlinger({
   // Find gram-mængden i et logget måltidsnavn, fx "Kyllingebryst · 250 g" eller
   // "... (300 g)". Returnerer { base, grams } eller null hvis den ikke kan læses.
   function parseLoggedGrams(meal) {
-    const m = String(meal).match(/(\d+)\s*g\)?\s*$/)
+    const m = String(meal).match(/(?:^| · |\()([+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:e[+-]?\d+)?)\s*g\)?\s*$/i)
     if (!m) return null
-    const grams = parseInt(m[1])
-    if (!grams) return null
+    const grams = parseInputNumber(m[1])
+    if (grams === null || grams <= 0) return null
     return { base: String(meal).split(' · ')[0], grams }
   }
 
@@ -312,24 +321,16 @@ export function lavKostHandlinger({
     let update
     if (parsed) {
       // Gram-skalering: vægt op/ned proportionalt og opdater gram i navnet.
-      const newGrams = parseFloat(editGrams) || 0
-      if (newGrams <= 0) return
+      const newGrams = parseInputNumber(editGrams)
+      if (newGrams === null || newGrams <= 0) return
       const factor = newGrams / parsed.grams
-      update = {
-        meal: `${parsed.base} · ${Math.round(newGrams)} g`,
-        kcal: Math.round((l.kcal || 0) * factor),
-        protein: Math.round((l.protein || 0) * factor),
-        carb: Math.round((l.carb || 0) * factor),
-        fat: Math.round((l.fat || 0) * factor),
-      }
+      const nutrients = nutritionValues(l, factor)
+      if (!nutrients) return
+      update = { meal: `${parsed.base} · ${Math.round(newGrams)} g`, ...nutrients }
     } else {
-      // Fallback: rediger makroerne direkte.
-      update = {
-        kcal: parseInt(editMacros.kcal) || 0,
-        protein: parseInt(editMacros.protein) || 0,
-        carb: parseInt(editMacros.carb) || 0,
-        fat: parseInt(editMacros.fat) || 0,
-      }
+      // Direct edits use the same rounding as scaled portions.
+      update = nutritionValues(editMacros)
+      if (!update) return
     }
     const ok = await runGuardedWrite(
       () => supabase.from('meal_logs').update(update).eq('id', l.id),
@@ -340,38 +341,52 @@ export function lavKostHandlinger({
     fetchLogs(athlete.id)
   }
 
-  const totKcal = logs.reduce((a, l) => a + (l.kcal || 0), 0)
-  const totProtein = logs.reduce((a, l) => a + (l.protein || 0), 0)
-  const totCarb = logs.reduce((a, l) => a + (l.carb || 0), 0)
-  const totFat = logs.reduce((a, l) => a + (l.fat || 0), 0)
-  const kcalPct = athlete?.kcal_target ? Math.min(100, Math.round(totKcal / athlete.kcal_target * 100)) : 0
-  const proteinPct = athlete?.protein_target ? Math.min(100, Math.round(totProtein / athlete.protein_target * 100)) : 0
+  const totKcal = finiteTotal(logs, 'kcal')
+  const totProtein = finiteTotal(logs, 'protein')
+  const totCarb = finiteTotal(logs, 'carb')
+  const totFat = finiteTotal(logs, 'fat')
+  const percent = (total, target) => {
+    const value = parseInputNumber(target)
+    return value > 0 ? Math.round(Math.min(1, total / value) * 100) : 0
+  }
+  const kcalPct = percent(totKcal, athlete?.kcal_target)
+  const proteinPct = percent(totProtein, athlete?.protein_target)
 
-  const pKcal = totProtein * 4
-  const cKcal = totCarb * 4
-  const fKcal = totFat * 9
-  const macroTotal = pKcal + cKcal + fKcal || 1
+  const pKcal = Math.min(Number.MAX_VALUE, totProtein * 4)
+  const cKcal = Math.min(Number.MAX_VALUE, totCarb * 4)
+  const fKcal = Math.min(Number.MAX_VALUE, totFat * 9)
+  const macroTotal = finiteTotal([{ value: pKcal }, { value: cKcal }, { value: fKcal }], 'value') || 1
+  // Normalize before multiplication so the circle remains finite at extreme totals.
+  const scale = Math.max(totProtein, totCarb, totFat) || 1
+  const p = totProtein / scale * 4, c = totCarb / scale * 4, f = totFat / scale * 9
+  const denominator = p + c + f || 1
   const circ = 2 * Math.PI * 48
-  const pLen = (pKcal / macroTotal) * circ
-  const cLen = (cKcal / macroTotal) * circ
-  const fLen = (fKcal / macroTotal) * circ
+  const pLen = p / denominator * circ
+  const cLen = c / denominator * circ
+  const fLen = f / denominator * circ
 
   const tdeeEstimate = (() => {
     const kcalByDate = {}
     for (const log of historicalMealLogs) {
-      kcalByDate[log.date] = (kcalByDate[log.date] || 0) + (log.kcal || 0)
+      const kcal = parseInputNumber(log.kcal, 0)
+      if (calendarTime(log.date) === null || kcal === null) return { ready: false, invalidData: true }
+      const total = (kcalByDate[log.date] || 0) + kcal
+      if (!Number.isFinite(total)) return { ready: false, invalidData: true }
+      kcalByDate[log.date] = total
     }
     const kcalDays = Object.values(kcalByDate)
     if (kcalDays.length < 7) return { ready: false, missingKcalDays: Math.max(0, 7 - kcalDays.length) }
+    if (weightLogs.some(log => calendarTime(log.logged_at) === null || !(parseInputNumber(log.weight) > 0))) return { ready: false, missingWeight: true }
     const wLogs = [...weightLogs].sort((a, b) => a.logged_at > b.logged_at ? 1 : -1)
     if (wLogs.length < 2) return { ready: false, missingWeight: true }
     const oldest = wLogs[0]
     const newest = wLogs[wLogs.length - 1]
     const daySpan = (new Date(newest.logged_at) - new Date(oldest.logged_at)) / 86400000
-    if (daySpan < 7) return { ready: false, missingWeight: true }
-    const avgKcal = kcalDays.reduce((a, b) => a + b, 0) / kcalDays.length
-    const weightChangePrDay = (newest.weight - oldest.weight) / daySpan
+    if (!Number.isFinite(daySpan) || daySpan < 7) return { ready: false, missingWeight: true }
+    const avgKcal = kcalDays.reduce((a, b) => a + b / kcalDays.length, 0)
+    const weightChangePrDay = (parseInputNumber(newest.weight) - parseInputNumber(oldest.weight)) / daySpan
     const tdee = Math.round(avgKcal - weightChangePrDay * 7700)
+    if (!Number.isFinite(tdee) || !Number.isFinite(avgKcal)) return { ready: false, invalidData: true }
     const confidence = kcalDays.length >= 14 && daySpan >= 21 ? 'høj' : kcalDays.length >= 10 && daySpan >= 14 ? 'moderat' : 'lav'
     return { ready: true, tdee, avgKcal: Math.round(avgKcal), kcalDays: kcalDays.length, daySpan: Math.round(daySpan), confidence }
   })()

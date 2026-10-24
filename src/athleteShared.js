@@ -7,6 +7,8 @@
 // (src/athlete/CountdownRing.jsx), da react-refresh kun tillader komponent-
 // eksporter i en JSX-fil.
 
+import { parseInputNumber } from './athlete/kostNumbers.mjs'
+
 export function today() {
   return new Date().toISOString().slice(0, 10)
 }
@@ -52,8 +54,9 @@ const PORTION_UNITS = {
 export function unitsForFood(food) {
   const units = [{ label: 'g', grams: 1 }]
   if (!food) return units
-  if (food.isCustom && food.unit_label && food.unit_grams > 0) {
-    units.push({ label: food.unit_label, grams: Number(food.unit_grams) })
+  const grams = parseInputNumber(food.unit_grams)
+  if (food.isCustom && food.unit_label && grams > 0) {
+    units.push({ label: food.unit_label, grams })
   } else if (PORTION_UNITS[food.name]) {
     units.push(...PORTION_UNITS[food.name])
   }
