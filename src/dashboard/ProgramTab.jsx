@@ -9,6 +9,8 @@ import { blockPurpose, withBlockPurposes } from '../periodizationAssistant'
 import { targetPrescriptionForExercise } from '../../supabase/functions/_shared/progressionState.js'
 import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared'
 import { nextWeekStartDate } from '../weekDates'
+import { useRef } from 'react'
+import { activateOnKey, cancelRecommended, restoreRecommendedFocus } from './coachAccessibility.mjs'
 import UgeFeedbackKort from './UgeFeedbackKort.jsx'
 import VideoCoachNote from './VideoCoachNote.jsx'
 
@@ -31,14 +33,15 @@ export default function ProgramTab({
   updateWeek, weekdayPicker, weekDateFill, weekDraft, weekForm, weeks,
   videoCoachNotes = [],
 }) {
+  const recommendedReturn = useRef(null)
   return (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
+                  <div role="heading" aria-level={2} aria-label={`Program: ${weeks.length} uger`} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
                     {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <button style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
+                    <button aria-expanded={showBlockPlanner} style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
                       if (!showBlockPlanner) {
                         setPlanStartDate(nextWeekStartDate(weeks))
                         setAssignEdits(Object.fromEntries(weeks.map(w => [w.id, w.block_name || ''])))
@@ -60,7 +63,7 @@ export default function ProgramTab({
                     {weeks.length > 0 && (
                       <button
                         style={{ ...s.btnGhost, color: weekDraft ? '#c8923a' : '#7a7770', borderColor: weekDraft ? 'rgba(200,146,58,0.4)' : undefined }}
-                        disabled={weekDraft?.loading}
+                        aria-busy={!!weekDraft?.loading} aria-expanded={!!weekDraft} disabled={weekDraft?.loading}
                         onClick={async () => {
                           if (weekDraft) { setWeekDraft(null); return }
                           setWeekDraft({ loading: true })
@@ -120,12 +123,12 @@ export default function ProgramTab({
                   <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
                     {weekDraft.error ? (
                       <>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#e05555', lineHeight: 1.6, marginBottom: '0.75rem' }}>{weekDraft.error}</div>
+                        <div role="alert" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#e05555', lineHeight: 1.6, marginBottom: '0.75rem' }}>{weekDraft.error}</div>
                         <button style={s.btnGhost} onClick={() => setWeekDraft(null)}>Luk</button>
                       </>
                     ) : (
                       <>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
+                        <div role="status" aria-live="polite" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
                           Udkast: uge {weekDraft.data.draft.p_payload.week} · start {weekDraft.data.draft.start_date}
                         </div>
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', marginBottom: '0.85rem' }}>
@@ -198,6 +201,9 @@ export default function ProgramTab({
                                          </div>
                                          <input
                                            style={{ ...s.fieldInput, borderColor: missingReason ? 'rgba(224,85,85,0.72)' : undefined, padding: '0.4rem 0.5rem' }}
+                                           aria-label={`Begrundelse for ændringen: ${item.exercise_name}`}
+                                           aria-required="true"
+                                           aria-invalid={missingReason}
                                            placeholder="Begrundelse for ændringen"
                                            value={override.reason || ''}
                                            disabled={approvingProgression}
@@ -286,7 +292,7 @@ export default function ProgramTab({
                         <div style={{ ...s.fieldLabel, marginBottom: '0.3rem', color: '#c8923a' }}>Planassistent — udkast</div>
                         <div style={{ fontSize: '0.68rem', color: '#98948a', lineHeight: 1.45, marginBottom: '0.65rem' }}>Laver kun et redigerbart blokudkast. Uger oprettes først nederst, når du vælger det.</div>
                         <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                          <select value={planAssistantFocus} onChange={e => setPlanAssistantFocus(e.target.value)} style={{ ...s.fieldSelect, minWidth: '142px', padding: '0.4rem 0.55rem', fontSize: '0.65rem' }}>
+                          <select aria-label="Planassistentens fokus" value={planAssistantFocus} onChange={e => setPlanAssistantFocus(e.target.value)} style={{ ...s.fieldSelect, minWidth: '142px', padding: '0.4rem 0.55rem', fontSize: '0.65rem' }}>
                             <option value="competition">Mod stævne</option>
                             <option value="strength">Grundstyrke</option>
                             <option value="offseason">Off-season</option>
@@ -323,6 +329,7 @@ export default function ProgramTab({
                                 <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', minWidth: '52px' }}>Uge {w.week_number}</span>
                                 {w.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', minWidth: '80px' }}>{new Date(w.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
                                 <select
+                                  aria-label={`Blok for uge ${w.week_number}`}
                                   value={assignEdits[w.id] ?? w.block_name ?? ''}
                                   onChange={e => setAssignEdits(p => ({ ...p, [w.id]: e.target.value }))}
                                   style={{ ...s.fieldSelect, padding: '0.25rem 0.5rem', fontSize: '0.62rem', flex: 1, maxWidth: '180px' }}
@@ -347,7 +354,7 @@ export default function ProgramTab({
                       <div style={{ marginBottom: '1rem' }}>
                         <div style={s.fieldLabel}>Nye uger — startdato{weeks.length > 0 && <span style={{ color: '#4a4844', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}> (fortsætter fra uge {Math.max(...weeks.map(w => w.week_number)) + 1})</span>}</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                          <input style={{ ...s.fieldInput, maxWidth: '180px' }} type="date" value={planStartDate} onChange={e => setPlanStartDate(e.target.value)} />
+                          <input aria-label="Nye uger, startdato" style={{ ...s.fieldInput, maxWidth: '180px' }} type="date" value={planStartDate} onChange={e => setPlanStartDate(e.target.value)} />
                           {/* Regn baglæns: sæt startdato så planen slutter ugen før stævnet.
                               Snap til mandag, så uge 1 starter på en normal træningsuge. */}
                           {compDate && totalWeeks > 0 && (
@@ -370,6 +377,7 @@ export default function ProgramTab({
                           <div key={block.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                             <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: blockColor(block.name), flexShrink: 0 }} />
                             <select
+                              aria-label={`Blok ${i + 1}: navn`}
                               value={block.name}
                               onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, name: e.target.value, description: blockPurpose(e.target.value) } : b))}
                               style={{ ...s.fieldSelect, width: '160px', padding: '0.35rem 0.6rem', fontSize: '0.72rem' }}
@@ -379,13 +387,14 @@ export default function ProgramTab({
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                               <input
                                 type="number" min="1" max="20"
+                                aria-label={`Blok ${i + 1}: antal uger`}
                                 value={block.weeks}
                                 onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, weeks: Math.max(1, parseInt(e.target.value) || 1) } : b))}
                                 style={{ ...s.fieldInput, width: '52px', padding: '0.35rem 0.5rem', fontSize: '0.72rem', textAlign: 'center' }}
                               />
                               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>uge{block.weeks !== 1 ? 'r' : ''}</span>
                             </div>
-                            <button onClick={() => setBlockPlan(p => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}>✕</button>
+                            <button aria-label={`Fjern blok ${i + 1}`} onClick={() => setBlockPlan(p => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}>✕</button>
                           </div>
                         ))}
                         <button
@@ -527,7 +536,7 @@ export default function ProgramTab({
                                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
                                     {renamingBlock === first.id ? (
                                       <input
-                                        autoFocus
+ aria-label="Bloknavn"                                        autoFocus
                                         value={renameValue}
                                         onClick={e => e.stopPropagation()}
                                         onChange={e => setRenameValue(e.target.value)}
@@ -544,13 +553,14 @@ export default function ProgramTab({
                                       />
                                     ) : (
                                       <>
-                                        <span style={{ fontSize: '0.82rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{phase.name || 'Uden blok'}</span>
+                                        <span role="button" tabIndex={0} aria-label={`Gå til ${range}`} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); gotoWeek(first) }} style={{ fontSize: '0.82rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{phase.name || 'Uden blok'}</span>
                                         {isDone && <span style={{ color, fontSize: '0.6rem', lineHeight: 1 }}>✓</span>}
                                         {isActive && (
                                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.1em', textTransform: 'uppercase', color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
                                         )}
                                         <button
                                           onClick={e => { e.stopPropagation(); setRenameValue(phase.name || ''); setRenamingBlock(first.id) }}
+                                          aria-label={`Omdøb blok ${phase.name || range}`}
                                           title="Omdøb blok"
                                           style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontSize: '0.7rem', padding: '0 2px', flexShrink: 0, ...(isMobile ? { minWidth: 44, minHeight: 32 } : {}) }}
                                         >✎</button>
@@ -669,6 +679,7 @@ export default function ProgramTab({
                                 cursor: 'pointer',
                                 opacity: isPostComp ? 0.35 : 1,
                               }}
+                              role="button" tabIndex={0} aria-label={`Gå til uge ${week.week_number}`} onKeyDown={activateOnKey}
                               onClick={() => gotoWeek(week)}
                             >
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isLatest ? '#c8923a' : '#7a7770', marginBottom: '0.2rem' }}>
@@ -696,25 +707,25 @@ export default function ProgramTab({
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 1fr 1.5fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                       <div>
                         <div style={s.fieldLabel}>Uge nr.</div>
-                        <input style={s.fieldInput} type="number" placeholder="Auto" value={weekForm.week_number} onChange={e => setWeekForm(p => ({ ...p, week_number: e.target.value }))} />
+                        <input aria-label="Uge nr." style={s.fieldInput} type="number" placeholder="Auto" value={weekForm.week_number} onChange={e => setWeekForm(p => ({ ...p, week_number: e.target.value }))} />
                       </div>
                       <div>
                         <div style={s.fieldLabel}>Startdato</div>
-                        <input style={s.fieldInput} type="date" value={weekForm.start_date} onChange={e => setWeekForm(p => ({ ...p, start_date: e.target.value }))} />
+                        <input aria-label="Startdato" style={s.fieldInput} type="date" value={weekForm.start_date} onChange={e => setWeekForm(p => ({ ...p, start_date: e.target.value }))} />
                       </div>
                       <div>
                         <div style={s.fieldLabel}>Blok</div>
-                        <input style={s.fieldInput} list="block-names-list" placeholder="Vælg blok…" value={weekForm.block_name} onChange={e => setWeekForm(p => ({ ...p, block_name: e.target.value }))} />
+                        <input aria-label="Blok" style={s.fieldInput} list="block-names-list" placeholder="Vælg blok…" value={weekForm.block_name} onChange={e => setWeekForm(p => ({ ...p, block_name: e.target.value }))} />
                         <datalist id="block-names-list">{BLOCK_NAMES.map(n => <option key={n} value={n} />)}</datalist>
                       </div>
                       <div>
                         <div style={s.fieldLabel}>Coach-note</div>
-                        <input style={s.fieldInput} type="text" placeholder="Note…" value={weekForm.coach_note} onChange={e => setWeekForm(p => ({ ...p, coach_note: e.target.value }))} />
+                        <input aria-label="Coach-note" style={s.fieldInput} type="text" placeholder="Note…" value={weekForm.coach_note} onChange={e => setWeekForm(p => ({ ...p, coach_note: e.target.value }))} />
                       </div>
                     </div>
                     <div style={{ marginBottom: '0.75rem' }}>
                       <div style={s.fieldLabel}>Blok-beskrivelse</div>
-                      <textarea style={{ ...s.fieldInput, minHeight: '72px', resize: 'vertical', lineHeight: 1.5 }} placeholder="Forklar formålet med denne blok…" value={weekForm.block_description} onChange={e => setWeekForm(p => ({ ...p, block_description: e.target.value }))} />
+                      <textarea aria-label="Blok-beskrivelse" style={{ ...s.fieldInput, minHeight: '72px', resize: 'vertical', lineHeight: 1.5 }} placeholder="Forklar formålet med denne blok…" value={weekForm.block_description} onChange={e => setWeekForm(p => ({ ...p, block_description: e.target.value }))} />
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button style={s.btnGhost} onClick={() => setAddingWeek(false)}>Annuller</button>
@@ -762,24 +773,24 @@ export default function ProgramTab({
                         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 1fr 1.5fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                           <div>
                             <div style={s.fieldLabel}>Uge nr.</div>
-                            <input style={s.fieldInput} type="number" value={weekForm.week_number} onChange={e => setWeekForm(p => ({ ...p, week_number: e.target.value }))} />
+                            <input aria-label="Uge nr." style={s.fieldInput} type="number" value={weekForm.week_number} onChange={e => setWeekForm(p => ({ ...p, week_number: e.target.value }))} />
                           </div>
                           <div>
                             <div style={s.fieldLabel}>Startdato</div>
-                            <input style={s.fieldInput} type="date" value={weekForm.start_date} onChange={e => setWeekForm(p => ({ ...p, start_date: e.target.value }))} />
+                            <input aria-label="Startdato" style={s.fieldInput} type="date" value={weekForm.start_date} onChange={e => setWeekForm(p => ({ ...p, start_date: e.target.value }))} />
                           </div>
                           <div>
                             <div style={s.fieldLabel}>Blok</div>
-                            <input style={s.fieldInput} list="block-names-list" value={weekForm.block_name} onChange={e => setWeekForm(p => ({ ...p, block_name: e.target.value }))} />
+                            <input aria-label="Blok" style={s.fieldInput} list="block-names-list" value={weekForm.block_name} onChange={e => setWeekForm(p => ({ ...p, block_name: e.target.value }))} />
                           </div>
                           <div>
                             <div style={s.fieldLabel}>Coach-note</div>
-                            <input style={s.fieldInput} type="text" value={weekForm.coach_note} onChange={e => setWeekForm(p => ({ ...p, coach_note: e.target.value }))} />
+                            <input aria-label="Coach-note" style={s.fieldInput} type="text" value={weekForm.coach_note} onChange={e => setWeekForm(p => ({ ...p, coach_note: e.target.value }))} />
                           </div>
                         </div>
                         <div style={{ marginBottom: '0.75rem' }}>
                           <div style={s.fieldLabel}>Blok-beskrivelse</div>
-                          <textarea style={{ ...s.fieldInput, minHeight: '72px', resize: 'vertical', lineHeight: 1.5 }} placeholder="Forklar formålet med denne blok…" value={weekForm.block_description} onChange={e => setWeekForm(p => ({ ...p, block_description: e.target.value }))} />
+                          <textarea aria-label="Blok-beskrivelse" style={{ ...s.fieldInput, minHeight: '72px', resize: 'vertical', lineHeight: 1.5 }} placeholder="Forklar formålet med denne blok…" value={weekForm.block_description} onChange={e => setWeekForm(p => ({ ...p, block_description: e.target.value }))} />
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button style={s.btnGhost} onClick={() => setEditingWeek(null)}>Annuller</button>
@@ -792,8 +803,8 @@ export default function ProgramTab({
                         onClick={() => setOpenWeekId(openWeekId === week.id ? null : week.id)}
                       >
                         <div>
-                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
+                          <div role="heading" aria-level={3} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
+                            <span role="button" tabIndex={0} aria-expanded={openWeekId === week.id} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); setOpenWeekId(openWeekId === week.id ? null : week.id) }} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
                             {week.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{new Date(week.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })} – {new Date(new Date(week.start_date + 'T12:00:00').getTime() + 6 * 24 * 3600 * 1000).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
                             {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{week.block_name}</span>}
                           </div>
@@ -821,7 +832,7 @@ export default function ProgramTab({
                                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', marginBottom: '0.5rem' }}>
                                   <div style={{ flex: 1 }}>
                                     <div style={s.fieldLabel}>Titel</div>
-                                    <input style={s.fieldInput} type="text" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
+                                    <input aria-label="Titel" style={s.fieldInput} type="text" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
                                   </div>
                                 </div>
                                 {weekdayPicker}
@@ -837,8 +848,8 @@ export default function ProgramTab({
                               >
                                 {/* Telefon: titlen faar hele bredden og knapperne en linje under (ordre 433). */}
                                 <div style={{ flex: isMobile ? '1 1 100%' : 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: '0.88rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                    {session.title}
+                                  <div role="heading" aria-level={4} style={{ fontSize: '0.88rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                    <span role="button" tabIndex={0} aria-expanded={openSessionId === session.id} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); setOpenSessionId(openSessionId === session.id ? null : session.id) }}>{session.title}</span>
                                     {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
                                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.12rem 0.4rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
                                     )}
@@ -859,6 +870,7 @@ export default function ProgramTab({
                                   {copyingSession === session.id ? (
                                     <>
                                       <select
+                                        aria-label={`Kopiér ${session.title} til uge`}
                                         style={{ ...s.fieldInput, fontSize: '0.6rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
                                         defaultValue=""
                                         onChange={e => { if (e.target.value) copySessionToWeek(session, e.target.value) }}
@@ -869,7 +881,7 @@ export default function ProgramTab({
                                           <option key={w.id} value={w.id}>Uge {w.week_number}{w.block_name ? ` — ${w.block_name}` : ''}</option>
                                         ))}
                                       </select>
-                                      <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={e => { e.stopPropagation(); setCopyingSession(null) }}>✕</button>
+                                      <button aria-label="Annuller kopiering af træning" style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={e => { e.stopPropagation(); setCopyingSession(null) }}>✕</button>
                                     </>
                                   ) : (
                                     <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setCopyingSession(session.id) }}>Kopiér</button>
@@ -908,32 +920,32 @@ export default function ProgramTab({
                                           {editingRecommended === ex.id ? (
                                             <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.3rem', alignItems: 'center' }}>
                                               <input
-                                                style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.2rem 0.4rem', width: '80px' }}
+ aria-label="Anbefalet vægt (kg)"                                                style={{ ...s.fieldInput, fontSize: '0.72rem', padding: '0.2rem 0.4rem', width: '80px' }}
                                                 type="number"
                                                 placeholder="kg"
                                                 value={recommendedInput}
                                                 onChange={e => setRecommendedInput(e.target.value)}
-                                                onKeyDown={e => { if (e.key === 'Enter') saveRecommendedWeight(ex.id); if (e.key === 'Escape') setEditingRecommended(null) }}
+                                                onKeyDown={e => { if (e.key === 'Enter') saveRecommendedWeight(ex.id); if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cancelRecommended(setEditingRecommended, recommendedReturn, ex.id) } }}
                                                 autoFocus
                                               />
                                               <button style={{ ...s.btnPrimary, fontSize: '0.55rem', padding: '0.2rem 0.5rem' }} onClick={() => saveRecommendedWeight(ex.id)}>Gem</button>
-                                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.5rem' }} onClick={() => setEditingRecommended(null)}>Annuller</button>
+                                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.5rem' }} onClick={() => cancelRecommended(setEditingRecommended, recommendedReturn, ex.id)}>Annuller</button>
                                             </div>
                                           ) : (
                                             (() => {
                                               const last = bestLog(ex.name, ex.reps)
                                               if (ex.recommended_weight != null) return (
-                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
+                                                <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
                                                   Anbefalet: {ex.recommended_weight}kg <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               if (last) return (
-                                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
                                                   Sidst logget: {last.weight}kg × {last.reps_completed} reps <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               return (
-                                                <button style={{ ...s.btnSm, marginTop: '0.25rem', fontSize: '0.5rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                <button ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} style={{ ...s.btnSm, marginTop: '0.25rem', fontSize: '0.5rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
                                                   + Anbefalet vægt
                                                 </button>
                                               )
@@ -944,6 +956,7 @@ export default function ProgramTab({
                                           {copyingExercise === ex.id ? (
                                             <>
                                               <select
+                                                aria-label={`Kopiér ${ex.name} til træning`}
                                                 style={{ ...s.fieldInput, fontSize: '0.65rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
                                                 defaultValue=""
                                                 onChange={e => { if (e.target.value) copyExerciseToSession(ex, e.target.value) }}
@@ -961,7 +974,7 @@ export default function ProgramTab({
                                                   )
                                                 })}
                                               </select>
-                                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={() => setCopyingExercise(null)}>✕</button>
+                                              <button aria-label="Annuller kopiering af øvelse" style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={() => setCopyingExercise(null)}>✕</button>
                                             </>
                                           ) : (
                                             <button style={s.btnEdit} onClick={() => setCopyingExercise(ex.id)}>Kopiér</button>
@@ -1000,7 +1013,7 @@ export default function ProgramTab({
                           <div style={{ background: '#141410', border: '1px solid rgba(200,146,58,0.2)', padding: '0.75rem', marginTop: '0.5rem' }}>
                             <div style={{ marginBottom: '0.5rem' }}>
                               <div style={s.fieldLabel}>Titel</div>
-                              <input style={s.fieldInput} type="text" placeholder="f.eks. Træning A" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
+                              <input aria-label="Titel" style={s.fieldInput} type="text" placeholder="f.eks. Træning A" value={sessionForm.title} onChange={e => setSessionForm(p => ({ ...p, title: e.target.value }))} />
                             </div>
                             {weekdayPicker}
                             <div style={{ display: 'flex', gap: '0.5rem' }}>

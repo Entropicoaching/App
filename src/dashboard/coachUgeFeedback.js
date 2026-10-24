@@ -43,17 +43,17 @@ const PAS_STATUS = { ingen_saet_planlagt: 'Ingen planlagte sæt', ikke_logget: '
 export function ugeFeedbackTree(h, feedback, ugeNr, scope = ugeNr, navne = {}) {
   if (!feedback) return null
   const list = (title, lines) => h('div', { key: title },
-    h('h4', null, title),
+    h('h4', { 'aria-level': 5 }, title),
     lines.length ? h('ul', null, ...lines.map((line, i) => h('li', { key: i }, line))) : h('p', null, 'Ingen registreret.'))
   const r = feedback.rpe
   return h('section', { 'aria-label': `Coachens ugeoverblik for uge ${ugeNr}`, style: { color: '#edeae2', background: '#1c1c18', padding: '1rem', marginBottom: '0.75rem', overflowWrap: 'anywhere' } },
-    h('h3', null, `Uge ${ugeNr} · Coachens ugeoverblik`),
+    h('h3', { 'aria-level': 4 }, `Uge ${ugeNr} · Coachens ugeoverblik`),
     h('p', null, `Afsluttet kalenderuge · ${STATUS[feedback.status] || feedback.status}`),
     h('p', null, 'Overblikket bygger på de indlæste logs. Coachen vurderer spørgsmålene sammen med atleten. Programmet ændres ikke automatisk.'),
     list('Pas og sæt', feedback.pas.map(p => `${p.titel || 'Pas'}: ${PAS_STATUS[p.status] || p.status}. ${p.gennemfoertSaet}/${p.planlagtSaet} gennemførte sæt; ${p.sprunget} sprunget over.${p.manglendeOevelser.length ? ' Uden fuld dækning: ' + p.manglendeOevelser.join(', ') + '.' : ''}`)),
     list('Afvigelser', feedback.afvigelser.map(afvigelseTekst)),
     list('Atletens noter', feedback.noter.map(n => n.tekst)),
-    h('h4', null, 'RPE'),
+    h('h4', { 'aria-level': 5 }, 'RPE'),
     h('p', null, r.kilde),
     h('p', null, `Gennemsnit: ${r.gennemsnit ?? 'ukendt'} · Maks: ${r.max ?? 'ukendt'} · Med RPE: ${r.saetMedRpe} · Uden RPE: ${r.saetUdenRpe} · Ugyldige: ${r.ugyldigeRpe}`),
     list('Spørgsmål til coachen', feedback.spoergsmaal),

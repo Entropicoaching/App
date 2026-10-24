@@ -1,12 +1,15 @@
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Øvelsesformens række med bibliotekssøgning (exFormRow til ProgramTab).
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
+import { useRef } from 'react'
+import { activateOnKey, searchKeys, leaveSearch, selectSearchOption, focusSearchList } from './coachAccessibility.mjs'
 import { s } from '../dashboardShared'
 
 export default function ExFormRow({
   addToLibraryQuick, exerciseForm, exerciseLibrary, exerciseSearchOpen, isMobile, setExerciseForm,
   setExerciseSearchOpen,
 }) {
+    const searchFocus = useRef(false)
     const searchLower = (exerciseForm.name || '').toLowerCase()
     const grouped = {}
     for (const ex of exerciseLibrary) {
@@ -30,17 +33,17 @@ export default function ExFormRow({
 
     return (
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 0.5fr 0.7fr minmax(200px, 2fr) 1.5fr', gap: '0.5rem', alignItems: 'end' }}>
-        <div style={{ position: 'relative' }}>
+        <div data-exercise-search="" onKeyDown={e => searchKeys(e, setExerciseSearchOpen, searchFocus)} onBlur={e => leaveSearch(e, setExerciseSearchOpen)} style={{ position: 'relative' }}>
           <div style={s.fieldLabel}>Navn</div>
           <input
             style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
             type="text"
             placeholder="Søg øvelse..."
+            aria-label="Navn"
             value={exerciseForm.name}
             autoComplete="off"
             onChange={e => { setExerciseForm(p => ({ ...p, name: e.target.value })); setExerciseSearchOpen(true) }}
             onFocus={() => setExerciseSearchOpen(true)}
-            onBlur={() => setTimeout(() => setExerciseSearchOpen(false), 180)}
           />
           {exerciseForm.name.trim() && !exactMatch && !exerciseSearchOpen && (
             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#c8923a', marginTop: '0.2rem', letterSpacing: '0.06em' }}>
@@ -48,13 +51,15 @@ export default function ExFormRow({
             </div>
           )}
           {showDropdown && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', borderTop: 'none', zIndex: 100, maxHeight: '240px', overflowY: 'auto' }}>
+            <div ref={node => focusSearchList(node, searchFocus)} style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', borderTop: 'none', zIndex: 100, maxHeight: '240px', overflowY: 'auto' }}>
               {filteredCategories.map(([cat, exs]) => (
                 <div key={cat}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', padding: '0.3rem 0.6rem 0.15rem', background: 'rgba(14,14,10,0.7)', position: 'sticky', top: 0 }}>{cat}</div>
                   {exs.map(ex => (
                     <div
                       key={ex.id}
+                      role="button" tabIndex={0} onKeyDown={activateOnKey}
+                      onClick={e => selectSearchOption(e, () => { setExerciseForm(p => ({ ...p, name: ex.name })); setExerciseSearchOpen(false) })}
                       onMouseDown={e => { e.preventDefault(); setExerciseForm(p => ({ ...p, name: ex.name })); setExerciseSearchOpen(false) }}
                       style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', color: '#b8b4a8', cursor: 'pointer' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(237,234,226,0.06)'}
@@ -65,6 +70,8 @@ export default function ExFormRow({
               ))}
               {exerciseForm.name.trim() && !exactMatch && (
                 <div
+                  role="button" tabIndex={0} onKeyDown={activateOnKey}
+                  onClick={e => selectSearchOption(e, () => { addToLibraryQuick(exerciseForm.name.trim()); setExerciseSearchOpen(false) })}
                   onMouseDown={e => { e.preventDefault(); addToLibraryQuick(exerciseForm.name.trim()); setExerciseSearchOpen(false) }}
                   style={{ padding: '0.4rem 0.75rem', fontSize: '0.68rem', color: '#c8923a', cursor: 'pointer', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.06em' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,146,58,0.08)'}
@@ -81,7 +88,8 @@ export default function ExFormRow({
               style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
               type={type}
               placeholder={label}
-              value={exerciseForm[key]}
+              aria-label={label}
+            value={exerciseForm[key]}
               onChange={e => setExerciseForm(p => ({ ...p, [key]: e.target.value }))}
             />
           </div>
@@ -104,7 +112,8 @@ export default function ExFormRow({
               style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', flex: 1, minWidth: 0, minHeight: '44px', boxSizing: 'border-box' }}
               type={exerciseForm.intensityPrefix === 'Fri tekst' ? 'text' : 'number'}
               placeholder={exerciseForm.intensityPrefix === 'RPE' ? 'f.eks. 8' : exerciseForm.intensityPrefix === '%' ? 'f.eks. 80' : exerciseForm.intensityPrefix === 'Tid' ? 'sek, f.eks. 20' : 'tekst...'}
-              value={exerciseForm.intensity}
+              aria-label="Intensitet"
+            value={exerciseForm.intensity}
               onChange={e => setExerciseForm(p => ({ ...p, intensity: e.target.value }))}
             />
           </div>
@@ -115,6 +124,7 @@ export default function ExFormRow({
             style={{ ...s.fieldInput, fontSize: '0.8rem', padding: '0.4rem 0.6rem', minHeight: '44px', boxSizing: 'border-box' }}
             type="text"
             placeholder="Note"
+            aria-label="Note"
             value={exerciseForm.note}
             onChange={e => setExerciseForm(p => ({ ...p, note: e.target.value }))}
           />

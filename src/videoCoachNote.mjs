@@ -115,5 +115,5 @@ export function noteForSession(notes, t) {
 export function renderCoachNote(h, notes, t) {
   const text = noteForSession(notes, t);
   return text === null ? null : h('aside', { 'aria-label': 'Tekniknote til passet', style: { overflowWrap: 'anywhere', marginBottom: '0.75rem' } },
-    h('strong', null, 'Tekniknote'), h('p', { style: { whiteSpace: 'pre-wrap' } }, text));
+    h('strong', { role: 'heading', 'aria-level': 5 }, 'Tekniknote'), h('p', { style: { whiteSpace: 'pre-wrap' } }, text));
 }
