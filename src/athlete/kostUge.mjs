@@ -34,8 +34,11 @@ export function summarizeKostWeek({ selectedDate, asOfDate, coveredDates, logs, 
   }
   const byDate = new Map()
   for (const log of logs) {
-    dateTime(log.date)
-    if (!byDate.has(log.date)) byDate.set(log.date, [])
+    // APP-PERF2: samme datostreng valideres kun en gang i dette kald.
+    if (!byDate.has(log.date)) {
+      dateTime(log.date)
+      byDate.set(log.date, [])
+    }
     byDate.get(log.date).push(log)
   }
   const days = Array.from({ length: 7 }, (_, index) => {

@@ -62,12 +62,56 @@ export function findDagensPas(allWeeks, currentWeek, exerciseLogs) {
   if (!currentWeek) return null
   const weeks = allWeeks || []
   const weekIdx = weeks.findIndex(w => w.id === currentWeek.id)
-  const openSession = (currentWeek.sessions || []).find(sess =>
-    (sess.exercises || []).length > 0 && !isSessionDone(sess, exerciseLogs))
-  if (openSession) {
-    return { status: 'open', session: openSession, next: nextSetInSession(openSession, exerciseLogs) }
+  // APP-PERF2: del opslag mellem sessionerne i dette kald. Ingen cache paa tvaers af visninger.
+  const loggedSets = new Map()
+  const rows = exerciseLogs || []
+  let scanned = 0
+  let sparseRows = false
+  const hasLog = (exerciseId, setNumber) => {
+    if (exerciseId === exerciseId && loggedSets.get(exerciseId)?.has(setNumber)) return true
+    // Udvid kun indekset indtil det efterspurgte saet er fundet.
+    while (scanned < rows.length) {
+      const index = scanned++
+      if (!(index in rows)) { sparseRows = true; continue }
+      const log = rows[index]
+      // Map bruger SameValueZero; den oprindelige sammenligning bruger ===.
+      if (log.exercise_id === log.exercise_id) {
+        if (!loggedSets.has(log.exercise_id)) loggedSets.set(log.exercise_id, new Set())
+        loggedSets.get(log.exercise_id).add(log.set_number)
+      }
+      if (log.exercise_id === exerciseId && log.set_number === setNumber) return true
+    }
+    return false
   }
-  const hasAnyProgress = (currentWeek.sessions || []).some(sess => sessionLoggedCount(sess, exerciseLogs) > 0)
+  const loggedCount = session => {
+    let count = 0
+    for (const ex of session?.exercises || []) {
+      for (let n = 1; n <= (ex.sets || 0); n++) {
+        if (hasLog(ex.id, n)) count++
+      }
+    }
+    return count
+  }
+  const openSession = (currentWeek.sessions || []).find(sess => {
+    if (!(sess.exercises || []).length) return false
+    const total = sessionSetTotal(sess)
+    return !(total > 0 && loggedCount(sess) >= total)
+  })
+  if (openSession) {
+    // R1-APP-PERF2: bevar find og fejlraekkefoelgen naar totalen ikke er positiv.
+    if (!(sessionSetTotal(openSession) > 0)) return { status: 'open', session: openSession, next: nextSetInSession(openSession, exerciseLogs) }
+    let next = null
+    for (const ex of openSession.exercises || []) {
+      const total = ex.sets || 0
+      for (let n = 1; n <= total; n++) {
+        if (!hasLog(ex.id, n)) { next = { exercise: ex, setNumber: n, totalSets: total }; break }
+      }
+      if (next) break
+    }
+    // find besoeger ogsaa huller i arrays; bevar den oprindelige fejl der.
+    return { status: 'open', session: openSession, next: sparseRows ? nextSetInSession(openSession, exerciseLogs) : next }
+  }
+  const hasAnyProgress = (currentWeek.sessions || []).some(sess => loggedCount(sess) > 0)
   const upcoming = findUpcoming(weeks, weekIdx + 1)
   return { status: hasAnyProgress ? 'done' : 'empty', upcoming }
 }
