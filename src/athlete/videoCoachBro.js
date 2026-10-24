@@ -35,9 +35,10 @@ function validateAthleteVideoCoachRow(row, athleteId) {
   if (!['squat', 'bench', 'deadlift'].includes(row.lift)) return 'Ugyldigt løft'
   if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(row.variation || ''))
     return 'Ugyldig variation'
-  if (!Array.isArray(row.reps) || row.reps.some(value => typeof value !== 'number'))
+  if (!Array.isArray(row.reps) || row.reps.some(value => !Number.isFinite(value)))
     return 'Repdata skal være numeriske'
-  if (!Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
+  if (row.reps.length !== row.reps_count ||
+      !Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
     return 'Repantal og repdetaljer stemmer ikke'
   const boundsError = validateVideoCoachPayloadBounds(row)
   if (boundsError) return boundsError

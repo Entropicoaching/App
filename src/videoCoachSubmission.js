@@ -24,6 +24,8 @@ export function validateVideoCoachPayloadBounds(row) {
   const barPath = row.bar_path
   if (barPath != null) {
     if (!barPath || typeof barPath !== 'object' || Array.isArray(barPath) ||
+        barPath.x0 == null || barPath.y0 == null ||
+        !Number.isFinite(Number(barPath.x0)) || !Number.isFinite(Number(barPath.y0)) ||
         !Array.isArray(barPath.dx) || !Array.isArray(barPath.dy) ||
         barPath.dx.length !== barPath.dy.length || barPath.dx.length > 240 ||
         barPath.dx.some(value => !finiteInRange(value, -2000, 2000, false)) ||

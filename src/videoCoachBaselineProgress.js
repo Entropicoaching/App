@@ -24,7 +24,7 @@ function hasEligibleBaselineMetric(analysis) {
       Array.isArray(analysis.metrics)) return false
   return Object.values(analysis.metrics).some(metric => {
     if (!metric || typeof metric !== 'object' || metric.eligible_for_baseline !== true) return false
-    if (!Number.isFinite(Number(metric.value)) || !String(metric.method || '').trim()) return false
+    if (metric.value == null || !Number.isFinite(Number(metric.value)) || !String(metric.method || '').trim()) return false
     return Number.isFinite(Number(metric.confidence)) && Number(metric.confidence) >= 0.75
   })
 }
@@ -49,7 +49,8 @@ export function buildVideoCoachBaselineProfiles(baselines, analyses = []) {
     if (!analysis || !VIDEOCOACH_LIFT_LABELS[analysis.lift] ||
         typeof analysis.variation !== 'string' ||
         !['coach_approved', 'shared'].includes(analysis.status) ||
-        analysis.low_conf_pct == null || Number(analysis.low_conf_pct) > 15 ||
+        analysis.low_conf_pct == null || !Number.isFinite(Number(analysis.low_conf_pct)) ||
+        Number(analysis.low_conf_pct) > 15 ||
         !hasEligibleBaselineMetric(analysis)) return
     const variation = videoCoachVariationIdentity(analysis.lift, analysis.variation)
     const key = `${analysis.lift}:${variation}`
