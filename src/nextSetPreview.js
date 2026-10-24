@@ -9,7 +9,7 @@ export function loadShowNextSetPreview(storage = globalThis.localStorage) {
   try {
     if (!storage) return true
     const raw = storage.getItem(KEY)
-    return raw === null ? true : raw === '1'
+    return raw !== '0'
   } catch {
     return true
   }

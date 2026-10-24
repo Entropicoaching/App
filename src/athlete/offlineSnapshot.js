@@ -19,7 +19,7 @@ export function loadOfflineSnapshot(userId, storage = globalThis.localStorage) {
     if (!storage || !userId) return null
     const raw = storage.getItem(snapshotKey(userId))
     const parsed = raw ? JSON.parse(raw) : null
-    return parsed && typeof parsed === 'object' ? parsed : null
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null
   } catch {
     return null
   }
@@ -46,7 +46,7 @@ export function saveOfflineSnapshot(userId, patch, storage = globalThis.localSto
 
 export function snapshotLogsForWeek(snapshot) {
   if (!snapshot?.week) return []
-  return snapshot.logsWeekId === snapshot.week.id ? (snapshot.logs || []) : []
+  return snapshot.logsWeekId === snapshot.week.id && Array.isArray(snapshot.logs) ? snapshot.logs : []
 }
 
 export function clearOfflineSnapshots(storage = globalThis.localStorage) {

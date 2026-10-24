@@ -11,13 +11,42 @@ function offlineSetQueueKey(athleteId) {
   return `${OFFLINE_SET_QUEUE_PREFIX}:${athleteId}`
 }
 
+// Ukendte poster maa ikke stoppe en hel synkrunde.
+function queueObject(parsed) {
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {}
+  return Object.fromEntries(Object.entries(parsed).filter(([, value]) =>
+    value && typeof value === 'object' && !Array.isArray(value)))
+}
+
+// Delvise kvitteringer uden clientId bruges stadig af de direkte skrivninger.
+function sameQueuedSet(current, sent) {
+  return !!current && (current.op || null) === (sent.op || null) &&
+    (!sent.clientId || current.clientId === sent.clientId) &&
+    JSON.stringify(current.payload ?? null) === JSON.stringify(sent.payload ?? null)
+}
+
+// Kun primitive tidsvaerdier maa naa sortering og Date.
+// Ugyldig tid sorteres ved 0 og giver ingen opdigtet logged_at.
+function queuedTime(value) {
+  if (typeof value !== 'number' && typeof value !== 'string') return null
+  if (typeof value === 'string' && !value.trim()) return null
+  const time = new Date(value).getTime()
+  return Number.isFinite(time) ? time : null
+}
+
+// Gamle talstrenge accepteres; defekte taellere starter ved 0.
+function failureCount(value) {
+  if (typeof value === 'string' && /^\d+$/.test(value.trim())) value = Number(value)
+  return Number.isSafeInteger(value) && value >= 0 ? value : 0
+}
+
 function readOfflineSetQueue(athleteId, storage) {
   try {
     if (!storage || !athleteId) return {}
     const raw = storage.getItem(offlineSetQueueKey(athleteId))
     if (!raw) return {}
     const parsed = JSON.parse(raw)
-    return parsed && typeof parsed === 'object' ? parsed : {}
+    return queueObject(parsed)
   } catch {
     return {}
   }
@@ -53,9 +82,9 @@ export function noteOfflineSetFailure(athleteId, key, sent, code, { count = true
     if (!storage || !athleteId || !key || !sent) return { failures: 0, newCode: false }
     const queue = readOfflineSetQueue(athleteId, storage)
     const current = queue[key]
-    if (!current || JSON.stringify(current.payload ?? null) !== JSON.stringify(sent.payload ?? null)) return { failures: 0, newCode: false }
+    if (!sameQueuedSet(current, sent)) return { failures: 0, newCode: false }
     const newCode = current.lastErrorCode !== code
-    const failures = (current.failures || 0) + (count ? 1 : 0)
+    const failures = Math.min(Number.MAX_SAFE_INTEGER, failureCount(current.failures) + (count ? 1 : 0))
     queue[key] = { ...current, failures, lastErrorCode: code }
     storage.setItem(offlineSetQueueKey(athleteId), JSON.stringify(queue))
     return { failures, newCode }
@@ -92,8 +121,7 @@ export function clearOfflineSetIfSame(athleteId, key, sent, storage = globalThis
     if (!storage || !athleteId || !key || !sent) return
     const current = readOfflineSetQueue(athleteId, storage)[key]
     if (!current) return
-    const same = (current.op || null) === (sent.op || null) &&
-      JSON.stringify(current.payload ?? null) === JSON.stringify(sent.payload ?? null)
+    const same = sameQueuedSet(current, sent)
     if (same) clearOfflineSet(athleteId, key, storage)
   } catch { /* som clearOfflineSet */ }
 }
@@ -107,7 +135,8 @@ export function clearOfflineSetIfSame(athleteId, key, sent, storage = globalThis
 export function queueUndoTombstone(athleteId, key, { exerciseId, setNumber, rowId }, storage = globalThis.localStorage) {
   if (!rowId) { clearOfflineSet(athleteId, key, storage); return null }
   const tombstone = { op: 'delete', exerciseId, setNumber, clientId: rowId, payload: null }
-  if (!saveOfflineSet(athleteId, key, tombstone, storage)) clearOfflineSet(athleteId, key, storage)
+  // Bevar den sidste holdbare post, hvis lageret afviser erstatningen.
+  if (!saveOfflineSet(athleteId, key, tombstone, storage)) return null
   return tombstone
 }
 
@@ -133,14 +162,16 @@ export function newSetClientId(cryptoImpl = globalThis.crypto) {
 // ikke, så får de tiden da de kom i køen (samme øjeblik som "Godkendt").
 export function queuedPayloadWithTime(entry) {
   const payload = entry?.payload
-  if (!payload || payload.logged_at || !entry.queuedAt) return payload
-  return { ...payload, logged_at: new Date(entry.queuedAt).toISOString() }
+  if (!payload || payload.logged_at) return payload
+  const time = queuedTime(entry.queuedAt)
+  if (time === null) return payload
+  return { ...payload, logged_at: new Date(time).toISOString() }
 }
 
 // Køens poster i den rækkefølge de blev logget: [[key, entry], ...].
 export function orderedOfflineSets(athleteId, storage = globalThis.localStorage) {
   return Object.entries(readOfflineSetQueue(athleteId, storage))
-    .sort((a, b) => (a[1]?.queuedAt || 0) - (b[1]?.queuedAt || 0))
+    .sort((a, b) => (queuedTime(a[1]?.queuedAt) ?? 0) - (queuedTime(b[1]?.queuedAt) ?? 0))
 }
 
 // Sæt-nøgler der venter på net (sletninger tæller ikke som "sæt der venter").
@@ -159,11 +190,12 @@ export function parkOfflineSet(athleteId, key, entry, reason, storage = globalTh
   try {
     if (!storage || !athleteId || !key) return false
     const k = `${PARKED_PREFIX}:${athleteId}`
-    const raw = storage.getItem(k)
-    const parked = raw ? JSON.parse(raw) : {}
+    const current = readOfflineSetQueue(athleteId, storage)[key]
+    if (current && !sameQueuedSet(current, entry)) return false
+    const parked = loadParkedSets(athleteId, storage)
     parked[key] = { ...entry, reason, parkedAt: Date.now() }
     storage.setItem(k, JSON.stringify(parked))
-    clearOfflineSet(athleteId, key, storage)
+    clearOfflineSetIfSame(athleteId, key, entry, storage)
     return true
   } catch {
     return false
@@ -175,7 +207,7 @@ export function loadParkedSets(athleteId, storage = globalThis.localStorage) {
     if (!storage || !athleteId) return {}
     const raw = storage.getItem(`${PARKED_PREFIX}:${athleteId}`)
     const parsed = raw ? JSON.parse(raw) : {}
-    return parsed && typeof parsed === 'object' ? parsed : {}
+    return queueObject(parsed)
   } catch {
     return {}
   }
@@ -218,7 +250,7 @@ function readRatingQueue(athleteId, storage) {
     if (!storage || !athleteId) return {}
     const raw = storage.getItem(`${RATING_PREFIX}:${athleteId}`)
     const parsed = raw ? JSON.parse(raw) : {}
-    return parsed && typeof parsed === 'object' ? parsed : {}
+    return queueObject(parsed)
   } catch {
     return {}
   }
@@ -276,7 +308,7 @@ function readRecordQueue(athleteId, storage) {
     if (!storage || !athleteId) return {}
     const raw = storage.getItem(`${RECORD_PREFIX}:${athleteId}`)
     const parsed = raw ? JSON.parse(raw) : {}
-    return parsed && typeof parsed === 'object' ? parsed : {}
+    return queueObject(parsed)
   } catch {
     return {}
   }
