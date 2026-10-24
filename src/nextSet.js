@@ -9,8 +9,13 @@ export function sessionSetTotal(session) {
 }
 
 export function sessionLoggedCount(session, logs) {
-  const ids = new Set((session?.exercises || []).map(ex => ex.id))
-  return (logs || []).filter(l => ids.has(l.exercise_id)).length
+  let count = 0
+  for (const ex of session?.exercises || []) {
+    for (let setNumber = 1; setNumber <= (ex.sets || 0); setNumber++) {
+      if ((logs || []).some(l => l.exercise_id === ex.id && l.set_number === setNumber)) count++
+    }
+  }
+  return count
 }
 
 // Samme regel som ProgramTab.jsx's isDone: alle sæt skal have en log-række

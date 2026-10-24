@@ -33,20 +33,21 @@ function computeActiveWeekIdx(weeks) {
   if (!weeks || !weeks.length) return 0
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const dayMs = 86400000
   let containing = -1
   weeks.forEach((w, i) => {
     if (!w.start_date) return
-    const d = new Date(w.start_date)
+    const d = new Date(w.start_date + 'T00:00:00')
     d.setHours(0, 0, 0, 0)
-    if (d <= today && today < new Date(d.getTime() + 7 * dayMs)) containing = i
+    const end = new Date(d.getTime())
+    end.setDate(end.getDate() + 7)
+    if (d <= today && today < end) containing = i
   })
   if (containing >= 0) return containing
   let active = -1
   weeks.forEach((w, i) => {
     let isFuture = false
     if (w.start_date) {
-      const d = new Date(w.start_date)
+      const d = new Date(w.start_date + 'T00:00:00')
       d.setHours(0, 0, 0, 0)
       isFuture = d > today
     }
@@ -55,29 +56,37 @@ function computeActiveWeekIdx(weeks) {
   return active >= 0 ? active : 0
 }
 
-// En uge regnes som fuldt logget når hver session har lige så mange logs som
-// planlagte sæt (skippede/auto-udfyldte sæt tæller med — samme "done"-regel
-// som per-session isDone i programmet). Tomme uger/sessioner tæller som ikke-done.
+// En uge regnes som fuldt logget når alle planlagte sæt har en log.
+// Skippede/auto-udfyldte sæt tæller med, samme "done"-regel
+// som per-session isDone i programmet. Tomme uger/sessioner tæller som ikke-done.
 function weekFullyLogged(week, logs) {
   const sessions = week?.sessions || []
   if (!sessions.length) return false
   return sessions.every(s => {
     const total = (s.exercises || []).reduce((a, e) => a + (e.sets || 0), 0)
     if (total === 0) return false
-    const ids = new Set((s.exercises || []).map(e => e.id))
-    return logs.filter(l => ids.has(l.exercise_id)).length >= total
+    return (s.exercises || []).every(e => {
+      for (let setNumber = 1; setNumber <= (e.sets || 0); setNumber++) {
+        if (!(logs || []).some(l => l.exercise_id === e.id && l.set_number === setNumber)) return false
+      }
+      return true
+    })
   })
 }
 
-// Udled en uges startdato fra den tidligste daterede uge (anker + 7 dage pr.
+// Brug ugens egen startdato, ellers den tidligste daterede uge (anker + 7 dage pr.
 // uge), så selv delvist daterede atleter får et datointerval på hver uge —
 // samme princip som coach-kalenderen, så datoerne er konsistente på tværs af
 // appen. Returnerer null hvis ingen uge har en dato.
 function weekStartDate(weeks, weekNumber) {
   if (!weeks?.length) return null
+  const selected = weeks.find(w => w.week_number === weekNumber)
+  if (selected?.start_date) return new Date(selected.start_date + 'T12:00:00')
   const anchor = [...weeks].sort((a, b) => a.week_number - b.week_number).find(w => w.start_date)
   if (!anchor) return null
-  return new Date(new Date(anchor.start_date + 'T12:00:00').getTime() + (weekNumber - anchor.week_number) * 7 * 86400000)
+  const start = new Date(anchor.start_date + 'T12:00:00')
+  start.setDate(start.getDate() + (weekNumber - anchor.week_number) * 7)
+  return start
 }
 function fmtWeekRange(start) {
   if (!start) return null
