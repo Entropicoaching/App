@@ -712,26 +712,20 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           APP-OV4: linjen ER overblikkets ene knap (bundark med ring og sæt),
           så overblikket ikke længere skubber loggen ned øverst i kortet.
           R1-APP-OV4 (F2): hele main-teksten (øvelse, sæt, reps, (+n)) står synligt og
-          ombrydes i stedet for at blive skåret af, og knappens navn siger det samme. */}
+          ombrydes i stedet for at blive skåret af, og knappens navn siger det samme.
+          APP-OV5: bunden er et lille kort i loggens stil (stor ring med procent,
+          næste øvelse med navn og sæt × reps), tegnet af PasOverblik ud fra
+          `naeste`. Bunden bruger altid retning B. */}
       <PasOverblik
         key={session.id} session={session} logs={exerciseLogs} activeId={ex.id}
+        naeste={naeste}
         triggerLabel={model => naesteKnapNavn(naeste, model.percent)}
         fallback={naeste ? (
           <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', textAlign: 'left' }}>
             Næste øvelse: <span style={{ color: '#b8b4a8' }}>{naeste.name}</span>{naesteOevelseDetalje(naeste)}
           </div>
         ) : null}
-      >
-        {model => (
-          <>
-            <span className="pas-overblik-mini" aria-hidden="true" style={{ '--progress': `${model.percent}%` }} />
-            <span data-testid="naeste-oevelse" style={{ flex: 1, minWidth: 0, whiteSpace: 'normal', overflowWrap: 'anywhere', lineHeight: 1.35, fontSize: '0.8rem', color: '#a8a498' }}>
-              {naeste ? <>Næste øvelse: <span style={{ color: '#edeae2' }}>{naeste.name}</span>{naesteOevelseDetalje(naeste)}</> : 'Sidste øvelse i passet'}
-            </span>
-            <span style={{ flexShrink: 0, fontSize: '0.8rem', color: '#c8923a' }}>Hele passet ›</span>
-          </>
-        )}
-      </PasOverblik>
+      />
 
       {/* Ordre 1446 (main): opvarmningen, kun før det første sæt. */}
       {onVarmOp && activeNext && (viewRow?.offset || 0) + setNumber === 1 && (

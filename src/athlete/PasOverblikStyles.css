@@ -100,3 +100,36 @@
 .pas-overblik-legend { margin: 0.75rem 0 0; font-size: 0.75rem; color: #7a7770; }
 .pas-overblik-sr { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .pas-overblik-trigger:focus-visible, .pas-overblik-sheet button:focus-visible { outline: 2px solid #c8923a; outline-offset: 2px; }
+
+/* APP-OV6: bunden og bundarket i loggens stil, kun retning B
+   (klassen pas-overblik--B kommer fra PasOverblik, data-variant ligeså).
+   Fælles: arkets felter som loggens (navn i Playfair, ordinationen i
+   versaler med accent, etiketter i små versaler), ringen større. */
+.pas-overblik--B .pas-overblik-status { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.pas-overblik-status-etiket {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.52rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #7a7770;
+}
+.pas-overblik--B .pas-overblik-status-tal { font-size: 1.25rem; }
+.pas-overblik--B .pas-overblik-name {
+  font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 400; line-height: 1.2;
+}
+.pas-overblik--B .pas-overblik-meta {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #c8923a; margin-top: 0.25rem;
+}
+.pas-overblik--B .pas-overblik-list > li[data-faerdig='ja'] .pas-overblik-meta { color: #7a7770; }
+
+/* B, bunden: knappen er ramme om to fliser; fliserne har selv flade og kant. */
+.pas-overblik--B .pas-overblik-trigger--linje { background: transparent; border: none; padding: 0; min-height: 0; }
+.pas-overblik--B .pas-overblik-trigger--linje:active { background: transparent; opacity: 0.85; }
+
+/* B, arket: hver øvelse som en flise, sættene som små firkantede fliser. */
+.pas-overblik--B .pas-overblik-progress { border-radius: 2px; border-color: rgba(237,234,226,0.13); }
+.pas-overblik--B .pas-overblik-list > li {
+  margin-top: 0.5rem; padding: 0.75rem 0.85rem; background: #141410;
+  border: 1px solid rgba(237,234,226,0.13); border-radius: 2px;
+}
+.pas-overblik--B .pas-overblik-list > li[aria-current='step'] { border-color: rgba(200,146,58,0.45); background: rgba(200,146,58,0.10); }
+.pas-overblik--B .pas-overblik-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 0.4rem; }
+.pas-overblik--B .pas-overblik-sets > li { justify-content: center; min-height: 36px; border-radius: 2px; }
