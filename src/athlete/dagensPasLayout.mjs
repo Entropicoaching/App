@@ -137,12 +137,7 @@ export function logStil(variant) {
   }
 }
 
-// APP-OV5: bunden af loggen ("Næste øvelse", ringen og "Hele passet") og
-// bundarket, i to retninger der følger loggens A/B. A: ét kort med stor ring
-// til venstre og næste øvelse ved siden af. B: to fliser som loggens kg/reps,
-// ringen med "Hele passet" og næste øvelse med sine sætstreger.
-export const BUND_VARIANTER = ['A', 'B']
-export const bundVariant = v => (v === 'B' ? 'B' : 'A')
+// APP-OV6: bunden og bundarket bruger kun retning B.
 
 // Ringens tal: helt tal fra 0 til 100, også ved skæve input.
 export function bundProcent(percent) {
@@ -177,27 +172,24 @@ export function ordinationTekst(ex) {
 }
 
 // Bundens stilarter (loggens farver og skrifter). Kun præsentation.
-export function bundStil(variant, percent) {
-  const v = bundVariant(variant)
+export function bundStil(percent) {
   const p = bundProcent(percent)
-  const ring = v === 'B' ? 76 : 60
-  const hul = v === 'B' ? 62 : 48
+  const ring = 76
+  const hul = 62
   const flise = { background: T.flade, border: `1px solid ${T.kant}`, borderRadius: '2px', boxSizing: 'border-box', minWidth: 0 }
   return {
-    variant: v,
+    variant: 'B',
     ring: { width: `${ring}px`, height: `${ring}px`, flexShrink: 0, borderRadius: '50%', display: 'grid', placeItems: 'center', background: `conic-gradient(${T.accent} ${p}%, rgba(237,234,226,0.10) 0)` },
     ringHul: { width: `${hul}px`, height: `${hul}px`, borderRadius: '50%', background: T.flade, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1px', color: T.tekst },
-    ringTal: { fontFamily: T.sans, fontSize: v === 'B' ? '1.4rem' : '1.15rem', fontWeight: 500, lineHeight: 1, fontVariantNumeric: 'tabular-nums' },
-    ringEnhed: { fontFamily: T.sans, fontSize: '0.7rem', lineHeight: 1, color: T.daempet, alignSelf: 'flex-end', marginBottom: v === 'B' ? '0.3rem' : '0.25rem' },
+    ringTal: { fontFamily: T.sans, fontSize: '1.4rem', fontWeight: 500, lineHeight: 1, fontVariantNumeric: 'tabular-nums' },
+    ringEnhed: { fontFamily: T.sans, fontSize: '0.7rem', lineHeight: 1, color: T.daempet, alignSelf: 'flex-end', marginBottom: '0.3rem' },
     oevelse: { flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '0.2rem', textAlign: 'left' },
     etiket: { fontFamily: T.mono, fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: T.stille },
-    navn: { fontFamily: T.serif, fontSize: v === 'B' ? '1.3rem' : '1.2rem', fontWeight: 400, lineHeight: 1.15, color: T.tekst, overflowWrap: 'anywhere' },
+    navn: { fontFamily: T.serif, fontSize: '1.3rem', fontWeight: 400, lineHeight: 1.15, color: T.tekst, overflowWrap: 'anywhere' },
     ordinationRaekke: { display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.4rem' },
     ordination: { fontFamily: T.mono, fontSize: '0.66rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent },
     efter: { fontFamily: T.sans, fontSize: '0.75rem', color: T.stille },
     handling: { fontFamily: T.sans, fontSize: '0.8rem', fontWeight: 500, color: T.accent, flexShrink: 0 },
-    // A: hele knappen er ét kort (baggrund og kant kommer fra CSS'en).
-    kort: { display: 'flex', alignItems: 'center', gap: '0.9rem', width: '100%' },
     // B: to fliser side om side, som loggens kg/reps.
     fliser: { display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr)', gap: '0.5rem', width: '100%' },
     ringFlise: { ...flise, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', padding: '0.7rem 0.75rem', minHeight: '128px' },

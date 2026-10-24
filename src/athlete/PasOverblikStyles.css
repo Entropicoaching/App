@@ -101,48 +101,24 @@
 .pas-overblik-sr { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .pas-overblik-trigger:focus-visible, .pas-overblik-sheet button:focus-visible { outline: 2px solid #c8923a; outline-offset: 2px; }
 
-/* APP-OV5: bunden og bundarket i loggens stil, retning A og B (klassen
-   pas-overblik--A eller --B kommer fra PasOverblik, data-variant ligeså).
+/* APP-OV6: bunden og bundarket i loggens stil, kun retning B
+   (klassen pas-overblik--B kommer fra PasOverblik, data-variant ligeså).
    Fælles: arkets felter som loggens (navn i Playfair, ordinationen i
    versaler med accent, etiketter i små versaler), ringen større. */
-.pas-overblik--A .pas-overblik-status, .pas-overblik--B .pas-overblik-status { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.pas-overblik--B .pas-overblik-status { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
 .pas-overblik-status-etiket {
   font-family: 'IBM Plex Mono', monospace; font-size: 0.52rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: #7a7770;
 }
-.pas-overblik--A .pas-overblik-status-tal, .pas-overblik--B .pas-overblik-status-tal { font-size: 1.25rem; }
-.pas-overblik--A .pas-overblik-name, .pas-overblik--B .pas-overblik-name {
+.pas-overblik--B .pas-overblik-status-tal { font-size: 1.25rem; }
+.pas-overblik--B .pas-overblik-name {
   font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 400; line-height: 1.2;
 }
-.pas-overblik--A .pas-overblik-meta, .pas-overblik--B .pas-overblik-meta {
+.pas-overblik--B .pas-overblik-meta {
   font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
   text-transform: uppercase; color: #c8923a; margin-top: 0.25rem;
 }
-.pas-overblik--A .pas-overblik-list > li[data-faerdig='ja'] .pas-overblik-meta,
 .pas-overblik--B .pas-overblik-list > li[data-faerdig='ja'] .pas-overblik-meta { color: #7a7770; }
-
-/* A, bunden: hele knappen er ét kort på loggens flade. */
-.pas-overblik--A .pas-overblik-trigger--linje {
-  background: #141410; border-color: rgba(237,234,226,0.13); padding: 0.75rem 0.85rem; min-height: 84px;
-}
-.pas-overblik--A .pas-overblik-trigger--linje:active { background: rgba(200,146,58,0.06); }
-
-/* A, arket: stor ring, og sættene som loggens sætstreger. */
-.pas-overblik--A .pas-overblik-ring { width: 112px; height: 112px; }
-.pas-overblik--A .pas-overblik-ring > span { width: 92px; height: 92px; line-height: 92px; }
-.pas-overblik--A .pas-overblik-ring strong { font-size: 1.9rem; }
-.pas-overblik--A .pas-overblik-sets { flex-wrap: nowrap; gap: 4px; margin-top: 0.65rem; padding-right: 0.25rem; }
-.pas-overblik--A .pas-overblik-sets > li {
-  position: relative; flex: 1; min-width: 0; min-height: 0; height: 6px; padding: 0;
-  border-radius: 3px; border: none; background: rgba(237,234,226,0.10);
-}
-.pas-overblik--A .pas-overblik-sets > li > span {
-  position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-}
-.pas-overblik--A .pas-overblik-sets [data-status='Færdigt'] { background: #c8923a; }
-.pas-overblik--A .pas-overblik-sets [data-status='Sprunget over'] { background: transparent; border: 1px dashed rgba(237,234,226,0.30); box-sizing: border-box; }
-/* R2-APP-OV5: kun det ene næste sæt (data-naeste fra naesteSaet i modulet). */
-.pas-overblik--A .pas-overblik-list > li[aria-current='step'] .pas-overblik-sets > li[data-naeste='ja'] { background: rgba(200,146,58,0.55); }
 
 /* B, bunden: knappen er ramme om to fliser; fliserne har selv flade og kant. */
 .pas-overblik--B .pas-overblik-trigger--linje { background: transparent; border: none; padding: 0; min-height: 0; }

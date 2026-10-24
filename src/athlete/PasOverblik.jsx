@@ -1,18 +1,17 @@
 import { useEffect, useId, useRef } from 'react'
 import { pasOverblik } from './pasOverblikModel.mjs'
 import { bindPasOverblik } from './pasOverblikDialog.mjs'
-import { bundStil, bundVariant, naesteKort, naesteSaet, ordinationTekst } from './dagensPasLayout.mjs'
+import { bundStil, naesteKort, naesteSaet, ordinationTekst } from './dagensPasLayout.mjs'
 import './PasOverblikStyles.css'
 
 const STATUS_TEGN = { 'Færdigt': '✓', 'Sprunget over': '↷', 'Planlagt': '' }
 
 // APP-OV5: bunden af loggen som et lille kort i loggens stil. Kun præsentation;
 // alt synligt kommer fra naesteKort, så knappens navn (triggerLabel) rummer det.
-// A: ét kort, stor ring med procent og næste øvelse ved siden af.
 // B: to fliser, ringen med "Hele passet" og næste øvelse med sætstreger.
-function NaesteBund({ naeste, model, variant }) {
+function NaesteBund({ naeste, model }) {
   const k = naesteKort(naeste, model)
-  const b = bundStil(variant, k.procent)
+  const b = bundStil(k.procent)
   const ring = (
     <span style={b.ring} aria-hidden="true" data-testid="bund-ring">
       <span style={b.ringHul}><span style={b.ringTal}>{k.procent}</span><span style={b.ringEnhed}>%</span></span>
@@ -30,7 +29,7 @@ function NaesteBund({ naeste, model, variant }) {
       )}
     </span>
   )
-  if (b.variant === 'B') return (
+  return (
     <span style={b.fliser} data-bund-variant="B">
       <span style={b.ringFlise}>{ring}<span style={b.handling}>{k.handling} ›</span></span>
       <span style={b.oevelseFlise}>
@@ -39,13 +38,7 @@ function NaesteBund({ naeste, model, variant }) {
       </span>
     </span>
   )
-  return (
-    <span style={b.kort} data-bund-variant="A">
-      {ring}
-      {oevelse}
-      <span style={b.handling}>{k.handling} ›</span>
-    </span>
-  )
+
 }
 
 // Kun læsevisning. Ingen callbacks til logning eller ændring af aktivt sæt.
@@ -54,9 +47,8 @@ function NaesteBund({ naeste, model, variant }) {
 // linjen og knappen er ét og samme tryk nederst i loggen. Uden children står
 // den rolige standardknap "Se hele passet" (fx når passet er færdigt).
 // APP-OV5: med `naeste` (også null ved sidste øvelse) tegner overblikket selv
-// bunden (NaesteBund). `variant` (A eller B, som loggen) vælger bundens og
-// arkets udseende; uden variant er det A.
-export default function PasOverblik({ session, logs, activeId, children, triggerLabel, fallback = null, naeste, variant }) {
+// bunden (NaesteBund). Bunden og arket bruger altid retning B.
+export default function PasOverblik({ session, logs, activeId, children, triggerLabel, fallback = null, naeste }) {
   const trigger = useRef(null)
   const dialog = useRef(null)
   const handle = useRef(null)
@@ -72,14 +64,13 @@ export default function PasOverblik({ session, logs, activeId, children, trigger
   if (!hasRows) return fallback
   const bund = naeste !== undefined
   const custom = bund || typeof children === 'function'
-  const v = bundVariant(variant)
   const naesteSet = naesteSaet(model)
   return (
-    <div className={`${custom ? 'pas-overblik pas-overblik--linje' : 'pas-overblik'} pas-overblik--${v}`} data-variant={v}>
+    <div className={`${custom ? 'pas-overblik pas-overblik--linje' : 'pas-overblik'} pas-overblik--B`} data-variant="B">
       <button ref={trigger} type="button" className={custom ? 'pas-overblik-trigger pas-overblik-trigger--linje' : 'pas-overblik-trigger'}
         aria-haspopup="dialog" aria-expanded="false"
         aria-label={triggerLabel ? triggerLabel(model) : undefined}>
-        {bund ? <NaesteBund naeste={naeste} model={model} variant={v} /> : custom ? children(model) : (
+        {bund ? <NaesteBund naeste={naeste} model={model} /> : custom ? children(model) : (
           <>
             <span className="pas-overblik-mini" aria-hidden="true" style={{ '--progress': `${model.percent}%` }} />
             <span>Se hele passet</span>
@@ -125,7 +116,7 @@ export default function PasOverblik({ session, logs, activeId, children, trigger
           ))}
         </ol>
         {model.rows.some(row => row.sets.some(set => set.status === 'Sprunget over')) && (
-          <p className="pas-overblik-legend">{v === 'A' ? 'Stiplet streg betyder sprunget over' : '↷ betyder sprunget over'}</p>
+          <p className="pas-overblik-legend">↷ betyder sprunget over</p>
         )}
       </dialog>
     </div>

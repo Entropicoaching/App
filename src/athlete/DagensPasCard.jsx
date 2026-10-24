@@ -686,10 +686,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           ombrydes i stedet for at blive skåret af, og knappens navn siger det samme.
           APP-OV5: bunden er et lille kort i loggens stil (stor ring med procent,
           næste øvelse med navn og sæt × reps), tegnet af PasOverblik ud fra
-          `naeste`. Retningen følger loggen (st.variant), så ?v=A og ?v=B viser hver sin. */}
+          `naeste`. Bunden bruger altid retning B. */}
       <PasOverblik
         key={session.id} session={session} logs={exerciseLogs} activeId={ex.id}
-        naeste={naeste} variant={st.variant}
+        naeste={naeste}
         triggerLabel={model => naesteKnapNavn(naeste, model.percent)}
         fallback={naeste ? (
           <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', textAlign: 'left' }}>

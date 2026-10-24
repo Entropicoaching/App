@@ -1,9 +1,9 @@
 // APP-OV4: rene layout-hjælpere til Dagens pas. "Næste øvelse" skal skrive
-// præcis det samme som main (ORDRE 330 · blok 2), og A/B må kun være layout.
+// præcis det samme som main (ORDRE 330 · blok 2), og B må kun være layout.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { exerciseViewGroups } from '../exerciseSetView.js'
-import { naesteOevelse, naesteOevelseDetalje, naesteOevelseTekst, naesteKnapNavn, saetStreger, logVariant, logStil, naesteKort, bundProcent, bundStil, bundVariant, ordinationTekst, naesteSaet } from './dagensPasLayout.mjs'
+import { naesteOevelse, naesteOevelseDetalje, naesteOevelseTekst, naesteKnapNavn, saetStreger, logVariant, logStil, naesteKort, bundProcent, bundStil, ordinationTekst, naesteSaet } from './dagensPasLayout.mjs'
 
 const pas = [
   { id: 'e1', name: 'Squat', sets: 5, reps: '3' },
@@ -29,13 +29,10 @@ test('sætstregerne følger det aktuelle sæt', () => {
   assert.deepEqual(saetStreger({ setNumber: 2, total: 3 }), ['klaret', 'aktuelt', 'senere'])
 })
 
-test('kun A og B; trykflader mindst 44 px i begge', () => {
+test('B: trykflader mindst 44 px', () => {
   assert.equal(logVariant('B'), 'B')
-  assert.equal(logVariant('noget andet'), 'A')
-  for (const v of ['A', 'B']) {
-    const st = logStil(v)
-    for (const k of ['trin', 'trinFlise', 'tekstKnap']) assert.ok(parseFloat(st[k].minHeight) >= 44, `${v}.${k}`)
-  }
+  const st = logStil('B')
+  for (const k of ['trin', 'trinFlise', 'tekstKnap']) assert.ok(parseFloat(st[k].minHeight) >= 44, k)
 })
 
 test('APP-OV5: bunden viser næste øvelse (navn, sæt × reps) og procent i ringen', () => {
@@ -64,13 +61,11 @@ test('APP-OV5: procenten er et helt tal fra 0 til 100, og ringen tegnes med den'
   assert.equal(bundProcent(133), 100)
   assert.equal(bundProcent(-4), 0)
   assert.equal(bundProcent(undefined), 0)
-  for (const v of ['A', 'B']) {
-    const b = bundStil(v, 37)
-    assert.ok(b.ring.background.includes('37%'), v)
-    assert.ok(parseFloat(b.ring.width) >= 56, `${v}: ringen er større end den gamle (26 px)`)
-  }
-  assert.equal(bundVariant('B'), 'B')
-  assert.equal(bundVariant('C'), 'A')
+  const b = bundStil(37)
+  assert.equal(b.variant, 'B')
+  assert.ok(b.ring.background.includes('37%'))
+  assert.equal(b.ring.width, '76px')
+  assert.equal(b.ringHul.width, '62px')
 })
 
 test('APP-OV5: bundarkets linje har loggens felter og format', () => {
