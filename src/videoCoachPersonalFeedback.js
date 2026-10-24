@@ -13,8 +13,7 @@ function cleanText(value, maxLength = MAX_TEXT_LENGTH) {
 }
 
 function finiteNumber(value) {
-  if (value == null || typeof value === 'boolean' ||
-      (typeof value === 'string' && !value.trim())) return null
+  if (typeof value !== 'number' && (typeof value !== 'string' || !value.trim())) return null
   const number = Number(value)
   return Number.isFinite(number) ? number : null
 }
@@ -86,7 +85,7 @@ export function videoCoachPersonalBaselineOptions(baselines, analysis, athleteId
   if (!analysis || !athleteId || analysis.athlete_id !== athleteId ||
       !['squat', 'bench', 'deadlift'].includes(analysis.lift) ||
       typeof analysis.variation !== 'string' ||
-      lowConfidencePct == null || lowConfidencePct > MAX_LOW_CONFIDENCE_PCT) return []
+      lowConfidencePct == null || lowConfidencePct < 0 || lowConfidencePct > MAX_LOW_CONFIDENCE_PCT) return []
 
   const variation = videoCoachVariationIdentity(analysis.lift, analysis.variation)
   const metrics = analysis.metrics && typeof analysis.metrics === 'object' ? analysis.metrics : {}
@@ -107,7 +106,7 @@ export function videoCoachPersonalBaselineOptions(baselines, analysis, athleteId
         !metric || metric.eligible_for_baseline !== true ||
         cleanText(metric.method, 160) !== metricMethod || finiteNumber(metric.value) == null ||
         finiteNumber(metric.confidence) == null ||
-        finiteNumber(metric.confidence) < MIN_METRIC_CONFIDENCE) continue
+        finiteNumber(metric.confidence) < MIN_METRIC_CONFIDENCE || finiteNumber(metric.confidence) > 1) continue
 
     const baseline = (baselines || []).find(item => item && item.lift === analysis.lift &&
       videoCoachVariationIdentity(item.lift, item.variation) === variation &&
@@ -118,7 +117,8 @@ export function videoCoachPersonalBaselineOptions(baselines, analysis, athleteId
 
     const finding = findings.find(item => item && item.id === `baseline_${metricKey}` &&
       cleanText(item.summary) && Array.isArray(item.evidence_refs) &&
-      item.evidence_refs.includes(metricKey) && finiteNumber(item.confidence) >= MIN_FINDING_CONFIDENCE)
+      item.evidence_refs.includes(metricKey) && finiteNumber(item.confidence) >= MIN_FINDING_CONFIDENCE &&
+      finiteNumber(item.confidence) <= 1)
     if (!finding) continue
 
     const option = sanitizeVideoCoachPersonalBaseline({

@@ -19,13 +19,19 @@ function profileDetails(lift, variation, nAnalyses) {
   }
 }
 
+function finiteNumber(value) {
+  if (typeof value !== 'number' && (typeof value !== 'string' || !value.trim())) return null
+  const number = Number(value)
+  return Number.isFinite(number) ? number : null
+}
+
 function hasEligibleBaselineMetric(analysis) {
   if (!analysis.metrics || typeof analysis.metrics !== 'object' ||
       Array.isArray(analysis.metrics)) return false
   return Object.values(analysis.metrics).some(metric => {
     if (!metric || typeof metric !== 'object' || metric.eligible_for_baseline !== true) return false
-    if (metric.value == null || !Number.isFinite(Number(metric.value)) || !String(metric.method || '').trim()) return false
-    return Number.isFinite(Number(metric.confidence)) && Number(metric.confidence) >= 0.75
+    if (finiteNumber(metric.value) == null || typeof metric.method !== 'string' || !metric.method.trim()) return false
+    return finiteNumber(metric.confidence) != null && Number(metric.confidence) >= 0.75 && Number(metric.confidence) <= 1
   })
 }
 
@@ -49,7 +55,7 @@ export function buildVideoCoachBaselineProfiles(baselines, analyses = []) {
     if (!analysis || !VIDEOCOACH_LIFT_LABELS[analysis.lift] ||
         typeof analysis.variation !== 'string' ||
         !['coach_approved', 'shared'].includes(analysis.status) ||
-        analysis.low_conf_pct == null || !Number.isFinite(Number(analysis.low_conf_pct)) ||
+        finiteNumber(analysis.low_conf_pct) == null || Number(analysis.low_conf_pct) < 0 ||
         Number(analysis.low_conf_pct) > 15 ||
         !hasEligibleBaselineMetric(analysis)) return
     const variation = videoCoachVariationIdentity(analysis.lift, analysis.variation)
@@ -89,8 +95,8 @@ export function videoCoachBaselineReviewImpact(baselines, analyses, analysis) {
     detail: 'Målingen påvirker ikke atletens historiske sammenligning.',
   }
 
-  const lowConfidence = analysis.low_conf_pct == null ? null : Number(analysis.low_conf_pct)
-  if (!Number.isFinite(lowConfidence) || lowConfidence > 15) return {
+  const lowConfidence = finiteNumber(analysis.low_conf_pct)
+  if (!Number.isFinite(lowConfidence) || lowConfidence < 0 || lowConfidence > 15) return {
     kind: 'blocked', label, current, after: current,
     title: 'Tæller ikke i baseline',
     detail: Number.isFinite(lowConfidence)

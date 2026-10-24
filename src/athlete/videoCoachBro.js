@@ -35,7 +35,7 @@ function validateAthleteVideoCoachRow(row, athleteId) {
   if (!['squat', 'bench', 'deadlift'].includes(row.lift)) return 'Ugyldigt løft'
   if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(row.variation || ''))
     return 'Ugyldig variation'
-  if (!Array.isArray(row.reps) || row.reps.some(value => !Number.isFinite(value)))
+  if (!Array.isArray(row.reps) || Array.from(row.reps).some(value => !Number.isFinite(value)))
     return 'Repdata skal være numeriske'
   if (row.reps.length !== row.reps_count ||
       !Array.isArray(row.rep_details) || row.reps_count !== row.rep_details.length)
@@ -48,13 +48,19 @@ function validateAthleteVideoCoachRow(row, athleteId) {
   return null
 }
 
+function pathNumber(value) {
+  return (typeof value === 'number' || (typeof value === 'string' && value.trim() !== '')) &&
+    Number.isFinite(Number(value))
+}
+
 function athleteVideoPathPreview(barPath) {
   if (!barPath || !Array.isArray(barPath.dx) || !Array.isArray(barPath.dy) ||
       barPath.dx.length !== barPath.dy.length || barPath.dx.length > 240 ||
-      !Number.isFinite(Number(barPath.x0)) || !Number.isFinite(Number(barPath.y0))) return null
+      !pathNumber(barPath.x0) || !pathNumber(barPath.y0)) return null
   let x = Number(barPath.x0), y = Number(barPath.y0)
   const path = [{ x, y }]
   for (let i = 0; i < barPath.dx.length; i++) {
+    if (!pathNumber(barPath.dx[i]) || !pathNumber(barPath.dy[i])) return null
     const dx = Number(barPath.dx[i]), dy = Number(barPath.dy[i])
     if (!Number.isFinite(dx) || !Number.isFinite(dy) || Math.abs(dx) > 1000 || Math.abs(dy) > 1000)
       return null

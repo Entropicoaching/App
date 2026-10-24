@@ -22,7 +22,8 @@ function isUuid(value) {
 
 function finiteInRange(value, min, max) {
   if (value == null) return true
-  return Number.isFinite(Number(value)) && Number(value) >= min && Number(value) <= max
+  return (typeof value === 'number' || (typeof value === 'string' && value.trim() !== '')) &&
+    Number.isFinite(Number(value)) && Number(value) >= min && Number(value) <= max
 }
 
 export function videoUploadMimeAllowed(mimeType) {
@@ -30,7 +31,7 @@ export function videoUploadMimeAllowed(mimeType) {
 }
 
 export function videoUploadExtForMime(mimeType) {
-  return VIDEOCOACH_UPLOAD_EXT_BY_MIME[mimeType] || null
+  return videoUploadMimeAllowed(mimeType) ? VIDEOCOACH_UPLOAD_EXT_BY_MIME[mimeType] : null
 }
 
 // Stikonvention håndhævet af storage.objects-policies: første segment SKAL
@@ -82,7 +83,7 @@ export function validateVideoUploadRequest({
   if (!['squat', 'bench', 'deadlift'].includes(lift)) return 'Ugyldigt løft'
   if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(variation || '')) return 'Ugyldig variation'
   if (!videoUploadMimeAllowed(mimeType)) return 'Videoformatet understøttes ikke'
-  if (!Number.isFinite(Number(fileSize)) || Number(fileSize) <= 0) return 'Videofilen er tom eller ugyldig'
+  if (!finiteInRange(fileSize, Number.MIN_VALUE, Number.MAX_VALUE) || fileSize == null) return 'Videofilen er tom eller ugyldig'
   if (Number(fileSize) > VIDEOCOACH_UPLOAD_MAX_BYTES) return 'Videoen er større end 500 MB'
   if (!finiteInRange(loadKg, 0, 1000)) return 'Belastningen er uden for det tilladte interval'
   if (!finiteInRange(rpe, 0, 10)) return 'RPE er uden for det tilladte interval'

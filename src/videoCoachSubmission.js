@@ -3,9 +3,14 @@ const VIDEOCOACH_QUEUE_PREFIX = 'entropi:videocoach:pending:v1'
 const VIDEOCOACH_QUEUE_MAX_BYTES = 256_000
 const VIDEOCOACH_QUEUE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
 
+function isNumeric(value) {
+  return (typeof value === 'number' || (typeof value === 'string' && value.trim() !== '')) &&
+    Number.isFinite(Number(value))
+}
+
 function finiteInRange(value, min, max, allowNull = true) {
   if (value == null) return allowNull
-  return Number.isFinite(Number(value)) && Number(value) >= min && Number(value) <= max
+  return isNumeric(value) && Number(value) >= min && Number(value) <= max
 }
 
 export function validateVideoCoachPayloadBounds(row) {
@@ -25,11 +30,11 @@ export function validateVideoCoachPayloadBounds(row) {
   if (barPath != null) {
     if (!barPath || typeof barPath !== 'object' || Array.isArray(barPath) ||
         barPath.x0 == null || barPath.y0 == null ||
-        !Number.isFinite(Number(barPath.x0)) || !Number.isFinite(Number(barPath.y0)) ||
+        !isNumeric(barPath.x0) || !isNumeric(barPath.y0) ||
         !Array.isArray(barPath.dx) || !Array.isArray(barPath.dy) ||
         barPath.dx.length !== barPath.dy.length || barPath.dx.length > 240 ||
-        barPath.dx.some(value => !finiteInRange(value, -2000, 2000, false)) ||
-        barPath.dy.some(value => !finiteInRange(value, -2000, 2000, false)))
+        Array.from(barPath.dx).some(value => !finiteInRange(value, -2000, 2000, false)) ||
+        Array.from(barPath.dy).some(value => !finiteInRange(value, -2000, 2000, false)))
       return 'Stangbanen har et ugyldigt eller for stort format'
   }
 
@@ -38,20 +43,21 @@ export function validateVideoCoachPayloadBounds(row) {
       Object.keys(metrics).length > 64) return 'Metricpakken er ugyldig eller for stor'
   for (const metric of Object.values(metrics)) {
     if (!metric || typeof metric !== 'object' || Array.isArray(metric) ||
-        (metric.value != null && !Number.isFinite(Number(metric.value))) ||
+        (metric.value != null && !isNumeric(metric.value)) ||
         typeof metric.method !== 'string' || metric.method.length > 160 ||
         !finiteInRange(metric.confidence, 0, 1)) return 'Metricpakken indeholder ugyldige værdier'
   }
 
   if (!Array.isArray(row.findings) || row.findings.length > 32 ||
-      row.findings.some(item => !item || typeof item !== 'object' ||
+      Array.from(row.findings).some(item => !item || typeof item !== 'object' ||
         typeof item.summary !== 'string' || item.summary.length > 1000))
     return 'Analysefundene er ugyldige eller for omfattende'
   if (!Array.isArray(row.rep_details) || row.rep_details.length !== row.reps_count ||
-      row.rep_details.some(rep => !rep || typeof rep !== 'object' ||
+      Array.from(row.rep_details).some((rep, index) => !rep || typeof rep !== 'object' ||
       !finiteInRange(rep.start_s, 0, 3600, false) ||
       !finiteInRange(rep.end_s, 0, 3600, false) ||
-      Number(rep.end_s) < Number(rep.start_s) ||
+      Number(rep.end_s) <= Number(rep.start_s) ||
+      (index > 0 && Number(rep.start_s) < Number(row.rep_details[index - 1].end_s)) ||
       !finiteInRange(rep.valid_ratio, 0, 1) || !finiteInRange(rep.confidence, 0, 1)))
     return 'Repdetaljerne indeholder ugyldige kvalitetsdata'
   return null
