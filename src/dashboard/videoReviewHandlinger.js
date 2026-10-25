@@ -8,6 +8,14 @@ import { supabase } from '../supabase'
 import { videoCoachFeedbackPayload, videoCoachFeedbackDraft } from './coachVideoHjaelp'
 import { VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
 
+// Sammenlign og skriv i samme UPDATE, så et gammelt review ikke overskriver nyere arbejde.
+function unchangedVideoAnalysis(query, analysis) {
+  query = query.eq('status', analysis.status)
+  return analysis.athlete_feedback == null
+    ? query.is('athlete_feedback', null)
+    : query.filter('athlete_feedback', 'eq', JSON.stringify(analysis.athlete_feedback))
+}
+
 export function lavVideoReviewHandlinger({
   fetchVideoCoachHistory, fetchVideoReviewQueue, openVideoCoachV3, selectedAthlete, setVideoAnalyses, setVideoAnalysisBaselineFindingId,
   setVideoAnalysisCloseWarning, setVideoAnalysisError, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, setVideoAnalysisReview, setVideoAnalysisReviewError,
@@ -50,6 +58,7 @@ export function lavVideoReviewHandlinger({
         .eq('athlete_id', selectedAthlete.id)
       if (analysis.client_analysis_id)
         query = query.eq('client_analysis_id', analysis.client_analysis_id)
+      query = unchangedVideoAnalysis(query, analysis)
       const { data, error } = await query
         .select('id,client_analysis_id,athlete_id,status').single()
       if (error) throw error
@@ -88,8 +97,14 @@ export function lavVideoReviewHandlinger({
       selectedAthlete.id)
     const selectedBaseline = baselineOptions.find(option =>
       option.id === videoAnalysisBaselineFindingId) || null
-    const athleteFeedback = videoCoachFeedbackPayload(analysis.athlete_feedback,
-      videoAnalysisFeedbackDraft, selectedBaseline)
+    let athleteFeedback
+    try {
+      athleteFeedback = videoCoachFeedbackPayload(analysis.athlete_feedback,
+        videoAnalysisFeedbackDraft, selectedBaseline)
+    } catch (error) {
+      showFlash(error.message || 'Feedbacken kunne ikke gemmes', 'error')
+      return
+    }
     setVideoAnalysisUpdatingId(analysis.id)
     setVideoAnalysisReviewError(null)
     try {
@@ -100,6 +115,7 @@ export function lavVideoReviewHandlinger({
         .eq('athlete_id', selectedAthlete.id)
       if (analysis.client_analysis_id)
         query = query.eq('client_analysis_id', analysis.client_analysis_id)
+      query = unchangedVideoAnalysis(query, analysis)
       const { data, error } = await query
         .select('id,client_analysis_id,athlete_id,status,athlete_feedback,feedback_version').single()
       if (error) throw error

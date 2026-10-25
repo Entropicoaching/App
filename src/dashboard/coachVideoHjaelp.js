@@ -88,22 +88,40 @@ function videoCoachPathPreview(barPath) {
 function videoCoachFeedbackDraft(feedback) {
   const source = feedback && typeof feedback === 'object' ? feedback : {}
   const text = key => Array.isArray(source[key])
-    ? source[key].filter(item => item && typeof item.text === 'string')
-      .slice(0, 2).map(item => item.text.trim()).filter(Boolean).join('\n')
-    : ''
+    ? source[key].map(item => typeof item === 'string' ? item : item?.text)
+      .filter(value => typeof value === 'string')
+      .map(value => value.trim()).filter(Boolean).join('\n')
+    : typeof source[key] === 'string' ? source[key].trim() : ''
   return { works: text('works'), focus: text('focus'), next_set: text('next_set') }
 }
 
 function videoCoachFeedbackPayload(existing, draft, personalBaseline) {
   const source = existing && typeof existing === 'object' ? existing : {}
-  const section = key => String(draft?.[key] || '').split(/\r?\n/)
-    .map(text => text.trim()).filter(Boolean).slice(0, 2)
-    .map((text, index) => ({
-      ...(source[key]?.[index] && typeof source[key][index] === 'object' ? source[key][index] : {}),
-      text,
-      evidence_refs: Array.isArray(source[key]?.[index]?.evidence_refs)
-        ? source[key][index].evidence_refs : ['coach_review'],
-    }))
+  const section = key => {
+    const lines = String(draft?.[key] || '').split(/\r\n|[\r\n]/)
+      .map(text => text.trim()).filter(Boolean)
+    if (lines.length > 2) throw new TypeError('Hvert feedbackfelt må højst have 2 tekstlinjer')
+    const previous = Array.isArray(source[key]) ? [...source[key]] : []
+    const previousCounts = new Map()
+    for (const item of previous) {
+      const text = typeof item === 'string' ? item.trim()
+        : typeof item?.text === 'string' ? item.text.trim() : ''
+      if (text) previousCounts.set(text, (previousCounts.get(text) || 0) + 1)
+    }
+    const counts = new Map()
+    for (const text of lines) counts.set(text, (counts.get(text) || 0) + 1)
+    return lines.map(text => {
+      // Ved ændret antal ens linjer kan teksten ikke identificere den gamle post.
+      const ambiguous = (previousCounts.get(text) > 1 || counts.get(text) > 1) && previousCounts.get(text) !== counts.get(text)
+      // Evidens følger kun entydigt bevaret tekst, aldrig dens tidligere plads.
+      const index = ambiguous ? -1 : previous.findIndex(item => item && typeof item.text === 'string' && item.text.trim() === text)
+      const item = index < 0 ? null : previous.splice(index, 1)[0]
+      return {
+        ...(item || {}), text,
+        evidence_refs: Array.isArray(item?.evidence_refs) ? [...item.evidence_refs] : ['coach_review'],
+      }
+    })
+  }
   return withVideoCoachPersonalBaseline({
     ...source, works: section('works'), focus: section('focus'), next_set: section('next_set'),
   }, personalBaseline)
