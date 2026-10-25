@@ -25,7 +25,7 @@ import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGraf
 function HjemTab({
   allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
   forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
-  logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday,
+  logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday, readinessOpen, setReadinessOpen,
   openReadiness, openSession, parkedSets, pendingSyncCount, pendingSyncKeys, prs, prsError, readinessCardRef, readinessError, readinessHistory,
   readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
   setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setMobilityMode, setWeightInput,
@@ -326,9 +326,14 @@ function HjemTab({
               )}
             </div>
 
+            </>)}
+
+            {(mereOpen || readinessOpen) && (
+              <section ref={readinessCardRef} tabIndex={-1} aria-label="Dagens parathed" style={{ scrollMarginTop: '5rem' }}>
+                {readinessOpen && <button type="button" onClick={() => setReadinessOpen(false)} style={{ ...s.btnGhost, minHeight: '44px', marginBottom: '0.75rem' }}>Luk parathed</button>}
             {/* Readiness check */}
             {!readinessLog ? (
-              <div ref={readinessCardRef} style={{ ...s.card, scrollMarginTop: '5rem' }}>
+              <div style={s.card}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
                   <div style={{ ...s.cardLabel, marginBottom: 0 }}>Dagens parathed</div>
                   {lastReadiness && (
@@ -514,6 +519,10 @@ function HjemTab({
               )
             })()}
 
+              </section>
+            )}
+
+            {mereOpen && (<>
             <div style={{ ...s.card, cursor: 'pointer' }} onClick={() => setTab('beskeder')}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(200,146,58,0.25)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(237,234,226,0.07)'}

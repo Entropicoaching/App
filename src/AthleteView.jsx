@@ -188,6 +188,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // ORDRE 330 · blok 2 — alt på forsiden der ikke skal bruges NU ligger bag
   // folden "Mere" (lukket fra start, ikke husket mellem besøg).
   const [mereOpen, setMereOpen] = useState(false)
+  const [readinessOpen, setReadinessOpen] = useState(false)
   // Session-kort refs, så vi kan scrolle en nyåbnet session op i toppen
   // (accordion: når en session over kollapser, hopper layoutet ellers så man
   // lander midt/nederst i den nye session i stedet for ved første øvelse).
@@ -326,7 +327,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     role, session, sessionRefs, setAllWeeks, setAthlete, setCurrentWeek, setExerciseHistory, setExerciseLogs,
     setForloebLoading, setForloebLogs, setFremgangLoading, setFremgangLogs, setGuideOpen, setGuideStep, setHasMeetPlan, setLastLogByExerciseName,
     setLastReadiness, setLiftProgress, setLoadError, setLoading, setLogInputs, setMeetAttempts, setMeetPlanNotes, setMeetResults,
-    setMeetType, setMereOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
+    setMeetType, setMereOpen, setReadinessOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
     setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
     setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
     setOfflineSnapshotAt, setUgensLogsHentet,
@@ -604,7 +605,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           {...{
             allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
             forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
-            logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday,
+            logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday, readinessOpen, setReadinessOpen,
             openReadiness, openSession, parkedSets, pendingSyncCount, pendingSyncKeys, prs, prsError, readinessCardRef, readinessError, readinessHistory,
             readinessInput, readinessLog, renderSharedFeedbackCards, restPause, role, saveReadiness, savingReadiness, savingWeight,
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setLogInputs, setMereOpen, setReadinessInput, setRestPause, setTab, setMobilityMode, setWeightInput,

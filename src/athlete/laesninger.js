@@ -1,3 +1,4 @@
+import { openReadinessSurface } from './readinessShortcut.mjs'
 import { parseInputNumber, optionalInput } from '../inputValues.js'
 
 // Laesningerne (atlet, program, saet-logs, historik, parathed, PR, staevne,
@@ -34,7 +35,7 @@ export function lavLaesninger({
   role, session, sessionRefs, setAllWeeks, setAthlete, setCurrentWeek, setExerciseHistory, setExerciseLogs,
   setForloebLoading, setForloebLogs, setFremgangLoading, setFremgangLogs, setGuideOpen, setGuideStep, setHasMeetPlan, setLastLogByExerciseName,
   setLastReadiness, setLiftProgress, setLoadError, setLoading, setLogInputs, setMeetAttempts, setMeetPlanNotes, setMeetResults,
-  setMeetType, setMereOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
+  setMeetType, setMereOpen, setReadinessOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
   setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
   setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
   setOfflineSnapshotAt, setUgensLogsHentet,
@@ -612,14 +613,11 @@ export function lavLaesninger({
   }
 
   function openReadiness() {
-    setTab('hjem')
-    setMereOpen(true)
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const card = readinessCardRef.current
-      if (!card) return
-      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-      card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
-    }))
+    openReadinessSurface({
+      setTab, setMereOpen, setReadinessOpen, readinessCardRef,
+      requestFrame: requestAnimationFrame,
+      matchMedia: query => window.matchMedia?.(query),
+    })
   }
 
   // Gemmer serverside via RPC (queueWrite: overlever cold-start/midlertidige
