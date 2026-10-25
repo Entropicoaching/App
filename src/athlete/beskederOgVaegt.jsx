@@ -1,4 +1,5 @@
 import { formatMessageTime } from '../messageTime.js'
+import { openVideoFeedbackFollowUp } from './videoFeedbackFollowUp.mjs'
 
 // Kropsvaegt (hent/log), beskeder (hent, marker laest, send, tidsformat) og
 // coachens delte videofeedback som kort (renderSharedFeedbackCards, bruges paa
@@ -19,7 +20,7 @@ import { parseInputNumber } from './kostNumbers.mjs'
 export function lavBeskederOgVaegt({
   athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
   setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
-  weightLogs,
+  weightLogs, setMsgTrack, setTab,
 }) {
   async function fetchWeightLogs(athleteId) {
     const { data, ok } = await runGuardedRead(
@@ -173,6 +174,7 @@ export function lavBeskederOgVaegt({
                   </div>
                 )}
                 <div style={{ display: 'grid', gap: '0.7rem' }}>
+                  <button type="button" style={{ ...s.btnGhost, minHeight: 44, whiteSpace: 'normal' }} onClick={() => openVideoFeedbackFollowUp(analysis, { setMessageInput, setMsgTrack, setTab }, ATHLETE_VIDEO_LIFTS[analysis.lift] || analysis.lift, athleteVideoVariationLabel(analysis.lift, analysis.variation))}>Spørg om denne feedback</button>
                   {personalBaseline && <div style={{ borderLeft: '2px solid #c8923a', background: 'rgba(200,146,58,0.04)', padding: '0.55rem 0.65rem' }}><div style={{ ...s.fieldLabel, color: '#c8923a' }}>Din udvikling</div><div style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{videoCoachPersonalBaselineAthleteText(personalBaseline)}</div><div style={{ color: '#77746d', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', lineHeight: 1.4, marginTop: '0.25rem' }}>Sammenlignet med {personalBaseline.evidence_ref.n_analyses} kvalitetssikrede analyser af samme løft og variation.</div></div>}
                   {works.length > 0 && <div><div style={s.fieldLabel}>Det fungerer</div>{works.map((item, index) => <div key={index} style={{ color: '#9fbd9a', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
                   {focus.length > 0 && <div><div style={s.fieldLabel}>Dit fokus</div>{focus.map((item, index) => <div key={index} style={{ color: '#d79a83', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}

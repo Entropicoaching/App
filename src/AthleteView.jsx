@@ -300,7 +300,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   } = lavBeskederOgVaegt({
     athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
     setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
-    weightLogs,
+    weightLogs, setMsgTrack, setTab,
   })
 
   const {
