@@ -1,4 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import EnkelHjemTab from './athlete/EnkelHjemTab'
+const enkelFremgangFactory = () => import('./athlete/EnkelFremgangTab')
+import { previewNavigation, renderControls, renderTrainingLinks, renderMore, renderNav } from './athlete/enkelPrototype.mjs'
+import { useState, useEffect, useRef, useMemo, createElement } from 'react'
 import { remainingSeconds } from './restTimer'
 import { countOfflineSets, pendingSetKeys, loadParkedSets } from './offlineSetQueue'
 import { browserSaysOffline, seemsOffline } from './offlineSession'
@@ -38,8 +41,13 @@ const fremgangFactory = () => import('./athlete/FremgangTab')
 const kostFactory = () => import('./athlete/KostTab')
 const beskederFactory = () => import('./athlete/BeskederTab')
 
-export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole }) {
-  const [tab, setTab] = useState('hjem')
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false }) {
+  const [tab, setLegacyTab] = useState('hjem')
+  const [enkelRoute, setEnkelRoute] = useState('traening')
+  const enkelOn = enkelPrototype === true
+  const HjemVisning = enkelOn ? EnkelHjemTab : HjemTab
+  // Explicit preview prop only; no storage, URL or environment activation.
+  const setTab = previewNavigation(enkelOn, setLegacyTab, setEnkelRoute)
   const [recheckingRole, setRecheckingRole] = useState(false)
   const [recheckMsg, setRecheckMsg] = useState('')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
@@ -319,7 +327,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
   const {
     fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight: suggestNextWeightRaa,
-    saveReadiness, fetchProgram, openSession, openReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
+    saveReadiness, fetchProgram, openSession, openReadiness: legacyOpenReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
     fetchExerciseLogs,
   } = lavLaesninger({
     athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
@@ -419,6 +427,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchSharedVideoAnalyses er ren ift. role/athlete.id, som er i deps; uændret fra før ordre 373
   }, [role, athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge kaldes synkront i denne kørsel og læser kun athlete/msgTrack, som allerede er i deps
+  const openReadiness = enkelOn ? () => setTab('dagsform') : legacyOpenReadiness
+
   useEffect(() => { if (tab === 'beskeder' && athlete?.id) { fetchAthleteMessages(); markTrackRead(msgTrack); if (msgTrack === 'teknik') fetchSharedVideoAnalyses() } }, [tab, athlete?.id, msgTrack])
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge er rene ift. athlete.id, som allerede er i deps
@@ -592,7 +602,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       {/* Toast-pladsen (ORDRE 339 · F5): under topbaren på alle faner undtagen
           forsiden, hvor den ligger under overskrift + strimmel (se toastSlot). */}
       <IngenForbindelse {...{ offlineSnapshotAt }} />
-      {!(tab === 'hjem' && !onHoliday) && toastSlot}
+      {(!(tab === 'hjem' && !onHoliday) || (enkelOn && ['uge', 'dagsform'].includes(enkelRoute))) && toastSlot}
       {recheckMsg && !onExitPreview && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', textAlign: 'right', padding: '0.4rem 1.5rem 0' }}>{recheckMsg}</div>
       )}
@@ -600,8 +610,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       {/* Page content */}
       <div style={s.page}>
 
+        {enkelOn && renderControls(createElement, { route: enkelRoute, go: setTab })}
+        {enkelOn && enkelRoute === 'mere' && renderMore(createElement, { athlete, hasMeetPlan, go: setTab })}
+        {enkelOn && enkelRoute === 'kontakt' && msgTrack === 'teknik' && role === 'athlete' && (
+          <button type="button" style={{ ...s.btnPrimary, minHeight: 44 }} onClick={() => {
+            if (!athlete?.id) return
+            setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true)
+          }}>Film et sæt</button>
+        )}
+        {enkelOn && enkelRoute === 'uge' && !currentWeek && <p>Ingen programuge endnu.</p>}
         {/* HJEM */}
-        <HjemTab
+        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(enkelRoute)) && <HjemVisning
+          enkelDel={enkelOn && enkelRoute !== 'alle' ? enkelRoute : null}
           {...{
             allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
             forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
@@ -613,7 +633,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
             rekordFejring, rekordGrundlagFoer, sendUgeLinje,
           }}
-        />
+        />}
+        {enkelOn && enkelRoute === 'traening' && renderTrainingLinks(createElement, {
+          messages, sharedVideoAnalyses, go: setTab, setMsgTrack,
+        })}
 
         {/* PROGRAM */}
         {tab === 'program' && (
@@ -647,8 +670,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {/* FREMGANG */}
         {tab === 'fremgang' && (
           <LazyBoundary
-            factory={fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={{ fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
+            factory={enkelOn ? enkelFremgangFactory : fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
+            componentProps={{ enkelDel: enkelOn ? enkelRoute : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
           />
         )}
 
@@ -713,7 +736,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         )}
       </div>
 
-      <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount }} />
+      {enkelOn ? renderNav(createElement, { route: enkelRoute, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
+        <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount }} />}
     </div>
   )
 }
