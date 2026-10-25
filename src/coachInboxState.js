@@ -76,7 +76,7 @@ export function filterOpenTrainingSignals(signals, actions, now = Date.now()) {
   const candidates = (signals || [])
     .filter(item => item?.o_athlete_id && (item.o_severity === 'alert' || item.o_severity === 'context'))
     .sort((left, right) => (rank[left.o_severity] - rank[right.o_severity]) ||
-      (left.o_athlete_name || '').localeCompare(right.o_athlete_name || ''))
+      (left.o_athlete_name || '').localeCompare(right.o_athlete_name || '', 'da'))
   const actionBySignal = new Map((actions || []).map(action =>
     [`${action.athlete_id}:${action.detector}`, action]))
 
