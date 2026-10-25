@@ -7,7 +7,7 @@ import { exerciseSetView, exerciseViewRows, bestExerciseRecords } from '../exerc
 import { isMainLift } from '../warmup'
 import { findDagensPas, isSessionDone } from '../nextSet'
 import { shouldNudgeCheckin } from '../checkinReminder'
-import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from '../readinessInsight'
+import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange, checkinNoteTimingText } from '../readinessInsight'
 import { s, today } from '../athleteShared'
 import { weekStartDate, fmtWeekRange, WEEKDAYS_LONG } from './ugeHjaelp'
 import UgensStatusKort from './UgensStatusKort'
@@ -480,6 +480,7 @@ function HjemTab({
               const coachSummary = summarizeReadinessForCoach(historyWithToday)
               const planChange = lastCheckinDrivenChange(historyWithToday, allWeeks)
               const fmtD = str => { const d = new Date(str + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+              const noteTiming = planChange && checkinNoteTimingText(planChange, fmtD)
               return (
                 <>
                   {coachSummary && (
@@ -499,9 +500,9 @@ function HjemTab({
                   )}
                   {planChange && (
                     <div style={s.card}>
-                      <div style={s.cardLabel}>Sidst det gjorde en forskel</div>
+                      <div style={s.cardLabel}>{noteTiming.heading}</div>
                       <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.55 }}>
-                        Efter dit check-in d. {fmtD(planChange.checkinDate)} med lav parathed, skrev din coach denne note til ugen der startede d. {fmtD(planChange.weekStartDate)}:
+                        {noteTiming.description}
                       </div>
                       <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#edeae2', fontStyle: 'italic' }}>
                         "{planChange.note}"

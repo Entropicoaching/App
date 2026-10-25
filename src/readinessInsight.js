@@ -80,7 +80,7 @@ export function summarizeReadinessForCoach(entries) {
   return { logsCount: list.length, avgSleep, topZone, lowStreak }
 }
 
-// "Sidste gang et check-in førte til en ændring": ingen tabel knytter et
+// Ingen tabel knytter et
 // check-in til en efterfølgende programrettelse, så dette er en tidsmæssig
 // korrelation, ikke en gemt årsagskæde — en lav parathedsscore (< 50) efterfulgt,
 // inden for et kort vindue, af en ny uge med en coach-note. Kun ægte, allerede
@@ -88,6 +88,13 @@ export function summarizeReadinessForCoach(entries) {
 // opfindes — findes ingen match, returneres null, og skærmen viser intet
 // (se ordreteksten: "hvis det findes i data").
 const CHANGE_WINDOW_DAYS = 9
+
+export function checkinNoteTimingText(change, fmtDate) {
+  return {
+    heading: 'Coachnote efter et check-in',
+    description: `Du loggede lav parathed d. ${fmtDate(change.checkinDate)}. Denne coachnote er til ugen der startede d. ${fmtDate(change.weekStartDate)}. Datoerne viser kun rækkefølgen, ikke hvorfor noten blev skrevet.`,
+  }
+}
 
 export function lastCheckinDrivenChange(readinessEntries, weeks) {
   const lowLogs = (readinessEntries || [])
