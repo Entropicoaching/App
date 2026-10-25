@@ -3,6 +3,7 @@
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { buildPlanOverview, planOverviewCounts } from '../planOverview'
 import { currentWeekNo, s, computePhases, blockColor } from '../dashboardShared'
+import { createWeekDate, createTimelineScale } from './calendarWeekDate.mjs'
 import { holidayInfo } from './coachKonstanter'
 
 export default function KalenderView({
@@ -136,34 +137,18 @@ export default function KalenderView({
                 const COL_W = isMobile ? 40 : 48
                 const NAME_W = isMobile ? 88 : 132
                 const ROW_H = 34
-                const mondayOf = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x }
                 const isoOf = (d) => d.toISOString().slice(0, 10)
 
                 const rows = visibleAthletes.map(a => {
                   const wks = calendarWeeks[a.id] || []
-                  const anchor = wks.find(w => w.start_date) // wks er sorteret stigende → tidligste daterede
-                  const weekDate = anchor
-                    ? (no) => new Date(new Date(anchor.start_date + 'T12:00:00').getTime() + (no - anchor.week_number) * 7 * dayMs)
-                    : null
-                  return { a, wks, phases: computePhases(wks), currentWk: currentWeekNo(wks, athleteCurrentWeek[a.id] ?? null), weekDate, hasAnchor: !!anchor }
+                  const weekDate = createWeekDate(wks)
+                  return { a, wks, phases: computePhases(wks), currentWk: currentWeekNo(wks, athleteCurrentWeek[a.id] ?? null), weekDate, hasAnchor: !!weekDate }
                 })
                 const placed = rows.filter(r => r.hasAnchor)
                 const tray = rows.filter(r => !r.hasAnchor && r.wks.length > 0)
 
                 // Global kolonneskala (ISO-uger). Pad én uge i hver ende.
-                let minMon = mondayOf(today0), maxMon = mondayOf(today0)
-                for (const r of placed) for (const w of r.wks) {
-                  const m = mondayOf(r.weekDate(w.week_number))
-                  if (m < minMon) minMon = m
-                  if (m > maxMon) maxMon = m
-                }
-                minMon = new Date(minMon.getTime() - 7 * dayMs)
-                maxMon = new Date(maxMon.getTime() + 7 * dayMs)
-                const nCols = Math.min(Math.round((maxMon - minMon) / (7 * dayMs)) + 1, 60)
-                const colOf = (d) => Math.round((mondayOf(d) - minMon) / (7 * dayMs))
-                const todayCol = colOf(today0)
-                const trackW = nCols * COL_W
-                const cols = Array.from({ length: nCols }, (_, i) => new Date(minMon.getTime() + i * 7 * dayMs))
+                const { nCols, colOf, todayCol, trackW, cols } = createTimelineScale(placed, today0, COL_W)
 
                 const openEdit = (r, ph) => {
                   const first = ph.weeks[0]

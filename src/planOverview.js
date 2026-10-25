@@ -31,8 +31,10 @@ function weeksLabel(days) {
 }
 
 function entryForAthlete(athlete, weekRows, today) {
-  const datedWeeks = (Array.isArray(weekRows) ? weekRows : [])
-    .filter(Boolean)
+  // Kendt tomme uger giver ingen traeningsdaekning, heller ikke efter sletning.
+  const plannedWeeks = (Array.isArray(weekRows) ? weekRows : [])
+    .filter(week => week && (week.exercise_count == null || week.exercise_count > 0))
+  const datedWeeks = plannedWeeks
     .map(week => ({ ...week, _date: isoAtNoon(week.start_date) }))
     .filter(week => week._date)
     .sort((left, right) => left._date - right._date || Number(left.week_number) - Number(right.week_number))
@@ -51,7 +53,7 @@ function entryForAthlete(athlete, weekRows, today) {
     suggested_focus: athlete.competition_date ? 'competition' : 'strength',
   }
 
-  if (!weekRows.length) return base
+  if (!plannedWeeks.length) return base
   if (!datedWeeks.length) {
     return {
       ...base,

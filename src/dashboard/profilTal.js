@@ -39,7 +39,7 @@ export function lavProfilTal({
     return Math.abs(difference) <= Number.MAX_VALUE / 10 ? Math.round(difference * 10) / 10 : difference
   })()
 
-  const lastLogPerExercise = {}
+  const lastLogPerExercise = Object.create(null)
   for (const log of athleteLogs) {
     const name = log.exercises?.name
     if (name && (log.weight > 0 || log.reps_completed > 0)) {

@@ -55,11 +55,14 @@ export function currentWeekNo(weeks, maxLoggedWk) {
   const anchor = sorted.find(w => w.start_date)
   if (anchor) {
     const today = new Date(); today.setHours(0, 0, 0, 0)
-    const anchorMs = new Date(anchor.start_date + 'T12:00:00').getTime()
     for (const w of sorted) {
-      const d = new Date(anchorMs + (w.week_number - anchor.week_number) * 7 * 86400000)
+      // En gemt dato har forrang. Kun udaterede uger udledes fra ankeret.
+      const d = new Date((w.start_date || anchor.start_date) + 'T12:00:00')
+      if (!w.start_date) d.setDate(d.getDate() + (w.week_number - anchor.week_number) * 7)
       d.setHours(0, 0, 0, 0)
-      if (d <= today && today < new Date(d.getTime() + 7 * 86400000)) return w.week_number
+      const end = new Date(d)
+      end.setDate(end.getDate() + 7)
+      if (d <= today && today < end) return w.week_number
     }
   }
   return maxLoggedWk ?? null
