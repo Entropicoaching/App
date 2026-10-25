@@ -1,12 +1,9 @@
 // APP-OV4: rene layout-hjælpere til Dagens pas (træningsloggen). Ingen React,
 // ingen DOM, ingen storage, så de kan prøves med node --test. Kortets logik
 // (logning, autofyld, ret-sæt, fortryd, pause) bor uændret i DagensPasCard.jsx;
-// her ligger kun det, layoutet A/B og "Næste øvelse"-knappen skal regne ud.
+// her ligger kun det, layoutet og "Næste øvelse"-knappen skal regne ud.
 
-// To retninger for loggen, så Marc kan vælge. A: tal i fuld bredde under
-// hinanden. B: kg og reps som to fliser side om side. Alt andet er fælles.
-export const LOG_VARIANTER = ['A', 'B']
-export const logVariant = v => (v === 'B' ? 'B' : 'A')
+// APP-OV7: den valgte B-præsentation med kg og reps side om side.
 
 // Appens egne farver og skrifter (samme værdier som athleteShared.js `s`).
 export const T = {
@@ -84,8 +81,7 @@ export function saetStreger({ offset = 0, setNumber, total }) {
 export const talBredde = v => `${Math.max(2, String(v ?? '').length + 0.5)}ch`
 
 // Fælles stilarter. Kun præsentation; ingen af dem bærer logik.
-export function logStil(variant) {
-  const v = logVariant(variant)
+export function logStil() {
   const trin = {
     background: 'transparent', color: T.tekst, border: 'none', cursor: 'pointer',
     fontFamily: T.sans, fontSize: '1.6rem', fontWeight: 300, lineHeight: 1,
@@ -98,13 +94,10 @@ export function logStil(variant) {
     textAlign: 'center', padding: 0, minHeight: '44px', boxSizing: 'border-box',
   }
   return {
-    variant: v,
+    variant: 'B',
     kortHoved: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.6rem' },
-    saetTael: { fontFamily: T.mono, fontSize: '0.6rem', letterSpacing: '0.08em', color: T.daempet, whiteSpace: 'nowrap' },
     saetPille: { fontFamily: T.sans, fontSize: '0.78rem', fontWeight: 500, color: T.accent, background: T.accentSvag, border: `1px solid ${T.accentKant}`, borderRadius: '999px', padding: '0.2rem 0.7rem', whiteSpace: 'nowrap', flexShrink: 0 },
-    streger: { display: 'flex', gap: '4px', marginBottom: '1rem' },
-    streg: status => ({ flex: 1, height: '4px', borderRadius: '2px', background: status === 'klaret' ? T.accent : status === 'aktuelt' ? 'rgba(200,146,58,0.55)' : 'rgba(237,234,226,0.10)' }),
-    navn: { fontFamily: T.serif, fontSize: v === 'B' ? '2rem' : '1.85rem', fontWeight: 400, color: T.tekst, lineHeight: 1.1, margin: 0, textAlign: 'left', overflowWrap: 'anywhere' },
+    navn: { fontFamily: T.serif, fontSize: '2rem', fontWeight: 400, color: T.tekst, lineHeight: 1.1, margin: 0, textAlign: 'left', overflowWrap: 'anywhere' },
     navnRaekke: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.35rem' },
     ordination: { fontFamily: T.mono, fontSize: '0.7rem', color: T.accent, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.85rem', textAlign: 'left' },
     // "Sidste gang" og "Anbefalet" i én rolig strimmel.
@@ -118,10 +111,6 @@ export function logStil(variant) {
     klaret: { display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.75rem', fontFamily: T.mono, fontSize: '0.64rem', color: T.daempet, textAlign: 'left' },
     klaretMaerke: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '18px', height: '18px', borderRadius: '50%', background: T.accentSvag, color: T.accent, fontSize: '0.6rem', marginRight: '0.4rem', flexShrink: 0 },
     tekstKnap: { background: 'none', border: 'none', color: T.stille, cursor: 'pointer', fontFamily: T.mono, fontSize: '0.58rem', letterSpacing: '0.04em', padding: '0 0.25rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0 },
-    // A: hver værdi i sin egen række i fuld bredde.
-    stepper: { display: 'flex', alignItems: 'stretch', background: T.flade, border: `1px solid ${T.kant}`, minHeight: '64px' },
-    stepperMidte: { flex: 1, minWidth: 0, display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '0.35rem', borderLeft: `1px solid ${T.linje}`, borderRight: `1px solid ${T.linje}`, padding: '0.35rem 0' },
-    stepperStak: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
     // B: to fliser side om side.
     fliser: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' },
     flise: { background: T.flade, border: `1px solid ${T.kant}`, display: 'flex', flexDirection: 'column', minWidth: 0 },
@@ -130,19 +119,15 @@ export function logStil(variant) {
     trin,
     trinFlise: { ...trin, minWidth: 0, width: '100%', minHeight: '52px', fontSize: '1.4rem' },
     trinFliseHoejre: { ...trin, minWidth: 0, width: '100%', minHeight: '52px', fontSize: '1.4rem', borderLeft: `1px solid ${T.linje}` },
-    tal: { ...tal, fontSize: v === 'B' ? '2.6rem' : '2.2rem', lineHeight: 1.1 },
+    tal: { ...tal, fontSize: '2.6rem', lineHeight: 1.1 },
     enhed: { fontFamily: T.sans, fontSize: '0.8rem', color: T.stille },
     fliseEtiket: { fontFamily: T.mono, fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: T.stille },
-    statiskReps: { fontFamily: T.sans, fontSize: v === 'B' ? '1.6rem' : '1.4rem', fontWeight: 500, color: T.accent, whiteSpace: 'nowrap' },
+    statiskReps: { fontFamily: T.sans, fontSize: '1.6rem', fontWeight: 500, color: T.accent, whiteSpace: 'nowrap' },
     ekstraRaekke: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' },
     ekstraKnap: aktiv => ({ fontFamily: T.mono, fontSize: '0.62rem', letterSpacing: '0.06em', color: aktiv ? T.accent : T.daempet, background: aktiv ? T.accentSvag : 'transparent', border: `1px solid ${aktiv ? T.accentKant : T.kant}`, minHeight: '48px', boxSizing: 'border-box', padding: '0 0.5rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }),
-    handlinger: v === 'B'
-      ? { display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.75rem' }
-      : { display: 'flex', gap: '0.5rem', marginTop: '0.75rem' },
-    godkendt: { flex: 1, minHeight: v === 'B' ? '64px' : '60px', boxSizing: 'border-box', fontSize: '0.85rem', letterSpacing: '0.14em', borderRadius: '2px' },
-    springOver: v === 'B'
-      ? { minHeight: '44px', boxSizing: 'border-box', fontSize: '0.58rem', border: 'none', color: T.stille }
-      : { minHeight: '60px', boxSizing: 'border-box', fontSize: '0.58rem', padding: '0.5rem 0.75rem' },
+    handlinger: { display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.75rem' },
+    godkendt: { flex: 1, minHeight: '64px', boxSizing: 'border-box', fontSize: '0.85rem', letterSpacing: '0.14em', borderRadius: '2px' },
+    springOver: { minHeight: '44px', boxSizing: 'border-box', fontSize: '0.58rem', border: 'none', color: T.stille },
     naesteSaet: { fontFamily: T.mono, fontSize: '0.6rem', color: T.daempet, letterSpacing: '0.02em', textAlign: 'left' },
   }
 }

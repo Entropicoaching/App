@@ -3,7 +3,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { exerciseViewGroups } from '../exerciseSetView.js'
-import { naesteOevelse, naesteOevelseDetalje, naesteOevelseTekst, naesteKnapNavn, saetStreger, logVariant, logStil, naesteKort, bundProcent, bundStil, ordinationTekst, naesteSaet } from './dagensPasLayout.mjs'
+import { naesteOevelse, naesteOevelseDetalje, naesteOevelseTekst, naesteKnapNavn, saetStreger, logStil, naesteKort, bundProcent, bundStil, ordinationTekst, naesteSaet } from './dagensPasLayout.mjs'
 
 const pas = [
   { id: 'e1', name: 'Squat', sets: 5, reps: '3' },
@@ -29,9 +29,18 @@ test('sætstregerne følger det aktuelle sæt', () => {
   assert.deepEqual(saetStreger({ setNumber: 2, total: 3 }), ['klaret', 'aktuelt', 'senere'])
 })
 
-test('B: trykflader mindst 44 px', () => {
-  assert.equal(logVariant('B'), 'B')
-  const st = logStil('B')
+test('APP-OV7: kun B, også uden valg og med gamle variantværdier', () => {
+  const st = logStil()
+  assert.equal(st.variant, 'B')
+  for (const tidligereValg of ['A', 'B', undefined, null, '', 'ukendt']) {
+    assert.deepEqual({ ...logStil(tidligereValg), ekstraKnap: null }, { ...st, ekstraKnap: null })
+    for (const aktiv of [false, true]) assert.deepEqual(logStil(tidligereValg).ekstraKnap(aktiv), st.ekstraKnap(aktiv))
+  }
+  assert.equal(st.fliser.gridTemplateColumns, '1fr 1fr')
+  assert.equal(st.handlinger.flexDirection, 'column')
+  assert.equal(st.godkendt.minHeight, '64px')
+  assert.equal(st.springOver.minHeight, '44px')
+  for (const key of ['stepper', 'stepperMidte', 'stepperStak', 'saetTael']) assert.equal(key in st, false)
   for (const k of ['trin', 'trinFlise', 'tekstKnap']) assert.ok(parseFloat(st[k].minHeight) >= 44, k)
 })
 

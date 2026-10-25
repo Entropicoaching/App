@@ -20,7 +20,7 @@ import { canAcceptSetTap } from './setTapGuard'
 import { restSecondsForExercise } from '../restBetweenSets'
 import { visTid, harSetPauseForklaring, markerPauseForklaring, foersteSaetTekst } from './pauseLinje'
 import { SMERTE_LINJE } from '../saetSmerte'
-import { dagensPasRaekke, logStil, naesteKnapNavn, naesteOevelse, naesteOevelseDetalje, saetStreger, talBredde } from './dagensPasLayout.mjs'
+import { dagensPasRaekke, logStil, naesteKnapNavn, naesteOevelse, naesteOevelseDetalje, talBredde } from './dagensPasLayout.mjs'
 
 // ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
 // samme øvelse (også et sæt, der venter i køen), det kortet viser som
@@ -43,7 +43,7 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, overviewSession = null, onRateSession, rekordFejring = null, onVarmOp = null, logVariant = 'A' }) {
+function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, overviewSession = null, onRateSession, rekordFejring = null, onVarmOp = null }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
   const lastSetTapRef = useRef(-Infinity)
   const logContextId = useId()
@@ -312,13 +312,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const nextSetReps = fixedRepsEntry(ex.reps) ?? (repsIsEditable ? (last?.reps ?? (repsPrescription.type === 'range' ? repsPrescription.min : null)) : ex.reps)
   const nextSetWeight = ex.recommended_weight ?? suggestion?.weight ?? last?.weight ?? null
 
-  // APP-OV4: præsentation for retning A eller B (dagensPasLayout.mjs). Kun stil
-  // og placering; hver handling herunder er den samme som på main 68f43741.
-  const st = logStil(logVariant)
-  const erB = st.variant === 'B'
+  // APP-OV7: den valgte B-præsentation er loggens eneste layout.
+  const st = logStil()
   const saetIAlt = viewRow?.totalSets || totalSets
   const saetNu = (viewRow?.offset || 0) + setNumber
-  const streger = saetStreger({ offset: viewRow?.offset || 0, setNumber, total: saetIAlt })
   const smerteBesked = smerteBeskedFor(suggestNextWeight, ex.name)
   const raadCelle = ex.recommended_weight != null ? (
     <div style={st.infoCelle}>
@@ -365,11 +362,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       }}
     />
   )
-  const vaegtMinus = <button type="button" aria-label="2,5 kg mindre" onClick={() => stepWeightBy(-2.5)} style={erB ? st.trinFlise : st.trin}>−</button>
-  const vaegtPlus = <button type="button" aria-label="2,5 kg mere" onClick={() => stepWeightBy(2.5)} style={erB ? st.trinFliseHoejre : st.trin}>+</button>
-  const repsMinus = <button type="button" aria-label="1 rep mindre" onClick={() => stepRepsBy(-1)} style={erB ? st.trinFlise : st.trin}>−</button>
-  const repsPlus = <button type="button" aria-label="1 rep mere" onClick={() => stepRepsBy(1)} style={erB ? st.trinFliseHoejre : st.trin}>+</button>
-  const statiskReps = <span style={st.statiskReps}>× {ex.reps || '—'}</span>
+  const vaegtMinus = <button type="button" aria-label="2,5 kg mindre" onClick={() => stepWeightBy(-2.5)} style={st.trinFlise}>−</button>
+  const vaegtPlus = <button type="button" aria-label="2,5 kg mere" onClick={() => stepWeightBy(2.5)} style={st.trinFliseHoejre}>+</button>
+  const repsMinus = <button type="button" aria-label="1 rep mindre" onClick={() => stepRepsBy(-1)} style={st.trinFlise}>−</button>
+  const repsPlus = <button type="button" aria-label="1 rep mere" onClick={() => stepRepsBy(1)} style={st.trinFliseHoejre}>+</button>
 
   return (
     <div style={{ ...s.card, textAlign: 'left' }} data-log-variant={st.variant}>
@@ -378,17 +374,11 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       {rateLine}
       <div style={st.kortHoved}>
         <div style={{ ...s.cardLabel, marginBottom: 0 }}>Dagens pas</div>
-        {!erB && <div style={st.saetTael}>{view.label !== 'Sæt' && `${view.label} · `}Sæt {saetNu}/{saetIAlt}</div>}
       </div>
-      {!erB && streger.length > 1 && (
-        <div aria-hidden="true" data-saet-streger={streger.length} style={st.streger}>
-          {streger.map((status, i) => <span key={i} style={st.streg(status)} />)}
-        </div>
-      )}
 
       <div style={st.navnRaekke}>
         <h3 style={st.navn}>{view.name}</h3>
-        {erB && <span style={st.saetPille}>{view.label !== 'Sæt' && `${view.label} · `}Sæt {saetNu}/{saetIAlt}</span>}
+        <span style={st.saetPille}>{view.label !== 'Sæt' && `${view.label} · `}Sæt {saetNu}/{saetIAlt}</span>
       </div>
       <div style={st.ordination}>
         {[ex.sets && !flereRaekker && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}${/^[\d\s\-–]+$/.test(String(ex.reps)) ? ' reps' : ''}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
@@ -533,46 +523,24 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         </div>
       )}
 
-      {/* APP-OV4: de store tal. A: vægt og reps i hver sin række i fuld
-          bredde, minus/plus yderst til tommelfingeren. B: to fliser side om
-          side med tallet øverst og minus/plus under. Begge: 2,5 kg / 1 rep pr.
-          tryk som på main, og feltet kan stadig tastes i. */}
+      {/* APP-OV7: kg og reps side om side. Samme felter og trin på 2,5 kg / 1 rep. */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {erB ? (
-          <div data-log-tal="fliser" style={st.fliser}>
-            <div style={st.flise}>
-              <div style={st.fliseTop}>
-                <span style={st.fliseEtiket}>kg</span>
-                {vaegtFelt}
-              </div>
-              <div style={st.fliseKnapper}>{vaegtMinus}{vaegtPlus}</div>
+        <div data-log-tal="fliser" style={st.fliser}>
+          <div style={st.flise}>
+            <div style={st.fliseTop}>
+              <span style={st.fliseEtiket}>kg</span>
+              {vaegtFelt}
             </div>
-            <div style={st.flise}>
-              <div style={st.fliseTop}>
-                <span style={st.fliseEtiket}>reps</span>
-                {repsIsEditable ? repsFelt : <span style={{ ...st.statiskReps, minHeight: '44px', display: 'inline-flex', alignItems: 'center' }}>× {ex.reps || '—'}</span>}
-              </div>
-              {repsIsEditable && <div style={st.fliseKnapper}>{repsMinus}{repsPlus}</div>}
-            </div>
+            <div style={st.fliseKnapper}>{vaegtMinus}{vaegtPlus}</div>
           </div>
-        ) : (
-          <div data-log-tal="raekker" style={st.stepperStak}>
-            <div style={st.stepper}>
-              {vaegtMinus}
-              <div style={st.stepperMidte}>{vaegtFelt}<span style={st.enhed}>kg</span></div>
-              {vaegtPlus}
+          <div style={st.flise}>
+            <div style={st.fliseTop}>
+              <span style={st.fliseEtiket}>reps</span>
+              {repsIsEditable ? repsFelt : <span style={{ ...st.statiskReps, minHeight: '44px', display: 'inline-flex', alignItems: 'center' }}>× {ex.reps || '—'}</span>}
             </div>
-            {repsIsEditable ? (
-              <div style={st.stepper}>
-                {repsMinus}
-                <div style={st.stepperMidte}>{repsFelt}<span style={st.enhed}>reps</span></div>
-                {repsPlus}
-              </div>
-            ) : (
-              <div style={{ ...st.stepper, alignItems: 'center', justifyContent: 'center' }}>{statiskReps}</div>
-            )}
+            {repsIsEditable && <div style={st.fliseKnapper}>{repsMinus}{repsPlus}</div>}
           </div>
-        )}
+        </div>
         {/* ORDRE 419 (I2): RPE-vælger og note, nu side om side under tallene. */}
         <div style={st.ekstraRaekke}>
           <button
