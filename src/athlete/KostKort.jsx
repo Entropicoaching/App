@@ -1,6 +1,7 @@
 // Kost-kortene: KostCompact (forsidens slanke kost-linje) og ProgressBars
 // (kalorie-/proteinkortene i Kost-fanen) — JSX'en flyttet uaendret ud af
 // AthleteView.jsx (ordre 373). Tallene regnes stadig i kostHandlinger.js.
+import { vaerdTekst } from './vaerdTekst.mjs'
 import { s } from '../athleteShared'
 
 function KostCompact({
@@ -15,7 +16,7 @@ function KostCompact({
     >
       {(totKcal > 0 || totProtein > 0) ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <span style={{ ...s.cardLabel, marginBottom: 0, flexShrink: 0 }}>Kost i dag</span>
+          <span style={{ ...s.cardLabel, marginBottom: 0, flexShrink: 0 }}>{vaerdTekst.kost}</span>
           {[
             { val: totKcal, target: athlete.kcal_target, unit: 'kcal', pct: kcalPct, color: '#c8923a' },
             { val: totProtein, target: athlete.protein_target, unit: 'g protein', pct: proteinPct, color: '#6cba6c' },

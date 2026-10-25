@@ -1,3 +1,4 @@
+import { vaerdTekst, ventendeSaetTekst } from './vaerdTekst.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
 import { exerciseSetView, exerciseViewGroups } from '../exerciseSetView'
@@ -226,7 +227,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       ))}
       {pendingSyncCount > 0 && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
-          ☁ {pendingSyncCount} {pendingSyncCount === 1 ? 'sæt' : 'sæt'} gemt lokalt — sendes når forbindelsen er tilbage
+          {ventendeSaetTekst(pendingSyncCount)}
         </div>
       )}
     </>
@@ -319,14 +320,14 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const smerteBesked = smerteBeskedFor(suggestNextWeight, ex.name)
   const raadCelle = ex.recommended_weight != null ? (
     <div style={st.infoCelle}>
-      <div style={st.infoEtiket}>Anbefalet</div>
+      <div style={st.infoEtiket}>{vaerdTekst.coach}</div>
       <div style={st.infoVaerdiAccent}>{ex.recommended_weight} kg</div>
     </div>
   ) : suggestion?.stop ? (
     <div data-testid="smerte-stop" style={{ ...st.infoCelle, ...st.infoTekst }}>{SMERTE_LINJE}</div>
   ) : suggestion ? (
     <div style={st.infoCelle}>
-      <div style={st.infoEtiket}>Forslag</div>
+      <div style={st.infoEtiket}>{vaerdTekst.app}</div>
       <div style={st.infoVaerdiAccent}>{suggestion.weight} kg <span style={{ color: '#7a7770', fontWeight: 400, fontSize: '0.75rem' }}>(RPE {suggestion.fromRpe})</span></div>
     </div>
   ) : smerteBesked ? (
@@ -583,7 +584,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             aria-label={`Note til sæt ${setNumber}`}
             autoFocus={noteOpenFor === key}
             type="text"
-            placeholder="Note til coachen, fx ryg stram"
+            placeholder={vaerdTekst.note}
             maxLength={200}
             value={input.note || ''}
             onChange={e => { const v = e.target.value; setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), note: v } })) }}
@@ -622,7 +623,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           style={{ display: 'block', width: '100%', minHeight: '48px', boxSizing: 'border-box', background: 'rgba(200,146,58,0.06)', border: '1px solid rgba(200,146,58,0.35)', borderRadius: '2px', padding: '0.55rem 0.8rem', marginTop: '0.5rem', cursor: 'pointer', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.74rem', color: '#d4d0c4', lineHeight: 1.5 }}
         >
           {intetLogget
-            ? <span style={{ color: '#e0a94c', fontWeight: 600 }}>Første sæt · tryk for at se</span>
+            ? <span style={{ color: '#e0a94c', fontWeight: 600 }}>{vaerdTekst.foersteSaet}</span>
             : <><span style={{ color: '#e0a94c', fontWeight: 600 }}>Pause {visTid(restSecondsForExercise(ex))}</span> · tryk for at starte</>}
           {!intetLogget && !pauseForklaret && <span style={{ display: 'block', fontSize: '0.64rem', color: '#a8a498' }}>Pausen starter af sig selv, når du godkender et sæt.</span>}
         </button>
