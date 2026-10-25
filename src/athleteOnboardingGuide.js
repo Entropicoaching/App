@@ -12,17 +12,17 @@ export const ATHLETE_ONBOARDING_GUIDE_STEPS = [
   {
     key: 'parathed',
     heading: 'Start med din parathed.',
-    body: 'Før du træner, logger du søvn, energi og hvordan kroppen føles. Det tager under et minut og hjælper dig og din coach med at følge formen.',
+    body: 'Før du træner, logger du søvn, energi og hvordan kroppen føles. Det hjælper dig og din coach med at følge formen.',
   },
   {
     key: 'find-session',
     heading: 'Sådan ser du din uge og dagens pas.',
-    body: 'På Hjem ser du, hvad din coach har planlagt for ugen. Dagens pas er markeret som "Næste". Tryk på det, så folder det sig ud med dagens øvelser.',
+    body: 'På Hjem ser du ugens plan og kortet med dagens næste sæt. Tryk på "Hele passet" nederst i sætkortet for at se et pasoverblik med alle øvelser og sæt.',
   },
   {
     key: 'log-saet',
     heading: 'Sådan logger du dagens pas.',
-    body: 'For hver øvelse skriver du vægten og antal gentagelser for hvert sæt, og vælger din RPE. RPE er dit eget skøn over, hvor hårdt sættet føltes, og der er ingen rigtige eller forkerte tal. Er du i tvivl om noget, så spørg din coach.',
+    body: 'Tjek kg (vægt) og reps (gentagelser) i sætkortet, og ret tallene, hvis du løftede noget andet. Når du har lavet sættet, trykker du på "Godkendt" for at gemme det. Du kan også vælge RPE. RPE er dit eget skøn over, hvor hårdt sættet føltes, og der er ingen rigtige eller forkerte tal. Er du i tvivl om noget, så spørg din coach.',
   },
 ]
 
