@@ -16,7 +16,7 @@ import { parseRepsPrescription } from '../repsPrescription'
 import { fixedRepsEntry } from '../fixedRepsEntry'
 import { exerciseViewGroups, exerciseViewRows } from '../exerciseSetView'
 import CountdownRing from './CountdownRing'
-import BlokRoedTraad from './BlokRoedTraad'
+import BlokRoedTraad from './BlokRoedTraad.jsx'
 import { s } from '../athleteShared'
 import { SMERTE_LINJE } from '../saetSmerte'
 
