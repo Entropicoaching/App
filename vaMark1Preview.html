@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="da"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'none'; img-src 'none'; media-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-qppxXDsB1YRaKuxfwwrET7d8owBT6OZfwmK5XfTYDW8='; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>VA-MARK1 syntetisk haandmarkering</title>
+<style>
+*{box-sizing:border-box}body{font:16px/1.5 system-ui;background:#10212c;color:#edf5f7;margin:0}
+main{max-width:920px;margin:auto;padding:24px}section{background:#1d3340;padding:18px;border-radius:12px;margin:16px 0}
+label{display:inline-block;margin:8px}button,input,select{font:inherit;padding:8px;max-width:100%}button{cursor:pointer;margin:6px}
+input{width:120px}svg{display:block;width:100%;height:auto;background:#e4edf0;touch-action:manipulation}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}h1{line-height:1.2}#message{border-left:4px solid #6ee0c4;padding:10px}
+</style><main>
+<h1>Marker stangens centrum</h1>
+<p>VA-MARK1 | Kun opfundne billeder og spor. Ingen video, upload eller net.</p>
+<p>Vurderingen er nominel og syntetisk. Fysisk VC-PASS er altid false. Usikkerhed er ukendt.</p>
+<section><h2>1. Vaelg billede</h2>
+<label>Klip <select id="clip"><option value="0">Syntetisk 1: lille kendt stoej</option><option value="1">Syntetisk 2: fast afvigelse</option><option value="2">Syntetisk 3: varierende stoej</option></select></label>
+<label>Billede <select id="frame"><option value="0">1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option></select></label>
+<p id="frameInfo"></p>
+<svg id="scene" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Syntetisk skive. Klik centrum eller brug koordinatfelterne.">
+<path d="M 0 335 H 640" stroke="#778b94"/><circle id="disc" cx="240" cy="260" r="45" fill="#396c80" stroke="#173541" stroke-width="3"/>
+<circle id="cross" cx="-100" cy="-100" r="5" fill="none" stroke="#b82230" stroke-width="2"/>
+<circle id="edgeA" cx="-100" cy="-100" r="4" fill="#d35e00"/><circle id="edgeB" cx="-100" cy="-100" r="4" fill="#d35e00"/></svg>
+<p>Klik skivens centrum. Roed ring viser din markering. Koordinater er kildepixels, x mod hoejre og y nedad, 640 x 360. SVG bevarer billedforholdet.</p>
+<label>x px <input id="x" type="number" step="any" min="0" max="640"></label>
+<label>y px <input id="y" type="number" step="any" min="0" max="360"></label>
+<button id="setPoint" type="button">Anvend punkt</button><button id="clearPoint" type="button">Fjern punkt</button>
+</section><section><h2>2. Marker skivens diameter i billedet</h2>
+<p>Skiven er 45 cm. Tryk knappen og klik to modsatte kanter i det valgte billede. Ingen fri cm/px-indtastning. De opfundne billeder binder diameteren til 90 kildepixels og skivens centrum.</p>
+<button id="calibrate" type="button">Marker diameter med to klik</button><p id="scaleInfo"></p>
+<p>Gyldigt billedinterval er 1 kildepixel til billedets korteste side (her 360 px). Det er en geometrisk kontrol, ikke en fysisk fagtaerskel. Teknisk klikvalg: midtpunkt hoejst 3 kildepixels fra centrum og diameterafvigelse hoejst 5 procent, inklusive graenserne. Dette er ikke fysisk valideret maalepraecision.</p>
+<p>Tiderne er 0, 0.2, 0.55 og 1.1 sekunder. Hastighed opad = (y foer - y efter) * cm/px / 100 / faktisk tidsforskel. Ingen fps-antagelse eller interpolation.</p>
+</section><section><h2>3. Gem og sammenlign</h2>
+<button id="save" type="button">Gem dette klip lokalt</button><button id="restore" type="button">Gendan dette klip</button>
+<button id="compare" type="button">Fastlaas og sammenlign</button><p id="message" role="status" aria-live="polite"></p>
+<p>Markeringer er tomme ved start. Fastlaas alle fire foer det automatiske spors fejl vises. Rettelser ophæver fastlaasning. Lokal lagring kan vaere utilgaengelig ved file-URL; en fejl vises eksplicit.</p>
+<p>PASS kraever maksimum 2D-positionsfejl &lt;= 1 cm og maksimum lodret hastighedsfejl &lt;= 0.05 m/s. Det sikrer ogsaa den lodrette positionsgraense. RMSE er kun beskrivende. Ingen afrunding i dommen. Samlet dom kraever praecis tre unikke klip med gyldige maalinger. Enhver mangel giver INCOMPLETE, ogsaa sammen med et FAIL.</p>
+<p id="aggregate"></p><pre id="result" aria-label="Residualer og intervalafvigelser"></pre>
+</section></main><script>// VA-MARK1. Own pure synthetic measurement contract. No original module imports.
+const finite = Number.isFinite;
+const need = (ok, why) => { if (!ok) throw new TypeError(why); };
+const text = x => typeof x === 'string' && x.trim().length > 0;
+const positive = x => finite(x) && x > 0;
+const calc = x => { need(finite(x), 'numeric_overflow'); return x; };
+const scaled = (x, s) => { const v = calc(x * s); need(x === 0 || v !== 0, 'numeric_underflow'); return v; };
+const SCHEMA = 'va-mark1-synthetic/v2';
+function canonical(x) {
+  if (x === null || typeof x !== 'object') return JSON.stringify(x);
+  return Array.isArray(x) ? '[' + x.map(canonical).join(',') + ']' :
+    '{' + Object.keys(x).sort().map(k => JSON.stringify(k) + ':' + canonical(x[k])).join(',') + '}';
+}
+function validateFixture(f) {
+  need(f && f.schema === SCHEMA && f.status === 'synthetic_only', 'synthetic_schema');
+  need(text(f.clip_id) && text(f.setup_id) && text(f.revision), 'identity');
+  need(f.image && positive(f.image.width) && positive(f.image.height), 'image');
+  need(f.axis === 'px_x_right_y_down' && f.time_unit === 's' && f.clock === 'actual_timestamps', 'axis_time_units');
+  need(Array.isArray(f.frames) && f.frames.length >= 2 && f.frames.length <= 1000, 'frames');
+  let previous = -1;
+  const ids = new Set();
+  for (const q of f.frames) {
+    need(q && Number.isInteger(q.frame_id) && q.frame_id >= 0 && !ids.has(q.frame_id), 'frame_id');
+    ids.add(q.frame_id);
+    need(finite(q.t_s) && q.t_s >= 0 && q.t_s > previous, 'actual_time'); previous = q.t_s;
+    for (const p of [q.disc, q.automatic]) {
+      need(p === null || inImage(p, f.image), 'point_bounds');
+    }
+    need(positive(q.disc_px) && q.disc_px >= 1 && q.disc_px <= Math.min(f.image.width, f.image.height), 'synthetic_disc');
+    need(q.disc && q.disc.x >= q.disc_px / 2 && q.disc.x + q.disc_px / 2 <= f.image.width &&
+      q.disc.y >= q.disc_px / 2 && q.disc.y + q.disc_px / 2 <= f.image.height, 'disc_bounds');
+  }
+  return f;
+}
+function inImage(p, image) {
+  return p && finite(p.x) && finite(p.y) && p.x >= 0 && p.x <= image.width && p.y >= 0 && p.y <= image.height;
+}
+function createSession(f) {
+  validateFixture(f);
+  return { schema: SCHEMA, basis: canonical(f), calibration: null,
+    marks: f.frames.map(q => ({ frame_id: q.frame_id, t_s: q.t_s, point: null })), locked: false };
+}
+function validateSession(f, s) {
+  validateFixture(f);
+  need(s && s.schema === SCHEMA && s.basis === canonical(f), 'basis_mismatch');
+  need(typeof s.locked === 'boolean', 'session_header');
+  if (s.calibration !== null) validateCalibration(f, s.calibration);
+  need(Array.isArray(s.marks) && s.marks.length === f.frames.length, 'sample_coverage');
+  s.marks.forEach((q, i) => {
+    need(q && q.frame_id === f.frames[i].frame_id && q.t_s === f.frames[i].t_s, 'frame_time_alignment');
+    need(q.point === null || inImage(q.point, f.image), 'manual_point_bounds');
+  });
+  return s;
+}
+function mark(f, s, index, point) {
+  validateSession(f, s);
+  need(Number.isInteger(index) && index >= 0 && index < f.frames.length, 'frame_selection');
+  need(point === null || inImage(point, f.image), 'manual_point_bounds');
+  return { ...s, locked: false, marks: s.marks.map((q, i) => i === index ? { ...q, point: point && { x: point.x, y: point.y } } : q) };
+}
+// Only a marked diameter in source image coordinates can establish the fixed 45 cm scale.
+function validateCalibration(f, c) {
+  need(c && c.unit === 'cm_per_px' && c.disc_cm === 45, 'calibration_mismatch');
+  const q = f.frames.find(q => q.frame_id === c.frame_id);
+  need(q && Array.isArray(c.endpoints) && c.endpoints.length === 2, 'calibration_frame');
+  const [a, b] = c.endpoints;
+  need(inImage(a, f.image) && inImage(b, f.image), 'diameter_bounds');
+  const dx = a.x - b.x, dy = a.y - b.y, px = Math.hypot(dx, dy);
+  // Geometric interval: at least one source pixel, at most the shorter image side.
+  // Technical click acceptance: center <= 3 source pixels, diameter error <= 5 percent.
+  // These choices do not establish physical measurement accuracy.
+  need(finite(px) && px >= 1 && px <= Math.min(f.image.width, f.image.height), 'diameter_interval');
+  const centerError = Math.hypot((a.x + b.x) / 2 - q.disc.x, (a.y + b.y) / 2 - q.disc.y);
+  const diameterError = Math.abs(px - q.disc_px);
+  need(centerError <= 3 && diameterError <= q.disc_px * 0.05 &&
+    c.disc_px === px, 'calibration_mismatch');
+  return c;
+}
+function calibrate(f, s, frame_id, endpoints) {
+  validateSession(f, s);
+  need(Array.isArray(endpoints) && endpoints.length === 2, 'diameter_mark_required');
+  const [a, b] = endpoints;
+  need(inImage(a, f.image) && inImage(b, f.image), 'diameter_bounds');
+  const calibration = { disc_cm: 45, disc_px: Math.hypot(a.x - b.x, a.y - b.y), frame_id,
+    endpoints: endpoints.map(p => ({ x: p.x, y: p.y })), unit: 'cm_per_px' };
+  validateCalibration(f, calibration);
+  return { ...s, locked: false, calibration };
+}
+function clearCalibration(f, s) {
+  validateSession(f, s);
+  return { ...s, locked: false, calibration: null };
+}
+function lock(f, s) {
+  validateSession(f, s);
+  need(s.marks.every(q => q.point !== null), 'missing_manual');
+  need(s.calibration !== null, 'missing_calibration');
+  return { ...s, locked: true };
+}
+function stats(xs) {
+  return { max_abs: Math.max(...xs.map(Math.abs)), rmse: calc(Math.hypot(...xs) / Math.sqrt(xs.length)) };
+}
+function compare(f, s) {
+  const empty = reason => ({ status: 'INCOMPLETE', reason, position: null, velocity: null, residuals: [], intervals: [], physical_vc_pass: false, uncertainty: null });
+  try { validateSession(f, s); } catch (e) { return empty(e.message); }
+  if (!s.locked) return empty('manual_not_locked');
+  if (!s.marks.every(q => q.point)) return empty('missing_manual');
+  if (!f.frames.every(q => q.automatic)) return empty('missing_automatic');
+  if (s.calibration === null) return empty('missing_calibration');
+  try {
+    const scale = calc(s.calibration.disc_cm / s.calibration.disc_px);
+    need(scale > 0, 'scale_underflow');
+    const residuals = f.frames.map((q, i) => {
+      const m = s.marks[i].point;
+      const dx_cm = scaled(q.automatic.x - m.x, scale), dy_cm = scaled(q.automatic.y - m.y, scale);
+      return { frame_id: q.frame_id, t_s: q.t_s, dx_cm, dy_cm, distance_cm: calc(Math.hypot(dx_cm, dy_cm)) };
+    });
+    const intervals = f.frames.slice(1).map((q, i) => {
+      const dt_s = calc(q.t_s - f.frames[i].t_s);
+      const speed = dy => {
+        const value = calc(scaled(dy, scale) / 100 / dt_s);
+        need(dy === 0 || value !== 0, 'numeric_underflow'); return value;
+      };
+      const manual_m_s = speed(s.marks[i].point.y - s.marks[i + 1].point.y);
+      const automatic_m_s = speed(f.frames[i].automatic.y - q.automatic.y);
+      return { from: f.frames[i].frame_id, to: q.frame_id, dt_s, manual_m_s, automatic_m_s, error_m_s: calc(automatic_m_s - manual_m_s) };
+    });
+    const position = { ...stats(residuals.map(q => q.distance_cm)), unit: 'cm', limit: 1 };
+    const vertical = { ...stats(residuals.map(q => q.dy_cm)), unit: 'cm', limit: 1 };
+    const velocity = { ...stats(intervals.map(q => q.error_m_s)), unit: 'm/s', limit: 0.05 };
+    // Conservative 2D position gate also guarantees the pinned vertical position gate.
+    const status = position.max_abs <= 1 && velocity.max_abs <= 0.05 ? 'PASS' : 'FAIL';
+    return { status, reason: 'synthetic_nominal_only', position, vertical, velocity, residuals, intervals,
+      cm_per_px: scale, velocity_axis: 'vertical_up_positive', uncertainty: null, physical_vc_pass: false };
+  } catch (e) { return empty(e.message); }
+}
+// Recompute from fixture/session pairs; caller-supplied status strings are never evidence.
+function aggregate(trials) {
+  const empty = reason => ({ status: 'INCOMPLETE', reason, physical_vc_pass: false });
+  if (!Array.isArray(trials) || trials.length !== 3) return empty('exactly_three_clips_required');
+  try {
+    const ids = new Set();
+    const results = trials.map(t => {
+      validateSession(t.fixture, t.session);
+      need(!ids.has(t.fixture.clip_id), 'duplicate_clip'); ids.add(t.fixture.clip_id);
+      return compare(t.fixture, t.session);
+    });
+    const status = results.some(r => r.status === 'INCOMPLETE') ? 'INCOMPLETE' :
+      results.some(r => r.status === 'FAIL') ? 'FAIL' : 'PASS';
+    return { status, clips: results.map((r, i) => ({ clip_id: trials[i].fixture.clip_id, status: r.status })),
+      physical_vc_pass: false };
+  } catch (e) { return empty(e.message); }
+}
+// SVG preserveAspectRatio=xMidYMid meet, including letterboxing. Source pixels stay isotropic.
+function pointerPoint(rect, image, clientX, clientY) {
+  need(rect && positive(rect.width) && positive(rect.height) && finite(rect.left) && finite(rect.top), 'viewport');
+  need(image && positive(image.width) && positive(image.height) && finite(clientX) && finite(clientY), 'pointer');
+  const scale = Math.min(rect.width / image.width, rect.height / image.height);
+  const x = (clientX - rect.left - (rect.width - image.width * scale) / 2) / scale;
+  const y = (clientY - rect.top - (rect.height - image.height * scale) / 2) / scale;
+  return inImage({ x, y }, image) ? { x, y } : null;
+}
+function save(storage, f, s) {
+  try { validateSession(f, s); storage.setItem('VA-MARK1:' + f.clip_id, JSON.stringify({ session: s, integrity: canonical(s) })); return { ok: true }; }
+  catch (e) { return { ok: false, reason: e.message }; }
+}
+function restore(storage, f) {
+  try {
+    const raw = storage.getItem('VA-MARK1:' + f.clip_id);
+    if (raw === null) return { ok: false, reason: 'no_saved_session' };
+    need(typeof raw === 'string' && raw.length <= 500000, 'storage_size');
+    const envelope = JSON.parse(raw);
+    need(envelope && envelope.integrity === canonical(envelope.session), 'storage_integrity');
+    const session = envelope.session; validateSession(f, session);
+    return { ok: true, session };
+  } catch (e) { return { ok: false, reason: e.message }; }
+}
+// Constructed scenes only. Disc center is visual truth, not the automatic estimate.
+function fixtures() {
+  return [0, 1, 2].map(c => ({
+    schema: 'va-mark1-synthetic/v2', status: 'synthetic_only', clip_id: 'synthetic-' + (c + 1),
+    setup_id: 'fixed-side-camera-' + c, revision: 'R1-VA-MARK1-v2',
+    image: { width: 640, height: 360 }, axis: 'px_x_right_y_down', time_unit: 's', clock: 'actual_timestamps',
+    frames: [0, 0.2, 0.55, 1.1].map((t_s, i) => {
+      const x = 240 + i * 10, y = 260 - 80 * t_s;
+      const noise = c === 0 ? [0.2, -0.2, 0.2, 0][i] : c === 1 ? 3 : [0, 4, -4, 0][i];
+      return { frame_id: i * 7, t_s, disc: { x, y }, disc_px: 90, automatic: { x: x + (c === 1 ? 1 : 0), y: y + noise } };
+    })
+  }));
+}
+function mount(dom, getStorage) {
+  const all = fixtures(), sessions = all.map(createSession), el = id => dom.getElementById(id);
+  let clip = 0, frame = 0, diameter = null;
+  const pending = () => { diameter = null; };
+  const f = () => all[clip], s = () => sessions[clip];
+  function message(t) { el('message').textContent = t; }
+  function render() {
+    const q = f().frames[frame], p = s().marks[frame].point;
+    el('scene').setAttribute('viewBox', '0 0 640 360');
+    el('disc').setAttribute('cx', q.disc.x); el('disc').setAttribute('cy', q.disc.y);
+    el('cross').setAttribute('cx', p?.x ?? -100); el('cross').setAttribute('cy', p?.y ?? -100);
+    el('x').value = p ? String(p.x) : ''; el('y').value = p ? String(p.y) : '';
+    el('scaleInfo').textContent = s().calibration ? '45 cm / ' + s().calibration.disc_px + ' px fra markeret diameter' : 'Ingen markeret diameter';
+    const ends = diameter?.length ? diameter : s().calibration?.frame_id === q.frame_id ? s().calibration.endpoints : null;
+    for (const [id, p] of [['edgeA', ends?.[0]], ['edgeB', ends?.[1]]]) {
+      el(id).setAttribute('cx', p?.x ?? -100); el(id).setAttribute('cy', p?.y ?? -100);
+    }
+    el('frame').value = String(frame); el('clip').value = String(clip);
+    el('frameInfo').textContent = f().clip_id + ' | frame ' + q.frame_id + ' | faktisk tid ' + q.t_s + ' s | ' +
+      s().marks.filter(m => m.point).length + '/4 markeret | ' + (s().locked ? 'fastlaast' : 'kladde');
+    const result = compare(f(), s());
+    el('result').textContent = JSON.stringify(result, null, 2);
+    el('aggregate').textContent = 'Alle tre syntetiske klip: ' + JSON.stringify(aggregate(all.map((a, i) => ({ fixture: a, session: sessions[i] }))));
+  }
+  function change(fn) { try { fn(); render(); message('Kladde aendret. Fastlaas foer sammenligning.'); } catch (e) { message('AFVIST: ' + e.message); } }
+  el('scene').addEventListener('click', e => change(() => {
+    const p = pointerPoint(el('scene').getBoundingClientRect(), f().image, e.clientX, e.clientY);
+    if (!p) throw Error('outside_image');
+    if (diameter) {
+      diameter.push(p);
+      if (diameter.length === 2) {
+        const endpoints = diameter; pending();
+        sessions[clip] = calibrate(f(), s(), f().frames[frame].frame_id, endpoints);
+      }
+    } else sessions[clip] = mark(f(), s(), frame, p);
+  }));
+  el('setPoint').addEventListener('click', () => change(() => {
+    if (!el('x').value.trim() || !el('y').value.trim()) throw Error('missing_coordinate');
+    sessions[clip] = mark(f(), s(), frame, { x: Number(el('x').value), y: Number(el('y').value) });
+  }));
+  el('clearPoint').addEventListener('click', () => change(() => { sessions[clip] = mark(f(), s(), frame, null); }));
+  el('calibrate').addEventListener('click', () => {
+    sessions[clip] = clearCalibration(f(), s()); diameter = []; render();
+    message('Klik to modsatte kanter paa skiven i billedet. Diameteren er 45 cm.');
+  });
+  // Pending coordinate edits immediately invalidate prior results and refresh coverage.
+  for (const id of ['x', 'y']) el(id).addEventListener('input', () => {
+    const x = el('x').value, y = el('y').value;
+    pending(); sessions[clip] = mark(f(), s(), frame, null); render();
+    el('x').value = x; el('y').value = y;
+    message('Punkt fjernet. Anvend det nye punkt og fastlaas igen.');
+  });
+  el('clip').addEventListener('change', () => {
+    const n = Number(el('clip').value);
+    if (!Number.isInteger(n) || n < 0 || n >= all.length) return message('AFVIST: clip');
+    pending(); clip = n; frame = 0; render(); message('Valgt syntetisk klip.');
+  });
+  el('frame').addEventListener('change', () => {
+    const n = Number(el('frame').value);
+    if (!Number.isInteger(n) || n < 0 || n >= f().frames.length) return message('AFVIST: frame');
+    pending(); frame = n; render();
+  });
+  el('compare').addEventListener('click', () => {
+    try { if (diameter) throw Error('diameter_pending'); sessions[clip] = lock(f(), s()); render(); message('Nominel syntetisk sammenligning. Usikkerhed ukendt.'); }
+    catch (e) { message('AFVIST: ' + e.message); }
+  });
+  el('save').addEventListener('click', () => {
+    try { const r = save(getStorage(), f(), s()); message(r.ok ? 'Gemt lokalt for dette syntetiske klip.' : 'IKKE GEMT: ' + r.reason); }
+    catch (e) { message('IKKE GEMT: ' + e.message); }
+  });
+  el('restore').addEventListener('click', () => {
+    // Clear stale results on failed load; never keep an old PASS on screen.
+    pending(); sessions[clip] = createSession(f());
+    try { const r = restore(getStorage(), f()); if (r.ok) sessions[clip] = r.session; render(); message(r.ok ? 'Gendannet med eksakt syntetisk basis.' : 'IKKE GENDANNET: ' + r.reason); }
+    catch (e) { render(); message('IKKE GENDANNET: ' + e.message); }
+  });
+  render(); message('Marker centrum i alle fire billeder. Automatisk spor vises foerst ved fastlaasning.');
+}
+mount(document, () => window.localStorage);
+</script></html>
