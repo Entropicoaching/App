@@ -8,11 +8,21 @@ import { finiteProduct } from '../inputValues.js'
 // Ren udflytning af JSX'en — ingen logikændring, kun frie variable gjort
 // eksplicitte som props. Skrivefunktionerne (quickLogFood, deleteLog, ...)
 // bliver i AthleteView.jsx (verify:athlete-write-failures læser dem der).
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import KostUge from './KostUge.jsx'
+import KostIDag from './KostIDag.jsx'
+import KostHistorik from './KostHistorik.jsx'
+import { kostIDagEnabled, harKostGrundlag } from './kostVisning.js'
 import { dateLabel, s, shiftDate, today, unitsForFood } from '../athleteShared'
 
-export default function KostTab({
+export default function KostTab(props) {
+  const [todayFirst] = useState(kostIDagEnabled)
+  return todayFirst
+    ? <KostIDag {...props} renderDetails={() => <KostLog {...props} simpleView />} />
+    : <KostLog {...props} />
+}
+
+function KostLog({
   addFromSearch, amount, athlete, cKcal, cLen, circ, copyYesterday, createFood,
   deleteLog, deleteTemplate, editGrams, editMacros, editingLogId, fKcal, fLen,
   frequentFoods, kostDate, kostWeekInput, logTemplate, logs, macroTotal, mealTemplates,
@@ -24,6 +34,7 @@ export default function KostTab({
   setShowTemplates, setTemplateNameInput, setUnitIdx, shareFood, showCreateFood,
   showSaveTemplate, showTdee, showTemplates, startEditLog, tdeeEstimate,
   templateNameInput, totCarb, totFat, totKcal, totProtein, unitIdx,
+  simpleView = false, historicalMealLogs,
 }) {
 return (
 <>
@@ -48,12 +59,12 @@ return (
     >→</button>
   </div>
 
-  <KostUge selectedDate={kostDate} input={kostWeekInput} />
+  {simpleView ? <KostHistorik logs={historicalMealLogs} /> : <KostUge selectedDate={kostDate} input={kostWeekInput} />}
 
-  {progressBars}
+  {(!simpleView || kostDate === today()) && progressBars}
 
   {/* TDEE estimate — kompakt, foldes ud */}
-  <div style={{ ...s.card, marginBottom: '1.5rem' }}>
+  {(!simpleView || (harKostGrundlag(historicalMealLogs, today()) && tdeeEstimate.ready)) && <div style={{ ...s.card, marginBottom: '1.5rem' }}>
     {!tdeeEstimate.ready ? (
       <>
         <div style={s.cardLabel}>Estimeret TDEE</div>
@@ -89,7 +100,7 @@ return (
               )
               return (
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
-                  Dit mål er <span style={{ color: diff > 0 ? '#6cba6c' : '#c8923a' }}>{diff > 0 ? '+' : ''}{diff} kcal</span> ift. vedligeholdelse — {diff > 0 ? 'overskud (bulk)' : 'underskud (cut)'}
+                  Dit mål er <span style={{ color: diff > 0 ? '#6cba6c' : '#c8923a' }}>{diff > 0 ? '+' : ''}{diff} kcal</span> ift. vedligeholdelse{simpleView ? '. ' : ' — '}{diff > 0 ? 'overskud (bulk)' : 'underskud (cut)'}
                 </div>
               )
             })()}
@@ -100,7 +111,7 @@ return (
         )}
       </>
     )}
-  </div>
+  </div>}
 
   {/* Search */}
   <div style={s.card}>
@@ -108,7 +119,7 @@ return (
 
     {frequentFoods.length > 0 && (
       <div style={{ marginBottom: '0.75rem' }}>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.4rem' }}>Ofte brugt — tryk for at logge</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.4rem' }}>{simpleView ? 'Ofte brugt. Tryk for at logge' : 'Ofte brugt — tryk for at logge'}</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
           {frequentFoods.map((f, i) => (
             <button
@@ -140,7 +151,7 @@ return (
     {showTemplates && (
       <div style={{ marginBottom: '0.75rem', background: '#141410', border: '1px solid rgba(237,234,226,0.07)' }}>
         {mealTemplates.length === 0 ? (
-          <div style={{ padding: '0.75rem 1rem', fontSize: '0.8rem', color: '#4a4844' }}>Ingen skabeloner endnu — log et måltid og gem det nedenfor.</div>
+          <div style={{ padding: '0.75rem 1rem', fontSize: '0.8rem', color: '#4a4844' }}>{simpleView ? 'Ingen skabeloner endnu. Log et måltid og gem det nedenfor.' : 'Ingen skabeloner endnu — log et måltid og gem det nedenfor.'}</div>
         ) : (
           mealTemplates.map(t => (
             <div key={t.id} style={{ padding: '0.75rem 1rem', borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
@@ -210,7 +221,7 @@ return (
               })()}
               <button
                 onClick={e => { e.stopPropagation(); quickAddSearchFood(f) }}
-                title="Hurtig-tilføj 1 portion — tryk navnet for at vælge mængde"
+                title={simpleView ? 'Hurtig-tilføj 1 portion. Tryk navnet for at vælge mængde' : 'Hurtig-tilføj 1 portion — tryk navnet for at vælge mængde'}
                 style={{ flexShrink: 0, width: '44px', height: '44px', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', borderRadius: '50%', border: '1px solid rgba(200,146,58,0.5)', background: 'rgba(200,146,58,0.1)', color: '#c8923a', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >+</button>
             </div>
@@ -263,7 +274,7 @@ return (
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-end' }}>
           <div>
             <div style={s.fieldLabel}>Mængde ({unit.label})</div>
-            <input style={{ ...s.fieldInput, maxWidth: '100px' }} type="number" inputMode="decimal" value={amount} onChange={e => setAmount(e.target.value)} />
+            <input style={{ ...s.fieldInput, maxWidth: '100px' }} type={simpleView ? 'text' : 'number'} inputMode="decimal" value={amount} onChange={e => setAmount(e.target.value)} />
           </div>
           <button style={s.btnPrimary} onClick={addFromSearch}>Tilføj</button>
           <button style={s.btnGhost} onClick={() => { setSelectedFood(null); setSearchQuery('') }}>Annuller</button>
@@ -282,7 +293,7 @@ return (
     {showCreateFood && (
       <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#141410', border: '1px solid rgba(200,146,58,0.2)' }}>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.75rem' }}>
-          Makroer pr. 100g — gemmes til din personlige liste
+          {simpleView ? 'Makroer pr. 100g. Gemmes til din personlige liste' : 'Makroer pr. 100g — gemmes til din personlige liste'}
         </div>
         <div style={{ marginBottom: '0.6rem' }}>
           <div style={s.fieldLabel}>Navn</div>
@@ -292,12 +303,12 @@ return (
           {[['Kcal', 'kcal100'], ['Protein (g)', 'protein100'], ['Kulhydrat (g)', 'carb100'], ['Fedt (g)', 'fat100']].map(([label, key]) => (
             <div key={key}>
               <div style={s.fieldLabel}>{label}</div>
-              <input style={s.fieldInput} type="number" inputMode="decimal" placeholder="0" value={createFood[key]} onChange={e => setCreateFood(p => ({ ...p, [key]: e.target.value }))} />
+              <input style={s.fieldInput} type={simpleView ? 'text' : 'number'} inputMode="decimal" placeholder="0" value={createFood[key]} onChange={e => setCreateFood(p => ({ ...p, [key]: e.target.value }))} />
             </div>
           ))}
         </div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>
-          Valgfri enhed — gør det muligt at logge i stk/portion i stedet for gram
+          {simpleView ? 'Valgfri enhed. Log i stk/portion i stedet for gram' : 'Valgfri enhed — gør det muligt at logge i stk/portion i stedet for gram'}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
           <div>
@@ -306,7 +317,7 @@ return (
           </div>
           <div>
             <div style={s.fieldLabel}>Gram pr. enhed</div>
-            <input style={s.fieldInput} type="number" inputMode="decimal" placeholder="fx 150" value={createFood.unit_grams} onChange={e => setCreateFood(p => ({ ...p, unit_grams: e.target.value }))} />
+            <input style={s.fieldInput} type={simpleView ? 'text' : 'number'} inputMode="decimal" placeholder="fx 150" value={createFood.unit_grams} onChange={e => setCreateFood(p => ({ ...p, unit_grams: e.target.value }))} />
           </div>
         </div>
         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', cursor: 'pointer' }}>
@@ -324,7 +335,7 @@ return (
 
   {/* Meal log */}
   <div style={s.card}>
-    <div style={s.cardLabel}>{kostDate === today() ? 'Dagens måltider' : `Måltider — ${dateLabel(kostDate)}`}</div>
+    <div style={s.cardLabel}>{kostDate === today() ? 'Dagens måltider' : `Måltider${simpleView ? ' · ' : ' — '}${dateLabel(kostDate)}`}</div>
 
     {logs.length === 0 ? (
       <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen måltider logget endnu i dag.</div>
@@ -365,13 +376,13 @@ return (
                       {parsed ? (
                         <div>
                           <div style={s.fieldLabel}>Ny mængde (g)</div>
-                          <input style={{ ...s.fieldInput, maxWidth: '100px' }} type="number" inputMode="decimal" autoFocus value={editGrams} onChange={e => setEditGrams(e.target.value)} onKeyDown={e => e.key === 'Enter' && saveEditLog(l)} />
+                          <input style={{ ...s.fieldInput, maxWidth: '100px' }} type={simpleView ? 'text' : 'number'} inputMode="decimal" autoFocus value={editGrams} onChange={e => setEditGrams(e.target.value)} onKeyDown={e => e.key === 'Enter' && saveEditLog(l)} />
                         </div>
                       ) : (
                         [['Kcal', 'kcal'], ['Protein', 'protein'], ['Kulh.', 'carb'], ['Fedt', 'fat']].map(([label, key]) => (
                           <div key={key}>
                             <div style={s.fieldLabel}>{label}</div>
-                            <input style={{ ...s.fieldInput, maxWidth: '70px' }} type="number" inputMode="decimal" value={editMacros[key]} onChange={e => setEditMacros(p => ({ ...p, [key]: e.target.value }))} />
+                            <input style={{ ...s.fieldInput, maxWidth: '70px' }} type={simpleView ? 'text' : 'number'} inputMode="decimal" value={editMacros[key]} onChange={e => setEditMacros(p => ({ ...p, [key]: e.target.value }))} />
                           </div>
                         ))
                       )}

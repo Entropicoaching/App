@@ -82,6 +82,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const [sharedVideoError, setSharedVideoError] = useState(null)
   const [openSharedVideoId, setOpenSharedVideoId] = useState(null)
   const [logs, setLogs] = useState([])
+  const [kostLogState, setKostLogState] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   // G1: skelner "programmet er tomt" fra "programmet kunne ikke hentes", så
@@ -311,7 +312,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   } = lavKostHandlinger({
     amount, athlete, createFood, customFoods, editGrams, editMacros, historicalMealLogs, kostDate,
     logs, onReadError, selectedFood, setAmount, setCreateFood, setCustomFoods, setEditGrams, setEditMacros,
-    setEditingLogId, setFrequentFoods, setHistoricalMealLogs, setLogs, setMealTemplates, setSearchQuery, setSearchResults, setSelectedFood,
+    setEditingLogId, setFrequentFoods, setHistoricalMealLogs, setLogs, setKostLogState, setMealTemplates, setSearchQuery, setSearchResults, setSelectedFood,
     setShowCreateFood, setShowSaveTemplate, setShowTemplates, setTemplateNameInput, setUndoPending, setUndoToast, setUnitIdx, shareFood,
     showFlash, templateNameInput, undoPending, undoTimerRef, undoToast, unitIdx, weightLogs,
   })
@@ -658,7 +659,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             componentProps={{
               addFromSearch, amount, athlete, cKcal, cLen, circ, copyYesterday, createFood,
               deleteLog, deleteTemplate, editGrams, editMacros, editingLogId, fKcal, fLen,
-              frequentFoods, kostDate, logTemplate, logs, macroTotal, mealTemplates,
+              frequentFoods, kostDate, kostLogState, fetchLogs, fetchHistoricalMealLogs, historicalMealLogs, logTemplate, logs, macroTotal, mealTemplates,
               onSearchInput, pKcal, pLen, parseLoggedGrams, progressBars, quickAddSearchFood,
               quickLogFood, saveCustomFood, saveEditLog, saveTemplate, searchQuery,
               searchResults, selectFood, selectedFood, setAmount, setCreateFood, setEditGrams,
