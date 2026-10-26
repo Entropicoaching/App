@@ -9,7 +9,7 @@ import { MESSAGE_VIDEO_RANK, signalRank } from './coachBriefingRules.js'
 // videoer og før fremgang.
 export const AUTOMATION_RANK = MESSAGE_VIDEO_RANK + 0.75
 
-export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTrack, latestByTrack, videoReviewQueue, describeVideo, automationAlerts = [], now = Date.now() }) {
+export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTrack, latestByTrack, videoReviewQueue, describeVideo, automationAlerts = [], noteSignalEnabled = false, pendingByTrack = {}, now = Date.now() }) {
   const athleteById = new Map(athletes.map(athlete => [athlete.id, athlete]))
   const items = []
 
@@ -52,8 +52,9 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
 
   athletes.forEach(athlete => {
     for (const track of ['teknik', 'besked']) {
-      const last = latestByTrack[athlete.id]?.[track]
-      const unread = unreadByTrack[athlete.id]?.[track] || 0
+      const pending = pendingByTrack[athlete.id]?.[track]
+      const last = noteSignalEnabled === true ? pending?.latestNote : latestByTrack[athlete.id]?.[track]
+      const unread = noteSignalEnabled === true ? (pending?.count || 0) : (unreadByTrack[athlete.id]?.[track] || 0)
       if (!last || unread < 1) continue
       items.push({
         key: `message-${athlete.id}-${track}`,
@@ -62,7 +63,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
         label: track === 'teknik' ? 'Teknik & løft' : 'Besked',
         title: athlete.name,
         detail: last.content,
-        createdAt: last.created_at,
+        createdAt: noteSignalEnabled === true ? pending.oldestAt : last.created_at,
         count: unread,
       })
     }

@@ -1,3 +1,5 @@
+import { pendingCoachNotes } from './coachNoteSignal.js'
+
 export function coachMessageTrack(message) {
   return (message?.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
 }
@@ -29,7 +31,7 @@ export function coachInboxFocusDecision({
   }
 }
 
-export function summarizeCoachMessages(messages) {
+export function summarizeCoachMessages(messages, { noteSignalEnabled = false } = {}) {
   const unreadCounts = {}
   const unreadByTrack = {}
   const latestByTrack = {}
@@ -46,7 +48,9 @@ export function summarizeCoachMessages(messages) {
     byTrack[track]++
   }
 
-  return { unreadCounts, unreadByTrack, latestByTrack }
+  return { unreadCounts, unreadByTrack, latestByTrack,
+    ...(noteSignalEnabled === true ? { pendingByTrack: pendingCoachNotes(messages) } : {}),
+  }
 }
 
 export function filterDraftVideoReviews(analyses) {
