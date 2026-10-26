@@ -23,7 +23,7 @@ export function lavLaesninger({
   setMessages, setMessageSendError, setMessageThreadError, setProfilesLastSeen, setSnoozedAthletes, setTodayData,
   setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
   setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
-  setWeeks, videoCoachAthletesRef,
+  setWeeks, videoCoachAthletesRef, currentProgramAthleteRef,
 }) {
   async function refreshCoachInbox() {
     return inboxRefreshRunnerRef.current(async () => {
@@ -350,6 +350,7 @@ export function lavLaesninger({
       .select('*, sessions(*, exercises(*))')
       .eq('athlete_id', athleteId)
       .order('week_number')
+    if (currentProgramAthleteRef && currentProgramAthleteRef.current !== athleteId) return
     setWeeks((data || []).map(w => ({
       ...w,
       sessions: (w.sessions || [])

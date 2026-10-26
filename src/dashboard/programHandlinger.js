@@ -11,6 +11,7 @@ import { supabase } from '../supabase'
 import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from '../progressionDraft'
 import { blockPurpose, buildPeriodizationSuggestion } from '../periodizationAssistant'
 import { nextWeekStartDate, fillMissingWeekDates } from '../weekDates'
+import { copyProgramWeeks, copyBlockName, skippedProgressions } from './programCopy.js'
 
 // ORDRE 456 (A6 i docs/kritik-446): "Kopiér seneste uge" kører ~8 s på en
 // langsom telefon; et dobbelttryk gav to uger. Spærren står på modul-niveau
@@ -27,6 +28,7 @@ export function lavProgramHandlinger({
   setExerciseForm, setLibraryAddForm, setOpenSessionId, setOpenWeekId, setPlanStartDate, setProgramBlockStart,
   setSessionForm, setShowBlockPlanner, setSnoozedAthletes, setWeekDateFill, setWeekDraft, setWeekForm,
   showFlash, weekDateFill, weekDraft, weekForm, weeks, setCopyingWeek,
+  weekDeletionQueue, setWeeks, currentProgramAthleteRef,
 }) {
   // --- Program-fane: blok-accordion (vis én blok ad gangen) ---
   function programActiveStart() {
@@ -319,10 +321,22 @@ export function lavProgramHandlinger({
   }
 
   function deleteWeek(weekId) {
-    askConfirm('Slet denne uge og alle dens træninger?', async () => {
-      await supabase.from('weeks').delete().eq('id', weekId)
-      if (openWeekId === weekId) setOpenWeekId(null)
-      fetchWeeks(selectedAthlete.id)
+    const week = weeks.find(w => w.id === weekId)
+    if (!week || !selectedAthlete) return
+    askConfirm(`Slet uge ${week.week_number} med alle pas og øvelser? Du kan fortryde i 10 sekunder.`, () => {
+      weekDeletionQueue.schedule({
+        weekId, weekNumber: week.week_number, athleteName: selectedAthlete.name,
+        remove: async () => {
+          const { error } = await supabase.from('weeks').delete().eq('id', weekId)
+          if (error) throw error
+        },
+        onDeleted: () => {
+          setWeeks(current => current.filter(w => w.id !== weekId))
+          fetchCalendarWeeks(athletes.map(a => a.id))
+          fetchAthleteWeekSummaries(athletes.map(a => a.id))
+        },
+        onError: () => showFlash(`Uge ${week.week_number} kunne ikke slettes. Prøv igen.`, 'error'),
+      })
     })
   }
 
@@ -540,59 +554,55 @@ export function lavProgramHandlinger({
     fetchWeeks(selectedAthlete.id)
   }
 
-  async function copyWeek(weekId) {
-    if (kopiererUge) return
+  async function copyWeek(weekId, progression = 'none') {
     const week = weeks.find(w => w.id === weekId)
-    if (!week) return
+    if (!week) return false
+    return copyWeeks([week], progression)
+  }
+
+  async function copyBlock(firstWeekId, progression = 'none') {
+    const phase = computePhases([...weeks].sort((a, b) => a.week_number - b.week_number))
+      .find(p => p.weeks[0].id === firstWeekId)
+    if (!phase) return false
+    return copyWeeks(phase.weeks, progression, copyBlockName(phase.name, weeks))
+  }
+
+  async function copyWeeks(sourceWeeks, progression, blockName) {
+    if (kopiererUge || !selectedAthlete?.id) return false
+    if (weekDeletionQueue?.hasPending()) {
+      showFlash('Vent på sletning eller fortryd først.', 'error')
+      return false
+    }
     kopiererUge = true
     setCopyingWeek?.(true)
+    const athleteId = selectedAthlete.id
+    const isCurrent = () => !currentProgramAthleteRef || currentProgramAthleteRef.current === athleteId
     try {
-      await kopierUge(week)
+      const created = await copyProgramWeeks({
+        client: supabase, athleteId, existingWeeks: weeks, sourceWeeks, progression, blockName,
+      })
+      if (isCurrent()) {
+        await fetchWeeks(athleteId)
+        if (isCurrent()) {
+          const lastPhase = computePhases(weeks).at(-1)
+          const joinsLast = !blockName && lastPhase?.name === (sourceWeeks[0].block_name || null)
+          setProgramBlockStart(joinsLast ? lastPhase.weeks[0].week_number : created[0].week_number)
+          setOpenWeekId(created[0].id)
+        }
+      }
+      fetchCalendarWeeks(athletes.map(a => a.id))
+      fetchAthleteWeekSummaries(athletes.map(a => a.id))
+      const skipped = skippedProgressions(sourceWeeks, progression).length
+      showFlash(`${blockName ? 'Blok' : 'Uge'} kopieret.${skipped ? ` Ret selv ${skipped} hovedøvelser uden progression.` : ' Du kan rette alt.'}`, 'success')
+      return true
+    } catch (error) {
+      if (isCurrent()) await fetchWeeks(athleteId)
+      showFlash(error.message || 'Kopieringen fejlede. Prøv igen.', 'error')
+      return false
     } finally {
       kopiererUge = false
       setCopyingWeek?.(false)
     }
-  }
-
-  async function kopierUge(week) {
-    const nextNum = Math.max(...weeks.map(w => w.week_number)) + 1
-    const { data: newWeek } = await supabase.from('weeks').insert({
-      athlete_id: selectedAthlete.id,
-      week_number: nextNum,
-      block_name: week.block_name,
-      coach_note: week.coach_note,
-      block_description: week.block_description,
-      start_date: nextWeekStartDate(weeks),
-    }).select().single()
-    if (!newWeek) return
-    for (const session of (week.sessions || [])) {
-      const { data: newSession } = await supabase.from('sessions').insert({
-        week_id: newWeek.id,
-        title: session.title,
-        session_order: session.session_order,
-        // ORDRE 428 (C1): ugedagen følger med, ellers ved atletens
-        // ugestrimmel ikke, hvornår passene ligger.
-        weekday: session.weekday ?? null,
-      }).select().single()
-      if (newSession) {
-        for (const ex of (session.exercises || [])) {
-          await supabase.from('exercises').insert({
-            session_id: newSession.id,
-            name: ex.name,
-            sets: ex.sets,
-            reps: ex.reps,
-            intensity: ex.intensity,
-            note: ex.note,
-            exercise_order: ex.exercise_order,
-            // ORDRE 428 (C1): anbefalet vægt følger med, så coachen kun
-            // retter det, der ændres (før: alle vægte skulle skrives igen).
-            recommended_weight: ex.recommended_weight ?? null,
-          })
-        }
-      }
-    }
-    fetchWeeks(selectedAthlete.id)
-    setOpenWeekId(newWeek.id)
   }
 
   // "Sæt datoer" (ordre 204, commit 2): forbereder previewet, rører ingen data endnu.
@@ -619,7 +629,7 @@ export function lavProgramHandlinger({
     applyPeriodizationSuggestion, createCalendarWeek, openCalBlockBuilder, deleteWeek, addSession, updateSession,
     deleteSession, reorderSession, reorderExercise, copySessionToWeek, copyExerciseToSession, addLibraryExercise,
     updateLibraryExercise, deleteLibraryExercise, addToLibraryQuick, canonicalName, buildIntensity, parseIntensity,
-    addExercise, updateExercise, deleteExercise, saveRecommendedWeight, copyWeek, previewWeekDateFill,
+    addExercise, updateExercise, deleteExercise, saveRecommendedWeight, copyWeek, copyBlock, previewWeekDateFill,
     applyWeekDateFill,
   }
 }

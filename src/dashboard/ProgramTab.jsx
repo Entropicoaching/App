@@ -9,7 +9,8 @@ import { blockPurpose, withBlockPurposes } from '../periodizationAssistant'
 import { targetPrescriptionForExercise } from '../../supabase/functions/_shared/progressionState.js'
 import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared'
 import { nextWeekStartDate } from '../weekDates'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import ProgramCopyOptions from './ProgramCopyOptions.jsx'
 import { activateOnKey, cancelRecommended, restoreRecommendedFocus } from './coachAccessibility.mjs'
 import UgeFeedbackKort from './UgeFeedbackKort.jsx'
 import VideoCoachNote from './VideoCoachNote.jsx'
@@ -18,7 +19,7 @@ export default function ProgramTab({
   addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
   applyPeriodizationSuggestion, applyWeekDateFill,
   approveDraftProgressionState, approvingProgression, assignEdits, athleteLogs, bestLog,
-  blockPlan, copyExerciseToSession, copyingExercise, copyingSession, copySessionToWeek, copyWeek, copyingWeek,
+  blockPlan, copyExerciseToSession, copyingExercise, copyingSession, copySessionToWeek, copyWeek, copyBlock, copyingWeek, pendingWeekDeletes = [],
   deleteExercise, deleteSession, deleteWeek, editDraftForecast, editingExercise, editingRecommended,
   editingSession, editingWeek, exFormRow, fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,
   openSessionId, openWeekId, parseIntensity, planAssistantFocus, planStartDate, previewWeekDateFill, programActiveStart,
@@ -30,10 +31,24 @@ export default function ProgramTab({
   setPlanAssistantFocus, setPlanStartDate, setProgramBlockStart, setRecommendedInput,
   setRenameValue, setRenamingBlock, setSendingDraft, setSessionForm, setShowBlockPlanner,
   setWeekDateFill, setWeekDraft, setWeekForm, showBlockPlanner, showFlash, updateExercise, updateSession,
-  updateWeek, weekdayPicker, weekDateFill, weekDraft, weekForm, weeks,
+  updateWeek, weekdayPicker, weekDateFill, weekDraft, weekForm, weeks: allWeeks,
   videoCoachNotes = [],
 }) {
   const recommendedReturn = useRef(null)
+  const [copyRequest, setCopyRequest] = useState(null)
+  const [blockToCopy, setBlockToCopy] = useState('')
+  const pendingIds = new Set(pendingWeekDeletes.map(entry => entry.weekId))
+  const weeks = allWeeks.filter(w => !pendingIds.has(w.id))
+  const phases = computePhases(weeks)
+  const copyPhase = phases.find(p => p.weeks[0].id === blockToCopy)
+    || phases.find(p => p.weeks[0].week_number === programActiveStart()) || phases.at(-1)
+  const copyDisabled = copyingWeek || pendingWeekDeletes.length > 0
+  const requestedWeeks = copyRequest?.kind === 'block'
+    ? phases.find(p => p.weeks[0].id === copyRequest.weeks[0].id)?.weeks
+    : weeks.filter(w => w.id === copyRequest?.weeks[0].id)
+  const request = copyRequest?.athleteId === selectedAthlete.id && requestedWeeks?.length
+    ? { ...copyRequest, weeks: requestedWeeks } : null
+  const requestCopy = (kind, sourceWeeks) => setCopyRequest({ kind, weeks: sourceWeeks, athleteId: selectedAthlete.id })
   return (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
@@ -43,7 +58,7 @@ export default function ProgramTab({
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <button aria-expanded={showBlockPlanner} style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
                       if (!showBlockPlanner) {
-                        setPlanStartDate(nextWeekStartDate(weeks))
+                        setPlanStartDate(nextWeekStartDate(allWeeks))
                         setAssignEdits(Object.fromEntries(weeks.map(w => [w.id, w.block_name || ''])))
                       }
                       setShowBlockPlanner(p => !p)
@@ -51,8 +66,8 @@ export default function ProgramTab({
                       Periodiseringsplan
                     </button>
                     {weeks.length > 0 && (
-                      <button style={{ ...s.btnGhost, opacity: copyingWeek ? 0.5 : 1 }} disabled={!!copyingWeek} aria-busy={!!copyingWeek} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
-                        {copyingWeek ? 'Kopierer ugen …' : 'Kopiér seneste uge →'}
+                      <button style={{ ...s.btnGhost, opacity: copyDisabled ? 0.5 : 1 }} disabled={!!copyDisabled} aria-busy={!!copyingWeek} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
+                        {copyingWeek ? 'Kopierer...' : 'Kopiér seneste uge'}
                       </button>
                     )}
                     {weeks.some(w => w.start_date) && weeks.some(w => !w.start_date) && (
@@ -82,12 +97,19 @@ export default function ProgramTab({
                     )}
                     <button style={s.btnPrimary} onClick={() => {
                       setAddingWeek(true)
-                      setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: nextWeekStartDate(weeks) })
+                      setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: nextWeekStartDate(allWeeks) })
                     }}>
                       + Ny uge
                     </button>
                   </div>
                 </div>
+
+                {request && <ProgramCopyOptions
+                  key={`${request.athleteId}-${request.kind}-${request.weeks[0].id}`}
+                  request={request} weeks={allWeeks} busy={!!copyingWeek}
+                  onCopy={request.kind === 'block' ? copyBlock : copyWeek}
+                  onCancel={() => setCopyRequest(null)}
+                />}
 
                 {/* Sæt datoer-panel: preview af udfyldte start_date'er før gem, rører ingen daterede uger */}
                 {weekDateFill && (
@@ -765,7 +787,22 @@ export default function ProgramTab({
                   )
                 })()}
 
-                {programShownWeeks().map(week => (
+                {copyPhase && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <label style={{ color: '#b8b4a8', fontSize: '0.8rem' }}>
+                      Blok til kopi
+                      <select aria-label="Blok til kopi" style={{ ...s.fieldInput, width: 'auto', marginLeft: '0.5rem' }}
+                        value={copyPhase.weeks[0].id} disabled={!!copyDisabled} onChange={e => setBlockToCopy(e.target.value)}>
+                        {phases.map(p => <option key={p.weeks[0].id} value={p.weeks[0].id}>
+                          {p.name || 'Uden blok'} · uge {p.weeks[0].week_number} til {p.weeks.at(-1).week_number}
+                        </option>)}
+                      </select>
+                    </label>
+                    <button style={s.btnGhost} disabled={!!copyDisabled} onClick={() => requestCopy('block', copyPhase.weeks)}>Kopiér blok</button>
+                  </div>
+                )}
+
+                {programShownWeeks().filter(w => !pendingIds.has(w.id)).map(week => (
                   <div key={week.id} id={`week-row-${week.id}`} style={{ marginBottom: '0.75rem' }}>
                     {/* Week header */}
                     {editingWeek === week.id ? (
@@ -799,7 +836,7 @@ export default function ProgramTab({
                       </div>
                     ) : (
                       <div
-                        style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', borderLeft: openWeekId === week.id ? '3px solid #c8923a' : '3px solid transparent', padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem' }}
+                        style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', borderLeft: openWeekId === week.id ? '3px solid #c8923a' : '3px solid transparent', padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}
                         onClick={() => setOpenWeekId(openWeekId === week.id ? null : week.id)}
                       >
                         <div>
@@ -811,10 +848,12 @@ export default function ProgramTab({
                           {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
                           {week.block_description && <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.78rem', color: '#4a4844', fontStyle: 'italic', marginTop: '0.2rem' }}>{week.block_description}</div>}
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 1, maxWidth: '100%', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'flex-end' }}>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase' }}>{week.sessions?.length || 0} træninger</span>
                           <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '', block_description: week.block_description || '', start_date: week.start_date || '' }) }}>Rediger</button>
-                          <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteWeek(week.id) }}>Slet</button>
+                          <button style={s.btnEdit} disabled={!!copyDisabled} onClick={e => { e.stopPropagation(); copyWeek(week.id) }}>Kopiér uge</button>
+                          <button style={s.btnEdit} disabled={!!copyDisabled} onClick={e => { e.stopPropagation(); requestCopy('week', [week]) }}>Kopiér med progression</button>
+                          <button aria-label={`Slet uge ${week.week_number}`} style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteWeek(week.id) }}>Slet</button>
                           <span style={{ color: '#4a4844', fontSize: '0.65rem', marginLeft: '0.25rem' }}>{openWeekId === week.id ? '▲' : '▼'}</span>
                         </div>
                       </div>

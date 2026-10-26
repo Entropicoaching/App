@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
+import { createWeekDeletionQueue } from './dashboard/weekDeletion.js'
 
 // Hele originalmodulet importeres. Kun databasegrænsen erstattes.
 // Alle kald holdes i hukommelsen. Ingen klient, net, DOM eller storage oprettes.
@@ -8,7 +9,7 @@ const key = Symbol.for('APP-TEST9.database')
 const guard = registerHooks({
   resolve(specifier, context, nextResolve) {
     if (specifier === '../supabase') return {
-      url: 'data:text/javascript,export const supabase = { from(table) { return globalThis[Symbol.for("APP-TEST9.database")].from(table) } }',
+      url: 'data:text/javascript,export const supabase = { from(table) { return globalThis[Symbol.for("APP-TEST9.database")].from(table) } }; export const withRetry = fn => fn()',
       shortCircuit: true,
     }
     // Appens egne imports uden filendelse skal også kunne køres af Node.
@@ -18,15 +19,27 @@ const guard = registerHooks({
     return nextResolve(specifier, context)
   },
 })
-let lavProgramHandlinger, computePhases, nextWeekStartDate, fillMissingWeekDates
+let lavProgramHandlinger, lavLaesninger, computePhases, nextWeekStartDate, fillMissingWeekDates
 try {
   ;({ lavProgramHandlinger } = await import('./dashboard/programHandlinger.js'))
+  ;({ lavLaesninger } = await import('./dashboard/laesninger.js'))
   ;({ computePhases } = await import('./dashboardShared.js'))
   ;({ nextWeekStartDate, fillMissingWeekDates } = await import('./weekDates.js'))
 } finally { guard.deregister() }
 
 function setup(overrides = {}) {
   const calls = [], state = {}, refresh = [], confirmations = []
+  const timers = new Map()
+  let now = 0
+  const weekDeletionQueue = createWeekDeletionQueue(value => { state.pending = value }, {
+    now: () => now,
+    later: (fn, ms) => { const id = Symbol(); timers.set(id, { fn, due: now + ms }); return id },
+    cancel: id => timers.delete(id),
+  })
+  async function elapse(ms) {
+    now += ms
+    for (const [id, timer] of timers) if (timer.due <= now) { timers.delete(id); await timer.fn() }
+  }
   let sequence = 0
   const db = {
     from(table) {
@@ -61,9 +74,9 @@ function setup(overrides = {}) {
     askConfirm: (message, action) => confirmations.push({ message, action }),
     fetchWeeks: id => { refresh.push(id) },
     fetchCalendarWeeks: async () => {}, fetchAthleteWeekSummaries: () => {},
-    showFlash: () => {}, ...overrides,
+    showFlash: () => {}, weekDeletionQueue, setWeeks: () => {}, ...overrides,
   }
-  return { h: lavProgramHandlinger(args), calls, state, refresh, confirmations }
+  return { h: lavProgramHandlinger(args), calls, state, refresh, confirmations, elapse, weekDeletionQueue }
 }
 const ex = (id, order, extra = {}) => ({ id, exercise_order: order, name: 'Squat', sets: 3, reps: '5', intensity: 'RPE 8', note: 'Rolig', recommended_weight: 100, ...extra })
 const sn = (id, order, exercises = []) => ({ id, session_order: order, title: id, weekday: 2, exercises })
@@ -164,14 +177,53 @@ test('APP-TEST9 dobbelt ugekopi under samme ventende kald opretter kun én uge',
   assert.deepEqual(f.state.CopyingWeek, [true, false])
 })
 
-test('APP-TEST9 slet uge afventer bekræftelse og lukker kun den åbne uge', async () => {
-  const f = setup({ openWeekId: 'u2' })
+test('APP-TEST9 slet uge afventer bekræftelse og 10 sekunders fortrydelsesfrist', async () => {
+  const f = setup({ weeks: [wk('u2', 2)], openWeekId: 'u2' })
   f.h.deleteWeek('u2')
   assert.deepEqual(f.calls, [])
   assert.equal(f.confirmations.length, 1)
   await f.confirmations[0].action()
+  await f.elapse(9999)
+  assert.deepEqual(f.calls, [])
+  assert.equal(f.state.pending[0].weekId, 'u2')
+  await f.elapse(1)
   assert.deepEqual(f.calls, [{ table: 'weeks', op: 'delete', where: { field: 'id', value: 'u2' } }])
-  assert.deepEqual(f.state.OpenWeekId, [null])
+  assert.deepEqual(f.state.pending, [])
+})
+
+test('APP-TEST9 fortryd bevarer uge pas øvelser og logs uden databaseskrivning', async () => {
+  const weeks = frozen([wk('u2', 2, [sn('s', 0, [ex('e', 0)])])])
+  const f = setup({ weeks, athleteLogs: [{ exercise_id: 'e', weight: 100 }] })
+  f.h.deleteWeek('u2')
+  f.confirmations[0].action()
+  await f.elapse(9999)
+  assert.equal(f.weekDeletionQueue.undo('u2'), true)
+  await f.elapse(1)
+  assert.deepEqual(f.calls, [])
+  assert.deepEqual(f.state.pending, [])
+})
+
+test('APP-TEST9 blokkopi vælger kun en sammenhængende blok med samme navn', async () => {
+  const f = setup({ weeks: [wk('u1', 1), wk('u2', 2), wk('u3', 3, [], { block_name: 'Deload' }), wk('u4', 4)] })
+  assert.equal(await f.h.copyBlock('u1', 'reps'), true)
+  assert.deepEqual(writes(f, 'weeks', 'insert').map(c => [c.value.week_number, c.value.block_name]), [[5, 'Styrke (kopi)'], [6, 'Styrke (kopi)']])
+  assert.deepEqual(f.state.ProgramBlockStart, [5])
+})
+
+test('APP-TEST9 kopiering venter på en igangværende ugesletning', async () => {
+  const f = setup({ weeks: [wk('u1', 1)] })
+  f.h.deleteWeek('u1')
+  f.confirmations[0].action()
+  assert.equal(await f.h.copyWeek('u1'), false)
+  assert.deepEqual(f.calls, [])
+  f.weekDeletionQueue.undo('u1')
+})
+
+test('APP-TEST9 færdig kopi åbner ikke programmet for en anden atlet', async () => {
+  const f = setup({ weeks: [wk('u1', 1)], currentProgramAthleteRef: { current: 'anden-atlet' } })
+  assert.equal(await f.h.copyWeek('u1', 'weight'), true)
+  assert.deepEqual(f.refresh, [])
+  assert.equal(f.state.OpenWeekId, undefined)
 })
 
 test('APP-TEST9 nyt pas og rettelse bevarer ugedag nul', async () => {
@@ -299,4 +351,34 @@ test('APP-TEST9 logstatus tæller normale sæt og ignorerer skipped samt andet p
   const f = setup({ athleteLogs: logs })
   assert.deepEqual(f.h.sessionLogStatus(training), { kind: 'partial', logged: 1, total: 2, color: '#c8923a' })
   assert.deepEqual(setup().h.sessionLogStatus(sn('tom', 0)), { kind: 'none', logged: 0, total: 0, color: '#3a3a36' })
+})
+
+
+test('APP-TEST9 atletskift under genindlæsning åbner ikke en forkert uge', async () => {
+  const ref = { current: 'a' }
+  const f = setup({ weeks: [wk('u1', 1)], currentProgramAthleteRef: ref,
+    fetchWeeks: async () => { ref.current = 'anden-atlet' },
+  })
+  assert.equal(await f.h.copyWeek('u1'), true)
+  assert.equal(f.state.OpenWeekId, undefined)
+  assert.equal(f.state.ProgramBlockStart, undefined)
+})
+
+test('APP-TEST9 sent databasesvar erstatter ikke den nye atlets program', async () => {
+  const ref = { current: 'a' }, updates = []
+  let finish
+  globalThis[key] = { from(table) {
+    assert.equal(table, 'weeks')
+    const query = {
+      select: () => query, eq: () => query,
+      order: () => new Promise(resolve => { finish = resolve }),
+    }
+    return query
+  } }
+  const h = lavLaesninger({ currentProgramAthleteRef: ref, setWeeks: value => updates.push(value) })
+  const loading = h.fetchWeeks('a')
+  ref.current = 'anden-atlet'
+  finish({ data: [wk('u1', 1)] })
+  await loading
+  assert.deepEqual(updates, [])
 })

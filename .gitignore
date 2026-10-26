@@ -63,24 +63,24 @@ outputs/_seneste/
 # Ogsaa avif/bmp/mkv/avi/zip (Playwright-trace)/pdf/har (ORDRE 1466).
 # De ligger lokalt i outputs/. Maalinger (.json/.md/.txt) og verify-scripts
 # (outputs/**/*.mjs, kaldt fra package.json) forbliver sporet.
-outputs/**/*.png
-outputs/**/*.jpg
-outputs/**/*.jpeg
-outputs/**/*.webp
-outputs/**/*.gif
-outputs/**/*.mp4
-outputs/**/*.webm
-outputs/**/*.mov
-outputs/**/*.avif
-outputs/**/*.bmp
-outputs/**/*.tif
-outputs/**/*.tiff
-outputs/**/*.svg
-outputs/**/*.mkv
-outputs/**/*.avi
-outputs/**/*.m4v
-outputs/**/*.zip
-outputs/**/*.pdf
-outputs/**/*.har
+outputs/**/*.[pP][nN][gG]
+outputs/**/*.[jJ][pP][gG]
+outputs/**/*.[jJ][pP][eE][gG]
+outputs/**/*.[wW][eE][bB][pP]
+outputs/**/*.[gG][iI][fF]
+outputs/**/*.[mM][pP]4
+outputs/**/*.[wW][eE][bB][mM]
+outputs/**/*.[mM][oO][vV]
+outputs/**/*.[aA][vV][iI][fF]
+outputs/**/*.[bB][mM][pP]
+outputs/**/*.[tT][iI][fF]
+outputs/**/*.[tT][iI][fF][fF]
+outputs/**/*.[sS][vV][gG]
+outputs/**/*.[mM][kK][vV]
+outputs/**/*.[aA][vV][iI]
+outputs/**/*.[mM]4[vV]
+outputs/**/*.[zZ][iI][pP]
+outputs/**/*.[pP][dD][fF]
+outputs/**/*.[hH][aA][rR]
 test-results/
 playwright-report/
