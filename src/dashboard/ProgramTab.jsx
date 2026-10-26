@@ -10,6 +10,8 @@ import { targetPrescriptionForExercise } from '../../supabase/functions/_shared/
 import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared'
 import { nextWeekStartDate } from '../weekDates'
 import { useRef } from 'react'
+import CoachPlanCopy from './CoachPlanCopy.jsx'
+import { DEFAULT_COACH_PLAN_COPY } from './coachPlanCopy.mjs'
 import { activateOnKey, cancelRecommended, restoreRecommendedFocus } from './coachAccessibility.mjs'
 import UgeFeedbackKort from './UgeFeedbackKort.jsx'
 import VideoCoachNote from './VideoCoachNote.jsx'
@@ -32,8 +34,11 @@ export default function ProgramTab({
   setWeekDateFill, setWeekDraft, setWeekForm, showBlockPlanner, showFlash, updateExercise, updateSession,
   updateWeek, weekdayPicker, weekDateFill, weekDraft, weekForm, weeks,
   videoCoachNotes = [],
+  coachPlanCopyEnabled = DEFAULT_COACH_PLAN_COPY,
 }) {
   const recommendedReturn = useRef(null)
+  const copyAthleteRef = useRef(null)
+  copyAthleteRef.current = selectedAthlete?.id
   return (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
@@ -50,7 +55,7 @@ export default function ProgramTab({
                     }}>
                       Periodiseringsplan
                     </button>
-                    {weeks.length > 0 && (
+                    {coachPlanCopyEnabled !== true && weeks.length > 0 && (
                       <button style={{ ...s.btnGhost, opacity: copyingWeek ? 0.5 : 1 }} disabled={!!copyingWeek} aria-busy={!!copyingWeek} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
                         {copyingWeek ? 'Kopierer ugen …' : 'Kopiér seneste uge →'}
                       </button>
@@ -88,6 +93,10 @@ export default function ProgramTab({
                     </button>
                   </div>
                 </div>
+
+                <CoachPlanCopy key={selectedAthlete?.id || 'none'} enabled={coachPlanCopyEnabled}
+                  weeks={weeks} athleteId={selectedAthlete?.id} openWeekId={openWeekId}
+                  onSent={id => { if (copyAthleteRef.current !== selectedAthlete?.id) return; fetchWeeks(selectedAthlete.id); setOpenWeekId(id); showFlash('Ugen er sendt til atleten', 'success') }} />
 
                 {/* Sæt datoer-panel: preview af udfyldte start_date'er før gem, rører ingen daterede uger */}
                 {weekDateFill && (
