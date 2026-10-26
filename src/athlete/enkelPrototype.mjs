@@ -28,8 +28,8 @@ export function primaryFor(route) {
   if (['traening', 'dagsform'].includes(route)) return 'traening'
   return 'mere'
 }
-export function moreItems(athlete, hasMeetPlan) {
-  return [ ['program', 'Mit program'], ['kost', 'Kost'], ['mobilisering', 'Mobilitet'],
+export function moreItems(athlete, hasMeetPlan, visKost = true) {
+  return [ ['program', 'Mit program'], ...(visKost ? [['kost', 'Kost']] : []), ['mobilisering', 'Mobilitet'],
     ...(athlete?.competition_date || hasMeetPlan ? [['stævnedag', 'Stævne']] : []),
     ['alle', 'Alle Hjem-kort'] ]
 }
@@ -46,9 +46,9 @@ export function renderControls(h, { route, go }) {
       ...[['rekorder', 'Rekorder'], ['styrke', 'Styrke'], ['uge', 'Uge'], ['volumen', 'Volumen']].map(([key, label]) => button(h, key, label, () => go(key), route === key))) : null,
     route === 'dagsform' ? button(h, 'tilbage', 'Tilbage til træning', () => go('hjem')) : null)
 }
-export function renderMore(h, { athlete, hasMeetPlan, go }) {
+export function renderMore(h, { athlete, hasMeetPlan, go, visKost = true }) {
   return h('nav', { 'aria-label': 'Flere muligheder', style: { display: 'grid', gap: 8 } },
-    ...moreItems(athlete, hasMeetPlan).map(([key, label]) => button(h, key, label, () => go(key))))
+    ...moreItems(athlete, hasMeetPlan, visKost).map(([key, label]) => button(h, key, label, () => go(key))))
 }
 export function latestContact(messages = [], analyses = []) {
   const entries = [
