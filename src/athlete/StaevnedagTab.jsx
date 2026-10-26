@@ -244,11 +244,14 @@ export default function StaevnedagTab({
               {total > 0 && (
                 <button
                   style={{ ...s.btnGhost, width: '100%', padding: '0.65rem', textAlign: 'center', marginTop: '1rem' }}
-                  onClick={() => setMeetAttempts({
+                  onClick={() => {
+                    if (!window.confirm('Nulstil forsøgsfelterne for squat, bænkpres og dødløft? Vægte og forsøgsresultater ryddes. Tidligere stævner bevares.')) return
+                    setMeetAttempts({
                     squat:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
                     bench:    [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
                     deadlift: [{ w: '', r: null }, { w: '', r: null }, { w: '', r: null }],
-                  })}
+                    })
+                  }}
                 >
                   Nulstil
                 </button>
