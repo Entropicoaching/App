@@ -17,7 +17,7 @@ function view(props = {}, state = {}) {
 }
 const component = (tree, name) => nodes(tree, n => n.type?.name === name)[0]
 function hasKost(tree) {
-  const home = component(tree, 'HjemTab') || component(tree, 'EnkelHjemTab')
+  const home = component(tree, 'HjemTab') || component(tree, 'LazyEnkelHjemTab')
   return Boolean(home?.props.kostCompact)
 }
 test('DefaultOFF preserves Kost for explicit false, missing and true choices', () => {
@@ -70,7 +70,7 @@ test('Simple preview recovers from stale Kost route and filters More', () => {
   const props = { enkelPrototype: true, kostPerAtlet: true, kostValg: {} }
   assert.equal(hasKost(view(props)), false)
   const tree = view(props, { requestedTab: 'kost', enkelRoute: 'kost' })
-  assert.ok(component(tree, 'EnkelHjemTab'))
+  assert.ok(component(tree, 'LazyEnkelHjemTab'))
   const more = view(props, { requestedTab: 'mere', enkelRoute: 'mere' })
   assert.equal(nodes(more, n => n.type === 'button' && text(n) === 'Kost').length, 0)
 })

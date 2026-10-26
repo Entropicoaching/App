@@ -1,5 +1,6 @@
 import { kostSynlig, kostDestination } from './athlete/kostValg.mjs'
-import EnkelHjemTab from './athlete/EnkelHjemTab'
+const enkelHjemFactory = () => import('./athlete/EnkelHjemTab')
+import { readinessNavigation } from './athlete/readinessShortcut.mjs'
 const enkelFremgangFactory = () => import('./athlete/EnkelFremgangTab')
 import { previewNavigation, renderControls, renderTrainingLinks, renderMore, renderNav } from './athlete/enkelPrototype.mjs'
 import { useState, useEffect, useRef, useMemo, createElement } from 'react'
@@ -42,11 +43,15 @@ const fremgangFactory = () => import('./athlete/FremgangTab')
 const kostFactory = () => import('./athlete/KostTab')
 const beskederFactory = () => import('./athlete/BeskederTab')
 
+function LazyEnkelHjemTab(props) {
+  return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
+}
+
 export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, kostPerAtlet, kostValg }) {
   const [requestedTab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
-  const HjemVisning = enkelOn ? EnkelHjemTab : HjemTab
+  const HjemVisning = enkelOn ? LazyEnkelHjemTab : HjemTab
   // Explicit preview prop only; no storage, URL or environment activation.
   const navigate = previewNavigation(enkelOn, setLegacyTab, setEnkelRoute)
   const [recheckingRole, setRecheckingRole] = useState(false)
@@ -68,7 +73,6 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   const visKost = kostSynlig(athlete, kostPerAtlet, kostValg)
   const tab = kostDestination(requestedTab, visKost)
   const route = enkelRoute === 'kost' && !visKost ? 'traening' : enkelRoute
-  const setTab = destination => navigate(kostDestination(destination, visKost))
   // ORDRE 263 · commit 2: den automatiske pause mellem sæt (null = ingen
   // aktiv pause). Se restPause.js.
   const [restPause, setRestPause] = useState(null)
@@ -202,6 +206,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // folden "Mere" (lukket fra start, ikke husket mellem besøg).
   const [mereOpen, setMereOpen] = useState(false)
   const [readinessOpen, setReadinessOpen] = useState(false)
+  const setTab = readinessNavigation(destination => navigate(kostDestination(destination, visKost)), setReadinessOpen)
   // Session-kort refs, så vi kan scrolle en nyåbnet session op i toppen
   // (accordion: når en session over kollapser, hopper layoutet ellers så man
   // lander midt/nederst i den nye session i stedet for ved første øvelse).
@@ -431,9 +436,9 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchSharedVideoAnalyses er ren ift. role/athlete.id, som er i deps; uændret fra før ordre 373
   }, [role, athlete?.id])
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- begge kaldes synkront i denne kørsel og læser kun athlete/msgTrack, som allerede er i deps
   const openReadiness = enkelOn ? () => setTab('dagsform') : legacyOpenReadiness
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- begge kaldes synkront i denne kørsel og læser kun athlete/msgTrack, som allerede er i deps
   useEffect(() => { if (tab === 'beskeder' && athlete?.id) { fetchAthleteMessages(); markTrackRead(msgTrack); if (msgTrack === 'teknik') fetchSharedVideoAnalyses() } }, [tab, athlete?.id, msgTrack])
   useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge er rene ift. athlete.id, som allerede er i deps

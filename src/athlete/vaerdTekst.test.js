@@ -1,0 +1,1 @@
+import './vaerdTekst.test.mjs'
