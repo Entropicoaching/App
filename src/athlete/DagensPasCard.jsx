@@ -1,3 +1,4 @@
+import { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
 import { vaerdTekst, ventendeSaetTekst } from './vaerdTekst.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
@@ -5,7 +6,7 @@ import { exerciseSetView, exerciseViewGroups } from '../exerciseSetView'
 // "Dagens pas"-kortet paa forsiden (egen tilstand: naeste-saet-visning,
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Skrivefunktionerne kommer stadig ind som props fra AthleteView.
-import { useState, useEffect, useRef, useId } from 'react'
+import { useState, useEffect, useRef, useId, createElement } from 'react'
 import PasOverblik from './PasOverblik.jsx'
 import { setAnnouncement, bindFirstSetFocus } from './logAccessibility.mjs'
 import { createPortal } from 'react-dom'
@@ -44,7 +45,7 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // — logInputs-nøglen er `${exerciseId}_${setNumber}`, delt på tværs af
 // begge faner). Under det: resten af DENNE session i kort form. `pas` kommer
 // fra findDagensPas (src/nextSet.js, ren funktion, se dens tests).
-function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, overviewSession = null, onRateSession, rekordFejring = null, onVarmOp = null }) {
+function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exerciseLogs, logInputs, setLogInputs, onLogSet, skipSet, suggestNextWeight, onOpenSession, todayStr, checkinNudge, lastLoggedSet, onUndoLastSet, onUpdateLoggedSet, pendingSyncCount, pendingSyncKeys = [], parkedSets = [], finishedSession = null, overviewSession = null, onRateSession, rekordFejring = null, onVarmOp = null, log2Enabled = APP_LOG2_ENABLED }) {
   const activeNext = pas && pas.status === 'open' ? pas.next : null
   const lastSetTapRef = useRef(-Infinity)
   const logContextId = useId()
@@ -128,7 +129,9 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
     const { exercise: ex, setNumber } = activeNext
     const key = `${ex.id}_${setNumber}`
     // ORDRE 456 (A1): uden historik (ikke hentet uden net) vægten fra ugens seneste sæt.
-    const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr) || ugensSenesteSaet(exerciseLogs, ex.id)
+    const last = log2Enabled === true
+      ? previousLog2Set(exerciseHistory, ex.name, todayStr, setNumber)
+      : lastHeaviestSet(exerciseHistory, ex.name, todayStr) || ugensSenesteSaet(exerciseLogs, ex.id)
     const repsPrescription = parseRepsPrescription(ex.reps)
     const repsIsEditable = repsPrescription.type !== 'fixed' || fixedRepsEntry(ex.reps) !== null
     const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
@@ -139,12 +142,15 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       : ''
     const lastAuto = autoFilledRef.current[key]
     const touched = touchedRef.current.has(key)
-    const decide = current => autoFillSetInput({ current, lastAuto, touched, weightDefault, repsDefault: repsDefaultValue })
+    const defaults = log2Enabled === true ? log2Defaults(ex, last, suggestion) : null
+    const decide = current => defaults
+      ? fillLog2Input(current, lastAuto, touched, defaults)
+      : autoFillSetInput({ current, lastAuto, touched, weightDefault, repsDefault: repsDefaultValue })
     if (!decide(logInputs[key])) return
-    autoFilledRef.current[key] = { weight: weightDefault, reps: repsDefaultValue }
+    autoFilledRef.current[key] = defaults || { weight: weightDefault, reps: repsDefaultValue }
     setLogInputs(p => { const next = decide(p[key]); return next ? { ...p, [key]: next } : p })
     // eslint-disable-next-line react-hooks/exhaustive-deps -- kør kun når sættet (øvelse+sætnummer) skifter, historikken ankommer eller ugens seneste vægt på øvelsen bliver kendt (A1)
-  }, [activeNext?.exercise?.id, activeNext?.setNumber, exerciseHistory, ugensVaegt])
+  }, [activeNext?.exercise?.id, activeNext?.setNumber, exerciseHistory, ugensVaegt, log2Enabled === true, log2Enabled === true ? activeNext?.exercise?.reps : null, log2Enabled === true ? activeNext?.exercise?.recommended_weight : null])
 
   if (!pas) return null
 
@@ -597,7 +603,15 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       <span id={logContextId}
         style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap' }}>{`${view.name}, sæt ${saetNu} af ${saetIAlt}`}</span>
       <div style={st.handlinger}>
-        <button
+        {log2Enabled === true ? renderLog2Button(createElement, {
+          style: { ...s.btnPrimary, ...st.godkendt }, describedBy: logContextId,
+          input, reps: repsToLog, exercise: ex, setNumber, totalSets, plannedRpe,
+          askZero: () => {
+            if (spoergNulKg && nulKgSpurgt !== key) { setNulKgSpurgt(key); return true }
+            return false
+          },
+          acceptTap: acceptSetTap, clearZero: () => setNulKgSpurgt(null), onLogSet,
+        }) : <button
           type="button" aria-describedby={logContextId}
           style={{ ...s.btnPrimary, ...st.godkendt }}
           onClick={() => {
@@ -606,7 +620,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             setNulKgSpurgt(null)
             onLogSet(ex, setNumber, totalSets, repsToLog, plannedRpe)
           }}
-        >Godkendt</button>
+        >Godkendt</button>}
         <button
           type="button" aria-describedby={logContextId}
           style={{ ...s.btnGhost, ...st.springOver }}

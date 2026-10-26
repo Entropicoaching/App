@@ -252,9 +252,9 @@ export function lavSaetSkrivning({
     return isSessionDone(sess, [...logs, { exercise_id: exerciseId, set_number: setNumber }])
   }
 
-  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false } = {}) {
+  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false, inputOverride } = {}) {
     const key = `${exerciseId}_${setNumber}`
-    const input = logInputs[key] || {}
+    const input = inputOverride || logInputs[key] || {}
     // Kun en rigtig (bekræftet) række afgør INSERT vs. UPDATE i databasen — en
     // optimistisk række har ikke et gyldigt db-id at opdatere på.
     const realExisting = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber && !l._optimistic)
@@ -266,6 +266,8 @@ export function lavSaetSkrivning({
       showFlash('Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.', 'error')
       return false
     }
+    // APP-LOG2: behold det bekræftede øjebliksbillede til fortryd/redigering.
+    if (inputOverride) setLogInputs(p => ({ ...p, [key]: { ...input } }))
     const payload = {
       // ORDRE 401: tidspunktet for "Godkendt" følger sættet ind i køen, så et
       // sæt sendt senere beholder sin tid hos coachen. Et sæt der allerede
@@ -325,7 +327,7 @@ export function lavSaetSkrivning({
       const nextKey = `${exerciseId}_${setNumber + 1}`
       setLogInputs(p => ({
         ...p,
-        [nextKey]: nextAthleteSetInput(input, p[nextKey]),
+        [nextKey]: nextAthleteSetInput(inputOverride ? { ...input, weight: '' } : input, p[nextKey]),
       }))
     }
 
@@ -408,9 +410,9 @@ export function lavSaetSkrivning({
   // logget (til "Fortryd sidste sæt" nedenfor). Program-fanens egen Log-knap
   // rører IKKE dette — den kalder stadig logSet direkte, uændret adfærd
   // (verify:athlete-write-failures/e2e:fejl låser den offline-fejlflowet der).
-  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe) {
+  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe, inputOverride) {
     setLastLoggedSet({ exerciseId: ex.id, setNumber })
-    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true })
+    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true, inputOverride })
   }
 
   // ORDRE 280 · commit 4 — sender ventende sæt (offlineSetQueue.js) igen når
