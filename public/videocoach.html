@@ -7186,7 +7186,7 @@ async function vcAthleteUploadAndGo() {
     // banneret står som læselig kvittering i 8 s (før 5 s), eller til næste besked.
     const athleteStatusEl = document.getElementById('athleteStatus');
     if (athleteStatusEl) athleteStatusEl.hidden = true;
-    say('Video modtaget ✓ · din coach ser den, når han åbner den');
+    say('Video modtaget ✓. Afvent coachens feedback. Se svaret i Beskeder under Teknik & løft.');
     banner.dataset.kvittering = String(Date.now() + 8000);
     setTimeout(() => say(''), 8100);
   } catch (error) {
@@ -10135,9 +10135,8 @@ if (ATHLETE) {
   const athleteFlow = document.createElement('div');
   athleteFlow.id = 'athleteFlow';
   athleteFlow.setAttribute('aria-label', 'Forløb');
-  // ORDRE 262 · commit 1: sidste trin hedder "Gem" i instant-flowet - der er
-  // intet automatisk "Send" her, se runFullAnalysis.
-  athleteFlow.innerHTML = ['Video', 'Klargør', 'Analyse', VC_ATHLETE_INSTANT ? 'Gem' : 'Send']
+  // Instant-flowet sender først, når atleten selv trykker Send video til coach.
+  athleteFlow.innerHTML = ['Video', 'Klargør', 'Analyse', 'Send']
     .map((label, index) => `<span class="athFlowStep"><b>${index + 1}</b>${label}</span>`).join('');
   document.body.appendChild(athleteFlow);
 
@@ -10145,7 +10144,7 @@ if (ATHLETE) {
     dropHint.innerHTML =
       '<span class="athKicker">Film et sæt</span>' +
       '<strong>Se svaret med det samme</strong>' +
-      '<span class="athCopy">Reps, bane og afvigelse — ingen dom om teknik. Du vælger selv om det gemmes.</span>' +
+      '<span class="athCopy">Reps, bane og afvigelse. Ingen dom om teknik. Du vælger selv, om videoen sendes til din coach.</span>' +
       '<div id="athFilmGuide"></div>' +
       '<button id="athleteOpenVideoBtn" class="athCta" type="button">Optag eller vælg video</button>';
   } else {
@@ -10232,7 +10231,7 @@ if (ATHLETE) {
   const athleteInstantSaveBtn = document.createElement('button');
   athleteInstantSaveBtn.type = 'button';
   athleteInstantSaveBtn.id = 'athleteInstantSaveBtn';
-  athleteInstantSaveBtn.textContent = 'Gem til mit pas';
+  athleteInstantSaveBtn.textContent = 'Send video til coach';
   athleteInstantActions.append(athleteInstantDiscardBtn, athleteInstantSaveBtn);
   athleteInstantResult.append(athleteInstantHead, athleteInstantRows, athleteInstantFoot, athleteInstantActions);
   document.body.appendChild(athleteInstantResult);
@@ -10243,23 +10242,6 @@ if (ATHLETE) {
     // hænger tilbage lokalt, uden at skulle nulstille hver global variabel
     // trackeren/opsætningen bruger enkeltvis.
     location.reload();
-  };
-  athleteInstantSaveBtn.onclick = async () => {
-    if (!VC_V3_ATHLETE_BRIDGE || !vcV3BridgeReady) {
-      alert('Forbindelsen til appen er ikke klar. Luk VideoCoach og åbn den fra appen igen.');
-      return;
-    }
-    athleteInstantSaveBtn.disabled = true;
-    athleteInstantDiscardBtn.disabled = true;
-    await vcAthleteUploadAndGo();
-    // Lykkes sendingen, skifter setAthleteState til 'sent' og skjuler panelet
-    // (se visibility-reglen i setAthleteState). Fejler den (fanget INDE i
-    // vcAthleteUploadAndGo, som selv åbner sendearket som faldback), er
-    // 'done' stadig aktiv, og knapperne her skal kunne bruges igen.
-    if (document.body.dataset.athleteState !== 'sent') {
-      athleteInstantSaveBtn.disabled = false;
-      athleteInstantDiscardBtn.disabled = false;
-    }
   };
   showInstantResult = path => {
     // Sidste billede, ikke loop - stangens bane står stille ovenpå, som ordren
@@ -10279,7 +10261,7 @@ if (ATHLETE) {
     }).join('');
     athleteInstantSaveBtn.disabled = false;
     athleteInstantDiscardBtn.disabled = false;
-    athleteInstantSaveBtn.textContent = 'Gem til mit pas';
+    athleteInstantSaveBtn.textContent = 'Send video til coach';
     athleteInstantResult.hidden = false;
   };
 
@@ -10433,7 +10415,9 @@ if (ATHLETE) {
     const states = {
       ready: ['Find starten', 'Spol til lige før løftet, og tryk Sæt start her.', 'Stangbane', 'ready'],
       target: ['Markér skiven', 'Tryk én gang midt på den skive, du vil følge.', 'Vælg skive', 'ready'],
-      confirm: ['Tjek ringen', 'Rammes skiven rigtigt? Justér om nødvendigt — tryk Start for at sende, eller Vis mig nu for et hurtigt kig.', 'Start', 'ready'],
+      confirm: ['Tjek ringen', VC_ATHLETE_INSTANT
+        ? 'Rammes skiven rigtigt? Justér om nødvendigt, og tryk Start for at se din analyse. Du sender selv videoen bagefter.'
+        : 'Rammes skiven rigtigt? Justér om nødvendigt, og tryk Start for at sende, eller Vis mig nu for et hurtigt kig.', 'Start', 'ready'],
       analyzing: [VC_ATHLETE_INSTANT ? 'Sporer sættet' : 'Video modtaget ✓',
         VC_ATHLETE_INSTANT
           ? 'Vi finder stangbanen. Intet sendes - du ser tallene om et øjeblik og vælger selv.'
@@ -10644,6 +10628,15 @@ function saveRec(mime, mic) {
 
 <script type="module">
 import { mountUploadFilmGuide } from './videoFilmGuide.mjs';
+import { bindInstantSend } from './vcInstantSend.mjs';
+bindInstantSend({
+  saveButton: document.getElementById('athleteInstantSaveBtn'),
+  discardButton: document.getElementById('athleteInstantDiscardBtn'),
+  bridgeReady: () => VC_V3_ATHLETE_BRIDGE && vcV3BridgeReady,
+  upload: () => vcAthleteUploadAndGo(),
+  state: () => document.body.dataset.athleteState,
+  alert: message => window.alert(message),
+});
 mountUploadFilmGuide(document, () => window.localStorage);
 </script>
 </body>
