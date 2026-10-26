@@ -37,6 +37,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows'
 import { lavProfilTal } from './dashboard/profilTal'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet'
+import { useCoachSvar } from './dashboard/useCoachSvar'
 
 
 
@@ -58,6 +59,8 @@ const programTabFactory = () => import('./dashboard/ProgramTab')
 const volumenKortFactory = () => import('./dashboard/VolumenKort')
 
 export default function Dashboard({ session, onPreviewAthlete }) {
+  const coachSvar = useCoachSvar(session.user.id, showFlash)
+  const messageSeenPendingRef = useRef(false)
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
@@ -306,7 +309,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setMessages, setMessageSendError, setMessageThreadError, setProfilesLastSeen, setSnoozedAthletes, setTodayData,
     setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
-    setWeeks, videoCoachAthletesRef,
+    setWeeks, videoCoachAthletesRef, coachSvarEnabled: coachSvar.enabled,
   })
 
   const {
@@ -323,14 +326,22 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   })
 
   const {
-    handleCoachBriefingSeen, handleAutomationAlert, handleTrainingSignal, markMessagesRead, sendCoachMessage, togglePin,
+    handleCoachBriefingSeen: handleLegacyBriefingSeen, handleAutomationAlert, handleTrainingSignal, markMessagesRead, markMessageSeen, sendCoachMessage, togglePin,
     formatMsgTime,
   } = lavIndbakkeHandlinger({
     athletes, coachMsgTrack, fetchLatestMessages, fetchMessages, messageInput, messageThreadAthleteRef,
     selectedAthlete, sendingMessage, session, setAutomationAlertActionError, setAutomationAlerts, setAutomationAlertUpdatingId,
     setCoachBriefingSeen, setCoachBriefingSeenSavingKey, setMessageInput, setMessages, setMessageSendError, setSendingMessage,
-    setTrainingSignals, setTrainingSignalUpdatingKey, showFlash,
+    setTrainingSignals, setTrainingSignalUpdatingKey, showFlash, coachSvarEnabled: coachSvar.enabled, messageSeenPendingRef, setUnreadByTrack, setUnreadCounts,
   })
+
+  function handleCoachBriefingSeen(item) {
+    if (coachSvar.enabled && item.kind === 'note') return coachSvar.markNoteSeen(item)
+    if (coachSvar.enabled && item.kind === 'message') {
+      return markMessageSeen({ athleteId: item.athlete.id, track: item.track, through: item.createdAt })
+    }
+    return handleLegacyBriefingSeen(item)
+  }
 
   const {
     reviewVideoAnalysis, saveVideoAnalysisFeedback, closeVideoAnalysisReview, discardVideoAnalysisFeedback, openAwaitingAnalysisVideo, openVideoAnalysisReview,
@@ -413,7 +424,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
     isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
     refreshCoachInbox, selectedAthlete, snoozeMigratedRef, videoAnalysisReview, videoReviewOpenedRef, videoReviewRequest,
-    view, weeksLogsLoadedForRef,
+    view, weeksLogsLoadedForRef, coachSvarEnabled: coachSvar.enabled,
   })
 
 
@@ -473,7 +484,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   } = useCoachPrioritet({
     athletes, automationAlerts, focusNextFromLinkRef, hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
     latestByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
-    videoReviewQueue, view,
+    videoReviewQueue, view, coachSvar, calendarWeeks, athleteWeekCompletion,
   })
 
 
@@ -530,7 +541,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           <LazyBoundary
             factory={indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
             componentProps={{
-              athletes, coachPriorityItems, handleTrainingSignal,
+              athletes, coachPriorityItems, handleTrainingSignal, coachSvar, handleCoachBriefingSeen, coachBriefingSeenSavingKey,
               automationAlertActionError, automationAlertUpdatingId, automationAlertsError, handleAutomationAlert,
               hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
               isMobile, latestByTrack, messageInboxError,
@@ -571,7 +582,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
           return (
             <ForsideView {...{
               athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
-              automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
+              automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems, coachSvarEnabled: coachSvar.enabled,
               fetchAthletes, goToMyProfile, handleCoachBriefingSeen, handleTrainingSignal, hiddenAthleteIds, isMobile,
               loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
               setAthleteSortMode, setHiddenAthleteIds, setLoading, setSelectedAthlete, setShowAllAthletes, setShowHiddenAthletes,
@@ -692,7 +703,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             {activeTab === 'log' && (() => {
               return (
                 <LogTab {...{
-                  athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
+                  athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks, athleteId: a.id, coachSvar,
                 }} />
               )
             })()}
@@ -720,7 +731,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                 <BeskederTab {...{
                   a, coachMsgTrack, fetchMessages, formatMsgTime, messageInput, messages,
                   messageSendError, messageThreadError, sendCoachMessage, sendingMessage, setCoachMsgTrack, setMessageInput,
-                  setMessageSendError, togglePin,
+                  setMessageSendError, togglePin, coachSvar, markMessageSeen, coachBriefingSeenSavingKey,
                 }} />
               )
             })()}

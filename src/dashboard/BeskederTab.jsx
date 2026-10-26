@@ -2,12 +2,14 @@
 // Profilfanen Beskeder: spor, fastgjorte og tråd, send.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { s } from '../dashboardShared'
+import HurtigeSvar from './HurtigeSvar'
 
 export default function BeskederTab({
   a, coachMsgTrack, fetchMessages, formatMsgTime, messageInput, messages,
   messageSendError, messageThreadError, sendCoachMessage, sendingMessage, setCoachMsgTrack, setMessageInput,
-  setMessageSendError, togglePin,
+  setMessageSendError, togglePin, coachSvar, markMessageSeen, coachBriefingSeenSavingKey,
 }) {
+              const Composer = coachSvar?.enabled ? 'textarea' : 'input'
               const trackOf = m => (m.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
               const shownMsgs = messages.filter(m => trackOf(m) === coachMsgTrack)
               const pinnedMsgs = messages.filter(m => m.pinned && trackOf(m) === coachMsgTrack)
@@ -92,6 +94,10 @@ export default function BeskederTab({
                           }}>
                             {msg.content}
                           </div>
+                          {coachSvar?.enabled && !isCoach && (
+                            msg.read_by_coach ? <span style={{ color: '#6cba6c', fontSize: '0.75rem' }}>Set</span> :
+                              <button type="button" disabled={Boolean(coachBriefingSeenSavingKey)} onClick={() => markMessageSeen({ athleteId: a.id, messageId: msg.id })} style={{ ...s.btnGhost, minHeight: 44, marginTop: '0.3rem' }}>{coachBriefingSeenSavingKey === msg.id ? 'Gemmer...' : 'Set'}</button>
+                          )}
                         </div>
                         <button
                           onClick={() => togglePin(msg.id, msg.pinned)}
@@ -110,15 +116,23 @@ export default function BeskederTab({
                 </div>
 
                 {/* Send input */}
+                {coachSvar?.enabled && <HurtigeSvar {...{ coachSvar, messageInput, setMessageInput, setMessageSendError, sendingMessage }} />}
                 <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
-                  <input
+                  <Composer
                     style={{ ...s.fieldInput, flex: 1, minWidth: 0 }}
-                    type="text"
+                    type={coachSvar?.enabled ? undefined : 'text'}
+                    rows={coachSvar?.enabled ? 2 : undefined}
+                    aria-label={`Svar til ${a.name}`}
                     placeholder={coachMsgTrack === 'teknik' ? 'Teknik-cue eller formsnak…' : 'Skriv en besked...'}
                     value={messageInput}
                     disabled={sendingMessage}
                     onChange={e => { setMessageInput(e.target.value); if (messageSendError) setMessageSendError(null) }}
-                    onKeyDown={e => e.key === 'Enter' && sendCoachMessage()}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && (!coachSvar?.enabled || !e.shiftKey) && !e.nativeEvent.isComposing) {
+                        e.preventDefault()
+                        sendCoachMessage()
+                      }
+                    }}
                   />
                   <button style={{ ...s.btnPrimary, opacity: sendingMessage ? 0.6 : 1 }} disabled={sendingMessage} onClick={sendCoachMessage}>{sendingMessage ? 'Sender…' : 'Send'}</button>
                 </div>

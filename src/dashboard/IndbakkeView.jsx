@@ -12,7 +12,7 @@ export default function IndbakkeView({
   coachPriorityItems, handleAutomationAlert, handleTrainingSignal, hiddenAthleteIds, inboxRefreshing,
   inboxRefreshStatus, isMobile, latestByTrack, messageInboxError, openCoachPriorityItem,
   openProfile, refreshCoachInbox, setCoachMsgTrack, trainingSignalsError,
-  trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError,
+  trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError, coachSvar, handleCoachBriefingSeen, coachBriefingSeenSavingKey,
 }) {
   const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
   const priorityItems = coachPriorityItems
@@ -84,6 +84,11 @@ export default function IndbakkeView({
           {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
           <span style={{ color: item.color, flexShrink: 0, fontSize: '0.7rem' }}>→</span>
         </button>
+        {coachSvar?.enabled && ['message', 'note'].includes(item.kind) && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.4rem' }}>
+            <button type="button" disabled={Boolean(coachBriefingSeenSavingKey)} onClick={() => handleCoachBriefingSeen(item)} style={{ ...s.btnGhost, minHeight: 44 }}>{coachBriefingSeenSavingKey === item.key ? 'Gemmer...' : 'Set'}</button>
+          </div>
+        )}
         {item.kind === 'signal' && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem', paddingTop: '0.45rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
             <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'snooze')}
@@ -161,6 +166,11 @@ export default function IndbakkeView({
           {inboxRefreshing ? 'Opdaterer…' : '↻ Opdater'}
         </button>
       </div>
+
+      <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minHeight: 44, marginBottom: '1rem', color: '#b8b4a8', fontSize: '0.8rem', cursor: 'pointer' }}>
+        <input type="checkbox" role="switch" checked={coachSvar?.enabled || false} onChange={event => coachSvar.setEnabled(event.target.checked)} />
+        Hurtige svar og Set
+      </label>
 
       {(priorityItems.length > 0 || priorityError) && (
         <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.035)', padding: '0.85rem' }}>

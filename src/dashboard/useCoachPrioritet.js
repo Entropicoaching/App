@@ -6,11 +6,12 @@ import { useEffect } from 'react'
 import { buildCoachPriorityItems, coachPriorityQueueContext } from '../coachPriority'
 import { coachVideoPriorityDetail } from './coachVideoHjaelp'
 import { coachInboxFocusDecision } from '../coachInboxState'
+import { coachNoteItems } from './coachSvar.js'
 
 export function useCoachPrioritet({
   athletes, automationAlerts, focusNextFromLinkRef, hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
   latestByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
-  videoReviewQueue, view,
+  videoReviewQueue, view, coachSvar, calendarWeeks, athleteWeekCompletion,
 }) {
   const coachPriorityItems = buildCoachPriorityItems({
     athletes: athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id)),
@@ -20,6 +21,7 @@ export function useCoachPrioritet({
     videoReviewQueue,
     describeVideo: coachVideoPriorityDetail,
     automationAlerts,
+    noteItems: coachSvar?.enabled ? coachNoteItems(athletes, calendarWeeks, athleteWeekCompletion, coachSvar.seenNotes) : [],
   })
   const coachPriorityCount = coachPriorityItems.length
   const priorityQueueContext = profileReturnView === 'inbox'

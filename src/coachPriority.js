@@ -9,9 +9,9 @@ import { MESSAGE_VIDEO_RANK, signalRank } from './coachBriefingRules.js'
 // videoer og før fremgang.
 export const AUTOMATION_RANK = MESSAGE_VIDEO_RANK + 0.75
 
-export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTrack, latestByTrack, videoReviewQueue, describeVideo, automationAlerts = [], now = Date.now() }) {
+export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTrack, latestByTrack, videoReviewQueue, describeVideo, automationAlerts = [], noteItems = [], now = Date.now() }) {
   const athleteById = new Map(athletes.map(athlete => [athlete.id, athlete]))
-  const items = []
+  const items = noteItems.filter(item => athleteById.has(item.athlete?.id))
 
   // ORDRE 301: en automatiseringsfejl har ingen atlet, så den må ikke gå
   // gennem athleteById-opslaget som de andre typer. Rang: se AUTOMATION_RANK.
