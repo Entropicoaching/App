@@ -741,10 +741,10 @@ function HjemTab({
               <div style={{ minWidth: 0 }}>
                 <div style={{ ...s.cardLabel, marginBottom: '0.2rem' }}>VideoCoach</div>
                 <div style={{ fontSize: '0.85rem', color: '#edeae2', lineHeight: 1.4 }}>
-                  Film dit løft og mål stanghastighed
+                  Film dit løft og send det til din coach
                 </div>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginTop: '0.3rem' }}>
-                  Åbn kamera-analyse →
+                  Åbn VideoCoach →
                 </div>
               </div>
             </div>
@@ -756,12 +756,12 @@ function HjemTab({
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.7rem', marginBottom: '0.8rem' }}>
                   <div>
                     <div style={{ ...s.cardLabel, marginBottom: '0.2rem' }}>Feedback fra din coach</div>
-                    <div style={{ color: '#7a7770', fontSize: '0.68rem', lineHeight: 1.4 }}>Godkendte bevægelsesanalyser og næste fokus.</div>
+                    <div style={{ color: '#7a7770', fontSize: '0.68rem', lineHeight: 1.4 }}>Det din coach har gennemgået og delt med dig.</div>
                   </div>
                   {!sharedVideoLoading && <button onClick={fetchSharedVideoAnalyses} style={{ ...s.btnGhost, padding: '0.3rem 0.55rem', fontSize: '0.5rem', flexShrink: 0 }}>Opdatér</button>}
                 </div>
 
-                {sharedVideoLoading && <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', padding: '0.5rem 0' }}>Henter analyser…</div>}
+                {sharedVideoLoading && <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', padding: '0.5rem 0' }}>Henter feedback…</div>}
                 {sharedVideoError && !sharedVideoLoading && (
                   <div style={{ color: '#d79a83', fontSize: '0.66rem', lineHeight: 1.45 }}>{sharedVideoError}</div>
                 )}

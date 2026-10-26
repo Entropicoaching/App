@@ -53,10 +53,10 @@ export default function BeskederTab({
                       <div style={{ ...s.cardLabel }}>Videofeedback fra din coach</div>
                       {!sharedVideoLoading && <button onClick={fetchSharedVideoAnalyses} style={{ ...s.btnGhost, padding: '0.3rem 0.55rem', fontSize: '0.5rem', flexShrink: 0 }}>Opdatér</button>}
                     </div>
-                    {sharedVideoLoading && <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', padding: '0.4rem 0' }}>Henter analyser…</div>}
+                    {sharedVideoLoading && <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', padding: '0.4rem 0' }}>Henter feedback…</div>}
                     {sharedVideoError && !sharedVideoLoading && <div style={{ color: '#d79a83', fontSize: '0.66rem', lineHeight: 1.45 }}>{sharedVideoError}</div>}
                     {!sharedVideoLoading && !sharedVideoError && sharedVideoAnalyses.length === 0 && (
-                      <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.5 }}>Ingen delte målinger endnu. Send et løft via VideoCoach, så dukker coachens feedback op her.</div>
+                      <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.5 }}>Ingen feedback endnu. Har du sendt en video, dukker feedbacken op her, når din coach har gennemgået og delt den.</div>
                     )}
                     {!sharedVideoLoading && !sharedVideoError && sharedVideoAnalyses.length > 0 && renderSharedFeedbackCards()}
                   </div>

@@ -165,14 +165,14 @@ export default function VideoReviewModal({
               )}
 
               <div style={{ marginTop: '0.9rem', border: '1px solid rgba(103,223,245,0.18)', background: 'rgba(103,223,245,0.035)', padding: '0.75rem 0.8rem' }}>
-                <div style={{ ...s.fieldLabel, color: '#67dff5' }}>Det atleten ser</div>
+                <div style={{ ...s.fieldLabel, color: '#67dff5' }}>Det atleten ser, når du deler</div>
                 {feedbackEditable ? (
                   <div style={{ display: 'grid', gap: '0.7rem', marginTop: '0.55rem' }}>
                     {feedbackEditorFields.map(([key, label]) => (
                       <label key={key} style={{ display: 'grid', gap: '0.3rem' }}>
                         <span style={s.fieldLabel}>{label}</span>
                         <textarea rows="2" maxLength="600" value={videoAnalysisFeedbackDraft[key]} disabled={updating}
-                          placeholder={key === 'works' ? 'Hvad skal atleten tage med som positivt?' : key === 'focus' ? 'Hvad er det vigtigste fokus?' : 'Hvad skal atleten gøre næste gang?'}
+                          placeholder={key === 'works' ? 'Hvad gik godt? Det skal atleten blive ved med.' : key === 'focus' ? 'Hvad er det ene, atleten skal have fokus på?' : 'Ét cue til næste sæt. Hvad skal atleten gøre?'}
                           onChange={event => { setVideoAnalysisFeedbackDraft(current => ({ ...current, [key]: event.target.value })); setVideoAnalysisFeedbackDirty(true); setVideoAnalysisCloseWarning(false) }}
                           style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', minHeight: '58px', border: '1px solid rgba(237,234,226,0.12)', background: '#141410', color: '#edeae2', padding: '0.55rem 0.6rem', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.68rem', lineHeight: 1.45 }} />
                       </label>
@@ -210,7 +210,7 @@ export default function VideoReviewModal({
                       <div style={{ color: '#b8b4a8', fontSize: '0.62rem', lineHeight: 1.45, marginTop: '0.22rem' }}>{feedbackQuality.detail}</div>
                       {feedbackQuality.blockers.length > 1 && <div style={{ color: '#8f8b82', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{feedbackQuality.blockers.slice(1).join(' · ')}</div>}
                     </div>
-                    {videoAnalysisCloseWarning && <div style={{ border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.065)', color: '#c9b58f', padding: '0.55rem 0.65rem', fontSize: '0.62rem', lineHeight: 1.45 }}>Du har ugemte ændringer. Gem dem, eller vælg Fortryd ændringer før du lukker.</div>}
+                    {videoAnalysisCloseWarning && <div style={{ border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.065)', color: '#c9b58f', padding: '0.55rem 0.65rem', fontSize: '0.62rem', lineHeight: 1.45 }}>Du har ændringer, der ikke er gemt. Tryk Gem feedback eller Fortryd ændringer, før du lukker.</div>}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem', flexWrap: 'wrap' }}>
                       <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>Højst 2 observationer · præcis ét cue til næste sæt</span>
                       <span style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
@@ -238,7 +238,7 @@ export default function VideoReviewModal({
                     ))}
                   </div>
                 ) : (
-                  <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.45, marginTop: '0.35rem' }}>Målingen har ingen særskilt tekstfeedback. Atleten vil kun se den godkendte stangbane.</div>
+                  <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.45, marginTop: '0.35rem' }}>Der er ingen tekstfeedback. Atleten ser kun stangbanen, når du deler.</div>
                 )}
               </div>
 

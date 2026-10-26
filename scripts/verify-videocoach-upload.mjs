@@ -154,7 +154,7 @@ console.log('Migrationsfilen er versionsstyret, markeret som allerede kørt, og 
     'Annullér-knappen skal kalde vcAthleteCancelUpload')
   assert.match(html, /function vcAthleteCancelUpload\(\) \{/)
   assert.match(html, /function vcV3RequestAbortUpload\(requestId\) \{/)
-  assert.match(html, /say\(error\.vcAborted \? 'Annulleret · intet blev sendt' : `Videoen blev ikke sendt · \$\{error\.message\}`\);/,
+  assert.match(html, /say\(error\.vcAborted \? 'Annulleret\. Intet er sendt, og videoen er stadig valgt\.' : `Videoen blev ikke sendt: \$\{error\.message\}\. Den er stadig valgt, så tryk Prøv at sende igen\.`\);/,
     'Grænsefladen skal sige tydeligt, at intet blev sendt ved en annullering')
   // Filen skal forblive valgt efter en annulleret upload, så hun kan sende igen.
   assert.match(html, /Filen forbliver valgt \(vcAthletePendingFile rører vi ikke\)/)
