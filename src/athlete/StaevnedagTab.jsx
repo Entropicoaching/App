@@ -111,7 +111,7 @@ export default function StaevnedagTab({
                       {new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.06em', marginTop: '0.5rem' }}>
-                      Din coach har endnu ikke sat forsøgsplan.
+                      Din coach har ikke lagt en forsøgsplan endnu.
                     </div>
                   </>
                 ) : (

@@ -451,7 +451,7 @@ export function lavLaesninger({
           const n = parseInputNumber(readinessInput[k])
           return !Number.isInteger(n) || n < 1 || n > 5
         })) {
-      setReadinessError('Brug gyldig søvn og hele svar fra 1 til 5.')
+      setReadinessError('Skriv gyldig søvn og hele svar fra 1 til 5.')
       return
     }
     setSavingReadiness(true)

@@ -47,7 +47,7 @@ export async function runOfflineSetLog(page, { appUrl, mockUrl, outDir }) {
 
   // Besked på skærmen: queueWrite's fire forsøg (se src/supabase.js) løber
   // hurtigt tør uden net — ingen kunstig 12s-ventetid nødvendig her.
-  await page.getByText('Fejl — prøv igen').waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Ikke gemt. Prøv igen').waitFor({ state: 'visible', timeout: 15000 })
   await shot('01-offline-fejl')
 
   await page.context().setOffline(false)

@@ -137,7 +137,7 @@ export function useVideoCoachBro({
         if (saved.error) {
           // Videoen er allerede lagt i bucket'en (idempotent sti pr. client_analysis_id) -
           // kun selve rækken mangler. Et nyt tryk på "Prøv at sende igen" er nok.
-          reply({ ok: false, error: saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes · prøv igen' })
+          reply({ ok: false, error: saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes. Prøv igen.' })
           return
         }
         clearPendingSilentFails(currentAthlete.id)

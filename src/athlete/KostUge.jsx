@@ -14,7 +14,7 @@ export default function KostUge({ selectedDate, input }) {
   }
   return (
     <section aria-label="Kostuge" style={{ marginBottom: '1.5rem', color: '#edeae2' }}>
-      <h2>Kostuge · {dateLabel(week.startDate)} – {dateLabel(week.endDate)}</h2>
+      <h2>Kostuge · {dateLabel(week.startDate)} til {dateLabel(week.endDate)}</h2>
       <p>Dage logget: {week.counts.logged} · Dage med sammenlignelige kalorimål: {week.metrics.kcal.comparison.days} · Dage med sammenlignelige proteinmål: {week.metrics.protein.comparison.days}</p>
       <p>{week.counts.logged} dage med logning · {week.counts.missing} dage uden logning · {week.counts.unavailable} dage uden datadækning · {week.counts.future} kommende dage</p>
       <p>Registrerede mængder er ikke nødvendigvis hele dagens indtag. Dage uden logning tælles ikke som nul.</p>

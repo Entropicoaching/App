@@ -263,7 +263,7 @@ export function lavSaetSkrivning({
     const reps = inputInteger(repsCompleted, 0)
     const rpe = optionalInput(input.rpe) ? parseInputNumber(plannedRpe) : parseInputNumber(input.rpe)
     if (weight === null || reps === null || (!optionalInput(input.rpe) && (rpe === null || rpe > 10))) {
-      showFlash('Brug gyldig vægt, hele reps og RPE fra 0 til 10.', 'error')
+      showFlash('Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.', 'error')
       return false
     }
     const payload = {
@@ -564,7 +564,7 @@ export function lavSaetSkrivning({
     const weight = parseInputNumber(updates.weight, 0)
     const reps = inputInteger(updates.reps, 0)
     if (weight === null || reps === null) {
-      showFlash('Brug gyldig vægt og hele reps.', 'error')
+      showFlash('Skriv en gyldig vægt og hele reps.', 'error')
       return false
     }
     const payload = {
@@ -779,7 +779,7 @@ export function lavSaetSkrivning({
 
   async function autoCompleteSession(session) {
     const exerciseIds = (session.exercises || []).map(e => e.id)
-    if (exerciseIds.length === 0) { showFlash('Ingen øvelser fundet i sessionen.', 'error'); return }
+    if (exerciseIds.length === 0) { showFlash('Der er ingen øvelser i passet.', 'error'); return }
 
     setPendingSessionAction(`${session.id}:autofill`)
     const { data: existing, error: fetchErr } = await supabase
@@ -826,7 +826,7 @@ export function lavSaetSkrivning({
   // at fabrikere gennemførte sæt — i modsætning til autoCompleteSession.
   async function skipRemainingSets(session) {
     const exerciseIds = (session.exercises || []).map(e => e.id)
-    if (exerciseIds.length === 0) { showFlash('Ingen øvelser fundet i sessionen.', 'error'); return }
+    if (exerciseIds.length === 0) { showFlash('Der er ingen øvelser i passet.', 'error'); return }
 
     setPendingSessionAction(`${session.id}:skip`)
     const { data: existing, error: fetchErr } = await supabase
