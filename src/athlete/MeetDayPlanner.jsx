@@ -36,7 +36,7 @@ function LiftPlan({ lift }) {
           <button type="button" onClick={() => setDraft(prev => prev.filter((_, i) => i !== index))}>Fjern sæt {index + 1}</button>
         </div>)}
         <button type="button" onClick={() => setDraft(prev => [...prev, { weight: 20, reps: 1, minutesBefore: 1 }])}>Tilføj sæt</button>
-        <button type="button" onClick={save}>Gem lokalt</button>
+        <button type="button" onClick={save}>Brug i denne visning</button>
         <button type="button" onClick={() => { setDraft(null); setError('') }}>Annuller</button>
         {error && <p role="alert">{error}</p>}
       </> : <>
@@ -52,6 +52,7 @@ export default function MeetDayPlanner({ meetAttempts, meetType }) {
   return <section aria-label="Tjekliste og opvarmningsforslag">
     <h2>Før stævnet</h2>
     <p>{NOTICE}</p>
+    <p>Ændringer af tider, opvarmningssæt og tjek gemmes ikke efter genåbning.</p>
     {CHECKLIST.map(item => <label key={item.id} style={{ display: 'block' }}>
       <input type="checkbox" checked={checked[item.id] === true}
         onChange={event => { const value = event.target.checked; setChecked(prev => checklistState(prev, item.id, value)) }} />{item.label}

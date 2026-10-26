@@ -87,7 +87,7 @@ function DinUgeKort({ uge, athleteId, weekId, sendUgeLinje }) {
               value={tekst}
               onChange={e => setTekst(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') send() }}
-              placeholder="Skriv en enkelt linje, hvis du har lyst"
+              placeholder="Hvad skal din coach vide før næste uge?"
               maxLength={500}
               style={{ ...s.fieldInput, flex: 1, minWidth: 0, minHeight: '44px', boxSizing: 'border-box', fontSize: '16px' }}
             />
