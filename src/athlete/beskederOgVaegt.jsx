@@ -158,7 +158,7 @@ export function lavBeskederOgVaegt({
                 </span>
               </span>
               <span style={{ color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                {open ? 'Skjul' : 'Se måling'}<span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>⌄</span>
+                {open ? 'Skjul' : 'Se feedback'}<span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>⌄</span>
               </span>
             </button>
             {open && (
@@ -179,7 +179,7 @@ export function lavBeskederOgVaegt({
                   {works.length > 0 && <div><div style={s.fieldLabel}>Det fungerer</div>{works.map((item, index) => <div key={index} style={{ color: '#9fbd9a', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
                   {focus.length > 0 && <div><div style={s.fieldLabel}>Dit fokus</div>{focus.map((item, index) => <div key={index} style={{ color: '#d79a83', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
                   {nextSet.length > 0 && <div><div style={s.fieldLabel}>Næste gang</div>{nextSet.map((item, index) => <div key={index} style={{ color: '#c9b47f', fontSize: '0.68rem', lineHeight: 1.45, marginTop: '0.25rem' }}>{item.text}</div>)}</div>}
-                  {!works.length && !focus.length && !nextSet.length && <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.45 }}>Coachen har delt målingen uden en særskilt tekstkommentar.</div>}
+                  {!works.length && !focus.length && !nextSet.length && <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.45 }}>Din coach har delt stangbanen uden en tekstkommentar.</div>}
                 </div>
               </div>
             )}

@@ -7148,13 +7148,13 @@ async function vcAthleteUploadAndGo() {
   const liftDisplay = document.getElementById('liftSel').value;
   const lift = vcV3Lift(liftDisplay);
   if (!lift) {
-    say('Vælg squat, bænkpres eller dødløft først');
+    say('Vælg løft først: squat, bænkpres eller dødløft');
     if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
     return;
   }
   const variation = vcV3Variation(liftDisplay, document.getElementById('variationSel').value);
   const file = vcAthletePendingFile;
-  if (!file) { say('Åbn en video først'); return; }
+  if (!file) { say('Vælg en video først, så kan du sende den'); return; }
   if (!vcAthleteClientAnalysisId) vcAthleteClientAnalysisId = vcV3Uuid();
   // ORDRE 57 · commit 3: tre valgfrie felter i samme trin som løft/variation -
   // ingen af dem påkrævet. Bruges kun af standardvejen (sheetet er tomt, hvis
@@ -7164,9 +7164,9 @@ async function vcAthleteUploadAndGo() {
   const mb = (file.size / (1024 * 1024)).toFixed(1);
   const requestId = vcV3Uuid();
   vcAthleteUploadRequestId = requestId;
-  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = `Sender video (${mb} MB) ...`; }
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = `Sender (${mb} MB) ...`; }
   if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = false;
-  say(`Sender video (${mb} MB) ...`);
+  say(`Sender video (${mb} MB). Bliv på skærmen, til den er sendt.`);
   try {
     await vcV3RequestUploadAndGo({
       requestId, clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
@@ -7186,7 +7186,7 @@ async function vcAthleteUploadAndGo() {
     // banneret står som læselig kvittering i 8 s (før 5 s), eller til næste besked.
     const athleteStatusEl = document.getElementById('athleteStatus');
     if (athleteStatusEl) athleteStatusEl.hidden = true;
-    say('Video modtaget ✓. Afvent coachens feedback. Se svaret i Beskeder under Teknik & løft.');
+    say('Video modtaget ✓ Din coach gennemgår den. Feedbacken kommer i Beskeder under Teknik & løft.');
     banner.dataset.kvittering = String(Date.now() + 8000);
     setTimeout(() => say(''), 8100);
   } catch (error) {
@@ -7199,7 +7199,7 @@ async function vcAthleteUploadAndGo() {
     // Filen forbliver valgt (vcAthletePendingFile rører vi ikke) - hun kan
     // trykke Send igen uden at åbne videoen på ny, se RAPPORT.md.
     if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
-    say(error.vcAborted ? 'Annulleret · intet blev sendt' : `Videoen blev ikke sendt · ${error.message}`);
+    say(error.vcAborted ? 'Annulleret. Intet er sendt, og videoen er stadig valgt.' : `Videoen blev ikke sendt: ${error.message}. Den er stadig valgt, så tryk Prøv at sende igen.`);
   }
 }
 
@@ -8884,12 +8884,12 @@ if (VC_V3_BRIDGE_ENABLED) {
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:queue-status`) {
       if (Number(msg.sent) > 0) {
         if (setAthleteState) setAthleteState('sent');
-        say('Din gemte analyse er nu sendt til coachen ✓');
+        say('Din gemte analyse er sendt til din coach ✓');
       } else if (Number(msg.expired) > 0 || Number(msg.invalid) > 0) {
         if (setAthleteState) setAthleteState('done');
-        say('Den lokale analyse kunne ikke sendes · tryk Send til coach igen');
+        say('Den gemte analyse kunne ikke sendes. Tryk Send til coach for at prøve igen.');
       } else if (Number(msg.remaining) > 0) {
-        say('Gemt lokalt · vi prøver automatisk igen');
+        say('Gemt på telefonen. Vi prøver at sende igen af os selv.');
       }
       return;
     }
@@ -9065,11 +9065,11 @@ saveBtn.onclick = async () => {
       if (completingPending) vcV3PendingCompletion = null;
       const queued = !!(saved && saved.queued);
       if (queued) {
-        saveBtn.textContent = 'Gemt lokalt · sender automatisk';
+        saveBtn.textContent = 'Gemt, sendes af sig selv';
         setTimeout(() => saveBtn.textContent = 'Send til coach', 3200);
         if (setAthleteState) setAthleteState('ready');
         if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
-        say('Gemt lokalt · sendes automatisk, når forbindelsen er tilbage');
+        say('Gemt på telefonen. Den sendes af sig selv, når du har forbindelse igen.');
         setTimeout(() => say(''), 5000);
         return;
       }
@@ -9089,7 +9089,7 @@ saveBtn.onclick = async () => {
       setTimeout(() => say(''), 3500);
       return;
     } catch (error) {
-      say(`Analysen blev ikke sendt · ${error.message}`);
+      say(`Analysen blev ikke sendt: ${error.message}`);
       saveBtn.textContent = VC_V3_ATHLETE_BRIDGE ? 'Prøv at sende igen' : 'Prøv igen';
       return;
     }
@@ -10070,7 +10070,7 @@ if (COACHWEB) {
 function renderFilmGuide() {
   const el = document.getElementById('athFilmGuide');
   if (!el) return;
-  el.innerHTML = "<button type=\"button\" id=\"film-guide-toggle\" class=\"film-guide-toggle\" aria-expanded=\"true\" aria-controls=\"film-guide-panel\">Sådan filmer du<span id=\"film-guide-arrow\" aria-hidden=\"true\">▾</span></button>\n<div id=\"film-guide-panel\">\n<h1>Sådan filmer du dit løft</h1>\n<p class=\"intro\">Gælder knæbøjning, bænkpres og dødløft.</p>\n<ol>\n  <li><strong>Film fra siden.</strong>\n    Telefonen står ved siden af løfteren og filmer vinkelret på stangen, set fra siden.</li>\n  <li><strong>Afstand og højde.</strong>\n    Som praktisk råd: stå 3 til 4 meter væk, med telefonen i højde med stangen eller hoften.</li>\n  <li><strong>Hele stang og skive i billedet.</strong>\n    Få hele kroppen med, og zoom ikke undervejs. Intet må dække skiven, for den bruges som målestok.</li>\n  <li><strong>Godt lys.</strong>\n    Tænd lyset i rummet, og undgå vindue lige bag dig.</li>\n  <li><strong>Stabil telefon.</strong>\n    Brug stativ, eller læn den mod noget tungt. Den må ikke bevæge sig.</li>\n  <li><strong>Hele løftet.</strong>\n    Start optagelsen, før du tager stangen. Stop først et par sekunder efter, at den er sat tilbage.</li>\n</ol>\n<p class=\"note\">Analysen er et skøn ud fra videoen. Vi lover ikke, at målene er nøjagtige.</p></div>";
+  el.innerHTML = "<button type=\"button\" id=\"film-guide-toggle\" class=\"film-guide-toggle\" aria-expanded=\"true\" aria-controls=\"film-guide-panel\">Sådan filmer du<span id=\"film-guide-arrow\" aria-hidden=\"true\">▾</span></button>\n<div id=\"film-guide-panel\">\n<h1>Sådan filmer du dit løft</h1>\n<p class=\"intro\">Gælder squat, bænkpres og dødløft.</p>\n<ol>\n  <li><strong>Film fra siden.</strong>\n    Stil telefonen ved siden af dig, så den filmer stangen fra siden.</li>\n  <li><strong>Afstand og højde.</strong>\n    Stå 3 til 4 meter væk, med telefonen i højde med stangen eller hoften.</li>\n  <li><strong>Hele stang og skive i billedet.</strong>\n    Få hele kroppen med, og zoom ikke undervejs. Intet må dække skiven, for den bruger vi som målestok.</li>\n  <li><strong>Godt lys.</strong>\n    Tænd lyset i rummet, og undgå vindue lige bag dig.</li>\n  <li><strong>Stabil telefon.</strong>\n    Brug stativ, eller læn den mod noget tungt. Den må ikke flytte sig.</li>\n  <li><strong>Hele løftet.</strong>\n    Start optagelsen, før du tager stangen. Stop først et par sekunder efter, at du har sat den tilbage.</li>\n</ol>\n<p class=\"note\">Analysen er et skøn ud fra videoen, ikke et facit.</p></div>";
   el.onclick = event => event.stopPropagation();
 }
 if (ATHLETE) {
@@ -10144,14 +10144,14 @@ if (ATHLETE) {
     dropHint.innerHTML =
       '<span class="athKicker">Film et sæt</span>' +
       '<strong>Se svaret med det samme</strong>' +
-      '<span class="athCopy">Reps, bane og afvigelse. Ingen dom om teknik. Du vælger selv, om videoen sendes til din coach.</span>' +
+      '<span class="athCopy">Du ser reps, bane og afvigelse med det samme. Det er ingen dom over din teknik. Videoen sendes først, når du selv trykker Send video til coach.</span>' +
       '<div id="athFilmGuide"></div>' +
       '<button id="athleteOpenVideoBtn" class="athCta" type="button">Optag eller vælg video</button>';
   } else {
     dropHint.innerHTML =
       '<span class="athKicker">Din VideoCoach</span>' +
-      '<strong>Se din stangbane</strong>' +
-      '<span class="athCopy">Vælg en video af dit sæt. Du markerer skiven én gang — resten klarer vi.</span>' +
+      '<strong>Send dit sæt til din coach</strong>' +
+      '<span class="athCopy">Vælg videoen, vælg løft, og tryk Send til coach. Vil du se din stangbane først, markerer du skiven én gang.</span>' +
       '<div id="athFilmGuide"></div>' +
       '<button id="athleteOpenVideoBtn" class="athCta" type="button">Åbn video</button>';
   }
@@ -10281,7 +10281,7 @@ if (ATHLETE) {
   // gennemgår den bagefter, ikke omvendt.
   athleteSubmitHead.innerHTML = '<div><small class="athleteSubmitKicker">Til din coach</small>' +
     '<h2>Send videoen</h2>' +
-    '<p>Vælg løft og variation. Din coach sporer og gennemgår videoen, når han åbner den.</p></div>';
+    '<p>Vælg løft og variation, og tryk Send til coach. Din coach sporer og gennemgår videoen bagefter. Svaret kommer i Beskeder under Teknik &amp; løft.</p></div>';
   const athleteSubmitClose = document.createElement('button');
   athleteSubmitClose.textContent = 'Luk';
   athleteSubmitClose.className = 'athleteSubmitClose';
@@ -10416,16 +10416,16 @@ if (ATHLETE) {
       ready: ['Find starten', 'Spol til lige før løftet, og tryk Sæt start her.', 'Stangbane', 'ready'],
       target: ['Markér skiven', 'Tryk én gang midt på den skive, du vil følge.', 'Vælg skive', 'ready'],
       confirm: ['Tjek ringen', VC_ATHLETE_INSTANT
-        ? 'Rammes skiven rigtigt? Justér om nødvendigt, og tryk Start for at se din analyse. Du sender selv videoen bagefter.'
-        : 'Rammes skiven rigtigt? Justér om nødvendigt, og tryk Start for at sende, eller Vis mig nu for et hurtigt kig.', 'Start', 'ready'],
-      analyzing: [VC_ATHLETE_INSTANT ? 'Sporer sættet' : 'Video modtaget ✓',
+        ? 'Sidder ringen om skiven? Ret den om nødvendigt, og tryk Start for at se din analyse. Videoen sendes først, når du selv trykker send.'
+        : 'Sidder ringen om skiven? Ret den om nødvendigt. Start finder stangbanen og sender videoen. Vis mig nu giver dig et hurtigt kig, og videoen sendes bagefter.', 'Start', 'ready'],
+      analyzing: [VC_ATHLETE_INSTANT ? 'Sporer sættet' : 'Sporer og sender sættet',
         VC_ATHLETE_INSTANT
-          ? 'Vi finder stangbanen. Intet sendes - du ser tallene om et øjeblik og vælger selv.'
-          : 'Vi finder stangbanen og sender den automatisk til din coach. Bliv på denne skærm, til der står Sendt.',
+          ? 'Vi finder stangbanen. Intet sendes. Du ser tallene om et øjeblik og vælger selv.'
+          : 'Vi finder stangbanen og sender derefter videoen til din coach. Bliv på denne skærm, til der står Sendt.',
         'Annullér', 'ready'],
-      done: ['Stangbanen er klar', 'Se hele banen, faserne og de valide målinger i Bane.', 'Ny bane', 'done'],
-      sent: ['Sendt til din coach', 'Din måling ligger klar til coachens gennemgang.', 'Ny bane', 'done'],
-      error: ['Prøv igen', 'Vi mistede skiven. Vælg et tydeligt punkt tæt på navet.', 'Prøv igen', 'ready']
+      done: ['Stangbanen er klar', 'Se banen og faserne i Bane. Tallene er et skøn ud fra videoen.', 'Ny bane', 'done'],
+      sent: ['Sendt til din coach', 'Din video ligger klar til din coach. Feedbacken finder du i Beskeder under Teknik & løft.', 'Ny bane', 'done'],
+      error: ['Prøv igen', 'Vi mistede skiven. Tryk på et tydeligt punkt tæt på midten af skiven, og prøv igen.', 'Prøv igen', 'ready']
     };
     const info = states[state];
     const empty = state === 'empty';

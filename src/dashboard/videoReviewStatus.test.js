@@ -40,7 +40,7 @@ function fixture(overrides = {}, result = {}) {
 test('F1 C2: den faktiske status-handler viser næste trin efter bekræftet godkendelse', async () => {
   const f = fixture()
   await f.handler(f.analysis, 'coach_approved')
-  assert.deepEqual(f.flashes, [['Videoanalyse godkendt til personlig baseline. Næste trin: gennemgå feedbacken, og vælg Del feedback med atlet.', 'success']])
+  assert.deepEqual(f.flashes, [['Godkendt til baseline. Atleten ser intet endnu. Næste skridt: ret feedbacken, og tryk Del feedback med atlet.', 'success']])
   assert.deepEqual(f.busy, ['analysis-1', null])
   assert.deepEqual(f.reviews, [{ ...f.analysis, status: 'coach_approved' }])
   assert.ok(f.calls.some(row => row[0] === 'history' && row[1] === 'athlete-1'))
@@ -80,7 +80,7 @@ test('F1 C2: deling kræver godkendelse, gemt feedback og brugbart cue', async (
   assert.deepEqual(draft.calls, [])
   const dirty = fixture({ videoAnalysisFeedbackDirty: true })
   await dirty.handler({ ...dirty.analysis, status: 'coach_approved' }, 'shared')
-  assert.deepEqual(dirty.flashes, [['Gem feedbacken før du deler den', 'error']])
+  assert.deepEqual(dirty.flashes, [['Gem feedbacken først, så kan du dele den', 'error']])
   assert.deepEqual(dirty.calls, [])
   const badCue = fixture({ videoCoachFeedbackQuality: () => ({ canShare: false, detail: 'cue mangler' }) })
   await badCue.handler({ ...badCue.analysis, status: 'coach_approved' }, 'shared')
@@ -97,7 +97,7 @@ test('F1 C2: personlig baseline kontrolleres før deling', async () => {
 })
 
 test('F1 C2: øvrige statustekster og feedback-filter bevares', async () => {
-  for (const [status, message] of [['shared', 'Feedback delt med atleten'],
+  for (const [status, message] of [['shared', 'Feedback delt. Atleten kan se den i appen.'],
     ['invalid', 'Videoanalyse udeladt fra personlig baseline'],
     ['draft', 'Videoanalyse flyttet tilbage til kladde']]) {
     const f = fixture()

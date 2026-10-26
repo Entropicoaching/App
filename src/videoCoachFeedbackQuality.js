@@ -66,10 +66,10 @@ export function videoCoachFeedbackQuality(feedback) {
     focus,
     nextSet,
     title: canShare
-      ? needsReview ? 'Brugbart udkast · tjek formuleringen' : 'Feedback klar til atleten'
-      : 'Feedback mangler retning',
+      ? needsReview ? 'Næsten klar. Tjek formuleringen' : 'Klar til at dele med atleten'
+      : 'Feedbacken mangler retning',
     detail: canShare
-      ? needsReview ? warnings[0] : 'Én observation og ét konkret cue hænger tydeligt sammen.'
-      : `Tilføj ${joinDanish(blockers)} før deling.`,
+      ? needsReview ? warnings[0] : 'Én observation og ét cue, der hænger sammen. Du kan dele den nu.'
+      : `Tilføj ${joinDanish(blockers)}, før du kan dele.`,
   }
 }

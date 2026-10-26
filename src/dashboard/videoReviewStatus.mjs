@@ -19,7 +19,7 @@ export function createVideoReviewStatusHandler({
     if (!['draft', 'coach_approved', 'shared', 'invalid'].includes(nextStatus)) return
     if (nextStatus === 'shared' && analysis.status !== 'coach_approved') return
     if (nextStatus === 'shared' && videoAnalysisFeedbackDirty) {
-      showFlash('Gem feedbacken før du deler den', 'error')
+      showFlash('Gem feedbacken først, så kan du dele den', 'error')
       return
     }
     if (nextStatus === 'shared') {
@@ -62,9 +62,9 @@ export function createVideoReviewStatusHandler({
       setVideoAnalysisReview(current => current?.id === analysis.id
         ? { ...current, status: nextStatus } : current)
       const message = nextStatus === 'coach_approved'
-        ? 'Videoanalyse godkendt til personlig baseline. Næste trin: gennemgå feedbacken, og vælg Del feedback med atlet.'
+        ? 'Godkendt til baseline. Atleten ser intet endnu. Næste skridt: ret feedbacken, og tryk Del feedback med atlet.'
         : nextStatus === 'shared'
-          ? 'Feedback delt med atleten'
+          ? 'Feedback delt. Atleten kan se den i appen.'
           : nextStatus === 'invalid'
             ? 'Videoanalyse udeladt fra personlig baseline'
             : 'Videoanalyse flyttet tilbage til kladde'
