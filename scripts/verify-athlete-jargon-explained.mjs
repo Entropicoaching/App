@@ -61,7 +61,7 @@ assert.match(
 )
 assert.match(
   allAthleteCode,
-  /Til alt andet — status, spørgsmål og det der ellers fylder\./,
+  /Til alt andet: status, spørgsmål og det, der ellers fylder\./,
   '"Beskeder"-sporet skal forklare hvad det er til',
 )
 

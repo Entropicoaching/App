@@ -89,7 +89,7 @@ return (
               )
               return (
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginBottom: '0.5rem' }}>
-                  Dit mål er <span style={{ color: diff > 0 ? '#6cba6c' : '#c8923a' }}>{diff > 0 ? '+' : ''}{diff} kcal</span> ift. vedligeholdelse — {diff > 0 ? 'overskud (bulk)' : 'underskud (cut)'}
+                  Dit mål er <span style={{ color: diff > 0 ? '#6cba6c' : '#c8923a' }}>{diff > 0 ? '+' : ''}{diff} kcal</span> ift. vedligeholdelse: {diff > 0 ? 'overskud (bulk)' : 'underskud (cut)'}
                 </div>
               )
             })()}
@@ -108,7 +108,7 @@ return (
 
     {frequentFoods.length > 0 && (
       <div style={{ marginBottom: '0.75rem' }}>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.4rem' }}>Ofte brugt — tryk for at logge</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.4rem' }}>Ofte brugt. Tryk for at logge</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
           {frequentFoods.map((f, i) => (
             <button
@@ -140,7 +140,7 @@ return (
     {showTemplates && (
       <div style={{ marginBottom: '0.75rem', background: '#141410', border: '1px solid rgba(237,234,226,0.07)' }}>
         {mealTemplates.length === 0 ? (
-          <div style={{ padding: '0.75rem 1rem', fontSize: '0.8rem', color: '#4a4844' }}>Ingen skabeloner endnu — log et måltid og gem det nedenfor.</div>
+          <div style={{ padding: '0.75rem 1rem', fontSize: '0.8rem', color: '#4a4844' }}>Ingen skabeloner endnu. Log et måltid og gem det som skabelon nedenfor.</div>
         ) : (
           mealTemplates.map(t => (
             <div key={t.id} style={{ padding: '0.75rem 1rem', borderBottom: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
@@ -173,7 +173,7 @@ return (
 
     {searchResults.length > 0 && (
       <>
-      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.35rem' }}>Tryk + for hurtig-log · tryk navnet for at vælge mængde</div>
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.35rem' }}>Tryk + for at logge med det samme. Tryk på navnet for at vælge mængde</div>
       <div style={{ background: '#141410', border: '1px solid rgba(237,234,226,0.13)', marginBottom: '0.75rem', maxHeight: '240px', overflowY: 'auto' }}>
         {searchResults.map((f, i) => (
           <div
@@ -210,7 +210,7 @@ return (
               })()}
               <button
                 onClick={e => { e.stopPropagation(); quickAddSearchFood(f) }}
-                title="Hurtig-tilføj 1 portion — tryk navnet for at vælge mængde"
+                title="Tilføj 1 portion. Tryk på navnet for at vælge mængde"
                 style={{ flexShrink: 0, width: '44px', height: '44px', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', borderRadius: '50%', border: '1px solid rgba(200,146,58,0.5)', background: 'rgba(200,146,58,0.1)', color: '#c8923a', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >+</button>
             </div>
@@ -282,7 +282,7 @@ return (
     {showCreateFood && (
       <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#141410', border: '1px solid rgba(200,146,58,0.2)' }}>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.75rem' }}>
-          Makroer pr. 100g — gemmes til din personlige liste
+          Makroer pr. 100g. Gemmes på din egen liste
         </div>
         <div style={{ marginBottom: '0.6rem' }}>
           <div style={s.fieldLabel}>Navn</div>
@@ -297,7 +297,7 @@ return (
           ))}
         </div>
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>
-          Valgfri enhed — gør det muligt at logge i stk/portion i stedet for gram
+          Valgfri enhed. Så kan du logge i stk eller portioner i stedet for gram
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
           <div>
@@ -324,7 +324,7 @@ return (
 
   {/* Meal log */}
   <div style={s.card}>
-    <div style={s.cardLabel}>{kostDate === today() ? 'Dagens måltider' : `Måltider — ${dateLabel(kostDate)}`}</div>
+    <div style={s.cardLabel}>{kostDate === today() ? 'Dagens måltider' : `Måltider, ${dateLabel(kostDate)}`}</div>
 
     {logs.length === 0 ? (
       <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen måltider logget endnu i dag.</div>

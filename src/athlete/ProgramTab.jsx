@@ -181,7 +181,7 @@ export default function ProgramTab({
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: low ? '#e05555' : '#c8923a', marginBottom: '0.3rem' }}>Parathed {sc}/100 i dag</div>
                           <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.6 }}>
                             {low
-                              ? 'Lav parathed. Overvej at skrue intensiteten ned, droppe de sidste sæt, eller tage en let session — og skriv til din coach hvis det varer ved.'
+                              ? 'Lav parathed. Du kan skrue intensiteten ned, droppe de sidste sæt, eller tage en let session. Skriv til din coach, hvis det varer ved.'
                               : 'Moderat parathed. Kør planen, men lyt til kroppen og pres ikke topsæt hvis det føles tungt.'}
                           </div>
                         </div>
@@ -221,7 +221,7 @@ export default function ProgramTab({
                     const firstDate = phase.weeks[0]?.start_date
                     const lastStart = phase.weeks[phase.weeks.length - 1]?.start_date
                     const dateRange = firstDate && lastStart
-                      ? `${fmt(firstDate)} – ${fmt(new Date(new Date(lastStart + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
+                      ? `${fmt(firstDate)} til ${fmt(new Date(new Date(lastStart + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
                       : null
 
                     const goToWeek = (gi) => {
@@ -568,7 +568,7 @@ export default function ProgramTab({
                                           })}
                                         >
                                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Opvarmningssæt —</span>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Opvarmningssæt</span>
                                             {isEditingWeight ? (
                                               <input
                                                 autoFocus
@@ -845,7 +845,7 @@ export default function ProgramTab({
                                             opacity: setConfirm[key] === 'fading' ? 0 : 1,
                                             transition: 'opacity 0.3s ease',
                                           }}>
-                                            {setConfirm[key] === 'error' ? 'Fejl — prøv igen' : 'Gemt ✓'}
+                                            {setConfirm[key] === 'error' ? 'Ikke gemt. Prøv igen' : 'Gemt ✓'}
                                           </div>
                                         )}
                                       </div>

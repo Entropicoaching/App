@@ -51,13 +51,13 @@ function Ramme({
               { rpe: '10',  label: 'Ingen gentagelser tilbage' },
               { rpe: '9.5', label: 'Muligvis 1 tilbage' },
               { rpe: '9',   label: '1 tilbage' },
-              { rpe: '8.5', label: '1–2 tilbage' },
+              { rpe: '8.5', label: '1 til 2 tilbage' },
               { rpe: '8',   label: '2 tilbage' },
-              { rpe: '7.5', label: '2–3 tilbage' },
+              { rpe: '7.5', label: '2 til 3 tilbage' },
               { rpe: '7',   label: '3 tilbage' },
-              { rpe: '6.5', label: '3–4 tilbage' },
+              { rpe: '6.5', label: '3 til 4 tilbage' },
               { rpe: '6',   label: '4 tilbage' },
-              { rpe: '5.5', label: '4–5 tilbage' },
+              { rpe: '5.5', label: '4 til 5 tilbage' },
             ].map(({ rpe, label }) => (
               <div key={rpe} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.45rem 0', borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
                 <span style={{ fontSize: '0.82rem', color: '#c8923a', minWidth: '36px', textAlign: 'right' }}>{rpe}</span>

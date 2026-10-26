@@ -44,7 +44,7 @@ function HjemTab({
               Du er på <em style={{ fontStyle: 'italic', color: '#5b9bb5' }}>ferie</em>
             </h1>
             <div style={{ fontSize: '0.95rem', color: '#7a7770', marginTop: '0.85rem', maxWidth: '320px', lineHeight: 1.5 }}>
-              Nyd pausen — lad kroppen restituere. Din træning venter, når du er tilbage.
+              Nyd pausen og lad kroppen hvile. Din træning venter, når du er tilbage.
             </div>
             {holidayReturn && (
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#5b9bb5', marginTop: '1.5rem', padding: '0.5rem 1rem', border: '1px solid rgba(91,155,181,0.3)', borderRadius: 4 }}>
@@ -659,7 +659,7 @@ function HjemTab({
                   <div style={s.cardLabel}>Dine rekorder</div>
                   {prsError && (
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.04em', color: '#7a7770', marginBottom: bestList.length || hasMax ? '0.75rem' : 0 }}>
-                      Rekorder kunne ikke hentes lige nu. Prøver igen i baggrunden…
+                      Rekorderne kunne ikke hentes lige nu.
                     </div>
                   )}
                   {hasMax && (
@@ -714,7 +714,7 @@ function HjemTab({
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', color: '#a8a498', letterSpacing: '0.06em', textTransform: 'uppercase' }}>bedste e1RM pr. uge, kg</span>
                 </div>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', color: '#a8a498', lineHeight: 1.5, marginBottom: '0.5rem' }}>
-                  e1RM er et regnestykke ud fra din vægt og dine reps, der viser hvor stærk du cirka er lige nu — ikke et forsøg du faktisk har taget.
+                  e1RM er et regnestykke ud fra din vægt og dine reps. Det viser cirka, hvor stærk du er lige nu. Det er ikke et forsøg, du har taget.
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '0.5rem' }}>
                   {liftProgress.filter(sr => sr.points.length >= 2).map(sr => (

@@ -124,7 +124,7 @@ export default function VolumenTab({ volumeLogs, volumeLoading }) {
                   <>
                     <VolumenGraf uger={uger} grupper={grupperTrend} />
                     <div style={{ fontSize: '0.56rem', color: '#4a4844', marginTop: '0.9rem', lineHeight: 1.5 }}>
-                      Hver række skalerer efter sin egen gruppe — søjlernes højde kan ikke
+                      Hver række skalerer efter sin egen gruppe. Søjlernes højde kan ikke
                       sammenlignes på tværs af grupper, kun uge for uge inden for samme række.
                       Tallet til højre er seneste uges "i alt".
                     </div>

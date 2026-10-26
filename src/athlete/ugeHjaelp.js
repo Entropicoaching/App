@@ -92,7 +92,7 @@ function fmtWeekRange(start) {
   if (!start) return null
   const end = new Date(start.getTime() + 6 * 86400000)
   const f = (d) => d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
-  return `${f(start)} – ${f(end)}`
+  return `${f(start)} til ${f(end)}`
 }
 // Valgfri fast ugedag pr. session (0=mandag .. 6=søndag). null = ingen fast dag.
 const WEEKDAYS_LONG = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']

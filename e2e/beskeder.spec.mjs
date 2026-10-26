@@ -16,7 +16,7 @@ export async function sendAthleteMessage(page, { appUrl, outDir, text }) {
   await page.getByRole('button', { name: 'Mere', exact: true }).waitFor({ state: 'visible', timeout: 15000 })
 
   await page.getByRole('button', { name: /Beskeder/ }).click()
-  await page.locator('input[placeholder="Skriv en besked til din coach..."]').fill(text)
+  await page.locator('input[placeholder="Skriv til din coach"]').fill(text)
   await page.getByRole('button', { name: 'Send', exact: true }).click()
   await page.getByText(text, { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
   await shot('01-atlet-sender')

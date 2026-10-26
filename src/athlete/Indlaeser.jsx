@@ -7,7 +7,7 @@ function Indlaeser({ backBtn, loadError }) {
     <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1.5rem', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
       {loadError ? (
         <>
-          <div style={{ color: '#7a7770' }}>Kunne ikke indlæse data.</div>
+          <div style={{ color: '#7a7770' }}>Dataene kunne ikke hentes. Tjek din forbindelse og prøv igen.</div>
           {backBtn || <button style={s.btnGhost} onClick={() => window.location.reload()}>Prøv igen</button>}
         </>
       ) : 'Indlæser...'}

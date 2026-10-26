@@ -42,7 +42,7 @@ export default function BeskederTab({
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '0.8rem' }}>
                 {msgTrack === 'teknik'
                   ? 'Til spørgsmål om teknik og løft, og til coachens videofeedback.'
-                  : 'Til alt andet — status, spørgsmål og det der ellers fylder.'}
+                  : 'Til alt andet: status, spørgsmål og det, der ellers fylder.'}
               </div>
 
               <div style={s.card}>
@@ -119,7 +119,7 @@ export default function BeskederTab({
                   <input
                     style={{ ...s.fieldInput, flex: 1 }}
                     type="text"
-                    placeholder={msgTrack === 'teknik' ? 'Skriv om teknik eller løft…' : 'Skriv en besked til din coach...'}
+                    placeholder={msgTrack === 'teknik' ? 'Skriv om teknik eller løft…' : 'Skriv til din coach'}
                     value={messageInput}
                     onChange={e => setMessageInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendAthleteMessage()}

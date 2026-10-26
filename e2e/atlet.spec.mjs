@@ -44,7 +44,7 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
   await page.getByText('Dag 1 — Squat', { exact: true }).click()
 
   // Opvarmning vises for øvelsen (Squat har recommended_weight >= 20, se fixtures.mjs).
-  await page.getByText('Opvarmningssæt —').waitFor({ state: 'visible', timeout: 10000 })
+  await page.getByText('Opvarmningssæt', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
   await shot('03-program-opvarmning')
 
   // Log tre sæt med interval-reps (4, 5, 6) — reps-feltet er redigerbart fordi
