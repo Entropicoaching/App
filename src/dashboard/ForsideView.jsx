@@ -17,7 +17,7 @@ export default function ForsideView({
   loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
   setAthleteSortMode, setHiddenAthleteIds, setLoading, setSelectedAthlete, setShowAllAthletes, setShowHiddenAthletes,
   setView, showAllAthletes, showHiddenAthletes, trainingSignalsError, trainingSignalUpdatingKey, unreadCounts,
-  videoMeasurementByAthlete, videoReviewQueueError,
+  videoMeasurementByAthlete, videoReviewQueueError, coachSvarEnabled = false,
 }) {
           const visibleAthletes = athletes
             .filter(ath => !hiddenAthleteIds.has(ath.id))
@@ -159,9 +159,9 @@ export default function ForsideView({
                       // unread_messages/video_drafts). Automatiseringsfejl har
                       // sin egen "Markeret som set" i selve Indbakken.
                       const briefingPointKey = coachBriefingPointKey(item)
-                      const briefingSeen = briefingPointKey ? Boolean(coachBriefingSeen[briefingPointKey]) : false
-                      const briefingSeenSaving = briefingPointKey && coachBriefingSeenSavingKey === briefingPointKey
-                      const canMarkBriefingSeen = briefingPointKey && (item.kind === 'message' || item.kind === 'video')
+                      const briefingSeen = briefingPointKey && !(coachSvarEnabled && item.kind === 'message') ? Boolean(coachBriefingSeen[briefingPointKey]) : false
+                      const briefingSeenSaving = briefingPointKey && (coachBriefingSeenSavingKey === briefingPointKey || coachBriefingSeenSavingKey === item.key)
+                      const canMarkBriefingSeen = briefingPointKey && (item.kind === 'message' || item.kind === 'video' || (coachSvarEnabled && item.kind === 'note'))
                       // Telefon: overskrift og handling paa to linjer i stedet for een med "…" (ordre 433, C5).
                       const clip = isMobile
                         ? { overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflowWrap: 'anywhere' }

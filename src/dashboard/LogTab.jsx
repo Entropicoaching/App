@@ -6,9 +6,18 @@ import { erTungtSaet, erDeloadBlok } from '../exerciseProgress.js'
 import { parsePlannedRpe } from '../dashboardShared'
 // ORDRE 456 (A8): dagen i dansk tid, ikke UTC (logged_at.slice(0, 10)).
 import { danskDag, danskDatoTekst } from '../danskDato'
+import { coachNoteKey } from './coachSvar.js'
+
+function NoteSet({ coachSvar, athleteId, type, id, text }) {
+  const noteKey = coachNoteKey(athleteId, type, id, text)
+  if (!coachSvar?.enabled || !noteKey) return null
+  return coachSvar.seenNotes.includes(noteKey)
+    ? <span style={{ color: '#6cba6c', marginLeft: '0.4rem' }}>Set</span>
+    : <button type="button" onClick={() => coachSvar.markNoteSeen({ noteKey })} style={{ minWidth: 44, minHeight: 44, fontSize: '0.75rem', marginLeft: '0.4rem', background: 'transparent', color: '#c8923a', border: '1px solid rgba(200,146,58,0.3)', cursor: 'pointer' }}>Set</button>
+}
 
 export default function LogTab({
-  athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
+  athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks, athleteId, coachSvar,
 }) {
   // Telefon: saet og noter i Log skal kunne laeses uden at zoome (ordre 433).
   const chipSize = isMobile ? '0.72rem' : '0.54rem'
@@ -49,7 +58,7 @@ export default function LogTab({
                 const date = danskDag(log.logged_at)
                 const sessId = sess?.id || 'unknown'
                 const key = `${date}|${sessId}`
-                if (!grouped[key]) grouped[key] = { date, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, blok: sess?.weeks?.block_name, sessionRating: sess?.athlete_rating ?? null, sessionComment: sess?.athlete_comment ?? null, exerciseMap: {} }
+                if (!grouped[key]) grouped[key] = { date, sessionId: sess?.id, sessionTitle: sess?.title || '—', weekNum: sess?.weeks?.week_number, blok: sess?.weeks?.block_name, sessionRating: sess?.athlete_rating ?? null, sessionComment: sess?.athlete_comment ?? null, exerciseMap: {} }
                 const exId = log.exercise_id
                 if (!grouped[key].exerciseMap[exId]) {
                   grouped[key].exerciseMap[exId] = {
@@ -61,7 +70,7 @@ export default function LogTab({
                     sets: [],
                   }
                 }
-                grouped[key].exerciseMap[exId].sets.push({ n: log.set_number, weight: log.weight, reps: log.reps_completed, note: log.note, rpe_actual: log.rpe_actual, rpe_planned: parsePlannedRpe(log.exercises?.intensity), skipped: log.skipped })
+                grouped[key].exerciseMap[exId].sets.push({ id: log.id, n: log.set_number, weight: log.weight, reps: log.reps_completed, note: log.note, rpe_actual: log.rpe_actual, rpe_planned: parsePlannedRpe(log.exercises?.intensity), skipped: log.skipped })
               }
               const logSessions = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date))
 
@@ -142,13 +151,13 @@ export default function LogTab({
                           </div>
                         </div>
 
-                        {sess.sessionRating && (
+                        {(sess.sessionRating || (coachSvar?.enabled && sess.sessionComment)) && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', letterSpacing: '0.04em' }}>
+                            {sess.sessionRating && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', letterSpacing: '0.04em' }}>
                               {'★'.repeat(sess.sessionRating)}{'☆'.repeat(5 - sess.sessionRating)}
-                            </div>
+                            </div>}
                             {sess.sessionComment && (
-                              <div style={{ fontSize: '0.75rem', color: '#7a7770', fontStyle: 'italic' }}>{sess.sessionComment}</div>
+                              <div style={{ fontSize: '0.75rem', color: '#7a7770', fontStyle: 'italic' }}>{sess.sessionComment}<NoteSet {...{ coachSvar, athleteId }} type="session" id={sess.sessionId} text={sess.sessionComment} /></div>
                             )}
                           </div>
                         )}
@@ -191,6 +200,7 @@ export default function LogTab({
                                   if (set.skipped) return (
                                     <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: chipSize, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.06)', padding: '0.2rem 0.5rem', color: '#4a4844' }}>
                                       <span>S{set.n} </span><span>✕</span>
+                                      {coachSvar?.enabled && set.note && <span style={{ marginLeft: '0.3rem' }}>{set.note}<NoteSet {...{ coachSvar, athleteId }} type="set" id={set.id} text={set.note} /></span>}
                                     </div>
                                   )
                                   const rpeColor = set.rpe_actual != null && set.rpe_planned != null
@@ -206,7 +216,7 @@ export default function LogTab({
                                           RPE {set.rpe_actual}{set.rpe_planned != null ? `/${set.rpe_planned}` : ''}
                                         </span>
                                       )}
-                                      {set.note && <span style={{ color: isMobile ? '#9a968c' : '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}</span>}
+                                      {set.note && <span style={{ color: isMobile ? '#9a968c' : '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}<NoteSet {...{ coachSvar, athleteId }} type="set" id={set.id} text={set.note} /></span>}
                                     </div>
                                   )
                                 })}

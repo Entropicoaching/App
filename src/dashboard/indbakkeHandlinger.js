@@ -7,13 +7,14 @@ import { formatMessageTime } from '../messageTime.js'
 import { coachBriefingPointKey, coachBriefingSeenErrorMessage } from '../coachBriefingSeen'
 import { supabase } from '../supabase'
 import { RESOLVE_AUTOMATION_ALERT_RPC, automationAlertResolveErrorMessage } from '../automationAlerts'
-import { trainingSignalFingerprint } from '../coachInboxState'
+import { coachMessageTrack, trainingSignalFingerprint } from '../coachInboxState'
 
 export function lavIndbakkeHandlinger({
   athletes, coachMsgTrack, fetchLatestMessages, fetchMessages, messageInput, messageThreadAthleteRef,
   selectedAthlete, sendingMessage, session, setAutomationAlertActionError, setAutomationAlerts, setAutomationAlertUpdatingId,
   setCoachBriefingSeen, setCoachBriefingSeenSavingKey, setMessageInput, setMessages, setMessageSendError, setSendingMessage,
   setTrainingSignals, setTrainingSignalUpdatingKey, showFlash,
+  coachSvarEnabled = false, messageSeenPendingRef, setUnreadByTrack, setUnreadCounts,
 }) {
   // "Set" på et punkt under "Kræver dit blik" (ORDRE 325): dæmper punktet i
   // appen OG lader n8n's Coach Briefing-mail se at Marc allerede har set det
@@ -102,6 +103,45 @@ export function lavIndbakkeHandlinger({
     await fetchLatestMessages(athletes.map(athlete => athlete.id))
   }
 
+  async function markMessageSeen({ athleteId, messageId, track, through }) {
+    if (!coachSvarEnabled || !session?.user?.id || messageSeenPendingRef.current ||
+      !athletes.some(athlete => athlete.id === athleteId)) return
+    if (!messageId && (!['besked', 'teknik'].includes(track) || !Number.isFinite(Date.parse(through)))) return
+    const savingKey = messageId || `message-${athleteId}-${track}`
+    messageSeenPendingRef.current = true
+    setCoachBriefingSeenSavingKey(savingKey)
+    try {
+      let query = supabase.from('messages').update({ read_by_coach: true })
+        .eq('athlete_id', athleteId).eq('sender_role', 'athlete').eq('read_by_coach', false)
+      if (messageId) query = query.eq('id', messageId)
+      else {
+        // Kun beskeder i den viste opgave. En ny besked under gemning forbliver ulæst.
+        query = query.lte('created_at', through)
+        query = track === 'teknik' ? query.eq('category', 'teknik') : query.or('category.eq.besked,category.is.null')
+      }
+      const { data, error } = await query.select('id,category')
+      if (error || !data?.length) throw error || new Error('Ingen beskeder opdateret')
+      const updatedIds = new Set(data.map(message => message.id))
+      if (messageThreadAthleteRef.current === athleteId) {
+        setMessages(current => current.map(message => updatedIds.has(message.id) ? { ...message, read_by_coach: true } : message))
+      }
+      const counts = { besked: 0, teknik: 0 }
+      for (const message of data) counts[coachMessageTrack(message)]++
+      setUnreadCounts(current => ({ ...current, [athleteId]: Math.max(0, (current[athleteId] || 0) - data.length) }))
+      setUnreadByTrack(current => ({ ...current, [athleteId]: {
+        besked: Math.max(0, (current[athleteId]?.besked || 0) - counts.besked),
+        teknik: Math.max(0, (current[athleteId]?.teknik || 0) - counts.teknik),
+      } }))
+      await fetchLatestMessages(athletes.map(athlete => athlete.id))
+      showFlash('Markeret som set.', 'success')
+    } catch {
+      showFlash('Kunne ikke markere som set. Prøv igen.', 'error')
+    } finally {
+      messageSeenPendingRef.current = false
+      setCoachBriefingSeenSavingKey(null)
+    }
+  }
+
   async function sendCoachMessage() {
     const content = messageInput.trim()
     if (!content || !selectedAthlete || sendingMessage) return
@@ -136,7 +176,7 @@ export function lavIndbakkeHandlinger({
   }
 
   return {
-    handleCoachBriefingSeen, handleAutomationAlert, handleTrainingSignal, markMessagesRead, sendCoachMessage, togglePin,
+    handleCoachBriefingSeen, handleAutomationAlert, handleTrainingSignal, markMessagesRead, markMessageSeen, sendCoachMessage, togglePin,
     formatMsgTime,
   }
 }

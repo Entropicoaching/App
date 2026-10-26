@@ -23,7 +23,7 @@ export function lavLaesninger({
   setMessages, setMessageSendError, setMessageThreadError, setProfilesLastSeen, setSnoozedAthletes, setTodayData,
   setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
   setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
-  setWeeks, videoCoachAthletesRef,
+  setWeeks, videoCoachAthletesRef, coachSvarEnabled = false,
 }) {
   async function refreshCoachInbox() {
     return inboxRefreshRunnerRef.current(async () => {
@@ -32,6 +32,7 @@ export function lavLaesninger({
         const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
         const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals(), fetchAutomationAlerts(), fetchCoachBriefingSeen()]
         if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
+        if (coachSvarEnabled && athleteIds.length) requests.push(fetchCalendarWeeks(athleteIds), fetchCalendarProgress(athleteIds))
         const results = await Promise.allSettled(requests)
         setInboxRefreshStatus(summarizeRefreshResults(results))
       } finally {
@@ -183,12 +184,13 @@ export function lavLaesninger({
         planned_sets: plannedSets,
         planned_tonnage: plannedTonnage,
         // ORDRE 428 (C2): ugens pas med atletens vurdering og kommentar.
-        session_voices: sessions.map(sess => ({ order: sess.session_order, rating: sess.athlete_rating, comment: sess.athlete_comment })),
+        session_voices: sessions.map(sess => ({ id: sess.id, order: sess.session_order, rating: sess.athlete_rating, comment: sess.athlete_comment })),
       })
     }
     // Sortér uger pr. atlet efter ugenummer (stigende)
     for (const aid in map) map[aid].sort((a, b) => a.week_number - b.week_number)
     setCalendarWeeks(map)
+    return true
   }
 
   async function fetchCalendarProgress(athleteIds) {
@@ -200,7 +202,7 @@ export function lavLaesninger({
     // tonnage, pr. programuge) uden endnu en rundtur.
     const { data } = await supabase
       .from('exercise_logs')
-      .select('athlete_id, logged_at, weight, reps_completed, skipped, note, exercises(reps, recommended_weight, sessions(id, session_order, weeks(week_number)))')
+      .select('id, athlete_id, logged_at, weight, reps_completed, skipped, note, exercises(reps, recommended_weight, sessions(id, session_order, weeks(week_number)))')
       .in('athlete_id', athleteIds)
       .gte('logged_at', since.toISOString())
       .order('logged_at', { ascending: false })
@@ -220,7 +222,7 @@ export function lavLaesninger({
       const c = completion[aid][wn]
       // ORDRE 428 (C2): sæt-noter tælles også fra sprungne sæt (atleten
       // skriver ofte hvorfor).
-      if (log.note) c.notes.push({ order: log.exercises?.sessions?.session_order, note: log.note })
+      if (log.note) c.notes.push({ id: log.id, order: log.exercises?.sessions?.session_order, note: log.note })
       // ORDRE 1588: RPE-uafhængige tegn (skip, færre reps end planlagt).
       const tegn = logTegn(log)
       if (tegn.sprunget) c.sprungneSaet += 1
@@ -234,6 +236,7 @@ export function lavLaesninger({
     }
     setAthleteCurrentWeek(map)
     setAthleteWeekCompletion(completion)
+    return true
   }
 
   async function fetchProfilesLastSeen(athletesList) {

@@ -11,7 +11,7 @@ export function useDashboardEffekter({
   fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
   isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
   refreshCoachInbox, selectedAthlete, snoozeMigratedRef, videoAnalysisReview, videoReviewOpenedRef, videoReviewRequest,
-  view, weeksLogsLoadedForRef,
+  view, weeksLogsLoadedForRef, coachSvarEnabled = false,
 }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps -- kører bevidst kun ved mount af Dashboard; session.user.id er fast for instansens levetid
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
@@ -67,10 +67,10 @@ export function useDashboardEffekter({
   useEffect(() => {
     if (activeTab === 'beskeder' && selectedAthlete?.id) {
       fetchMessages(selectedAthlete.id)
-      markMessagesRead(selectedAthlete.id, coachMsgTrack)
+      if (!coachSvarEnabled) markMessagesRead(selectedAthlete.id, coachMsgTrack)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- markMessagesRead læser athletes synkront ved kørsel, ikke en ældre snapshot
-  }, [activeTab, selectedAthlete?.id, coachMsgTrack])
+  }, [activeTab, selectedAthlete?.id, coachMsgTrack, coachSvarEnabled])
 
   useEffect(() => {
     if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete?.id) {
@@ -153,5 +153,5 @@ export function useDashboardEffekter({
     }
     // Funktionskaldet læser seneste atletliste fra ref; view styrer abonnementets levetid.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, loading, loadError])
+  }, [view, loading, loadError, coachSvarEnabled])
 }

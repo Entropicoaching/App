@@ -97,7 +97,7 @@ export function lavNavigation({
       return
     }
     const priorityContext = coachPriorityTaskContext(item)
-    if (item.kind === 'signal') {
+    if (item.kind === 'signal' || item.kind === 'note') {
       openProfile(item.athlete, 'log', returnView, item.key, priorityContext)
       return
     }
