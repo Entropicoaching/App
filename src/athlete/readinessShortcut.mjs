@@ -11,3 +11,11 @@ export function openReadinessSurface({ setTab, setMereOpen, setReadinessOpen, re
     card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
   }))
 }
+
+// Navigering lukker kun genvejsfladen. Felter og udkast bevares.
+export function readinessNavigation(setTab, setReadinessOpen) {
+  return destination => {
+    setReadinessOpen(false)
+    setTab(destination)
+  }
+}

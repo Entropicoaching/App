@@ -1,3 +1,4 @@
+import { weightTrendText } from './weightTrend.mjs'
 import { exerciseSetView, exerciseViewRows, bestExerciseRecords } from '../exerciseSetView'
 // HJEM-fanen (ferie-skaermen og forsiden: overskrift, ugestrimmel, Dagens pas,
 // pauselinje, chips og alt bag "Mere") — JSX'en flyttet uaendret ud af
@@ -7,7 +8,7 @@ import { exerciseSetView, exerciseViewRows, bestExerciseRecords } from '../exerc
 import { isMainLift } from '../warmup'
 import { findDagensPas, isSessionDone } from '../nextSet'
 import { shouldNudgeCheckin } from '../checkinReminder'
-import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange } from '../readinessInsight'
+import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange, checkinNoteTimingText } from '../readinessInsight'
 import { s, today } from '../athleteShared'
 import { weekStartDate, fmtWeekRange, WEEKDAYS_LONG } from './ugeHjaelp'
 import UgensStatusKort from './UgensStatusKort'
@@ -494,6 +495,7 @@ function HjemTab({
               const coachSummary = summarizeReadinessForCoach(historyWithToday)
               const planChange = lastCheckinDrivenChange(historyWithToday, allWeeks)
               const fmtD = str => { const d = new Date(str + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
+              const noteTiming = planChange && checkinNoteTimingText(planChange, fmtD)
               return (
                 <>
                   {coachSummary && (
@@ -513,9 +515,9 @@ function HjemTab({
                   )}
                   {planChange && (
                     <div style={s.card}>
-                      <div style={s.cardLabel}>Sidst det gjorde en forskel</div>
+                      <div style={s.cardLabel}>{noteTiming.heading}</div>
                       <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.55 }}>
-                        Efter dit check-in d. {fmtD(planChange.checkinDate)} med lav parathed, skrev din coach denne note til ugen der startede d. {fmtD(planChange.weekStartDate)}:
+                        {noteTiming.description}
                       </div>
                       <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#edeae2', fontStyle: 'italic' }}>
                         "{planChange.note}"
@@ -559,20 +561,8 @@ function HjemTab({
               const last5 = sorted.slice(-5).map(l => l.weight).sort((a, b) => a - b)
               const currentWeight = last5.length > 0 ? last5[Math.floor(last5.length / 2)] : null
 
-              // Trend: avg of last 7 vs avg of prior 7
-              let trendText = null
-              if (sorted.length >= 4) {
-                const r = sorted.slice(-7).map(l => l.weight)
-                const p = sorted.slice(Math.max(0, sorted.length - 14), sorted.length - 7).map(l => l.weight)
-                if (r.length >= 2 && p.length >= 1) {
-                  const rAvg = r.reduce((s, v) => s + v, 0) / r.length
-                  const pAvg = p.reduce((s, v) => s + v, 0) / p.length
-                  const diff = rAvg - pAvg
-                  if (Math.abs(diff) < 0.3) trendText = '= stabil'
-                  else if (diff > 0) trendText = `↑ +${diff.toFixed(1)}kg siden forrige uge`
-                  else trendText = `↓ ${Math.abs(diff).toFixed(1)}kg siden forrige uge`
-                }
-              }
+              // Gennemsnit af de seneste syv mod op til syv tidligere vejninger.
+              const trendText = weightTrendText(sorted)
 
               // SVG line chart
               let chartEl = null
@@ -616,10 +606,11 @@ function HjemTab({
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.25rem' }}>
                       <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', color: '#edeae2', lineHeight: 1 }}>{currentWeight}</span>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>kg</span>
-                      {trendText && (
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', letterSpacing: '0.04em' }}>{trendText}</span>
-                      )}
                     </div>
+                  )}
+
+                  {trendText && (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '0.5rem' }}>{trendText}</div>
                   )}
 
                   {hasChart ? chartEl : (

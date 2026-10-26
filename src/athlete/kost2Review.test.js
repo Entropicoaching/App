@@ -16,7 +16,7 @@ test('Review: revoke an open cost page without remount in both presentations', (
     begin(); assert.equal(costPage(AthleteView(props)), 1)
     begin(); const hidden = AthleteView({ ...props, kostValg: { 'review-a': false } })
     assert.equal(costPage(hidden), 0)
-    assert.ok(component(hidden, simple ? 'EnkelHjemTab' : 'HjemTab'))
+    assert.ok(component(hidden, simple ? 'LazyEnkelHjemTab' : 'HjemTab'))
     begin(); assert.equal(costPage(AthleteView({ ...props, kostPerAtlet: false, kostValg: {} })), 1)
   }
 })

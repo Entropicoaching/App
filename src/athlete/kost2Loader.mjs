@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { jsx } from './kost2Jsx.mjs'
 import { athleteViewUrl } from './kost2Paths.mjs'
 const root = new URL('./', import.meta.url)
-const real = new Set(['AthleteView.jsx', 'BundNav.jsx', 'NavItems.jsx', 'enkelPrototype.mjs', 'kostValg.mjs'])
+const real = new Set(['AthleteView.jsx', 'BundNav.jsx', 'NavItems.jsx', 'enkelPrototype.mjs', 'kostValg.mjs', 'readinessShortcut.mjs'])
 const files = new Map([...real].map(n => [new URL(n, root).href, n]))
 files.delete(new URL('AthleteView.jsx', root).href)
 files.set(athleteViewUrl.href, 'AthleteView.jsx')
