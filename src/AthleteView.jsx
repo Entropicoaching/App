@@ -41,7 +41,7 @@ const fremgangFactory = () => import('./athlete/FremgangTab')
 const kostFactory = () => import('./athlete/KostTab')
 const beskederFactory = () => import('./athlete/BeskederTab')
 
-export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false }) {
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false }) {
   const [tab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -622,6 +622,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {/* HJEM */}
         {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(enkelRoute)) && <HjemVisning
           enkelDel={enkelOn && enkelRoute !== 'alle' ? enkelRoute : null}
+          taskShortcuts={forenklinger === true && !enkelOn}
+          setMsgTrack={setMsgTrack}
           {...{
             allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
             forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,

@@ -76,7 +76,7 @@ const errorScreen = (onRetry) => (
   </div>
 )
 
-function App() {
+function App({ forenklinger = false } = {}) {
   const [session, setSession] = useState(null)
   const [role, setRole] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -269,7 +269,7 @@ function App() {
   if (role === 'coach') {
     viewEl = previewMode
       ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-          componentProps={{ session, role, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
+          componentProps={{ session, role, forenklinger: forenklinger === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
       : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
           componentProps={{ session, onPreviewAthlete: (athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
@@ -281,7 +281,7 @@ function App() {
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
     viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-      componentProps={{ session, role, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
+      componentProps={{ session, role, forenklinger: forenklinger === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
   }
   return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }

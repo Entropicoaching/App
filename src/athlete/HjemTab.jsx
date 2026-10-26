@@ -1,3 +1,5 @@
+import { renderAthleteShortcuts, revealWeek } from './athleteShortcuts.mjs'
+import { createElement, useRef } from 'react'
 import { weightTrendText } from './weightTrend.mjs'
 import { exerciseSetView, exerciseViewRows, bestExerciseRecords } from '../exerciseSetView'
 // HJEM-fanen (ferie-skaermen og forsiden: overskrift, ugestrimmel, Dagens pas,
@@ -23,6 +25,7 @@ import { startRestPause } from '../restPause'
 import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGrafer'
 
 function HjemTab({
+  taskShortcuts = false, setMsgTrack,
   allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
   forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
   logDagensPasSet, logInputs, logWeight, mereOpen, messages, months, now, onHoliday, readinessOpen, setReadinessOpen,
@@ -33,6 +36,7 @@ function HjemTab({
   unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
   rekordFejring, rekordGrundlagFoer, sendUgeLinje,
 }) {
+  const weekStatusRef = useRef(null)
   return (
     <>
         {tab === 'hjem' && onHoliday && (
@@ -192,6 +196,16 @@ function HjemTab({
               )
             })()}
 
+            {taskShortcuts === true && renderAthleteShortcuts(createElement, {
+              enabled: taskShortcuts, messages, sharedVideoAnalyses, sharedVideoError,
+              sharedVideoLoading, unreadMsgCount, role, athlete,
+              go: setTab, setMsgTrack, openReadiness, hasWeek: !!currentWeek,
+              openWeek: () => revealWeek({ setMereOpen, weekStatusRef,
+                requestFrame: requestAnimationFrame,
+                reducedMotion: window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches }),
+              startVideo: () => { setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) },
+            })}
+
             {/* ORDRE 330 · blok 2 — Marcs dom: forsiden var for "meget". Over
                 folden står nu kun dagens pas og ÉN række med højst tre
                 sekundære ting (parathed, besked, film et sæt — pausen har sin
@@ -242,6 +256,7 @@ function HjemTab({
               // ikke (fx uge 1), får UgensStatusKort null og siger det selv.
               const forrigeUge = (allWeeks || []).find(w => w.week_number === currentWeek.week_number - 1) || null
               return (
+                <div ref={weekStatusRef} tabIndex={-1} aria-label="Ugen som planlagt" style={{ scrollMarginTop: '5rem' }}>
                 <UgensStatusKort
                   week={currentWeek}
                   weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
@@ -253,6 +268,7 @@ function HjemTab({
                   forrigeUge={forrigeUge}
                   forrigeUgeStart={forrigeUge ? weekStartDate(allWeeks, forrigeUge.week_number) : null}
                 />
+                </div>
               )
             })()}
 
