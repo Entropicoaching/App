@@ -112,6 +112,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [coachMsgTrack, setCoachMsgTrack] = useState('besked')  // 'teknik' | 'besked'
   const [unreadByTrack, setUnreadByTrack] = useState({})
   const [latestByTrack, setLatestByTrack] = useState({})
+  const [pendingByTrack, setPendingByTrack] = useState({})
   const [unreadCounts, setUnreadCounts] = useState({})
   const [profilesLastSeen, setProfilesLastSeen] = useState({})
 
@@ -301,7 +302,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
     setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
     setAthleteWeightLogs, setAutomationAlerts, setAutomationAlertsError, setCalendarWeeks, setCoachBriefingSeen, setExerciseLibrary,
-    setHiddenAthleteIds, setInboxRefreshing, setInboxRefreshStatus, setLastBackup, setLatestByTrack, setLoadError,
+    setHiddenAthleteIds, setInboxRefreshing, setInboxRefreshStatus, setLastBackup, setLatestByTrack, setLoadError, setPendingByTrack,
     setLoading, setMeetPlan, setMeetPlanForm, setMeetResults, setMessageInboxError, setMessageInput,
     setMessages, setMessageSendError, setMessageThreadError, setProfilesLastSeen, setSnoozedAthletes, setTodayData,
     setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
@@ -472,7 +473,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     coachPriorityItems, coachPriorityCount, priorityQueueContext, nextPriorityItem, videoMeasurementByAthlete,
   } = useCoachPrioritet({
     athletes, automationAlerts, focusNextFromLinkRef, hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
-    latestByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
+    latestByTrack, pendingByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
     videoReviewQueue, view,
   })
 

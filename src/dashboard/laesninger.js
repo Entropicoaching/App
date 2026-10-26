@@ -1,3 +1,4 @@
+import { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Alt coachens side henter: atleter, kalender, indbakke (signaler, videoer,
 // automatiseringsfejl, set-markeringer, beskeder), program, logs, VideoCoach-
@@ -18,7 +19,7 @@ export function lavLaesninger({
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
   setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
   setAthleteWeightLogs, setAutomationAlerts, setAutomationAlertsError, setCalendarWeeks, setCoachBriefingSeen, setExerciseLibrary,
-  setHiddenAthleteIds, setInboxRefreshing, setInboxRefreshStatus, setLastBackup, setLatestByTrack, setLoadError,
+  setHiddenAthleteIds, setInboxRefreshing, setInboxRefreshStatus, setLastBackup, setLatestByTrack, setLoadError, setPendingByTrack,
   setLoading, setMeetPlan, setMeetPlanForm, setMeetResults, setMessageInboxError, setMessageInput,
   setMessages, setMessageSendError, setMessageThreadError, setProfilesLastSeen, setSnoozedAthletes, setTodayData,
   setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
@@ -371,10 +372,11 @@ export function lavLaesninger({
       const { data, error } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
       if (error) throw error
 
-      const summary = summarizeCoachMessages(data)
+      const summary = summarizeCoachMessages(data, { noteSignalEnabled: COACH_NOTE_SIGNAL_ENABLED })
       setUnreadCounts(summary.unreadCounts)
       setUnreadByTrack(summary.unreadByTrack)
       setLatestByTrack(summary.latestByTrack)
+      if (COACH_NOTE_SIGNAL_ENABLED) setPendingByTrack(summary.pendingByTrack)
       setMessageInboxError(null)
       return true
     } catch {

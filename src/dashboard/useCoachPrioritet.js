@@ -1,3 +1,4 @@
+import { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Coach Briefing-køen (buildCoachPriorityItems, kø-kontekst), nyeste gemte
 // måling pr. atlet og mailens deep-link-effekt. Hook kaldt nøjagtig hvor
@@ -9,7 +10,7 @@ import { coachInboxFocusDecision } from '../coachInboxState'
 
 export function useCoachPrioritet({
   athletes, automationAlerts, focusNextFromLinkRef, hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
-  latestByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
+  latestByTrack, pendingByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
   videoReviewQueue, view,
 }) {
   const coachPriorityItems = buildCoachPriorityItems({
@@ -17,6 +18,8 @@ export function useCoachPrioritet({
     trainingSignals,
     unreadByTrack,
     latestByTrack,
+    pendingByTrack,
+    noteSignalEnabled: COACH_NOTE_SIGNAL_ENABLED,
     videoReviewQueue,
     describeVideo: coachVideoPriorityDetail,
     automationAlerts,
