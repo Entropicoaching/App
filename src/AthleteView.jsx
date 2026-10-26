@@ -1,3 +1,4 @@
+import { kostSynlig, kostDestination } from './athlete/kostValg.mjs'
 import EnkelHjemTab from './athlete/EnkelHjemTab'
 const enkelFremgangFactory = () => import('./athlete/EnkelFremgangTab')
 import { previewNavigation, renderControls, renderTrainingLinks, renderMore, renderNav } from './athlete/enkelPrototype.mjs'
@@ -41,13 +42,13 @@ const fremgangFactory = () => import('./athlete/FremgangTab')
 const kostFactory = () => import('./athlete/KostTab')
 const beskederFactory = () => import('./athlete/BeskederTab')
 
-export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false }) {
-  const [tab, setLegacyTab] = useState('hjem')
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, kostPerAtlet, kostValg }) {
+  const [requestedTab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
   const HjemVisning = enkelOn ? EnkelHjemTab : HjemTab
   // Explicit preview prop only; no storage, URL or environment activation.
-  const setTab = previewNavigation(enkelOn, setLegacyTab, setEnkelRoute)
+  const navigate = previewNavigation(enkelOn, setLegacyTab, setEnkelRoute)
   const [recheckingRole, setRecheckingRole] = useState(false)
   const [recheckMsg, setRecheckMsg] = useState('')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
@@ -64,6 +65,10 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
     setRecheckMsg('Din konto er registreret som atlet — ingen coach-adgang fundet.')
   }
   const [athlete, setAthlete] = useState(null)
+  const visKost = kostSynlig(athlete, kostPerAtlet, kostValg)
+  const tab = kostDestination(requestedTab, visKost)
+  const route = enkelRoute === 'kost' && !visKost ? 'traening' : enkelRoute
+  const setTab = destination => navigate(kostDestination(destination, visKost))
   // ORDRE 263 · commit 2: den automatiske pause mellem sæt (null = ingen
   // aktiv pause). Se restPause.js.
   const [restPause, setRestPause] = useState(null)
@@ -559,7 +564,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   // Kompakt kost-status til forsiden: ét slankt, klikbart kort i stedet for to
   // store. Fylder minimalt når der ikke er logget noget ("mindre in your face"),
   // og viser tal + tynde bars når dagen er i gang. Kost-fanen har den fulde visning.
-  const kostCompact = (
+  const kostCompact = visKost && (
     <KostCompact {...{ athlete, kcalPct, proteinPct, setTab, totKcal, totProtein }} />
   )
 
@@ -602,7 +607,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       {/* Toast-pladsen (ORDRE 339 · F5): under topbaren på alle faner undtagen
           forsiden, hvor den ligger under overskrift + strimmel (se toastSlot). */}
       <IngenForbindelse {...{ offlineSnapshotAt }} />
-      {(!(tab === 'hjem' && !onHoliday) || (enkelOn && ['uge', 'dagsform'].includes(enkelRoute))) && toastSlot}
+      {(!(tab === 'hjem' && !onHoliday) || (enkelOn && ['uge', 'dagsform'].includes(route))) && toastSlot}
       {recheckMsg && !onExitPreview && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', textAlign: 'right', padding: '0.4rem 1.5rem 0' }}>{recheckMsg}</div>
       )}
@@ -610,18 +615,18 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
       {/* Page content */}
       <div style={s.page}>
 
-        {enkelOn && renderControls(createElement, { route: enkelRoute, go: setTab })}
-        {enkelOn && enkelRoute === 'mere' && renderMore(createElement, { athlete, hasMeetPlan, go: setTab })}
-        {enkelOn && enkelRoute === 'kontakt' && msgTrack === 'teknik' && role === 'athlete' && (
+        {enkelOn && renderControls(createElement, { route, go: setTab })}
+        {enkelOn && route === 'mere' && renderMore(createElement, { athlete, hasMeetPlan, go: setTab, visKost })}
+        {enkelOn && route === 'kontakt' && msgTrack === 'teknik' && role === 'athlete' && (
           <button type="button" style={{ ...s.btnPrimary, minHeight: 44 }} onClick={() => {
             if (!athlete?.id) return
             setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true)
           }}>Film et sæt</button>
         )}
-        {enkelOn && enkelRoute === 'uge' && !currentWeek && <p>Ingen programuge endnu.</p>}
+        {enkelOn && route === 'uge' && !currentWeek && <p>Ingen programuge endnu.</p>}
         {/* HJEM */}
-        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(enkelRoute)) && <HjemVisning
-          enkelDel={enkelOn && enkelRoute !== 'alle' ? enkelRoute : null}
+        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemVisning
+          enkelDel={enkelOn && route !== 'alle' ? route : null}
           taskShortcuts={forenklinger === true && !enkelOn}
           setMsgTrack={setMsgTrack}
           {...{
@@ -636,7 +641,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
             rekordFejring, rekordGrundlagFoer, sendUgeLinje,
           }}
         />}
-        {enkelOn && enkelRoute === 'traening' && renderTrainingLinks(createElement, {
+        {enkelOn && route === 'traening' && renderTrainingLinks(createElement, {
           messages, sharedVideoAnalyses, go: setTab, setMsgTrack,
         })}
 
@@ -673,12 +678,12 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {tab === 'fremgang' && (
           <LazyBoundary
             factory={enkelOn ? enkelFremgangFactory : fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={{ enkelDel: enkelOn ? enkelRoute : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
+            componentProps={{ enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
           />
         )}
 
         {/* KOST */}
-        {tab === 'kost' && (
+        {visKost && tab === 'kost' && (
           <LazyBoundary
             factory={kostFactory} label="Kost" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
@@ -738,8 +743,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         )}
       </div>
 
-      {enkelOn ? renderNav(createElement, { route: enkelRoute, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
-        <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount }} />}
+      {enkelOn ? renderNav(createElement, { route, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
+        <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount, visKost }} />}
     </div>
   )
 }
