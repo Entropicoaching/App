@@ -14,11 +14,13 @@ import { parseInputNumber, nutritionValues, finiteTotal, calendarTime } from './
 export function lavKostHandlinger({
   amount, athlete, createFood, customFoods, editGrams, editMacros, historicalMealLogs, kostDate,
   logs, onReadError, selectedFood, setAmount, setCreateFood, setCustomFoods, setEditGrams, setEditMacros,
-  setEditingLogId, setFrequentFoods, setHistoricalMealLogs, setLogs, setMealTemplates, setSearchQuery, setSearchResults, setSelectedFood,
+  setEditingLogId, setFrequentFoods, setHistoricalMealLogs, setLogs, setKostLogState, setMealTemplates, setSearchQuery, setSearchResults, setSelectedFood,
   setShowCreateFood, setShowSaveTemplate, setShowTemplates, setTemplateNameInput, setUndoPending, setUndoToast, setUnitIdx, shareFood,
   showFlash, templateNameInput, undoPending, undoTimerRef, undoToast, unitIdx, weightLogs,
 }) {
   async function fetchLogs(athleteId, date = kostDate) {
+    const reading = { athleteId, date, loading: true, error: false }
+    setKostLogState?.(reading)
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('meal_logs')
@@ -28,6 +30,11 @@ export function lavKostHandlinger({
         .order('created_at'),
       onReadError('Dagens kostlog', athleteId),
     )
+    // Only the newest read can update the new view's dated snapshot. Keep the
+    // legacy setLogs path unchanged when the feature is disabled.
+    setKostLogState?.(current => current === reading
+      ? { athleteId, date, loading: false, error: !ok, logs: ok ? data || [] : [] }
+      : current)
     if (!ok) return
     setLogs(data || [])
   }

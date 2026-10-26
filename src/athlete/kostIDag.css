@@ -1,0 +1,25 @@
+.kost-i-dag { color: #edeae2; font-size: 1rem; line-height: 1.5; text-align: left; }
+.kost-i-dag header { margin-bottom: 1.5rem; }
+.kost-i-dag h1 { color: #edeae2; font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 400; line-height: 1.2; margin: .25rem 0 0; }
+.kost-i-dag .kost-eyebrow { color: #c8923a; font-size: .85rem; margin-bottom: .4rem; }
+.kost-i-dag .kost-card { background: #1c1c18; border: 1px solid rgba(237,234,226,.12); padding: 1.1rem; margin-bottom: 1rem; }
+.kost-i-dag .kost-card h2 { color: #edeae2; font-size: 1rem; font-weight: 500; margin: 0 0 1rem; }
+.kost-i-dag .kost-goals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.kost-i-dag .kost-goals h3 { font-size: .85rem; font-weight: 400; color: #b8b4a8; margin: 0; }
+.kost-i-dag .kost-total { font-size: 1.45rem; color: #c8923a; margin: .25rem 0; }
+.kost-i-dag .kost-total span { display: block; font-size: .85rem; color: #b8b4a8; }
+.kost-i-dag .kost-muted { color: #b8b4a8; font-size: .875rem; }
+.kost-i-dag .kost-goals p { margin-top: .25rem; }
+.kost-i-dag label { display: block; margin-bottom: .4rem; font-size: .875rem; }
+.kost-i-dag input, .kost-i-dag select { width: 100%; min-height: 44px; box-sizing: border-box; border: 1px solid #666259; background: #141410; color: #edeae2; padding: .6rem; font: inherit; }
+.kost-i-dag .kost-portion { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 1rem; }
+.kost-i-dag .kost-primary, .kost-i-dag .kost-secondary, .kost-i-dag .kost-results button { min-height: 44px; padding: .7rem 1rem; font: inherit; cursor: pointer; }
+.kost-i-dag .kost-primary { background: #c8923a; color: #141410; border: 1px solid #c8923a; width: 100%; }
+.kost-i-dag .kost-secondary { background: transparent; color: #edeae2; border: 1px solid #666259; margin-bottom: 1rem; }
+.kost-i-dag button:disabled { opacity: .5; cursor: default; }
+.kost-i-dag :focus-visible { outline: 2px solid #c8923a; outline-offset: 3px; }
+.kost-i-dag .kost-results, .kost-i-dag .kost-meals { list-style: none; margin: .5rem 0 0; padding: 0; }
+.kost-i-dag .kost-results { max-height: 250px; overflow-y: auto; }
+.kost-i-dag .kost-results button { display: flex; flex-direction: column; gap: .2rem; width: 100%; text-align: left; border: 0; border-bottom: 1px solid #45423c; background: #141410; color: #edeae2; }
+.kost-i-dag .kost-meals li { display: flex; flex-direction: column; gap: .2rem; padding: .7rem 0; border-bottom: 1px solid #45423c; overflow-wrap: anywhere; }
+.kost-i-dag .kost-meals li:last-child { border-bottom: 0; padding-bottom: 0; }
