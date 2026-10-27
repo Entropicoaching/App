@@ -7,7 +7,7 @@ import { s, readinessSignal } from '../dashboardShared'
 import LazyBoundary from '../LazyBoundary'
 
 export default function OversigtTab({
-  a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
+  a, samletAtletprofil = false, athleteLogs, athleteReadiness, currentWeight, editData, editing,
   isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
   setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
   volumenKortFactory, weeks, weightTrend,
@@ -172,7 +172,7 @@ export default function OversigtTab({
                   )}
                 </div>
 
-                <div style={s.card}>
+                {!samletAtletprofil && <div style={s.card}>
                   <div style={s.cardLabel}>Kostmål</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     <div>
@@ -185,7 +185,7 @@ export default function OversigtTab({
                     </div>
                     <button style={{ ...s.btnGhost, alignSelf: 'flex-start', marginTop: '0.5rem' }} onClick={() => { setActiveTab('kost'); setEditing('setup') }}>Rediger mål</button>
                   </div>
-                </div>
+                </div>}
               </div>
 
               {/* Competition date card */}

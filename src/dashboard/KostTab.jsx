@@ -4,15 +4,15 @@
 import { s } from '../dashboardShared'
 
 export default function KostTab({
-  a, editData, editing, isMobile, saveEdit, saving,
+  a, samletAtletprofil = false, editData, editing, isMobile, saveEdit, saving,
   setEditData, setEditing, startEdit,
 }) {
   return (
               <div>
                 <div style={s.card}>
                   <div style={s.cardLabel}>
-                    Athlete setup
-                    <button style={s.btnEdit} onClick={() => startEdit('setup', { sex: a.sex || 'm', bodyweight: a.bodyweight, height: a.height, activity: a.activity || 1.55, goal: a.goal || 'maintain', kcal_target: a.kcal_target, protein_target: a.protein_target })}>Rediger</button>
+                    {samletAtletprofil ? 'Kostmål' : 'Athlete setup'}
+                    <button style={s.btnEdit} onClick={() => startEdit('setup', { sex: a.sex || 'm', bodyweight: a.bodyweight, height: a.height, activity: a.activity || 1.55, goal: a.goal || 'maintain', kcal_target: a.kcal_target, protein_target: a.protein_target })}>{samletAtletprofil ? 'Rediger mål' : 'Rediger'}</button>
                   </div>
                   {editing === 'setup' ? (
                     <div>
