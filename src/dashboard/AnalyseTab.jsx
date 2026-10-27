@@ -18,6 +18,8 @@ import { primaerKurve, primaerOverskrift } from './primaerKurve'
 import { danskDag } from '../danskDato' // ORDRE 456 (A8): PR-tidslinjen i dansk tid
 import AthleteSilentFailNote from '../AthleteSilentFailNote' // ORDRE 131 · commit 3, flyttet hertil ordre 137 · commit 1 (Dashboard.jsx splittet under 130) — eneste rendering, se RAPPORT-131.md
 
+import AnalyseSammenlign from './AnalyseSammenlign.jsx'
+import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'
 import AnalyseSamletPrototype from './AnalyseSamletPrototype'
 import { analyseSamletEnabled } from './analyseSamlet.mjs'
 
@@ -105,6 +107,10 @@ export default function AnalyseTab({
 
                   {analyseSamletEnabled(typeof window === 'undefined' ? '' : window.location.search) && (
                     <AnalyseSamletPrototype />
+                  )}
+
+                  {analyseSammenlignEnabled(typeof window === 'undefined' ? '' : window.location.search) && (
+                    <AnalyseSammenlign />
                   )}
 
                   {/* AI Rapport */}
