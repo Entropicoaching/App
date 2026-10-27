@@ -1,8 +1,10 @@
 import { createElement as h, useState } from 'react'
+import MobilitetsBibliotek from './MobilitetsBibliotek.jsx'
 import { FOCUS_LIFTS, FOCUS_NEEDS, focusPlan } from './mobilityFocus.mjs'
 
 const button = { minHeight: 48, padding: '12px 14px', border: '1px solid #736043', borderRadius: 8, background: '#24231d', color: '#edeae2', font: 'inherit', textAlign: 'left', cursor: 'pointer', whiteSpace: 'normal', overflowWrap: 'anywhere' }
 export default function MobilitetFokus({ library, warmupTemplates, onExit }) {
+  const [showLibrary, setShowLibrary] = useState(false)
   const [lift, setLift] = useState('Squat')
   const [need, setNeed] = useState('Mere dybde')
   const [started, setStarted] = useState(false)
@@ -11,8 +13,10 @@ export default function MobilitetFokus({ library, warmupTemplates, onExit }) {
   const plan = focusPlan(lift, need, library, warmupTemplates)
   const ex = plan.exercises[step]
   const choose = (label, action, active) => h('button', { key: label, type: 'button', onClick: action, 'aria-pressed': active, style: { ...button, background: active ? '#403522' : button.background, borderColor: active ? '#e0ae5c' : '#736043' } }, label)
+  if (showLibrary) return h(MobilitetsBibliotek, { library, onExit: () => setShowLibrary(false) })
   return h('section', { 'aria-label': 'Mobilitet med fokus', style: { width: '100%', minWidth: 0, boxSizing: 'border-box', color: '#edeae2', padding: '16px 0', lineHeight: 1.6 } },
     h('button', { type: 'button', style: button, onClick: onExit }, 'Tilbage til mobilitet'),
+    h('button', { type: 'button', style: button, onClick: () => setShowLibrary(true) }, 'Se øvelsesbibliotek'),
     h('p', { style: { color: '#e0ae5c', marginBottom: 4 } }, 'MOBILITET · DIT FOKUS'),
     h('h1', { style: { fontFamily: "'Playfair Display', serif", fontWeight: 400, fontSize: '1.9rem', lineHeight: 1.2 } }, done ? 'Klar til næste skridt' : 'Giv dit løft mere plads'),
     !started ? h('div', null,
