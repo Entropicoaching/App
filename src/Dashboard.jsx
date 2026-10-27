@@ -1,3 +1,5 @@
+import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
+import { COACH_FOUR_WEEKS_ENABLED, reduceFourWeekRead } from './dashboard/coachFourWeeks.mjs'
 import { calendarDay } from './calendarDate.js'
 
 import { useState, useEffect, useRef } from 'react'
@@ -60,7 +62,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort')
 
-export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false }) {
+export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
@@ -136,6 +138,9 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
   const [pickingMine, setPickingMine] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
 
+  const [fourWeekReads, setFourWeekReads] = useState({})
+  const fourWeekCapture = coachFourWeeksEnabled === true
+    ? event => setFourWeekReads(previous => reduceFourWeekRead(previous, event)) : undefined
   const [weeks, setWeeks] = useState([])
   const [openWeekId, setOpenWeekId] = useState(null)
   const [programBlockStart, setProgramBlockStart] = useState(null) // hvilken blok vises i program-listen (week_number for 1. uge, eller 'all')
@@ -149,6 +154,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
   const [approvingProgression, setApprovingProgression] = useState(false)
   // Dagens træningslogs bruges til de små aktivitetsmarkeringer i navigationen.
   const [todayData, setTodayData] = useState({ logs: [] })
+  const [videoQueueFilters, setVideoQueueFilters] = useState({ athleteId: '', lift: '' })
   const [videoReviewQueue, setVideoReviewQueue] = useState([])
   const [videoReviewQueueError, setVideoReviewQueueError] = useState(null)
   const [trainingSignals, setTrainingSignals] = useState([])
@@ -311,6 +317,8 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
     fetchVideoCoachHistory, fetchAthleteWeightLogs, fetchAthleteReadiness, fetchAthletePRs, fetchMeetResults, fetchMeetPlan,
     fetchWarmupTemplates,
   } = lavLaesninger({
+    blokFremgang: blokFremgang === true,
+    fourWeekCapture,
     setCoachActionsStatus,
     inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
     setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
@@ -423,6 +431,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
   })
 
   useDashboardEffekter({
+    coachFourWeeksEnabled,
     activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
     fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
     fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
@@ -552,7 +561,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
               isMobile, latestByTrack, messageInboxError,
               openCoachPriorityItem, openProfile, refreshCoachInbox,
               setCoachMsgTrack, trainingSignalsError,
-              trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError,
+              trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError, videoQueueFilters, setVideoQueueFilters,
             }}
           />
         )}
@@ -653,12 +662,16 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
 
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
+              <>
+              {coachFourWeeksEnabled === true && <CoachFourWeeks athlete={a} reads={fourWeekReads[a.id]} onOpenVideo={openVideoAnalysisReview} onOpenAwaitingVideo={openAwaitingAnalysisVideo} videoOpening={videoAnalysisReviewLoadingId} videoError={videoAnalysisReviewError} />}
               <OversigtTab {...{
+                blokFremgang: blokFremgang === true,
                 a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
                 isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
                 setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
                 volumenKortFactory, weeks, weightTrend,
               }} />
+              </>
             )}
 
             {/* TAB: KOST */}

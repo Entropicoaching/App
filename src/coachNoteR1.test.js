@@ -1,6 +1,7 @@
+import { assertNoteDependencies } from './coachNoteDependencyGuard.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { app, nodes, text } from './coachNoteTestHelpers.mjs'
+import { app, nodes, text, source } from './coachNoteTestHelpers.mjs'
 
 const row = { id: 'old', athlete_id: 'a', sender_role: 'athlete', category: 'teknik',
   content: 'Gammel tekniknote', created_at: '2020-01-01T10:00:00Z', read_by_coach: true }
@@ -56,4 +57,8 @@ test('R1: syntetisk loader afviser ikke-pinnede afhaengigheder', async () => {
   const load = await app()
   assert.throws(() => load('node:fs'), /Unapproved synthetic dependency/)
   assert.throws(() => load('src/not-pinned.js'), /Unapproved synthetic dependency/)
+})
+
+test('notesignalets transitive kaede har ingen net eller lagring', () => {
+  assertNoteDependencies(source)
 })

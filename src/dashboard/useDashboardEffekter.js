@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { supabase } from '../supabase'
 
 export function useDashboardEffekter({
+  coachFourWeeksEnabled = false,
   activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
   fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
   fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
@@ -87,11 +88,11 @@ export function useDashboardEffekter({
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if ((activeTab === 'hub' || activeTab === 'analyse') && selectedAthlete?.id) {
+    if ((activeTab === 'hub' || activeTab === 'analyse' || (coachFourWeeksEnabled === true && activeTab === 'oversigt')) && selectedAthlete?.id) {
       fetchVideoCoachHistory(selectedAthlete.id)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id])
+  }, [activeTab, selectedAthlete?.id, coachFourWeeksEnabled])
 
   // Et tryk i den samlede indbakke skifter først atlet og åbner derefter
   // den konkrete måling. Rækkefølgen forhindrer reviewdata fra en anden

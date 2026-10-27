@@ -1,3 +1,4 @@
+import { assertPureGraph, assertNoteDependencies } from './coachNoteDependencyGuard.mjs'
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { dirname, basename, join, posix } from 'node:path'
@@ -14,7 +15,7 @@ const registry = Symbol.for('APP-COACH4.synthetic-apps')
 globalThis[registry] = instances
 export function source(path) {
   const integrated = join(here, path.replace(/^src\//, ''))
-  return readFileSync(existsSync(integrated) ? integrated : join(here, basename(path)), 'utf8')
+  return readFileSync(existsSync(join(here, 'dashboard')) ? integrated : join(here, basename(path)), 'utf8')
 }
 export function h(type, props, ignored, ...children) {
   const flat = children.flat(Infinity).filter(child => child != null && child !== false)
@@ -29,6 +30,7 @@ export function text(tree) {
     : (tree?.children || []).map(text).join(' ')
 }
 export async function app({ enabled, backend } = {}) {
+  assertNoteDependencies(source)
   const id = String(++nextInstance)
   const prefix = `coach-note-test://${id}/`
   const fakes = {
@@ -40,19 +42,43 @@ export async function app({ enabled, backend } = {}) {
   }
   instances.set(id, { h, fakes })
   const allowed = new Set([
-    'e2eTestFlags.mjs', 'coachPriority.js', 'automationAlerts.js', 'coachBriefingRules.js',
-    'exerciseSetView.js', 'exerciseNames.js', 'exerciseProgress.js', 'inputValues.js',
-    'kostNumbers.mjs', 'calendarDate.js', 'ugenoegle.js', 'smerteRegion.js',
-    'coachInboxState.js', 'coachNoteSignal.js', 'laesninger.js', 'saetSmerte.js',
-    'coachFremgang.js', 'coachKonstanter.js', 'afvigelse.js', 'videoCoachVersion.js',
-    'personalRecords.js', 'danskDato.js', 'useCoachPrioritet.js', 'coachVideoHjaelp.js',
-    'videoCoachSubmission.js', 'videoCoachPersonalFeedback.js', 'videoCoachLabels.js',
-    'indbakkeHandlinger.js', 'messageTime.js', 'coachBriefingSeen.js',
-    'IndbakkeView.jsx', 'dashboardShared.js', 'coachActions.mjs',
-  ])
+    "src/athlete/kostNumbers.mjs",
+    "src/athlete/smerteRegion.js",
+    "src/automationAlerts.js",
+    "src/calendarDate.js",
+    "src/coachBriefingRules.js",
+    "src/coachBriefingSeen.js",
+    "src/coachFremgang.js",
+    "src/coachInboxState.js",
+    "src/coachNoteSignal.js",
+    "src/coachPriority.js",
+    "src/danskDato.js",
+    "src/dashboard/IndbakkeView.jsx",
+    "src/dashboard/afvigelse.js",
+    "src/dashboard/coachActions.mjs",
+    "src/dashboard/coachKonstanter.js",
+    "src/dashboard/coachVideoHjaelp.js",
+    "src/dashboard/indbakkeHandlinger.js",
+    "src/dashboard/laesninger.js",
+    "src/dashboard/useCoachPrioritet.js",
+    "src/dashboardShared.js",
+    "src/e2eTestFlags.mjs",
+    "src/exerciseNames.js",
+    "src/exerciseProgress.js",
+    "src/exerciseSetView.js",
+    "src/inputValues.js",
+    "src/messageTime.js",
+    "src/personalRecords.js",
+    "src/saetSmerte.js",
+    "src/videoCoachLabels.js",
+    "src/videoCoachPersonalFeedback.js",
+    "src/videoCoachSubmission.js",
+    "src/videoCoachVersion.js",
+    "src/volume/ugenoegle.js"
+])
   const urlFor = path => {
-    if (!Object.hasOwn(fakes, path) && (!path.startsWith('src/') || !allowed.has(posix.basename(path)))) {
-      throw new Error(`Unapproved synthetic dependency ${path}`)
+    if (!Object.hasOwn(fakes, path) && !allowed.has(path)) {
+      assertPureGraph(path, source)
     }
     return prefix + path
   }

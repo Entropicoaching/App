@@ -1,3 +1,4 @@
+import BlokFremgang from '../BlokFremgang.jsx'
 import { exerciseSetView } from '../exerciseSetView'
 // Fremgang-fanen (ordre 284) — "er squatten rent faktisk blevet stærkere
 // siden marts", for ÉN øvelse ad gangen: bedste e1RM-sæt pr. uge og det
@@ -202,7 +203,7 @@ function RekordListe({ rekorder }) {
   )
 }
 
-export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }) {
+export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false }) {
   const alleNavne = useMemo(() => [...new Map([...navneFraProgram(allWeeks), ...navneFraLogs(fremgangLogs)].map(n => [exerciseSetView(n).key, n])).values()], [allWeeks, fremgangLogs])
   const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
@@ -265,6 +266,7 @@ export default function FremgangTab({ fremgangLogs, fremgangLoading, allWeeks, e
 
   return (
     <>
+      <BlokFremgang enabled={blokFremgang === true && !fremgangLoading} weeks={allWeeks} logs={fremgangLogs} />
       <div style={{ marginBottom: '1rem' }}>
         <div style={{ fontFamily: mono, fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.5rem' }}>Fremgang</div>
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Bliver du stærkere?</h1>

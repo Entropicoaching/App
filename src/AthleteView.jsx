@@ -48,7 +48,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, mobilitetFokus = false, kostPerAtlet, kostValg }) {
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false }) {
   const [requestedTab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -686,7 +686,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {tab === 'fremgang' && (
           <LazyBoundary
             factory={enkelOn ? enkelFremgangFactory : fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={{ enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
+            componentProps={{ blokFremgang: blokFremgang === true, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
           />
         )}
 
