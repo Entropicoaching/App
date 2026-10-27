@@ -7,6 +7,14 @@ export function useState(initial) {
   if (!(i in instance.values)) instance.values[i] = initial
   return [instance.values[i], next => { instance.values[i] = typeof next === 'function' ? next(instance.values[i]) : next }]
 }
+export function useEffect(effect, dependencies) {
+  const instance = current, i = instance.cursor++
+  const prior = instance.values[i]
+  if (!prior || dependencies.some((value, j) => value !== prior.dependencies[j])) {
+    prior?.cleanup?.()
+    instance.values[i] = { dependencies, cleanup: effect() }
+  }
+}
 export function createElement(type, props, ...children) {
   return { type, props: { ...props, children: children.flat(Infinity) } }
 }
@@ -26,7 +34,7 @@ export function mount(Component, props = {}) {
     }
     return { ...node, props: { ...node.props, children: node.props.children.map((child, i) => expand(child, `${path}/${i}`)).filter(child => child !== null) } }
   }
-  return { render(next = props) { props = next; return expand(createElement(Component, props), 'root') } }
+  return { dispose() { for (const instance of instances.values()) for (const value of instance.values) value?.cleanup?.() }, render(next = props) { props = next; return expand(createElement(Component, props), 'root') } }
 }
 export function nodes(tree, match) {
   if (!tree || typeof tree !== 'object') return []

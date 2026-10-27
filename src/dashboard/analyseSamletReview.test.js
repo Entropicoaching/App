@@ -68,11 +68,11 @@ test('counterexample: history buttons remain native, labeled and large enough in
 test('exact source boundary: reversing only the declared insertions recovers the pinned base', () => {
   const final = readFileSync(new URL('./AnalyseTab.jsx', import.meta.url), 'utf8')
   const eol = final.includes('\r\n') ? '\r\n' : '\n'
-  const imports = ["import AnalyseSamletPrototype from './AnalyseSamletPrototype'", "import { analyseSamletEnabled } from './analyseSamlet.mjs'", '', ''].join(eol)
-  const block = ["                  {analyseSamletEnabled(typeof window === 'undefined' ? '' : window.location.search) && (", '                    <AnalyseSamletPrototype />', '                  )}', '', ''].join(eol)
+  const imports = ["import AnalyseSammenlign from './AnalyseSammenlign.jsx'", "import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'", ''].join(eol)
+  const block = ["                  {analyseSammenlignEnabled(typeof window === 'undefined' ? '' : window.location.search) && (", '                    <AnalyseSammenlign />', '                  )}', '', ''].join(eol)
   assert.equal(final.split(imports).length, 2)
   assert.equal(final.split(block).length, 2)
   const recovered = final.replace(imports, '').replace(block, '')
-  // Normalize only line endings so this application test also works in an LF checkout.
-  assert.equal(createHash('sha256').update(recovered.replace(/\r\n/g, '\n')).digest('hex'), '6d196a95737b85139943704d7639527fbd35b84630a14d919ad2341383b51306')
+  // Normalized pinned d3e50f5b source, independent of checkout line endings.
+  assert.equal(createHash('sha256').update(recovered.replace(/\r\n/g, '\n')).digest('hex'), '20402273571e03b8f741c51129652df75812dfb6a4afd0be2955f3ca1ad51450')
 })

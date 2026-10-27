@@ -14,7 +14,7 @@ export function install() {
       return next(specifier, context)
     },
     load(url, context, next) {
-      if (url.endsWith('/AnalyseSamletPrototype.jsx')) return { format: 'module', source: readFileSync(new URL(url), 'utf8'), shortCircuit: true }
+      if (url.endsWith('/AnalyseSamletPrototype.jsx') || url.endsWith('/AnalyseSammenlign.jsx')) return { format: 'module', source: readFileSync(new URL(url), 'utf8'), shortCircuit: true }
       if (url.endsWith('/AnalyseTab.jsx') || url.endsWith('/input-373-370-AnalyseTab.jsx')) return { format: 'module', source: `import { h as __h } from './analyseSamletDom.mjs';\n${jsx(readFileSync(new URL(url), 'utf8'))}`, shortCircuit: true }
       return next(url, context)
     },
