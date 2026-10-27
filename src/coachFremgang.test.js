@@ -127,9 +127,9 @@ test('gammel deload (over 10 dage) taler ikke; smerte staar stadig i en deload-u
   assert.ok(!t.includes('stagnation'))
 })
 
-test('lokalDag bruger lokal kalenderdag (som dagNoegle), ikke UTC-dato (ordre 1492)', () => {
-  assert.equal(lokalDag(new Date(2026, 9, 7, 0, 30)), '2026-10-07')
-  assert.equal(lokalDag(new Date(2026, 9, 7, 23, 59)), '2026-10-07')
+test('lokalDag bruger dansk kalenderdag som styrkekurven', () => {
+  assert.equal(lokalDag(new Date('2026-10-06T22:30:00Z')), '2026-10-07')
+  assert.equal(lokalDag(new Date('2026-10-07T21:59:00Z')), '2026-10-07')
 })
 
 test('ordre 1545: naar alt stiger, staar tallene i linjen (e1RM mod 1-3 mdr. foer), ikke kun en floskel', () => {

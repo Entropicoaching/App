@@ -66,7 +66,7 @@ export function summarizeWeek(week, logs) {
   if (plannedSets === 0) out.status = 'tom';
   else if (doneSets === 0 && skippedSets === 0) out.status = 'ingen_logs';
   else if (doneSets === 0) out.status = 'sprunget_over';
-  else out.status = out.pas.every(p => p.status === 'gennemfoert') ? 'fuld' : 'delvis';
+  else out.status = out.pas.every(p => p.planlagtSaet === 0 || p.status === 'gennemfoert') ? 'fuld' : 'delvis';
 
   const q = out.spoergsmaal;
   if (out.status === 'tom') q.push('Ugen indeholder ingen planlagte sæt. Er det tilsigtet, eller mangler programmet data?');

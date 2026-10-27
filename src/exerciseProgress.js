@@ -134,13 +134,7 @@ export function erTungtSaet(navn, reps) {
 export const erDeloadBlok = (blokNavn) => /deload|aflast|taper/i.test(String(blokNavn ?? ''))
 export const erDeloadLog = (log) => erDeloadBlok(log?.exercises?.sessions?.weeks?.block_name)
 
-const dagNoegle = (iso) => {
-  if (!calendarDay(iso)) return null
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return null
-  const p = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
-}
+const dagNoegle = iso => calendarDay(iso)
 
 /**
  * Hoejeste e1RM pr. DAG, kun fra tunge saet. Logs er raekker med

@@ -1,15 +1,14 @@
+import { calendarDay, addCalendarDays } from '../calendarDate.js'
 import { summarizeWeek } from '../athlete/ugeFeedback.js'
 import { coachTekstForslag } from './coachTekstForslag.js'
 import { coachTekstTree } from './coachTekstTree.js'
 
 // Calendar closure, independent of log coverage. No guessed end for undated weeks.
 export function erAfsluttetUge(week, now) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(week?.start_date || '')) return false
-  const [y, m, d] = week.start_date.split('-').map(Number)
-  const start = new Date(y, m - 1, d)
-  if (start.getFullYear() !== y || start.getMonth() !== m - 1 || start.getDate() !== d) return false
-  const end = new Date(y, m - 1, d + 7)
-  return now instanceof Date && Number.isFinite(now.getTime()) && now >= end
+  const start = calendarDay(week?.start_date || '')
+  const end = start && addCalendarDays(start, 7)
+  const today = now instanceof Date ? calendarDay(now) : null
+  return !!(end && today && today >= end)
 }
 
 // ProgramTab receives athlete-scoped logs. Keep this week's known exercise ids,
