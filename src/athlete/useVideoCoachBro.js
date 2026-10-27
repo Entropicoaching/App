@@ -4,6 +4,7 @@
 // AthleteView.jsx (ordre 373) som en hook. AthleteView kalder den paa samme
 // sted som effekterne stod, saa effekternes raekkefoelge er den samme.
 import { useEffect } from 'react'
+import { videoUploadRetryEnabled, uploadVideoAttempt } from '../videoUploadRetry.mjs'
 import { supabase, createAbortableUploadClient } from '../supabase'
 import { sanitizeVideoCoachFeedbackEvidence } from '../videoCoachFeedbackEvidence'
 import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, markUploadInflight,
@@ -106,7 +107,10 @@ export function useVideoCoachBro({
         markUploadInflight(currentAthlete.id, message.requestId)
         let upload
         try {
-          upload = await createAbortableUploadClient(controller.signal).storage
+          upload = videoUploadRetryEnabled()
+            ? await uploadVideoAttempt(createAbortableUploadClient, controller.signal,
+              VIDEOCOACH_UPLOAD_BUCKET, path, file, message.mimeType)
+            : await createAbortableUploadClient(controller.signal).storage
             .from(VIDEOCOACH_UPLOAD_BUCKET)
             .upload(path, file, { contentType: message.mimeType, upsert: false })
         } finally {
