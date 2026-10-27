@@ -40,7 +40,7 @@ export async function app({ enabled, backend } = {}) {
   }
   instances.set(id, { h, fakes })
   const allowed = new Set([
-    'coachPriority.js', 'automationAlerts.js', 'coachBriefingRules.js',
+    'e2eTestFlags.mjs', 'coachPriority.js', 'automationAlerts.js', 'coachBriefingRules.js',
     'exerciseSetView.js', 'exerciseNames.js', 'exerciseProgress.js', 'inputValues.js',
     'kostNumbers.mjs', 'calendarDate.js', 'ugenoegle.js', 'smerteRegion.js',
     'coachInboxState.js', 'coachNoteSignal.js', 'laesninger.js', 'saetSmerte.js',

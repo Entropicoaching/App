@@ -1,3 +1,4 @@
+import { fridayTestEnabled } from './e2eTestFlags.mjs'
 import { useState, useEffect, useRef } from 'react'
 import { supabase, withRetry, isPasswordRecoveryUrl } from './supabase'
 import Auth from './Auth'
@@ -77,6 +78,7 @@ const errorScreen = (onRetry) => (
 )
 
 function App({ forenklinger = false, mobilitetFokus = false } = {}) {
+  const fridayTest = fridayTestEnabled(import.meta.env.MODE, typeof window === 'undefined' ? '' : window.location.href)
   const [session, setSession] = useState(null)
   const [role, setRole] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -269,9 +271,9 @@ function App({ forenklinger = false, mobilitetFokus = false } = {}) {
   if (role === 'coach') {
     viewEl = previewMode
       ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-          componentProps={{ session, role, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
+          componentProps={{ session, role, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
       : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
-          componentProps={{ session, onPreviewAthlete: (athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
+          componentProps={{ session, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
     // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
     // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'
@@ -281,7 +283,7 @@ function App({ forenklinger = false, mobilitetFokus = false } = {}) {
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
     viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-      componentProps={{ session, role, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
+      componentProps={{ session, role, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
   }
   return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }

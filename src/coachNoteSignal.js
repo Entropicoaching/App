@@ -1,5 +1,6 @@
+import { fridayTestEnabled } from './e2eTestFlags.mjs'
 // APP-COACH4: aktiveres kun ved et eksplicit kodevalg. Ingen storage eller net.
-export const COACH_NOTE_SIGNAL_ENABLED = false
+export const COACH_NOTE_SIGNAL_ENABLED = fridayTestEnabled(import.meta.env?.MODE, typeof window === 'undefined' ? '' : window.location.href)
 
 // Den gemte samtale identificeres af athlete_id og category, som i
 // sendCoachMessage og BeskederTab. Laest-markering er ikke et svar.
