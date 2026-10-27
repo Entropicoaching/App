@@ -128,7 +128,7 @@ export default function ProgramTab({
   setProgOpenSession, setShowRpeGuide, setSkipConfirmEx, setViewingWeekIdx, setWarmupChecked,
   setWarmupOverrideTick, setWarmupSetEditing, skipConfirmEx, skipExercise, skipRemainingSets,
   skipSet, suggestNextWeight, suggestWarmupOverride, unskipSet, viewingWeekIdx, warmupChecked,
-  warmupOverrideTick, warmupSetEditing, weekStartDate,
+  warmupOverrideTick, warmupSetEditing, weekStartDate, vaerdF6 = false,
 }) {
           // Følg den aktive uge der blev ankret i fetchProgram (kan være rykket
           // frem til næste uge når den aktuelle er fuldt logget). Fald tilbage til
@@ -607,7 +607,7 @@ export default function ProgramTab({
                                               >{w}kg</span>
                                             )}
                                             {doneCnt > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#6cba6c' }}>{doneCnt}/{sets.length}</span>}
-                                            {usingOwn && <span title="Genbruger dine egne vægte fra sidste gang (samme øvelse, arbejdsvægt inden for 5%)" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.05rem 0.3rem' }}>dine sidste</span>}
+                                            {usingOwn && <span title="Genbruger dine egne vægte fra sidste gang (samme øvelse, arbejdsvægt inden for 5%)" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.05rem 0.3rem' }}>{vaerdF6 === true ? 'Din lokale rettelse af opvarmningen' : 'dine sidste'}</span>}
                                           </div>
                                           <span style={{ color: '#4a4844', fontSize: '0.55rem' }}>{isOpen ? '▲' : '▼'}</span>
                                         </div>
