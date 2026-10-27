@@ -19,6 +19,7 @@ export const screens = Object.freeze([
   ['atlet-mobilitet', 'athlete', 'Mobilitet', 'Mere > Mobilitet > vælg fokus'],
   ['atlet-fremgang', 'athlete', 'Fremgang', 'Fremgang > Styrke, derefter Rekorder'],
   ['atlet-profil', 'athlete', 'Profil', 'Åbn Konto øverst. Basen har kontomenu, ingen særskilt profilside'],
+  ['videocoach-tidsmarkeringer', 'athlete', 'Coachens tidsmarkeringer', 'Beskeder > Teknik & løft > Se feedback > Åbn syntetiske tidsmarkeringer'],
   ['coach-dagsliste', 'coach', 'Dagsliste', 'Startvisningen'],
   ['coach-atletprofil', 'coach', 'Atletprofil', 'Åbn Testatlet i dagslisten'],
   ['coach-analyse', 'coach', 'Analyse', 'Åbn Testatlet > Analyse > samlet analyse'],

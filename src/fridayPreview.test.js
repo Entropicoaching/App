@@ -34,9 +34,9 @@ test('eksplicit byggehandler får kun isoleret konfiguration via syntetisk bygge
   }
   assert.equal(c.resolve.alias[0].find.test('./not-supabase.js'),false)
 })
-test('alle ni skærme er lokale med entydige flag og 375 px', () => {
-  assert.equal(screens.length,9); assert.equal(new Set(screens.map(s => s.id)).size,9)
-  assert.equal(screens.filter(s => s.role === 'athlete').length,5)
+test('alle ti skærme er lokale med entydige flag og 375 px', () => {
+  assert.equal(screens.length,10); assert.equal(new Set(screens.map(s => s.id)).size,10)
+  assert.equal(screens.filter(s => s.role === 'athlete').length,6)
   for (const screen of screens) {
     assert.equal(screen.width,375); assert.ok(screen.steps)
     const url = new URL(previewUrl(screen.id,'http://localhost:4173/scripts/friday-preview.html?appRel3=0&appRel3=0#old'))
@@ -57,11 +57,11 @@ test('pinnede gates forbliver OFF i produktion og uden eksplicit lokalt flag', (
   assert.equal(athleteFlags.kostValg[ATHLETE],true)
   assert.equal(athleteFlags.programUgeFoerst,true); assert.equal(coachFlags.coachFourWeeksEnabled,true)
 })
-test('DOM-listen indeholder ni klikbare links med de rigtige roller', () => {
+test('DOM-listen indeholder ti klikbare links med de rigtige roller', () => {
   const h = (tag,props,...children) => ({tag,props,children})
   const dom = renderScreenList(h)
   assert.equal(dom.tag,'nav'); assert.equal(dom.props['aria-label'],'Syntetiske skærme')
-  assert.equal(dom.children.length,9)
+  assert.equal(dom.children.length,10)
   dom.children.forEach((node,i) => {
     assert.equal(node.tag,'a'); assert.equal(node.props.style.minHeight,44)
     assert.equal(new URL(node.props.href).searchParams.get('screen'),screens[i].id)
@@ -107,7 +107,7 @@ test('adapterens skriveveje og ukendte RPC fejler uden mutation', async () => {
   assert.equal((await db.from('athletes').select().single()).data.name,'Testatlet')
 })
 test('kodeflag omskrives kun i isoleret preview og tåler LF og CRLF', () => {
-  const root = resolve('synthetic-root'), plugin = previewConfig(root,reactPlugin).plugins.at(-1)
+  const root = resolve('synthetic-root'), plugin = previewConfig(root,reactPlugin).plugins.find(plugin => plugin.name === 'friday-preview-only')
   const sources = [ ['dashboard/coachActions.mjs','COACH_ACTIONS_ENABLED'],
     ['dashboard/videoQueueFilter.mjs','VIDEO_QUEUE_FILTER_ENABLED'], ['vcForenkl4.mjs','DEFAULT_VIDEOCOACH_FORENKL4'] ]
   for (const [file,name] of sources) for (const eol of ['\n','\r\n']) {

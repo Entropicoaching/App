@@ -11,14 +11,28 @@ export function previewConfig(root, reactPlugin) {
   return { root, configFile: false, envFile: false, envDir: false,
     mode: 'e2e', publicDir: false,
     resolve: { alias: [{ find: /^.*[/\\]supabase(?:\.js)?$/, replacement: source('fridayPreviewAdapter.mjs') }] },
-    plugins: [reactPlugin(), { name: 'friday-preview-only', enforce: 'pre',
+    plugins: [{ name: 'friday-preview-only', enforce: 'pre',
       transform(code, id) {
-        const name = constants.get(id.replaceAll('\\','/').split('?')[0])
+        const cleanId = id.replaceAll('\\','/').split('?')[0]
+        if (cleanId === source('athlete/beskederOgVaegt.jsx').replaceAll('\\','/')) {
+          const anchor = "from './VideoFeedbackPlayback.jsx'"
+          if (code.split(anchor).length !== 2) throw new Error('Previewfeedback ændret')
+          return { code: code.replace(anchor, "from '../fridayPreviewMarkersReact.mjs'"), map: null }
+        }
+        if (cleanId === source('dashboard/VideoReviewModal.jsx').replaceAll('\\','/')) {
+          const anchor = 'onClick={e => e.stopPropagation()}>'
+          if (code.split(anchor).length !== 2 || code.includes('VideoFeedbackPlayback as FridayMarkers'))
+            throw new Error('Previewmodal ændret')
+          const eol = code.includes('\r\n') ? '\r\n' : '\n'
+          return { code: `import { VideoFeedbackPlayback as FridayMarkers } from '../fridayPreviewMarkersReact.mjs'${eol}` +
+            code.replace(anchor, anchor + `${eol}<FridayMarkers athleteId={selectedAthlete?.id} analysisId={analysis.id} />`), map: null }
+        }
+        const name = constants.get(cleanId)
         if (!name) return null
         const pattern = new RegExp(`(export const ${name} = )false\\b`)
         if (!pattern.test(code)) throw new Error(`Previewflag ændret: ${name}`)
         return { code: code.replace(pattern, '$1true'), map: null }
-      } }],
+      } }, reactPlugin()],
     build: { outDir: resolve(root, 'preview-friday-dist'), emptyOutDir: false,
       rollupOptions: { input: resolve(root, 'scripts/friday-preview.html') } } }
 }
