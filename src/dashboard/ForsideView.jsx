@@ -9,6 +9,8 @@ import { supabase } from '../supabase'
 import { holidayInfo, ferieBadgeLabel } from './coachKonstanter'
 import { videoCoachMeasurementSummary, coachVideoPriorityDetail, videoCoachMeasurementText } from './coachVideoHjaelp'
 import { dageSiden } from '../danskDato'
+import CoachActions from './CoachActions.jsx'
+import { COACH_ACTIONS_ENABLED, coachActionsEnabled } from './coachActions.mjs'
 
 export default function ForsideView({
   athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
@@ -17,7 +19,8 @@ export default function ForsideView({
   loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
   setAthleteSortMode, setHiddenAthleteIds, setLoading, setSelectedAthlete, setShowAllAthletes, setShowHiddenAthletes,
   setView, showAllAthletes, showHiddenAthletes, trainingSignalsError, trainingSignalUpdatingKey, unreadCounts,
-  videoMeasurementByAthlete, videoReviewQueueError,
+  videoMeasurementByAthlete, videoReviewQueueError, latestByTrack, videoReviewQueue, coachActionsStatus,
+  coachActions = COACH_ACTIONS_ENABLED,
 }) {
           const visibleAthletes = athletes
             .filter(ath => !hiddenAthleteIds.has(ath.id))
@@ -110,6 +113,13 @@ export default function ForsideView({
 
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              {coachActionsEnabled(coachActions) && <CoachActions
+                enabled={coachActions} athletes={visibleAthletes} calendarWeeks={calendarWeeks}
+                completion={athleteWeekCompletion} latestByTrack={latestByTrack} videos={videoReviewQueue}
+                dataStatus={coachActionsStatus} loading={loading}
+                hasError={Boolean(loadError || messageInboxError || videoReviewQueueError)}
+                openProfile={openProfile} openCoachPriorityItem={openCoachPriorityItem}
+              />}
               <div style={{ marginBottom: isMobile ? '1.1rem' : '1.5rem' }}>
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>
                   Coach<span style={{ color: '#c8923a' }}>.</span>

@@ -14,8 +14,10 @@ import { planlagteReps, taellerIKg, logTegn } from './afvigelse'
 import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
 import { normaliserRekorder, bedsteRekorder, tungeRekorder } from '../personalRecords'
 import { danskDag } from '../danskDato'
+import { COACH_ACTIONS_ENABLED, coachActionsEnabled, actionSessions } from './coachActions.mjs'
 
 export function lavLaesninger({
+  coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {},
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
   setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
   setAthleteWeightLogs, setAutomationAlerts, setAutomationAlertsError, setCalendarWeeks, setCoachBriefingSeen, setExerciseLibrary,
@@ -147,17 +149,26 @@ export function lavLaesninger({
   }
 
   async function fetchCalendarWeeks(athleteIds) {
-    if (!athleteIds.length) return
+    if (!athleteIds.length) {
+      if (coachActionsEnabled(coachActions)) {
+        setCalendarWeeks({})
+        setCoachActionsStatus(prev => ({ ...prev, calendar: 'ready' }))
+      }
+      return
+    }
+    const status = value => { if (coachActionsEnabled(coachActions)) setCoachActionsStatus(prev => ({ ...prev, calendar: value })) }
+    status('loading')
+    try {
     // ORDRE 277 · commit 1: `sets`/`recommended_weight` tilføjet til selectet
     // (samme forespørgsel, ingen ny rundtur) — giver "planlagt denne uge"
     // (sæt + tonnage, src/dashboard/afvigelse.js) uden at ændre hvad
     // kalender-tidslinjen selv viser (session_count/exercise_count uændret).
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('weeks')
       .select('id, athlete_id, week_number, block_name, start_date, sessions(id, session_order, athlete_rating, athlete_comment, exercises(id, sets, reps, recommended_weight))')
       .in('athlete_id', athleteIds)
-    if (!data) return
-    const map = {}
+    if (!data || (coachActionsEnabled(coachActions) && error)) { status('error'); return }
+    const map = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, []])) : {}
     for (const w of data) {
       if (!map[w.athlete_id]) map[w.athlete_id] = []
       const sessions = w.sessions || []
@@ -179,6 +190,7 @@ export function lavLaesninger({
         week_number: w.week_number,
         block_name: w.block_name,
         start_date: w.start_date,
+        ...(coachActionsEnabled(coachActions) ? { actionSessions: actionSessions(sessions) } : {}),
         session_count: sessions.length,
         exercise_count: exercises.length,
         planned_sets: plannedSets,
@@ -190,24 +202,38 @@ export function lavLaesninger({
     // Sortér uger pr. atlet efter ugenummer (stigende)
     for (const aid in map) map[aid].sort((a, b) => a.week_number - b.week_number)
     setCalendarWeeks(map)
+    status('ready')
+    } catch (error) {
+      if (!coachActionsEnabled(coachActions)) throw error
+      status('error')
+    }
   }
 
   async function fetchCalendarProgress(athleteIds) {
-    if (!athleteIds.length) return
+    if (!athleteIds.length) {
+      if (coachActionsEnabled(coachActions)) {
+        setAthleteCurrentWeek({}); setAthleteWeekCompletion({})
+        setCoachActionsStatus(prev => ({ ...prev, progress: 'ready' }))
+      }
+      return
+    }
+    const status = value => { if (coachActionsEnabled(coachActions)) setCoachActionsStatus(prev => ({ ...prev, progress: value })) }
+    status('loading')
+    try {
     const since = new Date(); since.setDate(since.getDate() - 180)
     // ORDRE 277 · commit 1: weight/reps_completed/skipped tilføjet til
     // selectet (samme forespørgsel som allerede fandt "hvilken uge er
     // atleten i nu" via seneste log) — giver "gennemført denne uge" (sæt +
     // tonnage, pr. programuge) uden endnu en rundtur.
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('exercise_logs')
       .select('athlete_id, logged_at, weight, reps_completed, skipped, note, exercises(reps, recommended_weight, sessions(id, session_order, weeks(week_number)))')
       .in('athlete_id', athleteIds)
       .gte('logged_at', since.toISOString())
       .order('logged_at', { ascending: false })
-    if (!data) return
+    if (!data || (coachActionsEnabled(coachActions) && error)) { status('error'); return }
     const map = {}
-    const completion = {}
+    const completion = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, {}])) : {}
     for (const log of data) {
       if (map[log.athlete_id] == null) { // har allerede den seneste for denne atlet
         const wn = log.exercises?.sessions?.weeks?.week_number
@@ -235,6 +261,11 @@ export function lavLaesninger({
     }
     setAthleteCurrentWeek(map)
     setAthleteWeekCompletion(completion)
+    status('ready')
+    } catch (error) {
+      if (!coachActionsEnabled(coachActions)) throw error
+      status('error')
+    }
   }
 
   async function fetchProfilesLastSeen(athletesList) {

@@ -48,7 +48,7 @@ export async function app({ enabled, backend } = {}) {
     'personalRecords.js', 'danskDato.js', 'useCoachPrioritet.js', 'coachVideoHjaelp.js',
     'videoCoachSubmission.js', 'videoCoachPersonalFeedback.js', 'videoCoachLabels.js',
     'indbakkeHandlinger.js', 'messageTime.js', 'coachBriefingSeen.js',
-    'IndbakkeView.jsx', 'dashboardShared.js',
+    'IndbakkeView.jsx', 'dashboardShared.js', 'coachActions.mjs',
   ])
   const urlFor = path => {
     if (!Object.hasOwn(fakes, path) && (!path.startsWith('src/') || !allowed.has(posix.basename(path)))) {
