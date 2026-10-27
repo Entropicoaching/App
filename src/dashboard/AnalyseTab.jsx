@@ -525,7 +525,7 @@ export default function AnalyseTab({ coachRyd = false,
                           <div key={label}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
                             <LineChart series={[
-                              { data: dataEnoughEnabled() ? observed.map(p => ({ y: p.e1rm, label: p.dag })) : ls.actualData, color: '#c8923a' },
+                              { data: dataEnoughEnabled() ? liftEvidence(athleteLogs, label).rows.map(p => ({ y: p.e1rm, label: p.dag })) : ls.actualData, color: '#c8923a' },
                               { data: ls.plannedData, color: '#7a7770', dashed: true },
                             ]} />
                           </div>

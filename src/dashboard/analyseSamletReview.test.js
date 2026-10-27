@@ -74,5 +74,6 @@ test('exact source boundary: reversing only the declared insertions recovers the
   assert.equal(final.split(block).length, 2)
   const recovered = final.replace(imports, '').replace(block, '')
   // Normalized combined four-package source on a46979ff, independent of checkout line endings.
-  assert.equal(createHash('sha256').update(recovered.replace(/\r\n/g, '\n').replace(/(from ['"][^'"]+)\.(?:jsx|js)(['"])/g, '$1$2')).digest('hex'), 'ae2a409ac5851bcbf04762e7fe2401a87bac2dc01a88e86b5da58b9c255ba337')
+  // Opdateret 27. okt. (Dhurva): Planlagt vs faktisk brugte en udefineret variabel observed med appData2 slået til.
+  assert.equal(createHash('sha256').update(recovered.replace(/\r\n/g, '\n').replace(/(from ['"][^'"]+)\.(?:jsx|js)(['"])/g, '$1$2')).digest('hex'), '3a9f1a15bd833840db3d664f419320eb5011994015901457bf47c8d9560c7024')
 })
