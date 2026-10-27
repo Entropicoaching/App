@@ -45,6 +45,7 @@ export async function app(legacy = false, previous = false, r2Before = false) {
   const stub = () => null
   const fakes = {
     react: { createElement: h, Fragment, useState: initial => [typeof initial === 'function' ? initial() : initial, stub], useMemo: fn => fn(), useEffect: stub, useRef: value => ({ current: value }) },
+    'VideoReviewTemplates.mjs': { default: stub, DEFAULT_VIDEO_REVIEW_TEMPLATES: false },
     'dashboardShared.js': shared,
     'supabase.js': { signOutHard: () => { throw Error('Signout forbidden') }, supabase: new Proxy({}, { get() { throw Error('Backend access forbidden') } }) },
     'coachFremgang.js': { styrkeLinje: shared.styrkeLinje, styrkeSmerteRegel: shared.styrkeSmerteRegel },
