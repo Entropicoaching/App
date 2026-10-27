@@ -16,7 +16,7 @@ test('modprøve: rigtig pinnet navigation udfører handleren uden storage eller 
   assert.deepEqual(calls,['hjem','fremgang','beskeder','mere'])
 })
 test('modprøve: eksakte pinnede kodeflag kan transformeres med begge linjeslut', async () => {
-  const plugin = previewConfig(resolve('synthetic-root'),() => ({name:'fake-react'})).plugins.at(-1)
+  const plugin = previewConfig(resolve('synthetic-root'),() => ({name:'fake-react'})).plugins.find(plugin => plugin.name === 'friday-preview-only')
   for (const [file,name] of [['dashboard/coachActions.mjs','COACH_ACTIONS_ENABLED'],
     ['dashboard/videoQueueFilter.mjs','VIDEO_QUEUE_FILTER_ENABLED'],['vcForenkl4.mjs','DEFAULT_VIDEOCOACH_FORENKL4']]) {
     const original = await readFile(new URL(import.meta.resolve('./'+file)),'utf8')

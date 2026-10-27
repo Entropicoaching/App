@@ -1,6 +1,7 @@
 export const ATHLETE = '33333333-3333-4333-8333-333333333333'
 export const USER = '22222222-2222-4222-8222-222222222222'
 export const COACH = '11111111-1111-4111-8111-111111111111'
+export const PREVIEW_ANALYSIS = 'aaaaaaaa-aaaa-4aaa-8aaa-000000024000'
 const id = n => `aaaaaaaa-aaaa-4aaa-8aaa-${String(n).padStart(12, '0')}`
 export function buildPreviewSeed(now = new Date()) {
   const day = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12)
@@ -46,11 +47,13 @@ export function buildPreviewSeed(now = new Date()) {
   tables.messages.push({ id: id(23000), athlete_id: ATHLETE, sender_role: 'athlete',
     content: 'Syntetisk spørgsmål om næste uge', category: 'besked', read_by_coach: false,
     created_at: date(0)+'T08:00:00Z' })
-  tables.video_analyses.push({ id: id(24000), client_analysis_id: id(24001), athlete_id: ATHLETE,
+  tables.video_analyses.push({ id: PREVIEW_ANALYSIS, client_analysis_id: id(24001), athlete_id: ATHLETE,
     lift: 'squat', variation: 'competition', load_kg: 80, reps_count: 3,
     status: 'draft', analysis_state: 'complete', source_mode: 'video',
     created_at: date(0)+'T09:00:00Z', analyzed_at: date(0)+'T09:01:00Z',
     metrics: {}, rep_details: [], bar_path: [], video_path: null,
-    session_context: {}, athlete_feedback: { focus: 'Hold en rolig start', next_set: 'Gentag med samme vægt' } })
+    athlete_seen_at: date(0)+'T09:02:00Z',
+    session_context: { preview_markers: true }, athlete_feedback: { works: [{ text: 'Rolig opstilling' }],
+      focus: [{ text: 'Hold en rolig start' }], next_set: [{ text: 'Gentag med samme vægt' }] } })
   return tables
 }

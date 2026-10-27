@@ -1,4 +1,4 @@
-import { buildPreviewSeed } from './fridayPreviewSeed.mjs'
+import { buildPreviewSeed, ATHLETE, PREVIEW_ANALYSIS } from './fridayPreviewSeed.mjs'
 const failure = message => ({ data: null, error: { message, code: 'PREVIEW_ONLY' } })
 const get = (row, key) => key.split('.').reduce((value, part) => value?.[part], row)
 
@@ -69,8 +69,11 @@ export function createPreviewDatabase(seed = buildPreviewSeed()) {
     }
     return query
   }
-  return { from, rpc: async name => ['entropi_training_signals_v1', 'get_my_shared_video_analyses_v3'].includes(name)
-    ? { data: [], error: null } : failure('RPC er slået fra i preview'),
+  return { from, rpc: async name => name === 'get_my_shared_video_analyses_v3'
+    // Two read-only role perspectives of the same synthetic analysis. No share write.
+    ? { data: rows('video_analyses').filter(row => row.id === PREVIEW_ANALYSIS && row.athlete_id === ATHLETE)
+        .map(row => ({ ...row, status: 'shared' })), error: null }
+    : name === 'entropi_training_signals_v1' ? { data: [], error: null } : failure('RPC er slået fra i preview'),
     functions: { invoke: async () => failure('Funktioner er slået fra i syntetisk preview') },
     storage: { from: () => ({ createSignedUrl: async () => failure('Intet klip i syntetisk preview'),
       upload: async () => failure('Upload er slået fra i preview'), remove: async () => failure('Sletning er slået fra i preview') }) },
