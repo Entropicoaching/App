@@ -12,6 +12,9 @@ import { lavVideoReviewHandlinger } from './dashboard/videoReviewHandlinger'
 import { lavAtletHandlinger } from './dashboard/atletHandlinger'
 import { lavAiRapport } from './dashboard/aiRapport'
 import { lavProgramHandlinger } from './dashboard/programHandlinger'
+import { createWeekDeletionQueue } from './dashboard/weekDeletion.js'
+import { DEFAULT_PROGRAM_COPY } from './dashboard/programCopy.js'
+import WeekDeletionNotice from './dashboard/WeekDeletionNotice.jsx'
 import { useVideoCoachBro } from './dashboard/useVideoCoachBro'
 import BibliotekView from './dashboard/BibliotekView'
 import KalenderView from './dashboard/KalenderView'
@@ -57,7 +60,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort')
 
-export default function Dashboard({ session, onPreviewAthlete }) {
+export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
@@ -228,6 +231,14 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [copyingSession, setCopyingSession] = useState(null)
   // ORDRE 456 (A6): "Kopiér seneste uge" kører.
   const [copyingWeek, setCopyingWeek] = useState(false)
+  const [pendingWeekDeletes, setPendingWeekDeletes] = useState([])
+  const [weekDeletionQueue] = useState(() => createWeekDeletionQueue(setPendingWeekDeletes))
+  const currentProgramAthleteRef = useRef(null)
+  currentProgramAthleteRef.current = selectedAthlete?.id
+  useEffect(() => {
+    weekDeletionQueue.activate()
+    return () => weekDeletionQueue.dispose()
+  }, [weekDeletionQueue])
 
   // Meet plan state
   const [meetPlan, setMeetPlan] = useState(null)
@@ -309,7 +320,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setMessages, setMessageSendError, setMessageThreadError, setProfilesLastSeen, setSnoozedAthletes, setTodayData,
     setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
-    setWeeks, videoCoachAthletesRef,
+    setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
   })
 
   const {
@@ -369,7 +380,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     applyPeriodizationSuggestion, createCalendarWeek, openCalBlockBuilder, deleteWeek, addSession, updateSession,
     deleteSession, reorderSession, reorderExercise, copySessionToWeek, copyExerciseToSession, addLibraryExercise,
     updateLibraryExercise, deleteLibraryExercise, addToLibraryQuick, parseIntensity, addExercise, updateExercise,
-    deleteExercise, saveRecommendedWeight, copyWeek, previewWeekDateFill, applyWeekDateFill,
+    deleteExercise, saveRecommendedWeight, copyWeek, copyBlock, previewWeekDateFill, applyWeekDateFill,
   } = lavProgramHandlinger({
     askConfirm, athleteLogs, athletes, blockPlan, calendarWeeks, exerciseForm,
     exerciseLibrary, fetchAthleteWeekSummaries, fetchCalendarWeeks, fetchExerciseLibrary, fetchWeeks, libraryAddForm,
@@ -380,6 +391,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     setExerciseForm, setLibraryAddForm, setOpenSessionId, setOpenWeekId, setPlanStartDate, setProgramBlockStart,
     setSessionForm, setShowBlockPlanner, setSnoozedAthletes, setWeekDateFill, setWeekDraft, setWeekForm,
     showFlash, weekDateFill, weekDraft, weekForm, weeks, setCopyingWeek,
+    weekDeletionQueue, setWeeks, currentProgramAthleteRef, programCopyEnabled,
   })
 
   const {
@@ -501,6 +513,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
       <Overlays {...{
         confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
       }} />
+      {programCopyEnabled === true && <WeekDeletionNotice entries={pendingWeekDeletes} onUndo={id => weekDeletionQueue.undo(id)} />}
       <Sidebar {...{
         athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
         exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
@@ -666,7 +679,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
                   applyPeriodizationSuggestion, applyWeekDateFill, approveDraftProgressionState,
                   approvingProgression, assignEdits, athleteLogs, bestLog,
                   blockPlan, copyExerciseToSession, copyingExercise,
-                  copyingSession, copySessionToWeek, copyWeek, copyingWeek, deleteExercise,
+                  copyingSession, copySessionToWeek, copyWeek, copyBlock, copyingWeek, pendingWeekDeletes, programCopyEnabled, deleteExercise,
                   deleteSession, deleteWeek, editDraftForecast, editingExercise,
                   editingRecommended, editingSession, editingWeek, exFormRow,
                   fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,

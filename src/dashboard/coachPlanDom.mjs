@@ -49,3 +49,4 @@ export const button = (tree, label) => {
 }
 
 export function useRef(initial) { return useState(() => ({ current: initial }))[0] }
+export function useEffect() {}
