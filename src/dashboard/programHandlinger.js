@@ -6,11 +6,11 @@ import { addCalendarDays } from '../calendarDate.js'
 // øvelsesskrivning (tilføj, ret, slet, flyt, kopiér), ugeudkast og
 // progression, blokplan, kalender-uger og -datoer, udsæt, øvelsesbiblioteket
 // og "Sæt datoer". Handler-fabrik: Dashboard kalder den i hvert render.
-import { computePhases } from '../dashboardShared'
-import { supabase } from '../supabase'
-import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from '../progressionDraft'
-import { blockPurpose, buildPeriodizationSuggestion } from '../periodizationAssistant'
-import { nextWeekStartDate, fillMissingWeekDates } from '../weekDates'
+import { computePhases } from '../dashboardShared.js'
+import { supabase } from '../supabase.js'
+import { progressionOverrideErrors, updateDraftForecast, updateForecastOverrideReason } from '../progressionDraft.js'
+import { blockPurpose, buildPeriodizationSuggestion } from '../periodizationAssistant.js'
+import { nextWeekStartDate, fillMissingWeekDates } from '../weekDates.js'
 import { DEFAULT_PROGRAM_COPY, copyProgramWeeks, copyBlockName, skippedProgressions } from './programCopy.js'
 
 // ORDRE 456 (A6 i docs/kritik-446): "Kopiér seneste uge" kører ~8 s på en

@@ -1,3 +1,4 @@
+import { dataEnoughEnabled, readinessBasis, lowStreak as consecutiveLowStreak, dataMessage } from './dataEnough.mjs'
 import { parseInputNumber, finiteMean } from './inputValues.js'
 import { calendarDaysBetween } from './calendarDate.js'
 
@@ -15,7 +16,10 @@ import { calendarDaysBetween } from './calendarDate.js'
 const MIN_HISTORY_FOR_COMPARISON = 5
 const FALLBACK_THRESHOLD = 3
 
-export function compareReadiness(todayScore, historyScores) {
+export function compareReadiness(todayScore, historyScores, current = null, entries = []) {
+  if (dataEnoughEnabled()) {
+    historyScores = readinessBasis(current, entries).map(r => r.readiness_score)
+  }
   const hist = (historyScores || []).filter(v => Number.isFinite(v))
   if (!Number.isFinite(todayScore) || hist.length < MIN_HISTORY_FOR_COMPARISON) {
     return { status: 'insufficient', mean: null, sd: null, diff: null }
@@ -32,6 +36,9 @@ export function compareReadiness(todayScore, historyScores) {
 }
 
 export function readinessComparisonText(status) {
+  if (dataEnoughEnabled()) {
+    return status === 'insufficient' ? dataMessage('D02') : 'Dagens selvrapport sammenlignet med dine daterede svar i de seneste 14 dage.'
+  }
   switch (status) {
     case 'under': return 'Lidt under dit normale niveau de sidste to uger.'
     case 'over': return 'Over dit normale.'
@@ -43,6 +50,7 @@ export function readinessComparisonText(status) {
 // Ingen programændring, ingen medicinsk anbefaling — kun en tone at læse
 // dagen i, samme princip som den eksisterende autoregulerings-cue.
 export function readinessTrainingNote(status) {
+  if (dataEnoughEnabled()) return null
   switch (status) {
     case 'under': return 'Overvej at tage det lidt roligere i dag, hvis du kan mærke det.'
     case 'over': return 'Godt tidspunkt til at give den lidt ekstra, hvis du har lyst.'
@@ -77,6 +85,7 @@ export function summarizeReadinessForCoach(entries) {
     if (!Number.isFinite(e.readiness_score) || e.readiness_score >= LOW_READINESS_THRESHOLD) break
     lowStreak++
   }
+  if (dataEnoughEnabled()) lowStreak = consecutiveLowStreak(list)
   return { logsCount: list.length, avgSleep, topZone, lowStreak }
 }
 

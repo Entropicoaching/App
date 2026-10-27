@@ -1,5 +1,12 @@
+import { dataEnoughEnabled, weightWindows, dataMessage } from '../dataEnough.mjs'
 // Grupper efter antal registreringer, ikke kalenderuger. Input er datosorteret.
-export function weightTrendText(sorted) {
+export function weightTrendText(sorted, today = new Date().toLocaleDateString('en-CA')) {
+  if (dataEnoughEnabled()) {
+    const w = weightWindows(sorted, today)
+    if (!w.ready) return dataMessage('D46')
+    const period = rs => [...new Set(rs.map(r => r.logged_at.slice(0, 10)))].sort()
+    return `Observeret forskel: ${w.diff.toFixed(1)} kg. ${period(w.prior).join(', ')} (${w.prior.length} vejninger) mod ${period(w.recent).join(', ')} (${w.recent.length} vejninger).`
+  }
   const split = Math.max(0, sorted.length - 7)
   const recent = sorted.slice(split)
   const prior = sorted.slice(Math.max(0, sorted.length - 14), split)

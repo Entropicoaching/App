@@ -1,3 +1,5 @@
+import { dataEnoughEnabled } from '../dataEnough.mjs'
+import { volumeRows } from '../dataEvidence.mjs'
 // ORDRE 177 (13. sep), commit 3: kortet på coachens atletside der viser
 // hvor ugens træningsvolumen lander pr. muskelgruppe — Marcs egen ordlyd:
 // "20 sæt quads ugentlig". Lille og tydeligt, ingen graf-bibliotek, ingen ny
@@ -32,11 +34,11 @@ import { beregnVolumenPrUge } from '../volume/beregn.js'
 import { beregnPlanlagtDenneUge, beregnPlanlagtPrUge, opsummerGab } from '../volume/planlagt.js'
 import { MUSKELGRUPPER, slaaOevelseOp } from '../volume/muskelkort.js'
 import { hentRettelser, hentLagerType } from '../volume/rettelser.js'
-import { supabase } from '../supabase'
-import { s } from '../dashboardShared'
-import VolumenGraf from './VolumenGraf'
-import VolumenGrafForloeb from './VolumenGrafForloeb'
-import KortlaegningRedigering from './KortlaegningRedigering'
+import { supabase } from '../supabase.js'
+import { s } from '../dashboardShared.js'
+import VolumenGraf from './VolumenGraf.jsx'
+import VolumenGrafForloeb from './VolumenGrafForloeb.jsx'
+import KortlaegningRedigering from './KortlaegningRedigering.jsx'
 
 // Ordrens egen ramme: "fire til seks uger bagud" — seks valgt som den mest
 // oplysende ende af det spænd, notér-og-fortsæt (ordren beder om at vælge
@@ -49,6 +51,7 @@ const ANTAL_UGER = 6
 const GRAF_UGER = 8
 
 function raekkerFraAthleteLogs(athleteLogs) {
+  if (dataEnoughEnabled()) return volumeRows(athleteLogs)
   return (athleteLogs || []).map(log => ({
     oevelseNavn: log.exercises?.name,
     loggetDato: log.logged_at,

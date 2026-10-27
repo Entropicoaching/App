@@ -1,47 +1,51 @@
 import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
 import { COACH_FOUR_WEEKS_ENABLED, reduceFourWeekRead } from './dashboard/coachFourWeeks.mjs'
+import { coachWeekFlag } from './dashboard/coachWeekOverview.mjs'
+import { COACH_TEMPLATE_MESSAGES_ENABLED, createCoachTemplateSender } from './dashboard/coachTemplateMessages.mjs'
+import { supabase } from './supabase.js'
+import { coachRydEnabled, WorkInboxLink } from './coachRyd.mjs'
 import { calendarDay } from './calendarDate.js'
 
 import { useState, useEffect, useRef } from 'react'
-import LazyBoundary from './LazyBoundary'
-import { coachInboxEntryIntent, createSingleFlightRunner } from './coachInboxState'
-import { withBlockPurposes } from './periodizationAssistant'
-import { s, currentWeekNo } from './dashboardShared'
-import { lavLaesninger } from './dashboard/laesninger'
-import { lavNavigation } from './dashboard/navigation'
-import { lavIndbakkeHandlinger } from './dashboard/indbakkeHandlinger'
-import { lavVideoReviewHandlinger } from './dashboard/videoReviewHandlinger'
-import { lavAtletHandlinger } from './dashboard/atletHandlinger'
-import { lavAiRapport } from './dashboard/aiRapport'
-import { lavProgramHandlinger } from './dashboard/programHandlinger'
+import LazyBoundary from './LazyBoundary.jsx'
+import { coachInboxEntryIntent, createSingleFlightRunner } from './coachInboxState.js'
+import { withBlockPurposes } from './periodizationAssistant.js'
+import { s, currentWeekNo } from './dashboardShared.js'
+import { lavLaesninger } from './dashboard/laesninger.js'
+import { lavNavigation } from './dashboard/navigation.js'
+import { lavIndbakkeHandlinger } from './dashboard/indbakkeHandlinger.js'
+import { lavVideoReviewHandlinger } from './dashboard/videoReviewHandlinger.js'
+import { lavAtletHandlinger } from './dashboard/atletHandlinger.js'
+import { lavAiRapport } from './dashboard/aiRapport.js'
+import { lavProgramHandlinger } from './dashboard/programHandlinger.js'
 import { createWeekDeletionQueue } from './dashboard/weekDeletion.js'
 import { DEFAULT_PROGRAM_COPY } from './dashboard/programCopy.js'
 import WeekDeletionNotice from './dashboard/WeekDeletionNotice.jsx'
-import { useVideoCoachBro } from './dashboard/useVideoCoachBro'
-import BibliotekView from './dashboard/BibliotekView'
-import KalenderView from './dashboard/KalenderView'
-import ForsideView from './dashboard/ForsideView'
-import HubTab from './dashboard/HubTab'
-import OpvarmningTab from './dashboard/OpvarmningTab'
-import OversigtTab from './dashboard/OversigtTab'
-import KostTab from './dashboard/KostTab'
-import LogTab from './dashboard/LogTab'
-import StaevneTab from './dashboard/StaevneTab'
-import NoterTab from './dashboard/NoterTab'
-import BeskederTab from './dashboard/BeskederTab'
-import VideoReviewModal from './dashboard/VideoReviewModal'
-import StaevneResultatModal from './dashboard/StaevneResultatModal'
-import NyAtletModal from './dashboard/NyAtletModal'
-import Overlays from './dashboard/Overlays'
-import Sidebar from './dashboard/Sidebar'
-import MobilNav from './dashboard/MobilNav'
-import ProfilHoved from './dashboard/ProfilHoved'
-import WeekdayPicker from './dashboard/WeekdayPicker'
-import ExFormRow from './dashboard/ExFormRow'
-import BlockSequenceRows from './dashboard/BlockSequenceRows'
-import { lavProfilTal } from './dashboard/profilTal'
-import { useDashboardEffekter } from './dashboard/useDashboardEffekter'
-import { useCoachPrioritet } from './dashboard/useCoachPrioritet'
+import { useVideoCoachBro } from './dashboard/useVideoCoachBro.js'
+import BibliotekView from './dashboard/BibliotekView.jsx'
+import KalenderView from './dashboard/KalenderView.jsx'
+import ForsideView from './dashboard/ForsideView.jsx'
+import HubTab from './dashboard/HubTab.jsx'
+import OpvarmningTab from './dashboard/OpvarmningTab.jsx'
+import OversigtTab from './dashboard/OversigtTab.jsx'
+import KostTab from './dashboard/KostTab.jsx'
+import LogTab from './dashboard/LogTab.jsx'
+import StaevneTab from './dashboard/StaevneTab.jsx'
+import NoterTab from './dashboard/NoterTab.jsx'
+import BeskederTab from './dashboard/BeskederTab.jsx'
+import VideoReviewModal from './dashboard/VideoReviewModal.jsx'
+import StaevneResultatModal from './dashboard/StaevneResultatModal.jsx'
+import NyAtletModal from './dashboard/NyAtletModal.jsx'
+import Overlays from './dashboard/Overlays.jsx'
+import Sidebar from './dashboard/Sidebar.jsx'
+import MobilNav from './dashboard/MobilNav.jsx'
+import ProfilHoved from './dashboard/ProfilHoved.jsx'
+import WeekdayPicker from './dashboard/WeekdayPicker.jsx'
+import ExFormRow from './dashboard/ExFormRow.jsx'
+import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
+import { lavProfilTal } from './dashboard/profilTal.js'
+import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
+import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
 
 
 
@@ -52,20 +56,23 @@ import { useCoachPrioritet } from './dashboard/useCoachPrioritet'
 // åbner dem, så atletlisten og check-in-gennemgangen ikke skal downloade dem.
 // Indlæses via LazyBoundary (ordre 163 · del 2): egen fejlgrænse pr. fane, så
 // en fejl i ÉN fane ikke river resten af dashboardet med sig.
-const indbakkeFactory = () => import('./dashboard/IndbakkeView')
-const analyseTabFactory = () => import('./dashboard/AnalyseTab')
-const programTabFactory = () => import('./dashboard/ProgramTab')
+const indbakkeFactory = () => import('./dashboard/IndbakkeView.jsx')
+const analyseTabFactory = () => import('./dashboard/AnalyseTab.jsx')
+const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // ORDRE 228 · commit 2: Volumenkortet (177/185/209/210) trækker hele
 // src/volume/-træet med sig, inkl. den 53 kB genererede kortlægnings-JSON
 // (muskelkort.generet.json) — kun brugt på 'oversigt'-fanen i en atlets
 // profil, aldrig ved coachens første tegning af atletlisten. Samme
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
-const volumenKortFactory = () => import('./dashboard/VolumenKort')
+const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED }) {
+export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
+  const coachRyd = useRef(coachRydEnabled(typeof window === 'undefined' ? '' : window.location.search)).current
+  const coachWeekEnabled = coachWeekFlag(typeof window === 'undefined' ? '' : window.location.search)
+  const [coachWeekDataStatus, setCoachWeekDataStatus] = useState({})
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
@@ -320,6 +327,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
     blokFremgang: blokFremgang === true,
     fourWeekCapture,
     setCoachActionsStatus,
+    coachWeekEnabled, setCoachWeekDataStatus,
     inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
     setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
     setAthleteWeightLogs, setAutomationAlerts, setAutomationAlertsError, setCalendarWeeks, setCoachBriefingSeen, setExerciseLibrary,
@@ -329,7 +337,15 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
     setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
     setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
+    ...(coachTemplateMessages === true ? { coachActions: true } : {}),
   })
+
+  const templateScopeRef = useRef(null)
+  templateScopeRef.current = { enabled: coachTemplateMessages === true, coachId: session?.user?.id, athletes }
+  const [sendTemplateMessage] = useState(() => createCoachTemplateSender({
+    enabled: true, database: supabase, getScope: () => templateScopeRef.current,
+    onSent: () => fetchLatestMessages(templateScopeRef.current.athletes.map(a => a.id)),
+  }))
 
   const {
     goToMyProfile, openProfile, openPlanReview, startEdit, openCoachPriorityItem,
@@ -355,7 +371,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
   })
 
   const {
-    reviewVideoAnalysis, saveVideoAnalysisFeedback, closeVideoAnalysisReview, discardVideoAnalysisFeedback, openAwaitingAnalysisVideo, openVideoAnalysisReview,
+    saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, closeVideoAnalysisReview, discardVideoAnalysisFeedback, openAwaitingAnalysisVideo, openVideoAnalysisReview,
   } = lavVideoReviewHandlinger({
     fetchVideoCoachHistory, fetchVideoReviewQueue, openVideoCoachV3, selectedAthlete, setVideoAnalyses, setVideoAnalysisBaselineFindingId,
     setVideoAnalysisCloseWarning, setVideoAnalysisError, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, setVideoAnalysisReview, setVideoAnalysisReviewError,
@@ -431,6 +447,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
   })
 
   useDashboardEffekter({
+    coachWeekEnabled,
     coachFourWeeksEnabled,
     activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
     fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
@@ -523,7 +540,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
         confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
       }} />
       {programCopyEnabled === true && <WeekDeletionNotice entries={pendingWeekDeletes} onUndo={id => weekDeletionQueue.undo(id)} />}
-      <Sidebar {...{
+      <Sidebar {...{ coachRyd,
         athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
         exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
         openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId,
@@ -533,7 +550,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
 
       <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
         <div style={s.topbar}>
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? 'Coach Briefing' : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? (coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing') : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
           {onPreviewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
@@ -543,18 +560,19 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
           )}
         </div>
 
-        <MobilNav {...{
+        <MobilNav {...{ coachRyd,
           athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
           goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
           selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
           setShowAddModal, setSidebarOpen, setView, sheetPreviewPick, view,
         }} />
 
+        {coachRyd && view !== 'inbox' && view !== 'list' && <WorkInboxLink count={coachPriorityItems.length} next={coachPriorityItems[0]} open={() => { setView('inbox'); setSelectedAthlete(null) }} />}
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
         {view === 'inbox' && (
           <LazyBoundary
             factory={indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
-            componentProps={{
+            componentProps={{ coachRyd,
               athletes, coachPriorityItems, handleTrainingSignal,
               automationAlertActionError, automationAlertUpdatingId, automationAlertsError, handleAutomationAlert,
               hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
@@ -594,14 +612,16 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
 
         {view === 'list' && (() => {
           return (
-            <ForsideView {...{
+            <ForsideView {...{ coachRyd,
+              coachWeekEnabled, coachWeekDataStatus,
               athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
               automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
               fetchAthletes, goToMyProfile, handleCoachBriefingSeen, handleTrainingSignal, hiddenAthleteIds, isMobile,
-              loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
+              inboxRefreshStatus, loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
               setAthleteSortMode, setHiddenAthleteIds, setLoading, setSelectedAthlete, setShowAllAthletes, setShowHiddenAthletes,
               setView, showAllAthletes, showHiddenAthletes, trainingSignalsError, trainingSignalUpdatingKey, unreadCounts,
               videoMeasurementByAthlete, videoReviewQueueError, latestByTrack, videoReviewQueue, coachActionsStatus,
+              coachTemplateMessages, coachId: session?.user?.id, sendTemplateMessage,
             }} />
           )
         })()}
@@ -610,7 +630,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <ProfilHoved {...{
+            <ProfilHoved {...{ coachRyd,
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
@@ -623,7 +643,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
               const hubNo = currentWeekNo(hubUger, athleteCurrentWeek[a.id] ?? null)
               const plannedPas = hubUger.find(week => week.week_number === hubNo)?.session_count ?? null
               return (
-                <HubTab {...{
+                <HubTab {...{ coachRyd,
                   a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
                   videoAnalyses, weeklyActivity,
                 }} />
@@ -634,7 +654,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
             {activeTab === 'analyse' && (
               <LazyBoundary
                 factory={analyseTabFactory} label="Analyse" loading={<div style={s.page}>Indlæser…</div>}
-                componentProps={{
+                componentProps={{ coachRyd,
                   a, aiExportCopied, aiExportText, aiExportWeeks,
                   athleteLogs, athletePRHistory, athleteReadiness,
                   athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory,
@@ -759,8 +779,8 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
 
       {videoAnalysisReview && (() => {
         return (
-          <VideoReviewModal {...{
-            closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
+          <VideoReviewModal {...{ coachRyd,
+            closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
             setVideoAnalysisBaselineFindingId, setVideoAnalysisCloseWarning, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, videoAnalyses, videoAnalysisBaselineFindingId,
             videoAnalysisCloseWarning, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft, videoAnalysisReview, videoAnalysisUpdatingId, videoBaselines,
           }} />

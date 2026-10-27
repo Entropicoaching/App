@@ -1,12 +1,13 @@
+import { createSaveApproveShareHandler } from './videoSaveApproveShare.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // "Gennemgå måling": status (godkend/del/udelad), feedback gem/fortryd/luk,
 // åbn en afventende atlet-video til sporing og åbn review-modalen.
 // Handler-fabrik: Dashboard kalder den i hvert render.
-import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality'
-import { videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection } from '../videoCoachPersonalFeedback'
-import { supabase } from '../supabase'
-import { videoCoachFeedbackPayload, videoCoachFeedbackDraft } from './coachVideoHjaelp'
-import { VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
+import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality.js'
+import { videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection } from '../videoCoachPersonalFeedback.js'
+import { supabase } from '../supabase.js'
+import { videoCoachFeedbackPayload, videoCoachFeedbackDraft } from './coachVideoHjaelp.js'
+import { VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload.js'
 import { createVideoReviewStatusHandler } from './videoReviewStatus.mjs'
 
 // Sammenlign og skriv i samme UPDATE, så et gammelt review ikke overskriver nyere arbejde.
@@ -23,6 +24,14 @@ export function lavVideoReviewHandlinger({
   setVideoAnalysisReviewLoadingId, setVideoAnalysisUpdatingId, showFlash, videoAnalysisBaselineFindingId, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft,
   videoAnalysisReviewLoadingId, videoAnalysisUpdatingId, videoBaselines, videoCoachPendingCompletionRef,
 }) {
+  const saveApproveShareVideoAnalysis = createSaveApproveShareHandler({
+    selectedAthlete, videoAnalysisUpdatingId, videoBaselines, videoAnalysisFeedbackDraft,
+    videoAnalysisBaselineFindingId, supabase, setVideoAnalysisUpdatingId,
+    setVideoAnalysisReviewError, setVideoAnalysisReview, setVideoAnalyses,
+    setVideoAnalysisFeedbackDraft, setVideoAnalysisBaselineFindingId,
+    setVideoAnalysisFeedbackDirty, setVideoAnalysisCloseWarning,
+    fetchVideoCoachHistory, fetchVideoReviewQueue, showFlash,
+  })
   const reviewVideoAnalysis = createVideoReviewStatusHandler({
   selectedAthlete, videoAnalysisUpdatingId, videoAnalysisFeedbackDirty,
   videoBaselines, videoCoachFeedbackQuality, videoCoachPersonalBaselineOptions,
@@ -164,6 +173,6 @@ export function lavVideoReviewHandlinger({
   }
 
   return {
-    reviewVideoAnalysis, saveVideoAnalysisFeedback, closeVideoAnalysisReview, discardVideoAnalysisFeedback, openAwaitingAnalysisVideo, openVideoAnalysisReview,
+    saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, closeVideoAnalysisReview, discardVideoAnalysisFeedback, openAwaitingAnalysisVideo, openVideoAnalysisReview,
   }
 }

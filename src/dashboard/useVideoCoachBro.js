@@ -1,3 +1,6 @@
+import { DEFAULT_VIDEOCOACH_FORENKL4, returnCompletedVideoToReview } from '../vcForenkl4.mjs'
+import { dataEnoughEnabled } from '../dataEnough.mjs'
+import { attachVideoReferences } from '../videoEvidence.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // VideoCoach-broen på coachens side: atletlisten og den valgte atlet til
 // iframen, og message-lytteren (ready, close, baseline- og opsætnings-
@@ -5,13 +8,14 @@
 // Dashboard, så effekternes rækkefølge er uændret (samme mønster som
 // src/athlete/useVideoCoachBro.js, ordre 373).
 import { useEffect } from 'react'
-import { videoCoachBridgeConfig, VIDEOCOACH_V3_PREFIX, validateVideoCoachV3Row } from './coachVideoHjaelp'
-import { supabase } from '../supabase'
-import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
-import { sanitizeVideoCoachFeedbackEvidence } from '../videoCoachFeedbackEvidence'
-import { saveVideoCoachDraft } from '../videoCoachSubmission'
+import { videoCoachBridgeConfig, VIDEOCOACH_V3_PREFIX, validateVideoCoachV3Row } from './coachVideoHjaelp.js'
+import { supabase } from '../supabase.js'
+import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion.js'
+import { sanitizeVideoCoachFeedbackEvidence } from '../videoCoachFeedbackEvidence.js'
+import { saveVideoCoachDraft } from '../videoCoachSubmission.js'
 
 export function useVideoCoachBro({
+  videoCoachForenkl4 = DEFAULT_VIDEOCOACH_FORENKL4,
   athletes, fetchVideoCoachHistory, fetchVideoReviewQueue, openProfile, selectedAthlete, setConfirmDialog,
   setSelectedAthlete, setVideoCoachOpen, setVideoReviewRequest, setView, showFlash, videoCoachAthletesRef,
   videoCoachClientsRef, videoCoachFrameRef, videoCoachPendingCompletionRef, videoCoachPendingShareRef, videoCoachSelectedAthleteRef,
@@ -118,7 +122,16 @@ export function useVideoCoachBro({
           reply({ ok: false, error: error.message || 'Baseline kunne ikke hentes' })
           return
         }
-        reply({ ok: true, baselines: (data || []).filter(item =>
+        let references = []
+        if (dataEnoughEnabled()) {
+          const history = await supabase.from('video_analyses')
+            .select('id,athlete_id,lift,variation,status,analyzed_at,metrics,engine_version,tracker_version')
+            .eq('athlete_id', message.athleteId).in('status', ['coach_approved', 'shared'])
+            .order('analyzed_at', { ascending: false }).limit(500)
+          if (!history.error) references = history.data || []
+        }
+        const values = dataEnoughEnabled() ? attachVideoReferences(data || [], references) : data || []
+        reply({ ok: true, baselines: values.filter(item =>
           item && ['squat', 'bench', 'deadlift'].includes(item.lift) &&
           typeof item.variation === 'string' && typeof item.metric_key === 'string' &&
           typeof item.metric_method === 'string' && Number.isFinite(Number(item.median)) &&
@@ -216,7 +229,12 @@ export function useVideoCoachBro({
       }
       reply({ ok: true, data: result.data })
       if (isCompletion) {
-        videoCoachPendingCompletionRef.current = null
+        const active = videoCoachPendingCompletionRef.current === pendingCompletion &&
+          videoCoachClientsRef.current.has(event.source) &&
+          videoCoachFrameRef.current?.contentWindow === event.source
+        if (videoCoachForenkl4 !== true || active) videoCoachPendingCompletionRef.current = null
+        returnCompletedVideoToReview({ enabled: videoCoachForenkl4, active, pending: pendingCompletion, data: result.data,
+          athletes: videoCoachAthletesRef.current, setVideoCoachOpen, setVideoReviewRequest, openProfile })
         showFlash('Analysen er sporet og klar ✓', 'success')
         fetchVideoReviewQueue()
         if (videoCoachSelectedAthleteRef.current === result.data.athlete_id)

@@ -1,14 +1,15 @@
+import { withDataEnoughFlag } from '../dataEnough.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (linje 35-178 før
 // opdelingen, se docs/DASHBOARD-KORT.md). Rene VideoCoach-hjælpere til
 // coachens side: broens konfiguration og validering, stangbane-preview,
 // feedback-udkast og målingstekster.
-import { validateVideoCoachPayloadBounds } from '../videoCoachSubmission'
-import { withVideoCoachPersonalBaseline } from '../videoCoachPersonalFeedback'
-import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels'
-import { VIDEOCOACH_BUILD_ID } from '../videoCoachVersion'
+import { validateVideoCoachPayloadBounds } from '../videoCoachSubmission.js'
+import { withVideoCoachPersonalBaseline } from '../videoCoachPersonalFeedback.js'
+import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels.js'
+import { VIDEOCOACH_BUILD_ID } from '../videoCoachVersion.js'
 
 const VIDEOCOACH_V3_PREFIX = 'entropi:videocoach:v3'
-const VIDEOCOACH_V3_URL = `videocoach.html?coach=1&bridge=v3&v=${VIDEOCOACH_BUILD_ID}`
+const VIDEOCOACH_V3_URL = withDataEnoughFlag(`videocoach.html?coach=1&bridge=v3&v=${VIDEOCOACH_BUILD_ID}`)
 const VIDEOCOACH_V3_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',
   'lift', 'variation', 'load_kg', 'rpe', 'reps_count', 'rep_details',

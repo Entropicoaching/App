@@ -1,10 +1,10 @@
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Mobilens bundnavigation og menu-ark.
 // Samme navne som props som i Dashboard; linjerne står i et fragment (ingen DOM-ændring).
-import { s } from '../dashboardShared'
-import { signOutHard } from '../supabase'
+import { s } from '../dashboardShared.js'
+import { signOutHard } from '../supabase.js'
 
-export default function MobilNav({
+export default function MobilNav({ coachRyd = false,
   athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
   goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
   selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
@@ -29,7 +29,7 @@ export default function MobilNav({
                 icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>,
               },
               {
-                key: 'inbox', label: 'Coach Briefing', active: view === 'inbox',
+                key: 'inbox', label: coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing', active: view === 'inbox',
                 onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) },
                 icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
               },

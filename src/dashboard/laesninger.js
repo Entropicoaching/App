@@ -1,26 +1,33 @@
 import { readBlockLogs } from '../blokFremgang.mjs'
 import { readFourWeekSource } from './coachFourWeeks.mjs'
 import { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
+import { dataAllowed } from '../dataEnough.mjs'
+import { rpeSignalEvidence, rpeSignalDescription } from '../dataEvidence.mjs'
+import { attachVideoReferences } from '../videoEvidence.mjs'
+import { dataEnoughEnabled } from '../dataEnough.mjs'
+import { addWeekRpe, readWeekData } from './coachWeekOverview.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Alt coachens side henter: atleter, kalender, indbakke (signaler, videoer,
 // automatiseringsfejl, set-markeringer, beskeder), program, logs, VideoCoach-
 // historik, vægt, parathed, PR, stævner, opvarmning. Handler-fabrik som i
 // src/athlete/laesninger.js (ordre 373): Dashboard kalder den i hvert render
 // med de navne funktionerne bruger, så det er de samme closures som før.
-import { summarizeRefreshResults, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages } from '../coachInboxState'
-import { supabase, withRetry } from '../supabase'
-import { filterOpenAutomationAlerts } from '../automationAlerts'
-import { saetSmerteSignaler, medSaetSmerte } from '../saetSmerte'
-import { ATHLETE_LOGS_LIMIT } from './coachKonstanter'
-import { planlagteReps, taellerIKg, logTegn } from './afvigelse'
-import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion'
-import { normaliserRekorder, bedsteRekorder, tungeRekorder } from '../personalRecords'
-import { danskDag } from '../danskDato'
+import { summarizeRefreshResults, filterDraftVideoReviews, filterOpenTrainingSignals, summarizeCoachMessages } from '../coachInboxState.js'
+import { supabase, withRetry } from '../supabase.js'
+import { filterOpenAutomationAlerts } from '../automationAlerts.js'
+import { saetSmerteSignaler, medSaetSmerte } from '../saetSmerte.js'
+import { ATHLETE_LOGS_LIMIT } from './coachKonstanter.js'
+import { planlagteReps, taellerIKg, logTegn } from './afvigelse.js'
+import { VIDEOCOACH_BASELINE_VERSION } from '../videoCoachVersion.js'
+import { normaliserRekorder, bedsteRekorder, tungeRekorder } from '../personalRecords.js'
+import { danskDag } from '../danskDato.js'
 import { COACH_ACTIONS_ENABLED, coachActionsEnabled, actionSessions } from './coachActions.mjs'
 
 export function lavLaesninger({
   blokFremgang = false,
   fourWeekCapture,
+  coachWeekEnabled = false, setCoachWeekDataStatus = () => {},
+
   coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {},
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
   setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
@@ -38,7 +45,10 @@ export function lavLaesninger({
       try {
         const athleteIds = videoCoachAthletesRef.current.map(athlete => athlete.id)
         const requests = [fetchTodayActivity(), fetchVideoReviewQueue(), fetchTrainingSignals(), fetchAutomationAlerts(), fetchCoachBriefingSeen()]
-        if (athleteIds.length) requests.push(fetchLatestMessages(athleteIds))
+        if (athleteIds.length) {
+          requests.push(fetchLatestMessages(athleteIds))
+          if (dataEnoughEnabled()) requests.push(fetchCalendarWeeks(athleteIds), fetchCalendarProgress(athleteIds))
+        }
         const results = await Promise.allSettled(requests)
         setInboxRefreshStatus(summarizeRefreshResults(results))
       } finally {
@@ -167,11 +177,13 @@ export function lavLaesninger({
     // (samme forespørgsel, ingen ny rundtur) — giver "planlagt denne uge"
     // (sæt + tonnage, src/dashboard/afvigelse.js) uden at ændre hvad
     // kalender-tidslinjen selv viser (session_count/exercise_count uændret).
-    const { data, error } = await supabase
+    if (dataEnoughEnabled()) setCalendarWeeks(prev => Object.fromEntries(Object.entries(prev || {}).map(([id, rows]) => [id, rows.map(w => ({ ...w, readEvidence: { athleteId: id, complete: false } }))])))
+    const query = supabase
       .from('weeks')
       .select('id, athlete_id, week_number, block_name, start_date, sessions(id, session_order, athlete_rating, athlete_comment, exercises(id, sets, reps, recommended_weight))')
       .in('athlete_id', athleteIds)
-    if (!data || (coachActionsEnabled(coachActions) && error)) { status('error'); return }
+    const { data, error } = await readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'plan')
+    if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); return dataEnoughEnabled() ? false : undefined }
     const map = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, []])) : {}
     for (const w of data) {
       if (!map[w.athlete_id]) map[w.athlete_id] = []
@@ -191,6 +203,7 @@ export function lavLaesninger({
       }
       map[w.athlete_id].push({
         id: w.id,
+        ...(dataEnoughEnabled() ? { planSessions: sessions, readEvidence: { athleteId: w.athlete_id, complete: data.length < 1000 } } : {}),
         week_number: w.week_number,
         block_name: w.block_name,
         start_date: w.start_date,
@@ -207,6 +220,7 @@ export function lavLaesninger({
     for (const aid in map) map[aid].sort((a, b) => a.week_number - b.week_number)
     setCalendarWeeks(map)
     status('ready')
+    return dataEnoughEnabled() ? data.length < 1000 : undefined
     } catch (error) {
       if (!coachActionsEnabled(coachActions)) throw error
       status('error')
@@ -229,13 +243,15 @@ export function lavLaesninger({
     // selectet (samme forespørgsel som allerede fandt "hvilken uge er
     // atleten i nu" via seneste log) — giver "gennemført denne uge" (sæt +
     // tonnage, pr. programuge) uden endnu en rundtur.
-    const { data, error } = await supabase
+    if (dataEnoughEnabled()) setAthleteWeekCompletion(prev => Object.fromEntries(Object.entries(prev || {}).map(([id, byWeek]) => [id, Object.fromEntries(Object.entries(byWeek).map(([wn, c]) => [wn, { ...c, readEvidence: { athleteId: id, complete: false } }]))])))
+    const query = supabase
       .from('exercise_logs')
-      .select('athlete_id, logged_at, weight, reps_completed, skipped, note, exercises(reps, recommended_weight, sessions(id, session_order, weeks(week_number)))')
+      .select((coachWeekEnabled ? 'rpe_actual, rpe_planned, ' : '') + (dataEnoughEnabled() ? 'athlete_id, exercise_id, set_number, logged_at, weight, reps_completed, skipped, note, exercises(reps, recommended_weight, sessions(id, session_order, weeks(' + (coachWeekEnabled ? 'id, ' : '') + 'week_number)))' : 'athlete_id, logged_at, weight, reps_completed, skipped, note, exercises(reps, recommended_weight, sessions(id, session_order, weeks(' + (coachWeekEnabled ? 'id, ' : '') + 'week_number)))'))
       .in('athlete_id', athleteIds)
       .gte('logged_at', since.toISOString())
       .order('logged_at', { ascending: false })
-    if (!data || (coachActionsEnabled(coachActions) && error)) { status('error'); return }
+    const { data, error } = await readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'logs')
+    if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); return dataEnoughEnabled() ? false : undefined }
     const map = {}
     const completion = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, {}])) : {}
     for (const log of data) {
@@ -247,8 +263,16 @@ export function lavLaesninger({
       if (wn == null) continue
       const aid = log.athlete_id
       if (!completion[aid]) completion[aid] = {}
-      if (!completion[aid][wn]) completion[aid][wn] = { sets: 0, tonnage: 0, pas: 0, sprungneSaet: 0, saetUnderPlan: 0, sessionIds: {}, notes: [] }
-      const c = completion[aid][wn]
+      const weekId = log.exercises?.sessions?.weeks?.id
+      const keys = coachWeekEnabled && weekId != null ? [wn, `id:${weekId}`] : [wn]
+      for (const key of keys) {
+      if (!completion[aid][key]) completion[aid][key] = { sets: 0, tonnage: 0, pas: 0, sprungneSaet: 0, saetUnderPlan: 0, sessionIds: {}, notes: [] }
+      const c = completion[aid][key]
+      if (coachWeekEnabled) addWeekRpe(c, log)
+      if (dataEnoughEnabled()) {
+        c.readEvidence = { athleteId: aid, complete: data.length < 1000 }
+        c.evidenceRows = [...(c.evidenceRows || []), log]
+      }
       // ORDRE 428 (C2): sæt-noter tælles også fra sprungne sæt (atleten
       // skriver ofte hvorfor).
       if (log.note) c.notes.push({ order: log.exercises?.sessions?.session_order, note: log.note })
@@ -262,10 +286,12 @@ export function lavLaesninger({
       if (taellerIKg(log.exercises)) c.tonnage += (Number(log.weight) || 0) * (Number(log.reps_completed) || 0)
       const sid = log.exercises?.sessions?.id
       if (sid && !c.sessionIds[sid]) { c.sessionIds[sid] = true; c.pas += 1 }
+      }
     }
     setAthleteCurrentWeek(map)
     setAthleteWeekCompletion(completion)
     status('ready')
+    return dataEnoughEnabled() ? data.length < 1000 : undefined
     } catch (error) {
       if (!coachActionsEnabled(coachActions)) throw error
       status('error')
@@ -343,7 +369,26 @@ export function lavLaesninger({
         .not('note', 'is', null).gte('logged_at', siden).limit(2000)
       if (!noteResult.error) saetSignaler = saetSmerteSignaler(noteResult.data, videoCoachAthletesRef.current)
     } catch { /* signalerne uden saet-note-smerte vises stadig */ }
-    setTrainingSignals(filterOpenTrainingSignals(medSaetSmerte(signalsResult.data, saetSignaler), actionsResult.data))
+    let signals = signalsResult.data || []
+    if (dataEnoughEnabled()) {
+      const today = new Date().toLocaleDateString('en-CA')
+      const since = new Date(Date.now() - 22 * 86400000).toISOString()
+      signals = await Promise.all(signals.map(async item => {
+        if (!['rpe_drift', 'data_conflict'].includes(item.o_detector)) return item
+        try {
+          const history = await supabase.from('exercise_logs')
+            .select('id,athlete_id,exercise_id,set_number,weight,reps_completed,note,rpe_actual,rpe_planned,logged_at,skipped,exercises(name,session_id)')
+            .eq('athlete_id', item.o_athlete_id).gte('logged_at', since).limit(2000)
+          const checks = item.o_detector === 'data_conflict' ? await supabase.from('readiness_logs')
+            .select('*').eq('athlete_id', item.o_athlete_id).gte('logged_date', since.slice(0, 10)).limit(100) : { data: [] }
+          if (history.error || checks.error || !Array.isArray(history.data) || history.data.length >= 2000) return item
+          const evidence = rpeSignalEvidence(history.data, checks.data || [], today, item.o_metrics?.top_lift, item.o_detector === 'data_conflict')
+          return dataAllowed('D16', evidence) ? { ...item, data_evidence: evidence,
+            o_headline: 'Registreret RPE-afvigelse', o_detail: rpeSignalDescription(evidence) } : item
+        } catch { return item }
+      }))
+    }
+    setTrainingSignals(filterOpenTrainingSignals(medSaetSmerte(signals, saetSignaler), actionsResult.data))
     return true
   }
 
@@ -381,13 +426,17 @@ export function lavLaesninger({
   }
 
   async function fetchWeeks(athleteId) {
-    const { data } = await readFourWeekSource(fourWeekCapture, 'weeks', athleteId, () => supabase
+    if (dataEnoughEnabled()) setWeeks(prev => Object.assign([...prev], { readEvidence: { athleteId, complete: false } }))
+    const { data, error } = await readFourWeekSource(fourWeekCapture, 'weeks', athleteId, () => {
+      const query = supabase
       .from('weeks')
       .select('*, sessions(*, exercises(*))')
       .eq('athlete_id', athleteId)
-      .order('week_number'))
+      .order('week_number')
+      return dataEnoughEnabled() ? query.limit(1000) : query
+    })
     if (currentProgramAthleteRef && currentProgramAthleteRef.current !== athleteId) return
-    setWeeks((data || []).map(w => ({
+    const readWeeks = (data || []).map(w => ({
       ...w,
       sessions: (w.sessions || [])
         // Sekundær sortering på id giver dage med ens session_order en STABIL,
@@ -395,7 +444,8 @@ export function lavLaesninger({
         // altid flytter den dag man tror.
         .sort((a, b) => (a.session_order - b.session_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
         .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => (a.exercise_order - b.exercise_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)) }))
-    })))
+    }))
+    setWeeks(dataEnoughEnabled() ? Object.assign(readWeeks, { readEvidence: { athleteId, complete: !error && Array.isArray(data) && data.length < 1000 } }) : readWeeks)
   }
 
   async function fetchExerciseLibrary() {
@@ -444,20 +494,21 @@ export function lavLaesninger({
   }
 
   async function fetchAthleteLogs(athleteId) {
+    if (dataEnoughEnabled()) setAthleteLogs(prev => Object.assign([...prev], { readEvidence: { athleteId, complete: false } }))
     if (blokFremgang === true) {
       // Both opt-ins share the same scoped read and its error state.
       const { data, error } = await readFourWeekSource(fourWeekCapture, 'logs', athleteId,
         () => readBlockLogs(supabase, athleteId))
-      setAthleteLogs(error ? [] : data)
+      setAthleteLogs(dataEnoughEnabled() ? Object.assign(error ? [] : data, { readEvidence: { athleteId, complete: !error && Array.isArray(data) && data.length < ATHLETE_LOGS_LIMIT } }) : error ? [] : data)
       return
     }
-    const { data } = await readFourWeekSource(fourWeekCapture, 'logs', athleteId, () => supabase
+    const { data, error } = await readFourWeekSource(fourWeekCapture, 'logs', athleteId, () => supabase
       .from('exercise_logs')
       .select('id, athlete_id, set_number, weight, reps_completed, note, logged_at, rpe_actual, rpe_planned, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
       .limit(ATHLETE_LOGS_LIMIT))
-    setAthleteLogs(data || [])
+    setAthleteLogs(dataEnoughEnabled() ? Object.assign(data || [], { readEvidence: { athleteId, complete: !error && Array.isArray(data) && data.length < ATHLETE_LOGS_LIMIT } }) : data || [])
   }
 
   async function fetchVideoCoachHistory(athleteId) {
@@ -465,7 +516,7 @@ export function lavLaesninger({
     setVideoAnalysisError(null)
     const [historyResult, baselineResult] = await Promise.all([
       readFourWeekSource(fourWeekCapture, 'videos', athleteId, () => supabase.from('video_analyses')
-        .select('id,client_analysis_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path')
+        .select('id,client_analysis_id,athlete_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,session_context,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path')
         .eq('athlete_id', athleteId)
         .order('analyzed_at', { ascending: false })
         .limit(30)),
@@ -479,10 +530,10 @@ export function lavLaesninger({
       setVideoAnalysisError(historyResult.error?.message || baselineResult.error?.message ||
         'Videoanalyserne kunne ikke hentes')
       setVideoAnalyses(historyResult.data || [])
-      setVideoBaselines(baselineResult.data || [])
+      setVideoBaselines(dataEnoughEnabled() ? attachVideoReferences(baselineResult.data || [], historyResult.error ? [] : historyResult.data || []) : baselineResult.data || [])
     } else {
       setVideoAnalyses(historyResult.data || [])
-      setVideoBaselines(baselineResult.data || [])
+      setVideoBaselines(dataEnoughEnabled() ? attachVideoReferences(baselineResult.data || [], historyResult.error ? [] : historyResult.data || []) : baselineResult.data || [])
     }
     setVideoAnalysisLoading(false)
   }

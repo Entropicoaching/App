@@ -1,30 +1,36 @@
+import { nextTrainingHome, renderNextTrainingHome } from './nextTrainingHome.mjs'
+import MobilityBeforeSession from './mobilityBeforeSession.mjs'
 import { renderAthleteShortcuts, revealWeek } from './athleteShortcuts.mjs'
 import { createElement, useRef } from 'react'
+import { renderVideoCoachChoices } from '../vcForenkl4.mjs'
+import { dataEnoughEnabled, dataMessage, dayNumber } from '../dataEnough.mjs'
 import { weightTrendText } from './weightTrend.mjs'
-import { exerciseSetView, exerciseViewRows, bestExerciseRecords } from '../exerciseSetView'
+import { exerciseSetView, exerciseViewRows, bestExerciseRecords } from '../exerciseSetView.js'
 // HJEM-fanen (ferie-skaermen og forsiden: overskrift, ugestrimmel, Dagens pas,
 // pauselinje, chips og alt bag "Mere") — JSX'en flyttet uaendret ud af
 // AthleteView.jsx (ordre 373). Ikke lazy: det er standardfanen. Ingen egen
 // tilstand; alt kommer ind som props med samme navne som i AthleteView.
 
-import { isMainLift } from '../warmup'
-import { findDagensPas, isSessionDone } from '../nextSet'
-import { shouldNudgeCheckin } from '../checkinReminder'
-import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange, checkinNoteTimingText } from '../readinessInsight'
-import { s, today } from '../athleteShared'
-import { weekStartDate, fmtWeekRange, WEEKDAYS_LONG } from './ugeHjaelp'
-import UgensStatusKort from './UgensStatusKort'
-import WeekCalendar from './WeekCalendar'
-import DagensPasCard from './DagensPasCard'
-import DinUgeKort from './DinUgeKort'
-import { dinUge } from './dinUge'
-import RestPauseFooter from './RestPauseFooter'
-import { naesteLabel } from './pauseLinje'
-import { restSecondsForExercise } from '../restBetweenSets'
-import { startRestPause } from '../restPause'
-import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGrafer'
+import { isMainLift } from '../warmup.js'
+import { findDagensPas, isSessionDone } from '../nextSet.js'
+import { shouldNudgeCheckin } from '../checkinReminder.js'
+import { compareReadiness, readinessComparisonText, readinessTrainingNote, summarizeReadinessForCoach, lastCheckinDrivenChange, checkinNoteTimingText } from '../readinessInsight.js'
+import { s, today } from '../athleteShared.js'
+import { weekStartDate, fmtWeekRange, WEEKDAYS_LONG } from './ugeHjaelp.js'
+import UgensStatusKort from './UgensStatusKort.jsx'
+import WeekCalendar from './WeekCalendar.jsx'
+import DagensPasCard from './DagensPasCard.jsx'
+import DinUgeKort from './DinUgeKort.jsx'
+import { dinUge } from './dinUge.js'
+import RestPauseFooter from './RestPauseFooter.jsx'
+import { naesteLabel } from './pauseLinje.js'
+import { restSecondsForExercise } from '../restBetweenSets.js'
+import { startRestPause } from '../restPause.js'
+import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGrafer.jsx'
 
 function HjemTab({
+  mobilitetFoerPas = false,
+  naesteTraening = false,
   taskShortcuts = false, setMsgTrack,
   allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
   forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
@@ -61,6 +67,7 @@ function HjemTab({
         {tab === 'hjem' && !onHoliday && (
           <>
             {(() => {
+              const naesteHjem = nextTrainingHome({ enabled: naesteTraening, allWeeks, currentWeek, exerciseLogs, now })
               const dagensPas = findDagensPas(allWeeks, currentWeek, exerciseLogs)
               const next = dagensPas?.status === 'open' ? dagensPas.next : null
               // Samme taelling som kortet (Dagens pas): sæt i hele loeftet, ikke i raekken.
@@ -80,14 +87,15 @@ function HjemTab({
               const isTodayShown = shownWd === todayWd
               return (
                 <>
-                  <div style={{ marginBottom: '1rem' }}>
+                  {renderNextTrainingHome(createElement, naesteHjem, () => setTab('program'))}
+                  {!naesteHjem && <div style={{ marginBottom: '1rem' }}>
                     <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.55rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.15, margin: 0 }}>
                       {`${WEEKDAYS_LONG[shownWd]} · ${headingRest}`}
                     </h1>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginTop: '0.35rem' }}>
                       {isTodayShown ? 'I dag' : `I dag er det ${days[now.getDay()]}`} · {now.getDate()}. {months[now.getMonth()]}
                     </div>
-                  </div>
+                  </div>}
 
                   {currentWeek ? (
                     <WeekCalendar
@@ -95,7 +103,7 @@ function HjemTab({
                       weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
                       exerciseLogs={exerciseLogs}
                       onOpenSession={(id) => { setTab('program'); openSession(id) }}
-                      shownWd={pasSession ? shownWd : null}
+                      shownWd={!naesteHjem && pasSession ? shownWd : null}
                     />
                   ) : (
                     // Reserverer WeekCalendars typiske højde: FØR ugedata (allWeeks)
@@ -111,7 +119,12 @@ function HjemTab({
 
                   {toastSlot}
 
-                  <DagensPasCard
+                  {mobilitetFoerPas === true && <MobilityBeforeSession
+                    enabled={mobilitetFoerPas} pas={dagensPas} exerciseLogs={exerciseLogs}
+                    athleteId={athlete?.id} todayStr={today()}
+                  />}
+
+                  {!naesteHjem && <DagensPasCard
                     pas={dagensPas}
                     exerciseHistory={exerciseHistory}
                     exerciseLogs={exerciseLogs}
@@ -171,7 +184,7 @@ function HjemTab({
                         loggedDates,
                       }) ? { onClick: openReadiness } : null
                     })()}
-                  />
+                  />}
                   {/* ORDRE 439 · blok 2: "din uge", når ugens sidste pas er klaret.
                       Linjen til coachen kun i atletens egen visning, ikke i
                       coachens forhåndsvisning. */}
@@ -206,6 +219,7 @@ function HjemTab({
               startVideo: () => { setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) },
             })}
 
+            {role === 'athlete' && renderVideoCoachChoices(createElement, { athleteId: athlete?.id, setInstant: setAthleteVideoCoachInstant, setOpen: setAthleteVideoCoachOpen })}
             {/* ORDRE 330 · blok 2 — Marcs dom: forsiden var for "meget". Over
                 folden står nu kun dagens pas og ÉN række med højst tre
                 sekundære ting (parathed, besked, film et sæt — pausen har sin
@@ -455,7 +469,7 @@ function HjemTab({
               // sidste 14 dage — den eneste daglige rutine der hidtil ikke
               // spejlede noget tilbage. Ren logik i readinessInsight.js
               // (enhedstestet), kun teksten valgt her.
-              const cmp = compareReadiness(sc, readinessHistory.map(r => r.readiness_score))
+              const cmp = compareReadiness(sc, readinessHistory.map(r => r.readiness_score), readinessLog, readinessHistory)
               const comparisonText = readinessComparisonText(cmp.status)
               const trainingNote = readinessTrainingNote(cmp.status)
               // Kurvens punkter: historikken (allerede sorteret nyest-først
@@ -566,7 +580,7 @@ function HjemTab({
 
               // Median of last 5 as current weight
               const last5 = sorted.slice(-5).map(l => l.weight).sort((a, b) => a - b)
-              const currentWeight = last5.length > 0 ? last5[Math.floor(last5.length / 2)] : null
+              const currentWeight = dataEnoughEnabled() ? (sorted.at(-1)?.weight ?? null) : last5.length > 0 ? last5[Math.floor(last5.length / 2)] : null
 
               // Gennemsnit af de seneste syv mod op til syv tidligere vejninger.
               const trendText = weightTrendText(sorted)
@@ -579,7 +593,7 @@ function HjemTab({
                 const minW = Math.min(...ws) - 0.5
                 const maxW = Math.max(...ws) + 0.5
                 const range = maxW - minW
-                const cx = i => PL + (i / (chartEntries.length - 1)) * (W - PL - PR)
+                const cx = i => PL + (dataEnoughEnabled() ? (dayNumber(chartEntries[i].logged_at) - dayNumber(chartEntries[0].logged_at)) / (dayNumber(chartEntries.at(-1).logged_at) - dayNumber(chartEntries[0].logged_at) || 1) : i / (chartEntries.length - 1)) * (W - PL - PR)
                 const cy = w => PT + (1 - (w - minW) / range) * (H - PT - PB)
                 const pts = chartEntries.map((l, i) => `${cx(i).toFixed(1)},${cy(l.weight).toFixed(1)}`).join(' ')
                 const labelIs = chartEntries.length > 2

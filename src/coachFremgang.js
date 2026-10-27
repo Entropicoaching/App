@@ -1,3 +1,5 @@
+import { heavyPointEvidence } from './dataEvidence.mjs'
+import { dataEnoughEnabled, dataAllowed, dataMessage, dayNumber } from './dataEnough.mjs'
 // Ordre 1429: coachens fremgang med SAMME regler som atletens Fremgang (ordre
 // 1421): eet navn pr. hovedloeft (exerciseSetView), hoejeste e1RM pr. dag, kun
 // fra tunge saet (bestHeavySetPerDay). Hver atlet sammenlignes kun med sig
@@ -56,12 +58,20 @@ export function hovedloeftStatus(logs, today = lokalDag()) {
     }
     status.nu = maks(0, VINDUE_DAGE)
     status.foer = maks(VINDUE_DAGE, FOER_DAGE)
-    if (status.nu != null && status.foer != null) status.aendring = Math.round(((status.nu - status.foer) / status.foer) * 1000) / 10
+    const enoughDirection = dataAllowed('D25', { today, rows: punkter.map(p => heavyPointEvidence(p, navn)) })
+    if (enoughDirection && status.nu != null && status.foer != null) status.aendring = Math.round(((status.nu - status.foer) / status.foer) * 1000) / 10
     if (punkter.length >= MIN_PUNKTER) {
       let top = null
       for (const p of punkter) if (!top || p.e1rm > top.e1rm * 1.005) top = p
       status.sidsteTop = top
       status.stagneretUger = Math.floor((nu - dagMs(top.dag)) / (7 * DAG))
+      if (dataEnoughEnabled()) {
+        const week = p => { const d = dayNumber(p.dag); return d - ((d + 3) % 7) }
+        const observed = [...new Set(punkter.map(week))]
+        const after = observed.filter(w => w > week(top)).length
+        if (observed.length < 4 || after < 3 || dayNumber(today) - dayNumber(punkter.at(-1).dag) > 14) status.stagneretUger = null
+        else status.stagneretUger = after
+      }
     }
     ud.push(status)
   }
@@ -135,6 +145,11 @@ export function styrkeLinje(logs, today = lokalDag()) {
   if (!dele.length) {
     const nok = status.some(s => s.aendring != null)
     const tal = status.filter(s => s.aendring != null).map(s => `${s.navn} ${s.aendring > 0 ? '+' : ''}${String(s.aendring).replace('.', ',')} %`).join(', ')
+    if (dataEnoughEnabled()) {
+      const measured = status.filter(s => s.aendring != null).length
+      dele.push({ type: 'grundlag', tekst: measured ? `${measured} af 4 målbare løft: ${tal}` : dataMessage('D25') })
+      return { dele, tekst: dele.map(d => d.tekst).join(' · ') }
+    }
     dele.push({ type: 'ok', tekst: nok ? `Alle hovedløft stiger eller holder (e1RM mod 1-3 mdr. før: ${tal}); ingen smerte-noter` : 'Endnu ikke nok tunge sæt til en styrketendens (kræver tunge sæt både seneste 4 uger og 1-3 mdr. før)' })
   }
   return { dele, tekst: dele.map(d => d.tekst).join(' · ') }

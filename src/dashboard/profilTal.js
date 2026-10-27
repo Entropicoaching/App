@@ -1,3 +1,4 @@
+import { dataEnoughEnabled, weightWindows } from '../dataEnough.mjs'
 import { parseInputNumber, finiteMean } from '../inputValues.js'
 
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
@@ -17,6 +18,7 @@ export function lavProfilTal({
   }
   const currentWeight = (() => {
     if (!athleteWeightLogs.length) return null
+    if (dataEnoughEnabled()) return [...athleteWeightLogs].sort((a, b) => b.logged_at.localeCompare(a.logged_at))[0].weight
     const recent = athleteWeightLogs.slice(0, 5).map(l => l.weight)
     if (recent.length >= 5) {
       const sorted = [...recent].sort((a, b) => a - b)
@@ -26,6 +28,7 @@ export function lavProfilTal({
   })()
 
   const weightTrend = (() => {
+    if (dataEnoughEnabled()) return weightWindows(athleteWeightLogs, new Date().toLocaleDateString('en-CA')).diff
     if (athleteWeightLogs.length < 2) return null
     const now = new Date()
     const d7 = new Date(now); d7.setDate(now.getDate() - 7)

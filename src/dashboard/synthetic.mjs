@@ -28,3 +28,7 @@ export function textContent(tree) {
   if (tree == null) return ''
   return typeof tree === 'object' ? tree.children.map(textContent).join(' ') : String(tree)
 }
+
+// The template editor is never expanded by the legacy daylist tests.
+export function useState() { throw Error('Unexpected legacy hook') }
+export function useRef() { throw Error('Unexpected legacy hook') }

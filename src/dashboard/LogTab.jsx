@@ -1,11 +1,15 @@
+import { visibleRpeNote } from '../rpeEvidence.mjs'
+import { heavyPointEvidence } from '../dataEvidence.mjs'
+import { bestHeavySetPerDay } from '../exerciseProgress.js'
+import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
 import { exerciseSetView } from '../exerciseSetView.js'
 import { erTungtSaet, erDeloadBlok } from '../exerciseProgress.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Log: træningslog pr. uge og øvelsesfilter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
-import { parsePlannedRpe } from '../dashboardShared'
+import { parsePlannedRpe } from '../dashboardShared.js'
 // ORDRE 456 (A8): dagen i dansk tid, ikke UTC (logged_at.slice(0, 10)).
-import { danskDag, danskDatoTekst } from '../danskDato'
+import { danskDag, danskDatoTekst } from '../danskDato.js'
 
 export default function LogTab({
   athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
@@ -30,6 +34,12 @@ export default function LogTab({
               for (const arr of Object.values(trendIndex)) arr.sort((a, b) => a.date.localeCompare(b.date))
 
               function getTrend(exName, currentDate) {
+                if (dataEnoughEnabled()) {
+                  const ps = bestHeavySetPerDay(athleteLogs.filter(l => exerciseSetView(l.exercises?.name).key === exerciseSetView(exName).key && danskDag(l.logged_at) <= currentDate))
+                  if (!dataAllowed('D22', { rows: ps.map(p => heavyPointEvidence(p, exerciseSetView(exName).name)) })) return { text: dataMessage('D22'), color: '#7a7770' }
+                  const last = ps.at(-1), prev = ps.at(-2)
+                  return { text: `Observeret e1RM-forskel ${prev.dag} til ${last.dag}: ${last.e1rm - prev.e1rm} kg`, color: '#b8b4a8' }
+                }
                 const history = (trendIndex[exerciseSetView(exName).key] || []).filter(e => e.date <= currentDate)
                 if (history.length < 2) return null
                 const curr = history[history.length - 1]
@@ -61,7 +71,7 @@ export default function LogTab({
                     sets: [],
                   }
                 }
-                grouped[key].exerciseMap[exId].sets.push({ n: log.set_number, weight: log.weight, reps: log.reps_completed, note: log.note, rpe_actual: log.rpe_actual, rpe_planned: parsePlannedRpe(log.exercises?.intensity), skipped: log.skipped })
+                grouped[key].exerciseMap[exId].sets.push({ n: log.set_number, weight: log.weight, reps: log.reps_completed, note: visibleRpeNote(log.note), rpe_actual: log.rpe_actual, rpe_planned: parsePlannedRpe(log.exercises?.intensity), skipped: log.skipped })
               }
               const logSessions = Object.values(grouped).sort((a, b) => b.date.localeCompare(a.date))
 

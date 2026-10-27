@@ -1,3 +1,6 @@
+import { rpeOrigin } from '../rpeEvidence.mjs'
+import { volumeWeeks, suggestionEvidence, repZone, prescribedRepZone } from '../dataEvidence.mjs'
+import { dataEnoughEnabled, dataAllowed } from '../dataEnough.mjs'
 import { openReadinessSurface } from './readinessShortcut.mjs'
 import { parseInputNumber, optionalInput } from '../inputValues.js'
 
@@ -6,23 +9,23 @@ import { parseInputNumber, optionalInput } from '../inputValues.js'
 // vaegtforslag, navigation (openSession/openReadiness) og onboarding-guidens
 // handlere — flyttet uaendret ud af AthleteView.jsx (ordre 373) som en fabrik,
 // samme moenster som kostHandlinger.js.
-import { smerteNoter } from '../coachFremgang'
-import { smerteStopFor, historikSomLogs } from '../saetSmerte'
-import { supabase, withRetry, queueWrite } from '../supabase'
-import { mergeAthleteSetInputs } from '../athleteTrainingInputs'
-import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athleteOnboardingGuide'
-import { runGuardedRead } from '../athleteReadGuard'
-import { clearReadinessDraft } from '../readinessDraft'
-import { loadRestPause } from '../restPause'
-import { estimatedOneRepMax, erTungtSaet, erDeloadLog, HOVEDLOEFT_FAMILIER } from '../exerciseProgress'
-import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery, hentAlleSider } from '../fremgangLogs'
-import { today } from '../athleteShared'
-import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp'
-import { isUuid } from './videoCoachBro'
-import { unikkeRekorder } from '../personalRecords'
-import { loadOfflineSets, overlayQueuedSets, loadQueuedRatings, overlayQueuedRatings } from '../offlineSetQueue'
-import { browserSaysOffline, seemsOffline } from '../offlineSession'
-import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from './offlineSnapshot'
+import { smerteNoter } from '../coachFremgang.js'
+import { smerteStopFor, historikSomLogs } from '../saetSmerte.js'
+import { supabase, withRetry, queueWrite } from '../supabase.js'
+import { mergeAthleteSetInputs } from '../athleteTrainingInputs.js'
+import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athleteOnboardingGuide.js'
+import { runGuardedRead } from '../athleteReadGuard.js'
+import { clearReadinessDraft } from '../readinessDraft.js'
+import { loadRestPause } from '../restPause.js'
+import { estimatedOneRepMax, erTungtSaet, erDeloadLog, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
+import { fremgangLogsQuery, fremgangLogsKronologisk, rekordRaekkerQuery, hentAlleSider } from '../fremgangLogs.js'
+import { today } from '../athleteShared.js'
+import { computeActiveWeekIdx, weekFullyLogged, parsePlannedRpe, logFrontendError } from './ugeHjaelp.js'
+import { isUuid } from './videoCoachBro.js'
+import { unikkeRekorder } from '../personalRecords.js'
+import { loadOfflineSets, overlayQueuedSets, loadQueuedRatings, overlayQueuedRatings } from '../offlineSetQueue.js'
+import { browserSaysOffline, seemsOffline } from '../offlineSession.js'
+import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from './offlineSnapshot.js'
 
 // ORDRE 397: svarer serveren ikke inden da (browseren siger online, men
 // kælderens net er dødt), vises øjebliksbilledet. Under AthleteView's 10 s-
@@ -378,7 +381,7 @@ export function lavLaesninger({
           // to oprindelige kolonner — samme forespørgsel, kun flere felter —
           // så "hvad coachen ser"-kortet kan regne gns. søvn/hyppigste ømme
           // zone uden endnu et opslag (se summarizeReadinessForCoach).
-          .select('logged_date, readiness_score, sleep_hours, sore_zones')
+          .select(dataEnoughEnabled() ? 'logged_date, readiness_score, sleep_hours, sore_zones, energy, motivation, stress, soreness_level' : 'logged_date, readiness_score, sleep_hours, sore_zones')
           .eq('athlete_id', athleteId)
           .lt('logged_date', today())
           .order('logged_date', { ascending: false })
@@ -391,23 +394,24 @@ export function lavLaesninger({
     if (hist_.ok) setReadinessHistory(hist_.data || [])
   }
 
-  function suggestNextWeight(exName, intensity) {
+  function suggestNextWeight(exName, intensity, plannedReps) {
     const targetRpe = parsePlannedRpe(intensity)
     if (!targetRpe) return null
     // Ordre 1560 (V10 3A, V-SMERTE B): smerte i en saet-note standser forslaget paa de ramte loeft.
     const stop = smerteStopFor(smerteNoter(historikSomLogs(exerciseHistory)), exName)
     if (stop) return { stop: true, del: stop.del, dag: stop.dag }
     const hist = exerciseHistory[exName?.toLowerCase()] || []
+    if (!dataAllowed('D11', { ...suggestionEvidence(hist, exName, targetRpe, plannedReps), today: today() })) return null
     if (!hist.length) return null
     const lastSession = hist[0]
     if (lastSession.date === today()) return null // currently logging this session
-    const setsWithRpe = lastSession.sets.filter(s => s.rpe != null && s.weight > 0)
+    const setsWithRpe = lastSession.sets.filter(s => s.rpe != null && s.weight > 0 && (!dataEnoughEnabled() || (s.rpe_source === 'athlete' && s.targetRpe === targetRpe && repZone(s.reps) === prescribedRepZone(plannedReps))))
     if (!setsWithRpe.length) return null
     const ref = setsWithRpe[setsWithRpe.length - 1]
     const roundTo25 = w => Math.round(w / 2.5) * 2.5
     const suggested = roundTo25(ref.weight * (1 + (targetRpe - ref.rpe) * 0.03))
     if (suggested <= 0) return null
-    return { weight: suggested, fromRpe: ref.rpe, baseWeight: ref.weight }
+    return { weight: suggested, fromRpe: ref.rpe, baseWeight: ref.weight, ...(dataEnoughEnabled() ? { basisDates: [...new Set(suggestionEvidence(hist, exName, targetRpe, plannedReps).rows.filter(r => r.repZone === prescribedRepZone(plannedReps)).map(r => r.logged_at))] } : {}) }
   }
 
   function calcReadinessScore({ sleep, energy, motivation, stress, soreness }) {
@@ -532,11 +536,12 @@ export function lavLaesninger({
   // Ugentlig tonnage (sum af vægt × reps) + ugentligt bedste e1RM pr. hovedløft
   // til forsidens grafer. Grupperes på ugens mandag ud fra logged_at; ~12 ugers logs.
   async function fetchWeeklyTonnage(athleteId) {
+    if (dataEnoughEnabled()) setWeeklyTonnage([])
     const since = new Date(Date.now() - 84 * 86400000).toISOString()
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('exercise_logs')
-        .select('weight, reps_completed, logged_at, exercises(name, sessions(weeks(block_name)))')
+        .select(dataEnoughEnabled() ? 'weight, reps_completed, logged_at, exercises(name, session_id, sessions(weeks(block_name)))' : 'weight, reps_completed, logged_at, exercises(name, sessions(weeks(block_name)))')
         .eq('athlete_id', athleteId)
         .eq('skipped', false)
         .gt('weight', 0)
@@ -572,7 +577,7 @@ export function lavLaesninger({
     const rows = Object.entries(byWeek)
       .sort((a, b) => (a[0] < b[0] ? -1 : 1))
       .map(([weekStart, total]) => ({ weekStart, total: Math.round(total) }))
-    setWeeklyTonnage(rows.slice(-10))
+    setWeeklyTonnage(dataEnoughEnabled() ? volumeWeeks(data, today(), data.length < 4000).filter(w => w.start_date >= since.slice(0, 10)).slice(-10) : rows.slice(-10))
     setLiftProgress(HOVEDLOEFT_FAMILIER.map((lift, i) => ({
       label: lift.label,
       color: lift.color,
@@ -721,7 +726,7 @@ export function lavLaesninger({
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('exercise_logs')
-        .select('weight, reps_completed, rpe_actual, logged_at, set_number, note, exercises(name)')
+        .select(dataEnoughEnabled() ? 'id, weight, reps_completed, rpe_actual, rpe_planned, logged_at, set_number, note, exercise_id, exercises(name, session_id)' : 'weight, reps_completed, rpe_actual, logged_at, set_number, note, exercises(name)')
         .eq('athlete_id', athleteId)
         .eq('skipped', false)
         .gt('weight', 0)
@@ -737,11 +742,11 @@ export function lavLaesninger({
       const date = log.logged_at.slice(0, 10)
       if (!byName[name]) byName[name] = {}
       if (!byName[name][date]) byName[name][date] = []
-      byName[name][date].push({ weight: log.weight, reps: log.reps_completed, rpe: log.rpe_actual, set: log.set_number, ...(log.note ? { note: log.note } : {}) })
+      byName[name][date].push({ weight: log.weight, reps: log.reps_completed, rpe: log.rpe_actual, set: log.set_number, ...(dataEnoughEnabled() ? { id: log.id, exercise_id: log.exercise_id, rpe_source: rpeOrigin(log), session_id: log.exercises?.session_id, targetRpe: log.rpe_planned } : {}), ...(log.note ? { note: log.note } : {}) })
     }
     const history = {}
     for (const [name, dateMap] of Object.entries(byName)) {
-      const dates = Object.keys(dateMap).sort().reverse().slice(0, 3)
+      const dates = Object.keys(dateMap).sort().reverse().slice(0, dataEnoughEnabled() ? 28 : 3)
       history[name] = dates.map(date => ({ date, sets: dateMap[date].sort((a, b) => a.set - b.set) }))
     }
     setExerciseHistory(history)
@@ -751,6 +756,6 @@ export function lavLaesninger({
   return {
     fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
     saveReadiness, fetchProgram, openSession, openReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
-    fetchExerciseLogs,
+    fetchExerciseLogs, fetchExerciseHistory,
   }
 }

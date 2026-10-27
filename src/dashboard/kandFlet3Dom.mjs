@@ -1,3 +1,4 @@
+import { existsSync as exactExists } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from '../coachNoteJsx.mjs'
@@ -6,6 +7,8 @@ export function h(type, props, ignored, ...children) {
   return typeof type === 'function' ? type({ ...props, children }) : { type, props: props || {}, children }
 }
 export function createElement(type, props, ...children) { return h(type, props, null, ...children) }
+export const useState = () => { throw Error('Unexpected useState in OFF tree') }
+export const useRef = () => { throw Error('Unexpected useRef in OFF tree') }
 export const Fragment = Symbol('Fragment')
 export const nodes = tree => !tree || typeof tree !== 'object' ? [] : [tree, ...(tree.children || []).flatMap(nodes)]
 export const text = tree => typeof tree === 'string' || typeof tree === 'number' ? String(tree) : (tree?.children || []).map(text).join(' ')
@@ -13,10 +16,13 @@ const self = import.meta.url
 const root = new URL('../', self).href
 registerHooks({
   resolve(specifier, context, next) {
+      if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
+        for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
+      }
     if (context.parentURL?.startsWith(root)) {
       if (specifier === 'react') return { url: self, shortCircuit: true }
       if (/^(\.\.\/|\.\/)supabase(?:\.js)?$/.test(specifier)) return { url: 'data:text/javascript,export const supabase = new Proxy({}, {get(){throw Error("Unexpected backend access")}}); export const withRetry = f => f()', shortCircuit: true }
-      if (specifier === './AnalysePakkeReview') return { url: 'data:text/javascript,export default function AnalysePakkeReview(){return null}', shortCircuit: true }
+      if (specifier === './AnalysePakkeReview.jsx') return { url: 'data:text/javascript,export default function AnalysePakkeReview(){return null}', shortCircuit: true }
       if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier)) {
         for (const ext of ['.js', '.jsx']) {
           const url = new URL(specifier + ext, context.parentURL)

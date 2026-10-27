@@ -1240,6 +1240,7 @@ body.athlete #dropHint #athFilmGuide li::before { content:none; }
      lægger funktionerne på window, FØR hovedscriptet nedenfor kører sine
      event-handlere (som først kalder dem ved brugerinput, altså efter load). -->
 <script type="module" src="videocoach-zoom.js"></script>
+<script src="dataEnoughVideo.js"></script>
 <script>
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -7520,6 +7521,7 @@ const TEKNIK = {
 
 // Deterministisk vurdering: tallene mod teknik-grænseværdierne. Ingen AI-gætteri.
 function evaluateFindings(lift, v) {
+  if (AppData2Video.enabled()) return AppData2Video.findings(v);
   const f = [];
   const sq = lift === 'Squat', bp = lift === 'Bænkpres';
   const dl = lift === 'Dødløft', sumo = lift === 'Sumo dødløft';
@@ -7656,6 +7658,7 @@ function suggestCues(lift, v) {
 // Ét prioriteret, deterministisk feedbacklag. Ingen nye biomekaniske påstande:
 // observation → betydning → næste handling skal kunne føres tilbage til et tal.
 function buildCoachFeedback(lift, v = {}) {
+  if (AppData2Video.enabled()) return AppData2Video.feedback(v);
   const strengths = [], priorities = [], context = [];
   const addStrength = (title, athlete, evidence) =>
     strengths.push({ title, athlete, evidence });
@@ -8472,7 +8475,8 @@ function vcV3Metrics(v, lowConfPct = null) {
   return out;
 }
 
-function vcV3BaselineInsights(baselines, lift, variation, metrics, lowConfPct) {
+function vcV3BaselineInsights(baselines, lift, variation, metrics, lowConfPct, current = {}) {
+  if (AppData2Video.enabled()) return AppData2Video.baseline(baselines, lift, variation, metrics, lowConfPct, current);
   const result = { findings: [], used: [], comparedCount: 0,
     blockedByQuality: lowConfPct == null || !Number.isFinite(Number(lowConfPct)) ||
       Number(lowConfPct) > 15 };
@@ -8535,7 +8539,7 @@ function vcV3CurrentBaselineInsights(lift, variation, vals) {
   const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
   const lowConfPct = vcV3PathLowConfidencePct(path);
   return vcV3BaselineInsights(vcV3BaselineCache.get(athleteId) || [],
-    vcV3Lift(lift), vcV3Variation(lift, variation), vcV3Metrics(vals || {}, lowConfPct), lowConfPct);
+    vcV3Lift(lift), vcV3Variation(lift, variation), vcV3Metrics(vals || {}, lowConfPct), lowConfPct, appData2VideoCurrent(path, athleteId));
 }
 
 function vcV3Reps(path) {
@@ -8618,7 +8622,7 @@ function buildV3AnalysisPayload({ athleteId, athleteName, lift, variation,
   const v3Metrics = vcV3Metrics(vals, lowConfPct);
   const ruleFindings = vcV3Findings(legacy.findings, lowConfPct);
   const personal = vcV3BaselineInsights(baselines, normalizedLift,
-    normalizedVariation, v3Metrics, lowConfPct);
+    normalizedVariation, v3Metrics, lowConfPct, appData2VideoCurrent(path, athleteId, clientId));
   const findings = [...personal.findings, ...ruleFindings];
   const captureFps = path && path.times && path.times.length > 1
     ? (path.times.length - 1) /
@@ -10649,6 +10653,17 @@ bindInstantSend({
   alert: message => window.alert(message),
 });
 mountUploadFilmGuide(document, () => window.localStorage);
+
+function appData2VideoCurrent(path, athleteId, id) {
+  if (path && !vcV3AnalysisIds.has(path)) vcV3AnalysisIds.set(path, id || vcV3Uuid());
+  return { id: id || (path && vcV3AnalysisIds.get(path)), athlete_id: athleteId,
+    engine_version: 'videocoach-3.1.0', tracker_version: 'multipoint-clean-rebuild-v3-2026-08-15' };
+}
+AppData2Video.mountQualityControls(document, () => {
+  const path = latestCleanPath() || strokes.filter(s => s.type === 'path' && s.vel).pop();
+  if (!path) return null;
+  return { key: JSON.stringify([video.currentSrc, path.pts, path.times, path.reps, path.analysis]), reps: path.reps?.length || 0 };
+}, () => { collectMetrics(); if (openDesktopFeedbackFn) openDesktopFeedbackFn(); });
 </script>
 </body>
 </html>

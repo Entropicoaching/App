@@ -1,0 +1,40 @@
+import { createElement as h, Fragment } from 'react'
+
+export const DEFAULT_COACH_RYD = false
+// Explicit, session-local preview. No storage, backend or athlete flag.
+export function coachRydEnabled(search = '') {
+  const values = new URLSearchParams(search).getAll('coachRyd')
+  return values.length === 1 && values[0] === '1'
+}
+const buttonStyle = { minHeight: 44, padding: '0.65rem', color: '#edeae2', background: '#1c1c18', border: '1px solid #59564c', cursor: 'pointer', font: 'inherit' }
+export function CoachFold({ enabled = DEFAULT_COACH_RYD, title, children, open }) {
+  return enabled === true
+    ? h('details', { ...(open === undefined ? {} : { open }), style: { marginBlock: '0.75rem' } },
+      h('summary', { style: { ...buttonStyle, overflowWrap: 'anywhere' } }, title), children)
+    : h(Fragment, null, children)
+}
+export function WorkInboxLink({ count, next, open }) {
+  return h('section', { 'aria-label': 'Arbejdsindbakke', style: { marginBottom: '1rem' } },
+    h('button', { type: 'button', style: buttonStyle, onClick: open }, 'Arbejdsindbakke'),
+    h('p', null, `${count} opgaver i den fælles prioritering.`, next ? ` Næste: ${next.title}` : ' Åbn for status og opdatering.'))
+}
+export function ProfileActions({ go, task, athlete, activeTab, status }) {
+  return h('section', { 'aria-label': 'Atletens næste handling', style: { marginBottom: '0.75rem' } },
+    h('h2', { style: { overflowWrap: 'anywhere', marginBlock: '0.5rem' } }, athlete?.name),
+    status ? h('p', null, status) : null,
+    task ? h('p', null, task.summary || task.title, task.detail ? `: ${task.detail}` : '') : h('p', null, 'Plan, træning og svar samlet for den valgte atlet.'),
+    h('nav', { 'aria-label': 'Plan, log og svar', style: { display: 'flex', flexWrap: 'wrap', gap: 8 } },
+      ...[['program', 'Plan'], ['log', 'Log'], ['beskeder', 'Svar']].map(([key, label]) =>
+        h('button', { key, type: 'button', style: buttonStyle, 'aria-pressed': activeTab === key, onClick: () => go(key) }, label))))
+}
+export function ReviewConclusion({ analysis, draft, editable, quality, dirty }) {
+  const feedback = editable ? draft : analysis.athlete_feedback
+  const text = value => typeof value === 'string' ? value.trim() : Array.isArray(value) ? value.map(item => item?.text).filter(Boolean).join(' ') : ''
+  const focus = text(feedback?.focus)
+  const next = text(feedback?.next_set)
+  return h('section', { 'aria-label': 'Konklusion', style: { borderLeft: '3px solid #c8923a', padding: '0.75rem', overflowWrap: 'anywhere' } },
+    h('h2', null, 'Konklusion'),
+    h('p', null, focus || 'Der er endnu ingen fokuskonklusion. Gennemgå målingen og skriv feedback.'),
+    h('p', null, next ? `Næste sæt: ${next}` : 'Næste sæt er endnu ikke beskrevet.'),
+    h('p', null, analysis.status === 'invalid' ? 'Målingen er udeladt.' : analysis.status === 'shared' ? 'Feedback er delt med atleten.' : analysis.status === 'draft' ? 'Vurder målingen før godkendelse.' : dirty ? 'Gem feedback før deling.' : quality.canShare ? 'Feedback er klar til deling.' : quality.detail))
+}

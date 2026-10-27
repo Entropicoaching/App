@@ -1,25 +1,33 @@
+import { coachInboxLine } from '../coachInboxState.js'
+import { positiveStatusEvidence } from '../dataEvidence.mjs'
+import { dataEnoughEnabled, dataMessage } from '../dataEnough.mjs'
+import { createElement } from 'react'
+import { renderWeekOverview, selectOverviewWeek } from './coachWeekOverview.mjs'
+import { CoachFold } from '../coachRyd.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Forsiden: hurtigknapper, "Kræver dit blik" og atletlisten.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
-import { currentWeekNo, s, initials } from '../dashboardShared'
-import { beregnUgensAfvigelse, sorterEfterAfvigelse, ugensStemme } from './afvigelse'
-import { roligeAtleter, roligLinje } from '../roligeAtleter'
-import { coachBriefingPointKey } from '../coachBriefingSeen'
-import { supabase } from '../supabase'
-import { holidayInfo, ferieBadgeLabel } from './coachKonstanter'
-import { videoCoachMeasurementSummary, coachVideoPriorityDetail, videoCoachMeasurementText } from './coachVideoHjaelp'
-import { dageSiden } from '../danskDato'
+import { currentWeekNo, s, initials } from '../dashboardShared.js'
+import { beregnUgensAfvigelse, sorterEfterAfvigelse, ugensStemme } from './afvigelse.js'
+import { roligeAtleter, roligLinje } from '../roligeAtleter.js'
+import { coachBriefingPointKey } from '../coachBriefingSeen.js'
+import { supabase } from '../supabase.js'
+import { holidayInfo, ferieBadgeLabel } from './coachKonstanter.js'
+import { videoCoachMeasurementSummary, coachVideoPriorityDetail, videoCoachMeasurementText } from './coachVideoHjaelp.js'
+import { dageSiden } from '../danskDato.js'
 import CoachActions from './CoachActions.jsx'
 import { COACH_ACTIONS_ENABLED, coachActionsEnabled } from './coachActions.mjs'
 
-export default function ForsideView({
+export default function ForsideView({ coachRyd = false,
+  coachWeekEnabled = false, coachWeekDataStatus,
   athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
   automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
   fetchAthletes, goToMyProfile, handleCoachBriefingSeen, handleTrainingSignal, hiddenAthleteIds, isMobile,
-  loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
+  inboxRefreshStatus, loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
   setAthleteSortMode, setHiddenAthleteIds, setLoading, setSelectedAthlete, setShowAllAthletes, setShowHiddenAthletes,
   setView, showAllAthletes, showHiddenAthletes, trainingSignalsError, trainingSignalUpdatingKey, unreadCounts,
   videoMeasurementByAthlete, videoReviewQueueError, latestByTrack, videoReviewQueue, coachActionsStatus,
+  coachTemplateMessages = false, coachId, sendTemplateMessage,
   coachActions = COACH_ACTIONS_ENABLED,
 }) {
           const visibleAthletes = athletes
@@ -50,7 +58,7 @@ export default function ForsideView({
             // ORDRE 428 (C2): ugens stemme (laveste vurdering, nyeste
             // kommentar/note) og antal pas med mindst ét logget sæt (C3).
             const stemme = ugensStemme(current?.session_voices, completion.notes)
-            return { athlete, afvigelse, current, stemme, pasLogget: completion.pas || 0, sprungneSaet: completion.sprungneSaet || 0, saetUnderPlan: completion.saetUnderPlan || 0 }
+            return { athlete, afvigelse, current, stemme, ...(dataEnoughEnabled() ? { dataEvidence: positiveStatusEvidence(current, completion, athlete.id, new Date().toLocaleDateString('en-CA'), coachPriorityItems.filter(item => item.athlete?.id === athlete.id).length, inboxRefreshStatus?.allSourcesConfirmed === true) } : {}), pasLogget: completion.pas || 0, sprungneSaet: completion.sprungneSaet || 0, saetUnderPlan: completion.saetUnderPlan || 0 }
           })
           const afvigelseByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.afvigelse]))
           const ugeStatusByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r]))
@@ -113,8 +121,8 @@ export default function ForsideView({
 
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-              {coachActionsEnabled(coachActions) && <CoachActions
-                enabled={coachActions} athletes={visibleAthletes} calendarWeeks={calendarWeeks}
+              {(coachTemplateMessages === true || coachActionsEnabled(coachActions)) && <CoachActions
+                enabled={coachTemplateMessages === true || coachActions} templateMessages={coachTemplateMessages} coachId={coachId} sendTemplateMessage={sendTemplateMessage} athletes={visibleAthletes} calendarWeeks={calendarWeeks}
                 completion={athleteWeekCompletion} latestByTrack={latestByTrack} videos={videoReviewQueue}
                 dataStatus={coachActionsStatus} loading={loading}
                 hasError={Boolean(loadError || messageInboxError || videoReviewQueueError)}
@@ -151,14 +159,15 @@ export default function ForsideView({
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                   </span>
                   <span style={{ minWidth: 0, flex: 1 }}>
-                    <span style={{ display: 'block', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.92rem', color: '#edeae2' }}>Kræver dit blik</span>
-                    <span style={{ display: 'block', marginTop: '0.16rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: inboxTotal > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.035em' }}>{inboxTotal > 0 ? `${inboxTotal} åbne ting · vigtigste først` : 'Alt er set lige nu'}</span>
+                    <span style={{ display: 'block', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.92rem', color: '#edeae2' }}>{coachRyd ? 'Arbejdsindbakke' : 'Kræver dit blik'}</span>
+                    <span style={{ display: 'block', marginTop: '0.16rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: inboxTotal > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.035em' }}>{inboxTotal > 0 ? `${inboxTotal} åbne ting · vigtigste først` : coachInboxLine({ priorityCount: inboxTotal, refreshStatus: inboxRefreshStatus, hasError: Boolean(loadError || trainingSignalsError || videoReviewQueueError || messageInboxError || automationAlertsError) })}</span>
                   </span>
                   {inboxTotal > 0 && <span style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.32rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', fontWeight: 700 }}>{inboxTotal}</span>}
                   <span style={{ color: '#7a7770', fontSize: '0.75rem' }}>→</span>
                 </button>
 
-                {priorityPreview.length > 0 && (
+                <CoachFold enabled={coachRyd && priorityPreview.length > 0} title="Opgaver på forsiden">
+{priorityPreview.length > 0 && (
                   <div style={{ padding: isMobile ? '0.2rem 0.85rem 0.35rem' : '0.25rem 1rem 0.4rem' }}>
                     {priorityPreview.map((item, index) => {
                       const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
@@ -214,6 +223,7 @@ export default function ForsideView({
                     )}
                   </div>
                 )}
+</CoachFold>
 
                 {roligeLinjeTekst && (
                   <div data-rolige-linje style={{ padding: isMobile ? '0.55rem 0.85rem' : '0.6rem 1rem', borderTop: '1px solid rgba(237,234,226,0.06)', color: '#b3afa4', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.02em', lineHeight: 1.5 }}>
@@ -227,6 +237,11 @@ export default function ForsideView({
                   </button>
                 )}
               </div>
+
+              {renderWeekOverview(createElement, { enabled: coachWeekEnabled, entries: athletesWithAfvigelse.map(entry => ({
+                ...entry, current: selectOverviewWeek(calendarWeeks[entry.athlete.id] || [], entry.current),
+              })),
+                completion: athleteWeekCompletion, status: coachWeekDataStatus, loading, loadError, openProfile })}
 
               <div style={{ ...s.card, marginBottom: 0, padding: isMobile ? '0.8rem 0.9rem' : '1rem 1.2rem' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.45rem' }}>

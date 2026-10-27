@@ -1,3 +1,4 @@
+import { dataEnoughEnabled, dataAllowed, dataMessage } from './dataEnough.mjs'
 // ORDRE 1580 (D3): hvilke atleter er set igennem og kraever ikke noget.
 // En tom "Kraever dit blik" siger ikke, om atleten er gennemgaaet eller bare
 // ikke tjekket. Her er en atlet kun rolig, naar ALLE tre holder:
@@ -19,6 +20,7 @@ export function roligeAtleter({ atleter = [], aabneIds = [], ugeStatus = new Map
     if (aabne.has(atlet.id)) return false
     const status = ugeStatus.get(atlet.id)
     if (!status || !(status.pasLogget > 0)) return false
+    if (!dataAllowed('D41', status.dataEvidence)) return false
     if (status.saetUnderPlan > 0 || status.sprungneSaet > 0) return false
     const laveste = status.stemme?.laveste
     return laveste == null || laveste >= 3
@@ -29,9 +31,10 @@ const fornavn = navn => String(navn || '').trim().split(/\s+/)[0] || ''
 
 // Linjen under koeen. Maks tre navne, resten som tal.
 export function roligLinje(rolige, antalAtleter) {
-  if (!rolige.length) return null
+  if (!rolige.length) return dataEnoughEnabled() ? dataMessage('D41') : null
   const navne = rolige.map(a => fornavn(a.name)).filter(Boolean)
   const vist = navne.slice(0, 3).join(', ')
   const rest = navne.length - 3
+  if (dataEnoughEnabled()) return `Ingen registrerede afvigelser: ${vist}${rest > 0 ? ` og ${rest} til` : ''} (${rolige.length} af ${antalAtleter})`
   return `Trænet denne uge uden tegn på problemer: ${vist}${rest > 0 ? ` og ${rest} til` : ''} (${rolige.length} af ${antalAtleter})`
 }

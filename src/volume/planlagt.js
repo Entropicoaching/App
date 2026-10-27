@@ -1,3 +1,4 @@
+import { dayNumber, dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
 import { inputInteger, parseInputNumber, finiteAdd, finiteMean } from '../inputValues.js'
 
 // ORDRE 185 (14. sep), commit 1: planlagte sæt pr. muskelgruppe for DENNE
@@ -159,7 +160,16 @@ export function beregnPlanlagtPrUge(weeks, logs, { rettelser } = {}) {
 
   const uger = [...buckets.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([uge, { planlagt, gennemfoert }]) => ({ uge, planlagt, gennemfoert }))
+    .map(([uge, { planlagt, gennemfoert }]) => {
+      const dated = (weeks || []).filter(w => w?.start_date && ugenoegle(w.start_date) === uge)
+      const confirmed = weeks?.readEvidence?.complete === true && logs?.readEvidence?.complete === true &&
+        !!weeks.readEvidence.athleteId && weeks.readEvidence.athleteId === logs.readEvidence.athleteId
+      return { uge, planlagt, gennemfoert, ...(dataEnoughEnabled() ? {
+        start_date: dated.length === 1 ? dated[0].start_date : null, complete: confirmed,
+        mappingKnown: planlagt.ukendteSaet === 0 && gennemfoert.ukendteSaet === 0,
+        performedSessions: new Set((logs || []).filter(r => !r.skipped && r.session_id && ugenoegle(r.loggetDato) === uge).map(r => r.session_id)).size,
+      } : {}) }
+    })
 
   return { uger, ugerUdenDato }
 }
@@ -198,6 +208,19 @@ function samletGabIUge(uge, grupper) {
  * @returns {string[]}
  */
 export function opsummerGab(uger, grupper, muskelgrupper) {
+  if (dataEnoughEnabled()) {
+    const today = new Date().toLocaleDateString('en-CA')
+    const closed = (uger || []).filter(w => dataAllowed('D35', { weeks: [w], today, comparable: true }))
+    if (!closed.length || !grupper?.length) return [dataMessage('D35')]
+    const result = closed.map(w => `${w.start_date}: ${formatTal(samletGabIUge(w, grupper))} sæt under planen. Kortlagte sæt, ukendte udeladt.`)
+    if (dataAllowed('D35', { weeks: closed, today, comparable: true, trend: true })) {
+      const mid = Math.floor(closed.length / 2)
+      const first = finiteMean(closed.slice(0, mid).map(w => samletGabIUge(w, grupper)))
+      const last = finiteMean(closed.slice(-mid).map(w => samletGabIUge(w, grupper)))
+      result.push(`Observeret gab: ${formatTal(first)} sæt/uge i starten, ${formatTal(last)} sæt/uge nu, ${closed.length} afsluttede uger.`)
+    }
+    return result
+  }
   if (!uger?.length || !grupper?.length) return []
   uger = uger.filter(Boolean)
   muskelgrupper = muskelgrupper || {}

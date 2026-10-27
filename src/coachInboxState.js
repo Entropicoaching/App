@@ -1,5 +1,6 @@
 import { pendingCoachNotes } from './coachNoteSignal.js'
 
+import { dataEnoughEnabled, dataAllowed, dataMessage } from './dataEnough.mjs'
 export function coachMessageTrack(message) {
   return (message?.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
 }
@@ -77,7 +78,12 @@ export function trainingSignalFingerprint(signal) {
 
 export function filterOpenTrainingSignals(signals, actions, now = Date.now()) {
   const rank = { alert: 0, context: 1 }
-  const candidates = (signals || [])
+  const candidates = (signals || []).map(item => {
+    if (!dataEnoughEnabled() || !item) return item
+    const id = ({ rpe_drift: 'D16', data_conflict: 'D16', stagnation: 'D27', dropout: 'D40', missed_sessions: 'D40' })[item.o_detector]
+    if (!id || dataAllowed(id, item.data_evidence)) return item
+    return { ...item, o_headline: 'Grundlag for træningssignal afventer kontrol', o_detail: dataMessage(id), o_metrics: { data_status: 'undocumented' } }
+  })
     .filter(item => item?.o_athlete_id && (item.o_severity === 'alert' || item.o_severity === 'context'))
     .sort((left, right) => (rank[left.o_severity] - rank[right.o_severity]) ||
       (left.o_athlete_name || '').localeCompare(right.o_athlete_name || '', 'da'))
@@ -109,6 +115,7 @@ export function summarizeRefreshResults(results, refreshedAt = Date.now()) {
 
   return {
     kind: settled.length > 0 && completed === settled.length ? 'success' : 'partial',
+    ...(dataEnoughEnabled() ? { allSourcesConfirmed: settled.length > 0 && completed === settled.length } : {}),
     completed,
     total: settled.length,
     refreshedAt,
@@ -118,9 +125,18 @@ export function summarizeRefreshResults(results, refreshedAt = Date.now()) {
 export function coachInboxCompletionStatus({ priorityCount = 0, refreshStatus = null, hasError = false } = {}) {
   if (Number(priorityCount) > 0) return 'active'
   if (hasError || refreshStatus?.kind === 'partial') return 'unavailable'
+  const refreshTime = new Date(refreshStatus?.refreshedAt)
+  if (dataEnoughEnabled() && !dataAllowed('D76', { openCount: Number(priorityCount), allSourcesConfirmed: refreshStatus?.allSourcesConfirmed, refreshedAt: Number.isFinite(refreshTime.getTime()) ? refreshTime.toISOString() : null })) return 'loading'
   return refreshStatus?.kind === 'success' ? 'complete' : 'loading'
 }
 
 export function shouldCollapseCoachConversations({ isMobile = false, priorityCount = 0, conversationCount = 0, hasMessageError = false } = {}) {
   return Boolean(isMobile && Number(priorityCount) > 0 && Number(conversationCount) > 0 && !hasMessageError)
+}
+
+export function coachInboxLine(options = {}) {
+  if (!dataEnoughEnabled()) return 'Alt er set lige nu'
+  if (coachInboxCompletionStatus(options) !== 'complete') return dataMessage('D76')
+  const time = new Date(options.refreshStatus.refreshedAt).toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
+  return `Alt er set lige nu. Opdateret kl. ${time}`
 }

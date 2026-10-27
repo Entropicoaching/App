@@ -46,3 +46,5 @@ export function one(tree, match) {
   if (result.length !== 1) throw Error(`Expected one node, got ${result.length}`)
   return result[0]
 }
+
+export const Fragment = Symbol.for('synthetic.fragment')

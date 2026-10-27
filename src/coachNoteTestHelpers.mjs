@@ -1,4 +1,5 @@
 import { assertPureGraph, assertNoteDependencies } from './coachNoteDependencyGuard.mjs'
+import { existsSync as exactExists } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { dirname, basename, join, posix } from 'node:path'
@@ -42,6 +43,11 @@ export async function app({ enabled, backend } = {}) {
   }
   instances.set(id, { h, fakes })
   const allowed = new Set([
+    "src/dataEnough.mjs",
+    "src/dataEvidence.mjs",
+    "src/rpeEvidence.mjs",
+    "src/videoEvidence.mjs",
+    "src/dashboard/coachWeekOverview.mjs",
     "src/athlete/kostNumbers.mjs",
     "src/athlete/smerteRegion.js",
     "src/automationAlerts.js",
@@ -84,6 +90,9 @@ export async function app({ enabled, backend } = {}) {
   }
   registerHooks({
     resolve(specifier, context, next) {
+      if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
+        for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
+      }
       if (specifier.startsWith(prefix)) return { url: urlFor(specifier.slice(prefix.length)), shortCircuit: true }
       if (!context.parentURL?.startsWith(prefix)) return next(specifier, context)
       const parent = context.parentURL.slice(prefix.length)

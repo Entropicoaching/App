@@ -1,3 +1,4 @@
+import { dataAllowed } from '../dataEnough.mjs'
 import { coachTekstData } from './coachTekstData.js'
 
 function tekstSituationer(summary) {
@@ -11,7 +12,7 @@ function tekstSituationer(summary) {
   if (summary.status === 'sprunget_over') keys.push('sprunget_over')
   if (summary.status === 'delvis' && pas.some(p => p.manglendeOevelser?.length)) keys.push('manglende_oevelse')
   if (done > 0 && (Number(r.saetUdenRpe) || 0) + (Number(r.ugyldigeRpe) || 0) > 0) keys.push('manglende_rpe')
-  if (done > 0 && r.gennemsnit != null && r.gennemsnit >= 9) keys.push('hoej_rpe')
+  if (dataAllowed('D15', r.evidence) && done > 0 && r.gennemsnit != null && r.gennemsnit >= 9) keys.push('hoej_rpe')
   return keys
 }
 

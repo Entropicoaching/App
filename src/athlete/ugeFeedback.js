@@ -1,3 +1,5 @@
+import { visibleRpeNote } from '../rpeEvidence.mjs'
+import { dataEnoughEnabled, dataAllowed, explicitRpe, dataMessage } from '../dataEnough.mjs'
 // UP2: rent modul. Opsummerer en afsluttet uge til coachen. Ingen I/O, intet ur,
 // ingen programaendring: output er kun beskrivelse og spoergsmaal.
 // Syntetiske former: week {sessions:[{id,title,weekday,exercises:[{id,name,sets,reps,recommended_weight}]}]}
@@ -52,15 +54,18 @@ export function summarizeWeek(week, logs) {
   if (unknown.length) out.afvigelser.push({ type: 'ukendt_ovelse_log', antal: unknown.length });
   const mineLogs = allLogs.filter(l => known.has(l.exercise_id));
   for (const l of mineLogs) {
-    if (typeof l.note === 'string' && l.note.trim()) out.noter.push({ ovelseId: l.exercise_id, tekst: l.note.trim() });
+    if (typeof l.note === 'string' && visibleRpeNote(l.note).trim()) out.noter.push({ ovelseId: l.exercise_id, tekst: visibleRpeNote(l.note).trim() });
   }
   const done = mineLogs.filter(l => !l.skipped);
-  const rpes = done.map(l => validRpe(l.rpe)).filter(v => v !== null);
+  const rpes = done.filter(l => !dataEnoughEnabled() || explicitRpe(l)).map(l => validRpe(l.rpe)).filter(v => v !== null);
+  const rpeEvidence = { rows: done, today: week?.end_date, closed: week?.closed === true };
+  const enoughRpe = dataAllowed('D15', rpeEvidence);
   const invalid = done.filter(l => l.rpe != null && l.rpe !== '' && validRpe(l.rpe) === null).length;
   out.rpe = {
-    kilde: 'selvrapporteret subjektiv RPE; ikke en objektiv måling eller diagnose',
+    kilde: dataEnoughEnabled() ? 'Kun dokumenteret eget RPE-valg; øvrig oprindelse ukendt' : 'selvrapporteret subjektiv RPE; ikke en objektiv måling eller diagnose',
+    ...(dataEnoughEnabled() ? { evidence: rpeEvidence, enough: enoughRpe } : {}),
     saetMedRpe: rpes.length, saetUdenRpe: done.length - rpes.length - invalid, ugyldigeRpe: invalid,
-    gennemsnit: rpes.length ? Math.round(rpes.reduce((a, b) => a + b, 0) / rpes.length * 10) / 10 : null,
+    gennemsnit: enoughRpe && rpes.length ? Math.round(rpes.reduce((a, b) => a + b, 0) / rpes.length * 10) / 10 : null,
     max: rpes.length ? Math.max(...rpes) : null,
   };
   if (plannedSets === 0) out.status = 'tom';
@@ -82,8 +87,9 @@ export function summarizeWeek(week, logs) {
     else {
       const missing = out.rpe.saetUdenRpe + out.rpe.ugyldigeRpe;
       if (missing > 0) q.push('RPE mangler eller er ugyldig for ' + missing + ' sæt; oversigten bygger kun på de øvrige.');
-      if (out.rpe.gennemsnit >= RPE_HIGH) q.push('Selvrapporteret RPE var høj (gns ' + out.rpe.gennemsnit + '). Hvordan vil coachen vurdere det sammen med atleten?');
+      if (enoughRpe && out.rpe.gennemsnit >= RPE_HIGH) q.push('Selvrapporteret RPE var høj (gns ' + out.rpe.gennemsnit + '). Hvordan vil coachen vurdere det sammen med atleten?');
     }
   }
+  if (dataEnoughEnabled() && !enoughRpe) q.push(dataMessage('D15'));
   return out;
 }

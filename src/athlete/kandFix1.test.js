@@ -55,9 +55,9 @@ test('F3: default view stays eager; enabled view passes props and a deferred fac
     assert.equal(node.type, 'boundary')
     assert.strictEqual(node.props.componentProps, props)
     assert.equal(typeof node.props.factory, 'function')
-    assert.match(String(node.props.factory), /import\('\.\/athlete\/EnkelHjemTab'\)/)
+    assert.match(String(node.props.factory), /import\('\.\/athlete\/EnkelHjemTab(?:\.jsx)?'\)/)
   }
-  assert.match(athlete, /factory=\{enkelOn \? enkelFremgangFactory : fremgangFactory\}/)
+  assert.match(athlete, /factory=\{fremgangFokus === true \? fremgangFokusFactory : enkelOn \? enkelFremgangFactory : fremgangFactory\}/)
 })
 
 test('F4: effect suppression immediately precedes the message effect; readiness action remains executable', async () => {
@@ -73,7 +73,7 @@ test('F4: effect suppression immediately precedes the message effect; readiness 
 
 test('F5: Enkel uses current timing and weight helpers with actual candidate call statements', async () => {
   assert.match(enkel, /import \{ weightTrendText \} from '\.\/weightTrend.mjs'/)
-  assert.match(enkel, /import \{[^\n]*checkinNoteTimingText[^\n]*\} from '\.\.\/readinessInsight'/)
+  assert.match(enkel, /import \{[^\n]*checkinNoteTimingText[^\n]*\} from '\.\.\/readinessInsight(?:\.js)?'/)
   assert.doesNotMatch(enkel, /Sidst det gjorde en forskel|siden forrige uge/)
   assert.match(enkel, /\{noteTiming.heading\}/)
   assert.match(enkel, /\{noteTiming.description\}/)
