@@ -1,9 +1,10 @@
 import { createElement as h, useState } from 'react'
 import MobilitetsBibliotek from './MobilitetsBibliotek.jsx'
+import { MobilityHelped } from '../mobilityHelped.mjs'
 import { FOCUS_LIFTS, FOCUS_NEEDS, focusPlan } from './mobilityFocus.mjs'
 
 const button = { minHeight: 48, padding: '12px 14px', border: '1px solid #736043', borderRadius: 8, background: '#24231d', color: '#edeae2', font: 'inherit', textAlign: 'left', cursor: 'pointer', whiteSpace: 'normal', overflowWrap: 'anywhere' }
-export default function MobilitetFokus({ library, warmupTemplates, onExit }) {
+export default function MobilitetFokus({ mobilitetHjalp = false, athleteId, mobilityDate, library, warmupTemplates, onExit }) {
   const [showLibrary, setShowLibrary] = useState(false)
   const [lift, setLift] = useState('Squat')
   const [need, setNeed] = useState('Mere dybde')
@@ -30,6 +31,7 @@ export default function MobilitetFokus({ library, warmupTemplates, onExit }) {
       h('p', null, 'Arbejd roligt og inden for en behagelig bevægelse. Stop, hvis det gør ondt.'),
       h('button', { type: 'button', disabled: !plan.exercises.length, style: { ...button, width: '100%', background: '#e0ae5c', color: '#141410' }, onClick: () => { setStarted(true); setStep(0); setDone(false) } }, 'Start min rutine'))
       : done ? h('div', null, h('p', null, `${lift} · ${need}. Du har gennemgået din rutine.`),
+        h(MobilityHelped, { enabled: mobilitetHjalp, athleteId, date: mobilityDate, exercises: plan.exercises }),
         h('button', { type: 'button', style: button, onClick: () => { setStarted(false); setDone(false); setStep(0) } }, 'Vælg nyt fokus'))
       : ex ? h('article', { style: { marginTop: 20, padding: 18, borderRadius: 12, border: '1px solid #736043', background: '#24231d', overflowWrap: 'anywhere' }, 'aria-live': 'polite' },
         h('p', { style: { color: '#e0ae5c' } }, `${lift} · ${need} · ${step + 1} af ${plan.exercises.length}`),

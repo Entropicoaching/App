@@ -67,7 +67,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED }) {
+export default function Dashboard({ mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
@@ -633,7 +633,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <ProfilHoved {...{ coachRyd,
+            <ProfilHoved {...{ mobilitetHjalp: mobilitetHjalp === true, coachRyd,
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,

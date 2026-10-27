@@ -9,6 +9,7 @@
 // begge der) og sendes ned som props.
 import { createElement } from 'react'
 import MobilitetFokus from './MobilitetFokus.jsx'
+import { MobilityHelped } from '../mobilityHelped.mjs'
 import { foldNavn } from '../exerciseNames.js'
 import CountdownRing from './CountdownRing.jsx'
 import { s } from '../athleteShared.js'
@@ -505,6 +506,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
 }
 
 export default function MobiliseringTab({
+  mobilitetHjalp = false, athleteId, mobilityDate,
   mobilitetFokus = false,
   currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
   readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
@@ -513,7 +515,7 @@ export default function MobiliseringTab({
   setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,
   warmupFocus, warmupPhase, warmupProblems, warmupStep, warmupSubtype, warmupTemplates,
 }) {
-  if (mobilitetFokus === true && mobilityMode === 'fokus') return createElement(MobilitetFokus, { library: WARMUP_BASE, warmupTemplates, onExit: () => setMobilityMode(null) })
+  if (mobilitetFokus === true && mobilityMode === 'fokus') return createElement(MobilitetFokus, { library: WARMUP_BASE, warmupTemplates, mobilitetHjalp, athleteId, mobilityDate, onExit: () => setMobilityMode(null) })
   return (
     <>
         {mobilityMode === null && (() => {
@@ -798,6 +800,7 @@ export default function MobiliseringTab({
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>
                 {warmupExercises.length} øvelser gennemført
               </div>
+              <MobilityHelped enabled={mobilitetHjalp} athleteId={athleteId} date={mobilityDate} exercises={warmupExercises.map((slot, i) => slot.options?.[warmupChoice[i] ?? 0]).filter(Boolean)} />
               <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', marginBottom: '0.75rem' }} onClick={() => { resetWarmup(); setMobilityMode(null); setTab('hjem') }}>Til dagens pas →</button>
               <button style={{ ...s.btnGhost, padding: '0.75rem 1.5rem', minHeight: '44px' }} onClick={resetWarmup}>Start forfra</button>
             </div>
@@ -919,6 +922,7 @@ export default function MobiliseringTab({
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: '#6cba6c', marginBottom: '1rem' }}>✓</div>
                 <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Mobilitet færdig.</h2>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>{mobilitySlots.length} øvelser gennemført</div>
+                <MobilityHelped enabled={mobilitetHjalp} athleteId={athleteId} date={mobilityDate} exercises={mobilitySlots.map(exForSlot).filter(Boolean)} />
                 <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
                   <button style={{ ...s.btnGhost, padding: '0.75rem 1.25rem' }} onClick={rebuildSuggestion}>Byg en ny</button>
                   <button style={{ ...s.btnPrimary, padding: '0.75rem 1.25rem' }} onClick={() => setMobilityMode(null)}>Til mobilitet</button>
