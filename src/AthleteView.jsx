@@ -50,7 +50,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, staevnedagFokus = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false }) {
+export default function AthleteView({ mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false }) {
   const [requestedTab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -691,7 +691,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
         {tab === 'fremgang' && (
           <LazyBoundary
             factory={fremgangFokus === true ? fremgangFokusFactory : enkelOn ? enkelFremgangFactory : fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={fremgangFokus === true ? { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, key: athlete?.id, enkelOn, weightLogs, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek } : { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
+            componentProps={repRecords === true ? (fremgangFokus === true ? { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, repRecords: repRecords === true, fremgangLinjer: fremgangLinjer === true, key: athlete?.id, enkelOn, weightLogs, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek } : { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, repRecords: repRecords === true, fremgangLinjer: fremgangLinjer === true, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }) : fremgangFokus === true ? { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, key: athlete?.id, enkelOn, weightLogs, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek } : { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
           />
         )}
 

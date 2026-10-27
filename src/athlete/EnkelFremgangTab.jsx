@@ -19,6 +19,7 @@ import { exerciseSetView } from '../exerciseSetView.js'
 // tom øvelse aldrig kunne stå i listen overhovedet.
 import { createElement, useMemo, useState } from 'react'
 import { renderPersonalRecords } from './fremgangPersonalRecords.mjs'
+import { renderRepRecords } from './repRecords.mjs'
 import { bestHeavySetPerDay, erTungtSaet, grupperOevelsesnavne, hovedloeftFamilie, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
 import { s } from '../athleteShared.js'
 import { rekordListe, tidligereSaet, ugensSaet, grupperRekorder } from './rekorder.js'
@@ -210,7 +211,7 @@ function RekordListe({ rekorder }) {
   )
 }
 
-export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalRecords = false, enkelDel = null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false }) {
+export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalRecords = false, repRecords = false, enkelDel = null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false }) {
   const alleNavne = useMemo(() => [...new Map([...navneFraProgram(allWeeks), ...navneFraLogs(fremgangLogs)].map(n => [exerciseSetView(n).key, n])).values()], [allWeeks, fremgangLogs])
   const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
@@ -340,6 +341,8 @@ export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, 
           </>
         )}
       </div>}
+
+      {enkelDel !== 'styrke' && renderRepRecords(createElement, { enabled: repRecords, loading: fremgangLoading, logs: fremgangLogs, exerciseLogs, currentWeek })}
 
       {enkelDel !== 'styrke' && renderPersonalRecords(createElement, { enabled: personalRecords, loading: fremgangLoading, logs: fremgangLogs, exerciseLogs, currentWeek, allWeeks })}
 
