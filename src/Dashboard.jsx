@@ -1,3 +1,4 @@
+import { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './dashboard/VideoReviewTemplates.mjs'
 import { coachMorningFlag } from './dashboard/coachMorning.mjs'
 import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
 import { COACH_FOUR_WEEKS_ENABLED, reduceFourWeekRead } from './dashboard/coachFourWeeks.mjs'
@@ -67,7 +68,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED }) {
+export default function Dashboard({ mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
@@ -782,7 +783,7 @@ export default function Dashboard({ mobilitetHjalp = false, session, onPreviewAt
 
       {videoAnalysisReview && (() => {
         return (
-          <VideoReviewModal {...{ coachRyd,
+          <VideoReviewModal coachId={session?.user?.id} videoReviewTemplates={videoReviewTemplates} {...{ coachRyd,
             closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
             setVideoAnalysisBaselineFindingId, setVideoAnalysisCloseWarning, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, videoAnalyses, videoAnalysisBaselineFindingId,
             videoAnalysisCloseWarning, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft, videoAnalysisReview, videoAnalysisUpdatingId, videoBaselines,

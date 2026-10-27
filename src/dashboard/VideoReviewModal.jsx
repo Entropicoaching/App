@@ -1,3 +1,4 @@
+import VideoReviewTemplates, { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './VideoReviewTemplates.mjs'
 import { DEFAULT_VIDEOCOACH_FORENKL4 } from '../vcForenkl4.mjs'
 import { CoachFold, ReviewConclusion } from '../coachRyd.mjs'
 import { createElement, Fragment } from 'react'
@@ -14,7 +15,7 @@ import { videoCoachBaselineReviewImpact } from '../videoCoachBaselineProgress.js
 import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels.js'
 import AnalysePakkeReview from './AnalysePakkeReview.jsx'
 
-export default function VideoReviewModal({ coachRyd = false,
+export default function VideoReviewModal({ coachRyd = false, coachId, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES,
   closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
   setVideoAnalysisBaselineFindingId, setVideoAnalysisCloseWarning, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, videoAnalyses, videoAnalysisBaselineFindingId,
   videoAnalysisCloseWarning, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft, videoAnalysisReview, videoAnalysisUpdatingId, videoBaselines,
@@ -154,6 +155,15 @@ export default function VideoReviewModal({ coachRyd = false,
                 <div style={{ ...s.fieldLabel, color: '#67dff5' }}>Det atleten ser, når du deler</div>
                 {feedbackEditable ? (
                   <div style={{ display: 'grid', gap: '0.7rem', marginTop: '0.55rem' }}>
+                    {videoReviewTemplates === true && coachId && selectedAthlete?.id === analysis.athlete_id && <VideoReviewTemplates
+                      key={JSON.stringify([coachId, selectedAthlete.id, analysis.id])}
+                      coachId={coachId} athleteName={selectedAthlete.name} updating={updating}
+                      focus={videoAnalysisFeedbackDraft.focus}
+                      onApply={text => {
+                        setVideoAnalysisFeedbackDraft(current => ({ ...current, focus: text }))
+                        setVideoAnalysisFeedbackDirty(true)
+                        setVideoAnalysisCloseWarning(false)
+                      }} />}
                     {feedbackEditorFields.map(([key, label]) => (
                       <label key={key} style={{ display: 'grid', gap: '0.3rem' }}>
                         <span style={s.fieldLabel}>{label}</span>
