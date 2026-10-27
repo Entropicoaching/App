@@ -7,6 +7,8 @@
 // af AthleteView (en effekt der auto-detekterer warmupFocus, og
 // verify:athlete-rest-timer-drift's statiske timer-effekt-tjek, læser dem
 // begge der) og sendes ned som props.
+import { createElement } from 'react'
+import MobilitetFokus from './MobilitetFokus'
 import { foldNavn } from '../exerciseNames'
 import CountdownRing from './CountdownRing'
 import { s } from '../athleteShared'
@@ -906,6 +908,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
 }
 
 export default function MobiliseringTab({
+  mobilitetFokus = false,
   currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
   readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
   setMobilityStep, setTimerActive, setTimerDone, setTimerSeconds, setWarmupChoice,
@@ -913,6 +916,7 @@ export default function MobiliseringTab({
   setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,
   warmupFocus, warmupPhase, warmupProblems, warmupStep, warmupSubtype, warmupTemplates,
 }) {
+  if (mobilitetFokus === true && mobilityMode === 'fokus') return createElement(MobilitetFokus, { library: WARMUP_BASE, warmupTemplates, onExit: () => setMobilityMode(null) })
   return (
     <>
         {mobilityMode === null && (() => {
@@ -935,6 +939,7 @@ export default function MobiliseringTab({
               <Door icon="⚡" title="Varm op" sub="Inden du løfter" onClick={() => setMobilityMode('opvarmning')} />
               <Door icon="✦" title="Mobilitet" sub="Byg en session og tag den, når du er stram"
                 onClick={() => {
+                  if (mobilitetFokus === true) { setMobilityMode('fokus'); return }
                   // Land direkte på et forslag (løft fra ugens program + dagens ømhed) — ingen formular-port.
                   const intake = { time: 10, sitting: 'med', lifts: liftsFromWeek(currentWeek), problems: [], soreAreas: areasFromSoreZones(readinessLog?.sore_zones) }
                   setMobilityIntake(intake)
