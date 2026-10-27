@@ -1,3 +1,4 @@
+import { renderMobilityShortcut } from './athlete/mobilityFocus.mjs'
 import { kostSynlig, kostDestination } from './athlete/kostValg.mjs'
 const enkelHjemFactory = () => import('./athlete/EnkelHjemTab')
 import { readinessNavigation } from './athlete/readinessShortcut.mjs'
@@ -47,7 +48,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, kostPerAtlet, kostValg }) {
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, mobilitetFokus = false, kostPerAtlet, kostValg }) {
   const [requestedTab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -630,6 +631,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         )}
         {enkelOn && route === 'uge' && !currentWeek && <p>Ingen programuge endnu.</p>}
         {/* HJEM */}
+        {renderMobilityShortcut(createElement, { enabled: mobilitetFokus, tab, enkelOn, route, setMobilityMode, setTab })}
+
         {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemVisning
           enkelDel={enkelOn && route !== 'alle' ? route : null}
           taskShortcuts={forenklinger === true && !enkelOn}
@@ -724,7 +727,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
           <LazyBoundary
             factory={mobiliseringFactory} label="Mobilitet" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
-              currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
+              mobilitetFokus: mobilitetFokus === true, currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
               readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
               setMobilityStep, setTimerActive, setTimerDone, setTimerSeconds, setWarmupChoice,
               setWarmupExercises, setWarmupFocus, setWarmupPhase, setWarmupProblems, setWarmupStep,
