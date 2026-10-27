@@ -60,7 +60,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort')
 
-export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY }) {
+export default function Dashboard({ session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false }) {
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
@@ -679,7 +679,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
                   applyPeriodizationSuggestion, applyWeekDateFill, approveDraftProgressionState,
                   approvingProgression, assignEdits, athleteLogs, bestLog,
                   blockPlan, copyExerciseToSession, copyingExercise,
-                  copyingSession, copySessionToWeek, copyWeek, copyBlock, copyingWeek, pendingWeekDeletes, programCopyEnabled, deleteExercise,
+                  copyingSession, copySessionToWeek, copyWeek, copyBlock, copyingWeek, pendingWeekDeletes, programCopyEnabled, coachPlanCopyEnabled, deleteExercise,
                   deleteSession, deleteWeek, editDraftForecast, editingExercise,
                   editingRecommended, editingSession, editingWeek, exFormRow,
                   fetchWeeks, generateWeeksFromPlan, gotoWeek, isMobile,
