@@ -603,7 +603,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
   ) : null
 
   return (
-    <div style={s.wrap}>
+    <div {...(forenklinger === true ? { 'data-app-375': 'athlete' } : {})} style={s.wrap}>
       <Ramme
         {...{
           accountMenuOpen, askConfirm, athleteId: athlete?.id, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
@@ -620,7 +620,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
       )}
 
       {/* Page content */}
-      <div style={s.page}>
+      <div {...(forenklinger === true ? { 'data-app-375-page': '' } : {})} style={s.page}>
 
         {enkelOn && renderControls(createElement, { route, go: setTab })}
         {enkelOn && route === 'mere' && renderMore(createElement, { athlete, hasMeetPlan, go: setTab, visKost })}

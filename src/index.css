@@ -109,3 +109,50 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* APP-375FIX: only narrow app surfaces; no clipping or desktop overrides. */
+@media (max-width: 375px) {
+  [data-friday-preview] {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+  }
+
+  [data-app-375] {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    overflow-x: visible !important;
+  }
+
+  [data-app-375="coach"] > main {
+    width: 100% !important;
+    overflow-x: visible !important;
+  }
+
+  [data-app-375] [data-app-375-page] {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  [data-app-375] [data-app-375-grid] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [data-app-375] [data-coach-week] button {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  [data-app-375] [data-coach-week] span {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal !important;
+  }
+}
