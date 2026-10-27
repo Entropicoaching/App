@@ -5,8 +5,10 @@ import { buildPlanOverview, planOverviewCounts } from '../planOverview'
 import { currentWeekNo, s, computePhases, blockColor } from '../dashboardShared'
 import { createWeekDate, createTimelineScale } from './calendarWeekDate.mjs'
 import { holidayInfo } from './coachKonstanter'
+import CoachCalendarEvents from './CoachCalendarEvents.jsx'
 
 export default function KalenderView({
+  coachCalendarEvents = false,
   askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,
   calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,
   isMobile, openCalBlockBuilder, openPlanReview, openProfile, planStartDate, setBlockStartDate,
@@ -80,6 +82,8 @@ export default function KalenderView({
                   {board.length - needs.length} af {board.length} klar · har du husket at planlægge deres træning?
                 </div>
               </div>
+
+              {coachCalendarEvents === true && <CoachCalendarEvents athletes={visibleAthletes} openProfile={openProfile} />}
 
               {/* Planoverblik: forklarbare spørgsmål før den konkrete planlægningsflade. */}
               <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.28)', background: 'linear-gradient(135deg, rgba(200,146,58,0.065), rgba(28,28,24,0.5))' }}>
