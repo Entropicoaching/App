@@ -3,8 +3,9 @@ import { createElement as h, Fragment } from 'react'
 export const DEFAULT_COACH_RYD = false
 // Explicit, session-local preview. No storage, backend or athlete flag.
 export function coachRydEnabled(search = '') {
+  const release = new URLSearchParams(search).getAll('rel1030')
   const values = new URLSearchParams(search).getAll('coachRyd')
-  return values.length === 1 && values[0] === '1'
+  return (release.length === 1 && release[0] === '1') || (values.length === 1 && values[0] === '1')
 }
 const buttonStyle = { minHeight: 44, padding: '0.65rem', color: '#edeae2', background: '#1c1c18', border: '1px solid #59564c', cursor: 'pointer', font: 'inherit' }
 export function CoachFold({ enabled = DEFAULT_COACH_RYD, title, children, open }) {

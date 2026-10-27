@@ -2,7 +2,8 @@ import { calendarDay, addCalendarDays } from '../calendarDate.js'
 // APP-COACHUGE1. Presentation and aggregation only; no storage or network.
 export const DEFAULT_COACH_WEEK_OVERVIEW = false
 export function coachWeekFlag(search = '') {
-  return new URLSearchParams(search).get('coachUge') === '1'
+  const release = new URLSearchParams(search).getAll('rel1030')
+  return (release.length === 1 && release[0] === '1') || new URLSearchParams(search).get('coachUge') === '1'
 }
 export function addWeekRpe(completion, log) {
   if (log.skipped) return

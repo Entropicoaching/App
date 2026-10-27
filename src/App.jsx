@@ -1,3 +1,4 @@
+import { rel1030Mobility } from './rel1030.mjs'
 import { release3TestFlags } from './release3TestFlags.mjs'
 import { fridayTestEnabled } from './e2eTestFlags.mjs'
 import { useState, useEffect, useRef } from 'react'
@@ -79,6 +80,9 @@ const errorScreen = (onRetry) => (
 )
 
 function App({ mobilitetHjalp = false, forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokFremgang = false } = {}) {
+  ;({ mobilitetHjalp, mobilitetFokus, mobilitetFoerPas } = rel1030Mobility(
+    { mobilitetHjalp, mobilitetFokus, mobilitetFoerPas },
+    typeof window === 'undefined' ? '' : window.location.search))
   const fridayTest = fridayTestEnabled(import.meta.env.MODE, typeof window === 'undefined' ? '' : window.location.href)
   const rel3 = release3TestFlags(import.meta.env.MODE, typeof window === 'undefined' ? '' : window.location.href)
   const [session, setSession] = useState(null)
