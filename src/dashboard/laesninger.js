@@ -3,6 +3,7 @@ import { readFourWeekSource } from './coachFourWeeks.mjs'
 import { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
 import { dataAllowed } from '../dataEnough.mjs'
 import { rpeSignalEvidence, rpeSignalDescription } from '../dataEvidence.mjs'
+import { readMorningSource } from './coachMorningSource.mjs'
 import { attachVideoReferences } from '../videoEvidence.mjs'
 import { dataEnoughEnabled } from '../dataEnough.mjs'
 import { addWeekRpe, readWeekData } from './coachWeekOverview.mjs'
@@ -25,7 +26,7 @@ import { COACH_ACTIONS_ENABLED, coachActionsEnabled, actionSessions } from './co
 
 export function lavLaesninger({
   blokFremgang = false,
-  fourWeekCapture,
+  fourWeekCapture, coachMorning = false, setCoachMorningData = () => {},
   coachWeekEnabled = false, setCoachWeekDataStatus = () => {},
 
   coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {},
@@ -106,12 +107,12 @@ export function lavLaesninger({
   // fra forsidens kritiske kæde uden at ændre hvad der vises.
   async function fetchAthleteActivityLogs(athleteIds) {
     if (!athleteIds.length) return
-    const { data } = await supabase
+    const { data } = await readMorningSource(coachMorning, 'logs', athleteIds, setCoachMorningData, () => supabase
       .from('exercise_logs')
       .select('athlete_id, logged_at')
       .in('athlete_id', athleteIds)
       .eq('skipped', false)
-      .order('logged_at', { ascending: false })
+      .order('logged_at', { ascending: false }))
     if (!data) return
     const lastLogMap = {}
     for (const log of data) {
@@ -330,11 +331,11 @@ export function lavLaesninger({
   // måling i atletlisten uden en ekstra Supabase-forespørgsel.
   async function fetchVideoReviewQueue() {
     setVideoReviewQueueError(null)
-    const { data, error } = await supabase.from('video_analyses')
+    const { data, error } = await readMorningSource(coachMorning, 'videos', null, setCoachMorningData, () => supabase.from('video_analyses')
       .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,rep_details,metrics,bar_path,analyzed_at,created_at,source_mode,status,session_context,analysis_state,video_path')
       .eq('status', 'draft')
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(50))
     if (error) {
       setVideoReviewQueueError(error.message || 'VideoCoach-køen kunne ikke hentes')
       return false
@@ -455,7 +456,7 @@ export function lavLaesninger({
 
   async function fetchLatestMessages(athleteIds) {
     try {
-      const { data, error } = await supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false })
+      const { data, error } = await readMorningSource(coachMorning, 'messages', athleteIds, setCoachMorningData, () => supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false }))
       if (error) throw error
 
       const summary = summarizeCoachMessages(data, { noteSignalEnabled: COACH_NOTE_SIGNAL_ENABLED })

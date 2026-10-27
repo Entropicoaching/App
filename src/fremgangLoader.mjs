@@ -4,7 +4,7 @@ import { jsx } from './fremgangJsx.mjs'
 const root = new URL('./', import.meta.url)
 const nested = { 'FremgangTab.jsx': 'athlete/FremgangTab.jsx', 'EnkelFremgangTab.jsx': 'athlete/EnkelFremgangTab.jsx',
   'OversigtTab.jsx': 'dashboard/OversigtTab.jsx', 'coachLaesninger.js': 'dashboard/laesninger.js',
-  'coachFourWeeks.mjs': 'dashboard/coachFourWeeks.mjs', 'fremgangLinjer.mjs': 'athlete/fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs': 'athlete/fremgangPersonalRecords.mjs', 'coachWeekOverview.mjs': 'dashboard/coachWeekOverview.mjs', 'rekorder.js': 'athlete/rekorder.js', 'kostNumbers.mjs': 'athlete/kostNumbers.mjs', 'ugenoegle.js': 'volume/ugenoegle.js' }
+  'coachMorningSource.mjs': 'dashboard/coachMorningSource.mjs', 'coachFourWeeks.mjs': 'dashboard/coachFourWeeks.mjs', 'fremgangLinjer.mjs': 'athlete/fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs': 'athlete/fremgangPersonalRecords.mjs', 'coachWeekOverview.mjs': 'dashboard/coachWeekOverview.mjs', 'rekorder.js': 'athlete/rekorder.js', 'kostNumbers.mjs': 'athlete/kostNumbers.mjs', 'ugenoegle.js': 'volume/ugenoegle.js' }
 export const sourceURL = name => {
   const flat = new URL(name, root)
   return existsSync(flat) ? flat : new URL(nested[name] || name, root)
@@ -12,7 +12,7 @@ export const sourceURL = name => {
 const url = name => sourceURL(name).href
 const views = ['FremgangTab.jsx', 'EnkelFremgangTab.jsx', 'OversigtTab.jsx', 'BlokFremgang.jsx',
   'input-233-230-FremgangTab.jsx', 'input-230-227-EnkelFremgangTab.jsx', 'input-421-418-OversigtTab.jsx'].map(url)
-const dependency = new Set(['coachWeekOverview.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs', 'exerciseProgress.js', 'exerciseNames.js', 'exerciseSetView.js', 'calendarDate.js', 'inputValues.js', 'kostNumbers.mjs', 'ugenoegle.js', 'rekorder.js', 'fremgangLogs.js', 'blokFremgang.mjs', 'coachFourWeeks.mjs'])
+const dependency = new Set(['coachMorningSource.mjs', 'coachWeekOverview.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs', 'exerciseProgress.js', 'exerciseNames.js', 'exerciseSetView.js', 'calendarDate.js', 'inputValues.js', 'kostNumbers.mjs', 'ugenoegle.js', 'rekorder.js', 'fremgangLogs.js', 'blokFremgang.mjs', 'coachFourWeeks.mjs'])
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
