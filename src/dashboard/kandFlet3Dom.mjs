@@ -8,6 +8,7 @@ export function h(type, props, ignored, ...children) {
 }
 export function createElement(type, props, ...children) { return h(type, props, null, ...children) }
 export const useState = () => { throw Error('Unexpected useState in OFF tree') }
+export const useEffect = () => { throw Error('Unexpected useEffect in OFF tree') }
 export const useRef = () => { throw Error('Unexpected useRef in OFF tree') }
 export const Fragment = Symbol('Fragment')
 export const nodes = tree => !tree || typeof tree !== 'object' ? [] : [tree, ...(tree.children || []).flatMap(nodes)]

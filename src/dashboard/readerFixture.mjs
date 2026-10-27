@@ -15,7 +15,7 @@ export async function readerFixture(payload, { enabled = true, fail = false } = 
   const dependencies = { supabase }
   const source = readFileSync(new URL('./laesninger.js', import.meta.url), 'utf8').replace(
     /import\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]/g, (_, names, specifier) => {
-      if (specifier === './coachActions.mjs' || specifier === './coachWeekOverview.mjs' || specifier === './afvigelse.js' || ['../dataEnough.mjs', '../dataEvidence.mjs', '../rpeEvidence.mjs', '../videoEvidence.mjs'].includes(specifier)) {
+      if (specifier === './coachMorningSource.mjs' || specifier === './coachActions.mjs' || specifier === './coachWeekOverview.mjs' || specifier === './afvigelse.js' || ['../dataEnough.mjs', '../dataEvidence.mjs', '../rpeEvidence.mjs', '../videoEvidence.mjs'].includes(specifier)) {
         return `import {${names}} from ${JSON.stringify(new URL(specifier === './afvigelse.js' ? './afvigelse.js' : specifier, import.meta.url).href)}`
       }
       for (const name of names.split(',').map(n => n.trim())) {

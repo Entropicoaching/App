@@ -1,3 +1,4 @@
+import { coachMorningFlag } from './dashboard/coachMorning.mjs'
 import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
 import { COACH_FOUR_WEEKS_ENABLED, reduceFourWeekRead } from './dashboard/coachFourWeeks.mjs'
 import { coachWeekFlag } from './dashboard/coachWeekOverview.mjs'
@@ -73,6 +74,8 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
   const coachRyd = useRef(coachRydEnabled(typeof window === 'undefined' ? '' : window.location.search)).current
   const coachWeekEnabled = coachWeekFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachWeekDataStatus, setCoachWeekDataStatus] = useState({})
+  const coachMorning = coachMorningFlag(typeof window === 'undefined' ? '' : window.location.search)
+  const [coachMorningData, setCoachMorningData] = useState({})
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
@@ -326,7 +329,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
   } = lavLaesninger({
     blokFremgang: blokFremgang === true,
     fourWeekCapture,
-    setCoachActionsStatus,
+    setCoachActionsStatus, coachMorning, setCoachMorningData,
     coachWeekEnabled, setCoachWeekDataStatus,
     inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
     setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
@@ -612,7 +615,7 @@ export default function Dashboard({ session, onPreviewAthlete, programCopyEnable
 
         {view === 'list' && (() => {
           return (
-            <ForsideView {...{ coachRyd,
+            <ForsideView {...{ coachRyd, coachMorning, coachMorningData,
               coachWeekEnabled, coachWeekDataStatus,
               athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
               automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,

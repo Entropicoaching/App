@@ -1,3 +1,4 @@
+import { CoachMorning } from './coachMorning.mjs'
 import { coachInboxLine } from '../coachInboxState.js'
 import { positiveStatusEvidence } from '../dataEvidence.mjs'
 import { dataEnoughEnabled, dataMessage } from '../dataEnough.mjs'
@@ -18,7 +19,7 @@ import { dageSiden } from '../danskDato.js'
 import CoachActions from './CoachActions.jsx'
 import { COACH_ACTIONS_ENABLED, coachActionsEnabled } from './coachActions.mjs'
 
-export default function ForsideView({ coachRyd = false,
+export default function ForsideView({ coachRyd = false, coachMorning = false, coachMorningData,
   coachWeekEnabled = false, coachWeekDataStatus,
   athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
   automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
@@ -121,6 +122,7 @@ export default function ForsideView({ coachRyd = false,
 
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              {coachMorning === true && <CoachMorning enabled={coachMorning} data={coachMorningData} athletes={visibleAthletes} loading={loading} loadError={loadError} openProfile={openProfile} setView={setView} setSelectedAthlete={setSelectedAthlete} />}
               {(coachTemplateMessages === true || coachActionsEnabled(coachActions)) && <CoachActions
                 enabled={coachTemplateMessages === true || coachActions} templateMessages={coachTemplateMessages} coachId={coachId} sendTemplateMessage={sendTemplateMessage} athletes={visibleAthletes} calendarWeeks={calendarWeeks}
                 completion={athleteWeekCompletion} latestByTrack={latestByTrack} videos={videoReviewQueue}
