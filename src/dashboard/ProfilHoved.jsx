@@ -1,3 +1,4 @@
+import { MobilityHelpedProfile } from '../mobilityHelped.mjs'
 import { ProfileActions, CoachFold } from '../coachRyd.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilens hoved: tilbage/kø-kontekst, aktuel opgave, profilkort, sektions-navigation.
@@ -11,7 +12,7 @@ import { HUB_SECTIONS } from './hubSektioner.jsx'
 
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
-export default function ProfilHoved({ coachRyd = false,
+export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
   a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
   setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
@@ -36,6 +37,7 @@ export default function ProfilHoved({ coachRyd = false,
   }, [styrkeLogs, a.id])
   return (
     <>
+      <MobilityHelpedProfile enabled={mobilitetHjalp} athleteId={a.id} />
       {coachRyd && <ProfileActions status={statusLabels[a.status]} athlete={a} activeTab={activeTab} task={profilePriorityContext ? null : undefined} go={key => { setActiveTab(key); setEditing(null); setNavMenuOpen(false) }} /> }
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.75rem' }}>
               <button onClick={() => setView(profileReturnView)} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', padding: 0 }}>
