@@ -14,6 +14,16 @@ const known = url => [...urls.values()].includes(url)
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      // APP-FREM6: exact component edge and its three read-only dependencies only.
+      const repURL = new URL('./repRecords.mjs', root).href
+      if (specifier === './repRecords.mjs' && [...components].some(name => urls.get(name) === context.parentURL))
+        return { url: repURL, shortCircuit: true }
+      if (context.parentURL === repURL) {
+        const allowed = new Map(['exerciseSetView.js', 'inputValues.js', 'calendarDate.js']
+          .map(name => ['../' + name, urls.get(name)]))
+        if (allowed.has(specifier)) return { url: allowed.get(specifier), shortCircuit: true }
+        throw new Error('Forbidden synthetic dependency: ' + specifier)
+      }
       if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
         for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
       }
