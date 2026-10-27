@@ -2,8 +2,9 @@ export const DEFAULT_ANALYSE_SAMLET = false
 
 // Explicit opt-in, no persistence and no athlete data.
 export function analyseSamletEnabled(search = '') {
+  const release = new URLSearchParams(search).getAll('rel1030')
   const values = new URLSearchParams(search).getAll('analyseSamlet')
-  return values.length === 1 && values[0] === '1'
+  return (release.length === 1 && release[0] === '1') || (values.length === 1 && values[0] === '1')
 }
 
 export const analyseDemo = Object.freeze([

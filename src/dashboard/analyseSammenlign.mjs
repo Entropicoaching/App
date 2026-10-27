@@ -2,8 +2,9 @@ import { analyseDemo } from './analyseSamlet.mjs'
 
 export const DEFAULT_ANALYSE_SAMMENLIGN = false
 export function analyseSammenlignEnabled(search = '') {
+  const release = new URLSearchParams(search).getAll('rel1030')
   const values = new URLSearchParams(search).getAll('analyseSammenlign')
-  return values.length === 1 && values[0] === '1'
+  return (release.length === 1 && release[0] === '1') || (values.length === 1 && values[0] === '1')
 }
 
 // Local fixture contract only. Seconds and normalized image coordinates, not

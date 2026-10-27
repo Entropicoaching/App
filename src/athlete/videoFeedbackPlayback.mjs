@@ -1,7 +1,9 @@
 // VC-EPIK2 local playback contract. No backend fields or persistence writes.
 export const DEFAULT_VIDEO_FEEDBACK_PLAYBACK = false
 export const PLAYBACK_FLAG = 'vc-epik2-playback'
-export function videoFeedbackPlaybackEnabled(storage) {
+export function videoFeedbackPlaybackEnabled(storage, search = typeof window === 'undefined' ? '' : window.location.search) {
+  const release = new URLSearchParams(search).getAll('rel1030')
+  if ((release.length === 1 && release[0] === '1')) return true
   try { return (storage === undefined ? globalThis.localStorage : storage)?.getItem(PLAYBACK_FLAG) === '1' } catch { return false }
 }
 const number = x => typeof x === 'number' && Number.isFinite(x)
