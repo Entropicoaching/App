@@ -2,7 +2,7 @@ import { registerHooks } from 'node:module'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './mobilityJsx.mjs'
 const root = new URL('./', import.meta.url)
-const files = ['MobiliseringTab.jsx', 'MobilitetFokus.jsx', 'mobilityFocus.mjs', 'exerciseNames.js']
+const files = ['MobiliseringTab.jsx', 'MobilitetFokus.jsx', 'mobilityFocus.mjs', 'exerciseNames.js', 'MobilitetsBibliotek.jsx', 'mobilityLibrary.mjs']
 const urls = new Map(files.map(name => [name, new URL(existsSync(new URL(name, root)) ? name : '../' + name, root).href]))
 const nameOf = url => [...urls].find(([, value]) => value === url)?.[0]
 export function install() {
