@@ -1,3 +1,5 @@
+import { VideoFeedbackPlayback } from './VideoFeedbackPlayback.jsx'
+import { videoFeedbackPlaybackEnabled } from './videoFeedbackPlayback.mjs'
 import { formatMessageTime } from '../messageTime.js'
 import { openVideoFeedbackFollowUp } from './videoFeedbackFollowUp.mjs'
 
@@ -163,6 +165,7 @@ export function lavBeskederOgVaegt({
             </button>
             {open && (
               <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', padding: '0.75rem', display: 'grid', gridTemplateColumns: '1fr', gap: '0.8rem' }}>
+                {videoFeedbackPlaybackEnabled() && <VideoFeedbackPlayback key={`${athlete?.id}:${analysis.id}`} athleteId={athlete?.id} analysisId={analysis.id} />}
                 {preview && (
                   <div style={{ minHeight: '170px', background: '#141410', border: '1px solid rgba(237,234,226,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.6rem' }}>
                     <svg viewBox={preview.viewBox} width="100%" height="170" preserveAspectRatio="xMidYMid meet" style={{ display: 'block', overflow: 'visible' }}>
