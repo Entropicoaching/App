@@ -656,7 +656,7 @@ export default function MobiliseringTab({
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad er stramt eller tungt i dag?</h1>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginTop: '0.4rem' }}>Valgfrit. Vælg op til 2 områder</div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              <div {...(mobilitetFokus === true ? { 'data-app-375-grid': '' } : {})} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.5rem' }}>
                 {PROBLEMS.map(p => {
                   const on = warmupProblems.has(p)
                   return (

@@ -21,7 +21,7 @@ async function start() {
   const session = { user: { id: screen.role === 'coach' ? COACH : USER, email: `${screen.role}@example.test` } }
   const h = React.createElement
   createRoot(document.getElementById('root')).render(h(React.Fragment, null,
-    h('aside', { style: { padding: 12, border: '2px solid #c8923a' } },
+    h('aside', { 'data-friday-preview': '', style: { padding: 12, border: '2px solid #c8923a' } },
       h('strong', null, 'Syntetisk preview. Ingen rigtige data. Skrivehandlinger er slået fra.'),
       h('p', null, `${screen.title}: ${screen.steps}`),
       h('details', null, h('summary', null, 'Skærmliste'), renderScreenList(h, url.href))),

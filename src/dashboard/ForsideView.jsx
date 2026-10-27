@@ -121,7 +121,7 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
           }
 
           return (
-            <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+            <div {...(coachWeekEnabled === true ? { 'data-app-375-page': '' } : {})} style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
               {coachMorning === true && <CoachMorning enabled={coachMorning} data={coachMorningData} athletes={visibleAthletes} loading={loading} loadError={loadError} openProfile={openProfile} setView={setView} setSelectedAthlete={setSelectedAthlete} />}
               {(coachTemplateMessages === true || coachActionsEnabled(coachActions)) && <CoachActions
                 enabled={coachTemplateMessages === true || coachActions} templateMessages={coachTemplateMessages} coachId={coachId} sendTemplateMessage={sendTemplateMessage} athletes={visibleAthletes} calendarWeeks={calendarWeeks}

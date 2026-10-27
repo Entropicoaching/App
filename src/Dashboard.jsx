@@ -539,7 +539,7 @@ export default function Dashboard({ mobilitetHjalp = false, session, onPreviewAt
   })()
 
   return (
-    <div style={s.wrap}>
+    <div {...(coachWeekEnabled === true ? { 'data-app-375': 'coach' } : {})} style={s.wrap}>
       <Overlays {...{
         confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
       }} />
