@@ -1766,6 +1766,7 @@ function loadFile(file, remoteUrl = null) {
   if (!file && !remoteUrl) return;
   if (curUrl) URL.revokeObjectURL(curUrl);   // frigiv forrige video (mobil-RAM)
   if (file) {
+    if (vcUploadRetry) vcUploadRetry.reset();
     vcAthletePendingFile = file;
     vcAthleteClientAnalysisId = null;   // ny video = nyt klient-id ved upload
     if (typeof vcV3PendingCompletion !== 'undefined') vcV3PendingCompletion = null;
@@ -7143,6 +7144,8 @@ async function runFullAnalysis(barPt) {
 // vcAthletePreviewThree. Ingen fast timeout her - store videoer på svagt
 // mobilnet kan tage minutter, og det er den igangværende upload, ikke en
 // vilkårlig grænse, der skal afgøre, hvornår vi giver op.
+let vcUploadRetry = null;
+
 async function vcAthleteUploadAndGo() {
   if (!VC_V3_ATHLETE_BRIDGE) return;
   const liftDisplay = document.getElementById('liftSel').value;
@@ -8721,7 +8724,13 @@ function vcV3RequestSave(row) {
 // klonbare, så filen sendes direkte i postMessage - ingen mellemlagring i
 // VideoCoach selv. Ingen fast timeout: en upload på svagt mobilnet af en
 // stor fil kan tage flere minutter, og kun selve forsøget skal afgøre det.
-function vcV3RequestUploadAndGo({ requestId = vcV3Uuid(), clientAnalysisId, file, mimeType,
+function vcV3RequestUploadAndGo(options) {
+  return vcUploadRetry
+    ? vcUploadRetry.run(() => vcV3RequestUploadAndGoRaw(options))
+    : vcV3RequestUploadAndGoRaw(options);
+}
+
+function vcV3RequestUploadAndGoRaw({ requestId = vcV3Uuid(), clientAnalysisId, file, mimeType,
   lift, variation, loadKg = null, rpe = null, athleteNote = null, plateCalibration = null }) {
   if (!VC_V3_ATHLETE_BRIDGE || !VC_V3_HOST)
     return Promise.reject(new Error('VideoCoach er ikke forbundet til appen'));
@@ -10629,6 +10638,8 @@ function saveRec(mime, mic) {
 <script type="module">
 import { mountUploadFilmGuide } from './videoFilmGuide.mjs';
 import { bindInstantSend } from './vcInstantSend.mjs';
+import { mountUploadRetry } from './vcUploadRetry.mjs';
+if (VC_V3_ATHLETE_BRIDGE) vcUploadRetry = mountUploadRetry(document, () => vcAthleteUploadAndGo());
 bindInstantSend({
   saveButton: document.getElementById('athleteInstantSaveBtn'),
   discardButton: document.getElementById('athleteInstantDiscardBtn'),
