@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { supabase } from '../supabase'
 
 export function useDashboardEffekter({
-  activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
+  activeTab, samletAtletprofil = false, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
   fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
   fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
   isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
@@ -51,14 +51,14 @@ export function useDashboardEffekter({
   // profilen lukkes (se effekten nedenfor), så et senere genbesøg altid
   // henter friskt.
   useEffect(() => {
-    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
+    if (((samletAtletprofil && view === 'profile') || activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
       if (weeksLogsLoadedForRef.current === selectedAthlete.id) return
       weeksLogsLoadedForRef.current = selectedAthlete.id
       fetchWeeks(selectedAthlete.id)
       fetchAthleteLogs(selectedAthlete.id)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id])
+  }, [activeTab, selectedAthlete?.id, samletAtletprofil, view])
   useEffect(() => {
     if (!selectedAthlete) weeksLogsLoadedForRef.current = null
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før

@@ -31,6 +31,8 @@ import Overlays from './dashboard/Overlays'
 import Sidebar from './dashboard/Sidebar'
 import MobilNav from './dashboard/MobilNav'
 import ProfilHoved from './dashboard/ProfilHoved'
+import SamletProfilHoved from './dashboard/SamletProfilHoved'
+import { samletAtletprofilEnabled } from './dashboard/samletAtletprofil.js'
 import WeekdayPicker from './dashboard/WeekdayPicker'
 import ExFormRow from './dashboard/ExFormRow'
 import BlockSequenceRows from './dashboard/BlockSequenceRows'
@@ -75,7 +77,9 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   // ORDRE 175: hvilken atlet-id weeks+athleteLogs sidst er hentet for — se
   // effekten der bruger den, nedenfor.
   const weeksLogsLoadedForRef = useRef(null)
-  const [activeTab, setActiveTab] = useState('hub')
+  const [samletAtletprofil] = useState(samletAtletprofilEnabled)
+  const [storedActiveTab, setActiveTab] = useState('hub')
+  const activeTab = samletAtletprofil && storedActiveTab === 'hub' ? 'program' : storedActiveTab
   const [navMenuOpen, setNavMenuOpen] = useState(false) // "Mere"-menu i sektions-navigationen
   const [editing, setEditing] = useState(null)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -408,7 +412,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   })
 
   useDashboardEffekter({
-    activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
+    activeTab, samletAtletprofil, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
     fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
     fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
     isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
@@ -585,11 +589,17 @@ export default function Dashboard({ session, onPreviewAthlete }) {
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-            <ProfilHoved {...{
+            {samletAtletprofil ? <SamletProfilHoved {...{
+              a, activeTab, athleteLogs, gotoWeek, isMobile, latestByTrack, messages, navMenuOpen,
+              nextPriorityItem, openCoachPriorityItem, openAwaitingAnalysisVideo, openVideoAnalysisReview,
+              priorityQueueContext, profilePriorityContext, profileReturnView, setActiveTab, setCoachMsgTrack,
+              setEditing, setNavMenuOpen, setOpenSessionId, setShowDeleteModal,
+              setView, showFlash, unreadCounts, videoReviewQueue, weeks,
+            }} /> : <ProfilHoved {...{
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
-            }} />
+            }} />}
 
             {/* TAB: HUB — coach-landingsside med status + sektionsnavigation */}
             {activeTab === 'hub' && (() => {
@@ -638,7 +648,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             {/* TAB: OVERSIGT */}
             {activeTab === 'oversigt' && (
               <OversigtTab {...{
-                a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
+                a, samletAtletprofil, athleteLogs, athleteReadiness, currentWeight, editData, editing,
                 isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
                 setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
                 volumenKortFactory, weeks, weightTrend,
@@ -648,7 +658,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
             {/* TAB: KOST */}
             {activeTab === 'kost' && (
               <KostTab {...{
-                a, editData, editing, isMobile, saveEdit, saving,
+                a, samletAtletprofil, editData, editing, isMobile, saveEdit, saving,
                 setEditData, setEditing, startEdit,
               }} />
             )}

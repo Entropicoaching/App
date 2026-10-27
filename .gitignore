@@ -63,12 +63,12 @@ outputs/_seneste/
 # Ogsaa avif/bmp/mkv/avi/zip (Playwright-trace)/pdf/har (ORDRE 1466).
 # De ligger lokalt i outputs/. Maalinger (.json/.md/.txt) og verify-scripts
 # (outputs/**/*.mjs, kaldt fra package.json) forbliver sporet.
-outputs/**/*.png
+outputs/**/*.[pP][nN][gG]
 outputs/**/*.jpg
 outputs/**/*.jpeg
 outputs/**/*.webp
 outputs/**/*.gif
-outputs/**/*.mp4
+outputs/**/*.[mM][pP]4
 outputs/**/*.webm
 outputs/**/*.mov
 outputs/**/*.avif
