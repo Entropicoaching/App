@@ -1,3 +1,4 @@
+import { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/contactLatest.mjs'
 import { renderMobilityShortcut } from './athlete/mobilityFocus.mjs'
 import { kostSynlig, kostDestination } from './athlete/kostValg.mjs'
 const enkelHjemFactory = () => import('./athlete/EnkelHjemTab.jsx')
@@ -438,11 +439,12 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchSharedVideoAnalyses er ren ift. role/athlete.id, som er i deps; uændret fra før ordre 373
   }, [role, athlete?.id])
+  const contactLatest = contactLatestEnabled()
   const openReadiness = enkelOn ? () => setTab('dagsform') : legacyOpenReadiness
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge kaldes synkront i denne kørsel og læser kun athlete/msgTrack, som allerede er i deps
-  useEffect(() => { if (tab === 'beskeder' && athlete?.id) { fetchAthleteMessages(); markTrackRead(msgTrack); if (msgTrack === 'teknik') fetchSharedVideoAnalyses() } }, [tab, athlete?.id, msgTrack])
-  useEffect(() => { if (tab === 'beskeder') messagesEndRef.current?.scrollIntoView({ block: 'end' }) }, [messages, tab])
+  useEffect(() => { if (tab === 'beskeder' && athlete?.id) enterContact({ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack }) }, [tab, athlete?.id, msgTrack, contactLatest])
+  useEffect(() => { if (tab === 'beskeder') scrollContactEnd(contactLatest, messagesEndRef) }, [messages, tab, contactLatest])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge er rene ift. athlete.id, som allerede er i deps
   useEffect(() => { if (tab === 'stævnedag' && athlete?.id) { fetchMeetPlan(athlete.id); fetchMeetResults(athlete.id) } }, [tab, athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchVolumeLogs er ren ift. athleteId, som allerede er i deps
@@ -720,7 +722,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
             componentProps={{
               fetchSharedVideoAnalyses, formatMsgTime, messageInput, messagesEndRef, messages,
               msgTrack, renderSharedFeedbackCards, sendAthleteMessage, setMessageInput, setMsgTrack,
-              sharedVideoAnalyses, sharedVideoError, sharedVideoLoading,
+              sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, contactLatest,
             }}
           />
         )}

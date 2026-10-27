@@ -136,10 +136,11 @@ export function lavBeskederOgVaegt({
 
   // Coachens delte videofeedback som udfoldelige kort (én kilde: video_analyses).
   // Bruges både på hjem og i "Teknik & løft"-sporet — "se måling" udfolder banen.
-  const renderSharedFeedbackCards = () => (
+  const renderSharedFeedbackCards = (analyses = sharedVideoAnalyses, { expanded = false, formatDate } = {}) => (
     <div style={{ display: 'grid', gap: '0.55rem' }}>
-      {sharedVideoAnalyses.map(analysis => {
-        const open = openSharedVideoId === analysis.id
+      {analyses.map(analysis => {
+        const open = expanded || openSharedVideoId === analysis.id
+        const Header = expanded ? 'div' : 'button'
         const preview = athleteVideoPathPreview(analysis.bar_path)
         const feedback = analysis.athlete_feedback || {}
         const works = Array.isArray(feedback.works) ? feedback.works.filter(item => item?.text).slice(0, 2) : []
@@ -149,20 +150,20 @@ export function lavBeskederOgVaegt({
           athlete?.id)
         return (
           <div key={analysis.id} style={{ border: '1px solid rgba(237,234,226,0.08)', background: 'rgba(20,20,16,0.55)' }}>
-            <button onClick={() => { const opening = !open; setOpenSharedVideoId(opening ? analysis.id : null); if (opening) markVideoSeen(analysis.id) }} style={{ width: '100%', border: 0, background: 'transparent', color: '#edeae2', cursor: 'pointer', padding: '0.75rem', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.7rem' }}>
+            <Header onClick={expanded ? undefined : () => { const opening = !open; setOpenSharedVideoId(opening ? analysis.id : null); if (opening) markVideoSeen(analysis.id) }} style={{ width: '100%', border: 0, background: 'transparent', color: '#edeae2', cursor: 'pointer', padding: '0.75rem', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.7rem' }}>
               <span style={{ minWidth: 0 }}>
                 <span style={{ display: 'block', fontSize: '0.78rem' }}>
                   {!analysis.athlete_seen_at && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#c8923a', marginRight: 6, verticalAlign: 'middle' }} />}
                   {ATHLETE_VIDEO_LIFTS[analysis.lift] || analysis.lift} · {athleteVideoVariationLabel(analysis.lift, analysis.variation)}
                 </span>
                 <span style={{ display: 'block', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', marginTop: '0.25rem' }}>
-                  {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')}{analysis.load_kg != null ? ` · ${analysis.load_kg} kg` : ''}{analysis.reps_count ? ` · ${analysis.reps_count} reps` : ''}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                  {formatDate ? formatDate(analysis.analyzed_at) : new Date(analysis.analyzed_at).toLocaleDateString('da-DK')}{analysis.load_kg != null ? ` · ${analysis.load_kg} kg` : ''}{analysis.reps_count ? ` · ${analysis.reps_count} reps` : ''}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
                 </span>
               </span>
               <span style={{ color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                {open ? 'Skjul' : 'Se feedback'}<span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>⌄</span>
+                {expanded ? 'Feedback' : open ? 'Skjul' : 'Se feedback'}<span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>⌄</span>
               </span>
-            </button>
+            </Header>
             {open && (
               <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', padding: '0.75rem', display: 'grid', gridTemplateColumns: '1fr', gap: '0.8rem' }}>
                 {videoFeedbackPlaybackEnabled() && <VideoFeedbackPlayback key={`${athlete?.id}:${analysis.id}`} athleteId={athlete?.id} analysisId={analysis.id} />}

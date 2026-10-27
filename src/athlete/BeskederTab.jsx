@@ -7,15 +7,19 @@
 // bruges også af HJEM-fanen (eager) og bliver derfor i AthleteView.jsx,
 // sendt ned som props.
 import { s } from '../athleteShared'
+import { contactLatestEnabled, latestContactFeedback, formatContactDate } from './contactLatest.mjs'
 
 export default function BeskederTab({
   fetchSharedVideoAnalyses, formatMsgTime, messageInput, messagesEndRef, messages,
   msgTrack, renderSharedFeedbackCards, sendAthleteMessage, setMessageInput, setMsgTrack,
-  sharedVideoAnalyses, sharedVideoError, sharedVideoLoading,
+  sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, contactLatest = contactLatestEnabled(),
 }) {
           const trackOf = m => (m.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
-          const shown = messages.filter(m => trackOf(m) === msgTrack)
-          const pinnedShown = messages.filter(m => m.pinned && trackOf(m) === msgTrack)
+          const latest = contactLatest ? latestContactFeedback(messages, sharedVideoAnalyses) : null
+          const olderMessage = m => latest?.kind !== 'message' || m !== latest.value
+          const olderVideos = contactLatest ? sharedVideoAnalyses.filter(a => latest?.kind !== 'video' || a !== latest.value) : sharedVideoAnalyses
+          const shown = messages.filter(m => trackOf(m) === msgTrack && (!contactLatest || olderMessage(m)))
+          const pinnedShown = messages.filter(m => m.pinned && trackOf(m) === msgTrack && (!contactLatest || olderMessage(m)))
           const beskedUnread = messages.filter(m => trackOf(m) === 'besked' && m.sender_role === 'coach' && !m.read_at).length
           const teknikMsgUnread = messages.filter(m => trackOf(m) === 'teknik' && m.sender_role === 'coach' && !m.read_at).length
           const teknikUnread = teknikMsgUnread + sharedVideoAnalyses.filter(a => !a.athlete_seen_at).length
@@ -35,6 +39,22 @@ export default function BeskederTab({
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Din coach.</h1>
               </div>
 
+              {contactLatest && (
+                <section aria-label="Seneste feedback fra din coach" style={{ ...s.card, overflowWrap: 'anywhere' }}>
+                  <h2 style={{ ...s.cardLabel }}>Seneste feedback fra din coach</h2>
+                  {sharedVideoLoading && <p role="status">Henter videofeedback…</p>}
+                  {sharedVideoError && !sharedVideoLoading && <p role="status">{sharedVideoError}</p>}
+                  {latest ? (
+                    <>
+                      <p>{formatContactDate(latest.date)}{(latest.kind === 'message' ? !latest.value.read_at : !latest.value.athlete_seen_at) && <span> · Ulæst</span>}</p>
+                      {latest.kind === 'message'
+                        ? <div style={{ whiteSpace: 'pre-wrap' }}>{latest.value.content}</div>
+                        : renderSharedFeedbackCards([latest.value], { expanded: true, formatDate: formatContactDate })}
+                    </>
+                  ) : !sharedVideoLoading && !sharedVideoError && <p>Ingen feedback endnu. Din coachs feedback vises her, når den er delt.</p>}
+                </section>
+              )}
+
               <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.4rem' }}>
                 {trackTab('teknik', 'Teknik & løft', teknikUnread)}
                 {trackTab('besked', 'Beskeder', beskedUnread)}
@@ -47,7 +67,7 @@ export default function BeskederTab({
 
               <div style={s.card}>
                 {/* Teknik-spor: coachens delte videofeedback inline (kilde: video_analyses) */}
-                {msgTrack === 'teknik' && (
+                {msgTrack === 'teknik' && (!contactLatest || olderVideos.length > 0) && (
                   <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.7rem', marginBottom: '0.7rem' }}>
                       <div style={{ ...s.cardLabel }}>Videofeedback fra din coach</div>
@@ -58,7 +78,7 @@ export default function BeskederTab({
                     {!sharedVideoLoading && !sharedVideoError && sharedVideoAnalyses.length === 0 && (
                       <div style={{ color: '#7a7770', fontSize: '0.66rem', lineHeight: 1.5 }}>Ingen feedback endnu. Har du sendt en video, dukker feedbacken op her, når din coach har gennemgået og delt den.</div>
                     )}
-                    {!sharedVideoLoading && !sharedVideoError && sharedVideoAnalyses.length > 0 && renderSharedFeedbackCards()}
+                    {!sharedVideoLoading && !sharedVideoError && olderVideos.length > 0 && (contactLatest ? renderSharedFeedbackCards(olderVideos, { formatDate: formatContactDate }) : renderSharedFeedbackCards())}
                   </div>
                 )}
 
