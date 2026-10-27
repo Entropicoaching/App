@@ -1,3 +1,4 @@
+import { assertNoteDependencies } from './coachNoteDependencyGuard.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { pendingCoachNotes, COACH_NOTE_SIGNAL_ENABLED } from './coachNoteSignal.js'
@@ -156,4 +157,8 @@ test('Dashboard forbinder pending state til begge fabrikker', () => {
   assert.match(code, /\[pendingByTrack, setPendingByTrack\] = useState\(\{\}\)/)
   assert.match(code, /setLatestByTrack, setLoadError, setPendingByTrack/)
   assert.match(code, /latestByTrack, pendingByTrack, openCoachPriorityItem/)
+})
+
+test('notesignalets transitive kaede har ingen net eller lagring', () => {
+  assertNoteDependencies(source)
 })

@@ -1,3 +1,5 @@
+import { readBlockLogs } from '../blokFremgang.mjs'
+import { readFourWeekSource } from './coachFourWeeks.mjs'
 import { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Alt coachens side henter: atleter, kalender, indbakke (signaler, videoer,
@@ -17,6 +19,8 @@ import { danskDag } from '../danskDato'
 import { COACH_ACTIONS_ENABLED, coachActionsEnabled, actionSessions } from './coachActions.mjs'
 
 export function lavLaesninger({
+  blokFremgang = false,
+  fourWeekCapture,
   coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {},
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
   setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
@@ -377,11 +381,11 @@ export function lavLaesninger({
   }
 
   async function fetchWeeks(athleteId) {
-    const { data } = await supabase
+    const { data } = await readFourWeekSource(fourWeekCapture, 'weeks', athleteId, () => supabase
       .from('weeks')
       .select('*, sessions(*, exercises(*))')
       .eq('athlete_id', athleteId)
-      .order('week_number')
+      .order('week_number'))
     if (currentProgramAthleteRef && currentProgramAthleteRef.current !== athleteId) return
     setWeeks((data || []).map(w => ({
       ...w,
@@ -440,12 +444,19 @@ export function lavLaesninger({
   }
 
   async function fetchAthleteLogs(athleteId) {
-    const { data } = await supabase
+    if (blokFremgang === true) {
+      // Both opt-ins share the same scoped read and its error state.
+      const { data, error } = await readFourWeekSource(fourWeekCapture, 'logs', athleteId,
+        () => readBlockLogs(supabase, athleteId))
+      setAthleteLogs(error ? [] : data)
+      return
+    }
+    const { data } = await readFourWeekSource(fourWeekCapture, 'logs', athleteId, () => supabase
       .from('exercise_logs')
       .select('id, athlete_id, set_number, weight, reps_completed, note, logged_at, rpe_actual, rpe_planned, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
-      .limit(ATHLETE_LOGS_LIMIT)
+      .limit(ATHLETE_LOGS_LIMIT))
     setAthleteLogs(data || [])
   }
 
@@ -453,11 +464,11 @@ export function lavLaesninger({
     setVideoAnalysisLoading(true)
     setVideoAnalysisError(null)
     const [historyResult, baselineResult] = await Promise.all([
-      supabase.from('video_analyses')
+      readFourWeekSource(fourWeekCapture, 'videos', athleteId, () => supabase.from('video_analyses')
         .select('id,client_analysis_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path')
         .eq('athlete_id', athleteId)
         .order('analyzed_at', { ascending: false })
-        .limit(30),
+        .limit(30)),
       supabase.from('athlete_baselines_v3')
         .select('lift,variation,metric_key,metric_method,baseline_version,median,mad,n_analyses,n_reps,last_analyzed_at')
         .eq('athlete_id', athleteId)

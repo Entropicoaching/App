@@ -1,3 +1,4 @@
+import BlokFremgang from '../BlokFremgang.jsx'
 import { calendarDay } from '../calendarDate.js'
 
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
@@ -10,10 +11,11 @@ export default function OversigtTab({
   a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
   isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
   setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
-  volumenKortFactory, weeks, weightTrend,
+  volumenKortFactory, weeks, weightTrend, blokFremgang = false,
 }) {
   return (
               <div>
+              <BlokFremgang enabled={blokFremgang === true} weeks={weeks} logs={athleteLogs} athleteId={a.id} />
               {(() => {
                 const rawTs = profilesLastSeen[a.user_id]
                 if (!rawTs) return null

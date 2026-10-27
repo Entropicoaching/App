@@ -1,3 +1,5 @@
+import VideoQueueFilter from './VideoQueueFilter.jsx'
+import { VIDEO_QUEUE_FILTER_ENABLED } from './videoQueueFilter.mjs'
 // Coach Briefing / Indbakke — udskilt fra Dashboard.jsx (ordre 130 · commit 2)
 // som sin egen lazy-loadede chunk, så atletlisten og check-in-gennemgangen
 // ikke skal hente denne visning for at boote. Ren udflytning af JSX'en fra
@@ -12,10 +14,12 @@ export default function IndbakkeView({
   coachPriorityItems, handleAutomationAlert, handleTrainingSignal, hiddenAthleteIds, inboxRefreshing,
   inboxRefreshStatus, isMobile, latestByTrack, messageInboxError, openCoachPriorityItem,
   openProfile, refreshCoachInbox, setCoachMsgTrack, trainingSignalsError,
-  trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError,
+  trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError, videoQueueFilters, setVideoQueueFilters,
 }) {
   const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
-  const priorityItems = coachPriorityItems
+  const priorityItems = VIDEO_QUEUE_FILTER_ENABLED === true
+    ? coachPriorityItems.filter(item => item.kind !== 'video')
+    : coachPriorityItems
   const priorityFocus = coachPriorityFocus(priorityItems)
   const rows = visible.flatMap(athlete => ['teknik', 'besked'].map(track => ({
         athlete,
@@ -35,7 +39,7 @@ export default function IndbakkeView({
   }
   const priorityError = trainingSignalsError || videoReviewQueueError || messageInboxError || automationAlertsError
   const completionStatus = coachInboxCompletionStatus({
-    priorityCount: priorityItems.length,
+    priorityCount: coachPriorityItems.length,
     refreshStatus: inboxRefreshStatus,
     hasError: Boolean(priorityError),
   })
@@ -161,6 +165,13 @@ export default function IndbakkeView({
           {inboxRefreshing ? 'Opdaterer…' : '↻ Opdater'}
         </button>
       </div>
+
+      {VIDEO_QUEUE_FILTER_ENABLED === true && (
+        <VideoQueueFilter items={coachPriorityItems} hiddenAthleteIds={hiddenAthleteIds}
+          filters={videoQueueFilters} setFilters={setVideoQueueFilters}
+          error={videoReviewQueueError} refreshing={inboxRefreshing}
+          refresh={refreshCoachInbox} renderItem={renderPriorityItem} />
+      )}
 
       {(priorityItems.length > 0 || priorityError) && (
         <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.035)', padding: '0.85rem' }}>
