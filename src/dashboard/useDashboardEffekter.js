@@ -3,11 +3,11 @@
 // kalender- og fanehentninger, review-åbning, scroll-lås og den friske
 // indbakke. Hook kaldt nøjagtig hvor effekterne stod (samme rækkefølge).
 import { useEffect } from 'react'
-import { supabase } from '../supabase'
+import { supabase } from '../supabase.js'
 
 export function useDashboardEffekter({
   coachFourWeeksEnabled = false,
-  activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
+  coachWeekEnabled = false, activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
   fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
   fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
   isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
@@ -32,6 +32,7 @@ export function useDashboardEffekter({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [athletes])
+  const calendarAthletes = coachWeekEnabled ? JSON.stringify(athletes.map(a => a.id).sort()) : athletes
   useEffect(() => {
     if ((view === 'calendar' || view === 'list') && athletes.length) {
       const ids = athletes.map(a => a.id)
@@ -39,7 +40,7 @@ export function useDashboardEffekter({
       fetchCalendarProgress(ids)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [view, athletes])
+  }, [view, calendarAthletes])
   // ORDRE 175: program/log/analyse-fanerne deler samme weeks+athleteLogs-data.
   // ORDRE 185 commit 1: 'oversigt' tilføjet til listen — VolumenKort.jsx har nu
   // brug for `weeks` (planlagt mod gennemført), ikke kun `athleteLogs`.

@@ -1,11 +1,12 @@
 import BlokFremgang from '../BlokFremgang.jsx'
+import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
 import { calendarDay } from '../calendarDate.js'
 
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Oversigt: sidst aktiv, parathed, resultater, kostmål, stævne, volumenkort.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
-import { s, readinessSignal } from '../dashboardShared'
-import LazyBoundary from '../LazyBoundary'
+import { s, readinessSignal } from '../dashboardShared.js'
+import LazyBoundary from '../LazyBoundary.jsx'
 
 export default function OversigtTab({
   a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
@@ -43,6 +44,11 @@ export default function OversigtTab({
                   trend = d > 2 ? { text: `↑ +${d} vs. sidst`, color: '#6cba6c' }
                     : d < -2 ? { text: `↓ ${d} vs. sidst`, color: '#e05555' }
                     : { text: '= som sidst', color: '#7a7770' }
+                }
+                if (dataEnoughEnabled()) {
+                  trend = dataAllowed('D04', { rows: [todayR, prevR].filter(Boolean) })
+                    ? { text: `Forskel mellem ${prevR.logged_date} og ${todayR.logged_date}: ${todayR.readiness_score - prevR.readiness_score} point`, color: '#b8b4a8' }
+                    : { text: dataMessage('D04'), color: '#7a7770' }
                 }
                 const params = [
                   todayR.sleep_hours != null && ['Søvn', `${todayR.sleep_hours}t`],

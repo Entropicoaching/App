@@ -1,27 +1,29 @@
+import { rpeNote } from '../rpeEvidence.mjs'
+import { dataEnoughEnabled } from '../dataEnough.mjs'
 import { parseInputNumber, inputInteger, optionalInput } from '../inputValues.js'
 
 // Saet-skrivningen: persistSetLog-kaeden, logSet (optimistisk, PR-detektion),
 // Dagens pas' log/fortryd/ret, offline-koeen, spring over, session-feedback og
 // udfyld/spring resten over — flyttet uaendret ud af AthleteView.jsx (ordre 373)
 // som en fabrik, samme moenster som kostHandlinger.js.
-import { supabase, queueWrite } from '../supabase'
-import { nextAthleteSetInput } from '../athleteTrainingInputs'
-import { runGuardedWrite } from '../athleteWriteGuard'
-import { recordSilentFail } from '../athleteSilentFailLog'
-import { applySetEdit } from '../editLoggedSet'
-import { restSecondsForExercise } from '../restBetweenSets'
-import { isSessionDone } from '../nextSet'
-import { startRestPause, clearRestPause } from '../restPause'
+import { supabase, queueWrite } from '../supabase.js'
+import { nextAthleteSetInput } from '../athleteTrainingInputs.js'
+import { runGuardedWrite } from '../athleteWriteGuard.js'
+import { recordSilentFail } from '../athleteSilentFailLog.js'
+import { applySetEdit } from '../editLoggedSet.js'
+import { restSecondsForExercise } from '../restBetweenSets.js'
+import { isSessionDone } from '../nextSet.js'
+import { startRestPause, clearRestPause } from '../restPause.js'
 import {
   saveOfflineSet, loadOfflineSets, countOfflineSets, clearOfflineSetIfSame, newSetClientId,
   orderedOfflineSets, parkOfflineSet, queuedPayloadWithTime, noteOfflineSetFailure, queueUndoTombstone,
   saveQueuedRating, loadQueuedRatings, clearQueuedRatingIfSame,
   saveQueuedRecord, loadQueuedRecords, clearQueuedRecord, recordKey,
-} from '../offlineSetQueue'
-import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession'
-import { parsePlannedRpe, logFrontendError } from './ugeHjaelp'
+} from '../offlineSetQueue.js'
+import { browserSaysOffline, seemsOffline, withSlowNetCutoff } from '../offlineSession.js'
+import { parsePlannedRpe, logFrontendError } from './ugeHjaelp.js'
 import { erDeloadBlok } from '../exerciseProgress.js'
-import { bygGrundlag, findRekord, rekordTekst, ugensSaet, ugensOevelsesIds } from './rekorder'
+import { bygGrundlag, findRekord, rekordTekst, ugensSaet, ugensOevelsesIds } from './rekorder.js'
 
 // ORDRE 397 (docs/OFFLINE-PAS.md): uden net forsøges ingen skrivning; den
 // ville ellers stå i queueWrite's kø bag et auth-refresh, der selv prøver i
@@ -261,7 +263,7 @@ export function lavSaetSkrivning({
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const weight = parseInputNumber(input.weight, 0)
     const reps = inputInteger(repsCompleted, 0)
-    const rpe = optionalInput(input.rpe) ? parseInputNumber(plannedRpe) : parseInputNumber(input.rpe)
+    const rpe = optionalInput(input.rpe) ? (dataEnoughEnabled() ? null : parseInputNumber(plannedRpe)) : parseInputNumber(input.rpe)
     if (weight === null || reps === null || (!optionalInput(input.rpe) && (rpe === null || rpe > 10))) {
       showFlash('Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.', 'error')
       return false
@@ -282,6 +284,8 @@ export function lavSaetSkrivning({
       rpe_planned: parseInputNumber(plannedRpe),
       skipped: false,
     }
+
+    if (dataEnoughEnabled()) payload.note = rpeNote(input.note, payload, input.rpe_source === 'athlete' && !optionalInput(input.rpe))
 
     // OPTIMISTISK: vis fluebenet ØJEBLIKKELIGT og skriv i baggrunden. Atleten skal
     // aldrig vente på netværket for at se at sættet er registreret — det var netop
@@ -801,7 +805,7 @@ export function lavSaetSkrivning({
       const plannedRpe = parsePlannedRpe(ex.intensity)
       for (let n = 1; n <= (inputInteger(ex.sets) || 0); n++) {
         if (logged.has(`${ex.id}_${n}`)) continue
-        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: plannedRpe ?? null, rpe_planned: parseInputNumber(plannedRpe), skipped: false })
+        rows.push({ exercise_id: ex.id, athlete_id: athlete.id, set_number: n, weight, reps_completed: reps, note: null, rpe_actual: dataEnoughEnabled() ? null : plannedRpe ?? null, rpe_planned: parseInputNumber(plannedRpe), skipped: false })
       }
     }
 

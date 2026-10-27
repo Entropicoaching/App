@@ -8,7 +8,7 @@ import { createWeekDeletionQueue } from './dashboard/weekDeletion.js'
 const key = Symbol.for('APP-TEST9.database')
 const guard = registerHooks({
   resolve(specifier, context, nextResolve) {
-    if (specifier === '../supabase') return {
+    if (specifier === '../supabase' || specifier === '../supabase.js') return {
       url: 'data:text/javascript,export const supabase = { from(table) { return globalThis[Symbol.for("APP-TEST9.database")].from(table) } }; export const withRetry = fn => fn()',
       shortCircuit: true,
     }

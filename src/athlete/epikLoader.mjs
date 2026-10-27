@@ -1,3 +1,4 @@
+import { existsSync as exactExists } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { readFileSync } from 'node:fs'
 import { jsx } from './epikJsx.mjs'
@@ -9,6 +10,9 @@ const stub = new URL('epikDom.mjs', root).href
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
+        for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
+      }
       if ([card, wrapper].includes(context.parentURL)) {
         if (specifier === './videoFeedbackFollowUp.mjs') return { url: new URL('videoFeedbackFollowUp.mjs', root).href, shortCircuit: true }
         if (specifier === './VideoFeedbackPlayback.jsx') return { url: wrapper, shortCircuit: true }

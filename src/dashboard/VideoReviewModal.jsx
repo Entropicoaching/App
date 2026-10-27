@@ -1,19 +1,21 @@
+import { DEFAULT_VIDEOCOACH_FORENKL4 } from '../vcForenkl4.mjs'
+import { CoachFold, ReviewConclusion } from '../coachRyd.mjs'
 import { createElement, Fragment } from 'react'
 import { readVideoReviewFlag, renderVideoReviewLayout, videoReviewConclusion } from './videoReviewLayout.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // "Gennemgå måling" (video-review-modalen).
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
-import { VIDEOCOACH_STATUS, s, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline, videoCoachMetricText, videoCoachBaselineText } from '../dashboardShared'
-import { videoCoachPathPreview } from './coachVideoHjaelp'
-import { sanitizeVideoCoachFeedbackEvidence } from '../videoCoachFeedbackEvidence'
-import { videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineForAnalysis } from '../videoCoachPersonalFeedback'
-import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality'
-import { videoCoachBaselineReviewImpact } from '../videoCoachBaselineProgress'
-import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels'
-import AnalysePakkeReview from './AnalysePakkeReview'
+import { VIDEOCOACH_STATUS, s, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline, videoCoachMetricText, videoCoachBaselineText } from '../dashboardShared.js'
+import { videoCoachPathPreview } from './coachVideoHjaelp.js'
+import { sanitizeVideoCoachFeedbackEvidence } from '../videoCoachFeedbackEvidence.js'
+import { videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineForAnalysis } from '../videoCoachPersonalFeedback.js'
+import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality.js'
+import { videoCoachBaselineReviewImpact } from '../videoCoachBaselineProgress.js'
+import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels.js'
+import AnalysePakkeReview from './AnalysePakkeReview.jsx'
 
-export default function VideoReviewModal({
-  closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
+export default function VideoReviewModal({ coachRyd = false,
+  closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
   setVideoAnalysisBaselineFindingId, setVideoAnalysisCloseWarning, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, videoAnalyses, videoAnalysisBaselineFindingId,
   videoAnalysisCloseWarning, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft, videoAnalysisReview, videoAnalysisUpdatingId, videoBaselines,
 }) {
@@ -231,6 +233,7 @@ export default function VideoReviewModal({
               <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.08)' }}>
                 <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45, marginBottom: '0.7rem' }}>Reviewet viser den gemte måling. Originalvideoen lagres ikke i appen endnu.</div>
                 <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  {DEFAULT_VIDEOCOACH_FORENKL4 && feedbackEditable && <button disabled={updating || !feedbackQuality.canShare} onClick={() => saveApproveShareVideoAnalysis(analysis)} style={{ ...s.btnPrimary, opacity: updating || !feedbackQuality.canShare ? 0.5 : 1 }}>Gem, godkend og del feedback</button>}
                   {analysis.status === 'draft' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Udelad måling'}</button><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'coach_approved')} style={{ ...s.btnPrimary, background: '#4f7d50', opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Godkend til baseline'}</button></>}
                   {analysis.status === 'coach_approved' && <><button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Fjern fra baseline'}</button><button disabled={updating || videoAnalysisFeedbackDirty || !feedbackQuality.canShare} onClick={() => reviewVideoAnalysis(analysis, 'shared')} style={{ ...s.btnPrimary, background: '#3f7c87', opacity: updating || videoAnalysisFeedbackDirty || !feedbackQuality.canShare ? 0.5 : 1 }}>{updating ? 'Deler…' : videoAnalysisFeedbackDirty ? 'Gem feedback først' : !feedbackQuality.canShare ? 'Ret feedback først' : 'Del feedback med atlet'}</button></>}
                   {analysis.status === 'shared' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'invalid')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Skjul og udelad måling'}</button>}
@@ -261,12 +264,20 @@ export default function VideoReviewModal({
                 {!isMobile && <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>}
               </div>
 
+              {coachRyd ? <>
+                <ReviewConclusion analysis={analysis} draft={videoAnalysisFeedbackDraft} editable={feedbackEditable} quality={feedbackQuality} dirty={videoAnalysisFeedbackDirty} />
+                {athleteNoteSection}{feedback}{actions}
+                <CoachFold enabled open={analysis.status === 'draft'} title="Baseline og måling">{measurement}{packageReview}</CoachFold>
+                <CoachFold enabled={Boolean(feedbackEvidence)} title="Målegrundlag for feedback">{evidence}</CoachFold>
+              </> : <>
               {renderVideoReviewLayout(createElement, Fragment, {
                 measurement, packageReview, athleteNote: athleteNoteSection, evidence, feedback, actions,
                 conclusion: videoReviewConclusion({ status: analysis.status, dirty: videoAnalysisFeedbackDirty, quality: feedbackQuality, updating,
                   focus: feedbackEditable ? videoAnalysisFeedbackDraft.focus : athleteFeedbackSections.find(section => section.label === 'Atletens fokus')?.items.map(item => item.text).join('\n'),
                 }),
               }, readVideoReviewFlag())}
+              </>}
+
             </div>
           </div>
         )

@@ -1,3 +1,4 @@
+import { dataEnoughEnabled } from './dataEnough.mjs'
 import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
 import { erTungtSaet, erDeloadLog, bestHeavySetPerDay } from './exerciseProgress.js'
 // Delt mellem Dashboard.jsx og dens lazy-loadede underfaner (src/dashboard/*).
@@ -157,6 +158,7 @@ export const s = {
 }
 
 export function readinessSignal(score) {
+  if (dataEnoughEnabled()) return { color: '#b8b4a8', text: Number.isFinite(score) ? 'Dagens selvrapport' : 'Selvrapport uden gyldig score', bg: 'transparent' }
   if (score >= 75) return { color: '#6cba6c', text: 'Kroppen er klar 💪', bg: 'rgba(108,186,108,0.07)' }
   if (score >= 50) return { color: '#c8923a', text: 'Tag det lidt roligt i dag', bg: 'rgba(200,146,58,0.07)' }
   return { color: '#e05555', text: 'Overvej en let session i dag', bg: 'rgba(224,85,85,0.07)' }

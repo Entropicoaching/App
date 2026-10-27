@@ -1,12 +1,13 @@
+import { CoachFold } from '../coachRyd.mjs'
 import { calendarDay } from '../calendarDate.js'
 
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Hjem (hub): statuslinje og sektionsgitter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
-import { readinessSignal, s } from '../dashboardShared'
-import { HUB_SECTIONS } from './hubSektioner'
+import { readinessSignal, s } from '../dashboardShared.js'
+import { HUB_SECTIONS } from './hubSektioner.jsx'
 
-export default function HubTab({
+export default function HubTab({ coachRyd = false,
   a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
   videoAnalyses, weeklyActivity,
 }) {
@@ -43,7 +44,8 @@ export default function HubTab({
                   )}
 
                   {/* Sektionsgitter */}
-                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '1rem' }}>
+                  <CoachFold enabled={coachRyd} title="Mere om atleten">
+<div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '1rem' }}>
                     {HUB_SECTIONS.map(sec => (
                       <button
                         key={sec.key}
@@ -67,7 +69,8 @@ export default function HubTab({
                         )}
                       </button>
                     ))}
-                  </div>
+                  </div></CoachFold>
+
                 </div>
               )
 }

@@ -47,16 +47,25 @@ function LiftPlan({ lift }) {
   </fieldset>
 }
 
-export default function MeetDayPlanner({ meetAttempts, meetType }) {
+export default function MeetDayPlanner({ meetAttempts, meetType, dayFocus = false }) {
   const [checked, setChecked] = useState({})
+  const checklist = CHECKLIST.map(item => <label key={item.id} style={{ display: 'block' }}>
+      <input type="checkbox" checked={checked[item.id] === true}
+        onChange={event => { const value = event.target.checked; setChecked(prev => checklistState(prev, item.id, value)) }} />{item.label}
+    </label>)
+  const plans = meetPlan(meetAttempts, meetType).map(lift => <LiftPlan key={`${lift.key}:${lift.opener}`} lift={lift} />)
+  if (dayFocus) return <section aria-label="Opvarmningsplan og tidspunkter">
+    <h2>Opvarmning og tidspunkter</h2>
+    <p>{NOTICE}</p>
+    <p>Angiv forventede åbnertider nedenfor. Tider, rettelser og tjek gemmes kun i denne åbne fane.</p>
+    {plans}
+    <details><summary style={{ minHeight: 44, cursor: 'pointer' }}>Tjekliste før stævnet</summary>{checklist}</details>
+  </section>
   return <section aria-label="Tjekliste og opvarmningsforslag">
     <h2>Før stævnet</h2>
     <p>{NOTICE}</p>
     <p>Ændringer af tider, opvarmningssæt og tjek gemmes ikke efter genåbning.</p>
-    {CHECKLIST.map(item => <label key={item.id} style={{ display: 'block' }}>
-      <input type="checkbox" checked={checked[item.id] === true}
-        onChange={event => { const value = event.target.checked; setChecked(prev => checklistState(prev, item.id, value)) }} />{item.label}
-    </label>)}
-    {meetPlan(meetAttempts, meetType).map(lift => <LiftPlan key={`${lift.key}:${lift.opener}`} lift={lift} />)}
+    {checklist}
+    {plans}
   </section>
 }

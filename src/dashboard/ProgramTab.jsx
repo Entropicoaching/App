@@ -1,14 +1,15 @@
+import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
 // Program-fanen (ugeplan, sessioner, øvelsesformular) — udskilt fra
 // Dashboard.jsx (ordre 130 · commit 2) som sin egen lazy-loadede chunk, så
 // atletlisten og check-in-gennemgangen ikke skal hente program-redigeringen
 // for at boote. Ren udflytning af JSX'en fra "activeTab === 'program'"-
 // blokken - ingen logikændring, kun frie variable gjort eksplicitte som props.
-import { supabase } from '../supabase'
-import { draftExerciseForForecast, FORECAST_FIELD_LABELS } from '../progressionDraft'
-import { blockPurpose, withBlockPurposes } from '../periodizationAssistant'
+import { supabase } from '../supabase.js'
+import { draftExerciseForForecast, FORECAST_FIELD_LABELS } from '../progressionDraft.js'
+import { blockPurpose, withBlockPurposes } from '../periodizationAssistant.js'
 import { targetPrescriptionForExercise } from '../../supabase/functions/_shared/progressionState.js'
-import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared'
-import { nextWeekStartDate } from '../weekDates'
+import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared.js'
+import { nextWeekStartDate } from '../weekDates.js'
 import { useRef, useState } from 'react'
 import ProgramCopyOptions from './ProgramCopyOptions.jsx'
 import { DEFAULT_PROGRAM_COPY } from './programCopy.js'
@@ -183,7 +184,8 @@ export default function ProgramTab({
                           const progression = weekDraft.data.progression
                           const proposal = progression.proposal
                           const forecastState = progression.display_state || proposal
-                          const forecast = forecastState?.expected_progression?.exercises || []
+                          const rawForecast = forecastState?.expected_progression?.exercises || []
+                          const forecast = dataAllowed('D69', { rows: rawForecast }) ? rawForecast : []
                           const statusLabel = progression.status === 'approved_for_draft'
                             ? 'Godkendt for dette udkast'
                             : progression.status === 'approval_required'
@@ -195,7 +197,7 @@ export default function ProgramTab({
                            return (
                              <div style={{ marginBottom: '0.85rem', padding: '0.75rem', border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.06)' }}>
                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.42rem' }}>
-                                 <div style={{ ...s.fieldLabel, color: '#c8923a' }}>Forventet progression</div>
+                                 <div style={{ ...s.fieldLabel, color: '#c8923a' }}>{dataAllowed('D69', { rows: rawForecast }) ? 'Forventet progression' : dataMessage('D69')}</div>
                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: progression.can_commit ? '#6cba6c' : '#c8923a' }}>{statusLabel}</div>
                                </div>
                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', lineHeight: 1.45, marginBottom: '0.6rem' }}>

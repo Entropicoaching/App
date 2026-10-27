@@ -1,3 +1,6 @@
+import { dataEnoughEnabled, hasEnoughData } from './dataEnough.mjs'
+import { videoReferenceEvidence } from './videoEvidence.mjs'
+import { dataAllowed } from './dataEnough.mjs'
 import { videoCoachVariationIdentity } from './videoCoachLabels.js'
 
 const MAX_TEXT_LENGTH = 500
@@ -25,6 +28,7 @@ function sameVersion(left, right) {
 }
 
 export function sanitizeVideoCoachPersonalBaseline(value) {
+  if (!dataAllowed('D59', value?.data_evidence)) return null
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null
   const reference = value.evidence_ref
   if (!reference || typeof reference !== 'object' || Array.isArray(reference)) return null
@@ -44,8 +48,10 @@ export function sanitizeVideoCoachPersonalBaseline(value) {
       !metricKey || !metricMethod || !baselineVersion || !analysisId ||
       nAnalyses == null || nAnalyses < MIN_BASELINE_ANALYSES) return null
 
+  if (dataEnoughEnabled() && (value.data_evidence.currentId !== analysisId || value.data_evidence.athleteId !== athleteId || value.data_evidence.metric !== metricKey || value.data_evidence.method !== metricMethod || value.data_evidence.variation !== variation)) return null
   return {
     text,
+    ...(dataEnoughEnabled() ? { data_evidence: structuredClone(value.data_evidence) } : {}),
     evidence_ref: {
       schema_version: 'personal-baseline-evidence/v1',
       finding_id: findingId,
@@ -67,6 +73,7 @@ export function videoCoachPersonalBaselineForAnalysis(feedback, analysis, athlet
   const reference = selected.evidence_ref
   const analysisId = cleanText(analysis.id || analysis.client_analysis_id, 120)
   const variation = videoCoachVariationIdentity(analysis.lift, analysis.variation)
+  if (dataEnoughEnabled() && selected.data_evidence.version !== analysis.engine_version + '|' + analysis.tracker_version) return null
   return reference.analysis_id === analysisId && reference.athlete_id === athleteId &&
     reference.lift === analysis.lift && reference.variation === variation
     ? selected : null
@@ -114,15 +121,18 @@ export function videoCoachPersonalBaselineOptions(baselines, analysis, athleteId
       finiteNumber(item.n_analyses) >= MIN_BASELINE_ANALYSES &&
       finiteNumber(item.median) != null && sameVersion(item.baseline_version, snapshot.baseline_version))
     if (!baseline) continue
+    const dataEvidence = videoReferenceEvidence(baseline, analysis, athleteId)
+    if (dataEnoughEnabled() && !hasEnoughData('D59', dataEvidence)) continue
 
     const finding = findings.find(item => item && item.id === `baseline_${metricKey}` &&
       cleanText(item.summary) && Array.isArray(item.evidence_refs) &&
-      item.evidence_refs.includes(metricKey) && finiteNumber(item.confidence) >= MIN_FINDING_CONFIDENCE &&
-      finiteNumber(item.confidence) <= 1)
+      item.evidence_refs.includes(metricKey) && (dataEnoughEnabled() || (finiteNumber(item.confidence) >= MIN_FINDING_CONFIDENCE &&
+      finiteNumber(item.confidence) <= 1)))
     if (!finding) continue
 
     const option = sanitizeVideoCoachPersonalBaseline({
       text: finding.summary,
+      data_evidence: dataEvidence,
       evidence_ref: {
         finding_id: finding.id,
         analysis_id: analysisId,

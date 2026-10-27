@@ -1,11 +1,14 @@
+import { dataEnoughEnabled } from './dataEnough.mjs'
+import { rpeOrigin, visibleRpeNote } from './rpeEvidence.mjs'
 export function mergeAthleteSetInputs(previous = {}, loggedRows = []) {
   const logged = {}
   for (const row of loggedRows) {
     if (!row?.exercise_id || !Number.isInteger(Number(row.set_number))) continue
     logged[`${row.exercise_id}_${row.set_number}`] = {
       weight: row.weight?.toString() || '',
-      note: row.note || '',
+      note: visibleRpeNote(row.note),
       rpe: row.rpe_actual?.toString() || '',
+      ...(dataEnoughEnabled() ? { rpe_source: rpeOrigin(row) || 'unknown' } : {}),
       reps: row.reps_completed?.toString() || '',
     }
   }

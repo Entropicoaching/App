@@ -1,3 +1,4 @@
+import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
 // Program-fanen (ugeplan, sæt-logger, opvarmning, session-feedback) —
@@ -11,13 +12,13 @@ import { parseInputNumber } from '../inputValues.js'
 // brugt her og flyttet helt ind — verify:athlete-rest-timer-drift opdateret
 // til at læse den fra sin nye fil.
 import { useState, useEffect, useRef } from 'react'
-import { remainingSeconds } from '../restTimer'
-import { parseRepsPrescription } from '../repsPrescription'
-import { fixedRepsEntry } from '../fixedRepsEntry'
-import { exerciseViewGroups, exerciseViewRows } from '../exerciseSetView'
-import CountdownRing from './CountdownRing'
-import { s } from '../athleteShared'
-import { SMERTE_LINJE } from '../saetSmerte'
+import { remainingSeconds } from '../restTimer.js'
+import { parseRepsPrescription } from '../repsPrescription.js'
+import { fixedRepsEntry } from '../fixedRepsEntry.js'
+import { exerciseViewGroups, exerciseViewRows } from '../exerciseSetView.js'
+import CountdownRing from './CountdownRing.jsx'
+import { s } from '../athleteShared.js'
+import { SMERTE_LINJE } from '../saetSmerte.js'
 
 const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 
@@ -115,6 +116,7 @@ function ExerciseTimer({ duration, label }) {
 }
 
 export default function ProgramTab({
+  programUgeFoerst = false,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -131,6 +133,7 @@ export default function ProgramTab({
           // Følg den aktive uge der blev ankret i fetchProgram (kan være rykket
           // frem til næste uge når den aktuelle er fuldt logget). Fald tilbage til
           // den rene dato-beregning hvis ankeret ikke findes.
+          const ugeFoerst = programUgeFoerst === true
           const anchoredIdx = allWeeks.findIndex(w => w.id === currentWeek?.id)
           const activeWeekIdx = anchoredIdx >= 0 ? anchoredIdx : computeActiveWeekIdx(allWeeks)
           const viewedWeek = allWeeks[viewingWeekIdx] || null
@@ -139,64 +142,7 @@ export default function ProgramTab({
           const isFutureWeek = viewingWeekIdx > activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
 
-          return (
-            <>
-              {allWeeks.length === 0 ? (
-                <>
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Program</div>
-                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
-                  </div>
-                  {programError ? (
-                    // G1: en fejlet hentning må aldrig ligne "du har intet program" —
-                    // ærlig fejllinje + en vej til at prøve igen, ikke stilhed.
-                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
-                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program kunne ikke hentes.</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7, marginBottom: '1.25rem' }}>
-                        Tjek din forbindelse og prøv igen.
-                      </div>
-                      <button style={s.btnGhost} onClick={() => fetchProgram(athlete.id)}>Prøv igen</button>
-                    </div>
-                  ) : (
-                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
-                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
-                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7 }}>
-                        Din coach sætter det op inden din næste træning.
-                      </div>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
-                      (kun aktuel uge; readinessLog er allerede i state). */}
-                  {isCurrentWeek && readinessLog && readinessLog.readiness_score != null && readinessLog.readiness_score < 75 && (() => {
-                    const sc = readinessLog.readiness_score
-                    const low = sc < 50
-                    return (
-                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '0.85rem 1rem', marginBottom: '1.25rem', background: low ? 'rgba(224,85,85,0.07)' : 'rgba(200,146,58,0.07)', border: `1px solid ${low ? 'rgba(224,85,85,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
-                        <span style={{ color: low ? '#e05555' : '#c8923a', fontSize: '1rem', lineHeight: 1, flexShrink: 0 }}>{low ? '⚠' : '◐'}</span>
-                        <div>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: low ? '#e05555' : '#c8923a', marginBottom: '0.3rem' }}>Parathed {sc}/100 i dag</div>
-                          <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.6 }}>
-                            {low
-                              ? 'Lav parathed. Du kan skrue intensiteten ned, droppe de sidste sæt, eller tage en let session. Skriv til din coach, hvis det varer ved.'
-                              : 'Moderat parathed. Kør planen, men lyt til kroppen og pres ikke topsæt hvis det føles tungt.'}
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })()}
-                  {isCurrentWeek && !readinessLog && (
-                    <button type="button" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
-                      <span style={{ color: '#c8923a', fontSize: '0.9rem', flexShrink: 0 }}>◐</span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5 }}>Log dagens parathed for en tilpasset anbefaling →</span>
-                    </button>
-                  )}
-
-                  {/* Periodisering — uge-stepper */}
-                  {allWeeks.length > 0 && (() => {
+          const blokOversigt = allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
                     const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
                     const weeksToComp = compMs != null ? Math.ceil(compMs / (7 * 24 * 3600 * 1000)) : null
@@ -329,7 +275,82 @@ export default function ProgramTab({
                         </div>
                       </div>
                     )
+                  })()
+          const blokTekst = viewedWeek ? (
+            <>
+                  {viewedWeek.coach_note && (
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: '#7a7770', marginBottom: '1rem', letterSpacing: '0.04em' }}>
+                      {viewedWeek.coach_note}
+                    </div>
+                  )}
+
+                  {viewedWeek.block_description && (
+                    <div style={{ borderLeft: '2px solid rgba(200,146,58,0.3)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>Fra din coach</div>
+                      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: '#7a7770', fontStyle: 'italic', lineHeight: 1.6 }}>{viewedWeek.block_description}</div>
+                    </div>
+                  )}
+
+            </>
+          ) : null
+
+          return (
+            <>
+              {allWeeks.length === 0 ? (
+                <>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Program</div>
+                    <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
+                  </div>
+                  {programError ? (
+                    // G1: en fejlet hentning må aldrig ligne "du har intet program" —
+                    // ærlig fejllinje + en vej til at prøve igen, ikke stilhed.
+                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program kunne ikke hentes.</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7, marginBottom: '1.25rem' }}>
+                        Tjek din forbindelse og prøv igen.
+                      </div>
+                      <button style={s.btnGhost} onClick={() => fetchProgram(athlete.id)}>Prøv igen</button>
+                    </div>
+                  ) : (
+                    <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7 }}>
+                        Din coach sætter det op inden din næste træning.
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
+                      (kun aktuel uge; readinessLog er allerede i state). */}
+                  {isCurrentWeek && readinessLog && readinessLog.readiness_score != null && readinessLog.readiness_score < 75 && (() => {
+                    const sc = readinessLog.readiness_score
+                    const low = sc < 50
+                    return (
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '0.85rem 1rem', marginBottom: '1.25rem', background: low ? 'rgba(224,85,85,0.07)' : 'rgba(200,146,58,0.07)', border: `1px solid ${low ? 'rgba(224,85,85,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
+                        <span style={{ color: low ? '#e05555' : '#c8923a', fontSize: '1rem', lineHeight: 1, flexShrink: 0 }}>{low ? '⚠' : '◐'}</span>
+                        <div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: low ? '#e05555' : '#c8923a', marginBottom: '0.3rem' }}>Parathed {sc}/100 i dag</div>
+                          <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.6 }}>
+                            {low
+                              ? 'Lav parathed. Du kan skrue intensiteten ned, droppe de sidste sæt, eller tage en let session. Skriv til din coach, hvis det varer ved.'
+                              : 'Moderat parathed. Kør planen, men lyt til kroppen og pres ikke topsæt hvis det føles tungt.'}
+                          </div>
+                        </div>
+                      </div>
+                    )
                   })()}
+                  {isCurrentWeek && !readinessLog && (
+                    <button type="button" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
+                      <span style={{ color: '#c8923a', fontSize: '0.9rem', flexShrink: 0 }}>◐</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5 }}>Log dagens parathed for en tilpasset anbefaling →</span>
+                    </button>
+                  )}
+
+                  {!ugeFoerst && blokOversigt}
 
                   {/* Week header — navigation only shown when multiple weeks exist */}
                   <div style={{ marginBottom: '1.25rem' }}>
@@ -352,7 +373,7 @@ export default function ProgramTab({
                             {isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· planlagt</span>}
                             {!isCurrentWeek && !isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
                           </div>
-                          {viewedWeek.block_name && (
+                          {!ugeFoerst && viewedWeek.block_name && (
                             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#edeae2', marginTop: '0.1rem' }}>{viewedWeek.block_name}</div>
                           )}
                         </div>
@@ -390,24 +411,13 @@ export default function ProgramTab({
                           Uge {viewedWeek.week_number}
                         </div>
                         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
-                          {viewedWeek.block_name || 'Dit program'}.
+                          {ugeFoerst ? 'Dit program' : viewedWeek.block_name || 'Dit program'}.
                         </h1>
                       </div>
                     )}
                   </div>
 
-                  {viewedWeek.coach_note && (
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: '#7a7770', marginBottom: '1rem', letterSpacing: '0.04em' }}>
-                      {viewedWeek.coach_note}
-                    </div>
-                  )}
-
-                  {viewedWeek.block_description && (
-                    <div style={{ borderLeft: '2px solid rgba(200,146,58,0.3)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>Fra din coach</div>
-                      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: '#7a7770', fontStyle: 'italic', lineHeight: 1.6 }}>{viewedWeek.block_description}</div>
-                    </div>
-                  )}
+                  {!ugeFoerst && blokTekst}
 
                   {(viewedWeek.sessions || []).map(session => {
                     const isOpen = progOpenSession === session.id
@@ -505,14 +515,14 @@ export default function ProgramTab({
                                             Anbefalet: {ex.recommended_weight}kg
                                           </div>
                                         ) : (() => {
-                                          const s = suggestNextWeight(ex.name, ex.intensity)
+                                          const s = suggestNextWeight(ex.name, ex.intensity, ex.reps)
                                           if (!s) return null
                                           if (s.stop) return <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginBottom: '0.2rem' }}>{SMERTE_LINJE}</div>
                                           const diff = s.weight - s.baseWeight
                                           const diffStr = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : '='
                                           return (
                                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
-                                              Forslag: {s.weight} kg <span style={{ color: '#7a7770' }}>({diffStr} kg · RPE {s.fromRpe})</span>
+                                              Forslag: {s.weight} kg <span style={{ color: '#7a7770' }}>({diffStr} kg · RPE {s.fromRpe})</span>{s.basisDates && <small>Grundlag: {s.basisDates.join(', ')}</small>}
                                             </div>
                                           )
                                         })())}
@@ -676,7 +686,7 @@ export default function ProgramTab({
                                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'baseline' }}>
                                               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{logged.weight}kg × {logged.reps_completed}</span>
                                               {logged.rpe_actual != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>RPE {logged.rpe_actual}</span>}
-                                              {logged.note && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844', fontStyle: 'italic' }}>{logged.note}</span>}
+                                              {logged.note && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844', fontStyle: 'italic' }}>{visibleRpeNote(logged.note)}</span>}
                                             </div>
                                           ) : (
                                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844' }}>—</span>
@@ -800,7 +810,7 @@ export default function ProgramTab({
                                                       key={v}
                                                       data-selected={isSelected ? 'true' : 'false'}
                                                       onClick={() => {
-                                                        setLogInputs(p => ({ ...p, [key]: { ...p[key], rpe: v.toString() } }))
+                                                        setLogInputs(p => chooseRpeInput(p, key, v))
                                                         setOpenRpePicker(null)
                                                       }}
                                                       style={{
@@ -902,6 +912,15 @@ export default function ProgramTab({
                     <div style={s.card}>
                       <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
                     </div>
+                  )}
+                  {ugeFoerst && (
+                    <details key={viewedWeek.id} style={{ marginTop: '1rem', marginBottom: '1.5rem' }}>
+                      <summary style={{ cursor: 'pointer', minHeight: '44px', padding: '0.75rem', boxSizing: 'border-box', color: '#edeae2' }}>
+                        Blokinfo: {viewedWeek.block_name || 'Dit program'}
+                      </summary>
+                      {blokOversigt}
+                      {blokTekst}
+                    </details>
                   )}
                 </>
               )}

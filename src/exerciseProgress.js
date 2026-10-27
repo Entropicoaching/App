@@ -1,3 +1,4 @@
+import { dataEnoughEnabled } from './dataEnough.mjs'
 import { parseInputNumber } from './inputValues.js'
 import { calendarDay } from './calendarDate.js'
 
@@ -159,7 +160,7 @@ export function bestHeavySetPerDay(logs) {
     const val = estimatedOneRepMax(weight, reps)
     if (!(val > 0)) continue
     const cur = best.get(dag)
-    if (!cur || val > cur.val || (val === cur.val && weight > cur.weight)) best.set(dag, { dag, weight, reps, val, navn: log.exercises?.name ?? log.navn })
+    if (!cur || val > cur.val || (val === cur.val && weight > cur.weight)) best.set(dag, { dag, weight, reps, val, navn: log.exercises?.name ?? log.navn, ...(dataEnoughEnabled() ? { deload: erDeloadLog(log) } : {}) })
   }
   return [...best.values()].sort((a, b) => a.dag.localeCompare(b.dag))
     .map(({ val, ...p }) => ({ ...p, e1rm: Math.round(val) }))

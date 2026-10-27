@@ -1,3 +1,4 @@
+import { existsSync as exactExists } from 'node:fs'
 // Kun kendte lokale moduler. Flad worker-kopi eller de samme projektstier.
 import { registerHooks } from 'node:module'
 import { existsSync, readFileSync } from 'node:fs'
@@ -20,6 +21,9 @@ const urls = new Map(Object.entries(paths).map(([name, path]) => [name,
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
+        for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
+      }
       if (specifier === 'react' && context.parentURL === urls.get('MobilitetFokus.jsx')) return { url: urls.get('mobilityDom.mjs'), shortCircuit: true }
       const name = specifier.split('/').at(-1)
       if (specifier.startsWith('.') && urls.has(name)) return { url: urls.get(name), shortCircuit: true }

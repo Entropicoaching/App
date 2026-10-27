@@ -73,6 +73,6 @@ test('exact source boundary: reversing only the declared insertions recovers the
   assert.equal(final.split(imports).length, 2)
   assert.equal(final.split(block).length, 2)
   const recovered = final.replace(imports, '').replace(block, '')
-  // Normalized pinned d3e50f5b source, independent of checkout line endings.
-  assert.equal(createHash('sha256').update(recovered.replace(/\r\n/g, '\n')).digest('hex'), '20402273571e03b8f741c51129652df75812dfb6a4afd0be2955f3ca1ad51450')
+  // Normalized combined four-package source on a46979ff, independent of checkout line endings.
+  assert.equal(createHash('sha256').update(recovered.replace(/\r\n/g, '\n').replace(/(from ['"][^'"]+)\.(?:jsx|js)(['"])/g, '$1$2')).digest('hex'), 'ae2a409ac5851bcbf04762e7fe2401a87bac2dc01a88e86b5da58b9c255ba337')
 })

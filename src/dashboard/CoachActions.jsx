@@ -1,7 +1,8 @@
+import CoachTemplateMessage from './CoachTemplateMessage.jsx'
 import { createElement as h } from 'react'
 import { buildCoachActions, coachActionsEnabled, openCoachAction } from './coachActions.mjs'
 
-export default function CoachActions({ enabled, athletes, calendarWeeks, completion, latestByTrack, videos, loading, hasError, dataStatus = {}, openProfile, openCoachPriorityItem, today }) {
+export default function CoachActions({ templateMessages = false, coachId, sendTemplateMessage, enabled, athletes, calendarWeeks, completion, latestByTrack, videos, loading, hasError, dataStatus = {}, openProfile, openCoachPriorityItem, today }) {
   if (!coachActionsEnabled(enabled)) return null
   const ready = dataStatus.calendar === 'ready' && dataStatus.progress === 'ready'
   const failed = hasError || Object.values(dataStatus).includes('error')
@@ -14,5 +15,6 @@ export default function CoachActions({ enabled, athletes, calendarWeeks, complet
     h('ul', { style: { listStyle: 'none', padding: 0, margin: 0 } }, rows.map(row => h('li', { key: row.athlete.id },
       h('button', { type: 'button', onClick: () => openCoachAction(row, { openProfile, openCoachPriorityItem }), style: { display: 'block', width: '100%', minHeight: 52, padding: '0.55rem 0', border: 0, borderBottom: '1px solid #383730', background: 'transparent', color: '#edeae2', textAlign: 'left', cursor: 'pointer' } },
         h('span', { style: { display: 'block', overflowWrap: 'anywhere', fontWeight: 600 } }, row.athlete.name),
-        h('span', { style: { display: 'block', color: '#b3afa4', fontSize: '0.78rem', lineHeight: 1.4, overflowWrap: 'anywhere' } }, row.reason))))))
+        h('span', { style: { display: 'block', color: '#b3afa4', fontSize: '0.78rem', lineHeight: 1.4, overflowWrap: 'anywhere' } }, row.reason)),
+      templateMessages === true && h(CoachTemplateMessage, { key: `${coachId}:${row.athlete.id}`, coachId, athlete: row.athlete, sendMessage: sendTemplateMessage })))))
 }

@@ -4,6 +4,7 @@ import { jsx } from './coachFourWeeksJsx.mjs'
 const base = new URL('./', import.meta.url)
 const flat = existsSync(new URL('Dashboard.jsx', base))
 const targets = {
+  'dataEnough.mjs': '../dataEnough.mjs', 'dataEvidence.mjs': '../dataEvidence.mjs', 'rpeEvidence.mjs': '../rpeEvidence.mjs', 'mealEvidence.mjs': '../mealEvidence.mjs', 'videoEvidence.mjs': '../videoEvidence.mjs', 'coachWeekOverview.mjs': './coachWeekOverview.mjs',
   'coachKonstanter.js': './coachKonstanter.js',
   'Dashboard.jsx': '../Dashboard.jsx', 'laesninger.js': './laesninger.js',
   'useDashboardEffekter.js': './useDashboardEffekter.js', 'CoachFourWeeks.jsx': './CoachFourWeeks.jsx',
@@ -25,7 +26,7 @@ export function install() {
         const imports = [...source.matchAll(/import\s+([^\n]+?)\s+from\s+['"]([^'"]+)['"]/g)]
         const clause = imports.find(m => m[2] === specifier)?.[1] || ''
         const names = clause.match(/\{([^}]+)\}/)?.[1].split(',').map(n => n.trim()).filter(Boolean) || []
-        const exports = names.map(n => `export const ${n} = (...args) => ({});`).join('\n')
+        const exports = names.map(n => `export const ${n} = ${n === 'coachRydEnabled' ? '() => false' : n === 'useCoachPrioritet' ? '() => ({ coachPriorityItems: [], coachPriorityCount: 0 })' : '(...args) => ({})'};`).join('\n')
         const special = "export default function Stub(){ return null }"
         return { url: `data:text/javascript,${encodeURIComponent(special + '\n' + exports)}`, shortCircuit: true }
       }

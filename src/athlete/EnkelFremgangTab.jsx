@@ -1,5 +1,8 @@
 import BlokFremgang from '../BlokFremgang.jsx'
-import { exerciseSetView } from '../exerciseSetView'
+import { DEFAULT_FREMGANG_LINJER, renderFremgangLinjer } from './fremgangLinjer.mjs'
+import { heavyPointEvidence } from '../dataEvidence.mjs'
+import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
+import { exerciseSetView } from '../exerciseSetView.js'
 // Fremgang-fanen (ordre 284) — "er squatten rent faktisk blevet stærkere
 // siden marts", for ÉN øvelse ad gangen: bedste e1RM-sæt pr. uge og det
 // beregnede énrepetitionsmaksimum. Al regnelogik (herunder hovedløfts-
@@ -14,10 +17,11 @@ import { exerciseSetView } from '../exerciseSetView'
 // fra fremgangLogs: en øvelse man endnu ikke har logget skal stadig kunne
 // vælges og vise "Ingen logninger endnu." — listede den kun logs, ville en
 // tom øvelse aldrig kunne stå i listen overhovedet.
-import { useMemo, useState } from 'react'
+import { createElement, useMemo, useState } from 'react'
+import { renderPersonalRecords } from './fremgangPersonalRecords.mjs'
 import { bestHeavySetPerDay, erTungtSaet, grupperOevelsesnavne, hovedloeftFamilie, HOVEDLOEFT_FAMILIER } from '../exerciseProgress.js'
-import { s } from '../athleteShared'
-import { rekordListe, tidligereSaet, ugensSaet, grupperRekorder } from './rekorder'
+import { s } from '../athleteShared.js'
+import { rekordListe, tidligereSaet, ugensSaet, grupperRekorder } from './rekorder.js'
 
 const mono = "'IBM Plex Mono', monospace"
 
@@ -56,6 +60,9 @@ function hovednavnForFamilie(familie, navneIFamilie) {
 // i grafens hjørne. Ordre 1421: datoen er første tunge træningsdag i kurven.
 
 function fremgangLinje(navn, punkter) {
+  if (dataEnoughEnabled() && !dataAllowed('D18', { rows: punkter.map(p => heavyPointEvidence(p, navn)) })) {
+    return dataMessage('D18')
+  }
   if (punkter.length < 2) return null
   const forste = punkter[0], sidste = punkter[punkter.length - 1]
   const diff = sidste.e1rm - forste.e1rm
@@ -203,7 +210,7 @@ function RekordListe({ rekorder }) {
   )
 }
 
-export default function FremgangTab({ enkelDel = null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false }) {
+export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalRecords = false, enkelDel = null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false }) {
   const alleNavne = useMemo(() => [...new Map([...navneFraProgram(allWeeks), ...navneFraLogs(fremgangLogs)].map(n => [exerciseSetView(n).key, n])).values()], [allWeeks, fremgangLogs])
   const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
@@ -275,6 +282,8 @@ export default function FremgangTab({ enkelDel = null, fremgangLogs, fremgangLoa
       {enkelDel !== 'rekorder' && <div style={s.card}>
         {fremgangLoading ? (
           <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Henter…</div>
+        ) : fremgangLinjer === true ? (
+          renderFremgangLinjer(createElement, { enabled: fremgangLinjer, fremgangLogs, exerciseLogs, allWeeks, currentWeek })
         ) : alleNavne.length === 0 ? (
           <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Der er ingen øvelser i dit program endnu. Din coach lægger dem ind, og så vises din udvikling her.</div>
         ) : (
@@ -331,6 +340,8 @@ export default function FremgangTab({ enkelDel = null, fremgangLogs, fremgangLoa
           </>
         )}
       </div>}
+
+      {enkelDel !== 'styrke' && renderPersonalRecords(createElement, { enabled: personalRecords, loading: fremgangLoading, logs: fremgangLogs, exerciseLogs, currentWeek, allWeeks })}
 
       {enkelDel === 'rekorder' && !rekorder && <p>{fremgangLoading ? 'Henter rekorder…' : 'Ingen rekorder endnu.'}</p>}
       {enkelDel !== 'styrke' && rekorder && (

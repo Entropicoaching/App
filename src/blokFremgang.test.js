@@ -179,7 +179,7 @@ test('flag forwarding and imports in exact final files are line ending independe
     const app = read('App.jsx'), athlete = read('AthleteView.jsx'), coach = read('Dashboard.jsx')
     assert.match(app, /blokFremgang = false/)
     assert.equal((app.match(/blokFremgang: blokFremgang === true/g) || []).length, 3)
-    assert.match(athlete, /componentProps=\{\{ blokFremgang: blokFremgang === true, enkelDel:/)
+    assert.match(athlete, /componentProps=\{[\s\S]*?blokFremgang: blokFremgang === true,[\s\S]*?enkelDel:/)
     assert.match(coach, /lavLaesninger\(\{\s+blokFremgang: blokFremgang === true,/)
     assert.match(coach, /<OversigtTab \{\.\.\.\{\s+blokFremgang: blokFremgang === true,/)
   }

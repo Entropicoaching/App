@@ -1,29 +1,35 @@
+import { weekEvidence, datedRegression } from '../dataEvidence.mjs'
+import { rpeTrendEvidence } from '../dataEvidence.mjs'
+import { explicitRpe } from '../dataEnough.mjs'
+import { volumeWeeks, matchedDays, planEvidence, liftEvidence, normalizedRatings } from '../dataEvidence.mjs'
+import { dataEnoughEnabled, dataAllowed, dataMessage, lowStreak as consecutiveLowStreak } from '../dataEnough.mjs'
+import { CoachFold } from '../coachRyd.mjs'
 // Analyse-fanen (videoer + træningsgrafer) — udskilt fra Dashboard.jsx (ordre
 // 130 · commit 2) som sin egen lazy-loadede chunk, så atletlisten og check-in-
 // gennemgangen ikke skal hente VideoCoach-gennemgangen og graf-koden for at
 // boote. Ren udflytning af JSX'en fra "activeTab === 'analyse'"-blokken -
 // ingen logikændring, kun frie variable gjort eksplicitte som props.
-import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles } from '../videoCoachBaselineProgress'
-import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality'
-import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels'
-import { byggKategoriOpslag, kategoriFor } from '../exerciseNames'
-import { exerciseSetView } from '../exerciseSetView'
+import { buildVideoCoachBaselineProfiles, countReadyVideoCoachBaselineProfiles } from '../videoCoachBaselineProgress.js'
+import { videoCoachFeedbackQuality } from '../videoCoachFeedbackQuality.js'
+import { VIDEOCOACH_LIFT_LABELS as VIDEOCOACH_LIFTS, videoCoachVariationLabel } from '../videoCoachLabels.js'
+import { byggKategoriOpslag, kategoriFor } from '../exerciseNames.js'
+import { exerciseSetView } from '../exerciseSetView.js'
 import {
   s, VIDEOCOACH_STATUS, VIDEOCOACH_METRICS, videoCoachMetric, videoCoachBaseline,
   videoCoachMetricText, videoCoachBaselineText, parsePlannedRpe, buildLiftSeries,
-} from '../dashboardShared'
-import { BarChart, LineChart, ScatterPlot } from '../dashboardCharts'
-import AnalyseLokaltVaerktoej from './AnalyseLokaltVaerktoej'
-import { primaerKurve, primaerOverskrift } from './primaerKurve'
-import { danskDag } from '../danskDato' // ORDRE 456 (A8): PR-tidslinjen i dansk tid
-import AthleteSilentFailNote from '../AthleteSilentFailNote' // ORDRE 131 · commit 3, flyttet hertil ordre 137 · commit 1 (Dashboard.jsx splittet under 130) — eneste rendering, se RAPPORT-131.md
+} from '../dashboardShared.js'
+import { BarChart, LineChart, ScatterPlot } from '../dashboardCharts.jsx'
+import AnalyseLokaltVaerktoej from './AnalyseLokaltVaerktoej.jsx'
+import { primaerKurve, primaerOverskrift } from './primaerKurve.js'
+import { danskDag } from '../danskDato.js' // ORDRE 456 (A8): PR-tidslinjen i dansk tid
+import AthleteSilentFailNote from '../AthleteSilentFailNote.jsx' // ORDRE 131 · commit 3, flyttet hertil ordre 137 · commit 1 (Dashboard.jsx splittet under 130) — eneste rendering, se RAPPORT-131.md
 
 import AnalyseSammenlign from './AnalyseSammenlign.jsx'
 import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'
-import AnalyseSamletPrototype from './AnalyseSamletPrototype'
+import AnalyseSamletPrototype from './AnalyseSamletPrototype.jsx'
 import { analyseSamletEnabled } from './analyseSamlet.mjs'
 
-export default function AnalyseTab({
+export default function AnalyseTab({ coachRyd = false,
   a, aiExportCopied, aiExportText, aiExportWeeks, athleteLogs, athletePRHistory, athleteReadiness,
   athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory, generateAIReport, isMobile,
   openAwaitingAnalysisVideo, openVideoAnalysisReview, openVideoCoachV3, reviewVideoAnalysis,
@@ -32,6 +38,11 @@ export default function AnalyseTab({
   videoAnalysisReviewError, videoAnalysisReviewLoadingId, videoAnalysisUpdatingId, videoBaselines,
   videoLiftFilter, weeks,
 }) {
+              const basisToday = new Date().toLocaleDateString('en-CA')
+              const planBasis = dataEnoughEnabled() ? planEvidence(weeks, athleteLogs, a.id, basisToday) : {}
+              const readBasis = dataEnoughEnabled() ? matchedDays(athleteLogs, athleteReadiness) : {}
+              const sleepBasis = dataEnoughEnabled() ? matchedDays(athleteLogs, athleteReadiness, true) : {}
+              const enoughLift = lifts => lifts.some(l => dataAllowed('D21', dataEnoughEnabled() ? liftEvidence(athleteLogs, l.label) : {}))
               const now = new Date()
               const d28 = new Date(now); d28.setDate(now.getDate() - 28)
               const d28str = d28.toISOString().slice(0, 10)
@@ -156,7 +167,7 @@ export default function AnalyseTab({
                     </div>
                   )}
 
-                  <AnalyseLokaltVaerktoej key={selectedAthlete?.id || 'no-athlete'} />
+                  <CoachFold enabled={coachRyd} title="Mere: lokalt analyseværktøj"><AnalyseLokaltVaerktoej key={selectedAthlete?.id || 'no-athlete'} /></CoachFold>
                   {/* VideoCoach v3 · individuel historik (read-only første lag) */}
                   <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.24)', background: 'linear-gradient(145deg, rgba(200,146,58,0.055), #1c1c18 38%)' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
@@ -395,6 +406,7 @@ export default function AnalyseTab({
                     )}
                   </div>
 
+<CoachFold enabled={coachRyd} title="Mere: træningsgrafer og historik">
                   {/* 1. Træningsoverblik */}
                   <div style={s.card}>
                     <div style={s.cardLabel}>Træningsoverblik</div>
@@ -411,16 +423,17 @@ export default function AnalyseTab({
                         </div>
                       ))}
                     </div>
-                    {totalPlannedSessions > 0 && (
+                    {dataEnoughEnabled() && !dataAllowed('D37', planBasis) && <p>{dataMessage('D37')}</p>}
+                  {dataAllowed('D37', planBasis) && totalPlannedSessions > 0 && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
                           Compliance
                         </div>
                         <div style={{ flex: 1, height: '3px', background: '#242420', borderRadius: '2px', maxWidth: '180px' }}>
-                          <div style={{ height: '3px', width: `${Math.min(100, Math.round(completedSessionIds.size / totalPlannedSessions * 100))}%`, background: '#c8923a', borderRadius: '2px' }} />
+                          <div style={{ height: '3px', width: `${Math.min(100, Math.round((dataEnoughEnabled() ? planBasis.performedSessions : completedSessionIds.size) / (dataEnoughEnabled() ? planBasis.plannedSessions : totalPlannedSessions) * 100))}%`, background: '#c8923a', borderRadius: '2px' }} />
                         </div>
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#c8923a' }}>
-                          {completedSessionIds.size}/{totalPlannedSessions}
+                          {dataEnoughEnabled() ? planBasis.performedSessions : completedSessionIds.size}/{dataEnoughEnabled() ? planBasis.plannedSessions : totalPlannedSessions}
                         </div>
                       </div>
                     )}
@@ -428,7 +441,7 @@ export default function AnalyseTab({
 
                   {/* 2. Træningskonsistens heatmap */}
                   {(() => {
-                    const trainingDates = new Set(athleteLogs.map(l => l.logged_at.slice(0, 10)))
+                    const trainingDates = new Set(athleteLogs.filter(l => !dataEnoughEnabled() || !l.skipped).map(l => l.logged_at.slice(0, 10)))
                     const todayDate = new Date()
                     const WEEKS = 16, CELL = 22, GAP = 3, STEP = CELL + GAP
                     const PAD_LEFT = 18, PAD_TOP = 20
@@ -455,7 +468,7 @@ export default function AnalyseTab({
                     return (
                       <div style={s.card}>
                         <div style={{ ...s.cardLabel, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                          <span>Træningskonsistens</span>
+                          <span>{dataEnoughEnabled() ? 'Registreret aktivitet' : 'Træningskonsistens'}</span>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#c8923a', fontWeight: 400, letterSpacing: '0.04em', textTransform: 'none' }}>{totalDays} dage · {pct}% de seneste {WEEKS} uger</span>
                         </div>
                         <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
@@ -512,7 +525,7 @@ export default function AnalyseTab({
                           <div key={label}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
                             <LineChart series={[
-                              { data: ls.actualData, color: '#c8923a' },
+                              { data: dataEnoughEnabled() ? observed.map(p => ({ y: p.e1rm, label: p.dag })) : ls.actualData, color: '#c8923a' },
                               { data: ls.plannedData, color: '#7a7770', dashed: true },
                             ]} />
                           </div>
@@ -527,6 +540,7 @@ export default function AnalyseTab({
                       const weekMap = {}
                       for (const log of athleteLogs) {
                         if (log.skipped || !log.weight || !log.reps_completed) continue
+                         if (dataEnoughEnabled() && !volumeWeeks([log], basisToday, true).length) continue
                         const cat = kategoriFor(log.exercises?.name, nameToCat)
                         if (cat !== category) continue
                         const d = new Date(log.logged_at.slice(0, 10) + 'T12:00:00')
@@ -546,6 +560,14 @@ export default function AnalyseTab({
                       { label: 'Bænkpres', data: buildWeeklyVolume('Bænkpres'), color: '#6cba6c' },
                       { label: 'Dødløft', data: buildWeeklyVolume('Dødløft'), color: '#6b9fd4' },
                     ]
+                    if (dataEnoughEnabled()) {
+                      const complete = athleteLogs.readEvidence?.athleteId === a.id && athleteLogs.readEvidence?.complete === true
+                      for (const l of volLifts) {
+                        const rows = athleteLogs.filter(r => kategoriFor(r.exercises?.name, nameToCat) === l.label)
+                        if (!dataAllowed('D33', { weeks: volumeWeeks(rows, basisToday, complete), today: basisToday })) l.data = []
+                      }
+                      if (!volLifts.some(l => l.data.length)) return <p>{dataMessage('D33')}</p>
+                    }
                     if (!volLifts.some(l => l.data.length > 1)) return null
                     return (
                       <div style={s.card}>
@@ -643,7 +665,7 @@ export default function AnalyseTab({
                         </div>
                         <div style={{ textAlign: 'right' }}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem' }}>
-                            <span style={{ color: sess.plannedSets > 0 && sess.setsLogged >= sess.plannedSets ? '#6cba6c' : '#c8923a' }}>{sess.setsLogged}</span>
+                            <span style={{ color: dataAllowed('D38', dataEnoughEnabled() ? planEvidence(weeks, athleteLogs, a.id, basisToday, sess.id) : {}) && sess.plannedSets > 0 && sess.setsLogged >= sess.plannedSets ? '#6cba6c' : '#c8923a' }}>{sess.setsLogged}</span>
                             {sess.plannedSets > 0 && <span style={{ color: '#4a4844' }}>/{sess.plannedSets}</span>}
                           </div>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#4a4844' }}>sæt</div>
@@ -654,8 +676,9 @@ export default function AnalyseTab({
 
                   {/* 6. RPE analyse */}
                   {(() => {
+                    if (!dataAllowed('D12', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], today: new Date().toLocaleDateString('en-CA') })) return <p>{dataMessage('D12')}</p>
                     const rpeCategories = ['Squat', 'Bænkpres', 'Dødløft']
-                    const logsWithRpe = athleteLogs.filter(l => l.rpe_actual != null && !l.skipped)
+                    const logsWithRpe = athleteLogs.filter(l => l.rpe_actual != null && !l.skipped && (!dataEnoughEnabled() || explicitRpe(l)))
                     if (logsWithRpe.length === 0) return null
 
                     const lbl = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
@@ -691,7 +714,7 @@ export default function AnalyseTab({
 
                     // Fatigue trend: session-level avg RPE over time
                     const sessRpeMap = {}
-                    for (const log of logsWithRpe) {
+                    for (const log of (dataEnoughEnabled() ? rpeTrendEvidence(athleteLogs).rows : logsWithRpe)) {
                       const date = log.logged_at.slice(0, 10)
                       if (!sessRpeMap[date]) sessRpeMap[date] = []
                       sessRpeMap[date].push(log.rpe_actual)
@@ -703,13 +726,14 @@ export default function AnalyseTab({
 
                     return (
                       <>
-                        {fatigueWarning && (
+                        {dataEnoughEnabled() && !dataAllowed('D13', dataEnoughEnabled() ? rpeTrendEvidence(athleteLogs) : {}) && <p>{dataMessage('D13')}</p>}
+                  {dataAllowed('D13', dataEnoughEnabled() ? rpeTrendEvidence(athleteLogs) : {}) && fatigueWarning && (
                           <div style={{ ...s.card, borderLeft: '3px solid #c8923a', background: 'rgba(200,146,58,0.06)' }}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.5rem' }}>
                               ⚠ Stigende RPE-trend
                             </div>
                             <div style={{ fontSize: '0.82rem', color: '#b8b4a8' }}>
-                              RPE har steget i de seneste {last3.length} sessioner ({last3.map(v => Math.round(v * 10) / 10).join(' → ')}). Dette kan indikere akkumuleret træthed.
+                              RPE har steget i de seneste {last3.length} sessioner ({last3.map(v => Math.round(v * 10) / 10).join(' → ')}). {dataEnoughEnabled() ? 'Observeret RPE-stigning. Coachen vurderer sammenhængen.' : 'Dette kan indikere akkumuleret træthed.'}
                             </div>
                           </div>
                         )}
@@ -783,15 +807,17 @@ export default function AnalyseTab({
                     let lowStreak = 0
                     for (const r of sorted) { if (r.readiness_score < 50) lowStreak++; else break }
 
+                    if (dataEnoughEnabled()) lowStreak = consecutiveLowStreak(athleteReadiness)
                     return (
                       <>
+                        {dataEnoughEnabled() && lowStreak < 3 && <p>{dataMessage('D06')}</p>}
                         {lowStreak >= 3 && (
                           <div style={{ ...s.card, borderLeft: '3px solid #e05555', background: 'rgba(224,85,85,0.05)' }}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#e05555', marginBottom: '0.5rem' }}>
                               ⚠ Lav parathed {lowStreak} dage i træk
                             </div>
                             <div style={{ fontSize: '0.82rem', color: '#b8b4a8' }}>
-                              Atleten har haft parathedsscore under 50 i {lowStreak} dage i træk. Overvej en lettere session eller fri dag.
+                              Atleten har haft parathedsscore under 50 i {lowStreak} dage i træk. {dataEnoughEnabled() ? 'Dine registrerede svar beskriver oplevelsen på disse dage.' : 'Overvej en lettere session eller fri dag.'}
                             </div>
                           </div>
                         )}
@@ -872,7 +898,7 @@ export default function AnalyseTab({
                     const weekBars = Object.entries(weekVol)
                       .sort(([a], [b]) => parseInt(a) - parseInt(b))
                       .slice(-8)
-                      .map(([wn, d]) => ({ label: `U${wn}`, value: d.logged, planned: d.planned, highlight: d.planned > 0 && d.logged / d.planned < 0.7 }))
+                      .map(([wn, d]) => ({ label: `U${wn}`, value: d.logged, planned: d.planned, highlight: dataAllowed('D39', dataEnoughEnabled() ? weekEvidence(weeks, athleteLogs, a.id, basisToday, wn) : {}) && d.planned > 0 && d.logged / d.planned < 0.7 }))
 
                     // --- 3. Readiness vs RPE scatter ---
                     const trainingDayData = {}
@@ -888,9 +914,10 @@ export default function AnalyseTab({
                     for (const r of athleteReadiness) {
                       if (trainingDayData[r.logged_date]) trainingDayData[r.logged_date].readiness = r.readiness_score
                     }
-                    const scatterPoints = Object.entries(trainingDayData)
+                    let scatterPoints = Object.entries(trainingDayData)
                       .filter(([, d]) => d.readiness != null && d.rpeDevs.length > 0)
                       .map(([, d]) => ({ x: d.readiness, y: Math.round(d.rpeDevs.reduce((a, b) => a + b, 0) / d.rpeDevs.length * 10) / 10 }))
+                    if (dataEnoughEnabled()) scatterPoints = readBasis.rows.map(r => ({ x: r.readiness, y: r.value, label: r.date }))
                     const lowRead = scatterPoints.filter(p => p.x < 60)
                     const highRead = scatterPoints.filter(p => p.x >= 60)
                     const avgDevLow = lowRead.length > 0 ? Math.round(lowRead.reduce((a, b) => a + b.y, 0) / lowRead.length * 10) / 10 : null
@@ -911,6 +938,7 @@ export default function AnalyseTab({
                         sleepFeedbackPairs.push({ sleep: r.sleep_hours, rating: avgRating })
                       }
                     }
+                    if (dataEnoughEnabled()) sleepFeedbackPairs.splice(0, sleepFeedbackPairs.length, ...sleepBasis.rows.map(r => ({ sleep: r.sleep, rating: r.value })))
                     const sleepBuckets = {}
                     for (const p of sleepFeedbackPairs) {
                       const b = p.sleep < 6 ? '<6t' : p.sleep < 7 ? '6-7t' : p.sleep < 8 ? '7-8t' : '8t+'
@@ -945,13 +973,14 @@ export default function AnalyseTab({
 
                     return (
                       <>
-                        {overtrainingAlert && (
+                        {dataEnoughEnabled() && !dataAllowed('D14', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], checkins: athleteReadiness, today: new Date().toLocaleDateString('en-CA') }) && <p>{dataMessage('D14')}</p>}
+                  {dataAllowed('D14', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], checkins: athleteReadiness, today: new Date().toLocaleDateString('en-CA') }) && overtrainingAlert && (
                           <div style={{ ...s.card, borderLeft: '3px solid #e05555', background: 'rgba(224,85,85,0.06)' }}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#e05555', marginBottom: '0.5rem' }}>
-                              ⚠ Mulig overtræning — overvej deload
+                              {dataEnoughEnabled() ? 'Gennemgå lav selvrapport og afvigende RPE' : '⚠ Mulig overtræning — overvej deload'}
                             </div>
                             <div style={{ fontSize: '0.82rem', color: '#b8b4a8' }}>
-                              Parathed under 60 i {streak60} dage i træk og RPE konsekvent over planlagt (Ø +{Math.round(avgRpeDev30 * 10) / 10}). Overvej en deload-uge eller hviledage.
+                              Parathed under 60 i {streak60} dage i træk og RPE konsekvent over planlagt (Ø +{Math.round(avgRpeDev30 * 10) / 10}). {dataEnoughEnabled() ? 'Coachen vurderer de daterede observationer sammen med atleten.' : 'Overvej en deload-uge eller hviledage.'}
                             </div>
                           </div>
                         )}
@@ -961,7 +990,7 @@ export default function AnalyseTab({
                             <div style={s.cardLabel}>Belastningsoverblik — sæt per uge</div>
                             <BarChart bars={weekBars} height={110} />
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-                              {[['#c8923a', 'Normal'], ['#e05555', 'Under 70% compliance']].map(([color, lbl]) => (
+                              {(dataEnoughEnabled() ? [['#c8923a', 'Plan eller foreløbig logaktivitet']] : [['#c8923a', 'Normal'], ['#e05555', 'Under 70% compliance']]).map(([color, lbl]) => (
                                 <span key={lbl} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color }}>
                                   <span style={{ width: 10, height: 10, background: color, display: 'inline-block', opacity: 0.75, flexShrink: 0 }} />{lbl}
                                 </span>
@@ -970,7 +999,8 @@ export default function AnalyseTab({
                           </div>
                         )}
 
-                        {scatterPoints.length >= 3 && (
+                        {dataEnoughEnabled() && !dataAllowed('D08', readBasis) && <p>{dataMessage('D08')}</p>}
+                  {dataAllowed('D08', readBasis) && scatterPoints.length >= 3 && (
                           <div style={s.card}>
                             <div style={s.cardLabel}>Readiness vs RPE-afvigelse</div>
                             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
@@ -999,7 +1029,7 @@ export default function AnalyseTab({
                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', textTransform: 'uppercase' }}>Ø RPE-afvigelse</div>
                                   </div>
                                 )}
-                                {readInsight && (
+                                {!dataEnoughEnabled() && readInsight && (
                                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', lineHeight: 1.6, letterSpacing: '0.02em' }}>{readInsight}</div>
                                 )}
                               </div>
@@ -1007,7 +1037,8 @@ export default function AnalyseTab({
                           </div>
                         )}
 
-                        {sleepFeedbackPairs.length >= 2 && (
+                        {dataEnoughEnabled() && !dataAllowed('D09', sleepBasis) && <p>{dataMessage('D09')}</p>}
+                  {dataAllowed('D09', sleepBasis) && sleepFeedbackPairs.length >= 2 && (
                           <div style={s.card}>
                             <div style={s.cardLabel}>Søvn vs. træningsfeedback</div>
                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
@@ -1019,7 +1050,7 @@ export default function AnalyseTab({
                                 </div>
                               ))}
                             </div>
-                            {bestBucket && (
+                            {!dataEnoughEnabled() && bestBucket && (
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.04em' }}>
                                 Bedste træningsfeedback ved {bestBucket.bucket} søvn — Ø {bestBucket.avg}/5
                               </div>
@@ -1027,7 +1058,8 @@ export default function AnalyseTab({
                           </div>
                         )}
 
-                        {lifts.some(l => l.s.actualData.length >= 3) && (
+                        {dataEnoughEnabled() && !enoughLift(lifts) && <p>{dataMessage('D21')}</p>}
+                  {enoughLift(lifts) && lifts.some(l => l.s.actualData.length >= 3) && (
                           <div style={s.card}>
                             <div style={s.cardLabel}>
                               Fremgang på primære løft
@@ -1045,8 +1077,11 @@ export default function AnalyseTab({
                             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
                               {lifts.map(({ label, s: ls }) => {
                                 if (ls.actualData.length < 2) return null
-                                const trend = liftTrend(ls.actualData)
-                                const tl = trendLine(ls.actualData)
+                                if (dataEnoughEnabled() && !dataAllowed('D21', dataEnoughEnabled() ? liftEvidence(athleteLogs, label) : {})) return <p key={label}>{dataMessage('D21')}</p>
+                                const observed = dataEnoughEnabled() ? liftEvidence(athleteLogs, label).rows : []
+                                const regression = dataEnoughEnabled() ? datedRegression(observed) : null
+                                const trend = dataEnoughEnabled() ? (regression ? { text: `Observeret e1RM-trend ${regression.slope.toFixed(2)} kg pr. dag`, color: '#b8b4a8' } : null) : liftTrend(ls.actualData)
+                                const tl = dataEnoughEnabled() ? regression?.data || [] : trendLine(ls.actualData)
                                 return (
                                   <div key={label}>
                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.35rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1054,7 +1089,7 @@ export default function AnalyseTab({
                                       {trend && <span style={{ color: trend.color, letterSpacing: '0.06em' }}>{trend.text}</span>}
                                     </div>
                                     <LineChart series={[
-                                      { data: ls.actualData, color: '#c8923a' },
+                                      { data: dataEnoughEnabled() ? observed.map(p => ({ y: p.e1rm, label: p.dag })) : ls.actualData, color: '#c8923a' },
                                       { data: tl, color: 'rgba(200,146,58,0.4)', dashed: true },
                                     ]} height={100} />
                                   </div>
@@ -1067,5 +1102,6 @@ export default function AnalyseTab({
                     )
                   })()}
 
+</CoachFold>
                 </div>
               )}

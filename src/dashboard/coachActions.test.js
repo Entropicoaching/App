@@ -169,6 +169,6 @@ test('OFF actual handlers preserve thrown failure behavior', async () => {
 test('wiring retains all existing home content and OFF projections', () => {
   const home = readFileSync(new URL('./ForsideView.jsx', import.meta.url), 'utf8')
   assert.match(home, /coachActions = COACH_ACTIONS_ENABLED/)
-  assert.match(home, /coachActionsEnabled\(coachActions\) && <CoachActions/)
+  assert.match(home, /coachTemplateMessages === true \|\| coachActionsEnabled\(coachActions\)\) && <CoachActions/)
   assert.match(home, /dataStatus=\{coachActionsStatus\}/)
 })

@@ -1,15 +1,19 @@
+import { existsSync as exactExists } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './mobilityJsx.mjs'
 const root = new URL('./', import.meta.url)
-const files = ['MobiliseringTab.jsx', 'MobilitetFokus.jsx', 'mobilityFocus.mjs', 'exerciseNames.js', 'MobilitetsBibliotek.jsx', 'mobilityLibrary.mjs']
+const files = ['MobiliseringTab.jsx', 'MobilitetFokus.jsx', 'mobilityFocus.mjs', 'exerciseNames.js', 'MobilitetsBibliotek.jsx', 'mobilityLibrary.mjs', 'mobilityCatalog.mjs']
 const urls = new Map(files.map(name => [name, new URL(existsSync(new URL(name, root)) ? name : '../' + name, root).href]))
 const nameOf = url => [...urls].find(([, value]) => value === url)?.[0]
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
+        for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
+      }
       if (nameOf(context.parentURL)) {
-        if (['react', '../athleteShared', './CountdownRing', './mobilityDom.mjs'].includes(specifier)) return { url: new URL('./mobilityDom.mjs', root).href, shortCircuit: true }
+        if (['react', '../athleteShared.js', './CountdownRing.jsx', './mobilityDom.mjs'].includes(specifier)) return { url: new URL('./mobilityDom.mjs', root).href, shortCircuit: true }
         const basename = specifier.split('/').at(-1)
         const name = files.find(file => file === basename || file === basename + '.jsx' || file === basename + '.js')
         if (name) return { url: urls.get(name), shortCircuit: true }

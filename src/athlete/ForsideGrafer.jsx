@@ -1,9 +1,11 @@
+import { dataEnoughEnabled, dataAllowed, dataMessage, dayNumber } from '../dataEnough.mjs'
 // Forsidens tre smaa SVG-grafer (ugentlig tonnage, e1RM pr. hovedloeft,
 // 14-dages parathed) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 
 // Søjlediagram over ugentlig tonnage (sum af vægt × reps pr. uge, seneste ~10
 // uger). Seneste uge fremhæves; første/største/seneste søjle får værdi-label.
 function WeeklyTonnageChart({ data }) {
+  if (!dataAllowed('D33', { weeks: data, today: new Date().toLocaleDateString('en-CA') })) return <p>{dataMessage('D33')}</p>
   if (!data || data.length < 2) return null
   const W = 400, H = 120, PL = 6, PR = 6, PT = 16, PB = 18
   const max = Math.max(...data.map(d => d.total))
@@ -42,9 +44,11 @@ function WeeklyTonnageChart({ data }) {
 // Multi-linje graf over ugentligt bedste e1RM (Epley: vægt × (1 + reps/30))
 // pr. hovedløft. Svarer på "bliver jeg stærkere?" direkte på forsiden.
 function E1RMChart({ series }) {
-  const drawn = series.filter(sr => sr.points.length >= 2)
-  if (!drawn.length) return null
+  const t = dayNumber(new Date().toLocaleDateString('en-CA'))
+  let drawn = series.filter(sr => !dataEnoughEnabled() ? sr.points.length >= 2 : new Set(sr.points.filter(p => dayNumber(p.weekStart) !== null && dayNumber(p.weekStart) + 7 <= t && Number.isFinite(p.val) && p.val > 0).map(p => p.weekStart)).size >= 4)
+  if (!drawn.length) return dataEnoughEnabled() ? <p>{dataMessage('D19')}</p> : null
   const W = 400, H = 150, PL = 8, PR = 40, PT = 10, PB = 16
+  if (dataEnoughEnabled()) drawn = drawn.map(sr => ({ ...sr, points: sr.points.filter(p => dayNumber(p.weekStart) + 7 <= t) }))
   const allKeys = [...new Set(drawn.flatMap(sr => sr.points.map(p => p.weekStart)))].sort()
   if (allKeys.length < 2) return null
   const allVals = drawn.flatMap(sr => sr.points.map(p => p.val))

@@ -1,3 +1,4 @@
+import { dataEnoughEnabled } from '../dataEnough.mjs'
 import { parseInputNumber, nutritionValues } from './kostNumbers.mjs'
 import { finiteProduct } from '../inputValues.js'
 
@@ -10,10 +11,10 @@ import { finiteProduct } from '../inputValues.js'
 // bliver i AthleteView.jsx (verify:athlete-write-failures læser dem der).
 import { Fragment } from 'react'
 import KostUge from './KostUge.jsx'
-import { dateLabel, s, shiftDate, today, unitsForFood } from '../athleteShared'
+import { dateLabel, s, shiftDate, today, unitsForFood } from '../athleteShared.js'
 
 export default function KostTab({
-  addFromSearch, amount, athlete, cKcal, cLen, circ, copyYesterday, createFood,
+  confirmCompleteDay, addFromSearch, amount, athlete, cKcal, cLen, circ, copyYesterday, createFood,
   deleteLog, deleteTemplate, editGrams, editMacros, editingLogId, fKcal, fLen,
   frequentFoods, kostDate, kostWeekInput, logTemplate, logs, macroTotal, mealTemplates,
   onSearchInput, pKcal, pLen, parseLoggedGrams, progressBars, quickAddSearchFood,
@@ -32,6 +33,7 @@ return (
     <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Kostlog.</h1>
   </div>
 
+  {dataEnoughEnabled() && kostDate < today() && <button onClick={confirmCompleteDay} style={s.btnGhost}>Bekræft at hele dagens kost er registreret</button>}
   {/* Dato-navigator */}
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '0.4rem 0.5rem' }}>
     <button onClick={() => setKostDate(d => shiftDate(d, -1))} style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.35rem 0.8rem' }}>←</button>
@@ -58,9 +60,9 @@ return (
       <>
         <div style={s.cardLabel}>Estimeret TDEE</div>
         <div style={{ fontSize: '0.82rem', color: '#4a4844' }}>
-          {tdeeEstimate.missingWeight
+          {tdeeEstimate.reason || (tdeeEstimate.missingWeight
             ? 'Vej dig mindst 2 gange med 7 dages mellemrum for at aktivere dette estimat.'
-            : `Log kalorier i mindst ${tdeeEstimate.missingKcalDays} dage mere for at aktivere dette estimat.`}
+            : `Log kalorier i mindst ${tdeeEstimate.missingKcalDays} dage mere for at aktivere dette estimat.`)}
         </div>
       </>
     ) : (
@@ -70,7 +72,7 @@ return (
           <span style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
             <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{tdeeEstimate.tdee}</span>
             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770' }}>kcal/dag</span>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: tdeeEstimate.confidence === 'høj' ? '#6cba6c' : tdeeEstimate.confidence === 'moderat' ? '#c8923a' : '#7a7770', border: `1px solid ${tdeeEstimate.confidence === 'høj' ? 'rgba(108,186,108,0.4)' : tdeeEstimate.confidence === 'moderat' ? 'rgba(200,146,58,0.4)' : 'rgba(122,119,112,0.3)'}`, padding: '0.15rem 0.4rem' }}>{tdeeEstimate.confidence}</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: tdeeEstimate.confidence === 'høj' ? '#6cba6c' : tdeeEstimate.confidence === 'moderat' ? '#c8923a' : '#7a7770', border: `1px solid ${tdeeEstimate.confidence === 'høj' ? 'rgba(108,186,108,0.4)' : tdeeEstimate.confidence === 'moderat' ? 'rgba(200,146,58,0.4)' : 'rgba(122,119,112,0.3)'}`, padding: '0.15rem 0.4rem' }}>{dataEnoughEnabled() ? 'Usikkerhed ukendt' : tdeeEstimate.confidence}</span>
             <span style={{ color: '#4a4844', fontSize: '0.7rem' }}>{showTdee ? '⌃' : '⌄'}</span>
           </span>
         </div>
@@ -79,7 +81,7 @@ return (
         </div>
         {showTdee && (
           <div style={{ marginTop: '0.75rem' }}>
-            {athlete.kcal_target && (() => {
+            {!dataEnoughEnabled() && athlete.kcal_target && (() => {
               const diff = athlete.kcal_target - tdeeEstimate.tdee
               const absDiff = Math.abs(diff)
               if (absDiff < 100) return (

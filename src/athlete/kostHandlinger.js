@@ -1,14 +1,17 @@
+import { isDayReceipt, dayReceipt, confirmedMealDays } from '../mealEvidence.mjs'
+import { dayNumber, dataEnoughEnabled } from '../dataEnough.mjs'
+import { dataAllowed, dataMessage } from '../dataEnough.mjs'
 // Kost-handlerne (kostlog, skabeloner, foedevaresoegning, egne foedevarer,
 // ret/slet/fortryd) og kostfanens afledte tal (totaler, makro-cirkel, TDEE)
 // — flyttet uaendret ud af AthleteView.jsx (ordre 373) som en fabrik:
 // AthleteView kalder den i hvert render med sin egen tilstand, og faar de
 // samme funktioner og tal tilbage (samme closures som foer). Ingen egen tilstand.
-import { supabase } from '../supabase'
-import { runGuardedWrite } from '../athleteWriteGuard'
-import { runGuardedRead } from '../athleteReadGuard'
-import { shiftDate, unitsForFood } from '../athleteShared'
+import { supabase } from '../supabase.js'
+import { runGuardedWrite } from '../athleteWriteGuard.js'
+import { runGuardedRead } from '../athleteReadGuard.js'
+import { shiftDate, unitsForFood } from '../athleteShared.js'
 import { mealTemplateItems } from './kostSkabeloner.mjs'
-import { LOCAL_FOODS } from './lokaleFoedevarer'
+import { LOCAL_FOODS } from './lokaleFoedevarer.js'
 import { parseInputNumber, nutritionValues, finiteTotal, calendarTime } from './kostNumbers.mjs'
 
 export function lavKostHandlinger({
@@ -19,6 +22,7 @@ export function lavKostHandlinger({
   showFlash, templateNameInput, undoPending, undoTimerRef, undoToast, unitIdx, weightLogs,
 }) {
   async function fetchLogs(athleteId, date = kostDate) {
+    if (dataEnoughEnabled()) setHistoricalMealLogs([])
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('meal_logs')
@@ -29,7 +33,21 @@ export function lavKostHandlinger({
       onReadError('Dagens kostlog', athleteId),
     )
     if (!ok) return
-    setLogs(data || [])
+    setLogs(dataEnoughEnabled() ? (data || []).filter(r => !isDayReceipt(r)) : data || [])
+    if (dataEnoughEnabled()) await fetchHistoricalMealLogs(athleteId)
+  }
+
+  async function confirmCompleteDay() {
+    if (!dataEnoughEnabled() || !athlete?.id) return false
+    const { data, ok } = await runGuardedRead(() => supabase.from('meal_logs').select('*')
+      .eq('athlete_id', athlete.id).eq('date', kostDate), onReadError('Dagens kostlog', athlete.id))
+    if (!ok) return false
+    const receipt = dayReceipt((data || []).filter(r => !isDayReceipt(r)), kostDate, new Date().toLocaleDateString('en-CA'))
+    if (!receipt) return false
+    const saved = await runGuardedWrite(() => supabase.from('meal_logs').insert({ athlete_id: athlete.id, ...receipt }),
+      () => showFlash('Dagen blev ikke bekræftet.', 'error'))
+    if (saved) await fetchHistoricalMealLogs(athlete.id)
+    return saved
   }
 
   async function fetchHistoricalMealLogs(athleteId) {
@@ -38,7 +56,7 @@ export function lavKostHandlinger({
     const { data, ok } = await runGuardedRead(
       () => supabase
         .from('meal_logs')
-        .select('date, kcal')
+        .select(dataEnoughEnabled() ? 'id, date, meal, kcal, protein, carb, fat' : 'date, kcal')
         .eq('athlete_id', athleteId)
         .gte('date', from.toISOString().slice(0, 10))
         .order('date'),
@@ -64,6 +82,7 @@ export function lavKostHandlinger({
     if (!ok) return
     const map = new Map()
     for (const l of data || []) {
+      if (dataEnoughEnabled() && isDayReceipt(l)) continue
       if (!map.has(l.meal)) map.set(l.meal, { meal: l.meal, kcal: l.kcal, protein: l.protein, carb: l.carb, fat: l.fat, count: 0 })
       map.get(l.meal).count++
     }
@@ -350,6 +369,16 @@ export function lavKostHandlinger({
     fetchLogs(athlete.id)
   }
 
+
+  const basisToday = new Date().toLocaleDateString('en-CA')
+  if (dataEnoughEnabled()) {
+    historicalMealLogs = confirmedMealDays(historicalMealLogs).filter(r => {
+      const age = dayNumber(basisToday) - dayNumber(r.date); return age >= 1 && age <= 28
+    })
+    const dates = new Set(historicalMealLogs.map(r => r.date))
+    weightLogs = weightLogs.filter(r => dates.has(String(r.logged_at).slice(0, 10)))
+  }
+
   const totKcal = finiteTotal(logs, 'kcal')
   const totProtein = finiteTotal(logs, 'protein')
   const totCarb = finiteTotal(logs, 'carb')
@@ -401,10 +430,13 @@ export function lavKostHandlinger({
   })()
 
   return {
-    fetchLogs, fetchHistoricalMealLogs, fetchFrequentFoods, quickLogFood, fetchMealTemplates, copyYesterday, saveTemplate, logTemplate,
+    fetchLogs, fetchHistoricalMealLogs, confirmCompleteDay, fetchFrequentFoods, quickLogFood, fetchMealTemplates, copyYesterday, saveTemplate, logTemplate,
     deleteTemplate, fetchCustomFoods, onSearchInput, selectFood, addFromSearch, quickAddSearchFood, saveCustomFood, deleteLog,
     undoDelete, parseLoggedGrams, startEditLog, saveEditLog, totKcal, totProtein, totCarb, totFat,
     kcalPct, proteinPct, pKcal, cKcal, fKcal, macroTotal, circ, pLen,
-    cLen, fLen, tdeeEstimate,
+    cLen, fLen, tdeeEstimate: !dataEnoughEnabled() ? tdeeEstimate :
+      !dataAllowed('D48', { rows: historicalMealLogs, weights: weightLogs, today: basisToday })
+        ? { ready: false, reason: dataMessage('D48') }
+        : { ...tdeeEstimate, confidence: 'ukendt' },
   }
 }

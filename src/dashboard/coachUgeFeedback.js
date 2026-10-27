@@ -1,3 +1,4 @@
+import { dataEnoughEnabled } from '../dataEnough.mjs'
 import { summarizeWeek } from '../athlete/ugeFeedback.js'
 import { coachTekstForslag } from './coachTekstForslag.js'
 import { coachTekstTree } from './coachTekstTree.js'
@@ -64,5 +65,5 @@ export function coachUgeFeedback(week, athleteLogs, now) {
   if (!erAfsluttetUge(week, now) || !Array.isArray(athleteLogs)) return null
   // App logs store actual RPE in rpe_actual; the pure summary accepts rpe.
   const logs = logsForUge(week, athleteLogs).map(log => ({ ...log, rpe: log.rpe_actual }))
-  return summarizeWeek(week, logs)
+  return summarizeWeek(dataEnoughEnabled() ? { ...week, closed: true, end_date: new Date(Date.parse(week.start_date + 'T00:00:00Z') + 6 * 86400000).toISOString().slice(0, 10) } : week, logs)
 }

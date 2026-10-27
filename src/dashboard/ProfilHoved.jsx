@@ -1,16 +1,17 @@
+import { ProfileActions, CoachFold } from '../coachRyd.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilens hoved: tilbage/kø-kontekst, aktuel opgave, profilkort, sektions-navigation.
 // Samme navne som props som i Dashboard; linjerne står i et fragment (ingen DOM-ændring).
 import { useEffect, useMemo, useState } from 'react'
-import { supabase } from '../supabase'
-import { s, initials, formatLastSeen } from '../dashboardShared'
-import { styrkeLinje, styrkeSmerteRegel } from '../coachFremgang'
-import { statusLabels } from './coachKonstanter'
-import { HUB_SECTIONS } from './hubSektioner'
+import { supabase } from '../supabase.js'
+import { s, initials, formatLastSeen } from '../dashboardShared.js'
+import { styrkeLinje, styrkeSmerteRegel } from '../coachFremgang.js'
+import { statusLabels } from './coachKonstanter.js'
+import { HUB_SECTIONS } from './hubSektioner.jsx'
 
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
-export default function ProfilHoved({
+export default function ProfilHoved({ coachRyd = false,
   a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
   setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
@@ -35,6 +36,7 @@ export default function ProfilHoved({
   }, [styrkeLogs, a.id])
   return (
     <>
+      {coachRyd && <ProfileActions status={statusLabels[a.status]} athlete={a} activeTab={activeTab} task={profilePriorityContext ? null : undefined} go={key => { setActiveTab(key); setEditing(null); setNavMenuOpen(false) }} /> }
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.75rem' }}>
               <button onClick={() => setView(profileReturnView)} style={{ background: 'none', border: 'none', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', padding: 0 }}>
                 ← Tilbage til {profileReturnView === 'inbox' ? 'indbakken' : 'atleter'}
@@ -82,7 +84,8 @@ export default function ProfilHoved({
               </div>
             )}
 
-            <div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
+            <CoachFold enabled={coachRyd} title="Profiloplysninger">
+<div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
               <div style={{ ...s.avatar, width: isMobile ? '44px' : '56px', height: isMobile ? '44px' : '56px', fontSize: isMobile ? '1rem' : '1.3rem', flexShrink: 0 }}>{initials(a.name)}</div>
               <div style={isMobile ? { flex: 1, minWidth: 0 } : undefined}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 400, color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'nowrap' : 'normal' }}>{a.name}</div>
@@ -109,9 +112,10 @@ export default function ProfilHoved({
               </div>
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                 <span style={s.badge(a.status)}>{statusLabels[a.status]}</span>
-                <button style={s.btnDanger} onClick={() => setShowDeleteModal(true)}>Fjern</button>
+                <CoachFold enabled={coachRyd} title="Profiladministration"><button style={s.btnDanger} onClick={() => setShowDeleteModal(true)}>Fjern</button></CoachFold>
               </div>
             </div>
+</CoachFold>
 
             {/* Sektions-navigation: de sektioner man bruger dagligt står som
                 tydelige TEKST-faner; resten ligger i en "Mere"-menu. Erstatter den
@@ -119,8 +123,8 @@ export default function ProfilHoved({
             {(() => {
               const navItems = [{ key: 'hub', label: 'Hjem' }, ...HUB_SECTIONS]
               const EMOJI = { hub: '🏠', oversigt: '📊', kost: '🍽️', program: '🏋️', log: '📓', analyse: '📈', opvarmning: '🔥', stævne: '🏆', noter: '🗒️', beskeder: '💬' }
-              const PRIMARY = ['hub', 'program', 'log', 'beskeder']
-              const primary = PRIMARY.map(k => navItems.find(n => n.key === k)).filter(Boolean)
+              const PRIMARY = coachRyd ? ['program', 'log', 'beskeder'] : ['hub', 'program', 'log', 'beskeder']
+              const primary = (coachRyd ? [] : PRIMARY).map(k => navItems.find(n => n.key === k)).filter(Boolean)
               const more = navItems.filter(n => !PRIMARY.includes(n.key))
               const activeInMore = more.some(n => n.key === activeTab)
               const activeMoreLabel = more.find(n => n.key === activeTab)?.label

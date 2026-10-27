@@ -1,54 +1,55 @@
 import { renderMobilityShortcut } from './athlete/mobilityFocus.mjs'
 import { kostSynlig, kostDestination } from './athlete/kostValg.mjs'
-const enkelHjemFactory = () => import('./athlete/EnkelHjemTab')
+const enkelHjemFactory = () => import('./athlete/EnkelHjemTab.jsx')
 import { readinessNavigation } from './athlete/readinessShortcut.mjs'
-const enkelFremgangFactory = () => import('./athlete/EnkelFremgangTab')
+const enkelFremgangFactory = () => import('./athlete/EnkelFremgangTab.jsx')
 import { previewNavigation, renderControls, renderTrainingLinks, renderMore, renderNav } from './athlete/enkelPrototype.mjs'
 import { useState, useEffect, useRef, useMemo, createElement } from 'react'
-import { remainingSeconds } from './restTimer'
-import { countOfflineSets, pendingSetKeys, loadParkedSets } from './offlineSetQueue'
-import { browserSaysOffline, seemsOffline } from './offlineSession'
-import IngenForbindelse from './athlete/IngenForbindelse'
-import { calcWarmupSets } from './warmup'
-import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride'
-import LazyBoundary from './LazyBoundary'
-import { s, today } from './athleteShared'
+import { remainingSeconds } from './restTimer.js'
+import { countOfflineSets, pendingSetKeys, loadParkedSets } from './offlineSetQueue.js'
+import { browserSaysOffline, seemsOffline } from './offlineSession.js'
+import IngenForbindelse from './athlete/IngenForbindelse.jsx'
+import { calcWarmupSets } from './warmup.js'
+import { applyWarmupCorrection, saveWarmupOverride, suggestWarmupOverride } from './warmupOverride.js'
+import LazyBoundary from './LazyBoundary.jsx'
+import { s, today } from './athleteShared.js'
 import { computeActiveWeekIdx, weekStartDate, fmtWeekRange,
-  WEEKDAYS_LONG, parsePlannedRpe, logFrontendError } from './athlete/ugeHjaelp'
-import HjemTab from './athlete/HjemTab'
-import OnboardingGuide from './athlete/OnboardingGuide'
-import Ramme from './athlete/Ramme'
-import IkkeKoblet from './athlete/IkkeKoblet'
-import Indlaeser from './athlete/Indlaeser'
-import { KostCompact, ProgressBars } from './athlete/KostKort'
-import ToastPlads from './athlete/ToastPlads'
-import BundNav from './athlete/BundNav'
-import { lavSaetSkrivning } from './athlete/saetSkrivning'
-import { lavLaesninger } from './athlete/laesninger'
-import { udenForslagVedSmerte } from './athlete/smerteStop'
-import { lavBeskederOgVaegt } from './athlete/beskederOgVaegt'
-import { lavKostHandlinger } from './athlete/kostHandlinger'
-import { useVideoCoachBro, useAfbrudtUploadVarsel } from './athlete/useVideoCoachBro'
-import { useParathedUdkast } from './athlete/useParathedUdkast'
-import { bygGrundlag, ugensSaet } from './athlete/rekorder'
-import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks'
+  WEEKDAYS_LONG, parsePlannedRpe, logFrontendError } from './athlete/ugeHjaelp.js'
+import HjemTab from './athlete/HjemTab.jsx'
+import OnboardingGuide from './athlete/OnboardingGuide.jsx'
+import Ramme from './athlete/Ramme.jsx'
+import IkkeKoblet from './athlete/IkkeKoblet.jsx'
+import Indlaeser from './athlete/Indlaeser.jsx'
+import { KostCompact, ProgressBars } from './athlete/KostKort.jsx'
+import ToastPlads from './athlete/ToastPlads.jsx'
+import BundNav from './athlete/BundNav.jsx'
+import { lavSaetSkrivning } from './athlete/saetSkrivning.js'
+import { lavLaesninger } from './athlete/laesninger.js'
+import { udenForslagVedSmerte } from './athlete/smerteStop.js'
+import { lavBeskederOgVaegt } from './athlete/beskederOgVaegt.jsx'
+import { lavKostHandlinger } from './athlete/kostHandlinger.js'
+import { useVideoCoachBro, useAfbrudtUploadVarsel } from './athlete/useVideoCoachBro.js'
+import { useParathedUdkast } from './athlete/useParathedUdkast.js'
+import { bygGrundlag, ugensSaet } from './athlete/rekorder.js'
+import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks.js'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
-const mobiliseringFactory = () => import('./athlete/MobiliseringTab')
-const staevnedagFactory = () => import('./athlete/StaevnedagTab')
-const programFactory = () => import('./athlete/ProgramTab')
+const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
+const staevnedagFactory = () => import('./athlete/StaevnedagTab.jsx')
+const programFactory = () => import('./athlete/ProgramTab.jsx')
 // ORDRE 259 · commit 1: samme lazy-chunk-mønster, ny fane.
-const volumenFactory = () => import('./athlete/VolumenTab')
+const volumenFactory = () => import('./athlete/VolumenTab.jsx')
 // ORDRE 284 · commit 1: samme lazy-chunk-mønster, ny fane.
-const fremgangFactory = () => import('./athlete/FremgangTab')
-const kostFactory = () => import('./athlete/KostTab')
-const beskederFactory = () => import('./athlete/BeskederTab')
+const fremgangFactory = () => import('./athlete/FremgangTab.jsx')
+const fremgangFokusFactory = () => import('./athlete/fremgangFokus.mjs')
+const kostFactory = () => import('./athlete/KostTab.jsx')
+const beskederFactory = () => import('./athlete/BeskederTab.jsx')
 
 function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false }) {
+export default function AthleteView({ session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, staevnedagFokus = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false }) {
   const [requestedTab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -323,7 +324,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
   })
 
   const {
-    fetchLogs, fetchHistoricalMealLogs, fetchFrequentFoods, quickLogFood, fetchMealTemplates, copyYesterday, saveTemplate, logTemplate,
+    confirmCompleteDay, fetchLogs, fetchHistoricalMealLogs, fetchFrequentFoods, quickLogFood, fetchMealTemplates, copyYesterday, saveTemplate, logTemplate,
     deleteTemplate, fetchCustomFoods, onSearchInput, selectFood, addFromSearch, quickAddSearchFood, saveCustomFood, deleteLog,
     undoDelete, parseLoggedGrams, startEditLog, saveEditLog, totKcal, totProtein, totCarb, totFat,
     kcalPct, proteinPct, pKcal, cKcal, fKcal, macroTotal, circ, pLen,
@@ -635,6 +636,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
 
         {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemVisning
           enkelDel={enkelOn && route !== 'alle' ? route : null}
+          mobilitetFoerPas={mobilitetFoerPas === true}
+          naesteTraening={naesteTraening === true}
           taskShortcuts={forenklinger === true && !enkelOn}
           setMsgTrack={setMsgTrack}
           {...{
@@ -669,7 +672,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               setProgOpenSession, setShowRpeGuide, setSkipConfirmEx, setViewingWeekIdx, setWarmupChecked,
               setWarmupOverrideTick, setWarmupSetEditing, skipConfirmEx, skipExercise, skipRemainingSets,
               skipSet, suggestNextWeight, suggestWarmupOverride, unskipSet, viewingWeekIdx, warmupChecked,
-              warmupOverrideTick, warmupSetEditing, weekStartDate,
+              warmupOverrideTick, warmupSetEditing, weekStartDate, programUgeFoerst,
             }}
           />
         )}
@@ -685,8 +688,8 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
         {/* FREMGANG */}
         {tab === 'fremgang' && (
           <LazyBoundary
-            factory={enkelOn ? enkelFremgangFactory : fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={{ blokFremgang: blokFremgang === true, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
+            factory={fremgangFokus === true ? fremgangFokusFactory : enkelOn ? enkelFremgangFactory : fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
+            componentProps={fremgangFokus === true ? { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, key: athlete?.id, enkelOn, weightLogs, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek } : { blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, enkelDel: enkelOn ? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek }}
           />
         )}
 
@@ -704,7 +707,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               setEditMacros, setEditingLogId, setKostDate, setSearchQuery, setSelectedFood,
               setShareFood, setShowCreateFood, setShowSaveTemplate, setShowTdee,
               setShowTemplates, setTemplateNameInput, setUnitIdx, shareFood, showCreateFood,
-              showSaveTemplate, showTdee, showTemplates, startEditLog, tdeeEstimate,
+              confirmCompleteDay, showSaveTemplate, showTdee, showTemplates, startEditLog, tdeeEstimate,
               templateNameInput, totCarb, totFat, totKcal, totProtein, unitIdx,
             }}
           />
@@ -745,7 +748,7 @@ export default function AthleteView({ session, onExitPreview, role, coachAthlete
               athlete, coachAthleteId, hasMeetPlan, meetAttempts, meetPlanNotes, meetResults,
               meetType, meetWarmupDraft, meetWarmupEditing, meetWarmupOverrides, setAthlete,
               setMeetAttempts, setMeetType, setMeetWarmupDraft, setMeetWarmupEditing,
-              setMeetWarmupOverrides, showFlash,
+              setMeetWarmupOverrides, showFlash, staevnedagFokus,
             }}
           />
         )}

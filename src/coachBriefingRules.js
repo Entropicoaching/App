@@ -1,3 +1,20 @@
+import { explicitRpe } from './dataEnough.mjs'
+import { rpeSignalEvidence, rpeSignalDescription } from './dataEvidence.mjs'
+export function detectSignalsV2(input) {
+  const source = dataEnoughEnabled() ? { ...input, logs: (input.logs || []).map(r => explicitRpe(r) ? r : { ...r, rpe_actual: null }) } : input
+  const signals = detectSignalsV2Legacy(source)
+  if (!dataEnoughEnabled()) return signals
+  return signals.map(item => {
+    if (item.detector === 'pr') return { ...item, detail: 'Registreret rekord. Coachen vurderer den i sammenhæng med planen.' }
+    const id = ({ rpe_drift: 'D16', data_conflict: 'D16', stagnation: 'D27', dropout: 'D40', missed_sessions: 'D40' })[item.detector]
+    if (id === 'D16') {
+      const evidence = rpeSignalEvidence(input.logs || [], input.readiness || [], input.today, item.metrics?.top_lift, item.detector === 'data_conflict')
+      if (dataAllowed(id, evidence)) return { ...item, headline: 'Registreret RPE-afvigelse', detail: rpeSignalDescription(evidence), data_evidence: evidence }
+    }
+    return id ? { ...item, headline: 'Grundlag afventer kontrol', detail: dataMessage(id), metrics: { data_status: 'undocumented' } } : item
+  })
+}
+import { dataEnoughEnabled, dataAllowed, dataMessage } from './dataEnough.mjs'
 import { exerciseSetView, mainLiftName } from './exerciseSetView.js'
 import { erTungtSaet, erDeloadBlok } from './exerciseProgress.js'
 import { omfangTekst } from './athlete/smerteRegion.js'
@@ -415,7 +432,7 @@ function detectPr({ athlete, personal_records: records = [] }, T) {
     'Anerkend det i en kort besked; planen virker, ingen ændring nødvendig', { prs_7d: recent.length })
 }
 
-export function detectSignalsV2(input) {
+function detectSignalsV2Legacy(input) {
   const { athlete, logs = [], today } = input
   const T = toDay(today)
   const L = normalizeLogs(logs)

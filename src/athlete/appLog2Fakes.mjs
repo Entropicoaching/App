@@ -12,7 +12,7 @@ export const parsePlannedRpe = () => null
 registerHooks({
   resolve(specifier, context, nextResolve) {
     if (context.parentURL?.endsWith('/saetSkrivning.js') &&
-      ['../supabase', '../athleteSilentFailLog', './ugeHjaelp'].includes(specifier)) {
+      ['../supabase.js', '../athleteSilentFailLog.js', './ugeHjaelp.js'].includes(specifier)) {
       return { url: self, shortCircuit: true }
     }
     if (specifier.startsWith('.') && !/\.(?:js|mjs|jsx)$/.test(specifier)) {

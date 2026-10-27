@@ -7,17 +7,38 @@ import { parseInputNumber, finiteAdd } from '../inputValues.js'
 // frie variable gjort eksplicitte som props. Fanen er den sjældneste af de
 // seks: vises kun i bundnavigationen når atleten har en stævnedato eller
 // -plan sat (se NAV_ITEMS-filteret i AthleteView.jsx).
-import { runGuardedWrite } from '../athleteWriteGuard'
-import { supabase } from '../supabase'
-import { s } from '../athleteShared'
+import { runGuardedWrite } from '../athleteWriteGuard.js'
+import { supabase } from '../supabase.js'
+import { s } from '../athleteShared.js'
 import MeetDayPlanner from './MeetDayPlanner.jsx'
+import { DEFAULT_STAEVNEDAG_FOKUS, isMeetDay } from './staevnedagFocus.mjs'
+import { meetPlan } from './staevnedagPlan.mjs'
 
 export default function StaevnedagTab({
   athlete, coachAthleteId, hasMeetPlan, meetAttempts, meetPlanNotes, meetResults,
   meetType, meetWarmupDraft, meetWarmupEditing, meetWarmupOverrides, setAthlete,
   setMeetAttempts, setMeetType, setMeetWarmupDraft, setMeetWarmupEditing,
-  setMeetWarmupOverrides, showFlash,
+  setMeetWarmupOverrides, showFlash, staevnedagFokus = DEFAULT_STAEVNEDAG_FOKUS,
 }) {
+          const dayFocus = isMeetDay(staevnedagFokus, athlete?.competition_date)
+          const plannerKey = JSON.stringify([coachAthleteId || athlete.id || 'atlet', athlete.competition_date || '', meetAttempts.squat?.[0]?.w, meetAttempts.bench?.[0]?.w, meetAttempts.deadlift?.[0]?.w])
+          function renderDay(content) {
+            if (!dayFocus) return content
+            return <>
+              <section aria-label="Det vigtigste på stævnedagen" style={s.card}>
+                <h1>Stævnedag i dag</h1>
+                <h2>Dine åbnere</h2>
+                <ul>{meetPlan(meetAttempts, meetType).map(lift => <li key={lift.key}>
+                  {lift.label}: {lift.opener > 0 && lift.opener <= 1000 ? `${lift.opener} kg` : 'Åbner mangler'}
+                </li>)}</ul>
+                <MeetDayPlanner key={plannerKey} meetAttempts={meetAttempts} meetType={meetType} dayFocus />
+              </section>
+              <details>
+                <summary style={{ minHeight: 44, cursor: 'pointer' }}>Forsøg, coachnoter og tidligere stævner</summary>
+                {content}
+              </details>
+            </>
+          }
           function setAttempt(lift, idx, field, val) {
             setMeetAttempts(prev => {
               const next = { ...prev, [lift]: prev[lift].map((a, i) => i === idx ? { ...a, [field]: val } : a) }
@@ -98,7 +119,7 @@ export default function StaevnedagTab({
           if (!hasMeetPlan) {
             const compDate = athlete.competition_date
             const daysLeft = compDate ? Math.ceil((new Date(compDate + 'T12:00:00') - new Date()) / 86400000) : null
-            return (
+            return renderDay(
             <>
               <div style={{ marginBottom: '2rem' }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Stævne</div>
@@ -145,7 +166,7 @@ export default function StaevnedagTab({
             </>
           )}
 
-          return (
+          return renderDay(
             <>
               <div style={{ marginBottom: '1.5rem' }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Stævnedag</div>
@@ -162,11 +183,11 @@ export default function StaevnedagTab({
                 </div>
               )}
 
-              <MeetDayPlanner
-                key={JSON.stringify([coachAthleteId || athlete.id || 'atlet', athlete.competition_date || '', meetAttempts.squat?.[0]?.w, meetAttempts.bench?.[0]?.w, meetAttempts.deadlift?.[0]?.w])}
+              {!dayFocus && <MeetDayPlanner
+                key={plannerKey}
                 meetAttempts={meetAttempts}
                 meetType={meetType}
-              />
+              />}
 
               {/* Type toggle */}
               <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.75rem' }}>

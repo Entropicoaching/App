@@ -1,3 +1,4 @@
+import { existsSync as exactExists } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { readFileSync } from 'node:fs'
 import { jsx } from './kost2Jsx.mjs'
@@ -11,6 +12,9 @@ const fake = new URL('kost2Dom.mjs', root).href
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
+        for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
+      }
       if (files.has(context.parentURL)) {
         if (specifier === './kost2Dom.mjs') return { url: fake, shortCircuit: true }
         const base = specifier.split('/').at(-1)
@@ -31,7 +35,7 @@ export function install() {
         const named = clause.startsWith('{') ? clause.slice(1, -1).split(',').map(s => s.trim()).filter(Boolean) : []
         const values = { loadParkedSets: 'empty', grundlagFoer: 'empty', loadRekordIndeks: 'empty', tomtIndeks: 'empty', udenForslagVedSmerte: 'noop' }
         const exports = named.map(n => `export const ${n} = ${n.startsWith('lav') ? 'factory' : values[n] || 'noop'};`).join('\n')
-        return { format: 'module', source: `import { stub, factory, empty, noop } from ${JSON.stringify(fake)};\n${exports}\nexport default stub(${JSON.stringify(specifier.split('/').at(-1))});`, shortCircuit: true }
+        return { format: 'module', source: `import { stub, factory, empty, noop } from ${JSON.stringify(fake)};\n${exports}\nexport default stub(${JSON.stringify(specifier.split('/').at(-1).replace(/\.(?:jsx|js)$/, ''))});`, shortCircuit: true }
       }
       if (files.get(url)?.endsWith('.jsx')) return { format: 'module', source: `import { h as __h } from './kost2Dom.mjs';\n${jsx(readFileSync(new URL(url), 'utf8'))}`, shortCircuit: true }
       return next(url, context)

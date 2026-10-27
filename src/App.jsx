@@ -1,21 +1,21 @@
 import { fridayTestEnabled } from './e2eTestFlags.mjs'
 import { useState, useEffect, useRef } from 'react'
-import { supabase, withRetry, isPasswordRecoveryUrl } from './supabase'
-import Auth from './Auth'
-import SetNewPassword from './SetNewPassword'
-import ErrorBoundary from './ErrorBoundary'
-import { purgeVideoCoachDraftQueues } from './videoCoachSubmission'
-import LazyBoundary from './LazyBoundary'
-import { readCachedRole, writeCachedRole } from './roleCache'
-import { offlineAthleteSession, seemsOffline } from './offlineSession'
+import { supabase, withRetry, isPasswordRecoveryUrl } from './supabase.js'
+import Auth from './Auth.jsx'
+import SetNewPassword from './SetNewPassword.jsx'
+import ErrorBoundary from './ErrorBoundary.jsx'
+import { purgeVideoCoachDraftQueues } from './videoCoachSubmission.js'
+import LazyBoundary from './LazyBoundary.jsx'
+import { readCachedRole, writeCachedRole } from './roleCache.js'
+import { offlineAthleteSession, seemsOffline } from './offlineSession.js'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
 // omvendt). Halverer det første bundt der skal hentes på mobil. Indlæses via
 // LazyBoundary (ordre 163 · del 2): egen fejlgrænse pr. view, så en fejl i
 // den ene ikke rammer den anden (og en stale chunk-reference efter en deploy
 // prøver igen med back-off før den falder tilbage til ét helside-genload).
-const dashboardFactory = () => import('./Dashboard')
-const athleteViewFactory = () => import('./AthleteView')
+const dashboardFactory = () => import('./Dashboard.jsx')
+const athleteViewFactory = () => import('./AthleteView.jsx')
 
 // ORDRE 201 — kæden foran Dashboard/AthleteView var ren sekventiel:
 // rolleopslaget (profiles?select=role) ventede på hoved-bundtet, og KUN
@@ -77,7 +77,7 @@ const errorScreen = (onRetry) => (
   </div>
 )
 
-function App({ forenklinger = false, mobilitetFokus = false, blokFremgang = false } = {}) {
+function App({ forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokFremgang = false } = {}) {
   const fridayTest = fridayTestEnabled(import.meta.env.MODE, typeof window === 'undefined' ? '' : window.location.href)
   const [session, setSession] = useState(null)
   const [role, setRole] = useState(null)
@@ -271,7 +271,7 @@ function App({ forenklinger = false, mobilitetFokus = false, blokFremgang = fals
   if (role === 'coach') {
     viewEl = previewMode
       ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-          componentProps={{ session, role, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
+          componentProps={{ session, role, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
       : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
           componentProps={{ session, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
@@ -283,7 +283,7 @@ function App({ forenklinger = false, mobilitetFokus = false, blokFremgang = fals
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
     viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-      componentProps={{ session, role, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
+      componentProps={{ session, role, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
   }
   return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }

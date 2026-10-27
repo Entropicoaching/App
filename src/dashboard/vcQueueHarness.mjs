@@ -32,7 +32,7 @@ export async function app(enabled) {
     try { return type({ ...props, children: flat }) } finally { state.active = previous }
   }
   globalThis[registry].set(id, state)
-  const allowed = new Set(['IndbakkeView.jsx', 'VideoQueueFilter.jsx', 'videoQueueFilter.mjs',
+  const allowed = new Set(['coachRyd.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'IndbakkeView.jsx', 'VideoQueueFilter.jsx', 'videoQueueFilter.mjs',
     'coachPriority.js', 'coachInboxState.js', 'coachNoteSignal.js', 'e2eTestFlags.mjs',
     'automationAlerts.js', 'coachBriefingRules.js', 'exerciseSetView.js', 'exerciseNames.js',
     'exerciseProgress.js', 'inputValues.js', 'smerteRegion.js', 'kostNumbers.mjs', 'calendarDate.js', 'ugenoegle.js'])
@@ -50,7 +50,7 @@ export async function app(enabled) {
       const name = url.slice(prefix.length)
       const access = `globalThis[Symbol.for('VC-KOE4.synthetic')].get('${id}')`
       let source
-      if (name === 'react.js') source = `export const useState = ${access}.useState;`
+      if (name === 'react.js') source = `export const useState = ${access}.useState; export const createElement = (t,p,...c) => ${access}.h(t,p,null,...c); export const Fragment = Symbol.for('synthetic.fragment');`
       else if (name === 'dashboardShared.js') source = `export const s = {}; export const initials = name => name.slice(0, 2);`
       else {
         const local = new URL(name, import.meta.url)

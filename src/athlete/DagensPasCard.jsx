@@ -1,8 +1,9 @@
 import { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
+import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
 import { vaerdTekst, ventendeSaetTekst } from './vaerdTekst.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
-import { exerciseSetView, exerciseViewGroups } from '../exerciseSetView'
+import { exerciseSetView, exerciseViewGroups } from '../exerciseSetView.js'
 // "Dagens pas"-kortet paa forsiden (egen tilstand: naeste-saet-visning,
 // ret-saet, autofyld) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Skrivefunktionerne kommer stadig ind som props fra AthleteView.
@@ -10,18 +11,18 @@ import { useState, useEffect, useRef, useId, createElement } from 'react'
 import PasOverblik from './PasOverblik.jsx'
 import { setAnnouncement, bindFirstSetFocus } from './logAccessibility.mjs'
 import { createPortal } from 'react-dom'
-import { lastHeaviestSet } from '../nextSet'
-import { loadShowNextSetPreview, saveShowNextSetPreview } from '../nextSetPreview'
-import { parseRepsPrescription } from '../repsPrescription'
-import { fixedRepsEntry } from '../fixedRepsEntry'
-import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInputs, autoFillSetInput } from '../setLogDefaults'
-import { s } from '../athleteShared'
-import { smerteBeskedFor } from './smerteStop'
-import { parsePlannedRpe } from './ugeHjaelp'
-import { canAcceptSetTap } from './setTapGuard'
-import { restSecondsForExercise } from '../restBetweenSets'
-import { visTid, harSetPauseForklaring, markerPauseForklaring, foersteSaetTekst } from './pauseLinje'
-import { SMERTE_LINJE } from '../saetSmerte'
+import { lastHeaviestSet } from '../nextSet.js'
+import { loadShowNextSetPreview, saveShowNextSetPreview } from '../nextSetPreview.js'
+import { parseRepsPrescription } from '../repsPrescription.js'
+import { fixedRepsEntry } from '../fixedRepsEntry.js'
+import { defaultSetWeight, defaultSetReps, stepWeight, stepReps, stepRepsInInputs, autoFillSetInput } from '../setLogDefaults.js'
+import { s } from '../athleteShared.js'
+import { smerteBeskedFor } from './smerteStop.js'
+import { parsePlannedRpe } from './ugeHjaelp.js'
+import { canAcceptSetTap } from './setTapGuard.js'
+import { restSecondsForExercise } from '../restBetweenSets.js'
+import { visTid, harSetPauseForklaring, markerPauseForklaring, foersteSaetTekst } from './pauseLinje.js'
+import { SMERTE_LINJE } from '../saetSmerte.js'
 import { dagensPasRaekke, logStil, naesteKnapNavn, naesteOevelse, naesteOevelseDetalje, talBredde } from './dagensPasLayout.mjs'
 
 // ORDRE 456 (A1 i docs/kritik-446): ugens seneste gennemførte sæt med vægt på
@@ -134,7 +135,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       : lastHeaviestSet(exerciseHistory, ex.name, todayStr) || ugensSenesteSaet(exerciseLogs, ex.id)
     const repsPrescription = parseRepsPrescription(ex.reps)
     const repsIsEditable = repsPrescription.type !== 'fixed' || fixedRepsEntry(ex.reps) !== null
-    const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
+    const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity, ex.reps) : null
     // ORDRE 419 (I1): coachens anbefalede vægt først, så sidste gang, så appens forslag.
     const weightDefault = defaultSetWeight('', { coachWeight: ex.recommended_weight, lastWeight: last?.weight, recommendedWeight: suggestion?.weight })
     const repsDefaultValue = repsIsEditable
@@ -291,7 +292,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const repsToLog = repsIsEditable ? repsValue : ex.reps
   const last = lastHeaviestSet(exerciseHistory, ex.name, todayStr)
   const intetLogget = !(exerciseLogs || []).some(l => session.exercises.some(e => e.id === l.exercise_id))
-  const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity) : null
+  const suggestion = ex.recommended_weight == null ? suggestNextWeight(ex.name, ex.intensity, ex.reps) : null
   // ORDRE 456 (A1): en vægtøvelse = coachen, historikken, ugens sæt eller
   // appens forslag kender en vægt. Kropsvægtøvelser (Planke, Pull-ups) spørges ikke.
   const vaegtOevelse = Number(ex.recommended_weight) > 0 || Number(last?.weight) > 0 || !!ugensSenesteSaet(exerciseLogs, ex.id) || Number(suggestion?.weight) > 0
@@ -334,7 +335,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   ) : suggestion ? (
     <div style={st.infoCelle}>
       <div style={st.infoEtiket}>{vaerdTekst.app}</div>
-      <div style={st.infoVaerdiAccent}>{suggestion.weight} kg <span style={{ color: '#7a7770', fontWeight: 400, fontSize: '0.75rem' }}>(RPE {suggestion.fromRpe})</span></div>
+      <div style={st.infoVaerdiAccent}>{suggestion.weight} kg <span style={{ color: '#7a7770', fontWeight: 400, fontSize: '0.75rem' }}>(RPE {suggestion.fromRpe})</span>{suggestion.basisDates && <small>Grundlag: {suggestion.basisDates.join(', ')}</small>}</div>
     </div>
   ) : smerteBesked ? (
     <div data-testid="smerte-besked" style={{ ...st.infoCelle, ...st.infoTekst }}>{smerteBesked}</div>
@@ -576,7 +577,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
                   aria-label={`RPE ${v}`}
                   aria-pressed={valgt}
                   onClick={() => {
-                    setLogInputs(p => ({ ...p, [key]: { ...(p[key] || input), rpe: String(v) } }))
+                    setLogInputs(p => chooseRpeInput(p, key, v, input))
                     setRpeOpenFor(null)
                   }}
                   style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box', padding: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.9rem', letterSpacing: 0, color: valgt ? '#c8923a' : '#edeae2', borderColor: valgt ? 'rgba(200,146,58,0.6)' : undefined, background: valgt ? 'rgba(200,146,58,0.15)' : undefined }}
