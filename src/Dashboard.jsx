@@ -201,6 +201,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
   const [logExerciseFilter, setLogExerciseFilter] = useState(null) // Log-fane: null = alle øvelser; ellers øvelsesnavn
   const [weeklyActivity, setWeeklyActivity] = useState({}) // athlete_id → { sessions, sets } for indeværende uge
   const [athleteWeightLogs, setAthleteWeightLogs] = useState([])
+  const [coachActionsStatus, setCoachActionsStatus] = useState({})
   const [athleteReadiness, setAthleteReadiness] = useState([])
   const [athletePRs, setAthletePRs] = useState([])
   const [athletePRHistory, setAthletePRHistory] = useState([])
@@ -299,6 +300,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
     fetchVideoCoachHistory, fetchAthleteWeightLogs, fetchAthleteReadiness, fetchAthletePRs, fetchMeetResults, fetchMeetPlan,
     fetchWarmupTemplates,
   } = lavLaesninger({
+    setCoachActionsStatus,
     inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
     setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
     setAthleteWeightLogs, setAutomationAlerts, setAutomationAlertsError, setCalendarWeeks, setCoachBriefingSeen, setExerciseLibrary,
@@ -577,7 +579,7 @@ export default function Dashboard({ session, onPreviewAthlete }) {
               loadError, loading, messageInboxError, openCoachPriorityItem, openProfile, openVideoCoachV3,
               setAthleteSortMode, setHiddenAthleteIds, setLoading, setSelectedAthlete, setShowAllAthletes, setShowHiddenAthletes,
               setView, showAllAthletes, showHiddenAthletes, trainingSignalsError, trainingSignalUpdatingKey, unreadCounts,
-              videoMeasurementByAthlete, videoReviewQueueError,
+              videoMeasurementByAthlete, videoReviewQueueError, latestByTrack, videoReviewQueue, coachActionsStatus,
             }} />
           )
         })()}

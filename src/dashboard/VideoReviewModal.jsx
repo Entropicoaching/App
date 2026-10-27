@@ -1,3 +1,5 @@
+import { createElement, Fragment } from 'react'
+import { readVideoReviewFlag, renderVideoReviewLayout, videoReviewConclusion } from './videoReviewLayout.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // "Gennemgå måling" (video-review-modalen).
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -59,30 +61,8 @@ export default function VideoReviewModal({
         const feedbackQualityColor = ({ strong: '#6cba6c', review: '#c8923a', blocked: '#cf6b4e' })[feedbackQuality.level]
         const baselineImpact = videoCoachBaselineReviewImpact(videoBaselines, videoAnalyses, analysis)
         const updating = videoAnalysisUpdatingId === analysis.id
-        return (
-          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? 0 : '1.5rem', alignItems: isMobile ? 'stretch' : 'center', overflow: 'hidden', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) closeVideoAnalysisReview() }}>
-            <div style={{ ...s.modal, width: '100%', maxWidth: isMobile ? 'none' : '760px', height: isMobile ? '100dvh' : undefined, maxHeight: isMobile ? '100dvh' : '90vh', boxSizing: 'border-box', overflowY: 'auto', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch', border: isMobile ? 'none' : s.modal.border, padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
-              {isMobile && (
-                <div style={{ minHeight: 58, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', margin: '-1rem -1rem 1rem', padding: '0.55rem 1rem', position: 'sticky', top: 0, zIndex: 2, background: '#1c1c18', borderBottom: '1px solid rgba(237,234,226,0.08)', boxSizing: 'border-box' }}>
-                  <div style={s.cardLabel}>Gennemgå måling</div>
-                  <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, minHeight: 42, padding: '0.35rem 0.65rem', flexShrink: 0 }}>Luk</button>
-                </div>
-              )}
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
-                <div>
-                  {!isMobile && <div style={s.cardLabel}>Gennemgå måling</div>}
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.15rem' : '1.4rem', color: '#edeae2', marginTop: isMobile ? 0 : '0.25rem' }}>
-                    {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
-                  </div>
-                  <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.3rem' }}>
-                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
-                  </div>
-                  {analysis.source_mode === 'athlete_submission' && <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', marginTop: '0.35rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sendt af atleten</div>}
-                </div>
-                {!isMobile && <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>}
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(220px,0.8fr) minmax(0,1.2fr)', gap: '0.9rem' }}>
+        const measurement = (
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'minmax(220px,0.8fr) minmax(0,1.2fr)', gap: '0.9rem' }}>
                 <div style={{ border: '1px solid rgba(237,234,226,0.09)', background: '#141410', minHeight: '260px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.8rem' }}>
                   {pathPreview ? (
                     <svg viewBox={pathPreview.viewBox} width="100%" height="260" preserveAspectRatio="xMidYMid meet" style={{ display: 'block', overflow: 'visible' }}>
@@ -135,17 +115,20 @@ export default function VideoReviewModal({
                   {plateCalibrationText && <div style={{ color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', lineHeight: 1.45, marginTop: '0.35rem' }}>{plateCalibrationText}</div>}
                 </div>
               </div>
-
-              <AnalysePakkeReview key={analysis.id} />
-
-              {athleteNote && (
+        )
+        const packageReview = (
+          <AnalysePakkeReview key={analysis.id} />
+        )
+        const athleteNoteSection = (
+          athleteNote && (
                 <div style={{ marginTop: '0.9rem', borderLeft: '2px solid #67dff5', background: 'rgba(103,223,245,0.04)', padding: '0.7rem 0.8rem' }}>
                   <div style={s.fieldLabel}>Atletens notat</div>
                   <div style={{ color: '#c7c3b9', fontSize: '0.7rem', lineHeight: 1.5, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginTop: '0.3rem' }}>{athleteNote}</div>
                 </div>
-              )}
-
-              {feedbackEvidence && (
+              )
+        )
+        const evidence = (
+          feedbackEvidence && (
                 <div style={{ marginTop: '0.9rem', borderLeft: '2px solid #c8923a', background: 'rgba(200,146,58,0.045)', padding: '0.7rem 0.8rem' }}>
                   <div style={{ ...s.fieldLabel, color: '#c8923a' }}>Målegrundlag for feedbackudkastet</div>
                   {feedbackEvidence.priority && (
@@ -162,8 +145,9 @@ export default function VideoReviewModal({
                   )}
                   <div style={{ color: '#77746d', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', lineHeight: 1.45, marginTop: '0.45rem' }}>Coach-only · automatisk udgangspunkt, som kan redigeres før deling</div>
                 </div>
-              )}
-
+              )
+        )
+        const feedback = (
               <div style={{ marginTop: '0.9rem', border: '1px solid rgba(103,223,245,0.18)', background: 'rgba(103,223,245,0.035)', padding: '0.75rem 0.8rem' }}>
                 <div style={{ ...s.fieldLabel, color: '#67dff5' }}>Det atleten ser, når du deler</div>
                 {feedbackEditable ? (
@@ -242,6 +226,8 @@ export default function VideoReviewModal({
                 )}
               </div>
 
+        )
+        const actions = (
               <div style={{ marginTop: '1rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(237,234,226,0.08)' }}>
                 <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', lineHeight: 1.45, marginBottom: '0.7rem' }}>Reviewet viser den gemte måling. Originalvideoen lagres ikke i appen endnu.</div>
                 <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -251,6 +237,36 @@ export default function VideoReviewModal({
                   {analysis.status === 'invalid' && <button disabled={updating} onClick={() => reviewVideoAnalysis(analysis, 'draft')} style={{ ...s.btnGhost, opacity: updating ? 0.55 : 1 }}>{updating ? 'Gemmer…' : 'Tilbage til kladde'}</button>}
                 </div>
               </div>
+        )
+        return (
+          <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? 0 : '1.5rem', alignItems: isMobile ? 'stretch' : 'center', overflow: 'hidden', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) closeVideoAnalysisReview() }}>
+            <div style={{ ...s.modal, width: '100%', maxWidth: isMobile ? 'none' : '760px', height: isMobile ? '100dvh' : undefined, maxHeight: isMobile ? '100dvh' : '90vh', boxSizing: 'border-box', overflowY: 'auto', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch', border: isMobile ? 'none' : s.modal.border, padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
+              {isMobile && (
+                <div style={{ minHeight: 58, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', margin: '-1rem -1rem 1rem', padding: '0.55rem 1rem', position: 'sticky', top: 0, zIndex: 2, background: '#1c1c18', borderBottom: '1px solid rgba(237,234,226,0.08)', boxSizing: 'border-box' }}>
+                  <div style={s.cardLabel}>Gennemgå måling</div>
+                  <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, minHeight: 42, padding: '0.35rem 0.65rem', flexShrink: 0 }}>Luk</button>
+                </div>
+              )}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
+                <div>
+                  {!isMobile && <div style={s.cardLabel}>Gennemgå måling</div>}
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.15rem' : '1.4rem', color: '#edeae2', marginTop: isMobile ? 0 : '0.25rem' }}>
+                    {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
+                  </div>
+                  <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.3rem' }}>
+                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                  </div>
+                  {analysis.source_mode === 'athlete_submission' && <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', marginTop: '0.35rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sendt af atleten</div>}
+                </div>
+                {!isMobile && <button onClick={closeVideoAnalysisReview} style={{ ...s.btnGhost, padding: '0.28rem 0.55rem', flexShrink: 0 }}>Luk</button>}
+              </div>
+
+              {renderVideoReviewLayout(createElement, Fragment, {
+                measurement, packageReview, athleteNote: athleteNoteSection, evidence, feedback, actions,
+                conclusion: videoReviewConclusion({ status: analysis.status, dirty: videoAnalysisFeedbackDirty, quality: feedbackQuality, updating,
+                  focus: feedbackEditable ? videoAnalysisFeedbackDraft.focus : athleteFeedbackSections.find(section => section.label === 'Atletens fokus')?.items.map(item => item.text).join('\n'),
+                }),
+              }, readVideoReviewFlag())}
             </div>
           </div>
         )
