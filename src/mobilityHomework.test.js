@@ -20,7 +20,7 @@ test('OFF is strict and never touches storage', () => {
 test('library groups pinned exercises under all three lifts and marks placeholder text', () => {
   const problems = homeworkLibrary()
   assert.deepEqual([...new Set(problems.map(p => p.lift))], ['Squat', 'Bænkpres', 'Dødløft'])
-  assert.ok(problems.every(p => p.explanation === 'tekst fra Marc' && p.exercises.length > 0 && p.exercises.length <= 4))
+  assert.ok(problems.every(p => p.explanation === 'Øvelserne er valgt efter, hvad hovedløftet kræver af dig.' && p.exercises.length > 0 && p.exercises.length <= 4))
   problems[0].exercises[0].name = 'mutation'
   assert.notEqual(homeworkLibrary()[0].exercises[0].name, 'mutation')
 })

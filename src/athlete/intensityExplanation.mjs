@@ -7,5 +7,5 @@ export function intensityExplanation(intensity) {
   if (kind === 'RPE' ? value < 6 || value > 10 : value > 4) return null
   const reserve = kind === 'RPE' ? 10 - value : value
   const words = ['ingen gentagelser', 'én gentagelse', 'to gentagelser', 'tre gentagelser', 'fire gentagelser']
-  return `${kind} ${value}: du kunne have taget ${words[reserve]} mere. (tekst fra Marc)`
+  return `${kind} ${value}: du kunne have taget ${words[reserve]} mere. Erfaring og teknik påvirker vurderingen, så sammenlign kun med din egen over tid.`
 }

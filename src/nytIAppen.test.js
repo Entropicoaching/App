@@ -19,7 +19,7 @@ test('first display is local, with role-relevant placeholders and at most five p
   for (const role of ['athlete', 'coach']) {
     const storage = memory(), ui = mount(NytIAppen, props(storage, role)), tree = ui.render()
     assert.match(text(tree), /Nyt i appen/)
-    assert.match(text(tree), /tekst fra Marc/)
+    assert.match(text(tree), /Kort om det nyeste i appen/)
     assert.deepEqual(links(tree), copy.items.filter(i => i.roles.includes(role)).map(i => i.label))
     assert.ok(links(tree).length <= 5)
     ui.render()

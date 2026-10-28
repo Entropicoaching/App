@@ -49,7 +49,7 @@ test('counter: historical and future prescriptions also expose the correct local
     p.allWeeks=[{...week,id:'past',week_number:1}, {...week,id:'now',week_number:2},{...week,id:'future',week_number:3}]
     p.currentWeek=p.allWeeks[1];p.viewingWeekIdx=idx
     const view=mount(Program,p);assert.equal(badges(view.render()).length,2)
-    badges(view.render())[1].props.onClick();assert.match(text(view.render()),/tekst fra Marc/)
+    badges(view.render())[1].props.onClick();assert.match(text(view.render()),/Erfaring og teknik påvirker vurderingen/)
   }
 })
 test('counter: unsupported mixed ranges and misleading numbers never get a guessed explanation',()=>{
