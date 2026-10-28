@@ -50,3 +50,6 @@ export const button = (tree, label) => {
 
 export function useEffect() {}
 export function useRef(value) { return { current: value } }
+
+// APP-PROG3 uses React.createElement for the optional block overview.
+export const createElement = (type, props, ...children) => h(type, props, null, ...children)

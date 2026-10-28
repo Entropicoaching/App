@@ -1,3 +1,4 @@
+import { renderStaevneHome } from './staevneHome.mjs'
 import MobilityBeforeSession from './mobilityBeforeSession.mjs'
 import { weightTrendText } from './weightTrend.mjs'
 import { createElement } from 'react'
@@ -30,6 +31,7 @@ import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGraf
 function HjemTab({
   mobilitetFoerPas = false,
   naesteTraening = false,
+  staevneHjem = false,
   enkelDel = null,
   allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
   forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
@@ -43,6 +45,7 @@ function HjemTab({
 }) {
   return (
     <>
+        {tab === 'hjem' && (!enkelDel || enkelDel === 'traening') && renderStaevneHome(createElement, { enabled: staevneHjem, athlete, currentWeek, now, setTab })}
             {(!enkelDel || enkelDel === 'traening') && (<>
         {tab === 'hjem' && onHoliday && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '3rem 1.25rem', minHeight: '60vh', justifyContent: 'center' }}>

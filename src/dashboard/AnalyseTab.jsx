@@ -1,3 +1,4 @@
+import VideoRetentionLocalPreview from '../VideoRetentionLocalPreview.mjs'
 import { weekEvidence, datedRegression } from '../dataEvidence.mjs'
 import { rpeTrendEvidence } from '../dataEvidence.mjs'
 import { explicitRpe } from '../dataEnough.mjs'
@@ -29,7 +30,7 @@ import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'
 import AnalyseSamletPrototype from './AnalyseSamletPrototype.jsx'
 import { analyseSamletEnabled } from './analyseSamlet.mjs'
 
-export default function AnalyseTab({ coachRyd = false,
+export default function AnalyseTab({ coachRyd = false, videoRetentionObjects,
   a, aiExportCopied, aiExportText, aiExportWeeks, athleteLogs, athletePRHistory, athleteReadiness,
   athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory, generateAIReport, isMobile,
   openAwaitingAnalysisVideo, openVideoAnalysisReview, openVideoCoachV3, reviewVideoAnalysis,
@@ -168,6 +169,7 @@ export default function AnalyseTab({ coachRyd = false,
                   )}
 
                   <CoachFold enabled={coachRyd} title="Mere: lokalt analyseværktøj"><AnalyseLokaltVaerktoej key={selectedAthlete?.id || 'no-athlete'} /></CoachFold>
+                  <VideoRetentionLocalPreview key={a.id} analyses={videoAnalyses} objects={videoRetentionObjects} athleteId={a.id} />
                   {/* VideoCoach v3 · individuel historik (read-only første lag) */}
                   <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.24)', background: 'linear-gradient(145deg, rgba(200,146,58,0.055), #1c1c18 38%)' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>

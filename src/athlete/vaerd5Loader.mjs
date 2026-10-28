@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './vaerd5Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const names = ['ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
+const names = ['programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
   'fixedRepsEntry.js', 'exerciseSetView.js', 'exerciseNames.js', 'warmupOverride.js', 'kostNumbers.mjs',
   'vaerd5Fixture.mjs', 'rpeEvidence.mjs', 'dataEnough.mjs', 'calendarDate.js']
 const urls = new Map(names.map(name => [name, (existsSync(new URL(name, root))
@@ -13,6 +13,8 @@ export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
       if (!approved.has(context.parentURL)) return next(specifier, context)
+      if (context.parentURL === urls.get('ugeHjaelp.js') && ['../supabase', '../supabase.js'].includes(specifier))
+        return { url: 'data:text/javascript,export const supabase = new Proxy({}, {get(){throw Error("Backend outside synthetic scope")}})', shortCircuit: true }
       if (['react', '../athleteShared.js', './CountdownRing.jsx', '../saetSmerte.js'].includes(specifier)) {
         return { url: new URL('./vaerd5Stubs.mjs', root).href, shortCircuit: true }
       }

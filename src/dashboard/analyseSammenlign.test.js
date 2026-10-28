@@ -9,7 +9,7 @@ const { default: AnalyseTab } = await import('./AnalyseTab.jsx')
 const button = (tree, label) => one(tree, n => n.type === 'button' && text(n) === label)
 const select = (tree, label) => one(one(tree, n => n.type === 'label' && text(n).startsWith(label)), n => n.type === 'select')
 const change = (node, value) => node.props.onChange({ target: { value } })
-const empty = { athleteLogs: [], athletePRHistory: [], athleteReadiness: [], athleteWeightLogs: [], exerciseLibrary: [], videoAnalyses: [], videoBaselines: [], weeks: [], videoLiftFilter: 'all', selectedAthlete: { id: 'synthetic', name: 'FOREIGN_SENTINEL' } }
+const empty = { a: { id: 'synthetic-only' }, athleteLogs: [], athletePRHistory: [], athleteReadiness: [], athleteWeightLogs: [], exerciseLibrary: [], videoAnalyses: [], videoBaselines: [], weeks: [], videoLiftFilter: 'all', selectedAthlete: { id: 'synthetic', name: 'FOREIGN_SENTINEL' } }
 const clean = node => {
   if (typeof node === 'function') return '[handler]'
   if (!node || typeof node !== 'object') return node

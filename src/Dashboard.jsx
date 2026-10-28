@@ -1,3 +1,4 @@
+import NytIAppen, { nytCoachNavigation } from './nytIAppen.mjs'
 import { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './dashboard/VideoReviewTemplates.mjs'
 import { coachMorningFlag } from './dashboard/coachMorning.mjs'
 import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
@@ -611,6 +612,11 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
           selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
           setShowAddModal, setSidebarOpen, setView, sheetPreviewPick, view,
         }} />
+
+        <NytIAppen search={typeof window === 'undefined' ? '' : window.location.search}
+          role="coach" profileId={session?.user?.id}
+          athletes={athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))}
+          onNavigate={nytCoachNavigation({ setView, setSelectedAthlete, openProfile })} />
 
         {coachRyd && view !== 'inbox' && view !== 'list' && <WorkInboxLink count={coachPriorityItems.length} next={coachPriorityItems[0]} open={() => { setView('inbox'); setSelectedAthlete(null) }} />}
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}

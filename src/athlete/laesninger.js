@@ -1,3 +1,4 @@
+import { readProgramBlockLogs } from './programBlockOverview.mjs'
 import { rpeOrigin } from '../rpeEvidence.mjs'
 import { volumeWeeks, suggestionEvidence, repZone, prescribedRepZone } from '../dataEvidence.mjs'
 import { dataEnoughEnabled, dataAllowed } from '../dataEnough.mjs'
@@ -753,8 +754,16 @@ export function lavLaesninger({
     rememberForOffline({ historik: history })
   }
 
+  function fetchProgramBlockLogs(athleteId, weeks) {
+    return readProgramBlockLogs(weeks, (ids, from, to) => runGuardedRead(
+      () => supabase.from('exercise_logs').select('exercise_id, set_number, skipped')
+        .eq('athlete_id', athleteId).in('exercise_id', ids).order('id', { ascending: true }).range(from, to),
+      onReadError('Blokkens logstatus', athleteId),
+    ))
+  }
+
   return {
-    fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
+    fetchProgramBlockLogs, fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight,
     saveReadiness, fetchProgram, openSession, openReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
     fetchExerciseLogs, fetchExerciseHistory,
   }

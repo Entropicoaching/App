@@ -1,3 +1,4 @@
+import { renderStaevneHome } from './staevneHome.mjs'
 import { nextTrainingHome, renderNextTrainingHome } from './nextTrainingHome.mjs'
 import MobilityBeforeSession from './mobilityBeforeSession.mjs'
 import { renderAthleteShortcuts, revealWeek } from './athleteShortcuts.mjs'
@@ -31,6 +32,7 @@ import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGraf
 function HjemTab({
   mobilitetFoerPas = false,
   naesteTraening = false,
+  staevneHjem = false,
   taskShortcuts = false, setMsgTrack,
   allWeeks, athlete, currentWeek, days, exerciseHistory, exerciseLogs, fetchForloebLogs, fetchSharedVideoAnalyses,
   forloebLoading, forloebLogs, formatMsgTime, holidayReturn, kostCompact, lastLoggedSet, lastReadiness, liftProgress,
@@ -45,6 +47,7 @@ function HjemTab({
   const weekStatusRef = useRef(null)
   return (
     <>
+        {tab === 'hjem' && renderStaevneHome(createElement, { enabled: staevneHjem, athlete, currentWeek, now, setTab })}
         {tab === 'hjem' && onHoliday && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '3rem 1.25rem', minHeight: '60vh', justifyContent: 'center' }}>
             <div style={{ fontSize: '3.5rem', lineHeight: 1, marginBottom: '1.25rem' }}>🌴</div>

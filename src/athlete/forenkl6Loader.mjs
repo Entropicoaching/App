@@ -5,6 +5,7 @@ import { jsx } from './forenkl6Jsx.mjs'
 const root = new URL('./', import.meta.url)
 const components = new Set(['ProgramTab.jsx', 'forenkl6Baseline.jsx', 'CountdownRing.jsx'])
 const paths = {
+  'programBlockOverview.mjs': './programBlockOverview.mjs',
   'inputValues.js': '../inputValues.js', 'restTimer.js': '../restTimer.js',
   'repsPrescription.js': '../repsPrescription.js', 'fixedRepsEntry.js': '../fixedRepsEntry.js',
   'exerciseSetView.js': '../exerciseSetView.js', 'exerciseNames.js': '../exerciseNames.js',
