@@ -13,7 +13,7 @@ test('review: App and AthleteView flag is default OFF and requires strict true',
   assert.equal((app.match(/fremgangFokus: fremgangFokus === true/g) || []).length, 2)
   assert.match(athlete, /fremgangFokus = false/)
   assert.match(athlete, /factory=\{fremgangFokus === true \? fremgangFokusFactory : enkelOn \? enkelFremgangFactory : fremgangFactory\}/)
-  assert.match(athlete, /: \{ blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, enkelDel: enkelOn \? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek \}\}/)
+  assert.match(athlete, /: \{ blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, personalRecords: personalRecords === true, fremgangLinjer: fremgangLinjer === true, enkelDel: enkelOn \? route : null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek \}\}/)
 })
 test('review: skipped historical sets and deload cannot create a strength measurement', () => {
   const model = fokusModel({ fremgangLogs: [

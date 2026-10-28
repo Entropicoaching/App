@@ -1,0 +1,23 @@
+{
+  "src/athlete/FremgangTab.jsx": "FremgangTab.jsx",
+  "src/BlokFremgang.jsx": "BlokFremgang.jsx",
+  "src/blokFremgang.mjs": "blokFremgang.mjs",
+  "src/calendarDate.js": "calendarDate.js",
+  "src/athlete/kostNumbers.mjs": "kostNumbers.mjs",
+  "src/inputValues.js": "inputValues.js",
+  "src/exerciseProgress.js": "exerciseProgress.js",
+  "src/dataEnough.mjs": "dataEnough.mjs",
+  "src/rpeEvidence.mjs": "rpeEvidence.mjs",
+  "src/exerciseSetView.js": "exerciseSetView.js",
+  "src/exerciseNames.js": "exerciseNames.js",
+  "src/volume/ugenoegle.js": "ugenoegle.js",
+  "src/fremgangLogs.js": "fremgangLogs.js",
+  "src/athlete/fremgangLinjer.mjs": "fremgangLinjer.mjs",
+  "src/dataEvidence.mjs": "dataEvidence.mjs",
+  "src/athlete/fremgangPersonalRecords.mjs": "fremgangPersonalRecords.mjs",
+  "src/athlete/rekorder.js": "rekorder.js",
+  "src/athlete/EnkelFremgangTab.jsx": "EnkelFremgangTab.jsx",
+  "src/athlete/fremgangFokus.mjs": "fremgangFokus.mjs",
+  "src/athlete/fremgangFokusModel.mjs": "fremgangFokusModel.mjs",
+  "src/athlete/repRecords.mjs": "repRecords.mjs"
+}

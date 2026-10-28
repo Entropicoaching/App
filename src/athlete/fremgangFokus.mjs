@@ -1,3 +1,4 @@
+import { renderBlockStrength } from './blokStyrke.mjs'
 import { createElement as h, useState } from 'react'
 import FremgangTab from './FremgangTab.jsx'
 import EnkelFremgangTab from './EnkelFremgangTab.jsx'
@@ -30,6 +31,7 @@ export default function FremgangFokus(props) {
   const latestWeight = model.weights.at(-1)
   return h('section', { 'aria-label': 'Dit fremgangsoverblik' },
     h('h1', null, 'Din fremgang'),
+    renderBlockStrength(h, { ...props, enabled: props.blokStyrke === true && props.enkelDel !== 'rekorder', loading: props.fremgangLoading }),
     h('section', { style: s.card, 'aria-label': 'Hovedløftenes udvikling' },
       h('h2', null, 'Bliver du stærkere?'),
       props.fremgangLoading ? h('p', { role: 'status' }, 'Henter løftehistorik…')
@@ -48,5 +50,5 @@ export default function FremgangFokus(props) {
       h('p', null, latestWeight ? `${kg(latestWeight.weight)} kg den ${date(latestWeight.day)}.` : 'Ingen vejninger endnu.'),
       model.weights.length > 1 && h('p', null, `${kg(Math.round((latestWeight.weight - model.weights[0].weight) * 10) / 10)} kg siden ${date(model.weights[0].day)}.`)),
     h('button', { type: 'button', 'aria-expanded': expanded, style: control, onClick: () => setExpanded(value => !value) }, expanded ? 'Skjul detaljer' : 'Se alle detaljer'),
-    expanded && h('section', { 'aria-label': 'Alle fremgangsdetaljer' }, h(Legacy, { ...props, currentWeek: props.currentWeek || { sessions: [] } })))
+    expanded && h('section', { 'aria-label': 'Alle fremgangsdetaljer' }, h(Legacy, { ...props, blokStyrke: false, currentWeek: props.currentWeek || { sessions: [] } })))
 }

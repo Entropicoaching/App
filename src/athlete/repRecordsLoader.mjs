@@ -15,6 +15,16 @@ const stub = new URL('./repRecordsStubs.mjs', root).href
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      // APP-FREM5: exact component edge; preserve the existing records graph.
+      const strength = new URL('./blokStyrke.mjs', root).href
+      if (specifier === './blokStyrke.mjs' && components.some(name => urls.get(name) === context.parentURL))
+        return { url: strength, shortCircuit: true }
+      if (context.parentURL === strength) {
+        const allowed = new Map(['exerciseProgress.js', 'calendarDate.js', 'inputValues.js']
+          .map(name => ['../' + name, urls.get(name)]))
+        if (allowed.has(specifier)) return { url: allowed.get(specifier), shortCircuit: true }
+        throw new Error('Forbidden synthetic dependency: ' + specifier)
+      }
       if ([...urls.values()].includes(context.parentURL)) {
         if (specifier === dom) return { url: dom, shortCircuit: true }
         if (specifier === 'react' || specifier === '../athleteShared.js') return { url: dom, shortCircuit: true }

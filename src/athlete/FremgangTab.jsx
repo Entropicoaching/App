@@ -1,3 +1,4 @@
+import { renderBlockStrength } from './blokStyrke.mjs'
 import BlokFremgang from '../BlokFremgang.jsx'
 import { DEFAULT_FREMGANG_LINJER, renderFremgangLinjer } from './fremgangLinjer.mjs'
 import { heavyPointEvidence } from '../dataEvidence.mjs'
@@ -211,7 +212,7 @@ function RekordListe({ rekorder }) {
   )
 }
 
-export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalRecords = false, repRecords = false, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false }) {
+export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalRecords = false, repRecords = false, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false, blokStyrke = false }) {
   const alleNavne = useMemo(() => [...new Map([...navneFraProgram(allWeeks), ...navneFraLogs(fremgangLogs)].map(n => [exerciseSetView(n).key, n])).values()], [allWeeks, fremgangLogs])
   const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
@@ -274,6 +275,7 @@ export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, 
 
   return (
     <>
+      {renderBlockStrength(createElement, { enabled: blokStyrke === true, loading: fremgangLoading, allWeeks, currentWeek, fremgangLogs, exerciseLogs })}
       <BlokFremgang enabled={blokFremgang === true && !fremgangLoading} weeks={allWeeks} logs={fremgangLogs} />
       <div style={{ marginBottom: '1rem' }}>
         <div style={{ fontFamily: mono, fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.5rem' }}>Fremgang</div>

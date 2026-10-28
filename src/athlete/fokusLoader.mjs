@@ -12,6 +12,15 @@ const urlFor = name => {
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      // APP-FREM5: one exact new edge; no basename or wildcard permission.
+      const strength = new URL('blokStyrke.mjs', root).href
+      if (specifier === './blokStyrke.mjs' && ['FremgangTab.jsx', 'EnkelFremgangTab.jsx', 'fremgangFokus.mjs'].some(name => new URL(name, root).href === context.parentURL))
+        return { url: strength, shortCircuit: true }
+      if (context.parentURL === strength) {
+        const dependency = { '../exerciseProgress.js': 'exerciseProgress.js', '../calendarDate.js': 'calendarDate.js', '../inputValues.js': 'inputValues.js' }[specifier]
+        if (!dependency) throw new Error('Forbidden synthetic dependency: ' + specifier)
+        return { url: urlFor(dependency).href, shortCircuit: true }
+      }
       // APP-FREM6: exact component edge and its three read-only dependencies only.
       const repURL = new URL('./repRecords.mjs', root).href
       if (specifier === './repRecords.mjs' && ['FremgangTab.jsx', 'EnkelFremgangTab.jsx'].some(name => urlFor(name).href === context.parentURL))
