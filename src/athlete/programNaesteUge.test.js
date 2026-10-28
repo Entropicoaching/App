@@ -41,12 +41,13 @@ test('defaultOFF matches pinned baseline for all week positions and nonboolean f
 test('next week closed day shows four prescriptions and correct remaining count plus rest day', t => {
   freeze(t)
   const p = props(), tree = render(p), cards = previews(tree)
-  assert.equal(cards.length,2)
+  assert.equal(cards.length,1)
+  assert.equal(nodes(tree, n => n.props['data-hviledag'] !== undefined).length, 6)
   assert.equal(nodes(cards[0], n => n.type === 'li').length,4)
   for (let i=0;i<4;i++) assert.ok(text(cards[0]).includes(`Løft ${i}: 3 x 4-6`))
   assert.match(text(cards[0]), /\+2 flere/)
   assert.ok(!text(cards[0]).includes('Løft 4'))
-  assert.equal(text(cards[1]),'Hviledag')
+  assert.ok(nodes(tree, n => n.props['data-hviledag'] === 2).every(n => text(n).includes('Hviledag') && !nodes(n, x => x.props.onClick).length))
   assert.ok(!text(tree).includes('Spring resten over'))
   assert.ok(!text(tree).includes('Auto-udfyld'))
   const header = nodes(tree,n => n.type === 'div' && n.props.onClick && text(n).includes('Pas 1'))[0]
@@ -65,13 +66,15 @@ test('future anchored as active still hides bulk actions',t => {
   freeze(t)
   const p=props();p.currentWeek=p.allWeeks[1]
   const tree=render(p)
-  assert.equal(previews(tree).length,2)
+  assert.equal(previews(tree).length,1)
+  assert.equal(nodes(tree, n => n.props['data-hviledag'] !== undefined).length,6)
   assert.ok(!text(tree).includes('Auto-udfyld'))
 })
 test('zero through five rows obey cap with no invented extra count',t => {
   freeze(t)
   for(let n=0;n<=5;n++) {
     const tree=previews(render(props(1,n)))[0]
+    assert.equal(previews(render(props(1,n))).length, n === 0 ? 0 : 1)
     assert.equal(nodes(tree,x=>x.type==='li').length,Math.min(n,4))
     assert.equal(text(tree).includes('+1 flere'),n===5)
   }
@@ -88,7 +91,7 @@ test('Copenhagen DST Sundays switch at calendar Monday, not after 168 hours',t =
 test('inferred dates, missing dates and far future respect scope',t => {
   freeze(t)
   const p=props(2);delete p.allWeeks[2].start_date
-  assert.equal(previews(render(p)).length,2)
+  assert.equal(previews(render(p)).length,1)
   assert.equal(model.upcomingProgramWeek(null,true),true)
   assert.equal(model.upcomingProgramWeek(null,false),false)
   assert.deepEqual(model.programDayPreview([{ name:'A\n B',sets:0,reps:'AMRAP' }]),{lines:['A B: 0 x AMRAP'],more:0})

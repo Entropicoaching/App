@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './vaerd5Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const names = ['programNaesteUge.mjs','IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
+const names = ['RestDays.jsx', 'restDays.mjs', 'programNaesteUge.mjs','IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
   'fixedRepsEntry.js', 'exerciseSetView.js', 'exerciseNames.js', 'warmupOverride.js', 'kostNumbers.mjs',
   'vaerd5Fixture.mjs', 'rpeEvidence.mjs', 'dataEnough.mjs', 'calendarDate.js']
 const urls = new Map(names.map(name => [name, (existsSync(new URL(name, root))
@@ -21,13 +21,14 @@ export function install() {
       if (specifier === './vaerd5Dom.mjs') return next(specifier, context)
       const base = specifier.split('/').at(-1)
       const name = base.includes('.') ? base : base + '.js'
+      if (['RestDays.jsx', 'restDays.mjs'].includes(name) && specifier !== './' + name) throw Error('Unapproved synthetic dependency: ' + specifier)
       if (!urls.has(name)) throw new Error('Unapproved synthetic dependency: ' + specifier)
       return { url: urls.get(name), shortCircuit: true }
     },
     load(url, context, next) {
       if (!approved.has(url)) return next(url, context)
       let source = readFileSync(new URL(url), 'utf8')
-      if (url === urls.get('ProgramTab.jsx') || url === urls.get('IntensityExplanation.jsx')) {
+      if (url === urls.get('ProgramTab.jsx') || url === urls.get('IntensityExplanation.jsx') || url === urls.get('RestDays.jsx')) {
         source = "import { h as __h } from './vaerd5Dom.mjs';\n" + jsx(source)
       }
       return { format: 'module', source, shortCircuit: true }

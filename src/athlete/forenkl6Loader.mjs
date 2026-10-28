@@ -3,8 +3,9 @@ import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './forenkl6Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const components = new Set(['ProgramTab.jsx', 'forenkl6Baseline.jsx', 'CountdownRing.jsx', 'IntensityExplanation.jsx'])
+const components = new Set(['ProgramTab.jsx', 'forenkl6Baseline.jsx', 'CountdownRing.jsx', 'IntensityExplanation.jsx', 'RestDays.jsx'])
 const paths = {
+  'restDays.mjs': './restDays.mjs',
   'programNaesteUge.mjs': './programNaesteUge.mjs',
   'intensityExplanation.mjs': './intensityExplanation.mjs',
   'programBlockOverview.mjs': './programBlockOverview.mjs',
@@ -26,6 +27,8 @@ const approved = new Set(urls.values())
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (approved.has(context.parentURL) && ['RestDays', 'RestDays.jsx', 'restDays', 'restDays.mjs'].includes(specifier.split('/').at(-1)) && !['./RestDays.jsx', './restDays.mjs'].includes(specifier))
+        throw Error('Unapproved synthetic dependency: ' + specifier)
       if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
         for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
       }
@@ -36,6 +39,7 @@ export function install() {
         if (specifier === './forenkl6Dom.mjs') return next(specifier, context)
         const base = specifier.split('/').at(-1)
         const name = base.includes('.') ? base : components.has(base + '.jsx') ? base + '.jsx' : base + '.js'
+        if (['RestDays.jsx', 'restDays.mjs'].includes(name) && specifier !== './' + name) throw Error('Unapproved synthetic dependency: ' + specifier)
         if (urls.has(name)) return { url: urls.get(name), shortCircuit: true }
         throw Error(`Unapproved synthetic dependency: ${specifier}`)
       }

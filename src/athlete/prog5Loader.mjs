@@ -1,3 +1,4 @@
+import { withHvileBaseline } from './hvileBaseline.mjs'
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './prog5Jsx.mjs'
@@ -21,7 +22,7 @@ export function install() {
     },
     load(url, context, next) {
       if (url.endsWith('.jsx') && url.startsWith(root.href)) return { format: 'module', shortCircuit: true,
-        source: `import { h as __h } from './prog5Dom.mjs';\n${jsx(readFileSync(new URL(url), 'utf8'))}` }
+        source: `import { h as __h } from './prog5Dom.mjs';\n${jsx(url === new URL('prog5Baseline.jsx', root).href ? withHvileBaseline(readFileSync(new URL(url), 'utf8')) : readFileSync(new URL(url), 'utf8'))}` }
       return next(url, context)
     },
   })

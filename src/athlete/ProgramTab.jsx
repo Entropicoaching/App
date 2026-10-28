@@ -2,6 +2,8 @@ import { upcomingProgramWeek, programDayPreview } from './programNaesteUge.mjs'
 import IntensityExplanation from './IntensityExplanation.jsx'
 import { createElement } from 'react'
 import { blockWeeks, renderProgramBlockOverview } from './programBlockOverview.mjs'
+import RestDays from './RestDays.jsx'
+import { isRestSession } from './restDays.mjs'
 import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
@@ -446,7 +448,9 @@ export default function ProgramTab({
 
                   {!ugeFoerst && blokTekst}
 
-                  {(viewedWeek.sessions || []).map(session => {
+                  <RestDays week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />
+
+                  {(viewedWeek.sessions || []).filter(session => !isRestSession(viewedWeek, session)).map(session => {
                     const isOpen = progOpenSession === session.id
                     const preview = upcomingPreview ? programDayPreview(session.exercises) : null
                     const sessionExIds = (session.exercises || []).map(e => e.id)

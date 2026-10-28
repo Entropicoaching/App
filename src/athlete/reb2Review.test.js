@@ -54,7 +54,8 @@ test('REB2: block overview and intensity flags coexist with upcoming cards and n
   p.programBlokOversigt = true
   p.programIntensityHelp = true
   const tree = render(p)
-  assert.equal(previews(tree).length, 2)
+  assert.equal(previews(tree).length, 1)
+  assert.equal(nodes(tree, n => n.props['data-hviledag'] !== undefined).length, 6)
   assert.match(text(tree), /Squat 0: 1 x 3/)
   assert.match(text(tree), /Squat 1: 3 x 5-8/)
   const baseline = mount(Baseline, p).render()
@@ -85,9 +86,9 @@ test('REB2: missing date uses real weekStartDate; absent anchors use existing or
   freeze(t)
   const p = fixture(2); delete p.allWeeks[2].start_date
   assert.ok(helpers.weekStartDate(p.allWeeks, 3))
-  assert.equal(previews(render(p)).length, 2)
+  assert.equal(previews(render(p)).length, 1)
   p.allWeeks.forEach(w => { delete w.start_date })
-  assert.equal(previews(render(p)).length, 2)
+  assert.equal(previews(render(p)).length, 1)
   p.viewingWeekIdx = 0
   assert.equal(previews(render(p)).length, 0)
 })
