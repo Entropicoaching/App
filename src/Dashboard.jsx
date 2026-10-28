@@ -35,6 +35,7 @@ import LogTab from './dashboard/LogTab.jsx'
 import StaevneTab from './dashboard/StaevneTab.jsx'
 import NoterTab from './dashboard/NoterTab.jsx'
 import BeskederTab from './dashboard/BeskederTab.jsx'
+import { COACH_SAVE_NEXT_ENABLED, createInboxSaveNext, inboxReplyMatches } from './dashboard/coachSaveNext.mjs'
 import VideoReviewModal from './dashboard/VideoReviewModal.jsx'
 import StaevneResultatModal from './dashboard/StaevneResultatModal.jsx'
 import NyAtletModal from './dashboard/NyAtletModal.jsx'
@@ -85,6 +86,18 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
   // eslint-disable-next-line react-hooks/refs -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
   const focusNextFromLinkRef = useRef(initialCoachEntryRef.current.focusNext)
   const [profileReturnView, setProfileReturnView] = useState('list')
+  const saveNextScopeRef = useRef(null)
+  const saveNextRunRef = useRef({ busy: false, completed: new Set() })
+  const [saveNextBusy, setSaveNextBusy] = useState(false)
+  const [saveNextError, setSaveNextError] = useState(null)
+  const [saveNextDone, setSaveNextDone] = useState(false)
+  useEffect(() => {
+    if (view === 'inbox') {
+      saveNextRunRef.current.completed.clear()
+      setSaveNextError(null)
+      setSaveNextDone(false)
+    }
+  }, [view])
   const [profilePriorityKey, setProfilePriorityKey] = useState(null)
   const [profilePriorityContext, setProfilePriorityContext] = useState(null)
   const [selectedAthlete, setSelectedAthlete] = useState(null)
@@ -522,6 +535,33 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
   })
 
 
+  const replyVisit = [view, profileReturnView, profilePriorityKey, selectedAthlete?.id,
+    coachMsgTrack, videoAnalysisReview?.id, activeTab].join(':')
+  if (saveNextRunRef.current.visit !== replyVisit) {
+    saveNextRunRef.current.visit = replyVisit
+    saveNextRunRef.current.visitId = (saveNextRunRef.current.visitId || 0) + 1
+  }
+  saveNextScopeRef.current = {
+    visitId: saveNextRunRef.current.visitId,
+    view, returnView: profileReturnView, key: profilePriorityKey,
+    item: profilePriorityContext, athleteId: selectedAthlete?.id,
+    track: coachMsgTrack, analysisId: videoAnalysisReview?.id, activeTab,
+    items: coachPriorityItems,
+  }
+  const saveNextAvailable = COACH_SAVE_NEXT_ENABLED === true && inboxReplyMatches(saveNextScopeRef.current)
+  const saveAndNext = createInboxSaveNext({
+    enabled: COACH_SAVE_NEXT_ENABLED, scopeRef: saveNextScopeRef, run: saveNextRunRef.current,
+    setBusy: setSaveNextBusy, setError: setSaveNextError,
+    persist: kind => kind === 'message'
+      ? sendCoachMessage({ confirmed: true })
+      : saveVideoAnalysisFeedback(videoAnalysisReview, { confirmed: true }),
+    open: item => { setSaveNextDone(false); openCoachPriorityItem(item, 'inbox') },
+    complete: () => { setVideoAnalysisReview(null); setSaveNextDone(true) },
+  })
+  const saveMessageAndNext = () => saveAndNext('message', messageInput)
+  const saveVideoAndNext = () => saveAndNext('video',
+    ['works', 'focus', 'next_set'].map(key => videoAnalysisFeedbackDraft?.[key] || '').join(' ').trim())
+
   // Delt ugedags-vælger (bruges i både rediger- og tilføj-session-formen).
   const weekdayPicker = (
     <WeekdayPicker {...{
@@ -553,6 +593,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
       }} />
 
       <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
+        {COACH_SAVE_NEXT_ENABLED === true && saveNextDone && view === 'profile' && <p role="status" style={{ padding: '1rem', color: '#c9d7c7' }}>Svaret er gemt. Ingen flere ubesvarede beskeder eller videoer i denne gennemgang.</p>}
         <div style={s.topbar}>
           <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? (coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing') : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
           {onPreviewAthlete && !isMobile && (
@@ -774,7 +815,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
                 <BeskederTab {...{
                   a, coachMsgTrack, fetchMessages, formatMsgTime, messageInput, messages,
                   messageSendError, messageThreadError, sendCoachMessage, sendingMessage, setCoachMsgTrack, setMessageInput,
-                  setMessageSendError, togglePin,
+                  setMessageSendError, togglePin, saveNextAvailable, saveNextBusy, saveNextError, saveNextDone, saveMessageAndNext,
                 }} />
               )
             })()}
@@ -786,6 +827,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
         return (
           <VideoReviewModal coachId={session?.user?.id} videoReviewTemplates={videoReviewTemplates} {...{ coachRyd,
             closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
+            saveNextAvailable, saveNextBusy, saveNextError, saveVideoAndNext,
             setVideoAnalysisBaselineFindingId, setVideoAnalysisCloseWarning, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, videoAnalyses, videoAnalysisBaselineFindingId,
             videoAnalysisCloseWarning, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft, videoAnalysisReview, videoAnalysisUpdatingId, videoBaselines,
           }} />

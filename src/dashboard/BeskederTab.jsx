@@ -6,7 +6,7 @@ import { s } from '../dashboardShared'
 export default function BeskederTab({
   a, coachMsgTrack, fetchMessages, formatMsgTime, messageInput, messages,
   messageSendError, messageThreadError, sendCoachMessage, sendingMessage, setCoachMsgTrack, setMessageInput,
-  setMessageSendError, togglePin,
+  setMessageSendError, togglePin, saveNextAvailable = false, saveNextBusy = false, saveNextError, saveNextDone, saveMessageAndNext,
 }) {
               const trackOf = m => (m.category || 'besked') === 'teknik' ? 'teknik' : 'besked'
               const shownMsgs = messages.filter(m => trackOf(m) === coachMsgTrack)
@@ -109,6 +109,9 @@ export default function BeskederTab({
                   })}
                 </div>
 
+                {saveNextAvailable && saveNextDone && <p role="status">Svaret er gemt. Ingen flere ubesvarede beskeder eller videoer i denne gennemgang.</p>}
+                {saveNextAvailable && !saveNextDone && <button type="button" disabled={sendingMessage || saveNextBusy || !messageInput.trim()} onClick={saveMessageAndNext} style={s.btnPrimary}>{saveNextBusy ? 'Gemmer…' : 'Gem og næste'}</button>}
+                {saveNextAvailable && saveNextError && <p role="alert">{saveNextError}</p>}
                 {/* Send input */}
                 <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '1rem' }}>
                   <input
