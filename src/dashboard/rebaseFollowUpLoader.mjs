@@ -4,6 +4,9 @@ import { jsx } from './followUpJsx.mjs'
 const base = new URL('./', import.meta.url)
 // Explicit pinned parent/specifier pairs. Never infer exports from runtime source.
 const dependencies = [
+  ['./CoachActions.jsx', './coachInactiveFilter.mjs', { file: './coachInactiveFilter.mjs' }],
+  ['./coachInactiveFilter.mjs', './coachInactive.mjs', { file: './coachInactive.mjs' }],
+  ['./coachInactiveFilter.mjs', 'react', { file: './followUpDom.mjs' }],
   ["../Dashboard.jsx", "./dashboard/coachMeetSoon.mjs", {"stub": "export const coachMeetSoonFlag = () => false;"}],
   ["../Dashboard.jsx", "./dashboard/profileWeekSummary.mjs", {"stub": "export const profileWeekFlag = () => false; export const ProfileWeekSummary = () => null;"}],
   ["./ForsideView.jsx", "./coachMeetSoon.mjs", {"stub": "export const CoachMeetSoon = () => null;"}],
@@ -675,7 +678,7 @@ const dependencies = [
     }
   ]
 ]
-const real = new Set(["./coachNotes.mjs", "./ForsideView.jsx", "../Dashboard.jsx", "./followUpBaseline.jsx", "./coachFollowUp.mjs", "./afvigelse.js", "./coachMorning.mjs", "./coachMorningSource.mjs", "./CoachActions.jsx", "./coachActions.mjs", "./CoachTemplateMessage.jsx", "./coachTemplateMessages.mjs", "../coachRyd.mjs"].map(path => new URL(path, base).href))
+const real = new Set(["./coachInactive.mjs", "./coachInactiveFilter.mjs", "./coachNotes.mjs", "./ForsideView.jsx", "../Dashboard.jsx", "./followUpBaseline.jsx", "./coachFollowUp.mjs", "./afvigelse.js", "./coachMorning.mjs", "./coachMorningSource.mjs", "./CoachActions.jsx", "./coachActions.mjs", "./CoachTemplateMessage.jsx", "./coachTemplateMessages.mjs", "../coachRyd.mjs"].map(path => new URL(path, base).href))
 const dom = new URL('./followUpDom.mjs', base).href
 const pairs = new Map(dependencies.map(([parent, specifier, target]) => [
   new URL(parent, base).href + '\n' + specifier,

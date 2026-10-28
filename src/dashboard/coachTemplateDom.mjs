@@ -11,6 +11,7 @@ export function mount(Component, props) {
   const instances = new Map()
   function expand(node, path) {
     if (node == null || node === false) return null
+    if (Array.isArray(node)) return expand(createElement(Fragment, null, ...node), path + '/fragment')
     if (typeof node !== 'object') return String(node)
     if (typeof node.type === 'function') {
       const key = path + ':' + node.type.name + ':' + (node.props.key ?? '')
@@ -37,3 +38,5 @@ export function button(tree, label) {
 export function field(tree, label) { return nodes(tree, n => n.props['aria-label'] === label)[0].props }
 
 export const Fragment = Symbol.for('synthetic.fragment')
+
+export function useEffect() {}

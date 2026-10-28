@@ -32,3 +32,5 @@ export function textContent(tree) {
 // The template editor is never expanded by the legacy daylist tests.
 export function useState() { throw Error('Unexpected legacy hook') }
 export function useRef() { throw Error('Unexpected legacy hook') }
+
+export function useEffect() {}
