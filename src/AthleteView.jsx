@@ -1,3 +1,4 @@
+import NytIAppen, { nytAthleteNavigation } from './nytIAppen.mjs'
 import { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/contactLatest.mjs'
 import { renderMobilityShortcut } from './athlete/mobilityFocus.mjs'
 import { kostSynlig, kostDestination } from './athlete/kostValg.mjs'
@@ -50,7 +51,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false }) {
+export default function AthleteView({ mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false }) {
   const [requestedTab, setLegacyTab] = useState('hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -341,7 +342,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
   const {
     fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight: suggestNextWeightRaa,
     saveReadiness, fetchProgram, openSession, openReadiness: legacyOpenReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
-    fetchExerciseLogs,
+    fetchExerciseLogs, fetchProgramBlockLogs,
   } = lavLaesninger({
     athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
     fetchLogs, fetchMealTemplates, fetchWeightLogs, guideStep, mountedRef, onReadError, readinessCardRef, readinessInput,
@@ -624,6 +625,11 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
       {/* Page content */}
       <div {...(forenklinger === true ? { 'data-app-375-page': '' } : {})} style={s.page}>
 
+        <NytIAppen search={typeof window === 'undefined' ? '' : window.location.search}
+          role={role === 'athlete' && !coachAthleteId && !onExitPreview ? 'athlete' : null}
+          profileId={session?.user?.id}
+          onNavigate={nytAthleteNavigation({ setTab, setMsgTrack, setMobilityMode })} />
+
         {enkelOn && renderControls(createElement, { route, go: setTab })}
         {enkelOn && route === 'mere' && renderMore(createElement, { athlete, hasMeetPlan, go: setTab, visKost })}
         {enkelOn && route === 'kontakt' && msgTrack === 'teknik' && role === 'athlete' && (
@@ -639,6 +645,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
         {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemVisning
           enkelDel={enkelOn && route !== 'alle' ? route : null}
           mobilitetFoerPas={mobilitetFoerPas === true}
+          staevneHjem={staevneHjem === true}
           naesteTraening={naesteTraening === true}
           taskShortcuts={forenklinger === true && !enkelOn}
           setMsgTrack={setMsgTrack}
@@ -674,7 +681,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
               setProgOpenSession, setShowRpeGuide, setSkipConfirmEx, setViewingWeekIdx, setWarmupChecked,
               setWarmupOverrideTick, setWarmupSetEditing, skipConfirmEx, skipExercise, skipRemainingSets,
               skipSet, suggestNextWeight, suggestWarmupOverride, unskipSet, viewingWeekIdx, warmupChecked,
-              warmupOverrideTick, warmupSetEditing, weekStartDate, programUgeFoerst, vaerdF6,
+              warmupOverrideTick, warmupSetEditing, weekStartDate, programUgeFoerst, programBlokOversigt, fetchProgramBlockLogs, vaerdF6,
             }}
           />
         )}

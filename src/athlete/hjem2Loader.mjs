@@ -10,6 +10,7 @@ const real = new Map([
   ['nextTrainingHome.mjs', './nextTrainingHome.mjs'], ['nextSet.js', '../nextSet.js'],
   ['calendarDate.js', '../calendarDate.js'], ['kostNumbers.mjs', './kostNumbers.mjs'],
   ['exerciseSetView.js', '../exerciseSetView.js'], ['exerciseNames.js', '../exerciseNames.js'],
+  ['staevneHome.mjs', './staevneHome.mjs'],
   ['HjemTab.jsx', './HjemTab.jsx'], ['EnkelHjemTab.jsx', './EnkelHjemTab.jsx'],
 ])
 const urls = new Map([...real].map(([name, path]) => [name,

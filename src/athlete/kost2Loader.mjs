@@ -15,6 +15,11 @@ export function install() {
       if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
         for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
       }
+      // Rebase APP-NYT1: execute the actual card, gate and navigation factory.
+      const nyt = new URL('../nytIAppen.mjs', root).href
+      if (context.parentURL === athleteViewUrl.href && specifier === './nytIAppen.mjs')
+        return { url: nyt, shortCircuit: true }
+      if (context.parentURL === nyt && specifier === 'react') return { url: fake, shortCircuit: true }
       if (files.has(context.parentURL)) {
         if (specifier === './kost2Dom.mjs') return { url: fake, shortCircuit: true }
         const base = specifier.split('/').at(-1)

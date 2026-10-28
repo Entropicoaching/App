@@ -7,7 +7,7 @@ import { mount, nodes, text, one } from './analyseSamletDom.mjs'
 install()
 const { default: Prototype } = await import('./AnalyseSamletPrototype.jsx')
 const { default: AnalyseTab } = await import('./AnalyseTab.jsx')
-const props = { athleteLogs: [], athletePRHistory: [], athleteReadiness: [], athleteWeightLogs: [], exerciseLibrary: [], videoAnalyses: [], videoBaselines: [], weeks: [], videoLiftFilter: 'all', selectedAthlete: { id: 'synthetic-foreign', name: 'FOREIGN_SENTINEL' } }
+const props = { a: { id: 'synthetic-only' }, athleteLogs: [], athletePRHistory: [], athleteReadiness: [], athleteWeightLogs: [], exerciseLibrary: [], videoAnalyses: [], videoBaselines: [], weeks: [], videoLiftFilter: 'all', selectedAthlete: { id: 'synthetic-foreign', name: 'FOREIGN_SENTINEL' } }
 const clean = value => {
   if (typeof value === 'function') return '[handler]'
   if (!value || typeof value !== 'object') return value
@@ -72,7 +72,14 @@ test('exact source boundary: reversing only the declared insertions recovers the
   const block = ["                  {analyseSammenlignEnabled(typeof window === 'undefined' ? '' : window.location.search) && (", '                    <AnalyseSammenlign />', '                  )}', '', ''].join(eol)
   assert.equal(final.split(imports).length, 2)
   assert.equal(final.split(block).length, 2)
+  // R1-VC-SLET1 is an independently ordered additive layer. Undo exactly that
+  // layer before checking the original comparison-prototype baseline hash.
+  const retentionImport = "import VideoRetentionLocalPreview from '../VideoRetentionLocalPreview.mjs'" + eol
+  const retentionNode = '                  <VideoRetentionLocalPreview key={a.id} analyses={videoAnalyses} objects={videoRetentionObjects} athleteId={a.id} />' + eol
+  const retentionProps = 'coachRyd = false, videoRetentionObjects,'
+  for (const insertion of [retentionImport, retentionNode, retentionProps]) assert.equal(final.split(insertion).length, 2)
   const recovered = final.replace(imports, '').replace(block, '')
+    .replace(retentionImport, '').replace(retentionNode, '').replace(retentionProps, 'coachRyd = false,')
   // Normalized combined four-package source on a46979ff, independent of checkout line endings.
   // Opdateret 27. okt. (Dhurva): Planlagt vs faktisk brugte en udefineret variabel observed med appData2 slået til.
   assert.equal(createHash('sha256').update(recovered.replace(/\r\n/g, '\n').replace(/(from ['"][^'"]+)\.(?:jsx|js)(['"])/g, '$1$2')).digest('hex'), '3a9f1a15bd833840db3d664f419320eb5011994015901457bf47c8d9560c7024')

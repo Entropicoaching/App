@@ -6,7 +6,7 @@ import { mount, nodes, text, one } from './analyseSamletDom.mjs'
 install()
 const { default: Prototype } = await import('./AnalyseSamletPrototype.jsx')
 const { default: AnalyseTab } = await import('./AnalyseTab.jsx')
-const empty = { athleteLogs: [], athletePRHistory: [], athleteReadiness: [], athleteWeightLogs: [], exerciseLibrary: [], videoAnalyses: [], videoBaselines: [], weeks: [], videoLiftFilter: 'all', selectedAthlete: { id: 'synthetic-only', name: 'Synthetic' } }
+const empty = { a: { id: 'synthetic-only' }, athleteLogs: [], athletePRHistory: [], athleteReadiness: [], athleteWeightLogs: [], exerciseLibrary: [], videoAnalyses: [], videoBaselines: [], weeks: [], videoLiftFilter: 'all', selectedAthlete: { id: 'synthetic-only', name: 'Synthetic' } }
 const section = (tree, label) => one(tree, n => n.type === 'section' && n.props['aria-label'] === label)
 const changeLift = (tree, value) => one(tree, n => n.type === 'select').props.onChange({ target: { value } })
 const chooseHistory = (tree, date) => one(section(tree, 'Historik'), n => n.type === 'button' && text(n).includes(date)).props.onClick()

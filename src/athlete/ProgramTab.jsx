@@ -1,3 +1,5 @@
+import { createElement } from 'react'
+import { blockWeeks, renderProgramBlockOverview } from './programBlockOverview.mjs'
 import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
@@ -116,7 +118,7 @@ function ExerciseTimer({ duration, label }) {
 }
 
 export default function ProgramTab({
-  programUgeFoerst = false,
+  programUgeFoerst = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -136,11 +138,31 @@ export default function ProgramTab({
           const ugeFoerst = programUgeFoerst === true
           const anchoredIdx = allWeeks.findIndex(w => w.id === currentWeek?.id)
           const activeWeekIdx = anchoredIdx >= 0 ? anchoredIdx : computeActiveWeekIdx(allWeeks)
+          const block = blockWeeks(allWeeks, activeWeekIdx)
+          const [blockStatus, setBlockStatus] = useState(null)
+          useEffect(() => {
+            if (programBlokOversigt !== true || !athlete?.id || !block.length) return
+            let cancelled = false
+            setBlockStatus(null)
+            Promise.resolve().then(() => fetchProgramBlockLogs(athlete.id, block.map(row => row.week)))
+              .then(logs => { if (!cancelled) setBlockStatus({ weeks: allWeeks, athleteId: athlete.id, activeWeekIdx, logs }) })
+              .catch(() => { if (!cancelled) setBlockStatus(null) })
+            return () => { cancelled = true }
+            // The reader is recreated by the parent; data changes trigger a fresh status read.
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+          }, [programBlokOversigt, allWeeks, activeWeekIdx, athlete?.id, exerciseLogs, pastLogs])
           const viewedWeek = allWeeks[viewingWeekIdx] || null
           const viewedRange = viewedWeek ? fmtWeekRange(weekStartDate(allWeeks, viewedWeek.week_number)) : null
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
           const isFutureWeek = viewingWeekIdx > activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
+
+                    const goToWeek = (gi) => {
+                      setViewingWeekIdx(gi)
+                      setProgOpenSession(null)
+                      if (gi < activeWeekIdx) fetchPastLogs(allWeeks[gi], athlete.id)
+                      else setPastLogs([])
+                    }
 
           const blokOversigt = allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
@@ -170,12 +192,7 @@ export default function ProgramTab({
                       ? `${fmt(firstDate)} til ${fmt(new Date(new Date(lastStart + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
                       : null
 
-                    const goToWeek = (gi) => {
-                      setViewingWeekIdx(gi)
-                      setProgOpenSession(null)
-                      if (gi < activeWeekIdx) fetchPastLogs(allWeeks[gi], athlete.id)
-                      else setPastLogs([])
-                    }
+
 
                     const prevPhase = viewedPhaseIdx > 0 ? phases[viewedPhaseIdx - 1] : null
                     const nextPhase = viewedPhaseIdx < phases.length - 1 ? phases[viewedPhaseIdx + 1] : null
@@ -324,6 +341,11 @@ export default function ProgramTab({
                 </>
               ) : (
                 <>
+                  {programBlokOversigt === true && renderProgramBlockOverview(createElement, {
+                    allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate,
+                    logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
+                    goToWeek,
+                  })}
                   {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
                       (kun aktuel uge; readinessLog er allerede i state). */}
                   {isCurrentWeek && readinessLog && readinessLog.readiness_score != null && readinessLog.readiness_score < 75 && (() => {
