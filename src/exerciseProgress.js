@@ -136,6 +136,7 @@ export const erDeloadBlok = (blokNavn) => /deload|aflast|taper/i.test(String(blo
 export const erDeloadLog = (log) => erDeloadBlok(log?.exercises?.sessions?.weeks?.block_name)
 
 const dagNoegle = (iso) => {
+  if (dataEnoughEnabled()) return calendarDay(iso)
   if (!calendarDay(iso)) return null
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return null
