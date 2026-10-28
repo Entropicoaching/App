@@ -1,3 +1,4 @@
+import { calendarDay } from './calendarDate.js'
 import { heavyPointEvidence } from './dataEvidence.mjs'
 import { dataEnoughEnabled, dataAllowed, dataMessage, dayNumber } from './dataEnough.mjs'
 // Ordre 1429: coachens fremgang med SAMME regler som atletens Fremgang (ordre
@@ -22,8 +23,8 @@ const SMERTE_DAGE = 14
 const DELOAD_DAGE = 10
 const DELOAD_NAVN = /deload|aflast|taper|stævne|staevne|peak/i
 
-// Samme dagsgraense som dagNoegle i exerciseProgress (lokal tid): UTC-dato gav 7 i stedet for 8 uger mellem 00 og 02 dansk tid.
-export const lokalDag = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+// APP-DATA2 bruger Koebenhavn; OFF bevarer den lokale dagsgraense.
+export const lokalDag = (d = new Date()) => dataEnoughEnabled() ? calendarDay(d) : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 const dagMs = (dag) => Date.parse(`${dag}T12:00:00Z`)
 const rd = (n) => Math.round(n)
 
@@ -85,7 +86,7 @@ export function smerteNoter(logs, today = lokalDag()) {
   // Ordre 1545: en smerte skrevet paa et enkelt saet taeller som pas-kommentaren
   // (atleterne skriver ofte kun paa saettet); kilden staar i linjen.
   const tilfoej = (nogle, log, tekst, kilde) => {
-    const dag = String(log.logged_at || '').slice(0, 10)
+    const dag = dataEnoughEnabled() ? calendarDay(log.logged_at || '') : String(log.logged_at || '').slice(0, 10)
     if (!dag || nu - dagMs(dag) > SMERTE_DAGE * DAG || dagMs(dag) > nu) return
     const key = nogle(dag)
     if (!set.has(key)) set.set(key, { dag, del: bodyPartOf(tekst), loeft: loeftNavn(log), navn: log.exercises?.name ?? log.navn ?? null, kilde })
@@ -107,7 +108,7 @@ export function planlagtLetUge(logs, today = lokalDag()) {
   const nu = dagMs(today)
   return (logs || []).some(log => {
     const navn = log.exercises?.sessions?.weeks?.block_name
-    const dag = String(log.logged_at || '').slice(0, 10)
+    const dag = dataEnoughEnabled() ? calendarDay(log.logged_at || '') : String(log.logged_at || '').slice(0, 10)
     return navn && DELOAD_NAVN.test(navn) && dag && nu - dagMs(dag) <= DELOAD_DAGE * DAG && dagMs(dag) <= nu
   })
 }
