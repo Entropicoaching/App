@@ -45,7 +45,8 @@ export async function bridge({ enabled = true, upload = async () => ({}), save =
   const stubUrl = 'data:text/javascript;base64,' + Buffer.from(stub).toString('base64') + '#' + Math.random()
   let source = readFileSync(localOrApp('./useVideoCoachBro.js', './athlete/useVideoCoachBro.js'), 'utf8')
   source = source.replace(/from '([^']+)'/g, (_, spec) => {
-    const url = spec === '../videoUploadRetry.mjs' ? new URL('./videoUploadRetry.mjs', import.meta.url).href
+    const url = spec === './videoSetSelection.mjs' ? localOrApp('./videoSetSelection.mjs', './athlete/videoSetSelection.mjs').href
+      : spec === '../videoUploadRetry.mjs' ? new URL('./videoUploadRetry.mjs', import.meta.url).href
       : spec === '../videoCoachUpload' ? new URL('./videoCoachUpload.js', import.meta.url).href : stubUrl
     return `from '${url}'`
   })

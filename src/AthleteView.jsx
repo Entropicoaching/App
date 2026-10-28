@@ -1,5 +1,7 @@
 import NytIAppen, { nytAthleteNavigation } from './nytIAppen.mjs'
 import { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/contactLatest.mjs'
+import { VIDEO_SET_SELECTION_ENABLED, videoOptionsForDay, resolveVideoSet } from './athlete/videoSetSelection.mjs'
+import { findDagensPas } from './nextSet.js'
 import { CoachMobilitySummary } from './athlete/CoachMobility.jsx'
 import { MobilityHomeworkHome } from './mobilityHomework.mjs'
 import { renderMobilityShortcut } from './athlete/mobilityFocus.mjs'
@@ -53,7 +55,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false}) {
+export default function AthleteView({ videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false}) {
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -389,7 +391,20 @@ export default function AthleteView({ mobilitetCoach = false, mobilitetHjemme = 
 
   useParathedUdkast({ athlete, readinessInput, setReadinessInput, lastReadiness })
 
+  const [videoSetChoice, setVideoSetChoice] = useState(null)
+  const [videoSetReady, setVideoSetReady] = useState(false)
+  const videoSetRef = useRef(null)
+  const videoSetEnabled = videoSetSelection === true && role === 'athlete' && !coachAthleteId
+  const videoPas = videoSetEnabled ? findDagensPas(allWeeks, currentWeek, exerciseLogs) : null
+  const videoOptions = videoSetEnabled ? videoOptionsForDay(videoPas, currentWeek, exerciseLogs, today()) : []
+  const selectedVideoSet = resolveVideoSet(videoOptions, videoSetChoice)
+  // The listener reads the latest render; never retain another athlete's selection.
+  videoSetRef.current = { enabled: videoSetEnabled, athleteId: athlete?.id,
+    selected: athleteVideoCoachOpen && videoSetReady ? selectedVideoSet : null }
+  useEffect(() => { setVideoSetChoice(null); setVideoSetReady(false) }, [athleteVideoCoachOpen, athlete?.id])
+
   useVideoCoachBro({
+    videoSetRef,
     athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
     setAthleteVideoCoachOpen, setFlash,
   })
@@ -610,6 +625,10 @@ export default function AthleteView({ mobilitetCoach = false, mobilitetHjemme = 
   return (
     <div {...(forenklinger === true ? { 'data-app-375': 'athlete' } : {})} style={s.wrap}>
       <Ramme
+        videoSetEnabled={videoSetEnabled}
+        videoSetReady={videoSetReady && !!selectedVideoSet}
+        videoSetPicker={{ options: videoOptions, choice: videoSetChoice, onChange: setVideoSetChoice,
+          onContinue: () => setVideoSetReady(true), onClose: () => setAthleteVideoCoachOpen(false) }}
         {...{
           accountMenuOpen, askConfirm, athleteId: athlete?.id, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
           onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,

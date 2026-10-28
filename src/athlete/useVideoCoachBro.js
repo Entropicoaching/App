@@ -1,3 +1,4 @@
+import { bindVideoSet } from './videoSetSelection.mjs'
 // VideoCoach-broen paa atletsiden: config til aabne VideoCoach-vinduer, selve
 // postMessage-lytteren (upload-and-go, abort-upload, save-draft, close/ready)
 // og flush af den lokale kladdekoe — de tre effekter flyttet uaendret ud af
@@ -17,6 +18,7 @@ import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
 export function useVideoCoachBro({
+  videoSetRef,
   athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
   setAthleteVideoCoachOpen, setFlash,
 }) {
@@ -82,11 +84,19 @@ export function useVideoCoachBro({
           reply({ ok: false, error: 'VideoCoach-forbindelsen er ikke registreret' })
           return
         }
+        const selectionState = videoSetRef?.current
+        const selectedSet = selectionState?.enabled === true ? selectionState.selected : null
+        if (selectionState?.enabled === true && (!selectedSet || selectionState.athleteId !== currentAthlete.id)) {
+          reply({ ok: false, error: 'Vælg løft og sæt i dagens pas før du sender.' }); return
+        }
+        if (selectedSet && selectedSet.lift !== message.lift) {
+          reply({ ok: false, error: 'Vælg samme løft i VideoCoach som i dagens pas.' }); return
+        }
         const file = message.file
         const requestError = validateVideoUploadRequest({
           athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId,
           lift: message.lift, variation: message.variation, mimeType: message.mimeType,
-          fileSize: file?.size, loadKg: message.loadKg, rpe: message.rpe,
+          fileSize: file?.size, loadKg: selectedSet ? selectedSet.load_kg : message.loadKg, rpe: message.rpe,
           athleteNote: message.athleteNote, plateCalibration: message.plateCalibration,
         })
         if (requestError || !(file instanceof Blob)) {
@@ -136,6 +146,7 @@ export function useVideoCoachBro({
         // gemt - ventende stille-fejl-koder (G14/G15/G16) lægges kun ind her,
         // rydningen sker nedenfor FØRST når gemningen er bekræftet, så en
         // fejlet gemning ikke selv taber koderne.
+        if (selectedSet) bindVideoSet(row, selectedSet)
         row.session_context = attachPendingSilentFails(row.session_context, currentAthlete.id)
         const saved = await saveVideoCoachDraft(supabase, row, { athleteSubmission: true })
         if (saved.error) {
@@ -159,7 +170,15 @@ export function useVideoCoachBro({
         reply({ ok: false, error: 'VideoCoach-forbindelsen er ikke registreret' })
         return
       }
-      const validationError = validateAthleteVideoCoachRow(message.row, currentAthlete.id)
+      const selectionState = videoSetRef?.current
+        const selectedSet = selectionState?.enabled === true ? selectionState.selected : null
+        if (selectionState?.enabled === true && (!selectedSet || selectionState.athleteId !== currentAthlete.id)) {
+          reply({ ok: false, error: 'Vælg løft og sæt i dagens pas før du sender.' }); return
+        }
+        if (selectedSet && selectedSet.lift !== message.row?.lift) {
+          reply({ ok: false, error: 'Vælg samme løft i VideoCoach som i dagens pas.' }); return
+        }
+        const validationError = validateAthleteVideoCoachRow(message.row, currentAthlete.id)
       if (validationError) { reply({ ok: false, error: validationError }); return }
       const safeRow = {
         ...message.row,
@@ -184,6 +203,7 @@ export function useVideoCoachBro({
       // ORDRE 131 · commit 3: samme mønster som upload-and-go ovenfor - ventende
       // koder følger med i selve rækken (også hvis den ender i den lokale
       // retry-kø nedenfor), og ryddes kun ved en BEKRÆFTET gemning.
+      if (selectedSet) bindVideoSet(safeRow, selectedSet)
       safeRow.session_context = attachPendingSilentFails(safeRow.session_context, currentAthlete.id)
       const result = await saveVideoCoachDraft(supabase, safeRow, { athleteSubmission: true })
       if (result.error) {

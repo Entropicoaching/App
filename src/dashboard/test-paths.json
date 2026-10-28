@@ -1,4 +1,5 @@
 {
+  "src/athlete/videoSetSelection.mjs": "videoSetSelection.mjs",
   "src/dashboard/indbakkeHandlinger.js": "indbakkeHandlinger.js",
   "src/messageTime.js": "messageTime.js",
   "src/calendarDate.js": "calendarDate.js",

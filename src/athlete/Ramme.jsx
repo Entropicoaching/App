@@ -1,3 +1,5 @@
+import { createElement } from 'react'
+import { renderVideoSetPicker } from './videoSetSelection.mjs'
 // Atlet-visningens faste ramme: VideoCoach-iframen, RPE-guiden, fortryd-toasten,
 // bekraeftelses-modalen og topbaren med kontomenuen — JSX'en flyttet uaendret
 // ud af AthleteView.jsx (ordre 373). Ingen egen tilstand; alt kommer ind som
@@ -15,6 +17,7 @@ function logOutQuestion(unsent) {
 }
 
 function Ramme({
+  videoSetEnabled = false, videoSetReady = false, videoSetPicker,
   accountMenuOpen, askConfirm, athleteId, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
   onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
   setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
@@ -27,14 +30,14 @@ function Ramme({
           aria-label="VideoCoach"
           style={{ position: 'fixed', inset: 0, zIndex: 12000, background: '#0f0e0b' }}
         >
-          <iframe
+          {videoSetEnabled && !videoSetReady ? renderVideoSetPicker(createElement, videoSetPicker) : <iframe
             ref={athleteVideoCoachFrameRef}
             src={athleteVideoCoachInstant ? `${ATHLETE_VIDEOCOACH_URL}&instant=1` : ATHLETE_VIDEOCOACH_URL}
             title="VideoCoach"
             allow="fullscreen"
             allowFullScreen
             style={{ display: 'block', width: '100%', height: '100%', border: 0, background: '#0f0e0b' }}
-          />
+          />}
         </div>
       )}
       {openRpePicker && (
