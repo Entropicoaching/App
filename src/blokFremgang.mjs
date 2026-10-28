@@ -47,15 +47,15 @@ export function compareBlocks({ enabled = DEFAULT_BLOK_FREMGANG, weeks = [], log
     blocks.at(-1).weeks.push(w)
   }
   const index = blocks.findIndex(b => b.weeks.some(w => w.start_date <= today && today < addCalendarDays(w.start_date, 7)))
-  if (index <= 0) return unknown('Der skal være en aktuel og en forrige dateret blok.')
+  if (index < 0) return unknown('Der mangler en aktuel dateret blok.')
   const current = blocks[index], previous = blocks[index - 1]
-  if ([current, previous].some(b => erDeloadBlok(b.name))) return unknown('En let blok sammenlignes ikke som styrke.')
+  if ([current, previous].some(b => b && erDeloadBlok(b.name))) return unknown('En let blok sammenlignes ikke som styrke.')
 
   // exercise_id binder saettet til en bestemt programuge. Tidsstemplet
   // alene eller et bloknavn er ikke en sikker identitet.
   const exercises = new Map()
   for (const [side, block] of [[0, previous], [1, current]]) {
-    for (const w of block.weeks) for (const session of w.sessions || []) for (const ex of session.exercises || []) {
+    for (const w of block?.weeks || []) for (const session of w.sessions || []) for (const ex of session.exercises || []) {
       if (ex.id == null) continue
       if (exercises.has(ex.id)) return unknown('En øvelse optræder i flere programuger.')
       exercises.set(ex.id, { side, name: ex.name, block })
@@ -78,30 +78,37 @@ export function compareBlocks({ enabled = DEFAULT_BLOK_FREMGANG, weeks = [], log
       if (!best || value > best.value || (value === best.value && weight > best.weight)) days[ex.side].set(day, set)
     }
     const counts = days.map(d => d.size)
-    if (counts.some(n => n < MIN_BLOCK_DAYS)) return { key: lift.key, name: lift.label, status: 'insufficient', counts }
-    const best = days.map(d => [...d.values()].sort((a, b) => b.value - a.value || b.weight - a.weight || a.day.localeCompare(b.day))[0])
-    const [before, now] = best.map(set => ({ ...set, e1rm: Math.round(set.value) }))
-    return { key: lift.key, name: lift.label, status: 'ready', counts, before, now, delta: now.e1rm - before.e1rm }
+    const best = days.map(d => d.size < MIN_BLOCK_DAYS ? null : [...d.values()].sort((a, b) => b.value - a.value || b.weight - a.weight || a.day.localeCompare(b.day))[0])
+    const [before, now] = best.map(set => set ? ({ ...set, e1rm: Math.round(set.value) }) : null)
+    return { key: lift.key, name: lift.label, status: before && now ? 'ready' : 'insufficient', counts, before, now, delta: before && now ? now.e1rm - before.e1rm : null }
   })
-  return { status: 'known', previous: blockLabel(previous), current: blockLabel(current), today, lifts }
+  return { status: 'known', previous: previous ? blockLabel(previous) : null, current: blockLabel(current), today, lifts }
 }
 
 const kg = n => String(n).replace('.', ',')
-const setText = s => `${kg(s.weight)} kg × ${s.reps}, ${s.day}. e1RM ${s.e1rm} kg`
+const setText = s => `${kg(s.weight)} kg × ${s.reps}, ${s.day}`
+const valueText = s => s ? `${s.e1rm} kg` : '-'
+const deltaText = delta => delta == null ? '-' : `${delta > 0 ? '+' : ''}${delta} kg`
 
 export function renderBlockComparison(h, options) {
   const model = compareBlocks(options)
   if (!model) return null
+  const cell = { padding: '0.5rem 0.25rem', verticalAlign: 'top', overflowWrap: 'anywhere' }
   return h('section', { 'aria-label': 'Denne blok mod forrige blok', 'data-blok-fremgang': model.status,
-    style: { marginBottom: '1rem', padding: '1rem', border: '1px solid #59564c', color: '#edeae2', overflowWrap: 'anywhere' } },
-  h('h2', { style: { fontSize: '1rem' } }, 'Denne blok mod forrige blok'),
-  model.status === 'unknown' ? h('p', null, model.reason) : h('div', null,
-    h('p', null, `Denne blok: ${model.current}. Indtil ${model.today}. Forrige blok: ${model.previous}.`),
-    h('p', null, 'Bedste tunge sæt efter e1RM, et skøn over vægten for én gentagelse. Mindst to træningsdage i hver blok. En igangværende blok kan have færre træningsdage.'),
-    ...model.lifts.map(l => h('div', { key: l.key, 'data-blok-loeft': l.key },
-      h('h3', { style: { fontSize: '0.95rem' } }, l.name),
-      l.status !== 'ready' ? h('p', null, `Ikke nok grundlag. Tunge træningsdage: denne blok ${l.counts[1]}, forrige blok ${l.counts[0]}.`) : h('div', null,
-        h('p', null, `Denne blok: ${setText(l.now)}.`),
-        h('p', null, `Forrige blok: ${setText(l.before)}.`),
-        h('p', null, `Forskel i skøn: ${l.delta > 0 ? '+' : ''}${l.delta} kg. Træningsdage: ${l.counts[1]} mod ${l.counts[0]}.`))))))
+    style: { marginBottom: '1rem', padding: '0.75rem', border: '1px solid #59564c', color: '#edeae2', overflowWrap: 'anywhere' } },
+    h('h2', { style: { fontSize: '1rem' } }, 'Denne blok mod forrige blok'),
+    model.status === 'unknown' ? h('p', null, model.reason) : h('div', null,
+      h('p', null, `Denne blok: ${model.current}. Indtil ${model.today}. Forrige blok: ${model.previous || '-'}.`),
+      h('p', null, 'Estimeret 1RM er et skøn over vægten for én gentagelse, beregnet fra det bedste tunge sæt. Mindst to tunge træningsdage pr. løft i hver blok. En streg betyder, at der mangler grundlag.'),
+      h('table', { style: { width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', fontSize: '0.8rem' } },
+        h('caption', { style: { textAlign: 'left', padding: '0.5rem 0' } }, 'Estimeret 1RM pr. hovedløft'),
+        h('thead', null, h('tr', null,
+          ...['Hovedløft', 'Denne blok', 'Forrige blok', 'Forskel'].map(label => h('th', { scope: 'col', style: { ...cell, textAlign: 'left' } }, label)))),
+        h('tbody', null, ...model.lifts.map(l => h('tr', { key: l.key, 'data-blok-loeft': l.key },
+          h('th', { scope: 'row', style: { ...cell, textAlign: 'left' } }, l.name),
+          h('td', { 'data-blok-nu': l.key, style: cell }, valueText(l.now)),
+          h('td', { 'data-blok-foer': l.key, style: cell }, valueText(l.before)),
+          h('td', { 'data-blok-forskel': l.key, style: cell }, deltaText(l.delta)))))),
+      ...model.lifts.map(l => h('p', { key: l.key, 'data-blok-grundlag': l.key, style: { fontSize: '0.75rem' } },
+        `${l.name}. Denne blok: ${l.now ? setText(l.now) : '-'}. Forrige blok: ${l.before ? setText(l.before) : '-'}. Tunge træningsdage: ${l.counts[1]} mod ${l.counts[0]}.`))))
 }

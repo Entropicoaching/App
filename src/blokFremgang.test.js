@@ -29,7 +29,7 @@ test('two actual blocks, best Epley set, original load/reps/date and rounded del
   const dom = mount(renderBlockComparison(createElement, options))
   assert.match(dom.textContent, /115 kg × 3/)
   assert.match(dom.textContent, /105 kg × 3/)
-  assert.match(dom.textContent, /BænkpresIkke nok grundlag/)
+  assert.equal(find(dom, 'data-blok-nu').find(e => e.attrs['data-blok-nu'] === 'baenk').textContent, '-')
   assert.equal(find(dom, 'data-blok-loeft').length, 4)
 })
 
@@ -83,7 +83,7 @@ test('ambiguous or missing dates, week identity, gaps, foreign scope and duplica
   ]
   for (const change of changes) { const o = clone(options); change(o); assert.equal(compareBlocks(o).status, 'unknown') }
   assert.equal(compareBlocks({ ...options, today: '2026-12-01' }).status, 'unknown')
-  assert.equal(compareBlocks({ ...options, today: '2026-10-06' }).status, 'unknown')
+  assert.equal(compareBlocks({ ...options, today: '2026-10-06' }).previous, null)
 })
 
 test('immediate previous block only, repeated names are separate, and no deload comparison', () => {
