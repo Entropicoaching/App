@@ -1,4 +1,5 @@
 import { readMeetSource } from './coachMeetSource.mjs'
+import { readCoachActivity } from './coachInactive.mjs'
 import { readBlockLogs } from '../blokFremgang.mjs'
 import { readFourWeekSource } from './coachFourWeeks.mjs'
 import { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
@@ -109,12 +110,12 @@ export function lavLaesninger({
   // fra forsidens kritiske kæde uden at ændre hvad der vises.
   async function fetchAthleteActivityLogs(athleteIds) {
     if (!athleteIds.length) return
-    const { data } = await readMorningSource(coachMorning, 'logs', athleteIds, setCoachMorningData, () => supabase
+    const { data } = await readCoachActivity(coachActions, athleteIds, setCoachActionsStatus, () => readMorningSource(coachMorning, 'logs', athleteIds, setCoachMorningData, () => supabase
       .from('exercise_logs')
       .select('athlete_id, logged_at')
       .in('athlete_id', athleteIds)
       .eq('skipped', false)
-      .order('logged_at', { ascending: false }))
+      .order('logged_at', { ascending: false })))
     if (!data) return
     const lastLogMap = {}
     for (const log of data) {

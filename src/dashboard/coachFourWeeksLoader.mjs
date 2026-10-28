@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './coachFourWeeksJsx.mjs'
 const base = new URL('./', import.meta.url)
 const flat = existsSync(new URL('Dashboard.jsx', base))
-const targets = { 'profileWeekSummary.mjs': './profileWeekSummary.mjs', 'nextSet.js': '../nextSet.js', 'exerciseProgress.js': '../exerciseProgress.js', 'inputValues.js': '../inputValues.js', 'exerciseSetView.js': '../exerciseSetView.js', 'exerciseNames.js': '../exerciseNames.js', 'ugenoegle.js': '../volume/ugenoegle.js',
+const targets = { 'coachInactive.mjs': './coachInactive.mjs', 'profileWeekSummary.mjs': './profileWeekSummary.mjs', 'nextSet.js': '../nextSet.js', 'exerciseProgress.js': '../exerciseProgress.js', 'inputValues.js': '../inputValues.js', 'exerciseSetView.js': '../exerciseSetView.js', 'exerciseNames.js': '../exerciseNames.js', 'ugenoegle.js': '../volume/ugenoegle.js',
   'fridayChecklist.mjs': './fridayChecklist.mjs', 'rel1030.mjs': '../rel1030.mjs',
   'dataEnough.mjs': '../dataEnough.mjs', 'dataEvidence.mjs': '../dataEvidence.mjs', 'rpeEvidence.mjs': '../rpeEvidence.mjs', 'mealEvidence.mjs': '../mealEvidence.mjs', 'videoEvidence.mjs': '../videoEvidence.mjs', 'coachWeekOverview.mjs': './coachWeekOverview.mjs',
   'coachKonstanter.js': './coachKonstanter.js',
