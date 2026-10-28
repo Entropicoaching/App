@@ -1,3 +1,4 @@
+import { upcomingProgramWeek, programDayPreview } from './programNaesteUge.mjs'
 import IntensityExplanation from './IntensityExplanation.jsx'
 import { createElement } from 'react'
 import { blockWeeks, renderProgramBlockOverview } from './programBlockOverview.mjs'
@@ -119,7 +120,7 @@ function ExerciseTimer({ duration, label }) {
 }
 
 export default function ProgramTab({
-  programIntensityHelp = false, programUgeFoerst = false, programBlokOversigt = false, fetchProgramBlockLogs,
+  programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -157,6 +158,9 @@ export default function ProgramTab({
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
           const isFutureWeek = viewingWeekIdx > activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
+          const upcomingPreview = programNaesteUge === true && upcomingProgramWeek(
+            viewedWeek ? weekStartDate(allWeeks, viewedWeek.week_number) : null, isFutureWeek,
+          )
 
                     const goToWeek = (gi) => {
                       setViewingWeekIdx(gi)
@@ -444,6 +448,7 @@ export default function ProgramTab({
 
                   {(viewedWeek.sessions || []).map(session => {
                     const isOpen = progOpenSession === session.id
+                    const preview = upcomingPreview ? programDayPreview(session.exercises) : null
                     const sessionExIds = (session.exercises || []).map(e => e.id)
                     const sessionLogs = logsForView.filter(l => sessionExIds.includes(l.exercise_id))
                     const totalSets = (session.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
@@ -476,7 +481,7 @@ export default function ProgramTab({
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                               {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
-                              {!isDone && totalSets > 0 && (
+                              {!upcomingPreview && !isDone && totalSets > 0 && (
                                 <>
                                   <button
                                     style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
@@ -494,6 +499,19 @@ export default function ProgramTab({
                             </div>
                           </div>
                         </div>
+
+                        {preview && (
+                          <div data-program-day-preview={session.id} style={{ ...s.card, marginTop: 0, borderTop: 'none' }}>
+                            {preview.lines.length === 0 ? <div>Hviledag</div> : (
+                              <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
+                                {preview.lines.map((line, index) => (
+                                  <li key={index} title={line} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.5 }}>{line}</li>
+                                ))}
+                              </ul>
+                            )}
+                            {preview.more > 0 && <div>+{preview.more} flere</div>}
+                          </div>
+                        )}
 
                         {isOpen && (
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>

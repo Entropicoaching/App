@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './vaerd5Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const names = ['IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
+const names = ['programNaesteUge.mjs','IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
   'fixedRepsEntry.js', 'exerciseSetView.js', 'exerciseNames.js', 'warmupOverride.js', 'kostNumbers.mjs',
   'vaerd5Fixture.mjs', 'rpeEvidence.mjs', 'dataEnough.mjs', 'calendarDate.js']
 const urls = new Map(names.map(name => [name, (existsSync(new URL(name, root))
