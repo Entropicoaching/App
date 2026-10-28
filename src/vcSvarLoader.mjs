@@ -3,10 +3,11 @@ import { existsSync } from 'node:fs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './vcSvarJsx.mjs'
 const root = new URL('./', import.meta.url)
-const actual = new Set(['kostNumbers.mjs', 'coachBriefingSeen.js', 'videoMarkerReplies.mjs', 'videoFeedbackPlayback.mjs', 'VideoFeedbackPlayback.jsx',
+const actual = new Set(['videoQueueWait.mjs','kostNumbers.mjs', 'coachBriefingSeen.js', 'videoMarkerReplies.mjs', 'videoFeedbackPlayback.mjs', 'VideoFeedbackPlayback.jsx',
   'VideoMarkerReplyReview.jsx', 'beskederOgVaegt.jsx', 'IndbakkeView.jsx', 'VideoReviewModal.jsx',
   'videoFeedbackFollowUp.mjs', 'VideoReviewTemplates.mjs', 'videoReviewLayout.mjs', 'AthleteBeskederTab.jsx', 'CoachBeskederTab.jsx'])
 const locations = {
+  'videoQueueWait.mjs':'dashboard/',
   'kostNumbers.mjs':'athlete/',
   'AthleteBeskederTab.jsx':'athlete/BeskederTab.jsx', 'CoachBeskederTab.jsx':'dashboard/BeskederTab.jsx',
   'videoFeedbackPlayback.mjs':'athlete/', 'VideoFeedbackPlayback.jsx':'athlete/',

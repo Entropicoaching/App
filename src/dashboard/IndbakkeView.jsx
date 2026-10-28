@@ -1,5 +1,6 @@
 import { coachBriefingPointKey } from '../coachBriefingSeen.js'
 import { markerReplyPreview } from '../videoMarkerReplies.mjs'
+import { VIDEO_QUEUE_WAIT_ENABLED, sortVideoQueueByWait, videoQueueAge, videoQueueLiftDetail } from './videoQueueWait.mjs'
 import VideoQueueFilter from './VideoQueueFilter.jsx'
 import { VIDEO_QUEUE_FILTER_ENABLED } from './videoQueueFilter.mjs'
 import { dataEnoughEnabled, dataMessage } from '../dataEnough.mjs'
@@ -20,7 +21,13 @@ export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBri
   trainingSignalUpdatingKey, unreadByTrack, videoReviewQueueError, videoQueueFilters, setVideoQueueFilters,
 }) {
   const visible = athletes.filter(athlete => !hiddenAthleteIds.has(athlete.id))
-  const priorityItems = VIDEO_QUEUE_FILTER_ENABLED === true
+  const waitEnabled = VIDEO_QUEUE_WAIT_ENABLED === true
+  const queueEnabled = waitEnabled || VIDEO_QUEUE_FILTER_ENABLED === true
+  const queueNow = Date.now()
+  const queueItems = waitEnabled ? sortVideoQueueByWait(coachPriorityItems) : coachPriorityItems
+  const waitingVideos = queueItems.filter(item => item?.kind === 'video' && item.video?.id
+    && item.athlete?.id && !hiddenAthleteIds.has(item.athlete.id))
+  const priorityItems = queueEnabled
     ? coachPriorityItems.filter(item => item.kind !== 'video')
     : coachPriorityItems
   const priorityFocus = coachPriorityFocus(priorityItems)
@@ -88,6 +95,9 @@ export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBri
               <span style={{ color: item.color, border: `1px solid ${item.color}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{item.label}</span>
             </span>
             <span style={{ display: 'block', marginTop: '0.18rem', color: '#7a7770', fontSize: '0.66rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.detail}</span>
+            {waitEnabled && item.kind === 'video' && <span data-video-wait={item.video.id} style={{ display: 'block', marginTop: '0.25rem', color: '#b8b4a8', fontSize: '0.75rem', overflowWrap: 'anywhere' }}>
+              {videoQueueAge(item, queueNow)} · {videoQueueLiftDetail(item.video)}
+            </span>}
           </span>
           {item.createdAt && <span style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', flexShrink: 0 }}>{fmtT(item.createdAt)}</span>}
           {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
@@ -175,10 +185,20 @@ export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBri
       </div>
 
       {VIDEO_QUEUE_FILTER_ENABLED === true && (
-        <VideoQueueFilter items={coachPriorityItems} hiddenAthleteIds={hiddenAthleteIds}
+        <VideoQueueFilter items={queueItems} hiddenAthleteIds={hiddenAthleteIds}
           filters={videoQueueFilters} setFilters={setVideoQueueFilters}
           error={videoReviewQueueError} refreshing={inboxRefreshing}
           refresh={refreshCoachInbox} renderItem={renderPriorityItem} />
+      )}
+
+      {waitEnabled && VIDEO_QUEUE_FILTER_ENABLED !== true && (
+        <section aria-label="Videokø" style={{ marginBottom: '1rem', padding: '0.85rem', border: '1px solid #7a7770' }}>
+          <h2 style={{ fontSize: '1.1rem', marginTop: 0 }}>Videokø</h2>
+          <p>Venter længst først</p>
+          {videoReviewQueueError && <p role="alert">Videokøen kunne ikke opdateres. Listen kan være forældet.</p>}
+          {waitingVideos.length === 0 && <p>Ingen videoer i den hentede kø.</p>}
+          <div style={{ display: 'grid', gap: '0.4rem' }}>{waitingVideos.map(renderPriorityItem)}</div>
+        </section>
       )}
 
       {(priorityItems.length > 0 || priorityError) && (
