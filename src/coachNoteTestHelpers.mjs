@@ -45,6 +45,8 @@ export async function app({ enabled, backend } = {}) {
   }
   instances.set(id, { h, fakes })
   const allowed = new Set([
+    "src/dashboard/videoStorageUsage.mjs",
+    "src/dashboard/VideoStorageUsage.jsx",
     "src/dashboard/videoQueueWait.mjs",
     "src/dataEnough.mjs",
     "src/dataEvidence.mjs",

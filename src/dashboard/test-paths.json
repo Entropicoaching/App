@@ -45,5 +45,7 @@
   "src/dashboard/coachSaveNext.mjs": "coachSaveNext.mjs",
   "src/dashboard/VideoMarkerTemplates.mjs": "VideoMarkerTemplates.mjs",
   "src/dashboard/vcMarkerTemplates.mjs": "vcMarkerTemplates.mjs",
-  "src/athlete/videoFeedbackPlayback.mjs": "videoFeedbackPlayback.mjs"
+  "src/athlete/videoFeedbackPlayback.mjs": "videoFeedbackPlayback.mjs",
+  "src/dashboard/videoStorageUsage.mjs": "videoStorageUsage.mjs",
+  "src/dashboard/VideoStorageUsage.jsx": "VideoStorageUsage.jsx"
 }

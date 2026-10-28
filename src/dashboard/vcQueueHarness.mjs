@@ -11,7 +11,7 @@ export const nodes = tree => tree && typeof tree === 'object'
 export const text = tree => typeof tree === 'object'
   ? (tree?.children || []).map(text).join(' ').replace(/\s+/g, ' ').trim() : String(tree ?? '')
 
-export async function app(enabled, waitEnabled) {
+export async function app(enabled, waitEnabled, storageEnabled) {
   const id = String(++serial)
   const prefix = `vc-queue-${id}://app/`
   const state = { buckets: new Map(), active: null }
@@ -32,7 +32,7 @@ export async function app(enabled, waitEnabled) {
     try { return type({ ...props, children: flat }) } finally { state.active = previous }
   }
   globalThis[registry].set(id, state)
-  const allowed = new Set(['videoMarkerReplies.mjs', 'coachRyd.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'IndbakkeView.jsx', 'VideoQueueFilter.jsx', 'videoQueueFilter.mjs', 'videoQueueWait.mjs',
+  const allowed = new Set(['videoStorageUsage.mjs', 'VideoStorageUsage.jsx','videoMarkerReplies.mjs', 'coachRyd.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'IndbakkeView.jsx', 'VideoQueueFilter.jsx', 'videoQueueFilter.mjs', 'videoQueueWait.mjs',
     'coachBriefingSeen.js', 'coachPriority.js', 'coachInboxState.js', 'coachNoteSignal.js', 'e2eTestFlags.mjs',
     'automationAlerts.js', 'coachBriefingRules.js', 'exerciseSetView.js', 'exerciseNames.js',
     'exerciseProgress.js', 'inputValues.js', 'smerteRegion.js', 'kostNumbers.mjs', 'calendarDate.js', 'ugenoegle.js'])
@@ -62,6 +62,7 @@ export async function app(enabled, waitEnabled) {
             : name === 'smerteRegion.js' ? '../athlete/smerteRegion.js' : '../' + name
         const parent = new URL(relative, import.meta.url)
         source = readFileSync(existsSync(local) ? local : parent, 'utf8')
+        if (name === 'videoStorageUsage.mjs' && storageEnabled !== undefined) source = source.replace('VIDEO_STORAGE_USAGE_ENABLED = false', `VIDEO_STORAGE_USAGE_ENABLED = ${JSON.stringify(storageEnabled)}`)
         if (name === 'videoQueueFilter.mjs' && enabled !== undefined) source = source.replace('VIDEO_QUEUE_FILTER_ENABLED = false', `VIDEO_QUEUE_FILTER_ENABLED = ${JSON.stringify(enabled)}`)
         if (name === 'videoQueueWait.mjs' && waitEnabled !== undefined) source = source.replace('VIDEO_QUEUE_WAIT_ENABLED = false', `VIDEO_QUEUE_WAIT_ENABLED = ${JSON.stringify(waitEnabled)}`)
         if (name.endsWith('.jsx')) source = `const __h = ${access}.h;\n` + jsx(source)
