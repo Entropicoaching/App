@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readerFixture } from './readerFixture.mjs'
+import { readerFixture } from './coachWeekReaderFixture.mjs'
 import { effectFixture } from './effectFixture.mjs'
 import { weekRows, renderWeekOverview } from './coachWeekOverview.mjs'
 import * as overview from './coachWeekOverview.mjs'
@@ -13,7 +13,7 @@ test('F1: actual reader imports under plain node --test', async () => {
 })
 
 test('F2: two periods with the same week number stay separate including skips and RPE', async () => {
-  const log = (id, skipped, rpe_actual) => ({ athlete_id:'a', skipped, rpe_actual, rpe_planned:7,
+  const log = (id, skipped, rpe_actual) => ({ athlete_id:'a', logged_at:new Date().toISOString(), skipped, rpe_actual, rpe_planned:7,
     exercises:{ sessions:{ id:id+'session', weeks:{id,week_number:3} } } })
   const f = await readerFixture({exercise_logs:[log('new',false,8),log('old',false,10),log('old',true,10)]})
   await f.reader.fetchCalendarProgress(['a'])
@@ -21,7 +21,7 @@ test('F2: two periods with the same week number stay separate including skips an
   const [row] = weekRows(entries,f.values.AthleteWeekCompletion)
   assert.equal(row.logged,1); assert.equal(row.missed,0); assert.equal(row.remaining,3); assert.equal(row.rpe,1)
   assert.ok(f.calls[0].select[0].includes('weeks(id, week_number)'))
-  const dom = renderWeekOverview(element,{enabled:true,entries,completion:f.values.AthleteWeekCompletion,
+  const dom = renderWeekOverview(element,{enabled:true,profileTab:'log',entries,completion:f.values.AthleteWeekCompletion,
     status:f.statuses.plan ? f.statuses : {plan:'ready',...f.statuses}})
   assert.ok(dom.textContent.includes('Logget: 1 sæt'))
   assert.ok(dom.textContent.includes('Endnu ikke logget: 3 sæt'))

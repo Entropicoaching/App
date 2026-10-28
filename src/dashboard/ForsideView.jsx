@@ -256,7 +256,7 @@ function renderForsideList({ followUp = null, coachRyd = false, coachMorning = f
               {renderWeekOverview(createElement, { enabled: coachWeekEnabled, entries: athletesWithAfvigelse.map(entry => ({
                 ...entry, current: selectOverviewWeek(calendarWeeks[entry.athlete.id] || [], entry.current),
               })),
-                completion: athleteWeekCompletion, status: coachWeekDataStatus, loading, loadError, openProfile })}
+                completion: athleteWeekCompletion, status: coachWeekDataStatus, loading, loadError, openProfile, profileTab: 'log' })}
 
               {coachMeetSoon === true && <CoachMeetSoon enabled={coachMeetSoon} athletes={visibleAthletes} data={coachMeetData} loading={loading} loadError={loadError} openProfile={openProfile} />}
 

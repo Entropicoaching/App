@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, existsSync } from 'node:fs'
 import { weekRows, renderWeekOverview, addWeekRpe } from './coachWeekOverview.mjs'
-import { readerFixture } from './readerFixture.mjs'
+import { readerFixture } from './coachWeekReaderFixture.mjs'
 import { element } from './syntheticDom.mjs'
 const source = name => {
   const local = new URL(name, import.meta.url)
@@ -17,7 +17,7 @@ test('counterexample: no log is not a missed set and no RPE is not zero', () => 
 
 test('counterexample: balanced signed RPE is shown as measured zero with coverage', () => {
   const c = {}; addWeekRpe(c,{rpe_actual:8,rpe_planned:7}); addWeekRpe(c,{rpe_actual:6,rpe_planned:7})
-  const dom=renderWeekOverview(element,{enabled:true, entries:[entry], completion:{one:{4:c}},status:{plan:'ready',logs:'ready'}})
+  const dom=renderWeekOverview(element,{enabled:true,profileTab:'log', entries:[entry], completion:{one:{4:c}},status:{plan:'ready',logs:'ready'}})
   assert.ok(dom.textContent.includes('RPE: 0,0 (2 sæt)'))
 })
 
@@ -29,7 +29,7 @@ test('counterexample: unknown current program cannot borrow another week or athl
 test('counterexample: reader failure with cached values still suppresses totals', async () => {
   const f = await readerFixture({}, {fail:true})
   await f.reader.fetchCalendarProgress(['one'])
-  const dom=renderWeekOverview(element,{enabled:true, entries:[entry], completion:{one:{4:{sets:6}}},status:{plan:'ready',...f.statuses}})
+  const dom=renderWeekOverview(element,{enabled:true,profileTab:'log', entries:[entry], completion:{one:{4:{sets:6}}},status:{plan:'ready',...f.statuses}})
   assert.ok(dom.textContent.includes('kunne ikke indlæses')); assert.equal(dom.queryAll('button').length,0)
 })
 
