@@ -14,6 +14,7 @@ export function install() {
         for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
       }
       if ([card, wrapper].includes(context.parentURL)) {
+        if (specifier === '../videoMarkerReplies.mjs') return { url: new URL(exactExists(new URL('videoMarkerReplies.mjs', root)) ? 'videoMarkerReplies.mjs' : '../videoMarkerReplies.mjs', root).href, shortCircuit: true }
         if (specifier === './videoFeedbackFollowUp.mjs') return { url: new URL('videoFeedbackFollowUp.mjs', root).href, shortCircuit: true }
         if (specifier === './VideoFeedbackPlayback.jsx') return { url: wrapper, shortCircuit: true }
         if (specifier === './videoFeedbackPlayback.mjs') return { url: model, shortCircuit: true }

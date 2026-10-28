@@ -98,6 +98,10 @@ export async function app(legacy = false) {
   const key = String(++id), prefix = 'coachryd-test://' + key + '/'
   const stub = () => null
   const fakes = {
+    'videoMarkerReplies.mjs': { markerRepliesEnabled: () => false, markerReplyPreview: () => null,
+      mountMarkerReplyForm: () => () => {}, repliesForMarker: () => [] },
+    'VideoMarkerReplyReview.jsx': { default: stub },
+    // This harness exercises existing features with marker replies OFF.
     react: { createElement: h, Fragment, useState: initial => [typeof initial === 'function' ? initial() : initial, stub], useMemo: fn => fn(), useEffect: stub, useRef: value => ({ current: value }) },
     'dashboardShared.js': shared,
     'supabase.js': { signOutHard: () => { throw Error('Signout forbidden') }, supabase: new Proxy({}, { get() { throw Error('Backend access forbidden') } }) },

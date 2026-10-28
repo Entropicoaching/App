@@ -1,4 +1,5 @@
 import { coachBriefingPointKey } from '../coachBriefingSeen.js'
+import { markerReplyPreview } from '../videoMarkerReplies.mjs'
 import VideoQueueFilter from './VideoQueueFilter.jsx'
 import { VIDEO_QUEUE_FILTER_ENABLED } from './videoQueueFilter.mjs'
 import { dataEnoughEnabled, dataMessage } from '../dataEnough.mjs'
@@ -141,7 +142,7 @@ export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBri
                     <span style={{ fontSize: '0.84rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.athlete.name}</span>
                     <span style={{ color: trackColor, border: `1px solid ${trackColor}44`, padding: '0.08rem 0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.05em', textTransform: 'uppercase', flexShrink: 0 }}>{technique ? 'Teknik & løft' : 'Besked'}</span>
                   </span>
-                  <span style={{ display: 'block', marginTop: '0.16rem', color: row.unread > 0 ? '#b8b4a8' : '#7a7770', fontSize: '0.7rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.last.sender_role === 'coach' ? 'Dig: ' : ''}{row.last.content}</span>
+                  <span style={{ display: 'block', marginTop: '0.16rem', color: row.unread > 0 ? '#b8b4a8' : '#7a7770', fontSize: '0.7rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.last.sender_role === 'coach' ? 'Dig: ' : ''}{markerReplyPreview(row.last)}</span>
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844' }}>{fmtT(row.last.created_at)}</span>

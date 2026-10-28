@@ -2,7 +2,8 @@ import { registerHooks } from 'node:module'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './vcMark2Jsx.mjs'
 const dom = new URL('./vcMark2Dom.mjs', import.meta.url).href
-const stub = `export const DEFAULT_VIDEOCOACH_FORENKL4=false;
+const stub = `export const markerRepliesEnabled=()=>false; export const markerReplyPreview=()=>null;
+export const DEFAULT_VIDEOCOACH_FORENKL4=false;
 export const s={modal:{}}; export const VIDEOCOACH_STATUS={draft:{},coach_approved:{},shared:{},invalid:{}};
 export const VIDEOCOACH_METRICS=[]; export const VIDEOCOACH_LIFT_LABELS={};
 export const videoCoachPathPreview=()=>null;

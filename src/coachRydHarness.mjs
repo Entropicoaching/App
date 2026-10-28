@@ -48,6 +48,10 @@ export async function app(legacy = false, previous = false, r2Before = false) {
   const key = String(++id), prefix = 'coachryd-test://' + key + '/'
   const stub = () => null
   const fakes = {
+    'videoMarkerReplies.mjs': { markerRepliesEnabled: () => false, markerReplyPreview: () => null,
+      mountMarkerReplyForm: () => () => {}, repliesForMarker: () => [] },
+    'VideoMarkerReplyReview.jsx': { default: stub },
+    // This harness exercises existing features with marker replies OFF.
     react: { createElement: h, Fragment, useState: initial => [typeof initial === 'function' ? initial() : initial, stub], useMemo: fn => fn(), useEffect: stub, useRef: value => ({ current: value }) },
     'VideoReviewTemplates.mjs': { default: stub, DEFAULT_VIDEO_REVIEW_TEMPLATES: false },
     'dashboardShared.js': shared,
