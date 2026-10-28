@@ -102,7 +102,8 @@ export function lavIndbakkeHandlinger({
     await fetchLatestMessages(athletes.map(athlete => athlete.id))
   }
 
-  async function sendCoachMessage() {
+  async function sendCoachMessage(options) {
+    const confirmed = options?.confirmed === true
     const content = messageInput.trim()
     if (!content || !selectedAthlete || sendingMessage) return
     const athleteId = selectedAthlete.id
@@ -110,13 +111,24 @@ export function lavIndbakkeHandlinger({
     setSendingMessage(true)
     setMessageSendError(null)
     try {
-      const { error } = await supabase.from('messages').insert({ athlete_id: athleteId, sender_role: 'coach', content, category: coachMsgTrack })
+      let query = supabase.from('messages').insert({ athlete_id: athleteId, sender_role: 'coach', content, category: coachMsgTrack })
+      if (confirmed) query = query.select('id,athlete_id,sender_role,content,category').single()
+      const { data, error } = await query
       if (error) throw error
+      if (confirmed && (!data?.id || data.athlete_id !== athleteId || data.sender_role !== 'coach' ||
+          data.content !== content || data.category !== coachMsgTrack))
+        throw new Error('Databasen bekræftede ikke beskeden')
       if (messageThreadAthleteRef.current === athleteId) setMessageInput('')
-      await Promise.all([
+      const refresh = Promise.all([
         fetchMessages(athleteId),
         fetchLatestMessages(athletes.map(a => a.id)),
       ])
+      if (confirmed) {
+        // Skrivningen er bekræftet. En læsefejl må ikke føre til dobbelt afsendelse.
+        await refresh.catch(() => {})
+        return true
+      }
+      await refresh
     } catch {
       if (messageThreadAthleteRef.current === athleteId) {
         setMessageSendError('Beskeden blev ikke sendt. Din tekst er bevaret — prøv igen.')

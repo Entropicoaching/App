@@ -1,3 +1,4 @@
+import { canonicalFeedback } from './coachSaveNext.mjs'
 import { createSaveApproveShareHandler } from './videoSaveApproveShare.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // "Gennemgå måling": status (godkend/del/udelad), feedback gem/fortryd/luk,
@@ -41,10 +42,13 @@ export function lavVideoReviewHandlinger({
   setVideoAnalysisReview,
   })
 
-  async function saveVideoAnalysisFeedback(analysis) {
+  async function saveVideoAnalysisFeedback(analysis, options) {
+    const confirmed = options?.confirmed === true
     if (!selectedAthlete?.id || !analysis?.id || videoAnalysisUpdatingId) return
     if (!['draft', 'coach_approved'].includes(analysis.status)) return
+    if (confirmed && analysis.athlete_id && analysis.athlete_id !== selectedAthlete.id) return
     const values = Object.values(videoAnalysisFeedbackDraft).map(value => String(value || '').trim())
+    if (confirmed && !values.some(Boolean)) return
     if (values.some(value => value.length > 600)) {
       showFlash('Hvert feedbackfelt må højst være 600 tegn', 'error')
       return
@@ -77,6 +81,10 @@ export function lavVideoReviewHandlinger({
       if (error) throw error
       if (!data || data.id !== analysis.id || data.athlete_id !== selectedAthlete.id)
         throw new Error('Databasen bekræftede ikke feedbacken')
+      if (confirmed && (data.status !== analysis.status ||
+          (analysis.client_analysis_id && data.client_analysis_id !== analysis.client_analysis_id) ||
+          canonicalFeedback(data.athlete_feedback) !== canonicalFeedback(athleteFeedback)))
+        throw new Error('Databasen bekræftede ikke feedbacken')
       setVideoAnalyses(current => current.map(item => item.id === analysis.id
         ? { ...item, athlete_feedback: data.athlete_feedback,
           feedback_version: data.feedback_version } : item))
@@ -89,6 +97,7 @@ export function lavVideoReviewHandlinger({
       setVideoAnalysisFeedbackDirty(false)
       setVideoAnalysisCloseWarning(false)
       showFlash('Feedback gemt', 'success')
+      if (confirmed) return true
     } catch (error) {
       setVideoAnalysisReviewError(error.message || 'Feedbacken kunne ikke gemmes')
       showFlash('Feedbacken kunne ikke gemmes', 'error')

@@ -17,6 +17,7 @@ import AnalysePakkeReview from './AnalysePakkeReview.jsx'
 
 export default function VideoReviewModal({ coachRyd = false, coachId, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES,
   closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
+  saveNextAvailable = false, saveNextBusy = false, saveNextError, saveVideoAndNext,
   setVideoAnalysisBaselineFindingId, setVideoAnalysisCloseWarning, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, videoAnalyses, videoAnalysisBaselineFindingId,
   videoAnalysisCloseWarning, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft, videoAnalysisReview, videoAnalysisUpdatingId, videoBaselines,
 }) {
@@ -211,6 +212,8 @@ export default function VideoReviewModal({ coachRyd = false, coachId, videoRevie
                       <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>Højst 2 observationer · præcis ét cue til næste sæt</span>
                       <span style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
                         {videoAnalysisFeedbackDirty && <button disabled={updating} onClick={() => discardVideoAnalysisFeedback(analysis)} style={{ ...s.btnGhost, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: updating ? 0.5 : 1 }}>Fortryd ændringer</button>}
+                        {saveNextAvailable && <button type="button" disabled={updating || saveNextBusy || !['works', 'focus', 'next_set'].some(key => String(videoAnalysisFeedbackDraft?.[key] || '').trim())} onClick={saveVideoAndNext} style={s.btnPrimary}>{saveNextBusy ? 'Gemmer…' : 'Gem og næste'}</button>}
+                        {saveNextAvailable && saveNextError && <p role="alert">{saveNextError}</p>}
                         <button disabled={!videoAnalysisFeedbackDirty || updating} onClick={() => saveVideoAnalysisFeedback(analysis)} style={{ ...s.btnPrimary, padding: '0.36rem 0.65rem', fontSize: '0.5rem', opacity: !videoAnalysisFeedbackDirty || updating ? 0.5 : 1 }}>
                           {updating ? 'Gemmer…' : videoAnalysisFeedbackDirty ? 'Gem feedback' : 'Feedback gemt ✓'}
                         </button>
