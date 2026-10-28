@@ -34,9 +34,9 @@ test('eksplicit byggehandler får kun isoleret konfiguration via syntetisk bygge
   }
   assert.equal(c.resolve.alias[0].find.test('./not-supabase.js'),false)
 })
-test('alle ti skærme er lokale med entydige flag og 375 px', () => {
-  assert.equal(screens.length,10); assert.equal(new Set(screens.map(s => s.id)).size,10)
-  assert.equal(screens.filter(s => s.role === 'athlete').length,6)
+test('alle seksten skærme er lokale med entydige flag og 375 px', () => {
+  assert.equal(screens.length,16); assert.equal(new Set(screens.map(s => s.id)).size,16)
+  assert.equal(screens.filter(s => s.role === 'athlete').length,10)
   for (const screen of screens) {
     assert.equal(screen.width,375); assert.ok(screen.steps)
     const url = new URL(previewUrl(screen.id,'http://localhost:4173/scripts/friday-preview.html?appRel3=0&appRel3=0#old'))
@@ -57,11 +57,11 @@ test('pinnede gates forbliver OFF i produktion og uden eksplicit lokalt flag', (
   assert.equal(athleteFlags.kostValg[ATHLETE],true)
   assert.equal(athleteFlags.programUgeFoerst,true); assert.equal(coachFlags.coachFourWeeksEnabled,true)
 })
-test('DOM-listen indeholder ti klikbare links med de rigtige roller', () => {
+test('DOM-listen indeholder seksten klikbare links med de rigtige roller', () => {
   const h = (tag,props,...children) => ({tag,props,children})
   const dom = renderScreenList(h)
   assert.equal(dom.tag,'nav'); assert.equal(dom.props['aria-label'],'Syntetiske skærme')
-  assert.equal(dom.children.length,10)
+  assert.equal(dom.children.length,16)
   dom.children.forEach((node,i) => {
     assert.equal(node.tag,'a'); assert.equal(node.props.style.minHeight,44)
     assert.equal(new URL(node.props.href).searchParams.get('screen'),screens[i].id)

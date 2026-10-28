@@ -22,16 +22,22 @@ interne faner eller klik. Følg klikvejen efter åbning. Hvert link starter forf
 | Hjem (athlete) | [atlet-hjem](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-hjem) | Startvisningen |
 | Program næste uge (athlete) | [atlet-program](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-program) | Mere > Mit program > næste uge |
 | Mobilitet (athlete) | [atlet-mobilitet](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-mobilitet) | Mere > Mobilitet > vælg fokus |
-| Fremgang (athlete) | [atlet-fremgang](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-fremgang) | Fremgang > Styrke, derefter Rekorder |
+| Fremgang (athlete) | [atlet-fremgang](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-fremgang) | Fremgang > Styrke > Rekorder > Se alle detaljer |
 | Profil (athlete) | [atlet-profil](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-profil) | Åbn Konto øverst. Basen har kontomenu, ingen særskilt profilside |
+| Videocoachens tidsmarkeringer (athlete) | [videocoach-tidsmarkeringer](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=videocoach-tidsmarkeringer) | Kontakt > Teknik & løft > Se feedback > Åbn syntetiske tidsmarkeringer > 4.0 s | 
+| Mobilitetsbibliotek (athlete) | [atlet-mobilitetsbibliotek](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-mobilitetsbibliotek) | Mere > Mobilitet > Mobilitet > Se øvelsesbibliotek |
+| Hjemmerutine (athlete) | [atlet-hjemmerutine](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-hjemmerutine) | Mere > Mobilitet > Mobilitet > Squat > Mere dybde > Start min rutine |
+| Blok mod blok (athlete) | [atlet-blok-mod-blok](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-blok-mod-blok) | Fremgang > Styrke > Se alle detaljer |
+| Rekorder pr. gentagelser (athlete) | [atlet-gentagelsesrekorder](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=atlet-gentagelsesrekorder) | Fremgang > Styrke > Rekorder > Se alle detaljer |
+| Coachens opryddede menu (coach) | [coach-oprydning](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-oprydning) | Menu > Mere |
+| Kalender med stævner (coach) | [coach-staevnekalender](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-staevnekalender) | Menu > Kalender |
 | Dagsliste (coach) | [coach-dagsliste](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-dagsliste) | Startvisningen |
 | Atletprofil (coach) | [coach-atletprofil](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-atletprofil) | Åbn Testatlet i dagslisten |
-| Analyse (coach) | [coach-analyse](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-analyse) | Åbn Testatlet > Analyse > samlet analyse |
-| Videocoachens tidsmarkeringer (athlete) | [videocoach-tidsmarkeringer](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=videocoach-tidsmarkeringer) | Beskeder > Teknik & løft > Se feedback > Åbn syntetiske tidsmarkeringer > 4.0 s | 
-| Videokø (coach) | [coach-videokoe](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-videokoe) | Arbejdsindbakke > Videoer |
+| Analyse (coach) | [coach-analyse](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-analyse) | Åbn Testatlet > Mere ▾ > Analyse |
+| Videokø (coach) | [coach-videokoe](http://127.0.0.1:4173/scripts/friday-preview.html?appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&screen=coach-videokoe) | Arbejdsindbakke |
 
 Profilmotivet er basens Konto-menu, ikke en ny profilside. Videokøen indeholder
-en opdigtet kladde uden videofil. Åbn Arbejdsindbakke > Videoer > Testatlet >
+en opdigtet kladde uden videofil. Åbn Arbejdsindbakke > Testatlet >
 Gennemgå måling > Åbn syntetiske tidsmarkeringer > 4.0 s. Samme analyse-id
 vises som delt feedback hos atleten og kladde hos coachen i to særskilte
 læseperspektiver. Der udføres ingen deling eller lagring.
@@ -40,10 +46,10 @@ af lagring, upload eller deling. Data og lager forsvinder ved genindlæsning.
 
 ## Flag i den isolerede previewindgang
 
-Atletprops: enkelPrototype, forenklinger, programUgeFoerst, fremgangFokus, naesteTraening, personalRecords, staevnedagFokus, fremgangLinjer, mobilitetFoerPas, mobilitetFokus, kostPerAtlet, blokFremgang, vaerdF6, kostValg.
+Atletprops: enkelPrototype, forenklinger, programUgeFoerst, fremgangFokus, naesteTraening, personalRecords, repRecords, staevnedagFokus, fremgangLinjer, mobilitetFoerPas, mobilitetFokus, kostPerAtlet, blokFremgang, vaerdF6, kostValg.
 Kostvalg er kun true for den syntetiske atlet.
 
-Coachprops: programCopyEnabled, coachPlanCopyEnabled, blokFremgang, coachFourWeeksEnabled, coachTemplateMessages.
+Coachprops: programCopyEnabled, coachPlanCopyEnabled, blokFremgang, coachFourWeeksEnabled, coachTemplateMessages, coachCalendarEvents.
 
 URL: appE2E2=1, appRel3=1, coachRyd=1, coachUge=1, analyseSamlet=1, analyseSammenlign=1, appData2=1.
 
@@ -73,3 +79,26 @@ og næste ved 4 s viser hver sin kommentar og tegning. Visningen er kun
 indsat af den isolerede previewkonfiguration og kræver vc-epik2-playback=1.
 Normal app og VC-EPIK2-importafspiller er uændrede.
 Previewtransformationen kører før React og afviser ændrede ankerpunkter.
+
+
+## APP-SKAERM4: motiver og mangler i den pinnede base
+
+16 motiver har nu samme rækkefølge og URL i skærmlisten og billedscriptet.
+Kalenderen åbnes via Menu på mobil. Coachens oprydning vises i den eksisterende
+menu med Mere åbnet, så Min træning og VideoCoach er synlige.
+Biblioteket bruger basens lokale katalog med skematiske billeder og teksten
+"tekst fra Marc". Hjemmerutinen er den eksisterende fokusrutine, som kan følges
+hjemme. Basen har ingen særskilt skærm eller datakontrakt for hjemmeøvelser.
+
+Analyse med konklusionen først findes ikke i 7e217974. coach-analyse viser den
+eksisterende "Coachens analyse samlet", hvor Videoanalyse står først, efterfulgt
+af AI-rapport, Historik, Baseline og Målinger. Motivet dokumenterer kun den
+eksisterende prototype. Det er ikke dokumentation for en konklusion først.
+Ingen ny analysefunktion eller opdigtet konklusion er tilføjet.
+
+Seedet indeholder to navngivne blokke, tunge sæt på flere dage, præcis 1, 3, 5
+og 8 gentagelser samt Testatlets stævnedato. Kun previewprops aktiverer
+repRecords og coachCalendarEvents. Produktionsstandarderne er fortsat OFF.
+Kør berørte prøver: node --test scripts/friday-shots.test.js scripts/friday-screens4.test.js
+Workerkopi: node --import ./worker-register.mjs --test friday-shots.test.js friday-screens4.test.js
+Visuel kontrol, rigtig React-montering, fuld suite og build udføres separat.

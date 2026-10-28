@@ -30,7 +30,7 @@ export function buildPreviewSeed(now = new Date()) {
         tables.exercises.push(exercise)
         if (w < 4) for (let set = 1; set <= 3; set++) tables.exercise_logs.push({
           id: id(10000+w*27+s*9+e*3+set), athlete_id: ATHLETE, exercise_id: exercise.id,
-          set_number: set, weight: exercise.recommended_weight, reps_completed: 5,
+          set_number: set, weight: exercise.recommended_weight, reps_completed: set === 1 ? [1, 3, 5, 8][w] : 5,
           rpe_actual: 7, rpe_planned: 7, rpe_source: 'athlete', skipped: false,
           logged_at: date((w-4)*7+s*2)+'T10:00:00Z' })
       }
