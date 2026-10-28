@@ -1,3 +1,5 @@
+import VideoMarkerTemplates from './VideoMarkerTemplates.mjs'
+import { videoFeedbackPlaybackEnabled } from '../athlete/videoFeedbackPlayback.mjs'
 import VideoReviewTemplates, { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './VideoReviewTemplates.mjs'
 import { DEFAULT_VIDEOCOACH_FORENKL4 } from '../vcForenkl4.mjs'
 import { CoachFold, ReviewConclusion } from '../coachRyd.mjs'
@@ -165,6 +167,9 @@ export default function VideoReviewModal({ coachRyd = false, coachId, videoRevie
                         setVideoAnalysisFeedbackDirty(true)
                         setVideoAnalysisCloseWarning(false)
                       }} />}
+                    {coachId && selectedAthlete?.id === analysis.athlete_id && videoFeedbackPlaybackEnabled() && <VideoMarkerTemplates
+                      key={JSON.stringify([coachId, selectedAthlete.id, analysis.id])}
+                      coachId={coachId} athleteId={selectedAthlete.id} analysisId={analysis.id} updating={updating} />}
                     {feedbackEditorFields.map(([key, label]) => (
                       <label key={key} style={{ display: 'grid', gap: '0.3rem' }}>
                         <span style={s.fieldLabel}>{label}</span>

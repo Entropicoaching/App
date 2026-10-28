@@ -6,6 +6,8 @@ const base = new URL('./', import.meta.url)
 const dependencies = [
   ["../Dashboard.jsx", "./nytIAppen.mjs", {"stub": "export default function Stub(){return null}\nexport const nytCoachNavigation = () => () => {};"}],
   ["../Dashboard.jsx", "./dashboard/coachNotes.mjs", { "file": "./coachNotes.mjs" }],
+  ["../Dashboard.jsx", "./dashboard/fridayChecklist.mjs", {"stub": "export function FridayChecklist(){return null}\nexport function FridayChecklistEntry(){return null}"}],
+  ["../Dashboard.jsx", "./rel1030.mjs", {"stub": "export const DEFAULT_REL1030 = false; export const rel1030Enabled = () => false;"}],
   [
     "./ForsideView.jsx",
     "./coachFollowUp.mjs",

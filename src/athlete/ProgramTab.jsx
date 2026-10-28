@@ -1,3 +1,4 @@
+import IntensityExplanation from './IntensityExplanation.jsx'
 import { createElement } from 'react'
 import { blockWeeks, renderProgramBlockOverview } from './programBlockOverview.mjs'
 import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
@@ -118,7 +119,7 @@ function ExerciseTimer({ duration, label }) {
 }
 
 export default function ProgramTab({
-  programUgeFoerst = false, programBlokOversigt = false, fetchProgramBlockLogs,
+  programIntensityHelp = false, programUgeFoerst = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -561,7 +562,10 @@ export default function ProgramTab({
                                       </>
                                     )}
                                     {showPrescription && <div data-exercise-prescription style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
-                                      {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
+                                      {programIntensityHelp === true ? <>
+                                        {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`].filter(Boolean).join(' · ')}
+                                        {ex.intensity && <>{(ex.sets || ex.reps) ? ' · ' : ''}<IntensityExplanation key={ex.intensity} intensity={ex.intensity} /></>}
+                                      </> : [ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
                                     </div>}
                                     {ex.note && (
                                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginTop: '0.1rem', fontStyle: 'italic' }}>{ex.note}</div>
