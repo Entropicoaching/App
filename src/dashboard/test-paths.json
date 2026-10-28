@@ -38,5 +38,8 @@
   "src/videoCoachBaselineProgress.js": "videoCoachBaselineProgress.js",
   "src/dashboard/AnalysePakkeReview.jsx": "AnalysePakkeReview.jsx",
   "src/dashboard/analysePakke.js": "analysePakke.js",
-  "src/dashboard/coachSaveNext.mjs": "coachSaveNext.mjs"
+  "src/dashboard/coachSaveNext.mjs": "coachSaveNext.mjs",
+  "src/dashboard/VideoMarkerTemplates.mjs": "VideoMarkerTemplates.mjs",
+  "src/dashboard/vcMarkerTemplates.mjs": "vcMarkerTemplates.mjs",
+  "src/athlete/videoFeedbackPlayback.mjs": "videoFeedbackPlayback.mjs"
 }

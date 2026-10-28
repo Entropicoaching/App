@@ -4,6 +4,7 @@ import { jsx } from './coachFourWeeksJsx.mjs'
 const base = new URL('./', import.meta.url)
 const flat = existsSync(new URL('Dashboard.jsx', base))
 const targets = {
+  'fridayChecklist.mjs': './fridayChecklist.mjs', 'rel1030.mjs': '../rel1030.mjs',
   'dataEnough.mjs': '../dataEnough.mjs', 'dataEvidence.mjs': '../dataEvidence.mjs', 'rpeEvidence.mjs': '../rpeEvidence.mjs', 'mealEvidence.mjs': '../mealEvidence.mjs', 'videoEvidence.mjs': '../videoEvidence.mjs', 'coachWeekOverview.mjs': './coachWeekOverview.mjs',
   'coachKonstanter.js': './coachKonstanter.js',
   'Dashboard.jsx': '../Dashboard.jsx', 'laesninger.js': './laesninger.js',

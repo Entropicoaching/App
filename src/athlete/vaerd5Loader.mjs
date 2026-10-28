@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './vaerd5Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const names = ['programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
+const names = ['IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
   'fixedRepsEntry.js', 'exerciseSetView.js', 'exerciseNames.js', 'warmupOverride.js', 'kostNumbers.mjs',
   'vaerd5Fixture.mjs', 'rpeEvidence.mjs', 'dataEnough.mjs', 'calendarDate.js']
 const urls = new Map(names.map(name => [name, (existsSync(new URL(name, root))
@@ -27,7 +27,7 @@ export function install() {
     load(url, context, next) {
       if (!approved.has(url)) return next(url, context)
       let source = readFileSync(new URL(url), 'utf8')
-      if (url === urls.get('ProgramTab.jsx')) {
+      if (url === urls.get('ProgramTab.jsx') || url === urls.get('IntensityExplanation.jsx')) {
         source = "import { h as __h } from './vaerd5Dom.mjs';\n" + jsx(source)
       }
       return { format: 'module', source, shortCircuit: true }

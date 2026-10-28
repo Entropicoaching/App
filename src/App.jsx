@@ -79,7 +79,7 @@ const errorScreen = (onRetry) => (
   </div>
 )
 
-function App({ programBlokOversigt = false, mobilitetHjalp = false, forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokFremgang = false } = {}) {
+function App({ programIntensityHelp = false, programBlokOversigt = false, mobilitetHjalp = false, forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokFremgang = false } = {}) {
   ;({ mobilitetHjalp, mobilitetFokus, mobilitetFoerPas } = rel1030Mobility(
     { mobilitetHjalp, mobilitetFokus, mobilitetFoerPas },
     typeof window === 'undefined' ? '' : window.location.search))
@@ -91,6 +91,7 @@ function App({ programBlokOversigt = false, mobilitetHjalp = false, forenklinger
   const [loadError, setLoadError] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
   const [coachAthleteId, setCoachAthleteId] = useState(null)
+  const [previewInitialTab, setPreviewInitialTab] = useState('hjem')
   // Sand fra åbning til atleten har sat en ny adgangskode via "glemt adgangskode"-
   // linket. Initieres synkront fra URL'en (se isPasswordRecoveryUrl), så vi aldrig
   // først når at vise den almindelige rolle-baserede visning et splitsekund.
@@ -277,9 +278,9 @@ function App({ programBlokOversigt = false, mobilitetHjalp = false, forenklinger
   if (role === 'coach') {
     viewEl = previewMode
       ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-          componentProps={{ ...rel3.athlete, session, role, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
+          componentProps={{ ...rel3.athlete, session, role, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programIntensityHelp: programIntensityHelp === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, previewInitialTab, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } }} />
       : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
-          componentProps={{ ...rel3.coach, session, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId) => { setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
+          componentProps={{ ...rel3.coach, session, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem') => { setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
     // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
     // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'
@@ -289,7 +290,7 @@ function App({ programBlokOversigt = false, mobilitetHjalp = false, forenklinger
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
     viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-      componentProps={{ ...rel3.athlete, session, role, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
+      componentProps={{ ...rel3.athlete, session, role, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programIntensityHelp: programIntensityHelp === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) }} />
   }
   return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }

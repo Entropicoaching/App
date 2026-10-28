@@ -1,5 +1,5 @@
 import { registerHooks } from 'node:module'
-import { readFileSync } from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './reviewJsx.mjs'
 const dom = new URL('./reviewDom.mjs', import.meta.url).href
 const stub = `export const DEFAULT_VIDEOCOACH_FORENKL4=false;
@@ -16,9 +16,10 @@ export const videoCoachMetric=()=>null; export const videoCoachBaseline=()=>null
 export const videoCoachMetricText=()=>''; export const videoCoachBaselineText=()=>'';
 import {createElement as h} from 'react'; export const CoachFold=({children})=>h('div',null,children);
 export const ReviewConclusion=()=>null; export default ()=>null;`
-const allowed = ['./VideoReviewTemplates.mjs','./videoReviewLayout.mjs']
+const allowed = ['./VideoReviewTemplates.mjs','./videoReviewLayout.mjs','./VideoMarkerTemplates.mjs','../athlete/videoFeedbackPlayback.mjs']
 registerHooks({
   resolve(specifier, context, next) {
+    if (specifier === '../athlete/videoFeedbackPlayback.mjs') return {url:new URL(existsSync(new URL('./videoFeedbackPlayback.mjs',import.meta.url)) ? './videoFeedbackPlayback.mjs' : '../athlete/videoFeedbackPlayback.mjs',import.meta.url).href,shortCircuit:true}
     if (specifier === 'react') return {url:dom,shortCircuit:true}
     if ((context.parentURL?.endsWith('/VideoReviewModal.jsx') || context.parentURL?.endsWith('/reviewBaseline.jsx')) && specifier.startsWith('.') && !allowed.includes(specifier)) {
       return {url:'data:text/javascript,'+encodeURIComponent(stub),shortCircuit:true}

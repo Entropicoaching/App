@@ -51,8 +51,8 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false }) {
-  const [requestedTab, setLegacyTab] = useState('hjem')
+export default function AthleteView({ mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, previewInitialTab = 'hjem', onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, programIntensityHelp = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokFremgang = false, vaerdF6 = false }) {
+  const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
   const HjemVisning = enkelOn ? LazyEnkelHjemTab : HjemTab
@@ -681,7 +681,7 @@ export default function AthleteView({ mobilitetHjalp = false, session, onExitPre
               setProgOpenSession, setShowRpeGuide, setSkipConfirmEx, setViewingWeekIdx, setWarmupChecked,
               setWarmupOverrideTick, setWarmupSetEditing, skipConfirmEx, skipExercise, skipRemainingSets,
               skipSet, suggestNextWeight, suggestWarmupOverride, unskipSet, viewingWeekIdx, warmupChecked,
-              warmupOverrideTick, warmupSetEditing, weekStartDate, programUgeFoerst, programBlokOversigt, fetchProgramBlockLogs, vaerdF6,
+              warmupOverrideTick, warmupSetEditing, weekStartDate, programIntensityHelp, programUgeFoerst, programBlokOversigt, fetchProgramBlockLogs, vaerdF6,
             }}
           />
         )}

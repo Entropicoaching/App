@@ -1,4 +1,6 @@
 import NytIAppen, { nytCoachNavigation } from './nytIAppen.mjs'
+import { FridayChecklist, FridayChecklistEntry } from './dashboard/fridayChecklist.mjs'
+import { rel1030Enabled } from './rel1030.mjs'
 import { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './dashboard/VideoReviewTemplates.mjs'
 import { coachMorningFlag } from './dashboard/coachMorning.mjs'
 import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
@@ -71,6 +73,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
 export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
+  const checklistEnabled = rel1030Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
   ))
@@ -596,7 +599,8 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
       <main style={{ ...s.main, ...(isMobile ? { marginLeft: 0, overflowX: 'hidden', paddingBottom: '76px' } : {}) }}>
         {COACH_SAVE_NEXT_ENABLED === true && saveNextDone && view === 'profile' && <p role="status" style={{ padding: '1rem', color: '#c9d7c7' }}>Svaret er gemt. Ingen flere ubesvarede beskeder eller videoer i denne gennemgang.</p>}
         <div style={s.topbar}>
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? (coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing') : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
+          <FridayChecklistEntry enabled={checklistEnabled} open={() => { setSelectedAthlete(null); setView('friday-checklist') }} />
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'friday-checklist' && checklistEnabled ? 'Fredagens tjekliste' : view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? (coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing') : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
           {onPreviewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
@@ -619,6 +623,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
           onNavigate={nytCoachNavigation({ setView, setSelectedAthlete, openProfile })} />
 
         {coachRyd && view !== 'inbox' && view !== 'list' && <WorkInboxLink count={coachPriorityItems.length} next={coachPriorityItems[0]} open={() => { setView('inbox'); setSelectedAthlete(null) }} />}
+        {checklistEnabled && view === 'friday-checklist' && <FridayChecklist key={session.user.id} enabled={checklistEnabled} coachId={session.user.id} athletes={athletes} openProfile={openProfile} onPreviewAthlete={onPreviewAthlete} setView={setView} />}
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
         {view === 'inbox' && (
           <LazyBoundary
