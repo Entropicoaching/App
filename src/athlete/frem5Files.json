@@ -7,6 +7,7 @@
   "src/inputValues.js": "inputValues.js",
   "src/exerciseProgress.js": "exerciseProgress.js",
   "src/dataEnough.mjs": "dataEnough.mjs",
+  "src/udgivelseTrin.mjs": "udgivelseTrin.mjs",
   "src/rpeEvidence.mjs": "rpeEvidence.mjs",
   "src/exerciseSetView.js": "exerciseSetView.js",
   "src/exerciseNames.js": "exerciseNames.js",

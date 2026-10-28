@@ -7,7 +7,7 @@ const root = new URL('./', import.meta.url)
 const components = ['FremgangTab.jsx', 'EnkelFremgangTab.jsx']
 const athlete = ['repRecords.mjs', 'fremgangPersonalRecords.mjs', 'fremgangLinjer.mjs', 'rekorder.js', 'kostNumbers.mjs']
 const shared = ['exerciseProgress.js', 'exerciseSetView.js', 'exerciseNames.js', 'inputValues.js',
-  'calendarDate.js', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'ugenoegle.js']
+  'calendarDate.js', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'ugenoegle.js']
 const urls = new Map([...components, ...athlete, ...shared].map(name => [name,
   new URL(existsSync(new URL(name, root)) ? name : name === 'ugenoegle.js' ? '../volume/' + name : '../' + name, root).href]))
 const dom = new URL('./repRecordsDom.mjs', root).href

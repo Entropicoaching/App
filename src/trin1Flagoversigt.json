@@ -1,0 +1,394 @@
+[
+  {
+    "name": "rel1030",
+    "module": "src/rel1030.mjs",
+    "default": false,
+    "activation": "URL ?rel1030=1, exactly one value; session URL only",
+    "probe": "DEFAULT_REL1030"
+  },
+  {
+    "name": "appE2E2",
+    "module": "src/e2eTestFlags.mjs",
+    "default": false,
+    "activation": "MODE=e2e AND HTTP localhost/127.0.0.1/[::1], no credentials, exactly one appE2E2=1",
+    "probe": null
+  },
+  {
+    "name": "appRel3",
+    "module": "src/release3TestFlags.mjs",
+    "default": false,
+    "activation": "MODE=e2e AND HTTP loopback, no credentials, exactly one appRel3=1",
+    "probe": null
+  },
+  {
+    "name": "appData2",
+    "module": "src/dataEnough.mjs",
+    "default": false,
+    "activation": "URL ?appData2=1; URLSearchParams.get uses first value",
+    "probe": null
+  },
+  {
+    "name": "COACH_NOTE_SIGNAL_ENABLED",
+    "module": "src/coachNoteSignal.js",
+    "default": false,
+    "activation": "Computed from fridayTestEnabled; same local e2e gate as appE2E2",
+    "probe": "COACH_NOTE_SIGNAL_ENABLED"
+  },
+  {
+    "name": "coachRyd",
+    "module": "src/coachRyd.mjs",
+    "default": false,
+    "activation": "URL coachRyd=1 OR rel1030=1; each accepted key must have exactly one value",
+    "probe": "DEFAULT_COACH_RYD"
+  },
+  {
+    "name": "coachUge",
+    "module": "src/dashboard/coachWeekOverview.mjs",
+    "default": false,
+    "activation": "URL coachUge=1 (first value) OR exactly one rel1030=1",
+    "probe": "DEFAULT_COACH_WEEK_OVERVIEW"
+  },
+  {
+    "name": "coachNotes",
+    "module": "src/dashboard/coachNotes.mjs",
+    "default": false,
+    "activation": "URL coachNotes=1; first value",
+    "probe": "COACH_NOTES_ENABLED"
+  },
+  {
+    "name": "coachFollowUp",
+    "module": "src/dashboard/coachFollowUp.mjs",
+    "default": false,
+    "activation": "URL coachFollowUp=1; first value",
+    "probe": "COACH_FOLLOW_UP_ENABLED"
+  },
+  {
+    "name": "coachStaevne",
+    "module": "src/dashboard/coachMeetSoon.mjs",
+    "default": false,
+    "activation": "URL coachStaevne=1, exactly one value",
+    "probe": "COACH_MEET_SOON_ENABLED"
+  },
+  {
+    "name": "coachMorgen",
+    "module": "src/dashboard/coachMorningSource.mjs",
+    "default": false,
+    "activation": "URL coachMorgen=1, exactly one value",
+    "probe": "COACH_MORNING_ENABLED"
+  },
+  {
+    "name": "coachProfilUge",
+    "module": "src/dashboard/profileWeekSummary.mjs",
+    "default": false,
+    "activation": "URL coachProfilUge=1, exactly one value",
+    "probe": "DEFAULT_PROFILE_WEEK"
+  },
+  {
+    "name": "analyseConclusion",
+    "module": "src/dashboard/analyseConclusion.mjs",
+    "default": false,
+    "activation": "URL analyseConclusion=1 OR rel1030=1, exactly one value per accepted key",
+    "probe": "DEFAULT_ANALYSE_CONCLUSION"
+  },
+  {
+    "name": "analyseSamlet",
+    "module": "src/dashboard/analyseSamlet.mjs",
+    "default": false,
+    "activation": "URL analyseSamlet=1 OR rel1030=1, exactly one value per accepted key",
+    "probe": "DEFAULT_ANALYSE_SAMLET"
+  },
+  {
+    "name": "analyseSammenlign",
+    "module": "src/dashboard/analyseSammenlign.mjs",
+    "default": false,
+    "activation": "URL analyseSammenlign=1 OR rel1030=1, exactly one value per accepted key",
+    "probe": "DEFAULT_ANALYSE_SAMMENLIGN"
+  },
+  {
+    "name": "videoFeedbackPlayback",
+    "module": "src/athlete/videoFeedbackPlayback.mjs",
+    "default": false,
+    "activation": "localStorage vc-epik2-playback = string 1 OR exactly one URL rel1030=1",
+    "probe": "DEFAULT_VIDEO_FEEDBACK_PLAYBACK"
+  },
+  {
+    "name": "vc-svar1",
+    "module": "src/videoMarkerReplies.mjs",
+    "default": false,
+    "activation": "localStorage vc-svar1 = string 1; playback and exact marker scope also required",
+    "probe": "DEFAULT_MARKER_REPLIES"
+  },
+  {
+    "name": "entropi:vc-review1",
+    "module": "src/dashboard/videoReviewLayout.mjs",
+    "default": false,
+    "activation": "localStorage entropi:vc-review1 = string 1",
+    "probe": "DEFAULT_VIDEO_REVIEW"
+  },
+  {
+    "name": "vc_upload_retry_v1",
+    "module": "src/videoUploadRetry.mjs",
+    "default": false,
+    "activation": "localStorage vc_upload_retry_v1 = string 1",
+    "probe": null
+  },
+  {
+    "name": "VIDEO_QUEUE_FILTER_ENABLED",
+    "module": "src/dashboard/videoQueueFilter.mjs",
+    "default": false,
+    "activation": "Explicit code constant true; no URL/storage activation",
+    "probe": "VIDEO_QUEUE_FILTER_ENABLED"
+  },
+  {
+    "name": "VIDEO_QUEUE_WAIT_ENABLED",
+    "module": "src/dashboard/videoQueueWait.mjs",
+    "default": false,
+    "activation": "Explicit code constant true; no URL/storage activation",
+    "probe": "VIDEO_QUEUE_WAIT_ENABLED"
+  },
+  {
+    "name": "VIDEO_STORAGE_USAGE_ENABLED",
+    "module": "src/dashboard/videoStorageUsage.mjs",
+    "default": false,
+    "activation": "Explicit code constant true; no URL/storage activation",
+    "probe": "VIDEO_STORAGE_USAGE_ENABLED"
+  },
+  {
+    "name": "VIDEO_SLET",
+    "module": "src/videoRetention.mjs",
+    "default": false,
+    "activation": "Explicit videoSlet=true in isolated retention preview; default constant false",
+    "probe": "VIDEO_SLET"
+  },
+  {
+    "name": "DEFAULT_VIDEOCOACH_FORENKL4",
+    "module": "src/vcForenkl4.mjs",
+    "default": false,
+    "activation": "Explicit enabled=true/code choice at integration; no URL/storage gate",
+    "probe": "DEFAULT_VIDEOCOACH_FORENKL4"
+  },
+  {
+    "name": "videoReviewTemplates",
+    "module": "src/dashboard/VideoReviewTemplates.mjs",
+    "default": false,
+    "activation": "Dashboard/VideoReviewModal prop videoReviewTemplates=true; default constant false",
+    "probe": "DEFAULT_VIDEO_REVIEW_TEMPLATES"
+  },
+  {
+    "name": "coachActions",
+    "module": "src/dashboard/coachActions.mjs",
+    "default": false,
+    "activation": "ForsideView/ForsideBase and reader coachActions=true or explicit code constant",
+    "probe": "COACH_ACTIONS_ENABLED"
+  },
+  {
+    "name": "coachFourWeeksEnabled",
+    "module": "src/dashboard/coachFourWeeks.mjs",
+    "default": false,
+    "activation": "Dashboard prop coachFourWeeksEnabled=true; default constant false; coachProfilUge also captures sources",
+    "probe": "COACH_FOUR_WEEKS_ENABLED"
+  },
+  {
+    "name": "coachTemplateMessages",
+    "module": "src/dashboard/coachTemplateMessages.mjs",
+    "default": false,
+    "activation": "Dashboard prop coachTemplateMessages=true; local appRel3 e2e also supplies it",
+    "probe": "COACH_TEMPLATE_MESSAGES_ENABLED"
+  },
+  {
+    "name": "COACH_SAVE_NEXT_ENABLED",
+    "module": "src/dashboard/coachSaveNext.mjs",
+    "default": false,
+    "activation": "Explicit code constant true; matched inbox reply scope required",
+    "probe": "COACH_SAVE_NEXT_ENABLED"
+  },
+  {
+    "name": "programCopyEnabled",
+    "module": "src/dashboard/programCopy.js",
+    "default": false,
+    "activation": "Dashboard prop programCopyEnabled=true; default constant false",
+    "probe": "DEFAULT_PROGRAM_COPY"
+  },
+  {
+    "name": "coachPlanCopyEnabled",
+    "module": "src/dashboard/coachPlanCopy.mjs",
+    "default": false,
+    "activation": "Dashboard prop coachPlanCopyEnabled=true OR local appE2E2; default false",
+    "probe": "DEFAULT_COACH_PLAN_COPY"
+  },
+  {
+    "name": "coachCalendarEvents",
+    "module": "src/Dashboard.jsx",
+    "default": false,
+    "activation": "Dashboard prop coachCalendarEvents=true; isolated preview also sets it",
+    "probe": null
+  },
+  {
+    "name": "enkelPrototype",
+    "module": "src/athlete/enkelPrototype.mjs",
+    "default": false,
+    "activation": "AthleteView prop enkelPrototype=true; isolated Friday preview also sets it",
+    "probe": "DEFAULT_ENKEL_PROTOTYPE"
+  },
+  {
+    "name": "forenklinger",
+    "module": "src/athlete/athleteShortcuts.mjs",
+    "default": false,
+    "activation": "App/AthleteView prop forenklinger=true; isolated preview also sets it",
+    "probe": "DEFAULT_FORENKLINGER"
+  },
+  {
+    "name": "programUgeFoerst",
+    "module": "src/athlete/ProgramTab.jsx",
+    "default": false,
+    "activation": "AthleteView/ProgramTab prop programUgeFoerst=true; not a root App prop",
+    "probe": null
+  },
+  {
+    "name": "programNaesteUge",
+    "module": "src/athlete/ProgramTab.jsx",
+    "default": false,
+    "activation": "App/AthleteView/ProgramTab prop programNaesteUge=true",
+    "probe": null
+  },
+  {
+    "name": "programBlokOversigt",
+    "module": "src/athlete/ProgramTab.jsx",
+    "default": false,
+    "activation": "App/AthleteView/ProgramTab prop programBlokOversigt=true",
+    "probe": null
+  },
+  {
+    "name": "programIntensityHelp",
+    "module": "src/athlete/ProgramTab.jsx",
+    "default": false,
+    "activation": "App/AthleteView/ProgramTab prop programIntensityHelp=true",
+    "probe": null
+  },
+  {
+    "name": "vaerdF6",
+    "module": "src/athlete/ProgramTab.jsx",
+    "default": false,
+    "activation": "AthleteView/ProgramTab prop vaerdF6=true; not a root App prop",
+    "probe": null
+  },
+  {
+    "name": "ugeLogget",
+    "module": "src/athlete/UgensStatusKort.jsx",
+    "default": false,
+    "activation": "App/AthleteView prop ugeLogget=true",
+    "probe": null
+  },
+  {
+    "name": "fremgangFokus",
+    "module": "src/AthleteView.jsx",
+    "default": false,
+    "activation": "App/AthleteView prop fremgangFokus=true OR local appRel3 e2e",
+    "probe": null
+  },
+  {
+    "name": "fremgangLinjer",
+    "module": "src/athlete/fremgangLinjer.mjs",
+    "default": false,
+    "activation": "AthleteView/FremgangTab prop fremgangLinjer=true",
+    "probe": "DEFAULT_FREMGANG_LINJER"
+  },
+  {
+    "name": "personalRecords",
+    "module": "src/athlete/fremgangPersonalRecords.mjs",
+    "default": false,
+    "activation": "AthleteView/FremgangTab prop personalRecords=true",
+    "probe": "DEFAULT_PERSONAL_RECORDS"
+  },
+  {
+    "name": "repRecords",
+    "module": "src/athlete/repRecords.mjs",
+    "default": false,
+    "activation": "AthleteView/FremgangTab prop repRecords=true",
+    "probe": "DEFAULT_REP_RECORDS"
+  },
+  {
+    "name": "blokFremgang",
+    "module": "src/blokFremgang.mjs",
+    "default": false,
+    "activation": "App/AthleteView/Dashboard prop blokFremgang=true",
+    "probe": "DEFAULT_BLOK_FREMGANG"
+  },
+  {
+    "name": "naesteTraening",
+    "module": "src/athlete/nextTrainingHome.mjs",
+    "default": false,
+    "activation": "AthleteView prop naesteTraening=true OR local appRel3 e2e",
+    "probe": "DEFAULT_NEXT_TRAINING_HOME"
+  },
+  {
+    "name": "staevnedagFokus",
+    "module": "src/athlete/staevnedagFocus.mjs",
+    "default": false,
+    "activation": "AthleteView/StaevnedagTab prop staevnedagFokus=true OR local appRel3 e2e",
+    "probe": "DEFAULT_STAEVNEDAG_FOKUS"
+  },
+  {
+    "name": "staevneHjem",
+    "module": "src/athlete/staevneHome.mjs",
+    "default": false,
+    "activation": "AthleteView prop staevneHjem=true; no URL/storage activation",
+    "probe": "DEFAULT_STAEVNE_HOME"
+  },
+  {
+    "name": "mobilitetCoach",
+    "module": "src/athlete/coachMobility.mjs",
+    "default": false,
+    "activation": "App/AthleteView/Dashboard prop mobilitetCoach=true OR exactly one rel1030=1",
+    "probe": "DEFAULT_COACH_MOBILITY"
+  },
+  {
+    "name": "mobilitetHjemme",
+    "module": "src/mobilityHomework.mjs",
+    "default": false,
+    "activation": "App/AthleteView/Dashboard prop mobilitetHjemme=true OR exactly one rel1030=1",
+    "probe": "DEFAULT_MOBILITY_HOMEWORK"
+  },
+  {
+    "name": "mobilitetHjalp",
+    "module": "src/mobilityHelped.mjs",
+    "default": false,
+    "activation": "App/AthleteView/Dashboard prop mobilitetHjalp=true OR exactly one rel1030=1",
+    "probe": "DEFAULT_MOBILITY_HELPED"
+  },
+  {
+    "name": "mobilitetFoerPas",
+    "module": "src/athlete/mobilityBeforeSession.mjs",
+    "default": false,
+    "activation": "App/AthleteView prop mobilitetFoerPas=true OR exactly one rel1030=1",
+    "probe": "DEFAULT_MOBILITY_BEFORE_SESSION"
+  },
+  {
+    "name": "mobilitetFokus",
+    "module": "src/athlete/mobilityFocus.mjs",
+    "default": false,
+    "activation": "App/AthleteView prop mobilitetFokus=true OR rel1030=1 OR local appE2E2",
+    "probe": "DEFAULT_MOBILITY_FOCUS"
+  },
+  {
+    "name": "kostPerAtlet",
+    "module": "src/athlete/kostValg.mjs",
+    "default": false,
+    "activation": "AthleteView prop kostPerAtlet=true plus kostValg map keyed by synthetic athlete ID; fallback constant false",
+    "probe": "KOST_PER_ATLET"
+  },
+  {
+    "name": "app-kontakt2-latest",
+    "module": "src/athlete/contactLatest.mjs",
+    "default": false,
+    "activation": "localStorage app-kontakt2-latest = string 1",
+    "probe": "CONTACT_LATEST_DEFAULT"
+  },
+  {
+    "name": "videoSetSelection",
+    "module": "src/athlete/videoSetSelection.mjs",
+    "default": false,
+    "activation": "AthleteView prop videoSetSelection=true; default constant false",
+    "probe": "VIDEO_SET_SELECTION_ENABLED"
+  }
+]

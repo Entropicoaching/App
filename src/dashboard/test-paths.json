@@ -13,6 +13,7 @@
   "src/coachNoteSignal.js": "coachNoteSignal.js",
   "src/e2eTestFlags.mjs": "e2eTestFlags.mjs",
   "src/dataEnough.mjs": "dataEnough.mjs",
+  "src/udgivelseTrin.mjs": "udgivelseTrin.mjs",
   "src/rpeEvidence.mjs": "rpeEvidence.mjs",
   "src/dashboard/videoReviewHandlinger.js": "videoReviewHandlinger.js",
   "src/dashboard/videoSaveApproveShare.mjs": "videoSaveApproveShare.mjs",

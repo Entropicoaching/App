@@ -38,7 +38,7 @@ export function install() {
       }
       if (specifier === '../BlokFremgang.jsx') return { url: new URL('../BlokFremgang.jsx', root).href, shortCircuit: true }
       if (context.parentURL?.endsWith('/BlokFremgang.jsx') && specifier === 'react') return { url: new URL('frem3Dom.mjs', root).href, shortCircuit: true }
-      const linked = ['dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs'].find(n => specifier === '../' + n || specifier === './' + n)
+      const linked = ['udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs'].find(n => specifier === '../' + n || specifier === './' + n)
       if (linked && context.parentURL?.startsWith(new URL('../', root).href)) return { url: new URL(['fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs'].includes(linked) ? linked : '../' + linked, root).href, shortCircuit: true }
       if (known(context.parentURL)) {
         if (specifier === 'react' || specifier === '../athleteShared.js')

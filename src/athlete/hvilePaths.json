@@ -14,6 +14,7 @@
   "exerciseSetView.js": "src/exerciseSetView.js",
   "calendarDate.js": "src/calendarDate.js",
   "inputValues.js": "src/inputValues.js",
+  "udgivelseTrin.mjs": "src/udgivelseTrin.mjs",
   "dataEnough.mjs": "src/dataEnough.mjs",
   "rpeEvidence.mjs": "src/rpeEvidence.mjs",
   "dataEvidence.mjs": "src/dataEvidence.mjs",

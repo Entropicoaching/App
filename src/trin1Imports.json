@@ -1,0 +1,308 @@
+{
+  "src/dashboard/coachPlanCopy.mjs": {
+    "../calendarDate.js": "src/calendarDate.js",
+    "../inputValues.js": "src/inputValues.js"
+  },
+  "src/inputValues.js": {
+    "./athlete/kostNumbers.mjs": "src/athlete/kostNumbers.mjs"
+  },
+  "src/athlete/kostNumbers.mjs": {},
+  "src/calendarDate.js": {
+    "./athlete/kostNumbers.mjs": "src/athlete/kostNumbers.mjs"
+  },
+  "src/videoMarkerReplies.mjs": {},
+  "src/dashboard/videoQueueFilter.mjs": {},
+  "scripts/dashboardKilde.mjs": {
+    "node:fs": "node:fs"
+  },
+  "src/udgivelseTrin.mjs": {},
+  "src/mobilityHomework.mjs": {
+    "react": "@dom",
+    "./athlete/mobilityCatalog.mjs": "src/athlete/mobilityCatalog.mjs"
+  },
+  "src/athlete/mobilityCatalog.mjs": {},
+  "src/dashboard/coachMorningSource.mjs": {},
+  "src/e2eTestFlags.mjs": {},
+  "src/coachRyd.mjs": {
+    "react": "@dom"
+  },
+  "src/athlete/mobilityBeforeSession.mjs": {
+    "react": "@dom",
+    "./mobilityCatalog.mjs": "src/athlete/mobilityCatalog.mjs",
+    "./mobilityLibrary.mjs": "src/athlete/mobilityLibrary.mjs",
+    "../exerciseNames.js": "src/exerciseNames.js",
+    "../warmup.js": "src/warmup.js"
+  },
+  "src/warmup.js": {},
+  "src/exerciseNames.js": {},
+  "src/athlete/mobilityLibrary.mjs": {},
+  "src/athlete/ugeHjaelp.js": {
+    "../supabase": "@dom"
+  },
+  "src/athlete/ugeFeedback.js": {
+    "../rpeEvidence.mjs": "src/rpeEvidence.mjs",
+    "../dataEnough.mjs": "src/dataEnough.mjs"
+  },
+  "src/dataEnough.mjs": {
+    "./udgivelseTrin.mjs": "src/udgivelseTrin.mjs",
+    "./calendarDate.js": "src/calendarDate.js",
+    "./rpeEvidence.mjs": "src/rpeEvidence.mjs"
+  },
+  "src/rpeEvidence.mjs": {
+    "./dataEnough.mjs": "src/dataEnough.mjs"
+  },
+  "src/vcForenkl4.mjs": {},
+  "src/dashboard/analyseConclusion.mjs": {
+    "../rel1030.mjs": "src/rel1030.mjs",
+    "react": "@dom",
+    "../dataEnough.mjs": "src/dataEnough.mjs",
+    "../dataEvidence.mjs": "src/dataEvidence.mjs",
+    "../exerciseProgress.js": "src/exerciseProgress.js",
+    "../exerciseSetView.js": "src/exerciseSetView.js"
+  },
+  "src/exerciseSetView.js": {
+    "./exerciseNames.js": "src/exerciseNames.js"
+  },
+  "src/exerciseProgress.js": {
+    "./dataEnough.mjs": "src/dataEnough.mjs",
+    "./inputValues.js": "src/inputValues.js",
+    "./calendarDate.js": "src/calendarDate.js",
+    "./exerciseSetView.js": "src/exerciseSetView.js",
+    "./exerciseNames.js": "src/exerciseNames.js",
+    "./volume/ugenoegle.js": "src/volume/ugenoegle.js"
+  },
+  "src/volume/ugenoegle.js": {
+    "../athlete/kostNumbers.mjs": "src/athlete/kostNumbers.mjs"
+  },
+  "src/dataEvidence.mjs": {
+    "./dataEnough.mjs": "src/dataEnough.mjs",
+    "./exerciseProgress.js": "src/exerciseProgress.js",
+    "./exerciseSetView.js": "src/exerciseSetView.js"
+  },
+  "src/rel1030.mjs": {},
+  "src/athlete/repRecords.mjs": {
+    "../exerciseSetView.js": "src/exerciseSetView.js",
+    "../inputValues.js": "src/inputValues.js",
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/dashboard/videoQueueWait.mjs": {},
+  "src/athlete/contactLatest.mjs": {},
+  "src/dashboard/coachMeetSoon.mjs": {
+    "./coachMeetSource.mjs": "src/dashboard/coachMeetSource.mjs",
+    "react": "@dom"
+  },
+  "src/dashboard/coachMeetSource.mjs": {},
+  "src/dashboard/coachWeekOverview.mjs": {
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/dashboard/VideoReviewTemplates.mjs": {
+    "react": "@dom",
+    "./coachTemplateMessages.mjs": "src/dashboard/coachTemplateMessages.mjs"
+  },
+  "src/dashboard/coachTemplateMessages.mjs": {},
+  "src/trin1Flagoversigt.json": {},
+  "src/athlete/videoSetSelection.mjs": {
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/athlete/fremgangPersonalRecords.mjs": {
+    "../exerciseSetView.js": "src/exerciseSetView.js",
+    "../exerciseProgress.js": "src/exerciseProgress.js",
+    "../inputValues.js": "src/inputValues.js",
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/athlete/enkelPrototype.mjs": {},
+  "src/athlete/ProgramTab.jsx": {
+    "./programNaesteUge.mjs": "src/athlete/programNaesteUge.mjs",
+    "./IntensityExplanation.jsx": "src/athlete/IntensityExplanation.jsx",
+    "react": "@dom",
+    "./programBlockOverview.mjs": "src/athlete/programBlockOverview.mjs",
+    "./RestDays.jsx": "src/athlete/RestDays.jsx",
+    "./restDays.mjs": "src/athlete/restDays.mjs",
+    "../rpeEvidence.mjs": "src/rpeEvidence.mjs",
+    "../inputValues.js": "src/inputValues.js",
+    "../restTimer.js": "src/restTimer.js",
+    "../repsPrescription.js": "src/repsPrescription.js",
+    "../fixedRepsEntry.js": "src/fixedRepsEntry.js",
+    "../exerciseSetView.js": "src/exerciseSetView.js",
+    "./CountdownRing.jsx": "src/athlete/CountdownRing.jsx",
+    "../athleteShared.js": "@dom",
+    "../saetSmerte.js": "src/saetSmerte.js"
+  },
+  "src/saetSmerte.js": {
+    "./exerciseSetView.js": "src/exerciseSetView.js",
+    "./coachFremgang.js": "src/coachFremgang.js"
+  },
+  "src/coachFremgang.js": {
+    "./calendarDate.js": "src/calendarDate.js",
+    "./dataEvidence.mjs": "src/dataEvidence.mjs",
+    "./dataEnough.mjs": "src/dataEnough.mjs",
+    "./exerciseSetView.js": "src/exerciseSetView.js",
+    "./exerciseProgress.js": "src/exerciseProgress.js",
+    "./coachBriefingRules.js": "src/coachBriefingRules.js"
+  },
+  "src/coachBriefingRules.js": {
+    "./dataEnough.mjs": "src/dataEnough.mjs",
+    "./dataEvidence.mjs": "src/dataEvidence.mjs",
+    "./exerciseSetView.js": "src/exerciseSetView.js",
+    "./exerciseProgress.js": "src/exerciseProgress.js",
+    "./athlete/smerteRegion.js": "src/athlete/smerteRegion.js"
+  },
+  "src/athlete/smerteRegion.js": {},
+  "src/athlete/CountdownRing.jsx": {},
+  "src/fixedRepsEntry.js": {},
+  "src/repsPrescription.js": {},
+  "src/restTimer.js": {},
+  "src/athlete/restDays.mjs": {},
+  "src/athlete/RestDays.jsx": {
+    "./restDays.mjs": "src/athlete/restDays.mjs"
+  },
+  "src/athlete/programBlockOverview.mjs": {
+    "../calendarDate.js": "src/calendarDate.js",
+    "./ugeHjaelp.js": "src/athlete/ugeHjaelp.js"
+  },
+  "src/athlete/IntensityExplanation.jsx": {
+    "react": "@dom",
+    "./intensityExplanation.mjs": "src/athlete/intensityExplanation.mjs"
+  },
+  "src/athlete/intensityExplanation.mjs": {},
+  "src/athlete/programNaesteUge.mjs": {
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/athlete/MobiliseringTab.jsx": {
+    "react": "@dom",
+    "./MobilitetFokus.jsx": "src/athlete/MobilitetFokus.jsx",
+    "../mobilityHelped.mjs": "src/mobilityHelped.mjs",
+    "../exerciseNames.js": "src/exerciseNames.js",
+    "./CountdownRing.jsx": "src/athlete/CountdownRing.jsx",
+    "../athleteShared.js": "@dom",
+    "./mobilityCatalog.mjs": "src/athlete/mobilityCatalog.mjs"
+  },
+  "src/mobilityHelped.mjs": {
+    "react": "@dom"
+  },
+  "src/athlete/MobilitetFokus.jsx": {
+    "react": "@dom",
+    "./CoachMobility.jsx": "src/athlete/CoachMobility.jsx",
+    "./coachMobility.mjs": "src/athlete/coachMobility.mjs",
+    "./MobilitetsBibliotek.jsx": "src/athlete/MobilitetsBibliotek.jsx",
+    "../mobilityHelped.mjs": "src/mobilityHelped.mjs",
+    "./mobilityFocus.mjs": "src/athlete/mobilityFocus.mjs"
+  },
+  "src/athlete/mobilityFocus.mjs": {},
+  "src/athlete/MobilitetsBibliotek.jsx": {
+    "react": "@dom",
+    "./mobilityFocus.mjs": "src/athlete/mobilityFocus.mjs",
+    "./mobilityLibrary.mjs": "src/athlete/mobilityLibrary.mjs"
+  },
+  "src/athlete/coachMobility.mjs": {
+    "./mobilityFocus.mjs": "src/athlete/mobilityFocus.mjs"
+  },
+  "src/athlete/CoachMobility.jsx": {
+    "react": "@dom",
+    "./mobilityFocus.mjs": "src/athlete/mobilityFocus.mjs",
+    "./mobilityCatalog.mjs": "src/athlete/mobilityCatalog.mjs",
+    "./coachMobility.mjs": "src/athlete/coachMobility.mjs"
+  },
+  "src/athlete/fremgangLinjer.mjs": {
+    "../exerciseProgress.js": "src/exerciseProgress.js",
+    "../inputValues.js": "src/inputValues.js",
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/athlete/UgensStatusKort.jsx": {
+    "react": "@dom",
+    "./ugeLogget.mjs": "src/athlete/ugeLogget.mjs",
+    "./ugeStatus.js": "src/athlete/ugeStatus.js",
+    "../athleteShared": "@dom"
+  },
+  "src/athlete/ugeStatus.js": {
+    "../inputValues.js": "src/inputValues.js",
+    "../repsPrescription.js": "src/repsPrescription.js",
+    "../volume/ugenoegle.js": "src/volume/ugenoegle.js"
+  },
+  "src/athlete/ugeLogget.mjs": {
+    "../nextSet.js": "src/nextSet.js"
+  },
+  "src/nextSet.js": {},
+  "src/athlete/nextTrainingHome.mjs": {
+    "../calendarDate.js": "src/calendarDate.js",
+    "./kostNumbers.mjs": "src/athlete/kostNumbers.mjs",
+    "../nextSet.js": "src/nextSet.js",
+    "../exerciseSetView.js": "src/exerciseSetView.js"
+  },
+  "src/videoUploadRetry.mjs": {},
+  "src/dashboard/videoStorageUsage.mjs": {},
+  "src/athlete/athleteShortcuts.mjs": {},
+  "src/dashboard/analyseSamlet.mjs": {},
+  "src/dashboard/coachNotes.mjs": {},
+  "src/athlete/kostValg.mjs": {},
+  "src/athlete/staevneHome.mjs": {
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/dashboard/analyseSammenlign.mjs": {
+    "./analyseSamlet.mjs": "src/dashboard/analyseSamlet.mjs"
+  },
+  "src/coachNoteSignal.js": {
+    "./e2eTestFlags.mjs": "src/e2eTestFlags.mjs"
+  },
+  "src/dashboard/videoReviewLayout.mjs": {},
+  "src/dashboard/coachSaveNext.mjs": {},
+  "src/dashboard/coachFourWeeks.mjs": {
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/dashboard/profileWeekSummary.mjs": {
+    "react": "@dom",
+    "./coachFourWeeks.mjs": "src/dashboard/coachFourWeeks.mjs",
+    "../nextSet.js": "src/nextSet.js",
+    "../exerciseProgress.js": "src/exerciseProgress.js",
+    "../calendarDate.js": "src/calendarDate.js",
+    "../inputValues.js": "src/inputValues.js",
+    "./coachKonstanter.js": "src/dashboard/coachKonstanter.js"
+  },
+  "src/dashboard/coachKonstanter.js": {
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/videoRetention.mjs": {},
+  "src/dashboard/coachFollowUp.mjs": {
+    "react": "@dom"
+  },
+  "src/dashboard/coachUgeFeedback.js": {
+    "../calendarDate.js": "src/calendarDate.js",
+    "../dataEnough.mjs": "src/dataEnough.mjs",
+    "../athlete/ugeFeedback.js": "src/athlete/ugeFeedback.js",
+    "./coachTekstForslag.js": "src/dashboard/coachTekstForslag.js",
+    "./coachTekstTree.js": "src/dashboard/coachTekstTree.js"
+  },
+  "src/dashboard/coachTekstTree.js": {},
+  "src/dashboard/coachTekstForslag.js": {
+    "../dataEnough.mjs": "src/dataEnough.mjs",
+    "./coachTekstData.js": "src/dashboard/coachTekstData.js"
+  },
+  "src/dashboard/coachTekstData.js": {},
+  "src/dashboard/programCopy.js": {
+    "../exerciseSetView.js": "src/exerciseSetView.js",
+    "../inputValues.js": "src/inputValues.js",
+    "../weekDates.js": "src/weekDates.js",
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/weekDates.js": {
+    "./athlete/kostNumbers.mjs": "src/athlete/kostNumbers.mjs",
+    "./calendarDate.js": "src/calendarDate.js",
+    "./inputValues.js": "src/inputValues.js"
+  },
+  "src/release3TestFlags.mjs": {},
+  "src/athlete/staevnedagFocus.mjs": {
+    "../calendarDate.js": "src/calendarDate.js"
+  },
+  "src/dashboard/coachActions.mjs": {},
+  "src/blokFremgang.mjs": {
+    "./calendarDate.js": "src/calendarDate.js",
+    "./inputValues.js": "src/inputValues.js",
+    "./exerciseProgress.js": "src/exerciseProgress.js",
+    "./exerciseSetView.js": "src/exerciseSetView.js",
+    "./fremgangLogs.js": "src/fremgangLogs.js"
+  },
+  "src/fremgangLogs.js": {},
+  "src/athlete/videoFeedbackPlayback.mjs": {
+    "../videoMarkerReplies.mjs": "src/videoMarkerReplies.mjs"
+  }
+}

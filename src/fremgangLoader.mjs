@@ -12,7 +12,7 @@ export const sourceURL = name => {
 const url = name => sourceURL(name).href
 const views = ['FremgangTab.jsx', 'EnkelFremgangTab.jsx', 'OversigtTab.jsx', 'BlokFremgang.jsx',
   'input-233-230-FremgangTab.jsx', 'input-230-227-EnkelFremgangTab.jsx', 'input-421-418-OversigtTab.jsx'].map(url)
-const dependency = new Set(['coachInactive.mjs', 'coachMeetSource.mjs', 'coachMeetSoon.mjs','coachMorningSource.mjs', 'coachWeekOverview.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs', 'exerciseProgress.js', 'exerciseNames.js', 'exerciseSetView.js', 'calendarDate.js', 'inputValues.js', 'kostNumbers.mjs', 'ugenoegle.js', 'rekorder.js', 'fremgangLogs.js', 'blokFremgang.mjs', 'coachFourWeeks.mjs'])
+const dependency = new Set(['coachInactive.mjs', 'coachMeetSource.mjs', 'coachMeetSoon.mjs','coachMorningSource.mjs', 'coachWeekOverview.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'fremgangLinjer.mjs', 'fremgangPersonalRecords.mjs', 'exerciseProgress.js', 'exerciseNames.js', 'exerciseSetView.js', 'calendarDate.js', 'inputValues.js', 'kostNumbers.mjs', 'ugenoegle.js', 'rekorder.js', 'fremgangLogs.js', 'blokFremgang.mjs', 'coachFourWeeks.mjs'])
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {

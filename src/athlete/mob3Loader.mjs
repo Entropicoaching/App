@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { jsx } from './mob3Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const actual = new Set(['mobilityHomework.mjs', 'staevneHome.mjs', 'nextTrainingHome.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'mobilityBeforeSession.mjs', 'mobilityCatalog.mjs', 'mobilityLibrary.mjs',
+const actual = new Set(['mobilityHomework.mjs', 'staevneHome.mjs', 'nextTrainingHome.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'mobilityBeforeSession.mjs', 'mobilityCatalog.mjs', 'mobilityLibrary.mjs',
   'CoachMobility.jsx', 'coachMobility.mjs', 'mobilityHelped.mjs', 'mobilityFocus.mjs', 'MobilitetFokus.jsx', 'MobilitetsBibliotek.jsx', 'MobiliseringTab.jsx',
   'exerciseNames.js', 'warmup.js', 'nextSet.js', 'HjemTab.jsx', 'EnkelHjemTab.jsx', 'DagensPasCard.jsx',
   'appLog2.mjs', 'vaerdTekst.mjs', 'inputValues.js', 'exerciseSetView.js', 'logAccessibility.mjs',

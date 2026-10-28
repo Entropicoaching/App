@@ -1,8 +1,9 @@
+import { trin1AppData2 } from './udgivelseTrin.mjs'
 import { calendarDay } from './calendarDate.js'
 import { rpeOrigin } from './rpeEvidence.mjs'
-// APP-DATA2. Opt in per page with ?appData2=1. No storage or network access.
+// APP-DATA2. Release profile or explicit URL opt-in. No storage or network access.
 export function dataEnoughEnabled() {
-  return new URLSearchParams(globalThis.location?.search || '').get('appData2') === '1'
+  return trin1AppData2(globalThis.location?.search || '')
 }
 export function withDataEnoughFlag(url) {
   return dataEnoughEnabled() ? url + (url.includes('?') ? '&' : '?') + 'appData2=1' : url

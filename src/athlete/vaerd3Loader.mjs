@@ -6,7 +6,7 @@ import { jsx } from './vaerd3Jsx.mjs'
 // Exact allowlist: local reconstructed public modules or native integration paths.
 const root = new URL('./', import.meta.url)
 const components = new Set(['DinUgeKort.jsx', 'KostUge.jsx', 'MeetDayPlanner.jsx', 'StaevnedagTab.jsx'])
-const modules = new Set(['dinUge.js', 'nextSet.js', 'rekorder.js', 'exerciseProgress.js', 'exerciseSetView.js', 'exerciseNames.js', 'inputValues.js', 'calendarDate.js', 'ugenoegle.js', 'athleteWriteGuard.js', 'kostUge.mjs', 'staevnedagPlan.mjs', 'staevnedagFocus.mjs', 'kostNumbers.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs'])
+const modules = new Set(['dinUge.js', 'nextSet.js', 'rekorder.js', 'exerciseProgress.js', 'exerciseSetView.js', 'exerciseNames.js', 'inputValues.js', 'calendarDate.js', 'ugenoegle.js', 'athleteWriteGuard.js', 'kostUge.mjs', 'staevnedagPlan.mjs', 'staevnedagFocus.mjs', 'kostNumbers.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs'])
 const athleteModules = new Set(['dinUge.js', 'rekorder.js', 'kostUge.mjs', 'staevnedagPlan.mjs', 'staevnedagFocus.mjs', 'kostNumbers.mjs'])
 const urls = new Map([...components, ...modules].map(name => {
   const flat = new URL(name, root)

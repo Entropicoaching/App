@@ -5,7 +5,7 @@ import { jsx } from './coachPlanJsx.mjs'
 const root = new URL('./', import.meta.url)
 const names = ['ProgramTab.jsx', 'CoachPlanCopy.jsx', 'coachPlanCopy.mjs',
   'ProgramCopyOptions.jsx', 'programCopy.js', 'calendarDate.js', 'inputValues.js',
-  'kostNumbers.mjs', 'dataEnough.mjs', 'rpeEvidence.mjs', 'exerciseSetView.js', 'exerciseNames.js', 'weekDates.js']
+  'kostNumbers.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'rpeEvidence.mjs', 'exerciseSetView.js', 'exerciseNames.js', 'weekDates.js']
 const canonical = new Map(names.map(name => [name.toLowerCase(), name]))
 const programImports = new Set(['./coachplancopy.mjs', './coachplancopy.jsx',
   './programcopyoptions.jsx', './programcopy.js', '../dataenough.mjs'])
