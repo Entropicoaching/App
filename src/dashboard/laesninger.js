@@ -6,7 +6,7 @@ import { rpeSignalEvidence, rpeSignalDescription } from '../dataEvidence.mjs'
 import { readMorningSource } from './coachMorningSource.mjs'
 import { attachVideoReferences } from '../videoEvidence.mjs'
 import { dataEnoughEnabled } from '../dataEnough.mjs'
-import { addWeekRpe, readWeekData } from './coachWeekOverview.mjs'
+import { addWeekRpe, readWeekData, plannedSetCount, isThisCoachWeek } from './coachWeekOverview.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Alt coachens side henter: atleter, kalender, indbakke (signaler, videoer,
 // automatiseringsfejl, set-markeringer, beskeder), program, logs, VideoCoach-
@@ -212,6 +212,7 @@ export function lavLaesninger({
         session_count: sessions.length,
         exercise_count: exercises.length,
         planned_sets: plannedSets,
+        ...(coachWeekEnabled ? { coachWeekPlannedSets: exercises.every(ex => plannedSetCount(ex.sets) != null) && Number.isSafeInteger(plannedSets) ? plannedSets : null } : {}),
         planned_tonnage: plannedTonnage,
         // ORDRE 428 (C2): ugens pas med atletens vurdering og kommentar.
         session_voices: sessions.map(sess => ({ order: sess.session_order, rating: sess.athlete_rating, comment: sess.athlete_comment })),
@@ -253,6 +254,7 @@ export function lavLaesninger({
       .order('logged_at', { ascending: false })
     const { data, error } = await readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'logs')
     if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); return dataEnoughEnabled() ? false : undefined }
+    const overviewToday = new Date()
     const map = {}
     const completion = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, {}])) : {}
     for (const log of data) {
@@ -269,7 +271,12 @@ export function lavLaesninger({
       for (const key of keys) {
       if (!completion[aid][key]) completion[aid][key] = { sets: 0, tonnage: 0, pas: 0, sprungneSaet: 0, saetUnderPlan: 0, sessionIds: {}, notes: [] }
       const c = completion[aid][key]
-      if (coachWeekEnabled) addWeekRpe(c, log)
+      if (coachWeekEnabled) {
+        if (isThisCoachWeek(log.logged_at, overviewToday)) {
+          if (!log.skipped) c.coachWeekSets = (c.coachWeekSets || 0) + 1
+        }
+        addWeekRpe(c, log)
+      }
       if (dataEnoughEnabled()) {
         c.readEvidence = { athleteId: aid, complete: data.length < 1000 }
         c.evidenceRows = [...(c.evidenceRows || []), log]

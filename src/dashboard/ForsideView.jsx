@@ -243,7 +243,7 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
               {renderWeekOverview(createElement, { enabled: coachWeekEnabled, entries: athletesWithAfvigelse.map(entry => ({
                 ...entry, current: selectOverviewWeek(calendarWeeks[entry.athlete.id] || [], entry.current),
               })),
-                completion: athleteWeekCompletion, status: coachWeekDataStatus, loading, loadError, openProfile })}
+                completion: athleteWeekCompletion, status: coachWeekDataStatus, loading, loadError, openProfile, profileTab: 'log' })}
 
               <div style={{ ...s.card, marginBottom: 0, padding: isMobile ? '0.8rem 0.9rem' : '1rem 1.2rem' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.45rem' }}>

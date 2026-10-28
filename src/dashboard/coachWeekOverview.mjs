@@ -28,8 +28,9 @@ export async function readWeekData(enabled, run, setStatus, key) {
 const count = value => Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : 0
 // Reused week numbers need an unambiguous plan as well as separate log totals.
 export function selectOverviewWeek(weeks, current, today = new Date()) {
-  const matches = weeks.filter(w => w.week_number === current?.week_number)
-  if (matches.length < 2) return current
+  const dated = weeks.filter(w => w.start_date != null && w.start_date !== '')
+  const matches = dated.length ? dated : weeks.filter(w => w.week_number === current?.week_number)
+  if (!dated.length && matches.length < 2) return current
   const day = calendarDay(today)
   if (!day) return undefined
   const active = matches.filter(w => {
@@ -41,24 +42,38 @@ export function selectOverviewWeek(weeks, current, today = new Date()) {
   })
   return active.length === 1 ? active[0] : undefined
 }
+// Unknown plans stay unknown, including incomplete or malformed set prescriptions.
+export function plannedSetCount(value) {
+  if (!['number', 'string'].includes(typeof value) || String(value).trim() === '') return null
+  const number = Number(value)
+  return Number.isSafeInteger(number) && number >= 0 ? number : null
+}
+export function isThisCoachWeek(value, today = new Date()) {
+  const day = calendarDay(today), logged = calendarDay(value)
+  if (!day || !logged) return false
+  const weekday = new Date(day + 'T12:00:00Z').getUTCDay()
+  const monday = addCalendarDays(day, -((weekday + 6) % 7))
+  return monday <= logged && logged < addCalendarDays(monday, 7)
+}
 export function weekRows(entries, completion) {
   return entries.map(({ athlete, current }) => {
-    const c = completion?.[athlete.id]?.[current?.id != null ? `id:${current.id}` : current?.week_number] || {}
-    const planned = current ? count(current.planned_sets) : null
-    const logged = count(c.sets)
+    const c = (current && completion?.[athlete.id]?.[current.id != null ? `id:${current.id}` : current.week_number]) || {}
+    const planned = current ? plannedSetCount('coachWeekPlannedSets' in current ? current.coachWeekPlannedSets : current.planned_sets) : null
+    const logged = count(c.coachWeekSets)
     const missed = count(c.sprungneSaet)
     const rpe = c.rpeCount > 0 && Number.isFinite(c.rpeDeltaSum) ? c.rpeDeltaSum / c.rpeCount : null
-    return { athlete, week: current?.week_number ?? null, planned, logged, missed, rpe,
+    const deviation = planned == null ? null : Math.abs(planned - logged)
+    return { athlete, deviation, week: current?.week_number ?? null, planned, logged, missed, rpe,
       rpeCount: count(c.rpeCount), under: count(c.saetUnderPlan),
       remaining: planned == null ? 0 : Math.max(0, planned - logged - missed) }
-  }).sort((a, b) => b.missed - a.missed ||
-    Math.max(0, b.rpe ?? 0) - Math.max(0, a.rpe ?? 0) || b.under - a.under ||
-    (b.planned > 0 ? b.remaining / b.planned : 0) - (a.planned > 0 ? a.remaining / a.planned : 0) ||
-    String(a.athlete.name).localeCompare(String(b.athlete.name), 'da') || String(a.athlete.id).localeCompare(String(b.athlete.id)))
+  }).sort((a, b) => (a.deviation == null) - (b.deviation == null) ||
+    (b.deviation ?? 0) - (a.deviation ?? 0) ||
+    String(a.athlete.name).localeCompare(String(b.athlete.name), 'da') ||
+    String(a.athlete.id).localeCompare(String(b.athlete.id)))
 }
 const signed = value => `${value > 0 ? '+' : ''}${value.toFixed(1).replace('.', ',')}`
 export function renderWeekOverview(h, { enabled = DEFAULT_COACH_WEEK_OVERVIEW, entries = [], completion,
-  status = {}, loading = false, loadError = false, openProfile }) {
+  status = {}, loading = false, loadError = false, openProfile, profileTab = 'program' }) {
   if (enabled !== true) return null
   const title = h('h2', { id: 'coach-week-title', style: { fontSize: '1.1rem', margin: '0 0 8px' } }, 'Coachens uge')
   const message = text => h('section', { 'aria-labelledby': 'coach-week-title', style: { marginBottom: 20 } },
@@ -72,15 +87,16 @@ export function renderWeekOverview(h, { enabled = DEFAULT_COACH_WEEK_OVERVIEW, e
   return h('section', { 'aria-labelledby': 'coach-week-title', 'data-coach-week': true,
     style: { marginBottom: 20, color: '#edeae2' } }, title,
   h('p', { style: { fontSize: '0.8rem', color: '#b3afa4' } },
-    'Aktuel programuge. Missede sæt er markeret sprunget over. RPE er logget minus planlagt i snit, kun sæt med begge tal. Størst behov for et blik først: missede sæt, højere RPE, færre gentagelser og endnu ikke logget.'),
+    'Aktuel programuge. Missede sæt er markeret sprunget over. RPE er logget minus planlagt i snit, kun sæt med begge tal. Loggede sæt tælles fra mandag til søndag i dansk tid. Største absolutte forskel mellem planlagte og loggede sæt vises først. Ukendt plan vises sidst.'),
   h('div', { role: 'list', 'aria-label': 'Atleternes uger' }, ...rows.map(row =>
     h('div', { role: 'listitem', key: row.athlete.id }, h('button', {
-      type: 'button', onClick: () => openProfile(row.athlete, 'program'),
+      type: 'button', onClick: () => openProfile(row.athlete, profileTab === 'log' ? 'log' : 'program'),
       style: { display: 'flex', flexWrap: 'wrap', gap: '6px 16px', width: '100%', minHeight: 44,
         padding: '10px 4px', background: 'transparent', border: 0, borderBottom: '1px solid #59564c',
         textAlign: 'left', color: 'inherit', font: 'inherit', cursor: 'pointer' },
     }, h('span', { style: { flex: '1 1 160px', overflowWrap: 'anywhere' } }, row.athlete.name),
     cell('Uge', row.week ?? 'Ingen aktuel uge'), cell('Planlagt', row.planned == null ? 'Ingen plan' : `${row.planned} sæt`),
+    cell('Afvigelse', row.deviation == null ? 'Ukendt' : `${row.deviation} sæt`),
     cell('Logget', `${row.logged} sæt`), cell('Missede', `${row.missed} sæt`),
     cell('RPE', row.rpe == null ? 'Mangler tal' : `${signed(row.rpe)} (${row.rpeCount} sæt)`),
     cell('Endnu ikke logget', row.planned == null ? 'Ukendt' : `${row.remaining} sæt`))))))
