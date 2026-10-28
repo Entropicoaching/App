@@ -13,7 +13,7 @@ const logs=()=>['2026-10-01','2026-10-08','2026-10-15','2026-10-22'].map((date,i
 const row=extra=>({id:'v',athlete_id:'demo',lift:'squat',analyzed_at:'2026-10-20',status:'coach_approved',athlete_feedback:{focus:[{text:'Hold pausen.'}]},...extra})
 
 test('counterexample: baseline is byte-exact and the former tab body is intact',()=>{
- assert.equal(createHash('sha256').update(readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url))).digest('hex'),baselinePin)
+ assert.equal(createHash('sha256').update(readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url),'utf8').replace(/\r\n/g,'\n')).digest('hex'),baselinePin)
  const source=readFileSync(new URL('./AnalyseTab.jsx',import.meta.url),'utf8')
  const base=readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url),'utf8')
  const restored=source.replace(/^import AnalyseConclusion[^\n]*\r?\n/m,'').replace(/                <AnalyseConclusion enabled=[\s\S]*?error=\{videoAnalysisError\}>\r?\n/,'').replace(/                <\/AnalyseConclusion>\r?\n/,'')

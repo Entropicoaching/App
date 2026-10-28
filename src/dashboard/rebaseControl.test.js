@@ -12,7 +12,7 @@ test('closed prototype loader rejects unknown, escaping and extensionless import
  for(const name of ['node:http','react-dom','./unknown.mjs','./dataEnough','../../dataEnough.mjs','./unknown/../dataEnough.mjs']) await assert.rejects(import(name),/Closed loader/)
 })
 test('pinned baseline and accepted app payload stay exact',()=>{
- const hash=name=>createHash('sha256').update(readFileSync(new URL(name,import.meta.url))).digest('hex')
+ const hash=name=>createHash('sha256').update(readFileSync(new URL(name,import.meta.url),'utf8').replace(/\r\n/g,'\n')).digest('hex') // linjeslut normaliseret, saa CRLF- og LF-udtjekning giver samme hash
  assert.equal(hash('./analyseConclusionBaseline.jsx'),'b08de1810032a1c3e87bdcbd8e8af4248623163762ed946684bdcbf0ddd22d18')
  const accepted=readFileSync(new URL('./analyseConclusion.mjs',import.meta.url),'utf8').replace(/\r\n/g,'\n').replace(/^import \{ rel1030Feature \}[^\n]*\n/,'').replace("return (values.length === 1 && values[0] === '1') || rel1030Feature('analyseConclusion', search)", "return values.length === 1 && values[0] === '1'")
  assert.equal(createHash('sha256').update(accepted).digest('hex'),'0f820d5daf4845a7d4c985506d3460120c87252e28cf730a63f230f2d45c3836')
