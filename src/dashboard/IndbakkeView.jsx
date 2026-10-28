@@ -1,3 +1,5 @@
+import VideoStorageUsage from './VideoStorageUsage.jsx'
+import { VIDEO_STORAGE_USAGE_ENABLED } from './videoStorageUsage.mjs'
 import { coachBriefingPointKey } from '../coachBriefingSeen.js'
 import { markerReplyPreview } from '../videoMarkerReplies.mjs'
 import { VIDEO_QUEUE_WAIT_ENABLED, sortVideoQueueByWait, videoQueueAge, videoQueueLiftDetail } from './videoQueueWait.mjs'
@@ -183,6 +185,11 @@ export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBri
           {inboxRefreshing ? 'Opdaterer…' : '↻ Opdater'}
         </button>
       </div>
+
+      {VIDEO_STORAGE_USAGE_ENABLED === true && (
+        <VideoStorageUsage items={coachPriorityItems} hiddenAthleteIds={hiddenAthleteIds}
+          stale={Boolean(videoReviewQueueError || inboxRefreshing)} />
+      )}
 
       {VIDEO_QUEUE_FILTER_ENABLED === true && (
         <VideoQueueFilter items={queueItems} hiddenAthleteIds={hiddenAthleteIds}

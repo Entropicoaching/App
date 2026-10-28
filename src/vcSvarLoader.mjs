@@ -3,10 +3,12 @@ import { existsSync } from 'node:fs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './vcSvarJsx.mjs'
 const root = new URL('./', import.meta.url)
-const actual = new Set(['videoQueueWait.mjs','kostNumbers.mjs', 'coachBriefingSeen.js', 'videoMarkerReplies.mjs', 'videoFeedbackPlayback.mjs', 'VideoFeedbackPlayback.jsx',
+const actual = new Set(['videoStorageUsage.mjs', 'VideoStorageUsage.jsx','videoQueueWait.mjs','kostNumbers.mjs', 'coachBriefingSeen.js', 'videoMarkerReplies.mjs', 'videoFeedbackPlayback.mjs', 'VideoFeedbackPlayback.jsx',
   'VideoMarkerReplyReview.jsx', 'beskederOgVaegt.jsx', 'IndbakkeView.jsx', 'VideoReviewModal.jsx',
   'videoFeedbackFollowUp.mjs', 'VideoReviewTemplates.mjs', 'videoReviewLayout.mjs', 'AthleteBeskederTab.jsx', 'CoachBeskederTab.jsx'])
 const locations = {
+  'videoStorageUsage.mjs':'dashboard/',
+  'VideoStorageUsage.jsx':'dashboard/',
   'videoQueueWait.mjs':'dashboard/',
   'kostNumbers.mjs':'athlete/',
   'AthleteBeskederTab.jsx':'athlete/BeskederTab.jsx', 'CoachBeskederTab.jsx':'dashboard/BeskederTab.jsx',
@@ -26,6 +28,8 @@ export function install() {
       const parent = context.parentURL?.split('/').at(-1)
       const name = specifier.split('/').at(-1)
       if (specifier === './vcSvarDom.mjs') return {url: new URL('vcSvarDom.mjs',root).href, shortCircuit:true}
+      if (parent === 'VideoStorageUsage.jsx' && specifier !== './videoStorageUsage.mjs'
+        || parent === 'videoStorageUsage.mjs') throw Error('Unapproved storage dependency: ' + specifier)
       if (specifier === 'react') return {url: new URL('vcSvarDom.mjs',root).href, shortCircuit:true}
       if (specifier.startsWith('.') && actual.has(name)) return {url: moduleUrl(name),shortCircuit:true}
       if (athlete.has(parent) || parent?.endsWith('BeskederTab.jsx')) return {url:new URL('vcSvarDom.mjs',root).href,shortCircuit:true}
