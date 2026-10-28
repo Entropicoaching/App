@@ -3,7 +3,7 @@ import { WARMUP_BASE } from './athlete/mobilityCatalog.mjs'
 
 export const DEFAULT_MOBILITY_HOMEWORK = false
 export const HOMEWORK_NOTICE = 'Kun gemt i denne browser på denne enhed. Ikke sendt til atletens anden enhed.'
-export const MARC_HOMEWORK_TEXT = 'tekst fra Marc'
+export const MARC_HOMEWORK_TEXT = 'Øvelserne er valgt efter, hvad hovedløftet kræver af dig.'
 const definitions = [
   ['squat-hip', 'Squat', 'Hoftemobilitet for squatdybde', 'Squat', ['sq-mob-1', 'sq-mob-3', 'sq-mob-4', 'sq-mov-1']],
   ['squat-ankle', 'Squat', 'Ankel for squatdybde', 'Squat', ['sq-mob-2', 'sq-mov-3']],

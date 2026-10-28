@@ -36,7 +36,7 @@ test('rebase probe 7: new component key starts closed after changing intensity',
   const Pair = ({ intensity }) => ({ type: Explanation, props: { intensity, key: intensity, children: [] } })
   const view = mount(Pair, { intensity: 'RPE 8' })
   nodes(view.render(), n => n.type === 'button')[0].props.onClick()
-  assert.match(text(view.render()), /tekst fra Marc/)
+  assert.match(text(view.render()), /Erfaring og teknik påvirker vurderingen/)
   const changed = view.render({ intensity: 'RIR 2' })
   assert.equal(nodes(changed, n => n.type === 'button')[0].props['aria-expanded'], false)
   assert.doesNotMatch(text(changed), /tekst fra Marc/)

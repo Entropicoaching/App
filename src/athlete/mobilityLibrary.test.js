@@ -43,7 +43,7 @@ test('actual library lift handlers replace cards and expose local accessible pic
     assert.equal(nodes(tree, n => n.type === 'button' && n.props['aria-pressed'] === true).length, 1)
     for (let i = 0; i < cards.length; i++) {
       assert.ok(text(cards[i]).includes(exercises[i].name))
-      assert.ok(text(cards[i]).includes('tekst fra Marc'))
+      assert.ok(text(cards[i]).includes(MARC_TEXT))
       const pictures = nodes(cards[i], n => n.type === 'svg')
       assert.equal(pictures.length, 1)
       assert.equal(pictures[0].props.role, 'img')

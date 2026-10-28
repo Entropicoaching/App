@@ -10,7 +10,7 @@ const groups = {
     ['Hofteposition i sumo', 'Dødløft — Sumo', ['ds-mob-1']],
   ],
 }
-export const MARC_TEXT = 'tekst fra Marc'
+export const MARC_TEXT = 'Vælg øvelsen efter, hvad dit hovedløft kræver af dig. Prøv dig frem, og se, hvad der føles rigtigt for dig.'
 export function mobilityLibrary(lift, library = {}) {
   if (!Object.hasOwn(groups, lift)) return []
   return groups[lift].map(([title, key, ids]) => {
