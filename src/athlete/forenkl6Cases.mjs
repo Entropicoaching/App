@@ -12,7 +12,7 @@ export function propsFor(start = '2026-10-19') {
   const weeks = [start, day(next)].map((date, i) => ({
     id: `week-${i}`, week_number: i + 1, start_date: date, block_name: `Blok ${i}`,
     block_description: `Beskrivelse ${i}`, coach_note: `Ugenote ${i}`,
-    sessions: [{ id: `session-${i}`, title: `Pas ${i}`, weekday: 0, exercises: [] }],
+    sessions: [{ id: `session-${i}`, title: `Pas ${i}`, weekday: null, exercises: [] }],
   }))
   const p = { ...helpers, allWeeks: weeks, currentWeek: weeks[0], viewingWeekIdx: 0,
     athlete: { id: 'synthetic-athlete' }, exerciseLogs: [], pastLogs: [],

@@ -1,6 +1,8 @@
+import RestDays from './RestDays.jsx'
+import { restDays } from './restDays.mjs'
 // Ugestrimlen paa forsiden — flyttet uaendret ud af AthleteView.jsx (ordre 373).
-import { WEEKDAYS_LONG, WEEKDAYS_SHORT } from './ugeHjaelp'
-import { isSessionDone } from '../nextSet'
+import { WEEKDAYS_LONG, WEEKDAYS_SHORT } from './ugeHjaelp.js'
+import { isSessionDone } from '../nextSet.js'
 
 // Ugekalender på forsiden: 7 celler (man-søn) med ugens sessioner placeret på
 // deres weekday. Klik på en dag med session åbner den i Program-fanen.
@@ -17,7 +19,8 @@ import { isSessionDone } from '../nextSet'
 // programmer) regnes den aktive uge som denne uge, så "i dag" stadig vises.
 function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd }) {
   const sessions = week?.sessions || []
-  if (!sessions.length) return null
+  const rests = restDays(week)
+  if (!sessions.length && !rests.length) return null
   const sessDone = s => isSessionDone(s, exerciseLogs)
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const todayWd = (today.getDay() + 6) % 7
@@ -37,20 +40,22 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
       <div data-dagstrimmel="" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '0.35rem', margin: '0 -0.5rem' }}>
         {days.map(d => {
           const isToday = d.date ? d.date.getTime() === today.getTime() : d.wd === todayWd
-          const has = d.sessions.length > 0
-          const allDone = has && d.sessions.every(sessDone)
+          const training = d.sessions.filter(s => !Array.isArray(s.exercises) || s.exercises.length > 0)
+          const has = training.length > 0
+          const isRest = rests.some(day => day.weekday === d.wd)
+          const allDone = has && training.every(sessDone)
           const isShown = shownWd != null && d.wd === shownWd
-          const state = !has ? 'hvile' : allDone ? 'klaret' : 'pas'
+          const state = !has ? (isRest ? 'hvile' : 'ukendt') : allDone ? 'klaret' : 'pas'
           const border = isShown ? '2px solid #c8923a'
             : state === 'klaret' ? '1px solid rgba(108,186,108,0.45)'
             : state === 'pas' ? '1px solid rgba(237,234,226,0.22)'
             : '1px dashed rgba(237,234,226,0.1)'
           const bg = isShown ? 'rgba(200,146,58,0.14)' : state === 'klaret' ? 'rgba(108,186,108,0.07)' : state === 'pas' ? 'rgba(237,234,226,0.04)' : 'transparent'
-          const open = has ? (d.sessions.find(s => !sessDone(s)) || d.sessions[0]) : null
+          const open = has ? (training.find(s => !sessDone(s)) || training[0]) : null
           const label = [
             WEEKDAYS_LONG[d.wd],
             isToday && 'i dag',
-            has ? d.sessions.map(s => s.title).join(', ') : 'hviledag',
+            has ? training.map(s => s.title).join(', ') : isRest ? 'hviledag' : 'dag ikke fastlagt',
             allDone && 'klaret',
             isShown && 'vises nu',
           ].filter(Boolean).join(' · ')
@@ -88,7 +93,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
                 {d.date ? d.date.getDate() : ''}
               </span>
               <span data-dagstatus="" style={{ fontSize: '0.6rem', letterSpacing: 0, lineHeight: 1, height: '0.7rem', textTransform: 'uppercase', color: allDone ? '#6cba6c' : isShown ? '#c8923a' : has ? '#a9a69e' : '#4a4844' }}>
-                {allDone ? '✓' : has ? '●' : 'hvile'}
+                {allDone ? '✓' : has ? '●' : isRest ? 'hvile' : ''}
               </span>
               {isShown && (
                 <span aria-hidden="true" style={{ position: 'absolute', bottom: '-7px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid #c8923a' }} />
@@ -97,6 +102,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
           )
         })}
       </div>
+      <RestDays week={week} weekStart={weekStart} />
       {flex.length > 0 && (
         <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.5rem' }}>
           + {flex.length} fleksibel{flex.length > 1 ? 'le' : ''} session{flex.length > 1 ? 'er' : ''} uden fast dag
