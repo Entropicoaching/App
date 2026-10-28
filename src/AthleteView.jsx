@@ -404,7 +404,7 @@ export default function AthleteView({ programNaesteUge = false, videoSetSelectio
   useEffect(() => { setVideoSetChoice(null); setVideoSetReady(false) }, [athleteVideoCoachOpen, athlete?.id])
 
   useVideoCoachBro({
-    videoSetRef,
+    videoSetRef, videoOptag2: arguments[0]?.videoOptag2 === true,
     athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
     setAthleteVideoCoachOpen, setFlash,
   })
