@@ -30,6 +30,7 @@ import { startRestPause } from '../restPause.js'
 import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGrafer.jsx'
 
 function HjemTab({
+  ugeLogget = false,
   mobilitetFoerPas = false,
   naesteTraening = false,
   staevneHjem = false,
@@ -275,6 +276,8 @@ function HjemTab({
               return (
                 <div ref={weekStatusRef} tabIndex={-1} aria-label="Ugen som planlagt" style={{ scrollMarginTop: '5rem' }}>
                 <UgensStatusKort
+                  ugeLogget={ugeLogget === true}
+                  onOpenSession={(id) => { setTab('program'); openSession(id) }}
                   week={currentWeek}
                   weekStart={weekStartDate(allWeeks, currentWeek.week_number)}
                   exerciseLogs={exerciseLogs}

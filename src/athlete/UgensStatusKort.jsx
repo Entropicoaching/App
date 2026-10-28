@@ -22,7 +22,8 @@
 // "Lange forløbs-/øvelsesnavne" gælder ikke DENNE fil: den viser hverken
 // sessionstitler (fjernet i ordre 268 commit 3, se DagRaekke's egen
 // kommentar) eller øvelsesnavne noget sted, kun ugedag/dato/tal.
-import { useState } from 'react'
+import { createElement, useState } from 'react'
+import { renderUgeLogget } from './ugeLogget.mjs'
 import { beregnUgeDage, beregnForloebUger } from './ugeStatus.js'
 import { s } from '../athleteShared'
 
@@ -162,7 +163,7 @@ function ForloebVisning({ uger, ugerUdenDato }) {
  * @param {object|null} props.forrigeUge ORDRE 276 · blok 2: programugen lige før `week` (week_number - 1), eller null hvis den ikke findes.
  * @param {Date|null} props.forrigeUgeStart Mandag i forrigeUge.
  */
-export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeeks, forloebLogs, forloebLoading, onAabnForloeb, forrigeUge, forrigeUgeStart }) {
+export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeeks, forloebLogs, forloebLoading, onAabnForloeb, forrigeUge, forrigeUgeStart, ugeLogget = false, onOpenSession }) {
   const [visning, setVisning] = useState('uge')
 
   if (!week) return null
@@ -195,6 +196,7 @@ export default function UgensStatusKort({ week, weekStart, exerciseLogs, allWeek
 
   return (
     <div style={s.card}>
+      {renderUgeLogget(createElement, { enabled: ugeLogget, week, weekStart, exerciseLogs, onOpenSession })}
       <div style={s.cardLabel}>Ugen som planlagt</div>
       <div style={{ fontSize: '0.72rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '1rem' }}>
         Det du har nået, sammenlignet med det planlagte. Et sæt er en række gentagelser i træk, så to sæt á fem gentagelser er ti løft. Tonnage er samlet løftet vægt i kg. En dag uden træning er ikke en fejl.
