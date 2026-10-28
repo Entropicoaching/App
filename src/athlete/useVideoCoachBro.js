@@ -18,7 +18,7 @@ import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
 export function useVideoCoachBro({
-  videoSetRef,
+  videoSetRef, videoOptag2 = false,
   athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
   setAthleteVideoCoachOpen, setFlash,
 }) {
@@ -37,6 +37,7 @@ export function useVideoCoachBro({
   }, [athlete])
 
   useEffect(() => {
+    const optagPending = new Set()
     const onAthleteVideoCoachMessage = async event => {
       if (event.origin !== window.location.origin || !event.source) return
       const message = event.data || {}
@@ -92,10 +93,32 @@ export function useVideoCoachBro({
         if (selectedSet && selectedSet.lift !== message.lift) {
           reply({ ok: false, error: 'Vælg samme løft i VideoCoach som i dagens pas.' }); return
         }
-        const file = message.file
+        const selectedSetContent = videoOptag2 === true && selectedSet ? { ...selectedSet } : selectedSet
+        let file = message.file, mimeType = message.mimeType
+        if (videoOptag2 === true) {
+          const preparation = new AbortController()
+          optagPending.add(preparation)
+          athleteVideoUploadAbortsRef.current.set(message.requestId, preparation)
+          try {
+            if (!(file instanceof Blob)) throw Error('Ugyldig video')
+            const { prepareVideoOptag2Upload } = await import('../videoOptag2Upload.mjs')
+            if (preparation.signal.aborted) throw Error('Videoklargoring afbrudt. Intet er sendt.')
+            file = await prepareVideoOptag2Upload(file, { videoOptag2, document, signal: preparation.signal })
+            if (preparation.signal.aborted || athleteVideoCoachRef.current?.id !== currentAthlete.id ||
+                !athleteVideoCoachClientsRef.current.has(event.source) ||
+                (selectedSetContent && (videoSetRef.current?.enabled !== true ||
+                  videoSetRef.current?.athleteId !== currentAthlete.id ||
+                  !videoSetRef.current?.selected ||
+                  ['key', 'lift', 'load_kg', 'reps', 'training_session_id', 'program_item_id']
+                    .some(key => videoSetRef.current.selected[key] !== selectedSetContent[key]))))
+              throw Error('Videoens atlet eller saet er aendret. Proev igen.')
+            mimeType = file.type.split(';')[0].trim().toLowerCase()
+          } catch (error) { reply({ ok: false, error: error.message }); return }
+          finally { optagPending.delete(preparation); if (athleteVideoUploadAbortsRef.current.get(message.requestId) === preparation) athleteVideoUploadAbortsRef.current.delete(message.requestId) }
+        }
         const requestError = validateVideoUploadRequest({
           athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId,
-          lift: message.lift, variation: message.variation, mimeType: message.mimeType,
+          lift: message.lift, variation: message.variation, mimeType,
           fileSize: file?.size, loadKg: selectedSet ? selectedSet.load_kg : message.loadKg, rpe: message.rpe,
           athleteNote: message.athleteNote, plateCalibration: message.plateCalibration,
         })
@@ -103,7 +126,7 @@ export function useVideoCoachBro({
           reply({ ok: false, error: requestError || 'Ugyldig video' })
           return
         }
-        const path = buildVideoUploadPath(currentAthlete.id, message.clientAnalysisId, message.mimeType)
+        const path = buildVideoUploadPath(currentAthlete.id, message.clientAnalysisId, mimeType)
         if (!path) { reply({ ok: false, error: 'Videoformatet kunne ikke gemmes' }); return }
         // ORDRE 61 · commit 2: supabase-js's storage.upload() tager ikke en
         // AbortSignal (ingen af FileOptions dækker det), så selve fetch-kaldet
@@ -119,10 +142,10 @@ export function useVideoCoachBro({
         try {
           upload = videoUploadRetryEnabled()
             ? await uploadVideoAttempt(createAbortableUploadClient, controller.signal,
-              VIDEOCOACH_UPLOAD_BUCKET, path, file, message.mimeType)
+              VIDEOCOACH_UPLOAD_BUCKET, path, file, mimeType)
             : await createAbortableUploadClient(controller.signal).storage
             .from(VIDEOCOACH_UPLOAD_BUCKET)
-            .upload(path, file, { contentType: message.mimeType, upsert: false })
+            .upload(path, file, { contentType: mimeType, upsert: false })
         } finally {
           athleteVideoUploadAbortsRef.current.delete(message.requestId)
         }
@@ -225,9 +248,9 @@ export function useVideoCoachBro({
       reply({ ok: true, data: { ...result.data, duplicate: result.duplicate } })
     }
     window.addEventListener('message', onAthleteVideoCoachMessage)
-    return () => window.removeEventListener('message', onAthleteVideoCoachMessage)
+    return () => { optagPending.forEach(controller => controller.abort()); window.removeEventListener('message', onAthleteVideoCoachMessage) }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- ref-objekterne og setFlash er stabile (useRef/useState i AthleteView); deps uændret fra før ordre 373
-  }, [session.user.id])
+  }, [session.user.id, videoOptag2])
 
   useEffect(() => {
     if (!athlete?.id) return undefined
