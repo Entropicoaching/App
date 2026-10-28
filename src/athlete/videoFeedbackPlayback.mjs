@@ -21,6 +21,17 @@ export function parsePlaybackDocument(value, scope) {
   need(number(c.duration) && c.duration > 0 && c.duration <= 7200)
   need(Number.isInteger(c.width) && c.width > 0 && c.width <= 16384)
   need(Number.isInteger(c.height) && c.height > 0 && c.height <= 16384)
+  // Optional complete presentation timestamp index, bound to the hashed clip.
+  // Never infer frame spacing from duration, an average FPS or callback cadence.
+  let frameTimes
+  if (c.frameTimes !== undefined) {
+    need(Array.isArray(c.frameTimes) && c.frameTimes.length > 0 && c.frameTimes.length <= 200000)
+    need(c.frameTimes[0] === 0)
+    frameTimes = c.frameTimes.map((time, index) => {
+      need(number(time) && time >= 0 && time < c.duration && (index === 0 || time > c.frameTimes[index - 1]))
+      return time
+    })
+  }
   need(Array.isArray(value.markers) && value.markers.length > 0 && value.markers.length <= 200)
   const seen = new Set()
   const markers = value.markers.map(m => {
@@ -41,7 +52,7 @@ export function parsePlaybackDocument(value, scope) {
   }).sort((a, b) => a.start - b.start || a.id.localeCompare(b.id, 'en'))
   return { schema: value.schema, status: 'ready', athleteId: value.athleteId,
     analysisId: value.analysisId, clip: { name: c.name, size: c.size, type: c.type,
-      sha256: c.sha256, duration: c.duration, width: c.width, height: c.height }, markers }
+      sha256: c.sha256, duration: c.duration, width: c.width, height: c.height, ...(frameTimes ? { frameTimes } : {}) }, markers }
 }
 export function activeMarkers(markers, time) {
   return number(time) ? markers.filter(m => m.start <= time && time < m.end) : []
@@ -50,6 +61,18 @@ export function adjacentMarker(markers, time, direction) {
   if (!number(time)) return null
   return direction === -1 ? [...markers].reverse().find(m => m.start < time) || null
     : direction === 1 ? markers.find(m => m.start > time) || null : null
+}
+// The current frame is the last presentation timestamp at or before currentTime.
+export function adjacentFrameTime(times, time, direction) {
+  if (!times?.length || !number(time) || ![-1, 1].includes(direction)) return null
+  let low = 0, high = times.length
+  while (low < high) {
+    const mid = (low + high) >>> 1
+    if (times[mid] <= time) low = mid + 1
+    else high = mid
+  }
+  const index = Math.max(0, low - 1) + direction
+  return index >= 0 && index < times.length ? times[index] : null
 }
 export async function sha256File(file) {
   const bytes = await file.arrayBuffer()
@@ -89,8 +112,28 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
   const list = el('div'); Object.assign(list.style, { display: 'grid', gap: '0.5rem' }); list.setAttribute('aria-label', 'Alle markeringer')
   for (const b of [previous, next]) { b.type = 'button'; b.style.minHeight = '44px' }
   nav.append(previous, next)
-  root.replaceChildren(heading, help, jsonLabel, fileLabel, status, frame, comments, nav, list)
+  const transport = el('div'), speedLabel = el('label', 'Afspilningsfart '), speed = el('select')
+  speed.setAttribute('aria-label', 'Afspilningsfart')
+  for (const [value, label] of [['1', 'Normal fart'], ['0.5', 'Halv fart'], ['0.25', 'Kvart fart']]) {
+    const option = el('option', label); option.value = value; speed.append(option)
+  }
+  speed.value = '1'; speed.style.minHeight = '44px'; speedLabel.append(speed)
+  const frameBack = el('button', 'Et billede tilbage'), frameNext = el('button', 'Et billede frem')
+  const frameHelp = el('p')
+  frameHelp.id = 'vc-frame-help-' + scope.athleteId + '-' + scope.analysisId
+  for (const b of [frameBack, frameNext]) {
+    b.type = 'button'; b.style.minHeight = '44px'; b.setAttribute('aria-describedby', frameHelp.id)
+  }
+  Object.assign(transport.style, { display: 'flex', flexWrap: 'wrap', gap: '0.5rem' })
+  transport.append(speedLabel, frameBack, frameNext)
+  root.replaceChildren(heading, help, jsonLabel, fileLabel, status, frame, comments, nav, list, transport, frameHelp)
   function update() {
+    speed.disabled = !ready
+    const times = ready ? feedback.clip.frameTimes : null
+    frameBack.disabled = !ready || adjacentFrameTime(times, video.currentTime, -1) === null
+    frameNext.disabled = !ready || adjacentFrameTime(times, video.currentTime, 1) === null
+    frameHelp.textContent = times ? 'Billedtrin pauser videoen og bruger klippets billedtidspunkter.'
+      : 'Billedtrin er ikke tilgængelige: klippets billedtidspunkter er ukendte. Du kan stadig vælge halv eller kvart fart.'
     const active = ready ? activeMarkers(feedback.markers, video.currentTime) : []
     comments.replaceChildren(...active.map(m => el('p', m.text || 'Tegning')))
     svg.replaceChildren()
@@ -109,7 +152,7 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
     }
   }
   function clearVideo() {
-    ready = false; frame.hidden = true; video.pause(); video.removeAttribute('src'); video.load()
+    ready = false; speed.value = '1'; video.playbackRate = 1; video.defaultPlaybackRate = 1; frame.hidden = true; video.pause(); video.removeAttribute('src'); video.load()
     if (sourceUrl) urlApi.revokeObjectURL(sourceUrl)
     sourceUrl = null; update()
   }
@@ -118,7 +161,23 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
     if (!ready || !marker) return
     try { video.currentTime = marker.start; update() } catch { fail('Videoen kunne ikke spoles. Vælg klippet igen.') }
   }
-  listen(previous, 'click', () => seek(ready && adjacentMarker(feedback.markers, video.currentTime, -1)))
+  listen(speed, 'change', () => {
+    if (!ready || !['1', '0.5', '0.25'].includes(speed.value)) return
+    try { video.playbackRate = Number(speed.value) }
+    catch { status.textContent = 'Denne afspiller kunne ikke ændre farten.' }
+    speed.value = String(video.playbackRate)
+  })
+  listen(video, 'ratechange', () => { speed.value = String(video.playbackRate) })
+  function stepFrame(direction) {
+    if (!ready) return
+    const time = adjacentFrameTime(feedback.clip.frameTimes, video.currentTime, direction)
+    if (time === null) return
+    try { video.pause(); video.currentTime = time; update() }
+    catch { fail('Videoen kunne ikke spoles. Vælg klippet igen.') }
+  }
+  listen(frameBack, 'click', () => stepFrame(-1))
+  listen(frameNext, 'click', () => stepFrame(1))
+  listen(previous, 'click' , () => seek(ready && adjacentMarker(feedback.markers, video.currentTime, -1)))
   listen(next, 'click', () => seek(ready && adjacentMarker(feedback.markers, video.currentTime, 1)))
   // Delegate marker clicks so repeated document loads never accumulate listeners.
   listen(list, 'click', event => seek(feedback?.markers.find(m => m.id === event.target?.dataset?.markerId)))

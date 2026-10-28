@@ -10,7 +10,7 @@ const scope = { athleteId: 'athlete-1', analysisId: 'analysis-1' }
 const fixture = () => ({ schema: 'vc-epik2-playback/v1', status: 'ready', ...scope,
   clip: { name: 'fixture.webm', type: 'video/webm', size: bytes.length, sha256: hash, duration: 10, width: 640, height: 360 },
   markers: [
-    { id: 'later', start: 6, end: 8, text: 'Se knæet', strokes: [] },
+    { id: 'later', start: 6, end: 8, text: 'Se knÃƒÂ¦et', strokes: [] },
     { id: 'first', start: 1, end: 4, text: '<img src=x onerror=alert(1)>', strokes: [{ color: '#ffcc00', points: [[0,0], [1,1]] }] },
     { id: 'overlap', start: 2, end: 3, text: 'Hold fokus', strokes: [] },
   ] })
@@ -101,7 +101,7 @@ test('replacing document clears clip and scope rejection leaves no old annotatio
   x.video.currentTime = 1; await x.video.fire('timeupdate')
   await x.loadDocument({ ...fixture(), athleteId: 'wrong' })
   assert.equal(x.video.src, ''); assert.equal(x.file.disabled, true)
-  assert.equal(walk(x.root, 'polyline').length, 0); assert.equal(x.buttons().length, 2)
+  assert.equal(walk(x.root, 'polyline').length, 0); assert.equal(x.buttons().length, 4)
   assert.equal(x.revoked.length, 1); x.dispose()
 })
 test('late file reads and digests after replacement/unmount cannot create stale URLs or controls', async () => {
