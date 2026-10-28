@@ -6,6 +6,9 @@ const root = new URL('./',import.meta.url)
 const page = new URL('ForsideView.jsx',root).href
 const dom = new URL('rebaseDom.mjs',root).href
 const clauses = {
+  "./coachMeetSoon.mjs": [
+    "CoachMeetSoon"
+  ],
   "./coachMorning.mjs": [
     "CoachMorning"
   ],
@@ -49,6 +52,12 @@ const clauses = {
   "../danskDato.js": [
     "dageSiden"
   ],
+  "./coachFollowUp.mjs": [
+    "CoachFollowUpScope",
+    "FollowUpControl",
+    "sortFollowUps",
+    "validCoachScope"
+  ],
   "./CoachActions.jsx": [
     "default"
   ]
@@ -57,7 +66,7 @@ const actual = { './coachWeekOverview.mjs':'coachWeekOverview.mjs', './afvigelse
 const values = {
  s:'{}', videoCoachMeasurementSummary:'() => null', coachInboxLine:'() => null', currentWeekNo:'weeks => weeks[0]?.week_number ?? null',
  dataEnoughEnabled:'() => false', roligeAtleter:'() => []', roligLinje:'() => null',
- initials:'name => name.slice(0,2)', dageSiden:'() => 1', holidayInfo:'() => null',
+ validCoachScope:'() => false', CoachMeetSoon:'() => null', initials:'name => name.slice(0,2)', dageSiden:'() => 1', holidayInfo:'() => null',
 }
 export function resolve(specifier,context,next) {
  if (context.parentURL !== page) return next(specifier,context)

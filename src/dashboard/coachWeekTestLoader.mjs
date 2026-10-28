@@ -75,7 +75,7 @@ const stubs = {
 }
 const real = {
   'calendarDate.js': { './athlete/kostNumbers.mjs':'kostNumbers.mjs' },
-  'laesninger.js': { './coachWeekOverview.mjs':'coachWeekOverview.mjs', './afvigelse.js':'afvigelse.js', './coachActions.mjs':'coachActions.mjs' },
+  'laesninger.js': { './coachMeetSource.mjs':'coachMeetSource.mjs', './coachWeekOverview.mjs':'coachWeekOverview.mjs', './afvigelse.js':'afvigelse.js', './coachActions.mjs':'coachActions.mjs' },
   'coachWeekOverview.mjs': { '../calendarDate.js':'calendarDate.js' },
 }
 export function resolve(specifier, context, next) {
