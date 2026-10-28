@@ -32,18 +32,29 @@ function fixture(index = 1, count = 7) {
 const render = p => mount(Program, p).render()
 const freeze = t => t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-25T12:00:00Z') })
 
-test('REB2: baseline pin and complete App/AthleteView union survive LF normalization', () => {
+test('REB2: baseline pin and scoped default-OFF App/AthleteView wiring', () => {
   assert.equal(hash(source('prog2Baseline.txt')), 'ac4cfa59645e9391236b64a7a76eb39bdcdd451ed2c45a0d7b25699087a57f81')
-  const app = source('../App.jsx').replace('programNaesteUge = false, ', '')
-    .replaceAll(' programNaesteUge: programNaesteUge === true,', '')
-    .replace('blokStyrke = false, ', '').replaceAll(' blokStyrke: blokStyrke === true,', '')
-  assert.equal(hash(app), '0d9f04358e92c94cee1b0eed5a897be72f51619c21e0eb9983ae6a1680c9da19')
-  const athlete = source('../AthleteView.jsx').replace('programNaesteUge = false, ', '')
-    .replace('programUgeFoerst, programNaesteUge,', 'programUgeFoerst,')
-    .replace('videoSetRef, videoOptag2: arguments[0]?.videoOptag2 === true,', 'videoSetRef,')
-    .replace('blokStyrke = false, ', '').replaceAll(' blokStyrke: blokStyrke === true,', '')
-  assert.equal(hash(athlete), 'e29e4e22bd5d6a4e997d6b94eaa61c5d9a889dd3ada5df32746d6b32bd8624b3')
+  // Pin only PROG2's contract; unrelated props and features may evolve.
+  const defaultOff = (code, name) => {
+    const params = code.match(new RegExp('function\\s+' + name + '\\s*\\(\\s*\\{([^}]+)\\}'))
+    assert.ok(params, name + ' destructured props')
+    assert.match(params[1], /(?:^|,)\s*programNaesteUge\s*=\s*false\s*(?=,|$)/, name + ' defaults OFF')
+  }
+  const app = source('../App.jsx')
+  defaultOff(app, 'App')
+  const athleteProps = [...app.matchAll(/<LazyBoundary\s+factory=\{athleteViewFactory\}[\s\S]*?componentProps=\{\{([\s\S]*?)\}\}\s*\/>/g)]
+  assert.equal(athleteProps.length, 2, 'preview and athlete componentProps')
+  for (const [, props] of athleteProps) {
+    assert.match(props, /(?:^|,)\s*programNaesteUge\s*:\s*programNaesteUge\s*===\s*true\s*(?=,|$)/, 'strict opt-in in each athlete branch')
+  }
+  const athlete = source('../AthleteView.jsx')
+  defaultOff(athlete, 'AthleteView')
+  const programProps = athlete.match(/<LazyBoundary\s+factory=\{programFactory\}[\s\S]*?componentProps=\{\{([\s\S]*?)\}\}\s*\/>/)
+  assert.ok(programProps, 'Program componentProps')
+  // AthleteView forwards App's already-normalized boolean unchanged.
+  assert.match(programProps[1], /(?:^|,)\s*programNaesteUge\s*(?=,|$)/, 'Program receives programNaesteUge')
 })
+
 test('REB2: strict OFF matches current pinned Program DOM across counts and weeks', t => {
   freeze(t)
   for (const flag of [undefined, false, null, 'true', 1, {}]) for (const count of [0, 2, 7]) for (const index of [0, 1, 2]) {
