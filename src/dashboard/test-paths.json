@@ -1,4 +1,5 @@
 {
+  "src/dashboard/videoQueueWait.mjs": "videoQueueWait.mjs",
   "src/dashboard/VideoMarkerReplyReview.jsx": "VideoMarkerReplyReview.jsx",
   "src/videoMarkerReplies.mjs": "videoMarkerReplies.mjs",
   "src/athlete/videoSetSelection.mjs": "videoSetSelection.mjs",

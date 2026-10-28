@@ -45,6 +45,7 @@ export async function app({ enabled, backend } = {}) {
   }
   instances.set(id, { h, fakes })
   const allowed = new Set([
+    "src/dashboard/videoQueueWait.mjs",
     "src/dataEnough.mjs",
     "src/dataEvidence.mjs",
     "src/rpeEvidence.mjs",
