@@ -1,5 +1,7 @@
 import NytIAppen, { nytCoachNavigation } from './nytIAppen.mjs'
+import { coachNotesFlag, createCoachNoteSaver } from './dashboard/coachNotes.mjs'
 import { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './dashboard/VideoReviewTemplates.mjs'
+import { coachFollowUpFlag } from './dashboard/coachFollowUp.mjs'
 import { coachMorningFlag } from './dashboard/coachMorning.mjs'
 import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
 import { COACH_FOUR_WEEKS_ENABLED, reduceFourWeekRead } from './dashboard/coachFourWeeks.mjs'
@@ -75,8 +77,10 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
     typeof window === 'undefined' ? '' : window.location.search,
   ))
   const coachRyd = useRef(coachRydEnabled(typeof window === 'undefined' ? '' : window.location.search)).current
+  const coachNotesEnabled = coachNotesFlag(typeof window === 'undefined' ? '' : window.location.search)
   const coachWeekEnabled = coachWeekFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachWeekDataStatus, setCoachWeekDataStatus] = useState({})
+  const coachFollowUp = coachFollowUpFlag(typeof window === 'undefined' ? '' : window.location.search)
   const coachMorning = coachMorningFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachMorningData, setCoachMorningData] = useState({})
   const [athletes, setAthletes] = useState([])
@@ -664,7 +668,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
 
         {view === 'list' && (() => {
           return (
-            <ForsideView {...{ coachRyd, coachMorning, coachMorningData,
+            <ForsideView {...{ coachFollowUp, coachRyd, coachMorning, coachMorningData,
               coachWeekEnabled, coachWeekDataStatus,
               athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
               automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
@@ -809,7 +813,15 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
             })()}
 
             {activeTab === 'noter' && (
-              <NoterTab {...{
+              <NoterTab {...(coachNotesEnabled ? { key: `${session.user.id}:${a.id}` } : {})} {...{
+                coachNotesEnabled,
+                onAddNote: coachNotesEnabled ? createCoachNoteSaver({
+                  enabled: coachNotesEnabled, athlete: a, coachId: session.user.id, client: supabase,
+                  onSaved: data => {
+                    setSelectedAthlete(previous => previous?.id === data.id ? data : previous)
+                    setAthletes(previous => previous.map(item => item.id === data.id ? data : item))
+                  },
+                }) : undefined,
                 a, editData, editing, saveEdit, saving, setEditData,
                 setEditing, startEdit,
               }} />

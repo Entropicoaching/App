@@ -4,7 +4,7 @@ import { jsx } from './coachTemplateJsx.mjs'
 const dom = new URL('./coachTemplateDom.mjs', import.meta.url).href
 registerHooks({
   resolve(specifier, context, next) {
-    if (context.parentURL?.endsWith('/ForsideView.jsx') && ['./coachWeekOverview.mjs', '../coachInboxState.js', '../coachRyd.mjs', '../dataEnough.mjs'].includes(specifier)) return next(specifier, context)
+    if (context.parentURL?.endsWith('/ForsideView.jsx') && ['./coachFollowUp.mjs', './coachWeekOverview.mjs', '../coachInboxState.js', '../coachRyd.mjs', '../dataEnough.mjs'].includes(specifier)) return next(specifier, context)
     if (specifier === 'react') return { url: dom, shortCircuit: true }
     if (context.parentURL?.endsWith('/ForsideView.jsx') && !['./CoachActions.jsx', './coachActions.mjs'].includes(specifier)) {
       const source = readFileSync(new URL(context.parentURL), 'utf8')

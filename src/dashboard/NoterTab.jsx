@@ -1,12 +1,14 @@
+import CoachNotesPage from './CoachNotesPage.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Noter: coach-noter.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { s } from '../dashboardShared'
 
-export default function NoterTab({
+export default function NoterTab({ coachNotesEnabled = false, onAddNote,
   a, editData, editing, saveEdit, saving, setEditData,
   setEditing, startEdit,
 }) {
+  if (coachNotesEnabled === true) return <CoachNotesPage key={a.id} athlete={a} onAddNote={onAddNote} />
   return (
               <div style={s.card}>
                 <div style={s.cardLabel}>

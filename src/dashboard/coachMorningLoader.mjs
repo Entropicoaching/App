@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './coachMorningJsx.mjs'
 const base = new URL('./', import.meta.url)
 export const dashboardURL = new URL(existsSync(new URL('Dashboard.jsx', base)) ? 'Dashboard.jsx' : '../Dashboard.jsx', base)
-const real = new Set(['Dashboard.jsx', 'ForsideView.jsx', 'laesninger.js', 'coachMorning.mjs', 'coachMorningSource.mjs'])
+const real = new Set(['coachFollowUp.mjs', 'Dashboard.jsx', 'ForsideView.jsx', 'laesninger.js', 'coachMorning.mjs', 'coachMorningSource.mjs'])
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
