@@ -39,6 +39,7 @@ test('REB2: baseline pin and complete App/AthleteView union survive LF normaliza
   assert.equal(hash(app), '0d9f04358e92c94cee1b0eed5a897be72f51619c21e0eb9983ae6a1680c9da19')
   const athlete = source('../AthleteView.jsx').replace('programNaesteUge = false, ', '')
     .replace('programUgeFoerst, programNaesteUge,', 'programUgeFoerst,')
+    .replace('videoSetRef, videoOptag2: arguments[0]?.videoOptag2 === true,', 'videoSetRef,')
   assert.equal(hash(athlete), 'e29e4e22bd5d6a4e997d6b94eaa61c5d9a889dd3ada5df32746d6b32bd8624b3')
 })
 test('REB2: strict OFF matches current pinned Program DOM across counts and weeks', t => {
