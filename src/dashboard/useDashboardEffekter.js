@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { supabase } from '../supabase.js'
 
 export function useDashboardEffekter({
-  coachFourWeeksEnabled = false,
+  coachFourWeeksEnabled = false, coachProfileWeek = false,
   coachWeekEnabled = false, activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
   fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
   fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
@@ -53,26 +53,26 @@ export function useDashboardEffekter({
   // profilen lukkes (se effekten nedenfor), så et senere genbesøg altid
   // henter friskt.
   useEffect(() => {
-    if ((activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
-      if (weeksLogsLoadedForRef.current === selectedAthlete.id) return
+    if ((coachProfileWeek === true || activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
+      if (weeksLogsLoadedForRef.current === selectedAthlete.id && coachProfileWeek !== true) return
       weeksLogsLoadedForRef.current = selectedAthlete.id
       fetchWeeks(selectedAthlete.id)
       fetchAthleteLogs(selectedAthlete.id)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id])
+  }, [activeTab, selectedAthlete?.id, coachProfileWeek])
   useEffect(() => {
     if (!selectedAthlete) weeksLogsLoadedForRef.current = null
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
   }, [selectedAthlete])
 
   useEffect(() => {
-    if (activeTab === 'beskeder' && selectedAthlete?.id) {
+    if ((coachProfileWeek === true || activeTab === 'beskeder') && selectedAthlete?.id) {
       fetchMessages(selectedAthlete.id)
-      markMessagesRead(selectedAthlete.id, coachMsgTrack)
+      if (activeTab === 'beskeder') markMessagesRead(selectedAthlete.id, coachMsgTrack)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- markMessagesRead læser athletes synkront ved kørsel, ikke en ældre snapshot
-  }, [activeTab, selectedAthlete?.id, coachMsgTrack])
+  }, [activeTab, selectedAthlete?.id, coachMsgTrack, coachProfileWeek])
 
   useEffect(() => {
     if ((activeTab === 'oversigt' || activeTab === 'analyse') && selectedAthlete?.id) {
@@ -89,11 +89,11 @@ export function useDashboardEffekter({
   }, [activeTab, selectedAthlete?.id])
 
   useEffect(() => {
-    if ((activeTab === 'hub' || activeTab === 'analyse' || (coachFourWeeksEnabled === true && activeTab === 'oversigt')) && selectedAthlete?.id) {
+    if ((coachProfileWeek === true || activeTab === 'hub' || activeTab === 'analyse' || (coachFourWeeksEnabled === true && activeTab === 'oversigt')) && selectedAthlete?.id) {
       fetchVideoCoachHistory(selectedAthlete.id)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id, coachFourWeeksEnabled])
+  }, [activeTab, selectedAthlete?.id, coachFourWeeksEnabled, coachProfileWeek])
 
   // Et tryk i den samlede indbakke skifter først atlet og åbner derefter
   // den konkrete måling. Rækkefølgen forhindrer reviewdata fra en anden

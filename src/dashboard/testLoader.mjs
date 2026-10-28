@@ -16,6 +16,7 @@ export function resolve(specifier, context, next) {
       if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {
         for (const ext of ['.js', '.jsx', '.mjs']) if (exactExists(new URL(specifier + ext, context.parentURL))) { specifier += ext; break }
       }
+  if (specifier === 'react' && context.parentURL?.endsWith('/coachMeetSoon.mjs')) return { url: 'data:text/javascript,' + encodeURIComponent(`export { createElement, useState } from '${synthetic}'; export const useEffect=()=>{throw Error('Unexpected meet UI hook')};`), shortCircuit: true }
   if (specifier === 'react') return { url: synthetic, shortCircuit: true }
   if ((context.parentURL?.endsWith('/laesninger.js') || context.parentURL?.endsWith('/baselineLaesninger.js'))) {
     if (specifier === '../supabase.js') return { url: synthetic, shortCircuit: true }

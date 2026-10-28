@@ -2,9 +2,11 @@ import NytIAppen, { nytCoachNavigation } from './nytIAppen.mjs'
 import { coachNotesFlag, createCoachNoteSaver } from './dashboard/coachNotes.mjs'
 import { FridayChecklist, FridayChecklistEntry } from './dashboard/fridayChecklist.mjs'
 import { rel1030Enabled } from './rel1030.mjs'
+import { coachMeetSoonFlag } from './dashboard/coachMeetSoon.mjs'
 import { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './dashboard/VideoReviewTemplates.mjs'
 import { coachFollowUpFlag } from './dashboard/coachFollowUp.mjs'
 import { coachMorningFlag } from './dashboard/coachMorning.mjs'
+import { ProfileWeekSummary, profileWeekFlag } from './dashboard/profileWeekSummary.mjs'
 import CoachFourWeeks from './dashboard/CoachFourWeeks.jsx'
 import { COACH_FOUR_WEEKS_ENABLED, reduceFourWeekRead } from './dashboard/coachFourWeeks.mjs'
 import { coachWeekFlag } from './dashboard/coachWeekOverview.mjs'
@@ -80,12 +82,15 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
     typeof window === 'undefined' ? '' : window.location.search,
   ))
   const coachRyd = useRef(coachRydEnabled(typeof window === 'undefined' ? '' : window.location.search)).current
+  const coachProfileWeek = profileWeekFlag(typeof window === 'undefined' ? '' : window.location.search)
   const coachNotesEnabled = coachNotesFlag(typeof window === 'undefined' ? '' : window.location.search)
   const coachWeekEnabled = coachWeekFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachWeekDataStatus, setCoachWeekDataStatus] = useState({})
   const coachFollowUp = coachFollowUpFlag(typeof window === 'undefined' ? '' : window.location.search)
   const coachMorning = coachMorningFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachMorningData, setCoachMorningData] = useState({})
+  const coachMeetSoon = coachMeetSoonFlag(typeof window === 'undefined' ? '' : window.location.search)
+  const [coachMeetData, setCoachMeetData] = useState({})
   const [athletes, setAthletes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
@@ -171,7 +176,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
 
   const [fourWeekReads, setFourWeekReads] = useState({})
-  const fourWeekCapture = coachFourWeeksEnabled === true
+  const fourWeekCapture = coachFourWeeksEnabled === true || coachProfileWeek
     ? event => setFourWeekReads(previous => reduceFourWeekRead(previous, event)) : undefined
   const [weeks, setWeeks] = useState([])
   const [openWeekId, setOpenWeekId] = useState(null)
@@ -350,8 +355,9 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
     fetchWarmupTemplates,
   } = lavLaesninger({
     blokFremgang: blokFremgang === true,
-    fourWeekCapture,
+    fourWeekCapture, profileWeekCapture: coachProfileWeek ? fourWeekCapture : undefined,
     setCoachActionsStatus, coachMorning, setCoachMorningData,
+    coachMeetSoon, setCoachMeetData,
     coachWeekEnabled, setCoachWeekDataStatus,
     inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
     setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
@@ -473,7 +479,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
 
   useDashboardEffekter({
     coachWeekEnabled,
-    coachFourWeeksEnabled,
+    coachFourWeeksEnabled, coachProfileWeek,
     activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
     fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
     fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
@@ -673,7 +679,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
 
         {view === 'list' && (() => {
           return (
-            <ForsideView {...{ coachFollowUp, coachRyd, coachMorning, coachMorningData,
+            <ForsideView {...{ coachFollowUp, coachRyd, coachMorning, coachMorningData, coachMeetSoon, coachMeetData,
               coachWeekEnabled, coachWeekDataStatus,
               athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
               automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
@@ -691,6 +697,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
         {/* PROFILE VIEW */}
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+            {coachProfileWeek && <ProfileWeekSummary enabled={coachProfileWeek} athleteId={a.id} reads={fourWeekReads[a.id]} />}
             <ProfilHoved {...{ mobilitetHjalp: mobilitetHjalp === true, coachRyd,
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,

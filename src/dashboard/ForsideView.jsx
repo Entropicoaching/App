@@ -1,4 +1,5 @@
 import { CoachFollowUpScope, FollowUpControl, sortFollowUps, validCoachScope } from './coachFollowUp.mjs'
+import { CoachMeetSoon } from './coachMeetSoon.mjs'
 import { CoachMorning } from './coachMorning.mjs'
 import { coachInboxLine } from '../coachInboxState.js'
 import { positiveStatusEvidence } from '../dataEvidence.mjs'
@@ -31,6 +32,7 @@ export default function ForsideView(props) {
 // State remains in the keyed opt-in scope and per-athlete controls.
 function renderForsideList({ followUp = null, coachRyd = false, coachMorning = false, coachMorningData,
   coachWeekEnabled = false, coachWeekDataStatus,
+  coachMeetSoon = false, coachMeetData,
   athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
   automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
   fetchAthletes, goToMyProfile, handleCoachBriefingSeen, handleTrainingSignal, hiddenAthleteIds, isMobile,
@@ -255,6 +257,8 @@ function renderForsideList({ followUp = null, coachRyd = false, coachMorning = f
                 ...entry, current: selectOverviewWeek(calendarWeeks[entry.athlete.id] || [], entry.current),
               })),
                 completion: athleteWeekCompletion, status: coachWeekDataStatus, loading, loadError, openProfile })}
+
+              {coachMeetSoon === true && <CoachMeetSoon enabled={coachMeetSoon} athletes={visibleAthletes} data={coachMeetData} loading={loading} loadError={loadError} openProfile={openProfile} />}
 
               <div style={{ ...s.card, marginBottom: 0, padding: isMobile ? '0.8rem 0.9rem' : '1rem 1.2rem' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.45rem' }}>
