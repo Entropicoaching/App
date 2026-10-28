@@ -1,3 +1,4 @@
+import { CoachFollowUpScope, FollowUpControl, sortFollowUps, validCoachScope } from './coachFollowUp.mjs'
 import { CoachMorning } from './coachMorning.mjs'
 import { coachInboxLine } from '../coachInboxState.js'
 import { positiveStatusEvidence } from '../dataEvidence.mjs'
@@ -19,7 +20,16 @@ import { dageSiden } from '../danskDato.js'
 import CoachActions from './CoachActions.jsx'
 import { COACH_ACTIONS_ENABLED, coachActionsEnabled } from './coachActions.mjs'
 
-export default function ForsideView({ coachRyd = false, coachMorning = false, coachMorningData,
+export default function ForsideView(props) {
+  if (props.coachFollowUp !== true || !validCoachScope(props.coachId)) return renderForsideList(props)
+  return <CoachFollowUpScope key={props.coachId} coachId={props.coachId}>
+    {followUp => renderForsideList({ ...props, followUp })}
+  </CoachFollowUpScope>
+}
+
+// Pure render helper: keep the existing home tree directly observable while OFF.
+// State remains in the keyed opt-in scope and per-athlete controls.
+function renderForsideList({ followUp = null, coachRyd = false, coachMorning = false, coachMorningData,
   coachWeekEnabled = false, coachWeekDataStatus,
   athleteCurrentWeek, athleteLastLogs, athletes, athleteSortMode, athleteWeekCompletion, athleteWeekSummary,
   automationAlertsError, calendarWeeks, coachBriefingSeen, coachBriefingSeenSavingKey, coachPriorityCount, coachPriorityItems,
@@ -64,9 +74,10 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
           const afvigelseByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.afvigelse]))
           const ugeStatusByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r]))
           const currentWeekByAthleteId = new Map(athletesWithAfvigelse.map(r => [r.athlete.id, r.current]))
-          const sortedVisibleAthletes = athleteSortMode === 'afvigelse'
+          const orderedVisibleAthletes = athleteSortMode === 'afvigelse'
             ? sorterEfterAfvigelse(athletesWithAfvigelse).map(r => r.athlete)
             : visibleAthletes
+          const sortedVisibleAthletes = followUp ? sortFollowUps(orderedVisibleAthletes, followUp.marks) : orderedVisibleAthletes
           const shownAthletes = showHiddenAthletes
             ? [...sortedVisibleAthletes, ...hiddenAthletes.sort((x, y) => x.name.localeCompare(y.name, 'da'))]
             : sortedVisibleAthletes
@@ -251,6 +262,10 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844', letterSpacing: '0.06em' }}>{visibleAthletes.length} aktive</span>
                 </div>
 
+                {followUp && <p role={followUp.error ? 'alert' : undefined} style={{ color: '#b3afa4', fontSize: '0.75rem', overflowWrap: 'anywhere' }}>
+                  {followUp.error || 'Opfølgning gemmes kun i denne browser for dig. Ingen besked sendes til atleten.'}
+                </p>}
+
                 {/* ORDRE 277 · commit 1: sortér efter afvigelse denne uge —
                     planlagt mod gennemført, størst afvigelse øverst, "ingen
                     plan" nederst. Sorteringsvalget er almindelig
@@ -332,7 +347,7 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
                       const afvigelseText = !afvigelse ? '' : !afvigelse.harPlan
                         ? 'Ingen plan'
                         : `Planlagt ${afvigelse.plannedSets} sæt${afvigelse.plannedTonnage > 0 ? ` · ${Math.round(afvigelse.plannedTonnage)} kg` : ''} — gennemført ${afvigelse.completedSets} sæt${afvigelse.plannedTonnage > 0 ? ` · ${Math.round(afvigelse.completedTonnage)} kg` : ''} · ${lastLogText}`
-                      return (
+                      const athleteRow = (
                         <div key={athlete.id} role={isHidden ? undefined : 'button'} tabIndex={isHidden ? undefined : 0}
                           onClick={() => !isHidden && openProfile(athlete, 'program')}
                           onKeyDown={event => { if (!isHidden && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openProfile(athlete, 'program') } }}
@@ -401,6 +416,12 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
                           )}
                         </div>
                       )
+                      return followUp && !isHidden ? (
+                        <div key={athlete.id} data-follow-up-athlete={athlete.id} style={{ minWidth: 0 }}>
+                          {athleteRow}
+                          <FollowUpControl key={athlete.id} athlete={athlete} athletes={athletes} followUp={followUp} />
+                        </div>
+                      ) : athleteRow
                     })}
                   </div>
                 )}
