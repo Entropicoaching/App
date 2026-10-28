@@ -7,7 +7,7 @@ import { mount, nodes, text, one } from './analyseTestDom.mjs'
 install()
 const { analyseConclusion, default: Conclusion } = await import('./analyseConclusion.mjs')
 const { default: AnalyseTab } = await import('./AnalyseTab.jsx')
-const baselinePin = 'b08de1810032a1c3e87bdcbd8e8af4248623163762ed946684bdcbf0ddd22d18'
+const baselinePin = '1c621f8c1634f8a448bb917761d6074ebdacbc71568506356ddd63d34106bb74'
 const props = {a:{id:'demo',name:'Demo'},selectedAthlete:{id:'demo',name:'Demo'},athleteLogs:[],athletePRHistory:[],athleteReadiness:[],athleteWeightLogs:[],exerciseLibrary:[],videoAnalyses:[],videoBaselines:[],weeks:[],videoLiftFilter:'all'}
 const logs=()=>['2026-10-01','2026-10-08','2026-10-15','2026-10-22'].map((date,i)=>({id:String(i),weight:100,reps_completed:3,logged_at:date,exercises:{name:'Squat',sessions:{deload:false}}}))
 const row=extra=>({id:'v',athlete_id:'demo',lift:'squat',analyzed_at:'2026-10-20',status:'coach_approved',athlete_feedback:{focus:[{text:'Hold pausen.'}]},...extra})
