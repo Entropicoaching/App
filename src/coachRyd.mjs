@@ -7,6 +7,9 @@ export function coachRydEnabled(search = '') {
   const values = new URLSearchParams(search).getAll('coachRyd')
   return (release.length === 1 && release[0] === '1') || (values.length === 1 && values[0] === '1')
 }
+export function coachRydEntryView(enabled, originalView) {
+  return enabled === true ? 'inbox' : originalView
+}
 const buttonStyle = { minHeight: 44, padding: '0.65rem', color: '#edeae2', background: '#1c1c18', border: '1px solid #59564c', cursor: 'pointer', font: 'inherit' }
 export function CoachFold({ enabled = DEFAULT_COACH_RYD, title, children, open }) {
   return enabled === true

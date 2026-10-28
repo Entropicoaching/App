@@ -7,7 +7,7 @@ import { createWeekDate, createTimelineScale } from './calendarWeekDate.mjs'
 import { holidayInfo } from './coachKonstanter'
 import CoachCalendarEvents from './CoachCalendarEvents.jsx'
 
-export default function KalenderView({
+export default function KalenderView({ coachRyd = false, tasksOnly = false,
   coachCalendarEvents = false,
   askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,
   calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,
@@ -74,16 +74,7 @@ export default function KalenderView({
           const lastColor = (d) => d == null ? '#4a4844' : d <= 4 ? '#6cba6c' : d <= 8 ? '#c8923a' : '#e05555'
           const fmtDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
 
-          return (
-            <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>Overblik</h1>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
-                  {board.length - needs.length} af {board.length} klar · har du husket at planlægge deres træning?
-                </div>
-              </div>
-
-              {coachCalendarEvents === true && <CoachCalendarEvents athletes={visibleAthletes} openProfile={openProfile} />}
+          const renderPlanTasks = () => (<>
 
               {/* Planoverblik: forklarbare spørgsmål før den konkrete planlægningsflade. */}
               <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(200,146,58,0.28)', background: 'linear-gradient(135deg, rgba(200,146,58,0.065), rgba(28,28,24,0.5))' }}>
@@ -135,6 +126,67 @@ export default function KalenderView({
                   </details>
                 )}
               </div>
+
+</>)
+          const renderAttentionTasks = () => (<>
+              {/* Kræver handling — uden program / uden øvelser / sidste uge nu */}
+              {needs.length > 0 && (
+                <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(224,85,85,0.3)' }}>
+                  <div style={{ ...s.cardLabel, color: '#e05555' }}>⚠ Kræver din opmærksomhed ({needs.length})</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.5rem' }}>
+                    {needs.map(b => {
+                      const snooze = (days) => { const d = new Date(); d.setDate(d.getDate() + days); snoozeAthlete(b.a.id, d.toISOString().slice(0, 10)) }
+                      return (
+                        <div key={b.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', flexWrap: 'wrap' }}>
+                          <div onClick={() => openProfile(b.a, 'program')} style={{ cursor: 'pointer', flex: 1, minWidth: '140px' }}>
+                            <span style={{ fontSize: '0.85rem', color: '#edeae2' }}>{b.a.name}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: b.status === 'none' ? '#e05555' : '#c8923a', marginLeft: '0.6rem' }}>{reasonText(b)}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4844' }}>Udsæt</span>
+                            <button onClick={() => snooze(3)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>3d</button>
+                            <button onClick={() => snooze(7)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>7d</button>
+                            <input type="date" onChange={e => e.target.value && snoozeAthlete(b.a.id, e.target.value)} style={{ ...s.fieldInput, fontSize: '0.55rem', padding: '0.2rem 0.3rem', width: '120px' }} />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Udsatte atleter */}
+              {snoozedNeeds.length > 0 && (
+                <div style={{ ...s.card, marginBottom: '1.5rem' }}>
+                  <div style={s.cardLabel}>Udsat ({snoozedNeeds.length})</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.5rem' }}>
+                    {snoozedNeeds.map(b => (
+                      <div key={b.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                        <span style={{ fontSize: '0.82rem', color: '#7a7770' }}>{b.a.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>udsat til {fmtDate(new Date(b.snoozedUntil))}</span>
+                          <button onClick={() => snoozeAthlete(b.a.id, null)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>Vis nu</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+</>)
+          if (tasksOnly) return <section aria-label="Kalenderopgaver">{renderPlanTasks()}{renderAttentionTasks()}</section>
+
+          return (
+            <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>Overblik</h1>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
+                  {board.length - needs.length} af {board.length} klar · har du husket at planlægge deres træning?
+                </div>
+              </div>
+
+              {coachCalendarEvents === true && <CoachCalendarEvents athletes={visibleAthletes} openProfile={openProfile} />}
+              {!coachRyd && renderPlanTasks()}
 
               {/* Tidslinje — alle atleters blokke på tværs af tid */}
               {(() => {
@@ -392,49 +444,7 @@ export default function KalenderView({
                 )
               })()}
 
-              {/* Kræver handling — uden program / uden øvelser / sidste uge nu */}
-              {needs.length > 0 && (
-                <div style={{ ...s.card, marginBottom: '1.5rem', borderColor: 'rgba(224,85,85,0.3)' }}>
-                  <div style={{ ...s.cardLabel, color: '#e05555' }}>⚠ Kræver din opmærksomhed ({needs.length})</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.5rem' }}>
-                    {needs.map(b => {
-                      const snooze = (days) => { const d = new Date(); d.setDate(d.getDate() + days); snoozeAthlete(b.a.id, d.toISOString().slice(0, 10)) }
-                      return (
-                        <div key={b.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.5rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', flexWrap: 'wrap' }}>
-                          <div onClick={() => openProfile(b.a, 'program')} style={{ cursor: 'pointer', flex: 1, minWidth: '140px' }}>
-                            <span style={{ fontSize: '0.85rem', color: '#edeae2' }}>{b.a.name}</span>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: b.status === 'none' ? '#e05555' : '#c8923a', marginLeft: '0.6rem' }}>{reasonText(b)}</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#4a4844' }}>Udsæt</span>
-                            <button onClick={() => snooze(3)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>3d</button>
-                            <button onClick={() => snooze(7)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>7d</button>
-                            <input type="date" onChange={e => e.target.value && snoozeAthlete(b.a.id, e.target.value)} style={{ ...s.fieldInput, fontSize: '0.55rem', padding: '0.2rem 0.3rem', width: '120px' }} />
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Udsatte atleter */}
-              {snoozedNeeds.length > 0 && (
-                <div style={{ ...s.card, marginBottom: '1.5rem' }}>
-                  <div style={s.cardLabel}>Udsat ({snoozedNeeds.length})</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.5rem' }}>
-                    {snoozedNeeds.map(b => (
-                      <div key={b.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
-                        <span style={{ fontSize: '0.82rem', color: '#7a7770' }}>{b.a.name}</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844' }}>udsat til {fmtDate(new Date(b.snoozedUntil))}</span>
-                          <button onClick={() => snoozeAthlete(b.a.id, null)} style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.25rem 0.45rem' }}>Vis nu</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {!coachRyd && renderAttentionTasks()}
 
               {/* Fuldt board — alle atleter */}
               <div style={{ ...s.card }}>

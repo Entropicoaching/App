@@ -14,7 +14,7 @@ test('counter: exact pinned baselines and unchanged Mere/profile modules', () =>
   for (const [name, sha] of Object.entries({
     'coachNotesDashboardBase.txt': 'a92f2ae91402ac8a36cfeb9faa785cd40b5078c98e6ff07867fb54385fda0974',
     'coachNotesTabBase.txt': '2ed0318b70936b77730e331fb960c62f66379c69f0e412f79fcebd910a13a983',
-    'ProfilHoved.jsx': '500fd858e18dd024b2cae09060e5a81aaaf3b38c682841a4e7aaf6bd9b28c378',
+    'ProfilHoved.jsx': '97d6acd6cdfee2f25e6269eac1d4ef8ca2a6755f1af34457b3bc003682e1dbb0',
     'hubSektioner.jsx': '38e1961e332551e8f81963e3c3593a2c4596ec8ce35beae8745c6b3accbba6b8',
   })) assert.equal(createHash('sha256').update(readFileSync(sourcePath(name), 'utf8').replace(/\r\n/g, '\n')).digest('hex'), sha, name)
 })

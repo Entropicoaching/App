@@ -78,7 +78,13 @@ test('exact source boundary: reversing only the declared insertions recovers the
   const retentionNode = '                  <VideoRetentionLocalPreview key={a.id} analyses={videoAnalyses} objects={videoRetentionObjects} athleteId={a.id} />' + eol
   const retentionProps = 'coachRyd = false, videoRetentionObjects,'
   for (const insertion of [retentionImport, retentionNode, retentionProps]) assert.equal(final.split(insertion).length, 2)
-  const recovered = final.replace(imports, '').replace(block, '')
+  // APP-ANALYSE4 adds only a default-OFF wrapper around the former body.
+  const withoutConclusion = final.replace(/^import AnalyseConclusion[^\n]*\r?\n/m, '')
+    .replace(/                <AnalyseConclusion enabled=[\s\S]*?error=\{videoAnalysisError\}>\r?\n/, '')
+    .replace(/                <\/AnalyseConclusion>\r?\n/, '')
+  assert.notEqual(withoutConclusion, final)
+  assert.equal(withoutConclusion, readFileSync(new URL('./analyseConclusionBaseline.jsx', import.meta.url), 'utf8'))
+  const recovered = withoutConclusion.replace(imports, '').replace(block, '')
     .replace(retentionImport, '').replace(retentionNode, '').replace(retentionProps, 'coachRyd = false,')
   // Normalized combined four-package source on a46979ff, independent of checkout line endings.
   // Opdateret 27. okt. (Dhurva): Planlagt vs faktisk brugte en udefineret variabel observed med appData2 slået til.

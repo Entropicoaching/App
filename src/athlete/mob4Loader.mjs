@@ -4,7 +4,7 @@ import { jsx } from './mob4Jsx.mjs'
 const root = new URL('./', import.meta.url)
 const files = ['MobiliseringTab.jsx', 'MobilitetFokus.jsx', 'MobilitetsBibliotek.jsx',
   'mobilityFocus.mjs', 'mobilityCatalog.mjs', 'mobilityLibrary.mjs', 'exerciseNames.js',
-  'mobilityHelped.mjs', 'ProfilHoved.jsx']
+  'mobilityHomework.mjs', 'CoachMobility.jsx', 'coachMobility.mjs', 'mobilityHelped.mjs', 'ProfilHoved.jsx']
 export function moduleURL(name) {
   return [name, '../' + name, '../dashboard/' + name].map(path => new URL(path, root)).find(existsSync)
 }

@@ -33,9 +33,10 @@ export function focusPlan(lift, need, library, templates = []) {
   return { exercises, notes }
 }
 
-export function renderMobilityShortcut(h, { enabled, tab, enkelOn, route, setMobilityMode, setTab }) {
+export function renderMobilityShortcut(h, { enabled, tab, enkelOn, route, setMobilityMode, setTab, coachSummary }) {
   if (enabled !== true || tab !== 'hjem' || (enkelOn && !['traening', 'alle'].includes(route))) return null
   return h('section', { 'aria-label': 'Mobilitet til dit løft', style: { margin: '0 0 16px', padding: 18, border: '1px solid #736043', borderRadius: 12, background: 'linear-gradient(135deg, #302a20, #1c1c18)', color: '#edeae2' } },
+    coachSummary,
     h('h2', { style: { margin: '0 0 8px', fontFamily: "'Playfair Display', serif", fontWeight: 400 } }, 'Mere plads til dit løft'),
     h('p', { style: { margin: '0 0 12px', lineHeight: 1.5 } }, 'Vælg dit fokus. Få øvelser fra biblioteket og din coach.'),
     h('button', { type: 'button', style: { minHeight: 48, width: '100%', padding: 12, whiteSpace: 'normal', background: '#e0ae5c', color: '#141410', border: 0, borderRadius: 6, font: 'inherit', cursor: 'pointer' },

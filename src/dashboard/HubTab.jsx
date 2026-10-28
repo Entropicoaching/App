@@ -28,6 +28,7 @@ export default function HubTab({ coachRyd = false,
               ].filter(Boolean)
               return (
                 <div>
+                  <CoachFold enabled={coachRyd} title="Mere om atleten">
                   {/* Statuslinje */}
                   {stat.length > 0 && (
                     <div style={{ ...s.card, display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : `repeat(${stat.length}, 1fr)`, gap: '1rem' }}>
@@ -44,7 +45,7 @@ export default function HubTab({ coachRyd = false,
                   )}
 
                   {/* Sektionsgitter */}
-                  <CoachFold enabled={coachRyd} title="Mere om atleten">
+
 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '1rem' }}>
                     {HUB_SECTIONS.map(sec => (
                       <button

@@ -1,14 +1,16 @@
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './retentionJsx.mjs'
-export const nodes = n => n && typeof n === 'object' ? [n, ...(n.children || []).flatMap(nodes)] : []
-export const text = n => n && typeof n === 'object' ? n.children.map(text).join(' ') : String(n ?? '')
+export const nodes = n => Array.isArray(n) ? n.flatMap(nodes) : n && typeof n === 'object' ? [n, ...(n.children || []).flatMap(nodes)] : []
+export const text = n => Array.isArray(n) ? n.map(text).join(' ') : n && typeof n === 'object' ? n.children.map(text).join(' ') : String(n ?? '')
 let serial = 0
 const registry = Symbol.for('retention.synthetic')
 globalThis[registry] = new Map()
 const stubs = {
-  'dataEvidence.mjs': 'export const weekEvidence=()=>({}), datedRegression=()=>null, rpeTrendEvidence=()=>({}), volumeWeeks=()=>[], matchedDays=()=>({}), planEvidence=()=>({}), liftEvidence=()=>({}), normalizedRatings=()=>[];',
-  'dataEnough.mjs': 'export const explicitRpe=()=>null, dataEnoughEnabled=()=>false, dataAllowed=()=>false, dataMessage=()=>"", lowStreak=()=>false;',
+  'rel1030.mjs': 'export const rel1030Feature=()=>false;',
+  'exerciseProgress.js': 'export const bestHeavySetPerDay=()=>[];',
+  'dataEvidence.mjs': 'export const heavyPointEvidence=()=>({}), weekEvidence=()=>({}), datedRegression=()=>null, rpeTrendEvidence=()=>({}), volumeWeeks=()=>[], matchedDays=()=>({}), planEvidence=()=>({}), liftEvidence=()=>({}), normalizedRatings=()=>[];',
+  'dataEnough.mjs': 'export const hasEnoughData=()=>false, dayNumber=()=>null, explicitRpe=()=>null, dataEnoughEnabled=()=>false, dataAllowed=()=>false, dataMessage=()=>"", lowStreak=()=>false;',
   'coachRyd.mjs': 'export const CoachFold=()=>null;',
   'videoCoachBaselineProgress.js': 'export const buildVideoCoachBaselineProfiles=()=>[], countReadyVideoCoachBaselineProfiles=()=>0;',
   'videoCoachFeedbackQuality.js': 'export const videoCoachFeedbackQuality=()=>({});',
@@ -43,7 +45,7 @@ export async function app({ before = false } = {}) {
     try { return type({ ...props, children: flat }) } finally { state.active = old }
   }
   globalThis[registry].set(id, state)
-  const real = new Set(['AnalyseTab.jsx','VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs'])
+  const real = new Set(['analyseConclusion.mjs','AnalyseTab.jsx','VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs'])
   registerHooks({
     resolve(specifier, context, next) {
       if (specifier.startsWith(prefix)) return { url: specifier, shortCircuit: true }
@@ -59,7 +61,7 @@ export async function app({ before = false } = {}) {
       if (name === 'react') source = `export const useState=${access}.useState; export const createElement=(t,p,...c)=>${access}.h(t,p,null,...c);`
       else if (Object.hasOwn(stubs, name)) source = stubs[name]
       else {
-        const relative = before && name === 'AnalyseTab.jsx' ? './retentionBeforeAnalyseTab.txt' : './' + name
+        const relative = before && name === 'AnalyseTab.jsx' ? './retentionBeforeAnalyseTab.txt' : name === 'analyseConclusion.mjs' ? './dashboard/' + name : './' + name
         const local = new URL(relative, import.meta.url)
         source = readFileSync(name === 'AnalyseTab.jsx' && !before && !existsSync(local) ? new URL('./dashboard/AnalyseTab.jsx', import.meta.url) : local, 'utf8')
         if (name.endsWith('.jsx')) source = `const __h=${access}.h;\n` + jsx(source)

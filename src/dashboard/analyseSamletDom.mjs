@@ -22,6 +22,7 @@ export const h = (type, props, ignored, ...children) => createElement(type, prop
 export function mount(Component, props = {}) {
   const instances = new Map()
   function expand(node, path) {
+    if (Array.isArray(node)) return node.length === 1 ? expand(node[0], path) : { type: Fragment, props: { children: node.map((child, i) => expand(child, `${path}/${i}`)) } }
     if (node == null || typeof node === 'boolean') return null
     if (typeof node !== 'object') return String(node)
     if (typeof node.type === 'function') {

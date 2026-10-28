@@ -3,14 +3,14 @@ import { ATHLETE } from './fridayPreviewSeed.mjs'
 export const athleteFlags = Object.freeze(Object.fromEntries([
   'enkelPrototype', 'forenklinger', 'programUgeFoerst', 'fremgangFokus',
   'naesteTraening', 'personalRecords', 'repRecords', 'staevnedagFokus', 'fremgangLinjer',
-  'mobilitetFoerPas', 'mobilitetFokus', 'kostPerAtlet',
+  'mobilitetCoach', 'mobilitetHjemme', 'mobilitetFoerPas', 'mobilitetFokus', 'kostPerAtlet',
   'blokFremgang', 'vaerdF6',
 ].map(key => [key, true]).concat([['kostValg', Object.freeze({ [ATHLETE]: true })]])))
 export const coachFlags = Object.freeze({ programCopyEnabled: true,
   coachPlanCopyEnabled: true, blokFremgang: true,
-  coachFourWeeksEnabled: true, coachTemplateMessages: true, coachCalendarEvents: true })
+  mobilitetCoach: true, mobilitetHjemme: true, coachFourWeeksEnabled: true, coachTemplateMessages: true, coachCalendarEvents: true })
 export const queryFlags = Object.freeze({ appE2E2: '1', appRel3: '1',
-  coachRyd: '1', coachUge: '1', analyseSamlet: '1', analyseSammenlign: '1', appData2: '1' })
+  coachRyd: '1', coachUge: '1', analyseSamlet: '1', analyseSammenlign: '1', appData2: '1', rel1030: '1', analyseConclusion: '1' })
 export const storageFlags = Object.freeze({ 'vc-epik2-playback': '1',
   'entropi:vc-review1': '1', vc_upload_retry_v1: '1' })
 export const screens = Object.freeze([

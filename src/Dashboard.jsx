@@ -12,7 +12,7 @@ import { COACH_FOUR_WEEKS_ENABLED, reduceFourWeekRead } from './dashboard/coachF
 import { coachWeekFlag } from './dashboard/coachWeekOverview.mjs'
 import { COACH_TEMPLATE_MESSAGES_ENABLED, createCoachTemplateSender } from './dashboard/coachTemplateMessages.mjs'
 import { supabase } from './supabase.js'
-import { coachRydEnabled, WorkInboxLink } from './coachRyd.mjs'
+import { coachRydEnabled, coachRydEntryView, WorkInboxLink } from './coachRyd.mjs'
 import { calendarDay } from './calendarDate.js'
 
 import { useState, useEffect, useRef } from 'react'
@@ -76,7 +76,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
+export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
   const checklistEnabled = rel1030Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
@@ -95,7 +95,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   // eslint-disable-next-line react-hooks/refs -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
-  const [view, setView] = useState(initialCoachEntryRef.current.view)
+  const [view, setView] = useState(coachRydEntryView(coachRyd, initialCoachEntryRef.current.view))
   // eslint-disable-next-line react-hooks/refs -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)
   const focusNextFromLinkRef = useRef(initialCoachEntryRef.current.focusNext)
   const [profileReturnView, setProfileReturnView] = useState('list')
@@ -639,6 +639,8 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
           <LazyBoundary
             factory={indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
             componentProps={{ coachRyd,
+              coachBriefingSeen, coachBriefingSeenSavingKey, handleCoachBriefingSeen,
+              calendarTasks: coachRyd ? <KalenderView tasksOnly {...{ athletes, hiddenAthleteIds, calendarWeeks, athleteCurrentWeek, athleteLastLogs, snoozedAthletes, isMobile, openProfile, openPlanReview, snoozeAthlete }} /> : null,
               athletes, coachPriorityItems, handleTrainingSignal,
               automationAlertActionError, automationAlertUpdatingId, automationAlertsError, handleAutomationAlert,
               hiddenAthleteIds, inboxRefreshing, inboxRefreshStatus,
@@ -665,7 +667,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
         {/* CALENDAR VIEW */}
         {view === 'calendar' && (() => {
           return (
-            <KalenderView {...{
+            <KalenderView {...{ coachRyd,
               coachCalendarEvents: coachCalendarEvents === true,
               askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,
               calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,
@@ -698,7 +700,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             {coachProfileWeek && <ProfileWeekSummary enabled={coachProfileWeek} athleteId={a.id} reads={fourWeekReads[a.id]} />}
-            <ProfilHoved {...{ mobilitetHjalp: mobilitetHjalp === true, coachRyd,
+            <ProfilHoved {...{ mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilityCoachId: session?.user?.id, onMobilitySaved: updated => { setSelectedAthlete(previous => previous?.id === updated.id ? updated : previous); setAthletes(previous => previous.map(item => item.id === updated.id ? updated : item)) }, mobilitetHjalp: mobilitetHjalp === true, coachRyd,
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
@@ -825,7 +827,7 @@ export default function Dashboard({ coachCalendarEvents = false, mobilitetHjalp 
             })()}
 
             {activeTab === 'noter' && (
-              <NoterTab {...(coachNotesEnabled ? { key: `${session.user.id}:${a.id}` } : {})} {...{
+              <NoterTab {...{ mobilitetCoach: mobilitetCoach === true, mobilityCoachId: session?.user?.id, mobilityClient: supabase, setSaving, showFlash, onMobilitySaved: updated => { setSelectedAthlete(previous => previous?.id === updated.id ? updated : previous); setAthletes(previous => previous.map(item => item.id === updated.id ? updated : item)) } }} {...(coachNotesEnabled ? { key: `${session.user.id}:${a.id}` } : {})} {...{
                 coachNotesEnabled,
                 onAddNote: coachNotesEnabled ? createCoachNoteSaver({
                   enabled: coachNotesEnabled, athlete: a, coachId: session.user.id, client: supabase,

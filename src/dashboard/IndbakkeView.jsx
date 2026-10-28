@@ -1,3 +1,4 @@
+import { coachBriefingPointKey } from '../coachBriefingSeen.js'
 import VideoQueueFilter from './VideoQueueFilter.jsx'
 import { VIDEO_QUEUE_FILTER_ENABLED } from './videoQueueFilter.mjs'
 import { dataEnoughEnabled, dataMessage } from '../dataEnough.mjs'
@@ -10,7 +11,7 @@ import { coachPriorityFocus } from '../coachPriority.js'
 import { coachInboxCompletionStatus, shouldCollapseCoachConversations } from '../coachInboxState.js'
 import { s, initials } from '../dashboardShared.js'
 
-export default function IndbakkeView({ coachRyd = false,
+export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBriefingSeen = {}, coachBriefingSeenSavingKey, handleCoachBriefingSeen,
   athletes, automationAlertActionError, automationAlertUpdatingId, automationAlertsError,
   coachPriorityItems, handleAutomationAlert, handleTrainingSignal, hiddenAthleteIds, inboxRefreshing,
   inboxRefreshStatus, isMobile, latestByTrack, messageInboxError, openCoachPriorityItem,
@@ -72,6 +73,8 @@ export default function IndbakkeView({ coachRyd = false,
   }
   const renderPriorityItem = item => {
     if (item.kind === 'automation') return renderAutomationItem(item)
+    const briefingKey = coachBriefingPointKey(item)
+    const canMarkSeen = coachRyd && briefingKey && (item.kind === 'message' || item.kind === 'video')
     const signalUpdating = item.kind === 'signal' && trainingSignalUpdatingKey === `${item.signal.o_athlete_id}:${item.signal.o_detector}`
     return (
       <div key={item.key} style={{ padding: '0.62rem 0.7rem', border: `1px solid ${item.color}30`, background: '#171713' }}>
@@ -89,6 +92,9 @@ export default function IndbakkeView({ coachRyd = false,
           {item.count > 0 && <span style={{ minWidth: 19, height: 19, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 0.25rem', borderRadius: '999px', background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', fontWeight: 700 }}>{item.count}</span>}
           <span style={{ color: item.color, flexShrink: 0, fontSize: '0.7rem' }}>→</span>
         </button>
+        {canMarkSeen && (coachBriefingSeen[briefingKey]
+          ? <span>Set ✓</span>
+          : <button disabled={coachBriefingSeenSavingKey === briefingKey} style={{ ...s.btnGhost, minHeight: 44 }} onClick={() => handleCoachBriefingSeen(item)}>Set</button>)}
         {item.kind === 'signal' && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.5rem', paddingTop: '0.45rem', borderTop: '1px solid rgba(237,234,226,0.055)' }}>
             <button disabled={signalUpdating} onClick={() => handleTrainingSignal(item.signal, 'snooze')}
@@ -208,11 +214,13 @@ export default function IndbakkeView({ coachRyd = false,
         <div style={{ ...s.card, marginBottom: '1rem', borderColor: 'rgba(108,186,108,0.24)', background: 'rgba(108,186,108,0.035)', padding: '0.85rem 0.9rem', display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
           <span aria-hidden="true" style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(108,186,108,0.38)', background: 'rgba(108,186,108,0.07)', color: '#6cba6c', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.8rem' }}>✓</span>
           <span style={{ minWidth: 0 }}>
-            <span style={{ display: 'block', color: '#c9d7c7', fontSize: '0.78rem' }}>{dataEnoughEnabled() ? 'Ingen åbne registrerede ting' : coachRyd ? 'Arbejdsindbakke er ryddet' : 'Coach Briefing er ryddet'}</span>
+            <span style={{ display: 'block', color: '#c9d7c7', fontSize: '0.78rem' }}>{coachRyd ? 'Ingen åbne beskeder, videoer eller træningssignaler' : dataEnoughEnabled() ? 'Ingen åbne registrerede ting' : 'Coach Briefing er ryddet'}</span>
             <span style={{ display: 'block', marginTop: '0.16rem', color: '#7a7770', fontSize: '0.64rem', lineHeight: 1.4 }}>Ingen beskeder, videoer eller træningssignaler kræver dit blik lige nu.</span>
           </span>
         </div>
       )}
+
+      {coachRyd && calendarTasks}
 
       {collapseConversations ? (
         <details style={{ border: '1px solid rgba(237,234,226,0.1)', background: '#171713' }}>

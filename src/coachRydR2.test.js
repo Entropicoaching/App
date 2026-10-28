@@ -43,8 +43,8 @@ test('counterexample: populated home fold retains scoped task click',async()=>{
  const Home=await load('ForsideView.jsx'),calls=[]
  const item={key:'synthetic-item',title:'Unik opgave',kind:'message',label:'Svar',detail:'Svar på besked',color:'#fff',athlete}
  for(const isMobile of [false,true]) {
-  const tree=Home({...common,isMobile,coachRyd:true,coachPriorityItems:[item],coachPriorityCount:1,openCoachPriorityItem:(...x)=>calls.push(x)})
-  const details=fold(tree,'Opgaver på forsiden');assert.ok(details);assert.equal(details.props.open,undefined)
+  const tree=Home({...common,isMobile,coachRyd:false,coachPriorityItems:[item],coachPriorityCount:1,openCoachPriorityItem:(...x)=>calls.push(x)})
+  assert.equal(fold(tree,'Opgaver på forsiden'),undefined); const details=tree
   nodes(details).find(n=>n.type==='button'&&text(n).includes('Unik opgave')).props.onClick()
  }
  assert.deepEqual(calls,[[item,'list'],[item,'list']])

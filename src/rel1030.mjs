@@ -3,7 +3,7 @@ export const DEFAULT_REL1030 = false
 export const REL1030_FEATURES = Object.freeze([
   'mobilitetFoerPas', 'mobilitetFokus', 'mobilitetHjalp',
   'analyseSamlet', 'analyseSammenlign', 'coachRyd', 'coachUge',
-  'videoFeedbackPlayback',
+  'videoFeedbackPlayback', 'analyseConclusion', 'mobilitetCoach', 'mobilitetHjemme',
 ])
 export function rel1030Enabled(search = '') {
   const values = new URLSearchParams(search).getAll('rel1030')
@@ -14,5 +14,5 @@ export function rel1030Feature(feature, search = '') {
 }
 export function rel1030Mobility(props, search = '') {
   if (!rel1030Enabled(search)) return props
-  return { ...props, mobilitetFoerPas: true, mobilitetFokus: true, mobilitetHjalp: true }
+  return { ...props, mobilitetFoerPas: true, mobilitetFokus: true, mobilitetHjalp: true, mobilitetCoach: true, mobilitetHjemme: true }
 }

@@ -66,7 +66,8 @@ test('profile daily actions clear edit and menu without changing athlete scope',
   const tree=Profile({...common,coachRyd:true,setActiveTab:x=>calls.push(x),setEditing:x=>calls.push(x),setNavMenuOpen:x=>calls.push(x)})
   for(const label of ['Plan','Log','Svar']) button(tree,label).props.onClick()
   assert.deepEqual(calls,['program',null,false,'log',null,false,'beskeder',null,false])
-  assert.ok(nodes(tree).some(x=>x.type==='details'&&text(x).includes('Profiladministration')))
+  assert.equal(button(tree,'Fjern'),undefined)
+  const menu=Profile({...common,coachRyd:true,navMenuOpen:true}); assert.ok(button(menu,'Fjern'))
   assert.match(text(tree),/Syntetisk Atlet/)
 })
 test('hub keeps all destinations in closed More with original handlers',async()=>{

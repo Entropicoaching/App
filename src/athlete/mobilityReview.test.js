@@ -67,6 +67,6 @@ test('countercheck: exact integration passes opt-in to both athlete entry points
   assert.match(app, /mobilitetFokus = false/)
   assert.equal(app.split('mobilitetFokus: mobilitetFokus === true').length - 1, 2)
   assert.match(view, /mobilitetFokus = false/)
-  assert.match(view, /renderMobilityShortcut\(createElement, \{ enabled: mobilitetFokus, tab, enkelOn, route, setMobilityMode, setTab \}\)/)
+  assert.match(view, /renderMobilityShortcut\(createElement, \{ enabled: mobilitetFokus === true \|\| mobilitetCoach === true, tab, enkelOn, route, setMobilityMode, setTab, coachSummary: createElement\(CoachMobilitySummary, \{ enabled: mobilitetCoach, athleteId: athlete\?\.id, notes: athlete\?\.notes \}\) \}\)/)
   assert.match(view, /mobilitetFokus: mobilitetFokus === true, currentWeek, mobilityIntake/)
 })

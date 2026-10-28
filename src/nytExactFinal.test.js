@@ -11,7 +11,7 @@ const { DEFAULT_REL1030, rel1030Enabled } = await import('./rel1030.mjs')
 
 test('fresh final gate uses the byte-identical pinned default OFF release module', () => {
   const bytes = readFileSync(new URL('./rel1030.mjs', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
-  assert.equal(createHash('sha256').update(bytes).digest('hex'), '763f69c66bbeac40ded77319b6b2bf9bbbf1424af7777a9071201f906ef79795')
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), '84efbc0c720e87883bd5f8d538eda0d6bc3c1574297bed451648d550c5d625c5')
   assert.equal(DEFAULT_REL1030, false)
   assert.equal(rel1030Enabled(''), false)
 })

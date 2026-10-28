@@ -62,5 +62,5 @@ test('flag wiring uses strict opt-in through existing entry points and disables 
   assert.match(app, /mobilitetHjalp = false/)
   assert.equal((app.match(/mobilitetHjalp: mobilitetHjalp === true/g) || []).length, 3)
   assert.match(athlete, /mobilitetHjalp: mobilitetHjalp === true && !coachAthleteId, athleteId: athlete\?\.id, mobilityDate: today\(\)/)
-  assert.match(dashboard, /<ProfilHoved \{\.\.\.\{ mobilitetHjalp: mobilitetHjalp === true/)
+  assert.match(dashboard, /<ProfilHoved \{\.\.\.\{ mobilitetCoach: mobilitetCoach === true, [^\n]*mobilitetHjalp: mobilitetHjalp === true/)
 })

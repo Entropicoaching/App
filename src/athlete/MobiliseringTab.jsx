@@ -506,7 +506,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
 }
 
 export default function MobiliseringTab({
-  mobilitetHjalp = false, athleteId, mobilityDate,
+  mobilitetCoach = false, coachNotes, mobilitetHjalp = false, athleteId, mobilityDate,
   mobilitetFokus = false,
   currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
   readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
@@ -515,7 +515,7 @@ export default function MobiliseringTab({
   setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,
   warmupFocus, warmupPhase, warmupProblems, warmupStep, warmupSubtype, warmupTemplates,
 }) {
-  if (mobilitetFokus === true && mobilityMode === 'fokus') return createElement(MobilitetFokus, { library: WARMUP_BASE, warmupTemplates, mobilitetHjalp, athleteId, mobilityDate, onExit: () => setMobilityMode(null) })
+  if ((mobilitetFokus === true || mobilitetCoach === true) && mobilityMode === 'fokus') return createElement(MobilitetFokus, { key: JSON.stringify([athleteId, mobilitetCoach, coachNotes]), mobilitetCoach, coachNotes, library: WARMUP_BASE, warmupTemplates, mobilitetHjalp, athleteId, mobilityDate, onExit: () => setMobilityMode(null) })
   return (
     <>
         {mobilityMode === null && (() => {
@@ -538,7 +538,7 @@ export default function MobiliseringTab({
               <Door icon="⚡" title="Varm op" sub="Inden du løfter" onClick={() => setMobilityMode('opvarmning')} />
               <Door icon="✦" title="Mobilitet" sub="Byg en session og tag den, når du er stram"
                 onClick={() => {
-                  if (mobilitetFokus === true) { setMobilityMode('fokus'); return }
+                  if (mobilitetFokus === true || mobilitetCoach === true) { setMobilityMode('fokus'); return }
                   // Land direkte på et forslag (løft fra ugens program + dagens ømhed) — ingen formular-port.
                   const intake = { time: 10, sitting: 'med', lifts: liftsFromWeek(currentWeek), problems: [], soreAreas: areasFromSoreZones(readinessLog?.sore_zones) }
                   setMobilityIntake(intake)

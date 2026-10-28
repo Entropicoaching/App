@@ -1,3 +1,5 @@
+import { CoachMobilityEditor } from '../athlete/CoachMobility.jsx'
+import { MobilityHomeworkCoach } from '../mobilityHomework.mjs'
 import { MobilityHelpedProfile } from '../mobilityHelped.mjs'
 import { ProfileActions, CoachFold } from '../coachRyd.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
@@ -12,7 +14,7 @@ import { HUB_SECTIONS } from './hubSektioner.jsx'
 
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
-export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
+export default function ProfilHoved({ mobilitetHjemme = false, mobilitetCoach = false, mobilityCoachId, onMobilitySaved, mobilitetHjalp = false, coachRyd = false,
   a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
   setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
@@ -37,6 +39,8 @@ export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
   }, [styrkeLogs, a.id])
   return (
     <>
+      <MobilityHomeworkCoach key={a.id} enabled={mobilitetHjemme} athleteId={a.id} />
+      <CoachMobilityEditor enabled={mobilitetCoach} athlete={a} coachId={mobilityCoachId} client={supabase} onSaved={onMobilitySaved} />
       <MobilityHelpedProfile enabled={mobilitetHjalp} athleteId={a.id} />
       {coachRyd && <ProfileActions status={statusLabels[a.status]} athlete={a} activeTab={activeTab} task={profilePriorityContext ? null : undefined} go={key => { setActiveTab(key); setEditing(null); setNavMenuOpen(false) }} /> }
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.75rem' }}>
@@ -74,6 +78,7 @@ export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
               </div>
             )}
 
+            <CoachFold enabled={coachRyd} title="Profiloplysninger">
             {styrke && (
               <div data-styrke-linje={styrke.dele.map(d => d.type).join(',')} style={{ ...s.card, marginBottom: '1rem', padding: '0.7rem 0.85rem', borderColor: styrke.dele[0].type === 'smerte' ? '#e0555538' : 'rgba(200,146,58,0.22)' }}>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.3rem' }}>Hvad gør atleten stærkere nu</div>
@@ -86,7 +91,6 @@ export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
               </div>
             )}
 
-            <CoachFold enabled={coachRyd} title="Profiloplysninger">
 <div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
               <div style={{ ...s.avatar, width: isMobile ? '44px' : '56px', height: isMobile ? '44px' : '56px', fontSize: isMobile ? '1rem' : '1.3rem', flexShrink: 0 }}>{initials(a.name)}</div>
               <div style={isMobile ? { flex: 1, minWidth: 0 } : undefined}>
@@ -114,7 +118,7 @@ export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
               </div>
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                 <span style={s.badge(a.status)}>{statusLabels[a.status]}</span>
-                <CoachFold enabled={coachRyd} title="Profiladministration"><button style={s.btnDanger} onClick={() => setShowDeleteModal(true)}>Fjern</button></CoachFold>
+                {!coachRyd && <button style={s.btnDanger} onClick={() => setShowDeleteModal(true)}>Fjern</button>}
               </div>
             </div>
 </CoachFold>
@@ -165,7 +169,7 @@ export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
                       onMouseEnter={e => { if (!activeInMore) e.currentTarget.style.color = '#b8b4a8' }}
                       onMouseLeave={e => { if (!activeInMore) e.currentTarget.style.color = '#7a7770' }}
                     >
-                      {activeInMore ? <><span style={{ marginRight: '0.35rem' }}>{EMOJI[activeTab]}</span>{activeMoreLabel}</> : 'Mere'}
+                      {coachRyd ? 'Mere' : activeInMore ? <><span style={{ marginRight: '0.35rem' }}>{EMOJI[activeTab]}</span>{activeMoreLabel}</> : 'Mere'}
                       <span style={{ fontSize: '0.5rem', transform: navMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▾</span>
                     </button>
                   </div>
@@ -175,6 +179,7 @@ export default function ProfilHoved({ mobilitetHjalp = false, coachRyd = false,
                       {/* usynligt lag: klik udenfor lukker menuen */}
                       <div onClick={() => setNavMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
                       <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '0.25rem', zIndex: 41, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', minWidth: '11rem', padding: '0.3rem 0' }}>
+                        {coachRyd && <button style={s.btnDanger} onClick={() => setShowDeleteModal(true)}>Fjern</button>}
                         {more.map(n => {
                           const active = activeTab === n.key
                           return (

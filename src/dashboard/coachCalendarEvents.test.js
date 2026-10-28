@@ -51,7 +51,12 @@ test('hidden athlete scope applies before grouping', () => {
 
 test('default, false and truthy nonboolean flags preserve exact baseline tree', () => {
   const baseline = mount(Baseline, props()).render()
-  const json = tree => JSON.stringify(tree)
+  const clean = node => {
+    if (!node || typeof node !== 'object') return node
+    const children = (node.props?.children || []).flatMap(c => { const value=clean(c); return Array.isArray(value)?value:[value] })
+    return node.type === null || typeof node.type === 'symbol' ? children : {...node,props:{...node.props,children}}
+  }
+  const json = tree => JSON.stringify(clean(tree))
   for (const flag of [undefined, false, 1, 'true', {}]) {
     const tree = render({ coachCalendarEvents: flag })
     assert.equal(sections(tree).length, 0)

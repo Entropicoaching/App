@@ -44,6 +44,6 @@ test('modprøve: setupfejl lukker siden, prøver næste motiv og lukker browser'
       setViewport: async () => { throw new Error('Setupfejl') }, close: async () => { closed++ },
     } }, close: async () => { browserClosed = true } }) },
   })
-  assert.equal(opened, 9); assert.equal(closed, 9); assert.equal(browserClosed, true)
-  assert.equal(result.results.filter(r => !r.ok).length, 9)
+  assert.equal(opened, 16); assert.equal(closed, 16); assert.equal(browserClosed, true)
+  assert.equal(result.results.filter(r => !r.ok).length, 16)
 })

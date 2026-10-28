@@ -10,7 +10,11 @@ export function pinned(path) {
 export const Fragment = Symbol.for('synthetic.fragment')
 export function h(type, props, ...children) {
   children = children.flat(Infinity).filter(x => x != null && x !== false && x !== true)
-  if (typeof type === 'function') return type({ ...props, children })
+  if (typeof type === 'function') {
+    const result = type({ ...props, children })
+    // React renders a singleton children array as the same child tree.
+    return Array.isArray(result) && result.length === 1 ? result[0] : result
+  }
   return { type, props: props || {}, children }
 }
 export const nodes = tree => tree && typeof tree === 'object' ? [tree, ...(tree.children || []).flatMap(nodes)] : []
@@ -34,9 +38,9 @@ const shared = {
   videoCoachMetricText: () => '', videoCoachBaselineText: () => '',
   parsePlannedRpe: () => null, buildLiftSeries: () => ({ hasData: false, plannedData: [], actualData: [] }),
 }
-const real = new Set(['coachMeetSource.mjs', 'coachMeetSoon.mjs', 'coachFollowUp.mjs', 'VideoRetentionLocalPreview.mjs', 'VideoRetentionPreview.mjs', 'videoRetention.mjs', 'coachMenuMore.mjs', 'mobilityHelped.mjs', 'coachMorning.mjs', 'coachMorningSource.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'e2eTestFlags.mjs', 'videoQueueFilter.mjs', 'inputValues.js', 'exerciseSetView.js', 'exerciseProgress.js', 'exerciseNames.js', 'ugenoegle.js', 'smerteRegion.js', 'coachWeekOverview.mjs', 'coachTemplateMessages.mjs', 'analyseSammenlign.mjs', 'coachRyd.mjs','coachPriority.js','coachInboxState.js','coachNoteSignal.js','automationAlerts.js','coachBriefingRules.js','VideoMarkerTemplates.mjs', 'vcMarkerTemplates.mjs', 'videoFeedbackPlayback.mjs',
+const real = new Set(['rel1030.mjs','analyseConclusion.mjs', 'coachMobility.mjs', 'mobilityCatalog.mjs', 'mobilityFocus.mjs', 'mobilityHomework.mjs', 'coachMeetSource.mjs', 'coachMeetSoon.mjs', 'coachFollowUp.mjs', 'VideoRetentionLocalPreview.mjs', 'VideoRetentionPreview.mjs', 'videoRetention.mjs', 'coachMenuMore.mjs', 'mobilityHelped.mjs', 'coachMorning.mjs', 'coachMorningSource.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'e2eTestFlags.mjs', 'videoQueueFilter.mjs', 'inputValues.js', 'exerciseSetView.js', 'exerciseProgress.js', 'exerciseNames.js', 'ugenoegle.js', 'smerteRegion.js', 'coachWeekOverview.mjs', 'coachTemplateMessages.mjs', 'analyseSammenlign.mjs', 'coachRyd.mjs','coachPriority.js','coachInboxState.js','coachNoteSignal.js','automationAlerts.js','coachBriefingRules.js','VideoMarkerTemplates.mjs', 'vcMarkerTemplates.mjs', 'videoFeedbackPlayback.mjs',
   'videoCoachLabels.js','videoCoachPersonalFeedback.js','videoCoachFeedbackQuality.js','videoCoachFeedbackEvidence.js','videoCoachBaselineProgress.js','calendarDate.js','kostNumbers.mjs','coachActions.mjs','analyseSamlet.mjs','videoReviewLayout.mjs'])
-const components = new Set(['AnalyseSammenlign.jsx', 'CoachTemplateMessage.jsx', 'VideoQueueFilter.jsx', 'ForsideView.jsx','IndbakkeView.jsx','ProfilHoved.jsx','HubTab.jsx','AnalyseTab.jsx','VideoReviewModal.jsx','Sidebar.jsx','MobilNav.jsx','CoachActions.jsx','AnalyseSamletPrototype.jsx'])
+const components = new Set(['CoachMobility.jsx', 'AnalyseSammenlign.jsx', 'CoachTemplateMessage.jsx', 'VideoQueueFilter.jsx', 'ForsideView.jsx','IndbakkeView.jsx','ProfilHoved.jsx','HubTab.jsx','AnalyseTab.jsx','VideoReviewModal.jsx','Sidebar.jsx','MobilNav.jsx','CoachActions.jsx','AnalyseSamletPrototype.jsx'])
 const registry = new Map()
 globalThis[Symbol.for('coachRyd.tests')] = registry
 let id = 0
@@ -66,7 +70,11 @@ export async function app(legacy = false, previous = false, r2Before = false) {
   registry.set(key, { h, jsxH: (type, props, ignored, ...children) => h(type,props,...children), fakes })
   registerHooks({
     resolve(specifier, context, next) {
-      if (specifier.startsWith(prefix)) return { url: specifier, shortCircuit: true }
+      if (specifier.startsWith(prefix)) {
+        const name = specifier.slice(prefix.length)
+        if (!(name in fakes) && !real.has(name) && !components.has(name)) throw Error('Unapproved dependency: ' + name)
+        return { url: specifier, shortCircuit: true }
+      }
       if (!context.parentURL?.startsWith(prefix)) return next(specifier, context)
       let name = specifier === 'react' ? specifier : basename(specifier)
       if (['hubSektioner.jsx','dashboardCharts.jsx','AnalysePakkeReview.jsx','AnalyseLokaltVaerktoej.jsx','AthleteSilentFailNote.jsx'].includes(name)) name = name.replace(/\.jsx$/, '.js')
@@ -82,11 +90,11 @@ export async function app(legacy = false, previous = false, r2Before = false) {
       if (name in fakes) {
         source = Object.keys(fakes[name]).map(k => k === 'default' ? `export default ${state}.fakes[${JSON.stringify(name)}].default;` : `export const ${k} = ${state}.fakes[${JSON.stringify(name)}][${JSON.stringify(k)}];`).join('\n')
       } else if (components.has(name)) {
-        const target = new URL(existsSync(new URL(name,root)) ? name : 'dashboard/' + name,root)
-        source = r2Before && ['ForsideView.jsx','VideoReviewModal.jsx','ProfilHoved.jsx'].includes(name) ? readFileSync(new URL('r2Before' + name.replace('.jsx','.txt'),root),'utf8') : previous && ['IndbakkeView.jsx','VideoReviewModal.jsx','Sidebar.jsx','MobilNav.jsx'].includes(name) ? readFileSync(new URL('coachRydBefore' + name.replace('.jsx','.txt'), root),'utf8') : legacy && !['CoachActions.jsx','AnalyseSamletPrototype.jsx','AnalyseSammenlign.jsx','CoachTemplateMessage.jsx','VideoQueueFilter.jsx'].includes(name) ? pinned('src/dashboard/' + name) : readFileSync(target,'utf8')
+        const target = new URL(existsSync(new URL(name,root)) ? name : (name === 'CoachMobility.jsx' ? 'athlete/' : 'dashboard/') + name,root)
+        source = r2Before && ['ForsideView.jsx','VideoReviewModal.jsx','ProfilHoved.jsx'].includes(name) ? readFileSync(new URL('r2Before' + name.replace('.jsx','.txt'),root),'utf8') : previous && ['IndbakkeView.jsx','VideoReviewModal.jsx','Sidebar.jsx','MobilNav.jsx'].includes(name) ? readFileSync(new URL('coachRydBefore' + name.replace('.jsx','.txt'), root),'utf8') : legacy && !['CoachMobility.jsx','CoachActions.jsx','AnalyseSamletPrototype.jsx','AnalyseSammenlign.jsx','CoachTemplateMessage.jsx','VideoQueueFilter.jsx'].includes(name) ? pinned('src/dashboard/' + name) : readFileSync(target,'utf8')
         source = `const __h = ${state}.jsxH;\n` + jsx(source)
       } else {
-        source = r2Before && name === 'coachRyd.mjs' ? readFileSync(new URL('r2BeforecoachRyd.txt',root),'utf8') : previous && name === 'coachRyd.mjs' ? readFileSync(new URL('coachRydBeforeHelper.txt',root),'utf8') : readFileSync(new URL(existsSync(new URL(name,root)) ? name : (['VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs','mobilityHelped.mjs'].includes(name) ? '' : ['kostNumbers.mjs','smerteRegion.js','videoFeedbackPlayback.mjs'].includes(name) ? 'athlete/' : name === 'ugenoegle.js' ? 'volume/' : 'dashboard/') + name,root),'utf8')
+        source = r2Before && name === 'coachRyd.mjs' ? readFileSync(new URL('r2BeforecoachRyd.txt',root),'utf8') : previous && name === 'coachRyd.mjs' ? readFileSync(new URL('coachRydBeforeHelper.txt',root),'utf8') : readFileSync(new URL(existsSync(new URL(name,root)) ? name : (['VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs','mobilityHelped.mjs','mobilityHomework.mjs'].includes(name) ? '' : ['kostNumbers.mjs','smerteRegion.js','videoFeedbackPlayback.mjs','coachMobility.mjs','mobilityCatalog.mjs','mobilityFocus.mjs'].includes(name) ? 'athlete/' : name === 'ugenoegle.js' ? 'volume/' : 'dashboard/') + name,root),'utf8')
       }
       return { format:'module',source,shortCircuit:true }
     },

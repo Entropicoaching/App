@@ -7,17 +7,17 @@ export const routes = {
   'atlet-mobilitet': { clicks: ['Mere', 'Mobilitet', '✦MobilitetByg en session og tag den, når du er stram›', 'Squat', 'Mere dybde'], title: 'Giv dit løft mere plads', checks: ['Mere dybde'] },
   'atlet-fremgang': { clicks: ['Fremgang', 'Styrke', 'Rekorder', 'Se alle detaljer'], title: 'Fremgang', checks: ['Rekorder', 'Dine rekorder'] },
   'atlet-profil': { clicks: ['Konto'], title: 'Næste træning', checks: ['Se guiden igen', 'Log ud'] },
-  "videocoach-tidsmarkeringer": {"clicks": ["Kontakt", "Teknik & løft", "Se feedback", "Åbn syntetiske tidsmarkeringer", "4.0 s: Se coachens tegnede linje ved bunden."], "title": "Se coachens tegnede linje ved bunden.", "checks": ["4.0 s / 8 s"]},
+  "videocoach-tidsmarkeringer": {"clicks": ["Kontakt", "Teknik & løft", "Se feedback", "Åbn syntetiske tidsmarkeringer", "4.0 s: Se coachens tegnede linje ved bunden."], "title": "4.0 s / 8 s", "checks": ["Se coachens tegnede linje ved bunden."]},
   "atlet-mobilitetsbibliotek": {"clicks": ["Mere", "Mobilitet", "✦MobilitetByg en session og tag den, når du er stram›", "Se øvelsesbibliotek"], "title": "Øvelsesbibliotek", "checks": ["Dybde", "Hofteposition"]},
   "atlet-hjemmerutine": {"clicks": ["Mere", "Mobilitet", "✦MobilitetByg en session og tag den, når du er stram›", "Squat", "Mere dybde", "Start min rutine"], "title": "Giv dit løft mere plads", "checks": ["Næste øvelse", "Ret mit fokus"]},
   "atlet-blok-mod-blok": {"clicks": ["Fremgang", "Styrke", "Se alle detaljer"], "title": "Denne blok mod forrige blok", "checks": ["Denne blok: Styrke, uge 4 til 6. Indtil 2026-10-28. Forrige blok: Grundlag, uge 1 til 3."]},
   "atlet-gentagelsesrekorder": {"clicks": ["Fremgang", "Styrke", "Rekorder", "Se alle detaljer"], "title": "Rekorder pr. antal gentagelser", "checks": ["Bedste loggede vægt ved præcis 1, 3, 5 og 8 gentagelser. Alle gennemførte sæt tæller."]},
-  "coach-oprydning": {"clicks": ["Menu", "Mere"], "title": "Coach.", "checks": ["Min træning", "VideoCoach"]},
+  "coach-oprydning": {"clicks": ["Menu", "Mere"], "title": "Arbejdsindbakke.", "checks": ["Min træning", "VideoCoach"]},
   "coach-staevnekalender": {"clicks": ["Menu", "Kalender"], "title": "Stævnedatoer", "checks": ["Testatlet · Stævne"]},
-  'coach-dagsliste': { clicks: [], title: 'Coach.', checks: ['TTestatletUge 5'] },
+  'coach-dagsliste': { clicks: [], title: 'Arbejdsindbakke.', checks: ['TTestatletUge 5'] },
   'coach-atletprofil': { clicks: ['TTestatletUge 5'], title: 'Testatlet' },
-  'coach-analyse': { clicks: ['TTestatletUge 5', 'Mere▾', '📈Analyse'], title: 'Coachens analyse samlet' },
-  'coach-videokoe': { clicks: ['Arbejdsindbakke'], title: 'Videokø', checks: ['Viser 1 af 1 videoer'] },
+  'coach-analyse': { clicks: ['TTestatletUge 5', 'Mere▾', '📈Analyse'], title: 'Konklusion', checks: ['Se grundlaget'] },
+  'coach-videokoe': { clicks: ['Arbejdsindbakke'], title: 'Arbejdsindbakke.', checks: ['Vigtigst nu'] },
 }
 export function fakePage(id, { wrongTitle = false, missingCheck = false, failClick = -1 } = {}) {
   const fixture = routes[id]

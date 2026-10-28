@@ -168,7 +168,7 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
                   <span style={{ color: '#7a7770', fontSize: '0.75rem' }}>→</span>
                 </button>
 
-                <CoachFold enabled={coachRyd && priorityPreview.length > 0} title="Opgaver på forsiden">
+                {!coachRyd && <>
 {priorityPreview.length > 0 && (
                   <div style={{ padding: isMobile ? '0.2rem 0.85rem 0.35rem' : '0.25rem 1rem 0.4rem' }}>
                     {priorityPreview.map((item, index) => {
@@ -225,7 +225,7 @@ export default function ForsideView({ coachRyd = false, coachMorning = false, co
                     )}
                   </div>
                 )}
-</CoachFold>
+</>}
 
                 {roligeLinjeTekst && (
                   <div data-rolige-linje style={{ padding: isMobile ? '0.55rem 0.85rem' : '0.6rem 1rem', borderTop: '1px solid rgba(237,234,226,0.06)', color: '#b3afa4', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.02em', lineHeight: 1.5 }}>

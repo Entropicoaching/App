@@ -79,9 +79,9 @@ const errorScreen = (onRetry) => (
   </div>
 )
 
-function App({ programBlokOversigt = false, mobilitetHjalp = false, forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokFremgang = false, ugeLogget = false , programIntensityHelp = false} = {}) {
-  ;({ mobilitetHjalp, mobilitetFokus, mobilitetFoerPas } = rel1030Mobility(
-    { mobilitetHjalp, mobilitetFokus, mobilitetFoerPas },
+function App({ mobilitetCoach = false, mobilitetHjemme = false, programBlokOversigt = false, mobilitetHjalp = false, forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokFremgang = false, ugeLogget = false , programIntensityHelp = false} = {}) {
+  ;({ mobilitetCoach, mobilitetHjemme, mobilitetHjalp, mobilitetFokus, mobilitetFoerPas } = rel1030Mobility(
+    { mobilitetCoach, mobilitetHjemme, mobilitetHjalp, mobilitetFokus, mobilitetFoerPas },
     typeof window === 'undefined' ? '' : window.location.search))
   const fridayTest = fridayTestEnabled(import.meta.env.MODE, typeof window === 'undefined' ? '' : window.location.href)
   const rel3 = release3TestFlags(import.meta.env.MODE, typeof window === 'undefined' ? '' : window.location.href)
@@ -278,9 +278,9 @@ function App({ programBlokOversigt = false, mobilitetHjalp = false, forenklinger
   if (role === 'coach') {
     viewEl = previewMode
       ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-          componentProps={{ ...rel3.athlete, ugeLogget: ugeLogget === true, session, role, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } , programIntensityHelp: programIntensityHelp === true, previewInitialTab}} />
+          componentProps={{ ...rel3.athlete, ugeLogget: ugeLogget === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } , programIntensityHelp: programIntensityHelp === true, previewInitialTab}} />
       : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
-          componentProps={{ ...rel3.coach, session, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem') => { setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
+          componentProps={{ ...rel3.coach, session, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem') => { setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
     // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
     // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'
@@ -290,7 +290,7 @@ function App({ programBlokOversigt = false, mobilitetHjalp = false, forenklinger
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
     viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-      componentProps={{ ...rel3.athlete, ugeLogget: ugeLogget === true, session, role, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) , programIntensityHelp: programIntensityHelp === true}} />
+      componentProps={{ ...rel3.athlete, ugeLogget: ugeLogget === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) , programIntensityHelp: programIntensityHelp === true}} />
   }
   return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }

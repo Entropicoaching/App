@@ -1,4 +1,5 @@
 import VideoRetentionLocalPreview from '../VideoRetentionLocalPreview.mjs'
+import AnalyseConclusion, { analyseConclusionEnabled } from './analyseConclusion.mjs'
 import { weekEvidence, datedRegression } from '../dataEvidence.mjs'
 import { rpeTrendEvidence } from '../dataEvidence.mjs'
 import { explicitRpe } from '../dataEnough.mjs'
@@ -103,6 +104,9 @@ export default function AnalyseTab({ coachRyd = false, videoRetentionObjects,
               const latestVideo = videoAnalyses[0] || null
 
               return (
+                <AnalyseConclusion enabled={analyseConclusionEnabled(typeof window === 'undefined' ? '' : window.location.search)}
+                  athleteId={selectedAthlete?.id || a?.id} logs={athleteLogs} analyses={filteredVideoAnalyses}
+                  liftFilter={videoLiftFilter} loading={videoAnalysisLoading} error={videoAnalysisError}>
                 <div>
                   {/* ORDRE 137 · commit 2: video-review-rækkens hoved (titel + "Gennemgå
                       måling"-knap/status) går fra titel+knapper på samme linje til titel
@@ -1106,4 +1110,5 @@ export default function AnalyseTab({ coachRyd = false, videoRetentionObjects,
 
 </CoachFold>
                 </div>
+                </AnalyseConclusion>
               )}

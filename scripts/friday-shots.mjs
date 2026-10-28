@@ -6,7 +6,7 @@ const heading = name => ({ role: 'heading', name })
 const text = name => ({ role: 'text', name })
 const home = heading('^(Næste træning|(Mandag|Onsdag|Fredag) · Dag [123])$')
 const athlete = button('Testatlet', { leafText: 'Testatlet' })
-const flags = 'appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1'
+const flags = 'appE2E2=1&appRel3=1&coachRyd=1&coachUge=1&analyseSamlet=1&analyseSammenlign=1&appData2=1&rel1030=1&analyseConclusion=1'
 const freeze = value => { Object.values(value).forEach(v => { if (v && typeof v === 'object') freeze(v) }); return Object.freeze(value) }
 
 // APP-SKAERM4: table matches the pinned preview and screen guide. Fresh route per motif.
@@ -22,7 +22,7 @@ export const motifs = freeze([
   { id: 'atlet-profil', steps: [button('^Konto$')], title: home, checks: [button('^Se guiden igen$'), button('^Log ud$')] },
   { id: 'videocoach-tidsmarkeringer', steps: [button('^Kontakt(?: •)?$'), button('^Teknik & løft$'), button('^Se feedback$'),
       { role: 'summary', name: '^Åbn syntetiske tidsmarkeringer$' }, button('^4\\.0 s:')],
-    title: text('^Se coachens tegnede linje ved bunden\\.$'), checks: [{ role: 'status', name: '^4\\.0 s / 8 s$' }] },
+    title: { role: 'status', name: '^4\\.0 s / 8 s$' }, checks: [text('^Se coachens tegnede linje ved bunden\\.$')] },
   { id: 'atlet-mobilitetsbibliotek', steps: [button('^Mere$'), button('^Mobilitet$'), button('Mobilitet'), button('^Se øvelsesbibliotek$')],
     title: heading('^Øvelsesbibliotek$'), checks: [heading('^Dybde$'), heading('^Hofteposition$')] },
   { id: 'atlet-hjemmerutine', steps: [button('^Mere$'), button('^Mobilitet$'), button('Mobilitet'), button('^Squat$'), button('^Mere dybde$'), button('^Start min rutine$')],
@@ -32,15 +32,15 @@ export const motifs = freeze([
   { id: 'atlet-gentagelsesrekorder', steps: [button('^Fremgang$'), button('^Styrke$'), button('^Rekorder$'), button('^Se alle detaljer$')],
     title: heading('^Rekorder pr\\. antal gentagelser$'), checks: [text('^Bedste loggede vægt ved præcis 1, 3, 5 og 8 gentagelser\\.')] },
   { id: 'coach-oprydning', steps: [button('^Menu$'), { role: 'summary', name: '^Mere$' }],
-    title: heading('^Coach\\.$'), checks: [button('^Min træning$'), button('^VideoCoach$')] },
+    title: { role: 'title', name: '^(?:Coach|Arbejdsindbakke)\\.$' }, checks: [button('^Min træning$'), button('^VideoCoach$')] },
   { id: 'coach-staevnekalender', steps: [button('^Menu$'), button('^Kalender$')],
     title: heading('^Stævnedatoer$'), checks: [button('^Testatlet · Stævne$')] },
-  { id: 'coach-dagsliste', steps: [], title: heading('^Coach\\.$'), checks: [athlete] },
+  { id: 'coach-dagsliste', steps: [], title: { role: 'title', name: '^(?:Coach|Arbejdsindbakke)\\.$' }, checks: [athlete] },
   { id: 'coach-atletprofil', steps: [athlete], title: heading('^Testatlet$') },
   { id: 'coach-analyse', steps: [athlete, button('^Mere\\s*▾$'), button('Analyse$')],
-    title: heading('^Coachens analyse samlet$') },
-  { id: 'coach-videokoe', steps: [button('^Arbejdsindbakke$')], title: heading('^Videokø$'),
-    checks: [{ role: 'status', name: '^Viser 1 af 1 videoer$' }] },
+    title: { role: 'status', name: '^Konklusion$' }, checks: [{ role: 'summary', name: '^Se grundlaget$' }] },
+  { id: 'coach-videokoe', steps: [button('^Arbejdsindbakke$')], title: heading('^Arbejdsindbakke\\.$'),
+    checks: [text('^Vigtigst nu$')] },
 ])
 
 export function motifUrl(id) {
@@ -72,11 +72,11 @@ export function domStep(query, action = 'find') {
   if (action === 'ready') return !Array.from(root.querySelectorAll('*')).some(el =>
     visible(el) && !el.children.length && /^(Indlæser…|Henter…|Henter .+…|henter …)$/.test(normal(el.textContent)))
   const selectors = { button: 'button,[role="button"]', heading: 'h1,h2,h3,h4,h5,h6,[role="heading"]',
-    status: '[role="status"]', summary: 'summary', text: '*' }
+    status: '[role="status"]', summary: 'summary', title: 'h1,h2,h3,h4,h5,h6,div,[role="heading"]', text: '*' }
   const re = new RegExp(query.name, 'u')
   const matches = Array.from(root.querySelectorAll(selectors[query.role])).filter(el => {
     if (!visible(el) || normal(el.closest('aside')?.querySelector('summary')?.textContent) === 'Skærmliste') return false
-    if (query.role === 'text' && Array.from(el.children).some(child => re.test(normal(child.textContent)))) return false
+    if (['text', 'title'].includes(query.role) && Array.from(el.children).some(child => re.test(normal(child.textContent)))) return false
     const label = normal(el.getAttribute('aria-label') || el.textContent)
     if (query.leafText && !Array.from(el.querySelectorAll('*')).some(child => !child.children.length && normal(child.textContent) === query.leafText)) return false
     return re.test(label) && (query.pressed === undefined || el.getAttribute('aria-pressed') === String(query.pressed))

@@ -197,7 +197,7 @@ const dependencies = [
     "../Dashboard.jsx",
     "./coachRyd.mjs",
     {
-      "stub": "export default function Stub(){return null}\nexport const coachRydEnabled = () => ({});\nexport const WorkInboxLink = () => ({});"
+      "stub": "export default function Stub(){return null}\nexport const coachRydEntryView = (enabled, view) => enabled === true ? 'inbox' : view;\nexport const coachRydEnabled = () => ({});\nexport const WorkInboxLink = () => ({});"
     }
   ],
   [

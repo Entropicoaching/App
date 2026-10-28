@@ -33,7 +33,7 @@ test('all 16 paths execute imported domStep against event-driven synthetic DOM',
       } else {
         for (const [i,q] of [motif.title, ...(motif.checks || [])].entries()) {
           const content = i === 0 ? fixture.title : fixture.checks[i-1]
-          const child = el(q.role === 'heading' ? 'h2' : q.role === 'button' ? 'button' : 'p', content,
+          const child = el(q.role === 'heading' ? 'h2' : q.role === 'title' ? 'div' : q.role === 'summary' ? 'summary' : q.role === 'button' ? 'button' : 'p', content,
             { ...(q.role === 'status' ? { role: 'status' } : {}), ...(q.pressed === undefined ? {} : { 'aria-pressed': String(q.pressed) }) },
             q.leafText ? [el('span', q.leafText)] : [])
           child.parentElement = root; root.children.push(child)
