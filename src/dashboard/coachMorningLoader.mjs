@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './coachMorningJsx.mjs'
 const base = new URL('./', import.meta.url)
 export const dashboardURL = new URL(existsSync(new URL('Dashboard.jsx', base)) ? 'Dashboard.jsx' : '../Dashboard.jsx', base)
-const real = new Set(['coachFollowUp.mjs', 'Dashboard.jsx', 'ForsideView.jsx', 'laesninger.js', 'coachMorning.mjs', 'coachMorningSource.mjs'])
+const real = new Set(['coachMeetSource.mjs', 'coachMeetSoon.mjs', 'calendarDate.js', 'coachWeekOverview.mjs', 'coachFollowUp.mjs', 'Dashboard.jsx', 'ForsideView.jsx', 'laesninger.js', 'coachMorning.mjs', 'coachMorningSource.mjs'])
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
@@ -11,7 +11,7 @@ export function install() {
       if (specifier === 'react' || /supabase\.js$/.test(specifier)) return { url: new URL('coachMorningFake.mjs', base).href, shortCircuit: true }
       if (real.has(parent) && specifier.startsWith('.')) {
         const name = specifier.split('/').at(-1)
-        if (real.has(name)) return { url: (name === 'Dashboard.jsx' ? dashboardURL : new URL(name, base)).href, shortCircuit: true }
+        if (real.has(name)) return { url: (name === 'Dashboard.jsx' ? dashboardURL : new URL(name === 'calendarDate.js' && !existsSync(new URL(name, base)) ? '../calendarDate.js' : name, base)).href, shortCircuit: true }
         const source = readFileSync(new URL(context.parentURL), 'utf8')
         const clause = [...source.matchAll(/import\s+([^\n]+?)\s+from\s+['"]([^'"]+)['"]/g)].filter(m => m[2] === specifier).map(m => m[1]).join(',') || ''
         const names = [...clause.matchAll(/\{([^}]+)\}/g)].flatMap(m => m[1].split(',').map(n => n.trim()).filter(Boolean))

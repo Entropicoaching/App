@@ -1,3 +1,4 @@
+import { readMeetSource } from './coachMeetSource.mjs'
 import { readBlockLogs } from '../blokFremgang.mjs'
 import { readFourWeekSource } from './coachFourWeeks.mjs'
 import { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
@@ -26,7 +27,8 @@ import { COACH_ACTIONS_ENABLED, coachActionsEnabled, actionSessions } from './co
 
 export function lavLaesninger({
   blokFremgang = false,
-  fourWeekCapture, coachMorning = false, setCoachMorningData = () => {},
+  coachMeetSoon = false, setCoachMeetData = () => {},
+  fourWeekCapture, profileWeekCapture, coachMorning = false, setCoachMorningData = () => {},
   coachWeekEnabled = false, setCoachWeekDataStatus = () => {},
 
   coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {},
@@ -183,7 +185,7 @@ export function lavLaesninger({
       .from('weeks')
       .select('id, athlete_id, week_number, block_name, start_date, sessions(id, session_order, athlete_rating, athlete_comment, exercises(id, sets, reps, recommended_weight))')
       .in('athlete_id', athleteIds)
-    const { data, error } = await readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'plan')
+    const { data, error } = await readMeetSource(coachMeetSoon, 'plan', athleteIds, setCoachMeetData, () => readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'plan'))
     if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); return dataEnoughEnabled() ? false : undefined }
     const map = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, []])) : {}
     for (const w of data) {
@@ -251,7 +253,7 @@ export function lavLaesninger({
       .in('athlete_id', athleteIds)
       .gte('logged_at', since.toISOString())
       .order('logged_at', { ascending: false })
-    const { data, error } = await readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'logs')
+    const { data, error } = await readMeetSource(coachMeetSoon, 'logs', athleteIds, setCoachMeetData, () => readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'logs'))
     if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); return dataEnoughEnabled() ? false : undefined }
     const map = {}
     const completion = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, {}])) : {}
@@ -483,7 +485,7 @@ export function lavLaesninger({
     }
 
     try {
-      const { data, error } = await supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at')
+      const { data, error } = await readFourWeekSource(profileWeekCapture, 'messages', athleteId, () => supabase.from('messages').select('*').eq('athlete_id', athleteId).order('created_at'))
       if (messageThreadAthleteRef.current !== athleteId) return
       if (error) throw error
       setMessages(data || [])
