@@ -1,3 +1,4 @@
+import { markerReplyPreview } from '../videoMarkerReplies.mjs'
 // Beskeder-fanen (coach-tråd + delt videofeedback) — udskilt fra
 // AthleteView.jsx (ordre 232 · commit 3) som sin egen lazy-loadede chunk,
 // samme LazyBoundary-mønster som Dashboard.jsx's fire faner (130/163/228)
@@ -48,7 +49,7 @@ export default function BeskederTab({
                     <>
                       <p>{formatContactDate(latest.date)}{(latest.kind === 'message' ? !latest.value.read_at : !latest.value.athlete_seen_at) && <span> · Ulæst</span>}</p>
                       {latest.kind === 'message'
-                        ? <div style={{ whiteSpace: 'pre-wrap' }}>{latest.value.content}</div>
+                        ? <div style={{ whiteSpace: 'pre-wrap' }}>{markerReplyPreview(latest.value)}</div>
                         : renderSharedFeedbackCards([latest.value], { expanded: true, formatDate: formatContactDate })}
                     </>
                   ) : !sharedVideoLoading && !sharedVideoError && <p>Ingen feedback endnu. Din coachs feedback vises her, når den er delt.</p>}
@@ -96,7 +97,7 @@ export default function BeskederTab({
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
                           {msg.sender_role === 'coach' ? 'Coach' : 'Dig'} · {formatMsgTime(msg.created_at)}
                         </div>
-                        <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{msg.content}</div>
+                        <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{markerReplyPreview(msg)}</div>
                       </div>
                     ))}
                   </div>
@@ -125,7 +126,7 @@ export default function BeskederTab({
                             color: '#edeae2',
                             lineHeight: 1.55,
                           }}>
-                            {msg.content}
+                            {markerReplyPreview(msg)}
                           </div>
                         </div>
                       </div>

@@ -1,4 +1,6 @@
 {
+  "src/dashboard/VideoMarkerReplyReview.jsx": "VideoMarkerReplyReview.jsx",
+  "src/videoMarkerReplies.mjs": "videoMarkerReplies.mjs",
   "src/athlete/videoSetSelection.mjs": "videoSetSelection.mjs",
   "src/dashboard/indbakkeHandlinger.js": "indbakkeHandlinger.js",
   "src/messageTime.js": "messageTime.js",

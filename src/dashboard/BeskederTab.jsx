@@ -1,3 +1,4 @@
+import { markerReplyPreview } from '../videoMarkerReplies.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Beskeder: spor, fastgjorte og tråd, send.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -58,7 +59,7 @@ export default function BeskederTab({
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
                             {msg.sender_role === 'coach' ? 'Coach' : a.name} · {formatMsgTime(msg.created_at)}
                           </div>
-                          <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{msg.content}</div>
+                          <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{markerReplyPreview(msg)}</div>
                         </div>
                         <button onClick={() => togglePin(msg.id, msg.pinned)} title="Løsn" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c8923a', padding: '0.1rem', flexShrink: 0 }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
@@ -90,7 +91,7 @@ export default function BeskederTab({
                             color: '#edeae2',
                             lineHeight: 1.55,
                           }}>
-                            {msg.content}
+                            {markerReplyPreview(msg)}
                           </div>
                         </div>
                         <button

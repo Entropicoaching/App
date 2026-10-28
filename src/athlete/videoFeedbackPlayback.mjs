@@ -1,3 +1,4 @@
+import { markerRepliesEnabled, mountMarkerReplyForm, repliesForMarker } from '../videoMarkerReplies.mjs'
 // VC-EPIK2 local playback contract. No backend fields or persistence writes.
 export const DEFAULT_VIDEO_FEEDBACK_PLAYBACK = false
 export const PLAYBACK_FLAG = 'vc-epik2-playback'
@@ -81,9 +82,11 @@ export async function sha256File(file) {
 }
 
 // Native DOM, mounted only by the opt-in React wrapper. Dependencies injectable for hermetic tests.
-export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, digest = sha256File } = {}) {
+export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, digest = sha256File, sendReply, readReplies } = {}) {
   const doc = root.ownerDocument
   const listeners = []
+  const replyEnabled = markerRepliesEnabled()
+  let replyMessages = [], replyCleanup = () => {}
   let disposed = false, generation = 0, sourceUrl = null, feedback = null, ready = false
   const el = (tag, text) => { const n = doc.createElement(tag); if (text) n.textContent = text; return n }
   const listen = (node, name, handler) => { node.addEventListener(name, handler); listeners.push([node, name, handler]) }
@@ -126,7 +129,24 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
   }
   Object.assign(transport.style, { display: 'flex', flexWrap: 'wrap', gap: '0.5rem' })
   transport.append(speedLabel, frameBack, frameNext)
+  const replyRoot = el('section')
   root.replaceChildren(heading, help, jsonLabel, fileLabel, status, frame, comments, nav, list, transport, frameHelp)
+  if (replyEnabled && sendReply) root.append(replyRoot)
+  if (replyEnabled && readReplies) {
+    const refresh = el('button', 'Opdatér svar'); refresh.type = 'button'
+    const readStatus = el('p'); readStatus.setAttribute('role', 'status')
+    listen(refresh, 'click', async () => {
+      if (refresh.disabled) return
+      refresh.disabled = true; readStatus.textContent = 'Henter svar…'
+      try {
+        const rows = await readReplies()
+        if (disposed) return
+        replyMessages = rows; readStatus.textContent = 'Svar hentet. Vælg markeringen for at se svaret.'; update()
+      } catch { if (!disposed) readStatus.textContent = 'Svar kunne ikke hentes. Tryk Opdatér svar igen.' }
+      finally { if (!disposed) refresh.disabled = false }
+    })
+    root.append(refresh, readStatus)
+  }
   function update() {
     speed.disabled = !ready
     const times = ready ? feedback.clip.frameTimes : null
@@ -135,7 +155,13 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
     frameHelp.textContent = times ? 'Billedtrin pauser videoen og bruger klippets billedtidspunkter.'
       : 'Billedtrin er ikke tilgængelige: klippets billedtidspunkter er ukendte. Du kan stadig vælge halv eller kvart fart.'
     const active = ready ? activeMarkers(feedback.markers, video.currentTime) : []
-    comments.replaceChildren(...active.map(m => el('p', m.text || 'Tegning')))
+    comments.replaceChildren(...active.flatMap(m => {
+      const nodes = [el('p', m.text || 'Tegning')]
+      if (replyEnabled && readReplies) for (const reply of repliesForMarker(replyMessages, scope, m.id)) {
+        const n = el('p', `Atletens svar: ${reply.reply}`); n.dataset.markerId = m.id; nodes.push(n)
+      }
+      return nodes
+    }))
     svg.replaceChildren()
     for (const m of active) for (const stroke of m.strokes) {
       const line = doc.createElementNS('http://www.w3.org/2000/svg', 'polyline')
@@ -183,6 +209,7 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
   listen(list, 'click', event => seek(feedback?.markers.find(m => m.id === event.target?.dataset?.markerId)))
   listen(jsonInput, 'change', async () => {
     const token = ++generation
+    replyCleanup(); replyRoot.replaceChildren(); replyMessages = []
     feedback = null; clearVideo(); list.replaceChildren(); fileInput.disabled = true; fileInput.value = ''
     const file = jsonInput.files?.[0]; jsonInput.value = ''
     if (!file) { status.textContent = 'Vælg markeringsfilen først.'; return }
@@ -196,6 +223,7 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
         b.type = 'button'; b.dataset.markerId = m.id
         Object.assign(b.style, { minHeight: '44px', maxWidth: '100%', whiteSpace: 'normal', overflowWrap: 'anywhere' }); list.append(b)
       }
+      if (replyEnabled && sendReply) replyCleanup = mountMarkerReplyForm(replyRoot, scope, feedback.markers, sendReply)
       fileInput.disabled = false; status.textContent = 'Vælg det tilhørende videoklip.'; update()
     } catch { if (!disposed && token === generation) { status.textContent = 'Markeringsfilen passer ikke til denne feedback eller har et ugyldigt format.'; update() } }
   })
@@ -227,7 +255,7 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
   listen(video, 'error', () => { if (sourceUrl) fail('Videoen kunne ikke afspilles. Vælg klippet igen.') })
   update()
   return () => {
-    disposed = true; ++generation
+    disposed = true; ++generation; replyCleanup()
     for (const [node, name, handler] of listeners) node.removeEventListener(name, handler)
     clearVideo(); root.replaceChildren()
   }

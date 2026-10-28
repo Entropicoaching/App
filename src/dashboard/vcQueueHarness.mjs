@@ -32,7 +32,7 @@ export async function app(enabled) {
     try { return type({ ...props, children: flat }) } finally { state.active = previous }
   }
   globalThis[registry].set(id, state)
-  const allowed = new Set(['coachRyd.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'IndbakkeView.jsx', 'VideoQueueFilter.jsx', 'videoQueueFilter.mjs',
+  const allowed = new Set(['videoMarkerReplies.mjs', 'coachRyd.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'IndbakkeView.jsx', 'VideoQueueFilter.jsx', 'videoQueueFilter.mjs',
     'coachBriefingSeen.js', 'coachPriority.js', 'coachInboxState.js', 'coachNoteSignal.js', 'e2eTestFlags.mjs',
     'automationAlerts.js', 'coachBriefingRules.js', 'exerciseSetView.js', 'exerciseNames.js',
     'exerciseProgress.js', 'inputValues.js', 'smerteRegion.js', 'kostNumbers.mjs', 'calendarDate.js', 'ugenoegle.js'])

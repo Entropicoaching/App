@@ -1,5 +1,7 @@
 import VideoMarkerTemplates from './VideoMarkerTemplates.mjs'
 import { videoFeedbackPlaybackEnabled } from '../athlete/videoFeedbackPlayback.mjs'
+import { markerRepliesEnabled } from '../videoMarkerReplies.mjs'
+import VideoMarkerReplyReview from './VideoMarkerReplyReview.jsx'
 import VideoReviewTemplates, { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './VideoReviewTemplates.mjs'
 import { DEFAULT_VIDEOCOACH_FORENKL4 } from '../vcForenkl4.mjs'
 import { CoachFold, ReviewConclusion } from '../coachRyd.mjs'
@@ -262,6 +264,7 @@ export default function VideoReviewModal({ coachRyd = false, coachId, videoRevie
         return (
           <div role="dialog" aria-modal="true" style={{ ...s.overlay, padding: isMobile ? 0 : '1.5rem', alignItems: isMobile ? 'stretch' : 'center', overflow: 'hidden', zIndex: 10020 }} onClick={e => { if (e.target === e.currentTarget) closeVideoAnalysisReview() }}>
             <div style={{ ...s.modal, width: '100%', maxWidth: isMobile ? 'none' : '760px', height: isMobile ? '100dvh' : undefined, maxHeight: isMobile ? '100dvh' : '90vh', boxSizing: 'border-box', overflowY: 'auto', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch', border: isMobile ? 'none' : s.modal.border, padding: isMobile ? '1rem' : '1.4rem' }} onClick={e => e.stopPropagation()}>
+              {markerRepliesEnabled() && <VideoMarkerReplyReview key={`${selectedAthlete?.id}:${analysis.id}`} athleteId={selectedAthlete?.id} analysisId={analysis.id} />}
               {isMobile && (
                 <div style={{ minHeight: 58, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', margin: '-1rem -1rem 1rem', padding: '0.55rem 1rem', position: 'sticky', top: 0, zIndex: 2, background: '#1c1c18', borderBottom: '1px solid rgba(237,234,226,0.08)', boxSizing: 'border-box' }}>
                   <div style={s.cardLabel}>Gennemgå måling</div>

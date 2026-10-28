@@ -35,6 +35,8 @@ export async function app({ enabled, backend } = {}) {
   const id = String(++nextInstance)
   const prefix = `coach-note-test://${id}/`
   const fakes = {
+    // Reply UI is outside this note harness; keep the existing OFF contract.
+    'src/videoMarkerReplies.mjs': { markerRepliesEnabled: () => false, markerReplyPreview: () => null },
     'src/supabase.js': { supabase: backend, withRetry: fn => fn() },
     react: { useEffect: () => {} },
     ...(enabled === undefined ? {} : {
