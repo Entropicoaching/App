@@ -79,6 +79,9 @@ export async function runRejectedUploadRetry(page, { appUrl, mockUrl, outDir }) 
   await loginAsAthlete(page, appUrl)
   await injectFault(mockUrl, { pathPrefix: '/rest/v1/video_analyses', method: 'POST', mode: '500', times: 1 })
 
+  // APP-PARAT2: genvejen til parathed åbner ikke længere hele Mere-sektionen; VideoCoach-kortet ligger under Mere.
+  const mere = page.getByRole('button', { name: /^Mere/ })
+  if (await mere.getAttribute('aria-expanded') === 'false') await mere.click()
   await page.getByText('VideoCoach', { exact: true }).click()
   const frame = page.frameLocator('iframe[title="VideoCoach"]')
   await frame.locator('body.athlete').waitFor({ state: 'attached', timeout: 10000 })

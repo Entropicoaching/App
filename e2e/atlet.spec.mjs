@@ -114,6 +114,9 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
   await shot('06-checkin-gemt')
 
   // VideoCoach-forsiden åbner uden video — kun at den loader, ingen upload.
+  // APP-PARAT2: genvejen til parathed åbner ikke længere hele Mere-sektionen; VideoCoach-kortet ligger under Mere.
+  const mere = page.getByRole('button', { name: /^Mere/ })
+  if (await mere.getAttribute('aria-expanded') === 'false') await mere.click()
   await page.getByText('VideoCoach', { exact: true }).click()
   const vcFrame = page.locator('iframe[title="VideoCoach"]')
   await vcFrame.waitFor({ state: 'visible', timeout: 10000 })
