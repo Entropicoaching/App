@@ -51,7 +51,7 @@ async function main() {
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await page.waitForTimeout(1200)
 
     // 1) Dagens pas: log et saet -> pause -> pop-up. Ingen suffiks-navne som oevelsesnavn.

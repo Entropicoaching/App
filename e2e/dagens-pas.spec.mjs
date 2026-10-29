@@ -45,7 +45,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
 
   // Dagens pas: næste sæt vises øverst på Hjem, med det samme — ingen
   // navigation til Program-fanen nødvendig.
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText('Squat', { exact: true }).waitFor({ state: 'visible' })
   await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   // Ingen pause før noget er logget.
@@ -158,7 +158,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   // stadig stå, og appen skal ikke hænge i en spøgelses-pause fra det
   // fortrudte sæt.
   await page.reload()
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText(/Sæt 3\/4$/).waitFor({ state: 'visible', timeout: 10000 })
   assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'det fortrudte sæts pause må ikke overleve en genindlæsning')
   const logsAfterReload = await readTable(mockUrl, 'exercise_logs')
@@ -183,7 +183,7 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   const reopened = await context.newPage()
   reopened.on('pageerror', err => console.error('[browser pageerror]', err))
   await reopened.goto(appUrl)
-  await reopened.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await reopened.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await reopened.waitForFunction(
     async ([url, exId]) => {
       const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)

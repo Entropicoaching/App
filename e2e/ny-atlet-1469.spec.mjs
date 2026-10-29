@@ -26,7 +26,7 @@ async function main() {
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await shot('c1-forside')
 
     // 1) Timeren kan findes uden hjaelp: linjen staar paa saet-kortet, foer noget er logget.

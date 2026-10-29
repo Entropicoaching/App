@@ -16,7 +16,7 @@ try {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await shot('1-dagens-pas'); await shot('1b-hele-siden', true)
   await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
   await page.getByTestId('rest-pause-open').waitFor({ timeout: 5000 }).catch(() => {})

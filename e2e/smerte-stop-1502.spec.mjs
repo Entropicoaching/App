@@ -32,7 +32,7 @@ async function koer(kommentar, navn, forventForslag) {
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 20000 })
+    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 20000 })
     await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
     await page.getByText('Sidste gang:', { exact: false }).waitFor({ state: 'visible', timeout: 10000 })
     await page.waitForTimeout(500)

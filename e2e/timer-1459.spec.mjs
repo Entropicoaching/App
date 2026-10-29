@@ -31,7 +31,7 @@ async function main() {
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
 
     // 1) Linjen findes før noget sæt er godkendt
     const linje = page.getByTestId('pause-start-linje')

@@ -72,7 +72,7 @@ export async function runDagensPasHistorik(page, { appUrl, outDir }) {
   const openHeld = async () => {
     hold()
     await page.reload()
-    await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
     // Historikken er holdt tilbage: kortet står på planens tal og har ingen "Sidste gang".
     await page.waitForFunction(() => document.querySelector('[aria-label="Vægt, sæt 1"]')?.value === '80', null, { timeout: 5000 })
@@ -87,7 +87,7 @@ export async function runDagensPasHistorik(page, { appUrl, outDir }) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
 
   // ---- 1) Urørt: planens tal først, så sidste gang ----
   await openHeld()

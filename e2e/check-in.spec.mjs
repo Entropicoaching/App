@@ -80,7 +80,7 @@ export async function runCheckIn(page, { appUrl, mockUrl, outDir }) {
 
   // (3) Ugens check-in mangler, og ugen er ved at være slut → rolig linje
   // øverst i Dagens pas, med et link.
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText('Ugens check-in mangler stadig.', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
   await shot('01-nudge')
   await page.getByText('Log den →', { exact: true }).click()

@@ -73,7 +73,7 @@ async function main() {
     await ap.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await ap.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await ap.getByRole('button', { name: 'Log ind' }).click()
-    await ap.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await ap.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await ap.waitForTimeout(1000)
     await ap.getByText('Fremgang', { exact: true }).last().click(); await ap.waitForTimeout(2500)
     const atletTal = {}

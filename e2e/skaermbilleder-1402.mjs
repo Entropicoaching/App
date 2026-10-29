@@ -11,7 +11,7 @@ await page.goto(APP_URL)
 await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
 await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
 await page.getByRole('button', { name: 'Log ind' }).click()
-await page.getByText('Dagens pas', { exact: true }).waitFor()
+await page.getByText('Dagens pas', { exact: true }).first().waitFor()
 await page.waitForTimeout(1500)
 const o = 'outputs/1402/'
 await page.screenshot({ path: o + 'dagens-pas-390.png' })

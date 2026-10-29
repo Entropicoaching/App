@@ -65,7 +65,7 @@ async function runViewport(page, { tag, width, height }) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   // Lad de oevrige hentninger (besked, rekorder, vaegt ...) lande, saa
   // taellingen er for den faerdige forside, ikke en halvt indlaest.

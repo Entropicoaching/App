@@ -39,7 +39,7 @@ async function runViewport(page, { tag, width, height, outDir }) {
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
 
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   await checkOverflow(page, `${tag} før sæt 1`)
   await shot('00-foer-saet-1')

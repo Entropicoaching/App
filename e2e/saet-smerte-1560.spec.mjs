@@ -40,7 +40,7 @@ async function atletLoeb(page, { appUrl, outDir }, { foer, forventStop, billede 
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await page.getByText(/Sidste gang:|Næste: \d+ reps @/).first().waitFor({ state: 'visible', timeout: 10000 })
     await page.waitForTimeout(800)
     await page.screenshot({ path: join(outDir, `saet-smerte-1560-atlet-390-${billede}.png`), fullPage: true })

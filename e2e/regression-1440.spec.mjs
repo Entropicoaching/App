@@ -61,7 +61,7 @@ async function main() {
     const actx = await browser.newContext({ viewport: { width: W, height: H } })
     const a = await nye(actx, 'atlet')
     await logind(a, ATHLETE_USER)
-    await a.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await a.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await tjek(a, 'atlet-01-hjem-dagens-pas')
     await a.getByRole('button', { name: 'Godkendt', exact: true }).click() // log saet 1 (planens tal)
     const aaben = a.getByTestId('rest-pause-open')

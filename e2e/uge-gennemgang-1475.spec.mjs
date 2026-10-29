@@ -58,7 +58,7 @@ async function main() {
         await page.getByRole('button', { name: 'Log ind' }).click()
         foerste = false
       } else await page.reload()
-      await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+      await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
       await page.waitForTimeout(800)
       const foer = await tekst(); dumps.push(`===== ${dag[i]} FOER =====\n${foer}`)
       await shot(`uge-${i + 1}-${dag[i]}-a-forside`)

@@ -49,7 +49,7 @@ async function runViewport(page, { tag, width, height, mockUrl, outDir }) {
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
 
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
 
   // Log sæt 1-3 med de forudfyldte værdier — samme mønster som

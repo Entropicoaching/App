@@ -109,7 +109,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
   await page.getByRole('button', { name: 'Log ind' }).click()
 
   // ---- 1) Dagens pas: næste sæt vises øverst, med det samme ----
-  await page.getByText('Dagens pas', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await page.getByText('Squat', { exact: true }).waitFor({ state: 'visible' })
   await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   await shot('01-dagens-pas')
