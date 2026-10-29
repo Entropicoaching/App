@@ -1,0 +1,78 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import {readFileSync} from 'node:fs'
+import {createHash} from 'node:crypto'
+import {install, mount, memory, text, button, createElement as h} from './mob7Synthetic.mjs'
+install()
+const {MobilityHomeworkProgress, HomeworkExerciseProgress, readDone}=await import('./mobilityAdherence.mjs')
+const {MobilityHomeworkHome,saveHomework,homeworkLibrary}=await import('./mobilityHomework.mjs')
+const read=n=>readFileSync(new URL(n,import.meta.url),'utf8')
+const sha=s=>createHash('sha256').update(s).digest('hex')
+const ex=homeworkLibrary()[0].exercises[0]
+
+test('REB Home wrapper retains identical OFF element and route null, including nonboolean flags',()=>{
+ const home=h(MobilityHomeworkHome,{enabled:true,athleteId:'a'})
+ for(const enabled of [undefined,false,0,1,'true']) assert.equal(MobilityHomeworkProgress({enabled,athleteId:'a',children:home}),home)
+ for(const children of [false,null,undefined]) assert.equal(MobilityHomeworkProgress({enabled:true,children}),children)
+ const on=MobilityHomeworkProgress({enabled:true,athleteId:'a',children:home})
+ assert.equal(on.type,home.type); assert.equal(on.props.key,home.props.key)
+ assert.equal(on.props.athleteId,'a'); assert.equal(on.props.adherenceEnabled,true)
+ const progress=on.props.renderExerciseProgress(ex)
+ assert.equal(progress.type,HomeworkExerciseProgress); assert.equal(progress.props.athleteId,'a'); assert.equal(progress.props.exercise,ex)
+})
+
+test('REB actual wrapped Home mounts assigned controls once; click reaches scoped actual storage handler',()=>{
+ const storage=memory();saveHomework('a',{problemId:'squat-hip',exerciseIds:[ex.id]},storage)
+ const original=h(MobilityHomeworkHome,{enabled:true,athleteId:'a',storage})
+ const before=mount(MobilityHomeworkProgress,{children:original}).render()
+ assert.equal(text(before),text(mount(MobilityHomeworkHome,original.props).render()))
+ const previous=globalThis.localStorage; globalThis.localStorage=storage
+ const view=mount(MobilityHomeworkProgress,{enabled:true,athleteId:'a',children:original})
+ try {
+  button(view.render(),'Lavet i dag: '+ex.name).props.onClick()
+  assert.equal(readDone('a',storage).rows.length,1)
+  assert.equal(readDone('b',storage).rows.length,0)
+  assert.equal(button(view.render(),'Lavet i dag: '+ex.name).props['aria-pressed'],true)
+ } finally {
+  view.unmount()
+  if(previous===undefined) delete globalThis.localStorage; else globalThis.localStorage=previous
+ }
+})
+
+test('REB existing full Home JSX line and exact initial Athlete import contract survive',()=>{
+ const athlete=read('AthleteView.jsx')
+ assert.ok(athlete.split(/\r?\n/).includes("        {tab === 'hjem' && (!enkelOn || ['traening', 'alle'].includes(route)) && <MobilityHomeworkHome key={athlete?.id} enabled={mobilitetHjemme} athleteId={athlete?.id} />}"))
+ assert.ok(athlete.startsWith("import NytIAppen, { nytAthleteNavigation } from './nytIAppen.mjs'\r\nimport { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/contactLatest.mjs'\r\nimport { VIDEO_SET_SELECTION_ENABLED, videoOptionsForDay, resolveVideoSet } from './athlete/videoSetSelection.mjs'\r\nimport { findDagensPas } from './nextSet.js'\r\n"))
+ assert.match(athlete,/<MobilityHomeworkProgress enabled=\{mobilitetOpfoelgning === true && !coachAthleteId\} athleteId=\{athlete\?\.id\}>\s*\{tab === 'hjem'/)
+})
+
+test('REB intentional profile pin matches exact normalized final source',()=>{
+ const profile=read('dashboard/ProfilHoved.jsx'), source=read('dashboard/coachNotesReview.test.js')
+ assert.ok(source.includes("'ProfilHoved.jsx': '"+sha(profile.replace(/\r\n/g,'\n'))+"'"))
+ assert.match(profile,/mobilitetOpfoelgning = false, adherenceContent = null/)
+ assert.match(profile,/mobilitetOpfoelgning === true \? adherenceContent : null/)
+})
+
+test('REB closed loader lists admit only the new explicit dashboard export, keep rejection guards',()=>{
+ const follow=read('dashboard/followUpLoader.mjs'), rebase=read('rebaseHarness.mjs')
+ assert.ok(follow.includes('["../Dashboard.jsx", "./mobilityAdherence.mjs", {"stub": "export const MobilityAdherenceProfile = () => null;"}]'))
+ assert.ok(rebase.includes("'./mobilityAdherence.mjs': {MobilityAdherenceProfile:noop},"))
+ assert.match(follow,/if \(!target\) return unapproved\(specifier\)/)
+ assert.match(rebase,/if \(!\(specifier in fakes\)\) throw Error\('Unapproved dashboard import: '\+specifier\)/)
+ assert.equal((follow.match(/mobilityAdherence\.mjs/g)||[]).length,1)
+ assert.equal((rebase.match(/mobilityAdherence\.mjs/g)||[]).length,1)
+})
+
+test('REB follow closed-list remainder is pinned unchanged',()=>{
+ const source=read('dashboard/followUpLoader.mjs').replace(/\r\n/g,'\n')
+ const addition="  [\"../Dashboard.jsx\", \"./mobilityAdherence.mjs\", {\"stub\": \"export const MobilityAdherenceProfile = () => null;\"}],\n"
+ assert.equal(source.split(addition).length,2)
+ assert.equal(sha(source.replace(addition,'')),'4fd1797b3420888e9dd0c1e4a9bc132883d1789c7a1722b32050ccbace1c9ef5')
+})
+
+test('REB rebase closed-list remainder is pinned unchanged',()=>{
+ const source=read('rebaseHarness.mjs').replace(/\r\n/g,'\n')
+ const addition="'./mobilityAdherence.mjs': {MobilityAdherenceProfile:noop},\n"
+ assert.equal(source.split(addition).length,2)
+ assert.equal(sha(source.replace(addition,'')),'c52ae3d40959eac442ed0dab60e9a7c868f5ca19779cb615a81faf4872bf4736')
+})

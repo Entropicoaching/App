@@ -14,7 +14,7 @@ import { HUB_SECTIONS } from './hubSektioner.jsx'
 
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
-export default function ProfilHoved({ mobilitetHjemme = false, mobilitetCoach = false, mobilityCoachId, onMobilitySaved, mobilitetHjalp = false, coachRyd = false,
+export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgning = false, adherenceContent = null, mobilitetCoach = false, mobilityCoachId, onMobilitySaved, mobilitetHjalp = false, coachRyd = false,
   a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
   setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
@@ -39,6 +39,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetCoach = 
   }, [styrkeLogs, a.id])
   return (
     <>
+      {mobilitetOpfoelgning === true ? adherenceContent : null}
       <MobilityHomeworkCoach key={a.id} enabled={mobilitetHjemme} athleteId={a.id} />
       <CoachMobilityEditor enabled={mobilitetCoach} athlete={a} coachId={mobilityCoachId} client={supabase} onSaved={onMobilitySaved} />
       <MobilityHelpedProfile enabled={mobilitetHjalp} athleteId={a.id} />
