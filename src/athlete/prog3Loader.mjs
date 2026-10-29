@@ -1,5 +1,6 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { withHvileBaseline } from './hvileBaseline.mjs'
-import { registerHooks } from 'node:module'
+import { registryHooks } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './prog3Jsx.mjs'
 const root = new URL('./', import.meta.url)

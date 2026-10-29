@@ -1,6 +1,7 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { assertPureGraph, assertNoteDependencies } from './coachNoteDependencyGuard.mjs'
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { dirname, basename, join, posix } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -44,49 +45,7 @@ export async function app({ enabled, backend } = {}) {
     }),
   }
   instances.set(id, { h, fakes })
-  const allowed = new Set([
-    "src/dashboard/videoStorageUsage.mjs",
-    "src/dashboard/VideoStorageUsage.jsx",
-    "src/dashboard/videoQueueWait.mjs",
-    "src/dataEnough.mjs",
-    "src/dataEvidence.mjs",
-    "src/rpeEvidence.mjs",
-    "src/videoEvidence.mjs",
-    "src/dashboard/coachWeekOverview.mjs",
-    "src/athlete/kostNumbers.mjs",
-    "src/athlete/smerteRegion.js",
-    "src/automationAlerts.js",
-    "src/calendarDate.js",
-    "src/coachBriefingRules.js",
-    "src/coachBriefingSeen.js",
-    "src/coachFremgang.js",
-    "src/coachInboxState.js",
-    "src/coachNoteSignal.js",
-    "src/coachPriority.js",
-    "src/danskDato.js",
-    "src/dashboard/IndbakkeView.jsx",
-    "src/dashboard/afvigelse.js",
-    "src/dashboard/coachActions.mjs",
-    "src/dashboard/coachKonstanter.js",
-    "src/dashboard/coachVideoHjaelp.js",
-    "src/dashboard/indbakkeHandlinger.js",
-    "src/dashboard/laesninger.js",
-    "src/dashboard/useCoachPrioritet.js",
-    "src/dashboardShared.js",
-    "src/e2eTestFlags.mjs",
-    "src/exerciseNames.js",
-    "src/exerciseProgress.js",
-    "src/exerciseSetView.js",
-    "src/inputValues.js",
-    "src/messageTime.js",
-    "src/personalRecords.js",
-    "src/saetSmerte.js",
-    "src/videoCoachLabels.js",
-    "src/videoCoachPersonalFeedback.js",
-    "src/videoCoachSubmission.js",
-    "src/videoCoachVersion.js",
-    "src/volume/ugenoegle.js"
-])
+  const allowed = new Set(registryRecipe(import.meta.url, 'allowed'))
   const urlFor = path => {
     if (!Object.hasOwn(fakes, path) && !allowed.has(path)) {
       assertPureGraph(path, source)

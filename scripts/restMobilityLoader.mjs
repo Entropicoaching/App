@@ -1,10 +1,11 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../src/testModuleRegistry.mjs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './restMobilityJsx.mjs'
 const root = new URL('../', import.meta.url)
 const dom = new URL('./restMobilityDom.mjs', import.meta.url).href
-const inventory = JSON.parse(readFileSync(new URL('./restMobilityStubs.json', import.meta.url)))
-const names = ["RestDays.jsx", "WeekCalendar.jsx", "HjemTab.jsx", "EnkelHjemTab.jsx", "ProgramTab.jsx", "MobilitetFokus.jsx", "restDays.mjs", "restMobility.mjs", "coachMobility.mjs", "mobilityFocus.mjs", "mobilityCatalog.mjs"]
+const inventory = registryRecipe(import.meta.url, 'manifest:./restMobilityStubs.json')
+const names = registryRecipe(import.meta.url, 'names')
 const allowed = new Set(['src/', 'reference/src/'].flatMap(prefix => [
   ...names.map(name => new URL(prefix + 'athlete/' + name, root).href),
   ...['mobilityHomework.mjs', 'nextSet.js'].map(name => new URL(prefix + name, root).href),

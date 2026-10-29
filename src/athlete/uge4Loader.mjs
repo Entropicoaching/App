@@ -1,12 +1,10 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './uge4Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const real = new Set(['ugeLogget.mjs', 'nextSet.js', 'UgensStatusKort.jsx', 'EnkelHjemTab.jsx',
-  'HjemTab.jsx', 'ugeStatus.js', 'inputValues.js', 'kostNumbers.mjs', 'repsPrescription.js',
-  'ugenoegle.js', 'athleteShared.js', 'calendarDate.js', 'ugeHjaelp.js', 'uge4Dom.mjs', 'enkelPrototype.mjs', 'uge4Baseline.jsx',
-  'uge4Register.mjs', 'uge4Loader.mjs', 'uge4Jsx.mjs', 'ugeLogget.test.js', 'uge4Counter.test.js', 'nextSet.test.js', 'ugeStatus.test.js'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
 // Only the unrelated home cards are replaced. Test the week card and its rules intact.
 const stubs = new Map()
 for (const file of ['HjemTab.jsx', 'EnkelHjemTab.jsx']) {

@@ -1,16 +1,17 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './kost2Jsx.mjs'
 import { athleteViewUrl } from './kost2Paths.mjs'
 const root = new URL('./', import.meta.url)
-const real = new Set(['AthleteView.jsx', 'BundNav.jsx', 'NavItems.jsx', 'enkelPrototype.mjs', 'kostValg.mjs', 'readinessShortcut.mjs'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
 const files = new Map([...real].map(n => [new URL(n, root).href, n]))
 files.delete(new URL('AthleteView.jsx', root).href)
 files.set(athleteViewUrl.href, 'AthleteView.jsx')
 
-const addedPaths = {"CoachMobility.jsx": "./CoachMobility.jsx", "coachMobility.mjs": "./coachMobility.mjs", "mobilityFocus.mjs": "./mobilityFocus.mjs", "mobilityCatalog.mjs": "./mobilityCatalog.mjs", "mobilityHomework.mjs": "../mobilityHomework.mjs"}
-const addedEdges = {"CoachMobility.jsx": ["./mobilityFocus.mjs", "./mobilityCatalog.mjs", "./coachMobility.mjs"], "coachMobility.mjs": ["./mobilityFocus.mjs"], "mobilityFocus.mjs": [], "mobilityCatalog.mjs": [], "mobilityHomework.mjs": ["./athlete/mobilityCatalog.mjs"]}
+const addedPaths = registryRecipe(import.meta.url, 'addedPaths')
+const addedEdges = registryRecipe(import.meta.url, 'addedEdges')
 const addedURLs = new Map(Object.entries(addedPaths).map(([name,path])=>[new URL(path,root).href,name]))
 const fake = new URL('kost2Dom.mjs', root).href
 export function install() {

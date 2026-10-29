@@ -1,16 +1,9 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync as exactExists } from 'node:fs'
 import { readFileSync, existsSync } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 const synthetic = new URL('./synthetic.mjs', import.meta.url).href
-const exportsByPath = {
-  '../coachInboxState.js': ['summarizeRefreshResults', 'filterDraftVideoReviews', 'filterOpenTrainingSignals', 'summarizeCoachMessages'],
-  '../automationAlerts.js': ['filterOpenAutomationAlerts'],
-  '../saetSmerte.js': ['saetSmerteSignaler', 'medSaetSmerte'],
-  './coachKonstanter.js': ['ATHLETE_LOGS_LIMIT'],
-  '../videoCoachVersion.js': ['VIDEOCOACH_BASELINE_VERSION'],
-  '../personalRecords.js': ['normaliserRekorder', 'bedsteRekorder', 'tungeRekorder'],
-  '../danskDato.js': ['danskDag'],
-}
+const exportsByPath = registryRecipe(import.meta.url, 'exportsByPath')
 export function resolve(specifier, context, next) {
   if (specifier === '../coachNoteSignal.js' && !existsSync(new URL('../coachNoteSignal.js', import.meta.url))) return { url: new URL('./coachNoteSignal.js', import.meta.url).href, shortCircuit: true }
       if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {

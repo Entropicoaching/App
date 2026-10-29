@@ -1,9 +1,10 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './hvileJsx.mjs'
 const root = new URL('./', import.meta.url)
-const paths = JSON.parse(readFileSync(new URL('hvilePaths.json', root), 'utf8'))
+const paths = registryRecipe(import.meta.url, 'manifest:hvilePaths.json')
 const urls = new Map(Object.entries(paths).map(([name, path]) => {
   const flat = new URL(name, root)
   return [name, (existsSync(flat) ? flat : new URL('../../' + path, root)).href]

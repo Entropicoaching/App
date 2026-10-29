@@ -1,29 +1,33 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, copyFileSync } from 'node:fs'
+import * as vm from 'node:vm'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { join } from 'node:path'
+import { syntheticModules } from './registrySyntheticFs.mjs'
+import { snapshotFiles } from './registryTestFiles.mjs'
+if (!vm.SourceTextModule) {
+  test('isolated synthetic ESM counterexamples', () => {
+    const result = spawnSync(process.execPath, ['--experimental-vm-modules', fileURLToPath(import.meta.url)], { encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stdout + result.stderr)
+  })
+} else {
+const root = new URL('../', import.meta.url)
+const files = snapshotFiles(root)
 
-// Fresh, private synthetic FS graphs inside this test's own reconstructed copy.
 for (const [kind, leaf] of [
   ['net', "import 'node:https'"],
   ['storage', "export const read = () => localStorage.getItem('synthetic')"],
-]) test(`frisk FS-modproeve: ${kind} afvises foer mutationsmodulet kan evalueres`, () => {
-  const base = mkdtempSync(fileURLToPath(new URL('./kandFix2-mutation-', import.meta.url)))
-  const src = join(base, 'src'); mkdirSync(src)
-  writeFileSync(join(base, 'package.json'), '{"type":"module"}\n')
-  for (const file of ['coachNoteDependencyGuard.mjs', 'e2eTestFlags.mjs']) {
-    copyFileSync(new URL('./' + file, import.meta.url), join(src, file))
-  }
-  const original = readFileSync(new URL('./coachNoteSignal.js', import.meta.url), 'utf8')
-  writeFileSync(join(src, 'coachNoteSignal.js'), original + "\nexport * from './bridge.mjs'\n")
-  writeFileSync(join(src, 'bridge.mjs'), "export * from './leaf.mjs'\n")
-  writeFileSync(join(src, 'leaf.mjs'), leaf + "\nthrow Error('MUTATION_EXECUTED')\n")
-  const run = spawnSync(process.execPath, ['--input-type=module', '-e',
-    "await import('./src/coachNoteDependencyGuard.mjs'); await import('./src/coachNoteSignal.js')"],
-    { cwd: base, encoding: 'utf8' })
-  assert.equal(run.status, 1)
-  assert.match(run.stderr, /(?:Impure|Unapproved) synthetic dependency/)
-  assert.doesNotMatch(run.stderr, /MUTATION_EXECUTED/)
+]) test(`frisk FS-modproeve: ${kind} afvises foer mutationsmodulet kan evalueres`, async () => {
+  const input = new Map(files)
+  const signal = new URL('src/coachNoteSignal.js', root).href
+  input.set(signal, input.get(signal) + "\nexport * from './bridge.mjs'\n")
+  input.set(new URL('src/bridge.mjs', root).href, "export * from './leaf.mjs'\n")
+  input.set(new URL('src/leaf.mjs', root).href, leaf + "\nthrow Error('MUTATION_EXECUTED')\n")
+  const engine = syntheticModules(input, root)
+  await assert.rejects(engine.import('src/coachNoteDependencyGuard.mjs'), error => {
+    assert.match(error.message, /(?:Impure|Unapproved) synthetic dependency/)
+    assert.doesNotMatch(error.message, /MUTATION_EXECUTED/)
+    return true
+  })
 })
+}

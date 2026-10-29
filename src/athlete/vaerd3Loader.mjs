@@ -1,13 +1,14 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './vaerd3Jsx.mjs'
 
 // Exact allowlist: local reconstructed public modules or native integration paths.
 const root = new URL('./', import.meta.url)
-const components = new Set(['DinUgeKort.jsx', 'KostUge.jsx', 'MeetDayPlanner.jsx', 'StaevnedagTab.jsx'])
-const modules = new Set(['dinUge.js', 'nextSet.js', 'rekorder.js', 'exerciseProgress.js', 'exerciseSetView.js', 'exerciseNames.js', 'inputValues.js', 'calendarDate.js', 'ugenoegle.js', 'athleteWriteGuard.js', 'kostUge.mjs', 'staevnedagPlan.mjs', 'staevnedagFocus.mjs', 'kostNumbers.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs'])
-const athleteModules = new Set(['dinUge.js', 'rekorder.js', 'kostUge.mjs', 'staevnedagPlan.mjs', 'staevnedagFocus.mjs', 'kostNumbers.mjs'])
+const components = new Set(registryRecipe(import.meta.url, 'components'))
+const modules = new Set(registryRecipe(import.meta.url, 'modules'))
+const athleteModules = new Set(registryRecipe(import.meta.url, 'athleteModules'))
 const urls = new Map([...components, ...modules].map(name => {
   const flat = new URL(name, root)
   const nativePath = name === 'ugenoegle.js' ? '../volume/ugenoegle.js' : athleteModules.has(name) || (components.has(name) || components.has(name.replace(/\.(?:jsx|js)$/, ''))) ? name : '../' + name

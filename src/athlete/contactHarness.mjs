@@ -1,16 +1,12 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { jsx } from './contactJsx.mjs'
 
 const fake = new URL('./contactFakes.mjs', import.meta.url).href
-const fakes = new Set([
-  '../athleteShared', '../supabase', '../athleteWriteGuard', '../athleteReadGuard',
-  '../athleteSilentFailLog', '../videoCoachPersonalFeedback', '../videoCoachLabels',
-  './videoCoachBro', './ugeHjaelp', './dinUge', './kostNumbers.mjs',
-  '../messageTime.js', './videoFeedbackPlayback.mjs', './VideoFeedbackPlayback.jsx',
-])
-const targets = new Set(['BeskederTab.jsx', 'beskederOgVaegt.jsx', 'contactBaseBeskederTab.jsx', 'contactBaseFactory.jsx'])
+const fakes = new Set(registryRecipe(import.meta.url, 'fakes'))
+const targets = new Set(registryRecipe(import.meta.url, 'targets'))
 const targetUrls = new Set([...targets].map(n => new URL(n, import.meta.url).href))
 const clean = url => url?.split('?')[0]
 registerHooks({

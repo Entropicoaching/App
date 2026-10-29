@@ -1,12 +1,7 @@
+import { registryRecipe } from '../testModuleRegistry.mjs'
 // Explicit HVILE4 edges for the existing synthetic program/rest loaders.
 // Resolve normally after validation; never discover dependencies or relax guards.
-const edges = {
-  'restMobility.mjs': ['../mobilityHomework.mjs', './coachMobility.mjs', './mobilityFocus.mjs', './mobilityCatalog.mjs'],
-  'coachMobility.mjs': ['./mobilityFocus.mjs'],
-  'mobilityFocus.mjs': [],
-  'mobilityCatalog.mjs': [],
-  '../mobilityHomework.mjs': ['react', './athlete/mobilityCatalog.mjs'],
-}
+const edges = registryRecipe(import.meta.url, 'edges')
 export function assertRestMobilityEdge(specifier, parentURL, root) {
   const parent = Object.keys(edges).find(path => new URL(path, root).href === parentURL)
   if (parent !== undefined && !edges[parent].includes(specifier))

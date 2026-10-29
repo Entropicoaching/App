@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module';
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs';
 import { existsSync } from 'node:fs';
 import { fixture, settle } from './videoOptag2Fakes.mjs';
 
@@ -47,8 +48,7 @@ export async function bridge({ videoOptag2, before = false } = {}) {
     '../videoUploadRetry.mjs': './videoUploadRetry.mjs',
     '../videoCoachUpload': './videoCoachUpload.js',
   };
-  const stubSpecs = new Set(['react', '../supabase', '../videoCoachFeedbackEvidence',
-    '../athleteSilentFailLog', '../videoCoachSubmission', './videoCoachBro']);
+  const stubSpecs = new Set(registryRecipe(import.meta.url, 'stubSpecs'));
   const hooks = registerHooks({ resolve(specifier, context, next) {
     if (context.parentURL === hookUrl) {
       if (real[specifier]) return next(new URL(real[specifier], import.meta.url).href, context);

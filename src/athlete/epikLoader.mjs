@@ -1,5 +1,6 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks } from '../testModuleRegistry.mjs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './epikJsx.mjs'
 const root = new URL('./', import.meta.url)

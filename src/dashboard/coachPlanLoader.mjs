@@ -1,14 +1,12 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './coachPlanJsx.mjs'
 const root = new URL('./', import.meta.url)
-const names = ['ProgramTab.jsx', 'CoachPlanCopy.jsx', 'coachPlanCopy.mjs',
-  'ProgramCopyOptions.jsx', 'programCopy.js', 'calendarDate.js', 'inputValues.js',
-  'kostNumbers.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'rpeEvidence.mjs', 'exerciseSetView.js', 'exerciseNames.js', 'weekDates.js']
+const names = registryRecipe(import.meta.url, 'names')
 const canonical = new Map(names.map(name => [name.toLowerCase(), name]))
-const programImports = new Set(['./coachplancopy.mjs', './coachplancopy.jsx',
-  './programcopyoptions.jsx', './programcopy.js', '../dataenough.mjs'])
+const programImports = new Set(registryRecipe(import.meta.url, 'programImports'))
 // Whole filenames, including extensions, distinguish JSX from the pure module.
 // The injected root/flat mode also allows platform independent FS probes.
 export function createHooks(base = root, flat = existsSync(new URL('calendarDate.js', base))) {

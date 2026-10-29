@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks } from './testModuleRegistry.mjs'
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {

@@ -1,18 +1,10 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync, readFileSync } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { jsx } from './mob3Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const actual = new Set(['mobilityHomework.mjs', 'staevneHome.mjs', 'nextTrainingHome.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'mobilityBeforeSession.mjs', 'mobilityCatalog.mjs', 'mobilityLibrary.mjs',
-  'CoachMobility.jsx', 'coachMobility.mjs', 'mobilityHelped.mjs', 'mobilityFocus.mjs', 'MobilitetFokus.jsx', 'MobilitetsBibliotek.jsx', 'MobiliseringTab.jsx',
-  'exerciseNames.js', 'warmup.js', 'nextSet.js', 'HjemTab.jsx', 'EnkelHjemTab.jsx', 'DagensPasCard.jsx',
-  'appLog2.mjs', 'vaerdTekst.mjs', 'inputValues.js', 'exerciseSetView.js', 'logAccessibility.mjs',
-  'nextSetPreview.js', 'repsPrescription.js', 'fixedRepsEntry.js', 'setLogDefaults.js',
-  'smerteStop.js', 'setTapGuard.js', 'restBetweenSets.js', 'pauseLinje.js', 'saetSmerte.js', 'dagensPasLayout.mjs',
-  'kostNumbers.mjs', 'coachFremgang.js', 'coachBriefingRules.js', 'smerteRegion.js', 'exerciseProgress.js',
-  'calendarDate.js', 'ugenoegle.js'])
-const peripheral = new Set(['athleteShared', 'ugeHjaelp', 'UgensStatusKort', 'WeekCalendar', 'DinUgeKort',
-  'dinUge', 'RestPauseFooter', 'ForsideGrafer', 'readinessInsight', 'checkinReminder', 'restPause',
-  'weightTrend.mjs', 'athleteShortcuts.mjs', 'PasOverblik.jsx', 'CountdownRing'])
+const actual = new Set(registryRecipe(import.meta.url, 'actual'))
+const peripheral = new Set(registryRecipe(import.meta.url, 'peripheral'))
 export function moduleURL(name) {
   return ['./' + name, '../' + name, '../volume/' + name].map(path => new URL(path, root)).find(url => existsSync(url))
 }

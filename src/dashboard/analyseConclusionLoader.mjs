@@ -1,14 +1,15 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './analyseTestJsx.mjs'
 const root = new URL('./', import.meta.url)
 // Explicit locations support the flat hermetic copy and the original app tree.
 const flat = existsSync(new URL('dataEnough.mjs', root))
-const parentModules = new Set(['rel1030.mjs','VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs','udgivelseTrin.mjs', 'dataEnough.mjs','dataEvidence.mjs','calendarDate.js','rpeEvidence.mjs','exerciseProgress.js','exerciseSetView.js','exerciseNames.js','inputValues.js','coachRyd.mjs','dashboardShared.js','videoCoachLabels.js','videoCoachFeedbackQuality.js','videoCoachBaselineProgress.js'])
+const parentModules = new Set(registryRecipe(import.meta.url, 'parentModules'))
 const location = name => flat ? name : name === 'kostNumbers.mjs' ? '../athlete/kostNumbers.mjs' : name === 'ugenoegle.js' ? '../volume/ugenoegle.js' : parentModules.has(name) ? '../'+name : name
-const originals = new Set(['AnalyseTab.jsx', 'analyseConclusionBaseline.jsx'])
-const actual = new Set(['analyseConclusionMessage.mjs','coachTemplateMessages.mjs','rel1030.mjs','VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs','dashboardShared.js','videoCoachLabels.js','videoCoachFeedbackQuality.js','videoCoachBaselineProgress.js','analyseConclusion.mjs','udgivelseTrin.mjs', 'dataEnough.mjs','dataEvidence.mjs','calendarDate.js','kostNumbers.mjs','rpeEvidence.mjs','exerciseProgress.js','exerciseSetView.js','exerciseNames.js','inputValues.js','ugenoegle.js','coachRyd.mjs','AnalyseSamletPrototype.jsx','analyseSamlet.mjs','AnalyseSammenlign.jsx','analyseSammenlign.mjs'])
-const legacy = new Set(['../dashboardCharts.jsx','./AnalyseLokaltVaerktoej.jsx','./primaerKurve.js','../danskDato.js','../AthleteSilentFailNote.jsx'])
+const originals = new Set(registryRecipe(import.meta.url, 'originals'))
+const actual = new Set(registryRecipe(import.meta.url, 'actual'))
+const legacy = new Set(registryRecipe(import.meta.url, 'legacy'))
 export function install() {
  return registerHooks({
   resolve(specifier, context, next) {

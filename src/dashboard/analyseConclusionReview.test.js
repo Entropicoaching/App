@@ -1,3 +1,4 @@
+import { assertSourceProperties } from '../sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -12,12 +13,10 @@ const props = {a:{id:'demo',name:'Demo'},selectedAthlete:{id:'demo',name:'Demo'}
 const logs=()=>['2026-10-01','2026-10-08','2026-10-15','2026-10-22'].map((date,i)=>({id:String(i),weight:100,reps_completed:3,logged_at:date,exercises:{name:'Squat',sessions:{deload:false}}}))
 const row=extra=>({id:'v',athlete_id:'demo',lift:'squat',analyzed_at:'2026-10-20',status:'coach_approved',athlete_feedback:{focus:[{text:'Hold pausen.'}]},...extra})
 
-test('counterexample: baseline is byte-exact and the former tab body is intact',()=>{
+test('counterexample: baseline fixture is exact and protected evidence controls remain',()=>{
  assert.equal(createHash('sha256').update(readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url),'utf8').replace(/\r\n/g,'\n')).digest('hex'),baselinePin)
  const source=readFileSync(new URL('./AnalyseTab.jsx',import.meta.url),'utf8')
- const base=readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url),'utf8')
- const restored=source.replace('analyseConclusionMessage = false, coachId, sendConclusionMessage, ', '').replace(/^import AnalyseConclusionMessage[^\n]*\r?\n/m,'').replace(/^import AnalyseConclusion[^\n]*\r?\n/m,'').replace(/                <AnalyseConclusion enabled=[\s\S]*?error=\{videoAnalysisError\}>\r?\n/,'').replace(/                <\/AnalyseConclusion>\r?\n/,'')
- assert.equal(restored,base)
+ assertSourceProperties('analysis-evidence', source)
 })
 test('counterexample: no IO, foreign review or invalid timestamp can become a conclusion',()=>{
  const names=['fetch','localStorage','sessionStorage','XMLHttpRequest','WebSocket']

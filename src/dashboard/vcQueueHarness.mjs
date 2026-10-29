@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { basename } from 'node:path'
 import { jsx } from './vcQueueJsx.mjs'
@@ -32,10 +33,7 @@ export async function app(enabled, waitEnabled, storageEnabled) {
     try { return type({ ...props, children: flat }) } finally { state.active = previous }
   }
   globalThis[registry].set(id, state)
-  const allowed = new Set(['videoStorageUsage.mjs', 'VideoStorageUsage.jsx','videoMarkerReplies.mjs', 'coachRyd.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'IndbakkeView.jsx', 'VideoQueueFilter.jsx', 'videoQueueFilter.mjs', 'videoQueueWait.mjs',
-    'coachBriefingSeen.js', 'coachPriority.js', 'coachInboxState.js', 'coachNoteSignal.js', 'e2eTestFlags.mjs',
-    'automationAlerts.js', 'coachBriefingRules.js', 'exerciseSetView.js', 'exerciseNames.js',
-    'exerciseProgress.js', 'inputValues.js', 'smerteRegion.js', 'kostNumbers.mjs', 'calendarDate.js', 'ugenoegle.js'])
+  const allowed = new Set(registryRecipe(import.meta.url, 'allowed'))
   registerHooks({
     resolve(specifier, context, next) {
       if (specifier.startsWith(prefix)) {

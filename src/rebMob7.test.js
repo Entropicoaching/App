@@ -1,14 +1,14 @@
+import { registryRecipe } from './testModuleRegistry.mjs'
+import { assertSourceProperties } from './sourceProperties.mjs'
 import { assertAcceptedSource } from './analyse5SourceContract.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
-import {createHash} from 'node:crypto'
 import {install, mount, memory, text, button, createElement as h} from './mob7Synthetic.mjs'
 install()
 const {MobilityHomeworkProgress, HomeworkExerciseProgress, readDone}=await import('./mobilityAdherence.mjs')
 const {MobilityHomeworkHome,saveHomework,homeworkLibrary}=await import('./mobilityHomework.mjs')
 const read=n=>readFileSync(new URL(n,import.meta.url),'utf8')
-const sha=s=>createHash('sha256').update(s).digest('hex')
 const ex=homeworkLibrary()[0].exercises[0]
 
 test('REB Home wrapper retains identical OFF element and route null, including nonboolean flags',()=>{
@@ -49,18 +49,19 @@ test('REB existing full Home JSX line and exact initial Athlete import contract 
 
 test('REB intentional profile pin matches exact normalized final source',()=>{
  const profile=read('dashboard/ProfilHoved.jsx'), source=read('dashboard/coachNotesReview.test.js')
- assert.ok(source.includes("'ProfilHoved.jsx': '"+sha(profile.replace(/\r\n/g,'\n'))+"'"))
+ assertSourceProperties('profile-mobility', profile)
  assert.match(profile,/mobilitetOpfoelgning = false, adherenceContent = null/)
  assert.match(profile,/mobilitetOpfoelgning === true \? adherenceContent : null/)
 })
 
 test('REB closed loader lists admit only the new explicit dashboard export, keep rejection guards',()=>{
  const follow=read('dashboard/followUpLoader.mjs'), rebase=read('rebaseHarness.mjs')
- assert.ok(follow.includes('["../Dashboard.jsx", "./mobilityAdherence.mjs", {"stub": "export const MobilityAdherenceProfile = () => null;"}]'))
+ const recipe=registryRecipe(new URL('./dashboard/followUpLoader.mjs', import.meta.url).href, 'dependencies')
+ assert.ok(recipe.some(([parent, specifier, target]) => parent === '../Dashboard.jsx' && specifier === './mobilityAdherence.mjs' && target.stub === 'export const MobilityAdherenceProfile = () => null;'))
  assert.ok(rebase.includes("'./mobilityAdherence.mjs': {MobilityAdherenceProfile:noop},"))
  assert.match(follow,/if \(!target\) return unapproved\(specifier\)/)
  assert.match(rebase,/if \(!\(specifier in fakes\)\) throw Error\('Unapproved dashboard import: '\+specifier\)/)
- assert.equal((follow.match(/mobilityAdherence\.mjs/g)||[]).length,1)
+ assert.equal(recipe.filter(([, specifier]) => specifier === './mobilityAdherence.mjs').length,1)
  assert.equal((rebase.match(/mobilityAdherence\.mjs/g)||[]).length,1)
 })
 

@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './vcMark2Jsx.mjs'
 const dom = new URL('./vcMark2Dom.mjs', import.meta.url).href
@@ -17,7 +18,7 @@ export const videoCoachMetric=()=>null; export const videoCoachBaseline=()=>null
 export const videoCoachMetricText=()=>''; export const videoCoachBaselineText=()=>'';
 import {createElement as h} from 'react'; export const CoachFold=({children})=>h('div',null,children);
 export const ReviewConclusion=()=>null; export default ()=>null;`
-const allowed = ['./VideoReviewTemplates.mjs','./videoReviewLayout.mjs','./VideoMarkerTemplates.mjs','../athlete/videoFeedbackPlayback.mjs']
+const allowed = registryRecipe(import.meta.url, 'allowed')
 registerHooks({
   resolve(specifier, context, next) {
     if (specifier === '../athlete/videoFeedbackPlayback.mjs') return {url:new URL(existsSync(new URL('./videoFeedbackPlayback.mjs',import.meta.url)) ? './videoFeedbackPlayback.mjs' : '../athlete/videoFeedbackPlayback.mjs',import.meta.url).href,shortCircuit:true}

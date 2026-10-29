@@ -1,10 +1,11 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
 import { withHvileBaseline } from './hvileBaseline.mjs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './prog2Jsx.mjs'
-const names = ['restMobility.mjs', 'coachMobility.mjs', 'mobilityFocus.mjs', 'mobilityCatalog.mjs', 'mobilityHomework.mjs', 'RestDays.jsx','restDays.mjs','IntensityExplanation.jsx','intensityExplanation.mjs','programBlockOverview.mjs','mealEvidence.mjs','videoEvidence.mjs','vcForenkl4.mjs','ProgramTab.jsx','CountdownRing.jsx','prog2Baseline.txt','inputValues.js','restTimer.js','repsPrescription.js','fixedRepsEntry.js','exerciseSetView.js','exerciseNames.js','athleteShared.js','saetSmerte.js','smerteRegion.js','calendarDate.js','kostNumbers.mjs','rpeEvidence.mjs','udgivelseTrin.mjs', 'dataEnough.mjs','ugeHjaelp.js','coachFremgang.js','dataEvidence.mjs','exerciseProgress.js','coachBriefingRules.js','ugenoegle.js','programNaesteUge.mjs']
-const nativePaths = {"mobilityHomework.mjs": "../mobilityHomework.mjs", "mealEvidence.mjs": "../mealEvidence.mjs", "videoEvidence.mjs": "../videoEvidence.mjs", "vcForenkl4.mjs": "../vcForenkl4.mjs", "inputValues.js": "../inputValues.js", "restTimer.js": "../restTimer.js", "repsPrescription.js": "../repsPrescription.js", "fixedRepsEntry.js": "../fixedRepsEntry.js", "exerciseSetView.js": "../exerciseSetView.js", "exerciseNames.js": "../exerciseNames.js", "athleteShared.js": "../athleteShared.js", "saetSmerte.js": "../saetSmerte.js", "calendarDate.js": "../calendarDate.js", "rpeEvidence.mjs": "../rpeEvidence.mjs", "udgivelseTrin.mjs": "../udgivelseTrin.mjs", "dataEnough.mjs": "../dataEnough.mjs", "coachFremgang.js": "../coachFremgang.js", "dataEvidence.mjs": "../dataEvidence.mjs", "exerciseProgress.js": "../exerciseProgress.js", "coachBriefingRules.js": "../coachBriefingRules.js", "ugenoegle.js": "../volume/ugenoegle.js"}
+const names = registryRecipe(import.meta.url, 'names')
+const nativePaths = registryRecipe(import.meta.url, 'nativePaths')
 const urls = new Map(names.map(name => {
   const flat = new URL(name, import.meta.url)
   return [name, (existsSync(flat) ? flat : new URL(nativePaths[name] || name, import.meta.url)).href]

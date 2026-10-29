@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './coachNotesJsx.mjs'
 import * as dom from './coachNotesDom.mjs'
@@ -29,8 +30,7 @@ const fakes = {
   useCoachPrioritet: () => ({ coachPriorityItems: [], coachPriorityCount: 0 }),
 }
 globalThis[Symbol.for('coachNotes.test')] = { fakes, h: dom.h }
-const real = new Set(['Dashboard.jsx', 'NoterTab.jsx', 'CoachNotesPage.mjs', 'coachNotes.mjs',
-  'coachNotesDashboardBase.txt', 'coachNotesTabBase.txt', 'ProfilHoved.jsx', 'hubSektioner.jsx'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
 const prefix = 'coach-notes-test:///'
 export const load = name => import(prefix + name)
 // Allowlisted public modules only. Other static imports get inert exports derived
@@ -66,7 +66,7 @@ registerHooks({
     return { format: 'module', source, shortCircuit: true }
   },
 })
-const paths = { 'Dashboard.jsx': '../Dashboard.jsx' }
+const paths = registryRecipe(import.meta.url, 'paths')
 export function sourcePath(name) {
   const flat = new URL(name, import.meta.url)
   return existsSync(flat) ? flat : new URL(paths[name] || name, import.meta.url)

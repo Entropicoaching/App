@@ -1,13 +1,14 @@
+import { wrapRegistryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, basename, posix } from 'node:path'
 const root = new URL('./', import.meta.url)
-const paths = JSON.parse(readFileSync(new URL('source-map.json', root), 'utf8'))
+const paths = registryRecipe(import.meta.url, 'manifest:source-map.json')
 const modules = new Map(Object.entries(paths).map(([name, logical]) => [logical,
   (existsSync(new URL(name, root)) ? new URL(name, root) : new URL(logical.slice(4), root)).href]))
 const logicalByUrl = new Map([...modules].map(([logical, url]) => [url, logical]))
 const runtime = new URL('syntheticRuntime.mjs', root).href
-export function resolve(specifier, context, next) {
+function legacyResolve(specifier, context, next) {
   const parent = logicalByUrl.get(context.parentURL)
   if (!parent) return next(specifier, context)
   if (specifier === 'react') return { url: runtime, shortCircuit: true }
@@ -40,7 +41,9 @@ export function resolve(specifier, context, next) {
   if (!present) throw Object.assign(new Error(`Unpinned import: ${specifier}`), { code: 'ERR_MODULE_NOT_FOUND' })
   return next(specifier, context)
 }
-export function load(url, context, next) {
+function legacyLoad(url, context, next) {
   if (logicalByUrl.has(url) && url.endsWith('.js')) return next(url, { ...context, format: 'module' })
   return next(url, context)
 }
+
+export const { resolve, load } = wrapRegistryHooks(import.meta.url, { resolve: legacyResolve, load: legacyLoad })

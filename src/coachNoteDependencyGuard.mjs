@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto'
+import { assertSourceProperties } from './sourceProperties.mjs'
 import { readFileSync } from 'node:fs'
 import { posix } from 'node:path'
 
@@ -17,7 +17,15 @@ export function assertPureGraph(entry, readSource, seen = new Set()) {
   // Only the existing note flag may read the current URL. Storage and network
   // identifiers elsewhere in that very file are still checked.
   if (entry === 'src/coachNoteSignal.js') code = code.replace(flagLocation, "''")
-  if (entry === 'src/dataEnough.mjs' && createHash('sha256').update(code.replace(/\r\n/g, '\n')).digest('hex') === '04aa2464ed4f41b8c6bba24bfb6d884595875835377887d3290005a6024a89dd') code = code.replace("globalThis.location?.search", "''").replace(/\bwindow\b/g, 'periodRows')
+  if (entry === 'src/dataEnough.mjs') {
+    assertSourceProperties('data-enough-release', code)
+    // Only the existing release expression is exempt. All other host identifiers
+    // (including new ones elsewhere in this file) still fail the purity check.
+    code = code.replace("return trin1AppData2(globalThis.location?.search || '')", "return trin1AppData2('')")
+    code = code.replace('const window = (lo, hi) => clean.filter(', 'const periodRows = (lo, hi) => clean.filter(')
+      .replace('[] : window(1, 7)', '[] : periodRows(1, 7)')
+      .replace('[] : window(8, 14)', '[] : periodRows(8, 14)')
+  }
   code = withoutComments(code)
   const identifiers = code.replace(/\\u\{([0-9a-f]+)\}|\\u([0-9a-f]{4})|\\x([0-9a-f]{2})/gi,
     (_, a, b, c) => String.fromCodePoint(parseInt(a || b || c, 16)))

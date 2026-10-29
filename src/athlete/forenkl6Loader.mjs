@@ -1,29 +1,12 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './forenkl6Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const components = new Set(['ProgramTab.jsx', 'forenkl6Baseline.jsx', 'CountdownRing.jsx', 'IntensityExplanation.jsx', 'RestDays.jsx'])
-const paths = {
-  'restMobility.mjs': './restMobility.mjs',
-  'coachMobility.mjs': './coachMobility.mjs',
-  'mobilityFocus.mjs': './mobilityFocus.mjs',
-  'mobilityCatalog.mjs': './mobilityCatalog.mjs',
-  'mobilityHomework.mjs': '../mobilityHomework.mjs',
-  'restDays.mjs': './restDays.mjs',
-  'programNaesteUge.mjs': './programNaesteUge.mjs',
-  'intensityExplanation.mjs': './intensityExplanation.mjs',
-  'programBlockOverview.mjs': './programBlockOverview.mjs',
-  'inputValues.js': '../inputValues.js', 'restTimer.js': '../restTimer.js',
-  'repsPrescription.js': '../repsPrescription.js', 'fixedRepsEntry.js': '../fixedRepsEntry.js',
-  'exerciseSetView.js': '../exerciseSetView.js', 'exerciseNames.js': '../exerciseNames.js',
-  'athleteShared.js': '../athleteShared.js', 'saetSmerte.js': '../saetSmerte.js',
-  'calendarDate.js': '../calendarDate.js', 'kostNumbers.mjs': './kostNumbers.mjs',
-  'coachFremgang.js': '../coachFremgang.js', 'exerciseProgress.js': '../exerciseProgress.js',
-  'coachBriefingRules.js': '../coachBriefingRules.js', 'smerteRegion.js': './smerteRegion.js',
-  'ugenoegle.js': '../volume/ugenoegle.js', 'ugeHjaelp.js': './ugeHjaelp.js',
-}
+const components = new Set(registryRecipe(import.meta.url, 'components'))
+const paths = registryRecipe(import.meta.url, 'paths')
 const urls = new Map([...components].map(n => [n, new URL(n, root).href]))
 for (const [name, native] of Object.entries(paths)) {
   const flat = new URL(name, root)

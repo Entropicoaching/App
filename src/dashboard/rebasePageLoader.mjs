@@ -1,68 +1,13 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import './coachWeekTestLoader.mjs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './rebaseJsx.mjs'
 const root = new URL('./',import.meta.url)
 const page = new URL('ForsideView.jsx',root).href
 const dom = new URL('rebaseDom.mjs',root).href
-const clauses = {
-  "./coachMeetSoon.mjs": [
-    "CoachMeetSoon"
-  ],
-  "./coachMorning.mjs": [
-    "CoachMorning"
-  ],
-  "../coachInboxState.js": [
-    "coachInboxLine"
-  ],
-  "../dataEvidence.mjs": [
-    "positiveStatusEvidence"
-  ],
-  "../dataEnough.mjs": [
-    "dataEnoughEnabled",
-    "dataMessage"
-  ],
-  "../coachRyd.mjs": [
-    "CoachFold"
-  ],
-  "../dashboardShared.js": [
-    "currentWeekNo",
-    "s",
-    "initials"
-  ],
-  "../roligeAtleter.js": [
-    "roligeAtleter",
-    "roligLinje"
-  ],
-  "../coachBriefingSeen.js": [
-    "coachBriefingPointKey"
-  ],
-  "../supabase.js": [
-    "supabase"
-  ],
-  "./coachKonstanter.js": [
-    "holidayInfo",
-    "ferieBadgeLabel"
-  ],
-  "./coachVideoHjaelp.js": [
-    "videoCoachMeasurementSummary",
-    "coachVideoPriorityDetail",
-    "videoCoachMeasurementText"
-  ],
-  "../danskDato.js": [
-    "dageSiden"
-  ],
-  "./coachFollowUp.mjs": [
-    "CoachFollowUpScope",
-    "FollowUpControl",
-    "sortFollowUps",
-    "validCoachScope"
-  ],
-  "./CoachActions.jsx": [
-    "default"
-  ]
-}
-const actual = { './coachWeekOverview.mjs':'coachWeekOverview.mjs', './afvigelse.js':'afvigelse.js', './coachActions.mjs':'coachActions.mjs' }
+const clauses = registryRecipe(import.meta.url, 'clauses')
+const actual = registryRecipe(import.meta.url, 'actual')
 const values = {
  s:'{}', videoCoachMeasurementSummary:'() => null', coachInboxLine:'() => null', currentWeekNo:'weeks => weeks[0]?.week_number ?? null',
  dataEnoughEnabled:'() => false', roligeAtleter:'() => []', roligLinje:'() => null',

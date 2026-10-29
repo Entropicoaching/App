@@ -1,10 +1,11 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './staevneJsx.mjs'
 const root = new URL('./', import.meta.url)
-const components = new Set(['StaevnedagTab.jsx', 'MeetDayPlanner.jsx'])
-const modules = new Set(['staevnedagFocus.mjs', 'staevnedagPlan.mjs', 'inputValues.js', 'kostNumbers.mjs', 'athleteWriteGuard.js', 'calendarDate.js'])
+const components = new Set(registryRecipe(import.meta.url, 'components'))
+const modules = new Set(registryRecipe(import.meta.url, 'modules'))
 const urls = new Map([...components, ...modules].map(name => {
   const flat = new URL(name, root)
   const native = ['inputValues.js', 'athleteWriteGuard.js', 'calendarDate.js'].includes(name) ? '../' + name : name

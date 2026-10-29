@@ -1,11 +1,12 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './athlete/prog5Jsx.mjs'
 
 // Exact paths and import edges. No dependency discovery or backend at runtime.
 const root = new URL('../', import.meta.url)
 const dom = new URL('./trin1Dom.mjs', import.meta.url).href
-const graph = JSON.parse(readFileSync(new URL('./trin1Imports.json', import.meta.url), 'utf8'))
+const graph = registryRecipe(import.meta.url, 'manifest:./trin1Imports.json')
 const paths = new Map(Object.keys(graph).map(path => [new URL(path, root).href, path]))
 export function install({ trin, lineEnding } = {}) {
   return registerHooks({

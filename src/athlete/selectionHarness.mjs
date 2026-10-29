@@ -1,5 +1,6 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync, readFileSync } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks } from '../testModuleRegistry.mjs'
 import { jsx } from './selectionJsx.mjs'
 
 const local = (name, app) => new URL(existsSync(new URL(name, import.meta.url)) ? name : app, import.meta.url).href

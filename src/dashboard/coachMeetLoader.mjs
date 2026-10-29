@@ -1,9 +1,10 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './coachMeetJsx.mjs'
 const base = new URL('./', import.meta.url)
 export const dashboardURL = new URL(existsSync(new URL('Dashboard.jsx', base)) ? 'Dashboard.jsx' : '../Dashboard.jsx', base)
-const real = new Set(['coachInactive.mjs', 'Dashboard.jsx', 'ForsideView.jsx', 'ForsideBase.jsx', 'laesninger.js', 'coachMeetSource.mjs', 'coachMeetSoon.mjs', 'coachWeekOverview.mjs', 'calendarDate.js', 'navigation.js'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {

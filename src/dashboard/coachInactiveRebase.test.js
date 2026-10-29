@@ -72,6 +72,17 @@ async function capture(relative, method = null) {
   const hooks = []
   globalThis.__coach9Hooks = hooks
   const guard = registerHooks({ resolve(specifier, context, next) {
+    // Capture the registry installation while retaining its actual closed wrapper.
+    if (context.parentURL === url && ['../testModuleRegistry.mjs', './testModuleRegistry.mjs'].includes(specifier)) return {
+      url: 'data:text/javascript,' + encodeURIComponent(`
+        import { wrapRegistryHooks } from ${JSON.stringify(new URL('../testModuleRegistry.mjs', root).href)};
+        export { registryRecipe } from ${JSON.stringify(new URL('../testModuleRegistry.mjs', root).href)};
+        export const registryHooks = loaderURL => hooks => {
+          globalThis.__coach9Hooks.push(wrapRegistryHooks(loaderURL, hooks));
+          return { deregister() {} };
+        };
+      `), shortCircuit: true,
+    }
     if (context.parentURL === url && specifier === 'node:module') return {
       url: 'data:text/javascript,export const registerHooks = h => { globalThis.__coach9Hooks.push(h); return {deregister(){}} }', shortCircuit: true,
     }

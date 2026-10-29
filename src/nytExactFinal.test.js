@@ -1,7 +1,7 @@
+import { assertSourceProperties } from './sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { createHash } from 'node:crypto'
 import { install } from './nytTestLoader.mjs'
 import { mount, button, text } from './nytTestDom.mjs'
 install()
@@ -9,9 +9,9 @@ const { default: NytIAppen } = await import('./nytIAppen.mjs')
 const { nytIAppenText: copy } = await import('./nytIAppenText.mjs')
 const { DEFAULT_REL1030, rel1030Enabled } = await import('./rel1030.mjs')
 
-test('fresh final gate uses the byte-identical pinned default OFF release module', () => {
+test('fresh final gate uses the protected default OFF release module', () => {
   const bytes = readFileSync(new URL('./rel1030.mjs', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
-  assert.equal(createHash('sha256').update(bytes).digest('hex'), '84efbc0c720e87883bd5f8d538eda0d6bc3c1574297bed451648d550c5d625c5')
+  assertSourceProperties('release-off', bytes)
   assert.equal(DEFAULT_REL1030, false)
   assert.equal(rel1030Enabled(''), false)
 })

@@ -1,23 +1,14 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { existsSync as exactExists } from 'node:fs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './hjem2Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const real = new Map([
-  ['mobilityBeforeSession.mjs', './mobilityBeforeSession.mjs'], ['mobilityCatalog.mjs', './mobilityCatalog.mjs'],
-  ['mobilityLibrary.mjs', './mobilityLibrary.mjs'],
-  ['nextTrainingHome.mjs', './nextTrainingHome.mjs'], ['nextSet.js', '../nextSet.js'],
-  ['calendarDate.js', '../calendarDate.js'], ['kostNumbers.mjs', './kostNumbers.mjs'],
-  ['exerciseSetView.js', '../exerciseSetView.js'], ['exerciseNames.js', '../exerciseNames.js'],
-  ['staevneHome.mjs', './staevneHome.mjs'],
-  ['HjemTab.jsx', './HjemTab.jsx'], ['EnkelHjemTab.jsx', './EnkelHjemTab.jsx'],
-])
+const real = new Map(registryRecipe(import.meta.url, 'real'))
 const urls = new Map([...real].map(([name, path]) => [name,
   (existsSync(new URL(name, root)) ? new URL(name, root) : new URL(path, root)).href]))
-const stubs = new Set(['athleteShared', 'ugeHjaelp', 'checkinReminder', 'readinessInsight',
-  'pauseLinje', 'restBetweenSets', 'restPause', 'warmup', 'ForsideGrafer', 'dinUge',
-  'athleteShortcuts.mjs', 'weightTrend.mjs'])
+const stubs = new Set(registryRecipe(import.meta.url, 'stubs'))
 const components = new Set(['UgensStatusKort', 'WeekCalendar', 'DagensPasCard', 'DinUgeKort', 'RestPauseFooter'])
 
 export function install() {

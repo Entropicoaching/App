@@ -1,8 +1,9 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './frem5Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const paths = JSON.parse(readFileSync(new URL('frem5Files.json', root), 'utf8'))
+const paths = registryRecipe(import.meta.url, 'manifest:frem5Files.json')
 for (const name of ['blokStyrke.mjs', 'blokStyrke.test.js', 'frem5App.test.js', 'frem5Review.test.js', 'frem5Fixture.mjs']) paths['src/athlete/' + name] = name
 paths['src/App.jsx'] = 'App.jsx'
 paths['src/AthleteView.jsx'] = 'AthleteView.jsx'
