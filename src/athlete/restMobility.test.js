@@ -9,7 +9,8 @@ const { coachNotes } = await import('./coachMobility.mjs')
 const { WARMUP_BASE } = await import('./mobilityCatalog.mjs')
 const { saveHomework } = await import('../mobilityHomework.mjs')
 const { default: RestDays } = await import('./RestDays.jsx')
-const { default: WeekCalendar } = await import('./WeekCalendar.jsx')
+const { default: WeekCalendarUtenFlag } = await import('./WeekCalendar.jsx')
+const WeekCalendar = p => WeekCalendarUtenFlag({ hviledageListe: true, ...p })
 const { default: HjemTab } = await import('./HjemTab.jsx')
 const { default: EnkelHjemTab } = await import('./EnkelHjemTab.jsx')
 const { default: ProgramTab } = await import('./ProgramTab.jsx')
@@ -95,7 +96,7 @@ test('training calendar cells and handlers are unchanged when enabled', () => {
 
 test('actual Hjem, EnkelHjem and Program layouts pass suggestion to shared rest rows', () => {
  for (const Component of [HjemTab, EnkelHjemTab, ProgramTab]) {
-  const props = baseProps()
+  const props = { ...baseProps(), hviledageListe: true }
   const off = render(Component, props)
   assert.equal(suggestions(off).length, 0)
   const on = render(Component, { ...props, restMobility: enabled })

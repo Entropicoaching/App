@@ -122,7 +122,7 @@ function ExerciseTimer({ duration, label }) {
 }
 
 export default function ProgramTab({
-  restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
+  hviledageListe = false, restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -448,9 +448,9 @@ export default function ProgramTab({
 
                   {!ugeFoerst && blokTekst}
 
-                  <RestDays restMobility={restMobility} week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />
+                  {hviledageListe === true && <RestDays restMobility={restMobility} week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />}
 
-                  {(viewedWeek.sessions || []).filter(session => !isRestSession(viewedWeek, session)).map(session => {
+                  {(viewedWeek.sessions || []).filter(session => hviledageListe !== true || !isRestSession(viewedWeek, session)).map(session => {
                     const isOpen = progOpenSession === session.id
                     const preview = upcomingPreview ? programDayPreview(session.exercises) : null
                     const sessionExIds = (session.exercises || []).map(e => e.id)

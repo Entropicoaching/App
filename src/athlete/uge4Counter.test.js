@@ -57,7 +57,7 @@ test('exact final: both home adapters and athlete flag wiring parse and preserve
   const appFlat = new URL('App.jsx', import.meta.url)
   const app = readFileSync(existsSync(appFlat) ? appFlat : new URL('../App.jsx', import.meta.url), 'utf8')
   assert.match(app, /ugeLogget = false/)
-  assert.equal([...app.matchAll(/componentProps=\{\{ \.\.\.rel3\.athlete, ugeLogget: ugeLogget === true/g)].length, 2)
+  assert.equal([...app.matchAll(/componentProps=\{\{ \.\.\.rel3\.athlete, (?:hviledageListe, )?ugeLogget: ugeLogget === true/g)].length, 2)
   assert.doesNotThrow(() => jsx(app))
   for (const file of ['AthleteView.jsx', 'HjemTab.jsx', 'EnkelHjemTab.jsx']) {
     const flat = new URL(file, import.meta.url)

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 import { install } from './prog5Loader.mjs'
 import { mount, nodes, text } from './prog5Dom.mjs'
 install()
-const { default: Program } = await import('./ProgramTab.jsx')
+const { default: ProgramUtenFlag } = await import('./ProgramTab.jsx')
+const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
 const { default: Baseline } = await import('./prog5Baseline.jsx')
 const { intensityExplanation } = await import('./intensityExplanation.mjs')
 const helpers = await import('./ugeHjaelp.js')

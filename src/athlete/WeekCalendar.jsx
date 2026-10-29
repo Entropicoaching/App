@@ -17,16 +17,17 @@ import { isSessionDone } from '../nextSet.js'
 //   - hviledage: stiplet kant, "hvile" i stedet for prik, dæmpet.
 // Og der er luft (0.5rem) mellem dagene. Uden datoer på ugen (ældre
 // programmer) regnes den aktive uge som denne uge, så "i dag" stadig vises.
-function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd, restMobility }) {
+function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd, restMobility, hviledageListe = false }) {
   const sessions = week?.sessions || []
-  const rests = restDays(week)
+  const enabled = hviledageListe === true
+  const rests = enabled ? restDays(week) : []
   if (!sessions.length && !rests.length) return null
   const sessDone = s => isSessionDone(s, exerciseLogs)
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const todayWd = (today.getDay() + 6) % 7
   const days = [...Array(7)].map((_, wd) => {
     let date = null
-    if (weekStart) { date = new Date(weekStart); date.setDate(date.getDate() + wd); date.setHours(0, 0, 0, 0) }
+    if (weekStart) { date = enabled ? new Date(weekStart) : new Date(weekStart.getTime() + wd * 86400000); if (enabled) date.setDate(date.getDate() + wd); date.setHours(0, 0, 0, 0) }
     return { wd, date, sessions: sessions.filter(s => s.weekday === wd) }
   })
   const flex = sessions.filter(s => s.weekday == null)
@@ -40,9 +41,9 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd, r
       <div data-dagstrimmel="" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '0.35rem', margin: '0 -0.5rem' }}>
         {days.map(d => {
           const isToday = d.date ? d.date.getTime() === today.getTime() : d.wd === todayWd
-          const training = d.sessions.filter(s => !Array.isArray(s.exercises) || s.exercises.length > 0)
+          const training = enabled ? d.sessions.filter(s => !Array.isArray(s.exercises) || s.exercises.length > 0) : d.sessions
           const has = training.length > 0
-          const isRest = rests.some(day => day.weekday === d.wd)
+          const isRest = !enabled || rests.some(day => day.weekday === d.wd)
           const allDone = has && training.every(sessDone)
           const isShown = shownWd != null && d.wd === shownWd
           const state = !has ? (isRest ? 'hvile' : 'ukendt') : allDone ? 'klaret' : 'pas'
@@ -102,7 +103,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd, r
           )
         })}
       </div>
-      <RestDays restMobility={restMobility} week={week} weekStart={weekStart} />
+      {enabled && <RestDays restMobility={restMobility} week={week} weekStart={weekStart} />}
       {flex.length > 0 && (
         <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.5rem' }}>
           + {flex.length} fleksibel{flex.length > 1 ? 'le' : ''} session{flex.length > 1 ? 'er' : ''} uden fast dag

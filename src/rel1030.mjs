@@ -1,7 +1,7 @@
 // Lokalt tilvalg for denne URL. Ingen lagring eller dataadgang.
 export const DEFAULT_REL1030 = false
 export const REL1030_FEATURES = Object.freeze([
-  'mobilitetFoerPas', 'mobilitetFokus', 'mobilitetHjalp',
+  'hviledage', 'mobilitetFoerPas', 'mobilitetFokus', 'mobilitetHjalp',
   'analyseSamlet', 'analyseSammenlign', 'coachRyd', 'coachUge',
   'videoFeedbackPlayback', 'analyseConclusion', 'mobilitetCoach', 'mobilitetHjemme',
 ])

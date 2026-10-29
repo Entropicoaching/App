@@ -4,8 +4,10 @@ import { install } from './hvileLoader.mjs'
 import { mount, nodes, text, button } from './hvileDom.mjs'
 import { restDays, REST_DAY_TEXT, restDate } from './restDays.mjs'
 install()
-const { default: Program } = await import('./ProgramTab.jsx')
-const { default: Calendar } = await import('./WeekCalendar.jsx')
+const { default: ProgramUtenFlag } = await import('./ProgramTab.jsx')
+const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
+const { default: CalendarUtenFlag } = await import('./WeekCalendar.jsx')
+const Calendar = p => CalendarUtenFlag({ hviledageListe: true, ...p })
 const helpers = await import('./ugeHjaelp.js')
 const restRows = tree => nodes(tree, n => n.props['data-hviledag'] !== undefined)
 const session = (weekday, exercises = [{ id: `ex-${weekday}`, name: 'Squat', sets: 2 }]) => ({ id: `s-${weekday}`, title: `Pas ${weekday}`, weekday, exercises })

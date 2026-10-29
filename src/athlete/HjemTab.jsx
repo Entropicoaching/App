@@ -30,7 +30,7 @@ import { startRestPause } from '../restPause.js'
 import { WeeklyTonnageChart, E1RMChart, ReadinessSparkline } from './ForsideGrafer.jsx'
 
 function HjemTab({
-  restMobility, ugeLogget = false,
+  hviledageListe = false, restMobility, ugeLogget = false,
   mobilitetFoerPas = false,
   naesteTraening = false,
   staevneHjem = false,
@@ -103,6 +103,7 @@ function HjemTab({
 
                   {currentWeek ? (
                     <WeekCalendar
+                      hviledageListe={hviledageListe === true}
                       restMobility={restMobility}
                       week={currentWeek}
                       weekStart={weekStartDate(allWeeks, currentWeek.week_number)}

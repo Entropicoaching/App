@@ -78,7 +78,7 @@
       "programIntensityHelp = false",
       "programBlokOversigt = false",
       "<RestDays restMobility={restMobility} week={viewedWeek}",
-      ".filter(session => !isRestSession(viewedWeek, session))",
+      ".filter(session => hviledageListe !== true || !isRestSession(viewedWeek, session))",
       "programNaesteUge === true && upcomingProgramWeek(",
       "openSession(isOpen ? null : session.id)"
     ]

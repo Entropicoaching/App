@@ -2,7 +2,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
-import { Program, Baseline, helpers, model } from './prog2Loader.mjs'
+import { Program as ProgramUtenFlag, Baseline, helpers, model } from './prog2Loader.mjs'
+const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
 import { mount, nodes, text, button, io } from './prog2Dom.mjs'
 
 const source = name => readFileSync(new URL(name, import.meta.url), 'utf8').replace(/\r\n/g, '\n')

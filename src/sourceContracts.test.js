@@ -495,7 +495,7 @@ const cases=[
   {
     "reader": "athlete/uge4Counter.test.js",
     "host": "App.jsx",
-    "pattern": "componentProps=\\{\\{ \\.\\.\\.rel3\\.athlete, ugeLogget: ugeLogget === true",
+    "pattern": "componentProps=\\{\\{ \\.\\.\\.rel3\\.athlete, (?:hviledageListe, )?ugeLogget: ugeLogget === true",
     "flags": ""
   },
   {

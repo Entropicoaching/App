@@ -9,7 +9,8 @@ import { withHvileBaseline } from './hvileBaseline.mjs'
 import { install } from './hvileLoader.mjs'
 import { mount, nodes, text, io } from './hvileDom.mjs'
 const hvile = install()
-const { default: Program } = await import('./ProgramTab.jsx')
+const { default: ProgramUtenFlag } = await import('./ProgramTab.jsx')
+const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
 const helpers = await import('./ugeHjaelp.js')
 const source = n => readFileSync(new URL(n, import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const hash = s => createHash('sha256').update(s).digest('hex')

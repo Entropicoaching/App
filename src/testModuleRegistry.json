@@ -256,6 +256,12 @@
   ],
   "modules": [
     {
+      "module": "hviledageListe.mjs",
+      "path": "src/hviledageListe.mjs",
+      "allowedImporters": ["src/App.jsx"],
+      "imports": {"./rel1030.mjs": "src/rel1030.mjs"}
+    },
+    {
       "module": "analyseConclusionHistory.mjs",
       "path": "src/dashboard/analyseConclusionHistory.mjs",
       "allowedImporters": [
