@@ -1307,6 +1307,16 @@ function vcReadTrackerFast() {
   try { return localStorage.getItem('vc_tracker_fast') !== '0'; } catch { return true; }
 }
 let VC_TRACKER_FAST = vcReadTrackerFast();
+// Samme URL og localStorage mønster som trackerFast. Slukket som standard.
+function vcReadVideoCompression() {
+  const urlVal = MODE_PARAMS.get('videoCompression');
+  if (urlVal === '0' || urlVal === '1') {
+    try { localStorage.setItem('vc_video_compression', urlVal); } catch {}
+    return urlVal === '1';
+  }
+  try { return localStorage.getItem('vc_video_compression') === '1'; } catch { return false; }
+}
+const VC_VIDEO_COMPRESSION = vcReadVideoCompression();
 // ORDRE 80 · to chips i stedet for én skiftende knap - klik på den ene
 // VÆLGER den tilstand direkte, i stedet for at skifte frem og tilbage.
 function vcPaintTrackerFastSeg() {
@@ -1374,6 +1384,9 @@ let vcAthleteClientAnalysisId = null;
 // ORDRE 61 · commit 2: requestId for den upload, der er i gang lige nu (hvis
 // nogen) - så Annullér-knappen ved, hvilket forsøg den skal afbryde.
 let vcAthleteUploadRequestId = null;
+let vcAthleteCompressionAbort = null;
+// Et genforsøg skal bruge samme format og sti, også efter et tilbagefald.
+const vcAthletePreparedUploads = new WeakMap();
 // ORDRE 50 · seneste forudsøgnings-resultat for sæt-start/slut (coach-siden
 // alene, se vcRunSetBoundsPresearch) + om det viste klip stadig ER forslaget
 // eller allerede er gjort til Marcs eget (trimIn/trimOut/håndtag/nulstil).
@@ -7143,8 +7156,13 @@ async function runFullAnalysis(barPt) {
 // vcAthletePreviewThree. Ingen fast timeout her - store videoer på svagt
 // mobilnet kan tage minutter, og det er den igangværende upload, ikke en
 // vilkårlig grænse, der skal afgøre, hvornår vi giver op.
+function vcAthleteUploadStatus(text) {
+  if (saveBtn) saveBtn.textContent = text;
+  say(text);
+}
+
 async function vcAthleteUploadAndGo() {
-  if (!VC_V3_ATHLETE_BRIDGE) return;
+  if (!VC_V3_ATHLETE_BRIDGE || vcAthleteUploadRequestId) return;
   const liftDisplay = document.getElementById('liftSel').value;
   const lift = vcV3Lift(liftDisplay);
   if (!lift) {
@@ -7164,12 +7182,45 @@ async function vcAthleteUploadAndGo() {
   const mb = (file.size / (1024 * 1024)).toFixed(1);
   const requestId = vcV3Uuid();
   vcAthleteUploadRequestId = requestId;
+  const compressionController = new AbortController();
+  vcAthleteCompressionAbort = compressionController;
   if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = `Sender video (${mb} MB) ...`; }
   if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = false;
   say(`Sender video (${mb} MB) ...`);
   try {
+    let uploadFile = vcAthletePreparedUploads.get(file);
+    if (!uploadFile) {
+      uploadFile = file;
+      if (VC_VIDEO_COMPRESSION && typeof window.vcCompressVideoForUpload === 'function') {
+        try {
+          uploadFile = await window.vcCompressVideoForUpload(file, {
+            enabled: true, signal: compressionController.signal,
+            onProgress: percent => vcAthleteUploadStatus('Komprimerer video: ' + percent + ' %'),
+          });
+        } catch (error) {
+          if (error.name === 'AbortError') throw error;
+          uploadFile = file;
+        }
+      }
+      if (compressionController.signal.aborted) {
+        const error = new Error('Annulleret');
+        error.name = 'AbortError';
+        throw error;
+      }
+      vcAthletePreparedUploads.set(file, uploadFile);
+    }
+    if (compressionController.signal.aborted) {
+      const error = new Error('Annulleret');
+      error.name = 'AbortError';
+      throw error;
+    }
+    vcAthleteCompressionAbort = null;
+    const uploadMb = (uploadFile.size / (1024 * 1024)).toFixed(1);
+    const label = VC_VIDEO_COMPRESSION && uploadFile === file ? 'Sender originalfil' : 'Sender video';
+    vcAthleteUploadStatus(label + ' (' + uploadMb + ' MB) ...');
     await vcV3RequestUploadAndGo({
-      requestId, clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
+      requestId, clientAnalysisId: vcAthleteClientAnalysisId,
+      file: uploadFile, mimeType: uploadFile.type, lift, variation,
       loadKg: parsed.kg, rpe: parsed.rpe, athleteNote,
       // ORDRE 109 · commit 3: sendt med, så coachen kan se om atleten måtte
       // kalibrere skiven manuelt, uden at skulle spørge.
@@ -7190,6 +7241,8 @@ async function vcAthleteUploadAndGo() {
     banner.dataset.kvittering = String(Date.now() + 8000);
     setTimeout(() => say(''), 8100);
   } catch (error) {
+    if (vcAthleteCompressionAbort === compressionController) vcAthleteCompressionAbort = null;
+    if (error.name === 'AbortError') error.vcAborted = true;
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
     // ORDRE 61 · commit 2: en selv-annulleret upload er ikke en fejl - "Send
@@ -7208,6 +7261,7 @@ async function vcAthleteUploadAndGo() {
 // (AthleteView.jsx); her beder vi den blot om det og venter på upload-result.
 function vcAthleteCancelUpload() {
   if (!vcAthleteUploadRequestId) return;
+  if (vcAthleteCompressionAbort) { vcAthleteCompressionAbort.abort(); return; }
   vcV3RequestAbortUpload(vcAthleteUploadRequestId);
 }
 
@@ -10640,6 +10694,11 @@ function saveRec(mime, mic) {
   downloadLink.textContent = `💾 Hent færdig video (.${ext})`;
   downloadLink.hidden = false;
 }
+</script>
+
+<script type="module">
+import { compressVideoForUpload } from './videoCoachCompression.js';
+window.vcCompressVideoForUpload = compressVideoForUpload;
 </script>
 
 <script type="module">
