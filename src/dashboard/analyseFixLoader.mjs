@@ -5,7 +5,8 @@ const root = new URL('./', import.meta.url)
 const flat = existsSync(new URL('dataEvidence.mjs', root))
 const legacy = new Set(['../videoCoachBaselineProgress.js', '../videoCoachFeedbackQuality.js', '../videoCoachLabels.js', '../exerciseNames.js', '../exerciseSetView.js', '../dashboardShared.js', '../dashboardCharts.jsx', './AnalyseLokaltVaerktoej.jsx', './primaerKurve.js', '../danskDato.js', '../AthleteSilentFailNote.jsx'])
 const edges = {
-  'AnalyseTab.jsx': ['../VideoRetentionLocalPreview.mjs', './analyseConclusion.mjs', './analyseSamletDom.mjs', '../dataEvidence.mjs', '../dataEnough.mjs', '../coachRyd.mjs', './AnalyseSammenlign.jsx', './analyseSammenlign.mjs', './AnalyseSamletPrototype.jsx', './analyseSamlet.mjs'],
+  'analyseConclusionMessage.mjs': ['react', './analyseConclusion.mjs'],
+  'AnalyseTab.jsx': ['../VideoRetentionLocalPreview.mjs', './analyseConclusion.mjs', './analyseConclusionMessage.mjs', './analyseSamletDom.mjs', '../dataEvidence.mjs', '../dataEnough.mjs', '../coachRyd.mjs', './AnalyseSammenlign.jsx', './analyseSammenlign.mjs', './AnalyseSamletPrototype.jsx', './analyseSamlet.mjs'],
   'VideoRetentionLocalPreview.mjs': ['react', './VideoRetentionPreview.mjs'],
   'VideoRetentionPreview.mjs': ['./videoRetention.mjs'],
   'videoRetention.mjs': [],

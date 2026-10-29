@@ -16,6 +16,7 @@ export const handlers = Object.fromEntries(['openProfile','openPlanReview','snoo
 const empty = () => ({})
 let stateIndex = 0, currentView, overrideView
 const fakes = {
+'./dashboard/analyseConclusionMessage.mjs': {analyseConclusionMessageEnabled:()=>false},
 './mobilityAdherence.mjs': {MobilityAdherenceProfile:noop},
 './nytIAppen.mjs': {default:noop,nytCoachNavigation:()=>null},
 './dashboard/coachNotes.mjs': {coachNotesFlag:()=>false,createCoachNoteSaver:noop},

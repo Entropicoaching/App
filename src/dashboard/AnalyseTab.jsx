@@ -1,3 +1,4 @@
+import AnalyseConclusionMessage from './analyseConclusionMessage.mjs'
 import VideoRetentionLocalPreview from '../VideoRetentionLocalPreview.mjs'
 import AnalyseConclusion, { analyseConclusionEnabled } from './analyseConclusion.mjs'
 import { weekEvidence, datedRegression } from '../dataEvidence.mjs'
@@ -31,7 +32,7 @@ import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'
 import AnalyseSamletPrototype from './AnalyseSamletPrototype.jsx'
 import { analyseSamletEnabled } from './analyseSamlet.mjs'
 
-export default function AnalyseTab({ coachRyd = false, videoRetentionObjects,
+export default function AnalyseTab({ analyseConclusionMessage = false, coachId, sendConclusionMessage, coachRyd = false, videoRetentionObjects,
   a, aiExportCopied, aiExportText, aiExportWeeks, athleteLogs, athletePRHistory, athleteReadiness,
   athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory, generateAIReport, isMobile,
   openAwaitingAnalysisVideo, openVideoAnalysisReview, openVideoCoachV3, reviewVideoAnalysis,
@@ -104,9 +105,13 @@ export default function AnalyseTab({ coachRyd = false, videoRetentionObjects,
               const latestVideo = videoAnalyses[0] || null
 
               return (
-                <AnalyseConclusion enabled={analyseConclusionEnabled(typeof window === 'undefined' ? '' : window.location.search)}
+                <AnalyseConclusion enabled={analyseConclusionMessage === true || analyseConclusionEnabled(typeof window === 'undefined' ? '' : window.location.search)}
                   athleteId={selectedAthlete?.id || a?.id} logs={athleteLogs} analyses={filteredVideoAnalyses}
-                  liftFilter={videoLiftFilter} loading={videoAnalysisLoading} error={videoAnalysisError}>
+                  liftFilter={videoLiftFilter} loading={videoAnalysisLoading}
+                  message={analyseConclusionMessage === true ? <AnalyseConclusionMessage key={`${coachId}:${selectedAthlete?.id || a?.id}:${videoLiftFilter}`}
+                    enabled={true} coachId={coachId} athleteId={selectedAthlete?.id || a?.id} athleteName={selectedAthlete?.name || a?.name}
+                    analyses={filteredVideoAnalyses} logs={athleteLogs} liftFilter={videoLiftFilter}
+                    loading={videoAnalysisLoading} error={videoAnalysisError} sendMessage={sendConclusionMessage} /> : null} error={videoAnalysisError}>
                 <div>
                   {/* ORDRE 137 · commit 2: video-review-rækkens hoved (titel + "Gennemgå
                       måling"-knap/status) går fra titel+knapper på samme linje til titel

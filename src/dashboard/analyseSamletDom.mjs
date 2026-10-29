@@ -7,6 +7,10 @@ export function useState(initial) {
   if (!(i in instance.values)) instance.values[i] = initial
   return [instance.values[i], next => { instance.values[i] = typeof next === 'function' ? next(instance.values[i]) : next }]
 }
+export function useRef(initial) {
+  const [ref] = useState({ current: initial })
+  return ref
+}
 export function useEffect(effect, dependencies) {
   const instance = current, i = instance.cursor++
   const prior = instance.values[i]

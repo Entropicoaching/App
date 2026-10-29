@@ -16,7 +16,7 @@ test('counterexample: baseline is byte-exact and the former tab body is intact',
  assert.equal(createHash('sha256').update(readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url),'utf8').replace(/\r\n/g,'\n')).digest('hex'),baselinePin)
  const source=readFileSync(new URL('./AnalyseTab.jsx',import.meta.url),'utf8')
  const base=readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url),'utf8')
- const restored=source.replace(/^import AnalyseConclusion[^\n]*\r?\n/m,'').replace(/                <AnalyseConclusion enabled=[\s\S]*?error=\{videoAnalysisError\}>\r?\n/,'').replace(/                <\/AnalyseConclusion>\r?\n/,'')
+ const restored=source.replace('analyseConclusionMessage = false, coachId, sendConclusionMessage, ', '').replace(/^import AnalyseConclusionMessage[^\n]*\r?\n/m,'').replace(/^import AnalyseConclusion[^\n]*\r?\n/m,'').replace(/                <AnalyseConclusion enabled=[\s\S]*?error=\{videoAnalysisError\}>\r?\n/,'').replace(/                <\/AnalyseConclusion>\r?\n/,'')
  assert.equal(restored,base)
 })
 test('counterexample: no IO, foreign review or invalid timestamp can become a conclusion',()=>{

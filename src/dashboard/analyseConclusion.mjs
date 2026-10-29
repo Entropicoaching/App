@@ -17,17 +17,21 @@ function sentence(value) {
   return clean.match(/^.*?[.!?](?=\s|$)/u)?.[0] || (clean ? clean + '.' : '')
 }
 
+export function approvedConclusionReviews({ athleteId, analyses = [], liftFilter = 'all' }) {
+  return analyses.filter(row => row?.athlete_id === athleteId &&
+    (liftFilter === 'all' || row.lift === liftFilter) &&
+    ['coach_approved', 'shared'].includes(row.status) && dayNumber(row.analyzed_at) !== null && Number.isFinite(Date.parse(row.analyzed_at)) &&
+    sentence(row.athlete_feedback?.focus?.[0]?.text))
+    .sort((a, b) => Date.parse(b.analyzed_at) - Date.parse(a.analyzed_at) || String(a.id).localeCompare(String(b.id)))
+}
+
 // A saved, approved focus is a human conclusion, not a newly inferred finding.
 // Raw training numbers must pass the existing rules even when appData2 is OFF.
 export function analyseConclusion({ athleteId, analyses = [], logs = [], liftFilter = 'all', loading, error }) {
   if (!athleteId) return 'Vælg en atlet for at se analysens konklusion.'
   if (loading) return 'Afvent indlæsning af videoreview, før konklusionen vises.'
   if (error) return 'Videoreview kunne ikke indlæses, så grundlaget skal opdateres.'
-  const approved = analyses.filter(row => row?.athlete_id === athleteId &&
-    (liftFilter === 'all' || row.lift === liftFilter) &&
-    ['coach_approved', 'shared'].includes(row.status) && dayNumber(row.analyzed_at) !== null && Number.isFinite(Date.parse(row.analyzed_at)) &&
-    sentence(row.athlete_feedback?.focus?.[0]?.text))
-    .sort((a, b) => Date.parse(b.analyzed_at) - Date.parse(a.analyzed_at) || String(a.id).localeCompare(String(b.id)))
+  const approved = approvedConclusionReviews({ athleteId, analyses, liftFilter })
   if (approved.length) {
     const row = approved[0]
     return `Godkendt videoreview (${liftNames[row.lift] || row.lift}, ${row.analyzed_at.slice(0, 10)}): ${sentence(row.athlete_feedback.focus[0].text)}`
@@ -52,6 +56,7 @@ export default function AnalyseConclusion(props) {
   if (enabled !== true) return children
   return h('section', { 'aria-label': 'Samlet analyse', style: { minWidth: 0, overflowWrap: 'anywhere' } },
     h('p', { role: 'status', 'aria-label': 'Konklusion', style: { color: '#edeae2', lineHeight: 1.5 } }, analyseConclusion(props)),
+    ...(props.message ? [props.message] : []),
     h('details', null,
       h('summary', { style: { minHeight: 44, padding: '0.65rem', boxSizing: 'border-box', cursor: 'pointer', color: '#edeae2' } }, 'Se grundlaget'),
       children))

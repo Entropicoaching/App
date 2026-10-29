@@ -45,7 +45,7 @@ export async function app({ before = false } = {}) {
     try { return type({ ...props, children: flat }) } finally { state.active = old }
   }
   globalThis[registry].set(id, state)
-  const real = new Set(['analyseConclusion.mjs','AnalyseTab.jsx','VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs'])
+  const real = new Set(['analyseConclusionMessage.mjs','analyseConclusion.mjs','AnalyseTab.jsx','VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs'])
   registerHooks({
     resolve(specifier, context, next) {
       if (specifier.startsWith(prefix)) return { url: specifier, shortCircuit: true }
@@ -58,10 +58,10 @@ export async function app({ before = false } = {}) {
       if (!url.startsWith(prefix)) return next(url, context)
       const name = url.slice(prefix.length), access = `globalThis[Symbol.for('retention.synthetic')].get('${id}')`
       let source
-      if (name === 'react') source = `export const useState=${access}.useState; export const createElement=(t,p,...c)=>${access}.h(t,p,null,...c);`
+      if (name === 'react') source = `export const useState=${access}.useState; export const useRef=v=>{const [ref]=${access}.useState({current:v});return ref}; export const createElement=(t,p,...c)=>${access}.h(t,p,null,...c);`
       else if (Object.hasOwn(stubs, name)) source = stubs[name]
       else {
-        const relative = before && name === 'AnalyseTab.jsx' ? './retentionBeforeAnalyseTab.txt' : name === 'analyseConclusion.mjs' ? './dashboard/' + name : './' + name
+        const relative = before && name === 'AnalyseTab.jsx' ? './retentionBeforeAnalyseTab.txt' : ['analyseConclusion.mjs','analyseConclusionMessage.mjs'].includes(name) ? './dashboard/' + name : './' + name
         const local = new URL(relative, import.meta.url)
         source = readFileSync(name === 'AnalyseTab.jsx' && !before && !existsSync(local) ? new URL('./dashboard/AnalyseTab.jsx', import.meta.url) : local, 'utf8')
         if (name.endsWith('.jsx')) source = `const __h=${access}.h;\n` + jsx(source)
