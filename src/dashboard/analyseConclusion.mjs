@@ -1,5 +1,6 @@
 import { conclusionSentence as sentence, renderConclusionHistory } from './analyseConclusionHistory.mjs'
-import { rel1030Feature } from '../rel1030.mjs'
+import { approvedConclusionReviews, approvedConclusionText } from '../approvedAnalysisConclusion.mjs'
+export { analyseConclusionEnabled, approvedConclusionReviews } from '../approvedAnalysisConclusion.mjs'
 import { createElement as h } from 'react'
 import { hasEnoughData, dataMessage, dayNumber } from '../dataEnough.mjs'
 import { heavyPointEvidence } from '../dataEvidence.mjs'
@@ -7,19 +8,7 @@ import { bestHeavySetPerDay } from '../exerciseProgress.js'
 import { exerciseSetView } from '../exerciseSetView.js'
 
 export const DEFAULT_ANALYSE_CONCLUSION = false
-export function analyseConclusionEnabled(search = '') {
-  const values = new URLSearchParams(search).getAll('analyseConclusion')
-  return (values.length === 1 && values[0] === '1') || rel1030Feature('analyseConclusion', search)
-}
 const liftNames = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft', sumo: 'Sumo dødløft', ohp: 'OHP' }
-
-export function approvedConclusionReviews({ athleteId, analyses = [], liftFilter = 'all' }) {
-  return analyses.filter(row => row?.athlete_id === athleteId &&
-    (liftFilter === 'all' || row.lift === liftFilter) &&
-    ['coach_approved', 'shared'].includes(row.status) && dayNumber(row.analyzed_at) !== null && Number.isFinite(Date.parse(row.analyzed_at)) &&
-    sentence(row.athlete_feedback?.focus?.[0]?.text))
-    .sort((a, b) => Date.parse(b.analyzed_at) - Date.parse(a.analyzed_at) || String(a.id).localeCompare(String(b.id)))
-}
 
 // A saved, approved focus is a human conclusion, not a newly inferred finding.
 // Raw training numbers must pass the existing rules even when appData2 is OFF.
@@ -30,7 +19,7 @@ export function analyseConclusion({ athleteId, analyses = [], logs = [], liftFil
   const approved = approvedConclusionReviews({ athleteId, analyses, liftFilter })
   if (approved.length) {
     const row = approved[0]
-    return `Godkendt videoreview (${liftNames[row.lift] || row.lift}, ${row.analyzed_at.slice(0, 10)}): ${sentence(row.athlete_feedback.focus[0].text)}`
+    return approvedConclusionText(row)
   }
   const scopedLogs = logs.readEvidence?.athleteId && logs.readEvidence.athleteId !== athleteId ? []
     : logs.filter(row => !row.athlete_id || row.athlete_id === athleteId)
