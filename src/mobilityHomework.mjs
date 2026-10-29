@@ -89,20 +89,21 @@ export function MobilityHomeworkCoach({ enabled = DEFAULT_MOBILITY_HOMEWORK, ath
   if (enabled !== true || !validId(athleteId)) return null
   return h(CoachEditor, { key: athleteId, athleteId, storage })
 }
-function HomeworkHome({ athleteId, storage, adherenceEnabled, renderExerciseProgress }) {
+function HomeworkHome({ athleteId, storage, adherenceEnabled, renderExerciseProgress, renderHomeworkReminder }) {
   const [result, setResult] = useState(() => readHomework(athleteId, storage))
   const problem = homeworkLibrary().find(item => item.id === result.value?.problemId)
   return h('section', { style: section, 'aria-label': 'Hjemmeøvelser fra din coach' },
     h('h2', null, 'Hjemmeøvelser fra din coach'), h('p', null, HOMEWORK_NOTICE),
+    adherenceEnabled === true && typeof renderHomeworkReminder === 'function' ? renderHomeworkReminder(result.value) : null,
     h('button', { type: 'button', style: button, onClick: () => setResult(readHomework(athleteId, storage)) }, 'Genindlæs hjemmeøvelser'),
     h('p', { role: 'status' }, result.error || (problem ? `${problem.lift}: ${problem.title}` : 'Ingen hjemmeøvelser fra din coach gemt på denne enhed.')),
     problem ? h('div', null, h('p', null, problem.explanation),
-      h('ol', null, ...result.value.exerciseIds.map(id => {
+      h('ol', adherenceEnabled === true && typeof renderHomeworkReminder === 'function' ? { tabIndex: -1 } : null, ...result.value.exerciseIds.map(id => {
         const ex = problem.exercises.find(item => item.id === id)
         return h('li', { key: id }, h('h3', null, ex.name), h('p', null, ex.label), h('p', null, ex.desc), adherenceEnabled === true && typeof renderExerciseProgress === 'function' ? renderExerciseProgress(ex) : null)
       }))) : null)
 }
-export function MobilityHomeworkHome({ enabled = DEFAULT_MOBILITY_HOMEWORK, athleteId, storage, adherenceEnabled = false, renderExerciseProgress }) {
+export function MobilityHomeworkHome({ enabled = DEFAULT_MOBILITY_HOMEWORK, athleteId, storage, adherenceEnabled = false, renderExerciseProgress, renderHomeworkReminder }) {
   if (enabled !== true || !validId(athleteId)) return null
-  return h(HomeworkHome, { key: athleteId, athleteId, storage, adherenceEnabled, renderExerciseProgress })
+  return h(HomeworkHome, { key: athleteId, athleteId, storage, adherenceEnabled, renderExerciseProgress, renderHomeworkReminder })
 }

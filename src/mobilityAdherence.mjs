@@ -115,10 +115,31 @@ export function MobilityAdherenceProfile({ enabled = DEFAULT_MOBILITY_ADHERENCE,
   return h(AdherenceProfile, { key: athleteId, athleteId, storage, clock })
 }
 
+// A calendar day, rather than 24 hours, also covers daylight-saving boundaries.
+export function homeworkWaiting(assignment, rows, today) {
+  if (!validDate(today) || !assignment?.exerciseIds?.length) return false
+  const previous = new Date(today + 'T12:00:00Z')
+  previous.setUTCDate(previous.getUTCDate() - 1)
+  const yesterday = previous.toISOString().slice(0, 10)
+  return assignment.exerciseIds.some(id => !rows.some(row => row.id === id && row.date === yesterday))
+}
+function HomeworkReminder({ athleteId, assignment, storage, clock }) {
+  const [day] = useDay(clock)
+  const done = readDone(athleteId, storage)
+  if (done.error || !homeworkWaiting(assignment, done.rows, day)) return null
+  return h('button', { type: 'button', style: { ...button, textAlign: 'left', background: 'transparent', border: 0 },
+    onClick: event => {
+      const exercises = event.currentTarget.closest('section')?.querySelector('ol')
+      exercises?.focus({ preventScroll: true })
+      exercises?.scrollIntoView({ block: 'nearest' })
+    } }, 'Dine hjemmeøvelser fra i går venter')
+}
 // Preserve the existing Home element and inject progress only for explicit ON.
-export function MobilityHomeworkProgress({ enabled = false, athleteId, children }) {
+export function MobilityHomeworkProgress({ enabled = false, athleteId, children, clock = clockNow }) {
   const home = Array.isArray(children) ? children[0] : children
   if (enabled !== true || !home) return home
-  return cloneElement(home, { adherenceEnabled: true, renderExerciseProgress: exercise =>
+  return cloneElement(home, { adherenceEnabled: true,
+    renderHomeworkReminder: assignment => h(HomeworkReminder, { key: athleteId, athleteId, assignment, storage: home.props.storage, clock }),
+    renderExerciseProgress: exercise =>
     h(HomeworkExerciseProgress, { enabled: true, athleteId, exercise }) })
 }
