@@ -6,7 +6,7 @@ import { s, initials } from '../dashboardShared.js'
 import { holidayInfo, ferieBadgeLabel } from './coachKonstanter.js'
 import { signOutHard } from '../supabase.js'
 
-export default function Sidebar({ coachRyd = false,
+export default function Sidebar({ coachRyd = false, programOverblik = false,
   athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
   exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
   openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId,
@@ -16,7 +16,7 @@ export default function Sidebar({ coachRyd = false,
   const navigationItems = [
             { icon: <><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>, label: 'Forside', active: view === 'list', onClick: () => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />, label: 'Min træning', active: false, onClick: () => { setSidebarOpen(false); goToMyProfile() } },
-            { icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>, label: 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
+            { icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></>, label: programOverblik ? 'Programoverblik' : 'Kalender', active: view === 'calendar', onClick: () => { setView('calendar'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />, label: coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing', active: view === 'inbox', badge: coachPriorityCount, onClick: () => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false) } },
             { icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>, label: 'Bibliotek', active: view === 'library', onClick: () => { setView('library'); setSelectedAthlete(null); setSidebarOpen(false) } },
           ]
@@ -62,6 +62,7 @@ export default function Sidebar({ coachRyd = false,
             <NavItem
               {...(coachRyd ? { type: 'button' } : {})}
               key={item.label}
+              {...(programOverblik && item.label === 'Programoverblik' && !coachRyd ? { role: 'button', tabIndex: 0, onKeyDown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.onClick() } } } : {})}
               onClick={item.onClick}
               style={{ ...(coachRyd ? { border: 0, textAlign: 'left', minHeight: 44 } : {}), display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 1.25rem', cursor: 'pointer', borderLeft: item.active ? '2px solid #c8923a' : '2px solid transparent', background: item.active ? 'rgba(200,146,58,0.08)' : 'transparent', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: item.active ? '#c8923a' : '#b8b4a8' }}
               onMouseEnter={e => { if (!item.active) e.currentTarget.style.background = 'rgba(237,234,226,0.03)' }}

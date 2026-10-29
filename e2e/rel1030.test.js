@@ -26,7 +26,7 @@ const view = tree => tree.props.children[0].props.componentProps
 
 test('closed release list and strict default OFF, including malformed and duplicate opt-ins', () => {
   assert.equal(DEFAULT_REL1030, false)
-  assert.deepEqual(REL1030_FEATURES, ['mobilitetFoerPas','mobilitetFokus','mobilitetHjalp','analyseSamlet','analyseSammenlign','coachRyd','coachUge','videoFeedbackPlayback'])
+  assert.deepEqual(REL1030_FEATURES, ['hviledage','mobilitetFoerPas','mobilitetFokus','mobilitetHjalp','analyseSamlet','analyseSammenlign','coachRyd','coachUge','videoFeedbackPlayback','analyseConclusion','mobilitetCoach','mobilitetHjemme','programOverblik'])
   for (const search of ['', '?rel1030=0', '?rel1030=true', '?rel1030', '?REL1030=1', '?x=rel1030=1', '?rel1030=1&rel1030=1', '?rel1030=0&rel1030=1']) {
     assert.equal(rel1030Enabled(search), false, search)
     for (const gate of Object.values(gates)) assert.equal(gate(search), false, search)

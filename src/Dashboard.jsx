@@ -4,6 +4,8 @@ import { MobilityAdherenceProfile } from './mobilityAdherence.mjs'
 import NytIAppen, { nytCoachNavigation } from './nytIAppen.mjs'
 import { coachNotesFlag, createCoachNoteSaver } from './dashboard/coachNotes.mjs'
 import { FridayChecklist, FridayChecklistEntry } from './dashboard/fridayChecklist.mjs'
+import ProgramOverblik from './dashboard/ProgramOverblikView.mjs'
+import { programOverblikEnabled } from './programOverblik.mjs'
 import { rel1030Enabled } from './rel1030.mjs'
 import { coachMeetSoonFlag } from './dashboard/coachMeetSoon.mjs'
 import { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './dashboard/VideoReviewTemplates.mjs'
@@ -79,9 +81,10 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
+export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false }) {
   const analyseMissingData = analyseMissingDataEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const analyseConclusionMessage = analyseConclusionMessageEnabled(typeof window === 'undefined' ? '' : window.location.search)
+  const programOverview = programOverblik === true || programOverblikEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const checklistEnabled = rel1030Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
@@ -625,7 +628,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
       }} />
       {programCopyEnabled === true && <WeekDeletionNotice entries={pendingWeekDeletes} onUndo={id => weekDeletionQueue.undo(id)} />}
-      <Sidebar {...{ coachRyd,
+      <Sidebar {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
         athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
         exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
         openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId,
@@ -637,7 +640,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         {COACH_SAVE_NEXT_ENABLED === true && saveNextDone && view === 'profile' && <p role="status" style={{ padding: '1rem', color: '#c9d7c7' }}>Svaret er gemt. Ingen flere ubesvarede beskeder eller videoer i denne gennemgang.</p>}
         <div style={s.topbar}>
           <FridayChecklistEntry enabled={checklistEnabled} open={() => { setSelectedAthlete(null); setView('friday-checklist') }} />
-          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'friday-checklist' && checklistEnabled ? 'Fredagens tjekliste' : view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? 'Kalender' : view === 'inbox' ? (coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing') : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
+          <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'friday-checklist' && checklistEnabled ? 'Fredagens tjekliste' : view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? (programOverview ? 'Programoverblik' : 'Kalender') : view === 'inbox' ? (coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing') : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
           {onPreviewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
@@ -694,7 +697,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         {/* CALENDAR VIEW */}
         {view === 'calendar' && (() => {
           return (
-            <KalenderView {...{ coachRyd,
+            programOverview ? <ProgramOverblik {...{ athletes, calendarWeeks, hiddenAthleteIds, openProfile, loading, loadError }} /> : <KalenderView {...{ coachRyd,
               coachCalendarEvents: coachCalendarEvents === true,
               askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,
               calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,
