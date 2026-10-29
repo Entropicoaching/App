@@ -1,0 +1,2085 @@
+{
+  "schema": "program-overblik-off-baseline/v1",
+  "dashboardSha256": "2aaf1c0f5bfc851afcfc36c6d4d129832179f4aed866ea0b991f1768324b78db",
+  "calendar": "<KalenderView {...{ coachRyd,\n              coachCalendarEvents: coachCalendarEvents === true,\n              askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,\n              calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,\n              isMobile, openCalBlockBuilder, openPlanReview, openProfile, planStartDate, setBlockStartDate,\n              // eslint-disable-next-line react-hooks/refs -- uændret fra før ordre 377; lint ser det først nu (se RAPPORT-377)\n              setCalBlockAthlete, setHoverCell, setPlanStartDate, setTimelineEdit, showFlash, snoozeAthlete,\n              snoozedAthletes, timelineEdit,\n            }} />",
+  "cases": [
+    {
+      "width": 375,
+      "search": "",
+      "view": null,
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": true,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": true,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "list"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {
+                "marginLeft": 0,
+                "overflowX": "hidden",
+                "paddingBottom": "76px"
+              }
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Entropi Coach"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": true,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "list"
+                },
+                "children": []
+              },
+              {
+                "type": "ForsideView",
+                "props": {
+                  "coachFollowUp": false,
+                  "coachRyd": false,
+                  "coachMorning": false,
+                  "coachMorningData": {},
+                  "coachMeetSoon": false,
+                  "coachMeetData": {},
+                  "coachWeekEnabled": false,
+                  "coachWeekDataStatus": {},
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "athleteSortMode": "navn",
+                  "athleteWeekCompletion": null,
+                  "athleteWeekSummary": {},
+                  "automationAlertsError": null,
+                  "calendarWeeks": {},
+                  "coachBriefingSeen": {},
+                  "coachBriefingSeenSavingKey": null,
+                  "coachPriorityCount": 0,
+                  "coachPriorityItems": [],
+                  "handleCoachBriefingSeen": "handler",
+                  "hiddenAthleteIds": {},
+                  "isMobile": true,
+                  "inboxRefreshStatus": null,
+                  "loadError": false,
+                  "loading": false,
+                  "messageInboxError": null,
+                  "openProfile": "handler",
+                  "openVideoCoachV3": "handler",
+                  "setAthleteSortMode": "handler",
+                  "setHiddenAthleteIds": "handler",
+                  "setLoading": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setShowAllAthletes": "handler",
+                  "setShowHiddenAthletes": "handler",
+                  "setView": "handler",
+                  "showAllAthletes": false,
+                  "showHiddenAthletes": false,
+                  "trainingSignalsError": null,
+                  "trainingSignalUpdatingKey": null,
+                  "unreadCounts": {},
+                  "videoReviewQueueError": null,
+                  "latestByTrack": {},
+                  "videoReviewQueue": [],
+                  "coachActionsStatus": {},
+                  "coachTemplateMessages": false,
+                  "coachId": "synthetic-coach",
+                  "sendTemplateMessage": "handler"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "search": "",
+      "view": "calendar",
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": true,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": true,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "calendar"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {
+                "marginLeft": 0,
+                "overflowX": "hidden",
+                "paddingBottom": "76px"
+              }
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Kalender"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": true,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "calendar"
+                },
+                "children": []
+              },
+              {
+                "type": "KalenderView",
+                "props": {
+                  "coachRyd": false,
+                  "coachCalendarEvents": false,
+                  "askConfirm": "handler",
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "blockPlan": [
+                    {
+                      "id": 1,
+                      "name": "Akkumulering",
+                      "weeks": 4
+                    },
+                    {
+                      "id": 2,
+                      "name": "Intensificering",
+                      "weeks": 3
+                    },
+                    {
+                      "id": 3,
+                      "name": "Peak",
+                      "weeks": 2
+                    },
+                    {
+                      "id": 4,
+                      "name": "Deload",
+                      "weeks": 1
+                    }
+                  ],
+                  "blockSequenceRows": "handler",
+                  "calBlockAthlete": null,
+                  "calendarWeeks": {},
+                  "hiddenAthleteIds": {},
+                  "hoverCell": null,
+                  "isMobile": true,
+                  "openPlanReview": "handler",
+                  "openProfile": "handler",
+                  "planStartDate": "2026-10-29",
+                  "setCalBlockAthlete": "handler",
+                  "setHoverCell": "handler",
+                  "setPlanStartDate": "handler",
+                  "setTimelineEdit": "handler",
+                  "showFlash": "handler",
+                  "snoozeAthlete": "handler",
+                  "snoozedAthletes": {},
+                  "timelineEdit": null
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "search": "?coach=inbox",
+      "view": null,
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": true,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": true,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "inbox"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {
+                "marginLeft": 0,
+                "overflowX": "hidden",
+                "paddingBottom": "76px"
+              }
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Coach Briefing"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": true,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "inbox"
+                },
+                "children": []
+              },
+              {
+                "type": "LazyBoundary",
+                "props": {
+                  "factory": "handler",
+                  "label": "Indbakke",
+                  "loading": {
+                    "type": "div",
+                    "props": {
+                      "style": {}
+                    },
+                    "children": [
+                      "Indlæser…"
+                    ]
+                  },
+                  "componentProps": {
+                    "coachRyd": false,
+                    "coachBriefingSeen": {},
+                    "coachBriefingSeenSavingKey": null,
+                    "calendarTasks": null,
+                    "athletes": [],
+                    "coachPriorityItems": [],
+                    "automationAlertActionError": null,
+                    "automationAlertUpdatingId": null,
+                    "automationAlertsError": null,
+                    "hiddenAthleteIds": {},
+                    "inboxRefreshing": false,
+                    "inboxRefreshStatus": null,
+                    "isMobile": true,
+                    "latestByTrack": {},
+                    "messageInboxError": null,
+                    "trainingSignalsError": null,
+                    "trainingSignalUpdatingKey": null,
+                    "unreadByTrack": {},
+                    "videoReviewQueueError": null,
+                    "videoQueueFilters": {
+                      "athleteId": "",
+                      "lift": ""
+                    }
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "search": "?coach=inbox",
+      "view": "calendar",
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": true,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": true,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "calendar"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {
+                "marginLeft": 0,
+                "overflowX": "hidden",
+                "paddingBottom": "76px"
+              }
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Kalender"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": true,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "calendar"
+                },
+                "children": []
+              },
+              {
+                "type": "KalenderView",
+                "props": {
+                  "coachRyd": false,
+                  "coachCalendarEvents": false,
+                  "askConfirm": "handler",
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "blockPlan": [
+                    {
+                      "id": 1,
+                      "name": "Akkumulering",
+                      "weeks": 4
+                    },
+                    {
+                      "id": 2,
+                      "name": "Intensificering",
+                      "weeks": 3
+                    },
+                    {
+                      "id": 3,
+                      "name": "Peak",
+                      "weeks": 2
+                    },
+                    {
+                      "id": 4,
+                      "name": "Deload",
+                      "weeks": 1
+                    }
+                  ],
+                  "blockSequenceRows": "handler",
+                  "calBlockAthlete": null,
+                  "calendarWeeks": {},
+                  "hiddenAthleteIds": {},
+                  "hoverCell": null,
+                  "isMobile": true,
+                  "openPlanReview": "handler",
+                  "openProfile": "handler",
+                  "planStartDate": "2026-10-29",
+                  "setCalBlockAthlete": "handler",
+                  "setHoverCell": "handler",
+                  "setPlanStartDate": "handler",
+                  "setTimelineEdit": "handler",
+                  "showFlash": "handler",
+                  "snoozeAthlete": "handler",
+                  "snoozedAthletes": {},
+                  "timelineEdit": null
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "search": "?coachRyd=1",
+      "view": null,
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": true,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": true,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": true,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "inbox"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {
+                "marginLeft": 0,
+                "overflowX": "hidden",
+                "paddingBottom": "76px"
+              }
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Arbejdsindbakke"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": true,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": true,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "inbox"
+                },
+                "children": []
+              },
+              {
+                "type": "LazyBoundary",
+                "props": {
+                  "factory": "handler",
+                  "label": "Indbakke",
+                  "loading": {
+                    "type": "div",
+                    "props": {
+                      "style": {}
+                    },
+                    "children": [
+                      "Indlæser…"
+                    ]
+                  },
+                  "componentProps": {
+                    "coachRyd": true,
+                    "coachBriefingSeen": {},
+                    "coachBriefingSeenSavingKey": null,
+                    "calendarTasks": {
+                      "type": "KalenderView",
+                      "props": {
+                        "tasksOnly": true,
+                        "athletes": [],
+                        "hiddenAthleteIds": {},
+                        "calendarWeeks": {},
+                        "athleteCurrentWeek": {},
+                        "athleteLastLogs": null,
+                        "snoozedAthletes": {},
+                        "isMobile": true,
+                        "children": []
+                      },
+                      "children": []
+                    },
+                    "athletes": [],
+                    "coachPriorityItems": [],
+                    "automationAlertActionError": null,
+                    "automationAlertUpdatingId": null,
+                    "automationAlertsError": null,
+                    "hiddenAthleteIds": {},
+                    "inboxRefreshing": false,
+                    "inboxRefreshStatus": null,
+                    "isMobile": true,
+                    "latestByTrack": {},
+                    "messageInboxError": null,
+                    "trainingSignalsError": null,
+                    "trainingSignalUpdatingKey": null,
+                    "unreadByTrack": {},
+                    "videoReviewQueueError": null,
+                    "videoQueueFilters": {
+                      "athleteId": "",
+                      "lift": ""
+                    }
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 375,
+      "search": "?coachRyd=1",
+      "view": "calendar",
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": true,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": true,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": true,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "calendar"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {
+                "marginLeft": 0,
+                "overflowX": "hidden",
+                "paddingBottom": "76px"
+              }
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Kalender"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": true,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": true,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "calendar"
+                },
+                "children": []
+              },
+              {
+                "type": "section",
+                "props": {
+                  "aria-label": "Arbejdsindbakke",
+                  "style": {
+                    "marginBottom": "1rem"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "button",
+                    "props": {
+                      "type": "button",
+                      "style": {
+                        "minHeight": 44,
+                        "padding": "0.65rem",
+                        "color": "#edeae2",
+                        "background": "#1c1c18",
+                        "border": "1px solid #59564c",
+                        "cursor": "pointer",
+                        "font": "inherit"
+                      },
+                      "onClick": "handler"
+                    },
+                    "children": [
+                      "Arbejdsindbakke"
+                    ]
+                  },
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "0 opgaver i den fælles prioritering.",
+                      " Åbn for status og opdatering."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "KalenderView",
+                "props": {
+                  "coachRyd": true,
+                  "coachCalendarEvents": false,
+                  "askConfirm": "handler",
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "blockPlan": [
+                    {
+                      "id": 1,
+                      "name": "Akkumulering",
+                      "weeks": 4
+                    },
+                    {
+                      "id": 2,
+                      "name": "Intensificering",
+                      "weeks": 3
+                    },
+                    {
+                      "id": 3,
+                      "name": "Peak",
+                      "weeks": 2
+                    },
+                    {
+                      "id": 4,
+                      "name": "Deload",
+                      "weeks": 1
+                    }
+                  ],
+                  "blockSequenceRows": "handler",
+                  "calBlockAthlete": null,
+                  "calendarWeeks": {},
+                  "hiddenAthleteIds": {},
+                  "hoverCell": null,
+                  "isMobile": true,
+                  "openPlanReview": "handler",
+                  "openProfile": "handler",
+                  "planStartDate": "2026-10-29",
+                  "setCalBlockAthlete": "handler",
+                  "setHoverCell": "handler",
+                  "setPlanStartDate": "handler",
+                  "setTimelineEdit": "handler",
+                  "showFlash": "handler",
+                  "snoozeAthlete": "handler",
+                  "snoozedAthletes": {},
+                  "timelineEdit": null
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "search": "",
+      "view": null,
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": false,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": false,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "list"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {}
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Atleter"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": false,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "list"
+                },
+                "children": []
+              },
+              {
+                "type": "ForsideView",
+                "props": {
+                  "coachFollowUp": false,
+                  "coachRyd": false,
+                  "coachMorning": false,
+                  "coachMorningData": {},
+                  "coachMeetSoon": false,
+                  "coachMeetData": {},
+                  "coachWeekEnabled": false,
+                  "coachWeekDataStatus": {},
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "athleteSortMode": "navn",
+                  "athleteWeekCompletion": null,
+                  "athleteWeekSummary": {},
+                  "automationAlertsError": null,
+                  "calendarWeeks": {},
+                  "coachBriefingSeen": {},
+                  "coachBriefingSeenSavingKey": null,
+                  "coachPriorityCount": 0,
+                  "coachPriorityItems": [],
+                  "handleCoachBriefingSeen": "handler",
+                  "hiddenAthleteIds": {},
+                  "isMobile": false,
+                  "inboxRefreshStatus": null,
+                  "loadError": false,
+                  "loading": false,
+                  "messageInboxError": null,
+                  "openProfile": "handler",
+                  "openVideoCoachV3": "handler",
+                  "setAthleteSortMode": "handler",
+                  "setHiddenAthleteIds": "handler",
+                  "setLoading": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setShowAllAthletes": "handler",
+                  "setShowHiddenAthletes": "handler",
+                  "setView": "handler",
+                  "showAllAthletes": false,
+                  "showHiddenAthletes": false,
+                  "trainingSignalsError": null,
+                  "trainingSignalUpdatingKey": null,
+                  "unreadCounts": {},
+                  "videoReviewQueueError": null,
+                  "latestByTrack": {},
+                  "videoReviewQueue": [],
+                  "coachActionsStatus": {},
+                  "coachTemplateMessages": false,
+                  "coachId": "synthetic-coach",
+                  "sendTemplateMessage": "handler"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "search": "",
+      "view": "calendar",
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": false,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": false,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "calendar"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {}
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Kalender"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": false,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "calendar"
+                },
+                "children": []
+              },
+              {
+                "type": "KalenderView",
+                "props": {
+                  "coachRyd": false,
+                  "coachCalendarEvents": false,
+                  "askConfirm": "handler",
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "blockPlan": [
+                    {
+                      "id": 1,
+                      "name": "Akkumulering",
+                      "weeks": 4
+                    },
+                    {
+                      "id": 2,
+                      "name": "Intensificering",
+                      "weeks": 3
+                    },
+                    {
+                      "id": 3,
+                      "name": "Peak",
+                      "weeks": 2
+                    },
+                    {
+                      "id": 4,
+                      "name": "Deload",
+                      "weeks": 1
+                    }
+                  ],
+                  "blockSequenceRows": "handler",
+                  "calBlockAthlete": null,
+                  "calendarWeeks": {},
+                  "hiddenAthleteIds": {},
+                  "hoverCell": null,
+                  "isMobile": false,
+                  "openPlanReview": "handler",
+                  "openProfile": "handler",
+                  "planStartDate": "2026-10-29",
+                  "setCalBlockAthlete": "handler",
+                  "setHoverCell": "handler",
+                  "setPlanStartDate": "handler",
+                  "setTimelineEdit": "handler",
+                  "showFlash": "handler",
+                  "snoozeAthlete": "handler",
+                  "snoozedAthletes": {},
+                  "timelineEdit": null
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "search": "?coach=inbox",
+      "view": null,
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": false,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": false,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "inbox"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {}
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Coach Briefing"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": false,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "inbox"
+                },
+                "children": []
+              },
+              {
+                "type": "LazyBoundary",
+                "props": {
+                  "factory": "handler",
+                  "label": "Indbakke",
+                  "loading": {
+                    "type": "div",
+                    "props": {
+                      "style": {}
+                    },
+                    "children": [
+                      "Indlæser…"
+                    ]
+                  },
+                  "componentProps": {
+                    "coachRyd": false,
+                    "coachBriefingSeen": {},
+                    "coachBriefingSeenSavingKey": null,
+                    "calendarTasks": null,
+                    "athletes": [],
+                    "coachPriorityItems": [],
+                    "automationAlertActionError": null,
+                    "automationAlertUpdatingId": null,
+                    "automationAlertsError": null,
+                    "hiddenAthleteIds": {},
+                    "inboxRefreshing": false,
+                    "inboxRefreshStatus": null,
+                    "isMobile": false,
+                    "latestByTrack": {},
+                    "messageInboxError": null,
+                    "trainingSignalsError": null,
+                    "trainingSignalUpdatingKey": null,
+                    "unreadByTrack": {},
+                    "videoReviewQueueError": null,
+                    "videoQueueFilters": {
+                      "athleteId": "",
+                      "lift": ""
+                    }
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "search": "?coach=inbox",
+      "view": "calendar",
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": false,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": false,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": false,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "calendar"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {}
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Kalender"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": false,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": false,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "calendar"
+                },
+                "children": []
+              },
+              {
+                "type": "KalenderView",
+                "props": {
+                  "coachRyd": false,
+                  "coachCalendarEvents": false,
+                  "askConfirm": "handler",
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "blockPlan": [
+                    {
+                      "id": 1,
+                      "name": "Akkumulering",
+                      "weeks": 4
+                    },
+                    {
+                      "id": 2,
+                      "name": "Intensificering",
+                      "weeks": 3
+                    },
+                    {
+                      "id": 3,
+                      "name": "Peak",
+                      "weeks": 2
+                    },
+                    {
+                      "id": 4,
+                      "name": "Deload",
+                      "weeks": 1
+                    }
+                  ],
+                  "blockSequenceRows": "handler",
+                  "calBlockAthlete": null,
+                  "calendarWeeks": {},
+                  "hiddenAthleteIds": {},
+                  "hoverCell": null,
+                  "isMobile": false,
+                  "openPlanReview": "handler",
+                  "openProfile": "handler",
+                  "planStartDate": "2026-10-29",
+                  "setCalBlockAthlete": "handler",
+                  "setHoverCell": "handler",
+                  "setPlanStartDate": "handler",
+                  "setTimelineEdit": "handler",
+                  "showFlash": "handler",
+                  "snoozeAthlete": "handler",
+                  "snoozedAthletes": {},
+                  "timelineEdit": null
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "search": "?coachRyd=1",
+      "view": null,
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": false,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": true,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": false,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "inbox"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {}
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Arbejdsindbakke"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": true,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": false,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "inbox"
+                },
+                "children": []
+              },
+              {
+                "type": "LazyBoundary",
+                "props": {
+                  "factory": "handler",
+                  "label": "Indbakke",
+                  "loading": {
+                    "type": "div",
+                    "props": {
+                      "style": {}
+                    },
+                    "children": [
+                      "Indlæser…"
+                    ]
+                  },
+                  "componentProps": {
+                    "coachRyd": true,
+                    "coachBriefingSeen": {},
+                    "coachBriefingSeenSavingKey": null,
+                    "calendarTasks": {
+                      "type": "KalenderView",
+                      "props": {
+                        "tasksOnly": true,
+                        "athletes": [],
+                        "hiddenAthleteIds": {},
+                        "calendarWeeks": {},
+                        "athleteCurrentWeek": {},
+                        "athleteLastLogs": null,
+                        "snoozedAthletes": {},
+                        "isMobile": false,
+                        "children": []
+                      },
+                      "children": []
+                    },
+                    "athletes": [],
+                    "coachPriorityItems": [],
+                    "automationAlertActionError": null,
+                    "automationAlertUpdatingId": null,
+                    "automationAlertsError": null,
+                    "hiddenAthleteIds": {},
+                    "inboxRefreshing": false,
+                    "inboxRefreshStatus": null,
+                    "isMobile": false,
+                    "latestByTrack": {},
+                    "messageInboxError": null,
+                    "trainingSignalsError": null,
+                    "trainingSignalUpdatingKey": null,
+                    "unreadByTrack": {},
+                    "videoReviewQueueError": null,
+                    "videoQueueFilters": {
+                      "athleteId": "",
+                      "lift": ""
+                    }
+                  }
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "search": "?coachRyd=1",
+      "view": "calendar",
+      "tree": {
+        "type": "div",
+        "props": {
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "Overlays",
+            "props": {
+              "confirmDialog": null,
+              "flash": null,
+              "isMobile": false,
+              "setConfirmDialog": "handler",
+              "videoCoachFrameRef": {
+                "current": null
+              },
+              "videoCoachOpen": false
+            },
+            "children": []
+          },
+          {
+            "type": "Sidebar",
+            "props": {
+              "coachRyd": true,
+              "athletes": [],
+              "athleteWeekSummary": {},
+              "coachPriorityCount": 0,
+              "exportingBackup": false,
+              "exportingTraening": false,
+              "hiddenAthleteIds": {},
+              "isMobile": false,
+              "lastBackup": null,
+              "openProfile": "handler",
+              "openVideoCoachV3": "handler",
+              "pickingMine": false,
+              "previewPickerOpen": false,
+              "selectedAthlete": null,
+              "setMyAthleteId": "handler",
+              "setPickingMine": "handler",
+              "setPreviewPickerOpen": "handler",
+              "setSelectedAthlete": "handler",
+              "setSidebarMoreOpen": "handler",
+              "setSidebarOpen": "handler",
+              "setView": "handler",
+              "sidebarMoreOpen": false,
+              "sidebarOpen": false,
+              "todayData": {
+                "logs": []
+              },
+              "unreadCounts": {},
+              "view": "calendar"
+            },
+            "children": []
+          },
+          {
+            "type": "main",
+            "props": {
+              "style": {}
+            },
+            "children": [
+              {
+                "type": "div",
+                "props": {
+                  "style": {}
+                },
+                "children": [
+                  {
+                    "type": "div",
+                    "props": {
+                      "style": {
+                        "flex": 1
+                      }
+                    },
+                    "children": [
+                      "Kalender"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "MobilNav",
+                "props": {
+                  "coachRyd": true,
+                  "athletes": [],
+                  "coachPriorityCount": 0,
+                  "exportingBackup": false,
+                  "exportingTraening": false,
+                  "isMobile": false,
+                  "menuSheetOpen": false,
+                  "openVideoCoachV3": "handler",
+                  "pickingMine": false,
+                  "selectedAthlete": null,
+                  "setMenuSheetOpen": "handler",
+                  "setMyAthleteId": "handler",
+                  "setPickingMine": "handler",
+                  "setSelectedAthlete": "handler",
+                  "setSheetPreviewPick": "handler",
+                  "setShowAddModal": "handler",
+                  "setSidebarOpen": "handler",
+                  "setView": "handler",
+                  "sheetPreviewPick": false,
+                  "view": "calendar"
+                },
+                "children": []
+              },
+              {
+                "type": "section",
+                "props": {
+                  "aria-label": "Arbejdsindbakke",
+                  "style": {
+                    "marginBottom": "1rem"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "button",
+                    "props": {
+                      "type": "button",
+                      "style": {
+                        "minHeight": 44,
+                        "padding": "0.65rem",
+                        "color": "#edeae2",
+                        "background": "#1c1c18",
+                        "border": "1px solid #59564c",
+                        "cursor": "pointer",
+                        "font": "inherit"
+                      },
+                      "onClick": "handler"
+                    },
+                    "children": [
+                      "Arbejdsindbakke"
+                    ]
+                  },
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "0 opgaver i den fælles prioritering.",
+                      " Åbn for status og opdatering."
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "KalenderView",
+                "props": {
+                  "coachRyd": true,
+                  "coachCalendarEvents": false,
+                  "askConfirm": "handler",
+                  "athleteCurrentWeek": {},
+                  "athleteLastLogs": null,
+                  "athletes": [],
+                  "blockPlan": [
+                    {
+                      "id": 1,
+                      "name": "Akkumulering",
+                      "weeks": 4
+                    },
+                    {
+                      "id": 2,
+                      "name": "Intensificering",
+                      "weeks": 3
+                    },
+                    {
+                      "id": 3,
+                      "name": "Peak",
+                      "weeks": 2
+                    },
+                    {
+                      "id": 4,
+                      "name": "Deload",
+                      "weeks": 1
+                    }
+                  ],
+                  "blockSequenceRows": "handler",
+                  "calBlockAthlete": null,
+                  "calendarWeeks": {},
+                  "hiddenAthleteIds": {},
+                  "hoverCell": null,
+                  "isMobile": false,
+                  "openPlanReview": "handler",
+                  "openProfile": "handler",
+                  "planStartDate": "2026-10-29",
+                  "setCalBlockAthlete": "handler",
+                  "setHoverCell": "handler",
+                  "setPlanStartDate": "handler",
+                  "setTimelineEdit": "handler",
+                  "showFlash": "handler",
+                  "snoozeAthlete": "handler",
+                  "snoozedAthletes": {},
+                  "timelineEdit": null
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

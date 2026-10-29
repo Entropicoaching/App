@@ -33,9 +33,18 @@ test('rebase: actual Dashboard entry and calendar callbacks for both flags and w
     assert.equal(props.handleCoachBriefingSeen,handlers.handleCoachBriefingSeen)
     const task=props.calendarTasks
     assert.equal(task.type,'KalenderView');assert.equal(task.props.tasksOnly,true)
-    const calendar=nodes(draw(search,width,'calendar').tree).find(n=>n.type==='KalenderView')
-    for(const name of ['openProfile','openPlanReview','snoozeAthlete']) {
-      assert.equal(task.props[name],calendar.props[name]);assert.equal(task.props[name],handlers[name])
+    const calendarTree=draw(search,width,'calendar').tree
+    const calendar=nodes(calendarTree).find(n=>n.type==='KalenderView')
+    // rel1030 intentionally replaces only the calendar route with Programoverblik.
+    // Inbox calendar tasks retain their original callbacks in either mode.
+    if(rel1030Feature('programOverblik',search)) {
+      assert.equal(calendar,undefined)
+      assert.ok(nodes(calendarTree).find(n=>n.props['aria-label']==='Programoverblik'))
+      for(const name of ['openProfile','openPlanReview','snoozeAthlete']) assert.equal(task.props[name],handlers[name])
+    } else {
+      for(const name of ['openProfile','openPlanReview','snoozeAthlete']) {
+        assert.equal(task.props[name],calendar.props[name]);assert.equal(task.props[name],handlers[name])
+      }
     }
     task.props.openProfile({id:'synthetic-a'},'program')
     assert.deepEqual(calls,[['openProfile',{id:'synthetic-a'},'program']])
