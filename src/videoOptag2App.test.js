@@ -11,8 +11,8 @@ test('K wiring: actual upload handler waits for validated compression before upl
     const earlyUploads = f.uploads.length;
     if (before) await task;
     assert.equal(earlyUploads, 0);
-    await f.metadata(40); assert.equal(f.uploads.length, 0);
-    await f.finish(40); await task;
+    await f.metadata(10); assert.equal(f.uploads.length, 0);
+    await f.finish(10); await task;
     assert.equal(f.uploads.length, 1); assert.equal(f.rows.length, 1);
     assert.notEqual(f.uploads[0].file, f.message.file);
     assert.ok(f.uploads[0].file instanceof Blob);
@@ -38,7 +38,7 @@ test('actual upload handler defaultOFF preserves original Blob and MIME without 
 test('actual handler rejects early output, allows cancel, and clears pending abort', { skip: before }, async () => {
   const f = await bridge({ videoOptag2: true });
   try {
-    const task = f.send(); await f.metadata(40); f.recorder().stop(); await settle();
+    const task = f.send(); await f.metadata(10); f.recorder().stop(); await settle();
     assert.equal(f.uploads.length, 0);
     f.button('Annullér').click(); await task;
     assert.equal(f.replies[0].ok, false); assert.equal(f.rows.length, 0); assert.equal(f.aborts.size, 0);
@@ -51,9 +51,9 @@ test('actual handler supports explicit trim before storage', { skip: before }, a
   try {
     const task = f.send(); await f.metadata(125);
     const fields = f.dom.nodes.filter(n => n.type === 'number');
-    fields[0].value = '20'; fields[1].value = '60';
+    fields[0].value = '20'; fields[1].value = '35';
     const trim = f.button('Klip og brug video').click();
-    await f.finish(60, 40); await trim; await task;
+    await f.finish(35, 15); await trim; await task;
     assert.equal(f.uploads.length, 1); assert.equal(f.replies[0].ok, true);
   } finally { f.restore(); }
 });
