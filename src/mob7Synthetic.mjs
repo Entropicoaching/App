@@ -1,5 +1,6 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 // Own synthetic React tree, hooks and import boundary. No browser or backend.
-import { registerHooks } from 'node:module'
+import { registryHooks } from './testModuleRegistry.mjs'
 const root = new URL('./', import.meta.url)
 const modules = new Map([
   ['mobilityAdherence.mjs', ['react', './mobilityHelped.mjs']],

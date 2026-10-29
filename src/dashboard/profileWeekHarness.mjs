@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { basename } from 'node:path'
 import { jsx } from './profileWeekJsx.mjs'
@@ -20,7 +21,7 @@ const fakeQuery = new Proxy({}, { get(_, method) {
 } })
 globalThis[key] = { h, Fragment, effects, supabase: { from: (...args) => { requests.push(['from', ...args]); return fakeQuery } } }
 const root = new URL('./', import.meta.url)
-const real = new Set(['coachInactive.mjs', 'coachMeetSource.mjs', 'coachMeetSoon.mjs', 'coachWeekOverview.mjs','profileWeekSummary.mjs', 'coachFourWeeks.mjs', 'nextSet.js', 'exerciseProgress.js', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'inputValues.js', 'calendarDate.js', 'kostNumbers.mjs', 'rpeEvidence.mjs', 'exerciseSetView.js', 'exerciseNames.js', 'ugenoegle.js', 'coachKonstanter.js', 'laesninger.js', 'useDashboardEffekter.js'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
 const data = source => ({ url: 'data:text/javascript,' + encodeURIComponent(source), shortCircuit: true })
 registerHooks({
   resolve(specifier, context, next) {

@@ -1,83 +1,15 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 const root = new URL('./', import.meta.url)
 import { existsSync } from 'node:fs'
-const locations = { 'calendarDate.js':'../calendarDate.js', 'kostNumbers.mjs':'../athlete/kostNumbers.mjs' }
+const locations = registryRecipe(import.meta.url, 'locations')
 const url = name => {
  const flat = new URL(name,root)
  return (existsSync(flat) ? flat : new URL(locations[name] || name,root)).href
 }
 // Exact parent/specifier pairs from the pinned public handlers.
-const stubs = {
-  "laesninger.js": {
-    "../blokFremgang.mjs": [
-      "readBlockLogs"
-    ],
-    "./coachFourWeeks.mjs": [
-      "readFourWeekSource"
-    ],
-    "../coachNoteSignal.js": [
-      "COACH_NOTE_SIGNAL_ENABLED"
-    ],
-    "../dataEnough.mjs": [
-      "dataAllowed",
-      "dataEnoughEnabled"
-    ],
-    "../dataEvidence.mjs": [
-      "rpeSignalEvidence",
-      "rpeSignalDescription"
-    ],
-    "./coachMorningSource.mjs": [
-      "readMorningSource"
-    ],
-    "../videoEvidence.mjs": [
-      "attachVideoReferences"
-    ],
-    "../coachInboxState.js": [
-      "summarizeRefreshResults",
-      "filterDraftVideoReviews",
-      "filterOpenTrainingSignals",
-      "summarizeCoachMessages"
-    ],
-    "../supabase.js": [
-      "supabase",
-      "withRetry"
-    ],
-    "../automationAlerts.js": [
-      "filterOpenAutomationAlerts"
-    ],
-    "../saetSmerte.js": [
-      "saetSmerteSignaler",
-      "medSaetSmerte"
-    ],
-    "./coachKonstanter.js": [
-      "ATHLETE_LOGS_LIMIT"
-    ],
-    "../videoCoachVersion.js": [
-      "VIDEOCOACH_BASELINE_VERSION"
-    ],
-    "../personalRecords.js": [
-      "normaliserRekorder",
-      "bedsteRekorder",
-      "tungeRekorder"
-    ],
-    "../danskDato.js": [
-      "danskDag"
-    ]
-  },
-  "navigation.js": {
-    "../weekDates": [
-      "nextWeekStartDate"
-    ],
-    "../coachPriority": [
-      "coachPriorityTaskContext"
-    ]
-  }
-}
-const real = {
-  'calendarDate.js': { './athlete/kostNumbers.mjs':'kostNumbers.mjs' },
-  'laesninger.js': { './coachInactive.mjs':'coachInactive.mjs', './coachMeetSource.mjs':'coachMeetSource.mjs', './coachWeekOverview.mjs':'coachWeekOverview.mjs', './afvigelse.js':'afvigelse.js', './coachActions.mjs':'coachActions.mjs' },
-  'coachWeekOverview.mjs': { '../calendarDate.js':'calendarDate.js' },
-}
+const stubs = registryRecipe(import.meta.url, 'stubs')
+const real = registryRecipe(import.meta.url, 'real')
 export function resolve(specifier, context, next) {
   const parent = Object.keys({...stubs,...real}).find(name => url(name) === context.parentURL)
   if (parent) {

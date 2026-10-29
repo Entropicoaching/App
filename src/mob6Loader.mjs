@@ -1,11 +1,12 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './mob6Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const actual = new Set(['CoachMobility.jsx', 'coachMobility.mjs', 'mobilityFocus.mjs', 'mobilityHomework.mjs', 'mobilityCatalog.mjs', 'ProfilHoved.jsx'])
+const actual = new Set(registryRecipe(import.meta.url, 'actual'))
 const moduleURL = name => [name, 'dashboard/' + name, 'athlete/' + name].map(path => new URL(path, root)).find(existsSync)
 const urls = new Map([...actual].map(name => [moduleURL(name)?.href, name]))
-const peripheral = new Set(['../mobilityHelped.mjs', '../coachRyd.mjs', '../supabase.js', '../dashboardShared.js', '../coachFremgang.js', './coachKonstanter.js', './hubSektioner.jsx'])
+const peripheral = new Set(registryRecipe(import.meta.url, 'peripheral'))
 export function install({ baseline = false, lineEnding } = {}) {
   return registerHooks({
     resolve(specifier, context, next) {

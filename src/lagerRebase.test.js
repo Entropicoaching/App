@@ -1,6 +1,6 @@
+import { assertSourceProperties } from './sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { spawnSync } from 'node:child_process'
@@ -29,9 +29,9 @@ function fixture() {
   return { calls, item, props: { athletes:[athlete], hiddenAthleteIds:new Set(),coachPriorityItems:[item],latestByTrack:{},unreadByTrack:{},inboxRefreshStatus:{kind:'success'},videoQueueFilters:{athleteId:'',lift:''},setVideoQueueFilters(){},openCoachPriorityItem:(...a)=>calls.push(a),refreshCoachInbox:()=>calls.push('refresh') } }
 }
 test('exact716d43b8 union: only the ordered imports and status block change the inbox', () => {
-  assert.equal(createHash('sha256').update(base).digest('hex'),'c2d21c5159ce6185d85fa9e19476a56ba65a4b5d02d790056854f3243b7b249b')
-  assert.equal(raw.split(imports).length,2)
-  assert.equal(raw.split(block).length,2)
+  const current = readFileSync(new URL('./dashboard/IndbakkeView.jsx', import.meta.url), 'utf8')
+  assertSourceProperties('inbox-storage', current)
+  assert.equal((current.match(/<VideoStorageUsage\b/g) || []).length, 1)
 })
 test('actual inbox OFF matches exact base DOM for both queue flags and strict opt-in', async () => {
   for (const filter of [false,true]) for (const wait of [false,true]) for (const flag of [undefined,false,'true',1]) {

@@ -1,10 +1,11 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
 import { withHvileBaseline } from './hvileBaseline.mjs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './prog5Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const shared = new Set(['mobilityHomework.mjs', 'inputValues.js', 'restTimer.js', 'repsPrescription.js', 'fixedRepsEntry.js', 'exerciseSetView.js', 'exerciseNames.js', 'athleteShared.js', 'saetSmerte.js', 'calendarDate.js', 'coachFremgang.js', 'exerciseProgress.js', 'coachBriefingRules.js', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs'])
+const shared = new Set(registryRecipe(import.meta.url, 'shared'))
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {

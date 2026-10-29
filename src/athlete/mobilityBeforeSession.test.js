@@ -1,7 +1,7 @@
+import { assertSourceProperties } from '../sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { createHash } from 'node:crypto'
 import { install, moduleURL } from './mob3Loader.mjs'
 import { mount, text, nodes, button } from './mob3Dom.mjs'
 install()
@@ -120,7 +120,7 @@ for (const homeName of ['HjemTab.jsx', 'EnkelHjemTab.jsx']) {
 
 test('catalog preserves the pinned table and both top-level flag routes remain explicit', () => {
   const catalog = readFileSync(moduleURL('mobilityCatalog.mjs'), 'utf8').replace(/\r\n/g, '\n')
-  assert.equal(createHash('sha256').update(catalog).digest('hex'), 'e13f626a5220737ec18975c77be231fb0785720e0514e45c8652ec004b025b29')
+  assertSourceProperties('mobility-catalog', catalog)
   const app = readFileSync(moduleURL('App.jsx'), 'utf8')
   assert.match(app, /mobilitetFoerPas = false/)
   assert.equal(app.match(/mobilitetFoerPas: mobilitetFoerPas === true,/g).length, 2)

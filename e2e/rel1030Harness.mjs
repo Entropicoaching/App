@@ -1,22 +1,15 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../src/testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { basename, posix } from 'node:path'
 import { jsx } from './rel1030Jsx.mjs'
-const paths = {
-  'App.jsx': 'src/App.jsx', 'rel1030.mjs': 'src/rel1030.mjs',
-  'coachRyd.mjs': 'src/coachRyd.mjs', 'coachWeekOverview.mjs': 'src/dashboard/coachWeekOverview.mjs',
-  'analyseSamlet.mjs': 'src/dashboard/analyseSamlet.mjs', 'analyseSammenlign.mjs': 'src/dashboard/analyseSammenlign.mjs',
-  'videoFeedbackPlayback.mjs': 'src/athlete/videoFeedbackPlayback.mjs', 'calendarDate.js': 'src/calendarDate.js',
-  'kostNumbers.mjs': 'src/athlete/kostNumbers.mjs', 'release3TestFlags.mjs': 'src/release3TestFlags.mjs',
-  'e2eTestFlags.mjs': 'src/e2eTestFlags.mjs',
-}
+const paths = registryRecipe(import.meta.url, 'paths')
 const logicalByUrl = new Map(Object.entries(paths).map(([name, logical]) => [new URL(name, import.meta.url).href, logical]))
 logicalByUrl.set(new URL('rel1030.test.js', import.meta.url).href, 'e2e/rel1030.test.js')
 logicalByUrl.set(new URL('rel1030.review.test.js', import.meta.url).href, 'e2e/rel1030.review.test.js')
 logicalByUrl.set(new URL('rel1030.fixes.test.js', import.meta.url).href, 'e2e/rel1030.fixes.test.js')
 logicalByUrl.set(new URL('rel1030Baseline.txt', import.meta.url).href, 'src/App.jsx')
-const stubs = ['supabase.js', 'Auth.jsx', 'SetNewPassword.jsx', 'ErrorBoundary.jsx',
-  'videoCoachSubmission.js', 'LazyBoundary.jsx', 'roleCache.js', 'offlineSession.js']
+const stubs = registryRecipe(import.meta.url, 'stubs')
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {

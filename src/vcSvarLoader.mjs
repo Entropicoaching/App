@@ -1,27 +1,16 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { existsSync } from 'node:fs'
 import { readFileSync } from 'node:fs'
 import { jsx } from './vcSvarJsx.mjs'
 const root = new URL('./', import.meta.url)
-const actual = new Set(['videoStorageUsage.mjs', 'VideoStorageUsage.jsx','videoQueueWait.mjs','kostNumbers.mjs', 'coachBriefingSeen.js', 'videoMarkerReplies.mjs', 'videoFeedbackPlayback.mjs', 'VideoFeedbackPlayback.jsx',
-  'VideoMarkerReplyReview.jsx', 'beskederOgVaegt.jsx', 'IndbakkeView.jsx', 'VideoReviewModal.jsx',
-  'videoFeedbackFollowUp.mjs', 'VideoReviewTemplates.mjs', 'videoReviewLayout.mjs', 'AthleteBeskederTab.jsx', 'CoachBeskederTab.jsx'])
-const locations = {
-  'videoStorageUsage.mjs':'dashboard/',
-  'VideoStorageUsage.jsx':'dashboard/',
-  'videoQueueWait.mjs':'dashboard/',
-  'kostNumbers.mjs':'athlete/',
-  'AthleteBeskederTab.jsx':'athlete/BeskederTab.jsx', 'CoachBeskederTab.jsx':'dashboard/BeskederTab.jsx',
-  'videoFeedbackPlayback.mjs':'athlete/', 'VideoFeedbackPlayback.jsx':'athlete/',
-  'beskederOgVaegt.jsx':'athlete/', 'videoFeedbackFollowUp.mjs':'athlete/',
-  'VideoMarkerReplyReview.jsx':'dashboard/', 'VideoReviewModal.jsx':'dashboard/',
-  'IndbakkeView.jsx':'dashboard/', 'VideoReviewTemplates.mjs':'dashboard/', 'videoReviewLayout.mjs':'dashboard/',
-}
+const actual = new Set(registryRecipe(import.meta.url, 'actual'))
+const locations = registryRecipe(import.meta.url, 'locations')
 const moduleUrl = name => {
   const flat = new URL(name, root)
   return existsSync(flat) ? flat.href : new URL((name.endsWith('BeskederTab.jsx') ? locations[name] : (locations[name] || '') + name), root).href
 }
-const athlete = new Set(['beskederOgVaegt.jsx','VideoFeedbackPlayback.jsx','VideoMarkerReplyReview.jsx'])
+const athlete = new Set(registryRecipe(import.meta.url, 'athlete'))
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {

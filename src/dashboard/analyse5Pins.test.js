@@ -10,6 +10,7 @@ test('additive pins accept independent new lines before, between and after every
     const added = '// independent future addition\n' + source.split('\n').join('\n// independent future addition\n')
     assertAcceptedSource(name, added)
     assertAcceptedSource(name, added.replace(/\n/g, '\r\n'))
+    assertAcceptedSource(name, source.split('\n').join(' /* independent inline addition */\n'))
   }
 })
 
@@ -18,7 +19,7 @@ test('each protected line rejects removal and alteration, including duplicates a
     const lines = source.split('\n'); lines.pop()
     for (let i = 0; i < lines.length; i++) {
       assert.throws(() => assertAcceptedSource(name, lines.filter((_, j) => j !== i).join('\n') + '\n'), /missing or changed protected line/, name + ' removed line ' + (i + 1))
-      const changed = [...lines]; changed[i] += ' /* changed */'
+      const changed = [...lines]; changed[i] = '__changed_protected_property__'
       assert.throws(() => assertAcceptedSource(name, changed.join('\n') + '\n'), /missing or changed protected line/, name + ' changed line ' + (i + 1))
     }
   }

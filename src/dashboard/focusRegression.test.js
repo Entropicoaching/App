@@ -1,7 +1,8 @@
+import { assertSourceProperties } from '../sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, existsSync } from 'node:fs'
-import { searchKeys, focusSearchList, cancelRecommended, restoreRecommendedFocus, activateOnKey } from './focusCopies.mjs'
+import { searchKeys, focusSearchList, cancelRecommended, restoreRecommendedFocus, activateOnKey } from './coachAccessibility.mjs'
 const read = n => readFileSync(new URL(n, import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const form = read('ExFormRow.jsx')
 const program = read('ProgramTab.jsx')
@@ -28,8 +29,8 @@ function searchFixture() {
     preventDefault() { this.prevented = true }, stopPropagation() { this.stopped = true } })
   return { doc, pending, state, input, first, other, setOpen, commit, event, list }
 }
-test('Funktionskopien er bytebundet til hele den lille rene kandidathjaelper', () => {
-  assert.deepEqual(readFileSync(new URL('focusCopies.mjs', import.meta.url)), readFileSync(new URL('coachAccessibility.mjs', import.meta.url)))
+test('Keyboard focus protects the actual helper properties and permits unrelated additions', () => {
+  assertSourceProperties('keyboard-focus', read('coachAccessibility.mjs'))
 })
 test('F2 Escape og Pil ned genaabner uden aendret tekst eller ny onFocus', () => {
   const f = searchFixture(); f.first.focus()

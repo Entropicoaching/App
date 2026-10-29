@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './retentionJsx.mjs'
 export const nodes = n => Array.isArray(n) ? n.flatMap(nodes) : n && typeof n === 'object' ? [n, ...(n.children || []).flatMap(nodes)] : []
@@ -6,28 +7,7 @@ export const text = n => Array.isArray(n) ? n.map(text).join(' ') : n && typeof 
 let serial = 0
 const registry = Symbol.for('retention.synthetic')
 globalThis[registry] = new Map()
-const stubs = {
-  'rel1030.mjs': 'export const rel1030Feature=()=>false;',
-  'exerciseProgress.js': 'export const bestHeavySetPerDay=()=>[];',
-  'dataEvidence.mjs': 'export const heavyPointEvidence=()=>({}), weekEvidence=()=>({}), datedRegression=()=>null, rpeTrendEvidence=()=>({}), volumeWeeks=()=>[], matchedDays=()=>({}), planEvidence=()=>({}), liftEvidence=()=>({}), normalizedRatings=()=>[];',
-  'dataEnough.mjs': 'export const hasEnoughData=()=>false, dayNumber=()=>null, explicitRpe=()=>null, dataEnoughEnabled=()=>false, dataAllowed=()=>false, dataMessage=()=>"", lowStreak=()=>false;',
-  'coachRyd.mjs': 'export const CoachFold=()=>null;',
-  'videoCoachBaselineProgress.js': 'export const buildVideoCoachBaselineProfiles=()=>[], countReadyVideoCoachBaselineProfiles=()=>0;',
-  'videoCoachFeedbackQuality.js': 'export const videoCoachFeedbackQuality=()=>({});',
-  'videoCoachLabels.js': 'export const VIDEOCOACH_LIFT_LABELS={}, videoCoachVariationLabel=()=>"";',
-  'exerciseNames.js': 'export const byggKategoriOpslag=()=>({}), kategoriFor=()=>"";',
-  'exerciseSetView.js': 'export const exerciseSetView=()=>({});',
-  'dashboardShared.js': 'export const s={}, VIDEOCOACH_STATUS={draft:{}}, VIDEOCOACH_METRICS=[], videoCoachMetric=()=>null, videoCoachBaseline=()=>null, videoCoachMetricText=()=>"", videoCoachBaselineText=()=>"", parsePlannedRpe=()=>null, buildLiftSeries=()=>({hasData:false,plannedData:[],data:[]});',
-  'dashboardCharts.jsx': 'export const BarChart=()=>null, LineChart=()=>null, ScatterPlot=()=>null;',
-  'primaerKurve.js': 'export const primaerKurve=()=>({data:[]}), primaerOverskrift=()=>"";',
-  'danskDato.js': 'export const danskDag=()=>"";',
-  'analyseSammenlign.mjs': 'export const analyseSammenlignEnabled=()=>false;',
-  'analyseSamlet.mjs': 'export const analyseSamletEnabled=()=>false;',
-  'AnalyseLokaltVaerktoej.jsx': 'export default ()=>null;',
-  'AnalyseSammenlign.jsx': 'export default ()=>null;',
-  'AnalyseSamletPrototype.jsx': 'export default ()=>null;',
-  'AthleteSilentFailNote.jsx': 'export default ()=>null;',
-}
+const stubs = registryRecipe(import.meta.url, 'stubs')
 export async function app({ before = false } = {}) {
   const id = String(++serial), prefix = `retention-${id}://app/`
   const state = { buckets: new Map(), active: null }
@@ -45,7 +25,7 @@ export async function app({ before = false } = {}) {
     try { return type({ ...props, children: flat }) } finally { state.active = old }
   }
   globalThis[registry].set(id, state)
-  const real = new Set(['analyseConclusionMessage.mjs','analyseConclusion.mjs','AnalyseTab.jsx','VideoRetentionLocalPreview.mjs','VideoRetentionPreview.mjs','videoRetention.mjs'])
+  const real = new Set(registryRecipe(import.meta.url, 'real'))
   registerHooks({
     resolve(specifier, context, next) {
       if (specifier.startsWith(prefix)) return { url: specifier, shortCircuit: true }

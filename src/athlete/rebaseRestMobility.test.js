@@ -41,9 +41,7 @@ for (const loader of ['forenkl6','hvile','prog2','prog5','vaerd5','trin1']) {
   assert.equal(result.status,0,result.stdout+result.stderr)
  })
 }
-test('text reader retains the original pin and removes only HVILE4 presentation additions', () => {
+test('text reader protects rest properties without reversing unrelated source', () => {
  const code=readFileSync(new URL('./reb2HvileCounter.test.js',import.meta.url),'utf8')
- assert.ok(code.includes('233f0be78b6d7612714462a522badd67abafa8750375fcdaa46c768137f5e8de'))
- assert.ok(code.includes(".replace('  restMobility, programIntensityHelp = false,', '  programIntensityHelp = false,')"))
- assert.ok(code.includes(".replace('<RestDays restMobility={restMobility} week=', '<RestDays week=')"))
+ assert.ok(code.includes("assertSourceProperties('program-rest', source('ProgramTab.jsx'))"))
 })

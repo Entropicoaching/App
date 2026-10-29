@@ -1,32 +1,11 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './analyseSamletJsx.mjs'
 const root = new URL('./', import.meta.url)
 const flat = existsSync(new URL('dataEvidence.mjs', root))
-const legacy = new Set(['../videoCoachBaselineProgress.js', '../videoCoachFeedbackQuality.js', '../videoCoachLabels.js', '../exerciseNames.js', '../exerciseSetView.js', '../dashboardShared.js', '../dashboardCharts.jsx', './AnalyseLokaltVaerktoej.jsx', './primaerKurve.js', '../danskDato.js', '../AthleteSilentFailNote.jsx'])
-const edges = {
-  'analyseConclusionMessage.mjs': ['react', './analyseConclusion.mjs'],
-  'AnalyseTab.jsx': ['../VideoRetentionLocalPreview.mjs', './analyseConclusion.mjs', './analyseConclusionMessage.mjs', './analyseSamletDom.mjs', '../dataEvidence.mjs', '../dataEnough.mjs', '../coachRyd.mjs', './AnalyseSammenlign.jsx', './analyseSammenlign.mjs', './AnalyseSamletPrototype.jsx', './analyseSamlet.mjs'],
-  'VideoRetentionLocalPreview.mjs': ['react', './VideoRetentionPreview.mjs'],
-  'VideoRetentionPreview.mjs': ['./videoRetention.mjs'],
-  'videoRetention.mjs': [],
-  'rel1030.mjs': [],
-  'analyseConclusion.mjs': ['../rel1030.mjs', 'react', '../dataEvidence.mjs', '../dataEnough.mjs', '../exerciseProgress.js', '../exerciseSetView.js'],
-  'dataEvidence.mjs': ['./dataEnough.mjs', './exerciseProgress.js', './exerciseSetView.js'],
-  'udgivelseTrin.mjs': [],
-  'dataEnough.mjs': ['./udgivelseTrin.mjs', './calendarDate.js', './rpeEvidence.mjs'],
-  'exerciseProgress.js': ['./dataEnough.mjs', './inputValues.js', './calendarDate.js', './exerciseSetView.js', './exerciseNames.js', './volume/ugenoegle.js'],
-  'exerciseSetView.js': ['./exerciseNames.js'],
-  'inputValues.js': ['./athlete/kostNumbers.mjs'],
-  'calendarDate.js': ['./athlete/kostNumbers.mjs'],
-  'ugenoegle.js': ['../athlete/kostNumbers.mjs'],
-  'rpeEvidence.mjs': ['./dataEnough.mjs'],
-  'analyseSammenlign.mjs': ['./analyseSamlet.mjs'],
-  'AnalyseSamletPrototype.jsx': ['react', './analyseSamlet.mjs'],
-  'AnalyseSammenlign.jsx': ['react', './analyseSammenlign.mjs'],
-  'coachRyd.mjs': ['react'],
-  'analyseFixStubs.mjs': ['react'],
-}
+const legacy = new Set(registryRecipe(import.meta.url, 'legacy'))
+const edges = registryRecipe(import.meta.url, 'edges')
 const basename = value => value.slice(value.lastIndexOf('/') + 1)
 export function install({ before = false } = {}) {
   return registerHooks({

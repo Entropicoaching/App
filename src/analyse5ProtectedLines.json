@@ -1,0 +1,6 @@
+{
+  "src/dashboard/followUpLoader.mjs": "if (!target) return unapproved(specifier)\nprotectedNames.has(new URL(result.url).pathname.split('/').at(-1)) && !real.has(result.url)\n",
+  "src/rebaseHarness.mjs": "if (!(specifier in fakes)) throw Error('Unapproved dashboard import: '+specifier)\nif (!(name in fakes)) throw Error('Unapproved dashboard load')\n",
+  "src/dashboard/AnalyseTab.jsx": "import AnalyseConclusion, { analyseConclusionEnabled } from './analyseConclusion.mjs'\n<AnalyseSamletPrototype />\n<AnalyseSammenlign />\nsetAiExportText(''); setShowAiExport(true)\n",
+  "src/dashboard/analyseConclusion.mjs": "export const DEFAULT_ANALYSE_CONCLUSION = false\nif (enabled !== true) return children\n"
+}

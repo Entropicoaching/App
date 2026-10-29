@@ -1,20 +1,12 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../src/testModuleRegistry.mjs'
 import { existsSync, readFileSync } from 'node:fs'
 import { basename } from 'node:path'
 import { jsx } from './rel3Jsx.mjs'
 
 // Eksplicitte offentlige moduler. Ukendte imports fejler normalt.
-const paths = {
-  'nextTrainingHome.mjs': 'athlete/nextTrainingHome.mjs', 'kostNumbers.mjs': 'athlete/kostNumbers.mjs',
-  'fremgangFokusModel.mjs': 'athlete/fremgangFokusModel.mjs', 'rekorder.js': 'athlete/rekorder.js',
-  'staevnedagPlan.mjs': 'athlete/staevnedagPlan.mjs', 'staevnedagFocus.mjs': 'athlete/staevnedagFocus.mjs',
-  'coachTemplateMessages.mjs': 'dashboard/coachTemplateMessages.mjs',
-  'CoachTemplateMessage.jsx': 'dashboard/CoachTemplateMessage.jsx',
-  'fremgangFokus.mjs': 'athlete/fremgangFokus.mjs', 'MeetDayPlanner.jsx': 'athlete/MeetDayPlanner.jsx',
-  'ugenoegle.js': 'volume/ugenoegle.js',
-}
-const rootModules = ['calendarDate.js', 'inputValues.js', 'nextSet.js', 'exerciseSetView.js',
-  'exerciseNames.js', 'exerciseProgress.js', 'dataEnough.mjs', 'rpeEvidence.mjs', 'coachRyd.mjs', 'release3TestFlags.mjs']
+const paths = registryRecipe(import.meta.url, 'paths')
+const rootModules = registryRecipe(import.meta.url, 'rootModules')
 for (const name of rootModules) paths[name] = name
 export function install() {
   return registerHooks({

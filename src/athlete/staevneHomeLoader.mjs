@@ -1,9 +1,10 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './staevneHomeJsx.mjs'
 const root = new URL('./', import.meta.url)
-const homes = ['HjemTab.jsx', 'EnkelHjemTab.jsx']
-const actual = ['staevneHome.mjs', 'calendarDate.js', 'kostNumbers.mjs', 'enkelPrototype.mjs']
+const homes = registryRecipe(import.meta.url, 'homes')
+const actual = registryRecipe(import.meta.url, 'actual')
 const domURL = new URL('./staevneHomeDom.mjs', root).href
 const domSource = readFileSync(new URL(domURL), 'utf8')
 const sources = new Map()

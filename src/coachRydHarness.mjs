@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { basename, posix } from 'node:path'
 import { jsx } from './coachRydJsx.mjs'
@@ -38,9 +39,8 @@ const shared = {
   videoCoachMetricText: () => '', videoCoachBaselineText: () => '',
   parsePlannedRpe: () => null, buildLiftSeries: () => ({ hasData: false, plannedData: [], actualData: [] }),
 }
-const real = new Set(['coachInactive.mjs', 'coachInactiveFilter.mjs', 'videoStorageUsage.mjs','videoQueueWait.mjs','rel1030.mjs','analyseConclusionMessage.mjs','analyseConclusion.mjs', 'coachMobility.mjs', 'mobilityCatalog.mjs', 'mobilityFocus.mjs', 'mobilityHomework.mjs', 'coachMeetSource.mjs', 'coachMeetSoon.mjs', 'coachFollowUp.mjs', 'VideoRetentionLocalPreview.mjs', 'VideoRetentionPreview.mjs', 'videoRetention.mjs', 'coachMenuMore.mjs', 'mobilityHelped.mjs', 'coachMorning.mjs', 'coachMorningSource.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'mealEvidence.mjs', 'videoEvidence.mjs', 'vcForenkl4.mjs', 'e2eTestFlags.mjs', 'videoQueueFilter.mjs', 'inputValues.js', 'exerciseSetView.js', 'exerciseProgress.js', 'exerciseNames.js', 'ugenoegle.js', 'smerteRegion.js', 'coachWeekOverview.mjs', 'coachTemplateMessages.mjs', 'analyseSammenlign.mjs', 'coachRyd.mjs','coachPriority.js','coachInboxState.js','coachNoteSignal.js','automationAlerts.js','coachBriefingRules.js','VideoMarkerTemplates.mjs', 'vcMarkerTemplates.mjs', 'videoFeedbackPlayback.mjs',
-  'videoCoachLabels.js','videoCoachPersonalFeedback.js','videoCoachFeedbackQuality.js','videoCoachFeedbackEvidence.js','videoCoachBaselineProgress.js','calendarDate.js','kostNumbers.mjs','coachActions.mjs','analyseSamlet.mjs','videoReviewLayout.mjs'])
-const components = new Set(['VideoStorageUsage.jsx','CoachMobility.jsx', 'AnalyseSammenlign.jsx', 'CoachTemplateMessage.jsx', 'VideoQueueFilter.jsx', 'ForsideView.jsx','IndbakkeView.jsx','ProfilHoved.jsx','HubTab.jsx','AnalyseTab.jsx','VideoReviewModal.jsx','Sidebar.jsx','MobilNav.jsx','CoachActions.jsx','AnalyseSamletPrototype.jsx'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
+const components = new Set(registryRecipe(import.meta.url, 'components'))
 const registry = new Map()
 globalThis[Symbol.for('coachRyd.tests')] = registry
 let id = 0

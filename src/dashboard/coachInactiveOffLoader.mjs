@@ -1,9 +1,10 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync } from 'node:fs'
 import { offJsx } from './coachInactiveOffJsx.mjs'
 const base = new URL('./', import.meta.url)
 const dom = new URL('./coachInactiveOffDom.mjs', base).href
-const real = new Set(['CoachActions.jsx', 'coachActions.mjs', 'coachInactiveFilter.mjs', 'coachInactive.mjs', 'ForsideView.jsx'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
 const stubs = {
   s: '{}', currentWeekNo: '() => null', initials: 'name => name.slice(0, 1)',
   beregnUgensAfvigelse: '() => ({harPlan:false})', ugensStemme: '() => null',

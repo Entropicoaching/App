@@ -1,3 +1,4 @@
+import { assertSourceProperties } from '../sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
@@ -14,9 +15,9 @@ test('counter: exact pinned baselines and unchanged Mere/profile modules', () =>
   for (const [name, sha] of Object.entries({
     'coachNotesDashboardBase.txt': 'a92f2ae91402ac8a36cfeb9faa785cd40b5078c98e6ff07867fb54385fda0974',
     'coachNotesTabBase.txt': '2ed0318b70936b77730e331fb960c62f66379c69f0e412f79fcebd910a13a983',
-    'ProfilHoved.jsx': '5bd898220f3610851f3a32f376f755c767461bf66523a9772c018670df2d6cee',
-    'hubSektioner.jsx': '38e1961e332551e8f81963e3c3593a2c4596ec8ce35beae8745c6b3accbba6b8',
   })) assert.equal(createHash('sha256').update(readFileSync(sourcePath(name), 'utf8').replace(/\r\n/g, '\n')).digest('hex'), sha, name)
+  assertSourceProperties('profile-mobility', readFileSync(sourcePath('ProfilHoved.jsx'), 'utf8'))
+  assertSourceProperties('hub-sections', readFileSync(sourcePath('hubSektioner.jsx'), 'utf8'))
 })
 
 test('counter: failed write keeps all input, false result cannot announce success, retry succeeds', async () => {

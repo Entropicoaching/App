@@ -1,25 +1,31 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, existsSync } from 'node:fs'
+import * as vm from 'node:vm'
 import { spawnSync } from 'node:child_process'
-const root = new URL('./', import.meta.url)
-const shared = ['exerciseSetView.js', 'exerciseNames.js', 'inputValues.js', 'calendarDate.js']
-const read = name => readFileSync(new URL(existsSync(new URL(name, root)) ? name : '../' + name, root))
-for (const prefix of ['fokus', 'frem3']) {
-  for (const dependency of ['node:fs', '../other/inputValues.js', '../calendarDate.js?alias']) {
-    test(`${prefix}: actual module import rejects ${dependency}`, () => {
-      const dir = mkdtempSync(new URL('./synthetic-counter-', root))
-      mkdirSync(dir + '/athlete')
-      writeFileSync(dir + '/package.json', '{"type":"module"}')
-      for (const name of shared) writeFileSync(dir + '/' + name, read(name))
-      for (const suffix of ['Loader.mjs', 'Dom.mjs', 'Jsx.mjs'])
-        writeFileSync(dir + '/athlete/' + prefix + suffix, read(prefix + suffix))
-      writeFileSync(dir + '/athlete/repRecords.mjs', `import ${JSON.stringify(dependency)};\n` + read('repRecords.mjs'))
-      const script = `import { install } from './${prefix}Loader.mjs'; install(); await import('./repRecords.mjs')`
-      const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: dir + '/athlete', encoding: 'utf8' })
-      assert.equal(result.status, 1)
-      assert.match(result.stderr, /Forbidden synthetic dependency:/)
-      assert.ok(result.stderr.includes(dependency))
+import { fileURLToPath } from 'node:url'
+import { syntheticModules } from '../registrySyntheticFs.mjs'
+import { snapshotFiles } from '../registryTestFiles.mjs'
+if (!vm.SourceTextModule) {
+  test('isolated synthetic ESM counterexamples', () => {
+    const result = spawnSync(process.execPath, ['--experimental-vm-modules', fileURLToPath(import.meta.url)], { encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stdout + result.stderr)
+  })
+} else {
+const root = new URL('../../', import.meta.url)
+const files = snapshotFiles(root)
+
+for (const prefix of ['fokus', 'frem3']) for (const dependency of ['node:fs', '../other/inputValues.js', '../calendarDate.js?alias']) {
+  test(`${prefix}: actual module import rejects ${dependency}`, async () => {
+    const input = new Map(files)
+    const target = new URL('src/athlete/repRecords.mjs', root).href
+    input.set(target, `import ${JSON.stringify(dependency)};\n` + input.get(target))
+    const engine = syntheticModules(input, root)
+    const loader = await engine.import('src/athlete/' + prefix + 'Loader.mjs'); loader.install()
+    await assert.rejects(engine.import('src/athlete/repRecords.mjs'), error => {
+      assert.match(error.message, /Forbidden synthetic dependency:/)
+      assert.ok(error.message.includes(dependency))
+      return true
     })
-  }
+  })
+}
 }

@@ -1,8 +1,9 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './checklistJsx.mjs'
 import * as dom from './checklistDom.mjs'
-const files = ['App.jsx', 'Dashboard.jsx', 'AthleteView.jsx']
+const files = registryRecipe(import.meta.url, 'files')
 const stubs = new Map()
 for (const file of files) {
   const source = readFileSync(new URL(file, import.meta.url), 'utf8')

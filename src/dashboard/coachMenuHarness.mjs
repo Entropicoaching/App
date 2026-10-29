@@ -1,4 +1,5 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { basename } from 'node:path'
 import { jsx } from './coachRydJsx.mjs'
@@ -46,8 +47,7 @@ registerHooks({
     }
     if (!context.parentURL?.startsWith(prefix)) return next(specifier, context)
     const name = basename(specifier)
-    const imports = new Set(['react', '../dashboardShared.js', './coachKonstanter.js',
-      '../supabase.js', './coachMenuMore.mjs', '../coachRyd.mjs', '../weekDates', '../coachPriority'])
+    const imports = new Set(registryRecipe(import.meta.url, 'imports'))
     if (!imports.has(specifier) || !allowed.has(name)) throw Error('Forbidden dependency: ' + specifier)
     return { url: prefix + name, shortCircuit: true }
   },

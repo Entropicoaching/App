@@ -1,30 +1,33 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import * as vm from 'node:vm'
 import { spawnSync } from 'node:child_process'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-const base = new URL('./', import.meta.url)
+import { syntheticModules } from '../registrySyntheticFs.mjs'
+import { snapshotFiles } from '../registryTestFiles.mjs'
+if (!vm.SourceTextModule) {
+  test('isolated synthetic ESM counterexamples', () => {
+    const result = spawnSync(process.execPath, ['--experimental-vm-modules', fileURLToPath(import.meta.url)], { encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stdout + result.stderr)
+  })
+} else {
+const root = new URL('../../', import.meta.url)
+const files = snapshotFiles(root)
+
 for (const loader of ['followUpLoader.mjs', 'rebaseFollowUpLoader.mjs']) {
- test(`${loader}: K-FUND1 rejects unknown import from exact approved component`, () => {
-  const code = `import { registerHooks } from 'node:module';
-   import { install } from './${loader}'; install();
-   const home = new URL('./ForsideView.jsx', import.meta.url).href;
-   registerHooks({load(url, context, next) {
-    const result = next(url, context);
-    if (url === home) return {...result, source: "import './not-a-pinned-dependency.mjs';\\n" + result.source};
-    return result;
-   }});
-   await import('./ForsideView.jsx');`;
-  const result = spawnSync(process.execPath, ['--input-type=module','-e',code], {cwd:fileURLToPath(base),encoding:'utf8'});
-  assert.notEqual(result.status, 0, 'unknown component import must fail');
-  assert.match(result.stderr, /Unapproved hermetic dependency: \.\/not-a-pinned-dependency\.mjs/);
- });
- test(`${loader}: rejects same basename in another directory`, () => {
-  const dir = new URL(`./boundary-${loader}/`,base); mkdirSync(dir,{recursive:true});
-  writeFileSync(new URL('ForsideView.jsx',dir), readFileSync(new URL('ForsideView.jsx',base)));
-  const code = `import { install } from './${loader}'; install(); await import('./boundary-${loader}/ForsideView.jsx');`;
-  const result = spawnSync(process.execPath,['--input-type=module','-e',code],{cwd:fileURLToPath(base),encoding:'utf8'});
-  assert.notEqual(result.status,0);
-  assert.match(result.stderr,/Unapproved/);
- });
+  test(`${loader}: K-FUND1 rejects unknown import from exact approved component`, async () => {
+    const input = new Map(files), home = new URL('src/dashboard/ForsideView.jsx', root).href
+    input.set(home, "import './not-a-pinned-dependency.mjs';\n" + input.get(home))
+    const engine = syntheticModules(input, root)
+    const module = await engine.import('src/dashboard/' + loader); module.install()
+    await assert.rejects(engine.import('src/dashboard/ForsideView.jsx'), /Unapproved hermetic dependency: \.\/not-a-pinned-dependency\.mjs/)
+  })
+  test(`${loader}: rejects same basename in another directory`, async () => {
+    const input = new Map(files), path = 'src/dashboard/boundary-' + loader + '/ForsideView.jsx'
+    input.set(new URL(path, root).href, input.get(new URL('src/dashboard/ForsideView.jsx', root).href))
+    const engine = syntheticModules(input, root)
+    const module = await engine.import('src/dashboard/' + loader); module.install()
+    await assert.rejects(engine.import(path), /Unapproved/)
+  })
+}
 }

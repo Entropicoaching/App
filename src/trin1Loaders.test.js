@@ -1,3 +1,4 @@
+import { registryRecipe } from './testModuleRegistry.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
@@ -70,5 +71,8 @@ test('custom closed graph contains the real profile and closed harness registrie
   assert.deepEqual(graph['src/udgivelseTrin.mjs'], {})
   const loaders = ['coachRydHarness.mjs', 'coachRyd2Harness.mjs',
     'dashboard/profileWeekHarness.mjs', 'dashboard/vcQueueHarness.mjs']
-  for (const path of loaders) assert.match(readFileSync(new URL(path, root), 'utf8'), /['"]udgivelseTrin\.mjs['"]/)
+  for (const path of loaders) {
+    const name = path.endsWith('profileWeekHarness.mjs') ? 'real' : path.endsWith('vcQueueHarness.mjs') ? 'allowed' : 'real'
+    assert.ok(JSON.stringify(registryRecipe(new URL(path, root).href, name)).includes('udgivelseTrin.mjs'))
+  }
 })

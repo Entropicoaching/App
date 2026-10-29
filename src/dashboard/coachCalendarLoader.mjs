@@ -1,10 +1,11 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './coachCalendarJsx.mjs'
 const root = new URL('./', import.meta.url)
 const dom = new URL('coachCalendarDom.mjs', root).href
-const names = new Set(['KalenderView.jsx', 'CoachCalendarEvents.jsx', 'coachCalendarEvents.mjs', 'planOverview.js', 'calendarDate.js', 'kostNumbers.mjs', 'calendarWeekDate.mjs', 'coachKonstanter.js'])
-const paths = { 'planOverview.js': '../planOverview.js', 'calendarDate.js': '../calendarDate.js', 'kostNumbers.mjs': '../athlete/kostNumbers.mjs' }
+const names = new Set(registryRecipe(import.meta.url, 'names'))
+const paths = registryRecipe(import.meta.url, 'paths')
 const local = name => new URL(existsSync(new URL(name, root)) ? name : (paths[name] || name), root).href
 registerHooks({
   resolve(specifier, context, next) {

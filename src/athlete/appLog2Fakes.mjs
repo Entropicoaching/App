@@ -1,5 +1,6 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 // Hermetisk grænse. Ingen rigtig klient indlæses.
-import { registerHooks } from 'node:module'
+import { registryHooks } from '../testModuleRegistry.mjs'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 const self = import.meta.url

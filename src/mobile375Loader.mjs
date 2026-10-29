@@ -1,15 +1,8 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 const root = new URL('./', import.meta.url)
-const paths = {
-  'kost2Loader.mjs': 'src/athlete/kost2Loader.mjs',
-  'kost2Dom.mjs': 'src/athlete/kost2Dom.mjs',
-  'kost2Paths.mjs': 'src/athlete/kost2Paths.mjs',
-  'mobilityFocus.mjs': 'src/athlete/mobilityFocus.mjs',
-  'coachWeekOverview.mjs': 'src/dashboard/coachWeekOverview.mjs',
-  'calendarDate.js': 'src/calendarDate.js',
-  'kostNumbers.mjs': 'src/athlete/kostNumbers.mjs',
-}
+const paths = registryRecipe(import.meta.url, 'paths')
 const urls = new Map(Object.entries(paths).map(([name, path]) => [name,
   new URL(existsSync(new URL(name, root)) ? name : path.replace(/^src\//, ''), root).href]))
 export const hooks = registerHooks({

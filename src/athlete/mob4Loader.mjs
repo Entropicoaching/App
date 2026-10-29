@@ -1,10 +1,9 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './mob4Jsx.mjs'
 const root = new URL('./', import.meta.url)
-const files = ['MobiliseringTab.jsx', 'MobilitetFokus.jsx', 'MobilitetsBibliotek.jsx',
-  'mobilityFocus.mjs', 'mobilityCatalog.mjs', 'mobilityLibrary.mjs', 'exerciseNames.js',
-  'mobilityHomework.mjs', 'CoachMobility.jsx', 'coachMobility.mjs', 'mobilityHelped.mjs', 'ProfilHoved.jsx']
+const files = registryRecipe(import.meta.url, 'files')
 export function moduleURL(name) {
   return [name, '../' + name, '../dashboard/' + name].map(path => new URL(path, root)).find(existsSync)
 }

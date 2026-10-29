@@ -1,8 +1,9 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { posix } from 'node:path'
 import { jsx } from './coachSaveNextJsx.mjs'
-const paths = JSON.parse(readFileSync(new URL('./test-paths.json', import.meta.url)))
+const paths = registryRecipe(import.meta.url, 'manifest:./test-paths.json')
 const states = new Map()
 globalThis[Symbol.for('coach14.tests')] = states
 let counter = 0

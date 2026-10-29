@@ -1,13 +1,13 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './repRecordsJsx.mjs'
 
 // Resolve only the pinned, reconstructed module graph. No packages or backend.
 const root = new URL('./', import.meta.url)
-const components = ['FremgangTab.jsx', 'EnkelFremgangTab.jsx']
-const athlete = ['repRecords.mjs', 'fremgangPersonalRecords.mjs', 'fremgangLinjer.mjs', 'rekorder.js', 'kostNumbers.mjs']
-const shared = ['exerciseProgress.js', 'exerciseSetView.js', 'exerciseNames.js', 'inputValues.js',
-  'calendarDate.js', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'dataEvidence.mjs', 'rpeEvidence.mjs', 'ugenoegle.js']
+const components = registryRecipe(import.meta.url, 'components')
+const athlete = registryRecipe(import.meta.url, 'athlete')
+const shared = registryRecipe(import.meta.url, 'shared')
 const urls = new Map([...components, ...athlete, ...shared].map(name => [name,
   new URL(existsSync(new URL(name, root)) ? name : name === 'ugenoegle.js' ? '../volume/' + name : '../' + name, root).href]))
 const dom = new URL('./repRecordsDom.mjs', root).href

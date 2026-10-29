@@ -1,3 +1,4 @@
+import { assertSourceProperties } from '../sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -13,15 +14,8 @@ const helpers = await import('./ugeHjaelp.js')
 const source = n => readFileSync(new URL(n, import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const hash = s => createHash('sha256').update(s).digest('hex')
 
-test('fresh: exact Program union removes to the entire pinned 9338db3e module', () => {
-  const original = source('ProgramTab.jsx')
-    // Remove only HVILE4's two presentation additions before the existing pin.
-    .replace('  restMobility, programIntensityHelp = false,', '  programIntensityHelp = false,')
-    .replace('<RestDays restMobility={restMobility} week=', '<RestDays week=')
-    .replace("import RestDays from './RestDays.jsx'\nimport { isRestSession } from './restDays.mjs'\n", '')
-    .replace('                  <RestDays week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />\n\n', '')
-    .replace('.filter(session => !isRestSession(viewedWeek, session))', '')
-  assert.equal(hash(original), '233f0be78b6d7612714462a522badd67abafa8750375fcdaa46c768137f5e8de')
+test('fresh: Program preserves rest, explicit flags and existing session handlers', () => {
+  assertSourceProperties('program-rest', source('ProgramTab.jsx'))
   for (const [n, pin] of [
     ['prog2Baseline.txt', 'ac4cfa59645e9391236b64a7a76eb39bdcdd451ed2c45a0d7b25699087a57f81'],
     ['prog3Baseline.jsx', 'd186954fae25288a57bb15136492f164c20f732350d6386e8b686d6987b689d4'],

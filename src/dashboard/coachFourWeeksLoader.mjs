@@ -1,17 +1,10 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { existsSync, readFileSync } from 'node:fs'
 import { jsx } from './coachFourWeeksJsx.mjs'
 const base = new URL('./', import.meta.url)
 const flat = existsSync(new URL('Dashboard.jsx', base))
-const targets = { 'coachInactive.mjs': './coachInactive.mjs', 'profileWeekSummary.mjs': './profileWeekSummary.mjs', 'nextSet.js': '../nextSet.js', 'exerciseProgress.js': '../exerciseProgress.js', 'inputValues.js': '../inputValues.js', 'exerciseSetView.js': '../exerciseSetView.js', 'exerciseNames.js': '../exerciseNames.js', 'ugenoegle.js': '../volume/ugenoegle.js',
-  'fridayChecklist.mjs': './fridayChecklist.mjs', 'rel1030.mjs': '../rel1030.mjs',
-  'udgivelseTrin.mjs': '../udgivelseTrin.mjs', 'dataEnough.mjs': '../dataEnough.mjs', 'dataEvidence.mjs': '../dataEvidence.mjs', 'rpeEvidence.mjs': '../rpeEvidence.mjs', 'mealEvidence.mjs': '../mealEvidence.mjs', 'videoEvidence.mjs': '../videoEvidence.mjs', 'coachWeekOverview.mjs': './coachWeekOverview.mjs',
-  'coachKonstanter.js': './coachKonstanter.js',
-  'Dashboard.jsx': '../Dashboard.jsx', 'laesninger.js': './laesninger.js',
-  'useDashboardEffekter.js': './useDashboardEffekter.js', 'CoachFourWeeks.jsx': './CoachFourWeeks.jsx',
-  'coachFourWeeks.mjs': './coachFourWeeks.mjs', 'calendarDate.js': '../calendarDate.js',
-  'kostNumbers.mjs': '../athlete/kostNumbers.mjs',
-}
+const targets = registryRecipe(import.meta.url, 'targets')
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {

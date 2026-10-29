@@ -1,69 +1,11 @@
-import { registerHooks } from 'node:module'
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
+import { registryHooks, registryRecipe } from './testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { basename, posix } from 'node:path'
 import { jsx } from './coachRyd2Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const modulePaths = {
-  'coachInactive.mjs': 'dashboard/coachInactive.mjs',
-  'coachInactiveFilter.mjs': 'dashboard/coachInactiveFilter.mjs',
-  "videoStorageUsage.mjs": "dashboard/videoStorageUsage.mjs",
-  "VideoStorageUsage.jsx": "dashboard/VideoStorageUsage.jsx",
-  "videoQueueWait.mjs": "dashboard/videoQueueWait.mjs",
-  "rel1030.mjs": "rel1030.mjs",
-  "coachMeetSoon.mjs": "dashboard/coachMeetSoon.mjs",
-  "coachMeetSource.mjs": "dashboard/coachMeetSource.mjs",
-  "coachFollowUp.mjs": "dashboard/coachFollowUp.mjs",
-  "coachMenuMore.mjs": "dashboard/coachMenuMore.mjs",
-  "coachCalendarEvents.mjs": "dashboard/coachCalendarEvents.mjs",
-  "coachMobility.mjs": "athlete/coachMobility.mjs",
-  "mobilityCatalog.mjs": "athlete/mobilityCatalog.mjs",
-  "mobilityFocus.mjs": "athlete/mobilityFocus.mjs",
-  "mobilityHomework.mjs": "mobilityHomework.mjs",
-  "CoachCalendarEvents.jsx": "dashboard/CoachCalendarEvents.jsx",
-  "CoachMobility.jsx": "athlete/CoachMobility.jsx",
-
-  "inputValues.js": "inputValues.js",
-  "e2eTestFlags.mjs": "e2eTestFlags.mjs",
-  "mobilityHelped.mjs": "mobilityHelped.mjs",
-  "coachRyd.mjs": "coachRyd.mjs",
-  "calendarDate.js": "calendarDate.js",
-  "planOverview.js": "planOverview.js",
-  "kostNumbers.mjs": "athlete/kostNumbers.mjs",
-  "calendarWeekDate.mjs": "dashboard/calendarWeekDate.mjs",
-  "coachPriority.js": "coachPriority.js",
-  "automationAlerts.js": "automationAlerts.js",
-  "coachBriefingRules.js": "coachBriefingRules.js",
-  "coachInboxState.js": "coachInboxState.js",
-  "coachNoteSignal.js": "coachNoteSignal.js",
-  "udgivelseTrin.mjs": "udgivelseTrin.mjs",
-  "dataEnough.mjs": "dataEnough.mjs",
-  "rpeEvidence.mjs": "rpeEvidence.mjs",
-  "coachBriefingSeen.js": "coachBriefingSeen.js",
-  "coachMorning.mjs": "dashboard/coachMorning.mjs",
-  "coachMorningSource.mjs": "dashboard/coachMorningSource.mjs",
-  "dataEvidence.mjs": "dataEvidence.mjs",
-  "exerciseProgress.js": "exerciseProgress.js",
-  "exerciseSetView.js": "exerciseSetView.js",
-  "exerciseNames.js": "exerciseNames.js",
-  "smerteRegion.js": "athlete/smerteRegion.js",
-  "ugenoegle.js": "volume/ugenoegle.js",
-  "coachWeekOverview.mjs": "dashboard/coachWeekOverview.mjs",
-  "coachActions.mjs": "dashboard/coachActions.mjs",
-  "coachTemplateMessages.mjs": "dashboard/coachTemplateMessages.mjs",
-  "videoQueueFilter.mjs": "dashboard/videoQueueFilter.mjs",
-  "HubTab.jsx": "dashboard/HubTab.jsx",
-  "ProfilHoved.jsx": "dashboard/ProfilHoved.jsx",
-  "IndbakkeView.jsx": "dashboard/IndbakkeView.jsx",
-  "ForsideView.jsx": "dashboard/ForsideView.jsx",
-  "KalenderView.jsx": "dashboard/KalenderView.jsx",
-  "Sidebar.jsx": "dashboard/Sidebar.jsx",
-  "MobilNav.jsx": "dashboard/MobilNav.jsx",
-  "hubSektioner.jsx": "dashboard/hubSektioner.jsx",
-  "CoachActions.jsx": "dashboard/CoachActions.jsx",
-  "CoachTemplateMessage.jsx": "dashboard/CoachTemplateMessage.jsx",
-  "VideoQueueFilter.jsx": "dashboard/VideoQueueFilter.jsx"
-}
+const modulePaths = registryRecipe(import.meta.url, 'modulePaths')
 const actual = name => new URL(existsSync(new URL(name,root)) ? name : modulePaths[name],root)
 export function pinned(path) {
   return readFileSync(new URL('coachRyd2Base' + basename(path).replace('.jsx','.txt'), root), 'utf8')
@@ -95,8 +37,8 @@ const shared = {
   videoCoachMetricText: () => '', videoCoachBaselineText: () => '',
   parsePlannedRpe: () => null, buildLiftSeries: () => ({ hasData: false, plannedData: [], actualData: [] }),
 }
-const real = new Set(['coachInactive.mjs', 'coachInactiveFilter.mjs', 'videoStorageUsage.mjs','videoQueueWait.mjs','rel1030.mjs','coachMeetSoon.mjs','coachMeetSource.mjs','coachFollowUp.mjs','coachMenuMore.mjs','coachCalendarEvents.mjs','coachMobility.mjs','mobilityCatalog.mjs','mobilityFocus.mjs','mobilityHomework.mjs','inputValues.js','e2eTestFlags.mjs','mobilityHelped.mjs','coachRyd.mjs','calendarDate.js','planOverview.js','kostNumbers.mjs','calendarWeekDate.mjs','coachPriority.js','automationAlerts.js','coachBriefingRules.js','coachInboxState.js','coachNoteSignal.js','udgivelseTrin.mjs', 'dataEnough.mjs','rpeEvidence.mjs','coachBriefingSeen.js','coachMorning.mjs','coachMorningSource.mjs','dataEvidence.mjs','exerciseProgress.js','exerciseSetView.js','exerciseNames.js','smerteRegion.js','ugenoegle.js','coachWeekOverview.mjs','coachActions.mjs','coachTemplateMessages.mjs','videoQueueFilter.mjs'])
-const components = new Set(['VideoStorageUsage.jsx','CoachCalendarEvents.jsx','CoachMobility.jsx','HubTab.jsx','ProfilHoved.jsx','IndbakkeView.jsx','ForsideView.jsx','KalenderView.jsx','Sidebar.jsx','MobilNav.jsx','hubSektioner.jsx','CoachActions.jsx','CoachTemplateMessage.jsx','VideoQueueFilter.jsx'])
+const real = new Set(registryRecipe(import.meta.url, 'real'))
+const components = new Set(registryRecipe(import.meta.url, 'components'))
 const registry = new Map()
 globalThis[Symbol.for('coachRyd.tests')] = registry
 let id = 0

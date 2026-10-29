@@ -1,12 +1,11 @@
+const registerHooks = (...args) => registryHooks(import.meta.url)(...args)
 import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
-import { registerHooks } from 'node:module'
+import { registryHooks, registryRecipe } from '../testModuleRegistry.mjs'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './vaerd5Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const names = ['restMobility.mjs', 'coachMobility.mjs', 'mobilityFocus.mjs', 'mobilityCatalog.mjs', 'mobilityHomework.mjs', 'RestDays.jsx', 'restDays.mjs', 'programNaesteUge.mjs','IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
-  'fixedRepsEntry.js', 'exerciseSetView.js', 'exerciseNames.js', 'warmupOverride.js', 'kostNumbers.mjs',
-  'vaerd5Fixture.mjs', 'rpeEvidence.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'calendarDate.js']
+const names = registryRecipe(import.meta.url, 'names')
 const urls = new Map(names.map(name => [name, (existsSync(new URL(name, root))
   ? new URL(name, root) : new URL('../' + name, root)).href]))
 const approved = new Set(urls.values())

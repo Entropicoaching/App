@@ -1,8 +1,8 @@
+import { assertSourceProperties } from '../sourceProperties.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
-import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { app, nodes, text } from './vcQueueHarness.mjs'
 
@@ -93,10 +93,9 @@ test('union keeps marker preview, seen handler and exact video handler in the sa
   }
 })
 
-test('hash comparison normalizes CRLF and LF without normalizing other source bytes', () => {
+test('queue flag contract permits additions and normalizes line endings', () => {
   const code = readFileSync(new URL('./videoQueueWait.mjs', import.meta.url), 'utf8')
-  const hash = value => createHash('sha256').update(value.replace(/\r\n/g, '\n')).digest('hex')
-  const lf = code.replace(/\r\n/g, '\n')
-  assert.equal(hash(lf), hash(lf.replace(/\n/g, '\r\n')))
-  assert.notEqual(hash(code), hash(code.replace('ENABLED = false', 'ENABLED = true')))
+  assertSourceProperties('queue-default', code)
+  assertSourceProperties('queue-default', code.replace(/\r?\n/g, '\r\n') + '\n// unrelated addition\n')
+  assert.throws(() => assertSourceProperties('queue-default', code.replace('VIDEO_QUEUE_WAIT_ENABLED = false', 'VIDEO_QUEUE_WAIT_ENABLED = true')), /missing protected property/)
 })
