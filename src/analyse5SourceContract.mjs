@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 const bytes = readFileSync(new URL('./analyse5ProtectedSources.json', import.meta.url))
-assert.equal(createHash('sha256').update(bytes).digest('hex'), 'c8219db0a798d147153a8b19982b01706a058cf1e154daaf917110401cafedf9')
+assert.equal(createHash('sha256').update(bytes.toString('utf8').replace(/\r\n/g, '\n')).digest('hex'), 'c8219db0a798d147153a8b19982b01706a058cf1e154daaf917110401cafedf9')
 export const protectedSources = Object.freeze(JSON.parse(bytes))
 export function assertProtectedLines(actual, expected, label = 'protected source') {
   const lines = actual.replace(/\r\n/g, '\n').split('\n')
