@@ -52,12 +52,12 @@ test('fresh actual handler: codec MIME is normalized for storage and path', asyn
   } finally { f.restore(); }
 });
 
-test('fresh actual handler: recording replacement follows same upload gate and sixty-second cap', async () => {
+test('fresh actual handler: recording replacement follows same upload gate and fifteen-second cap', async () => {
   const f = await bridge({ videoOptag2: true });
   try {
     const work = f.send(); await f.metadata(90);
     await f.button('Start optagelse').click();
-    f.dom.advance(60000); await f.metadata(60); await f.finish(60); await work;
+    f.dom.advance(15000); await f.metadata(15); await f.finish(15); await work;
     assert.equal(f.uploads.length, 1); assert.equal(f.replies[0].ok, true);
     assert.equal(f.dom.jobs.size, 0);
   } finally { f.restore(); }

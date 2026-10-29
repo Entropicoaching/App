@@ -11,7 +11,7 @@ test('counter: external select cannot claim encoded approval with a second argum
 });
 
 test('counter: switching source during encode invalidates former result and cleans timers', async () => {
-  const f = fixture(); const first = f.api.select({ name: 'old' }); await f.metadata(20);
+  const f = fixture(); const first = f.api.select({ name: 'old' }); await f.metadata(10);
   const late = f.active.onstop;
   const second = f.api.select({ name: 'next' });
   late(); await f.metadata(90); await Promise.all([first, second]);

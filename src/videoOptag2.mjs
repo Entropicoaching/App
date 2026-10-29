@@ -1,7 +1,7 @@
 import { compressVideo2, estimateVideoBytes, compressionProfile } from './videoCompression2.mjs';
 // VC-OPTAG2. Kun et eksplicit kodevalg aktiverer forslaget.
 export const DEFAULT_VIDEO_OPTAG2 = false;
-export const MAX_CAPTURE_SECONDS = 60;
+export const MAX_CAPTURE_SECONDS = 15;
 
 export function validInterval(start, end, duration) {
   return [start, end, duration].every(Number.isFinite) && start >= 0 &&
@@ -29,7 +29,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
     parent?.appendChild(node);
     return node;
   };
-  const launcher = make('button', 'Optag et løft (højst 60 sekunder)');
+  const launcher = make('button', 'Optag et løft (højst 15 sekunder)');
   launcher.type = 'button';
   (document.getElementById('openSmall')?.parentNode || document.body).appendChild(launcher);
   const sizeLine = make('p', '', launcher.parentNode);
@@ -40,7 +40,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
   panel.setAttribute('aria-modal', 'true');
   panel.setAttribute('aria-label', 'Kort løftevideo');
   panel.style.cssText = 'position:fixed;inset:8px;z-index:100000;background:#181818;color:white;padding:16px;overflow:auto';
-  make('p', 'Film ét løft pr. video. Optagelsen stopper efter 60 sekunder.', panel);
+  make('p', 'Film ét løft pr. video. Optagelsen stopper efter 15 sekunder.', panel);
   const status = make('p', '', panel);
   status.setAttribute('role', 'status');
   const preview = make('video', '', panel);
@@ -146,7 +146,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
       } else {
         start.value = ''; end.value = '';
         start.max = end.max = String(seconds);
-        status.textContent = 'Videoen er over 60 sekunder. Vælg start og slut, og tryk Klip og brug video. Klipning og komprimering tager intervallets tid. Intet er sendt.';
+        status.textContent = 'Videoen er over 15 sekunder. Vælg start og slut, og tryk Klip og brug video. Klipning og komprimering tager intervallets tid. Intet er sendt.';
       }
       controls();
     } catch {
@@ -197,7 +197,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
         const tick = () => {
           if (!recording || token !== generation) return;
           const remaining = Math.max(0, deadline - clock.now());
-          status.textContent = remaining <= 10000 ? `${Math.ceil(remaining / 1000)} sekunder tilbage` : 'Optager ... stopper efter 60 sekunder.';
+          status.textContent = remaining <= 5000 ? `${Math.ceil(remaining / 1000)} sekunder tilbage` : 'Optager ... stopper efter 15 sekunder.';
           if (remaining === 0) { stopRecording(); return; }
           timer = clock.timeout(tick, Math.min(100, remaining));
         };
@@ -220,7 +220,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
   play.onclick = async () => {
     const from = Number(start.value), to = Number(end.value);
     if (start.value.trim() === '' || end.value.trim() === '' || !validInterval(from, to, duration)) {
-      status.textContent = 'Vælg start og slut inden for videoen, højst 60 sekunder.'; return;
+      status.textContent = 'Vælg start og slut inden for videoen, højst 15 sekunder.'; return;
     }
     preview.pause(); preview.currentTime = from;
     preview.ontimeupdate = () => { if (preview.currentTime >= to) preview.pause(); };
@@ -246,7 +246,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
     if (disposed || waiting || recording) return;
     const from = Number(start.value), to = Number(end.value);
     if (start.value.trim() === '' || end.value.trim() === '' || !validInterval(from, to, duration)) {
-      status.textContent = 'Vælg start og slut inden for videoen, højst 60 sekunder.'; return;
+      status.textContent = 'Vælg start og slut inden for videoen, højst 15 sekunder.'; return;
     }
     await encode(from, to);
   };

@@ -2,7 +2,7 @@
 // The caller must validate the returned file's decoded duration before upload.
 export const compressionProfile = Object.freeze({ videoBitsPerSecond: 1000000, audioBitsPerSecond: 64000 });
 export function estimateVideoBytes(seconds) {
-  if (!Number.isFinite(seconds) || seconds <= 0 || seconds > 60) throw Error('Ugyldig varighed');
+  if (!Number.isFinite(seconds) || seconds <= 0 || seconds > 15) throw Error('Ugyldig varighed');
   return Math.ceil(seconds * (compressionProfile.videoBitsPerSecond + compressionProfile.audioBitsPerSecond) / 8);
 }
 export function dimensions540(width, height) {
@@ -14,7 +14,7 @@ export function compressVideo2({ video, start, end, media, clock, signal }) {
   return new Promise((resolve, reject) => {
     let recorder, stream, sourceStream, drawTimer = null, timer = null, poll = null, started = false, reachedEnd = false, finished = false;
     const chunks = [];
-    if (![start, end, video.duration].every(Number.isFinite) || start < 0 || end <= start || end > video.duration || end - start > 60) {
+    if (![start, end, video.duration].every(Number.isFinite) || start < 0 || end <= start || end > video.duration || end - start > 15) {
       reject(Error('Ugyldigt klippeinterval')); return;
     }
     const cleanup = () => {
