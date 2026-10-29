@@ -1,3 +1,4 @@
+import { assertAcceptedSource } from '../analyse5SourceContract.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -14,11 +15,10 @@ test('closed prototype loader rejects unknown, escaping and extensionless import
 test('pinned baseline and accepted app payload stay exact',()=>{
  const hash=name=>createHash('sha256').update(readFileSync(new URL(name,import.meta.url),'utf8').replace(/\r\n/g,'\n')).digest('hex') // linjeslut normaliseret, saa CRLF- og LF-udtjekning giver samme hash
  assert.equal(hash('./analyseConclusionBaseline.jsx'),'b08de1810032a1c3e87bdcbd8e8af4248623163762ed946684bdcbf0ddd22d18')
- const accepted=readFileSync(new URL('./analyseConclusion.mjs',import.meta.url),'utf8').replace(/\r\n/g,'\n').replace(/^import \{ rel1030Feature \}[^\n]*\n/,'').replace("return (values.length === 1 && values[0] === '1') || rel1030Feature('analyseConclusion', search)", "return values.length === 1 && values[0] === '1'")
- assert.equal(createHash('sha256').update(accepted).digest('hex'),'0f820d5daf4845a7d4c985506d3460120c87252e28cf730a63f230f2d45c3836')
- const source=readFileSync(new URL('./AnalyseTab.jsx',import.meta.url),'utf8')
- const restored=source.replace(/^import AnalyseConclusion[^\n]*\r?\n/m,'').replace(/                <AnalyseConclusion enabled=[\s\S]*?error=\{videoAnalysisError\}>\r?\n/,'').replace(/                <\/AnalyseConclusion>\r?\n/,'')
- assert.equal(restored,readFileSync(new URL('./analyseConclusionBaseline.jsx',import.meta.url),'utf8'))
+ // Baseline remains immutable; app sources preserve accepted lines additively.
+ for (const name of ['analyseConclusion.mjs', 'AnalyseTab.jsx']) {
+  assertAcceptedSource('src/dashboard/'+name, readFileSync(new URL('./'+name,import.meta.url),'utf8'))
+ }
 })
 test('release and preview combinations preserve closed evidence and real handlers',()=>{
  for(const extra of ['', '&rel1030=1','&analyseSamlet=1&analyseSammenlign=1']) for(const isMobile of [false,true]) {

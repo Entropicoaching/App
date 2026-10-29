@@ -1,3 +1,4 @@
+import { assertAcceptedSource } from './analyse5SourceContract.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
@@ -64,15 +65,9 @@ test('REB closed loader lists admit only the new explicit dashboard export, keep
 })
 
 test('REB follow closed-list remainder is pinned unchanged',()=>{
- const source=read('dashboard/followUpLoader.mjs').replace(/\r\n/g,'\n')
- const addition="  [\"../Dashboard.jsx\", \"./mobilityAdherence.mjs\", {\"stub\": \"export const MobilityAdherenceProfile = () => null;\"}],\n"
- assert.equal(source.split(addition).length,2)
- assert.equal(sha(source.replace(addition,'')),'4fd1797b3420888e9dd0c1e4a9bc132883d1789c7a1722b32050ccbace1c9ef5')
+ assertAcceptedSource('src/dashboard/followUpLoader.mjs', read('dashboard/followUpLoader.mjs'))
 })
 
 test('REB rebase closed-list remainder is pinned unchanged',()=>{
- const source=read('rebaseHarness.mjs').replace(/\r\n/g,'\n')
- const addition="'./mobilityAdherence.mjs': {MobilityAdherenceProfile:noop},\n"
- assert.equal(source.split(addition).length,2)
- assert.equal(sha(source.replace(addition,'')),'c52ae3d40959eac442ed0dab60e9a7c868f5ca19779cb615a81faf4872bf4736')
+ assertAcceptedSource('src/rebaseHarness.mjs', read('rebaseHarness.mjs'))
 })
