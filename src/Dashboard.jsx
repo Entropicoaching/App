@@ -1,3 +1,4 @@
+import { MobilityAdherenceProfile } from './mobilityAdherence.mjs'
 import NytIAppen, { nytCoachNavigation } from './nytIAppen.mjs'
 import { coachNotesFlag, createCoachNoteSaver } from './dashboard/coachNotes.mjs'
 import { FridayChecklist, FridayChecklistEntry } from './dashboard/fridayChecklist.mjs'
@@ -76,7 +77,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
+export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
   const checklistEnabled = rel1030Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
@@ -700,7 +701,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         {view === 'profile' && a && (
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             {coachProfileWeek && <ProfileWeekSummary enabled={coachProfileWeek} athleteId={a.id} reads={fourWeekReads[a.id]} />}
-            <ProfilHoved {...{ mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilityCoachId: session?.user?.id, onMobilitySaved: updated => { setSelectedAthlete(previous => previous?.id === updated.id ? updated : previous); setAthletes(previous => previous.map(item => item.id === updated.id ? updated : item)) }, mobilitetHjalp: mobilitetHjalp === true, coachRyd,
+            <ProfilHoved {...{ mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, adherenceContent: mobilitetOpfoelgning === true ? <MobilityAdherenceProfile key={a.id} enabled={true} athleteId={a.id} /> : null, mobilityCoachId: session?.user?.id, onMobilitySaved: updated => { setSelectedAthlete(previous => previous?.id === updated.id ? updated : previous); setAthletes(previous => previous.map(item => item.id === updated.id ? updated : item)) }, mobilitetHjalp: mobilitetHjalp === true, coachRyd,
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,

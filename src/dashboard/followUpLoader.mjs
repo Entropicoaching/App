@@ -4,6 +4,7 @@ import { jsx } from './followUpJsx.mjs'
 const base = new URL('./', import.meta.url)
 // Explicit pinned parent/specifier pairs. Never infer exports from runtime source.
 const dependencies = [
+  ["../Dashboard.jsx", "./mobilityAdherence.mjs", {"stub": "export const MobilityAdherenceProfile = () => null;"}],
   ["../Dashboard.jsx", "./dashboard/coachMeetSoon.mjs", {"stub": "export const coachMeetSoonFlag = () => false;"}],
   ["../Dashboard.jsx", "./dashboard/profileWeekSummary.mjs", {"stub": "export const profileWeekFlag = () => false; export const ProfileWeekSummary = () => null;"}],
   ["./ForsideView.jsx", "./coachMeetSoon.mjs", {"stub": "export const CoachMeetSoon = () => null;"}],

@@ -89,7 +89,7 @@ export function MobilityHomeworkCoach({ enabled = DEFAULT_MOBILITY_HOMEWORK, ath
   if (enabled !== true || !validId(athleteId)) return null
   return h(CoachEditor, { key: athleteId, athleteId, storage })
 }
-function HomeworkHome({ athleteId, storage }) {
+function HomeworkHome({ athleteId, storage, adherenceEnabled, renderExerciseProgress }) {
   const [result, setResult] = useState(() => readHomework(athleteId, storage))
   const problem = homeworkLibrary().find(item => item.id === result.value?.problemId)
   return h('section', { style: section, 'aria-label': 'Hjemmeøvelser fra din coach' },
@@ -99,10 +99,10 @@ function HomeworkHome({ athleteId, storage }) {
     problem ? h('div', null, h('p', null, problem.explanation),
       h('ol', null, ...result.value.exerciseIds.map(id => {
         const ex = problem.exercises.find(item => item.id === id)
-        return h('li', { key: id }, h('h3', null, ex.name), h('p', null, ex.label), h('p', null, ex.desc))
+        return h('li', { key: id }, h('h3', null, ex.name), h('p', null, ex.label), h('p', null, ex.desc), adherenceEnabled === true && typeof renderExerciseProgress === 'function' ? renderExerciseProgress(ex) : null)
       }))) : null)
 }
-export function MobilityHomeworkHome({ enabled = DEFAULT_MOBILITY_HOMEWORK, athleteId, storage }) {
+export function MobilityHomeworkHome({ enabled = DEFAULT_MOBILITY_HOMEWORK, athleteId, storage, adherenceEnabled = false, renderExerciseProgress }) {
   if (enabled !== true || !validId(athleteId)) return null
-  return h(HomeworkHome, { key: athleteId, athleteId, storage })
+  return h(HomeworkHome, { key: athleteId, athleteId, storage, adherenceEnabled, renderExerciseProgress })
 }
