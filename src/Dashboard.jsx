@@ -1,3 +1,4 @@
+import { analyseMissingDataEnabled } from './analyseMissingFlag.mjs'
 import { analyseConclusionMessageEnabled } from './dashboard/analyseConclusionMessage.mjs'
 import { MobilityAdherenceProfile } from './mobilityAdherence.mjs'
 import NytIAppen, { nytCoachNavigation } from './nytIAppen.mjs'
@@ -79,6 +80,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
 export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES }) {
+  const analyseMissingData = analyseMissingDataEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const analyseConclusionMessage = analyseConclusionMessageEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const checklistEnabled = rel1030Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
@@ -373,6 +375,17 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
     ...(coachTemplateMessages === true ? { coachActions: true } : {}),
   })
+
+  const missingDataScopeRef = useRef(null)
+  missingDataScopeRef.current = {
+    enabled: analyseMissingData === true && !videoAnalysisLoading && !videoAnalysisError,
+    coachId: session?.user?.id,
+    athletes: athletes.filter(item => item.id === selectedAthlete?.id),
+  }
+  const [sendMissingDataMessage] = useState(() => createCoachTemplateSender({
+    enabled: true, database: supabase, getScope: () => missingDataScopeRef.current,
+    onSent: () => fetchLatestMessages(missingDataScopeRef.current.athletes.map(item => item.id)),
+  }))
 
   const conclusionScopeRef = useRef(null)
   conclusionScopeRef.current = {
@@ -739,6 +752,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               <LazyBoundary
                 factory={analyseTabFactory} label="Analyse" loading={<div style={s.page}>Indlæser…</div>}
                 componentProps={{ coachRyd,
+                  analyseMissingData, sendMissingDataMessage,
                   analyseConclusionMessage, coachId: session?.user?.id, sendConclusionMessage,
                   a, aiExportCopied, aiExportText, aiExportWeeks,
                   athleteLogs, athletePRHistory, athleteReadiness,

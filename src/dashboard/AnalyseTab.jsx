@@ -1,3 +1,4 @@
+import AnalyseMissingData from './analyseMissingData.mjs'
 import AnalyseConclusionMessage from './analyseConclusionMessage.mjs'
 import VideoRetentionLocalPreview from '../VideoRetentionLocalPreview.mjs'
 import AnalyseConclusion, { analyseConclusionEnabled } from './analyseConclusion.mjs'
@@ -5,7 +6,8 @@ import { weekEvidence, datedRegression } from '../dataEvidence.mjs'
 import { rpeTrendEvidence } from '../dataEvidence.mjs'
 import { explicitRpe } from '../dataEnough.mjs'
 import { volumeWeeks, matchedDays, planEvidence, liftEvidence, normalizedRatings } from '../dataEvidence.mjs'
-import { dataEnoughEnabled, dataAllowed, dataMessage, lowStreak as consecutiveLowStreak } from '../dataEnough.mjs'
+import { dataEnoughEnabled, dataAllowed, dataMessage } from './analyseDataGate.mjs'
+import { lowStreak as consecutiveLowStreak } from '../dataEnough.mjs'
 import { CoachFold } from '../coachRyd.mjs'
 // Analyse-fanen (videoer + træningsgrafer) — udskilt fra Dashboard.jsx (ordre
 // 130 · commit 2) som sin egen lazy-loadede chunk, så atletlisten og check-in-
@@ -32,7 +34,7 @@ import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'
 import AnalyseSamletPrototype from './AnalyseSamletPrototype.jsx'
 import { analyseSamletEnabled } from './analyseSamlet.mjs'
 
-export default function AnalyseTab({ analyseConclusionMessage = false, coachId, sendConclusionMessage, coachRyd = false, videoRetentionObjects,
+export default function AnalyseTab({ analyseMissingData = false, sendMissingDataMessage, analyseConclusionMessage = false, coachId, sendConclusionMessage, coachRyd = false, videoRetentionObjects,
   a, aiExportCopied, aiExportText, aiExportWeeks, athleteLogs, athletePRHistory, athleteReadiness,
   athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory, generateAIReport, isMobile,
   openAwaitingAnalysisVideo, openVideoAnalysisReview, openVideoCoachV3, reviewVideoAnalysis,
@@ -41,6 +43,11 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
   videoAnalysisReviewError, videoAnalysisReviewLoadingId, videoAnalysisUpdatingId, videoBaselines,
   videoLiftFilter, weeks,
 }) {
+              const missing = (rule, evidence, legacy, scopeKey = '') => analyseMissingData === true
+                ? <AnalyseMissingData enabled={true} key={`${rule}:${scopeKey}`} rule={rule} evidence={evidence()} scopeKey={scopeKey}
+                    coachId={coachId} athleteId={selectedAthlete?.id || a?.id}
+                    loading={videoAnalysisLoading} error={videoAnalysisError} sendMessage={sendMissingDataMessage} />
+                : legacy
               const basisToday = new Date().toLocaleDateString('en-CA')
               const planBasis = dataEnoughEnabled() ? planEvidence(weeks, athleteLogs, a.id, basisToday) : {}
               const readBasis = dataEnoughEnabled() ? matchedDays(athleteLogs, athleteReadiness) : {}
@@ -434,7 +441,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
                         </div>
                       ))}
                     </div>
-                    {dataEnoughEnabled() && !dataAllowed('D37', planBasis) && <p>{dataMessage('D37')}</p>}
+                    {dataEnoughEnabled() && !dataAllowed('D37', planBasis) && missing('D37', () => planBasis, <p>{dataMessage('D37')}</p>)}
                   {dataAllowed('D37', planBasis) && totalPlannedSessions > 0 && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
@@ -577,7 +584,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
                         const rows = athleteLogs.filter(r => kategoriFor(r.exercises?.name, nameToCat) === l.label)
                         if (!dataAllowed('D33', { weeks: volumeWeeks(rows, basisToday, complete), today: basisToday })) l.data = []
                       }
-                      if (!volLifts.some(l => l.data.length)) return <p>{dataMessage('D33')}</p>
+                      if (!volLifts.some(l => l.data.length)) return missing('D33', () => ({}), <p>{dataMessage('D33')}</p>)
                     }
                     if (!volLifts.some(l => l.data.length > 1)) return null
                     return (
@@ -687,7 +694,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
 
                   {/* 6. RPE analyse */}
                   {(() => {
-                    if (!dataAllowed('D12', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], today: new Date().toLocaleDateString('en-CA') })) return <p>{dataMessage('D12')}</p>
+                    if (!dataAllowed('D12', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], today: new Date().toLocaleDateString('en-CA') })) return missing('D12', () => ({ rows: normalizedRatings(athleteLogs), today: basisToday }), <p>{dataMessage('D12')}</p>)
                     const rpeCategories = ['Squat', 'Bænkpres', 'Dødløft']
                     const logsWithRpe = athleteLogs.filter(l => l.rpe_actual != null && !l.skipped && (!dataEnoughEnabled() || explicitRpe(l)))
                     if (logsWithRpe.length === 0) return null
@@ -737,7 +744,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
 
                     return (
                       <>
-                        {dataEnoughEnabled() && !dataAllowed('D13', dataEnoughEnabled() ? rpeTrendEvidence(athleteLogs) : {}) && <p>{dataMessage('D13')}</p>}
+                        {dataEnoughEnabled() && !dataAllowed('D13', dataEnoughEnabled() ? rpeTrendEvidence(athleteLogs) : {}) && missing('D13', () => rpeTrendEvidence(athleteLogs), <p>{dataMessage('D13')}</p>)}
                   {dataAllowed('D13', dataEnoughEnabled() ? rpeTrendEvidence(athleteLogs) : {}) && fatigueWarning && (
                           <div style={{ ...s.card, borderLeft: '3px solid #c8923a', background: 'rgba(200,146,58,0.06)' }}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.5rem' }}>
@@ -821,7 +828,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
                     if (dataEnoughEnabled()) lowStreak = consecutiveLowStreak(athleteReadiness)
                     return (
                       <>
-                        {dataEnoughEnabled() && lowStreak < 3 && <p>{dataMessage('D06')}</p>}
+                        {dataEnoughEnabled() && lowStreak < 3 && missing('D06', () => ({ rows: athleteReadiness }), <p>{dataMessage('D06')}</p>)}
                         {lowStreak >= 3 && (
                           <div style={{ ...s.card, borderLeft: '3px solid #e05555', background: 'rgba(224,85,85,0.05)' }}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#e05555', marginBottom: '0.5rem' }}>
@@ -984,7 +991,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
 
                     return (
                       <>
-                        {dataEnoughEnabled() && !dataAllowed('D14', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], checkins: athleteReadiness, today: new Date().toLocaleDateString('en-CA') }) && <p>{dataMessage('D14')}</p>}
+                        {dataEnoughEnabled() && !dataAllowed('D14', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], checkins: athleteReadiness, today: new Date().toLocaleDateString('en-CA') }) && missing('D14', () => ({ rows: normalizedRatings(athleteLogs), checkins: athleteReadiness, today: basisToday }), <p>{dataMessage('D14')}</p>)}
                   {dataAllowed('D14', { rows: dataEnoughEnabled() ? normalizedRatings(athleteLogs) : [], checkins: athleteReadiness, today: new Date().toLocaleDateString('en-CA') }) && overtrainingAlert && (
                           <div style={{ ...s.card, borderLeft: '3px solid #e05555', background: 'rgba(224,85,85,0.06)' }}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#e05555', marginBottom: '0.5rem' }}>
@@ -1010,7 +1017,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
                           </div>
                         )}
 
-                        {dataEnoughEnabled() && !dataAllowed('D08', readBasis) && <p>{dataMessage('D08')}</p>}
+                        {dataEnoughEnabled() && !dataAllowed('D08', readBasis) && missing('D08', () => readBasis, <p>{dataMessage('D08')}</p>)}
                   {dataAllowed('D08', readBasis) && scatterPoints.length >= 3 && (
                           <div style={s.card}>
                             <div style={s.cardLabel}>Readiness vs RPE-afvigelse</div>
@@ -1048,7 +1055,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
                           </div>
                         )}
 
-                        {dataEnoughEnabled() && !dataAllowed('D09', sleepBasis) && <p>{dataMessage('D09')}</p>}
+                        {dataEnoughEnabled() && !dataAllowed('D09', sleepBasis) && missing('D09', () => sleepBasis, <p>{dataMessage('D09')}</p>)}
                   {dataAllowed('D09', sleepBasis) && sleepFeedbackPairs.length >= 2 && (
                           <div style={s.card}>
                             <div style={s.cardLabel}>Søvn vs. træningsfeedback</div>
@@ -1069,7 +1076,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
                           </div>
                         )}
 
-                        {dataEnoughEnabled() && !enoughLift(lifts) && <p>{dataMessage('D21')}</p>}
+                        {dataEnoughEnabled() && !enoughLift(lifts) && (analyseMissingData === true ? lifts.map(({ label }) => missing('D21', () => liftEvidence(athleteLogs, label), null, label)) : <p>{dataMessage('D21')}</p>)}
                   {enoughLift(lifts) && lifts.some(l => l.s.actualData.length >= 3) && (
                           <div style={s.card}>
                             <div style={s.cardLabel}>
@@ -1088,7 +1095,7 @@ export default function AnalyseTab({ analyseConclusionMessage = false, coachId, 
                             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
                               {lifts.map(({ label, s: ls }) => {
                                 if (ls.actualData.length < 2) return null
-                                if (dataEnoughEnabled() && !dataAllowed('D21', dataEnoughEnabled() ? liftEvidence(athleteLogs, label) : {})) return <p key={label}>{dataMessage('D21')}</p>
+                                if (dataEnoughEnabled() && !dataAllowed('D21', dataEnoughEnabled() ? liftEvidence(athleteLogs, label) : {})) return missing('D21', () => liftEvidence(athleteLogs, label), <p key={label}>{dataMessage('D21')}</p>, label)
                                 const observed = dataEnoughEnabled() ? liftEvidence(athleteLogs, label).rows : []
                                 const regression = dataEnoughEnabled() ? datedRegression(observed) : null
                                 const trend = dataEnoughEnabled() ? (regression ? { text: `Observeret e1RM-trend ${regression.slope.toFixed(2)} kg pr. dag`, color: '#b8b4a8' } : null) : liftTrend(ls.actualData)
