@@ -26,5 +26,10 @@
   "programNaesteUge.mjs": "src/athlete/programNaesteUge.mjs",
   "IntensityExplanation.jsx": "src/athlete/IntensityExplanation.jsx",
   "intensityExplanation.mjs": "src/athlete/intensityExplanation.mjs",
-  "programBlockOverview.mjs": "src/athlete/programBlockOverview.mjs"
+  "programBlockOverview.mjs": "src/athlete/programBlockOverview.mjs",
+  "restMobility.mjs": "src/athlete/restMobility.mjs",
+  "coachMobility.mjs": "src/athlete/coachMobility.mjs",
+  "mobilityFocus.mjs": "src/athlete/mobilityFocus.mjs",
+  "mobilityCatalog.mjs": "src/athlete/mobilityCatalog.mjs",
+  "mobilityHomework.mjs": "src/mobilityHomework.mjs"
 }

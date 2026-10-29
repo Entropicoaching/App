@@ -122,7 +122,7 @@ function ExerciseTimer({ duration, label }) {
 }
 
 export default function ProgramTab({
-  programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
+  restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -448,7 +448,7 @@ export default function ProgramTab({
 
                   {!ugeFoerst && blokTekst}
 
-                  <RestDays week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />
+                  <RestDays restMobility={restMobility} week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />
 
                   {(viewedWeek.sessions || []).filter(session => !isRestSession(viewedWeek, session)).map(session => {
                     const isOpen = progOpenSession === session.id

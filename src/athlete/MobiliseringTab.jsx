@@ -507,7 +507,7 @@ function MobilityGuideStep({ heading, step, total, onExit, areaLabel, ex, opts, 
 
 export default function MobiliseringTab({
   mobilitetCoach = false, coachNotes, mobilitetHjalp = false, athleteId, mobilityDate,
-  mobilitetFokus = false,
+  onFocusSelected, mobilitetFokus = false,
   currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
   readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
   setMobilityStep, setTimerActive, setTimerDone, setTimerSeconds, setWarmupChoice,
@@ -515,7 +515,7 @@ export default function MobiliseringTab({
   setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,
   warmupFocus, warmupPhase, warmupProblems, warmupStep, warmupSubtype, warmupTemplates,
 }) {
-  if ((mobilitetFokus === true || mobilitetCoach === true) && mobilityMode === 'fokus') return createElement(MobilitetFokus, { key: JSON.stringify([athleteId, mobilitetCoach, coachNotes]), mobilitetCoach, coachNotes, library: WARMUP_BASE, warmupTemplates, mobilitetHjalp, athleteId, mobilityDate, onExit: () => setMobilityMode(null) })
+  if ((mobilitetFokus === true || mobilitetCoach === true) && mobilityMode === 'fokus') return createElement(MobilitetFokus, { key: JSON.stringify([athleteId, mobilitetCoach, coachNotes]), onFocusSelected, mobilitetCoach, coachNotes, library: WARMUP_BASE, warmupTemplates, mobilitetHjalp, athleteId, mobilityDate, onExit: () => setMobilityMode(null) })
   return (
     <>
         {mobilityMode === null && (() => {

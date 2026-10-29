@@ -15,6 +15,9 @@ const hash = s => createHash('sha256').update(s).digest('hex')
 
 test('fresh: exact Program union removes to the entire pinned 9338db3e module', () => {
   const original = source('ProgramTab.jsx')
+    // Remove only HVILE4's two presentation additions before the existing pin.
+    .replace('  restMobility, programIntensityHelp = false,', '  programIntensityHelp = false,')
+    .replace('<RestDays restMobility={restMobility} week=', '<RestDays week=')
     .replace("import RestDays from './RestDays.jsx'\nimport { isRestSession } from './restDays.mjs'\n", '')
     .replace('                  <RestDays week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />\n\n', '')
     .replace('.filter(session => !isRestSession(viewedWeek, session))', '')

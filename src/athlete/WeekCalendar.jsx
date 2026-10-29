@@ -17,7 +17,7 @@ import { isSessionDone } from '../nextSet.js'
 //   - hviledage: stiplet kant, "hvile" i stedet for prik, dæmpet.
 // Og der er luft (0.5rem) mellem dagene. Uden datoer på ugen (ældre
 // programmer) regnes den aktive uge som denne uge, så "i dag" stadig vises.
-function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd }) {
+function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd, restMobility }) {
   const sessions = week?.sessions || []
   const rests = restDays(week)
   if (!sessions.length && !rests.length) return null
@@ -102,7 +102,7 @@ function WeekCalendar({ week, weekStart, exerciseLogs, onOpenSession, shownWd })
           )
         })}
       </div>
-      <RestDays week={week} weekStart={weekStart} />
+      <RestDays restMobility={restMobility} week={week} weekStart={weekStart} />
       {flex.length > 0 && (
         <div style={{ fontFamily: mono, fontSize: '0.5rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.5rem' }}>
           + {flex.length} fleksibel{flex.length > 1 ? 'le' : ''} session{flex.length > 1 ? 'er' : ''} uden fast dag

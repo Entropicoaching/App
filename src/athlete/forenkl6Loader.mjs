@@ -1,3 +1,4 @@
+import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
 import { existsSync as exactExists } from 'node:fs'
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
@@ -5,6 +6,11 @@ import { jsx } from './forenkl6Jsx.mjs'
 const root = new URL('./', import.meta.url)
 const components = new Set(['ProgramTab.jsx', 'forenkl6Baseline.jsx', 'CountdownRing.jsx', 'IntensityExplanation.jsx', 'RestDays.jsx'])
 const paths = {
+  'restMobility.mjs': './restMobility.mjs',
+  'coachMobility.mjs': './coachMobility.mjs',
+  'mobilityFocus.mjs': './mobilityFocus.mjs',
+  'mobilityCatalog.mjs': './mobilityCatalog.mjs',
+  'mobilityHomework.mjs': '../mobilityHomework.mjs',
   'restDays.mjs': './restDays.mjs',
   'programNaesteUge.mjs': './programNaesteUge.mjs',
   'intensityExplanation.mjs': './intensityExplanation.mjs',
@@ -27,6 +33,7 @@ const approved = new Set(urls.values())
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (approved.has(context.parentURL)) assertRestMobilityEdge(specifier, context.parentURL, root)
       if (approved.has(context.parentURL) && ['RestDays', 'RestDays.jsx', 'restDays', 'restDays.mjs'].includes(specifier.split('/').at(-1)) && !['./RestDays.jsx', './restDays.mjs'].includes(specifier))
         throw Error('Unapproved synthetic dependency: ' + specifier)
       if (specifier.startsWith('.') && !/\.[a-z]+$/i.test(specifier) && context.parentURL?.startsWith('file:')) {

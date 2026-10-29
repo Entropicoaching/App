@@ -6,7 +6,7 @@ import { MobilityHelped } from '../mobilityHelped.mjs'
 import { FOCUS_LIFTS, FOCUS_NEEDS, focusPlan } from './mobilityFocus.mjs'
 
 const button = { minHeight: 48, padding: '12px 14px', border: '1px solid #736043', borderRadius: 8, background: '#24231d', color: '#edeae2', font: 'inherit', textAlign: 'left', cursor: 'pointer', whiteSpace: 'normal', overflowWrap: 'anywhere' }
-export default function MobilitetFokus({ mobilitetCoach = false, coachNotes, mobilitetHjalp = false, athleteId, mobilityDate, library, warmupTemplates, onExit }) {
+export default function MobilitetFokus({ mobilitetCoach = false, coachNotes, mobilitetHjalp = false, athleteId, mobilityDate, library, warmupTemplates, onExit, onFocusSelected }) {
   const coach = readCoachChoices(mobilitetCoach, athleteId, coachNotes, library).choices
   const first = FOCUS_LIFTS.find(name => coach[name])
   const [coachActive, setCoachActive] = useState(!!first)
@@ -38,7 +38,7 @@ export default function MobilitetFokus({ mobilitetCoach = false, coachNotes, mob
       h('ol', { style: { paddingLeft: 24 } }, ...plan.exercises.map(item => h('li', { key: item.id, style: { padding: '8px 0' } }, h('strong', null, item.name), h('div', { style: { color: '#d1c9b8' } }, `${item.label} · ${item.source}`)))),
       plan.notes.length ? h('aside', { 'aria-label': 'Besked fra din coach', style: { borderLeft: '3px solid #e0ae5c', paddingLeft: 12, overflowWrap: 'anywhere' } }, h('h2', { style: { fontSize: '1rem' } }, 'Fra din coach'), ...plan.notes.map(note => h('p', { key: note }, note))) : null,
       h('p', null, 'Arbejd roligt og inden for en behagelig bevægelse. Stop, hvis det gør ondt.'),
-      h('button', { type: 'button', disabled: !plan.exercises.length, style: { ...button, width: '100%', background: '#e0ae5c', color: '#141410' }, onClick: () => { setStarted(true); setStep(0); setDone(false) } }, 'Start min rutine'))
+      h('button', { type: 'button', disabled: !plan.exercises.length, style: { ...button, width: '100%', background: '#e0ae5c', color: '#141410' }, onClick: () => { onFocusSelected?.({ lift, need }); setStarted(true); setStep(0); setDone(false) } }, 'Start min rutine'))
       : done ? h('div', null, h('p', null, `${lift} · ${need}. Du har gennemgået din rutine.`),
         h(MobilityHelped, { enabled: mobilitetHjalp, athleteId, date: mobilityDate, exercises: plan.exercises }),
         h('button', { type: 'button', style: button, onClick: () => { setStarted(false); setDone(false); setStep(0) } }, 'Vælg nyt fokus'))

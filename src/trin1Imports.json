@@ -154,7 +154,8 @@
   "src/restTimer.js": {},
   "src/athlete/restDays.mjs": {},
   "src/athlete/RestDays.jsx": {
-    "./restDays.mjs": "src/athlete/restDays.mjs"
+    "./restDays.mjs": "src/athlete/restDays.mjs",
+    "./restMobility.mjs": "src/athlete/restMobility.mjs"
   },
   "src/athlete/programBlockOverview.mjs": {
     "../calendarDate.js": "src/calendarDate.js",
@@ -304,5 +305,11 @@
   "src/fremgangLogs.js": {},
   "src/athlete/videoFeedbackPlayback.mjs": {
     "../videoMarkerReplies.mjs": "src/videoMarkerReplies.mjs"
+  },
+  "src/athlete/restMobility.mjs": {
+    "../mobilityHomework.mjs": "src/mobilityHomework.mjs",
+    "./coachMobility.mjs": "src/athlete/coachMobility.mjs",
+    "./mobilityFocus.mjs": "src/athlete/mobilityFocus.mjs",
+    "./mobilityCatalog.mjs": "src/athlete/mobilityCatalog.mjs"
   }
 }

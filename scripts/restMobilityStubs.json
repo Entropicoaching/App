@@ -1,0 +1,118 @@
+{
+  "./ugeHjaelp.js": [
+    "WEEKDAYS_LONG",
+    "WEEKDAYS_SHORT",
+    "fmtWeekRange",
+    "weekStartDate"
+  ],
+  "./staevneHome.mjs": [
+    "renderStaevneHome"
+  ],
+  "./nextTrainingHome.mjs": [
+    "nextTrainingHome",
+    "renderNextTrainingHome"
+  ],
+  "./mobilityBeforeSession.mjs": [],
+  "./athleteShortcuts.mjs": [
+    "renderAthleteShortcuts",
+    "revealWeek"
+  ],
+  "react": [
+    "createElement",
+    "useEffect",
+    "useRef",
+    "useState"
+  ],
+  "../vcForenkl4.mjs": [
+    "renderVideoCoachChoices"
+  ],
+  "../dataEnough.mjs": [
+    "dataEnoughEnabled",
+    "dataMessage",
+    "dayNumber"
+  ],
+  "./weightTrend.mjs": [
+    "weightTrendText"
+  ],
+  "../exerciseSetView.js": [
+    "bestExerciseRecords",
+    "exerciseSetView",
+    "exerciseViewGroups",
+    "exerciseViewRows"
+  ],
+  "../warmup.js": [
+    "isMainLift"
+  ],
+  "../checkinReminder.js": [
+    "shouldNudgeCheckin"
+  ],
+  "../readinessInsight.js": [
+    "checkinNoteTimingText",
+    "compareReadiness",
+    "lastCheckinDrivenChange",
+    "readinessComparisonText",
+    "readinessTrainingNote",
+    "summarizeReadinessForCoach"
+  ],
+  "../athleteShared.js": [
+    "s",
+    "today"
+  ],
+  "./UgensStatusKort.jsx": [],
+  "./DagensPasCard.jsx": [],
+  "./DinUgeKort.jsx": [],
+  "./dinUge.js": [
+    "dinUge"
+  ],
+  "./RestPauseFooter.jsx": [],
+  "./pauseLinje.js": [
+    "naesteLabel"
+  ],
+  "../restBetweenSets.js": [
+    "restSecondsForExercise"
+  ],
+  "../restPause.js": [
+    "startRestPause"
+  ],
+  "./ForsideGrafer.jsx": [
+    "E1RMChart",
+    "ReadinessSparkline",
+    "WeeklyTonnageChart"
+  ],
+  "./programNaesteUge.mjs": [
+    "programDayPreview",
+    "upcomingProgramWeek"
+  ],
+  "./IntensityExplanation.jsx": [],
+  "./programBlockOverview.mjs": [
+    "blockWeeks",
+    "renderProgramBlockOverview"
+  ],
+  "../rpeEvidence.mjs": [
+    "chooseRpeInput",
+    "visibleRpeNote"
+  ],
+  "../inputValues.js": [
+    "parseInputNumber"
+  ],
+  "../restTimer.js": [
+    "remainingSeconds"
+  ],
+  "../repsPrescription.js": [
+    "parseRepsPrescription"
+  ],
+  "../fixedRepsEntry.js": [
+    "fixedRepsEntry"
+  ],
+  "./CountdownRing.jsx": [],
+  "../saetSmerte.js": [
+    "SMERTE_LINJE"
+  ],
+  "./CoachMobility.jsx": [
+    "CoachMobilitySummary"
+  ],
+  "./MobilitetsBibliotek.jsx": [],
+  "../mobilityHelped.mjs": [
+    "MobilityHelped"
+  ]
+}

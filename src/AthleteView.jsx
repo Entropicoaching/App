@@ -56,7 +56,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false}) {
+export default function AthleteView({ programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false}) {
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -260,6 +260,9 @@ export default function AthleteView({ programNaesteUge = false, videoSetSelectio
   // G5: { remainingAtStart, startedAt } for det aktive segment — læses kun
   // inde i effekten nedenfor, aldrig under selve renderet.
   const timerStartRef = useRef(null)
+
+  const [restFocus, setRestFocus] = useState(null)
+  const restMobility = hviledagMobilitet === true ? { enabled: true, athleteId: athlete?.id, notes: athlete?.notes, coachEnabled: mobilitetCoach, homeworkEnabled: mobilitetHjemme, focus: restFocus?.athleteId === athlete?.id ? restFocus : null } : undefined
 
   // Mobilitet-hub state — fanen er en intent-landing (null) med tre døre
   const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'mobilitet'
@@ -668,6 +671,7 @@ export default function AthleteView({ programNaesteUge = false, videoSetSelectio
         {renderMobilityShortcut(createElement, { enabled: mobilitetFokus === true || mobilitetCoach === true, tab, enkelOn, route, setMobilityMode, setTab, coachSummary: createElement(CoachMobilitySummary, { enabled: mobilitetCoach, athleteId: athlete?.id, notes: athlete?.notes }) })}
 
         {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemVisning
+          restMobility={restMobility}
           ugeLogget={ugeLogget === true}
           enkelDel={enkelOn && route !== 'alle' ? route : null}
           mobilitetFoerPas={mobilitetFoerPas === true}
@@ -696,7 +700,7 @@ export default function AthleteView({ programNaesteUge = false, videoSetSelectio
           <LazyBoundary
             factory={programFactory} label="Program" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
-              WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
+              restMobility, WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
               calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
               exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
               fetchPastLogs, fetchProgram, fmtWeekRange, lastLogByExerciseName, logInputs, logSet,
@@ -765,6 +769,7 @@ export default function AthleteView({ programNaesteUge = false, videoSetSelectio
           <LazyBoundary
             factory={mobiliseringFactory} label="Mobilitet" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
+              onFocusSelected: hviledagMobilitet === true ? focus => setRestFocus({ ...focus, athleteId: athlete?.id }) : undefined,
               mobilitetCoach: mobilitetCoach === true, coachNotes: athlete?.notes, mobilitetHjalp: mobilitetHjalp === true && !coachAthleteId, athleteId: athlete?.id, mobilityDate: today(), mobilitetFokus: mobilitetFokus === true, currentWeek, mobilityIntake, mobilityMode, mobilityPhase, mobilitySlots, mobilityStep,
               readinessLog, setTab, setMobilityIntake, setMobilityMode, setMobilityPhase, setMobilitySlots,
               setMobilityStep, setTimerActive, setTimerDone, setTimerSeconds, setWarmupChoice,

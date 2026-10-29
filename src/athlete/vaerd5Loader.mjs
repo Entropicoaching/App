@@ -1,9 +1,10 @@
+import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './vaerd5Jsx.mjs'
 
 const root = new URL('./', import.meta.url)
-const names = ['RestDays.jsx', 'restDays.mjs', 'programNaesteUge.mjs','IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
+const names = ['restMobility.mjs', 'coachMobility.mjs', 'mobilityFocus.mjs', 'mobilityCatalog.mjs', 'mobilityHomework.mjs', 'RestDays.jsx', 'restDays.mjs', 'programNaesteUge.mjs','IntensityExplanation.jsx', 'intensityExplanation.mjs', 'programBlockOverview.mjs', 'ugeHjaelp.js', 'ProgramTab.jsx', 'inputValues.js', 'restTimer.js', 'repsPrescription.js',
   'fixedRepsEntry.js', 'exerciseSetView.js', 'exerciseNames.js', 'warmupOverride.js', 'kostNumbers.mjs',
   'vaerd5Fixture.mjs', 'rpeEvidence.mjs', 'udgivelseTrin.mjs', 'dataEnough.mjs', 'calendarDate.js']
 const urls = new Map(names.map(name => [name, (existsSync(new URL(name, root))
@@ -12,6 +13,7 @@ const approved = new Set(urls.values())
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (approved.has(context.parentURL)) assertRestMobilityEdge(specifier, context.parentURL, root)
       if (!approved.has(context.parentURL)) return next(specifier, context)
       if (context.parentURL === urls.get('ugeHjaelp.js') && ['../supabase', '../supabase.js'].includes(specifier))
         return { url: 'data:text/javascript,export const supabase = new Proxy({}, {get(){throw Error("Backend outside synthetic scope")}})', shortCircuit: true }

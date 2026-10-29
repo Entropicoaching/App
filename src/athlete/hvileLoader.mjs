@@ -1,3 +1,4 @@
+import { assertRestMobilityEdge } from './restMobilityEdges.mjs'
 import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from './hvileJsx.mjs'
@@ -12,6 +13,7 @@ const allowed = new Set(urls.values())
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (allowed.has(context.parentURL)) assertRestMobilityEdge(specifier, context.parentURL, root)
       if (!allowed.has(context.parentURL) || specifier === new URL('hvileDom.mjs', root).href) return next(specifier, context)
       if (specifier === 'react' || /\/supabase(?:\.js)?$/.test(specifier))
         return { url: new URL('hvileDom.mjs', root).href, shortCircuit: true }
