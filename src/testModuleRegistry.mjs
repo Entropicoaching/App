@@ -93,6 +93,13 @@ export function wrapRegistryHooks(loaderURL, hooks, options = {}) {
     ...hooks,
     resolve(specifier, context, next) {
       const match = rules.lookup(loader, specifier, context.parentURL)
+      // A virtual legacy recipe owns its explicit fakes before registered additions.
+      // File parents and unlisted dependencies retain the closed registry graph.
+      const stubs = rules.data.recipes?.[loader + '#stubs']
+      if (match && loader === 'src/retentionAppHarness.mjs' && !context.parentURL.startsWith(repository.href)
+        && Object.hasOwn(stubs || {}, match.url.split('/').pop()) && hooks.resolve) {
+        return hooks.resolve(specifier, context, next)
+      }
       if (match) { if (!match.legacy) managed.add(match.url); return { url: match.url, shortCircuit: true } }
       // A newly admitted module never acquires host fallback or dynamic discovery.
       if (managed.has(context.parentURL)) return closed(specifier)
