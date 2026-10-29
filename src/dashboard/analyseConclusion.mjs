@@ -1,3 +1,4 @@
+import { conclusionSentence as sentence, renderConclusionHistory } from './analyseConclusionHistory.mjs'
 import { rel1030Feature } from '../rel1030.mjs'
 import { createElement as h } from 'react'
 import { hasEnoughData, dataMessage, dayNumber } from '../dataEnough.mjs'
@@ -11,11 +12,6 @@ export function analyseConclusionEnabled(search = '') {
   return (values.length === 1 && values[0] === '1') || rel1030Feature('analyseConclusion', search)
 }
 const liftNames = { squat: 'Squat', bench: 'Bænkpres', deadlift: 'Dødløft', sumo: 'Sumo dødløft', ohp: 'OHP' }
-function sentence(value) {
-  if (typeof value !== 'string') return ''
-  const clean = value.trim().replace(/\s+/g, ' ')
-  return clean.match(/^.*?[.!?](?=\s|$)/u)?.[0] || (clean ? clean + '.' : '')
-}
 
 export function approvedConclusionReviews({ athleteId, analyses = [], liftFilter = 'all' }) {
   return analyses.filter(row => row?.athlete_id === athleteId &&
@@ -56,6 +52,7 @@ export default function AnalyseConclusion(props) {
   if (enabled !== true) return children
   return h('section', { 'aria-label': 'Samlet analyse', style: { minWidth: 0, overflowWrap: 'anywhere' } },
     h('p', { role: 'status', 'aria-label': 'Konklusion', style: { color: '#edeae2', lineHeight: 1.5 } }, analyseConclusion(props)),
+    renderConclusionHistory(h, !props.athleteId || props.loading || props.error ? [] : approvedConclusionReviews(props)),
     ...(props.message ? [props.message] : []),
     h('details', null,
       h('summary', { style: { minHeight: 44, padding: '0.65rem', boxSizing: 'border-box', cursor: 'pointer', color: '#edeae2' } }, 'Se grundlaget'),
