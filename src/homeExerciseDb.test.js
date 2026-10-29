@@ -140,7 +140,7 @@ function policy(name) {
 
 test('migration text enables RLS, restricts grants, includes all CRUD policies and immutable scope', () => {
   assert.match(sql, /^--[^\n]*\nbegin;/)
-  assert.match(sql, /commit;\n$/)
+  assert.match(sql, /commit;\r?\n$/)
   assert.match(sql, /alter table public.home_exercise_assignments enable row level security;/)
   assert.match(sql, /revoke all on table public.home_exercise_assignments from public, anon, authenticated;/)
   assert.match(sql, /unique \(athlete_id, coach_id\)/)
