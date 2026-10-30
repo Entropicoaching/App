@@ -44,6 +44,7 @@ function HjemTab({
   sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, skipSet, suggestNextWeight, tab, toastSlot, undoLoggedSet,
   unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
   rekordFejring, rekordGrundlagFoer, sendUgeLinje,
+  homeworkEntry,
 }) {
   const weekStatusRef = useRef(null)
   return (
@@ -269,6 +270,7 @@ function HjemTab({
             </button>
 
             {mereOpen && (<>
+            {homeworkEntry}
             {currentWeek && (() => {
               // ORDRE 276 · blok 2: "sidste uge" = programugen lige før den
               // aktive (week_number - 1), samme princip som Dashboard.jsx
