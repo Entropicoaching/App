@@ -2,6 +2,7 @@ import NytIAppen, { nytAthleteNavigation } from './nytIAppen.mjs'
 import { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/contactLatest.mjs'
 import { VIDEO_SET_SELECTION_ENABLED, videoOptionsForDay, resolveVideoSet } from './athlete/videoSetSelection.mjs'
 import { findDagensPas } from './nextSet.js'
+import { indbakke2Enabled } from './indbakke2.mjs'
 import { MobilityHomeworkProgress } from './mobilityAdherence.mjs'
 import { CoachMobilitySummary } from './athlete/CoachMobility.jsx'
 import { MobilityHomeworkHome } from './mobilityHomework.mjs'
@@ -50,6 +51,7 @@ const volumenFactory = () => import('./athlete/VolumenTab.jsx')
 const fremgangFactory = () => import('./athlete/FremgangTab.jsx')
 const fremgangFokusFactory = () => import('./athlete/fremgangFokus.mjs')
 const kostFactory = () => import('./athlete/KostTab.jsx')
+const indbakke2Factory = () => import('./athlete/Indbakke2Tab.mjs')
 const beskederFactory = () => import('./athlete/BeskederTab.jsx')
 
 function LazyEnkelHjemTab(props) {
@@ -57,6 +59,7 @@ function LazyEnkelHjemTab(props) {
 }
 
 export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false}) {
+  const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const enkelOn = enkelPrototype === true
@@ -352,6 +355,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     saveReadiness, fetchProgram, openSession, openReadiness: legacyOpenReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
     fetchExerciseLogs, fetchProgramBlockLogs,
   } = lavLaesninger({
+    indbakke2,
     athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
     fetchLogs, fetchMealTemplates, fetchWeightLogs, guideStep, mountedRef, onReadError, readinessCardRef, readinessInput,
     role, session, sessionRefs, setAllWeeks, setAthlete, setCurrentWeek, setExerciseHistory, setExerciseLogs,
@@ -461,7 +465,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchSharedVideoAnalyses er ren ift. role/athlete.id, som er i deps; uændret fra før ordre 373
   }, [role, athlete?.id])
-  const contactLatest = contactLatestEnabled()
+  const contactLatest = contactLatestEnabled() || indbakke2
   const openReadiness = enkelOn ? () => setTab('dagsform') : legacyOpenReadiness
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge kaldes synkront i denne kørsel og læser kun athlete/msgTrack, som allerede er i deps
@@ -756,7 +760,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {/* BESKEDER */}
         {tab === 'beskeder' && (
           <LazyBoundary
-            factory={beskederFactory} label="Beskeder" loading={<div style={s.page}>Indlæser…</div>}
+            factory={indbakke2 ? indbakke2Factory : beskederFactory} label="Beskeder" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
               fetchSharedVideoAnalyses, formatMsgTime, messageInput, messagesEndRef, messages,
               msgTrack, renderSharedFeedbackCards, sendAthleteMessage, setMessageInput, setMsgTrack,

@@ -1,3 +1,4 @@
+import { readSharedInboxVideos } from '../indbakke2.mjs'
 import { readProgramBlockLogs } from './programBlockOverview.mjs'
 import { rpeOrigin } from '../rpeEvidence.mjs'
 import { volumeWeeks, suggestionEvidence, repZone, prescribedRepZone } from '../dataEvidence.mjs'
@@ -34,6 +35,7 @@ import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from '.
 const SNAPSHOT_AFTER_MS = 8000
 
 export function lavLaesninger({
+  indbakke2 = false,
   athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
   fetchLogs, fetchMealTemplates, fetchWeightLogs, guideStep, mountedRef, onReadError, readinessCardRef, readinessInput,
   role, session, sessionRefs, setAllWeeks, setAthlete, setCurrentWeek, setExerciseHistory, setExerciseLogs,
@@ -175,7 +177,7 @@ export function lavLaesninger({
   async function fetchSharedVideoAnalyses() {
     setSharedVideoLoading(true)
     setSharedVideoError(null)
-    const { data, error } = await supabase.rpc('get_my_shared_video_analyses_v3', {
+    const { data, error } = indbakke2 ? await readSharedInboxVideos(supabase) : await supabase.rpc('get_my_shared_video_analyses_v3', {
       p_limit: 6,
       p_offset: 0,
     })

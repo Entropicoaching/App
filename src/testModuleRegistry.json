@@ -3,6 +3,7 @@
   "schema": "test-module-registry/v1",
   "version": 1,
   "loaders": {
+    "src/indbakke2Loader.mjs": {},
     "e2e/fridayHermeticLoader.mjs": {},
     "e2e/rel1030Harness.mjs": {},
     "e2e/release3-loader.mjs": {},
@@ -256,6 +257,13 @@
     [0,1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,21,22,23,24,26,27,28,29,30,31,33,35,36,37,38,39,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,57,68,58,59,60,61,62,63,64,65,66,67]
   ],
   "modules": [
+    {"module": "indbakke2.mjs", "path": "src/indbakke2.mjs", "allowedImporters": ["src/Dashboard.jsx", "src/AthleteView.jsx", "src/dashboard/indbakke2Controller.mjs", "src/athlete/laesninger.js", "src/athlete/Indbakke2Tab.mjs", "src/indbakke2.test.js", "src/indbakke2Review.test.js"], "imports": {"./rel1030.mjs": "src/rel1030.mjs"}},
+    {"module": "indbakke2Controller.mjs", "path": "src/dashboard/indbakke2Controller.mjs", "allowedImporters": ["src/dashboard/Indbakke2View.mjs", "src/indbakke2.test.js", "src/indbakke2Review.test.js"], "imports": {"../indbakke2.mjs": "src/indbakke2.mjs", "./coachTemplateMessages.mjs": "src/dashboard/coachTemplateMessages.mjs"}},
+    {"module": "Indbakke2View.mjs", "path": "src/dashboard/Indbakke2View.mjs", "runtime": "src/indbakke2Dom.mjs", "allowedImporters": ["src/Dashboard.jsx", "src/indbakke2.test.js", "src/indbakke2Review.test.js"], "imports": {"react": "@runtime", "./indbakke2Controller.mjs": "src/dashboard/indbakke2Controller.mjs", "../videoMarkerReplies.mjs": "src/videoMarkerReplies.mjs"}},
+    {"module": "Indbakke2Tab.mjs", "path": "src/athlete/Indbakke2Tab.mjs", "runtime": "src/indbakke2Dom.mjs", "allowedImporters": ["src/AthleteView.jsx", "src/indbakke2.test.js", "src/indbakke2Review.test.js"], "imports": {"react": "@runtime", "../indbakke2.mjs": "src/indbakke2.mjs", "../videoMarkerReplies.mjs": "src/videoMarkerReplies.mjs"}},
+    {"module": "indbakke2Dom.mjs", "path": "src/indbakke2Dom.mjs", "allowedImporters": ["src/indbakke2.test.js", "src/indbakke2Review.test.js"]},
+    {"module": "indbakke2Loader.mjs", "path": "src/indbakke2Loader.mjs", "allowedImporters": ["src/indbakke2.test.js", "src/indbakke2Review.test.js"]},
+
     {"module":"opvarmStigeDom.mjs","path":"src/athlete/opvarmStigeDom.mjs","allowedImporters":["src/athlete/opvarmStigeApp.test.js","src/athlete/opvarmStigeLoader.mjs"]},
     {"module":"opvarmStigeLoader.mjs","path":"src/athlete/opvarmStigeLoader.mjs","allowedImporters":["src/athlete/opvarmStigeApp.test.js"]},
     {"module":"opvarmStigeJsx.mjs","path":"src/athlete/opvarmStigeJsx.mjs","allowedImporters":["src/athlete/opvarmStigeLoader.mjs"]},
