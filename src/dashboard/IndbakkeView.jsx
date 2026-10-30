@@ -15,7 +15,7 @@ import { coachPriorityFocus } from '../coachPriority.js'
 import { coachInboxCompletionStatus, shouldCollapseCoachConversations } from '../coachInboxState.js'
 import { s, initials } from '../dashboardShared.js'
 
-export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBriefingSeen = {}, coachBriefingSeenSavingKey, handleCoachBriefingSeen,
+export default function IndbakkeView({ conversationPanel = null, coachRyd = false, calendarTasks, coachBriefingSeen = {}, coachBriefingSeenSavingKey, handleCoachBriefingSeen,
   athletes, automationAlertActionError, automationAlertUpdatingId, automationAlertsError,
   coachPriorityItems, handleAutomationAlert, handleTrainingSignal, hiddenAthleteIds, inboxRefreshing,
   inboxRefreshStatus, isMobile, latestByTrack, messageInboxError, openCoachPriorityItem,
@@ -250,7 +250,7 @@ export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBri
 
       {coachRyd && calendarTasks}
 
-      {collapseConversations ? (
+      {conversationPanel || (collapseConversations ? (
         <details style={{ border: '1px solid rgba(237,234,226,0.1)', background: '#171713' }}>
           <summary style={{ minHeight: 48, padding: '0.7rem 0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', cursor: 'pointer', color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
             <span>Vis alle samtaler</span>
@@ -258,7 +258,7 @@ export default function IndbakkeView({ coachRyd = false, calendarTasks, coachBri
           </summary>
           <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)' }}>{conversationsPanel}</div>
         </details>
-      ) : conversationsPanel}
+      ) : conversationsPanel)}
     </div>
   )
 }

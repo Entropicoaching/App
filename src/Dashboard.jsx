@@ -6,6 +6,7 @@ import { coachNotesFlag, createCoachNoteSaver } from './dashboard/coachNotes.mjs
 import { FridayChecklist, FridayChecklistEntry } from './dashboard/fridayChecklist.mjs'
 import ProgramOverblik from './dashboard/ProgramOverblikView.mjs'
 import { programOverblikEnabled } from './programOverblik.mjs'
+import { indbakke2Enabled } from './indbakke2.mjs'
 import { rel1030Enabled } from './rel1030.mjs'
 import { coachMeetSoonFlag } from './dashboard/coachMeetSoon.mjs'
 import { DEFAULT_VIDEO_REVIEW_TEMPLATES } from './dashboard/VideoReviewTemplates.mjs'
@@ -71,6 +72,12 @@ import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
 // åbner dem, så atletlisten og check-in-gennemgangen ikke skal downloade dem.
 // Indlæses via LazyBoundary (ordre 163 · del 2): egen fejlgrænse pr. fane, så
 // en fejl i ÉN fane ikke river resten af dashboardet med sig.
+const indbakke2Factory = async () => {
+  const [legacy, conversations] = await Promise.all([
+    import('./dashboard/IndbakkeView.jsx'), import('./dashboard/Indbakke2View.mjs'),
+  ])
+  return { default: conversations.withInboxConversations(legacy.default) }
+}
 const indbakkeFactory = () => import('./dashboard/IndbakkeView.jsx')
 const analyseTabFactory = () => import('./dashboard/AnalyseTab.jsx')
 const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
@@ -85,6 +92,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const analyseMissingData = analyseMissingDataEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const analyseConclusionMessage = analyseConclusionMessageEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const programOverview = programOverblik === true || programOverblikEnabled(typeof window === 'undefined' ? '' : window.location.search)
+  const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const checklistEnabled = rel1030Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const initialCoachEntryRef = useRef(coachInboxEntryIntent(
     typeof window === 'undefined' ? '' : window.location.search,
@@ -667,8 +675,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
         {view === 'inbox' && (
           <LazyBoundary
-            factory={indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
-            componentProps={{ coachRyd,
+            factory={indbakke2 ? indbakke2Factory : indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
+            componentProps={{ ...(indbakke2 ? { database: supabase, coachId: session?.user?.id } : {}), coachRyd,
               coachBriefingSeen, coachBriefingSeenSavingKey, handleCoachBriefingSeen,
               calendarTasks: coachRyd ? <KalenderView tasksOnly {...{ athletes, hiddenAthleteIds, calendarWeeks, athleteCurrentWeek, athleteLastLogs, snoozedAthletes, isMobile, openProfile, openPlanReview, snoozeAthlete }} /> : null,
               athletes, coachPriorityItems, handleTrainingSignal,
