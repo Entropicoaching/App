@@ -1,3 +1,4 @@
+import OpvarmStige from './WarmupLadderView.mjs'
 import { upcomingProgramWeek, programDayPreview } from './programNaesteUge.mjs'
 import IntensityExplanation from './IntensityExplanation.jsx'
 import { createElement } from 'react'
@@ -122,7 +123,7 @@ function ExerciseTimer({ duration, label }) {
 }
 
 export default function ProgramTab({
-  hviledageListe = false, restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
+  opvarmStige = false, hviledageListe = false, restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -521,6 +522,7 @@ export default function ProgramTab({
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
 
 
+                            {opvarmStige === true && isCurrentWeek && !upcomingPreview && createElement(OpvarmStige, { enabled: true, exercises: session.exercises, scope: `${athlete?.id}|${viewedWeek.id}|${session.id}` })}
                             {exerciseViewRows(session.exercises).map(({ ex, name, label, startsGroup, endsGroup, showPrescription }, exIdx) => {
                               const isLast = exIdx === session.exercises.length - 1
                               return (

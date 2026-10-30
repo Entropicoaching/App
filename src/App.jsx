@@ -1,3 +1,4 @@
+import { opvarmStigeEnabled } from './opvarmStige.mjs'
 import { hviledageListeEnabled } from './hviledageListe.mjs'
 import { rel1030Mobility } from './rel1030.mjs'
 import { release3TestFlags } from './release3TestFlags.mjs'
@@ -80,7 +81,8 @@ const errorScreen = (onRetry) => (
   </div>
 )
 
-function App({ hviledageListe = false, programNaesteUge = false, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, programBlokOversigt = false, mobilitetHjalp = false, forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokStyrke = false, blokFremgang = false, ugeLogget = false , programIntensityHelp = false} = {}) {
+function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, programBlokOversigt = false, mobilitetHjalp = false, forenklinger = false, mobilitetFokus = false, fremgangFokus = false, mobilitetFoerPas = false, blokStyrke = false, blokFremgang = false, ugeLogget = false , programIntensityHelp = false} = {}) {
+  opvarmStige = opvarmStigeEnabled(opvarmStige, typeof window === 'undefined' ? '' : window.location.search)
   hviledageListe = hviledageListeEnabled(hviledageListe, typeof window === 'undefined' ? '' : window.location.search)
   ;({ mobilitetCoach, mobilitetHjemme, mobilitetHjalp, mobilitetFokus, mobilitetFoerPas } = rel1030Mobility(
     { mobilitetCoach, mobilitetHjemme, mobilitetHjalp, mobilitetFokus, mobilitetFoerPas },
@@ -280,7 +282,7 @@ function App({ hviledageListe = false, programNaesteUge = false, mobilitetCoach 
   if (role === 'coach') {
     viewEl = previewMode
       ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-          componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } , programIntensityHelp: programIntensityHelp === true, previewInitialTab}} />
+          componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } , opvarmStige, programIntensityHelp: programIntensityHelp === true, previewInitialTab}} />
       : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
           componentProps={{ ...rel3.coach, session, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem') => { setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
@@ -292,7 +294,7 @@ function App({ hviledageListe = false, programNaesteUge = false, mobilitetCoach 
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
     viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-      componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) , programIntensityHelp: programIntensityHelp === true}} />
+      componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) , opvarmStige, programIntensityHelp: programIntensityHelp === true}} />
   }
   return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }

@@ -13,7 +13,8 @@ const graph = JSON.parse(readFileSync(new URL('./trin1Imports.json', import.meta
 const extras = ['trin1Loader.mjs', 'trin1Dom.mjs', 'trin1Imports.json', 'trin1Flagoversigt.json',
   'trin1Flags.test.js', 'trin1On.test.js', 'trin1Off.test.js', 'trin1WeekCases.mjs', 'trin1F1.test.js',
   'athlete/prog5Dom.mjs', 'athlete/prog5Jsx.mjs', 'testModuleRegistry.mjs',
-  'testModuleRegistry.json', 'coachRyd2Jsx.mjs', 'registryDom.mjs']
+  'testModuleRegistry.json', 'coachRyd2Jsx.mjs', 'registryDom.mjs',
+  'opvarmStige.mjs', 'athlete/WarmupLadderView.mjs', 'athlete/opvarmStigeDom.mjs']
 const paths = new Set([...Object.keys(graph), ...extras.map(path => 'src/' + path)])
 const cases = [
   ['unexpected-default-on', 'src/udgivelseTrin.mjs', 'UDGIVELSE_TRIN = 0', 'UDGIVELSE_TRIN = 1', 'trin1Flags.test.js', /profile preserves default OFF/],
