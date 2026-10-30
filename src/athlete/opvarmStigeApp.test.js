@@ -29,7 +29,7 @@ test('actual checkbox, timer start/stop/completion, deadline drift and keyed res
     let tree = app.render()
     assert.match(text(tree), /Ankel-vægstræk/)
     assert.match(text(tree), /90\/90 hofterotation/)
-    assert.equal(nodes(tree,n=>n.type==='strong' && text(n).endsWith('60 sekunder')).length, 2)
+    assert.deepEqual(nodes(tree,n=>n.type==='strong').map(text), ['Ankel-vægstræk · 10 reps pr. side', '90/90 hofterotation · 30 sek pr. side'])
     assert.ok(text(tree).indexOf('2 minutters mobilitet') < text(tree).indexOf('20 kg ×'))
     assert.match(text(tree), /Pr. side: 1 × 25 kg \+ 1 × 10 kg/)
     checks(tree)[0].props.onChange({target:{checked:true}})

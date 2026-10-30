@@ -712,70 +712,88 @@
         ]
       },
       {
-        "type": "h4",
-        "props": {},
-        "children": [
-          "Før første trin: 2 minutters mobilitet"
-        ]
-      },
-      {
-        "type": "ol",
-        "props": {},
+        "type": "section",
+        "props": {
+          "aria-label": "Mobilitet før opvarmningsstigen"
+        },
         "children": [
           {
-            "type": "li",
-            "props": {
-              "key": "sq-mob-2"
-            },
+            "type": "h4",
+            "props": {},
+            "children": [
+              "Før første trin: 2 minutters mobilitet"
+            ]
+          },
+          {
+            "type": "ol",
+            "props": {},
             "children": [
               {
-                "type": "strong",
-                "props": {},
+                "type": "li",
+                "props": {
+                  "key": "sq-mob-2"
+                },
                 "children": [
-                  "Ankel-vægstræk · 60 sekunder"
+                  {
+                    "type": "strong",
+                    "props": {},
+                    "children": [
+                      "Ankel-vægstræk · 10 reps pr. side"
+                    ]
+                  },
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "Stå med tåen ca. 10 cm fra en væg og bøj knæet fremad, til det rører væggen. Hælen skal blive i gulvet. Flyt tåen gradvist længere væk. Lader anklen bøje nok til at knæet kan vandre frem over tæerne, afgørende for din squat-dybde."
+                    ]
+                  }
                 ]
               },
               {
-                "type": "p",
-                "props": {},
+                "type": "li",
+                "props": {
+                  "key": "sq-mob-3"
+                },
                 "children": [
-                  "Stå med tåen ca. 10 cm fra en væg og bøj knæet fremad, til det rører væggen. Hælen skal blive i gulvet. Flyt tåen gradvist længere væk. Lader anklen bøje nok til at knæet kan vandre frem over tæerne, afgørende for din squat-dybde."
+                  {
+                    "type": "strong",
+                    "props": {},
+                    "children": [
+                      "90/90 hofterotation · 30 sek pr. side"
+                    ]
+                  },
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "Sid på gulvet med det ene ben bøjet foran dig (90°) og det andet ud til siden (90°). Skub forsigtigt hoften frem mod det forreste ben og hold. Rammer både udad- og indadrotation i hoften, vigtigt for at komme dybt i squatten."
+                    ]
+                  }
                 ]
               }
             ]
           },
           {
-            "type": "li",
+            "type": "button",
             "props": {
-              "key": "sq-mob-3"
+              "type": "button",
+              "onClick": "[handler]"
             },
             "children": [
-              {
-                "type": "strong",
-                "props": {},
-                "children": [
-                  "90/90 hofterotation · 60 sekunder"
-                ]
-              },
-              {
-                "type": "p",
-                "props": {},
-                "children": [
-                  "Sid på gulvet med det ene ben bøjet foran dig (90°) og det andet ud til siden (90°). Skub forsigtigt hoften frem mod det forreste ben og hold. Rammer både udad- og indadrotation i hoften, vigtigt for at komme dybt i squatten."
-                ]
-              }
+              "Start 2 minutters mobilitet"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "type": "button",
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Spring mobilitet over"
             ]
           }
-        ]
-      },
-      {
-        "type": "button",
-        "props": {
-          "type": "button",
-          "onClick": "[handler]"
-        },
-        "children": [
-          "Start 2 minutters mobilitet"
         ]
       },
       {
