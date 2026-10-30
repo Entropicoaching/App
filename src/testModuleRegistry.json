@@ -264,11 +264,11 @@
     {"module": "indbakke2Dom.mjs", "path": "src/indbakke2Dom.mjs", "allowedImporters": ["src/indbakke2.test.js", "src/indbakke2Review.test.js"]},
     {"module": "indbakke2Loader.mjs", "path": "src/indbakke2Loader.mjs", "allowedImporters": ["src/indbakke2.test.js", "src/indbakke2Review.test.js"]},
 
-    {"module":"opvarmStigeDom.mjs","path":"src/athlete/opvarmStigeDom.mjs","allowedImporters":["src/athlete/opvarmStigeApp.test.js","src/athlete/opvarmStigeLoader.mjs"]},
-    {"module":"opvarmStigeLoader.mjs","path":"src/athlete/opvarmStigeLoader.mjs","allowedImporters":["src/athlete/opvarmStigeApp.test.js"]},
+    {"module":"opvarmStigeDom.mjs","path":"src/athlete/opvarmStigeDom.mjs","allowedImporters":["src/athlete/opvarmStigeCounts.test.js","src/athlete/opvarmStigeApp.test.js","src/athlete/opvarmStigeLoader.mjs"]},
+    {"module":"opvarmStigeLoader.mjs","path":"src/athlete/opvarmStigeLoader.mjs","allowedImporters":["src/athlete/opvarmStigeCounts.test.js","src/athlete/opvarmStigeApp.test.js"]},
     {"module":"opvarmStigeJsx.mjs","path":"src/athlete/opvarmStigeJsx.mjs","allowedImporters":["src/athlete/opvarmStigeLoader.mjs"]},
-    {"module":"opvarmStige.mjs","path":"src/opvarmStige.mjs","allowedImporters":["src/App.jsx","src/athlete/WarmupLadderView.mjs","src/opvarmStige.test.js","src/athlete/opvarmStigeApp.test.js","src/athlete/opvarmStigeReview.test.js"],"imports":{"./exerciseSetView.js":"src/exerciseSetView.js","./rel1030.mjs":"src/rel1030.mjs"}},
-    {"module":"WarmupLadderView.mjs","path":"src/athlete/WarmupLadderView.mjs","runtime":"src/athlete/opvarmStigeDom.mjs","allowedImporters":["src/athlete/ProgramTab.jsx","src/athlete/opvarmStigeApp.test.js"],"imports":{"react":"@runtime","../opvarmStige.mjs":"src/opvarmStige.mjs","./mobilityCatalog.mjs":"src/athlete/mobilityCatalog.mjs"}},
+    {"module":"opvarmStige.mjs","path":"src/opvarmStige.mjs","allowedImporters":["src/athlete/opvarmStigeCounts.test.js","src/App.jsx","src/athlete/WarmupLadderView.mjs","src/opvarmStige.test.js","src/athlete/opvarmStigeApp.test.js","src/athlete/opvarmStigeReview.test.js"],"imports":{"./exerciseSetView.js":"src/exerciseSetView.js","./rel1030.mjs":"src/rel1030.mjs"}},
+    {"module":"WarmupLadderView.mjs","path":"src/athlete/WarmupLadderView.mjs","runtime":"src/athlete/opvarmStigeDom.mjs","allowedImporters":["src/athlete/opvarmStigeCounts.test.js","src/athlete/ProgramTab.jsx","src/athlete/opvarmStigeApp.test.js"],"imports":{"react":"@runtime","../opvarmStige.mjs":"src/opvarmStige.mjs","./mobilityCatalog.mjs":"src/athlete/mobilityCatalog.mjs"}},
     {"module":"programOverblik.mjs","path":"src/programOverblik.mjs","allowedImporters":["src/Dashboard.jsx","src/dashboard/ProgramOverblikView.mjs","src/programOverblik.test.js"]},
     {"module":"ProgramOverblikView.mjs","path":"src/dashboard/ProgramOverblikView.mjs","allowedImporters":["src/Dashboard.jsx","src/programOverblikApp.test.js"],"imports":{"../dashboardShared.js":"src/dashboardShared.js","react":"@runtime","../programOverblik.mjs":"src/programOverblik.mjs"}},
     {
