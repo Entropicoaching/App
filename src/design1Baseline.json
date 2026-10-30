@@ -810,6 +810,13 @@
                 "children": [
                   "Tom stang · ingen plader"
                 ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "I alt pr. side: 0 kg · antal skiver: 0"
+                ]
               }
             ]
           },
@@ -840,6 +847,13 @@
                 "props": {},
                 "children": [
                   "Pr. side: 1 × 10 kg"
+                ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "I alt pr. side: 10 kg · antal skiver: 1"
                 ]
               }
             ]
@@ -872,6 +886,13 @@
                 "children": [
                   "Pr. side: 1 × 20 kg"
                 ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "I alt pr. side: 20 kg · antal skiver: 1"
+                ]
               }
             ]
           },
@@ -903,6 +924,13 @@
                 "children": [
                   "Pr. side: 1 × 25 kg + 1 × 5 kg"
                 ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "I alt pr. side: 30 kg · antal skiver: 2"
+                ]
               }
             ]
           },
@@ -933,6 +961,13 @@
                 "props": {},
                 "children": [
                   "Pr. side: 1 × 25 kg + 1 × 10 kg"
+                ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "I alt pr. side: 35 kg · antal skiver: 2"
                 ]
               }
             ]
