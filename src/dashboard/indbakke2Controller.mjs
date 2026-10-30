@@ -48,8 +48,8 @@ export function createInboxController({ enabled = false, database, getScope, not
       state.videos = (videos.data || []).filter(v => ids.includes(v.athlete_id) && v.status === 'shared')
       state.loaded = true
       return true
-    } catch (error) {
-      if (active && ticket === generation) state.error = error.message || 'Samtalerne kunne ikke opdateres.'
+    } catch {
+      if (active && ticket === generation) state.error = 'Samtalerne kunne ikke opdateres. Prøv igen.'
       return false
     } finally {
       if (active && ticket === generation) { state.loading = false; emit() }
@@ -72,7 +72,12 @@ export function createInboxController({ enabled = false, database, getScope, not
     },
     draft(text) { if (!state.busy && state.selected) { target(state.selected); state.drafts[state.selected] = text; emit() } },
     templates() {
-      try { const s = scope(); state.templates = readCoachTemplates(storage(), s.coachId) }
+      if (state.busy) return
+      state.templates = []; state.error = ''; state.status = ''
+      try {
+        const s = scope(); state.templates = readCoachTemplates(storage(), s.coachId)
+        if (!state.templates.length) state.status = 'Ingen gemte hurtige svar.'
+      }
       catch { state.error = 'De eksisterende hurtige svar kunne ikke læses.' }
       emit()
     },
@@ -87,7 +92,9 @@ export function createInboxController({ enabled = false, database, getScope, not
       const id = state.selected
       return mutate(async () => {
         target(id)
-        const sent = await sender({ coachId: scope().coachId, athleteId: id, text: state.drafts[id] })
+        let sent
+        try { sent = await sender({ coachId: scope().coachId, athleteId: id, text: state.drafts[id] }) }
+        catch { throw Error('Beskeden kunne ikke sendes. Din kladde er bevaret. Prøv igen.') }
         if (sent !== true) return
         state.drafts[id] = ''; state.status = 'Beskeden er sendt.'
         await refresh()
@@ -101,9 +108,11 @@ export function createInboxController({ enabled = false, database, getScope, not
         if (!state.loaded || state.loading) throw Error('Opdatér samtalen før du markerer den som set.')
         const ids = state.messages.filter(m => m.athlete_id === id && m.sender_role === 'athlete' && !m.read_by_coach).map(m => m.id)
         if (!ids.length) return
-        const { error } = await database.from('messages').update({ read_by_coach: true })
-          .eq('athlete_id', id).eq('sender_role', 'athlete').in('id', ids)
-        if (error) throw Error('Kunne ikke markere som set. Samtalen er fortsat ulæst.')
+        try {
+          const { error } = await database.from('messages').update({ read_by_coach: true })
+            .eq('athlete_id', id).eq('sender_role', 'athlete').in('id', ids)
+          if (error) throw error
+        } catch { throw Error('Kunne ikke markere som set. Samtalen er fortsat ulæst.') }
         state.messages = state.messages.map(m => ids.includes(m.id) && m.athlete_id === id ? { ...m, read_by_coach: true } : m)
         state.status = 'Markeret som set.'
         try { await onChanged() } catch { /* Local confirmed read state remains. */ }
