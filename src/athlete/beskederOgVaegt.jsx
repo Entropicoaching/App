@@ -197,6 +197,7 @@ export function lavBeskederOgVaegt({
   )
 
   return {
+    inboxDatabase: supabase,
     fetchWeightLogs, logWeight, fetchAthleteMessages, markTrackRead, sendAthleteMessage, formatMsgTime, renderSharedFeedbackCards,
     sendUgeLinje,
   }
