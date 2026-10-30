@@ -658,7 +658,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
           )}
         </div>
 
-        <MobilNav {...{ coachRyd,
+        <MobilNav {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
           athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
           goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
           selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
