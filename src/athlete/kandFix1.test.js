@@ -1,11 +1,14 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// These fixtures exercise the legacy contract, independently of the shipped step.
+useTestRelease(0)
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, readdirSync } from 'node:fs'
-import { dashboardKilde, DASHBOARD_MODULER } from '../../scripts/dashboardKilde.mjs'
-import { openReadinessSurface, readinessNavigation } from './readinessShortcut.mjs'
-import { previewNavigation } from './enkelPrototype.mjs'
-import { weightTrendText } from './weightTrend.mjs'
-import { checkinNoteTimingText } from '../readinessInsight.js'
+const { dashboardKilde, DASHBOARD_MODULER } = await import('../../scripts/dashboardKilde.mjs')
+const { openReadinessSurface, readinessNavigation } = await import('./readinessShortcut.mjs')
+const { previewNavigation } = await import('./enkelPrototype.mjs')
+const { weightTrendText } = await import('./weightTrend.mjs')
+const { checkinNoteTimingText } = await import('../readinessInsight.js')
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const athlete = read('../AthleteView.jsx')

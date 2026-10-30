@@ -1,11 +1,14 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 // Ordre 1429: coachens fremgang matcher atletens (samme tunge-saet-regel, eet
 // navn pr. hovedloeft) og styrkelinjen oeverst paa profilen. Syntetiske data.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { bestHeavySetPerDay } from './exerciseProgress.js'
-import { hovedloeftStatus, lokalDag, smerteNoter, styrkeLinje, styrkeSmerteRegel } from './coachFremgang.js'
-import { bedsteRekorder, normaliserRekorder, tungeRekorder } from './personalRecords.js'
-import { detectSignalsV2 } from './coachBriefingRules.js'
+const { bestHeavySetPerDay } = await import('./exerciseProgress.js')
+const { hovedloeftStatus, lokalDag, smerteNoter, styrkeLinje, styrkeSmerteRegel } = await import('./coachFremgang.js')
+const { bedsteRekorder, normaliserRekorder, tungeRekorder } = await import('./personalRecords.js')
+const { detectSignalsV2 } = await import('./coachBriefingRules.js')
 
 const TODAY = '2026-10-06'
 const dagMinus = (n) => new Date(Date.parse(`${TODAY}T10:00:00Z`) - n * 86400000).toISOString()

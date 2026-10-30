@@ -1,6 +1,9 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { roligeAtleter, roligLinje } from './roligeAtleter.js'
+const { roligeAtleter, roligLinje } = await import('./roligeAtleter.js')
 
 const atleter = [
   { id: 'a', name: 'Alfa Testsen' }, { id: 'b', name: 'Bravo Testsen' },

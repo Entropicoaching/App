@@ -1,10 +1,13 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { summarizeWeek } from './athlete/ugeFeedback.js';
-import { coachUgeFeedback, ugeFeedbackTree, erAfsluttetUge } from './dashboard/coachUgeFeedback.js';
-import { smerteNoter, planlagtLetUge, lokalDag } from './coachFremgang.js';
-import { bestHeavySetPerDay } from './exerciseProgress.js';
-import { dataEnoughEnabled } from './dataEnough.mjs';
+const { summarizeWeek } = await import('./athlete/ugeFeedback.js')
+const { coachUgeFeedback, ugeFeedbackTree, erAfsluttetUge } = await import('./dashboard/coachUgeFeedback.js')
+const { smerteNoter, planlagtLetUge, lokalDag } = await import('./coachFremgang.js')
+const { bestHeavySetPerDay } = await import('./exerciseProgress.js')
+const { dataEnoughEnabled } = await import('./dataEnough.mjs')
 
 const training = { id: 's', title: 'Training', exercises: [{ id: 'sq', sets: 1, name: 'Squat', reps: 5 }] };
 const rest = { id: 'r', title: 'Rest', exercises: [] };

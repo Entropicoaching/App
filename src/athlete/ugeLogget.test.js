@@ -1,7 +1,11 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// Explicit legacy profile, loaded before the component/handler fixture.
+useTestRelease(0)
+await import('../udgivelseTrin.mjs')
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { install } from './uge4Loader.mjs'
-import { mount, nodes, text, createElement as h } from './uge4Dom.mjs'
+const { install } = await import('./uge4Loader.mjs')
+const { mount, nodes, text, createElement: h } = await import('./uge4Dom.mjs')
 install()
 const { renderUgeLogget } = await import('./ugeLogget.mjs')
 const { default: UgensStatusKort } = await import('./UgensStatusKort.jsx')

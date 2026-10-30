@@ -26,7 +26,7 @@ export function install({ trin, lineEnding } = {}) {
       if (lineEnding) source = source.replace(/\r?\n/g, lineEnding)
       if (path === 'src/udgivelseTrin.mjs' && trin !== undefined) {
         if (![0, 1].includes(trin)) throw Error('Unknown synthetic release step')
-        source = source.replace('UDGIVELSE_TRIN = 0', `UDGIVELSE_TRIN = ${trin}`)
+        source = source.replace(/^export const UDGIVELSE_TRIN = [01](?=\r?$)/m, `export const UDGIVELSE_TRIN = ${trin}`)
       }
       if (path.endsWith('.jsx')) source = `import { h as __h } from '${dom}';\n${jsx(source)}`
       return { format: 'module', source, shortCircuit: true }

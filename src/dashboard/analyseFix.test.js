@@ -1,8 +1,12 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { install } from './analyseFixLoader.mjs'
 import { mount, nodes, text, one } from './analyseSamletDom.mjs'
 install({ before: process.argv.includes('--before-observed') })
+useTestRelease(0)
 const { default: AnalyseTab } = await import('./AnalyseTab.jsx')
 const { liftEvidence } = await import('../dataEvidence.mjs')
 const { dataEnoughEnabled } = await import('../dataEnough.mjs')

@@ -1,6 +1,9 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lastCheckinDrivenChange, checkinNoteTimingText } from './readinessInsight.js'
+const { lastCheckinDrivenChange, checkinNoteTimingText } = await import('./readinessInsight.js')
 
 const fmtDate = value => {
   const [, month, day] = value.split('-')

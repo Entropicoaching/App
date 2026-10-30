@@ -1,9 +1,12 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import {
+const {
   compareReadiness, readinessComparisonText, readinessTrainingNote,
   summarizeReadinessForCoach, lastCheckinDrivenChange,
-} from './readinessInsight.js'
+} = await import('./readinessInsight.js')
 
 test('færre end fem logs → insufficient, uanset dagens score', () => {
   const r = compareReadiness(80, [70, 72, 68, 71])

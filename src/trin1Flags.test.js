@@ -13,9 +13,9 @@ const root = new URL('../', import.meta.url)
 const { trin1AppData2, UDGIVELSE_TRIN } = await import('./udgivelseTrin.mjs')
 const data = await import('./dataEnough.mjs')
 
-test('profile preserves default OFF and step 1 only activates appData2 for every URL', () => {
-  assert.equal(UDGIVELSE_TRIN, 0)
-  assert.equal(data.dataEnoughEnabled(), false)
+test('profile accepts supported release steps and step 1 only activates appData2 for every URL', () => {
+  assert.ok([0, 1].includes(UDGIVELSE_TRIN))
+  assert.equal(data.dataEnoughEnabled(), UDGIVELSE_TRIN === 1)
   for (const search of ['', '?x=1', '?appData2=0', '?appData2=true']) {
     assert.equal(trin1AppData2(search, 0), false)
     assert.equal(trin1AppData2(search, 1), true)
@@ -23,7 +23,7 @@ test('profile preserves default OFF and step 1 only activates appData2 for every
   for (const trin of [false, true, '1', 2, null]) assert.equal(trin1AppData2('', trin), false)
   assert.equal(trin1AppData2('?appData2=1', 0), true)
   assert.equal(trin1AppData2('?appData2=0&appData2=1', 0), false, 'legacy first-value parsing')
-  assert.equal(data.withDataEnoughFlag('/program'), '/program')
+  assert.equal(data.withDataEnoughFlag('/program'), UDGIVELSE_TRIN === 1 ? '/program?appData2=1' : '/program')
   globalThis.location.search = '?appData2=1'
   assert.equal(data.withDataEnoughFlag('/program?week=2'), '/program?week=2&appData2=1')
   globalThis.location.search = ''

@@ -1,12 +1,16 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Explicit legacy profile, loaded before the component/handler fixture.
+useTestRelease(0)
+await import('./udgivelseTrin.mjs')
 // ORDRE 370 · Coach Briefing skarpere. En test pr. syntetisk atlet
 // (test/fixtures/briefing/), plus prioritering og synkronisering med n8n.
 // Hver atlet-test tjekker baade hvad v1 sagde (FOER) og hvad v2 siger.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { fixtures } from '../test/fixtures/briefing/index.mjs'
-import { buildAthlete } from '../test/fixtures/briefing/helpers.mjs'
-import { DETECTOR_RANK, MESSAGE_VIDEO_RANK, briefingOrder, briefingVisible, detectSignalsV1, detectSignalsV2, mentionsPain } from './coachBriefingRules.js'
+const { fixtures } = await import('../test/fixtures/briefing/index.mjs')
+const { buildAthlete } = await import('../test/fixtures/briefing/helpers.mjs')
+const { DETECTOR_RANK, MESSAGE_VIDEO_RANK, briefingOrder, briefingVisible, detectSignalsV1, detectSignalsV2, mentionsPain } = await import('./coachBriefingRules.js')
 
 const v1 = fixture => briefingVisible(detectSignalsV1(fixture))
 const only = fixture => {

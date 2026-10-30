@@ -40,7 +40,8 @@ for (const path of installers) test(`closed loader imports effective profile: ${
     const hooks = m.install();
     globalThis.location = {search:''};
     const data = await import('../dataEnough.mjs');
-    assert.equal(data.dataEnoughEnabled(), false);
+    const { UDGIVELSE_TRIN } = await import('../udgivelseTrin.mjs');
+    assert.equal(data.dataEnoughEnabled(), UDGIVELSE_TRIN === 1);
     globalThis.location.search = '?appData2=1';
     assert.equal(data.dataEnoughEnabled(), true);
     hooks?.deregister();`
@@ -58,7 +59,8 @@ for (const path of ['coachRydHarness.mjs', 'coachRyd2Harness.mjs',
       const m = await import(${JSON.stringify(loader)});
       globalThis.location = {search:''};
       const data = await ${load};
-      assert.equal(data.dataEnoughEnabled(), false);
+      const { UDGIVELSE_TRIN } = await import('../udgivelseTrin.mjs');
+    assert.equal(data.dataEnoughEnabled(), UDGIVELSE_TRIN === 1);
       globalThis.location.search = '?appData2=1';
       assert.equal(data.dataEnoughEnabled(), true);`
     assert.doesNotThrow(() => runProbe(code))

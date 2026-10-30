@@ -1,8 +1,12 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// Explicit legacy profile, loaded before the component/handler fixture.
+useTestRelease(0)
+await import('../udgivelseTrin.mjs')
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
-import { syntheticElement } from './appLog2Fakes.mjs'
+const { previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } = await import('./appLog2.mjs')
+const { syntheticElement } = await import('./appLog2Fakes.mjs')
 
 test('modprøve: usorteret historik, fremtid og navnefamilier må ikke lække', () => {
   const history = { squat: [
