@@ -1,26 +1,27 @@
 import { createElement as h, useState, useEffect, useMemo, useRef } from 'react'
+import { s } from '../dashboardShared.js'
 import { createInboxController } from './indbakke2Controller.mjs'
 import { markerReplyPreview } from '../videoMarkerReplies.mjs'
-const button = { minHeight: 44, margin: '4px 8px 4px 0' }
-const field = { display: 'block', width: '100%', boxSizing: 'border-box' }
+const button = { ...s.btnPrimary, minHeight: 44, maxWidth: '100%', whiteSpace: 'normal', overflowWrap: 'anywhere', textAlign: 'left', margin: '4px 8px 4px 0' }
+const field = { ...s.fieldInput, display: 'block', width: '100%', boxSizing: 'border-box' }
 export function InboxPanel({ controller, state }) {
   const rows = controller.rows()
   const selected = rows.find(row => row.athlete.id === state.selected)
-  return h('section', { 'aria-label': 'Indbakke', style: { padding: '1rem', color: '#edeae2' } },
-    h('h1', null, 'Indbakke'),
+  return h('section', { 'aria-label': 'Indbakke', style: { ...s.page, color: '#edeae2', fontFamily: s.wrap.fontFamily, fontWeight: s.wrap.fontWeight, textAlign: 'left', lineHeight: 1.5, minWidth: 0, overflowWrap: 'anywhere' } },
+    h('h1', { style: { ...s.topbarTitle, margin: '0 0 1rem', letterSpacing: 'normal' } }, 'Indbakke'),
     h('button', { style: button, disabled: state.loading || state.busy, onClick: controller.refresh }, 'Opdatér'),
     state.loading && h('p', { role: 'status' }, 'Henter samtaler…'),
     state.error && h('p', { role: 'alert' }, state.error),
     state.status && h('p', { role: 'status' }, state.status),
     !state.loading && !rows.length && h('p', null, 'Ingen atleter i indbakken.'),
     h('nav', { 'aria-label': 'Samtaler' }, ...rows.map(row => h('button', {
-      key: row.athlete.id, style: button, disabled: state.busy,
+      key: row.athlete.id, style: { ...button, ...(state.selected === row.athlete.id ? {} : s.btnGhost), color: state.selected === row.athlete.id ? s.btnPrimary.color : '#edeae2', textAlign: 'left' }, disabled: state.busy,
       'aria-pressed': state.selected === row.athlete.id, onClick: () => controller.select(row.athlete.id),
     }, row.athlete.name, row.unread > 0 ? ` · ${row.unread} ulæste` : ''))),
     selected && h('section', { 'aria-label': `Samtale med ${selected.athlete.name}` },
-      h('h2', null, selected.athlete.name),
+      h('h2', { style: s.topbarTitle }, selected.athlete.name),
       h('button', { style: button, disabled: state.busy || state.loading || !state.loaded || !selected.unread, onClick: controller.seen }, 'Markér som set'),
-      h('ol', null, ...selected.thread.map(item => h('li', { key: item.key, style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginBottom: 12 } },
+      h('ol', null, ...selected.thread.map(item => h('li', { key: item.key, style: { ...s.card, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginBottom: 12 } },
         h('p', null, item.kind === 'video' ? 'Videofeedback' : item.value.sender_role === 'coach' ? 'Dig' : selected.athlete.name,
           ' · ', item.at || 'Dato ukendt'),
         item.kind === 'video' ? videoFeedback(h, item.value) : markerReplyPreview(item.value)))),

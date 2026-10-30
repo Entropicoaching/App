@@ -14,6 +14,8 @@ const extras = ['trin1Loader.mjs', 'trin1Dom.mjs', 'trin1Imports.json', 'trin1Fl
   'trin1Flags.test.js', 'trin1On.test.js', 'trin1Off.test.js', 'trin1WeekCases.mjs', 'trin1F1.test.js',
   'athlete/prog5Dom.mjs', 'athlete/prog5Jsx.mjs', 'testModuleRegistry.mjs',
   'testModuleRegistry.json', 'coachRyd2Jsx.mjs', 'registryDom.mjs',
+  'App.jsx', 'Dashboard.jsx', 'AthleteView.jsx',
+  'dashboard/analyseConclusionHistory.mjs', 'approvedAnalysisConclusion.mjs',
   'opvarmStige.mjs', 'athlete/WarmupLadderView.mjs', 'athlete/opvarmStigeDom.mjs']
 const paths = new Set([...Object.keys(graph), ...extras.map(path => 'src/' + path)])
 const cases = [
@@ -33,6 +35,11 @@ for (const [name, path, before, after, probe, diagnostic] of cases) test(`counte
       mkdirSync(new URL('./', target), { recursive: true })
       writeFileSync(target, readFileSync(new URL(path, root)))
     }
+    const run = () => spawnSync(process.execPath, ['--test', fileURLToPath(new URL('src/' + probe, fixture))],
+      { encoding: 'utf8', env: { SystemRoot: 'C:\\Windows', TEMP: tmpdir(), TMP: tmpdir(), TMPDIR: tmpdir() }, stdio: ['ignore', 'pipe', 'pipe'] })
+    const control = run()
+    assert.equal(control.error, undefined)
+    assert.equal(control.status, 0, 'unmodified closed fixture must pass: ' + control.stdout + control.stderr)
     const target = new URL(path, fixture)
     const source = readFileSync(target, 'utf8')
     if (name === 'closed-import-missing') {
@@ -45,8 +52,7 @@ for (const [name, path, before, after, probe, diagnostic] of cases) test(`counte
       assert.equal(source.split(before).length, 2, 'one exact mutation site')
       writeFileSync(target, source.replace(before, after))
     }
-    const result = spawnSync(process.execPath, ['--test', fileURLToPath(new URL('src/' + probe, fixture))],
-      { encoding: 'utf8', env: { SystemRoot: 'C:\\Windows', TEMP: tmpdir(), TMP: tmpdir(), TMPDIR: tmpdir() }, stdio: ['ignore', 'pipe', 'pipe'] })
+    const result = run()
     assert.equal(result.error, undefined)
     assert.notEqual(result.status, 0, 'broken behavior must fail its actual-module probe')
     assert.match(result.stdout + result.stderr, diagnostic)
