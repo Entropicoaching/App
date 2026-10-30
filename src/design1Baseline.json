@@ -1,0 +1,983 @@
+[
+  {
+    "type": "section",
+    "props": {
+      "aria-label": "Programoverblik"
+    },
+    "children": [
+      {
+        "type": "h1",
+        "props": {},
+        "children": [
+          "Programoverblik"
+        ]
+      },
+      {
+        "type": "p",
+        "props": {},
+        "children": [
+          "Sidste planlagte uge dækker syv dage fra startdatoen. Uger tilbage beregnes fra i dag i dansk tid."
+        ]
+      },
+      {
+        "type": "ul",
+        "props": {},
+        "children": [
+          {
+            "type": "li",
+            "props": {
+              "key": "a"
+            },
+            "children": [
+              {
+                "type": "button",
+                "props": {
+                  "type": "button",
+                  "onClick": "[handler]"
+                },
+                "children": [
+                  {
+                    "type": "strong",
+                    "props": {},
+                    "children": [
+                      "Testatlet"
+                    ]
+                  },
+                  {
+                    "type": "div",
+                    "props": {},
+                    "children": [
+                      "Intet program"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "props": {
+      "aria-label": "Indbakke"
+    },
+    "children": [
+      {
+        "type": "h1",
+        "props": {},
+        "children": [
+          "Indbakke"
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Opdatér"
+        ]
+      },
+      {
+        "type": "nav",
+        "props": {
+          "aria-label": "Samtaler"
+        },
+        "children": [
+          {
+            "type": "button",
+            "props": {
+              "key": "a",
+              "aria-pressed": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Testatlet",
+              " · 1 ulæste"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "props": {
+          "aria-label": "Samtale med Testatlet"
+        },
+        "children": [
+          {
+            "type": "h2",
+            "props": {},
+            "children": [
+              "Testatlet"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": false,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Markér som set"
+            ]
+          },
+          {
+            "type": "ol",
+            "props": {},
+            "children": [
+              {
+                "type": "li",
+                "props": {
+                  "key": "m"
+                },
+                "children": [
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "Testatlet",
+                      " · ",
+                      "2026-10-30"
+                    ]
+                  },
+                  "Hej"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Eksisterende hurtige svar"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "key": 0,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Skabelon"
+            ]
+          },
+          {
+            "type": "label",
+            "props": {},
+            "children": [
+              "Svar",
+              {
+                "type": "textarea",
+                "props": {
+                  "rows": 4,
+                  "maxLength": 10000,
+                  "value": "Svar",
+                  "onChange": "[handler]"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": false,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Send"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "props": {
+      "aria-label": "Indbakke"
+    },
+    "children": [
+      {
+        "type": "h1",
+        "props": {},
+        "children": [
+          "Indbakke"
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "disabled": true,
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Opdatér"
+        ]
+      },
+      {
+        "type": "p",
+        "props": {
+          "role": "status"
+        },
+        "children": [
+          "Henter samtaler…"
+        ]
+      },
+      {
+        "type": "nav",
+        "props": {
+          "aria-label": "Samtaler"
+        },
+        "children": [
+          {
+            "type": "button",
+            "props": {
+              "key": "a",
+              "aria-pressed": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Testatlet",
+              " · 1 ulæste"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "props": {
+          "aria-label": "Samtale med Testatlet"
+        },
+        "children": [
+          {
+            "type": "h2",
+            "props": {},
+            "children": [
+              "Testatlet"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Markér som set"
+            ]
+          },
+          {
+            "type": "ol",
+            "props": {},
+            "children": [
+              {
+                "type": "li",
+                "props": {
+                  "key": "m"
+                },
+                "children": [
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "Testatlet",
+                      " · ",
+                      "2026-10-30"
+                    ]
+                  },
+                  "Hej"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Eksisterende hurtige svar"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "key": 0,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Skabelon"
+            ]
+          },
+          {
+            "type": "label",
+            "props": {},
+            "children": [
+              "Svar",
+              {
+                "type": "textarea",
+                "props": {
+                  "rows": 4,
+                  "maxLength": 10000,
+                  "value": "Svar",
+                  "onChange": "[handler]"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": false,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Send"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "props": {
+      "aria-label": "Indbakke"
+    },
+    "children": [
+      {
+        "type": "h1",
+        "props": {},
+        "children": [
+          "Indbakke"
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "disabled": true,
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Opdatér"
+        ]
+      },
+      {
+        "type": "nav",
+        "props": {
+          "aria-label": "Samtaler"
+        },
+        "children": [
+          {
+            "type": "button",
+            "props": {
+              "key": "a",
+              "disabled": true,
+              "aria-pressed": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Testatlet",
+              " · 1 ulæste"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "props": {
+          "aria-label": "Samtale med Testatlet"
+        },
+        "children": [
+          {
+            "type": "h2",
+            "props": {},
+            "children": [
+              "Testatlet"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Markér som set"
+            ]
+          },
+          {
+            "type": "ol",
+            "props": {},
+            "children": [
+              {
+                "type": "li",
+                "props": {
+                  "key": "m"
+                },
+                "children": [
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "Testatlet",
+                      " · ",
+                      "2026-10-30"
+                    ]
+                  },
+                  "Hej"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Eksisterende hurtige svar"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "key": 0,
+              "disabled": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Skabelon"
+            ]
+          },
+          {
+            "type": "label",
+            "props": {},
+            "children": [
+              "Svar",
+              {
+                "type": "textarea",
+                "props": {
+                  "rows": 4,
+                  "maxLength": 10000,
+                  "disabled": true,
+                  "value": "Svar",
+                  "onChange": "[handler]"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Gemmer…"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "props": {
+      "aria-label": "Indbakke"
+    },
+    "children": [
+      {
+        "type": "h1",
+        "props": {},
+        "children": [
+          "Indbakke"
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Opdatér"
+        ]
+      },
+      {
+        "type": "p",
+        "props": {
+          "role": "alert"
+        },
+        "children": [
+          "Fejl"
+        ]
+      },
+      {
+        "type": "p",
+        "props": {
+          "role": "status"
+        },
+        "children": [
+          "Status"
+        ]
+      },
+      {
+        "type": "nav",
+        "props": {
+          "aria-label": "Samtaler"
+        },
+        "children": [
+          {
+            "type": "button",
+            "props": {
+              "key": "a",
+              "aria-pressed": true,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Testatlet",
+              " · 1 ulæste"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "props": {
+          "aria-label": "Samtale med Testatlet"
+        },
+        "children": [
+          {
+            "type": "h2",
+            "props": {},
+            "children": [
+              "Testatlet"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": false,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Markér som set"
+            ]
+          },
+          {
+            "type": "ol",
+            "props": {},
+            "children": [
+              {
+                "type": "li",
+                "props": {
+                  "key": "m"
+                },
+                "children": [
+                  {
+                    "type": "p",
+                    "props": {},
+                    "children": [
+                      "Testatlet",
+                      " · ",
+                      "2026-10-30"
+                    ]
+                  },
+                  "Hej"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Eksisterende hurtige svar"
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "key": 0,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Skabelon"
+            ]
+          },
+          {
+            "type": "label",
+            "props": {},
+            "children": [
+              "Svar",
+              {
+                "type": "textarea",
+                "props": {
+                  "rows": 4,
+                  "maxLength": 10000,
+                  "value": "Svar",
+                  "onChange": "[handler]"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "props": {
+              "disabled": false,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Send"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "props": {
+      "aria-label": "Indbakke"
+    },
+    "children": [
+      {
+        "type": "h1",
+        "props": {},
+        "children": [
+          "Indbakke"
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Opdatér"
+        ]
+      },
+      {
+        "type": "nav",
+        "props": {
+          "aria-label": "Samtaler"
+        },
+        "children": [
+          {
+            "type": "button",
+            "props": {
+              "key": "a",
+              "aria-pressed": false,
+              "onClick": "[handler]"
+            },
+            "children": [
+              "Testatlet",
+              " · 1 ulæste"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "props": {
+      "aria-label": "Opvarmningsstige"
+    },
+    "children": [
+      {
+        "type": "h3",
+        "props": {},
+        "children": [
+          "Opvarmningsstige · Squat"
+        ]
+      },
+      {
+        "type": "p",
+        "props": {},
+        "children": [
+          "Planlagt topsæt: 100 kg. 20 kg stang; pladerne vises pr. side."
+        ]
+      },
+      {
+        "type": "h4",
+        "props": {},
+        "children": [
+          "Før første trin: 2 minutters mobilitet"
+        ]
+      },
+      {
+        "type": "ol",
+        "props": {},
+        "children": [
+          {
+            "type": "li",
+            "props": {
+              "key": "sq-mob-2"
+            },
+            "children": [
+              {
+                "type": "strong",
+                "props": {},
+                "children": [
+                  "Ankel-vægstræk · 60 sekunder"
+                ]
+              },
+              {
+                "type": "p",
+                "props": {},
+                "children": [
+                  "Stå med tåen ca. 10 cm fra en væg og bøj knæet fremad, til det rører væggen. Hælen skal blive i gulvet. Flyt tåen gradvist længere væk. Lader anklen bøje nok til at knæet kan vandre frem over tæerne, afgørende for din squat-dybde."
+                ]
+              }
+            ]
+          },
+          {
+            "type": "li",
+            "props": {
+              "key": "sq-mob-3"
+            },
+            "children": [
+              {
+                "type": "strong",
+                "props": {},
+                "children": [
+                  "90/90 hofterotation · 60 sekunder"
+                ]
+              },
+              {
+                "type": "p",
+                "props": {},
+                "children": [
+                  "Sid på gulvet med det ene ben bøjet foran dig (90°) og det andet ud til siden (90°). Skub forsigtigt hoften frem mod det forreste ben og hold. Rammer både udad- og indadrotation i hoften, vigtigt for at komme dybt i squatten."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "type": "button",
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Start 2 minutters mobilitet"
+        ]
+      },
+      {
+        "type": "ol",
+        "props": {},
+        "children": [
+          {
+            "type": "li",
+            "props": {
+              "key": 20
+            },
+            "children": [
+              {
+                "type": "label",
+                "props": {},
+                "children": [
+                  {
+                    "type": "input",
+                    "props": {
+                      "type": "checkbox",
+                      "checked": false,
+                      "onChange": "[handler]"
+                    },
+                    "children": []
+                  },
+                  " 20 kg × 8 reps"
+                ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "Tom stang · ingen plader"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "li",
+            "props": {
+              "key": 40
+            },
+            "children": [
+              {
+                "type": "label",
+                "props": {},
+                "children": [
+                  {
+                    "type": "input",
+                    "props": {
+                      "type": "checkbox",
+                      "checked": false,
+                      "onChange": "[handler]"
+                    },
+                    "children": []
+                  },
+                  " 40 kg × 5 reps"
+                ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "Pr. side: 1 × 10 kg"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "li",
+            "props": {
+              "key": 60
+            },
+            "children": [
+              {
+                "type": "label",
+                "props": {},
+                "children": [
+                  {
+                    "type": "input",
+                    "props": {
+                      "type": "checkbox",
+                      "checked": false,
+                      "onChange": "[handler]"
+                    },
+                    "children": []
+                  },
+                  " 60 kg × 3 reps"
+                ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "Pr. side: 1 × 20 kg"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "li",
+            "props": {
+              "key": 80
+            },
+            "children": [
+              {
+                "type": "label",
+                "props": {},
+                "children": [
+                  {
+                    "type": "input",
+                    "props": {
+                      "type": "checkbox",
+                      "checked": false,
+                      "onChange": "[handler]"
+                    },
+                    "children": []
+                  },
+                  " 80 kg × 2 reps"
+                ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "Pr. side: 1 × 25 kg + 1 × 5 kg"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "li",
+            "props": {
+              "key": 90
+            },
+            "children": [
+              {
+                "type": "label",
+                "props": {},
+                "children": [
+                  {
+                    "type": "input",
+                    "props": {
+                      "type": "checkbox",
+                      "checked": false,
+                      "onChange": "[handler]"
+                    },
+                    "children": []
+                  },
+                  " 90 kg × 1 reps"
+                ]
+              },
+              {
+                "type": "div",
+                "props": {},
+                "children": [
+                  "Pr. side: 1 × 25 kg + 1 × 10 kg"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "p",
+        "props": {},
+        "children": [
+          "Valgfri pause mellem trinnene"
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "type": "button",
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Start 60 sekunders pause"
+        ]
+      },
+      {
+        "type": "button",
+        "props": {
+          "type": "button",
+          "onClick": "[handler]"
+        },
+        "children": [
+          "Stop timer"
+        ]
+      },
+      {
+        "type": "p",
+        "props": {
+          "role": "timer",
+          "aria-label": "Tid tilbage"
+        },
+        "children": [
+          "0 sekunder"
+        ]
+      }
+    ]
+  },
+  null,
+  null
+]
