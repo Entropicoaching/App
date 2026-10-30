@@ -1,4 +1,5 @@
 [
+  {"name": "opvarmStige", "module": "src/App.jsx", "default": false, "activation": "Prop opvarmStige=true, ?opvarmStige=1 eller ?rel1030=1", "probe": null},
   {
     "name": "rel1030",
     "module": "src/rel1030.mjs",

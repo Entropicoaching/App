@@ -6,7 +6,9 @@ import {nodes,normalized} from './coachRyd2Harness.mjs'
 const baseline=JSON.parse(readFileSync(new URL('./rebaseProgramOverblikBase.json',import.meta.url),'utf8'))
 const plain=tree=>JSON.parse(JSON.stringify(normalized(tree)))
 
-test('repair: OFF trees equal all twelve pinned Dashboard baseline trees',()=>{
+test('repair: OFF trees equal all twelve pinned Dashboard baseline trees',t=>{
+  // The twelve immutable trees were captured on this Copenhagen calendar day.
+  t.mock.timers.enable({apis:['Date'],now:Date.parse('2026-10-29T12:00:00Z')})
   assert.equal(baseline.schema,'program-overblik-off-baseline/v1')
   assert.equal(baseline.cases.length,12)
   for(const entry of baseline.cases) {
