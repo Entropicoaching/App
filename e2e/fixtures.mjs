@@ -24,16 +24,6 @@ export const ANALYZED_VIDEO_CLIENT_ID = '88888888-8888-4888-8888-888888888888'
 export const MEASURED_VIDEO_ID = '99999999-9999-4999-8999-999999999999'
 export const MEASURED_VIDEO_CLIENT_ID = 'aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa'
 
-function isoNow() { return new Date().toISOString() }
-function todayStr() { return new Date().toISOString().slice(0, 10) }
-
-// weekday: 0=mandag..6=søndag i appens egen skala (se WEEKDAYS_LONG i
-// AthleteView.jsx) — sat til i dag, så sessionen fremstår som "Næste".
-function todayWeekdayIdx() {
-  const jsDay = new Date().getDay() // 0=søndag..6=lørdag
-  return jsDay === 0 ? 6 : jsDay - 1
-}
-
 /**
  * Bygger et frisk sæt tabeller. `withLogs: true` seeder programmet som om
  * atleten allerede har logget dagens tre sæt + dagens parathed — bruges når
@@ -41,7 +31,20 @@ function todayWeekdayIdx() {
  * atlet-spec-kørsel i samme proces. `withAnalyzedVideo: true` (ordre 155)
  * tilføjer en færdig-sporet video, så video-review.spec.mjs kan køres alene.
  */
-export function buildSeed({ withLogs = false, withAnalyzedVideo = false, withMeasuredVideo = false } = {}) {
+export function buildSeed({ withLogs = false, withAnalyzedVideo = false, withMeasuredVideo = false, now = new Date() } = {}) {
+  // One injected clock keeps this synthetic program and its logs reproducible.
+  // Use Copenhagen civil days so Monday does not drift at UTC midnight or DST.
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).formatToParts(now).map(p => [p.type, p.value]))
+  const today = `${parts.year}-${parts.month}-${parts.day}`
+  const monday = new Date(today + 'T00:00:00Z')
+  const weekday = (monday.getUTCDay() + 6) % 7
+  monday.setUTCDate(monday.getUTCDate() - weekday)
+  const isoNow = () => now.toISOString()
+  const todayStr = () => today
+  const todayWeekdayIdx = () => weekday
+
   const tables = {
     profiles: [
       { id: COACH_USER.id, role: 'coach', email: COACH_USER.email, last_seen: null },
@@ -61,7 +64,7 @@ export function buildSeed({ withLogs = false, withAnalyzedVideo = false, withMea
       },
     ],
     weeks: [
-      { id: WEEK_ID, athlete_id: ATHLETE_ID, week_number: 1, block_name: 'Base' },
+      { id: WEEK_ID, athlete_id: ATHLETE_ID, week_number: 1, block_name: 'Base', start_date: monday.toISOString().slice(0, 10) },
     ],
     sessions: [
       {
