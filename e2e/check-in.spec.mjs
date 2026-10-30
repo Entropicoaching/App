@@ -3,7 +3,7 @@
 // mønster som dagens-pas.spec.mjs:
 // (1) formularen forudfyldes fra sidste log, og ét tryk er nok at sende den
 // (2) skærmen efter afsendelse viser "hvad coachen ser" og — når det findes i
-//     data — "hvad der ændrede sig sidst"
+//     data — en coachnote efter et check-in, uden at påstå en årsag
 // (3) mangler ugens check-in, og ugen er ved at være slut, viser Dagens pas
 //     en rolig linje med et link, som forsvinder igen efter afsendelse
 //
@@ -33,7 +33,7 @@ const LOW_LOG_ID = '99999999-9999-4999-8999-999999999903'
 //   altid fra den tidligst daterede uge, se AthleteView.jsx.
 // - et log for 8 dage siden bliver "sidste log" → afprøver forudfyldning.
 // - et LAVT log (score 20) for 16 dage siden, 3 dage før Deload-ugens egen
-//   startdato og med en coach-note → afprøver "hvad ændrede sig sidst".
+//   startdato og med en coach-note → afprøver notens rækkefølge efter check-in.
 function seedWithCheckinHistory() {
   const seed = buildSeed()
   const { tables } = seed
@@ -119,12 +119,12 @@ export async function runCheckIn(page, { appUrl, mockUrl, outDir }) {
   assert.deepEqual(todaysLog.sore_zones, ['Ben'])
 
   // (2) Efter afsendelse: "hvad coachen ser" (ægte regnet ud fra historikken
-  // + dagens log) og "hvad der ændrede sig sidst" (den lave score for 16
-  // dage siden + Deload-ugens coach-note, 3 dage efter — inden for vinduet).
+  // + dagens log) og coachnoten efter den lave score for 16 dage siden
+  // (Deload-ugens note, 3 dage efter — rækkefølge, ikke en påstået årsag).
   await page.getByText('Det din coach ser', { exact: true }).waitFor({ state: 'visible' })
   await page.getByText('gns. søvn 5,7 timer', { exact: false }).waitFor({ state: 'visible' })
   await page.getByText('oftest øm: Ben', { exact: false }).waitFor({ state: 'visible' })
-  await page.getByText('Sidst det gjorde en forskel', { exact: true }).waitFor({ state: 'visible' })
+  await page.getByText('Coachnote efter et check-in', { exact: true }).waitFor({ state: 'visible' })
   await page.getByText('Skruet ned for volumen efter din tilbagemelding.', { exact: false }).waitFor({ state: 'visible' })
   await shot('03-efter-afsendelse')
 
@@ -132,7 +132,7 @@ export async function runCheckIn(page, { appUrl, mockUrl, outDir }) {
   assert.equal(await page.getByText('Ugens check-in mangler stadig.', { exact: true }).count(), 0,
     'nudge-linjen skal forsvinde, når ugens check-in er logget')
 
-  console.log('GRØN: check-in forudfyldes fra sidste log og sendes med ét tryk, viser bagefter hvad coachen ser og hvad et tidligere check-in ændrede, og ugens påmindelse forsvinder igen.')
+  console.log('GRØN: check-in forudfyldes fra sidste log og sendes med ét tryk, viser bagefter hvad coachen ser og en coachnote efter et check-in, og ugens påmindelse forsvinder igen.')
 }
 
 async function main() {

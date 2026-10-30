@@ -46,7 +46,8 @@ export async function runDagensPasPause(page, { appUrl, mockUrl, outDir }) {
   // Dagens pas: næste sæt vises øverst på Hjem, med det samme — ingen
   // navigation til Program-fanen nødvendig.
   await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText('Squat', { exact: true }).waitFor({ state: 'visible' })
+  // Squat findes også i pasoverblikket; vent på den aktive øvelses overskrift.
+  await page.getByRole('heading', { name: 'Squat', exact: true }).waitFor({ state: 'visible' })
   await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
   // Ingen pause før noget er logget.
   assert.equal(await page.getByTestId('rest-pause-open').count(), 0, 'ingen pausetimer må vises før et sæt er logget')

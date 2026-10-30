@@ -1,5 +1,5 @@
 // ORDRE 1502 (D3, Marcs V10 3A): en smerte-note standser appens stigningsforslag.
-// To koersler paa 390: uden smerte staar "Forslag: X kg" i Dagens pas; med en
+// To koersler paa 390: uden smerte staar "Appens forslag" i Dagens pas; med en
 // smerte-note i en seneste uge er forslaget vaek. Coachens egen anbefaling er uroert.
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
@@ -34,12 +34,13 @@ async function koer(kommentar, navn, forventForslag) {
     await page.getByRole('button', { name: 'Log ind' }).click()
     await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 20000 })
     await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
-    await page.getByText('Sidste gang:', { exact: false }).waitFor({ state: 'visible', timeout: 10000 })
+    // Vent på historikværdien, ikke den tidligere samlede etiket med kolon.
+    await page.getByText('100 kg × 5 @7', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
     await page.waitForTimeout(500)
-    const antal = await page.getByText(/Forslag: [\d.,]+ kg/).count()
+    const antal = await page.getByText('Appens forslag', { exact: true }).count()
     await page.screenshot({ path: join(OUT_DIR, `smerte-stop-1502-${navn}.png`), fullPage: true })
-    assert.equal(antal > 0, forventForslag, `${navn}: Forslag-linjer = ${antal}`)
-    console.log(`${navn}: Forslag-linjer ${antal} (forventet ${forventForslag ? '>0' : '0'})`)
+    assert.equal(antal > 0, forventForslag, `${navn}: Appens forslag-linjer = ${antal}`)
+    console.log(`${navn}: Appens forslag-linjer ${antal} (forventet ${forventForslag ? '>0' : '0'})`)
   } finally {
     await browser.close(); await vite.stop(); await mock.close()
   }

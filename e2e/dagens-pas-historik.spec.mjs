@@ -74,13 +74,14 @@ export async function runDagensPasHistorik(page, { appUrl, outDir }) {
     await page.reload()
     await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
-    // Historikken er holdt tilbage: kortet står på planens tal og har ingen "Sidste gang".
+    // Historikken er holdt tilbage: kortet står på planens tal uden historikværdien.
     await page.waitForFunction(() => document.querySelector('[aria-label="Vægt, sæt 1"]')?.value === '80', null, { timeout: 5000 })
-    assert.equal(await page.getByText('Sidste gang:', { exact: false }).count(), 0, 'historikken er holdt tilbage — ingen "Sidste gang" endnu')
+    assert.equal(await page.getByText('95 kg × 5', { exact: true }).count(), 0, 'historikken er holdt tilbage — ingen historikværdi endnu')
   }
   const releaseAndWaitForHistory = async () => {
     release()
-    await page.getByText('Sidste gang: 95 kg × 5', { exact: false }).waitFor({ state: 'visible', timeout: 10000 })
+    // Etiketten og værdien står i hver sin celle; værdien beviser ankomsten.
+    await page.getByText('95 kg × 5', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
   }
 
   await page.goto(appUrl)
