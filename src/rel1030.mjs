@@ -16,3 +16,9 @@ export function rel1030Mobility(props, search = '') {
   if (!rel1030Enabled(search)) return props
   return { ...props, mobilitetFoerPas: true, mobilitetFokus: true, mobilitetHjalp: true, mobilitetCoach: true, mobilitetHjemme: true }
 }
+
+export const DEFAULT_HJEMOEV_KOMPAKT = false
+export function hjemoevKompaktEnabled(prop = DEFAULT_HJEMOEV_KOMPAKT, search = '') {
+  const values = new URLSearchParams(search).getAll('hjemoevKompakt')
+  return prop === true || rel1030Enabled(search) || (values.length === 1 && values[0] === '1')
+}

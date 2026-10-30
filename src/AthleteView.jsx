@@ -40,6 +40,7 @@ import { useVideoCoachBro, useAfbrudtUploadVarsel } from './athlete/useVideoCoac
 import { useParathedUdkast } from './athlete/useParathedUdkast.js'
 import { bygGrundlag, ugensSaet } from './athlete/rekorder.js'
 import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks.js'
+import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -58,7 +59,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false}) {
+export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false}) {
   const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
@@ -269,6 +270,9 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
 
   // Mobilitet-hub state — fanen er en intent-landing (null) med tre døre
   const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'mobilitet'
+  const compactHomework = compactHomeworkEnabled(mobilitetHjemme, hjemoevKompakt)
+  const openHomework = () => { setMobilityMode('hjemmeoevelser'); setTab('mobilisering') }
+  const homeworkEntry = renderHomeworkEntry(createElement, { enabled: compactHomework, athleteId: athlete?.id, onOpen: openHomework })
 
   // Mobilitets-session (on-demand: byg en session nu, ingen persistens/streak)
   const [mobilityPhase, setMobilityPhase] = useState('design')  // 'design' | 'guide' | 'done' (intake-porten droppet)
@@ -661,6 +665,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
 
         {enkelOn && renderControls(createElement, { route, go: setTab })}
         {enkelOn && route === 'mere' && renderMore(createElement, { athlete, hasMeetPlan, go: setTab, visKost })}
+        {enkelOn && route === 'mere' && homeworkEntry}
         {enkelOn && route === 'kontakt' && msgTrack === 'teknik' && role === 'athlete' && (
           <button type="button" style={{ ...s.btnPrimary, minHeight: 44 }} onClick={() => {
             if (!athlete?.id) return
@@ -669,9 +674,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
         {enkelOn && route === 'uge' && !currentWeek && <p>Ingen programuge endnu.</p>}
         {/* HJEM */}
+        {!compactHomework && (<>
         <MobilityHomeworkProgress enabled={mobilitetOpfoelgning === true && !coachAthleteId} athleteId={athlete?.id}>
         {tab === 'hjem' && (!enkelOn || ['traening', 'alle'].includes(route)) && <MobilityHomeworkHome key={athlete?.id} enabled={mobilitetHjemme} athleteId={athlete?.id} />}
         </MobilityHomeworkProgress>
+        </>)}
+        {compactHomework && renderHomeworkHome(createElement, { compact: compactHomework, tab, enkelOn, route, enabled: mobilitetHjemme, athleteId: athlete?.id, onOpen: openHomework, Home: MobilityHomeworkHome })}
         {renderMobilityShortcut(createElement, { enabled: mobilitetFokus === true || mobilitetCoach === true, tab, enkelOn, route, setMobilityMode, setTab, coachSummary: createElement(CoachMobilitySummary, { enabled: mobilitetCoach, athleteId: athlete?.id, notes: athlete?.notes }) })}
 
         {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemVisning
@@ -695,6 +703,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             unreadMsgCount, updateLoggedSet, weeklyTonnage, weightInput, weightLogs, saveFeedback,
             rekordFejring, rekordGrundlagFoer, sendUgeLinje,
           }}
+          homeworkEntry={homeworkEntry}
         />}
         {enkelOn && route === 'traening' && renderTrainingLinks(createElement, {
           messages, sharedVideoAnalyses, go: setTab, setMsgTrack,
@@ -770,7 +779,15 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
 
         {/* MOBILITET */}
-        {tab === 'mobilisering' && (
+        {compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (
+          <section aria-label="Dine hjemmeøvelser">
+            <button type="button" style={{ minHeight: 44 }} onClick={() => setMobilityMode(null)}>← Til Mobilitet</button>
+            <MobilityHomeworkProgress enabled={mobilitetOpfoelgning === true && !coachAthleteId} athleteId={athlete?.id}>
+              <MobilityHomeworkHome key={athlete?.id} enabled={mobilitetHjemme} athleteId={athlete?.id} />
+            </MobilityHomeworkProgress>
+          </section>
+        )}
+        {tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && (
           <LazyBoundary
             factory={mobiliseringFactory} label="Mobilitet" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
@@ -781,6 +798,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
               setWarmupExercises, setWarmupFocus, setWarmupPhase, setWarmupProblems, setWarmupStep,
               setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,
               warmupFocus, warmupPhase, warmupProblems, warmupStep, warmupSubtype, warmupTemplates,
+              homeworkEntry,
             }}
           />
         )}

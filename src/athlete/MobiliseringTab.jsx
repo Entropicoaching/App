@@ -514,6 +514,7 @@ export default function MobiliseringTab({
   setWarmupExercises, setWarmupFocus, setWarmupPhase, setWarmupProblems, setWarmupStep,
   setWarmupSubtype, timerActive, timerDone, timerSeconds, warmupChoice, warmupExercises,
   warmupFocus, warmupPhase, warmupProblems, warmupStep, warmupSubtype, warmupTemplates,
+  homeworkEntry,
 }) {
   if ((mobilitetFokus === true || mobilitetCoach === true) && mobilityMode === 'fokus') return createElement(MobilitetFokus, { key: JSON.stringify([athleteId, mobilitetCoach, coachNotes]), onFocusSelected, mobilitetCoach, coachNotes, library: WARMUP_BASE, warmupTemplates, mobilitetHjalp, athleteId, mobilityDate, onExit: () => setMobilityMode(null) })
   return (
@@ -535,6 +536,7 @@ export default function MobiliseringTab({
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Mobilitet</div>
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Hvad har du brug for?</h1>
               </div>
+              {homeworkEntry}
               <Door icon="⚡" title="Varm op" sub="Inden du løfter" onClick={() => setMobilityMode('opvarmning')} />
               <Door icon="✦" title="Mobilitet" sub="Byg en session og tag den, når du er stram"
                 onClick={() => {
