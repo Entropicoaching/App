@@ -26,6 +26,8 @@ function Ladder({ plan }) {
   const [checked, setChecked] = useState({})
   const [deadline, setDeadline] = useState(null)
   const [seconds, setSeconds] = useState(0)
+  const [mobilitySkipped, setMobilitySkipped] = useState(false)
+  const [timerKind, setTimerKind] = useState('pause')
   useEffect(() => {
     if (deadline === null) return
     const tick = () => { const next = timerSeconds(deadline); setSeconds(next); if (!next) setDeadline(null) }
@@ -33,18 +35,24 @@ function Ladder({ plan }) {
     const id = setInterval(tick, 250)
     return () => clearInterval(id)
   }, [deadline])
-  const start = duration => { setSeconds(duration); setDeadline(Date.now() + duration * 1000) }
+  const start = (duration, kind = 'pause') => { setTimerKind(kind); setSeconds(duration); setDeadline(Date.now() + duration * 1000) }
+  const skipMobility = () => {
+    setMobilitySkipped(true)
+    if (timerKind === 'mobility') { setDeadline(null); setSeconds(0) }
+  }
   const [key, ids] = mobility[plan.lift]
   const catalog = WARMUP_BASE[key].flatMap(slot => slot.options)
   return h('section', { 'aria-label': 'Opvarmningsstige', style: { ...s.card, color: s.wrap.color, fontFamily: s.wrap.fontFamily, fontWeight: s.wrap.fontWeight, textAlign: 'left', lineHeight: 1.5, overflowWrap: 'anywhere', minWidth: 0 } },
     h('h3', { style: { ...s.logo, fontWeight: 400 } }, `Opvarmningsstige · ${plan.lift}`),
     h('p', null, `Planlagt topsæt: ${format(plan.plannedWeight)} kg. 20 kg stang; pladerne vises pr. side.`),
-    h('h4', { style: s.cardLabel }, 'Før første trin: 2 minutters mobilitet'),
-    h('ol', null, ...ids.map(id => {
-      const ex = catalog.find(item => item.id === id)
-      return h('li', { key: id }, h('strong', null, `${ex.name} · 60 sekunder`), h('p', null, ex.desc))
-    })),
-    h('button', { type: 'button', style: button, onClick: () => start(120) }, 'Start 2 minutters mobilitet'),
+    !mobilitySkipped && h('section', { 'aria-label': 'Mobilitet før opvarmningsstigen' },
+      h('h4', { style: s.cardLabel }, 'Før første trin: 2 minutters mobilitet'),
+      h('ol', null, ...ids.map(id => {
+        const ex = catalog.find(item => item.id === id)
+        return h('li', { key: id }, h('strong', null, `${ex.name} · ${ex.label}`), h('p', null, ex.desc))
+      })),
+      h('button', { type: 'button', style: button, onClick: () => start(120, 'mobility') }, 'Start 2 minutters mobilitet'),
+      h('button', { type: 'button', style: button, onClick: skipMobility }, 'Spring mobilitet over')),
     h('ol', null, ...plan.steps.map((step, index) => h('li', { key: step.weight, style: { padding: '8px 0' } },
       h('label', { style: { display: 'flex', alignItems: 'center', gap: 8, minHeight: 44, cursor: 'pointer' } }, h('input', { type: 'checkbox', style: { accentColor: '#c8923a', width: 20, height: 20, flexShrink: 0, margin: 0 }, checked: !!checked[index], onChange: event => setChecked(previous => ({ ...previous, [index]: event.target.checked })) }),
         ` ${format(step.weight)} kg × ${step.reps} reps`),
