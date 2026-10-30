@@ -1,8 +1,11 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { videoCoachPersonalBaselineOptions as options, sanitizeVideoCoachPersonalBaseline as sanitize,
-  videoCoachPersonalBaselineForAnalysis as forAnalysis, videoCoachPersonalBaselineAthleteText as athleteText,
-  videoCoachPersonalBaselineSelection as selection, withVideoCoachPersonalBaseline as withBaseline } from './videoCoachPersonalFeedback.js'
+const { videoCoachPersonalBaselineOptions: options, sanitizeVideoCoachPersonalBaseline: sanitize,
+  videoCoachPersonalBaselineForAnalysis: forAnalysis, videoCoachPersonalBaselineAthleteText: athleteText,
+  videoCoachPersonalBaselineSelection: selection, withVideoCoachPersonalBaseline: withBaseline } = await import('./videoCoachPersonalFeedback.js')
 
 function fixture() {
   const baseline = { lift: 'squat', variation: 'competition_squat', metric_key: 'rom', metric_method: 'synthetic-v1',

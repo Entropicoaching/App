@@ -1,8 +1,11 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { dataEnoughEnabled, dataAllowed, hasEnoughData, readinessBasis, lowStreak,
-  weightWindows, renderDataInsight, DATA_MESSAGES } from './dataEnough.mjs'
-import { compareReadiness, readinessTrainingNote } from './readinessInsight.js'
+const { dataEnoughEnabled, dataAllowed, hasEnoughData, readinessBasis, lowStreak,
+  weightWindows, renderDataInsight, DATA_MESSAGES } = await import('./dataEnough.mjs')
+const { compareReadiness, readinessTrainingNote } = await import('./readinessInsight.js')
 
 const date = d => new Date(Date.UTC(2026, 9, 26 + d)).toISOString().slice(0, 10)
 const row = d => ({ logged_date: date(d), readiness_score: 40, energy: 3,

@@ -19,7 +19,7 @@ const extras = ['trin1Loader.mjs', 'trin1Dom.mjs', 'trin1Imports.json', 'trin1Fl
   'opvarmStige.mjs', 'athlete/WarmupLadderView.mjs', 'athlete/opvarmStigeDom.mjs']
 const paths = new Set([...Object.keys(graph), ...extras.map(path => 'src/' + path)])
 const cases = [
-  ['unexpected-default-on', 'src/udgivelseTrin.mjs', 'UDGIVELSE_TRIN = 0', 'UDGIVELSE_TRIN = 1', 'trin1Flags.test.js', /profile preserves default OFF/],
+  ['unsupported-release-step', 'src/udgivelseTrin.mjs', /^export const UDGIVELSE_TRIN = [01](?=\r?$)/m, 'export const UDGIVELSE_TRIN = 2', 'trin1Flags.test.js', /profile accepts supported release steps/],
   ['profile-disconnected', 'src/dataEnough.mjs', "return trin1AppData2(globalThis.location?.search || '')", 'return false', 'trin1On.test.js', /effective dataEnough import/],
   ['rest-regression', 'src/athlete/ugeFeedback.js', '(dataEnoughEnabled() && p.planlagtSaet === 0)', '(false && p.planlagtSaet === 0)', 'trin1On.test.js', /rest week keeps/],
   ['wrong-next-week', 'src/athlete/ProgramTab.jsx', 'setViewingWeekIdx(gi)', 'setViewingWeekIdx(0)', 'trin1Off.test.js', /Program Sunday rest/],
@@ -49,7 +49,7 @@ for (const [name, path, before, after, probe, diagnostic] of cases) test(`counte
       imports[after] = imports[before]; delete imports[before]
       writeFileSync(target, JSON.stringify(registry))
     } else {
-      assert.equal(source.split(before).length, 2, 'one exact mutation site')
+      assert.equal(before instanceof RegExp ? [...source.matchAll(new RegExp(before.source, before.flags + 'g'))].length : source.split(before).length - 1, 1, 'one exact mutation site')
       writeFileSync(target, source.replace(before, after))
     }
     const result = run()

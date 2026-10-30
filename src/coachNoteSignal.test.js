@@ -1,9 +1,12 @@
-import { assertNoteDependencies } from './coachNoteDependencyGuard.mjs'
+import { useTestRelease } from './trin1TestProfile.mjs'
+// These fixtures exercise the legacy contract, independently of the shipped step.
+useTestRelease(0)
+const { assertNoteDependencies } = await import('./coachNoteDependencyGuard.mjs')
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { pendingCoachNotes, COACH_NOTE_SIGNAL_ENABLED } from './coachNoteSignal.js'
-import { summarizeCoachMessages } from './coachInboxState.js'
-import { app, nodes, text, source } from './coachNoteTestHelpers.mjs'
+const { pendingCoachNotes, COACH_NOTE_SIGNAL_ENABLED } = await import('./coachNoteSignal.js')
+const { summarizeCoachMessages } = await import('./coachInboxState.js')
+const { app, nodes, text, source } = await import('./coachNoteTestHelpers.mjs')
 
 const athlete = { id: 'a', name: 'Syntetisk Atlet' }
 const note = (id, date, extra = {}) => ({ id, athlete_id: 'a', sender_role: 'athlete',

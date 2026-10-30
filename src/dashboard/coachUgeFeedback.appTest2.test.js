@@ -1,6 +1,9 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { erAfsluttetUge, logsForUge, coachUgeFeedback, ugeFeedbackTree } from './coachUgeFeedback.js'
+const { erAfsluttetUge, logsForUge, coachUgeFeedback, ugeFeedbackTree } = await import('./coachUgeFeedback.js')
 
 const week = () => ({ start_date: '2026-10-12', sessions: [{ id: 's1', title: 'Dag 1', exercises: [
   { id: 'sq', name: 'Squat', sets: 2, reps: '5-8', recommended_weight: 100 },

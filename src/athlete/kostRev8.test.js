@@ -1,3 +1,7 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// Explicit legacy profile, loaded before the component/handler fixture.
+useTestRelease(0)
+await import('../udgivelseTrin.mjs')
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { register } from 'node:module'
@@ -5,7 +9,7 @@ register('./kostRev8.loader.mjs', import.meta.url)
 const { lavKostHandlinger } = await import('./kostHandlinger.js')
 const { summarizeKostWeek } = await import('./kostUge.mjs')
 const { shiftDate } = await import('../athleteShared.js')
-import { reset, state } from './kostRev8.fake.mjs'
+const { reset, state } = await import('./kostRev8.fake.mjs')
 
 const row = (extra = {}) => ({ meal: 'Grød', kcal: 123, protein: 5, carb: 20, fat: 2, ...extra })
 function setup(extra = {}) {

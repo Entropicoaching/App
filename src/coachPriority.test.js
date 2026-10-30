@@ -1,3 +1,6 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// These fixtures exercise the legacy contract, independently of the shipped step.
+useTestRelease(0)
 // ORDRE 377 · appens coach-prioritet i samme raekkefoelge som Coach
 // Briefing-mailen (ORDRE 370). De syntetiske atlet-uger fra
 // test/fixtures/briefing/ koeres gennem detectSignalsV2 og ind i
@@ -5,9 +8,9 @@
 // (o_*-felter). Ingen rigtige atletdata.
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { fixtures } from '../test/fixtures/briefing/index.mjs'
-import { briefingOrder, detectSignalsV2 } from './coachBriefingRules.js'
-import { AUTOMATION_RANK, buildCoachPriorityItems } from './coachPriority.js'
+const { fixtures } = await import('../test/fixtures/briefing/index.mjs')
+const { briefingOrder, detectSignalsV2 } = await import('./coachBriefingRules.js')
+const { AUTOMATION_RANK, buildCoachPriorityItems } = await import('./coachPriority.js')
 
 const allFixtures = Object.values(fixtures)
 const athletes = allFixtures.map(fixture => fixture.athlete)

@@ -1,13 +1,16 @@
+import { useTestRelease } from './trin1TestProfile.mjs'
+// These fixtures exercise the legacy contract, independently of the shipped step.
+useTestRelease(0)
 // ORDRE 301 · commit 2 — automatiseringsfejl i Indbakken. Kort og uden atletdata:
 // rækker uden athlete_id må ikke længere droppes stille for denne type, men
 // stadig droppes for alle andre (de kræver en atlet at åbne).
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { buildCoachPriorityItems, coachPriorityQueueContext } from './coachPriority.js'
-import { coachInboxFocusDecision } from './coachInboxState.js'
-import {
+const { buildCoachPriorityItems, coachPriorityQueueContext } = await import('./coachPriority.js')
+const { coachInboxFocusDecision } = await import('./coachInboxState.js')
+const {
   automationAlertDetail, automationAlertResolveErrorMessage, filterOpenAutomationAlerts, formatRelativeTimeDa,
-} from './automationAlerts.js'
+} = await import('./automationAlerts.js')
 
 const NOW = Date.parse('2026-09-21T12:00:00Z')
 const minutesAgo = n => new Date(NOW - n * 60000).toISOString()

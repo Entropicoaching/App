@@ -1,10 +1,13 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// These fixtures exercise the legacy contract, independently of the shipped step.
+useTestRelease(0)
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { readinessNavigation, openReadinessSurface } from './readinessShortcut.mjs'
-import { previewNavigation, DEFAULT_ENKEL_PROTOTYPE } from './enkelPrototype.mjs'
-import { weightTrendText } from './weightTrend.mjs'
-import { checkinNoteTimingText } from '../readinessInsight.js'
+const { readinessNavigation, openReadinessSurface } = await import('./readinessShortcut.mjs')
+const { previewNavigation, DEFAULT_ENKEL_PROTOTYPE } = await import('./enkelPrototype.mjs')
+const { weightTrendText } = await import('./weightTrend.mjs')
+const { checkinNoteTimingText } = await import('../readinessInsight.js')
 
 // Fresh counterexamples, separate from the six repair probes.
 test('modproeve: only explicit true changes route; every tab change closes shortcut', () => {

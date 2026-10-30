@@ -1,7 +1,11 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// Explicit legacy profile, loaded before the component/handler fixture.
+useTestRelease(0)
+await import('../udgivelseTrin.mjs')
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
-import { syntheticElement } from './appLog2Fakes.mjs'
+const { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } = await import('./appLog2.mjs')
+const { syntheticElement } = await import('./appLog2Fakes.mjs')
 
 test('frisk: manglende historik og tomme dage giver plan uden mutation', () => {
   assert.equal(APP_LOG2_ENABLED, false)

@@ -1,7 +1,10 @@
+import { useTestRelease } from '../trin1TestProfile.mjs'
+// Legacy fixtures explicitly select step 0; URL opt-in still exercises ON.
+useTestRelease(0)
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { coachUgeFeedback, ugeFeedbackTree } from './coachUgeFeedback.js'
+const { coachUgeFeedback, ugeFeedbackTree } = await import('./coachUgeFeedback.js')
 
 const now = () => new Date(2026, 9, 19)
 const week = () => ({ id: 'w4', week_number: 4, start_date: '2026-10-12', sessions: [
