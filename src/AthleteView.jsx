@@ -332,6 +332,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
 
   /* eslint-disable react-hooks/refs -- fabrikkerne får ref-objekterne med, men læser .current kun i hændelses- og effekt-callbacks, præcis som før ordre 373 */
   const {
+    inboxDatabase,
     fetchWeightLogs, logWeight, fetchAthleteMessages, markTrackRead, sendAthleteMessage, formatMsgTime, renderSharedFeedbackCards,
     sendUgeLinje,
   } = lavBeskederOgVaegt({
@@ -774,6 +775,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
               fetchSharedVideoAnalyses, formatMsgTime, messageInput, messagesEndRef, messages,
               msgTrack, renderSharedFeedbackCards, sendAthleteMessage, setMessageInput, setMsgTrack,
               sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, contactLatest,
+              inboxDatabase, athleteId: athlete?.id, inboxReadEnabled: indbakke2 && role === 'athlete' && !coachAthleteId,
+              setMessages, setUnreadMsgCount,
             }}
           />
         )}

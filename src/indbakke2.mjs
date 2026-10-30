@@ -40,3 +40,27 @@ export async function readSharedInboxVideos(database) {
     }
   } catch (error) { return { error } }
 }
+
+// Acknowledge only coach replies actually displayed in this athlete's inbox.
+// Existing messages.read_at is sufficient; no schema or storage changes.
+export async function acknowledgeInboxReplies({ enabled = false, database, athleteId,
+  messages = [], isCurrent = () => true }) {
+  if (enabled !== true || typeof athleteId !== 'string' || !athleteId || !isCurrent()) return {}
+  const ids = [...new Set(messages.filter(message => message?.athlete_id === athleteId
+    && message.sender_role === 'coach' && !message.read_at
+    && typeof message.id === 'string' && message.id
+    && typeof message.content === 'string' && message.content.trim()).map(message => message.id))]
+  if (!ids.length) return {}
+  try {
+    const readAt = new Date().toISOString()
+    const result = await database.from('messages').update({ read_at: readAt })
+      .eq('athlete_id', athleteId).eq('sender_role', 'coach').in('id', ids).select('id')
+    if (!isCurrent()) return {}
+    const returned = new Set(Array.isArray(result?.data) ? result.data.map(row => row?.id) : [])
+    if (!result || result.error || returned.size !== ids.length || ids.some(id => !returned.has(id)))
+      return { error: true }
+    return { messages: messages.map(message => message.athlete_id === athleteId
+      && message.sender_role === 'coach' && ids.includes(message.id)
+      ? { ...message, read_at: readAt } : message) }
+  } catch { return isCurrent() ? { error: true } : {} }
+}
