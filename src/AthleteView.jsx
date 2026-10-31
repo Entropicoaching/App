@@ -3,6 +3,8 @@ import { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/
 import { VIDEO_SET_SELECTION_ENABLED, videoOptionsForDay, resolveVideoSet } from './athlete/videoSetSelection.mjs'
 import { findDagensPas } from './nextSet.js'
 import { indbakke2Enabled } from './indbakke2.mjs'
+import TrainingFullscreen from './athlete/TrainingFullscreen.mjs'
+import { rel1101Enabled } from './rel1101.mjs'
 import { MobilityHomeworkProgress } from './mobilityAdherence.mjs'
 import { CoachMobilitySummary } from './athlete/CoachMobility.jsx'
 import { MobilityHomeworkHome } from './mobilityHomework.mjs'
@@ -59,7 +61,7 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false}) {
+export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false, rel1101 = false}) {
   const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
@@ -659,6 +661,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
       {/* Page content */}
       <div {...(forenklinger === true ? { 'data-app-375-page': '' } : {})} style={s.page}>
 
+        {tab === 'hjem' && !onHoliday && role === 'athlete' && !coachAthleteId && athlete?.id &&
+          (!enkelOn || ['traening', 'alle'].includes(route)) &&
+          rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search) &&
+          <TrainingFullscreen key={athlete.id} allWeeks={allWeeks} currentWeek={currentWeek}
+            exerciseLogs={exerciseLogs} logInputs={logInputs} setLogInputs={setLogInputs}
+            onLogSet={logDagensPasSet} restPause={restPause} />}
         <NytIAppen search={typeof window === 'undefined' ? '' : window.location.search}
           role={role === 'athlete' && !coachAthleteId && !onExitPreview ? 'athlete' : null}
           profileId={session?.user?.id}

@@ -254,7 +254,7 @@ export function lavSaetSkrivning({
     return isSessionDone(sess, [...logs, { exercise_id: exerciseId, set_number: setNumber }])
   }
 
-  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false, inputOverride } = {}) {
+  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false, inputOverride, preserveMissingRpe = false } = {}) {
     const key = `${exerciseId}_${setNumber}`
     const input = inputOverride || logInputs[key] || {}
     // Kun en rigtig (bekræftet) række afgør INSERT vs. UPDATE i databasen — en
@@ -263,7 +263,7 @@ export function lavSaetSkrivning({
     const existing = exerciseLogs.find(l => l.exercise_id === exerciseId && l.set_number === setNumber)
     const weight = parseInputNumber(input.weight, 0)
     const reps = inputInteger(repsCompleted, 0)
-    const rpe = optionalInput(input.rpe) ? (dataEnoughEnabled() ? null : parseInputNumber(plannedRpe)) : parseInputNumber(input.rpe)
+    const rpe = optionalInput(input.rpe) ? (preserveMissingRpe === true || dataEnoughEnabled() ? null : parseInputNumber(plannedRpe)) : parseInputNumber(input.rpe)
     if (weight === null || reps === null || (!optionalInput(input.rpe) && (rpe === null || rpe > 10))) {
       showFlash('Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.', 'error')
       return false
@@ -414,9 +414,9 @@ export function lavSaetSkrivning({
   // logget (til "Fortryd sidste sæt" nedenfor). Program-fanens egen Log-knap
   // rører IKKE dette — den kalder stadig logSet direkte, uændret adfærd
   // (verify:athlete-write-failures/e2e:fejl låser den offline-fejlflowet der).
-  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe, inputOverride) {
+  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe, inputOverride, { preserveMissingRpe = false } = {}) {
     setLastLoggedSet({ exerciseId: ex.id, setNumber })
-    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true, inputOverride })
+    await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true, inputOverride, preserveMissingRpe })
   }
 
   // ORDRE 280 · commit 4 — sender ventende sæt (offlineSetQueue.js) igen når
