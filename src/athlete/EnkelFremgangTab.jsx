@@ -1,3 +1,4 @@
+import { analyseAtlet1Enabled, renderAnalyseAtlet1 } from './analyseAtlet1.mjs'
 import { renderBlockStrength } from './blokStyrke.mjs'
 import BlokFremgang from '../BlokFremgang.jsx'
 import { DEFAULT_FREMGANG_LINJER, renderFremgangLinjer } from './fremgangLinjer.mjs'
@@ -212,7 +213,7 @@ function RekordListe({ rekorder }) {
   )
 }
 
-export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalRecords = false, repRecords = false, enkelDel = null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false, blokStyrke = false }) {
+function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalRecords = false, repRecords = false, enkelDel = null, fremgangLogs, fremgangLoading, allWeeks, exerciseLogs, currentWeek, blokFremgang = false, blokStyrke = false }) {
   const alleNavne = useMemo(() => [...new Map([...navneFraProgram(allWeeks), ...navneFraLogs(fremgangLogs)].map(n => [exerciseSetView(n).key, n])).values()], [allWeeks, fremgangLogs])
   const navneMedLogs = useMemo(() => navneFraLogs(fremgangLogs), [fremgangLogs])
   const grupper = useMemo(() => grupperOevelsesnavne(alleNavne), [alleNavne])
@@ -360,4 +361,9 @@ export default function FremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, 
       )}
     </>
   )
+}
+
+// APP-ANALYSE-ATLET1: keep the legacy component and its handlers intact when off.
+export default function AnalyseAtlet1Entry(props) {
+  return analyseAtlet1Enabled(props) ? renderAnalyseAtlet1(createElement, props) : createElement(LegacyFremgangTab, props)
 }
