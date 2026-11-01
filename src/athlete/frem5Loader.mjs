@@ -21,6 +21,19 @@ export function install() {
   installed = true
   return registerHooks({
     resolve(specifier, context, next) {
+      // APP-ANALYSE-ATLET1: exact entry edges and four real read-only dependencies.
+      const analysis = new URL('./analyseAtlet1.mjs', root).href
+      const release = new URL('../rel1101.mjs', root).href
+      if (specifier === './analyseAtlet1.mjs' && ['FremgangTab.jsx', 'EnkelFremgangTab.jsx', 'fremgangFokus.mjs']
+        .some(name => new URL(name, root).href === context.parentURL))
+        return { url: analysis, shortCircuit: true }
+      if (context.parentURL === analysis) {
+        const dependencies = new Map(['rel1101.mjs', 'inputValues.js', 'calendarDate.js', 'exerciseProgress.js']
+          .map(name => ['../' + name, new URL('../' + name, root).href]))
+        if (dependencies.has(specifier)) return { url: dependencies.get(specifier), shortCircuit: true }
+        throw new Error('Forbidden analysis dependency: ' + specifier)
+      }
+      if (context.parentURL === release) throw new Error('Forbidden release dependency: ' + specifier)
       if (!known(context.parentURL)) return next(specifier, context)
       if (specifier === 'react' || specifier === '../athleteShared.js' || specifier === dom)
         return { url: dom, shortCircuit: true }

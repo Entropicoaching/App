@@ -1,3 +1,4 @@
+import { analyseAtlet1Enabled, renderAnalyseAtlet1 } from './analyseAtlet1.mjs'
 import { renderBlockStrength } from './blokStyrke.mjs'
 import { createElement as h, useState } from 'react'
 import FremgangTab from './FremgangTab.jsx'
@@ -23,7 +24,7 @@ function curve(points) {
   return h('svg', { viewBox: '0 0 300 60', 'aria-hidden': true, style: { width: '100%', height: 60 } },
     h('polyline', { points: coordinates, fill: 'none', stroke: '#c8923a', strokeWidth: 2 }))
 }
-export default function FremgangFokus(props) {
+function LegacyFremgangFokus(props) {
   const [showWeight, setShowWeight] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const model = fokusModel(props)
@@ -51,4 +52,9 @@ export default function FremgangFokus(props) {
       model.weights.length > 1 && h('p', null, `${kg(Math.round((latestWeight.weight - model.weights[0].weight) * 10) / 10)} kg siden ${date(model.weights[0].day)}.`)),
     h('button', { type: 'button', 'aria-expanded': expanded, style: control, onClick: () => setExpanded(value => !value) }, expanded ? 'Skjul detaljer' : 'Se alle detaljer'),
     expanded && h('section', { 'aria-label': 'Alle fremgangsdetaljer' }, h(Legacy, { ...props, blokStyrke: false, currentWeek: props.currentWeek || { sessions: [] } })))
+}
+
+// APP-ANALYSE-ATLET1: keep the legacy component and its handlers intact when off.
+export default function AnalyseAtlet1Entry(props) {
+  return analyseAtlet1Enabled(props) ? renderAnalyseAtlet1(h, props) : h(LegacyFremgangFokus, props)
 }
