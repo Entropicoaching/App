@@ -1,5 +1,6 @@
 import { createElement as h, useState } from 'react'
 import { rel1030Enabled } from './rel1030.mjs'
+import { rel1101Enabled } from './rel1101.mjs'
 import { nytIAppenText as copy } from './nytIAppenText.mjs'
 
 const version = 'rel1030-2026-10-30'
@@ -62,11 +63,29 @@ function NytCard({ role, storageKey, storage, onNavigate, athletes = [] }) {
     }))
 }
 
-export default function NytIAppen({ search = '', role, profileId, storage, ...props }) {
+// Same identity/version key and failure-safe dismissal as the existing card.
+function NytLine({ storageKey, storage }) {
+  const [closed, setClosed] = useState(() => isClosed(storage, storageKey))
+  if (closed) return null
+  const summary = `${copy.title} · Mobilitet, tidsmarkeringer og fremgang`
+  return h('section', { 'aria-label': copy.title, 'data-nyt-i-appen': version,
+    style: { display: 'flex', alignItems: 'center', minWidth: 0, gap: 8,
+      margin: '1rem', color: '#edeae2' } },
+    h('span', { title: summary, style: { flex: 1, minWidth: 0,
+      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, summary),
+    h('button', { type: 'button', 'aria-label': copy.close,
+      style: { ...buttonStyle, flexShrink: 0, minWidth: 44 }, onClick: () => {
+        setClosed(true)
+        try { storage?.setItem(storageKey, 'closed') } catch { /* Closed for this mount. */ }
+      } }, 'Luk'))
+}
+
+export default function NytIAppen({ rel1101 = false, search = '', role, profileId, storage, ...props }) {
   // OFF does not read storage or create card state. Identity changes remount it.
-  if (!rel1030Enabled(search)) return null
+  const compact = role === 'athlete' && rel1101Enabled(rel1101, search)
+  if (!compact && !rel1030Enabled(search)) return null
   const key = nytStorageKey(role, profileId)
   if (!key) return null
-  return h(NytCard, { ...props, role, storageKey: key,
+  return h(compact ? NytLine : NytCard, { ...props, role, storageKey: key,
     storage: storage === undefined ? browserStorage() : storage, key })
 }
