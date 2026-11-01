@@ -61,12 +61,39 @@ function LazyEnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: enkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
+// RO2: presentation-only Home entry. Original Home/lazy modules remain intact.
+function homeRo2Order(tree, enabled) {
+  if (enabled !== true) return tree
+  let chips
+  function move(node) {
+    if (Array.isArray(node)) return node.map(move)
+    if (!node || typeof node !== 'object' || !node.props) return node
+    if (Object.hasOwn(node.props, 'data-sekundaer')) { chips = node; return null }
+    if (!Object.hasOwn(node.props, 'children')) return node
+    const children = Array.isArray(node.props.children) ? node.props.children : [node.props.children]
+    return createElement(node.type, { ...node.props, ...(node.key == null ? {} : { key: node.key }) }, ...children.map(move))
+  }
+  const body = move(tree)
+  return chips ? createElement(tree.type, null, chips, body) : tree
+}
+function Ro2HjemTab(props) {
+  return homeRo2Order(HjemTab(props), !props.onHoliday)
+}
+const ro2EnkelHjemFactory = () => enkelHjemFactory().then(module => ({
+  default: homeProps => homeRo2Order(module.default(homeProps), !homeProps.onHoliday),
+}))
+function Ro2EnkelHjemTab(props) {
+  return createElement(LazyBoundary, { factory: ro2EnkelHjemFactory, label: 'Hjem', componentProps: props })
+}
+
 export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false, rel1101 = false}) {
   const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
+  const homeRo2 = rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search)
   const enkelOn = enkelPrototype === true
   const HjemVisning = enkelOn ? LazyEnkelHjemTab : HjemTab
+  const HjemIndgang = homeRo2 ? (enkelOn ? Ro2EnkelHjemTab : Ro2HjemTab) : HjemVisning
   // Explicit preview prop only; no storage, URL or environment activation.
   const navigate = previewNavigation(enkelOn, setLegacyTab, setEnkelRoute)
   const [recheckingRole, setRecheckingRole] = useState(false)
@@ -274,7 +301,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const [mobilityMode, setMobilityMode] = useState(null) // null=landing | 'opvarmning' | 'mobilitet'
   const compactHomework = compactHomeworkEnabled(mobilitetHjemme, hjemoevKompakt)
   const openHomework = () => { setMobilityMode('hjemmeoevelser'); setTab('mobilisering') }
-  const homeworkEntry = renderHomeworkEntry(createElement, { enabled: compactHomework, athleteId: athlete?.id, onOpen: openHomework })
+  const homeworkEntry = homeRo2 && tab === 'hjem' && (!enkelOn || route !== 'mere') ? null : renderHomeworkEntry(createElement, { enabled: compactHomework, athleteId: athlete?.id, onOpen: openHomework })
 
   // Mobilitets-session (on-demand: byg en session nu, ingen persistens/streak)
   const [mobilityPhase, setMobilityPhase] = useState('design')  // 'design' | 'guide' | 'done' (intake-porten droppet)
@@ -667,7 +694,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           <TrainingFullscreen key={athlete.id} allWeeks={allWeeks} currentWeek={currentWeek}
             exerciseLogs={exerciseLogs} logInputs={logInputs} setLogInputs={setLogInputs}
             onLogSet={logDagensPasSet} restPause={restPause} />}
-        <NytIAppen search={typeof window === 'undefined' ? '' : window.location.search}
+        <NytIAppen rel1101={rel1101} search={typeof window === 'undefined' ? '' : window.location.search}
           role={role === 'athlete' && !coachAthleteId && !onExitPreview ? 'athlete' : null}
           profileId={session?.user?.id}
           onNavigate={nytAthleteNavigation({ setTab, setMsgTrack, setMobilityMode })} />
@@ -683,15 +710,18 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
         {enkelOn && route === 'uge' && !currentWeek && <p>Ingen programuge endnu.</p>}
         {/* HJEM */}
+        {!homeRo2 && (<>
         {!compactHomework && (<>
         <MobilityHomeworkProgress enabled={mobilitetOpfoelgning === true && !coachAthleteId} athleteId={athlete?.id}>
         {tab === 'hjem' && (!enkelOn || ['traening', 'alle'].includes(route)) && <MobilityHomeworkHome key={athlete?.id} enabled={mobilitetHjemme} athleteId={athlete?.id} />}
         </MobilityHomeworkProgress>
         </>)}
         {compactHomework && renderHomeworkHome(createElement, { compact: compactHomework, tab, enkelOn, route, enabled: mobilitetHjemme, athleteId: athlete?.id, onOpen: openHomework, Home: MobilityHomeworkHome })}
+        </>)}
         {renderMobilityShortcut(createElement, { enabled: mobilitetFokus === true || mobilitetCoach === true, tab, enkelOn, route, setMobilityMode, setTab, coachSummary: createElement(CoachMobilitySummary, { enabled: mobilitetCoach, athleteId: athlete?.id, notes: athlete?.notes }) })}
 
-        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemVisning
+        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang
+          homeRo2={homeRo2}
           hviledageListe={hviledageListe === true}
           restMobility={restMobility}
           ugeLogget={ugeLogget === true}

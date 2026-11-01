@@ -59,6 +59,17 @@ test('rel1101 accepts only boolean true or one exact query value; default OFF', 
 
 test('OFF integration reconstructs exact base; only current Hjem entry changes', () => {
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')
+  // Invert only this explicit Home-entry delta, then retain both original SHA guards.
+  candidate = candidate
+    .replace("  const homeRo2 = rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search)\r\n", '')
+    .replace("  const HjemIndgang = homeRo2 ? (enkelOn ? Ro2EnkelHjemTab : Ro2HjemTab) : HjemVisning\r\n", '')
+    .replace("homeRo2 && tab === 'hjem' && (!enkelOn || route !== 'mere') ? null : renderHomeworkEntry(", 'renderHomeworkEntry(')
+    .replace('<NytIAppen rel1101={rel1101} search=', '<NytIAppen search=')
+    .replace('{!homeRo2 && (<>\r\n        {!compactHomework && (<>', '{!compactHomework && (<>')
+    .replace('        </>)}\r\n        {renderMobilityShortcut(', '        {renderMobilityShortcut(')
+    .replace('<HjemIndgang\r\n', '<HjemVisning\r\n')
+    .replace('          homeRo2={homeRo2}\r\n', '')
+  candidate = candidate.replace("// RO2: presentation-only Home entry. Original Home/lazy modules remain intact.\r\nfunction homeRo2Order(tree, enabled) {\r\n  if (enabled !== true) return tree\r\n  let chips\r\n  function move(node) {\r\n    if (Array.isArray(node)) return node.map(move)\r\n    if (!node || typeof node !== 'object' || !node.props) return node\r\n    if (Object.hasOwn(node.props, 'data-sekundaer')) { chips = node; return null }\r\n    if (!Object.hasOwn(node.props, 'children')) return node\r\n    const children = Array.isArray(node.props.children) ? node.props.children : [node.props.children]\r\n    return createElement(node.type, { ...node.props, ...(node.key == null ? {} : { key: node.key }) }, ...children.map(move))\r\n  }\r\n  const body = move(tree)\r\n  return chips ? createElement(tree.type, null, chips, body) : tree\r\n}\r\nfunction Ro2HjemTab(props) {\r\n  return homeRo2Order(HjemTab(props), !props.onHoliday)\r\n}\r\nconst ro2EnkelHjemFactory = () => enkelHjemFactory().then(module => ({\r\n  default: homeProps => homeRo2Order(module.default(homeProps), !homeProps.onHoliday),\r\n}))\r\nfunction Ro2EnkelHjemTab(props) {\r\n  return createElement(LazyBoundary, { factory: ro2EnkelHjemFactory, label: 'Hjem', componentProps: props })\r\n}\r\n\r\n", '')
   const base = 'da7f60d30d71209bb716c5d953ceb52a92f3e082edf619a53f366e607b8df46b'
   assert.ok(candidate.includes("tab === 'hjem' && !onHoliday && role === 'athlete' && !coachAthleteId && athlete?.id"))
   const entry = candidate.slice(candidate.indexOf("        {tab === 'hjem' && !onHoliday && role === 'athlete'"), candidate.indexOf("        <NytIAppen search="))
