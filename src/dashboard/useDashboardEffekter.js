@@ -32,6 +32,7 @@ export function useDashboardEffekter({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [athletes])
+  const e2Effects = entropi2 === true
   const calendarAthletes = coachWeekEnabled ? JSON.stringify(athletes.map(a => a.id).sort()) : athletes
   useEffect(() => {
     // Entropi 2: coachskærmen (list og inbox) bygger på kalenderlæsningen, også ved direkte åbning af indbakken.
@@ -40,8 +41,9 @@ export function useDashboardEffekter({
       fetchCalendarWeeks(ids)
       fetchCalendarProgress(ids)
     }
+  // Entropi 2: flaget er med i afhængighederne, så et flagskift på samme instans starter effekten igen med den aktuelle læser.
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [view, calendarAthletes])
+  }, [view, calendarAthletes, e2Effects])
   // ORDRE 175: program/log/analyse-fanerne deler samme weeks+athleteLogs-data.
   // ORDRE 185 commit 1: 'oversigt' tilføjet til listen — VolumenKort.jsx har nu
   // brug for `weeks` (planlagt mod gennemført), ikke kun `athleteLogs`.
@@ -163,6 +165,7 @@ export function useDashboardEffekter({
       if (dayTimer !== null) window.clearInterval(dayTimer)
     }
     // Funktionskaldet læser seneste atletliste fra ref; view styrer abonnementets levetid.
+    // Entropi 2: et flagskift installerer timere og lyttere igen med læseren fra den aktuelle flagtilstand.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, loading, loadError])
+  }, [view, loading, loadError, e2Effects])
 }

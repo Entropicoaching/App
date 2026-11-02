@@ -184,5 +184,5 @@ test('R6: Dashboard giver CoachScreen videofejlen fra videokilden og læseren va
   const screen = source.slice(source.indexOf('<CoachScreen enabled={true}'), source.indexOf('readContext={e2ReadContext} />'))
   assert.match(screen, /videoReviewQueueError=\{entropi2VideoQueueError\(coachMorningData\.videos\)\}/)
   assert.equal(screen.match(/videoReviewQueueError/g).length, 1)
-  assert.match(source, /\.\.\.\(e2 \? \{ entropi2CalendarRead, entropi2ReadGate \} : \{\}\),/)
+  assert.match(source, /\.\.\.\(e2 \? \{ entropi2CalendarRead, entropi2ReadGate, inboxRefreshRunnerRef: e2InboxRefreshRunnerRef \} : \{\}\),/)
 })
