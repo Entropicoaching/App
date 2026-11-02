@@ -26,6 +26,19 @@ import { normaliserRekorder, bedsteRekorder, tungeRekorder } from '../personalRe
 import { danskDag } from '../danskDato.js'
 import { COACH_ACTIONS_ENABLED, coachActionsEnabled, actionSessions } from './coachActions.mjs'
 
+// Entropi 2: flaggeneration pr. Dashboard, nøglet på den stabile setCalendarWeeks. Den øges, når
+// læseren bygges med en anden flagtilstand end sidst (et flagskift på samme instans). Et svar fra
+// en læsning, der startede før skiftet, kasseres derfor i begge tilstande. Ændres flaget aldrig,
+// ændres generationen aldrig, og læserne er uændrede.
+const e2Generations = new WeakMap()
+function e2Generation(owner, on) {
+  if (typeof owner !== 'function') return null
+  let generation = e2Generations.get(owner)
+  if (!generation) { generation = { on, n: 0 }; e2Generations.set(owner, generation) }
+  else if (generation.on !== on) { generation.on = on; generation.n++ }
+  return generation
+}
+
 export function lavLaesninger({
   blokFremgang = false,
   coachMeetSoon = false, setCoachMeetData = () => {},
@@ -43,6 +56,9 @@ export function lavLaesninger({
   setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
   setWeeks, videoCoachAthletesRef, currentProgramAthleteRef,
 }) {
+  const e2Gen = e2Generation(setCalendarWeeks, typeof entropi2CalendarRead === 'function')
+  const e2Started = () => e2Gen?.n
+  const e2Replaced = started => e2Gen !== null && e2Gen.n !== started
   async function refreshCoachInbox() {
     return inboxRefreshRunnerRef.current(async () => {
       setInboxRefreshing(true)
@@ -79,9 +95,11 @@ export function lavLaesninger({
   async function fetchAthletes() {
     // Entropi 2: kun den senest startede atletlæsning må sætte atleter, skjulte, fejl og indlæsning.
     const e2Gate = typeof entropi2ReadGate === 'function' ? entropi2ReadGate(setLoading, 'athletes') : null
+    const generation = e2Started()
     setLoadError(false)
     const { data, error } = await withRetry(() => supabase.from('athletes').select('*').order('name'))
     if (e2Gate && !e2Gate.current()) return
+    if (e2Replaced(generation)) return
     // Reel fejl efter retries: vis fejl/retry i stedet for misvisende "ingen atleter".
     if (error) { setLoadError(true); setLoading(false); return }
     setAthletes(data || [])
@@ -184,6 +202,7 @@ export function lavLaesninger({
     // Funktionen gives kun med flaget tændt (Dashboard, via entropi2/coachEntry.mjs); ellers er læseren uændret.
     const e2Read = typeof entropi2CalendarRead === 'function' && coachActionsEnabled(coachActions)
       ? entropi2CalendarRead({ enabled: true, coachId: session?.user?.id, athleteIds, setStatus: setCoachActionsStatus }) : null
+    const generation = e2Started()
     if (!athleteIds.length) {
       if (coachActionsEnabled(coachActions)) {
         const empty = {}
@@ -208,6 +227,7 @@ export function lavLaesninger({
     const { data, error } = await readMeetSource(coachMeetSoon, 'plan', athleteIds, setCoachMeetData, () => readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'plan'))
     // Entropi 2: et svar fra en læsning, som en nyere har afløst, overskriver hverken kalender eller status.
     if (e2Read && !e2Read.current()) { e2Read.settle(); return dataEnoughEnabled() ? false : undefined }
+    if (e2Replaced(generation)) { e2Read?.settle(); return dataEnoughEnabled() ? false : undefined }
     if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); e2Read?.settle(); return dataEnoughEnabled() ? false : undefined }
     const map = coachActionsEnabled(coachActions) ? Object.fromEntries(athleteIds.map(id => [id, []])) : {}
     for (const w of data) {
@@ -251,6 +271,7 @@ export function lavLaesninger({
     } catch (error) {
       if (!coachActionsEnabled(coachActions)) throw error
       if (e2Read && !e2Read.current()) { e2Read.settle(); return }
+      if (e2Replaced(generation)) { e2Read?.settle(); return }
       status('error')
       e2Read?.settle()
     }
@@ -267,6 +288,7 @@ export function lavLaesninger({
     const status = value => { if (coachActionsEnabled(coachActions)) setCoachActionsStatus(prev => ({ ...prev, progress: value })) }
     // Entropi 2: et afløst svar sætter hverken fremdrift eller status (heller ikke fejl).
     const e2Gate = typeof entropi2ReadGate === 'function' && coachActionsEnabled(coachActions) ? entropi2ReadGate(setCoachActionsStatus, 'progress') : null
+    const generation = e2Started()
     status('loading')
     try {
     const since = new Date(); since.setDate(since.getDate() - 180)
@@ -283,6 +305,7 @@ export function lavLaesninger({
       .order('logged_at', { ascending: false })
     const { data, error } = await readMeetSource(coachMeetSoon, 'logs', athleteIds, setCoachMeetData, () => readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'logs'))
     if (e2Gate && !e2Gate.current()) return dataEnoughEnabled() ? false : undefined
+    if (e2Replaced(generation)) return dataEnoughEnabled() ? false : undefined
     if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); return dataEnoughEnabled() ? false : undefined }
     const overviewToday = new Date()
     const map = {}
@@ -333,6 +356,7 @@ export function lavLaesninger({
     } catch (error) {
       if (!coachActionsEnabled(coachActions)) throw error
       if (e2Gate && !e2Gate.current()) return
+      if (e2Replaced(generation)) return
       status('error')
     }
   }

@@ -132,3 +132,67 @@ test('R8: Dashboard giver ON-læseren sin egen single-flight; hooken har flaget 
   assert.match(hook, /\}, \[view, calendarAthletes, e2Effects\]\)/)
   assert.match(hook, /\}, \[view, loading, loadError, e2Effects\]\)/)
 })
+
+// Runde 8 (rest): læsninger fra før et flagskift kasseres i begge tilstande (flaggeneration).
+function dashboardReaders() {
+  // Stabile settere som Dashboardets useState-settere; læseren bygges på ny ved hver gengivelse.
+  const captured = { status: {}, calendar: undefined, athletes: undefined, loadError: undefined }
+  const stable = {
+    setCalendarWeeks: value => { captured.calendar = value },
+    setCoachActionsStatus: fn => { captured.status = fn(captured.status) },
+    setAthletes: value => { captured.athletes = value }, setLoadError: value => { captured.loadError = value },
+    setLoading: () => {}, setHiddenAthleteIds: () => {}, setSnoozedAthletes: () => {},
+    setAthleteCurrentWeek: () => {}, setAthleteWeekCompletion: () => {},
+  }
+  const build = on => lavLaesninger({ ...stable, session: { user: { id: 'syn-coach' } }, coachActions: true,
+    ...(on ? { entropi2CalendarRead, entropi2ReadGate } : {}) })
+  return { captured, build }
+}
+const weekRow = id => ({ id, athlete_id: 'syn-a', week_number: 1, start_date: '2026-10-29', sessions: [] })
+
+test('R8: en OFF-kalenderlæsning fra før skiftet til ON overskriver hverken kalender, status eller kontekst', async () => {
+  for (const lateOff of [{ data: [weekRow('syn-off')] }, { data: null, error: { message: 'syntetisk' } }, Error('syntetisk kast')]) {
+    state.calls.length = 0; state.responses.length = 0
+    const { captured, build } = dashboardReaders()
+    let release
+    state.responses.push(new Promise((resolve, reject) => { release = () => lateOff instanceof Error ? reject(lateOff) : resolve(lateOff) }),
+      { data: [weekRow('syn-on')] })
+    const off = build(false).fetchCalendarWeeks(['syn-a'])
+    const on = build(true).fetchCalendarWeeks(['syn-a'])
+    await on
+    const weeks = captured.calendar
+    assert.equal(weeks['syn-a'][0].id, 'syn-on')
+    release(); await off.catch(() => {})
+    assert.equal(captured.calendar, weeks)
+    assert.equal(captured.status.calendar, 'ready')
+    assert.equal(captured.status.e2Calendar.pending, 0)
+    assert.equal(captured.status.e2Calendar.weeks, weeks)
+  }
+})
+
+test('R8: en ON-læsning fra før skiftet til OFF og en OFF-atletlæsning kasseres også; uden flagskift er OFF uændret', async () => {
+  state.calls.length = 0; state.responses.length = 0
+  let r = dashboardReaders()
+  let release
+  state.responses.push(new Promise(resolve => { release = () => resolve({ data: [weekRow('syn-gammel-on')] }) }), { data: [weekRow('syn-off')] })
+  const onRead = r.build(true).fetchCalendarWeeks(['syn-a'])
+  await r.build(false).fetchCalendarWeeks(['syn-a'])
+  release(); await onRead
+  assert.equal(r.captured.calendar['syn-a'][0].id, 'syn-off')
+  // Atletlæsning fra før skiftet til ON.
+  state.calls.length = 0; state.responses.length = 0
+  r = dashboardReaders()
+  state.responses.push(new Promise(resolve => { release = () => resolve({ data: [{ id: 'syn-gammel' }] }) }), { data: [] })
+  const oldAthletes = r.build(false).fetchAthletes()
+  await r.build(true).fetchAthletes()
+  release(); await oldAthletes
+  assert.deepEqual(r.captured.athletes, [])
+  // Uden flagskift (flaget altid slukket) vinder det sene svar som i den uændrede læser.
+  state.calls.length = 0; state.responses.length = 0
+  r = dashboardReaders()
+  state.responses.push(new Promise(resolve => { release = () => resolve({ data: [weekRow('syn-sen')] }) }), { data: [weekRow('syn-tidlig')] })
+  const late = r.build(false).fetchCalendarWeeks(['syn-a'])
+  await r.build(false).fetchCalendarWeeks(['syn-a'])
+  release(); await late
+  assert.equal(r.captured.calendar['syn-a'][0].id, 'syn-sen')
+})
