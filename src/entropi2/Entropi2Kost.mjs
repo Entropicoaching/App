@@ -1,6 +1,7 @@
 import { createElement, useEffect, useRef } from 'react'
 import { mountNutritionScreen } from './nutrition/index.mjs'
 import './nutrition/nutrition.css'
+import './entropi2.css'
 
 // React-ramme om kostskærmens egen DOM-montering. Monteres om ved atlet- eller datoskift.
 export default function Entropi2Kost({ enabled = false, athlete, date, client, foods, onNavigate, onCoach }) {
