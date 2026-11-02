@@ -1,10 +1,39 @@
 import { feedbackText } from './conversationModel.mjs'
 
+const copenhagen = new Intl.DateTimeFormat('da-DK', {
+  timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+})
+const danishDate = new Intl.DateTimeFormat('da-DK', {
+  timeZone: 'Europe/Copenhagen', day: 'numeric', month: 'short',
+})
+const dateParts = date => Object.fromEntries(copenhagen.formatToParts(date).map(p => [p.type, p.value]))
+const calendarDay = parts => Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day))
+
+export function formatConversationTime(value, now = new Date()) {
+  // Require an explicit wire timezone; never interpret a timestamp in the device timezone.
+  const match = typeof value === 'string' && /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})$/.exec(value)
+  if (!match) return 'tidspunkt mangler'
+  const [, year, month, day, hour, minute, second = '0', zone] = match
+  const days = new Date(Date.UTC(Number(year), Number(month), 0)).getUTCDate()
+  if (Number(month) < 1 || Number(month) > 12 || Number(day) < 1 || Number(day) > days
+    || Number(hour) > 23 || Number(minute) > 59 || Number(second) > 59
+    || zone !== 'Z' && (Number(zone.slice(1, 3)) > 23 || Number(zone.slice(4)) > 59))
+    return 'tidspunkt mangler'
+  const date = new Date(value)
+  if (!Number.isFinite(date.getTime())) return 'tidspunkt mangler'
+  const parts = dateParts(date), today = dateParts(now)
+  // Compare Copenhagen calendar dates, not 24-hour durations across DST changes.
+  const difference = calendarDay(today) - calendarDay(parts)
+  const prefix = difference === 0 ? 'i dag' : difference === 86400000 ? 'i går' : danishDate.format(date)
+  return `${prefix} ${parts.hour}:${parts.minute}`
+}
+
 // Explicit expansion is the view acknowledgement. No mount/load/scroll read effects.
 export function mountConversation(root, controller, { enabled = false } = {}) {
   if (enabled !== true) return () => {}
   const doc = root.ownerDocument, expanded = new Set()
-  let disposed = false, templateError = '', templates = []
+  let disposed = false, templateError = '', templates = [], composition = ''
   const node = (tag, text) => { const el = doc.createElement(tag); if (text) el.textContent = text; return el }
   const button = (text, fn) => {
     const b = node('button', text); b.type = 'button'; b.style.minHeight = '44px'
@@ -33,7 +62,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     seconds: seconds.value.trim() ? Number(seconds.value) : NaN }))
   const coach = node('section'); coach.setAttribute('aria-label', 'Coachens svar')
   coach.append(loadQuick, quickStatus, quick, videoSelect, seconds, timed)
-  compose.append(input, send, retry, upload, coach)
+  compose.append(input, send)
   Object.assign(root.style, { background: '#141410', color: '#edeae2', padding: '20px',
     maxWidth: '480px', boxSizing: 'border-box', overflowWrap: 'anywhere' })
   root.replaceChildren(title, status, reload, list, compose)
@@ -48,6 +77,13 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     input.disabled = Boolean(locked); send.disabled = Boolean(locked || !state.draft.trim())
     retry.hidden = state.operation?.status !== 'error'; retry.disabled = state.busy
     upload.hidden = state.role !== 'athlete'; coach.hidden = state.role !== 'coach'
+    // Attach privileged tools and retry only when applicable; do not rely on CSS hiding.
+    const nextComposition = `${state.role}:${retry.hidden}`
+    if (composition !== nextComposition) {
+      composition = nextComposition
+      compose.replaceChildren(input, send, ...(retry.hidden ? [] : [retry]),
+        ...(state.role === 'athlete' ? [upload] : []), ...(state.role === 'coach' ? [coach] : []))
+    }
     loadQuick.disabled = Boolean(locked); timed.disabled = Boolean(locked || !state.draft.trim())
     const selected = videoSelect.value
     videoSelect.replaceChildren(node('option', 'Vælg video'))
@@ -60,19 +96,23 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
       const li = node('li'), row = item.value
       li.dataset.key = item.key; li.style.whiteSpace = 'pre-wrap'; li.style.marginBottom = '20px'
       const unread = state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach
-      const label = `${item.kind === 'video' ? 'Video' : row.sender_role === 'coach' ? 'Coach' : 'Atlet'} · ${item.at || 'Dato ukendt'}${unread ? ' · Ulæst' : ''}`
+      const label = `${item.kind === 'video' ? 'Video' : row.sender_role === 'coach' ? 'Coach' : 'Atlet'} · ${formatConversationTime(item.at)}${unread ? ' · Ulæst' : ''}`
       const toggle = button(label, async () => {
         if (disposed) return
         expanded.add(item.key)
         // Content is attached before any read write is attempted.
-        content.hidden = false; toggle.setAttribute('aria-expanded', 'true')
+        content.hidden = false; preview.hidden = true; toggle.setAttribute('aria-expanded', 'true')
         await controller.seen(item.key)
       })
       toggle.setAttribute('aria-expanded', String(expanded.has(item.key)))
       const content = node('div', item.kind === 'video' ? feedbackText(row) : row.content)
       content.hidden = !expanded.has(item.key)
       if (item.kind === 'video') content.append(button(state.role === 'coach' ? 'Åbn videoreview' : 'Åbn videofeedback', () => controller.open(item.key)))
-      li.append(toggle, content); return li
+      const text = item.kind === 'video' ? feedbackText(row) : row.content
+      const characters = Array.from(text)
+      const preview = node('p', characters.slice(0, 120).join('') + (characters.length > 120 ? '…' : ''))
+      preview.hidden = expanded.has(item.key)
+      li.append(toggle, content, preview); return li
     }))
     if (state.operation && state.operation.status !== 'sent') {
       const pending = node('li', `${state.operation.row.content}\n${state.operation.status === 'error' ? 'Ikke bekræftet. Prøv igen med samme besked.' : 'Sender…'}`)
