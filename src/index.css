@@ -91,6 +91,13 @@ h2 {
     font-size: 20px;
   }
 }
+/* E2-FREMGANG-KONTRAST1: fremgangens analyse (rel1101) ligger på mørk bund, så overskrifterne arver sektionens lyse farve i lyst skema. Mørkt skema er uændret. */
+@media (prefers-color-scheme: light) {
+  [data-analyse-atlet1] h1,
+  [data-analyse-atlet1] h2 {
+    color: inherit;
+  }
+}
 p {
   margin: 0;
 }
