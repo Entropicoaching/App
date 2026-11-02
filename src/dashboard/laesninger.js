@@ -53,8 +53,18 @@ export function lavLaesninger({
           requests.push(fetchLatestMessages(athleteIds))
           if (dataEnoughEnabled()) requests.push(fetchCalendarWeeks(athleteIds), fetchCalendarProgress(athleteIds))
         }
+        // Entropi 2 (kun når Dashboard giver læseren kontekstfunktionen): coachskærmens øvrige grundlag
+        // fornyes ved hver indbakkeopdatering, også med en tom atletliste og efter midnat.
+        // De indgår ikke i den gamle opdateringsstatus.
+        const e2Requests = []
+        if (typeof entropi2CalendarRead === 'function') {
+          if (!athleteIds.length || !dataEnoughEnabled()) e2Requests.push(fetchCalendarWeeks(athleteIds))
+          if (athleteIds.length && !dataEnoughEnabled()) e2Requests.push(fetchCalendarProgress(athleteIds))
+          if (athleteIds.length) e2Requests.push(fetchAthleteActivityLogs(athleteIds))
+        }
         const results = await Promise.allSettled(requests)
         setInboxRefreshStatus(summarizeRefreshResults(results))
+        await Promise.allSettled(e2Requests)
       } finally {
         setInboxRefreshing(false)
       }
