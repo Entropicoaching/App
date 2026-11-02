@@ -1,0 +1,8 @@
+/* Entropi 2: appens globale overskriftsfarve er mørk; skærmene ligger på mørk bund. */
+[data-entropi2-home-session] :is(h1, h2, h3),
+[data-entropi2-kost] :is(h1, h2, h3),
+[data-entropi2-mobility] :is(h1, h2, h3),
+[data-entropi2-coach] :is(h1, h2, h3),
+section[aria-label="Samlet samtale"] :is(h1, h2, h3) {
+  color: #edeae2;
+}

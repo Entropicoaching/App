@@ -5,7 +5,7 @@ import { fixture, settle } from './videoOptag2Fakes.mjs';
 
 let sequence = 0;
 const local = (flat, app) => new URL(existsSync(new URL(flat, import.meta.url)) ? flat : app, import.meta.url).href;
-export async function bridge({ videoOptag2, before = false } = {}) {
+export async function bridge({ videoOptag2, before = false, conversationRef } = {}) {
   const dom = fixture({ factory: () => null });
   // Real Blob container, synthetic bytes only. Never real media devices.
   let active;
@@ -67,7 +67,8 @@ export async function bridge({ videoOptag2, before = false } = {}) {
     const client = { postMessage: message => f.replies.push(message) };
     f.athleteRef = { current: athlete }; f.clients = new Set([client]); f.aborts = new Map();
     f.setRef = { current: { enabled: false } };
-    module.useVideoCoachBro({ videoOptag2, videoSetRef: f.setRef, athlete,
+    // conversationRef er valgfri (Entropi 2); udeladt er kaldet som før.
+    module.useVideoCoachBro({ ...(conversationRef ? { conversationRef } : {}), videoOptag2, videoSetRef: f.setRef, athlete,
       athleteVideoCoachClientsRef: { current: f.clients }, athleteVideoCoachFrameRef: { current: null },
       athleteVideoCoachRef: f.athleteRef, athleteVideoUploadAbortsRef: { current: f.aborts },
       flashTimerRef: { current: null }, session: { user: { id: 'synthetic' } },

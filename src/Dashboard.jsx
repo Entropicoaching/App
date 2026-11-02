@@ -62,6 +62,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
 import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
+import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
 
 
 
@@ -88,7 +89,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false }) {
+export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false, entropi2 = false }) {
   const analyseMissingData = analyseMissingDataEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const analyseConclusionMessage = analyseConclusionMessageEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const programOverview = programOverblik === true || programOverblikEnabled(typeof window === 'undefined' ? '' : window.location.search)
@@ -103,7 +104,10 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const coachWeekEnabled = coachWeekFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachWeekDataStatus, setCoachWeekDataStatus] = useState({})
   const coachFollowUp = coachFollowUpFlag(typeof window === 'undefined' ? '' : window.location.search)
-  const coachMorning = coachMorningFlag(typeof window === 'undefined' ? '' : window.location.search)
+  const e2 = entropi2Enabled(entropi2) === true
+  useEffect(() => { if (e2) loadEntropi2Styles() }, [e2])
+  // Entropi 2 bruger morgenlæsningerne som kilde; de tændes derfor med flaget.
+  const coachMorning = e2 || coachMorningFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachMorningData, setCoachMorningData] = useState({})
   const coachMeetSoon = coachMeetSoonFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachMeetData, setCoachMeetData] = useState({})
@@ -384,9 +388,11 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
     setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
-    ...(coachTemplateMessages === true ? { coachActions: true } : {}),
+    ...(coachTemplateMessages === true || e2 ? { coachActions: true } : {}),
   })
 
+  // Entropi 2: læsekonteksten fastlåses ved kalenderlæsningen (se entropi2/coachReadContext.mjs).
+  const e2ReadContext = useEntropi2ReadContext({ enabled: e2, loading, loadError, coachId: session?.user?.id, athletes, calendarWeeks, calendarStatus: coachActionsStatus.calendar })
   const missingDataScopeRef = useRef(null)
   missingDataScopeRef.current = {
     enabled: analyseMissingData === true && !videoAnalysisLoading && !videoAnalysisError,
@@ -521,7 +527,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
     fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
     fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
-    isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
+    isMobile, loadError, loading, markMessagesRead: e2 ? () => {} : markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
     refreshCoachInbox, selectedAthlete, snoozeMigratedRef, videoAnalysisReview, videoReviewOpenedRef, videoReviewRequest,
     view, weeksLogsLoadedForRef,
   })
@@ -673,7 +679,16 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         {coachRyd && view !== 'inbox' && view !== 'list' && <WorkInboxLink count={coachPriorityItems.length} next={coachPriorityItems[0]} open={() => { setView('inbox'); setSelectedAthlete(null) }} />}
         {checklistEnabled && view === 'friday-checklist' && <FridayChecklist key={session.user.id} enabled={checklistEnabled} coachId={session.user.id} athletes={athletes} openProfile={openProfile} onPreviewAthlete={onPreviewAthlete} setView={setView} />}
         {/* INDBAKKE — samlet beskedoverblik på tværs af atleter */}
-        {view === 'inbox' && (
+        {e2 && (view === 'inbox' || view === 'list') && (
+          <CoachScreen enabled={true} tab={view === 'inbox' ? 'inbox' : 'home'} {...{
+            session, athletes, hiddenAthleteIds, loading, loadError, calendarWeeks, coachActionsStatus, coachMorningData,
+            latestByTrack, unreadByTrack, pendingByTrack, inboxRefreshing, messageInboxError, videoReviewQueueError,
+            openCoachPriorityItem, openProfile, setSelectedAthlete, setView,
+          }}
+          noteSignalEnabled={COACH_NOTE_SIGNAL_ENABLED}
+          readContext={e2ReadContext} />
+        )}
+        {!e2 && view === 'inbox' && (
           <LazyBoundary
             factory={indbakke2 ? indbakke2Factory : indbakkeFactory} label="Indbakke" loading={<div style={{ ...s.page }}>Indlæser…</div>}
             componentProps={{ ...(indbakke2 ? { database: supabase, coachId: session?.user?.id } : {}), coachRyd,
@@ -717,7 +732,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
           )
         })()}
 
-        {view === 'list' && (() => {
+        {!e2 && view === 'list' && (() => {
           return (
             <ForsideView {...{ coachFollowUp, coachRyd, coachMorning, coachMorningData, coachMeetSoon, coachMeetData,
               coachWeekEnabled, coachWeekDataStatus,
@@ -882,7 +897,13 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             )}
 
             {/* TAB: BESKEDER */}
-            {activeTab === 'beskeder' && (() => {
+            {e2 && activeTab === 'beskeder' && (
+              <ConversationEntry enabled={true} role="coach" getEntry={() => ({
+                enabled: true, session, selectedAthlete, athletes, hiddenAthleteIds, inboxDatabase: supabase,
+                openVideoAnalysisReview, openAwaitingAnalysisVideo, storage: () => localStorage,
+              })} />
+            )}
+            {!e2 && activeTab === 'beskeder' && (() => {
               return (
                 <BeskederTab {...{
                   a, coachMsgTrack, fetchMessages, formatMsgTime, messageInput, messages,
