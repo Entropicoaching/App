@@ -63,7 +63,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   const entropi2Delta = [
-    ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
+    ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
     ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
     ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],
     // E2-OVERSKRIFT1: Entropi 2-stilen indlæses, så snart flaget er tændt; atletens ramme markeres kun med e2Atlet.
@@ -125,6 +125,12 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
             exerciseLogs={exerciseLogs} now={e2MobilityNow} homeworkEnabled={mobilitetHjemme === true}
             coachEnabled={mobilitetCoach === true} storage={typeof localStorage === 'undefined' ? undefined : localStorage}
             onProgram={e2GoProgram} />
+        )}
+`, ''],
+    // Analysen (R2-ENTROPI2-ANALYSE) øverst i fremgang-fanen, kun med flaget tændt.
+    [`        {e2Atlet && tab === 'fremgang' && (
+          <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
+            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab} />
         )}
 `, ''],
   ]
