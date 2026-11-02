@@ -3,6 +3,9 @@
 [data-entropi2-kost] :is(h1, h2, h3),
 [data-entropi2-mobility] :is(h1, h2, h3),
 [data-entropi2-coach] :is(h1, h2, h3),
-section[aria-label="Samlet samtale"] :is(h1, h2, h3) {
+section[aria-label="Samlet samtale"] :is(h1, h2, h3),
+section[aria-label="Beskeder og video"] :is(h1, h2, h3),
+.e2-session :is(h1, h2, h3),
+[data-entropi2-athlete] [data-analyse-atlet1] :is(h1, h2, h3) {
   color: #edeae2;
 }
