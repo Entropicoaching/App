@@ -1,4 +1,4 @@
-// Entropi 2-kobling runde 6: coachskærmens beskedsammendrag hører til samme afsluttede læsning
+// Entropi 2-kobling runde 6: coachskærmens beskedsammendrag (og videofejl, atleter og fremdrift) hører til samme afsluttede læsning
 // som den indfangede beskedkilde. Faktisk lavLaesninger (readMorningSource, fetchLatestMessages)
 // med den syntetiske database fra testLoader, faktisk entropi2MessageSummary og coachHomeModel.
 import './testLoader.mjs'
@@ -6,8 +6,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { registerHooks } from 'node:module'
+import { setImmediate } from 'node:timers'
 import { state } from './synthetic.mjs'
-import { entropi2MessageSummary, MESSAGE_INBOX_ERROR } from '../entropi2/coachMessageSummary.mjs'
+import { entropi2MessageSummary, entropi2VideoQueueError, MESSAGE_INBOX_ERROR, VIDEO_QUEUE_ERROR } from '../entropi2/coachMessageSummary.mjs'
+import { entropi2CalendarRead, entropi2ReadGate } from '../entropi2/coachReadContext.mjs'
 import { coachHomeModel } from '../entropi2/coach/coachModel.mjs'
 import { activityDay } from './coachInactive.mjs'
 // testLoader erstatter læserens hjælpere med kastende stubbe; her bruges den faktiske
@@ -100,4 +102,87 @@ test('R6: Dashboard giver kun CoachScreen kildens sammendrag med flaget; OFF-gre
   assert.doesNotMatch(screen, /latestByTrack|unreadByTrack|pendingByTrack|messageInboxError/)
   // Den gamle forside får stadig Dashboardets egne sammendrag.
   assert.match(source, /videoMeasurementByAthlete, videoReviewQueueError, latestByTrack, videoReviewQueue, coachActionsStatus,/)
+})
+
+// Runde 6 (fortsat): øvrige props til CoachScreen fra læsninger uden eget token.
+function gated(entropi2 = true, extra = {}) {
+  state.calls.length = 0; state.responses.length = 0
+  const captured = { morning: {}, status: {}, athletes: undefined, loadError: undefined, loading: undefined, videoError: undefined }
+  const handlers = lavLaesninger({ session, coachMorning: true, coachActions: true,
+    ...(entropi2 ? { entropi2CalendarRead, entropi2ReadGate } : {}),
+    setCoachMorningData: fn => { captured.morning = fn(captured.morning) },
+    setCoachActionsStatus: fn => { captured.status = fn(captured.status) },
+    setVideoReviewQueueError: v => { captured.videoError = v }, setVideoReviewQueue: () => {},
+    setAthletes: v => { captured.athletes = v }, setHiddenAthleteIds: () => {}, setSnoozedAthletes: () => {},
+    setLoadError: v => { captured.loadError = v }, setLoading: v => { captured.loading = v },
+    setAthleteCurrentWeek: () => {}, setAthleteWeekCompletion: () => {}, setAthleteWeekSummary: () => {},
+    setAthleteLastLogs: () => {}, setWeeklyActivity: () => {}, setProfilesLastSeen: () => {}, ...extra })
+  return { handlers, captured }
+}
+async function race(handlers, name, args, lateA, answerB, followUps = 0) {
+  let releaseA
+  state.responses.push(new Promise((resolve, reject) => { releaseA = () => lateA instanceof Error ? reject(lateA) : resolve(lateA) }), answerB)
+  // Tomme svar til de læsninger, en vellykket atletlæsning selv starter bagefter.
+  for (let i = 0; i < followUps; i++) state.responses.push({ data: [] })
+  const first = handlers[name](...args)
+  await handlers[name](...args)
+  releaseA(); await first.catch(() => {})
+}
+const video = { id: 'syn-v1', athlete_id: a.id, status: 'draft', created_at: new Date().toISOString() }
+
+test('R6: videokøens fejl kommer fra samme videokilde; en afløst fejl blander sig ikke', async () => {
+  for (const lateA of [{ data: null, error: { message: 'syntetisk' } }, Error('syntetisk kast')]) {
+    const { handlers, captured } = gated()
+    await race(handlers, 'fetchVideoReviewQueue', [], lateA, { data: [video] })
+    assert.equal(captured.morning.videos.state, 'ready')
+    // Reproduktion: Dashboardets egen fejl er sat af det afløste svar (kast giver ingen state-fejl, men afvist læser).
+    if (!(lateA instanceof Error)) assert.equal(captured.videoError, 'syntetisk')
+    const props = videoReviewQueueError => ({ ...sourceSummaries(captured), videoReviewQueueError })
+    if (!(lateA instanceof Error)) {
+      const stale = model(captured, props(captured.videoError))
+      assert.equal(stale.videos.usable, false); assert.equal(stale.hasError, true)
+    }
+    const fixed = model(captured, props(entropi2VideoQueueError(captured.morning.videos)))
+    assert.equal(fixed.videos.usable, true); assert.equal(fixed.hasError, false)
+    assert.equal(fixed.inbox.filter(item => item.item.kind === 'video').length, 1)
+  }
+  // Den gældende kildes egen fejl vises stadig.
+  const { handlers, captured } = gated()
+  state.responses.push({ data: null, error: { message: 'syntetisk' } })
+  await handlers.fetchVideoReviewQueue()
+  assert.equal(entropi2VideoQueueError(captured.morning.videos), VIDEO_QUEUE_ERROR)
+  assert.equal(entropi2VideoQueueError(undefined), null)
+})
+
+test('R6: en afløst atletlæsning sætter hverken atleter, fejl eller indlæsning med flaget; OFF uændret', async () => {
+  for (const [lateA, check] of [[{ data: [a] }, c => assert.deepEqual(c.athletes, [])],
+    [{ data: null, error: { message: 'syntetisk' } }, c => assert.equal(c.loadError, false)]]) {
+    const on = gated()
+    await race(on.handlers, 'fetchAthletes', [], lateA, { data: [] })
+    check(on.captured); assert.equal(on.captured.loading, false)
+    // OFF: den eksisterende læser er uændret, og det sene svar vinder som før.
+    const off = gated(false)
+    await race(off.handlers, 'fetchAthletes', [], lateA, { data: [] }, lateA.data ? 3 : 0)
+    await new Promise(resolve => setImmediate(resolve))
+    if (lateA.data) assert.deepEqual(off.captured.athletes, [a]); else assert.equal(off.captured.loadError, true)
+  }
+})
+
+test('R6: en afløst fremdriftslæsning sætter ikke fejlstatus med flaget; OFF uændret', async () => {
+  for (const lateA of [{ data: null, error: { message: 'syntetisk' } }, Error('syntetisk kast')]) {
+    const on = gated()
+    await race(on.handlers, 'fetchCalendarProgress', [[a.id]], lateA, { data: [] })
+    assert.equal(on.captured.status.progress, 'ready')
+    const off = gated(false)
+    await race(off.handlers, 'fetchCalendarProgress', [[a.id]], lateA, { data: [] })
+    assert.equal(off.captured.status.progress, 'error')
+  }
+})
+
+test('R6: Dashboard giver CoachScreen videofejlen fra videokilden og læseren vagten kun med flaget', () => {
+  const source = readFileSync(new URL('../Dashboard.jsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
+  const screen = source.slice(source.indexOf('<CoachScreen enabled={true}'), source.indexOf('readContext={e2ReadContext} />'))
+  assert.match(screen, /videoReviewQueueError=\{entropi2VideoQueueError\(coachMorningData\.videos\)\}/)
+  assert.equal(screen.match(/videoReviewQueueError/g).length, 1)
+  assert.match(source, /\.\.\.\(e2 \? \{ entropi2CalendarRead, entropi2ReadGate \} : \{\}\),/)
 })

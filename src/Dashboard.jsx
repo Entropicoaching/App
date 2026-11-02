@@ -62,7 +62,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
 import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
-import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, entropi2MessageSummary, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, entropi2ReadGate, entropi2MessageSummary, entropi2VideoQueueError, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
 
 
 
@@ -389,7 +389,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
     setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
     ...(coachTemplateMessages === true || e2 ? { coachActions: true } : {}),
-    ...(e2 ? { entropi2CalendarRead } : {}),
+    ...(e2 ? { entropi2CalendarRead, entropi2ReadGate } : {}),
   })
 
   // Entropi 2: læsekonteksten kommer fra selve kalenderlæsningen (se entropi2/coachReadContext.mjs).
@@ -685,10 +685,11 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         {e2 && (view === 'inbox' || view === 'list') && (
           <CoachScreen enabled={true} tab={view === 'inbox' ? 'inbox' : 'home'} {...{
             session, athletes, hiddenAthleteIds, loading, loadError, calendarWeeks, coachActionsStatus, coachMorningData,
-            inboxRefreshing, videoReviewQueueError,
+            inboxRefreshing,
             openCoachPriorityItem, openProfile, setSelectedAthlete, setView,
           }}
           {...e2Beskeder}
+          videoReviewQueueError={entropi2VideoQueueError(coachMorningData.videos)}
           noteSignalEnabled={COACH_NOTE_SIGNAL_ENABLED}
           readContext={e2ReadContext} />
         )}

@@ -106,10 +106,10 @@ test('F1: konteksten læses uden tid og memo, også i en faktisk React-gengivels
   assert.doesNotMatch(source, /from 'react'|useMemo|new Date/)
 })
 
-test('F1: Dashboard binder coachskærmens kontekst til læseresultatet og giver kun læseren funktionen med flaget', () => {
+test('F1: Dashboard binder coachskærmens kontekst til læseresultatet og giver kun læseren funktionerne med flaget', () => {
   const source = read('../Dashboard.jsx')
   assert.match(source, /const e2ReadContext = useEntropi2ReadContext\(\{ enabled: e2, loading, loadError, coachId: session\?\.user\?\.id, athletes, calendarWeeks, coachActionsStatus, coachMorningData \}\)/)
-  assert.match(source, /\.\.\.\(e2 \? \{ entropi2CalendarRead \} : \{\}\),\n {2}\}\)/)
+  assert.match(source, /\.\.\.\(e2 \? \{ entropi2CalendarRead, entropi2ReadGate \} : \{\}\),\n {2}\}\)/)
   assert.match(source, /readContext=\{e2ReadContext\} \/>/)
   assert.doesNotMatch(source, /day: activityDay\(\)/)
   const reader = read('../dashboard/laesninger.js')

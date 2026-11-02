@@ -32,7 +32,7 @@ export function lavLaesninger({
   fourWeekCapture, profileWeekCapture, coachMorning = false, setCoachMorningData = () => {},
   coachWeekEnabled = false, setCoachWeekDataStatus = () => {},
 
-  coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {}, entropi2CalendarRead,
+  coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {}, entropi2CalendarRead, entropi2ReadGate,
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
   setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
   setAthleteWeightLogs, setAutomationAlerts, setAutomationAlertsError, setCalendarWeeks, setCoachBriefingSeen, setExerciseLibrary,
@@ -67,8 +67,11 @@ export function lavLaesninger({
   }
 
   async function fetchAthletes() {
+    // Entropi 2: kun den senest startede atletlæsning må sætte atleter, skjulte, fejl og indlæsning.
+    const e2Gate = typeof entropi2ReadGate === 'function' ? entropi2ReadGate(setLoading, 'athletes') : null
     setLoadError(false)
     const { data, error } = await withRetry(() => supabase.from('athletes').select('*').order('name'))
+    if (e2Gate && !e2Gate.current()) return
     // Reel fejl efter retries: vis fejl/retry i stedet for misvisende "ingen atleter".
     if (error) { setLoadError(true); setLoading(false); return }
     setAthletes(data || [])
@@ -252,6 +255,8 @@ export function lavLaesninger({
       return
     }
     const status = value => { if (coachActionsEnabled(coachActions)) setCoachActionsStatus(prev => ({ ...prev, progress: value })) }
+    // Entropi 2: et afløst svar sætter hverken fremdrift eller status (heller ikke fejl).
+    const e2Gate = typeof entropi2ReadGate === 'function' && coachActionsEnabled(coachActions) ? entropi2ReadGate(setCoachActionsStatus, 'progress') : null
     status('loading')
     try {
     const since = new Date(); since.setDate(since.getDate() - 180)
@@ -267,6 +272,7 @@ export function lavLaesninger({
       .gte('logged_at', since.toISOString())
       .order('logged_at', { ascending: false })
     const { data, error } = await readMeetSource(coachMeetSoon, 'logs', athleteIds, setCoachMeetData, () => readWeekData(coachWeekEnabled, () => (dataEnoughEnabled() ? query.limit(1000) : query), setCoachWeekDataStatus, 'logs'))
+    if (e2Gate && !e2Gate.current()) return dataEnoughEnabled() ? false : undefined
     if (!data || ((dataEnoughEnabled() || coachActionsEnabled(coachActions)) && error)) { status('error'); return dataEnoughEnabled() ? false : undefined }
     const overviewToday = new Date()
     const map = {}
@@ -316,6 +322,7 @@ export function lavLaesninger({
     return dataEnoughEnabled() ? data.length < 1000 : undefined
     } catch (error) {
       if (!coachActionsEnabled(coachActions)) throw error
+      if (e2Gate && !e2Gate.current()) return
       status('error')
     }
   }

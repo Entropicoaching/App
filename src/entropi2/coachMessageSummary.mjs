@@ -8,6 +8,13 @@ import { summarizeCoachMessages } from '../coachInboxState.js'
 export const MESSAGE_INBOX_ERROR = 'Beskeder kunne ikke opdateres. Prøv igen.'
 const cache = new WeakMap()
 
+// Videokøens fejlstatus hører til samme indfangede videokilde (coachMorningData.videos) som
+// videorækkerne. Et afløst svar kan derfor hverken sætte eller rydde fejlen.
+export const VIDEO_QUEUE_ERROR = 'VideoCoach-køen kunne ikke hentes'
+export function entropi2VideoQueueError(source) {
+  return source?.state === 'error' ? VIDEO_QUEUE_ERROR : null
+}
+
 export function entropi2MessageSummary(source, { noteSignalEnabled = false } = {}) {
   const note = noteSignalEnabled === true
   if (source?.state === 'error') return { latestByTrack: {}, unreadByTrack: {}, pendingByTrack: {}, messageInboxError: MESSAGE_INBOX_ERROR }

@@ -40,6 +40,18 @@ export function entropi2CalendarRead({ enabled, coachId, athleteIds, setStatus }
   }
 }
 
+// Entropi 2: generel vagt for læsere uden eget token. Kun den senest startede læsning med samme
+// ejer (en stabil statussetter) og nøgle er gældende; et afløst svar skal kassere sit resultat.
+const gates = new WeakMap()
+export function entropi2ReadGate(owner, key) {
+  if (!owner || (typeof owner !== 'object' && typeof owner !== 'function')) return null
+  let byKey = gates.get(owner)
+  if (!byKey) { byKey = new Map(); gates.set(owner, byKey) }
+  const token = {}
+  byKey.set(key, token)
+  return { current: () => byKey.get(key) === token }
+}
+
 const sameIds = (a, b) => {
   const x = [...a].sort(), y = [...b].sort()
   return x.length === y.length && x.every((id, i) => id === y[i])
