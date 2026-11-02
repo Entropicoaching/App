@@ -83,6 +83,12 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   const e2GoProgram = useMemo(() => () => e2SetTabRef.current('program'), [])
   const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
 `, ''],
+    // Kostkobling (APP-KOST-START1): vægtlog hentes kun med flaget tændt, når kostfanen er åben.
+    [`  // Entropi 2: kostskærmen viser vægten; hent den eksisterende vægtlog, når kostfanen åbnes.
+  const e2KostAaben = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id && visKost && tab === 'kost'
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchWeightLogs er ren ift. atlet-id'et, som er i deps
+  useEffect(() => { if (e2KostAaben) fetchWeightLogs(athlete.id) }, [e2KostAaben, athlete?.id])
+`, ''],
     [`  // Entropi 2: atletens egen forside erstatter den gamle hjem-visning og passtart.
   const e2Atlet = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id
   const e2Home = e2Atlet && tab === 'hjem'
@@ -98,7 +104,9 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
     ["        {!e2Home && (!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang", "        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang"],
     [`        {e2Atlet && visKost && tab === 'kost' && (
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
-            onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')} />
+            onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
+            weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
+            {...(kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight } : {})} />
         )}
         {!e2Atlet && visKost && tab === 'kost' && (`, "        {visKost && tab === 'kost' && ("],
     [`        {e2Atlet && tab === 'beskeder' && (

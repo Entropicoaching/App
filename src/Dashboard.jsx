@@ -62,7 +62,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
 import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
-import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, entropi2ReadGate, entropi2MessageSummary, entropi2VideoQueueError, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, entropi2ReadGate, entropi2MessageSummary, entropi2VideoQueueError, useEntropi2CoachNutrition, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
 
 
 
@@ -394,6 +394,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
 
   // Entropi 2: læsekonteksten kommer fra selve kalenderlæsningen (se entropi2/coachReadContext.mjs).
   const e2ReadContext = useEntropi2ReadContext({ enabled: e2, loading, loadError, coachId: session?.user?.id, athletes, calendarWeeks, coachActionsStatus, coachMorningData })
+  // Entropi 2: coachens kostlinje læses kun med flaget tændt og bindes til samme kontekst.
+  const e2CoachNutrition = useEntropi2CoachNutrition({ enabled: e2, client: supabase, readContext: e2ReadContext })
   // Entropi 2: beskedsammendrag og fejlstatus udledes af samme indfangede beskedkilde (se entropi2/coachMessageSummary.mjs).
   const e2Beskeder = e2 ? entropi2MessageSummary(coachMorningData.messages, { noteSignalEnabled: COACH_NOTE_SIGNAL_ENABLED }) : null
   const missingDataScopeRef = useRef(null)
@@ -690,7 +692,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
           }}
           {...e2Beskeder}
           videoReviewQueueError={entropi2VideoQueueError(coachMorningData.videos)}
-          noteSignalEnabled={COACH_NOTE_SIGNAL_ENABLED}
+          noteSignalEnabled={COACH_NOTE_SIGNAL_ENABLED} coachNutrition={e2CoachNutrition}
           readContext={e2ReadContext} />
         )}
         {!e2 && view === 'inbox' && (
