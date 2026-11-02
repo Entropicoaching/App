@@ -34,7 +34,13 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   if (enabled !== true) return () => {}
   const doc = root.ownerDocument, expanded = new Set()
   let disposed = false, templateError = '', templates = [], composition = ''
-  const node = (tag, text) => { const el = doc.createElement(tag); if (text) el.textContent = text; return el }
+  const node = (tag, text) => { const el = doc.createElement(tag); if (text) el.textContent = text
+    if (['button', 'select', 'textarea', 'input'].includes(tag)) Object.assign(el.style, {
+      minHeight: '44px', maxWidth: '100%', boxSizing: 'border-box', border: '1px solid #59564c',
+      borderRadius: '10px', padding: '12px 16px', background: '#1c1c18', color: '#edeae2',
+      font: 'inherit',
+    })
+    return el }
   const button = (text, fn) => {
     const b = node('button', text); b.type = 'button'; b.style.minHeight = '44px'
     b.addEventListener('click', fn); return b
@@ -45,6 +51,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   input.setAttribute('aria-label', 'Din besked'); input.style.width = '100%'; input.style.boxSizing = 'border-box'
   input.addEventListener('input', () => controller.draft(input.value))
   const send = button('Send', () => controller.send()), retry = button('Prøv afsendelse igen', () => controller.retry())
+  Object.assign(send.style, { background: '#d8b16b', color: '#141410' })
   const reload = button('Opdatér samtalen', () => controller.refresh())
   const upload = button('Send video', () => controller.upload())
   const quick = node('div'), quickStatus = node('p')
@@ -60,10 +67,12 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   seconds.setAttribute('aria-label', 'Tidspunkt i sekunder')
   const timed = button('Send tidsfeedback', () => controller.send({ analysisId: videoSelect.value,
     seconds: seconds.value.trim() ? Number(seconds.value) : NaN }))
+  Object.assign(timed.style, { background: '#d8b16b', color: '#141410' })
   const coach = node('section'); coach.setAttribute('aria-label', 'Coachens svar')
   coach.append(loadQuick, quickStatus, quick, videoSelect, seconds, timed)
   compose.append(input, send)
   Object.assign(root.style, { background: '#141410', color: '#edeae2', padding: '20px',
+    fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5', colorScheme: 'dark',
     maxWidth: '480px', boxSizing: 'border-box', overflowWrap: 'anywhere' })
   root.replaceChildren(title, status, reload, list, compose)
   const unsubscribe = controller.subscribe(state => {
@@ -85,6 +94,9 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
         ...(state.role === 'athlete' ? [upload] : []), ...(state.role === 'coach' ? [coach] : []))
     }
     loadQuick.disabled = Boolean(locked); timed.disabled = Boolean(locked || !state.draft.trim())
+    for (const primary of [send, timed]) Object.assign(primary.style, {
+      opacity: primary.disabled ? '0.45' : '1', cursor: primary.disabled ? 'not-allowed' : 'pointer',
+    })
     const selected = videoSelect.value
     videoSelect.replaceChildren(node('option', 'Vælg video'))
     videoSelect.children[0].value = ''

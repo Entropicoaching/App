@@ -176,7 +176,7 @@ test('load race and disposed controller cannot update a replaced athlete view', 
 test('real mount -> adapter -> guarded synthetic insert, one-tap favorite/log/history/navigation', async () => {
   const host = syntheticHost(), client = clientFake(), storage = storageFake(), routes = []
   let coach = 0
-  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete: { id: 'synthetic-A', kcal_target: 2200 }, date, client, storage, onCoach: () => coach++, onNavigate: r => routes.push(r) })
+  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete: { id: 'synthetic-A', kcal_target: 2200 }, date, client, storage, onCoach: () => { coach++; routes.push('beskeder') }, onNavigate: r => routes.push(r) })
   await flush()
   assert.match(host.textContent, /Dit næste måltid/)
   assert.match(host.textContent, /Ingen mål endnu/)
@@ -195,8 +195,12 @@ test('real mount -> adapter -> guarded synthetic insert, one-tap favorite/log/hi
   await find(host, 'button', 'Se historik').fire('click')
   assert.ok(find(host, 'h2', 'Historik · seneste 30 dage'))
   assert.equal(find(host, 'button', 'Se historik').getAttribute('aria-expanded'), 'true')
-  await find(host, 'button', 'Tal med din coach').fire('click'); assert.equal(coach, 1)
-  await find(host, 'button', 'Beskeder').fire('click'); assert.deepEqual(routes, ['beskeder'])
+  // The remaining coach action is the assembly's navigation seam after removing duplicate nav.
+  assert.equal(find(host, 'button', 'Beskeder'), undefined)
+  assert.equal(host.querySelectorAll('nav').length, 0)
+  assert.deepEqual(routes, [])
+  await find(host, 'button', 'Tal med din coach').fire('click')
+  assert.equal(coach, 1); assert.deepEqual(routes, ['beskeder'])
   cleanup(); assert.equal(host.textContent, '')
 })
 

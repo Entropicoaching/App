@@ -40,9 +40,6 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
     const app = node('div', 'e2-nutrition')
     const skip = append(app, 'a', 'skip', 'Gå til indhold')
     skip.setAttribute('href', '#' + contentId)
-    const top = append(app, 'header', 'top')
-    const brand = append(top, 'span', 'brand', 'Entropi')
-    append(brand, 'span', 'edition', '02')
     const main = append(app, 'main')
     main.setAttribute('id', contentId); main.setAttribute('tabindex', '-1')
     const weighing = append(main, 'section', 'card')
@@ -175,10 +172,6 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
         const list = append(section, 'ul', 'list')
         s.historyRows.forEach(row => append(list, 'li', '', `${row.date} · ${typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid'}`))
       }
-    }
-    if (typeof onNavigate === 'function') {
-      const nav = append(app, 'nav', 'nav'); nav.setAttribute('aria-label', 'Atlet')
-      for (const [text, route] of [['Hjem', 'hjem'], ['Analyse', 'analyse'], ['Beskeder', 'beskeder']]) button(nav, text, () => onNavigate(route))
     }
     host.replaceChildren(app)
     for (const n of host.querySelectorAll('[data-focus]')) {
