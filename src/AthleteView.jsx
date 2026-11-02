@@ -43,7 +43,7 @@ import { useParathedUdkast } from './athlete/useParathedUdkast.js'
 import { bygGrundlag, ugensSaet } from './athlete/rekorder.js'
 import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks.js'
 import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
-import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -807,6 +807,10 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
 
         {/* FREMGANG */}
+        {e2Atlet && tab === 'fremgang' && (
+          <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
+            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab} />
+        )}
         {tab === 'fremgang' && (
           <LazyBoundary
             factory={fremgangFokus === true ? fremgangFokusFactory : enkelOn ? enkelFremgangFactory : fremgangFactory} label="Fremgang" loading={<div style={s.page}>Indlæser…</div>}
