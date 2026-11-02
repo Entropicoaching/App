@@ -6,4 +6,5 @@ export { default as ConversationEntry } from './conversation/ConversationEntry.m
 export { useEntropi2ReadContext, entropi2CalendarRead, entropi2ReadGate } from './coachReadContext.mjs'
 export { entropi2MessageSummary, entropi2VideoQueueError } from './coachMessageSummary.mjs'
 export { useEntropi2CoachNutrition } from './coachNutritionRead.mjs'
+export { default as CoachKostMaal, useEntropi2KostVaegt } from './kostMaalKobling.mjs'
 export { COACH_NOTE_SIGNAL_ENABLED } from '../coachNoteSignal.js'
