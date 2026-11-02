@@ -27,6 +27,8 @@ const fakes = {
 './dashboard/coachFollowUp.mjs': {coachFollowUpFlag:()=>false},
 './dashboard/profileWeekSummary.mjs': {ProfileWeekSummary:noop,profileWeekFlag:()=>false},
 './dashboard/coachSaveNext.mjs': {COACH_SAVE_NEXT_ENABLED:false,createInboxSaveNext:noop,inboxReplyMatches:()=>false},
+// Entropi 2 er slukket i disse prøver: flaget er altid false, skærmene rendres aldrig.
+'./entropi2/coachEntry.mjs': {entropi2Enabled:()=>false,loadEntropi2Styles:noop,CoachScreen:()=>null,ConversationEntry:()=>null,useEntropi2ReadContext:()=>undefined,entropi2CalendarRead:()=>null,COACH_NOTE_SIGNAL_ENABLED:false},
 
   react: { useState(initial) {
     const index = stateIndex++

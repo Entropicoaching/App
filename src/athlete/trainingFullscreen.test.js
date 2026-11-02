@@ -59,6 +59,70 @@ test('rel1101 accepts only boolean true or one exact query value; default OFF', 
 
 test('OFF integration reconstructs exact base; only current Hjem entry changes', () => {
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')
+  // Entropi 2-koblingen (flaget entropi2, slukket som standard) er et eksplicit, separat delta.
+  // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
+  // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
+  const entropi2Delta = [
+    ["import { entropi2Enabled, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
+    ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
+    ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],
+    // Runde 3: samtale-ref til upload-broen og eksplicit OFF-grænse om de gamle mobilitetsgrene.
+    [`  // Entropi 2: samtalen får besked om bekræftede indsendelser fra upload-broen.
+  const e2ConversationRef = useRef(null)
+`, ''],
+    ['    conversationRef: e2ConversationRef,\n', ''],
+    ['    conversationHandover: e2,\n', ''],
+    ["        {!e2Atlet && compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (", "        {compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && ("],
+    ["        {!e2Atlet && tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && (", "        {tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && ("],
+    [`  // Entropi 2: stabile props, så skærmene ikke monteres om ved hver gengivelse.
+  const e2Day = today()
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- nyt tidspunkt kun ved dagsskifte eller atletskift
+  const e2MobilityNow = useMemo(() => new Date(), [e2Day, athlete?.id])
+  const e2SetTabRef = useRef(setTab)
+  useEffect(() => { e2SetTabRef.current = setTab })
+  const e2GoProgram = useMemo(() => () => e2SetTabRef.current('program'), [])
+  const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
+`, ''],
+    [`  // Entropi 2: atletens egen forside erstatter den gamle hjem-visning og passtart.
+  const e2Atlet = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id
+  const e2Home = e2Atlet && tab === 'hjem'
+`, ''],
+    [`        {e2Home && (
+          <HomeSession key={athlete.id} enabled={true} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
+            setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
+            programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}
+            onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
+            pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause} />
+        )}
+        {!e2Home && tab === 'hjem' && !onHoliday`, "        {tab === 'hjem' && !onHoliday"],
+    ["        {!e2Home && (!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang", "        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang"],
+    [`        {e2Atlet && visKost && tab === 'kost' && (
+          <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
+            onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')} />
+        )}
+        {!e2Atlet && visKost && tab === 'kost' && (`, "        {visKost && tab === 'kost' && ("],
+    [`        {e2Atlet && tab === 'beskeder' && (
+          <ConversationEntry enabled={true} role="athlete" controllerRef={e2ConversationRef} getEntry={() => ({
+            enabled: true, session, athlete, coachAthleteId, inboxDatabase,
+            setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setOpenSharedVideoId, renderSharedFeedbackCards,
+            storage: () => localStorage,
+          })} />
+        )}
+        {!e2Atlet && tab === 'beskeder' && (`, "        {tab === 'beskeder' && ("],
+    [`        {e2Atlet && tab === 'mobilisering' && (
+          <Entropi2Mobility enabled={true} athlete={athlete} allWeeks={allWeeks} currentWeek={currentWeek}
+            exerciseLogs={exerciseLogs} now={e2MobilityNow} homeworkEnabled={mobilitetHjemme === true}
+            coachEnabled={mobilitetCoach === true} storage={typeof localStorage === 'undefined' ? undefined : localStorage}
+            onProgram={e2GoProgram} />
+        )}
+`, ''],
+  ]
+  for (const [added, original] of entropi2Delta) {
+    const exact = added.replaceAll('\n', '\r\n')
+    assert.equal(candidate.split(exact).length, 2, 'Entropi 2-delta skal findes præcis én gang: ' + added.slice(0, 80))
+    candidate = candidate.replace(exact, original.replaceAll('\n', '\r\n'))
+  }
+  assert.doesNotMatch(candidate, /entropi2|e2Home|e2Atlet/i)
   // Invert only this explicit Home-entry delta, then retain both original SHA guards.
   candidate = candidate
     .replace("  const homeRo2 = rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search)\r\n", '')
