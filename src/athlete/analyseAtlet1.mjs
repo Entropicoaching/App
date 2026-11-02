@@ -4,7 +4,9 @@ import { calendarDay, calendarDaysBetween, addCalendarDays } from '../calendarDa
 import { erTungtSaet, erDeloadLog, erDeloadBlok } from '../exerciseProgress.js'
 
 // Only the existing strict release opt-in. No storage or new data source.
+// Entropi 2: med den nye analyse øverst (flaget entropi2) vises den gamle ikke; resten af fremgang bevares.
 export function analyseAtlet1Enabled(props = {}) {
+  if (props.entropi2Analyse === true) return false
   return rel1101Enabled(props.rel1101, globalThis.window?.location?.search ?? globalThis.location?.search ?? '')
 }
 const list = value => Array.isArray(value) ? value.filter(v => v && typeof v === 'object') : []

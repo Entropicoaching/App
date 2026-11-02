@@ -139,6 +139,9 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab} />
         )}
 `, ''],
+    // Ret1: med flaget tændt skjules den gamle analyse i fremgangsvisningen; resten af fremgang er uændret.
+    ['            componentProps={{ ...(e2Atlet ? { entropi2Analyse: true } : {}), ...repRecords === true ? (fremgangFokus', '            componentProps={repRecords === true ? (fremgangFokus'],
+    ['exerciseLogs, currentWeek }}}\n', 'exerciseLogs, currentWeek }}\n'],
   ]
   for (const [added, original] of entropi2Delta) {
     const exact = added.replaceAll('\n', '\r\n')
