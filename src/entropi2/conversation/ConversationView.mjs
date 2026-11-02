@@ -1,4 +1,4 @@
-import { feedbackText } from './conversationModel.mjs'
+import { feedbackText, videoLabel } from './conversationModel.mjs'
 
 const copenhagen = new Intl.DateTimeFormat('da-DK', {
   timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -33,7 +33,7 @@ export function formatConversationTime(value, now = new Date()) {
 export function mountConversation(root, controller, { enabled = false } = {}) {
   if (enabled !== true) return () => {}
   const doc = root.ownerDocument, expanded = new Set()
-  let disposed = false, templateError = '', templates = [], composition = ''
+  let disposed = false, templateError = '', templates = [], composition = '', clearedTimedId = null
   const node = (tag, text) => { const el = doc.createElement(tag); if (text) el.textContent = text
     if (['button', 'select', 'textarea', 'input'].includes(tag)) Object.assign(el.style, {
       minHeight: '44px', maxWidth: '100%', boxSizing: 'border-box', border: '1px solid #59564c',
@@ -94,6 +94,11 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
         ...(state.role === 'athlete' ? [upload] : []), ...(state.role === 'coach' ? [coach] : []))
     }
     loadQuick.disabled = Boolean(locked); timed.disabled = Boolean(locked || !state.draft.trim())
+    if (state.operation?.status === 'sent' && state.operation.row.category === 'teknik'
+      && state.operation.row.id !== clearedTimedId) {
+      clearedTimedId = state.operation.row.id
+      videoSelect.value = ''; seconds.value = ''
+    }
     for (const primary of [send, timed]) Object.assign(primary.style, {
       opacity: primary.disabled ? '0.45' : '1', cursor: primary.disabled ? 'not-allowed' : 'pointer',
     })
@@ -101,7 +106,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     videoSelect.replaceChildren(node('option', 'Vælg video'))
     videoSelect.children[0].value = ''
     for (const item of state.thread.filter(item => item.kind === 'video')) {
-      const option = node('option', `${item.value.lift || 'Video'} · ${item.value.id}`); option.value = item.value.id; videoSelect.append(option)
+      const option = node('option', videoLabel(item.value)); option.value = item.value.id; videoSelect.append(option)
     }
     videoSelect.value = selected
     list.replaceChildren(...state.thread.map(item => {
