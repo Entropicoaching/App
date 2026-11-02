@@ -43,7 +43,7 @@ import { useParathedUdkast } from './athlete/useParathedUdkast.js'
 import { bygGrundlag, ugensSaet } from './athlete/rekorder.js'
 import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks.js'
 import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
-import { entropi2Enabled, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -93,6 +93,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const homeRo2 = rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search)
   const e2 = entropi2Enabled(entropi2) === true
+  useEffect(() => { if (e2) loadEntropi2Styles() }, [e2])
   const enkelOn = enkelPrototype === true
   const HjemVisning = enkelOn ? LazyEnkelHjemTab : HjemTab
   const HjemIndgang = homeRo2 ? (enkelOn ? Ro2EnkelHjemTab : Ro2HjemTab) : HjemVisning
@@ -686,7 +687,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   ) : null
 
   return (
-    <div {...(forenklinger === true ? { 'data-app-375': 'athlete' } : {})} style={s.wrap}>
+    <div {...(forenklinger === true ? { 'data-app-375': 'athlete' } : {})} {...(e2Atlet ? { 'data-entropi2-athlete': '' } : {})} style={s.wrap}>
       <Ramme
         videoSetEnabled={videoSetEnabled}
         videoSetReady={videoSetReady && !!selectedVideoSet}
