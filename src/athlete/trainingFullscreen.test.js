@@ -124,7 +124,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
             weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
-            {...(kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight } : {})} />
+            {...(kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />
         )}
         {!e2Atlet && visKost && tab === 'kost' && (`, "        {visKost && tab === 'kost' && ("],
     [`        {e2Atlet && tab === 'beskeder' && (

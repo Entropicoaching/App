@@ -8,6 +8,9 @@ export function mountKost(host, { athlete, date, client, foods, storage }, lates
     entropi2: true, athlete, date, client, foods, storage,
     onNavigate: route => latest.current.onNavigate?.(route),
     onCoach: () => latest.current.onCoach?.(),
+    // Entropi 2: følger skærmen dags dato, bestemmes datoen ved gemning; ellers den valgte dato.
+    currentDay: () => (typeof latest.current.currentDay === 'function' ? latest.current.currentDay() : date),
+    onDayChanged: day => latest.current.onDayChanged?.(day),
     ...weight,
   })
 }
@@ -20,14 +23,14 @@ export function forwardKostWeight(cleanup, { weightLogs, weightInput, onWeightIn
 // React-ramme om kostskærmens egen DOM-montering. Monteres om ved atlet-, dato- eller målskift.
 // Efter hver relevant gengivelse følger den nyeste logWeight-closure det tilhørende weightInput.
 export default function Entropi2Kost({ enabled = false, athlete, date, client, foods, onNavigate, onCoach,
-  weightLogs, weightInput, onWeightInput, logWeight, savingWeight }) {
+  weightLogs, weightInput, onWeightInput, logWeight, savingWeight, currentDay, onDayChanged }) {
   const root = useRef(null)
   const screen = useRef(null)
-  const latest = useRef({ onNavigate, onCoach })
+  const latest = useRef({ onNavigate, onCoach, currentDay, onDayChanged })
   const weight = { weightLogs, weightInput, onWeightInput, logWeight, savingWeight }
   const latestWeight = useRef(weight)
   // Kører før monteringen i samme commit, så en ny montering får de aktuelle vægtprops.
-  useEffect(() => { latest.current = { onNavigate, onCoach }; latestWeight.current = weight })
+  useEffect(() => { latest.current = { onNavigate, onCoach, currentDay, onDayChanged }; latestWeight.current = weight })
   useEffect(() => { if (enabled === true) loadEntropi2Styles() }, [enabled])
   useEffect(() => {
     if (enabled !== true || !root.current || !athlete?.id) return undefined

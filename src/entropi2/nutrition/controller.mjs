@@ -22,7 +22,9 @@ const validId = id => typeof id === 'string' && id.trim().length > 0
 
 // A controller belongs to ONE immutable athlete/date. Dispose before replacing it.
 // enabled must be the assembly's strict boolean entropi2 gate; default is OFF.
-export function createNutritionController({ enabled = false, athlete, date, contracts, storage, foods = [] } = {}) {
+// Entropi 2: currentDay (valgfri) giver den aktuelle kalenderdag, når skærmen følger dags dato. Et måltid
+// får da dagen i det øjeblik, det gemmes, og onDayChanged får besked, når den ikke længere er date.
+export function createNutritionController({ enabled = false, athlete, date, contracts, storage, foods = [], currentDay, onDayChanged } = {}) {
   if (enabled !== true) return null
   if (!validId(athlete?.id) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
   const id = athlete.id
@@ -100,7 +102,9 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       if (disposed || !validId(intent) || pending || committed.has(intent) || !['ready', 'saved', 'save-error'].includes(phase)) return false
       const value = cleanMeal(meal)
       if (!value) { message = 'Udfyld måltid og gyldige næringsværdier.'; emit(); return false }
-      const payload = { athlete_id: id, date, ...value }
+      const day = typeof currentDay === 'function' ? currentDay() : date
+      if (calendarTime(day) === null) { message = 'Datoen kunne ikke bestemmes. Prøv igen.'; emit(); return false }
+      const payload = { athlete_id: id, date: day, ...value }
       pending = intent; phase = 'saving'; message = 'Gemmer måltid…'; emit()
       try {
         const ok = await contracts.save(payload)
@@ -109,7 +113,9 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         if (disposed) return false
         // No optimistic totals: failures leave the diary exactly as it was.
         rows.unshift({ ...payload, id: 'local:' + intent })
-        phase = 'saved'; message = 'Måltid gemt.'; return true
+        phase = 'saved'; message = 'Måltid gemt.'
+        if (day !== date) { try { onDayChanged?.(day) } catch { /* ignoreret */ } }
+        return true
       } catch {
         if (!disposed) { phase = 'save-error'; message = 'Måltidet blev ikke gemt. Prøv igen.' }
         return false

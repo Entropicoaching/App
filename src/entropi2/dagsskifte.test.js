@@ -61,7 +61,7 @@ test('R9 F1: kostens dato følger dagsskiftet, når den stod på dagen før; sam
 test('R9 F1: kostskærmen monteres igen med den nye dato, og vægten kan kun logges på dagens dato', () => {
   assert.match(athleteView, /const e2Dag = useEntropi2Dag\(\{ enabled: e2, today \}\) \?\? \{\}/)
   assert.match(athleteView, /<Entropi2Kost enabled=\{true\} athlete=\{athlete\} date=\{kostDate\}/)
-  assert.match(athleteView, /\.\.\.\(kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight \} : \{\}\)/)
+  assert.match(athleteView, /\.\.\.\(kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag\.refresh \} : \{\}\)/)
   assert.match(read('./Entropi2Kost.mjs'), /\}, \[enabled, athlete\?\.id, athlete\?\.kcal_target, athlete\?\.protein_target, date, client, foods\]\)/)
 })
 
