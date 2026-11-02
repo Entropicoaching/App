@@ -38,7 +38,7 @@ export function mountMobility(root, options = {}) {
     clear()
     Object.assign(root.style, { maxWidth: '640px', overflowWrap: 'anywhere', boxSizing: 'border-box',
       background: '#141410', color: '#edeae2', colorScheme: 'dark', padding: '20px',
-      fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5' })
+      fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5', textAlign: 'left' })
     element('h1', 'Mobilitet')
     const before = element('section'); before.setAttribute('aria-label', 'Før næste pas')
     element('h2', model.routine.length ? `Forbered din ${model.lift.toLowerCase()}` : 'Ingen kort rutine klar', before)

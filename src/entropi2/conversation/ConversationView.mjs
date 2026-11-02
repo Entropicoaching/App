@@ -47,6 +47,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   }
   const title = node('h1', 'Samtale'), status = node('p'), list = node('ol'), compose = node('section')
   status.setAttribute('role', 'status'); compose.setAttribute('aria-label', 'Skriv en besked')
+  Object.assign(list.style, { textAlign: 'left', paddingInlineStart: '32px', listStylePosition: 'outside' })
   const input = node('textarea'); input.value = ''; input.maxLength = 10000
   input.setAttribute('aria-label', 'Din besked'); input.style.width = '100%'; input.style.boxSizing = 'border-box'
   input.addEventListener('input', () => controller.draft(input.value))
@@ -55,6 +56,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   const reload = button('Opdatér samtalen', () => controller.refresh())
   const upload = button('Send video', () => controller.upload())
   const quick = node('div'), quickStatus = node('p')
+  Object.assign(quick.style, { display: 'flex', flexWrap: 'wrap', gap: '8px' })
   const loadQuick = button('Hent hurtige svar', () => {
     try { templates = controller.templates(); templateError = '' }
     catch (e) { templates = []; templateError = e.message }
@@ -69,11 +71,14 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     seconds: seconds.value.trim() ? Number(seconds.value) : NaN }))
   Object.assign(timed.style, { background: '#d8b16b', color: '#141410' })
   const coach = node('section'); coach.setAttribute('aria-label', 'Coachens svar')
-  coach.append(loadQuick, quickStatus, quick, videoSelect, seconds, timed)
+  const timeFeedback = node('div')
+  Object.assign(timeFeedback.style, { display: 'flex', flexWrap: 'wrap', gap: '8px' })
+  timeFeedback.append(videoSelect, seconds, timed)
+  coach.append(loadQuick, quickStatus, quick, timeFeedback)
   compose.append(input, send)
   Object.assign(root.style, { background: '#141410', color: '#edeae2', padding: '20px',
     fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5', colorScheme: 'dark',
-    maxWidth: '480px', boxSizing: 'border-box', overflowWrap: 'anywhere' })
+    maxWidth: '480px', textAlign: 'left', boxSizing: 'border-box', overflowWrap: 'anywhere' })
   root.replaceChildren(title, status, reload, list, compose)
   const unsubscribe = controller.subscribe(state => {
     if (disposed) return
@@ -121,6 +126,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
         content.hidden = false; preview.hidden = true; toggle.setAttribute('aria-expanded', 'true')
         await controller.seen(item.key)
       })
+      toggle.style.textAlign = 'left'
       toggle.setAttribute('aria-expanded', String(expanded.has(item.key)))
       const content = node('div', item.kind === 'video' ? feedbackText(row) : row.content)
       content.hidden = !expanded.has(item.key)
