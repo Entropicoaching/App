@@ -6,6 +6,7 @@ import assert from 'node:assert/strict'
 import { state } from './synthetic.mjs'
 import { entropi2CalendarRead, entropi2ReadContext } from '../entropi2/coachReadContext.mjs'
 import { coachHomeModel } from '../entropi2/coach/coachModel.mjs'
+import { readCoachNutrition, selectCoachNutrition } from '../entropi2/coachNutritionRead.mjs'
 import { activityDay } from './coachInactive.mjs'
 const { lavLaesninger } = await import('./laesninger.js')
 
@@ -114,4 +115,34 @@ test('R4 F1: OFF er læseren uændret: ingen kontekst og samme status uden funkt
     assert.deepEqual(captured.status, options.coachActions === false ? {} : { calendar: 'ready' })
     assert.equal(contextFor(captured, [a]), undefined)
   }
+})
+
+// Fletning med kostkoblingen: kostlinjen læses og vises kun med læsningens egen kontekst.
+function nutritionClient(rows) {
+  return { from: table => {
+    const answer = table === 'meal_logs' ? { data: rows, error: null }
+      : { data: [{ id: a.id, kcal_target: 2400, protein_target: 150 }], error: null }
+    const q = { select: () => q, in: () => q, gte: () => q, lte: () => q, order: () => q, limit: () => q,
+      then: (resolve, reject) => Promise.resolve(answer).then(resolve, reject) }
+    return q
+  } }
+}
+
+test('R4 kost: kostlinjen følger læsningens kontekst og forsvinder ved genstempling efter midnat', async () => {
+  const { handlers, captured } = reader()
+  state.responses.push({ data: weekRows })
+  await at(evening, () => handlers.fetchCalendarWeeks([a.id, b.id]))
+  const context = contextFor(captured, [a, b])
+  const rows = ['2026-10-28', '2026-10-30', '2026-11-01', '2026-11-02'].map((date, i) => ({ id: i + 1, athlete_id: a.id, date, meal: 'Syntetisk', kcal: 2000, protein: 120 }))
+  const coachNutrition = await readCoachNutrition(nutritionClient(rows), context)
+  assert.equal(selectCoachNutrition({ context, batch: coachNutrition }, true, context), coachNutrition)
+  const props = readContext => ({ session, athletes: [a, b], readContext, coachNutrition: selectCoachNutrition({ context, batch: coachNutrition }, true, readContext),
+    calendarWeeks: captured.calendar, coachActionsStatus: captured.status, loading: false, loadError: false })
+  assert.equal(coachHomeModel(props(context), evening).nutrition.size, 1)
+  // Efter midnat og omordnet atletliste er konteksten stadig læsningens egen: ingen kostlinje.
+  const later = await at(afterMidnight, () => contextFor(captured, [b, a]))
+  assert.equal(later, context)
+  assert.equal(coachHomeModel(props(later), afterMidnight).nutrition.size, 0)
+  // Uden kontekst (fx under en ny læsning) gives intet kostsvar videre.
+  assert.equal(selectCoachNutrition({ context, batch: coachNutrition }, true, contextFor(captured, [a, b], { coachMorningData: { messages: { state: 'loading' } } })), undefined)
 })

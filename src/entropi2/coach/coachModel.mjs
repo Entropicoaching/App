@@ -1,5 +1,6 @@
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
+import { coachNutritionLines } from './coachNutrition.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
 const own = (o, k) => Object.prototype.hasOwnProperty.call(o || {}, k)
@@ -114,7 +115,8 @@ export function coachHomeModel(props = {}, today = new Date()) {
   }
   actions.sort(order); inbox.sort(order)
   const complete = data.rosterReady && data.calendarReady && messages.complete && videos.complete && logs.complete
-  return { ...data, actions, inbox, complete,
+  const nutrition = coachNutritionLines(props, day, athletes, data.rosterReady)
+  return { ...data, actions, inbox, complete, nutrition,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
 }
 
