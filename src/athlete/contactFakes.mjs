@@ -1,8 +1,11 @@
 export const s = new Proxy({}, { get: () => ({}) })
 export const today = () => '2026-10-27'
-export const supabase = new Proxy({}, { get() { throw Error('Backend forbidden') } })
+// E2-ATLET-LAEST1: en prøve kan vælge en syntetisk backend og læsevagt; uden valg er alt forbudt som før.
+let backend = null, guardedRead = null
+export const setBackend = (client, read = null) => { backend = client; guardedRead = read }
+export const supabase = new Proxy({}, { get(target, key) { if (backend) return backend[key]; throw Error('Backend forbidden') } })
 export function runGuardedWrite() { throw Error('Write forbidden') }
-export function runGuardedRead() { throw Error('Read forbidden') }
+export function runGuardedRead(...args) { if (guardedRead) return guardedRead(...args); throw Error('Read forbidden') }
 export function recordSilentFail() { throw Error('Storage write forbidden') }
 let playbackOn = false
 export const setPlayback = value => { playbackOn = value }

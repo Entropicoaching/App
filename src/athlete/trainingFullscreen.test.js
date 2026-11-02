@@ -127,6 +127,12 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
             onProgram={e2GoProgram} />
         )}
 `, ''],
+    // E2-ATLET-LAEST1: med flaget tændt kører den gamle automatiske læst-markering ikke ved åbning af Beskeder.
+    [`  // Entropi 2: samtalen kvitterer selv ved eksplicit åbning; den gamle automatiske læst-markering må ikke køre.
+  const e2SelvKvittering = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id
+`, ''],
+    ["  useEffect(() => { if (tab === 'beskeder' && athlete?.id) enterContact({ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: e2SelvKvittering ? () => {} : markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack }) }, [tab, athlete?.id, msgTrack, contactLatest, e2SelvKvittering])",
+      "  useEffect(() => { if (tab === 'beskeder' && athlete?.id) enterContact({ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack }) }, [tab, athlete?.id, msgTrack, contactLatest])"],
     // Analysen (R2-ENTROPI2-ANALYSE) øverst i fremgang-fanen, kun med flaget tændt.
     [`        {e2Atlet && tab === 'fremgang' && (
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}

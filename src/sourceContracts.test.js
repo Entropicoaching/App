@@ -57,7 +57,7 @@ const cases=[
   {
     "reader": "athlete/contactReview.test.js",
     "host": "AthleteView.jsx",
-    "pattern": "enterContact\\(\\{ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack \\}\\)",
+    "pattern": "enterContact\\(\\{ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: e2SelvKvittering \\? \\(\\) => \\{\\} : markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack \\}\\)",
     "flags": ""
   },
   {
