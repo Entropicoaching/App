@@ -467,6 +467,10 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   useEffect(() => { e2SetTabRef.current = setTab })
   const e2GoProgram = useMemo(() => () => e2SetTabRef.current('program'), [])
   const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
+  // Entropi 2: kostskærmen viser vægten; hent den eksisterende vægtlog, når kostfanen åbnes.
+  const e2KostAaben = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id && visKost && tab === 'kost'
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchWeightLogs er ren ift. atlet-id'et, som er i deps
+  useEffect(() => { if (e2KostAaben) fetchWeightLogs(athlete.id) }, [e2KostAaben, athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchLogs er ren ift. sine parametre (athleteId, dato), begge allerede i deps
   useEffect(() => { if (athlete?.id) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   // ORDRE 280 · commit 4 — ventende sæt (offlineSetQueue.js) sendes igen ved
@@ -811,7 +815,9 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {/* KOST */}
         {e2Atlet && visKost && tab === 'kost' && (
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
-            onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')} />
+            onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
+            weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
+            {...(kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight } : {})} />
         )}
         {!e2Atlet && visKost && tab === 'kost' && (
           <LazyBoundary
