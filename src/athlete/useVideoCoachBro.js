@@ -17,6 +17,10 @@ import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequ
 import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
+// Entropi 2: den aktuelle flagværdi pr. samtale-ref. Den opdateres ved hver gengivelse, så også
+// callbacks fra effekter, der blev installeret i en tidligere gengivelse, læser den aktuelle værdi.
+const conversationHandoverFlags = new WeakMap()
+
 export function useVideoCoachBro({
   conversationRef, conversationHandover = false, videoSetRef, videoOptag2 = false,
   athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
@@ -26,8 +30,10 @@ export function useVideoCoachBro({
   // Er beskedfanen ikke monteret, overleveres client-id i samtalens egen ejer- og atletscopede
   // nøgle (samme som conversationAdapters.mjs). Næste load genvaliderer den via identity-RPC'en.
   // Kun med flaget tændt og kun for atletens egen konto; aldrig ved fejl eller lokal kø.
+  // eslint-disable-next-line react-hooks/refs -- ref-objektet er kun nøgle i WeakMap'en; .current læses ikke under gengivelsen
+  if (conversationRef && typeof conversationRef === 'object') conversationHandoverFlags.set(conversationRef, conversationHandover === true)
   const handOverSubmission = (clientId, owner, target) => {
-    if (conversationHandover !== true) return
+    if (!conversationRef || conversationHandoverFlags.get(conversationRef) !== true) return
     const valid = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,120}$/.test(value)
     const ownerId = owner?.user?.id, athleteId = target?.id
     if (typeof ownerId !== 'string' || !ownerId || target?.user_id !== ownerId || !valid(athleteId) || !valid(clientId)) return

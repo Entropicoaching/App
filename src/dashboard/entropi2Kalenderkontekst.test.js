@@ -115,3 +115,40 @@ test('R4 F1: OFF er læseren uændret: ingen kontekst og samme status uden funkt
     assert.equal(contextFor(captured, [a]), undefined)
   }
 })
+
+test('R5 F1: B afsluttes før A; ingen kontekst mens A er i gang, og A overskriver ikke B', async () => {
+  for (const lateA of [{ data: weekRows }, { data: null, error: { message: 'syntetisk' } }, Error('syntetisk kast')]) {
+    const { handlers, captured } = reader()
+    let releaseA
+    const answerA = new Promise((resolve, reject) => { releaseA = () => lateA instanceof Error ? reject(lateA) : resolve(lateA) })
+    state.responses.push(answerA, { data: [] })
+    const first = handlers.fetchCalendarWeeks([a.id])
+    const second = handlers.fetchCalendarWeeks([a.id, b.id])
+    await second
+    const weeksB = captured.calendar
+    assert.deepEqual(weeksB, { [a.id]: [], [b.id]: [] })
+    assert.equal(captured.status.calendar, 'ready')
+    // A er stadig i gang: læsningerne overlapper, så der er ingen kontekst.
+    assert.equal(contextFor(captured, [a, b]), undefined)
+    releaseA()
+    await first.catch(() => {})
+    // A's ældre svar overskriver hverken kalender eller status, og B's kontekst gælder nu.
+    assert.equal(captured.calendar, weeksB)
+    assert.equal(captured.status.calendar, 'ready')
+    assert.deepEqual(contextFor(captured, [a, b]).athleteIds, [a.id, b.id])
+    assert.equal(contextFor(captured, [a]), undefined)
+  }
+})
+
+test('R5 F1: en ny læsning midt i en afsluttet giver ingen kontekst, før den selv er afsluttet', async () => {
+  const { handlers, captured } = reader()
+  state.responses.push({ data: weekRows })
+  await handlers.fetchCalendarWeeks([a.id])
+  assert.ok(contextFor(captured, [a]))
+  let release
+  state.responses.push(new Promise(resolve => { release = () => resolve({ data: weekRows }) }))
+  const pending = handlers.fetchCalendarWeeks([a.id])
+  assert.equal(contextFor(captured, [a]), undefined)
+  release(); await pending
+  assert.ok(contextFor(captured, [a]))
+})

@@ -68,11 +68,14 @@ export async function bridge({ videoOptag2, before = false, conversationRef, con
     f.athleteRef = { current: athlete }; f.clients = new Set([client]); f.aborts = new Map();
     f.setRef = { current: { enabled: false } };
     // conversationRef, conversationHandover, storage og athleteUserId er valgfri (Entropi 2); udeladt er kaldet som før.
-    module.useVideoCoachBro({ ...(conversationRef ? { conversationRef } : {}), ...(conversationHandover ? { conversationHandover } : {}), videoOptag2, videoSetRef: f.setRef, athlete,
+    const hookArgs = { ...(conversationRef ? { conversationRef } : {}), ...(conversationHandover ? { conversationHandover } : {}), videoOptag2, videoSetRef: f.setRef, athlete,
       athleteVideoCoachClientsRef: { current: f.clients }, athleteVideoCoachFrameRef: { current: null },
       athleteVideoCoachRef: f.athleteRef, athleteVideoUploadAbortsRef: { current: f.aborts },
       flashTimerRef: { current: null }, session: { user: { id: 'synthetic' } },
-      setAthleteVideoCoachInstant() {}, setAthleteVideoCoachOpen() {}, setFlash() {} });
+      setAthleteVideoCoachInstant() {}, setAthleteVideoCoachOpen() {}, setFlash() {} };
+    module.useVideoCoachBro(hookArgs);
+    // Valgfri ny gengivelse af samme instans (Entropi 2): effekterne køres ikke igen, som når deres afhængigheder er uændrede.
+    f.rerender = (extra = {}) => { const effects = f.effects.length; module.useVideoCoachBro({ ...hookArgs, ...extra }); f.effects.length = effects; };
     f.cleanup = f.effects[1]();
     f.message = { type: 'test:vc:upload-and-go', requestId: 'attempt',
       clientAnalysisId: '22222222-2222-4222-8222-222222222222',

@@ -200,3 +200,40 @@ test('R4 F2: en ugyldig eller fuld referenceliste overskrives ikke, og en kendt 
     } finally { f.restore() }
   }
 })
+
+// Runde 5, fund 1: flaget læses ved hvert kald, også fra effekter fra en tidligere gengivelse.
+test('R5 F2: flagskift ON til OFF på samme monterede instans overleverer ikke længere', async () => {
+  const storage = memoryStorage()
+  const f = await handover(storage)
+  try {
+    f.rerender({ conversationHandover: false })
+    await f.send(draft(f, 'off'))
+    assert.equal(f.replies.at(-1).ok, true)
+    assert.equal(storage.getItem(referenceKey), null)
+    f.rerender({ conversationHandover: true })
+    await f.send(draft(f, 'on'))
+    assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), [clientId])
+  } finally { f.restore() }
+})
+
+test('R5 F2: flagskift OFF til ON på samme monterede instans overleverer ved save og køflush', async () => {
+  const storage = memoryStorage(), database = syntheticDatabase()
+  const f = await bridge({ conversationRef: { current: null }, storage, athleteUserId: 'synthetic' })
+  try {
+    await f.send(draft(f, 'off'))
+    assert.equal(storage.getItem(referenceKey), null)
+    f.rerender({ conversationHandover: true })
+    await f.send(draft(f, 'on'))
+    assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), [clientId])
+    // Køeffekten fra den første (OFF) gengivelse læser også den aktuelle værdi.
+    const queued = '33333333-3333-4333-8333-333333333333'
+    assert.equal(queueVideoCoachDraft(queuedRow(atletId, queued), storage, 'synthetic'), true)
+    f.flush = (_, athleteId, store, owner, onSent) => flushVideoCoachDraftQueue(database, athleteId, store, owner, onSent)
+    f.effects[2](); await settle(); await settle()
+    assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), [clientId, queued])
+    f.rerender({ conversationHandover: false })
+    assert.equal(queueVideoCoachDraft(queuedRow(atletId, 'syn-sidst'), storage, 'synthetic'), true)
+    f.effects[2](); await settle(); await settle()
+    assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), [clientId, queued])
+  } finally { f.restore() }
+})
