@@ -26,11 +26,22 @@ export function feedbackText(row) {
   return ['works', 'focus', 'next_set'].flatMap(key => (Array.isArray(feedback[key]) ? feedback[key] : [])
     .filter(item => typeof item?.text === 'string').map(item => item.text)).join('\n') || 'Videofeedback uden tekst.'
 }
+const videoDate = new Intl.DateTimeFormat('da-DK', {
+  timeZone: 'Europe/Copenhagen', day: 'numeric', month: 'short',
+})
+export function videoLabel(row) {
+  const lift = typeof row?.lift === 'string' && row.lift.trim() ? row.lift.trim() : ''
+  const title = lift ? `${lift[0].toLocaleUpperCase('da-DK')}${lift.slice(1)}-video` : 'Video'
+  const date = typeof row?.created_at === 'string' ? new Date(row.created_at) : null
+  return `${title} ${date && Number.isFinite(date.getTime()) ? videoDate.format(date) : '(dato mangler)'}`
+}
+const videoSeconds = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 2 })
+
 // A technique message with a human-readable reference, using only messages.content.
 // No new wire protocol or claim that a local playback document was shared.
 export function timestampContent(row, seconds, text) {
   if (!row || !validId(row.id) || typeof seconds !== 'number' || !Number.isFinite(seconds)
     || seconds < 0 || seconds >= 7200 || typeof text !== 'string' || !text.trim() || text.trim().length > 600)
     throw Error('Vælg video, tidspunkt og en tekst på højst 600 tegn.')
-  return `Video ${row.id} (${row.lift || 'løft'}) ved ${seconds.toFixed(2)} s\n${text.trim()}`
+  return `${videoLabel(row)} ved ${videoSeconds.format(seconds)} s\n${text.trim()}`
 }
