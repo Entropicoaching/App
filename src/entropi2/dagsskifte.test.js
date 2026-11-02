@@ -59,7 +59,7 @@ test('R9 F1: kostens dato følger dagsskiftet, når den stod på dagen før; sam
 })
 
 test('R9 F1: kostskærmen monteres igen med den nye dato, og vægten kan kun logges på dagens dato', () => {
-  assert.match(athleteView, /const e2Dag = useEntropi2Dag\(\{ enabled: e2, today \}\)/)
+  assert.match(athleteView, /const e2Dag = useEntropi2Dag\(\{ enabled: e2, today \}\) \?\? \{\}/)
   assert.match(athleteView, /<Entropi2Kost enabled=\{true\} athlete=\{athlete\} date=\{kostDate\}/)
   assert.match(athleteView, /\.\.\.\(kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight \} : \{\}\)/)
   assert.match(read('./Entropi2Kost.mjs'), /\}, \[enabled, athlete\?\.id, athlete\?\.kcal_target, athlete\?\.protein_target, date, client, foods\]\)/)
@@ -67,7 +67,7 @@ test('R9 F1: kostskærmen monteres igen med den nye dato, og vægten kan kun log
 
 test('R9: coachsiden har samme dagsur; kostmål og coachens samtale følger dagsskiftet', () => {
   const dash = read('../Dashboard.jsx')
-  assert.match(dash, /const e2Dag = useEntropi2Dag\(\{ enabled: e2, today: calendarDay \}\)/)
+  assert.match(dash, /const e2Dag = useEntropi2Dag\(\{ enabled: e2, today: calendarDay \}\) \?\? \{\}/)
   assert.match(dash, /useEffect\(\(\) => \{ if \(e2\) void e2CoachSamtaleRef\.current\?\.refresh\?\.\(\) \}, \[e2, e2Dag\.day\]\)/)
   assert.match(dash, /<ConversationEntry enabled=\{true\} role="coach" controllerRef=\{e2CoachSamtaleRef\}/)
   assert.match(dash, /today=\{calendarDay\(\)\}/)

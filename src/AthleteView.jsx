@@ -471,7 +471,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
   // Entropi 2: dagsur. Ved dagsskifte gengives skærmene igen, kostens dato følger med, hvis den stod
   // på dagen før, og samtalen hentes igen, så tidsangivelserne passer.
-  const e2Dag = useEntropi2Dag({ enabled: e2, today })
+  const e2Dag = useEntropi2Dag({ enabled: e2, today }) ?? {}
   const e2ForrigeDag = useRef(e2Dag.day)
   useEffect(() => {
     const forrige = e2ForrigeDag.current

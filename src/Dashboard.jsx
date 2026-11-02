@@ -401,7 +401,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   // Entropi 2: kostmål. Vægtloggen hentes med den eksisterende læser, når coachens kostfane er åben.
   const e2KostVaegt = useEntropi2KostVaegt({ enabled: e2 && activeTab === 'kost', athleteId: selectedAthlete?.id, fetchAthleteWeightLogs })
   // Entropi 2: dagsur, så kostmål og samtale følger dagsskiftet også uden anden ændring.
-  const e2Dag = useEntropi2Dag({ enabled: e2, today: calendarDay })
+  const e2Dag = useEntropi2Dag({ enabled: e2, today: calendarDay }) ?? {}
   const e2CoachSamtaleRef = useRef(null)
   useEffect(() => { if (e2) void e2CoachSamtaleRef.current?.refresh?.() }, [e2, e2Dag.day])
   // Entropi 2: beskedsammendrag og fejlstatus udledes af samme indfangede beskedkilde (se entropi2/coachMessageSummary.mjs).

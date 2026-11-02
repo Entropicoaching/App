@@ -89,7 +89,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
     // Runde 9: dagsur, kostdato og samtale ved dagsskifte samt mobilitetens dagskontrol.
     [`  // Entropi 2: dagsur. Ved dagsskifte gengives skærmene igen, kostens dato følger med, hvis den stod
   // på dagen før, og samtalen hentes igen, så tidsangivelserne passer.
-  const e2Dag = useEntropi2Dag({ enabled: e2, today })
+  const e2Dag = useEntropi2Dag({ enabled: e2, today }) ?? {}
   const e2ForrigeDag = useRef(e2Dag.day)
   useEffect(() => {
     const forrige = e2ForrigeDag.current
