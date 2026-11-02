@@ -1,0 +1,44 @@
+/* Screen05 palette, spacing and typography; confined to the nutrition host. */
+.e2-nutrition{color-scheme:dark;--bg:#141410;--surface:#1c1c18;--raised:#25251f;--ink:#edeae2;--muted:#b8b4a8;--gold:#c8923a;--line:#414139;--sans:'IBM Plex Sans',Arial,sans-serif;--mono:'IBM Plex Mono',Consolas,monospace;--display:'Playfair Display',Georgia,serif;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);width:100%;max-width:480px;margin:auto;min-height:100svh;border-inline:1px solid var(--line)}
+.e2-nutrition *{box-sizing:border-box;min-width:0}
+.e2-nutrition .top{padding:12px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.e2-nutrition .brand{font:22px var(--display)}
+.e2-nutrition .edition{font:11px var(--mono);color:var(--gold);margin-left:8px}
+.e2-nutrition .skip{display:flex;align-items:center;padding:0 20px;font-size:12px;color:var(--muted);min-height:44px;min-width:44px}
+.e2-nutrition main{padding:28px 20px 32px;overflow-wrap:anywhere}
+.e2-nutrition p,.e2-nutrition h1,.e2-nutrition h2{margin:0}
+.e2-nutrition h1{font:400 36px/1.1 var(--display);letter-spacing:-.8px}
+.e2-nutrition h2{font-size:22px;line-height:1.25;font-weight:500}
+.e2-nutrition .intro{margin-bottom:24px}
+.e2-nutrition .intro p{margin-top:12px}
+.e2-nutrition .muted{color:var(--muted)}
+.e2-nutrition .small{font-size:13px}
+.e2-nutrition .eyebrow{font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.e2-nutrition .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+.e2-nutrition .hero{border-top:3px solid var(--gold);background:radial-gradient(ellipse at top right,rgba(200,146,58,.12),transparent 70%),var(--surface)}
+.e2-nutrition .hero h2{font:32px/1.15 var(--display)}
+.e2-nutrition .hero p{margin-top:12px}
+.e2-nutrition .space{margin-top:20px}
+.e2-nutrition .stack{display:grid;gap:12px}
+.e2-nutrition .section-head{margin-top:28px}
+.e2-nutrition .list{list-style:none;padding:0;margin:12px 0 0}
+.e2-nutrition .list li{padding:14px 0;border-bottom:1px solid var(--line)}
+.e2-nutrition .list li:last-child{border-bottom:0}
+.e2-nutrition .list strong{font-weight:500}
+.e2-nutrition .list small{display:block;color:var(--muted);margin-top:4px}
+.e2-nutrition button,.e2-nutrition summary,.e2-nutrition input,.e2-nutrition select{min-height:44px;min-width:44px;touch-action:manipulation}
+.e2-nutrition .cta{display:flex;align-items:center;justify-content:center;min-height:52px;padding:12px 16px;border:1px solid var(--line);border-radius:10px;font:600 15px var(--sans);text-align:center;background:var(--surface);color:var(--ink);width:100%;overflow-wrap:anywhere;cursor:pointer}
+.e2-nutrition button:hover{color:var(--gold)}
+.e2-nutrition button:disabled{opacity:.65;cursor:wait}
+.e2-nutrition :focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.e2-nutrition summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-size:15px;list-style:none}
+.e2-nutrition summary::after{content:'+';font:22px var(--mono);color:var(--gold)}
+.e2-nutrition details[open]>summary::after{content:'\00d7'}
+.e2-nutrition details>div{padding-top:16px}
+.e2-nutrition details.card{padding-block:12px}
+.e2-nutrition label{display:block;font-size:14px}
+.e2-nutrition input,.e2-nutrition select{display:block;width:100%;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;font:16px var(--sans);color:var(--ink);margin-top:6px}
+.e2-nutrition progress{width:100%;accent-color:var(--gold)}
+.e2-nutrition .nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);padding:8px 12px 16px;gap:4px;background:var(--surface)}
+.e2-nutrition .nav button{font-size:13px;padding:8px 4px}
+@media(min-width:600px){.e2-nutrition{margin:24px auto;border:1px solid var(--line);border-radius:20px}}
