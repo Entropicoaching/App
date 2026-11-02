@@ -62,12 +62,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
 import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
-import { entropi2Enabled } from './entropi2/flag.mjs'
-import CoachScreen from './entropi2/coach/CoachScreen.mjs'
-import './entropi2/entropi2.css'
-import ConversationEntry from './entropi2/conversation/ConversationEntry.mjs'
-import { activityDay } from './dashboard/coachInactive.mjs'
-import { COACH_NOTE_SIGNAL_ENABLED } from './coachNoteSignal.js'
+import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, activityDay, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
 
 
 
@@ -109,7 +104,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const coachWeekEnabled = coachWeekFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachWeekDataStatus, setCoachWeekDataStatus] = useState({})
   const coachFollowUp = coachFollowUpFlag(typeof window === 'undefined' ? '' : window.location.search)
-  const e2 = entropi2Enabled(entropi2)
+  const e2 = entropi2Enabled(entropi2) === true
+  useEffect(() => { if (e2) loadEntropi2Styles() }, [e2])
   // Entropi 2 bruger morgenlæsningerne som kilde; de tændes derfor med flaget.
   const coachMorning = e2 || coachMorningFlag(typeof window === 'undefined' ? '' : window.location.search)
   const [coachMorningData, setCoachMorningData] = useState({})

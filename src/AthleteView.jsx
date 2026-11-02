@@ -43,12 +43,7 @@ import { useParathedUdkast } from './athlete/useParathedUdkast.js'
 import { bygGrundlag, ugensSaet } from './athlete/rekorder.js'
 import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks.js'
 import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
-import { entropi2Enabled } from './entropi2/flag.mjs'
-import HomeSession from './entropi2/home/HomeSession.mjs'
-import Entropi2Kost from './entropi2/Entropi2Kost.mjs'
-import ConversationEntry from './entropi2/conversation/ConversationEntry.mjs'
-import Entropi2Mobility from './entropi2/mobility/Mobility.mjs'
-import { LOCAL_FOODS } from './athlete/lokaleFoedevarer.js'
+import { entropi2Enabled, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -97,7 +92,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const homeRo2 = rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search)
-  const e2 = entropi2Enabled(entropi2)
+  const e2 = entropi2Enabled(entropi2) === true
   const enkelOn = enkelPrototype === true
   const HjemVisning = enkelOn ? LazyEnkelHjemTab : HjemTab
   const HjemIndgang = homeRo2 ? (enkelOn ? Ro2EnkelHjemTab : Ro2HjemTab) : HjemVisning
