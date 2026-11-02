@@ -1,13 +1,16 @@
 import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
+import { startAdvice, weightSummary, displayNumber } from './startModel.mjs'
+import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 let mountSequence = 0
 
 // Mount inside an assembly-owned host; load nutrition.css separately. No global DOM.
 // The caller disposes/remounts on athlete/date change. No shared entry is changed.
-export function mountNutrition(host, controller, { onCoach, onNavigate } = {}) {
+export function mountNutrition(host, controller, { onCoach, onNavigate, ...weightProps } = {}) {
   if (!controller) return () => {} // default OFF: do not even touch the host.
   const doc = host.ownerDocument
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
+  let weightPending = false, weightError = ''
   const node = (tag, cls, text) => {
     const n = doc.createElement(tag)
     if (cls) n.className = cls
@@ -42,14 +45,55 @@ export function mountNutrition(host, controller, { onCoach, onNavigate } = {}) {
     append(brand, 'span', 'edition', '02')
     const main = append(app, 'main')
     main.setAttribute('id', contentId); main.setAttribute('tabindex', '-1')
+    const weighing = append(main, 'section', 'card')
+    append(weighing, 'h2', '', 'Din vægt')
+    const summary = weightSummary(weightProps.weightLogs, s.athleteId, s.date)
+    append(weighing, 'p', 'muted space', summary.latest
+      ? `Seneste vægt: ${displayNumber(summary.latest.weight)} kg · ${summary.latest.date}` : 'Ingen vejninger endnu')
+    append(weighing, 'p', 'muted', summary.average !== null
+      ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} vejedage (seneste 7 dage)`
+      : 'Ingen vejninger de seneste 7 dage')
+    const weightConnected = typeof weightProps.logWeight === 'function' && typeof weightProps.onWeightInput === 'function'
+    if (weightConnected) {
+      const form = append(weighing, 'form', 'stack space')
+      const input = field(form, 'Vægt (kg)', weightProps.weightInput ?? '', value => {
+        weightProps = { ...weightProps, weightInput: value }
+        weightProps.onWeightInput(value)
+      })
+      input.disabled = weightPending || weightProps.savingWeight === true
+      const save = button(form, input.disabled ? 'Gemmer vægt…' : 'Gem vægt', () => {}, input.disabled)
+      save.type = 'submit'; save.setAttribute('data-focus', 'save-weight')
+      form.addEventListener('submit', async e => {
+        e.preventDefault()
+        if (destroyed || weightPending || weightProps.savingWeight === true) return
+        const value = parseInputNumber(weightProps.weightInput)
+        if (!(value > 0)) { weightError = 'Angiv en gyldig vægt over 0 kg.'; draw(); return }
+        weightPending = true; weightError = ''; draw()
+        try {
+          // Existing logWeight is zero-argument and returns void, even on failure.
+          // The owner controls feedback, input clearing and refreshed weight rows.
+          await weightProps.logWeight()
+        } catch { weightError = 'Vægten blev ikke gemt. Prøv igen.' }
+        finally { weightPending = false; draw() }
+      })
+    } else append(weighing, 'p', 'muted space', 'Vejning er ikke tilsluttet endnu.')
+    if (weightError) { const p = append(weighing, 'p', 'space', weightError); p.setAttribute('role', 'alert') }
     const intro = append(main, 'div', 'intro')
     append(intro, 'p', 'eyebrow', 'Kost · ' + s.date)
     append(intro, 'h1', '', 'Dit næste måltid')
-    append(intro, 'p', 'muted', 'En enkel dagbog. Mål kræver en aftalt plan.')
+    append(intro, 'p', 'muted', 'Brug dine mål uden at logge. Dagbogen er valgfri.')
     const hero = append(main, 'section', 'card hero')
-    append(hero, 'p', 'eyebrow', 'Din måltidsplan')
-    append(hero, 'h2', '', 'Ingen måltidsplan tilgængelig')
-    append(hero, 'p', 'muted space', 'Se dine registreringer nedenfor, eller tal med din coach om en plan.')
+    append(hero, 'h2', '', 'Dagens mål')
+    const advice = startAdvice(s.targets)
+    if (!advice.kcal && !advice.protein) append(hero, 'p', 'space', 'Ingen mål endnu')
+    else {
+      append(hero, 'p', 'space', advice.kcal ? `Energi: ${displayNumber(advice.kcal)} kcal` : 'Energi: Ingen mål endnu')
+      append(hero, 'p', 'space', advice.protein ? `Protein: ${displayNumber(advice.protein)} g` : 'Protein: Ingen mål endnu')
+      const tips = append(hero, 'ul', 'list')
+      advice.tips.forEach(tip => append(tips, 'li', '', tip))
+    }
+    if (!advice.kcal || !advice.protein) append(hero, 'p', 'muted space', 'Tal med din coach om at aftale de manglende kostmål.')
+    if (typeof onCoach === 'function') button(hero, 'Tal med din coach', onCoach)
     append(main, 'h2', 'section-head', 'Dagens dagbog')
     const status = append(main, 'p', 'space', s.message)
     status.setAttribute('role', s.phase.endsWith('error') ? 'alert' : 'status')
@@ -71,14 +115,13 @@ export function mountNutrition(host, controller, { onCoach, onNavigate } = {}) {
       for (const [key, label, unitName] of [['kcal', 'Energi', 'kcal'], ['protein', 'Protein', 'g']]) {
         const target = s.targets[key] > 0 ? s.targets[key] : null
         append(goals, 'p', 'muted space', label + ': ' + (s.totals ? `${s.totals[key]} ${unitName}` : 'ukendt')
-          + (target ? ` · aftalt mål ${target} ${unitName}` : ' · intet aftalt mål'))
+          + (target ? ` · aftalt mål ${target} ${unitName}` : ' · Ingen mål endnu'))
         if (target && s.totals && s.logs.length) {
           const progress = append(goals, 'progress'); progress.max = target; progress.value = Math.min(target, s.totals[key])
           progress.setAttribute('aria-label', label + ', registreret i forhold til aftalt mål')
         }
       }
       append(goals, 'p', 'small muted space', 'Registreringer viser ikke nødvendigvis hele dagens indtag. Ingen samlet kostvurdering.')
-      if (typeof onCoach === 'function') button(goals, 'Tal med din coach', onCoach)
       const quick = (title, items, prefix) => {
         const section = append(main, 'section', 'card'); append(section, 'h2', '', title)
         if (!items.length) append(section, 'p', 'muted space', 'Ingen måltider endnu.')
@@ -147,5 +190,11 @@ export function mountNutrition(host, controller, { onCoach, onNavigate } = {}) {
   const unsubscribe = controller.subscribe(draw)
   draw()
   controller.load()
-  return () => { destroyed = true; unsubscribe(); controller.dispose(); host.replaceChildren() }
+  const cleanup = () => { destroyed = true; unsubscribe(); controller.dispose(); host.replaceChildren() }
+  // Update weight props without remounting the diary or losing a meal draft.
+  cleanup.updateWeight = props => {
+    if (destroyed) return
+    weightProps = { ...weightProps, ...props }; draw()
+  }
+  return cleanup
 }

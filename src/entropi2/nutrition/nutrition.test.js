@@ -179,8 +179,8 @@ test('real mount -> adapter -> guarded synthetic insert, one-tap favorite/log/hi
   const cleanup = mountNutritionScreen(host, { entropi2: true, athlete: { id: 'synthetic-A', kcal_target: 2200 }, date, client, storage, onCoach: () => coach++, onNavigate: r => routes.push(r) })
   await flush()
   assert.match(host.textContent, /Dit næste måltid/)
-  assert.match(host.textContent, /intet aftalt mål/)
-  assert.match(host.textContent, /Ingen måltidsplan tilgængelig/)
+  assert.match(host.textContent, /Ingen mål endnu/)
+  assert.match(host.textContent, /Dagens mål/)
   await find(host, 'button', 'Gem favorit: ' + meal.meal).fire('click')
   assert.ok(find(host, 'button', 'Fjern favorit: ' + meal.meal))
   const gate = deferred(); client.writeGate = gate
@@ -223,7 +223,7 @@ test('DOM empty/invalid/read-error states and user text injection do not claim c
   for (const rows of [[], [row({ meal: 7, kcal: Infinity })], [row({ meal: '<img src=x onerror=evil()>' })]]) {
     const { c } = make({ athlete: { id: 'synthetic-A' }, contracts: { async load() { return rows } } })
     const host = syntheticHost(); mountNutrition(host, c); await flush()
-    assert.match(host.textContent, /intet aftalt mål/)
+    assert.match(host.textContent, /Ingen mål endnu/)
     assert.equal(host.querySelectorAll('img').length, 0)
     assert.equal(host.querySelectorAll('progress').length, 0)
     if (!rows.length) assert.match(host.textContent, /Ingen måltider registreret/)
