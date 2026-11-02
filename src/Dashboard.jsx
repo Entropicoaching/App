@@ -536,7 +536,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
     isMobile, loadError, loading, markMessagesRead: e2 ? () => {} : markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
     refreshCoachInbox, selectedAthlete, snoozeMigratedRef, videoAnalysisReview, videoReviewOpenedRef, videoReviewRequest,
-    view, weeksLogsLoadedForRef,
+    view, weeksLogsLoadedForRef, ...(e2 ? { entropi2: true } : {}),
   })
 
 

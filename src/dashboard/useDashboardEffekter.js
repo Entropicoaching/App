@@ -12,7 +12,7 @@ export function useDashboardEffekter({
   fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
   isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
   refreshCoachInbox, selectedAthlete, snoozeMigratedRef, videoAnalysisReview, videoReviewOpenedRef, videoReviewRequest,
-  view, weeksLogsLoadedForRef,
+  view, weeksLogsLoadedForRef, entropi2 = false,
 }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps -- kører bevidst kun ved mount af Dashboard; session.user.id er fast for instansens levetid
   useEffect(() => { fetchAthletes(); fetchExerciseLibrary(); fetchLastBackup() }, [])
@@ -34,7 +34,8 @@ export function useDashboardEffekter({
   }, [athletes])
   const calendarAthletes = coachWeekEnabled ? JSON.stringify(athletes.map(a => a.id).sort()) : athletes
   useEffect(() => {
-    if ((view === 'calendar' || view === 'list') && athletes.length) {
+    // Entropi 2: coachskærmen (list og inbox) bygger på kalenderlæsningen, også ved direkte åbning af indbakken.
+    if ((view === 'calendar' || view === 'list' || (entropi2 === true && view === 'inbox')) && athletes.length) {
       const ids = athletes.map(a => a.id)
       fetchCalendarWeeks(ids)
       fetchCalendarProgress(ids)
@@ -147,11 +148,19 @@ export function useDashboardEffekter({
     window.addEventListener('focus', refreshWhenVisible)
     document.addEventListener('visibilitychange', refreshWhenVisible)
     const intervalId = window.setInterval(refreshWhenVisible, 5 * 60 * 1000)
+    // Entropi 2: coachskærmen afviser gårsdagens læsninger; ved dansk dagsskifte fornyes de straks.
+    let dayTimer = null
+    if (entropi2 === true) {
+      const day = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+      let seen = day()
+      dayTimer = window.setInterval(() => { const now = day(); if (now !== seen) { seen = now; refreshCoachInbox() } }, 60 * 1000)
+    }
 
     return () => {
       window.removeEventListener('focus', refreshWhenVisible)
       document.removeEventListener('visibilitychange', refreshWhenVisible)
       window.clearInterval(intervalId)
+      if (dayTimer !== null) window.clearInterval(dayTimer)
     }
     // Funktionskaldet læser seneste atletliste fra ref; view styrer abonnementets levetid.
     // eslint-disable-next-line react-hooks/exhaustive-deps
