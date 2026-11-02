@@ -5,7 +5,7 @@ import { fixture, settle } from './videoOptag2Fakes.mjs';
 
 let sequence = 0;
 const local = (flat, app) => new URL(existsSync(new URL(flat, import.meta.url)) ? flat : app, import.meta.url).href;
-export async function bridge({ videoOptag2, before = false } = {}) {
+export async function bridge({ videoOptag2, before = false, conversationRef, conversationHandover, storage, athleteUserId } = {}) {
   const dom = fixture({ factory: () => null });
   // Real Blob container, synthetic bytes only. Never real media devices.
   let active;
@@ -30,7 +30,7 @@ export async function bridge({ videoOptag2, before = false } = {}) {
     __optagBridge: f, document: dom.doc,
     window: { location: { origin: 'https://synthetic.invalid' },
       addEventListener: (type, fn) => { f.listeners[type] = fn; }, removeEventListener() {}, dispatchEvent() {} },
-    localStorage: { getItem: () => null }, MediaRecorder: Recorder,
+    localStorage: storage || { getItem: () => null }, MediaRecorder: Recorder,
     navigator: { mediaDevices: { getUserMedia: media.getStream } },
     performance: { now: dom.clock.now },
     File: class extends Blob { constructor(parts, name, options) { super(parts, options); this.name = name; } },
@@ -63,15 +63,19 @@ export async function bridge({ videoOptag2, before = false } = {}) {
   } });
   try {
     const module = await import(hookUrl);
-    const athlete = { id: '11111111-1111-4111-8111-111111111111', name: 'Synthetic' };
+    const athlete = { id: '11111111-1111-4111-8111-111111111111', name: 'Synthetic', ...(athleteUserId ? { user_id: athleteUserId } : {}) };
     const client = { postMessage: message => f.replies.push(message) };
     f.athleteRef = { current: athlete }; f.clients = new Set([client]); f.aborts = new Map();
     f.setRef = { current: { enabled: false } };
-    module.useVideoCoachBro({ videoOptag2, videoSetRef: f.setRef, athlete,
+    // conversationRef, conversationHandover, storage og athleteUserId er valgfri (Entropi 2); udeladt er kaldet som før.
+    const hookArgs = { ...(conversationRef ? { conversationRef } : {}), ...(conversationHandover ? { conversationHandover } : {}), videoOptag2, videoSetRef: f.setRef, athlete,
       athleteVideoCoachClientsRef: { current: f.clients }, athleteVideoCoachFrameRef: { current: null },
       athleteVideoCoachRef: f.athleteRef, athleteVideoUploadAbortsRef: { current: f.aborts },
       flashTimerRef: { current: null }, session: { user: { id: 'synthetic' } },
-      setAthleteVideoCoachInstant() {}, setAthleteVideoCoachOpen() {}, setFlash() {} });
+      setAthleteVideoCoachInstant() {}, setAthleteVideoCoachOpen() {}, setFlash() {} };
+    module.useVideoCoachBro(hookArgs);
+    // Valgfri ny gengivelse af samme instans (Entropi 2): effekterne køres ikke igen, som når deres afhængigheder er uændrede.
+    f.rerender = (extra = {}) => { const effects = f.effects.length; module.useVideoCoachBro({ ...hookArgs, ...extra }); f.effects.length = effects; };
     f.cleanup = f.effects[1]();
     f.message = { type: 'test:vc:upload-and-go', requestId: 'attempt',
       clientAnalysisId: '22222222-2222-4222-8222-222222222222',

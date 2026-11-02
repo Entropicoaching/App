@@ -11,9 +11,10 @@ export const clearPendingSilentFails = () => {};
 export const markUploadInflight = () => {};
 export const clearUploadInflight = () => {};
 export const takeStaleUploadInflight = () => false;
-export const flushVideoCoachDraftQueue = async () => ({ remaining: 0 });
-export const isRetryableVideoCoachError = () => false;
-export const queueVideoCoachDraft = () => false;
+// Valgfrie prøveoverstyringer (Entropi 2); udeladt er adfærden som før.
+export const flushVideoCoachDraftQueue = async (...args) => f.flush ? f.flush(...args) : ({ remaining: 0 });
+export const isRetryableVideoCoachError = error => f.retryable ? f.retryable(error) : false;
+export const queueVideoCoachDraft = (...args) => f.queue ? f.queue(...args) : false;
 export const saveVideoCoachDraft = async (_, row) => { f.rows.push(row); return f.save ? f.save(row) : { data: { id: 'synthetic' } }; };
 export const ATHLETE_VIDEOCOACH_PREFIX = 'test:vc';
 export const ATHLETE_VIDEOCOACH_QUEUE_CHANGED = 'test:queue';

@@ -137,7 +137,7 @@ export function queueVideoCoachDraft(row, storage = globalThis.localStorage,
 }
 
 export async function flushVideoCoachDraftQueue(supabase, athleteId,
-  storage = globalThis.localStorage, ownerId = athleteId) {
+  storage = globalThis.localStorage, ownerId = athleteId, onSent = () => {}) {
   const result = { sent: 0, remaining: 0, expired: 0, invalid: 0 }
   if (!storage || !athleteId) return result
   const prefix = `${VIDEOCOACH_QUEUE_PREFIX}:${athleteId}:`
@@ -169,7 +169,9 @@ export async function flushVideoCoachDraftQueue(supabase, athleteId,
     try { saved = await saveVideoCoachDraft(supabase, row, { athleteSubmission: true }) }
     catch { result.remaining++; continue }
     if (saved.error) { result.remaining++; continue }
-    try { storage.removeItem(key); result.sent++ } catch { result.remaining++ }
+    try { storage.removeItem(key); result.sent++ } catch { result.remaining++; continue }
+    // Entropi 2: kun efter bekræftet gemning og fjernelse fra køen; en fejl i modtageren påvirker ikke køen.
+    try { onSent(row.client_analysis_id) } catch { /* ignoreret */ }
   }
   return result
 }
