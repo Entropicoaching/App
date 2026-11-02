@@ -451,6 +451,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const e2ConversationRef = useRef(null)
   useVideoCoachBro({
     conversationRef: e2ConversationRef,
+    conversationHandover: e2,
     videoSetRef, videoOptag2: arguments[0]?.videoOptag2 === true,
     athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
     setAthleteVideoCoachOpen, setFlash,

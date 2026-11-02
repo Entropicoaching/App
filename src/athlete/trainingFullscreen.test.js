@@ -71,6 +71,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   const e2ConversationRef = useRef(null)
 `, ''],
     ['    conversationRef: e2ConversationRef,\n', ''],
+    ['    conversationHandover: e2,\n', ''],
     ["        {!e2Atlet && compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (", "        {compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && ("],
     ["        {!e2Atlet && tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && (", "        {tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && ("],
     [`  // Entropi 2: stabile props, så skærmene ikke monteres om ved hver gengivelse.

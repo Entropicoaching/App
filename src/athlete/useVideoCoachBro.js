@@ -18,13 +18,35 @@ import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
 export function useVideoCoachBro({
-  conversationRef, videoSetRef, videoOptag2 = false,
+  conversationRef, conversationHandover = false, videoSetRef, videoOptag2 = false,
   athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
   setAthleteVideoCoachOpen, setFlash,
 }) {
   // Entropi 2: samtalen får kun bekræftet gemte indsendelser; en fejl i samtalen rører aldrig broen.
-  const notifyConversation = clientId => {
-    try { Promise.resolve(conversationRef?.current?.submission?.(clientId)).catch(() => {}) } catch { /* ignoreret */ }
+  // Er beskedfanen ikke monteret, overleveres client-id i samtalens egen ejer- og atletscopede
+  // nøgle (samme som conversationAdapters.mjs). Næste load genvaliderer den via identity-RPC'en.
+  // Kun med flaget tændt og kun for atletens egen konto; aldrig ved fejl eller lokal kø.
+  const handOverSubmission = (clientId, owner, target) => {
+    if (conversationHandover !== true) return
+    const valid = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,120}$/.test(value)
+    const ownerId = owner?.user?.id, athleteId = target?.id
+    if (typeof ownerId !== 'string' || !ownerId || target?.user_id !== ownerId || !valid(athleteId) || !valid(clientId)) return
+    try {
+      const store = globalThis.localStorage
+      const key = `entropi2:conversation:submissions:v1:${encodeURIComponent(ownerId)}:${athleteId}`
+      const value = store.getItem(key)
+      const ids = value === null ? [] : JSON.parse(value)
+      // En ugyldig eller fuld liste overskrives aldrig.
+      if (!Array.isArray(ids) || ids.some(id => !valid(id)) || ids.includes(clientId) || ids.length >= 10000) return
+      store.setItem(key, JSON.stringify([...ids, clientId]))
+    } catch { /* ignoreret */ }
+  }
+  const notifyConversation = (clientId, target = athlete) => {
+    const receiver = conversationRef?.current
+    if (typeof receiver?.submission !== 'function') { handOverSubmission(clientId, session, target); return }
+    // Lukkes fanen, før den monterede samtale har gemt referencen, overleveres den alligevel.
+    const fallback = () => { if (conversationRef.current !== receiver) handOverSubmission(clientId, session, target) }
+    try { Promise.resolve(receiver.submission(clientId)).then(ok => { if (ok !== true) fallback() }, fallback) } catch { fallback() }
   }
   useEffect(() => {
     athleteVideoCoachRef.current = athlete
@@ -185,7 +207,7 @@ export function useVideoCoachBro({
         clearPendingSilentFails(currentAthlete.id)
         reply({ ok: true, data: { ...saved.data, duplicate: saved.duplicate } })
         window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
-        notifyConversation(row.client_analysis_id)
+        notifyConversation(row.client_analysis_id, currentAthlete)
         return
       }
       if (message.type !== `${ATHLETE_VIDEOCOACH_PREFIX}:save-draft`) return
@@ -251,7 +273,7 @@ export function useVideoCoachBro({
       }
       clearPendingSilentFails(currentAthlete.id)
       reply({ ok: true, data: { ...result.data, duplicate: result.duplicate } })
-      notifyConversation(safeRow.client_analysis_id)
+      notifyConversation(safeRow.client_analysis_id, currentAthlete)
     }
     window.addEventListener('message', onAthleteVideoCoachMessage)
     return () => { optagPending.forEach(controller => controller.abort()); window.removeEventListener('message', onAthleteVideoCoachMessage) }
@@ -289,7 +311,7 @@ export function useVideoCoachBro({
       inFlight = true
       const result = await flushVideoCoachDraftQueue(
         supabase, athlete.id, globalThis.localStorage, session.user.id,
-        notifyConversation)
+        clientId => notifyConversation(clientId, athlete))
       inFlight = false
       if (cancelled) return
       notifyVideoCoachQueue(result)

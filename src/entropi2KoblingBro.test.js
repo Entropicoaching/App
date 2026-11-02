@@ -1,9 +1,10 @@
-// Entropi 2-kobling runde 3, fund 3: samtalen får kun bekræftet gemte indsendelser.
+// Entropi 2-kobling runde 3, fund 3, og runde 4, fund 2: samtalen får kun bekræftet gemte indsendelser.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { bridge } from './optagBridgeHarness.mjs'
 import { flushVideoCoachDraftQueue, queueVideoCoachDraft } from './videoCoachSubmission.js'
 import { setImmediate } from 'node:timers'
+import { createConversationAdapters, athleteConversationScope } from './entropi2/conversation/conversationAdapters.mjs'
 
 const clientId = '22222222-2222-4222-8222-222222222222'
 const settle = () => new Promise(setImmediate)
@@ -99,4 +100,103 @@ test('F3: broens flush giver samtalens submission som onSent', async () => {
     assert.equal(args.length, 1); assert.equal(args[0][1], f.athleteRef.current.id)
     assert.deepEqual(c.calls, [clientId])
   } finally { f.restore() }
+})
+
+// Runde 4, fund 2: en bekræftet indsendelse overleveres, også når beskedfanen ikke er monteret.
+const atletId = '11111111-1111-4111-8111-111111111111'
+const referenceKey = `entropi2:conversation:submissions:v1:synthetic:${atletId}`
+// Syntetisk database: gemte rækker kan bagefter bekræftes via identity-RPC'en.
+function syntheticDatabase() {
+  const saved = new Map()
+  const page = () => { const q = { select: () => q, eq: () => q, order: () => q, range: async () => ({ data: [] }) }; return q }
+  return { saved,
+    from: table => table === 'video_analyses' ? { insert: async row => {
+      saved.set(row.client_analysis_id, { id: `syn-v-${saved.size + 1}`, athlete_id: row.athlete_id, client_analysis_id: row.client_analysis_id, status: 'draft' })
+      return { error: null } } } : page(),
+    rpc: (name, args) => name === 'get_my_video_analysis_submission_identity_v3'
+      ? { single: async () => saved.has(args.p_client_analysis_id) ? { data: saved.get(args.p_client_analysis_id) } : { error: { message: 'ukendt' } } }
+      : Promise.resolve({ data: [] }) }
+}
+// Den faktiske samtaleadapter, som beskedfanen bruger ved næste load.
+function laterLoad(database, storage) {
+  const scope = athleteConversationScope({ enabled: true, session: { user: { id: 'synthetic' } },
+    athlete: { id: atletId, user_id: 'synthetic' } })
+  return createConversationAdapters({ enabled: true, database, getScope: () => scope, storage: () => storage }).load()
+}
+const handover = (storage, extra = {}) => bridge({ conversationRef: { current: null }, conversationHandover: true,
+  storage, athleteUserId: 'synthetic', ...extra })
+
+test('R4 F2: vellykket køflush mens beskedfanen er lukket giver referencen ved senere load', async () => {
+  const storage = memoryStorage(), database = syntheticDatabase()
+  assert.equal(queueVideoCoachDraft(queuedRow(atletId, clientId), storage, 'synthetic'), true)
+  const f = await handover(storage)
+  try {
+    const results = []
+    f.flush = async (_, athleteId, store, owner, onSent) => {
+      const result = await flushVideoCoachDraftQueue(database, athleteId, store, owner, onSent); results.push(result); return result }
+    f.effects[2](); await settle(); await settle()
+    assert.deepEqual({ sent: results[0].sent, remaining: results[0].remaining }, { sent: 1, remaining: 0 })
+    assert.equal([...storage.items.keys()].some(key => key.startsWith('entropi:videocoach:pending')), false)
+    assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), [clientId])
+  } finally { f.restore() }
+  // Fanen åbnes senere: referencen genvalideres via identity-RPC'en og står i samtalen.
+  const loaded = await laterLoad(database, storage)
+  assert.deepEqual(loaded.analyses.map(row => [row.client_analysis_id, row.source_mode]), [[clientId, 'athlete_submission']])
+})
+
+test('R4 F2: upload-and-go og save-draft med lukket fane overleveres; fejl og lokal kø overleveres aldrig', async () => {
+  const storage = memoryStorage()
+  const f = await handover(storage)
+  try {
+    f.save = async () => ({ error: { message: 'syntetisk rækkefejl' } }); await f.send()
+    await f.send(draft(f, 'fejl'))
+    f.retryable = () => true; f.queue = () => true
+    await f.send(draft(f, 'koe'))
+    assert.equal(f.replies.at(-1).data.queued, true)
+    assert.equal(storage.getItem(referenceKey), null)
+    f.save = undefined; f.retryable = undefined; f.queue = undefined
+    await f.send({ ...f.message, requestId: 'ok' })
+    assert.equal(f.replies.at(-1).ok, true)
+    assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), [clientId])
+    await f.send(draft(f, 'ok'))
+    assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), [clientId])
+  } finally { f.restore() }
+})
+
+test('R4 F2: med flaget slukket og i coachens forhåndsvisning overleveres intet', async () => {
+  for (const options of [{ conversationHandover: undefined }, { athleteUserId: 'syn-anden' }, { athleteUserId: undefined }]) {
+    const storage = memoryStorage()
+    const f = await handover(storage, options)
+    try {
+      await f.send(draft(f))
+      assert.equal(f.replies.at(-1).ok, true)
+      assert.equal(storage.items.size, 0, JSON.stringify(options))
+    } finally { f.restore() }
+  }
+})
+
+test('R4 F2: monteret samtale får submission; lukkes fanen før den har gemt, overleveres referencen', async () => {
+  for (const [result, closeFirst, expected] of [[true, false, null], [false, false, null], [false, true, [clientId]], [true, true, null]]) {
+    const storage = memoryStorage(), ref = { current: null }, calls = []
+    ref.current = { submission: async id => { calls.push(id); if (closeFirst) ref.current = null; return result } }
+    const f = await handover(storage, { conversationRef: ref })
+    try {
+      await f.send(draft(f)); await settle()
+      assert.deepEqual(calls, [clientId])
+      assert.deepEqual(JSON.parse(storage.getItem(referenceKey)), expected, JSON.stringify([result, closeFirst]))
+    } finally { f.restore() }
+  }
+})
+
+test('R4 F2: en ugyldig eller fuld referenceliste overskrives ikke, og en kendt reference dubleres ikke', async () => {
+  const full = JSON.stringify(Array.from({ length: 10000 }, (_, i) => `syn-${i}`))
+  for (const before of ['ikke json', '{"a":1}', '["ugyldig id!"]', JSON.stringify([clientId]), full]) {
+    const storage = memoryStorage(); storage.setItem(referenceKey, before)
+    const f = await handover(storage)
+    try {
+      await f.send(draft(f))
+      assert.equal(f.replies.at(-1).ok, true)
+      assert.equal(storage.getItem(referenceKey), before)
+    } finally { f.restore() }
+  }
 })

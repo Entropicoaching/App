@@ -62,7 +62,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
 import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
-import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
 
 
 
@@ -389,10 +389,11 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
     setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
     ...(coachTemplateMessages === true || e2 ? { coachActions: true } : {}),
+    ...(e2 ? { entropi2CalendarRead } : {}),
   })
 
-  // Entropi 2: læsekonteksten fastlåses ved kalenderlæsningen (se entropi2/coachReadContext.mjs).
-  const e2ReadContext = useEntropi2ReadContext({ enabled: e2, loading, loadError, coachId: session?.user?.id, athletes, calendarWeeks, calendarStatus: coachActionsStatus.calendar })
+  // Entropi 2: læsekonteksten kommer fra selve kalenderlæsningen (se entropi2/coachReadContext.mjs).
+  const e2ReadContext = useEntropi2ReadContext({ enabled: e2, loading, loadError, coachId: session?.user?.id, athletes, calendarWeeks, coachActionsStatus, coachMorningData })
   const missingDataScopeRef = useRef(null)
   missingDataScopeRef.current = {
     enabled: analyseMissingData === true && !videoAnalysisLoading && !videoAnalysisError,

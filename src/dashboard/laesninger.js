@@ -32,7 +32,7 @@ export function lavLaesninger({
   fourWeekCapture, profileWeekCapture, coachMorning = false, setCoachMorningData = () => {},
   coachWeekEnabled = false, setCoachWeekDataStatus = () => {},
 
-  coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {},
+  coachActions = COACH_ACTIONS_ENABLED, setCoachActionsStatus = () => {}, entropi2CalendarRead,
   inboxRefreshRunnerRef, messageThreadAthleteRef, session, setAthleteCurrentWeek, setAthleteLastLogs, setAthleteLogs,
   setAthletePRHistory, setAthletePRs, setAthleteReadiness, setAthletes, setAthleteWeekCompletion, setAthleteWeekSummary,
   setAthleteWeightLogs, setAutomationAlerts, setAutomationAlertsError, setCalendarWeeks, setCoachBriefingSeen, setExerciseLibrary,
@@ -167,10 +167,16 @@ export function lavLaesninger({
   }
 
   async function fetchCalendarWeeks(athleteIds) {
+    // Entropi 2: ejer, anmodede atlet-id'er og afslutningsdag bindes til netop denne læsnings resultat.
+    // Funktionen gives kun med flaget tændt (Dashboard, via entropi2/coachEntry.mjs); ellers er læseren uændret.
+    const e2Read = typeof entropi2CalendarRead === 'function' && coachActionsEnabled(coachActions)
+      ? entropi2CalendarRead({ enabled: true, coachId: session?.user?.id, athleteIds, setStatus: setCoachActionsStatus }) : null
     if (!athleteIds.length) {
       if (coachActionsEnabled(coachActions)) {
-        setCalendarWeeks({})
+        const empty = {}
+        setCalendarWeeks(empty)
         setCoachActionsStatus(prev => ({ ...prev, calendar: 'ready' }))
+        e2Read?.done(empty)
       }
       return
     }
@@ -225,6 +231,7 @@ export function lavLaesninger({
     for (const aid in map) map[aid].sort((a, b) => a.week_number - b.week_number)
     setCalendarWeeks(map)
     status('ready')
+    e2Read?.done(map)
     return dataEnoughEnabled() ? data.length < 1000 : undefined
     } catch (error) {
       if (!coachActionsEnabled(coachActions)) throw error
