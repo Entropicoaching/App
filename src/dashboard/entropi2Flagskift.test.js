@@ -141,7 +141,7 @@ function dashboardReaders() {
     setCalendarWeeks: value => { captured.calendar = value },
     setCoachActionsStatus: fn => { captured.status = fn(captured.status) },
     setAthletes: value => { captured.athletes = value }, setLoadError: value => { captured.loadError = value },
-    setLoading: () => {}, setHiddenAthleteIds: () => {}, setSnoozedAthletes: () => {},
+    setLoading: value => { captured.loading = value }, setHiddenAthleteIds: () => {}, setSnoozedAthletes: () => {},
     setAthleteCurrentWeek: () => {}, setAthleteWeekCompletion: () => {},
   }
   const build = on => lavLaesninger({ ...stable, session: { user: { id: 'syn-coach' } }, coachActions: true,
@@ -182,11 +182,13 @@ test('R8: en ON-læsning fra før skiftet til OFF og en OFF-atletlæsning kasser
   // Atletlæsning fra før skiftet til ON.
   state.calls.length = 0; state.responses.length = 0
   r = dashboardReaders()
-  state.responses.push(new Promise(resolve => { release = () => resolve({ data: [{ id: 'syn-gammel' }] }) }), { data: [] })
+  // Runde 9 (F3): det kasserede svar starter en ny atletlæsning, som får det tredje svar.
+  state.responses.push(new Promise(resolve => { release = () => resolve({ data: [{ id: 'syn-gammel' }] }) }), { data: [] }, { data: [] })
   const oldAthletes = r.build(false).fetchAthletes()
   await r.build(true).fetchAthletes()
   release(); await oldAthletes
   assert.deepEqual(r.captured.athletes, [])
+  assert.equal(state.calls.filter(call => call.table === 'athletes').length, 3)
   // Uden flagskift (flaget altid slukket) vinder det sene svar som i den uændrede læser.
   state.calls.length = 0; state.responses.length = 0
   r = dashboardReaders()
@@ -195,4 +197,20 @@ test('R8: en ON-læsning fra før skiftet til OFF og en OFF-atletlæsning kasser
   await r.build(false).fetchCalendarWeeks(['syn-a'])
   release(); await late
   assert.equal(r.captured.calendar['syn-a'][0].id, 'syn-sen')
+})
+
+test('R9 F3: OFF til ON under opstart efterlader ikke loading=true; atletlæsningen startes igen', async () => {
+  state.calls.length = 0; state.responses.length = 0
+  const { captured, build } = dashboardReaders()
+  let release
+  state.responses.push(new Promise(resolve => { release = () => resolve({ data: [{ id: 'syn-gammel' }] }) }), { data: [] })
+  // Mountens eneste atletlæsning startes med flaget slukket.
+  const off = build(false).fetchAthletes()
+  // Flaget skifter, mens den venter. Dashboardets mount-effekt starter ingen ny atletlæsning.
+  build(true)
+  release(); await off
+  // Det gamle svar kasseres, men en ny læsning startes straks og afsluttes.
+  assert.equal(state.calls.filter(call => call.table === 'athletes').length, 2)
+  assert.equal(captured.loading, false)
+  assert.deepEqual(captured.athletes, [])
 })

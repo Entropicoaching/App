@@ -63,7 +63,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   const entropi2Delta = [
-    ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
+    ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
     ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
     ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],
     // E2-OVERSKRIFT1: Entropi 2-stilen indlæses, så snart flaget er tændt; atletens ramme markeres kun med e2Atlet.
@@ -85,6 +85,21 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   useEffect(() => { e2SetTabRef.current = setTab })
   const e2GoProgram = useMemo(() => () => e2SetTabRef.current('program'), [])
   const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
+`, ''],
+    // Runde 9: dagsur, kostdato og samtale ved dagsskifte samt mobilitetens dagskontrol.
+    [`  // Entropi 2: dagsur. Ved dagsskifte gengives skærmene igen, kostens dato følger med, hvis den stod
+  // på dagen før, og samtalen hentes igen, så tidsangivelserne passer.
+  const e2Dag = useEntropi2Dag({ enabled: e2, today })
+  const e2ForrigeDag = useRef(e2Dag.day)
+  useEffect(() => {
+    const forrige = e2ForrigeDag.current
+    e2ForrigeDag.current = e2Dag.day
+    if (!e2 || forrige === e2Dag.day) return
+    setKostDate(dato => dato === forrige ? e2Dag.day : dato)
+    void e2ConversationRef.current?.refresh?.()
+  }, [e2, e2Dag.day])
+  // Entropi 2: mobiliteten må kun starte et pas for den dag, skærmen blev beregnet for.
+  const e2MobilityCurrent = useMemo(() => () => today() === e2Day, [e2Day])
 `, ''],
     // Kostkobling (APP-KOST-START1): vægtlog hentes kun med flaget tændt, når kostfanen er åben.
     [`  // Entropi 2: kostskærmen viser vægten; hent den eksisterende vægtlog, når kostfanen åbnes.
@@ -124,7 +139,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
           <Entropi2Mobility enabled={true} athlete={athlete} allWeeks={allWeeks} currentWeek={currentWeek}
             exerciseLogs={exerciseLogs} now={e2MobilityNow} homeworkEnabled={mobilitetHjemme === true}
             coachEnabled={mobilitetCoach === true} storage={typeof localStorage === 'undefined' ? undefined : localStorage}
-            onProgram={e2GoProgram} />
+            onProgram={e2GoProgram} isCurrentDay={e2MobilityCurrent} onStaleDay={e2Dag.refresh} />
         )}
 `, ''],
     // E2-ATLET-LAEST1: med flaget tændt kører den gamle automatiske læst-markering ikke ved åbning af Beskeder.

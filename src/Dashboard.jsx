@@ -62,7 +62,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
 import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
-import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, entropi2ReadGate, entropi2MessageSummary, entropi2VideoQueueError, useEntropi2CoachNutrition, CoachKostMaal, useEntropi2KostVaegt, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, entropi2ReadGate, entropi2MessageSummary, entropi2VideoQueueError, useEntropi2CoachNutrition, CoachKostMaal, useEntropi2KostVaegt, useEntropi2Dag, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
 
 
 
@@ -400,6 +400,10 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const e2CoachNutrition = useEntropi2CoachNutrition({ enabled: e2, client: supabase, readContext: e2ReadContext })
   // Entropi 2: kostmål. Vægtloggen hentes med den eksisterende læser, når coachens kostfane er åben.
   const e2KostVaegt = useEntropi2KostVaegt({ enabled: e2 && activeTab === 'kost', athleteId: selectedAthlete?.id, fetchAthleteWeightLogs })
+  // Entropi 2: dagsur, så kostmål og samtale følger dagsskiftet også uden anden ændring.
+  const e2Dag = useEntropi2Dag({ enabled: e2, today: calendarDay })
+  const e2CoachSamtaleRef = useRef(null)
+  useEffect(() => { if (e2) void e2CoachSamtaleRef.current?.refresh?.() }, [e2, e2Dag.day])
   // Entropi 2: beskedsammendrag og fejlstatus udledes af samme indfangede beskedkilde (se entropi2/coachMessageSummary.mjs).
   const e2Beskeder = e2 ? entropi2MessageSummary(coachMorningData.messages, { noteSignalEnabled: COACH_NOTE_SIGNAL_ENABLED }) : null
   const missingDataScopeRef = useRef(null)
@@ -914,7 +918,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
 
             {/* TAB: BESKEDER */}
             {e2 && activeTab === 'beskeder' && (
-              <ConversationEntry enabled={true} role="coach" getEntry={() => ({
+              <ConversationEntry enabled={true} role="coach" controllerRef={e2CoachSamtaleRef} getEntry={() => ({
                 enabled: true, session, selectedAthlete, athletes, hiddenAthleteIds, inboxDatabase: supabase,
                 openVideoAnalysisReview, openAwaitingAnalysisVideo, storage: () => localStorage,
               })} />

@@ -99,7 +99,9 @@ export function lavLaesninger({
     setLoadError(false)
     const { data, error } = await withRetry(() => supabase.from('athletes').select('*').order('name'))
     if (e2Gate && !e2Gate.current()) return
-    if (e2Replaced(generation)) return
+    // Svaret er fra før et flagskift og kasseres. Atletlæsningen startes kun ved mount, så der startes
+    // straks en ny, ellers kunne loading blive stående true.
+    if (e2Replaced(generation)) return fetchAthletes()
     // Reel fejl efter retries: vis fejl/retry i stedet for misvisende "ingen atleter".
     if (error) { setLoadError(true); setLoading(false); return }
     setAthletes(data || [])

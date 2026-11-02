@@ -43,7 +43,7 @@ import { useParathedUdkast } from './athlete/useParathedUdkast.js'
 import { bygGrundlag, ugensSaet } from './athlete/rekorder.js'
 import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks.js'
 import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
-import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -469,6 +469,19 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   useEffect(() => { e2SetTabRef.current = setTab })
   const e2GoProgram = useMemo(() => () => e2SetTabRef.current('program'), [])
   const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
+  // Entropi 2: dagsur. Ved dagsskifte gengives skærmene igen, kostens dato følger med, hvis den stod
+  // på dagen før, og samtalen hentes igen, så tidsangivelserne passer.
+  const e2Dag = useEntropi2Dag({ enabled: e2, today })
+  const e2ForrigeDag = useRef(e2Dag.day)
+  useEffect(() => {
+    const forrige = e2ForrigeDag.current
+    e2ForrigeDag.current = e2Dag.day
+    if (!e2 || forrige === e2Dag.day) return
+    setKostDate(dato => dato === forrige ? e2Dag.day : dato)
+    void e2ConversationRef.current?.refresh?.()
+  }, [e2, e2Dag.day])
+  // Entropi 2: mobiliteten må kun starte et pas for den dag, skærmen blev beregnet for.
+  const e2MobilityCurrent = useMemo(() => () => today() === e2Day, [e2Day])
   // Entropi 2: kostskærmen viser vægten; hent den eksisterende vægtlog, når kostfanen åbnes.
   const e2KostAaben = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id && visKost && tab === 'kost'
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchWeightLogs er ren ift. atlet-id'et, som er i deps
@@ -872,7 +885,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           <Entropi2Mobility enabled={true} athlete={athlete} allWeeks={allWeeks} currentWeek={currentWeek}
             exerciseLogs={exerciseLogs} now={e2MobilityNow} homeworkEnabled={mobilitetHjemme === true}
             coachEnabled={mobilitetCoach === true} storage={typeof localStorage === 'undefined' ? undefined : localStorage}
-            onProgram={e2GoProgram} />
+            onProgram={e2GoProgram} isCurrentDay={e2MobilityCurrent} onStaleDay={e2Dag.refresh} />
         )}
         {!e2Atlet && compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (
           <section aria-label="Dine hjemmeøvelser">

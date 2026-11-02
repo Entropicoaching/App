@@ -46,7 +46,12 @@ export function mountMobility(root, options = {}) {
       element('p', `${model.minutes} · anslået tid. Følg øvelsernes dosering.`, before)
       element('p', model.selected.date || 'Dag ikke fastlagt', before)
       model.routine.forEach(ex => exercise(ex, before))
-      Object.assign(action('Start mobilitet', () => run(0), before).style, { background: '#d8b16b', color: '#141410' })
+      // Entropi 2: et pas fra en tidligere dag startes aldrig; adapteren beregner dagen igen.
+      const start = () => {
+        if (typeof options.isCurrentDay === 'function' && options.isCurrentDay() !== true) { options.onStaleDay?.(); return }
+        run(0)
+      }
+      Object.assign(action('Start mobilitet', start, before).style, { background: '#d8b16b', color: '#141410' })
     } else element('p', 'Næste pas eller et kendt hovedløft med sæt mangler, eller passet er allerede påbegyndt.', before)
     if (typeof options.onProgram === 'function') action('Til programmet', go, before)
     const coach = element('section'); element('h2', 'Hjemmeøvelser fra din coach', coach)
