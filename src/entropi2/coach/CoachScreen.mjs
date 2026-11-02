@@ -4,7 +4,7 @@ import ProgramOverblik from '../../dashboard/ProgramOverblikView.mjs'
 import { DEFAULT_ENTROPI2_COACH, coachHomeModel, hasUndatedPlannedWeek, openCoachRow, selectCoachTab } from './coachModel.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
-  background: '#1c1c18', border: '1px solid #59564c', borderRadius: 12,
+  background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
   cursor: 'pointer', textAlign: 'left', overflowWrap: 'anywhere' }
 
 // Assembly mounts this component only for coach list/inbox with entropi2 === true.

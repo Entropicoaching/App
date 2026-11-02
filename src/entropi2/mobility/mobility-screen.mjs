@@ -23,7 +23,9 @@ export function mountMobility(root, options = {}) {
   }
   const action = (label, handler, parent = root) => {
     const node = element('button', label, parent); node.type = 'button'
-    node.style.minHeight = '48px'; node.style.whiteSpace = 'normal'
+    Object.assign(node.style, { minHeight: '48px', maxWidth: '100%', boxSizing: 'border-box',
+      whiteSpace: 'normal', border: '1px solid #59564c', borderRadius: '10px',
+      padding: '12px 16px', background: '#1c1c18', color: '#edeae2', font: 'inherit' })
     const guarded = () => { if (!disposed) handler() }
     node.addEventListener('click', guarded); listeners.push([node, guarded]); return node
   }
@@ -34,7 +36,9 @@ export function mountMobility(root, options = {}) {
   const go = () => { dispose(); options.onProgram?.() }
   function home() {
     clear()
-    root.style.maxWidth = '640px'; root.style.overflowWrap = 'anywhere'
+    Object.assign(root.style, { maxWidth: '640px', overflowWrap: 'anywhere', boxSizing: 'border-box',
+      background: '#141410', color: '#edeae2', colorScheme: 'dark', padding: '20px',
+      fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5' })
     element('h1', 'Mobilitet')
     const before = element('section'); before.setAttribute('aria-label', 'Før næste pas')
     element('h2', model.routine.length ? `Forbered din ${model.lift.toLowerCase()}` : 'Ingen kort rutine klar', before)
@@ -42,7 +46,7 @@ export function mountMobility(root, options = {}) {
       element('p', `${model.minutes} · anslået tid. Følg øvelsernes dosering.`, before)
       element('p', model.selected.date || 'Dag ikke fastlagt', before)
       model.routine.forEach(ex => exercise(ex, before))
-      action('Start mobilitet', () => run(0), before)
+      Object.assign(action('Start mobilitet', () => run(0), before).style, { background: '#d8b16b', color: '#141410' })
     } else element('p', 'Næste pas eller et kendt hovedløft med sæt mangler, eller passet er allerede påbegyndt.', before)
     if (typeof options.onProgram === 'function') action('Til programmet', go, before)
     const coach = element('section'); element('h2', 'Hjemmeøvelser fra din coach', coach)
@@ -92,10 +96,10 @@ export function mountMobility(root, options = {}) {
       }
       const timerButton = action('Start sidetimer', () => { if (interval === null && side < sides) startSide() })
     }
-    action(step + 1 < model.routine.length ? 'Næste øvelse' : 'Afslut mobilitet', () => {
+    Object.assign(action(step + 1 < model.routine.length ? 'Næste øvelse' : 'Afslut mobilitet', () => {
       if (step + 1 < model.routine.length) run(step + 1)
       else home()
-    })
+    }).style, { background: '#d8b16b', color: '#141410' })
     action('Spring over', home)
     if (typeof options.onProgram === 'function') action('Til programmet', go)
   }

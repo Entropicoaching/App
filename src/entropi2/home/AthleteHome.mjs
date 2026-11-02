@@ -39,7 +39,7 @@ export default function AthleteHome(props) {
       h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
       target ? h('div', null,
         h('p', { style: s.text }, model.date || `Dag ikke fastlagt · uge ${target.week.week_number ?? 'ikke angivet'}`),
-        h('ul', { style: s.text }, ...target.session.exercises.map(e => h('li', { key: e.id }, e.name || 'Øvelse uden navn'))),
+        h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...target.session.exercises.map(e => h('li', { key: e.id }, e.name || 'Øvelse uden navn'))),
         h('p', { style: s.text }, model.logged == null ? 'Sætstatus hentes, når passet åbnes.' : `${model.logged} af ${model.total} sæt klaret`),
         ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)),
         h('button', { type: 'button', style: s.primary, disabled: typeof onStartSession !== 'function', onClick: start },

@@ -40,10 +40,13 @@ export function createConversationAdapters({ enabled = false, database, getScope
     }
     throw Error('Samtalen overstiger hentegrænsen. Ingen afkortet historik vises som komplet.')
   }
+  const sendFailure = cause => new Error('Beskeden blev ikke sendt. Prøv igen.', { cause })
   async function confirmedMessage(s, id) {
-    const result = await database.from('messages').select('*').eq('athlete_id', s.athleteId).eq('id', id)
+    let result
+    try { result = await database.from('messages').select('*').eq('athlete_id', s.athleteId).eq('id', id) }
+    catch (cause) { current(s); throw sendFailure(cause) }
     current(s)
-    if (result?.error || !Array.isArray(result?.data)) throw Error('Afsendelsen kunne ikke kontrolleres.')
+    if (result?.error || !Array.isArray(result?.data)) throw sendFailure(result?.error || Error('Afsendelsen kunne ikke kontrolleres.'))
     return result.data.find(row => row.id === id && row.athlete_id === s.athleteId)
   }
   const referenceKey = s => `entropi2:conversation:submissions:v1:${encodeURIComponent(s.ownerId)}:${s.athleteId}`
@@ -127,10 +130,12 @@ export function createConversationAdapters({ enabled = false, database, getScope
       if (prior) { if (!match(prior)) throw Error('Besked-id er allerede brugt.'); return prior }
       current(s)
       // Reuse messages.id across every retry, including unknown write outcomes.
-      const result = await database.from('messages').insert(row)
+      let result
+      try { result = await database.from('messages').insert(row) }
+      catch (cause) { result = { error: cause } }
       current(s)
       const saved = await confirmedMessage(s, row.id)
-      if (!match(saved)) throw Error(result?.error?.message || 'Afsendelsen er ikke bekræftet. Prøv igen.')
+      if (!match(saved)) throw sendFailure(result?.error || Error('Afsendelsen er ikke bekræftet.'))
       return saved
     },
     async seen(item) {
