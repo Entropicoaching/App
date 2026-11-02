@@ -230,6 +230,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const [inboxRefreshing, setInboxRefreshing] = useState(false)
   const [inboxRefreshStatus, setInboxRefreshStatus] = useState(null)
   const inboxRefreshRunnerRef = useRef(createSingleFlightRunner())
+  // Entropi 2: egen single-flight for flagets opdateringer, så en igangværende opdatering fra den anden flagtilstand ikke opsluger den første efter et flagskift.
+  const e2InboxRefreshRunnerRef = useRef(createSingleFlightRunner())
   const [trainingSignalUpdatingKey, setTrainingSignalUpdatingKey] = useState(null)
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
   const videoReviewOpenedRef = useRef(null)
@@ -389,7 +391,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
     setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
     ...(coachTemplateMessages === true || e2 ? { coachActions: true } : {}),
-    ...(e2 ? { entropi2CalendarRead, entropi2ReadGate } : {}),
+    ...(e2 ? { entropi2CalendarRead, entropi2ReadGate, inboxRefreshRunnerRef: e2InboxRefreshRunnerRef } : {}),
   })
 
   // Entropi 2: læsekonteksten kommer fra selve kalenderlæsningen (se entropi2/coachReadContext.mjs).
