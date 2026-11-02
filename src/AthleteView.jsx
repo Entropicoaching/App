@@ -43,6 +43,12 @@ import { useParathedUdkast } from './athlete/useParathedUdkast.js'
 import { bygGrundlag, ugensSaet } from './athlete/rekorder.js'
 import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgensSaet, grundlagFoer, hentSiden } from './athlete/rekordIndeks.js'
 import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
+import { entropi2Enabled } from './entropi2/flag.mjs'
+import HomeSession from './entropi2/home/HomeSession.mjs'
+import Entropi2Kost from './entropi2/Entropi2Kost.mjs'
+import ConversationEntry from './entropi2/conversation/ConversationEntry.mjs'
+import Entropi2Mobility from './entropi2/mobility/Mobility.mjs'
+import { LOCAL_FOODS } from './athlete/lokaleFoedevarer.js'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -86,11 +92,12 @@ function Ro2EnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: ro2EnkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
-export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false, rel1101 = false}) {
+export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false, rel1101 = false, entropi2 = false}) {
   const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
   const homeRo2 = rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search)
+  const e2 = entropi2Enabled(entropi2)
   const enkelOn = enkelPrototype === true
   const HjemVisning = enkelOn ? LazyEnkelHjemTab : HjemTab
   const HjemIndgang = homeRo2 ? (enkelOn ? Ro2EnkelHjemTab : Ro2HjemTab) : HjemVisning
@@ -454,6 +461,15 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   // eslint-disable-next-line react-hooks/exhaustive-deps -- kører bevidst kun ved mount; coachAthleteId/role/session er faste for denne AthleteView-instans (nyt preview = nyt mount, se App.jsx)
   useEffect(() => { fetchAthlete() }, [])
   useAfbrudtUploadVarsel({ athlete, flashTimerRef, setFlash })
+  // Entropi 2: stabile props, så skærmene ikke monteres om ved hver gengivelse.
+  const e2ConversationRef = useRef(null)
+  const e2Day = today()
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- nyt tidspunkt kun ved dagsskifte eller atletskift
+  const e2MobilityNow = useMemo(() => new Date(), [e2Day, athlete?.id])
+  const e2SetTabRef = useRef(setTab)
+  useEffect(() => { e2SetTabRef.current = setTab })
+  const e2GoProgram = useMemo(() => () => e2SetTabRef.current('program'), [])
+  const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchLogs er ren ift. sine parametre (athleteId, dato), begge allerede i deps
   useEffect(() => { if (athlete?.id) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   // ORDRE 280 · commit 4 — ventende sæt (offlineSetQueue.js) sendes igen ved
@@ -660,6 +676,9 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const pendingSyncKeys = pendingSyncCount > 0 ? pendingSetKeys(athlete.id) : []
   const parkedSets = Object.values(loadParkedSets(athlete.id))
 
+  // Entropi 2: atletens egen forside erstatter den gamle hjem-visning og passtart.
+  const e2Atlet = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id
+  const e2Home = e2Atlet && tab === 'hjem'
   const toastSlot = (prToast || flash) ? (
     <ToastPlads {...{ flash, prToast, prToastFading }} />
   ) : null
@@ -688,7 +707,14 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
       {/* Page content */}
       <div {...(forenklinger === true ? { 'data-app-375-page': '' } : {})} style={s.page}>
 
-        {tab === 'hjem' && !onHoliday && role === 'athlete' && !coachAthleteId && athlete?.id &&
+        {e2Home && (
+          <HomeSession key={athlete.id} enabled={true} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
+            setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
+            programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}
+            onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
+            pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause} />
+        )}
+        {!e2Home && tab === 'hjem' && !onHoliday && role === 'athlete' && !coachAthleteId && athlete?.id &&
           (!enkelOn || ['traening', 'alle'].includes(route)) &&
           rel1101Enabled(rel1101, typeof window === 'undefined' ? '' : window.location.search) &&
           <TrainingFullscreen key={athlete.id} allWeeks={allWeeks} currentWeek={currentWeek}
@@ -720,7 +746,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         </>)}
         {renderMobilityShortcut(createElement, { enabled: mobilitetFokus === true || mobilitetCoach === true, tab, enkelOn, route, setMobilityMode, setTab, coachSummary: createElement(CoachMobilitySummary, { enabled: mobilitetCoach, athleteId: athlete?.id, notes: athlete?.notes }) })}
 
-        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang
+        {!e2Home && (!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang
           homeRo2={homeRo2}
           hviledageListe={hviledageListe === true}
           restMobility={restMobility}
@@ -786,7 +812,11 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
 
         {/* KOST */}
-        {visKost && tab === 'kost' && (
+        {e2Atlet && visKost && tab === 'kost' && (
+          <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
+            onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')} />
+        )}
+        {!e2Atlet && visKost && tab === 'kost' && (
           <LazyBoundary
             factory={kostFactory} label="Kost" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
@@ -806,7 +836,14 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
 
         {/* BESKEDER */}
-        {tab === 'beskeder' && (
+        {e2Atlet && tab === 'beskeder' && (
+          <ConversationEntry enabled={true} role="athlete" controllerRef={e2ConversationRef} getEntry={() => ({
+            enabled: true, session, athlete, coachAthleteId, inboxDatabase,
+            setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setOpenSharedVideoId, renderSharedFeedbackCards,
+            storage: () => localStorage,
+          })} />
+        )}
+        {!e2Atlet && tab === 'beskeder' && (
           <LazyBoundary
             factory={indbakke2 ? indbakke2Factory : beskederFactory} label="Beskeder" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
@@ -820,6 +857,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
 
         {/* MOBILITET */}
+        {e2Atlet && tab === 'mobilisering' && (
+          <Entropi2Mobility enabled={true} athlete={athlete} allWeeks={allWeeks} currentWeek={currentWeek}
+            exerciseLogs={exerciseLogs} now={e2MobilityNow} homeworkEnabled={mobilitetHjemme === true}
+            coachEnabled={mobilitetCoach === true} storage={typeof localStorage === 'undefined' ? undefined : localStorage}
+            onProgram={e2GoProgram} />
+        )}
         {compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (
           <section aria-label="Dine hjemmeøvelser">
             <button type="button" style={{ minHeight: 44 }} onClick={() => setMobilityMode(null)}>← Til Mobilitet</button>
