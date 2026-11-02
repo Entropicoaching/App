@@ -16,6 +16,7 @@ const validContext = context => !!context && typeof context.coachId === 'string'
   typeof context.day === 'string' && nutritionFrom(context.day) !== null && Array.isArray(context.athleteIds)
 
 // Ren læsning: samme fejl- og cap-mønster som morgenlæsningerne (fejl => error, cap nået => partial).
+// Begge svar har cap: når måltider eller mål når cap, kan svaret være afkortet og er aldrig komplet.
 export async function readCoachNutrition(client, context) {
   if (!validContext(context)) return undefined
   const athleteIds = [...context.athleteIds]
@@ -28,14 +29,15 @@ export async function readCoachNutrition(client, context) {
       client.from('meal_logs').select('id, athlete_id, date, meal, kcal, protein')
         .in('athlete_id', athleteIds).gte('date', base.from).lte('date', base.through)
         .order('date').limit(COACH_NUTRITION_CAP),
-      client.from('athletes').select('id, kcal_target, protein_target').in('id', athleteIds),
+      client.from('athletes').select('id, kcal_target, protein_target').in('id', athleteIds)
+        .order('id').limit(COACH_NUTRITION_CAP),
     ])
   } catch {
     return { ...base, state: 'error', complete: false }
   }
   if (meals?.error || goals?.error || !Array.isArray(meals?.data) || !Array.isArray(goals?.data))
     return { ...base, state: 'error', complete: false }
-  if (meals.data.length >= COACH_NUTRITION_CAP) return { ...base, state: 'partial', complete: false }
+  if (meals.data.length >= COACH_NUTRITION_CAP || goals.data.length >= COACH_NUTRITION_CAP) return { ...base, state: 'partial', complete: false }
   return { ...base, state: 'ready', complete: true,
     rows: meals.data.map(row => ({ ...row, id: typeof row?.id === 'number' ? String(row.id) : row?.id })),
     targets: goals.data.map(row => ({ athlete_id: row?.id, kcal_target: row?.kcal_target, protein_target: row?.protein_target })) }

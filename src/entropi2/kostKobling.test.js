@@ -212,6 +212,51 @@ test('COACH: fejl, afkortning og manglende mål giver ingen linje', async () => 
   }
 })
 
+// Runde 2 (K-ENTROPI2-KOSTKOBLING1 fund 1): afkortede mål må aldrig erklæres komplette.
+const manyIds = n => Array.from({ length: n }, (_, i) => `syn-${String(i).padStart(4, '0')}`)
+const lastMeals = id => ['2026-10-27', '2026-10-28', '2026-10-30', day].map((date, i) =>
+  ({ id: `syn-last-${i}`, athlete_id: id, date, meal: 'Syntetisk måltid', kcal: 2000, protein: 120 }))
+const manyProps = (ids, batch) => ({ ...coachProps({ coachId: 'syn-coach', day, athleteIds: ids }, batch),
+  athletes: ids.map(id => ({ id, name: id })) })
+
+test("COACH R2: 1001 scope-id'er med fejlfrit, afkortet målsvar giver ingen linje", async () => {
+  const ids = manyIds(COACH_NUTRITION_CAP + 1), last = ids[ids.length - 1]
+  // Serveren afkorter uden fejl til de første 1000 målrækker; den sidste atlet mangler.
+  const client = fakeClient({ meal_logs: { data: lastMeals(last), error: null },
+    athletes: { data: ids.slice(0, COACH_NUTRITION_CAP).map(id => ({ id, kcal_target: 2400, protein_target: 150 })), error: null } })
+  const batch = await readCoachNutrition(client, { coachId: 'syn-coach', day, athleteIds: ids })
+  assert.equal(batch.complete, false)
+  assert.equal(batch.state, 'partial')
+  assert.equal(batch.rows, undefined); assert.equal(batch.targets, undefined)
+  assert.equal(coachHomeModel(manyProps(ids, batch), day).nutrition.size, 0)
+})
+
+test('COACH R2: målhentningen har samme cap som måltiderne, og fejl eller kast i mål giver ingen linje', async () => {
+  const client = fakeClient(answers())
+  await readCoachNutrition(client, context())
+  const target = client.calls.find(c => c.table === 'athletes')
+  assert.deepEqual(target.ops.find(op => op[0] === 'limit'), ['limit', COACH_NUTRITION_CAP])
+  const readContext = context()
+  for (const [name, athletesAnswer] of [['mål-kast', new Error('syn')], ['mål-uden-array', { data: { id: 'syn-a' }, error: null }],
+    ['mål-cap', { data: manyIds(COACH_NUTRITION_CAP).map(id => ({ id, kcal_target: 1, protein_target: 1 })), error: null }]]) {
+    const batch = await readCoachNutrition(fakeClient({ ...answers(), athletes: athletesAnswer }), readContext)
+    assert.equal(batch.complete, false, name)
+    assert.notEqual(batch.state, 'ready', name)
+    assert.equal(coachHomeModel(coachProps(readContext, batch), day).nutrition.size, 0, name)
+  }
+})
+
+test("COACH R2: kontrol under cap: 999 scope-id'er med alle mål giver stadig én linje", async () => {
+  const ids = manyIds(COACH_NUTRITION_CAP - 1), last = ids[ids.length - 1]
+  const client = fakeClient({ meal_logs: { data: lastMeals(last), error: null },
+    athletes: { data: ids.map(id => ({ id, kcal_target: 2400, protein_target: 150 })), error: null } })
+  const batch = await readCoachNutrition(client, { coachId: 'syn-coach', day, athleteIds: ids })
+  assert.equal(batch.complete, true)
+  const lines = coachHomeModel(manyProps(ids, batch), day).nutrition
+  assert.equal(lines.size, 1)
+  assert.match(lines.get(last).text, /Mål: 2400 kcal \/ 150 g protein/)
+})
+
 test('COACH: ingen læsning med flaget slukket, uden klient eller uden gyldig kontekst', async () => {
   const client = fakeClient(answers())
   const seen = []
