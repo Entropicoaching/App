@@ -63,9 +63,12 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   const entropi2Delta = [
-    ["import { entropi2Enabled, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
+    ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
     ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
     ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],
+    // E2-OVERSKRIFT1: Entropi 2-stilen indlæses, så snart flaget er tændt; atletens ramme markeres kun med e2Atlet.
+    ['  useEffect(() => { if (e2) loadEntropi2Styles() }, [e2])\n', ''],
+    [" {...(e2Atlet ? { 'data-entropi2-athlete': '' } : {})} style={s.wrap}>", ' style={s.wrap}>'],
     // Runde 3: samtale-ref til upload-broen og eksplicit OFF-grænse om de gamle mobilitetsgrene.
     [`  // Entropi 2: samtalen får besked om bekræftede indsendelser fra upload-broen.
   const e2ConversationRef = useRef(null)
