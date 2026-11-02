@@ -90,7 +90,8 @@ test('wiring: final AthleteView invokes imported entry and scroll handlers and p
   const flat = new URL('./AthleteView.jsx', import.meta.url)
   const source = readFileSync(existsSync(flat) ? flat : new URL('../AthleteView.jsx', import.meta.url), 'utf8')
   assert.match(source, /import \{ contactLatestEnabled, enterContact, scrollContactEnd \} from '\.\/athlete\/contactLatest\.mjs'/)
-  assert.match(source, /enterContact\(\{ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack \}\)/)
+  // E2-ATLET-LAEST1: med Entropi 2 tændt kvitterer samtalen selv; ellers den gamle markTrackRead.
+  assert.match(source, /enterContact\(\{ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: e2SelvKvittering \? \(\) => \{\} : markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack \}\)/)
   assert.match(source, /scrollContactEnd\(contactLatest, messagesEndRef\)/)
   assert.match(source, /sharedVideoAnalyses, sharedVideoError, sharedVideoLoading, contactLatest,/)
 })
