@@ -66,8 +66,14 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
     ["import { entropi2Enabled, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
     ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
     ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],
-    [`  // Entropi 2: stabile props, så skærmene ikke monteres om ved hver gengivelse.
+    // Runde 3: samtale-ref til upload-broen og eksplicit OFF-grænse om de gamle mobilitetsgrene.
+    [`  // Entropi 2: samtalen får besked om bekræftede indsendelser fra upload-broen.
   const e2ConversationRef = useRef(null)
+`, ''],
+    ['    conversationRef: e2ConversationRef,\n', ''],
+    ["        {!e2Atlet && compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (", "        {compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && ("],
+    ["        {!e2Atlet && tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && (", "        {tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && ("],
+    [`  // Entropi 2: stabile props, så skærmene ikke monteres om ved hver gengivelse.
   const e2Day = today()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- nyt tidspunkt kun ved dagsskifte eller atletskift
   const e2MobilityNow = useMemo(() => new Date(), [e2Day, athlete?.id])

@@ -62,7 +62,7 @@ import BlockSequenceRows from './dashboard/BlockSequenceRows.jsx'
 import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
-import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, activityDay, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
+import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
 
 
 
@@ -391,6 +391,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     ...(coachTemplateMessages === true || e2 ? { coachActions: true } : {}),
   })
 
+  // Entropi 2: læsekonteksten fastlåses ved kalenderlæsningen (se entropi2/coachReadContext.mjs).
+  const e2ReadContext = useEntropi2ReadContext({ enabled: e2, loading, loadError, coachId: session?.user?.id, athletes, calendarWeeks, calendarStatus: coachActionsStatus.calendar })
   const missingDataScopeRef = useRef(null)
   missingDataScopeRef.current = {
     enabled: analyseMissingData === true && !videoAnalysisLoading && !videoAnalysisError,
@@ -525,7 +527,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     activeTab, athletes, coachMsgTrack, fetchAthleteLogs, fetchAthletePRs, fetchAthleteReadiness,
     fetchAthletes, fetchAthleteWeightLogs, fetchCalendarProgress, fetchCalendarWeeks, fetchExerciseLibrary, fetchLastBackup,
     fetchMeetPlan, fetchMeetResults, fetchMessages, fetchVideoCoachHistory, fetchWarmupTemplates, fetchWeeks,
-    isMobile, loadError, loading, markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
+    isMobile, loadError, loading, markMessagesRead: e2 ? () => {} : markMessagesRead, openAwaitingAnalysisVideo, openVideoAnalysisReview,
     refreshCoachInbox, selectedAthlete, snoozeMigratedRef, videoAnalysisReview, videoReviewOpenedRef, videoReviewRequest,
     view, weeksLogsLoadedForRef,
   })
@@ -684,8 +686,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             openCoachPriorityItem, openProfile, setSelectedAthlete, setView,
           }}
           noteSignalEnabled={COACH_NOTE_SIGNAL_ENABLED}
-          readContext={!loading && !loadError && session?.user?.id
-            ? { coachId: session.user.id, athleteIds: athletes.map(item => item.id), day: activityDay() } : undefined} />
+          readContext={e2ReadContext} />
         )}
         {!e2 && view === 'inbox' && (
           <LazyBoundary

@@ -447,7 +447,10 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     selected: athleteVideoCoachOpen && videoSetReady ? selectedVideoSet : null }
   useEffect(() => { setVideoSetChoice(null); setVideoSetReady(false) }, [athleteVideoCoachOpen, athlete?.id])
 
+  // Entropi 2: samtalen får besked om bekræftede indsendelser fra upload-broen.
+  const e2ConversationRef = useRef(null)
   useVideoCoachBro({
+    conversationRef: e2ConversationRef,
     videoSetRef, videoOptag2: arguments[0]?.videoOptag2 === true,
     athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
     setAthleteVideoCoachOpen, setFlash,
@@ -457,7 +460,6 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   useEffect(() => { fetchAthlete() }, [])
   useAfbrudtUploadVarsel({ athlete, flashTimerRef, setFlash })
   // Entropi 2: stabile props, så skærmene ikke monteres om ved hver gengivelse.
-  const e2ConversationRef = useRef(null)
   const e2Day = today()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- nyt tidspunkt kun ved dagsskifte eller atletskift
   const e2MobilityNow = useMemo(() => new Date(), [e2Day, athlete?.id])
@@ -858,7 +860,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             coachEnabled={mobilitetCoach === true} storage={typeof localStorage === 'undefined' ? undefined : localStorage}
             onProgram={e2GoProgram} />
         )}
-        {compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (
+        {!e2Atlet && compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (
           <section aria-label="Dine hjemmeøvelser">
             <button type="button" style={{ minHeight: 44 }} onClick={() => setMobilityMode(null)}>← Til Mobilitet</button>
             <MobilityHomeworkProgress enabled={mobilitetOpfoelgning === true && !coachAthleteId} athleteId={athlete?.id}>
@@ -866,7 +868,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             </MobilityHomeworkProgress>
           </section>
         )}
-        {tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && (
+        {!e2Atlet && tab === 'mobilisering' && !(compactHomework && mobilityMode === 'hjemmeoevelser') && (
           <LazyBoundary
             factory={mobiliseringFactory} label="Mobilitet" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{

@@ -18,10 +18,14 @@ import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
 export function useVideoCoachBro({
-  videoSetRef, videoOptag2 = false,
+  conversationRef, videoSetRef, videoOptag2 = false,
   athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
   setAthleteVideoCoachOpen, setFlash,
 }) {
+  // Entropi 2: samtalen får kun bekræftet gemte indsendelser; en fejl i samtalen rører aldrig broen.
+  const notifyConversation = clientId => {
+    try { Promise.resolve(conversationRef?.current?.submission?.(clientId)).catch(() => {}) } catch { /* ignoreret */ }
+  }
   useEffect(() => {
     athleteVideoCoachRef.current = athlete
     if (!athlete?.id) return
@@ -181,6 +185,7 @@ export function useVideoCoachBro({
         clearPendingSilentFails(currentAthlete.id)
         reply({ ok: true, data: { ...saved.data, duplicate: saved.duplicate } })
         window.dispatchEvent(new Event(ATHLETE_VIDEOCOACH_QUEUE_CHANGED))
+        notifyConversation(row.client_analysis_id)
         return
       }
       if (message.type !== `${ATHLETE_VIDEOCOACH_PREFIX}:save-draft`) return
@@ -246,6 +251,7 @@ export function useVideoCoachBro({
       }
       clearPendingSilentFails(currentAthlete.id)
       reply({ ok: true, data: { ...result.data, duplicate: result.duplicate } })
+      notifyConversation(safeRow.client_analysis_id)
     }
     window.addEventListener('message', onAthleteVideoCoachMessage)
     return () => { optagPending.forEach(controller => controller.abort()); window.removeEventListener('message', onAthleteVideoCoachMessage) }
@@ -282,7 +288,8 @@ export function useVideoCoachBro({
       if (cancelled || inFlight) return
       inFlight = true
       const result = await flushVideoCoachDraftQueue(
-        supabase, athlete.id, globalThis.localStorage, session.user.id)
+        supabase, athlete.id, globalThis.localStorage, session.user.id,
+        notifyConversation)
       inFlight = false
       if (cancelled) return
       notifyVideoCoachQueue(result)
