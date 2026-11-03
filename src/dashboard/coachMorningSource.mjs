@@ -24,14 +24,16 @@ export function yesterday(value = new Date()) {
 // Capture existing reads only. The disabled path returns the original operation untouched.
 export function readMorningSource(enabled, key, ids, setData, run) {
   if (enabled !== true) return run()
-  const token = {}
+  // Entropi 2 runde 12: the source belongs to the day the read STARTED. A read that starts
+  // before midnight and finishes after it keeps yesterday's day and is rejected by today's model.
+  const token = {}, day = morningDay()
   setData(previous => ({ ...previous, [key]: { token, state: 'loading' } }))
   return (async () => {
     let result
     try { result = await run() } catch (error) { result = { data: null, error } }
     const rows = Array.isArray(result?.data) ? result.data : []
     const cap = key === 'videos' ? 50 : 1000
-    const source = { token, ids: ids?.slice() ?? null, rows, day: morningDay(),
+    const source = { token, ids: ids?.slice() ?? null, rows, day,
       state: result?.error || !Array.isArray(result?.data) ? 'error' : rows.length >= cap ? 'partial' : 'ready' }
     setData(previous => previous[key]?.token === token ? { ...previous, [key]: source } : previous)
     return result || { data: null, error: new Error('Missing result') }

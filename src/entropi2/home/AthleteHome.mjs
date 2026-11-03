@@ -25,6 +25,9 @@ export default function AthleteHome(props) {
   const model = homeModel({ ...props, now })
   const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
   const target = model.target
+  // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
+  // gamle. Registrering kræver samme uge; ellers bedes atleten genindlæse, ikke registrere forgæves.
+  const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
   const coach = [...messages].reverse().find(m => m.sender_role === 'coach')
   const go = route => () => latest.current.setTab?.(route)
   const start = () => {
@@ -44,9 +47,10 @@ export default function AthleteHome(props) {
         h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...target.session.exercises.map(e => h('li', { key: e.id }, e.name || 'Øvelse uden navn'))),
         h('p', { style: s.text }, model.logged == null ? 'Sætstatus hentes, når passet åbnes.' : `${model.logged} af ${model.total} sæt klaret`),
         ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)),
-        h('button', { type: 'button', style: s.primary, disabled: typeof onStartSession !== 'function', onClick: start },
+        h('button', { type: 'button', style: s.primary, disabled: typeof onStartSession !== 'function' || staleWeek, onClick: start },
           model.kind === 'today' ? 'Start dagens pas' : 'Start næste pas'),
-        typeof onStartSession !== 'function' && h('p', { role: 'status', style: s.text }, 'Passtart er ikke tilgængelig endnu.'))
+        staleWeek ? h('p', { role: 'status', style: s.text }, 'En ny uge er startet. Genindlæs siden for at registrere passet.')
+          : typeof onStartSession !== 'function' && h('p', { role: 'status', style: s.text }, 'Passtart er ikke tilgængelig endnu.'))
         : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
     nutrition && h('button', { type: 'button',

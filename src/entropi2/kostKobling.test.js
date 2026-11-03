@@ -38,8 +38,10 @@ function fakeClient(answers = {}) {
   return client
 }
 const latestRef = () => ({ current: {} })
-const weightForm = host => host.querySelectorAll('form')[0]
 const weightSection = host => host.querySelectorAll('section').find(n => n.textContent.startsWith('Din vægt'))
+// Runde 12: kostens "Log hurtigt" (E2-KOST-NAESTE1) ligger nu øverst med egne formularer;
+// vægtformularen findes derfor i vægtafsnittet, ikke som sidens første formular.
+const weightForm = host => weightSection(host).querySelectorAll('form')[0]
 const goalCard = host => host.querySelectorAll('section').find(n => n.textContent.startsWith('Dagens mål'))
 const weightRow = (logged_at, weight, extra = {}) => ({ athlete_id: athlete.id, logged_at, weight, ...extra })
 
