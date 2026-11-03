@@ -97,7 +97,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     body.append(timer)
     // A rerender transfers the display subscriber and disposes the previous interval.
     stopTimer?.(); lastPause = p.restPause
-    stopTimer = watchRest(lastPause, n => { timer.textContent = `Pause: ${n} sekunder` }, clock)
+    stopTimer = watchRest(lastPause, n => { timer.textContent = n > 0 ? `Pause: ${n} sekunder` : ''; timer.hidden = !(n > 0) }, clock)
     if (s.next && !summary) {
       const n = s.next, ex = n.exercise, key = s.key
       body.append(el('p', `Sæt ${n.setNumber} af ${n.totalSets}`, { class: 'muted' }))
