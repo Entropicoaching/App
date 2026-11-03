@@ -69,9 +69,9 @@ test('START: weight summary uses seven inclusive calendar days, latest daily row
     weight(date, 84, { created_at: '2026-11-02T08:00:00Z' }), weight(date, 999, { athlete_id: 'synthetic-other' }),
     weight('2026-11-03', 999), weight('2026-02-30', 999), weight(date, 0), weight(date, 'bad'), null]
   const summary = weightSummary(rows, id, date)
-  assert.deepEqual(summary, { latest: { weight: 84, date }, average: 82, days: 2 })
-  assert.deepEqual(weightSummary([weight('2026-10-26', 90)], id, date), { latest: { weight: 90, date: '2026-10-26' }, average: null, days: 0 })
-  assert.deepEqual(weightSummary(null, id, date), { latest: null, average: null, days: 0 })
+  assert.deepEqual(summary, { latest: { weight: 84, date }, average: 82, days: 2, previousAverage: 90, previousDays: 1, comparison: null })
+  assert.deepEqual(weightSummary([weight('2026-10-26', 90)], id, date), { latest: { weight: 90, date: '2026-10-26' }, average: null, days: 0, previousAverage: 90, previousDays: 1, comparison: null })
+  assert.deepEqual(weightSummary(null, id, date), { latest: null, average: null, days: 0, previousAverage: null, previousDays: 0, comparison: null })
   assert.equal(rows[2].weight, '82,0')
 })
 
