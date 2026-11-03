@@ -69,7 +69,14 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
         model.complete && h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.')),
-    !inbox && model.nutrition.size > 0 && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
+    !inbox && (model.nutritionState === 'error' || model.nutritionState === 'partial') && h('details', {
+      'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', 'data-coach-nutrition-state': model.nutritionState, open: true, style: fold },
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Kost')),
+      h('p', { role: 'alert' }, model.nutritionState === 'error'
+        ? 'Kostdata kunne ikke hentes. Overblikket viser ikke kost lige nu.'
+        : 'Kostdata er ufuldstændige. Overblikket viser ikke kost lige nu.'),
+      model.nutritionReload && h('button', { type: 'button', style: button, onClick: model.nutritionReload }, 'Hent kost igen')),
+    !inbox && model.nutritionState === 'ready' && model.nutrition.size > 0 && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Kost (${model.nutrition.size})`)),
       h('ul', { style: { listStyle: 'none', padding: 0 } },
         ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,

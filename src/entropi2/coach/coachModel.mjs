@@ -116,7 +116,12 @@ export function coachHomeModel(props = {}, today = new Date()) {
   actions.sort(order); inbox.sort(order)
   const complete = data.rosterReady && data.calendarReady && messages.complete && videos.complete && logs.complete
   const nutrition = coachNutritionLines(props, day, athletes, data.rosterReady)
-  return { ...data, actions, inbox, complete, nutrition,
+  // K-R3-ENTROPI-SAMLET fund 3: en fejlet eller ufuldstaendig kostlaesning maa ikke ligne fravaer.
+  const nutritionSource = props.coachNutrition
+  const nutritionState = !nutritionSource ? 'loading' : nutritionSource.state === 'ready' ? 'ready'
+    : nutritionSource.state === 'partial' ? 'partial' : nutritionSource.state === 'error' ? 'error' : 'loading'
+  return { ...data, actions, inbox, complete, nutrition, nutritionState,
+    nutritionReload: typeof nutritionSource?.reload === 'function' ? nutritionSource.reload : null,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
 }
 

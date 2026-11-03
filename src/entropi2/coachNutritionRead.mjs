@@ -62,6 +62,9 @@ export function selectCoachNutrition(result, enabled, readContext) {
 
 export function useEntropi2CoachNutrition({ enabled, client, readContext }) {
   const [result, setResult] = useState(null)
-  useEffect(() => startCoachNutritionRead({ enabled, client, readContext }, setResult), [enabled, client, readContext])
-  return selectCoachNutrition(result, enabled, readContext)
+  const [attempt, setAttempt] = useState(0)
+  useEffect(() => startCoachNutritionRead({ enabled, client, readContext }, setResult), [enabled, client, readContext, attempt])
+  const batch = selectCoachNutrition(result, enabled, readContext)
+  // En fejlet laesning kan hentes igen fra coachens overblik (K-R3-ENTROPI-SAMLET fund 3).
+  return batch && batch.state !== 'ready' ? { ...batch, reload: () => setAttempt(n => n + 1) } : batch
 }
