@@ -151,7 +151,7 @@ test('Danish calendar midnight and previous-week boundaries are respected', () =
 test('render places overview above unchanged questions, escapes text and preserves navigation', () => {
   const calls = []
   const dom = Analysis(props({ setTab: tab => calls.push(tab), currentWeek: { ...currentWeek, block_name: '<img src=x>' } }))
-  assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Ugeoversigt', ...QUESTIONS])
+  assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Ugeoversigt', 'De seneste 4 uger', ...QUESTIONS])
   assert.equal(dom.querySelectorAll('[data-analysis-week]').length, 1)
   assert.equal(dom.querySelectorAll('h3').length, 4)
   assert.equal(dom.querySelectorAll('img').length, 0)
@@ -181,6 +181,6 @@ test('render exposes empty, partial, full, missing-history and decimal snapshots
   for (const [extra, texts] of cases) {
     const dom = Analysis(props(extra))
     for (const text of texts) assert.ok(dom.textContent.includes(text), text)
-    assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Ugeoversigt', ...QUESTIONS])
+    assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Ugeoversigt', 'De seneste 4 uger', ...QUESTIONS])
   }
 })
