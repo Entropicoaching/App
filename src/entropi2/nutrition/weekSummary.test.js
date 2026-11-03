@@ -92,21 +92,20 @@ async function mounted(t, rows, goals = {}) {
   return { host, controller, calls, week: find(host, 'h2', 'Din uge').parentElement }
 }
 
-test('week view: zero or one logged date shows only the insufficient-days message', async t => {
+test('week view: zero or one logged date shows count and insufficient-days text', async t => {
   for (const rows of [[], [row(), row()], [row({ meal: '[appData2-day-v1][]' })]]) {
     const { week } = await mounted(t, rows, { protein_target: 5 })
-    assert.ok(find(week, 'p', 'For få dage til en ugeoversigt'))
-    assert.doesNotMatch(week.textContent, /Gennemsnit|Protein nået|Loggede dage/)
+    assert.match(week.textContent, /Seneste 7 dage: [01] af 7 dage logget · for få dage til et gennemsnit\./)
+    assert.doesNotMatch(week.textContent, /snit [0-9]|Protein nået/)
   }
 })
 
-test('week view: existing rounding, count, goal line, history toggles and save redraw', async t => {
+test('week view: compact rounding/count and trend replace goal lines; toggles/save do not read again', async t => {
   const { host, week, controller, calls } = await mounted(t, [row({ kcal: '100,5', protein: 10 }),
     row({ date: '2026-11-02', kcal: 200, protein: 20 })], { protein_target: 15, kcal_target: 2000 })
-  assert.ok(find(week, 'p', 'Loggede dage: 2'))
-  assert.ok(find(week, 'p', 'Gennemsnit pr. logget dag: 150,3 kcal · 15 g protein'))
-  assert.ok(find(week, 'p', 'Protein nået 1 af 2 dage'))
-  assert.ok(find(week, 'p', 'Seneste 7 kalenderdage · til og med ' + date))
+  assert.ok(find(week, 'p', 'Seneste 7 dage: 2 af 7 dage logget · snit 150,3 kcal · 15 g protein pr. logget dag.'))
+  assert.ok(find(week, 'p', 'Loggede dage pr. kalenderuge: 0 → 0 → 0 → 2 · ældste først, denne uge indtil nu.'))
+  assert.equal(week.querySelectorAll('p').length, 2)
   assert.equal(week.querySelectorAll('button').length, 0)
   assert.equal(week.querySelectorAll('progress').length, 0)
   assert.equal(week.querySelectorAll('p').some(p => p.getAttribute('role') === 'alert'), false)
@@ -117,19 +116,20 @@ test('week view: existing rounding, count, goal line, history toggles and save r
   assert.deepEqual(calls, { load: 1, save: 0, storage: 0 })
   await controller.log(row({ protein: 10 }), 'synthetic-week-add')
   const updated = find(host, 'h2', 'Din uge').parentElement
-  assert.ok(find(updated, 'p', 'Protein nået 2 af 2 dage'))
+  assert.ok(find(updated, 'p', 'Seneste 7 dage: 2 af 7 dage logget · snit 200,3 kcal · 20 g protein pr. logget dag.'))
+  assert.ok(find(updated, 'p', 'Loggede dage pr. kalenderuge: 0 → 0 → 0 → 2 · ældste først, denne uge indtil nu.'))
   assert.deepEqual(calls, { load: 1, save: 1, storage: 0 })
 })
 
-test('week view: no protein goal omits line; invalid day shows unknown', async t => {
+test('week view: no duplicate goal line; invalid day shows unknown', async t => {
   const rows = [row(), row({ date: '2026-11-02' })]
   for (const goals of [{}, { kcal_target: 2000 }, { protein_target: 'bad' }]) {
     const { week } = await mounted(t, rows, goals)
     assert.doesNotMatch(week.textContent, /Protein nået/)
   }
   const { week } = await mounted(t, [row({ protein: null }), rows[1]], { protein_target: 10 })
-  assert.ok(find(week, 'p', 'Gennemsnit pr. logget dag: ukendt'))
-  assert.ok(find(week, 'p', 'Protein nået: ukendt'))
+  assert.ok(find(week, 'p', 'Seneste 7 dage: 2 af 7 dage logget · gennemsnit ukendt.'))
+  assert.doesNotMatch(week.textContent, /Protein nået/)
 })
 
 test('week view: loading/failure hides summary; strict OFF never touches host', async t => {

@@ -1,7 +1,8 @@
 import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { historyDays } from './historyDays.mjs'
-import { weekSummary } from './weekSummary.mjs'
+import { weekText } from './weekText.mjs'
+import { weeklyTrend } from './weeklyTrend.mjs'
 import { mealProtein, eveningProtein } from './dailyProtein.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
@@ -298,21 +299,13 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       library('Dine favoritter', s.favorites, 'fav')
       library('Måltidsbibliotek', s.recent.filter(meal => !s.favoriteKeys.includes(mealKey(meal))), 'recent')
       if (s.favoriteError && s.logs.length < 2) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
-      const week = weekSummary(s.historyRows, s.targets, s.date)
       const weekly = append(main, 'section', 'card')
       append(weekly, 'h2', '', 'Din uge')
-      append(weekly, 'p', 'muted space', 'Seneste 7 kalenderdage · til og med ' + s.date)
-      if (week.loggedDays < 2) append(weekly, 'p', 'muted space', 'For få dage til en ugeoversigt')
-      else {
-        append(weekly, 'p', 'muted space', `Loggede dage: ${week.loggedDays}`)
-        const { kcal, protein } = week.averages
-        append(weekly, 'p', 'muted space', kcal === null || protein === null
-          ? 'Gennemsnit pr. logget dag: ukendt'
-          : `Gennemsnit pr. logget dag: ${displayNumber(kcal)} kcal · ${displayNumber(protein)} g protein`)
-        if (week.protein) append(weekly, 'p', 'muted space', week.protein.reached === null
-          ? 'Protein nået: ukendt'
-          : `Protein nået ${week.protein.reached} af ${week.protein.days} dage`)
-      }
+      append(weekly, 'p', 'muted space', weekText(s.historyRows, s.targets, s.date, { compact: true }))
+      const weeks = weeklyTrend(s.historyRows, s.targets, s.date)
+      if (weeks.length) append(weekly, 'p', 'small muted space',
+        'Loggede dage pr. kalenderuge: ' + weeks.map(week => week.loggedDays).join(' → ')
+        + ' · ældste først, denne uge indtil nu.')
       const hb = button(main, 'Se historik', () => controller.toggleHistory(), s.pending)
       hb.setAttribute('aria-expanded', String(s.history)); hb.setAttribute('data-focus', 'history')
       if (s.history) {

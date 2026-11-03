@@ -73,3 +73,18 @@ test('week text: frozen snapshots unchanged and arbitrary identity/free text nev
   assert.doesNotMatch(first, /PRIVATE|DO_NOT_INCLUDE|undefined|NaN|Infinity/)
   assert.ok(first.length < 350)
 })
+
+// The compact projection is opt-in: existing callers keep the full dated text.
+test('weekText compact: one short summary, sparse/unknown days and unchanged full default', () => {
+  const compact = (rows, goals = {}) => weekText(rows, goals, date, { compact: true })
+  assert.equal(compact([]), 'Seneste 7 dage: 0 af 7 dage logget · for få dage til et gennemsnit.')
+  assert.equal(compact([row(), row()]), 'Seneste 7 dage: 1 af 7 dage logget · for få dage til et gennemsnit.')
+  const rows = [row({ kcal: '100,5', protein: 10 }), row({ date: '2026-11-02', kcal: 200, protein: 20 })]
+  assert.equal(compact(rows), 'Seneste 7 dage: 2 af 7 dage logget · snit 150,3 kcal · 15 g protein pr. logget dag.')
+  assert.equal(compact([row({ kcal: null }), rows[1]]), 'Seneste 7 dage: 2 af 7 dage logget · gennemsnit ukendt.')
+  assert.equal(compact([row({ kcal: 0, protein: 0 }), row({ date: '2026-11-02', kcal: 0, protein: 0 })]),
+    'Seneste 7 dage: 2 af 7 dage logget · snit 0 kcal · 0 g protein pr. logget dag.')
+  assert.match(weekText(rows, {}, date), /^Kost /)
+  assert.equal(weekText(rows, {}, date, { compact: false }), weekText(rows, {}, date))
+  assert.equal(weekText(rows, {}, 'invalid', { compact: true }), 'Kostuge: perioden er ukendt.')
+})
