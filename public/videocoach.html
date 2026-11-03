@@ -142,6 +142,20 @@
     font-weight:600; letter-spacing:0.05em; padding:8px 16px; border-radius:2px;
     border:1px solid var(--accent); z-index:20; text-align:center; max-width:92vw;
     pointer-events:none; }
+  /* Marc 3. nov.: guiden laa oven paa videoens overkant (hvor skiven ofte er)
+     og bag topbjaelken paa desktop. Coachens visning: under videoen over
+     vaerktoejerne paa mobil, i den tomme venstre margin paa desktop. */
+  body.coachweb #banner { top:auto; bottom:192px; max-width:min(92vw,380px); font-size:13px; }
+  /* Tidslinjen laa bag vaerktoejerne, og tidsteksten blev klemt til en lodret stribe i hoejre kant. */
+  /* layoutBars() maaler foden, mens den er skjult i setup, og satte derfor
+     tidslinjen bag vaerktoejerne; paa coachskaermen ligger den fast over dem. */
+  body.slim.coachweb #scrubRow { bottom:124px !important; }
+  body.coachweb #timeLabel { white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    flex:0 1 auto; max-width:45%; min-width:0; }
+  @media (min-width:900px) {
+    body.coachweb #banner, body.desktop #banner { top:88px; bottom:auto; left:16px; transform:none;
+      max-width:min(300px,calc(50vw - 200px)); text-align:left; }
+  }
   /* ---- SLANK/MOBIL-TILSTAND (atleter) ---- */
   body.slim header { display:none; }
   body.slim #stage { position:fixed; inset:0; }
@@ -9710,11 +9724,15 @@ const banner = document.getElementById('banner');
 // ORDRE 422 (I5): kvitteringen efter Send (data-kvittering = udløbstid) må
 // ikke ryddes af en ældre say('')-timer fra videoindlæsningen, før atleten
 // har nået at læse den. En ny besked erstatter den stadig med det samme.
+let sayTimer = 0;
 function say(txt) {
   if (!txt && banner.dataset.kvittering && Date.now() < Number(banner.dataset.kvittering)) return;
   banner.textContent = txt;
   banner.hidden = !txt;
   delete banner.dataset.kvittering;
+  // Marc 3. nov.: paa smal coachskaerm maa guiden ikke blive staaende over videoen.
+  clearTimeout(sayTimer);
+  if (txt && COACHWEB && innerWidth < 900) sayTimer = setTimeout(() => { if (banner.textContent === txt) banner.hidden = true; }, 7000);
 }
 // MOBIL-FIX: bjælkerne er fixed med HÅRDKODEDE afstande - når footeren
 // ombryder til flere rækker på smalle skærme, lå tidslinjen oven i knapperne.
