@@ -1,5 +1,9 @@
 import { mobilityModel } from './mobility-model.mjs'
 
+// Marc 3. nov.: dansk dato som paa Hjem, aldrig ISO-dato paa skaermen.
+const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
+const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${MONTHS[Number(m[2]) - 1]}` : String(iso) }
+
 // A real DOM mount with explicit lifecycle; no routing, fetch or write globals.
 // Assembly can mount this from its React effect and return the disposer.
 export function mountMobility(root, options = {}) {
@@ -54,7 +58,7 @@ export function mountMobility(root, options = {}) {
     element('h2', model.routine.length ? `Forbered din ${model.lift.toLowerCase()}` : 'Ingen kort rutine klar', before)
     if (model.routine.length) {
       element('p', `${model.minutes} · anslået tid. Følg øvelsernes dosering.`, before)
-      element('p', model.selected.date || 'Dag ikke fastlagt', before)
+      element('p', model.selected.date ? danishDate(model.selected.date) : 'Dag ikke fastlagt', before)
       model.routine.forEach(ex => exercise(ex, before))
       // Entropi 2: et pas fra en tidligere dag startes aldrig; adapteren beregner dagen igen.
       const start = () => {
