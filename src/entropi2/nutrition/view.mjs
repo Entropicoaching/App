@@ -1,5 +1,7 @@
 import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
+import { historyDays } from './historyDays.mjs'
+import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 let mountSequence = 0
 
@@ -184,9 +186,21 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
       hb.setAttribute('aria-expanded', String(s.history)); hb.setAttribute('data-focus', 'history')
       if (s.history) {
         const section = append(main, 'section', 'card'); append(section, 'h2', '', 'Historik · seneste 30 dage')
-        if (!s.historyRows.length) append(section, 'p', 'muted', 'Ingen registreringer i perioden.')
-        const list = append(section, 'ul', 'list')
-        s.historyRows.forEach(row => append(list, 'li', '', `${row.date} · ${typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid'}`))
+        const days = historyDays(s.historyRows, s.targets)
+        const dateFormat = new Intl.DateTimeFormat('da-DK', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
+        if (!days.length) append(section, 'p', 'muted', 'Ingen registreringer i perioden.')
+        for (const day of days) {
+          const group = append(section, 'section', 'space')
+          const heading = append(group, 'h3')
+          const date = append(heading, 'time', '', dateFormat.format(new Date(day.date + 'T00:00:00Z')))
+          date.setAttribute('datetime', day.date)
+          append(group, 'p', 'muted', day.kcal === null || day.protein === null
+            ? 'Næringsdata skal kontrolleres'
+            : `${displayNumber(day.kcal)} kcal · ${displayNumber(day.protein)} g protein`)
+          const list = append(group, 'ul', 'list')
+          s.historyRows.filter(row => row.date === day.date && !isDayReceipt(row)).forEach(row =>
+            append(list, 'li', '', typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid'))
+        }
       }
     }
     host.replaceChildren(app)
