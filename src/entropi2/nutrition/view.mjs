@@ -66,8 +66,10 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
         })
       }
       const favoriteKeys = new Set(s.favorites.map(mealKey))
-      quick('Favoritter', s.favorites.slice(0, 5), 'fav')
-      quick('Seneste måltider', s.recent.filter(meal => !favoriteKeys.has(mealKey(meal))).slice(0, 5), 'recent')
+      // Yesterday already supplies a log button for these exact meal identities.
+      const yesterdayKeys = new Set(s.yesterday.map(mealKey))
+      quick('Favoritter', s.favorites.filter(meal => !yesterdayKeys.has(mealKey(meal))).slice(0, 5), 'fav')
+      quick('Seneste måltider', s.recent.filter(meal => !favoriteKeys.has(mealKey(meal)) && !yesterdayKeys.has(mealKey(meal))).slice(0, 5), 'recent')
       const details = append(fast, 'details', 'space'); details.setAttribute('data-focus', 'log-form')
       append(details, 'summary', '', 'Notér et måltid')
       const inner = append(details, 'div')

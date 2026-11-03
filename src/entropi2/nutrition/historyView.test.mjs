@@ -75,7 +75,8 @@ for (const [date, previous, firstLabel, previousLabel] of [
 test('history view: closing/reopening and redraw preserve controls without new I/O', async t => {
   const { host, controller, calls } = await mounted(t, [row(), row({ date: '2026-11-03' })])
   const buttons = host.querySelectorAll('button').map(n => n.textContent)
-  for (const heading of ['Log hurtigt', 'Gentag i går', 'Seneste måltider', 'Dagens mål', 'Din vægt']) assert.ok(find(host, 'h2', heading))
+  for (const heading of ['Log hurtigt', 'Gentag i går', 'Dagens mål', 'Din vægt']) assert.ok(find(host, 'h2', heading))
+  assert.equal(find(host, 'h2', 'Seneste måltider'), undefined) // Both rows repeat the same yesterday meal.
   assert.ok(host.textContent.includes('Tilbage i dag:'))
   await find(host, 'button', 'Se historik').fire('click')
   assert.equal(find(host, 'h2', 'Historik · seneste 30 dage'), undefined)
