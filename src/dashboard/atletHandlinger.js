@@ -123,12 +123,12 @@ export function lavAtletHandlinger({
       if (!(key in payload)) continue
       const value = (integers.has(key) ? inputInteger : parseInputNumber)(payload[key])
       if (value === null && !optionalInput(payload[key])) {
-        showFlash('Brug gyldige tal i atletens felter.', 'error'); setSaving(false); return
+        showFlash('Brug gyldige tal i atletens felter.', 'error'); setSaving(false); return false
       }
       payload[key] = value
     }
     if (['competition_date', 'vacation_until'].some(k => !optionalInput(payload[k]) && calendarTime(payload[k]) === null)) {
-      showFlash('Brug gyldige datoer.', 'error'); setSaving(false); return
+      showFlash('Brug gyldige datoer.', 'error'); setSaving(false); return false
     }
     // Tomme dato-felter må ikke sendes som '' til date-kolonner (Postgres-fejl).
     for (const k of ['competition_date', 'vacation_until']) {
@@ -137,12 +137,15 @@ export function lavAtletHandlinger({
     // Rydder man feriedatoen mens status ikke er ferie, så nulstil den helt.
     if (payload.status && payload.status !== 'ferie') payload.vacation_until = null
     const { data, error } = await supabase.from('athletes').update(payload).eq('id', selectedAthlete.id).select().single()
-    if (!error) {
-      setSelectedAthlete(data)
-      setAthletes(prev => prev.map(a => a.id === data.id ? data : a))
+    // En afvist gemning bevarer formularen og udkastet og siger det (K-R3-ENTROPI-SAMLET fund 1).
+    if (error || !data) {
+      showFlash('Ændringen blev ikke gemt. Prøv igen.', 'error'); setSaving(false); return false
     }
+    setSelectedAthlete(data)
+    setAthletes(prev => prev.map(a => a.id === data.id ? data : a))
     setEditing(null)
     setSaving(false)
+    return true
   }
 
   // Åbn "Registrér stævneresultat"-modal; forudfyld fra atletens stævneplan hvis den findes.
