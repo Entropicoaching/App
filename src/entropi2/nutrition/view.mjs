@@ -139,6 +139,14 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
           f.setAttribute('data-focus', prefix + '-favorite-' + i)
         })
       }
+      if (s.yesterday.length) {
+        const section = append(main, 'section', 'card'); append(section, 'h2', '', 'Gentag i går')
+        s.yesterday.forEach((meal, i) => {
+          const row = append(section, 'div', 'space stack')
+          const b = button(row, 'Log igen: ' + meal.meal, () => action(meal), s.pending)
+          b.setAttribute('data-focus', 'yesterday-log-' + i)
+        })
+      }
       quick('Favoritter', s.favorites, 'fav'); quick('Seneste måltider', s.recent, 'recent')
       if (s.favoriteError) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
       const details = append(main, 'details', 'card'); details.setAttribute('data-focus', 'log-form')
