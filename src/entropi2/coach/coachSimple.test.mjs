@@ -21,7 +21,8 @@ test('coach home: "Kræver dit blik" comes first; kost and programmes are folded
   assert.ok(order.indexOf('Atleter der kræver handling') < order.indexOf('Kostoverblik'))
   const folds = all.filter(n => n.type === 'details').map(n => n.props['data-coach-fold'])
   // Runde 3: passenes noter (E2-COACH-PASNOTER1) er også foldet ind under det vigtigste.
-  assert.deepEqual(folds, ['kost', 'noter', 'programmer'])
+  // E2-COACH-PROGRAMSLUT1: programmer der slutter er sin egen fold (bevidst tilføjelse).
+  assert.deepEqual(folds, ['kost', 'noter', 'programslut', 'programmer'])
   for (const d of all.filter(n => n.type === 'details')) assert.notEqual(d.props.open, true)
   assert.ok(all.some(n => n.props?.['data-coach-nutrition'] === 'athlete-1'), 'kost line still rendered inside the fold')
 })

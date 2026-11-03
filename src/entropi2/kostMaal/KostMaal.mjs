@@ -1,6 +1,6 @@
 import { createElement as h, useRef, useState } from 'react'
 import { energySuggestion } from './energySuggestion.mjs'
-import { nutritionWeek } from './nutritionWeek.mjs'
+import { nutritionWeek, nutritionGoalWeek } from './nutritionWeek.mjs'
 import { DEFAULT_ENABLED, kostMaalModel, displayNumber, positive, validTargetDraft, proteinSuggestion } from './model.mjs'
 
 const button = { minHeight: 44, padding: '10px 16px', font: 'inherit', border: '1px solid #777267', borderRadius: 8, color: 'inherit', background: '#282820', cursor: 'pointer' }
@@ -21,6 +21,7 @@ function EnabledKostMaal(props) {
   const model = kostMaalModel({ athlete, weightLogs, today })
   const suggestion = proteinSuggestion(model)
   const week = nutritionWeek(props)
+  const goalWeek = nutritionGoalWeek(props)
   const energy = energySuggestion(model, week)
   const connected = typeof startEdit === 'function' && typeof setEditData === 'function' &&
     typeof setEditing === 'function' && typeof saveEdit === 'function' && athlete?.id != null
@@ -52,6 +53,7 @@ function EnabledKostMaal(props) {
       value('Energi', model.kcal === null ? 'Ingen mål endnu' : `${displayNumber(model.kcal)} kcal`),
       value('Protein', model.protein === null ? 'Ingen mål endnu' : `${displayNumber(model.protein)} g`)),
     week && h('p', null, week.text),
+    goalWeek && h('p', null, goalWeek.text),
     active ? h('form', { onSubmit: submit, 'aria-busy': Boolean(locked) },
       h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 12 } }, field('kcal_target', 'Kcal-mål'), field('protein_target', 'Proteinmål (g)')),
       h('p', null, 'Et tomt felt fjerner målet.'),
