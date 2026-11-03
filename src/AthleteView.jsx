@@ -838,7 +838,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
             weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
-            {...(kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />
+            {...(kostDate === e2Dag.day || kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />
         )}
         {!e2Atlet && visKost && tab === 'kost' && (
           <LazyBoundary

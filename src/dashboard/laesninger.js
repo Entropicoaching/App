@@ -57,6 +57,8 @@ export function lavLaesninger({
   setWeeks, videoCoachAthletesRef, currentProgramAthleteRef,
 }) {
   const e2Gen = e2Generation(setCalendarWeeks, typeof entropi2CalendarRead === 'function')
+  // Den senest byggede læser på samme instans; en genstart efter et flagskift går altid gennem den.
+  if (e2Gen) e2Gen.fetchAthletes = fetchAthletes
   const e2Started = () => e2Gen?.n
   const e2Replaced = started => e2Gen !== null && e2Gen.n !== started
   async function refreshCoachInbox() {
@@ -96,12 +98,16 @@ export function lavLaesninger({
     // Entropi 2: kun den senest startede atletlæsning må sætte atleter, skjulte, fejl og indlæsning.
     const e2Gate = typeof entropi2ReadGate === 'function' ? entropi2ReadGate(setLoading, 'athletes') : null
     const generation = e2Started()
+    // Fælles læseidentitet på tværs af flagtilstande: kun den senest startede atletlæsning må sætte state.
+    const athleteRead = e2Gen ? (e2Gen.athleteRead = (e2Gen.athleteRead || 0) + 1) : 0
     setLoadError(false)
     const { data, error } = await withRetry(() => supabase.from('athletes').select('*').order('name'))
     if (e2Gate && !e2Gate.current()) return
     // Svaret er fra før et flagskift og kasseres. Atletlæsningen startes kun ved mount, så der startes
     // straks en ny, ellers kunne loading blive stående true.
-    if (e2Replaced(generation)) return fetchAthletes()
+    if (e2Replaced(generation)) return (e2Gen.fetchAthletes || fetchAthletes)()
+    // Uden flagskift og med flaget slukket er adfærden uændret; ellers kasseres en afløst læsning.
+    if (e2Gen && (e2Gen.on || e2Gen.n > 0) && e2Gen.athleteRead !== athleteRead) return
     // Reel fejl efter retries: vis fejl/retry i stedet for misvisende "ingen atleter".
     if (error) { setLoadError(true); setLoading(false); return }
     setAthletes(data || [])

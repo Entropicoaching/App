@@ -104,7 +104,7 @@ test('KOST: AthleteView leverer mål, vægt og logWeight kun på dagens dato og 
   const source = read('../AthleteView.jsx')
   assert.match(source, /<Entropi2Kost enabled=\{true\} athlete=\{athlete\} date=\{kostDate\}/)
   assert.match(source, /weightLogs=\{weightLogs\} weightInput=\{weightInput\} savingWeight=\{savingWeight\}/)
-  assert.match(source, /\{\.\.\.\(kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag\.refresh \} : \{\}\)\} \/>/)
+  assert.match(source, /\{\.\.\.\(kostDate === e2Dag\.day \|\| kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag\.refresh \} : \{\}\)\} \/>/)
   assert.match(source, /const e2KostAaben = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete\?\.id && visKost && tab === 'kost'\n/)
   assert.match(source, /useEffect\(\(\) => \{ if \(e2KostAaben\) fetchWeightLogs\(athlete\.id\) \}, \[e2KostAaben, athlete\?\.id\]\)/)
   // Den gamle kostfane med flaget slukket er uændret og får ingen nye props.

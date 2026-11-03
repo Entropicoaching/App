@@ -16,7 +16,12 @@ export function startDayClock({ today, onDay, every = 60 * 1000, timers = global
 // Kun med flaget tændt startes uret. refresh() læser dagen straks, fx når en skærm opdager en forældet dag.
 export function useEntropi2Dag({ enabled = false, today }) {
   const [day, setDay] = useState(() => (typeof today === 'function' ? today() : ''))
-  useEffect(() => (enabled === true ? startDayClock({ today, onDay: setDay }) : undefined), [enabled, today])
+  useEffect(() => {
+    if (enabled !== true) return undefined
+    // Aktiveres uret efter et dagsskifte (fx OFF til ON), følger state straks dagen, før intervallet starter.
+    if (typeof today === 'function') setDay(today())
+    return startDayClock({ today, onDay: setDay })
+  }, [enabled, today])
   const refresh = useMemo(() => () => { if (typeof today === 'function') setDay(today()) }, [today])
   return useMemo(() => ({ day, refresh }), [day, refresh])
 }

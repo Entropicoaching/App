@@ -50,7 +50,7 @@ test('R9: en bevidst valgt dato (uden currentDay) bevares, og en ugyldig dag gem
 
 test('R9: koblingen giver kun currentDay, når kostens dato er dags dato; vejningen bruger allerede gemmeøjeblikket', () => {
   const view = read('../../AthleteView.jsx')
-  assert.match(view, /\{\.\.\.\(kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag\.refresh \} : \{\}\)\} \/>/)
+  assert.match(view, /\{\.\.\.\(kostDate === e2Dag\.day \|\| kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag\.refresh \} : \{\}\)\} \/>/)
   const kost = read('../Entropi2Kost.mjs')
   assert.match(kost, /currentDay: \(\) => \(typeof latest\.current\.currentDay === 'function' \? latest\.current\.currentDay\(\) : date\)/)
   assert.match(kost, /latest\.current = \{ onNavigate, onCoach, currentDay, onDayChanged \}/)

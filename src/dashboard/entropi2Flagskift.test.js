@@ -214,3 +214,55 @@ test('R9 F3: OFF til ON under opstart efterlader ikke loading=true; atletlæsnin
   assert.equal(captured.loading, false)
   assert.deepEqual(captured.athletes, [])
 })
+
+// Runde 10: som dashboardReaders, men med syntetiske no-op-settere til de øvrige atletlæsninger,
+// som en atletliste med indhold starter (de får tomme svar).
+function stilleReaders() {
+  const captured = { status: {}, calendar: undefined, athletes: undefined, loadError: undefined }
+  const stable = {
+    setCalendarWeeks: value => { captured.calendar = value },
+    setCoachActionsStatus: fn => { captured.status = fn(captured.status) },
+    setAthletes: value => { captured.athletes = value }, setLoadError: value => { captured.loadError = value },
+    setLoading: value => { captured.loading = value },
+  }
+  const noop = () => {}
+  const all = new Proxy(stable, { get: (t, k) => (k in t ? t[k] : typeof k === 'string' && k.startsWith('set') ? noop : undefined),
+    has: (t, k) => k in t || (typeof k === 'string' && k.startsWith('set')) })
+  const build = on => lavLaesninger(new Proxy({ session: { user: { id: 'syn-coach' } }, coachActions: true,
+    ...(on ? { entropi2CalendarRead, entropi2ReadGate } : {}) }, { get: (t, k) => (k in t ? t[k] : all[k]) }))
+  return { captured, build }
+}
+
+test('R10 F2: genstart efter flagskift går gennem den nyeste læser; en afløst genstart overskriver ikke en nyere ON-læsning', async () => {
+  state.calls.length = 0; state.responses.length = 0
+  const { captured, build } = stilleReaders()
+  let releaseA, releaseB
+  // A: OFF-læsning før skiftet. B: genstarten efter skiftet. C: en ny ON-læsning, der afsluttes før B.
+  state.responses.push(new Promise(resolve => { releaseA = () => resolve({ data: [{ id: 'syn-a-gammel' }] }) }),
+    new Promise(resolve => { releaseB = () => resolve({ data: [{ id: 'syn-b-genstart' }] }) }),
+    { data: [{ id: 'syn-c-ny' }] })
+  state.responses.push(...Array.from({ length: 12 }, () => ({ data: [] })))
+  const a = build(false).fetchAthletes()
+  const on = build(true)
+  releaseA()
+  // Lad A afslutte og starte genstarten B.
+  for (let i = 0; i < 5 && state.calls.filter(call => call.table === 'athletes').length < 2; i++) await new Promise(r => setTimeout(r, 0))
+  assert.equal(state.calls.filter(call => call.table === 'athletes').length, 2)
+  await on.fetchAthletes()
+  assert.deepEqual(captured.athletes, [{ id: 'syn-c-ny' }])
+  releaseB(); await a
+  assert.deepEqual(captured.athletes, [{ id: 'syn-c-ny' }])
+  assert.equal(captured.loading, false)
+})
+
+test('R10 F2: uden flagskift og med flaget slukket vinder den sene atletlæsning som i den uændrede læser', async () => {
+  state.calls.length = 0; state.responses.length = 0
+  const { captured, build } = stilleReaders()
+  let release
+  state.responses.push(new Promise(resolve => { release = () => resolve({ data: [{ id: 'syn-sen' }] }) }), { data: [{ id: 'syn-tidlig' }] })
+  state.responses.push(...Array.from({ length: 12 }, () => ({ data: [] })))
+  const late = build(false).fetchAthletes()
+  await build(false).fetchAthletes()
+  release(); await late
+  assert.deepEqual(captured.athletes, [{ id: 'syn-sen' }])
+})
