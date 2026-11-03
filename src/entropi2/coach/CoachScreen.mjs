@@ -10,6 +10,9 @@ const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
 
 // Assembly mounts this component only for coach list/inbox with entropi2 === true.
 // The clock is isolated behind the disabled boundary and owns no data reads.
+const MONTHS_DA = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
+const coachDay = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso ?? '')); return m ? `${Number(m[3])}. ${MONTHS_DA[Number(m[2]) - 1]}` : 'Ukendt dato' }
+
 export default function CoachScreen(props = {}) {
   if (props.enabled !== true) return null
   return h(ClockedCoach, props)
@@ -43,6 +46,8 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
   const fold = { marginBlock: 16, borderTop: '1px solid #414139', paddingTop: 8 }
   const foldSummary = { cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center' }
   const foldHeading = { display: 'inline', fontSize: 20, margin: 0 }
+  // Foldene viser en tydelig pil, saa man ser, at de kan aabnes.
+  const arrow = h('span', { 'aria-hidden': true, style: { marginRight: 10, color: '#d8b16b' } }, '▸')
   return h('main', { 'data-entropi2-coach': true, style: { boxSizing: 'border-box',
     maxWidth: 900, marginInline: 'auto', padding: 20, background: '#141410', color: '#edeae2',
     fontFamily: s.wrap.fontFamily, lineHeight: 1.5, overflowWrap: 'anywhere' } },
@@ -52,7 +57,8 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
         key: value, type: 'button', style: button, disabled: !canTab,
         'aria-current': (value === 'inbox') === inbox ? 'page' : undefined,
         onClick: canTab ? () => selectCoachTab(value, props) : undefined }, label))),
-    h('p', null, `Coach · ${model.day ?? 'Ukendt dato'}`),
+    // Marc 3. nov.: dansk dato og luft til knapperne over.
+    h('p', { style: { marginTop: 20, marginBottom: 0, color: '#b9b4a8' } }, `Coach · ${coachDay(model.day)}`),
     h('h1', { style: { fontFamily: 'Georgia, serif', fontSize: 36, lineHeight: 1.15 } }, inbox ? 'Indbakke' : 'Det vigtigste først.'),
     !available && h('p', { role: 'alert' }, 'Navigationen er ikke tilsluttet.'),
     model.state === 'empty' ? h('p', { role: 'status' }, 'Ingen synlige atleter.') :
@@ -62,22 +68,22 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
     h('section', { 'aria-label': inbox ? 'Ulæste beskeder og indsendelser' : 'Atleter der kræver handling' },
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
-        model.complete && h('p', null, 'Ingen handlinger i de indlæste data.')),
+        model.complete && h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.')),
     !inbox && model.nutrition.size > 0 && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
-      h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, `Kost (${model.nutrition.size})`)),
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Kost (${model.nutrition.size})`)),
       h('ul', { style: { listStyle: 'none', padding: 0 } },
         ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,
           style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },
           h('strong', null, a.name), h('span', { style: { display: 'block' } }, model.nutrition.get(a.id).text))))),
     !inbox && h('details', { 'aria-label': 'Noter fra passene', 'data-coach-fold': 'noter', style: fold },
-      h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, 'Noter fra passene')),
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Noter fra passene')),
       h(CoachSessionNotes, { source: props, context: model })),
     inbox ? model.rosterReady && h('details', { 'aria-label': 'Alle samtaler', 'data-coach-fold': 'samtaler', style: fold },
-      h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, `Alle samtaler (${model.athletes.length})`)),
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Alle samtaler (${model.athletes.length})`)),
       ...model.athletes.map(a => h('button', { key: a.id, type: 'button', style: { ...button, margin: 4 },
         disabled: !available, onClick: available ? () => props.openProfile(a, 'beskeder', 'inbox') : undefined }, a.name))) :
       h('details', { 'aria-label': 'Ugens programmer', 'data-coach-fold': 'programmer', style: fold },
-        h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, `Ugens programmer (${model.athletes.length})`)),
+        h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Ugens programmer (${model.athletes.length})`)),
         model.calendarReady && available ? h('div', null,
           // Keep uncertain athletes visible without claiming the dated subset is complete.
           unknownPrograms.length > 0 && h('ul', { style: { listStyle: 'none', padding: 0 } },
