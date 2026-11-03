@@ -5,6 +5,7 @@ import { hasEnoughData } from '../../dataEnough.mjs'
 import { adaptPublicContract } from './publicContract.mjs'
 import { weekOverview } from './weekOverview.mjs'
 import { fourWeekHistory } from './fourWeekHistory.mjs'
+import { rpeHistory } from './rpeHistory.mjs'
 
 export const QUESTIONS = Object.freeze(['Hvor står jeg?', 'Hvad går godt?', 'Hvad arbejder vi med nu?'])
 const kg = n => String(n).replace('.', ',')
@@ -65,5 +66,5 @@ export function analysisModel(props = {}, now = new Date()) {
         : 'Dette er navnet på din aktuelle programblok, ikke en udledt årsag eller anbefaling. Følg øvelserne i programmet og log vægt og gentagelser efter hvert sæt.'
     }
   }
-  return { answers, weekOverview: weekOverview(contract, now), fourWeekHistory: fourWeekHistory(contract), setTab: contract.setTab }
+  return { answers, weekOverview: weekOverview(contract, now), fourWeekHistory: fourWeekHistory(contract), rpeHistory: rpeHistory(props, now), setTab: contract.setTab }
 }

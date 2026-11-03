@@ -1,12 +1,13 @@
 import { createElement as h } from 'react'
 import { analysisModel } from './analysisModel.mjs'
 import { formatHistoryKg } from './fourWeekHistory.mjs'
+import RpeHistoryView from './RpeHistoryView.mjs'
 
 // Explicit opt-in only. Assembly must supply entropi2 === true and the existing
 // AthleteView props. Importing this module changes no existing entry or flag.
 export default function Analysis(props = {}) {
   if (props.entropi2 !== true) return null
-  const { answers, weekOverview: week, fourWeekHistory: history, setTab } = analysisModel(props, props.now ?? new Date())
+  const { answers, weekOverview: week, fourWeekHistory: history, rpeHistory, setTab } = analysisModel(props, props.now ?? new Date())
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
@@ -42,6 +43,7 @@ export default function Analysis(props = {}) {
               point.value === null ? (row.unavailable ? 'Data ikke klar' : 'Ingen data') : `${formatHistoryKg(point.value)} kg e1RM`)))),
         h('p', { 'data-history-summary': true, style: { lineHeight: 1.6 } }, row.summary))
     })),
+  RpeHistoryView({ history: rpeHistory }),
   ...answers.map(a => h('section', { key: a.key, 'aria-label': a.title,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
   h('h2', { style: { fontSize: '1.15rem' } }, a.title),
