@@ -98,13 +98,6 @@ h2 {
     color: inherit;
   }
 }
-/* E2-KOSTUGE-KONTRAST1: atletens kostuge og coachens lokale analyseværktøj ligger på mørk bund, så deres h2 arver sektionens lyse farve i lyst skema. Mørkt skema er uændret. */
-@media (prefers-color-scheme: light) {
-  section[aria-label="Kostuge"] h2,
-  section[aria-label="Lokalt videoanalyseværktøj"] h2 {
-    color: inherit;
-  }
-}
 p {
   margin: 0;
 }
