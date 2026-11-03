@@ -20,7 +20,7 @@ export function SessionNotesView({ model, athletes, onSelect }) {
       onChange: event => onSelect(event.target.value) },
       h('option', { value: '' }, 'Vælg atlet'),
       ...athletes.map(a => h('option', { key: a.id, value: a.id }, a.name)))),
-    h('p', null, 'Kun allerede indlæste pasdata. Listen kan være ufuldstændig. Paskommentarer vises ved passets logdato.'),
+    // Marc 3. nov. (keep it simple): ingen teknisk forbeholdstekst over listen.
     model.state !== 'loaded' && h('p', { role: 'status' }, model.state === 'select'
       ? 'Vælg en atlet for at se pasnoter.' : 'Pasgrundlaget er ukendt. Detaljerede logs er ikke tilgængelige for valget.'),
     model.state === 'loaded' && model.entries.length === 0 && h('p', { role: 'status' },
