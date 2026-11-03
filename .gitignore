@@ -84,3 +84,8 @@ outputs/**/*.pdf
 outputs/**/*.har
 test-results/
 playwright-report/
+
+# Proeverester fra syntetiske kopier og mutationsproever (fjernet fra historikkens traeet 3. nov. 2026)
+src/athlete/synthetic-counter-*/
+src/kandFix2-mutation-*/
+.trin1-profile-*/
