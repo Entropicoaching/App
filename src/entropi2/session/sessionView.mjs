@@ -12,7 +12,7 @@ const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer 
 // It owns only nodes under root, no storage, media, global listeners or writes.
 export function mountSession(root, latest, { clock = globalThis } = {}) {
   const doc = root.ownerDocument
-  let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, dead = false
+  let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, stepIdentity, announcement, errorStatus, dead = false
   const el = (tag, text, attrs = {}) => {
     const node = doc.createElement(tag)
     if (text != null) node.textContent = String(text)
@@ -29,7 +29,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   function tearDown() {
     stopTimer?.(); stopTimer = null; lastPause = undefined
     unbind?.(); unbind = null
-    dialog?.remove(); dialog = null
+    dialog?.remove(); dialog = null; stepIdentity = undefined
   }
   function render() {
     if (dead) return
@@ -47,15 +47,22 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       handle = el('div', '━━━', { class: 'handle', 'aria-hidden': 'true' })
       close = el('button', 'Luk pas', { type: 'button' })
       body = el('div')
-      frame.append(handle, close, body); dialog.append(frame); root.append(dialog)
+      announcement = el('p', '', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' })
+      errorStatus = el('p', '', { role: 'alert', 'aria-atomic': 'true' })
+      frame.append(handle, close, announcement, body, errorStatus); dialog.append(frame); root.append(dialog)
       unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => controller.close() })
     }
+    const nextStep = JSON.stringify([s.selection.stamp, s.key]), stepChanged = nextStep !== stepIdentity
+    stepIdentity = nextStep
+    announcement.textContent = [`${s.done} af ${s.total} sæt bekræftet`, messages[s.phase]].filter(Boolean).join('. ')
+    errorStatus.textContent = s.error
     const focused = doc.activeElement, fieldName = focused?.getAttribute('data-field')
     const position = fieldName ? [focused.selectionStart, focused.selectionEnd] : null
     const detailsOpen = [...body.querySelectorAll('details')].filter(n => n.open).map(n => n.getAttribute('data-detail'))
     const hadBodyFocus = body.contains(focused)
+    const detailFocus = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
+    const approveFocus = focused?.getAttribute('class') === 'approve'
     body.replaceChildren()
-    body.append(el('p', `${s.done} af ${s.total} sæt bekræftet`, { role: 'status', 'aria-live': 'polite' }))
     body.append(el('h1', s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
     const timer = el('p', '', { role: 'timer', 'aria-label': 'Pause mellem sæt', 'aria-live': 'off' })
     body.append(timer)
@@ -95,10 +102,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         return controller.approve(key, { ...s.input, ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, v.value])) }, s.selection.stamp)
       })
       form.append(approve)
-      if (messages[s.phase]) form.append(el('p', messages[s.phase], { role: ['error', 'parked'].includes(s.phase) ? 'alert' : 'status', 'aria-live': 'polite' }))
       body.append(form)
     } else body.append(el('h2', 'Passet er færdigt. Alle sæt er bekræftet.'))
-    if (s.error) body.append(el('p', s.error, { role: 'alert' }))
     const history = el('details', null, { class: 'card', 'data-detail': 'history' })
     history.append(el('summary', 'Hele passet og klarede sæt'))
     for (const ex of s.session.exercises || []) {
@@ -111,9 +116,12 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     body.append(history)
     for (const node of body.querySelectorAll('details')) node.open = detailsOpen.includes(node.getAttribute('data-detail'))
     const replacement = fieldName ? body.querySelector(`[data-field="${fieldName}"]`) : null
-    if (replacement && !replacement.disabled) {
+    if (stepChanged) body.querySelector('[data-heading]')?.focus()
+    else if (replacement && !replacement.disabled) {
       replacement.focus(); if (position[0] != null) replacement.setSelectionRange(...position)
-    } else if (hadBodyFocus) body.querySelector('[data-heading]')?.focus()
+    } else if (detailFocus) body.querySelector(`[data-detail="${detailFocus}"] summary`)?.focus()
+    else if (approveFocus && !body.querySelector('.approve')?.disabled) body.querySelector('.approve')?.focus()
+    else if (hadBodyFocus) body.querySelector('[data-heading]')?.focus()
   }
   render()
   return { update: () => controller.refresh(), controller,
