@@ -30,8 +30,10 @@ export function sessionInput(input = {}) {
 }
 export function defaults(p, n) {
   const input = p.logInputs?.[setKey(n)] || {}
-  return { ...input, weight: input.weight ?? n?.exercise.recommended_weight ?? '',
-    reps: input.reps ?? fixedRepsEntry(n?.exercise.reps) ?? '', rpe: input.rpe ?? '' }
+  // Marc 3. nov.: an empty stored field is not a choice; the next set starts from the plan.
+  const given = v => v != null && String(v).trim() !== ''
+  return { ...input, weight: given(input.weight) ? input.weight : n?.exercise.recommended_weight ?? '',
+    reps: given(input.reps) ? input.reps : fixedRepsEntry(n?.exercise.reps) ?? '', rpe: input.rpe ?? '' }
 }
 export function warmup(n, input) {
   const w = parseInputNumber(input?.weight)

@@ -100,7 +100,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     body.append(timer)
     // A rerender transfers the display subscriber and disposes the previous interval.
     stopTimer?.(); lastPause = p.restPause
-    stopTimer = watchRest(lastPause, n => { timer.textContent = n > 0 ? `Pause: ${n} sekunder` : ''; timer.hidden = !(n > 0) }, clock)
+    // Marc 3. nov.: one rest display only. When the rest timer shows, the planned pause line hides.
+    stopTimer = watchRest(lastPause, n => { timer.textContent = n > 0 ? `Pause: ${n} sekunder` : ''; timer.hidden = !(n > 0) || !rest.node.hidden }, clock)
     if (s.next && !summary) {
       const n = s.next, ex = n.exercise, key = s.key
       body.append(el('p', `Sæt ${n.setNumber} af ${n.totalSets}`, { class: 'muted' }))
@@ -109,15 +110,15 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         el('p', `${present(ex.recommended_weight)} kg`, { class: 'plan' }), el('p', `Intensitet: ${present(ex.intensity)}`))
       body.append(plan)
       const previous = lastSetLine(p, ex.id, clock.Date.now())
-      if (previous) body.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
-      if (ex.note) body.append(el('p', `Coachens fokus: ${ex.note}`))
+      if (previous) plan.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
+      if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
       const details = el('details', null, { class: 'card', 'data-detail': 'warmup' })
       details.append(el('summary', 'Opvarmning og teknik'))
       const steps = warmup(n, s.input)
       details.append(el('p', steps.length ? 'Beregnet opvarmning frem mod din indtastede arbejdsvægt.' : 'Ingen beregnet opvarmning ved denne vægt. Aftal eventuelt opvarmning med din coach.'))
       const list = el('ol')
       for (const step of steps) list.append(el('li', `${step.weight} kg × ${step.reps} reps`))
-      details.append(list); body.append(details)
+      details.append(list)
       const form = el('form', null, { class: 'card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
       const busy = !['idle', 'error'].includes(s.phase)
       // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
@@ -167,7 +168,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         return controller.approve(key, { ...s.input, ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, v.value])) }, s.selection.stamp)
       })
       form.append(approve)
-      body.append(form)
+      // Marc 3. nov.: the set form follows the plan directly; warmup and technique fold in below it.
+      body.append(form, details)
     }
     if (!summary) {
       const finish = el('button', 'Afslut pas', { type: 'button' })

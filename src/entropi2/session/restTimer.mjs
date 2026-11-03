@@ -8,7 +8,9 @@ export function createRestTimer(doc, clock = globalThis) {
   }
   const node = el('section', null, { class: 'e2-rest', 'aria-label': 'Hvile mellem sæt' })
   const style = el('style', `
-.e2-session .e2-rest {min-width:0;max-width:100%;overflow-wrap:anywhere;margin:20px 0}
+.e2-session .e2-rest {min-width:0;max-width:100%;overflow-wrap:anywhere;margin:8px 0;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:center}
+.e2-session .e2-rest p {margin:0}
+.e2-session .e2-rest-choose summary {min-height:44px;display:flex;align-items:center;cursor:pointer}
 .e2-session .e2-rest-options {display:flex;flex-wrap:wrap;gap:8px}
 .e2-session .e2-rest button {min-height:44px;min-width:44px}
 .e2-session .e2-rest button[aria-pressed="true"] {border-color:#c8923a}
@@ -28,7 +30,10 @@ export function createRestTimer(doc, clock = globalThis) {
     })
     options.append(b); return b
   })
-  node.append(style, el('p', 'Hvile mellem sæt'), elapsed, options, status)
+  // Marc 3. nov.: compact rest display; the optional rest choice folds in so the set form stays near the top.
+  const choose = el('details', null, { class: 'e2-rest-choose' })
+  choose.append(el('summary', 'Vælg hviletid'), options)
+  node.append(style, elapsed, choose, status)
   function stop() { if (interval != null) clock.clearInterval(interval); interval = null }
   function tick() {
     if (startedAt == null) return
