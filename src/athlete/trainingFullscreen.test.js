@@ -62,6 +62,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // Entropi 2-koblingen (flaget entropi2, slukket som standard) er et eksplicit, separat delta.
   // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
+  // Marc 3. nov.: genvejen 'Film et saet' paa Entropi 2-hjem er en del af det samme delta (onFilmSet).
   const entropi2Delta = [
     ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
     ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
@@ -116,7 +117,8 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
             setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
             programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
-            pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause} />
+            pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}
+            onFilmSet={() => { if (!athlete?.id) return; setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) }} />
         )}
         {!e2Home && tab === 'hjem' && !onHoliday`, "        {tab === 'hjem' && !onHoliday"],
     ["        {!e2Home && (!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang", "        {(!enkelOn || ['traening', 'uge', 'dagsform', 'alle'].includes(route)) && <HjemIndgang"],
