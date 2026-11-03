@@ -2,6 +2,7 @@ import { createSessionController, warmup } from './sessionModel.mjs'
 import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
 import { lastSetLine } from './sessionHistory.mjs'
+import { sessionSummary } from './sessionSummary.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
@@ -52,9 +53,11 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       frame.append(handle, close, announcement, body, errorStatus); dialog.append(frame); root.append(dialog)
       unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => controller.close() })
     }
-    const nextStep = JSON.stringify([s.selection.stamp, s.key]), stepChanged = nextStep !== stepIdentity
+    const nextStep = JSON.stringify([s.selection.stamp, s.key, s.summary]), stepChanged = nextStep !== stepIdentity
     stepIdentity = nextStep
-    announcement.textContent = [`${s.done} af ${s.total} sæt bekræftet`, messages[s.phase]].filter(Boolean).join('. ')
+    const summary = s.summary ? sessionSummary(s.session, s.logs, p, clock.Date.now()) : null
+    announcement.textContent = summary ? `${summary.done} af ${summary.total} sæt klaret`
+      : [`${s.done} af ${s.total} sæt bekræftet`, messages[s.phase]].filter(Boolean).join('. ')
     errorStatus.textContent = s.error
     const focused = doc.activeElement, fieldName = focused?.getAttribute('data-field')
     const position = fieldName ? [focused.selectionStart, focused.selectionEnd] : null
@@ -63,13 +66,38 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const detailFocus = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
     const approveFocus = focused?.getAttribute('class') === 'approve'
     body.replaceChildren()
-    body.append(el('h1', s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
+    body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
+    if (summary) {
+      const card = el('section', null, { class: 'card', 'aria-label': 'Opsummering', 'data-session-summary': '' })
+      card.append(el('p', `${summary.done} af ${summary.total} sæt klaret`))
+      const complete = summary.exercises.filter(ex => ex.total > 0 && ex.missing === 0)
+      const missing = summary.exercises.filter(ex => ex.missing > 0)
+      card.append(el('h2', 'Øvelser med alle sæt klaret'))
+      if (!complete.length) card.append(el('p', 'Ingen endnu.'))
+      for (const ex of complete) card.append(el('p', ex.name))
+      if (missing.length) {
+        card.append(el('h2', 'Øvelser med sæt tilbage'))
+        for (const ex of missing) card.append(el('p', `${ex.name}: ${ex.missing} sæt tilbage`))
+      }
+      for (const ex of summary.exercises.filter(ex => ex.total === 0)) card.append(el('p', `${ex.name}: ingen planlagte sæt`))
+      card.append(el('p', `Højeste RPE i dag: ${summary.highestRpe ?? 'ikke angivet'}`))
+      const heavy = summary.exercises.filter(ex => ex.heaviest)
+      if (heavy.length) {
+        card.append(el('h2', 'Tungeste sæt i dag'))
+        for (const ex of heavy) card.append(el('p', `${ex.name}: ${ex.heaviest}`))
+      }
+      body.append(card)
+      if (s.next) {
+        const resume = el('button', 'Fortsæt passet', { type: 'button' })
+        resume.addEventListener('click', () => controller.resume()); body.append(resume)
+      }
+    }
     const timer = el('p', '', { role: 'timer', 'aria-label': 'Pause mellem sæt', 'aria-live': 'off' })
     body.append(timer)
     // A rerender transfers the display subscriber and disposes the previous interval.
     stopTimer?.(); lastPause = p.restPause
     stopTimer = watchRest(lastPause, n => { timer.textContent = `Pause: ${n} sekunder` }, clock)
-    if (s.next) {
+    if (s.next && !summary) {
       const n = s.next, ex = n.exercise, key = s.key
       body.append(el('p', `Sæt ${n.setNumber} af ${n.totalSets}`, { class: 'muted' }))
       const plan = el('section', null, { class: 'card', 'aria-label': 'Planlagt belastning' })
@@ -103,7 +131,11 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       })
       form.append(approve)
       body.append(form)
-    } else body.append(el('h2', 'Passet er færdigt. Alle sæt er bekræftet.'))
+    }
+    if (!summary) {
+      const finish = el('button', 'Afslut pas', { type: 'button' })
+      finish.addEventListener('click', () => controller.finish()); body.append(finish)
+    }
     const history = el('details', null, { class: 'card', 'data-detail': 'history' })
     history.append(el('summary', 'Hele passet og klarede sæt'))
     for (const ex of s.session.exercises || []) {

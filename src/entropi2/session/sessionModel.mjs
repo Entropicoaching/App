@@ -41,7 +41,7 @@ export function warmup(n, input) {
 }
 
 export function createSessionController(latest, changed = () => {}) {
-  let selection = null, open = false, error = ''
+  let selection = null, open = false, finished = false, error = ''
   const writes = new Map()
   function confirmed(p) {
     return (p.exerciseLogs || []).filter(l => !l._optimistic &&
@@ -69,13 +69,14 @@ export function createSessionController(latest, changed = () => {}) {
     const next = session ? nextSetInSession(session, logs) : null
     const key = setKey(next), phase = key ? status(p, key) : 'idle'
     return { open: open && !!session, selection, session, next, key, phase, error,
+      summary: !!session && (finished || (!next && sessionSetTotal(session) > 0)),
       canStart: !!session || !!day?.next, day, input: defaults(p, next),
       done: sessionLoggedCount(session, logs), total: sessionSetTotal(session), logs }
   }
   return {
     state,
     refresh() {
-      if (selection && !resolve(latest())) { selection = null; open = false; error = '' }
+      if (selection && !resolve(latest())) { selection = null; open = false; finished = false; error = '' }
       changed()
     },
     start() {
@@ -87,14 +88,23 @@ export function createSessionController(latest, changed = () => {}) {
       open = true; error = ''; changed(); return true
     },
     close() { open = false; changed() },
+    finish() {
+      if (!state().open) return false
+      if (!finished) { finished = true; error = ''; changed() }
+      return true
+    },
+    resume() {
+      if (!state().open || !finished) return false
+      finished = false; changed(); return true
+    },
     edit(expected, name, value, stamp) {
       const p = latest(), s = state()
-      if (!s.open || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
+      if (!s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
       p.setLogInputs(prev => ({ ...prev, [expected]: { ...(prev[expected] || {}), [name]: value } }))
     },
     async approve(expected, values, stamp) {
       const p = latest(), s = state()
-      if (!s.open || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
+      if (!s.open || s.summary || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
       const input = sessionInput(values)
       if (!input) { error = 'Skriv vægt og hele reps over 0. RPE er valgfri fra 0 til 10.'; changed(); return false }
       if (typeof p.onLogSet !== 'function' || typeof p.parsePlannedRpe !== 'function') {
@@ -105,7 +115,7 @@ export function createSessionController(latest, changed = () => {}) {
       writes.set(id, write); error = ''; changed()
       // Re-read after notifications as well: no retained exercise or callback crosses a plan change.
       const current = latest(), valid = state()
-      if (!valid.open || valid.selection.stamp !== stamp || !valid.next || valid.key !== expected || !resolve(current)) {
+      if (!valid.open || valid.summary || valid.selection.stamp !== stamp || !valid.next || valid.key !== expected || !resolve(current)) {
         writes.delete(id); changed(); return false
       }
       try {
