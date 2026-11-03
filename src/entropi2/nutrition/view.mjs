@@ -113,7 +113,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     append(weighing, 'p', 'muted space', summary.latest
       ? `Seneste vægt: ${displayNumber(summary.latest.weight)} kg · ${dag(summary.latest.date)}` : 'Ingen vejninger endnu')
     if (summary.latest) append(weighing, 'p', 'muted', summary.average !== null
-      ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} vejedage (seneste 7 dage)`
+      ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} ${summary.days === 1 ? 'vejedag' : 'vejedage'} (seneste 7 dage)`
       : 'Ingen vejninger de seneste 7 dage')
     if (summary.comparison !== null) append(weighing, 'p', 'muted', summary.comparison)
     const weightConnected = typeof weightProps.logWeight === 'function' && typeof weightProps.onWeightInput === 'function'
