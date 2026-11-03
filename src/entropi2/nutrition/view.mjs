@@ -14,6 +14,8 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
   let weightPending = false, weightError = ''
+  let editing = null, removing = null
+  const intent = () => 'nutrition-' + (++sequence)
   const node = (tag, cls, text) => {
     const n = doc.createElement(tag)
     if (cls) n.className = cls
@@ -25,7 +27,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
     const b = append(parent, 'button', 'cta', text); b.type = 'button'; b.disabled = disabled
     b.addEventListener('click', fn); return b
   }
-  const action = meal => controller.log(meal, 'nutrition-' + (++sequence))
+  const action = meal => controller.log(meal, intent())
   const field = (parent, label, value, change, type = 'text') => {
     const l = append(parent, 'label', '', label), input = append(l, 'input')
     input.type = type; input.value = value; input.required = true
@@ -161,11 +163,66 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
     if (s.phase === 'load-error') button(main, 'Hent kostloggen igen', () => controller.load())
     if (s.loaded) {
       const ul = append(main, 'ul', 'list')
+      if (s.needsRefresh) {
+        append(main, 'p', 'muted', 'Hent dagbogen igen for at kunne rette eller fjerne det nye måltid.')
+        button(main, 'Hent dagbogen igen', () => controller.load(), s.pending)
+      }
       if (!s.logs.length) append(ul, 'li', 'muted', 'Ingen måltider registreret i dag.')
       for (const row of s.logs) {
         const li = append(ul, 'li')
         append(li, 'strong', '', typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid')
         append(li, 'small', '', s.invalid ? 'Næringsdata skal kontrolleres.' : `${row.kcal} kcal · ${row.protein} g protein`)
+        if (s.editableIds?.includes(row.id)) {
+          const edit = button(li, 'Ret måltid: ' + row.meal, () => {
+            if (destroyed || controller.snapshot().pending) return
+            editing = { id: row.id, intent: intent(), meal: row.meal,
+              ...Object.fromEntries(['kcal', 'protein', 'carb', 'fat'].map(k => [k, row[k] ?? ''])) }
+            removing = null; draw()
+            host.querySelectorAll('input').find(n => n.getAttribute('data-focus') === 'edit-Måltid')?.focus()
+          }, s.pending)
+          edit.setAttribute('data-focus', 'edit-' + row.id)
+        }
+        if (s.removableIds?.includes(row.id)) {
+          const remove = button(li, 'Fjern måltid: ' + row.meal, () => {
+            if (destroyed || controller.snapshot().pending) return
+            removing = { id: row.id, intent: intent() }; editing = null; draw()
+            host.querySelectorAll('button').find(n => n.getAttribute('data-focus') === 'cancel-remove')?.focus()
+          }, s.pending)
+          remove.setAttribute('data-focus', 'remove-' + row.id)
+        }
+        if (editing?.id === row.id && s.editableIds?.includes(row.id)) {
+          const draft = editing, form = append(li, 'form', 'stack space')
+          form.setAttribute('aria-label', 'Ret måltid: ' + row.meal)
+          for (const [k, label] of [['meal', 'Måltid'], ['kcal', 'Energi (kcal)'], ['protein', 'Protein (g)'], ['carb', 'Kulhydrat (g)'], ['fat', 'Fedt (g)']]) {
+            const input = field(form, label, draft[k], v => { draft[k] = v })
+            input.setAttribute('data-focus', 'edit-' + label); input.disabled = s.pending
+          }
+          append(form, 'p', 'small muted', 'Angiv kendte værdier. Brug 0 kun når værdien er kendt som nul.')
+          const save = button(form, 'Gem ændring', () => {}, s.pending); save.type = 'submit'
+          save.setAttribute('data-focus', 'save-edit')
+          button(form, 'Annuller rettelse', () => { editing = null; draw() }, s.pending)
+          form.addEventListener('submit', async e => {
+            e.preventDefault()
+            if (destroyed || editing !== draft) return
+            if (await controller.update(draft.id, { ...draft }, draft.intent)) {
+              editing = null; draw()
+              host.querySelectorAll('button').find(n => n.getAttribute('data-focus') === 'edit-' + row.id)?.focus()
+            }
+          })
+        }
+        if (removing?.id === row.id && s.removableIds?.includes(row.id)) {
+          const confirmation = removing, group = append(li, 'div', 'stack space')
+          append(group, 'p', '', 'Vil du fjerne måltidet ' + row.meal + '?')
+          button(group, 'Ja, fjern måltid', async () => {
+            if (destroyed || removing !== confirmation) return
+            if (await controller.remove(row.id, confirmation.intent, true)) { removing = null; draw() }
+          }, s.pending)
+          const cancel = button(group, 'Behold måltid', () => {
+            removing = null; draw()
+            host.querySelectorAll('button').find(n => n.getAttribute('data-focus') === 'remove-' + row.id)?.focus()
+          }, s.pending)
+          cancel.setAttribute('data-focus', 'cancel-remove')
+        }
       }
       const goals = append(main, 'section', 'card')
       append(goals, 'p', 'eyebrow', 'Dagens registreringer og mål')

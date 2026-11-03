@@ -43,6 +43,34 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     }
   } catch { favoriteError = 'Favoritter kunne ikke læses.' }
   const emit = () => { if (!disposed) for (const fn of listeners) fn() }
+  const checkedRows = result => {
+    if (!Array.isArray(result) || result.some(r => r?.athlete_id !== id || calendarTime(r?.date) === null || r.date > date)) throw new Error()
+    return result.map(r => ({ ...r })).sort((a, b) => b.date.localeCompare(a.date) || String(b.created_at || '').localeCompare(String(a.created_at || '')))
+  }
+  const mutable = row => validId(row?.id) && !row.id.startsWith('local:') && row.date === date
+    && row.athlete_id === id && !receipt({ ...row, meal: typeof row.meal === 'string' ? row.meal.trimStart() : row.meal })
+    && rows.filter(r => r.id === row.id).length === 1
+  const ready = intent => !disposed && validId(intent) && !pending && !committed.has(intent)
+    && ['ready', 'saved', 'save-error'].includes(phase)
+  const mutate = async (kind, rowId, meal, intent, confirmed) => {
+    if (!ready(intent) || typeof contracts?.[kind] !== 'function' || (kind === 'remove' && confirmed !== true)) return false
+    const row = rows.find(r => r.id === rowId)
+    if (!mutable(row)) return false
+    const value = kind === 'update' ? cleanMeal(meal) : null
+    if (kind === 'update' && !value) { message = 'Udfyld måltid og gyldige næringsværdier.'; emit(); return false }
+    const payload = { id: row.id, athlete_id: id, date, ...(value || {}) }
+    pending = intent; phase = 'saving'; message = kind === 'remove' ? 'Fjerner måltid…' : 'Gemmer ændring…'; emit()
+    try {
+      if (await contracts[kind](payload) !== true) throw new Error()
+      committed.add(intent)
+      if (disposed) return false
+      rows = kind === 'remove' ? rows.filter(r => r !== row) : rows.map(r => r === row ? { ...row, ...value } : r)
+      phase = 'saved'; message = kind === 'remove' ? 'Måltid fjernet.' : 'Måltid rettet.'; return true
+    } catch {
+      if (!disposed) { phase = 'save-error'; message = kind === 'remove' ? 'Måltidet blev ikke fjernet. Prøv igen.' : 'Ændringen blev ikke gemt. Prøv igen.' }
+      return false
+    } finally { pending = null; emit() }
+  }
   const known = () => rows.filter(r => !receipt(r) && cleanMeal(r))
   const recent = () => {
     const map = new Map()
@@ -70,6 +98,10 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         loaded: phase !== 'idle' && phase !== 'loading' && phase !== 'load-error',
         totals: finite ? totals : null, targets: { ...targets }, invalid: !finite,
         logs: todayRows.map(r => ({ ...r })),
+        removableIds: todayRows.filter(mutable).filter(() => typeof contracts?.remove === 'function').map(r => r.id),
+        editableIds: todayRows.filter(mutable).filter(() => typeof contracts?.update === 'function').map(r => r.id),
+        needsRefresh: todayRows.some(r => r.id?.startsWith?.('local:'))
+          && (typeof contracts?.remove === 'function' || typeof contracts?.update === 'function'),
         historyRows: rows.filter(r => !receipt(r)).map(r => ({ ...r })),
         yesterday: yesterday(),
         recent: list.slice(0, 20), favorites: favorites.map(r => ({ ...r })),
@@ -83,8 +115,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       try {
         const result = await contracts.load(id, date)
         if (disposed || token !== loadToken) return false
-        if (!Array.isArray(result) || result.some(r => r?.athlete_id !== id || calendarTime(r?.date) === null || r.date > date)) throw new Error()
-        rows = result.map(r => ({ ...r })).sort((a, b) => b.date.localeCompare(a.date) || String(b.created_at || '').localeCompare(String(a.created_at || '')))
+        rows = checkedRows(result)
         phase = 'ready'; emit(); return true
       } catch {
         if (disposed || token !== loadToken) return false
@@ -119,13 +150,31 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         committed.add(intent)
         if (disposed) return false
         // No optimistic totals: failures leave the diary exactly as it was.
-        rows.unshift({ ...payload, id: 'local:' + intent })
+        const existingIds = new Set(rows.map(r => r.id))
+        const localRow = { ...payload, id: 'local:' + intent }
+        rows.unshift(localRow)
+        // The existing insert returns a boolean, not its generated database ID.
+        // Resolve canonical identities before offering edit/remove on a new meal.
+        if (typeof contracts.remove === 'function' || typeof contracts.update === 'function') {
+          try {
+            const result = await contracts.load(id, date)
+            if (disposed) return false
+            // A stale read must not erase an already confirmed insert. Resolve
+            // only an unambiguous new identity with exactly the saved values.
+            const candidates = checkedRows(result).filter(r => validId(r.id) && !r.id.startsWith('local:')
+              && !existingIds.has(r.id) && r.date === date && cleanMeal(r) && mealKey(cleanMeal(r)) === mealKey(value))
+            if (candidates.length === 1) rows = rows.map(r => r === localRow ? candidates[0] : r)
+          } catch { /* Keep the confirmed local log; a later load resolves its ID. */ }
+        }
+        if (disposed) return false
         phase = 'saved'; message = 'Måltid gemt.'; return true
       } catch {
         if (!disposed) { phase = 'save-error'; message = 'Måltidet blev ikke gemt. Prøv igen.' }
         return false
       } finally { pending = null; emit() }
     },
+    update(rowId, meal, intent) { return mutate('update', rowId, meal, intent) },
+    remove(rowId, intent, confirmed = false) { return mutate('remove', rowId, null, intent, confirmed) },
     dispose() { disposed = true; loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear() },
   }
   return api
