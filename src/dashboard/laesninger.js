@@ -57,6 +57,8 @@ export function lavLaesninger({
   setWeeks, videoCoachAthletesRef, currentProgramAthleteRef,
 }) {
   const e2Gen = e2Generation(setCalendarWeeks, typeof entropi2CalendarRead === 'function')
+  // Entropi 2 runde 13: Entropi 2 seams are only passed with the flag ON; the legacy ?coachMorgen=1 path keeps its day contract.
+  const morningStartDay = { startDay: typeof entropi2CalendarRead === 'function' || typeof entropi2ReadGate === 'function' }
   // Den senest byggede læser på samme instans; en genstart efter et flagskift går altid gennem den.
   if (e2Gen) e2Gen.fetchAthletes = fetchAthletes
   const e2Started = () => e2Gen?.n
@@ -154,7 +156,7 @@ export function lavLaesninger({
       .select('athlete_id, logged_at')
       .in('athlete_id', athleteIds)
       .eq('skipped', false)
-      .order('logged_at', { ascending: false })))
+      .order('logged_at', { ascending: false }), morningStartDay))
     if (!data) return
     const lastLogMap = {}
     for (const log of data) {
@@ -405,7 +407,7 @@ export function lavLaesninger({
       .select('id,client_analysis_id,athlete_id,lift,variation,load_kg,reps_count,rep_details,metrics,bar_path,analyzed_at,created_at,source_mode,status,session_context,analysis_state,video_path')
       .eq('status', 'draft')
       .order('created_at', { ascending: false })
-      .limit(50))
+      .limit(50), morningStartDay)
     if (error) {
       setVideoReviewQueueError(error.message || 'VideoCoach-køen kunne ikke hentes')
       return false
@@ -526,7 +528,7 @@ export function lavLaesninger({
 
   async function fetchLatestMessages(athleteIds) {
     try {
-      const { data, error } = await readMorningSource(coachMorning, 'messages', athleteIds, setCoachMorningData, () => supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false }))
+      const { data, error } = await readMorningSource(coachMorning, 'messages', athleteIds, setCoachMorningData, () => supabase.from('messages').select('*').in('athlete_id', athleteIds).order('created_at', { ascending: false }), morningStartDay)
       if (error) throw error
 
       const summary = summarizeCoachMessages(data, { noteSignalEnabled: COACH_NOTE_SIGNAL_ENABLED })

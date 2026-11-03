@@ -22,6 +22,9 @@ proto.close ??= function () { this.open = false }
 proto.contains ??= function (node) { return node === this || this.children.some(c => c.contains?.(node)) }
 proto.remove ??= function () {}
 proto.removeAttribute ??= function (k) { delete this.attrs[k] }
+// Runde 13: sessionsvisningen fra samlegrenen (E2-PAS-*) slaar fokusmaal op efter render; den syntetiske vaert har ingen fokus.
+proto.querySelectorAll ??= function () { return [] }
+proto.querySelector ??= function () { return null }
 const host = () => { const h = syntheticHost(); h.classList = { add() {}, remove() {} }; return h }
 
 test('fund 1: Hjem viser den nye uge, men registrering åbnes ikke i en anden uge end forælderens', () => {
@@ -48,7 +51,7 @@ test('fund 2: en læsning startet før midnat bærer startdagen efter afslutning
     const startDay = morningDay()
     let release, data = {}
     const run = () => new Promise(resolve => { release = resolve })
-    const pending = readMorningSource(true, 'messages', ['syn-atlet'], f => { data = f(data) }, run)
+    const pending = readMorningSource(true, 'messages', ['syn-atlet'], f => { data = f(data) }, run, { startDay: true })
     mock.timers.setTime(Date.parse('2026-11-02T23:00:05Z'))
     assert.notEqual(morningDay(), startDay, 'syntetisk forudsætning: dansk midnat er passeret')
     release({ data: [], error: null })

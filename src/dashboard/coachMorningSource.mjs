@@ -22,18 +22,19 @@ export function yesterday(value = new Date()) {
   return day ? new Date(Date.parse(`${day}T00:00:00Z`) - 86400000).toISOString().slice(0, 10) : null
 }
 // Capture existing reads only. The disabled path returns the original operation untouched.
-export function readMorningSource(enabled, key, ids, setData, run) {
+export function readMorningSource(enabled, key, ids, setData, run, { startDay = false } = {}) {
   if (enabled !== true) return run()
-  // Entropi 2 runde 12: the source belongs to the day the read STARTED. A read that starts
-  // before midnight and finishes after it keeps yesterday's day and is rejected by today's model.
-  const token = {}, day = morningDay()
+  // Entropi 2 runde 12/13: with Entropi 2 ON the source belongs to the day the read STARTED, so a
+  // read across midnight keeps yesterday's day. With Entropi 2 OFF the legacy contract is kept
+  // exactly: the day is stamped when the read finishes.
+  const token = {}, started = startDay === true ? morningDay() : null
   setData(previous => ({ ...previous, [key]: { token, state: 'loading' } }))
   return (async () => {
     let result
     try { result = await run() } catch (error) { result = { data: null, error } }
     const rows = Array.isArray(result?.data) ? result.data : []
     const cap = key === 'videos' ? 50 : 1000
-    const source = { token, ids: ids?.slice() ?? null, rows, day,
+    const source = { token, ids: ids?.slice() ?? null, rows, day: startDay === true ? started : morningDay(),
       state: result?.error || !Array.isArray(result?.data) ? 'error' : rows.length >= cap ? 'partial' : 'ready' }
     setData(previous => previous[key]?.token === token ? { ...previous, [key]: source } : previous)
     return result || { data: null, error: new Error('Missing result') }
