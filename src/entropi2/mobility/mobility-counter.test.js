@@ -19,7 +19,7 @@ test('counter: year boundary, undated/flexible future and unordered weeks', () =
     const m = mobilityModel(p({ allWeeks: [next, a] }))
     assert.equal(m.selected.session.id, 'next')
     assert.equal(m.selected.date, next.sessions[0].weekday === null ? null : '2027-01-04')
-    assert.equal(m.routine.length, 2)
+    assert.equal(m.routine.length, 3)
   }
 })
 test('counter: null week or missing session identity fails closed', () => {

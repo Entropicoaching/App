@@ -19,7 +19,7 @@ const week = (id, start_date, sessions, week_number = 1) => ({ id, start_date, s
 const a = week('w1', '2026-10-19', [session('old', 0)])
 const b = week('w2', '2026-10-26', [session('next', 0)], 2)
 const input = (changes = {}) => ({ enabled: true, athlete: { id: 'a', coach_id: 'coach-a' },
-  allWeeks: [a, b], currentWeek: a, exerciseLogs: [], now: new Date('2026-10-25T12:00Z'), ...changes })
+  allWeeks: [a, b], currentWeek: a, exerciseLogs: [], storage: memory(), now: new Date('2026-10-25T12:00Z'), ...changes })
 const memory = () => {
   const values = new Map(); let writes = 0
   return { values, get writes() { return writes }, getItem: key => values.get(key) ?? null,
@@ -53,7 +53,7 @@ test('week change, rest day, both DST changes and future actual sessions reuse c
     const selected = nextMobilitySession(p)
     assert.equal(selected.date, baseline.date)
     assert.equal(selected.week.week_number, baseline.weekNumber)
-    assert.equal(mobilityModel(p).routine.length, 2)
+    assert.equal(mobilityModel(p).routine.length, 3)
   }
   const rest = week('r', '2026-10-19', [session('past', 0), session('future', 4), session('later', 6)])
   assert.equal(mobilityModel(input({ allWeeks: [rest], currentWeek: rest, now: new Date('2026-10-22T12:00Z') })).selected.session.id, 'future')
@@ -83,18 +83,18 @@ test('first supported actual main lift wins; no mixed squat and bench routine', 
   const exercises = [lift('rdl', 'Romanian deadlift'), lift('bench', 'Bench press'), lift('sq', 'Squat')]
   const p = input({ allWeeks: [a, { ...b, sessions: [session('two', 0, exercises)] }] })
   const before = JSON.stringify(p)
-  assert.deepEqual(mobilityModel(p).routine.map(e => e.id), ['bp-mob-2', 'bp-akt-3'])
+  assert.deepEqual(mobilityModel(p).routine.map(e => e.id), ['bp-mob-2', 'bp-akt-3', 'bp-akt-1'])
   assert.equal(JSON.stringify(p), before)
   for (const name of ['Deadlift', 'Sumo deadlift']) {
     const m = mobilityModel(input({ allWeeks: [a, { ...b, sessions: [session('d', 0, [lift('d', name)])] }] }))
-    assert.equal(m.lift, 'Dødløft'); assert.equal(m.routine.length, 2)
-    assert.equal(m.routine[0].id, name.startsWith('Sumo') ? 'ds-mob-1' : 'dk-mob-3')
+    assert.equal(m.lift, 'Dødløft'); assert.equal(m.routine.length, 3)
+    assert.equal(m.routine[0].id, name.startsWith('Sumo') ? 'ds-mob-2' : 'dk-mob-3')
   }
 })
 test('any session progress or skipped set suppresses routine; foreign athlete logs do not', () => {
   for (const row of [{ exercise_id: 'next', set_number: 1 }, { exercise_id: 'next', set_number: 2, skipped: true }]) {
     assert.equal(mobilityModel(input({ exerciseLogs: [row] })).routine.length, 0)
-    assert.equal(mobilityModel(input({ exerciseLogs: [{ ...row, athlete_id: 'other' }] })).routine.length, 2)
+    assert.equal(mobilityModel(input({ exerciseLogs: [{ ...row, athlete_id: 'other' }] })).routine.length, 3)
   }
 })
 test('local homework content/dose first, actual matching coach name, library follows; no writes', () => {
@@ -125,14 +125,15 @@ test('corrupt/denied storage surfaces read failure and remains unchanged; subfla
 test('actual handlers: reps, next, two side timers, drift, skip, finish, navigation and cleanup', () => {
   const root = dom(), clock = fakeClock(), calls = []
   const stop = mountMobility(root, input({ clock, onProgram: () => calls.push('program') }))
-  button(root, 'Start mobilitet').click(); assert.match(root.textContent, /1 af 2/)
+  button(root, 'Start mobilitet').click(); assert.match(root.textContent, /1 af 3/)
   assert.equal(nodes(root, 'button').some(n => n.textContent === 'Start sidetimer'), false)
-  button(root, 'Næste øvelse').click(); assert.match(root.textContent, /2 af 2/)
+  button(root, 'Næste øvelse').click(); assert.match(root.textContent, /2 af 3/)
   button(root, 'Start sidetimer').click(); button(root, 'Start sidetimer').click()
   assert.equal(clock.count, 1)
   clock.advance(45000); assert.equal(clock.count, 0); assert.match(root.textContent, /Skift side/)
   button(root, 'Start sidetimer').click(); clock.advance(30000)
   assert.match(root.textContent, /Doseringen er færdig/)
+  button(root, 'Næste øvelse').click()
   button(root, 'Afslut mobilitet').click(); assert.equal(clock.count, 0)
   button(root, 'Start mobilitet').click(); button(root, 'Næste øvelse').click()
   button(root, 'Start sidetimer').click(); const stale = clock.history.at(-1)

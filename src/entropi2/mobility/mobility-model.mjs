@@ -7,10 +7,10 @@ import { WARMUP_BASE } from '../../athlete/mobilityCatalog.mjs'
 import { focusPlan } from '../../athlete/mobilityFocus.mjs'
 import { readCoachChoices, coachCatalog } from '../../athlete/coachMobility.mjs'
 import { readHomework, homeworkLibrary, HOMEWORK_NOTICE } from '../../mobilityHomework.mjs'
+import { recommendMobilityRoutine } from './mobility-recommendation.mjs'
 
 export const DEFAULT_ENTROPI2_MOBILITY = false
 const validId = id => typeof id === 'string' && !!id.trim() && id.length <= 200
-const catalog = Object.values(WARMUP_BASE).flatMap(slots => slots.flatMap(s => s.options))
 
 // Calendar projection follows nextTrainingHome's pinned anchor rule. Selection
 // itself uses nextTrainingHome (future/rest) and findDagensPas (next actual set).
@@ -80,12 +80,10 @@ export function mobilityModel(options = {}) {
     !l?.athlete_id || l.athlete_id === athlete.id) : options.exerciseLogs
   const selected = nextMobilitySession({ ...options, exerciseLogs })
   const seed = selected ? sessionMobilityPlan(selected.pas, exerciseLogs) : []
-  let routine = seed.map(e => catalog.find(c => c.id === e.id)).filter(Boolean)
-  if (seed.length === 1) {
-    const need = { 'Bænkpres': 'Skulderposition', 'Dødløft': seed[0].id === 'ds-mob-1' ? 'Plads i sumostilling' : 'Hofteposition' }[seed[0].lift]
-    const extra = focusPlan(seed[0].lift, need, WARMUP_BASE).exercises.find(e => !routine.some(r => r.id === e.id))
-    if (extra) routine.push(extra)
-  }
+  // Keep the existing eligibility guard: no routine for stale/started/unknown
+  // sessions. Eligible sessions use the complete recommendation and catalog doses.
+  const recommendation = seed.length ? recommendMobilityRoutine(selected.session) : null
+  const routine = recommendation?.routine || []
   const problems = homeworkLibrary()
   const homework = homeworkEnabled === true ? readHomework(athlete.id, storage) : { value: null, error: null }
   const problem = problems.find(p => p.id === homework.value?.problemId)
@@ -94,8 +92,10 @@ export function mobilityModel(options = {}) {
   const choices = Object.entries(coach.choices).map(([lift, choice]) => ({ lift, need: choice.need,
     exercises: choice.ids.length ? choice.ids.map(id => coachCatalog(lift, WARMUP_BASE).find(e => e.id === id))
       : focusPlan(lift, choice.need, WARMUP_BASE).exercises }))
-  return { athleteId: athlete.id, selected, lift: seed[0]?.lift, routine,
-    minutes: routine.length ? '2–3 minutter' : null, assigned, choices, problems,
+  return { athleteId: athlete.id, selected, lift: recommendation?.lift, routine, recommendation,
+    screenDate: calendarDay(options.now),
+    routineId: routine.length ? 'recommendation:v1:' + routine.map(ex => ex.id).join(':') : null,
+    assigned, choices, problems,
     homeworkNotice: HOMEWORK_NOTICE, error: [homework.error, coach.error].filter(Boolean).join(' '),
     coachName: validId(athlete.coach_id) && options.coach?.id === athlete.coach_id &&
       typeof options.coach.name === 'string' && options.coach.name.trim() ? options.coach.name.trim() : null,

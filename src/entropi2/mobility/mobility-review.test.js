@@ -25,7 +25,7 @@ function check(p, expected, lift) {
   const dispose = mountMobility(root, p)
   assert.equal(nodes(root, 'h2')[0].textContent, `Forbered din ${lift.toLowerCase()}`)
   button(root, 'Start mobilitet').click()
-  assert.match(root.textContent, /1 af 2/)
+  assert.match(root.textContent, /1 af 3/)
   dispose()
   assert.equal(JSON.stringify(p), before)
   return selected

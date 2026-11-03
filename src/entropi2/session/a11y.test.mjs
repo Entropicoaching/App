@@ -10,10 +10,12 @@ const { mountMobility } = await import('../mobility/mobility-screen.mjs')
 test.after(() => hooks.deregister())
 
 function fixture() {
+  const values = new Map()
   const exercise = { id: 'lift', name: 'Bench press', sets: 2, reps: 3, recommended_weight: 60 }
   const week = { id: 'week', start_date: '2026-10-26', week_number: 1,
     sessions: [{ id: 'session', title: 'Pas', weekday: 3, exercises: [exercise] }] }
   return { enabled: true, athleteId: 'synthetic', athlete: { id: 'synthetic' }, allWeeks: [week], currentWeek: week,
+    storage: { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) },
     exerciseLogs: [], logInputs: {}, now: new Date('2026-10-29T12:00Z'), parsePlannedRpe: () => null,
     setLogInputs() {} }
 }
@@ -63,14 +65,15 @@ test('mobility: keyboard-native controls, step/return focus, quiet countdown and
   const dispose = mountMobility(root, { ...props, clock: c })
   assert.equal(root.ownerDocument.activeElement, undefined)
   button(root, 'Start mobilitet').click()
-  assert.match(root.ownerDocument.activeElement.textContent, /1 af 2/)
+  assert.match(root.ownerDocument.activeElement.textContent, /1 af 3/)
   for (const n of root.querySelectorAll('button, summary')) assert.ok(n.textContent.trim())
   const live = root.querySelector('[role="status"]'), timer = root.querySelector('[role="timer"]')
   assert.equal(timer.getAttribute('aria-live'), 'off'); assert.equal(live.getAttribute('aria-live'), 'polite')
   button(root, 'Start sidetimer').click(); const started = live.textContent
   c.advance(1000); assert.equal(live.textContent, started)
   c.advance(600000); assert.match(live.textContent, /Skift side|færdig/)
-  button(root, 'Næste øvelse').click(); assert.match(root.ownerDocument.activeElement.textContent, /2 af 2/)
+  button(root, 'Næste øvelse').click(); assert.match(root.ownerDocument.activeElement.textContent, /2 af 3/)
+  button(root, 'Næste øvelse').click()
   button(root, 'Afslut mobilitet').click(); assert.equal(root.ownerDocument.activeElement.textContent, 'Mobilitet')
   button(root, 'Start mobilitet').click(); button(root, 'Spring over').click()
   assert.equal(root.ownerDocument.activeElement.textContent, 'Mobilitet'); dispose(); assert.equal(c.count, 0)

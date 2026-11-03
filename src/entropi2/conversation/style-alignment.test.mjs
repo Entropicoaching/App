@@ -103,14 +103,17 @@ test('mobility alignment persists across home, running, next, skip and return', 
   root.style.textAlign = 'center'
   const week = { id: 'week', start_date: '2026-10-26', week_number: 1,
     sessions: [{ id: 'session', weekday: 3, exercises: [{ id: 'lift', name: 'Bench press', sets: 2 }] }] }
+  const values = new Map()
   const dispose = mountMobility(root, { enabled: true, athlete: { id: 'synthetic' },
+    storage: { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) },
     allWeeks: [week], currentWeek: week, exerciseLogs: [], now: new Date('2026-10-29T12:00:00Z'),
     clock, onProgram: () => calls.push('program') })
   assert.equal(root.style.textAlign, 'left')
   button(root, 'Start mobilitet').click()
-  assert.equal(root.style.textAlign, 'left'); assert.match(root.textContent, /1 af 2/)
+  assert.equal(root.style.textAlign, 'left'); assert.match(root.textContent, /1 af 3/)
   button(root, 'Næste øvelse').click()
-  assert.equal(root.style.textAlign, 'left'); assert.match(root.textContent, /2 af 2/)
+  assert.equal(root.style.textAlign, 'left'); assert.match(root.textContent, /2 af 3/)
+  button(root, 'Næste øvelse').click()
   button(root, 'Afslut mobilitet').click()
   assert.equal(root.style.textAlign, 'left')
   button(root, 'Start mobilitet').click(); button(root, 'Spring over').click()

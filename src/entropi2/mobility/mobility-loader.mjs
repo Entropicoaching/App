@@ -3,6 +3,7 @@ import { registerHooks } from 'node:module'
 // Closed exact public contracts; no generic basename fallback or backend stub.
 const edges = {
   'mobility-model.mjs': {
+    './mobility-recommendation.mjs': 'mobility-recommendation.mjs',
     '../../athlete/nextTrainingHome.mjs': 'public-nextTrainingHome.mjs',
     '../../nextSet.js': 'public-nextSet.mjs', '../../calendarDate.js': 'public-calendarDate.mjs',
     '../../athlete/kostNumbers.mjs': 'public-kostNumbers.mjs',
@@ -12,7 +13,13 @@ const edges = {
     '../../athlete/coachMobility.mjs': 'public-coachMobility.mjs',
     '../../mobilityHomework.mjs': 'public-mobilityHomework.mjs',
   },
-  'mobility-screen.mjs': { './mobility-model.mjs': 'mobility-model.mjs' },
+  'mobility-screen.mjs': { './mobility-model.mjs': 'mobility-model.mjs', './mobilityDone.mjs': 'mobilityDone.mjs' },
+  'mobilityDone.mjs': {},
+  'mobility-recommendation.mjs': {
+    '../../athlete/mobilityCatalog.mjs': 'public-mobilityCatalog.mjs',
+    '../../athlete/mobilityFocus.mjs': 'public-mobilityFocus.mjs',
+    '../../exerciseNames.js': 'public-exerciseNames.mjs', '../../warmup.js': 'public-warmup.mjs',
+  },
   'Mobility.mjs': { react: 'synthetic-react.mjs', './mobility-screen.mjs': 'mobility-screen.mjs' },
   'public-nextTrainingHome.mjs': {
     '../calendarDate.js': 'public-calendarDate.mjs', './kostNumbers.mjs': 'public-kostNumbers.mjs',
