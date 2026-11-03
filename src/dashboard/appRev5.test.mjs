@@ -1,6 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { lavIndbakkeHandlinger } from './indbakkeHandlinger.js'
+import { installNodeTestBoundary } from './nodeTestBoundary.mjs'
+const hooks = installNodeTestBoundary()
+test.after(() => hooks.deregister())
+const { lavIndbakkeHandlinger } = await import('./indbakkeHandlinger.js')
 import { filterOpenTrainingSignals, trainingSignalFingerprint, summarizeCoachMessages } from '../coachInboxState.js'
 import { sorterEfterAfvigelse, beregnUgensAfvigelse } from './afvigelse.js'
 
