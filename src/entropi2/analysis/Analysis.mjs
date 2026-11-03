@@ -33,7 +33,8 @@ export default function Analysis(props = {}) {
   h('section', { 'aria-label': 'De seneste 4 uger', 'data-analysis-history': true,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'De seneste 4 uger'),
-    h('p', { style: { lineHeight: 1.6 } }, history.message),
+    // Marc 3. nov. (keep it simple): forklaringen foldes ind under graferne.
+    h('details', { style: { marginTop: 8 } }, h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'), h('p', { style: { lineHeight: 1.6 } }, history.message)),
     ...history.lifts.map(row => {
       const max = Math.max(...row.points.map(p => p.value ?? 0), 1)
       return h('figure', { key: row.lift, 'aria-label': `${row.lift}, ugentligt e1RM`, style: { margin: '20px 0' } },
@@ -53,21 +54,22 @@ export default function Analysis(props = {}) {
   h('section', { 'aria-label': 'Dine rekorder', 'data-analysis-records': true,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'Dine rekorder'),
-    h('p', null, records.message),
+    // Marc 3. nov.: forklaringen foldes ind; rekorderne staar oeverst.
+    h('details', { style: { marginTop: 8 } }, h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'), h('p', null, records.message), h('p', { style: { lineHeight: 1.6 } }, records.note)),
     records.lifts.length > 0 && h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } },
       ...records.lifts.map(row => {
         const heavy = row.heaviest, best = row.bestEstimate
         const date = day => `${day.slice(8, 10)}.${day.slice(5, 7)}.${day.slice(0, 4)}`
         return h('li', { key: row.lift },
           h('strong', null, row.lift),
-          h('p', null, `Tungeste sæt: ${formatHistoryKg(heavy.weight)} kg × ${heavy.reps} — ${date(heavy.date)}.`),
-          h('p', null, `Bedste e1RM: ${formatHistoryKg(best.value)} kg e1RM fra ${formatHistoryKg(best.weight)} kg × ${best.reps} — ${date(best.date)}.`))
+          h('p', null, `Tungeste sæt: ${formatHistoryKg(heavy.weight)} kg × ${heavy.reps} · ${date(heavy.date)}.`),
+          h('p', null, `Bedste e1RM: ${formatHistoryKg(best.value)} kg e1RM fra ${formatHistoryKg(best.weight)} kg × ${best.reps} · ${date(best.date)}.`))
       })),
-    h('p', { style: { lineHeight: 1.6 } }, records.note)),
+    ),
   h('section', { 'aria-label': 'Volumen pr. muskelgruppe', 'data-analysis-volume': true,
     style: { padding: 12, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18', minWidth: 0 } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'Volumen pr. muskelgruppe'),
-    h('p', { style: { lineHeight: 1.6 } }, volume.message),
+    h('details', { style: { marginTop: 8 } }, h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'), h('p', { style: { lineHeight: 1.6 } }, volume.message)),
     ...volume.weeks.map(week => h('table', { key: week.start,
       style: { width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', marginBottom: 20, fontSize: '0.85rem' } },
       h('caption', { style: { textAlign: 'left', paddingBottom: 8 } }, week.label),
