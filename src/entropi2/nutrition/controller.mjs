@@ -34,6 +34,8 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   let rows = [], favorites = [], phase = 'idle', message = '', disposed = false, loadToken = 0
   let pending = null, history = false, favoriteError = '', committed = new Set()
   const listeners = new Set()
+  const selectedParts = new Set()
+  const today = () => rows.filter(r => r?.date === date && !receipt(r))
   try {
     const raw = storage?.getItem(storageKey)
     if (raw != null) {
@@ -66,6 +68,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       if (await contracts[kind](payload) !== true) throw new Error()
       committed.add(intent)
       if (disposed) return false
+      selectedParts.delete(row)
       rows = kind === 'remove' ? rows.filter(r => r !== row) : rows.map(r => r === row ? { ...row, ...value } : r)
       phase = 'saved'; message = kind === 'remove' ? 'Måltid fjernet.' : 'Måltid rettet.'; return true
     } catch {
@@ -90,7 +93,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   const api = {
     subscribe(fn) { if (disposed) return () => {}; listeners.add(fn); return () => listeners.delete(fn) },
     snapshot() {
-      const todayRows = rows.filter(r => r?.date === date && !receipt(r))
+      const todayRows = today()
       const valid = todayRows.every(r => cleanMeal(r))
       const totals = Object.fromEntries(metrics.map(k => [k, valid ? todayRows.reduce((s, r) => s + parseInputNumber(r[k]), 0) : null]))
       const finite = valid && Object.values(totals).every(Number.isFinite)
@@ -100,6 +103,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         loaded: phase !== 'idle' && phase !== 'loading' && phase !== 'load-error',
         totals: finite ? totals : null, targets: { ...targets }, invalid: !finite,
         logs: todayRows.map(r => ({ ...r })),
+        selectedParts: todayRows.flatMap((r, i) => selectedParts.has(r) ? [i] : []),
         removableIds: todayRows.filter(mutable).filter(() => typeof contracts?.remove === 'function').map(r => r.id),
         editableIds: todayRows.filter(mutable).filter(() => typeof contracts?.update === 'function').map(r => r.id),
         needsRefresh: todayRows.some(r => r.id?.startsWith?.('local:'))
@@ -118,6 +122,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         const result = await contracts.load(id, date)
         if (disposed || token !== loadToken) return false
         rows = checkedRows(result)
+        selectedParts.clear()
         phase = 'ready'; emit(); return true
       } catch {
         if (disposed || token !== loadToken) return false
@@ -137,6 +142,35 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         storage.setItem(storageKey, JSON.stringify(next))
         favorites = next; favoriteError = ''; emit(); return true
       } catch { favoriteError = 'Favoritten blev ikke gemt. Prøv igen.'; emit(); return false }
+    },
+    toggleMealPart(index) {
+      if (disposed || pending || !['ready', 'saved', 'save-error'].includes(phase) || !Number.isInteger(index)) return false
+      const row = today()[index]
+      if (!row) return false
+      if (selectedParts.has(row)) selectedParts.delete(row)
+      else selectedParts.add(row)
+      emit(); return true
+    },
+    saveOwnMeal(name) {
+      if (disposed || pending || !['ready', 'saved', 'save-error'].includes(phase)) return false
+      const fail = text => { favoriteError = text; emit(); return false }
+      const label = typeof name === 'string' ? name.replace(/[\u0000-\u001f\u007f-\u009f]/g, '').trim() : ''
+      if (!label || label.length > 60) return fail('Angiv et navn på højst 60 tegn.')
+      const parts = today().filter(r => selectedParts.has(r))
+      if (parts.length < 2) return fail('Vælg mindst to af dagens måltider.')
+      const values = parts.map(cleanMeal)
+      if (values.some(v => !v)) return fail('Kontrollér næringsværdierne i de valgte måltider. Intet blev gemt.')
+      const combined = cleanMeal({ meal: label, ...Object.fromEntries(metrics.map(k => [k, values.reduce((sum, v) => sum + v[k], 0)])) })
+      if (!combined) return fail('Kontrollér navn og næringsværdier. Intet blev gemt.')
+      // Idempotent save, including a replay when the favorite list is full.
+      if (favorites.some(v => mealKey(v) === mealKey(combined))) { favoriteError = ''; emit(); return true }
+      try {
+        if (!storage || favorites.length >= 100) throw new Error()
+        // Put the new own meal in the existing five quick favorite slots.
+        const next = [combined, ...favorites]
+        storage.setItem(storageKey, JSON.stringify(next))
+        favorites = next; favoriteError = ''; message = 'Eget måltid gemt i Favoritter.'; emit(); return true
+      } catch { return fail('Favoritten blev ikke gemt. Prøv igen.') }
     },
     // Intent tokens deduplicate replays of the same UI action, including after success.
     // A fresh deliberate click after completion gets a fresh token, so two meals are possible.
@@ -183,7 +217,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     },
     update(rowId, meal, intent) { return mutate('update', rowId, meal, intent) },
     remove(rowId, intent, confirmed = false) { return mutate('remove', rowId, null, intent, confirmed) },
-    dispose() { disposed = true; loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear() },
+    dispose() { disposed = true; loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
   }
   return api
 }
