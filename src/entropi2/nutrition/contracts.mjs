@@ -8,6 +8,19 @@ import { mealTemplateItems } from '../../athlete/kostSkabeloner.mjs'
 // The assembly supplies its existing authenticated client; tests supply a fake.
 export function nutritionContracts({ client, onReadError = () => {}, onWriteError = () => {} }) {
   return {
+    // Existing meal_logs update/delete paths, with explicit athlete/day scope.
+    // Select the affected identity: a zero-row write must not look successful.
+    async remove(row) {
+      if (!writableRow(row)) return false
+      return affected(() => client.from('meal_logs').delete()
+        .eq('id', row.id).eq('athlete_id', row.athlete_id).eq('date', row.date).select('id'), row.id)
+    },
+    async update(row) {
+      const items = mealTemplateItems([row])
+      if (!writableRow(row) || !items || isDayReceipt({ meal: items[0].meal.trimStart() })) return false
+      return affected(() => client.from('meal_logs').update(items[0])
+        .eq('id', row.id).eq('athlete_id', row.athlete_id).eq('date', row.date).select('id'), row.id)
+    },
     async load(athleteId, date) {
       if (!athleteId || calendarTime(date) === null) throw new TypeError('Ugyldig kostdato')
       const from = new Date(calendarTime(date) - 30 * 86400000).toISOString().slice(0, 10)
@@ -27,4 +40,16 @@ export function nutritionContracts({ client, onReadError = () => {}, onWriteErro
       }), onWriteError)
     },
   }
+  async function affected(run, id) {
+    let matched = false
+    const ok = await runGuardedWrite(async () => {
+      const result = await run()
+      matched = Array.isArray(result?.data) && result.data.length === 1 && result.data[0]?.id === id
+      return result
+    }, onWriteError)
+    return ok === true && matched
+  }
 }
+
+const writableRow = row => typeof row?.id === 'string' && row.id.trim() && !row.id.startsWith('local:')
+  && typeof row.athlete_id === 'string' && row.athlete_id.trim() && calendarTime(row.date) !== null
