@@ -154,7 +154,9 @@ test('render places overview above unchanged questions, escapes text and preserv
   const dom = Analysis(props({ setTab: tab => calls.push(tab), currentWeek: { ...currentWeek, block_name: '<img src=x>' } }))
   assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Ugeoversigt', 'De seneste 4 uger', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
   assert.equal(dom.querySelectorAll('[data-analysis-week]').length, 1)
-  assert.equal(dom.querySelectorAll('h3').length, 4)
+  // Marc 3. nov. (keep it simple): loeft uden data samles i een linje; alle fire loeft naevnes stadig.
+  assert.ok(dom.querySelectorAll('h3').length + dom.querySelectorAll('[data-week-lifts-none]').length >= 1)
+  for (const name of ['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft']) assert.match(dom.querySelectorAll('[data-analysis-week]')[0].textContent, new RegExp(name))
   assert.equal(dom.querySelectorAll('img').length, 0)
   dom.querySelectorAll('button').forEach(b => b.dispatchEvent({ type: 'click' }))
   assert.deepEqual(calls, ['hjem', 'hjem', 'program'])

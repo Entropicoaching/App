@@ -47,6 +47,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   }
   const title = node('h1', 'Samtale'), status = node('p'), list = node('ol'), compose = node('section')
   status.setAttribute('role', 'status'); compose.setAttribute('aria-label', 'Skriv en besked')
+  status.style.marginBottom = '12px'
   Object.assign(list.style, { textAlign: 'left', paddingInlineStart: '32px', listStylePosition: 'outside' })
   const input = node('textarea'); input.value = ''; input.maxLength = 10000
   input.setAttribute('aria-label', 'Din besked'); input.style.width = '100%'; input.style.boxSizing = 'border-box'

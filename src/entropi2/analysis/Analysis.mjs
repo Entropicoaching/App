@@ -21,10 +21,13 @@ export default function Analysis(props = {}) {
     h('p', null, week.period),
     h('p', null, week.sessions),
     h('p', null, week.sets),
-    ...week.lifts.map(row => h('section', { key: row.lift, 'aria-label': row.lift },
+    // Marc 3. nov. (keep it simple): loeft med et tal faar deres egen blok; loeft uden data samles i een linje.
+    ...week.lifts.filter(row => row.value).map(row => h('section', { key: row.lift, 'aria-label': row.lift },
       h('h3', { style: { fontSize: '1rem' } }, row.lift),
-      row.value && h('p', { 'data-week-lift-value': row.lift }, row.value),
+      h('p', { 'data-week-lift-value': row.lift }, row.value),
       h('p', { style: { lineHeight: 1.6 } }, row.message))),
+    week.lifts.some(row => !row.value) && h('p', { 'data-week-lifts-none': true, style: { lineHeight: 1.6, opacity: 0.85 } },
+      `${week.lifts.filter(row => !row.value).map(row => row.lift).join(', ')}: ${(week.lifts.find(row => !row.value).message || '').replace(/^./, c => c.toLowerCase())}`),
     // Marc 3. nov. (keep it simple): forklaringerne er foldet ind; tallene står øverst.
     h('details', { 'data-analysis-week-help': true, style: { marginTop: 8 } },
       h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'),
