@@ -1,5 +1,5 @@
 import { createElement as h, useRef, useState } from 'react'
-import { DEFAULT_ENABLED, kostMaalModel, displayNumber, positive, validTargetDraft } from './model.mjs'
+import { DEFAULT_ENABLED, kostMaalModel, displayNumber, positive, validTargetDraft, proteinSuggestion } from './model.mjs'
 
 const button = { minHeight: 44, padding: '10px 16px', font: 'inherit', border: '1px solid #777267', borderRadius: 8, color: 'inherit', background: '#282820', cursor: 'pointer' }
 const input = { boxSizing: 'border-box', width: '100%', minWidth: 0, minHeight: 44, padding: 10, font: 'inherit', color: 'inherit', background: '#141410', border: '1px solid #777267', borderRadius: 6 }
@@ -16,6 +16,7 @@ function EnabledKostMaal({ enabled = DEFAULT_ENABLED, athlete, weightLogs, today
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const model = kostMaalModel({ athlete, weightLogs, today })
+  const suggestion = proteinSuggestion(model)
   const connected = typeof startEdit === 'function' && typeof setEditData === 'function' &&
     typeof setEditing === 'function' && typeof saveEdit === 'function' && athlete?.id != null
   const locked = saving || busy
@@ -67,6 +68,13 @@ function EnabledKostMaal({ enabled = DEFAULT_ENABLED, athlete, weightLogs, today
       value('Ugegennemsnit · seneste 7 dage', model.average === null ? 'Ingen vejninger i perioden' : `${displayNumber(model.average)} kg · ${model.days} vejedage`),
       value('Trend · mod de foregående 7 dage', model.trend === null ? 'Flere vejninger nødvendige' :
         Math.abs(model.trend) < 0.05 ? 'Stabil vægt · 0 kg' : `${model.trend > 0 ? '+' : ''}${displayNumber(model.trend)} kg`)),
+    suggestion && h('p', null, `Forslag: ${displayNumber(suggestion.min)} til ${displayNumber(suggestion.max)} g protein (1,6 til 2,2 g pr. kg ud fra ${displayNumber(suggestion.weight)} kg)`),
+    active && suggestion && h('button', { type: 'button', style: button, disabled: locked || !connected,
+      onClick: () => {
+        if (!locked && !pending.current && connected && active) {
+          setError(''); setEditData(previous => ({ ...previous, protein_target: suggestion.midpoint }))
+        }
+      } }, 'Brug forslag'),
     model.day && h('p', null, `Grundlag til og med ${model.day}. Trenden er forskellen mellem to ugegennemsnit.`),
     ...model.actions.map(text => h('p', { key: text }, text)))
 }
