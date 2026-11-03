@@ -1,5 +1,5 @@
 import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
-import { startAdvice, weightSummary, displayNumber } from './startModel.mjs'
+import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 let mountSequence = 0
 
@@ -117,6 +117,13 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
           const progress = append(goals, 'progress'); progress.max = target; progress.value = Math.min(target, s.totals[key])
           progress.setAttribute('aria-label', label + ', registreret i forhold til aftalt mål')
         }
+      }
+      const remaining = remainingToday(s.totals, s.targets)
+      if (remaining) {
+        const parts = []
+        if (remaining.kcal !== null) parts.push(remaining.kcal === 0 ? 'Energi nået' : `${displayNumber(remaining.kcal)} kcal`)
+        if (remaining.protein !== null) parts.push(remaining.protein === 0 ? 'Protein nået' : `${displayNumber(remaining.protein)} g protein`)
+        append(goals, 'p', 'muted space', 'Tilbage i dag: ' + parts.join(' · '))
       }
       append(goals, 'p', 'small muted space', 'Registreringer viser ikke nødvendigvis hele dagens indtag. Ingen samlet kostvurdering.')
       const quick = (title, items, prefix) => {

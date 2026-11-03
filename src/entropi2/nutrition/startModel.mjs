@@ -3,6 +3,17 @@ import { parseInputNumber, calendarTime } from '../../athlete/kostNumbers.mjs'
 const positive = value => { const n = parseInputNumber(value); return n > 0 ? n : null }
 export const displayNumber = value => value.toLocaleString('da-DK', { maximumFractionDigits: 1 })
 
+// Snapshot totals must be known numbers, including zero. Missing targets stay absent.
+export function remainingToday(totals, targets) {
+  if (!['kcal', 'protein'].every(key => Number.isFinite(totals?.[key]) && totals[key] >= 0)) return null
+  const kcal = positive(targets?.kcal), protein = positive(targets?.protein)
+  if (kcal === null && protein === null) return null
+  return {
+    kcal: kcal === null ? null : Math.max(0, kcal - totals.kcal),
+    protein: protein === null ? null : Math.max(0, protein - totals.protein),
+  }
+}
+
 // Advice describes the agreed targets; it never infers intake from missing logs.
 export function startAdvice(targets) {
   const kcal = positive(targets.kcal), protein = positive(targets.protein)
