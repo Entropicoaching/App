@@ -1,6 +1,7 @@
 import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { historyDays } from './historyDays.mjs'
+import { weekSummary } from './weekSummary.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 let mountSequence = 0
@@ -181,6 +182,21 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
         unitSelect.value = unit; unitSelect.addEventListener('change', e => { unit = e.target.value })
         const add = button(foodForm, 'Log portion', () => {}, s.pending); add.type = 'submit'
         foodForm.addEventListener('submit', e => { e.preventDefault(); action(foodPortion(food, amount, Number(unit))) })
+      }
+      const week = weekSummary(s.historyRows, s.targets, s.date)
+      const weekly = append(main, 'section', 'card')
+      append(weekly, 'h2', '', 'Din uge')
+      append(weekly, 'p', 'muted space', 'Seneste 7 kalenderdage · til og med ' + s.date)
+      if (week.loggedDays < 2) append(weekly, 'p', 'muted space', 'For få dage til en ugeoversigt')
+      else {
+        append(weekly, 'p', 'muted space', `Loggede dage: ${week.loggedDays}`)
+        const { kcal, protein } = week.averages
+        append(weekly, 'p', 'muted space', kcal === null || protein === null
+          ? 'Gennemsnit pr. logget dag: ukendt'
+          : `Gennemsnit pr. logget dag: ${displayNumber(kcal)} kcal · ${displayNumber(protein)} g protein`)
+        if (week.protein) append(weekly, 'p', 'muted space', week.protein.reached === null
+          ? 'Protein nået: ukendt'
+          : `Protein nået ${week.protein.reached} af ${week.protein.days} dage`)
       }
       const hb = button(main, 'Se historik', () => controller.toggleHistory(), s.pending)
       hb.setAttribute('aria-expanded', String(s.history)); hb.setAttribute('data-focus', 'history')
