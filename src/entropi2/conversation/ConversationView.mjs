@@ -1,4 +1,5 @@
 import { feedbackText, videoLabel } from './conversationModel.mjs'
+import { ownQuickRepliesView } from './ownQuickRepliesView.mjs'
 
 const copenhagen = new Intl.DateTimeFormat('da-DK', {
   timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -82,10 +83,11 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     seconds: seconds.value.trim() ? Number(seconds.value) : NaN }))
   Object.assign(timed.style, { background: '#d8b16b', color: '#141410' })
   const coach = node('section'); coach.setAttribute('aria-label', 'Coachens svar')
+  const ownReplies = ownQuickRepliesView({ node, button, controller, input })
   const timeFeedback = node('div')
   Object.assign(timeFeedback.style, { display: 'flex', flexWrap: 'wrap', gap: '8px' })
   timeFeedback.append(videoSelect, seconds, timed)
-  coach.append(loadQuick, quickStatus, quick, timeFeedback)
+  coach.append(loadQuick, quickStatus, quick, ownReplies.root, timeFeedback)
   compose.append(input, send)
   Object.assign(root.style, { background: '#141410', color: '#edeae2', padding: '20px',
     fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5', colorScheme: 'dark',
@@ -100,6 +102,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   root.replaceChildren(title, status, jump, reload, list, compose)
   const unsubscribe = controller.subscribe(state => {
     if (disposed) return
+    ownReplies.update(state)
     title.textContent = state.role === 'coach' ? 'Samtale med atleten' : 'Din coach'
     const unread = state.thread.filter(item => state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach).length
     status.textContent = state.error || (state.loading ? 'Henter samtalen…' : `${unread} ulæste`)
@@ -167,5 +170,5 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
       pending.dataset.pending = state.operation.row.id; list.append(pending)
     }
   })
-  return () => { disposed = true; unsubscribe(); controller.dispose(); root.replaceChildren() }
+  return () => { disposed = true; ownReplies.dispose(); unsubscribe(); controller.dispose(); root.replaceChildren() }
 }

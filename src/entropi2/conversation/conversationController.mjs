@@ -1,10 +1,12 @@
 import { createQuickReplyUsage } from './quickReplyUsage.mjs'
+import { createOwnQuickReplies } from './ownQuickReplies.mjs'
 import { threadFor, timestampContent } from './conversationModel.mjs'
 
 export function createConversation({ enabled = false, adapters, storage, uuid = () => globalThis.crypto.randomUUID() }) {
   let active = true, generation = 0, busy = false, loading = false, error = '', draft = '', operation = null
   let messages = [], analyses = [], submissions = new Map(), loaded = false
   const usage = createQuickReplyUsage(storage)
+  const ownReplies = createOwnQuickReplies(storage)
   const listeners = new Set()
   const initial = enabled === true ? adapters.scope() : null
   const guard = () => {
@@ -100,6 +102,14 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
     templates: () => {
       const s = guard()
       return s.role === 'coach' ? usage.order(adapters.templates(), s.ownerId) : []
+    },
+    ownQuickReplies(action, index, text) {
+      const s = guard()
+      if (s.role !== 'coach' || busy || operation?.status === 'error') throw Error('Hurtigsvar er ikke tilgængelige lige nu.')
+      if (action === undefined) return ownReplies.list(s.ownerId)
+      if (action === 'save') return ownReplies.save(s.ownerId, index, text)
+      if (action === 'remove') return ownReplies.remove(s.ownerId, index)
+      throw Error('Ukendt hurtigsvarhandling.')
     },
     selectTemplate(name) {
       const s = guard()
