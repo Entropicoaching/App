@@ -1,4 +1,5 @@
 import { createElement as h, useRef, useState } from 'react'
+import { energySuggestion } from './energySuggestion.mjs'
 import { nutritionWeek } from './nutritionWeek.mjs'
 import { DEFAULT_ENABLED, kostMaalModel, displayNumber, positive, validTargetDraft, proteinSuggestion } from './model.mjs'
 
@@ -20,6 +21,7 @@ function EnabledKostMaal(props) {
   const model = kostMaalModel({ athlete, weightLogs, today })
   const suggestion = proteinSuggestion(model)
   const week = nutritionWeek(props)
+  const energy = energySuggestion(model, week)
   const connected = typeof startEdit === 'function' && typeof setEditData === 'function' &&
     typeof setEditing === 'function' && typeof saveEdit === 'function' && athlete?.id != null
   const locked = saving || busy
@@ -77,6 +79,15 @@ function EnabledKostMaal(props) {
       onClick: () => {
         if (!locked && !pending.current && connected && active) {
           setError(''); setEditData(previous => ({ ...previous, protein_target: suggestion.midpoint }))
+        }
+      } }, 'Brug forslag'),
+    h('h3', null, 'Hjælp til energimål'),
+    h('p', null, energy.text),
+    energy.kcal !== null && active && h('button', { type: 'button', style: button,
+      'aria-label': 'Brug forslag til energimål', disabled: locked || !connected,
+      onClick: () => {
+        if (!locked && !pending.current && connected && active) {
+          setError(''); setEditData(previous => ({ ...previous, kcal_target: energy.kcal }))
         }
       } }, 'Brug forslag'),
     model.day && h('p', null, `Grundlag til og med ${model.day}. Trenden er forskellen mellem to ugegennemsnit.`),

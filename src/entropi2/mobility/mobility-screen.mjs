@@ -6,6 +6,11 @@ export function mountMobility(root, options = {}) {
   const model = mobilityModel(options)
   if (!model) return () => {}
   const doc = root.ownerDocument
+  root.setAttribute('data-e2-mobility', '')
+  const styles = `[data-e2-mobility] :focus-visible {outline:3px solid #d8b16b;outline-offset:3px}
+[data-e2-mobility] summary {min-height:44px;min-width:44px;box-sizing:border-box;padding:10px 0;cursor:pointer}
+[data-e2-mobility] button {min-width:44px}
+[data-e2-mobility] button:disabled {opacity:1}`
   const clock = options.clock || { now: () => Date.now(), setInterval, clearInterval }
   let interval = null, disposed = false, generation = 0
   const listeners = []
@@ -34,12 +39,15 @@ export function mountMobility(root, options = {}) {
     element('h3', ex.name, item); element('p', ex.label, item); element('p', ex.desc, item)
   }
   const go = () => { dispose(); options.onProgram?.() }
-  function home() {
+  function home(focusHeading = true) {
     clear()
+    element('style', styles)
     Object.assign(root.style, { maxWidth: '640px', overflowWrap: 'anywhere', boxSizing: 'border-box',
       background: '#141410', color: '#edeae2', colorScheme: 'dark', padding: '20px',
       fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5', textAlign: 'left' })
-    element('h1', 'Mobilitet')
+    const heading = element('h1', 'Mobilitet')
+    heading.setAttribute('tabindex', '-1')
+    if (focusHeading) heading.focus?.()
     const before = element('section'); before.setAttribute('aria-label', 'Før næste pas')
     element('h2', model.routine.length ? `Forbered din ${model.lift.toLowerCase()}` : 'Ingen kort rutine klar', before)
     if (model.routine.length) {
@@ -75,17 +83,27 @@ export function mountMobility(root, options = {}) {
   }
   function run(step) {
     clear()
+    element('style', styles)
     const ex = model.routine[step]
-    element('h2', `${step + 1} af ${model.routine.length}`)
+    const heading = element('h2', `${step + 1} af ${model.routine.length}: ${ex.name}`)
+    heading.setAttribute('tabindex', '-1')
+    heading.focus?.()
     exercise(ex, root)
     const status = element('p', 'Følg doseringen ovenfor.')
     status.setAttribute('role', 'timer')
+    status.setAttribute('aria-label', 'Doseringstimer')
+    status.setAttribute('aria-live', 'off')
+    const announcement = element('p', '')
+    announcement.setAttribute('role', 'status')
+    announcement.setAttribute('aria-live', 'polite')
+    announcement.setAttribute('aria-atomic', 'true')
     // Timed catalog doses run one side at a time; reps have no invented clock.
     let side = 0
     if (ex.type === 'timer' && Number.isFinite(ex.duration) && ex.duration > 0) {
       const sides = ex.label.includes('pr. side') ? 2 : 1
       const startSide = () => {
         clearTimer()
+        announcement.textContent = `Timer startet for side ${side + 1} af ${sides}.`
         const token = generation, deadline = clock.now() + ex.duration * 1000
         const tick = () => {
           if (disposed || generation !== token) return
@@ -94,6 +112,7 @@ export function mountMobility(root, options = {}) {
           if (remaining === 0) {
             clearTimer(); side++
             status.textContent = side < sides ? 'Skift side og start timeren igen.' : 'Doseringen er færdig.'
+            announcement.textContent = status.textContent
             timerButton.disabled = side >= sides
           }
         }
@@ -109,6 +128,6 @@ export function mountMobility(root, options = {}) {
     if (typeof options.onProgram === 'function') action('Til programmet', go)
   }
   function dispose() { if (!disposed) { disposed = true; clear() } }
-  home()
+  home(false)
   return dispose
 }

@@ -5,11 +5,11 @@ import { mountNutrition } from './view.mjs'
 // Assembly seam only. No flag discovery, URL activation, client creation or routing.
 // Returns cleanup for a React effect or an owned DOM mount lifecycle.
 export function mountNutritionScreen(host, { entropi2 = false, athlete, date, client,
-  storage, foods, onReadError, onWriteError, onCoach, onNavigate, currentDay, onDayChanged,
+  storage, foods, clock, onReadError, onWriteError, onCoach, onNavigate, currentDay, onDayChanged,
   weightLogs, weightInput, onWeightInput, logWeight, savingWeight } = {}) {
   if (entropi2 !== true) return () => {}
   const contracts = nutritionContracts({ client, onReadError, onWriteError })
   const controller = createNutritionController({ enabled: true, athlete, date, contracts, storage, foods, currentDay, onDayChanged })
-  return mountNutrition(host, controller, { onCoach, onNavigate,
+  return mountNutrition(host, controller, { onCoach, onNavigate, clock,
     weightLogs, weightInput, onWeightInput, logWeight, savingWeight })
 }

@@ -3,6 +3,8 @@ import { calendarDaysBetween } from '../../calendarDate.js'
 import { heavyPointEvidence } from '../../dataEvidence.mjs'
 import { hasEnoughData } from '../../dataEnough.mjs'
 import { adaptPublicContract } from './publicContract.mjs'
+import { weekOverview } from './weekOverview.mjs'
+import { fourWeekHistory } from './fourWeekHistory.mjs'
 
 export const QUESTIONS = Object.freeze(['Hvor står jeg?', 'Hvad går godt?', 'Hvad arbejder vi med nu?'])
 const kg = n => String(n).replace('.', ',')
@@ -63,5 +65,5 @@ export function analysisModel(props = {}, now = new Date()) {
         : 'Dette er navnet på din aktuelle programblok, ikke en udledt årsag eller anbefaling. Følg øvelserne i programmet og log vægt og gentagelser efter hvert sæt.'
     }
   }
-  return { answers, setTab: contract.setTab }
+  return { answers, weekOverview: weekOverview(contract, now), fourWeekHistory: fourWeekHistory(contract), setTab: contract.setTab }
 }
