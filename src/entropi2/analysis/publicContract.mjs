@@ -56,7 +56,8 @@ export function adaptPublicContract(props = {}, now = new Date()) {
     return [{ ...r, weight, reps_completed: reps, logged_at: day,
       lift: view.name, liftKey: view.key, repZone: repZone(reps) }]
   })
-  return { today, rows, week, exercises,
+  return { today, rows, week, exercises, start,
+    weekLogs: localPresent ? uniqueLogs(local) : null,
     activeWeek: !!(today && start && calendarDaysBetween(start, today) >= 0 && calendarDaysBetween(start, today) < 7),
     loading: props.fremgangLoading === true,
     historyReady: Array.isArray(props.fremgangLogs),
