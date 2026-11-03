@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { kostMaalModel, civilDay, loggedDay, positive, validTargetDraft } from './model.mjs'
+import { kostMaalModel, civilDay, loggedDay, positive, validTargetDraft, proteinSuggestion } from './model.mjs'
 import { mount, nodes, one, text } from './reactFixture.mjs'
 
 const local = new URL('./', import.meta.url).href
@@ -179,4 +179,86 @@ test('375 px structural affordances: wrapping fields, full width inputs, labelle
   assert.equal(nodes(tree, n => n.type === 'label').length, 2)
   assert.ok(nodes(tree, n => n.type === 'button').every(b => b.props.style.minHeight >= 44))
   assert.ok(nodes(tree, n => n.props.style?.flexWrap === 'wrap').length >= 2)
+})
+
+
+test('protein suggestion uses positive week average before profile weight without mutation', () => {
+  assert.equal(proteinSuggestion(), null)
+  for (const value of [undefined, null, '', ' ', 0, '0', -1, NaN, Infinity, 'tekst', '80kg', {}, true]) {
+    assert.equal(proteinSuggestion({ average: value, bodyweight: value }), null)
+    assert.equal(proteinSuggestion({ average: value, bodyweight: 82.5 }).weight, 82.5)
+  }
+  assert.deepEqual(proteinSuggestion({ bodyweight: '82,5' }), { weight: 82.5, min: 130, max: 180, midpoint: 155 })
+  const basis = Object.freeze({ average: 80, bodyweight: 100 })
+  assert.deepEqual(proteinSuggestion(basis), { weight: 80, min: 130, max: 175, midpoint: 155 })
+  assert.equal(proteinSuggestion(model([row(today, 82.5)])).weight, 82.5)
+  assert.equal(proteinSuggestion(model([row('2026-09-01', 100)] )).weight, 80)
+})
+
+test('protein suggestion rounds half steps upward and handles small and large weights safely', () => {
+  assert.equal(proteinSuggestion({ bodyweight: 82.8125 }).min, 135) // 132.5 g
+  assert.equal(proteinSuggestion({ bodyweight: 12.5 }).max, 30) // 27.5 g
+  assert.deepEqual(proteinSuggestion({ bodyweight: 2 }), { weight: 2, min: 5, max: 5, midpoint: 5 })
+  assert.deepEqual(proteinSuggestion({ bodyweight: 500 }), { weight: 500, min: 800, max: 1100, midpoint: 950 })
+  for (const bodyweight of [Number.MIN_VALUE, 0.1, 1, Number.MAX_VALUE, 1e12]) assert.equal(proteinSuggestion({ bodyweight }), null)
+})
+
+test('suggestion renders below weight basis, falls back to profile and is absent without usable weight', () => {
+  const e = editor({ weightLogs: [row(today, 82.5)] })
+  const content = text(e.render())
+  assert.ok(content.indexOf('Forslag:') > content.indexOf('Vægtgrundlag'))
+  assert.match(content, /Forslag: 130 til 180 g protein \(1,6 til 2,2 g pr\. kg ud fra 82,5 kg\)/)
+  assert.equal(nodes(e.render(), n => n.type === 'button' && text(n) === 'Brug forslag').length, 0)
+  assert.match(text(editor().render()), /Forslag: 130 til 175 g protein/)
+  const missing = editor({ athlete: { id: athlete.id }, editing: 'setup' })
+  assert.doesNotMatch(text(missing.render()), /Forslag:|Brug forslag/)
+  const suggestion = nodes(e.render(), n => n.type === 'p' && text(n).startsWith('Forslag:'))[0]
+  assert.doesNotMatch(text(suggestion), /[\u2013\u2014-]/)
+})
+
+test('use suggestion changes only protein draft and requires explicit save through existing handler', async () => {
+  syntheticCalls.length = 0
+  const e = editor({ weightLogs: [row(today, 82.5)] })
+  one(e.render(), 'button', 'Rediger').props.onClick()
+  e.props.editData = { ...e.props.editData, kcal_target: '2500' }
+  const before = { ...athlete }
+  const use = one(e.render(), 'button', 'Brug forslag')
+  assert.equal(use.props.type, 'button')
+  use.props.onClick()
+  assert.deepEqual(e.props.editData, { kcal_target: '2500', protein_target: 155 })
+  assert.equal(one(e.render(), 'input', 'protein_target').props.value, 155)
+  assert.deepEqual(athlete, before)
+  assert.deepEqual(syntheticCalls, [])
+  const saved = { ...athlete, kcal_target: 2500, protein_target: 155 }
+  responses.push({ data: saved, error: null })
+  e.props.saveEdit = lavAtletHandlinger({ editData: e.props.editData, selectedAthlete: athlete,
+    setSaving: value => { e.props.saving = value }, setSelectedAthlete: () => {}, setAthletes: () => {},
+    setEditing: e.props.setEditing, showFlash: () => { throw Error('unexpected') } }).saveEdit
+  await one(e.render(), 'form').props.onSubmit(event)
+  assert.deepEqual(syntheticCalls, [{ table: 'athletes', operations: [
+    ['update', { kcal_target: 2500, protein_target: 155 }], ['eq', 'id', athlete.id], ['select'],
+  ] }])
+})
+
+test('use suggestion respects saving, missing connection and synchronous pending save guard', async () => {
+  const locked = editor({ editing: 'setup', saving: true })
+  const b = one(locked.render(), 'button', 'Brug forslag')
+  assert.equal(b.props.disabled, true); b.props.onClick(); assert.deepEqual(locked.props.editData, {})
+  let changed = 0
+  const disconnected = mount(KostMaal, { enabled: true, athlete, today, editing: 'setup', setEditData: () => changed++ }).render()
+  const d = one(disconnected, 'button', 'Brug forslag')
+  assert.equal(d.props.disabled, true); d.props.onClick(); assert.equal(changed, 0)
+  let finish
+  const e = editor({ editing: 'setup', editData: { protein_target: 160 }, saveEdit: () => new Promise(resolve => { finish = resolve }) })
+  const tree = e.render(), staleClick = one(tree, 'button', 'Brug forslag').props.onClick
+  const task = one(tree, 'form').props.onSubmit(event)
+  staleClick(); assert.equal(e.props.editData.protein_target, 160)
+  assert.equal(one(e.render(), 'button', 'Brug forslag').props.disabled, true)
+  finish(false); await task
+  one(e.render(), 'button', 'Brug forslag').props.onClick()
+  assert.equal(e.props.editData.protein_target, 155)
+  assert.doesNotMatch(text(e.render()), /ikke gemt/)
+  one(e.render(), 'button', 'Annuller').props.onClick()
+  assert.equal(e.props.editing, null)
+  assert.equal(nodes(e.render(), n => n.type === 'button' && text(n) === 'Brug forslag').length, 0)
 })
