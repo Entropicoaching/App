@@ -45,6 +45,61 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
     skip.setAttribute('href', '#' + contentId)
     const main = append(app, 'main')
     main.setAttribute('id', contentId); main.setAttribute('tabindex', '-1')
+    if (s.loaded) {
+      const fast = append(main, 'section', 'card')
+      append(fast, 'h2', '', 'Log hurtigt')
+      if (s.yesterday.length) {
+        const section = append(fast, 'section', 'space'); append(section, 'h2', '', 'Gentag i går')
+        s.yesterday.forEach((meal, i) => {
+          const row = append(section, 'div', 'space stack')
+          const b = button(row, 'Log igen: ' + meal.meal, () => action(meal), s.pending)
+          b.setAttribute('data-focus', 'yesterday-log-' + i)
+        })
+      }
+      const quick = (title, items, prefix) => {
+        if (!items.length) return
+        const section = append(fast, 'section', 'space'); append(section, 'h2', '', title)
+        items.forEach((meal, i) => {
+          const row = append(section, 'div', 'space stack')
+          const b = button(row, 'Log ' + meal.meal, () => action(meal), s.pending)
+          b.setAttribute('data-focus', prefix + '-log-' + i)
+        })
+      }
+      const favoriteKeys = new Set(s.favorites.map(mealKey))
+      quick('Favoritter', s.favorites.slice(0, 5), 'fav')
+      quick('Seneste måltider', s.recent.filter(meal => !favoriteKeys.has(mealKey(meal))).slice(0, 5), 'recent')
+      const details = append(fast, 'details', 'space'); details.setAttribute('data-focus', 'log-form')
+      append(details, 'summary', '', 'Notér et måltid')
+      const inner = append(details, 'div')
+      const form = append(inner, 'form', 'stack')
+      field(form, 'Måltid', manual.meal || '', v => { manual.meal = v })
+      for (const [k, l] of [['kcal', 'Energi (kcal)'], ['protein', 'Protein (g)'], ['carb', 'Kulhydrat (g)'], ['fat', 'Fedt (g)']]) {
+        field(form, l, manual[k] ?? '', v => { manual[k] = v })
+      }
+      append(form, 'p', 'small muted', 'Angiv kendte værdier. Brug 0 kun når værdien er kendt som nul.')
+      const save = button(form, s.pending ? 'Gemmer…' : 'Gem måltid', () => {}, s.pending); save.type = 'submit'; save.setAttribute('data-focus', 'save')
+      form.addEventListener('submit', async e => {
+        e.preventDefault()
+        if (await action({ ...manual })) { manual = {}; draw() }
+      })
+      if (s.foods.length) {
+        const foodForm = append(inner, 'form', 'stack space')
+        const foodLabel = append(foodForm, 'label', '', 'Fødevare')
+        const select = append(foodLabel, 'select'); select.value = selection
+        select.setAttribute('data-focus', 'food-choice')
+        s.foods.forEach((f, i) => { const opt = append(select, 'option', '', f.name); opt.value = String(i) })
+        select.value = selection
+        select.addEventListener('change', e => { selection = e.target.value; unit = '0'; draw() })
+        const food = s.foods[Number(selection)]
+        field(foodForm, 'Mængde', amount, v => { amount = v })
+        const unitLabel = append(foodForm, 'label', '', 'Enhed'), unitSelect = append(unitLabel, 'select')
+        unitSelect.setAttribute('data-focus', 'unit-choice')
+        unitsForFood(food).forEach((u, i) => { const opt = append(unitSelect, 'option', '', u.label); opt.value = String(i) })
+        unitSelect.value = unit; unitSelect.addEventListener('change', e => { unit = e.target.value })
+        const add = button(foodForm, 'Log portion', () => {}, s.pending); add.type = 'submit'
+        foodForm.addEventListener('submit', e => { e.preventDefault(); action(foodPortion(food, amount, Number(unit))) })
+      }
+    }
     const weighing = append(main, 'section', 'card')
     append(weighing, 'h2', '', 'Din vægt')
     const summary = weightSummary(weightProps.weightLogs, s.athleteId, s.date)
@@ -130,59 +185,21 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
         append(goals, 'p', 'muted space', 'Tilbage i dag: ' + parts.join(' · '))
       }
       append(goals, 'p', 'small muted space', 'Registreringer viser ikke nødvendigvis hele dagens indtag. Ingen samlet kostvurdering.')
-      const quick = (title, items, prefix) => {
+      // Keep the existing library controls below the diary, without duplicate log buttons.
+      const library = (title, items, prefix) => {
+        if (!items.length) return
         const section = append(main, 'section', 'card'); append(section, 'h2', '', title)
-        if (!items.length) append(section, 'p', 'muted space', 'Ingen måltider endnu.')
         items.forEach((meal, i) => {
           const row = append(section, 'div', 'space stack')
-          const b = button(row, 'Log ' + meal.meal, () => action(meal), s.pending)
-          b.setAttribute('data-focus', prefix + '-log-' + i)
-          const f = button(row, s.favoriteKeys.includes(mealKey(meal)) ? 'Fjern favorit: ' + meal.meal : 'Gem favorit: ' + meal.meal, () => controller.toggleFavorite(meal), s.pending)
-          f.setAttribute('aria-pressed', String(s.favoriteKeys.includes(mealKey(meal))))
+          const favorite = s.favoriteKeys.includes(mealKey(meal))
+          const f = button(row, favorite ? 'Fjern favorit: ' + meal.meal : 'Gem favorit: ' + meal.meal, () => controller.toggleFavorite(meal), s.pending)
+          f.setAttribute('aria-pressed', String(favorite))
           f.setAttribute('data-focus', prefix + '-favorite-' + i)
         })
       }
-      if (s.yesterday.length) {
-        const section = append(main, 'section', 'card'); append(section, 'h2', '', 'Gentag i går')
-        s.yesterday.forEach((meal, i) => {
-          const row = append(section, 'div', 'space stack')
-          const b = button(row, 'Log igen: ' + meal.meal, () => action(meal), s.pending)
-          b.setAttribute('data-focus', 'yesterday-log-' + i)
-        })
-      }
-      quick('Favoritter', s.favorites, 'fav'); quick('Seneste måltider', s.recent, 'recent')
+      library('Dine favoritter', s.favorites, 'fav')
+      library('Måltidsbibliotek', s.recent.filter(meal => !s.favoriteKeys.includes(mealKey(meal))), 'recent')
       if (s.favoriteError) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
-      const details = append(main, 'details', 'card'); details.setAttribute('data-focus', 'log-form')
-      append(details, 'summary', '', 'Notér et måltid')
-      const inner = append(details, 'div')
-      const form = append(inner, 'form', 'stack')
-      field(form, 'Måltid', manual.meal || '', v => { manual.meal = v })
-      for (const [k, l] of [['kcal', 'Energi (kcal)'], ['protein', 'Protein (g)'], ['carb', 'Kulhydrat (g)'], ['fat', 'Fedt (g)']]) {
-        field(form, l, manual[k] ?? '', v => { manual[k] = v })
-      }
-      append(form, 'p', 'small muted', 'Angiv kendte værdier. Brug 0 kun når værdien er kendt som nul.')
-      const save = button(form, s.pending ? 'Gemmer…' : 'Gem måltid', () => {}, s.pending); save.type = 'submit'; save.setAttribute('data-focus', 'save')
-      form.addEventListener('submit', async e => {
-        e.preventDefault()
-        if (await action({ ...manual })) { manual = {}; draw() }
-      })
-      if (s.foods.length) {
-        const foodForm = append(inner, 'form', 'stack space')
-        const foodLabel = append(foodForm, 'label', '', 'Fødevare')
-        const select = append(foodLabel, 'select'); select.value = selection
-        select.setAttribute('data-focus', 'food-choice')
-        s.foods.forEach((f, i) => { const opt = append(select, 'option', '', f.name); opt.value = String(i) })
-        select.value = selection
-        select.addEventListener('change', e => { selection = e.target.value; unit = '0'; draw() })
-        const food = s.foods[Number(selection)]
-        field(foodForm, 'Mængde', amount, v => { amount = v })
-        const unitLabel = append(foodForm, 'label', '', 'Enhed'), unitSelect = append(unitLabel, 'select')
-        unitSelect.setAttribute('data-focus', 'unit-choice')
-        unitsForFood(food).forEach((u, i) => { const opt = append(unitSelect, 'option', '', u.label); opt.value = String(i) })
-        unitSelect.value = unit; unitSelect.addEventListener('change', e => { unit = e.target.value })
-        const add = button(foodForm, 'Log portion', () => {}, s.pending); add.type = 'submit'
-        foodForm.addEventListener('submit', e => { e.preventDefault(); action(foodPortion(food, amount, Number(unit))) })
-      }
       const week = weekSummary(s.historyRows, s.targets, s.date)
       const weekly = append(main, 'section', 'card')
       append(weekly, 'h2', '', 'Din uge')

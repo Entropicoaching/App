@@ -18,7 +18,7 @@ function mount(options = {}, view = {}) {
   return { host, controller, cleanup }
 }
 function goalCard(host) { return host.querySelectorAll('section').find(n => n.textContent.startsWith('Dagens mål')) }
-function weightForm(host) { return host.querySelectorAll('form')[0] }
+function weightForm(host) { return find(host, 'h2', 'Din vægt').parentElement.querySelectorAll('form')[0] }
 
 test('START: actual mount shows goals and three derived tips before any log response', async () => {
   const gate = deferred()
@@ -81,16 +81,16 @@ test('START: top weight form submits once with zero arguments, controlled input,
     logWeight: (...values) => { args.push(values); return gate.promise }, weightLogs: [weight(date, 81)] })
   await flush()
   assert.match(host.textContent, /Seneste vægt: 81 kg/); assert.match(host.textContent, /Ugegennemsnit: 81 kg/)
-  const input = host.querySelectorAll('input')[0]; input.value = '82,5'; await input.fire('input')
+  const input = weightForm(host).querySelectorAll('input')[0]; input.value = '82,5'; await input.fire('input')
   assert.deepEqual(inputs, ['82,5'])
   const form = weightForm(host), first = form.fire('submit'); await form.fire('submit')
   assert.deepEqual(args, [[]]); assert.equal(find(host, 'button', 'Gemmer vægt…').disabled, true)
   gate.resolve(); await first
-  assert.equal(host.querySelectorAll('input')[0].value, '82,5') // void is not proof of success
+  assert.equal(weightForm(host).querySelectorAll('input')[0].value, '82,5') // void is not proof of success
   assert.doesNotMatch(host.textContent, /Vægt gemt/)
   cleanup.updateWeight({ weightInput: '', weightLogs: [weight(date, 82.5)] })
   assert.match(host.textContent, /Seneste vægt: 82,5 kg/)
-  assert.equal(host.querySelectorAll('input')[0].value, '')
+  assert.equal(weightForm(host).querySelectorAll('input')[0].value, '')
   cleanup()
 })
 
@@ -106,7 +106,7 @@ test('START: invalid input and saving prop prevent callback; thrown callback per
   cleanup.updateWeight({ weightInput: '80', savingWeight: true }); await weightForm(host).fire('submit'); assert.equal(calls, 0)
   cleanup.updateWeight({ savingWeight: false }); await weightForm(host).fire('submit')
   assert.equal(calls, 1); assert.match(host.textContent, /Vægten blev ikke gemt/)
-  assert.equal(host.querySelectorAll('input')[0].value, '80')
+  assert.equal(weightForm(host).querySelectorAll('input')[0].value, '80')
   await weightForm(host).fire('submit'); assert.equal(calls, 2)
 })
 

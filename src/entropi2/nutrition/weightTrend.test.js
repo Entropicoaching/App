@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { weightSummary } from './startModel.mjs'
 import { mountNutritionScreen } from './index.mjs'
-import { syntheticHost, flush } from './synthetic-dom.mjs'
+import { syntheticHost, find, flush } from './synthetic-dom.mjs'
 
 const date = '2026-11-03', athlete = { id: 'synthetic-trend' }
 const day = offset => new Date(Date.parse(date + 'T00:00:00Z') + offset * 86400000).toISOString().slice(0, 10)
@@ -63,7 +63,7 @@ test('TREND: actual synthetic DOM adds plain comparison after unchanged average,
   } }
   const cleanup = mountNutritionScreen(host, { entropi2: true, athlete, date, client, weightLogs: weeks() })
   await flush()
-  const section = host.querySelectorAll('section')[0], paragraphs = section.querySelectorAll('p')
+  const section = find(host, 'h2', 'Din vægt').parentElement, paragraphs = section.querySelectorAll('p')
   assert.equal(paragraphs[0].textContent, `Seneste vægt: 80 kg · ${date}`)
   assert.equal(paragraphs[1].textContent, 'Ugegennemsnit: 80 kg · 3 vejedage (seneste 7 dage)')
   assert.equal(paragraphs[2].textContent, '1 kg lavere end ugen før'); assert.equal(paragraphs[2].className, 'muted')
