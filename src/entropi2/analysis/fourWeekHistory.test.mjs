@@ -109,9 +109,9 @@ test('history: local undo, frozen inputs and strict OFF preserve behavior', () =
 test('history DOM: placed below overview, bars have visible text equivalents and gaps have no bars', () => {
   const dom = Analysis(props([log(dates[0], 100), log(dates[3], '102,5')]))
   const sections = dom.querySelectorAll('section')
-  assert.ok(sections.findIndex(n => n.getAttribute('data-analysis-week')) < sections.findIndex(n => n.getAttribute('data-analysis-history')))
+  assert.ok(sections.findIndex(n => n.getAttribute('data-entropi2-ugerapport')) < sections.findIndex(n => n.getAttribute('data-analysis-history')))
   const history = dom.querySelectorAll('[data-analysis-history]')[0]
-  assert.equal(history.querySelectorAll('figure').length, 4)
+  assert.equal(history.querySelectorAll('figure').length, 1)
   assert.equal(history.querySelectorAll('ol').length, 4)
   assert.equal(history.querySelectorAll('li').length, 16)
   assert.equal(history.querySelectorAll('[data-history-bar]').length, 2)

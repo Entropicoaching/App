@@ -20,9 +20,9 @@ const props = extra => ({ entropi2: true, now, currentWeek, exerciseLogs: [local
 const nodes = n => !n || typeof n !== 'object' ? [] : [n, ...[n.props?.children].flat(Infinity).flatMap(nodes)]
 const copyButton = p => nodes(RawAnalysis(p)).find(n => n.props?.['data-analysis-copy'])
 
-test('integration: actual sentence immediately follows heading; share is folded and no graph is added', () => {
+test('integration: actual sentence remains in folded analyses; share is folded and no graph is added', () => {
   const p = props(), tree = RawAnalysis(p), dom = Analysis(p)
-  assert.equal(tree.props.children[1].props.children, weekProgressSentence(p, now))
+  assert.equal(nodes(tree).find(n => n.props?.['data-analysis-progress']).props.children, weekProgressSentence(p, now))
   assert.equal(dom.querySelectorAll('[data-analysis-progress]').length, 1)
   assert.equal(dom.querySelectorAll('[data-analysis-load]').length, 1)
   assert.match(dom.querySelectorAll('[data-analysis-load]')[0].textContent, /1.000 kg tonnage.*2 gange.*ufuldstændig/)

@@ -4,65 +4,58 @@ import { formatHistoryKg } from './fourWeekHistory.mjs'
 import RpeHistoryView from './RpeHistoryView.mjs'
 import { muscleVolume, formatVolume } from './muscleVolume.mjs'
 import { analysisWeekExtras, copyAnalysisWeek } from './analysisWeekExtras.mjs'
+import WeeklyReport from './ugerapport/WeeklyReport.mjs'
+import MineData from '../athlete/minedata/MineData.mjs'
+import { analysisMineData } from './analysisMineData.mjs'
 
 // Explicit opt-in only. Assembly must supply entropi2 === true and the existing
 // AthleteView props. Importing this module changes no existing entry or flag.
 export default function Analysis(props = {}) {
   if (props.entropi2 !== true) return null
   const now = props.now ?? new Date()
-  const { answers, weekOverview: week, fourWeekHistory: history, rpeHistory, personalRecords: records, setTab } = analysisModel(props, now)
+  const { answers, fourWeekHistory: history, rpeHistory, personalRecords: records, setTab } = analysisModel(props, now)
   const volume = muscleVolume(props, now)
   const extras = analysisWeekExtras(props, now)
+  const historyMax = Math.max(1, ...history.lifts.flatMap(row => row.points.map(p => p.value ?? 0)))
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
+  WeeklyReport({ ...props, now }),
+  h('details', { 'data-analysis-mine-data': true, style: { marginBottom: 16 } },
+    h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Mine data · 4 uger'),
+    MineData(analysisMineData(props, now))),
+  h('details', { 'data-analysis-more': true },
+    h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Flere analyser'),
   extras.progress && h('p', { 'data-analysis-progress': true, style: { lineHeight: 1.6 } }, extras.progress),
-  h('section', { 'aria-label': 'Ugeoversigt', 'data-analysis-week': true,
-    style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
-    h('h2', { style: { fontSize: '1.15rem' } }, 'Ugeoversigt'),
-    h('p', null, week.period),
-    h('p', null, week.sessions),
-    h('p', null, week.sets),
-    extras.load && h('p', { 'data-analysis-load': true, style: { lineHeight: 1.6 } }, extras.load),
-    h('details', { 'data-analysis-share': true, style: { marginTop: 12, marginBottom: 12 } },
-      h('summary', { style: { cursor: 'pointer', minHeight: 44, display: 'list-item', paddingTop: 12, boxSizing: 'border-box' } }, 'Del ugen'),
-      h('pre', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', fontFamily: 'inherit', lineHeight: 1.6 } }, extras.share),
-      h('button', { type: 'button', 'data-analysis-copy': true, 'aria-live': 'polite',
-        style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
-        onClick: event => copyAnalysisWeek(event, extras.share) }, 'Del ugen')),
-    // Marc 3. nov. (keep it simple): loeft med et tal faar deres egen blok; loeft uden data samles i een linje.
-    ...week.lifts.filter(row => row.value).map(row => h('section', { key: row.lift, 'aria-label': row.lift },
-      h('h3', { style: { fontSize: '1rem' } }, row.lift),
-      h('p', { 'data-week-lift-value': row.lift }, row.value),
-      h('p', { style: { lineHeight: 1.6 } }, row.message))),
-    week.lifts.some(row => !row.value) && h('p', { 'data-week-lifts-none': true, style: { lineHeight: 1.6, opacity: 0.85 } },
-      `${week.lifts.filter(row => !row.value).map(row => row.lift).join(', ')}: ${(week.lifts.find(row => !row.value).message || '').replace(/^./, c => c.toLowerCase())}`),
-    // Marc 3. nov. (keep it simple): forklaringerne er foldet ind; tallene står øverst.
-    h('details', { 'data-analysis-week-help': true, style: { marginTop: 8 } },
-      h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'),
-      h('p', { style: { lineHeight: 1.6 } }, week.note),
-      h('p', { style: { lineHeight: 1.6 } }, 'e1RM er et beregnet enrepetitionsmaksimum. Kun tunge sæt i kendte programblokke indgår; deload, taper og aflastning er udeladt.'))),
+  extras.load && h('p', { 'data-analysis-load': true, style: { lineHeight: 1.6 } }, extras.load),
+  h('details', { 'data-analysis-share': true, style: { marginTop: 12, marginBottom: 12 } },
+    h('summary', { style: { cursor: 'pointer', minHeight: 44, display: 'list-item', paddingTop: 12, boxSizing: 'border-box' } }, 'Del ugen'),
+    h('pre', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', fontFamily: 'inherit', lineHeight: 1.6 } }, extras.share),
+    h('button', { type: 'button', 'data-analysis-copy': true, 'aria-live': 'polite',
+      style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
+      onClick: event => copyAnalysisWeek(event, extras.share) }, 'Del ugen')),
   h('section', { 'aria-label': 'De seneste 4 uger', 'data-analysis-history': true,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'De seneste 4 uger'),
     // Marc 3. nov. (keep it simple): forklaringen foldes ind under graferne.
     h('details', { style: { marginTop: 8 } }, h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'), h('p', { style: { lineHeight: 1.6 } }, history.message)),
+    h('figure', { 'aria-label': 'Styrke de seneste 4 uger', style: { margin: '20px 0' } },
+      h('figcaption', null, 'Ugentligt e1RM · fælles skala i kg'),
     ...history.lifts.map(row => {
-      const max = Math.max(...row.points.map(p => p.value ?? 0), 1)
-      return h('figure', { key: row.lift, 'aria-label': `${row.lift}, ugentligt e1RM`, style: { margin: '20px 0' } },
-        h('figcaption', { style: { fontWeight: 600 } }, row.lift),
+      return h('section', { key: row.lift, 'aria-label': `${row.lift}, ugentligt e1RM` },
+        h('h3', { style: { fontSize: '1rem', fontWeight: 600 } }, row.lift),
         h('ol', { 'aria-label': `${row.lift}: værdier pr. uge`,
           style: { display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 8, padding: 0, listStyle: 'none', fontSize: '0.85rem' } },
           ...row.points.map(point => h('li', { key: point.start },
             h('span', { 'aria-hidden': 'true', style: { display: 'flex', alignItems: 'flex-end', height: 64 } },
               point.value !== null && h('span', { 'data-history-bar': true,
-                style: { display: 'block', width: '100%', height: `${point.value / max * 100}%`, background: '#d8b16b', borderRadius: 3 } })),
+                style: { display: 'block', width: '100%', height: `${point.value / historyMax * 100}%`, background: '#d8b16b', borderRadius: 3 } })),
             h('span', { style: { display: 'block' } }, point.label),
             h('span', { 'data-history-value': true, style: { display: 'block' } },
               point.value === null ? (row.unavailable ? 'Data ikke klar' : 'Ingen data') : `${formatHistoryKg(point.value)} kg e1RM`)))),
         h('p', { 'data-history-summary': true, style: { lineHeight: 1.6 } }, row.summary))
-    })),
+    }))),
   RpeHistoryView({ history: rpeHistory }),
   h('section', { 'aria-label': 'Dine rekorder', 'data-analysis-records': true,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
@@ -100,5 +93,5 @@ export default function Analysis(props = {}) {
   h('p', { style: { lineHeight: 1.6 } }, a.message),
   typeof setTab === 'function' && h('button', { type: 'button', 'data-analysis-destination': a.destination,
     style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
-    onClick: () => setTab(a.destination) }, a.action))))
+    onClick: () => setTab(a.destination) }, a.action)))))
 }
