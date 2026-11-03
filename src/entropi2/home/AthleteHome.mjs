@@ -2,6 +2,8 @@ import { createElement as h, useEffect, useRef, useState } from 'react'
 import { homeModel, startHomeSession } from './homeModel.mjs'
 import { homeStyles as s } from './homeStyles.mjs'
 import { nutritionTodayModel } from './nutritionTodayModel.mjs'
+import { weekSummary } from './weekSummary.mjs'
+import HomeOnboarding from './HomeIntroduction.mjs'
 
 const clock = () => new Date()
 const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
@@ -13,6 +15,7 @@ const labels = { holiday: 'Du er på ferie', missing: 'Programdata mangler', 'no
 export default function AthleteHome(props) {
   const { enabled = false, athlete, messages = [], formatMsgTime, setTab, onStartSession, onFilmSet, getNow = clock } = props
   const [tick, setTick] = useState(0)
+  const headingRef = useRef(null)
   const latest = useRef(props)
   latest.current = props
   useEffect(() => {
@@ -25,6 +28,7 @@ export default function AthleteHome(props) {
   void tick
   const now = props.now ?? getNow()
   const model = homeModel({ ...props, now })
+  const weekText = weekSummary({ ...props, now })
   const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
   const target = model.target
   // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
@@ -43,8 +47,9 @@ export default function AthleteHome(props) {
     // her kun ugen, og kortet siger "I dag" eller en dansk dato.
     (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
-    h('h1', { style: s.title }, model.kind === 'done' ? (athlete?.name ? `Godt arbejde i dag, ${athlete.name}` : 'Godt arbejde i dag')
+    h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (athlete?.name ? `Godt arbejde i dag, ${athlete.name}` : 'Godt arbejde i dag')
       : athlete?.name ? `Klar til dit pas, ${athlete.name}?` : 'Klar til dit pas?'),
+    h(HomeOnboarding, { enabled, athleteId: athlete?.id, storage: props.storage, headingRef }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas' },
       h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
@@ -59,6 +64,7 @@ export default function AthleteHome(props) {
           : typeof onStartSession !== 'function' && h('p', { role: 'status', style: s.text }, 'Passtart er ikke tilgængelig endnu.'))
         : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
+    weekText && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, weekText),
     // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
     h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
       disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
