@@ -14,7 +14,8 @@ function mount({ goals = { kcal_target: 2400, protein_target: 160 }, rows = [row
   const host = syntheticHost()
   const controller = createNutritionController({ enabled: true, athlete: { id, ...goals }, date,
     contracts: contracts ?? { async load() { return rows } } })
-  const cleanup = mountNutrition(host, controller)
+  // Fixed daytime clock: the evening protein line (after 18:00) is covered by its own tests.
+  const cleanup = mountNutrition(host, controller, { clock: () => new Date(2026, 10, 3, 12, 0, 0) })
   return { host, controller, cleanup }
 }
 
