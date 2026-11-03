@@ -2,13 +2,14 @@ import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { historyDays } from './historyDays.mjs'
 import { weekSummary } from './weekSummary.mjs'
+import { mealProtein, eveningProtein } from './dailyProtein.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 let mountSequence = 0
 
 // Mount inside an assembly-owned host; load nutrition.css separately. No global DOM.
 // The caller disposes/remounts on athlete/date change. No shared entry is changed.
-export function mountNutrition(host, controller, { onCoach, onNavigate, ...weightProps } = {}) {
+export function mountNutrition(host, controller, { onCoach, onNavigate, clock = () => new Date(), ...weightProps } = {}) {
   if (!controller) return () => {} // default OFF: do not even touch the host.
   const doc = host.ownerDocument
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
@@ -162,6 +163,14 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
     if (s.phase === 'idle' || s.phase === 'loading') append(main, 'p', 'muted', 'Indlæser kostloggen…')
     if (s.phase === 'load-error') button(main, 'Hent kostloggen igen', () => controller.load())
     if (s.loaded) {
+      const distribution = append(main, 'section', 'space')
+      append(distribution, 'h3', '', 'Protein pr. måltid')
+      if (!s.logs.length) append(distribution, 'p', 'muted', 'Ingen måltider registreret i dag.')
+      else {
+        const list = append(distribution, 'ul', 'list')
+        for (const meal of mealProtein(s.logs)) append(list, 'li', '', meal.meal + ': '
+          + (meal.protein === null ? 'ukendt protein' : `${displayNumber(meal.protein)} g protein`))
+      }
       const ul = append(main, 'ul', 'list')
       if (s.needsRefresh) {
         append(main, 'p', 'muted', 'Hent dagbogen igen for at kunne rette eller fjerne det nye måltid.')
@@ -243,6 +252,8 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
         if (remaining.protein !== null) parts.push(displayNumber(remaining.protein) === '0' ? 'Protein nået' : `${displayNumber(remaining.protein)} g protein`)
         append(goals, 'p', 'muted space', 'Tilbage i dag: ' + parts.join(' · '))
       }
+      const evening = eveningProtein(remaining, clock())
+      if (evening) append(goals, 'p', 'muted space', evening)
       append(goals, 'p', 'small muted space', 'Registreringer viser ikke nødvendigvis hele dagens indtag. Ingen samlet kostvurdering.')
       // Keep the existing library controls below the diary, without duplicate log buttons.
       const library = (title, items, prefix) => {
