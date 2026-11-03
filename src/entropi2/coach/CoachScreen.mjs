@@ -38,6 +38,10 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
     h('span', { style: { ...s.avatar, display: 'inline-flex', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
     h('strong', null, row.athlete.name), h('span', { style: { display: 'block', marginTop: 8 } }, row.reason)))
   const rows = inbox ? model.inbox : model.actions
+  // Marc 3. nov.: keep it simple. Kun det vigtigste staar aabent; resten er foldet ind.
+  const fold = { marginBlock: 16, borderTop: '1px solid #414139', paddingTop: 8 }
+  const foldSummary = { cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center' }
+  const foldHeading = { display: 'inline', fontSize: 20, margin: 0 }
   return h('main', { 'data-entropi2-coach': true, style: { boxSizing: 'border-box',
     maxWidth: 900, marginInline: 'auto', padding: 20, background: '#141410', color: '#edeae2',
     fontFamily: s.wrap.fontFamily, lineHeight: 1.5, overflowWrap: 'anywhere' } },
@@ -54,21 +58,22 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
       model.state !== 'ready' && h('p', { role: 'status' }, model.hasError
         ? 'Nogle data kunne ikke hentes. Overblikket er ufuldstændigt.'
         : 'Grundlaget afventer opdatering. Ukendt antal handlinger.'),
-    !inbox && model.nutrition.size > 0 && h('section', { 'aria-label': 'Kostoverblik' },
-      h('h2', null, 'Kost'),
-      h('ul', { style: { listStyle: 'none', padding: 0 } },
-        ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,
-          style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },
-          h('strong', null, a.name), h('span', { style: { display: 'block' } }, model.nutrition.get(a.id).text))))),
     h('section', { 'aria-label': inbox ? 'Ulæste beskeder og indsendelser' : 'Atleter der kræver handling' },
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
         model.complete && h('p', null, 'Ingen handlinger i de indlæste data.')),
-    inbox ? model.rosterReady && h('section', { 'aria-label': 'Alle samtaler' },
-      h('h2', null, 'Alle samtaler'),
+    !inbox && model.nutrition.size > 0 && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
+      h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, `Kost (${model.nutrition.size})`)),
+      h('ul', { style: { listStyle: 'none', padding: 0 } },
+        ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,
+          style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },
+          h('strong', null, a.name), h('span', { style: { display: 'block' } }, model.nutrition.get(a.id).text))))),
+    inbox ? model.rosterReady && h('details', { 'aria-label': 'Alle samtaler', 'data-coach-fold': 'samtaler', style: fold },
+      h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, `Alle samtaler (${model.athletes.length})`)),
       ...model.athletes.map(a => h('button', { key: a.id, type: 'button', style: { ...button, margin: 4 },
         disabled: !available, onClick: available ? () => props.openProfile(a, 'beskeder', 'inbox') : undefined }, a.name))) :
-      h('section', { 'aria-label': 'Ugens programmer' }, h('h2', null, 'Ugens programmer'),
+      h('details', { 'aria-label': 'Ugens programmer', 'data-coach-fold': 'programmer', style: fold },
+        h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, `Ugens programmer (${model.athletes.length})`)),
         model.calendarReady && available ? h('div', null,
           // Keep uncertain athletes visible without claiming the dated subset is complete.
           unknownPrograms.length > 0 && h('ul', { style: { listStyle: 'none', padding: 0 } },
