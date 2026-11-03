@@ -52,7 +52,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       handle = el('div', '━━━', { class: 'handle', 'aria-hidden': 'true' })
       close = el('button', 'Luk pas', { type: 'button' })
       body = el('div')
-      announcement = el('p', '', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' })
+      announcement = el('p', '', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', 'data-announce': '' })
       errorStatus = el('p', '', { role: 'alert', 'aria-atomic': 'true' })
       frame.append(handle, close, rest.node, announcement, body, errorStatus); dialog.append(frame); root.append(dialog)
       unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => controller.close() })
@@ -63,6 +63,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     announcement.textContent = summary ? `${summary.done} af ${summary.total} sæt klaret`
       : [`${s.done} af ${s.total} sæt bekræftet`, messages[s.phase]].filter(Boolean).join('. ')
     errorStatus.textContent = s.error
+    // Marc 3. nov.: opsummeringskortet viser selv antallet; statuslinjen bliver kun for skaermlaesere.
+    announcement.setAttribute('data-summary', summary ? '1' : '0')
     const focused = doc.activeElement, fieldName = focused?.getAttribute('data-field')
     const position = fieldName ? [focused.selectionStart, focused.selectionEnd] : null
     const detailsOpen = [...body.querySelectorAll('details')].filter(n => n.open).map(n => n.getAttribute('data-detail'))

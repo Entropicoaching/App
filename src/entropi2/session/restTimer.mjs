@@ -9,7 +9,9 @@ export function createRestTimer(doc, clock = globalThis) {
   const node = el('section', null, { class: 'e2-rest', 'aria-label': 'Hvile mellem sæt' })
   const style = el('style', `
 .e2-session .e2-rest {min-width:0;max-width:100%;overflow-wrap:anywhere;margin:8px 0;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:center}
+.e2-session .e2-rest[hidden] {display:none}
 .e2-session .e2-rest p {margin:0}
+.e2-session [data-announce][data-summary="1"] {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .e2-session .e2-rest-choose summary {min-height:44px;display:flex;align-items:center;cursor:pointer}
 .e2-session .e2-rest-options {display:flex;flex-wrap:wrap;gap:8px}
 .e2-session .e2-rest button {min-height:44px;min-width:44px}
