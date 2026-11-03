@@ -30,6 +30,18 @@ const mean = rows => {
   return scale * Math.min(1, rows.reduce((sum, row) => sum + (row.weight / scale) / rows.length, 0))
 }
 
+// Derive a transient suggestion from the existing weight basis, without writes.
+export function proteinSuggestion({ average, bodyweight } = {}) {
+  const weight = positive(average) ?? positive(bodyweight)
+  if (weight === null) return null
+  const round = value => Math.round(value / 5) * 5
+  const min = round(weight * 1.6), max = round(weight * 2.2)
+  const midpoint = round(min / 2 + max / 2)
+  // Do not offer a draft that the existing integer target contract cannot save.
+  if (![min, max, midpoint].every(Number.isSafeInteger) || midpoint < 1 || max > 2147483647) return null
+  return { weight, min, max, midpoint }
+}
+
 // The adapter supplies already scoped rows; explicit foreign IDs are rejected too.
 // One row per Copenhagen calendar day: latest timestamp wins; equal dates use
 // the last supplied row (adapter should retain ascending creation order).

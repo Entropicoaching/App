@@ -1,6 +1,7 @@
 import { createSessionController, warmup } from './sessionModel.mjs'
 import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
+import { lastSetLine } from './sessionHistory.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
@@ -68,6 +69,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       plan.append(el('p', `${present(ex.reps)} gentagelser`, { class: 'plan' }),
         el('p', `${present(ex.recommended_weight)} kg`, { class: 'plan' }), el('p', `Intensitet: ${present(ex.intensity)}`))
       body.append(plan)
+      const previous = lastSetLine(p, ex.id, clock.Date.now())
+      if (previous) body.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
       if (ex.note) body.append(el('p', `Coachens fokus: ${ex.note}`))
       const details = el('details', null, { class: 'card', 'data-detail': 'warmup' })
       details.append(el('summary', 'Opvarmning og teknik'))
@@ -100,6 +103,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     history.append(el('summary', 'Hele passet og klarede sæt'))
     for (const ex of s.session.exercises || []) {
       history.append(el('h2', ex.name), el('p', `${ex.sets} × ${present(ex.reps)}`))
+      const previous = lastSetLine(p, ex.id, clock.Date.now())
+      if (previous) history.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
       for (const log of s.logs.filter(l => l.exercise_id === ex.id).slice().sort((a, b) => a.set_number - b.set_number))
         history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} reps, RPE ${present(log.rpe_actual)}`}`))
     }

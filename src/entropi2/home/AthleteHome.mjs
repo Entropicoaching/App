@@ -1,6 +1,7 @@
 import { createElement as h, useEffect, useRef, useState } from 'react'
 import { homeModel, startHomeSession } from './homeModel.mjs'
 import { homeStyles as s } from './homeStyles.mjs'
+import { nutritionTodayModel } from './nutritionTodayModel.mjs'
 
 const clock = () => new Date()
 const labels = { holiday: 'Du er på ferie', missing: 'Programdata mangler', 'no-program': 'Intet program endnu',
@@ -22,6 +23,7 @@ export default function AthleteHome(props) {
   void tick
   const now = props.now ?? getNow()
   const model = homeModel({ ...props, now })
+  const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
   const target = model.target
   const coach = [...messages].reverse().find(m => m.sender_role === 'coach')
   const go = route => () => latest.current.setTab?.(route)
@@ -47,6 +49,9 @@ export default function AthleteHome(props) {
         typeof onStartSession !== 'function' && h('p', { role: 'status', style: s.text }, 'Passtart er ikke tilgængelig endnu.'))
         : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
+    nutrition && h('button', { type: 'button',
+      style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left' },
+      disabled: typeof setTab !== 'function', onClick: go('kost') }, nutrition.text),
     h('section', { style: s.card, 'aria-label': 'Fra din coach' },
       h('p', { style: s.eyebrow }, 'Fra din coach'),
       h('h2', { style: s.heading }, 'Seneste besked'),

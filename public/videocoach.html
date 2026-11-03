@@ -10637,6 +10637,12 @@ function saveRec(mime, mic) {
   downloadLink.textContent = `💾 Hent færdig video (.${ext})`;
   downloadLink.hidden = false;
 }
+// Klassisk scope: kaldes af vcV3 feedback- og gemmefunktionerne ovenfor; modulscriptet ser den ogsaa.
+function appData2VideoCurrent(path, athleteId, id) {
+  if (path && !vcV3AnalysisIds.has(path)) vcV3AnalysisIds.set(path, id || vcV3Uuid());
+  return { id: id || (path && vcV3AnalysisIds.get(path)), athlete_id: athleteId,
+    engine_version: 'videocoach-3.1.0', tracker_version: 'multipoint-clean-rebuild-v3-2026-08-15' };
+}
 </script>
 
 <script type="module">
@@ -10654,11 +10660,6 @@ bindInstantSend({
 });
 mountUploadFilmGuide(document, () => window.localStorage);
 
-function appData2VideoCurrent(path, athleteId, id) {
-  if (path && !vcV3AnalysisIds.has(path)) vcV3AnalysisIds.set(path, id || vcV3Uuid());
-  return { id: id || (path && vcV3AnalysisIds.get(path)), athlete_id: athleteId,
-    engine_version: 'videocoach-3.1.0', tracker_version: 'multipoint-clean-rebuild-v3-2026-08-15' };
-}
 AppData2Video.mountQualityControls(document, () => {
   const path = latestCleanPath() || strokes.filter(s => s.type === 'path' && s.vel).pop();
   if (!path) return null;
