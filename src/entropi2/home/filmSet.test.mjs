@@ -21,3 +21,11 @@ test('AthleteView wires the shortcut to the existing instant videocoach flow', (
   const view = readFileSync(new URL('../../AthleteView.jsx', import.meta.url), 'utf8')
   assert.match(view, /onFilmSet=\{\(\) => \{ if \(!athlete\?\.id\) return; setAthleteVideoCoachInstant\(true\); setAthleteVideoCoachOpen\(true\) \}\}/)
 })
+
+test('home shows the date once: only the week in the eyebrow and "I dag" in the pass card', () => {
+  const week = { id: 'w1', athlete_id: 'a', week_number: 1, start_date: '2026-11-03',
+    sessions: [{ id: 's1', title: 'Dag 1', weekday: 1, exercises: [{ id: 'e1', name: 'Squat', sets: 4 }] }] }
+  const html = renderToStaticMarkup(createElement(AthleteHome, props({ allWeeks: [week], currentWeek: week, exerciseLogs: [], onStartSession() {} })))
+  assert.ok(html.includes('>Uge 1<'))
+  assert.doesNotMatch(html, /2026-11-03/)
+})

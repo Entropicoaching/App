@@ -4,6 +4,8 @@ import { homeStyles as s } from './homeStyles.mjs'
 import { nutritionTodayModel } from './nutritionTodayModel.mjs'
 
 const clock = () => new Date()
+const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
+const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${MONTHS[Number(m[2]) - 1]}` : String(iso) }
 const labels = { holiday: 'Du er på ferie', missing: 'Programdata mangler', 'no-program': 'Intet program endnu',
   'no-next': 'Intet kommende pas planlagt', done: 'Dagens pas er klaret' }
 
@@ -37,13 +39,15 @@ export default function AthleteHome(props) {
   const link = (route, text) => h('button', { key: route, type: 'button', style: s.secondary,
     disabled: typeof setTab !== 'function', onClick: go(route) }, text)
   return h('main', { style: s.page, 'aria-label': 'Hjem', 'data-entropi2-home': '' },
-    h('p', { style: s.eyebrow }, `${model.today || 'Dato mangler'}${(target?.week || props.currentWeek) ? ` · uge ${(target?.week || props.currentWeek).week_number ?? 'ikke angivet'}` : ''}`),
+    // Marc 3. nov.: datoen stod tre gange (topbjaelke, her og i kortet). Topbjaelken viser datoen;
+    // her kun ugen, og kortet siger "I dag" eller en dansk dato.
+    (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
     h('h1', { style: s.title }, athlete?.name ? `Klar til dit pas, ${athlete.name}?` : 'Klar til dit pas?'),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas' },
       h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
       target ? h('div', null,
-        h('p', { style: s.text }, model.date || `Dag ikke fastlagt · uge ${target.week.week_number ?? 'ikke angivet'}`),
+        h('p', { style: s.text }, model.date ? (model.date === model.today ? 'I dag' : danishDate(model.date)) : `Dag ikke fastlagt · uge ${target.week.week_number ?? 'ikke angivet'}`),
         h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...target.session.exercises.map(e => h('li', { key: e.id }, e.name || 'Øvelse uden navn'))),
         h('p', { style: s.text }, model.logged == null ? 'Sætstatus hentes, når passet åbnes.' : `${model.logged} af ${model.total} sæt klaret`),
         ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)),
