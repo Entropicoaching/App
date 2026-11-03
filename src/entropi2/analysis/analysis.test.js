@@ -24,10 +24,10 @@ test('real imports use the existing formula and four-day D18 gate', () => {
   assert.equal(hasEnoughData('D18', { rows: [] }), false)
   assert.deepEqual(values(), ['127 kg e1RM', '+17 kg e1RM'])
 })
-test('synthetic DOM renders exactly three questions and one value per answer', () => {
+test('synthetic DOM preserves three questions below the week overview and one value per answer', () => {
   const dom = Analysis(props())
   assert.ok(dom instanceof Element)
-  assert.deepEqual(dom.querySelectorAll('h2').map(e => e.textContent), QUESTIONS)
+  assert.deepEqual(dom.querySelectorAll('h2').map(e => e.textContent), ['Ugeoversigt', ...QUESTIONS])
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 2)
   assert.equal(dom.querySelectorAll('svg').length, 0)
   assert.equal(dom.querySelectorAll('button').length, 0)
