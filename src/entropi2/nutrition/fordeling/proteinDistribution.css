@@ -1,0 +1,16 @@
+.e2-protein-fordeling {
+  color: inherit;
+  max-width: 42rem;
+  overflow-wrap: anywhere;
+}
+.e2-protein-fordeling ul {
+  list-style: none;
+  padding: 0;
+}
+.e2-protein-fordeling li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .25rem 1rem;
+  padding: .5rem 0;
+}
