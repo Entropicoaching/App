@@ -10,7 +10,9 @@ export function mountMobility(root, options = {}) {
   const styles = `[data-e2-mobility] :focus-visible {outline:3px solid #d8b16b;outline-offset:3px}
 [data-e2-mobility] summary {min-height:44px;min-width:44px;box-sizing:border-box;padding:10px 0;cursor:pointer}
 [data-e2-mobility] button {min-width:44px}
-[data-e2-mobility] button:disabled {opacity:1}`
+[data-e2-mobility] button:disabled {opacity:1}
+[data-e2-mobility] section {margin-top:28px}
+[data-e2-mobility] section[hidden] {display:none}`
   const clock = options.clock || { now: () => Date.now(), setInterval, clearInterval }
   let interval = null, disposed = false, generation = 0
   const listeners = []
@@ -60,14 +62,16 @@ export function mountMobility(root, options = {}) {
         run(0)
       }
       Object.assign(action('Start mobilitet', start, before).style, { background: '#d8b16b', color: '#141410' })
-    } else element('p', 'Næste pas eller et kendt hovedløft med sæt mangler, eller passet er allerede påbegyndt.', before)
+    } else element('p', 'Der er ingen kort rutine før næste pas lige nu. Find øvelser efter behov herunder.', before)
     if (typeof options.onProgram === 'function') action('Til programmet', go, before)
-    const coach = element('section'); element('h2', 'Hjemmeøvelser fra din coach', coach)
-    element('p', model.homeworkNotice, coach)
+    // Marc 3. nov. (keep it simple): hjemmeoevelser vises kun, naar der er nogen; ingen teknisk lagringstekst.
+    const coach = element('section'); coach.hidden = !(model.assigned.length || model.choices.length || model.error)
+    element('h2', 'Hjemmeøvelser fra din coach', coach)
     if (model.assigned.length) {
       element('p', model.homeworkAuthor, coach)
       model.assigned.forEach(ex => exercise(ex, coach))
-    } else element('p', 'Ingen lokale hjemmeøvelser gemt.', coach)
+      element('p', 'Gemt på denne enhed.', coach)
+    }
     for (const choice of model.choices) {
       element('p', model.coachName ? `Valgt af ${model.coachName}` : 'Coachens navn er ikke tilgængeligt.', coach)
       element('h3', `${choice.lift}: ${choice.need}`, coach)
