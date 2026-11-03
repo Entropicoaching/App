@@ -9730,9 +9730,10 @@ function say(txt) {
   banner.textContent = txt;
   banner.hidden = !txt;
   delete banner.dataset.kvittering;
-  // Marc 3. nov.: paa smal coachskaerm maa guiden ikke blive staaende over videoen.
+  // Marc 3. nov.: guiden maa aldrig ligge over videoen. Paa coachskaermen faar den sit
+  // eget baand, og videoen flyttes, saa der er plads (se vcCoachFitStage).
   clearTimeout(sayTimer);
-  if (txt && COACHWEB && innerWidth < 900) sayTimer = setTimeout(() => { if (banner.textContent === txt) banner.hidden = true; }, 7000);
+  if (COACHWEB) vcCoachFitStage();
 }
 // MOBIL-FIX: bjælkerne er fixed med HÅRDKODEDE afstande - når footeren
 // ombryder til flere rækker på smalle skærme, lå tidslinjen oven i knapperne.
@@ -9746,8 +9747,47 @@ function layoutBars() {
   const mb = document.getElementById('moreBar');
   if (mb && !mb.hidden)
     mb.style.bottom = (base + 10 + row.offsetHeight + 8) + 'px';
+  if (COACHWEB) vcCoachFitStage();
+}
+// Marc 3. nov. (runde 3): paa coachskaermen maa intet ligge over videoen. Videoens
+// flade (#stage) laegges mellem de faste bjaelker, maalt paa de rigtige elementer:
+// over den: systembjaelken og guiden; under den: tidslinjen, vaerktoejsbakken, HUD og foden.
+function vcCoachFitStage() {
+  if (!COACHWEB) return;
+  const stage = document.getElementById('stage');
+  if (!stage || getComputedStyle(stage).position !== 'fixed') return;
+  const shown = e => e && !e.hidden && getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().height > 1;
+  const bar = document.getElementById('vcSystemBar');
+  let top = shown(bar) ? bar.getBoundingClientRect().bottom : 0;
+  const narrow = innerWidth < 900;
+  if (narrow && shown(banner)) {
+    banner.style.setProperty('top', (top + 4) + 'px', 'important');
+    banner.style.setProperty('bottom', 'auto', 'important');
+    banner.style.setProperty('transform', 'none', 'important');
+    banner.style.setProperty('left', '8px', 'important');
+    banner.style.setProperty('right', '8px', 'important');
+    banner.style.setProperty('max-width', 'none', 'important');
+    top = banner.getBoundingClientRect().bottom;
+  } else if (narrow) {
+    for (const k of ['top', 'bottom', 'transform', 'left', 'right', 'max-width']) banner.style.removeProperty(k);
+  }
+  const sr = stage.getBoundingClientRect();
+  let bottom = innerHeight;
+  for (const id of ['scrubRow', 'moreBar', 'barPathHUD']) {
+    const e = document.getElementById(id); if (!shown(e)) continue;
+    const r = e.getBoundingClientRect();
+    if (r.right <= sr.left || r.left >= sr.right) continue;
+    if (r.top > innerHeight * 0.35) bottom = Math.min(bottom, r.top);
+    else top = Math.max(top, r.bottom);
+  }
+  const foot = document.querySelector('footer');
+  if (shown(foot)) bottom = Math.min(bottom, foot.getBoundingClientRect().top);
+  stage.style.setProperty('top', Math.ceil(top + 4) + 'px', 'important');
+  stage.style.setProperty('bottom', Math.ceil(innerHeight - bottom + 4) + 'px', 'important');
 }
 window.addEventListener('resize', () => { layoutBars(); reflowFit(); });
+// Bjaelkerne aendrer hoejde, naar vaerktoejer og HUD aabnes; hold videoens flade fri hele tiden.
+if (COACHWEB) { setInterval(vcCoachFitStage, 400); window.addEventListener('resize', vcCoachFitStage); }
 window.addEventListener('orientationchange', () => setTimeout(() => { layoutBars(); reflowFit(); }, 150));
 if (SLIM) {
   document.body.classList.add('slim');

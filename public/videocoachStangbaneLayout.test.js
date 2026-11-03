@@ -14,10 +14,22 @@ test('coach guide banner sits outside the top of the video and the timeline abov
   assert.match(html, /body\.coachweb #timeLabel \{ white-space:nowrap;/)
 })
 
-test('guide text hides itself after 7 s on a narrow coach screen and still clears like before', () => {
+// Runde 3 (Marcs test): guiden maa aldrig ligge over videoen, heller ikke i 7 s. Den
+// skjules ikke laengere automatisk; i stedet faar den sit eget baand, og videoens flade
+// flyttes. Den faktiske maaling (getBoundingClientRect, 390 og 1280 px) ligger i
+// Hara/worktrees/_e2-logs/samlet-r3/.
+test('guide text keeps its own band: say() refits the coach stage instead of hiding after 7 s', () => {
   const say = html.slice(html.indexOf('let sayTimer = 0;'), html.indexOf('// MOBIL-FIX: bjælkerne'))
   assert.ok(say.includes('function say(txt)'))
   assert.ok(say.includes('banner.hidden = !txt;'))
-  assert.match(say, /COACHWEB && innerWidth < 900\) sayTimer = setTimeout\([^)]*\) => \{ if \(banner\.textContent === txt\) banner\.hidden = true; \}, 7000\)/)
-  assert.ok(say.includes('clearTimeout(sayTimer);'))
+  assert.ok(say.includes('if (COACHWEB) vcCoachFitStage();'))
+  assert.ok(!/7000\)/.test(say))
+})
+
+test('coach stage is fitted between the fixed bars, measured on the real elements', () => {
+  const fit = html.slice(html.indexOf('function vcCoachFitStage()'), html.indexOf("window.addEventListener('resize', () => { layoutBars(); reflowFit(); });"))
+  for (const id of ['vcSystemBar', 'scrubRow', 'moreBar', 'barPathHUD']) assert.ok(fit.includes(id), id)
+  assert.match(fit, /stage\.style\.setProperty\('top'/)
+  assert.match(fit, /stage\.style\.setProperty\('bottom'/)
+  assert.match(html, /if \(COACHWEB\) \{ setInterval\(vcCoachFitStage, 400\);/)
 })
