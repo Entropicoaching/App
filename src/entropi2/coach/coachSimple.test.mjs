@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import WeeklyReport from './WeeklyReport.mjs'
 import { CoachView } from './CoachScreen.mjs'
 
 // Marc 3. nov.: "lidt mere keep it simple paa front skaermen". Kun det vigtigste staar aabent.
@@ -20,9 +21,10 @@ test('coach home: "Kræver dit blik" comes first; kost and programmes are folded
   const order = all.map(label).filter(Boolean)
   assert.ok(order.indexOf('Atleter der kræver handling') < order.indexOf('Kostoverblik'))
   const folds = all.filter(n => n.type === 'details').map(n => n.props['data-coach-fold'])
+  // E2-KOBL-COACH1: atletliste og ugerapport er nye lukkede folde.
   // Runde 3: passenes noter (E2-COACH-PASNOTER1) er også foldet ind under det vigtigste.
   // E2-COACH-PROGRAMSLUT1: programmer der slutter er sin egen fold (bevidst tilføjelse).
-  assert.deepEqual(folds, ['kost', 'noter', 'programslut', 'programmer'])
+  assert.deepEqual(folds, ['atleter', 'ugerapport', 'kost', 'noter', 'programslut', 'programmer'])
   for (const d of all.filter(n => n.type === 'details')) assert.notEqual(d.props.open, true)
   assert.ok(all.some(n => n.props?.['data-coach-nutrition'] === 'athlete-1'), 'kost line still rendered inside the fold')
 })
@@ -32,4 +34,23 @@ test('coach inbox: "Venter på dig" open, "Alle samtaler" folded', () => {
   assert.ok(all.some(n => label(n) === 'Ulæste beskeder og indsendelser' && n.type === 'section'))
   const folds = all.filter(n => n.type === 'details').map(n => n.props['data-coach-fold'])
   assert.deepEqual(folds, ['samtaler'])
+})
+
+
+test('new content stays inside native closed folds after the open attention section', () => {
+  const view = CoachView(props('home')), all = nodes(view)
+  const attention = all.find(n => label(n) === 'Atleter der kræver handling')
+  const athletes = all.find(n => n.props?.['data-coach-fold'] === 'atleter')
+  const weekly = all.find(n => n.props?.['data-coach-fold'] === 'ugerapport')
+  assert.equal(attention.type, 'section')
+  for (const fold of [athletes, weekly]) {
+    assert.equal(fold.type, 'details'); assert.notEqual(fold.props.open, true)
+    const summary = nodes(fold).find(n => n.type === 'summary')
+    assert.ok(summary.props.style.minHeight >= 44)
+    assert.ok(all.indexOf(attention) < all.indexOf(fold))
+  }
+  assert.equal(nodes(athletes).filter(n => n.props?.['data-coach-summary']).length, 1)
+  const report = nodes(weekly).find(n => n.type === WeeklyReport)
+  assert.ok(report)
+  assert.equal(nodes(report.type(report.props)).filter(n => n.props?.['data-coach-weekly-report']).length, 1)
 })

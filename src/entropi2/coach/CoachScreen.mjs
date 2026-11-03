@@ -1,5 +1,6 @@
 import { createElement as h, useEffect, useState } from 'react'
 import { s, initials } from '../../dashboardShared.js'
+import WeeklyReport from './WeeklyReport.mjs'
 import CoachSessionNotes from './SessionNotesView.mjs'
 import ProgramEndingView from './ProgramEndingView.mjs'
 import ProgramOverblik from '../../dashboard/ProgramOverblikView.mjs'
@@ -45,14 +46,14 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
   const rows = inbox ? model.inbox : model.actions
   // Marc 3. nov.: keep it simple. Kun det vigtigste staar aabent; resten er foldet ind.
   const fold = { marginBlock: 16, borderTop: '1px solid #414139', paddingTop: 8 }
-  const foldSummary = { cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center' }
+  const foldSummary = { cursor: 'pointer', minHeight: 48, display: 'flex', alignItems: 'center', minWidth: 0, overflowWrap: 'anywhere' }
   const foldHeading = { display: 'inline', fontSize: 20, margin: 0 }
   // Foldene viser en tydelig pil, saa man ser, at de kan aabnes.
   const arrow = h('span', { 'aria-hidden': true, style: { marginRight: 10, color: '#d8b16b' } }, '▸')
   return h('main', { 'data-entropi2-coach': true, style: { boxSizing: 'border-box',
     maxWidth: 900, marginInline: 'auto', padding: 20, background: '#141410', color: '#edeae2',
     fontFamily: s.wrap.fontFamily, lineHeight: 1.5, overflowWrap: 'anywhere' } },
-    h('style', null, '[data-entropi2-coach] button:focus-visible{outline:3px solid #f1cf7b;outline-offset:3px}'),
+    h('style', null, '[data-entropi2-coach] :is(button,summary):focus-visible{outline:3px solid #f1cf7b;outline-offset:3px}'),
     h('nav', { 'aria-label': 'Coach', style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
       ...[['home', 'Overblik'], ['inbox', 'Indbakke']].map(([value, label]) => h('button', {
         key: value, type: 'button', style: button, disabled: !canTab,
@@ -70,6 +71,21 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
         model.complete && h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.')),
+    !inbox && model.summaries.length > 0 && h('details', { 'aria-label': 'Atletoverblik', 'data-coach-fold': 'atleter', style: fold },
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Dine atleter (${model.summaries.length})`)),
+      h('ul', { style: { listStyle: 'none', padding: 0 } },
+        ...model.summaries.map(row => h('li', { key: row.athlete.id },
+          h('button', { type: 'button', 'data-coach-summary': row.athlete.id,
+            disabled: typeof props.openProfile !== 'function',
+            style: { ...button, width: '100%', minWidth: 0, boxSizing: 'border-box', marginBlock: 6 },
+            onClick: typeof props.openProfile === 'function'
+              ? () => props.openProfile(row.athlete, 'hub', 'list') : undefined },
+          h('strong', null, row.athlete.name),
+          row.text && h('span', { style: { display: 'block', marginTop: 8 } }, row.text)))))),
+    !inbox && model.rosterReady && model.athletes.length > 0 && h('details', {
+      'aria-label': 'Ugerapport', 'data-coach-fold': 'ugerapport', style: fold },
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Ugerapport')),
+      h(WeeklyReport, { ...props, today })),
     !inbox && (model.nutritionState === 'error' || model.nutritionState === 'partial') && h('details', {
       'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', 'data-coach-nutrition-state': model.nutritionState, open: true, style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Kost')),

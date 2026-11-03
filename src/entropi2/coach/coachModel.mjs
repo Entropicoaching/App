@@ -1,5 +1,6 @@
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
+import { coachAthleteList } from './athleteListModel.mjs'
 import { coachNutritionLines } from './coachNutrition.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
@@ -120,7 +121,8 @@ export function coachHomeModel(props = {}, today = new Date()) {
   const nutritionSource = props.coachNutrition
   const nutritionState = !nutritionSource ? 'loading' : nutritionSource.state === 'ready' ? 'ready'
     : nutritionSource.state === 'partial' ? 'partial' : nutritionSource.state === 'error' ? 'error' : 'loading'
-  return { ...data, actions, inbox, complete, nutrition, nutritionState,
+  const summaries = coachAthleteSummaries(data, nutrition, inbox)
+  return { ...data, actions, inbox, complete, nutrition, nutritionState, summaries,
     nutritionReload: typeof nutritionSource?.reload === 'function' ? nutritionSource.reload : null,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
 }
@@ -140,4 +142,46 @@ export function selectCoachTab(tab, { setSelectedAthlete, setView }) {
   if (!['home', 'inbox'].includes(tab)) return
   setSelectedAthlete(null)
   setView(tab === 'inbox' ? 'inbox' : 'list')
+}
+
+// Only the already scoped, usable reads can contribute to an athlete summary.
+// Missing evidence is silent; a partial read can still prove a present activity.
+export function coachAthleteSummaries(data, nutrition, inbox) {
+  const { day, athletes, logs, messages } = data
+  const relative = date => {
+    const days = ordinal(day) - ordinal(date)
+    return days === 0 ? 'i dag' : days === 1 ? 'i går' : `for ${days} dage siden`
+  }
+  const rows = athletes.map(athlete => {
+    const activity = []
+    const add = (source, field, kind) => {
+      const dates = source.map(row => loggedDay(row[field]))
+      if (dates.some(date => !date || date > day)) return
+      dates.forEach((date, index) => activity.push({ day: date, kind, stamp: Date.parse(source[index][field]) }))
+    }
+    if (logs.usable) add(logs.rows.filter(r => r.athlete_id === athlete.id && r.skipped !== true), 'logged_at', 'Sidste pas')
+    if (messages.usable) {
+      const latest = ['besked', 'teknik'].map(track => data.latestByTrack[athlete.id]?.[track])
+        .filter(row => row?.athlete_id === athlete.id)
+      add([...messages.rows.filter(r => r.athlete_id === athlete.id), ...latest], 'created_at', 'Sidste besked')
+    }
+    activity.sort((a, b) => b.stamp - a.stamp || a.kind.localeCompare(b.kind, 'da'))
+    const last = activity[0]
+    const unread = inbox.filter(row => row.athlete.id === athlete.id && row.item.kind === 'message')
+      .reduce((sum, row) => sum + row.item.count, 0)
+    const parts = [last && `${last.kind} ${relative(last.day)}`, nutrition.get(athlete.id)?.text,
+      unread > 0 && `${unread} ulæst${unread === 1 ? '' : 'e'} besked${unread === 1 ? '' : 'er'}`].filter(Boolean)
+    return { athlete, text: parts.join(' · '), lastDay: last?.day, unread,
+      hasNews: unread > 0 || last?.day === day }
+  })
+  rows.sort((a, b) => Number(b.hasNews) - Number(a.hasNews) ||
+    (b.lastDay || '').localeCompare(a.lastDay || '') ||
+    a.athlete.name.localeCompare(b.athlete.name, 'da') || a.athlete.id.localeCompare(b.athlete.id))
+  if (!rows.length) return rows
+  const byId = new Map(rows.map(row => [row.athlete.id, row]))
+  // Only confirmed unread facts are available to the standalone list model.
+  // No pain/deviation flags or inactivity claims are inferred from roster data.
+  return coachAthleteList({ today: day, athletes: rows.map(row => ({
+    id: row.athlete.id, unreadMessages: row.unread,
+  })) }).map(row => byId.get(row.athlete.id))
 }
