@@ -15,7 +15,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
   let weightPending = false, weightError = ''
-  let editing = null, removing = null
+  let editing = null, removing = null, ownMealName = ''
   const intent = () => 'nutrition-' + (++sequence)
   const node = (tag, cls, text) => {
     const n = doc.createElement(tag)
@@ -177,8 +177,15 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         button(main, 'Hent dagbogen igen', () => controller.load(), s.pending)
       }
       if (!s.logs.length) append(ul, 'li', 'muted', 'Ingen måltider registreret i dag.')
-      for (const row of s.logs) {
+      for (const [index, row] of s.logs.entries()) {
         const li = append(ul, 'li')
+        const partLabel = append(li, 'label', 'meal-part')
+        const part = append(partLabel, 'input')
+        part.type = 'checkbox'; part.checked = s.selectedParts.includes(index); part.disabled = s.pending
+        part.setAttribute('aria-label', 'Vælg del ' + (index + 1) + ': ' + row.meal)
+        part.setAttribute('data-focus', 'meal-part-' + index)
+        part.addEventListener('change', () => controller.toggleMealPart(index))
+        append(partLabel, 'span', '', 'Vælg til eget måltid')
         append(li, 'strong', '', typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid')
         append(li, 'small', '', s.invalid ? 'Næringsdata skal kontrolleres.' : `${row.kcal} kcal · ${row.protein} g protein`)
         if (s.editableIds?.includes(row.id)) {
@@ -233,6 +240,23 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           cancel.setAttribute('data-focus', 'cancel-remove')
         }
       }
+      if (s.logs.length >= 2) {
+        const own = append(main, 'form', 'card stack')
+        own.setAttribute('aria-label', 'Gem eget måltid')
+        append(own, 'h2', '', 'Gem eget måltid')
+        append(own, 'p', 'muted', 'Vælg mindst to af dagens måltider og gem dem samlet i Favoritter.')
+        append(own, 'p', '', s.selectedParts.length + ' dele valgt')
+        const name = field(own, 'Navn på eget måltid', ownMealName, v => { ownMealName = v })
+        name.inputMode = 'text'; name.maxLength = 60; name.disabled = s.pending
+        const save = button(own, 'Gem i Favoritter', () => {}, s.pending || s.selectedParts.length < 2)
+        save.type = 'submit'; save.setAttribute('data-focus', 'save-own-meal')
+        if (s.favoriteError) { const p = append(own, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
+        own.addEventListener('submit', e => {
+          e.preventDefault()
+          if (destroyed) return
+          controller.saveOwnMeal(ownMealName)
+        })
+      }
       const goals = append(main, 'section', 'card')
       append(goals, 'p', 'eyebrow', 'Dagens registreringer og mål')
       append(goals, 'h2', '', s.invalid ? 'Næringsdata skal kontrolleres' : s.logs.length ? 'Registreret indtag' : 'Ingen vurdering endnu')
@@ -269,7 +293,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       }
       library('Dine favoritter', s.favorites, 'fav')
       library('Måltidsbibliotek', s.recent.filter(meal => !s.favoriteKeys.includes(mealKey(meal))), 'recent')
-      if (s.favoriteError) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
+      if (s.favoriteError && s.logs.length < 2) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
       const week = weekSummary(s.historyRows, s.targets, s.date)
       const weekly = append(main, 'section', 'card')
       append(weekly, 'h2', '', 'Din uge')
