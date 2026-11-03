@@ -120,13 +120,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       details.append(list); body.append(details)
       const form = el('form', null, { class: 'card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
       const busy = !['idle', 'error'].includes(s.phase)
-      for (const [name, label, mode] of [['weight', 'Vægt i kg', 'decimal'], ['reps', 'Gentagelser', 'numeric'], ['rpe', 'Oplevet RPE (valgfri)', 'decimal']]) {
-        const lab = el('label', label), input = el('input', null, { type: 'text', inputmode: mode, 'data-field': name })
-        input.value = String(s.input[name]); input.disabled = busy
-        input.addEventListener('input', () => controller.edit(key, name, input.value, s.selection.stamp))
-        lab.append(input); fields.append(lab); inputs[name] = input
-      }
-      // Marc 3. nov.: same one-tap controls as the old Dagens pas: 2,5 kg, 1 rep and RPE buttons.
+      // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
+      // "−2,5 [vægt] +2,5", "−1 [reps] +1", and the RPE buttons directly under the RPE field.
       const set = (name, value) => controller.edit(key, name, value, s.selection.stamp)
       // Read the live value at tap time, so repeated taps add up even before a rerender.
       const now = name => controller.state().input?.[name] ?? inputs[name].value
@@ -134,19 +129,37 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         const b = el('button', text, { type: 'button', class: cls, 'aria-label': label, 'data-step': id })
         b.disabled = busy; b.addEventListener('click', run); return b
       }
-      const steppers = el('div', null, { class: 'steppers' })
-      steppers.append(
-        tap('−2,5', '2,5 kg mindre', () => set('weight', stepWeight(now('weight'), -2.5)), 'step', 'weight-down'),
-        tap('+2,5', '2,5 kg mere', () => set('weight', stepWeight(now('weight'), 2.5)), 'step', 'weight-up'),
-        tap('−1', '1 gentagelse mindre', () => set('reps', stepReps(now('reps'), -1)), 'step', 'reps-down'),
-        tap('+1', '1 gentagelse mere', () => set('reps', stepReps(now('reps'), 1)), 'step', 'reps-up'))
-      const rpeRow = el('div', null, { class: 'rpe-row', role: 'group', 'aria-label': 'Vælg RPE' })
-      for (const v of ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10']) {
-        const shown = v.replace('.', ',')
-        const b = tap(shown, `RPE ${shown}`, () => set('rpe', String(now('rpe')) === v ? '' : v), 'rpe', `rpe-${v}`)
-        b.setAttribute('aria-pressed', String(String(s.input.rpe) === v)); rpeRow.append(b)
+      const stepButtons = {
+        weight: [['−2,5', '2,5 kg mindre', v => stepWeight(v, -2.5), 'weight-down'], ['+2,5', '2,5 kg mere', v => stepWeight(v, 2.5), 'weight-up']],
+        reps: [['−1', '1 gentagelse mindre', v => stepReps(v, -1), 'reps-down'], ['+1', '1 gentagelse mere', v => stepReps(v, 1), 'reps-up']]
       }
-      form.append(el('h2', 'Dit sæt'), fields, steppers, rpeRow, el('p', 'Skriv 0 kg ved en øvelse uden ekstra vægt. RPE er fra 0 til 10.'))
+      for (const [name, label, mode] of [['weight', 'Vægt i kg', 'decimal'], ['reps', 'Gentagelser', 'numeric'], ['rpe', 'Oplevet RPE (valgfri)', 'decimal']]) {
+        const lab = el('label', label), input = el('input', null, { type: 'text', inputmode: mode, 'data-field': name })
+        input.value = String(s.input[name]); input.disabled = busy
+        input.addEventListener('input', () => controller.edit(key, name, input.value, s.selection.stamp))
+        inputs[name] = input
+        if (stepButtons[name]) {
+          // The input stays directly inside its own label; the buttons sit on either side of it.
+          const [down, up] = stepButtons[name]
+          const line = el('div', null, { class: 'stepper-line' })
+          lab.append(input)
+          line.append(tap(down[0], down[1], () => set(name, down[2](now(name))), 'step', down[3]), lab,
+            tap(up[0], up[1], () => set(name, up[2](now(name))), 'step', up[3]))
+          fields.append(line)
+          continue
+        } else {
+          lab.append(input)
+          const rpeRow = el('div', null, { class: 'rpe-row', role: 'group', 'aria-label': 'Vælg RPE' })
+          for (const v of ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10']) {
+            const shown = v.replace('.', ',')
+            const b = tap(shown, `RPE ${shown}`, () => set('rpe', String(now('rpe')) === v ? '' : v), 'rpe', `rpe-${v}`)
+            b.setAttribute('aria-pressed', String(String(s.input.rpe) === v)); rpeRow.append(b)
+          }
+          lab.append(rpeRow)
+        }
+        fields.append(lab)
+      }
+      form.append(el('h2', 'Dit sæt'), fields, el('p', 'Skriv 0 kg ved en øvelse uden ekstra vægt.', { class: 'hint' }))
       const approve = el('button', busy ? 'Afventer svar' : 'Godkendt', { type: 'submit', class: 'approve' })
       approve.disabled = busy
       form.addEventListener('submit', e => {

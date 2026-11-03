@@ -11,7 +11,12 @@ export const sessionStyle = `
 .e2-session h1 {font:36px/1.12 'Playfair Display',Georgia,serif;margin:20px 0 12px}
 .e2-session h2 {font-size:24px;line-height:1.2}
 .e2-session .card {background:#1c1c18;border:1px solid #414139;border-radius:16px;padding:20px;margin:20px 0}
-.e2-session .fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.e2-session .fields {display:grid;grid-template-columns:1fr;gap:10px}
+.e2-session .stepper-line {display:grid;grid-template-columns:64px minmax(0,1fr) 64px;gap:8px;align-items:end}
+.e2-session .stepper-line > button {min-height:56px;font-size:20px;font-weight:600;padding:4px}
+.e2-session .stepper-line label {display:flex;flex-direction:column;gap:4px;text-align:center}
+.e2-session .stepper-line input {text-align:center;font-size:22px;min-height:56px}
+.e2-session .hint {font-size:13px;opacity:.75;margin:6px 0}
 .e2-session label {display:block;min-width:0}
 .e2-session input {display:block;width:100%;min-width:0;margin-top:8px;padding:12px;background:#141410;color:#edeae2;border:1px solid #77776b;border-radius:8px}
 .e2-session .steppers {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
