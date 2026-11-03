@@ -3,10 +3,20 @@ import { estimatedOneRepMax } from '../../exerciseProgress.js'
 import { mainLiftName } from '../../exerciseSetView.js'
 import { uniqueLogs } from './publicContract.mjs'
 
-const lifts = ['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft']
+export const MAIN_LIFTS = Object.freeze(['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft'])
 const number = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 })
 const format = n => number.format(n)
 const date = day => `${day.slice(8, 10)}.${day.slice(5, 7)}.${day.slice(0, 4)}`
+
+// Shared weekly selection: identical formula, eligibility and tie breaking in
+// the overview and the four-week history. Input rows come from the adapter.
+export function bestWeeklySet(rows, lift, start, end) {
+  return rows.filter(r => !r._optimistic && mainLiftName(r.lift) &&
+    r.lift === lift && r.logged_at >= start && r.logged_at <= end)
+    .map(r => ({ ...r, value: estimatedOneRepMax(r.weight, r.reps_completed) }))
+    .filter(r => r.value > 0)
+    .sort((a, b) => b.value - a.value || b.weight - a.weight || a.repZone.localeCompare(b.repZone))[0] ?? null
+}
 
 function validDay(value, now) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}(?:$|T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$)/.test(value)) return null
@@ -70,15 +80,11 @@ export function weekOverview(contract, now) {
     period: `${date(start)} til ${date(end)}. Sidste uge: ${date(previousStart)} til ${date(addCalendarDays(start, -1))}.`,
     sessions, sets,
     note: 'Et pas er gennemført, når alle planlagte sæt er logget eller sprunget over. Bekræftede sæt omfatter ikke oversprungne eller afventende sæt. Denne uge kan være ufuldstændig.',
-    lifts: lifts.map(lift => {
+    lifts: MAIN_LIFTS.map(lift => {
       const missing = message => ({ lift, message })
       if (contract.loading) return missing('Henter løftehistorik. Sammenligningen er ikke klar.')
       if (!contract.historyReady) return missing('Løftehistorik mangler. Sammenligningen er ikke klar.')
-      const current = rows.filter(r => r.lift === lift && r.logged_at >= start && r.logged_at <= end)
-        .map(r => ({ ...r, value: estimatedOneRepMax(r.weight, r.reps_completed) }))
-        .filter(r => r.value > 0)
-        .sort((a, b) => b.value - a.value || b.weight - a.weight || a.repZone.localeCompare(b.repZone))
-      const best = current[0]
+      const best = bestWeeklySet(rows, lift, start, end)
       if (!best) return missing('Ingen sammenlignelige tunge sæt denne uge.')
       const previous = rows.filter(r => r.lift === lift && r.repZone === best.repZone &&
         r.logged_at >= previousStart && calendarDaysBetween(r.logged_at, start) > 0)
