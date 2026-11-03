@@ -163,10 +163,11 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     if (s.phase === 'idle' || s.phase === 'loading') append(main, 'p', 'muted', 'Indlæser kostloggen…')
     if (s.phase === 'load-error') button(main, 'Hent kostloggen igen', () => controller.load())
     if (s.loaded) {
-      const distribution = append(main, 'section', 'space')
-      append(distribution, 'h3', '', 'Protein pr. måltid')
-      if (!s.logs.length) append(distribution, 'p', 'muted', 'Ingen måltider registreret i dag.')
-      else {
+      // Marc 3. nov.: uden maaltider stod "Ingen maaltider registreret i dag." to gange;
+      // fordelingen vises kun, naar der er noget at fordele (dagbogen siger det tomme).
+      if (s.logs.length) {
+        const distribution = append(main, 'section', 'space')
+        append(distribution, 'h3', '', 'Protein pr. måltid')
         const list = append(distribution, 'ul', 'list')
         for (const meal of mealProtein(s.logs)) append(list, 'li', '', meal.meal + ': '
           + (meal.protein === null ? 'ukendt protein' : `${displayNumber(meal.protein)} g protein`))

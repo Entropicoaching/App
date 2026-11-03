@@ -66,7 +66,8 @@ test('evening: same remaining calculation/rounding, missing/reached goals and in
 
 test('DOM: empty diary and one meal have neutral protein distribution and one evening line', async t => {
   const empty = await mounted(t)
-  assert.equal(distribution(empty.host).textContent, 'Protein pr. måltid Ingen måltider registreret i dag.')
+  // Marc 3. nov.: tom dag viser kun dagbogens tomme linje, ikke en tom fordeling oveni.
+  assert.equal(find(empty.host, 'h3', 'Protein pr. måltid'), undefined)
   assert.equal(evening(empty.host)[0].textContent, 'Til resten af dagen: ca. 100 g protein')
   const f = await mounted(t, [row({ protein: '12,5' })])
   assert.deepEqual(distribution(f.host).querySelectorAll('li').map(n => n.textContent), ['Syntetisk måltid: 12,5 g protein'])
@@ -106,7 +107,8 @@ test('DOM: redraw uses current injected time; log/update/remove refresh distribu
   assert.equal(distribution(f.host).querySelectorAll('li')[0].textContent, 'Syntetisk måltid: 40 g protein')
   assert.equal(evening(f.host)[0].textContent, 'Til resten af dagen: ca. 60 g protein')
   await f.controller.remove('meal-1', 'remove', true)
-  assert.equal(distribution(f.host).querySelectorAll('li').length, 0)
+  // Marc 3. nov.: uden maaltider vises fordelingen ikke (dagbogen siger det tomme).
+  assert.equal(find(f.host, 'h3', 'Protein pr. måltid'), undefined)
   assert.equal(evening(f.host)[0].textContent, 'Til resten af dagen: ca. 100 g protein')
   await f.controller.log(row({ meal: 'Nyt måltid', protein: 15 }), 'new-meal')
   assert.deepEqual(distribution(f.host).querySelectorAll('li').map(n => n.textContent), ['Nyt måltid: 15 g protein'])
