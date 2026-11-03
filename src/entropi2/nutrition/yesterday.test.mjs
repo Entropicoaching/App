@@ -33,7 +33,7 @@ test('yesterday: no meals hides section, including valid meals from other days',
     assert.deepEqual(controller.snapshot().yesterday, [])
     assert.equal(find(host, 'h2', 'Gentag i går'), undefined)
     assert.equal(repeat(host).length, 0)
-    assert.ok(find(host, 'h2', 'Favoritter'))
+    assert.equal(find(host, 'h2', 'Favoritter'), undefined)
     assert.equal(calls.loads.length, 1)
     assert.deepEqual(calls.saves, [])
     assert.deepEqual(calls.storage, [])
@@ -74,7 +74,7 @@ test('yesterday: chronological order, normalized mealKey dedupe, unchanged exist
   assert.deepEqual(s.logs.map(r => r.meal), ['Synthetic today'])
   assert.deepEqual(rows, original)
   const headings = host.querySelectorAll('h2').map(n => n.textContent)
-  assert.equal(headings.indexOf('Gentag i går') + 1, headings.indexOf('Favoritter'))
+  assert.equal(headings.indexOf('Gentag i går') + 1, headings.indexOf('Seneste måltider'))
   assert.deepEqual(repeat(host).map(n => n.textContent), s.yesterday.map(m => 'Log igen: ' + m.meal))
 })
 
