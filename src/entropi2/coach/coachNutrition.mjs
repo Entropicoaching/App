@@ -48,8 +48,10 @@ export function coachNutritionLines(props, day, athletes, rosterReady) {
     const kcalTarget = parseInputNumber(target?.kcal_target), proteinTarget = parseInputNumber(target?.protein_target)
     const goals = kcalTarget > 0 && proteinTarget > 0
       ? `Mål: ${Math.round(kcalTarget)} kcal / ${Math.round(proteinTarget)} g protein` : 'Ingen mål endnu'
+    const proteinProgress = proteinTarget > 0
+      ? ` · Protein nået ${[...days.values()].filter(d => d.protein + 1e-9 >= proteinTarget).length} af ${days.size} dage` : ''
     result.set(athlete.id, { days: days.size, kcal, protein,
-      text: `Kost · ${days.size}/7 dage · Gns. pr. logget dag: ${Math.round(kcal)} kcal / ${Math.round(protein)} g protein · ${goals}` })
+      text: `Kost · ${days.size}/7 dage · Gns. pr. logget dag: ${Math.round(kcal)} kcal / ${Math.round(protein)} g protein · ${goals}${proteinProgress}` })
   }
   return result
 }
