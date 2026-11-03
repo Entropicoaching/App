@@ -146,6 +146,10 @@ export function useVideoCoachBro({
             : await createAbortableUploadClient(controller.signal).storage
             .from(VIDEOCOACH_UPLOAD_BUCKET)
             .upload(path, file, { contentType: mimeType, upsert: false })
+        } catch (error) {
+          // K-ENTROPI-UDGIVELSE1 fund 3: a thrown upload error becomes { error },
+          // so reply() below always runs and clears the inflight marker.
+          upload = { data: null, error: error instanceof Error ? error : Error(String(error ?? 'ukendt fejl')) }
         } finally {
           athleteVideoUploadAbortsRef.current.delete(message.requestId)
         }

@@ -18,12 +18,13 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
   const guard = () => { if (!available()) throw Error('Åbn videoen igen for den valgte atlet.') }
   const editable = () => available() && !busy() && !operation
   const update = patch => { state = { ...state, ...patch }; emit() }
-  async function stage(fn, request, token) {
+  // Called as callbacks[name](request), so an injected adapter keeps its receiver.
+  async function stage(name, request, token) {
     let timer, onAbort
     const signal = abort.signal
     try {
       return await Promise.race([
-        Promise.resolve().then(() => { guard(); if (signal.aborted) throw Error('Afbrudt.'); return fn(request) }),
+        Promise.resolve().then(() => { guard(); if (signal.aborted) throw Error('Afbrudt.'); return callbacks[name](request) }),
         new Promise((_, reject) => {
           timer = clock.set(() => {
             if (token === generation) abort?.abort()
@@ -44,7 +45,7 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
       guard()
       if (!operation.prepared) {
         update({ phase: 'preparing', error: '', progress: null })
-        const prepared = await stage(callbacks.prepare, { source: structuredClone(operation.source),
+        const prepared = await stage('prepare', { source: structuredClone(operation.source),
           window: { ...operation.window }, signal: abort.signal,
           onProgress(value) { if (current() && state.phase === 'preparing' && finite(value)) update({ progress: clamp(value, 0, 1) }) } }, token)
         if (!current()) return false
@@ -55,7 +56,7 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
         operation.prepared = prepared
       }
       update({ phase: 'sending', progress: null, error: '' })
-      const result = await stage(callbacks.upload, { clientAnalysisId: operation.id,
+      const result = await stage('upload', { clientAnalysisId: operation.id,
         choice: structuredClone(operation.choice), artifact: operation.prepared.artifact,
         duration: operation.prepared.duration, window: { ...operation.window }, signal: abort.signal,
         onProgress(value) { if (current() && state.phase === 'sending' && finite(value)) update({ progress: clamp(value, 0, 1) }) } }, token)
