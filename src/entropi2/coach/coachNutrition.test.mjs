@@ -17,8 +17,19 @@ function fixture() {
 }
 const model = (p, day = today) => coachHomeModel(p, day)
 const line = p => model(p).nutrition.get('athlete-1')
-const nodes = n => !n || typeof n !== 'object' ? [] : [n, ...(n.children || []).flatMap(nodes)]
+// React stores children in props; the hermetic adapter uses a children field.
+const nodes = n => Array.isArray(n) ? n.flatMap(nodes) :
+  !n || typeof n !== 'object' ? [] : [n, ...nodes(n.props?.children ?? n.children)]
 const nutritionNodes = tree => nodes(tree).filter(n => n.props?.['data-coach-nutrition'])
+
+test('nutrition traversal handles React children and the hermetic adapter', () => {
+  const first = { props: { 'data-coach-nutrition': 'athlete-1' } }
+  const second = { props: { 'data-coach-nutrition': 'athlete-2' } }
+  for (const tree of [
+    { props: { children: [null, false, first, [{ props: { children: second } }]] } },
+    { children: [null, false, first, [{ children: [second] }]] },
+  ]) assert.deepEqual(nutritionNodes(tree).map(n => n.props['data-coach-nutrition']), ['athlete-1', 'athlete-2'])
+})
 
 test('four distinct days show daily averages and both targets', () => {
   const value = line(fixture())

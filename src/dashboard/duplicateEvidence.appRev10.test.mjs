@@ -1,7 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { videoCoachFeedbackPayload as payload, videoCoachFeedbackDraft as draft } from './coachVideoHjaelp.js'
-import { lavVideoReviewHandlinger as handlers } from './videoReviewHandlinger.js'
+import { installNodeTestBoundary } from './nodeTestBoundary.mjs'
+const hooks = installNodeTestBoundary()
+test.after(() => hooks.deregister())
+const { videoCoachFeedbackPayload: payload, videoCoachFeedbackDraft: draft } = await import('./coachVideoHjaelp.js')
+const { lavVideoReviewHandlinger: handlers } = await import('./videoReviewHandlinger.js')
 import { setDatabase } from './videoCoachNotes.appRev10.fake.mjs'
 
 for (const key of ['works', 'focus', 'next_set']) {
