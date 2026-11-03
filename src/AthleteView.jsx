@@ -730,7 +730,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
             programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
-            pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause} />
+            pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}
+            onFilmSet={() => { if (!athlete?.id) return; setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) }} />
         )}
         {!e2Home && tab === 'hjem' && !onHoliday && role === 'athlete' && !coachAthleteId && athlete?.id &&
           (!enkelOn || ['traening', 'alle'].includes(route)) &&

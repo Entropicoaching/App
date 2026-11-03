@@ -9,7 +9,7 @@ const labels = { holiday: 'Du er på ferie', missing: 'Programdata mangler', 'no
 
 // Only an explicit enabled=true renders this opt-in component. No flag reader.
 export default function AthleteHome(props) {
-  const { enabled = false, athlete, messages = [], formatMsgTime, setTab, onStartSession, getNow = clock } = props
+  const { enabled = false, athlete, messages = [], formatMsgTime, setTab, onStartSession, onFilmSet, getNow = clock } = props
   const [tick, setTick] = useState(0)
   const latest = useRef(props)
   latest.current = props
@@ -53,6 +53,9 @@ export default function AthleteHome(props) {
           : typeof onStartSession !== 'function' && h('p', { role: 'status', style: s.text }, 'Passtart er ikke tilgængelig endnu.'))
         : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
+    // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
+    h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
+      disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
     nutrition && h('button', { type: 'button',
       style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left' },
       disabled: typeof setTab !== 'function', onClick: go('kost') }, nutrition.text),
