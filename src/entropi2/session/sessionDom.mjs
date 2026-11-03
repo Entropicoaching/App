@@ -31,7 +31,15 @@ export function bindDialog({ dialog, handle, close, trigger, dismiss, document }
   }
   const keys = e => {
     if (e.key !== 'Tab') return
-    const nodes = [...dialog.querySelectorAll('button, input, summary, [tabindex="0"]')].filter(n => !n.disabled)
+    const nodes = [...dialog.querySelectorAll('button, input, textarea, select, summary, [tabindex="0"]')].filter(n => {
+      if (n.disabled || n.hidden) return false
+      let child = n, parent = n.parentElement
+      while (parent && parent !== dialog) {
+        if (parent.hidden || (parent.tagName?.toLowerCase() === 'details' && !parent.open && child.tagName?.toLowerCase() !== 'summary')) return false
+        child = parent; parent = parent.parentElement
+      }
+      return true
+    })
     const first = nodes[0], last = nodes[nodes.length - 1]
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus() }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus() }

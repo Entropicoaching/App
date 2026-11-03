@@ -3,7 +3,7 @@ import { parseTempo, parsePlannedRest } from './tempoParser.mjs'
 // Unwired, read-only adapter. Each mount owns only its section. OFF is inert.
 export function mountTempoView(root, initial = {}) {
   let section = null, disposed = false
-  function update({ enabled = false, tempo, restSeconds } = {}) {
+  function update({ enabled = false, tempo, restSeconds, compact = false } = {}) {
     if (disposed) return
     if (enabled !== true) { section?.remove(); section = null; return }
     const doc = root.ownerDocument
@@ -25,7 +25,11 @@ export function mountTempoView(root, initial = {}) {
       const list = el('ol')
       list.setAttribute('aria-label', 'Tempoets fire faser i rækkefølge')
       for (const phase of parsed.phases) list.append(el('li', `${phase.label}: ${phase.explosive ? 'eksplosivt' : `${phase.seconds} sek.`}`))
-      content.push(list)
+      if (compact) {
+        const phases = el('details')
+        phases.setAttribute('data-detail', 'tempo-phases')
+        phases.append(el('summary', 'Tempoets faser'), list); content.push(phases)
+      } else content.push(list)
     } else content.push(el('p', parsed.status === 'missing' ? 'Tempo er ikke angivet.'
       : 'Tempo kan ikke vises. Brug fire faser, fx 3-1-1-0. X betyder eksplosivt.'))
     content.push(el('p', rest.status === 'valid' ? `Planlagt pause mellem sæt: ${rest.label}`

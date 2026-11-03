@@ -1,6 +1,7 @@
 import { findDagensPas, nextSetInSession, sessionSetTotal, sessionLoggedCount } from '../../nextSet.js'
 import { inputInteger, parseInputNumber, optionalInput } from '../../inputValues.js'
 import { fixedRepsEntry } from '../../fixedRepsEntry.js'
+import { noteValue, withSetNote } from './noter/noteModel.mjs'
 import { calcWarmupSets } from '../../warmup.js'
 
 // Existing weeks are the program: fetchProgram reads weeks/sessions/exercises.
@@ -8,7 +9,7 @@ import { calcWarmupSets } from '../../warmup.js'
 const plan = week => [week?.id, week?.athlete_id, week?.program_id, week?.block_id,
   (week?.sessions || []).map(s => [s.id, s.title, s.session_order,
     (s.exercises || []).map(e => [e.id, e.name, e.exercise_order, e.sets, e.reps,
-      e.intensity, e.recommended_weight, e.note])])]
+      e.intensity, e.recommended_weight, e.note, e.tempo, e.restSeconds])])]
 export function programStamp(p) {
   if (p.enabled !== true || !p.athleteId || p.programError || p.offlineSnapshotAt != null || !p.currentWeek?.id) return null
   const week = p.allWeeks?.find(w => w.id === p.currentWeek.id)
@@ -44,7 +45,7 @@ export function warmup(n, input) {
 
 export function createSessionController(latest, changed = () => {}) {
   let selection = null, open = false, finished = false, error = ''
-  const writes = new Map()
+  const writes = new Map(), notes = new Map()
   function confirmed(p) {
     return (p.exerciseLogs || []).filter(l => !l._optimistic &&
       (l.athlete_id == null || l.athlete_id === p.athleteId) &&
@@ -73,6 +74,7 @@ export function createSessionController(latest, changed = () => {}) {
     return { open: open && !!session, selection, session, next, key, phase, error,
       summary: !!session && (finished || (!next && sessionSetTotal(session) > 0)),
       canStart: !!session || !!day?.next, day, input: defaults(p, next),
+      note: noteValue(notes.get(`${selection?.stamp}:${key}`) ?? { text: defaults(p, next).note }),
       done: sessionLoggedCount(session, logs), total: sessionSetTotal(session), logs }
   }
   return {
@@ -104,10 +106,16 @@ export function createSessionController(latest, changed = () => {}) {
       if (!s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
       p.setLogInputs(prev => ({ ...prev, [expected]: { ...(prev[expected] || {}), [name]: value } }))
     },
+    editNote(expected, value, stamp) {
+      const s = state()
+      if (!s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
+      notes.set(`${stamp}:${expected}`, noteValue(value))
+      return true
+    },
     async approve(expected, values, stamp) {
       const p = latest(), s = state()
       if (!s.open || s.summary || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
-      const input = sessionInput(values)
+      const input = sessionInput(notes.has(`${stamp}:${expected}`) ? withSetNote(values, s.note) : values)
       if (!input) { error = 'Skriv vægt og hele reps over 0. RPE er valgfri fra 0 til 10.'; changed(); return false }
       if (typeof p.onLogSet !== 'function' || typeof p.parsePlannedRpe !== 'function') {
         error = 'Registrering er ikke tilgængelig.'; changed(); return false

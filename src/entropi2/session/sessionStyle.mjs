@@ -1,6 +1,6 @@
 export const sessionStyle = `
 .e2-session {background:#141410;color-scheme:dark;color:#edeae2;font:16px/1.5 'IBM Plex Sans',Arial,sans-serif}
-.e2-session button,.e2-session input,.e2-session summary {font:inherit;min-height:44px;box-sizing:border-box}
+.e2-session button,.e2-session input,.e2-session textarea,.e2-session select,.e2-session summary {font:inherit;min-height:44px;box-sizing:border-box}
 .e2-session button {min-width:44px;padding:12px 16px;border:1px solid #77776b;border-radius:12px;background:#1c1c18;color:inherit;cursor:pointer}
 .e2-session button:disabled {opacity:1;cursor:default}
 .e2-session :focus-visible {outline:3px solid #c8923a;outline-offset:3px}
@@ -16,9 +16,15 @@ export const sessionStyle = `
 .e2-session .stepper-line > button {min-height:56px;font-size:20px;font-weight:600;padding:4px}
 .e2-session .stepper-line label {display:flex;flex-direction:column;gap:4px;text-align:center}
 .e2-session .stepper-line input {text-align:center;font-size:22px;min-height:56px}
+.e2-session .plate-tool > summary {display:inline-flex;align-items:center;border:1px solid #77776b;border-radius:10px;padding:4px 12px}
+.e2-session .note-choices {display:flex;flex-wrap:wrap;gap:8px}
+.e2-session [data-set-note] {min-width:0;border:1px solid #77776b;border-radius:12px;padding:12px;margin-top:16px}
+.e2-session .note-choices button[aria-pressed="true"] {background:#c8923a;color:#141410}
+.e2-session textarea {resize:vertical}
+.e2-session [data-e2-tempo] h3 {font-size:16px;margin-bottom:4px}
 .e2-session .hint {font-size:13px;opacity:.75;margin:6px 0}
 .e2-session label {display:block;min-width:0}
-.e2-session input {display:block;width:100%;min-width:0;margin-top:8px;padding:12px;background:#141410;color:#edeae2;border:1px solid #77776b;border-radius:8px}
+.e2-session input,.e2-session textarea,.e2-session select {display:block;width:100%;min-width:0;margin-top:8px;padding:12px;background:#141410;color:#edeae2;border:1px solid #77776b;border-radius:8px}
 .e2-session .steppers {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
 .e2-session .steppers button {min-height:56px;font-size:20px;font-weight:600;padding:8px}
 .e2-session .rpe-row {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}

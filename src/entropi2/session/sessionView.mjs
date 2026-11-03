@@ -1,10 +1,16 @@
-import { createSessionController, warmup } from './sessionModel.mjs'
+import { createSessionController } from './sessionModel.mjs'
 import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
 import { lastSetLine } from './sessionHistory.mjs'
 import { sessionSummary } from './sessionSummary.mjs'
 import { stepWeight, stepReps } from '../../setLogDefaults.js'
 import { createRestTimer } from './restTimer.mjs'
+import { mountPlateCalculator } from './plader/plateView.mjs'
+import { createOpvarmning } from './opvarmning/OpvarmningView.mjs'
+import { mountTempoView } from './tempo/tempoView.mjs'
+import { createSetNote } from './noter/noteDom.mjs'
+import { sessionPrescription } from './sessionPrescription.mjs'
+import { parseInputNumber } from '../../inputValues.js'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
@@ -16,6 +22,8 @@ const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer 
 export function mountSession(root, latest, { clock = globalThis } = {}) {
   const doc = root.ownerDocument
   const rest = createRestTimer(doc, clock)
+  let cleanBlocks = [], plateBar = 20
+  const clearBlocks = () => { cleanBlocks.forEach(fn => fn()); cleanBlocks = [] }
   let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, stepIdentity, announcement, errorStatus, dead = false
   const el = (tag, text, attrs = {}) => {
     const node = doc.createElement(tag)
@@ -31,6 +39,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   trigger.addEventListener('click', start)
   function start() { controller.start() }
   function tearDown() {
+    clearBlocks()
     stopTimer?.(); stopTimer = null; lastPause = undefined
     unbind?.(); unbind = null
     dialog?.remove(); dialog = null; stepIdentity = undefined
@@ -71,6 +80,9 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const hadBodyFocus = body.contains(focused)
     const detailFocus = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
     const approveFocus = focused?.getAttribute('class') === 'approve'
+    const oldBar = body.querySelector('[data-e2-plader]')?.querySelector('select')
+    if (oldBar) plateBar = Number(oldBar.value)
+    clearBlocks()
     body.replaceChildren()
     body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
     if (summary) {
@@ -111,16 +123,24 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       plan.append(el('p', `${present(ex.reps)} gentagelser`, { class: 'plan' }),
         el('p', `${present(ex.recommended_weight)} kg`, { class: 'plan' }), el('p', `Intensitet: ${present(ex.intensity)}`))
       body.append(plan)
+      const tempo = mountTempoView(plan, { enabled: true, ...sessionPrescription(ex), compact: true })
+      cleanBlocks.push(() => tempo.dispose())
       const previous = lastSetLine(p, ex.id, clock.Date.now())
       if (previous) plan.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
-      if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
-      const details = el('details', null, { class: 'card', 'data-detail': 'warmup' })
-      details.append(el('summary', 'Opvarmning og teknik'))
-      const steps = warmup(n, s.input)
-      details.append(el('p', steps.length ? 'Beregnet opvarmning frem mod din indtastede arbejdsvægt.' : 'Ingen beregnet opvarmning ved denne vægt. Aftal eventuelt opvarmning med din coach.'))
-      const list = el('ol')
-      for (const step of steps) list.append(el('li', `${step.weight} kg × ${step.reps} reps`))
-      details.append(list)
+      if (ex.note) {
+        if (/(?:^|[\s;,])(?:tempo|pause|hvile|rest)\b/i.test(ex.note)) {
+          const instructions = el('details', null, { 'data-detail': 'coach-note' })
+          instructions.append(el('summary', 'Coachens instruktioner'), el('p', ex.note)); plan.append(instructions)
+        } else plan.append(el('p', `Coachens fokus: ${ex.note}`))
+      }
+      // Only the first work set needs a warmup ramp; it starts folded above the form.
+      if (n.setNumber === 1) {
+        const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
+        warm.append(el('summary', 'Opvarmningssæt'), createOpvarmning(doc, {
+          enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) }
+        }))
+        body.append(warm)
+      }
       const form = el('form', null, { class: 'card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
       const busy = !['idle', 'error'].includes(s.phase)
       // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
@@ -149,6 +169,25 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
           line.append(tap(down[0], down[1], () => set(name, down[2](now(name))), 'step', down[3]), lab,
             tap(up[0], up[1], () => set(name, up[2](now(name))), 'step', up[3]))
           fields.append(line)
+          if (name === 'weight') {
+            const plates = el('details', null, { 'data-detail': 'plates', class: 'plate-tool' })
+            plates.append(el('summary', 'Skiver'))
+            let disposePlates = null
+            const toggle = () => {
+              if (plates.open && !disposePlates) disposePlates = mountPlateCalculator(plates,
+                { weight: controller.state().input.weight, barWeightKg: plateBar })
+              else if (!plates.open && disposePlates) {
+                plateBar = Number(plates.querySelector('select')?.value || 20)
+                disposePlates(); disposePlates = null
+              }
+            }
+            // Enter in the read-only calculator must never approve the work set.
+            plates.addEventListener('keydown', event => { if (event.key === 'Enter') event.preventDefault() })
+            plates.addEventListener('toggle', toggle)
+            cleanBlocks.push(() => { plates.removeEventListener('toggle', toggle); disposePlates?.() })
+            plates.open = !stepChanged && detailsOpen.includes('plates'); toggle()
+            fields.append(plates)
+          }
           continue
         } else {
           lab.append(input)
@@ -169,9 +208,9 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         e.preventDefault()
         return controller.approve(key, { ...s.input, ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, v.value])) }, s.selection.stamp)
       })
-      form.append(approve)
-      // Marc 3. nov.: the set form follows the plan directly; warmup and technique fold in below it.
-      body.append(form, details)
+      form.append(createSetNote(doc, { value: s.note, disabled: busy,
+        onChange: value => controller.editNote(key, value, s.selection.stamp) }), approve)
+      body.append(form)
     }
     if (!summary) {
       const finish = el('button', 'Afslut pas', { type: 'button' })
@@ -187,7 +226,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} reps, RPE ${present(log.rpe_actual)}`}`))
     }
     body.append(history)
-    for (const node of body.querySelectorAll('details')) node.open = detailsOpen.includes(node.getAttribute('data-detail'))
+    for (const node of body.querySelectorAll('details')) node.open = !stepChanged && detailsOpen.includes(node.getAttribute('data-detail'))
     const replacement = fieldName ? body.querySelector(`[data-field="${fieldName}"]`) : null
     if (stepChanged) body.querySelector('[data-heading]')?.focus()
     else if (replacement && !replacement.disabled) {
