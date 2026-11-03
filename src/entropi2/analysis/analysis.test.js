@@ -27,7 +27,7 @@ test('real imports use the existing formula and four-day D18 gate', () => {
 test('synthetic DOM preserves three questions below the week overview and one value per answer', () => {
   const dom = Analysis(props())
   assert.ok(dom instanceof Element)
-  assert.deepEqual(dom.querySelectorAll('h2').map(e => e.textContent), ['Ugeoversigt', 'De seneste 4 uger', ...QUESTIONS])
+  assert.deepEqual(dom.querySelectorAll('h2').map(e => e.textContent), ['Ugeoversigt', 'De seneste 4 uger', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 2)
   assert.equal(dom.querySelectorAll('svg').length, 0)
   assert.equal(dom.querySelectorAll('button').length, 0)

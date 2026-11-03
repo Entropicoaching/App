@@ -22,7 +22,7 @@ export function createEntryFactory({ enabled = false, role, getEntry, openFeedba
         getEntry().setOpenSharedVideoId(row.id)
         openFeedback(row)
       } })
-    return createConversation({ enabled, adapters })
+    return createConversation({ enabled, adapters, storage: () => getEntry().storage() })
   }
 }
 

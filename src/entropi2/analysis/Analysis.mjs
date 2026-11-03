@@ -1,12 +1,16 @@
 import { createElement as h } from 'react'
 import { analysisModel } from './analysisModel.mjs'
 import { formatHistoryKg } from './fourWeekHistory.mjs'
+import RpeHistoryView from './RpeHistoryView.mjs'
+import { muscleVolume, formatVolume } from './muscleVolume.mjs'
 
 // Explicit opt-in only. Assembly must supply entropi2 === true and the existing
 // AthleteView props. Importing this module changes no existing entry or flag.
 export default function Analysis(props = {}) {
   if (props.entropi2 !== true) return null
-  const { answers, weekOverview: week, fourWeekHistory: history, setTab } = analysisModel(props, props.now ?? new Date())
+  const now = props.now ?? new Date()
+  const { answers, weekOverview: week, fourWeekHistory: history, rpeHistory, personalRecords: records, setTab } = analysisModel(props, now)
+  const volume = muscleVolume(props, now)
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
@@ -42,6 +46,35 @@ export default function Analysis(props = {}) {
               point.value === null ? (row.unavailable ? 'Data ikke klar' : 'Ingen data') : `${formatHistoryKg(point.value)} kg e1RM`)))),
         h('p', { 'data-history-summary': true, style: { lineHeight: 1.6 } }, row.summary))
     })),
+  RpeHistoryView({ history: rpeHistory }),
+  h('section', { 'aria-label': 'Dine rekorder', 'data-analysis-records': true,
+    style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
+    h('h2', { style: { fontSize: '1.15rem' } }, 'Dine rekorder'),
+    h('p', null, records.message),
+    records.lifts.length > 0 && h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } },
+      ...records.lifts.map(row => {
+        const heavy = row.heaviest, best = row.bestEstimate
+        const date = day => `${day.slice(8, 10)}.${day.slice(5, 7)}.${day.slice(0, 4)}`
+        return h('li', { key: row.lift },
+          h('strong', null, row.lift),
+          h('p', null, `Tungeste sæt: ${formatHistoryKg(heavy.weight)} kg × ${heavy.reps} — ${date(heavy.date)}.`),
+          h('p', null, `Bedste e1RM: ${formatHistoryKg(best.value)} kg e1RM fra ${formatHistoryKg(best.weight)} kg × ${best.reps} — ${date(best.date)}.`))
+      })),
+    h('p', { style: { lineHeight: 1.6 } }, records.note)),
+  h('section', { 'aria-label': 'Volumen pr. muskelgruppe', 'data-analysis-volume': true,
+    style: { padding: 12, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18', minWidth: 0 } },
+    h('h2', { style: { fontSize: '1.15rem' } }, 'Volumen pr. muskelgruppe'),
+    h('p', { style: { lineHeight: 1.6 } }, volume.message),
+    ...volume.weeks.map(week => h('table', { key: week.start,
+      style: { width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', marginBottom: 20, fontSize: '0.85rem' } },
+      h('caption', { style: { textAlign: 'left', paddingBottom: 8 } }, week.label),
+      h('thead', null, h('tr', null,
+        ...['Muskelgruppe', 'Sæt', 'Tonnage (kg)'].map((label, i) => h('th', { key: label, scope: 'col',
+          style: { width: i === 0 ? '40%' : i === 1 ? '15%' : '45%', textAlign: i === 0 ? 'left' : 'right', padding: '6px 2px', verticalAlign: 'top' } }, label)))),
+      h('tbody', null, ...week.groups.map(row => h('tr', { key: row.group },
+        h('th', { scope: 'row', style: { textAlign: 'left', padding: '6px 2px', fontWeight: 400 } }, row.group),
+        h('td', { style: { textAlign: 'right', padding: '6px 2px' } }, formatVolume(row.sets)),
+        h('td', { style: { textAlign: 'right', padding: '6px 2px' } }, formatVolume(row.tonnage)))))))),
   ...answers.map(a => h('section', { key: a.key, 'aria-label': a.title,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
   h('h2', { style: { fontSize: '1.15rem' } }, a.title),

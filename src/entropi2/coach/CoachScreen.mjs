@@ -1,5 +1,6 @@
 import { createElement as h, useEffect, useState } from 'react'
 import { s, initials } from '../../dashboardShared.js'
+import CoachSessionNotes from './SessionNotesView.mjs'
 import ProgramOverblik from '../../dashboard/ProgramOverblikView.mjs'
 import { DEFAULT_ENTROPI2_COACH, coachHomeModel, hasUndatedPlannedWeek, openCoachRow, selectCoachTab } from './coachModel.mjs'
 
@@ -68,6 +69,9 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
         ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,
           style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },
           h('strong', null, a.name), h('span', { style: { display: 'block' } }, model.nutrition.get(a.id).text))))),
+    !inbox && h('details', { 'aria-label': 'Noter fra passene', 'data-coach-fold': 'noter', style: fold },
+      h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, 'Noter fra passene')),
+      h(CoachSessionNotes, { source: props, context: model })),
     inbox ? model.rosterReady && h('details', { 'aria-label': 'Alle samtaler', 'data-coach-fold': 'samtaler', style: fold },
       h('summary', { style: foldSummary }, h('h2', { style: foldHeading }, `Alle samtaler (${model.athletes.length})`)),
       ...model.athletes.map(a => h('button', { key: a.id, type: 'button', style: { ...button, margin: 4 },

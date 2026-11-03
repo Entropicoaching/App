@@ -4,6 +4,7 @@ import { sessionStyle } from './sessionStyle.mjs'
 import { lastSetLine } from './sessionHistory.mjs'
 import { sessionSummary } from './sessionSummary.mjs'
 import { stepWeight, stepReps } from '../../setLogDefaults.js'
+import { createRestTimer } from './restTimer.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
@@ -14,6 +15,7 @@ const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer 
 // It owns only nodes under root, no storage, media, global listeners or writes.
 export function mountSession(root, latest, { clock = globalThis } = {}) {
   const doc = root.ownerDocument
+  const rest = createRestTimer(doc, clock)
   let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, stepIdentity, announcement, errorStatus, dead = false
   const el = (tag, text, attrs = {}) => {
     const node = doc.createElement(tag)
@@ -36,6 +38,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   function render() {
     if (dead) return
     const p = latest(), s = controller.state()
+    rest.update(s, p)
     root.hidden = p.enabled !== true
     trigger.disabled = !s.canStart
     trigger.textContent = s.selection ? 'Åbn dagens pas' : 'Start dagens pas'
@@ -51,7 +54,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       body = el('div')
       announcement = el('p', '', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' })
       errorStatus = el('p', '', { role: 'alert', 'aria-atomic': 'true' })
-      frame.append(handle, close, announcement, body, errorStatus); dialog.append(frame); root.append(dialog)
+      frame.append(handle, close, rest.node, announcement, body, errorStatus); dialog.append(frame); root.append(dialog)
       unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => controller.close() })
     }
     const nextStep = JSON.stringify([s.selection.stamp, s.key, s.summary]), stepChanged = nextStep !== stepIdentity
@@ -178,5 +181,5 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   }
   render()
   return { update: () => controller.refresh(), controller,
-    dispose() { dead = true; tearDown(); trigger.removeEventListener('click', start); root.replaceChildren(); root.classList.remove('e2-session') } }
+    dispose() { dead = true; rest.dispose(); tearDown(); trigger.removeEventListener('click', start); root.replaceChildren(); root.classList.remove('e2-session') } }
 }
