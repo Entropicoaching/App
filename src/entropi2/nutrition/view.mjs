@@ -49,7 +49,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     const main = append(app, 'main')
     main.setAttribute('id', contentId); main.setAttribute('tabindex', '-1')
     if (s.loaded) {
-      const fast = append(main, 'section', 'card')
+      const fast = append(main, 'section', 'card'); fast.setAttribute('data-kost-del', 'hurtig')
       append(fast, 'h2', '', 'Log hurtigt')
       if (s.yesterday.length) {
         const section = append(fast, 'section', 'space'); append(section, 'h2', '', 'Gentag i går')
@@ -105,12 +105,14 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         foodForm.addEventListener('submit', e => { e.preventDefault(); action(foodPortion(food, amount, Number(unit))) })
       }
     }
-    const weighing = append(main, 'section', 'card')
+    const weighing = append(main, 'section', 'card'); weighing.setAttribute('data-kost-del', 'vaegt')
     append(weighing, 'h2', '', 'Din vægt')
     const summary = weightSummary(weightProps.weightLogs, s.athleteId, s.date)
+    // Marc 3. nov.: dansk dato i stedet for ISO, og kun én tom-tekst, når der ingen vejninger er.
+    const dag = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.'][Number(m[2]) - 1]}` : String(iso) }
     append(weighing, 'p', 'muted space', summary.latest
-      ? `Seneste vægt: ${displayNumber(summary.latest.weight)} kg · ${summary.latest.date}` : 'Ingen vejninger endnu')
-    append(weighing, 'p', 'muted', summary.average !== null
+      ? `Seneste vægt: ${displayNumber(summary.latest.weight)} kg · ${dag(summary.latest.date)}` : 'Ingen vejninger endnu')
+    if (summary.latest) append(weighing, 'p', 'muted', summary.average !== null
       ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} vejedage (seneste 7 dage)`
       : 'Ingen vejninger de seneste 7 dage')
     if (summary.comparison !== null) append(weighing, 'p', 'muted', summary.comparison)
@@ -139,11 +141,12 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       })
     } else append(weighing, 'p', 'muted space', 'Vejning er ikke tilsluttet endnu.')
     if (weightError) { const p = append(weighing, 'p', 'space', weightError); p.setAttribute('role', 'alert') }
-    const intro = append(main, 'div', 'intro')
-    append(intro, 'p', 'eyebrow', 'Kost · ' + s.date)
+    const intro = append(main, 'div', 'intro'); intro.setAttribute('data-kost-del', 'intro')
+    // Marc 3. nov.: datoen staar allerede i topbjaelken.
+    append(intro, 'p', 'eyebrow', 'Kost i dag')
     append(intro, 'h1', '', 'Dit næste måltid')
     append(intro, 'p', 'muted', 'Brug dine mål uden at logge. Dagbogen er valgfri.')
-    const hero = append(main, 'section', 'card hero')
+    const hero = append(main, 'section', 'card hero'); hero.setAttribute('data-kost-del', 'maal')
     append(hero, 'h2', '', 'Dagens mål')
     const advice = startAdvice(s.targets)
     if (!advice.kcal && !advice.protein) append(hero, 'p', 'space', 'Ingen mål endnu')
@@ -195,7 +198,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
             editing = { id: row.id, intent: intent(), meal: row.meal,
               ...Object.fromEntries(['kcal', 'protein', 'carb', 'fat'].map(k => [k, row[k] ?? ''])) }
             removing = null; draw()
-            host.querySelectorAll('input').find(n => n.getAttribute('data-focus') === 'edit-Måltid')?.focus()
+            Array.from(host.querySelectorAll('input')).find(n => n.getAttribute('data-focus') === 'edit-Måltid')?.focus()
           }, s.pending)
           edit.setAttribute('data-focus', 'edit-' + row.id)
         }
@@ -203,7 +206,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           const remove = button(li, 'Fjern måltid: ' + row.meal, () => {
             if (destroyed || controller.snapshot().pending) return
             removing = { id: row.id, intent: intent() }; editing = null; draw()
-            host.querySelectorAll('button').find(n => n.getAttribute('data-focus') === 'cancel-remove')?.focus()
+            Array.from(host.querySelectorAll('button')).find(n => n.getAttribute('data-focus') === 'cancel-remove')?.focus()
           }, s.pending)
           remove.setAttribute('data-focus', 'remove-' + row.id)
         }
@@ -223,7 +226,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
             if (destroyed || editing !== draft) return
             if (await controller.update(draft.id, { ...draft }, draft.intent)) {
               editing = null; draw()
-              host.querySelectorAll('button').find(n => n.getAttribute('data-focus') === 'edit-' + row.id)?.focus()
+              Array.from(host.querySelectorAll('button')).find(n => n.getAttribute('data-focus') === 'edit-' + row.id)?.focus()
             }
           })
         }
@@ -236,7 +239,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           }, s.pending)
           const cancel = button(group, 'Behold måltid', () => {
             removing = null; draw()
-            host.querySelectorAll('button').find(n => n.getAttribute('data-focus') === 'remove-' + row.id)?.focus()
+            Array.from(host.querySelectorAll('button')).find(n => n.getAttribute('data-focus') === 'remove-' + row.id)?.focus()
           }, s.pending)
           cancel.setAttribute('data-focus', 'cancel-remove')
         }
@@ -331,6 +334,11 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
       }
     }
+    // Marc 3. nov. (keep it simple): overskriften foerst; vejningen bliver oeverst som bestilt i
+    // APP-KOST-START1 ("vaegttrenden er det vigtigste tal"), derefter log hurtigt og dagens maal.
+    const kids = [...main.children], del = n => n.getAttribute?.('data-kost-del')
+    const first = ['intro', 'vaegt', 'hurtig', 'maal'].map(k => kids.find(n => del(n) === k)).filter(Boolean)
+    main.replaceChildren(...first, ...kids.filter(n => !first.includes(n)))
     host.replaceChildren(app)
     for (const n of host.querySelectorAll('[data-focus]')) {
       const key = n.getAttribute('data-focus')

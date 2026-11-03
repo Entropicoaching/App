@@ -64,7 +64,8 @@ test('TREND: actual synthetic DOM adds plain comparison after unchanged average,
   const cleanup = mountNutritionScreen(host, { entropi2: true, athlete, date, client, weightLogs: weeks() })
   await flush()
   const section = find(host, 'h2', 'Din vægt').parentElement, paragraphs = section.querySelectorAll('p')
-  assert.equal(paragraphs[0].textContent, `Seneste vægt: 80 kg · ${date}`)
+  // Marc 3. nov.: datoen vises paa dansk (2026-11-03 -> 3. nov.).
+  assert.equal(paragraphs[0].textContent, 'Seneste vægt: 80 kg · 3. nov.')
   assert.equal(paragraphs[1].textContent, 'Ugegennemsnit: 80 kg · 3 vejedage (seneste 7 dage)')
   assert.equal(paragraphs[2].textContent, '1 kg lavere end ugen før'); assert.equal(paragraphs[2].className, 'muted')
   assert.deepEqual(tables, ['meal_logs'])

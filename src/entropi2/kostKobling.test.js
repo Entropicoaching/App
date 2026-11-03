@@ -54,7 +54,7 @@ test('KOST: kostskærmen får atletens mål og vægt fra de eksisterende rækker
   assert.match(goalCard(host).textContent, /2.400 kcal/)
   assert.match(goalCard(host).textContent, /160 g/)
   const section = weightSection(host)
-  assert.match(section.textContent, /Seneste vægt: 82 kg · 2026-11-02/)
+  assert.match(section.textContent, /Seneste vægt: 82 kg · 2\. nov\./)
   assert.match(section.textContent, /Ugegennemsnit: 82,2 kg · 2 vejedage/)
   assert.doesNotMatch(section.textContent, /99/)
   assert.equal(section.querySelectorAll('form').length, 1)

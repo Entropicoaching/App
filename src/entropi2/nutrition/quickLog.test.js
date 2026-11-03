@@ -25,7 +25,10 @@ test('quick: first block orders yesterday, five favorites, five non-favorite rec
   const favorites = Array.from({ length: 7 }, (_, i) => meal(i))
   const rows = Array.from({ length: 16 }, (_, i) => row(i)).concat(row(30, '2026-11-02'))
   const { host, controller, writes } = await mounted(t, { rows, favorites })
-  assert.equal(host.querySelectorAll('main')[0].children[0], block(host))
+  // Marc 3. nov.: overskriften og vejningen staar over Log hurtigt; blokken er den foerste handling efter dem.
+  const order = host.querySelectorAll('main')[0].children.map(n => n.getAttribute('data-kost-del'))
+  assert.deepEqual(order.slice(0, 3), ['intro', 'vaegt', 'hurtig'])
+  assert.equal(host.querySelectorAll('main')[0].children[2], block(host))
   assert.deepEqual(block(host).querySelectorAll('h2').map(n => n.textContent), ['Log hurtigt', 'Gentag i går', 'Favoritter', 'Seneste måltider'])
   const buttons = quickButtons(host)
   assert.deepEqual(buttons.map(n => n.textContent), ['Log igen: Synthetic meal 30', ...[0, 1, 2, 3, 4, 7, 8, 9, 10, 11].map(i => 'Log Synthetic meal ' + i)])
