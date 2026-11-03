@@ -57,11 +57,22 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   const upload = button('Send video', () => controller.upload())
   const quick = node('div'), quickStatus = node('p')
   Object.assign(quick.style, { display: 'flex', flexWrap: 'wrap', gap: '8px' })
+  const renderQuick = () => quick.replaceChildren(...templates.map(row => button(row.name, () => {
+    if (disposed) return
+    try {
+      if (controller.selectTemplate) {
+        if (!controller.selectTemplate(row.name)) return
+        templates = controller.templates()
+        renderQuick()
+      } else controller.draft(row.text)
+      input.focus?.()
+    } catch (e) { quickStatus.textContent = e.message }
+  })))
   const loadQuick = button('Hent hurtige svar', () => {
     try { templates = controller.templates(); templateError = '' }
     catch (e) { templates = []; templateError = e.message }
-    quick.replaceChildren(...templates.map(row => button(row.name, () => controller.draft(row.text))))
-    quickStatus.textContent = templateError || (templates.length ? 'Vælg et svar og tryk Send.' : 'Ingen gemte hurtige svar.')
+    renderQuick()
+    quickStatus.textContent = templateError || (templates.length ? 'Vælg et svar, ret teksten og tryk Send. Mest brugte vises først.' : 'Ingen gemte hurtige svar.')
   })
   const videoSelect = node('select'); videoSelect.setAttribute('aria-label', 'Video til tidsfeedback')
   videoSelect.value = ''
@@ -79,7 +90,14 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   Object.assign(root.style, { background: '#141410', color: '#edeae2', padding: '20px',
     fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5', colorScheme: 'dark',
     maxWidth: '480px', textAlign: 'left', boxSizing: 'border-box', overflowWrap: 'anywhere' })
-  root.replaceChildren(title, status, reload, list, compose)
+  let firstUnread = null
+  const jump = button('Spring til første ulæste', () => {
+    if (disposed || !firstUnread) return
+    firstUnread.scrollIntoView?.({ block: 'start', behavior: 'smooth' })
+    firstUnread.focus?.()
+  })
+  jump.hidden = true
+  root.replaceChildren(title, status, jump, reload, list, compose)
   const unsubscribe = controller.subscribe(state => {
     if (disposed) return
     title.textContent = state.role === 'coach' ? 'Samtale med atleten' : 'Din coach'
@@ -114,7 +132,13 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
       const option = node('option', videoLabel(item.value)); option.value = item.value.id; videoSelect.append(option)
     }
     videoSelect.value = selected
-    list.replaceChildren(...state.thread.map(item => {
+    const isUnread = item => Boolean(state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach)
+    // Stable partition: preserve the original timeline inside each group.
+    const ordered = [...state.thread.filter(isUnread), ...state.thread.filter(item => !isUnread(item))]
+    firstUnread = null
+    jump.hidden = unread === 0; jump.disabled = unread === 0
+    jump.textContent = `${unread} ulæste · Spring til første ulæste`
+    list.replaceChildren(...ordered.map(item => {
       const li = node('li'), row = item.value
       li.dataset.key = item.key; li.style.whiteSpace = 'pre-wrap'; li.style.marginBottom = '20px'
       const unread = state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach
@@ -126,6 +150,7 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
         content.hidden = false; preview.hidden = true; toggle.setAttribute('aria-expanded', 'true')
         await controller.seen(item.key)
       })
+      if (isUnread(item) && !firstUnread) firstUnread = toggle
       toggle.style.textAlign = 'left'
       toggle.setAttribute('aria-expanded', String(expanded.has(item.key)))
       const content = node('div', item.kind === 'video' ? feedbackText(row) : row.content)

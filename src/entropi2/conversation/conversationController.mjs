@@ -1,8 +1,10 @@
+import { createQuickReplyUsage } from './quickReplyUsage.mjs'
 import { threadFor, timestampContent } from './conversationModel.mjs'
 
-export function createConversation({ enabled = false, adapters, uuid = () => globalThis.crypto.randomUUID() }) {
+export function createConversation({ enabled = false, adapters, storage, uuid = () => globalThis.crypto.randomUUID() }) {
   let active = true, generation = 0, busy = false, loading = false, error = '', draft = '', operation = null
   let messages = [], analyses = [], submissions = new Map(), loaded = false
+  const usage = createQuickReplyUsage(storage)
   const listeners = new Set()
   const initial = enabled === true ? adapters.scope() : null
   const guard = () => {
@@ -95,7 +97,21 @@ export function createConversation({ enabled = false, adapters, uuid = () => glo
         return true
       })
     },
-    templates: () => { guard(); return adapters.templates() },
+    templates: () => {
+      const s = guard()
+      return s.role === 'coach' ? usage.order(adapters.templates(), s.ownerId) : []
+    },
+    selectTemplate(name) {
+      const s = guard()
+      if (s.role !== 'coach' || busy || operation?.status === 'error') return false
+      const row = adapters.templates().find(row => row.name === name)
+      guard()
+      if (!row) return false
+      draft = String(row.text).slice(0, 10000)
+      // Count explicit use in the editor, never template reads or automatic sends.
+      usage.record(name, s.ownerId)
+      emit(); return true
+    },
     upload: () => action(() => adapters.upload()),
     open: key => action(() => {
       const item = snapshot().thread.find(row => row.key === key && row.kind === 'video')
