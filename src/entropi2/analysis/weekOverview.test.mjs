@@ -158,7 +158,7 @@ test('render places overview above unchanged questions, escapes text and preserv
   assert.ok(dom.querySelectorAll('h3').length + dom.querySelectorAll('[data-week-lifts-none]').length >= 1)
   for (const name of ['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft']) assert.match(dom.querySelectorAll('[data-analysis-week]')[0].textContent, new RegExp(name))
   assert.equal(dom.querySelectorAll('img').length, 0)
-  dom.querySelectorAll('button').forEach(b => b.dispatchEvent({ type: 'click' }))
+  dom.querySelectorAll('[data-analysis-destination]').forEach(b => b.dispatchEvent({ type: 'click' }))
   assert.deepEqual(calls, ['hjem', 'hjem', 'program'])
 })
 

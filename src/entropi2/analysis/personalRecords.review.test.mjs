@@ -27,7 +27,7 @@ test('review probe: four-lift display stays short and does not change answer nav
   const records = tree.querySelectorAll('[data-analysis-records]')[0]
   assert.equal(records.querySelectorAll('li').length, 4)
   assert.doesNotMatch(records.textContent, /999|Pause squat/)
-  tree.querySelectorAll('button').forEach(b => b.dispatchEvent({ type: 'click' }))
+  tree.querySelectorAll('[data-analysis-destination]').forEach(b => b.dispatchEvent({ type: 'click' }))
   assert.deepEqual(calls, ['hjem', 'hjem', 'program'])
 })
 

@@ -37,7 +37,7 @@ test('own review: volume does not create strength evidence or change navigation/
     setTab: () => ++calls }
   const dom = Analysis(p)
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 0)
-  const buttons = dom.querySelectorAll('button')
+  const buttons = dom.querySelectorAll('[data-analysis-destination]')
   assert.equal(buttons.length, 3)
   assert.equal(calls, 0)
   for (const button of buttons) button.dispatchEvent({ type: 'click' })

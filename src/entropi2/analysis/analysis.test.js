@@ -30,7 +30,7 @@ test('synthetic DOM preserves three questions below the week overview and one va
   assert.deepEqual(dom.querySelectorAll('h2').map(e => e.textContent), ['Ugeoversigt', 'De seneste 4 uger', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 2)
   assert.equal(dom.querySelectorAll('svg').length, 0)
-  assert.equal(dom.querySelectorAll('button').length, 0)
+  assert.equal(dom.querySelectorAll('[data-analysis-destination]').length, 0)
 })
 test('OFF is strict and does not read data or callbacks', () => {
   for (const entropi2 of [undefined, false, 1, 'true', '1', null]) {
@@ -41,7 +41,7 @@ test('DOM button dispatch calls the unchanged existing callback with destination
   const calls = [], setTab = (...args) => { calls.push(args); return 'routed' }
   assert.equal(adaptPublicContract(props({ setTab }), now).setTab, setTab)
   const dom = Analysis(props({ setTab }))
-  const buttons = dom.querySelectorAll('button')
+  const buttons = dom.querySelectorAll('[data-analysis-destination]')
   assert.equal(buttons.length, 3)
   for (const button of buttons) {
     assert.equal(button.getAttribute('type'), 'button')
@@ -51,7 +51,7 @@ test('DOM button dispatch calls the unchanged existing callback with destination
 })
 test('callback errors propagate without writes or fabricated success', () => {
   const dom = Analysis(props({ setTab() { throw Error('navigation failed') } }))
-  assert.throws(() => dom.querySelectorAll('button')[0].dispatchEvent({ type: 'click' }), /navigation failed/)
+  assert.throws(() => dom.querySelectorAll('[data-analysis-destination]')[0].dispatchEvent({ type: 'click' }), /navigation failed/)
 })
 test('empty, missing and loading states give instructions without metrics', () => {
   for (const rows of [[], null, undefined, {}, [null]]) noValues(rows)

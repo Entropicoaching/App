@@ -34,13 +34,13 @@ test('ANALYSE: knapperne kalder den eksisterende setTab med hjem, hjem og progra
   const calls = []
   const tree = Entropi2Analysis({ entropi2: true, athlete, currentWeek: null, exerciseLogs: [], fremgangLogs,
     fremgangLoading: false, setTab: tab => calls.push(tab), now })
-  const buttons = nodes(tree).filter(n => n.type === 'button')
+  const buttons = nodes(tree).filter(n => n.type === 'button' && n.props['data-analysis-destination'])
   assert.equal(buttons.length, 3)
   for (const button of buttons) button.props.onClick()
   assert.deepEqual(calls, ['hjem', 'hjem', 'program'])
-  // Uden setTab vises ingen knapper.
+  // Uden setTab vises ingen navigationsknapper; deling er en separat handling.
   const without = Entropi2Analysis({ entropi2: true, athlete, fremgangLogs, now })
-  assert.equal(nodes(without).filter(n => n.type === 'button').length, 0)
+  assert.equal(nodes(without).filter(n => n.type === 'button' && n.props['data-analysis-destination']).length, 0)
 })
 
 test('ANALYSE: AthleteView viser analysen øverst i fremgang-fanen kun med e2Atlet og eksisterende state', () => {

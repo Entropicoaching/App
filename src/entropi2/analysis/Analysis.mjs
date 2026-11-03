@@ -3,6 +3,7 @@ import { analysisModel } from './analysisModel.mjs'
 import { formatHistoryKg } from './fourWeekHistory.mjs'
 import RpeHistoryView from './RpeHistoryView.mjs'
 import { muscleVolume, formatVolume } from './muscleVolume.mjs'
+import { analysisWeekExtras, copyAnalysisWeek } from './analysisWeekExtras.mjs'
 
 // Explicit opt-in only. Assembly must supply entropi2 === true and the existing
 // AthleteView props. Importing this module changes no existing entry or flag.
@@ -11,16 +12,25 @@ export default function Analysis(props = {}) {
   const now = props.now ?? new Date()
   const { answers, weekOverview: week, fourWeekHistory: history, rpeHistory, personalRecords: records, setTab } = analysisModel(props, now)
   const volume = muscleVolume(props, now)
+  const extras = analysisWeekExtras(props, now)
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
+  extras.progress && h('p', { 'data-analysis-progress': true, style: { lineHeight: 1.6 } }, extras.progress),
   h('section', { 'aria-label': 'Ugeoversigt', 'data-analysis-week': true,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'Ugeoversigt'),
     h('p', null, week.period),
     h('p', null, week.sessions),
     h('p', null, week.sets),
+    extras.load && h('p', { 'data-analysis-load': true, style: { lineHeight: 1.6 } }, extras.load),
+    h('details', { 'data-analysis-share': true, style: { marginTop: 12, marginBottom: 12 } },
+      h('summary', { style: { cursor: 'pointer', minHeight: 44, display: 'list-item', paddingTop: 12, boxSizing: 'border-box' } }, 'Del ugen'),
+      h('pre', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', fontFamily: 'inherit', lineHeight: 1.6 } }, extras.share),
+      h('button', { type: 'button', 'data-analysis-copy': true, 'aria-live': 'polite',
+        style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
+        onClick: event => copyAnalysisWeek(event, extras.share) }, 'Del ugen')),
     // Marc 3. nov. (keep it simple): loeft med et tal faar deres egen blok; loeft uden data samles i een linje.
     ...week.lifts.filter(row => row.value).map(row => h('section', { key: row.lift, 'aria-label': row.lift },
       h('h3', { style: { fontSize: '1rem' } }, row.lift),
@@ -88,7 +98,7 @@ export default function Analysis(props = {}) {
   h('h2', { style: { fontSize: '1.15rem' } }, a.title),
   a.value && h('p', { 'data-analysis-value': a.key, style: { fontSize: '1.5rem' } }, a.value),
   h('p', { style: { lineHeight: 1.6 } }, a.message),
-  typeof setTab === 'function' && h('button', { type: 'button',
+  typeof setTab === 'function' && h('button', { type: 'button', 'data-analysis-destination': a.destination,
     style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
     onClick: () => setTab(a.destination) }, a.action))))
 }
