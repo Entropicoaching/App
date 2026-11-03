@@ -50,6 +50,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, ...weigh
     append(weighing, 'p', 'muted', summary.average !== null
       ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} vejedage (seneste 7 dage)`
       : 'Ingen vejninger de seneste 7 dage')
+    if (summary.comparison !== null) append(weighing, 'p', 'muted', summary.comparison)
     const weightConnected = typeof weightProps.logWeight === 'function' && typeof weightProps.onWeightInput === 'function'
     if (weightConnected) {
       const form = append(weighing, 'form', 'stack space')

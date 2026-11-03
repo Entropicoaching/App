@@ -40,6 +40,22 @@ export function weightSummary(rows, athleteId, date) {
   const week = ordered.filter(row => calendarTime(row.logged_at) >= end - 6 * 86400000)
   // Divide before summing to keep even large finite fixtures finite.
   const average = week.length ? week.reduce((sum, row) => sum + row.weight / week.length, 0) : null
+  const previousWeek = ordered.filter(row => {
+    const time = calendarTime(row.logged_at)
+    return time >= end - 13 * 86400000 && time <= end - 7 * 86400000
+  })
+  const previousAverage = previousWeek.length
+    ? previousWeek.reduce((sum, row) => sum + row.weight / previousWeek.length, 0) : null
+  let comparison = null
+  if (week.length >= 3 && previousWeek.length >= 3 && Number.isFinite(average) && Number.isFinite(previousAverage)) {
+    const difference = average - previousAverage, magnitude = Math.abs(difference)
+    // Repair floating-point noise at the 0.05 kg boundary, before one-decimal display.
+    const tolerance = Number.EPSILON * 1024
+    comparison = magnitude + tolerance < 0.05 ? 'samme som ugen før'
+      : `${displayNumber(magnitude < Number.MAX_VALUE / 10 ? Math.round((magnitude + tolerance) * 10) / 10 : magnitude)} kg ${difference < 0 ? 'lavere' : 'højere'} end ugen før`
+  }
   return { latest: ordered[0] ? { weight: ordered[0].weight, date: ordered[0].logged_at } : null,
-    average: Number.isFinite(average) ? average : null, days: week.length }
+    average: Number.isFinite(average) ? average : null, days: week.length,
+    previousAverage: Number.isFinite(previousAverage) ? previousAverage : null,
+    previousDays: previousWeek.length, comparison }
 }
