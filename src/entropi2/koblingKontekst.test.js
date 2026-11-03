@@ -22,9 +22,9 @@ const weeksFor = now => {
 function completedRead(calendarWeeks, at, { coachId = 'syn-coach', athleteIds = ['syn-a'] } = {}) {
   let status = {}
   const setStatus = fn => { status = fn(status) }
-  const handle = entropi2CalendarRead({ enabled: true, coachId, athleteIds, setStatus })
+  // Runde 11: dagen indfanges ved læsningens start, så uret dækker både start og afslutning.
   mock.timers.enable({ apis: ['Date'], now: at })
-  try { handle.done(calendarWeeks) } finally { mock.timers.reset() }
+  try { entropi2CalendarRead({ enabled: true, coachId, athleteIds, setStatus }).done(calendarWeeks) } finally { mock.timers.reset() }
   return { ...status, calendar: 'ready' }
 }
 const input = (calendarWeeks, coachActionsStatus, extra = {}) => ({ enabled: true, loading: false, loadError: false,
@@ -138,4 +138,24 @@ test('F4: med flaget tændt vises præcis én mobilitetsvisning; slukket er de g
         assert.deepEqual(off.slice(1), old.map(branch => Boolean(branch(tab, compactHomework, mobilityMode))))
       }
   assert.match(lines[0], /^ {8}\{e2Atlet && tab === 'mobilisering' && \($/)
+})
+
+// K-R10 fund 4: en kalenderlæsning startet før midnat og afsluttet efter må ikke få den nye dags
+// kontekst. Den bærer startdagen og afvises af dagens model, indtil en ny læsning er afsluttet.
+test('R11 F4: læsning startet 23:59:50 og afsluttet 00:00:05 bærer gårsdagens dag', () => {
+  const start = new Date('2026-11-02T22:59:50Z'), end = new Date('2026-11-02T23:00:05Z')
+  const calendarWeeks = weeksFor(start)
+  let status = {}
+  const setStatus = fn => { status = fn(status) }
+  mock.timers.enable({ apis: ['Date'], now: start })
+  let handle
+  try { handle = entropi2CalendarRead({ enabled: true, coachId: 'syn-coach', athleteIds: ['syn-a'], setStatus }) } finally { mock.timers.reset() }
+  mock.timers.enable({ apis: ['Date'], now: end })
+  try { handle.done(calendarWeeks) } finally { mock.timers.reset() }
+  const context = entropi2ReadContext(input(calendarWeeks, { ...status, calendar: 'ready' }))
+  assert.equal(context.day, '2026-11-02')
+  assert.notEqual(context.day, activityDay(end))
+  const m = model(context, calendarWeeks, end)
+  assert.equal(m.calendarReady, false)
+  assert.equal(programActions(m).length, 0)
 })

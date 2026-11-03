@@ -43,11 +43,12 @@ delete globalThis.__kostMaalKoblingClient
 const read = name => readFileSync(new URL(name, import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const today = '2026-11-02'
 const athlete = { id: 'syn-a', kcal_target: 2400, protein_target: 160, bodyweight: 80 }
-const ready = { athleteId: 'syn-a', state: 'ready' }
 // Som den eksisterende fetchAthleteWeightLogs: select('*') med athlete_id, nyeste først.
 const logs = ['2026-11-02', '2026-11-01', '2026-10-30', '2026-10-28', '2026-10-25', '2026-10-23', '2026-10-21']
   .map((day, i) => ({ id: `syn-w${i}`, athlete_id: 'syn-a', logged_at: `${day}T07:00:00Z`, weight: i < 4 ? 81 : 80 }))
-const view = props => mount(CoachKostMaal, { enabled: true, athlete, weightStatus: ready, weightLogs: logs, today, ...props }).render()
+// Runde 11: rækkerne følger statusobjektet fra præcis den læsning, der gav dem.
+const ready = { athleteId: 'syn-a', state: 'ready', rows: logs }
+const view = props => mount(CoachKostMaal, { enabled: true, athlete, weightStatus: ready, today, ...props }).render()
 
 test('KOSTMÅL: coachen ser mål, kropsvægt, ugegennemsnit og trend fra atletens weight_logs', () => {
   const out = text(view())
@@ -55,7 +56,7 @@ test('KOSTMÅL: coachen ser mål, kropsvægt, ugegennemsnit og trend fra atleten
     /Ugegennemsnit · seneste 7 dage\s+81 kg · 4 vejedage/, /Trend · mod de foregående 7 dage\s+\+1 kg/])
     assert.match(out, pattern)
   // Den eksisterende læser giver nyeste først; koblingen vender til stigende uden at ændre rækkerne.
-  assert.deepEqual(kostMaalVaegt(ready, 'syn-a', logs).rows, [...logs].reverse())
+  assert.deepEqual(kostMaalVaegt(ready, 'syn-a').rows, [...logs].reverse())
   assert.equal(logs[0].logged_at.startsWith('2026-11-02'), true)
 })
 
@@ -68,12 +69,12 @@ test('KOSTMÅL: manglende mål vises som Ingen mål endnu, aldrig som nul', () =
 })
 
 test('KOSTMÅL: manglende vægt, igangværende læsning, fremmed atlet og læsefejl', () => {
-  const empty = text(view({ weightLogs: [], athlete: { ...athlete, bodyweight: null } }))
+  const empty = text(view({ weightStatus: { ...ready, rows: [] }, athlete: { ...athlete, bodyweight: null } }))
   assert.match(empty, /Ingen kropsvægt angivet/); assert.match(empty, /Ingen vejninger endnu/)
   assert.match(empty, /Ingen vejninger i perioden/); assert.match(empty, /Flere vejninger nødvendige/)
   // Ikke afsluttet læsning for netop denne atlet er aldrig "ingen vejninger".
   for (const props of [{ weightStatus: null }, { weightStatus: { athleteId: 'syn-a', state: 'loading' } },
-    { weightStatus: { athleteId: 'syn-b', state: 'ready' } }, { weightLogs: [{ ...logs[0], athlete_id: 'syn-b' }] }]) {
+    { weightStatus: { athleteId: 'syn-b', state: 'ready' } }, { weightStatus: { ...ready, rows: [{ ...logs[0], athlete_id: 'syn-b' }] } }]) {
     const out = text(view(props))
     assert.match(out, /Indlæser vægtgrundlag/, JSON.stringify(Object.keys(props)))
     assert.doesNotMatch(out, /Ingen vejninger|Kostmål/)
@@ -92,7 +93,7 @@ test('KOSTMÅL: Rediger og Gem bruger den eksisterende startEdit og saveEdit; ku
     setSaving: value => { props.saving = value }, setSelectedAthlete: value => { selected = value },
     setAthletes: update => { roster = update(roster) }, setEditing, showFlash: () => { throw Error('uventet valideringsfejl') } }).saveEdit
   const saveEdit = (...args) => { saveCalls++; assert.deepEqual(args, []); return existing()() }
-  const c = mount(CoachKostMaal, { enabled: true, athlete, weightStatus: ready, weightLogs: logs, today })
+  const c = mount(CoachKostMaal, { enabled: true, athlete, weightStatus: ready, today })
   const render = () => c.render({ ...props, startEdit: nav.startEdit, setEditing,
     setEditData: update => { props.editData = update(props.editData) }, saveEdit })
   one(render(), 'button', 'Rediger').props.onClick()
@@ -110,34 +111,85 @@ test('KOSTMÅL: Rediger og Gem bruger den eksisterende startEdit og saveEdit; ku
   assert.equal(nodes(render(), n => n.type === 'form').length, 0)
 })
 
-test('KOSTMÅL: vægtloggen hentes med den eksisterende læser for den valgte atlet; OFF læser intet', async () => {
+// Syntetisk Supabase-klient: registrerer forespørgslen og lader prøven bestemme, hvornår og hvad
+// hver læsning svarer.
+function weightClient() {
+  const reads = []
+  const client = { from(table) {
+    const read = { table, ops: [] }
+    const chain = Object.fromEntries(['select', 'eq', 'order'].map(m => [m, (...a) => { read.ops.push([m, ...a]); return chain }]))
+    chain.limit = n => { read.ops.push(['limit', n]); return new Promise((resolve, reject) => { read.resolve = resolve; read.reject = reject }) }
+    reads.push(read); return chain
+  } }
+  return { client, reads }
+}
+
+test('KOSTMÅL: vægtloggen læses med samme forespørgsel som den eksisterende læser; OFF læser intet', async () => {
   const flush = () => new Promise(resolve => setImmediate(resolve))
-  const fetched = [], seen = []
-  const cancel = startKostVaegt({ enabled: true, athleteId: 'syn-a', fetchAthleteWeightLogs: async id => { fetched.push(id) } }, s => seen.push(s))
+  const { client, reads } = weightClient(), seen = []
+  const cancel = startKostVaegt({ enabled: true, athleteId: 'syn-a', client }, s => seen.push(s))
   await flush()
-  assert.deepEqual(fetched, ['syn-a'])
-  assert.deepEqual(seen, [{ athleteId: 'syn-a', state: 'loading' }, { athleteId: 'syn-a', state: 'ready' }])
+  assert.equal(reads.length, 1)
+  assert.deepEqual(reads[0].table, 'weight_logs')
+  assert.deepEqual(reads[0].ops, [['select', '*'], ['eq', 'athlete_id', 'syn-a'], ['order', 'logged_at', { ascending: false }], ['limit', 90]])
+  reads[0].resolve({ data: logs, error: null }); await flush()
+  assert.deepEqual(seen, [{ athleteId: 'syn-a', state: 'loading' }, { athleteId: 'syn-a', state: 'ready', rows: logs }])
   cancel()
-  const failed = []
-  startKostVaegt({ enabled: true, athleteId: 'syn-a', fetchAthleteWeightLogs: async () => { throw Error('syntetisk') } }, s => failed.push(s))
-  await flush()
+  const rejected = weightClient(), failed = []
+  startKostVaegt({ enabled: true, athleteId: 'syn-a', client: rejected.client }, s => failed.push(s))
+  await flush(); rejected.reads[0].reject(Error('syntetisk')); await flush()
   assert.deepEqual(failed.at(-1), { athleteId: 'syn-a', state: 'error' })
   // Et svar efter atletskift (annullering) afleveres ikke.
-  const late = [], stop = startKostVaegt({ enabled: true, athleteId: 'syn-a', fetchAthleteWeightLogs: async () => {} }, s => late.push(s))
-  stop(); await flush()
+  const lateClient = weightClient(), late = [], stop = startKostVaegt({ enabled: true, athleteId: 'syn-a', client: lateClient.client }, s => late.push(s))
+  await flush(); stop(); lateClient.reads[0].resolve({ data: logs, error: null }); await flush()
   assert.deepEqual(late, [{ athleteId: 'syn-a', state: 'loading' }])
-  for (const input of [{ enabled: false, athleteId: 'syn-a' }, { enabled: 'true', athleteId: 'syn-a' }, { enabled: true, athleteId: undefined }]) {
+  for (const input of [{ enabled: false, athleteId: 'syn-a' }, { enabled: 'true', athleteId: 'syn-a' }, { enabled: true, athleteId: undefined }, { enabled: true, athleteId: 'syn-a', client: null }]) {
     let called = 0
-    assert.equal(startKostVaegt({ ...input, fetchAthleteWeightLogs: () => { called++ } }, () => { called++ }), undefined)
+    const probe = { from() { called++; throw Error('OFF læst') } }
+    assert.equal(startKostVaegt({ client: probe, ...input }, () => { called++ }), undefined)
     assert.equal(called, 0)
   }
+})
+
+// K-R10 fund 1: et sent vægtsvar fra den forrige atlet må aldrig låse den nye atlets kostskærm.
+test('KOSTMÅL R11: sent svar fra atlet A efter skift til B blander sig ikke; B vises med egne rækker', async () => {
+  const flush = () => new Promise(resolve => setImmediate(resolve))
+  const { client, reads } = weightClient()
+  let status = null
+  const stopA = startKostVaegt({ enabled: true, athleteId: 'syn-a', client }, s => { status = s })
+  await flush()
+  stopA() // atletskift: effekten rydder A op og starter B
+  startKostVaegt({ enabled: true, athleteId: 'syn-b', client }, s => { status = s })
+  await flush()
+  const rowsB = [{ id: 'syn-wb', athlete_id: 'syn-b', logged_at: '2026-11-02T07:00:00Z', weight: 70 }]
+  reads[1].resolve({ data: rowsB, error: null }); await flush()
+  reads[0].resolve({ data: logs, error: null }); await flush() // A svarer sent
+  assert.deepEqual(status, { athleteId: 'syn-b', state: 'ready', rows: rowsB })
+  assert.deepEqual(kostMaalVaegt(status, 'syn-b'), { state: 'ready', rows: rowsB })
+  const out = text(view({ athlete: { ...athlete, id: 'syn-b' }, weightStatus: status }))
+  assert.doesNotMatch(out, /Indlæser vægtgrundlag/)
+})
+
+// K-R10 fund 3: en læsefejl fra databasen er en fejl, aldrig "Ingen vejninger endnu".
+test('KOSTMÅL R11: databasefejl i svaret vises som fejl, ikke som tomme vejninger', async () => {
+  const flush = () => new Promise(resolve => setImmediate(resolve))
+  for (const answer of [{ data: null, error: { message: 'syntetisk fejl' } }, { data: [], error: { message: 'syntetisk' } }, { data: null, error: null }, undefined]) {
+    const { client, reads } = weightClient(), seen = []
+    startKostVaegt({ enabled: true, athleteId: 'syn-a', client }, s => seen.push(s))
+    await flush(); reads[0].resolve(answer); await flush()
+    assert.deepEqual(seen.at(-1), { athleteId: 'syn-a', state: 'error' }, JSON.stringify(answer))
+    const out = view({ weightStatus: seen.at(-1) })
+    assert.equal(out.props.role, 'alert'); assert.doesNotMatch(text(out), /Ingen vejninger/)
+  }
+  // En ready-status uden rækker er aldrig bevis for "ingen vejninger".
+  assert.deepEqual(kostMaalVaegt({ athleteId: 'syn-a', state: 'ready' }, 'syn-a'), { state: 'error' })
 })
 
 test('KOSTMÅL: OFF giver ingen gengivelse, og Dashboard bevarer KostTab uændret bag !e2', () => {
   for (const enabled of [undefined, false, 'true', 1]) assert.equal(CoachKostMaal({ enabled, get athlete() { throw Error('OFF læst') } }), null)
   const source = read('../Dashboard.jsx')
-  assert.match(source, /const e2KostVaegt = useEntropi2KostVaegt\(\{ enabled: e2 && activeTab === 'kost', athleteId: selectedAthlete\?\.id, fetchAthleteWeightLogs \}\)/)
-  assert.match(source, /\{e2 && activeTab === 'kost' && \(\n {14}<CoachKostMaal enabled=\{true\} athlete=\{a\} weightStatus=\{e2KostVaegt\} weightLogs=\{athleteWeightLogs\} today=\{calendarDay\(\)\} \{\.\.\.\{\n {16}editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,\n {14}\}\} \/>/)
+  assert.match(source, /const e2KostVaegt = useEntropi2KostVaegt\(\{ enabled: e2 && activeTab === 'kost', athleteId: selectedAthlete\?\.id, client: supabase \}\)/)
+  assert.match(source, /\{e2 && activeTab === 'kost' && \(\n {14}<CoachKostMaal enabled=\{true\} athlete=\{a\} weightStatus=\{e2KostVaegt\} today=\{calendarDay\(\)\} \{\.\.\.\{\n {16}editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,\n {14}\}\} \/>/)
   assert.match(source, /\{!e2 && activeTab === 'kost' && \(\n {14}<KostTab \{\.\.\.\{\n {16}a, editData, editing, isMobile, saveEdit, saving,\n {16}setEditData, setEditing, startEdit,\n {14}\}\} \/>/)
   assert.equal(source.match(/<KostTab /g).length, 1)
 })

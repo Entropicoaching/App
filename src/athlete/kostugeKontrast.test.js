@@ -1,4 +1,7 @@
 // E2-KOSTUGE-KONTRAST1: atletens kostuge og coachens lokale analyseværktøj skal have læsbare h2 i lyst og mørkt skema.
+// Runde 11 (K-R10 fund 5): rettelsen gælder kun med Entropi 2 tændt. Den ligger i entropi2.css (indlæses kun
+// med flaget) under rodmarkørerne [data-entropi2-athlete] og [data-entropi2-coach-root]; index.css er uændret,
+// så skærmene er præcis som før, når flaget er slukket.
 // Renderer de faktiske KostUge.jsx og AnalyseLokaltVaerktoej.jsx (oversat med den eksisterende vaerd3Jsx-adapter)
 // og læser den faktiske src/index.css og appens mørke bund i src/App.jsx.
 import { test } from 'node:test'
@@ -43,7 +46,11 @@ const textH = {
   dark: css.match(/@media \(prefers-color-scheme: dark\) \{\s*:root \{[^}]*?--text-h: (#[0-9a-f]{6});/)[1],
 }
 const LABELS = ['Kostuge', 'Lokalt videoanalyseværktøj']
-const lightRule = /@media \(prefers-color-scheme: light\) \{\s*section\[aria-label="Kostuge"\] h2,\s*section\[aria-label="Lokalt videoanalyseværktøj"\] h2 \{\s*color: inherit;\s*\}\s*\}/
+const e2css = readFileSync(new URL('../entropi2/entropi2.css', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
+const SCOPED = ['[data-entropi2-athlete] section[aria-label="Kostuge"] :is(h1, h2, h3)',
+  '[data-entropi2-coach-root] section[aria-label="Lokalt videoanalyseværktøj"] :is(h1, h2, h3)']
+const e2Rule = e2css.replace(/\/\*[^]*?\*\//g, '').match(/([^{}]*)\{\s*color:\s*(#[0-9a-f]{6});\s*\}/i)
+const e2Color = e2Rule[2]
 
 const lum = hex => {
   const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -61,7 +68,7 @@ function headings(tree, scheme, withRule) {
     const own = node.props.style?.color
     const here = own ?? inherited
     const inSection = node.type === 'section' && LABELS.includes(node.props['aria-label']) ? node.props['aria-label'] : section
-    if (node.type === 'h2') out.push({ section: inSection, color: own ?? (scheme === 'light' && withRule && inSection ? inherited : textH[scheme]) })
+    if (node.type === 'h2') out.push({ section: inSection, color: own ?? (withRule && inSection ? e2Color : textH[scheme]) })
     for (const child of node.props.children) walk(child, here, inSection)
   }
   walk(tree, appColor, null)
@@ -78,19 +85,21 @@ const trees = () => [
   ['Lokalt analyseværktøj', AnalyseLokaltVaerktoej()],
 ]
 
-test('index.css: lys-reglen findes præcis én gang, kun i lyst skema, før APP-375FIX, og mørkt skema er uændret', () => {
-  assert.match(css, lightRule)
-  for (const label of LABELS) assert.equal(css.split(`section[aria-label="${label}"]`).length - 1, 1)
+test('R11: index.css er uændret (ingen regel for de to sektioner); rettelsen ligger kun i entropi2.css under rodmarkørerne', () => {
+  for (const label of LABELS) assert.equal(css.split(`section[aria-label="${label}"]`).length - 1, 0)
+  assert.equal(css.indexOf('E2-KOSTUGE-KONTRAST1'), -1)
+  const selectors = e2Rule[1].split(/,\s*\n/).map(s => s.trim()).filter(Boolean)
+  for (const scoped of SCOPED) assert.ok(selectors.includes(scoped), scoped)
+  for (const label of LABELS) assert.ok(!selectors.some(s => s.startsWith(`section[aria-label="${label}"]`)), label)
   assert.equal(textH.light, '#08060d')
   assert.equal(textH.dark, '#f3f4f6')
   assert.equal(ground, '#141410')
-  assert.ok(css.indexOf('E2-KOSTUGE-KONTRAST1') < css.indexOf('/* APP-375FIX:'))
 })
 
 for (const [name, make] of trees().map(([n], i) => [n, () => trees()[i][1]])) {
   test(name + ': h2 har mindst 4,5:1 i lyst og mørkt skema; uden reglen er fejlen genskabt', () => {
     const tree = make()
-    const withRule = lightRule.test(css)
+    const withRule = true // Entropi 2 tændt: komponenten ligger i den markerede rod
     if (name === 'Kostuge med ugedata') assert.match(JSON.stringify(tree), /"Kostuge · ","19.10.2026"/)
     for (const scheme of ['light', 'dark']) {
       const heads = headings(tree, scheme, withRule)
@@ -100,8 +109,9 @@ for (const [name, make] of trees().map(([n], i) => [n, () => trees()[i][1]])) {
         assert.ok(contrast(x.color, ground) >= 4.5, `${scheme} ${x.color} paa ${ground}`)
       }
     }
+    // Flaget slukket: farverne er de oprindelige (som live i dag), i begge skemaer.
+    for (const scheme of ['light', 'dark']) assert.ok(headings(tree, scheme, false).every(x => x.color === textH[scheme]))
     assert.ok(headings(tree, 'light', false).every(x => contrast(x.color, ground) < 1.2))
-    assert.deepEqual(headings(tree, 'dark', false), headings(tree, 'dark', true))
   })
 }
 

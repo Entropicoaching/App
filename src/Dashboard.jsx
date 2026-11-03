@@ -398,8 +398,9 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const e2ReadContext = useEntropi2ReadContext({ enabled: e2, loading, loadError, coachId: session?.user?.id, athletes, calendarWeeks, coachActionsStatus, coachMorningData })
   // Entropi 2: coachens kostlinje læses kun med flaget tændt og bindes til samme kontekst.
   const e2CoachNutrition = useEntropi2CoachNutrition({ enabled: e2, client: supabase, readContext: e2ReadContext })
-  // Entropi 2: kostmål. Vægtloggen hentes med den eksisterende læser, når coachens kostfane er åben.
-  const e2KostVaegt = useEntropi2KostVaegt({ enabled: e2 && activeTab === 'kost', athleteId: selectedAthlete?.id, fetchAthleteWeightLogs })
+  // Entropi 2: kostmål. Vægtloggen læses i koblingens egen læsning (samme forespørgsel som den
+  // eksisterende læser), når coachens kostfane er åben; den fælles athleteWeightLogs røres ikke.
+  const e2KostVaegt = useEntropi2KostVaegt({ enabled: e2 && activeTab === 'kost', athleteId: selectedAthlete?.id, client: supabase })
   // Entropi 2: dagsur, så kostmål og samtale følger dagsskiftet også uden anden ændring.
   const e2Dag = useEntropi2Dag({ enabled: e2, today: calendarDay }) ?? {}
   const e2CoachSamtaleRef = useRef(null)
@@ -650,7 +651,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   })()
 
   return (
-    <div {...(coachWeekEnabled === true ? { 'data-app-375': 'coach' } : {})} style={s.wrap}>
+    <div {...(coachWeekEnabled === true ? { 'data-app-375': 'coach' } : {})} {...(e2 ? { 'data-entropi2-coach-root': '' } : {})} style={s.wrap}>
       <Overlays {...{
         confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
       }} />
@@ -836,7 +837,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
 
             {/* TAB: KOST */}
             {e2 && activeTab === 'kost' && (
-              <CoachKostMaal enabled={true} athlete={a} weightStatus={e2KostVaegt} weightLogs={athleteWeightLogs} today={calendarDay()} {...{
+              <CoachKostMaal enabled={true} athlete={a} weightStatus={e2KostVaegt} today={calendarDay()} {...{
                 editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
               }} />
             )}

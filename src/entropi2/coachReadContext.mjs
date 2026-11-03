@@ -3,7 +3,9 @@ import { activityDay } from '../dashboard/coachInactive.mjs'
 // Entropi 2: konteksten hører til selve kalenderlæsningen, aldrig til gengivelsen.
 // Læseren (src/dashboard/laesninger.js) kalder entropi2CalendarRead ved læsningens start og
 // done(weeks) dér, hvor læsningen afsluttes. Først da stemples ejer, anmodede atlet-id'er og
-// afslutningsdag, sammen med netop det kalenderobjekt, læsningen gav.
+// STARTdagen, sammen med netop det kalenderobjekt, læsningen gav. Dagen indfanges ved start
+// (runde 11): et svar på en læsning, der startede før midnat, bærer gårsdagens dato og
+// afvises derfor af dagens model, indtil en ny læsning er afsluttet.
 // Alle igangværende læsninger registreres pr. statussetter (én pr. Dashboard). Kun den nyeste
 // læsning er gældende (current); et ældre svar afsluttes med settle() uden at overskrive noget.
 // Så længe nogen læsning er i gang, er der ingen kontekst (se pending nedenfor).
@@ -12,7 +14,7 @@ export function entropi2CalendarRead({ enabled, coachId, athleteIds, setStatus }
   if (enabled !== true || typeof setStatus !== 'function') return null
   let tracker = trackers.get(setStatus)
   if (!tracker) { tracker = { latest: null, pending: new Set() }; trackers.set(setStatus, tracker) }
-  const token = {}, scope = Array.isArray(athleteIds) ? athleteIds.slice() : []
+  const token = {}, scope = Array.isArray(athleteIds) ? athleteIds.slice() : [], day = activityDay()
   tracker.latest = token
   tracker.pending.add(token)
   const started = tracker.pending.size
@@ -28,7 +30,7 @@ export function entropi2CalendarRead({ enabled, coachId, athleteIds, setStatus }
         setStatus(prev => ({ ...prev, e2Calendar: { ...prev.e2Calendar, pending } }))
         return
       }
-      const context = { coachId, athleteIds: scope, day: activityDay() }
+      const context = { coachId, athleteIds: scope, day }
       setStatus(prev => ({ ...prev, e2Calendar: { token, pending, weeks, context } }))
     },
     // Afslutter læsningen uden resultat (fejl eller afløst af en nyere læsning).

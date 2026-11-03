@@ -39,9 +39,11 @@ const videoSeconds = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 2 }
 
 // A technique message with a human-readable reference, using only messages.content.
 // No new wire protocol or claim that a local playback document was shared.
+// The last line keeps the selected analysis.id, so two videos of the same lift on the same
+// day never produce the same stored reference (INTEGRATION contract: analysis.id, lift, time).
 export function timestampContent(row, seconds, text) {
   if (!row || !validId(row.id) || typeof seconds !== 'number' || !Number.isFinite(seconds)
     || seconds < 0 || seconds >= 7200 || typeof text !== 'string' || !text.trim() || text.trim().length > 600)
     throw Error('Vælg video, tidspunkt og en tekst på højst 600 tegn.')
-  return `${videoLabel(row)} ved ${videoSeconds.format(seconds)} s\n${text.trim()}`
+  return `${videoLabel(row)} ved ${videoSeconds.format(seconds)} s\n${text.trim()}\nVideo-id: ${row.id}`
 }

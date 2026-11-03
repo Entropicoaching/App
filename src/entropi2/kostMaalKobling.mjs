@@ -3,44 +3,53 @@ import KostMaal from './kostMaal/KostMaal.mjs'
 
 // Entropi 2 (APP-KOST-MAAL1): coachens kostfane. Kostmål og vægtgrundlag vises med pakken
 // KostMaal; redigering og gem går gennem Dashboardets eksisterende startEdit('setup', ...) og
-// saveEdit. Vægtloggen hentes med den eksisterende fetchAthleteWeightLogs. Ingen ny skrivevej.
+// saveEdit. Vægtloggen læses med samme forespørgsel som den eksisterende fetchAthleteWeightLogs,
+// men i koblingens egen læsning, så rækker og status hører til præcis samme svar. Ingen ny skrivevej.
 
-// Effektens krop: henter vægtloggen for den valgte atlet med den eksisterende læser og melder
-// status for netop den atlet. Et svar efter annullering afleveres aldrig.
-export function startKostVaegt({ enabled, athleteId, fetchAthleteWeightLogs }, onStatus) {
-  if (enabled !== true || athleteId == null || typeof fetchAthleteWeightLogs !== 'function') return undefined
+// Effektens krop: læser vægtloggen for den valgte atlet (samme select som den eksisterende læser:
+// weight_logs, athlete_id, nyeste først, højst 90) og melder status MED rækkerne for netop den
+// læsning. Et svar efter annullering afleveres aldrig og rører ingen fælles state, så et sent svar
+// fra en tidligere atlet kan ikke blande sig med den nye atlets skærm. Kun et svar uden error og
+// med en liste er en komplet læsning; alt andet er en fejl, aldrig "ingen vejninger".
+export function startKostVaegt({ enabled, athleteId, client }, onStatus) {
+  if (enabled !== true || athleteId == null || typeof client?.from !== 'function') return undefined
   let current = true
   onStatus({ athleteId, state: 'loading' })
-  Promise.resolve().then(() => fetchAthleteWeightLogs(athleteId)).then(
-    () => { if (current) onStatus({ athleteId, state: 'ready' }) },
+  Promise.resolve().then(() => client.from('weight_logs').select('*').eq('athlete_id', athleteId)
+    .order('logged_at', { ascending: false }).limit(90)).then(
+    result => {
+      if (!current) return
+      if (!result || result.error || !Array.isArray(result.data)) onStatus({ athleteId, state: 'error' })
+      else onStatus({ athleteId, state: 'ready', rows: result.data })
+    },
     () => { if (current) onStatus({ athleteId, state: 'error' }) })
   return () => { current = false }
 }
 
-export function useEntropi2KostVaegt({ enabled, athleteId, fetchAthleteWeightLogs }) {
+export function useEntropi2KostVaegt({ enabled, athleteId, client }) {
   const [status, setStatus] = useState(null)
   const live = enabled === true ? athleteId : undefined
-  // fetchAthleteWeightLogs er ny i hvert render (lavLaesninger); læsningen startes kun ved atlet- eller flagskift.
-  useEffect(() => startKostVaegt({ enabled, athleteId: live, fetchAthleteWeightLogs }, setStatus), [enabled, live])
+  // Læsningen startes kun ved atlet-, flag- eller klientskift.
+  useEffect(() => startKostVaegt({ enabled, athleteId: live, client }, setStatus), [enabled, live, client])
   return status
 }
 
 // Vægtrækkerne gives kun videre, når læsningen for netop denne atlet er afsluttet, og alle
-// rækker hører til atleten. Den eksisterende læser sorterer nyeste først; pakken lader den
-// sidst indlæste række vinde, så rækkefølgen vendes til stigende.
-export function kostMaalVaegt(status, athleteId, weightLogs) {
+// rækker hører til atleten. Læsningen sorterer nyeste først; pakken lader den sidst indlæste
+// række vinde, så rækkefølgen vendes til stigende. Rækkerne kommer fra statusobjektet selv.
+export function kostMaalVaegt(status, athleteId) {
   if (athleteId == null || status?.athleteId !== athleteId) return { state: 'loading' }
   if (status.state !== 'ready') return { state: status.state === 'error' ? 'error' : 'loading' }
-  const rows = Array.isArray(weightLogs) ? weightLogs : []
-  if (!rows.every(row => row?.athlete_id === athleteId)) return { state: 'loading' }
-  return { state: 'ready', rows: [...rows].reverse() }
+  if (!Array.isArray(status.rows)) return { state: 'error' }
+  if (!status.rows.every(row => row?.athlete_id === athleteId)) return { state: 'loading' }
+  return { state: 'ready', rows: [...status.rows].reverse() }
 }
 
 // Standard OFF: læser hverken props, data eller callbacks.
 export default function CoachKostMaal(props = {}) {
   if (props.enabled !== true) return null
-  const { athlete, weightStatus, weightLogs, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving } = props
-  const weight = kostMaalVaegt(weightStatus, athlete?.id, weightLogs)
+  const { athlete, weightStatus, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving } = props
+  const weight = kostMaalVaegt(weightStatus, athlete?.id)
   if (weight.state === 'error') return h('p', { role: 'alert' }, 'Vægtgrundlaget kunne ikke hentes. Prøv igen ved at åbne kostfanen.')
   if (weight.state !== 'ready') return h('p', { role: 'status' }, 'Indlæser vægtgrundlag…')
   return h(KostMaal, { key: athlete.id, enabled: true, athlete, weightLogs: weight.rows, today,
