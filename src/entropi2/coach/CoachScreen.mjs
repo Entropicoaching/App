@@ -1,6 +1,7 @@
 import { createElement as h, useEffect, useState } from 'react'
 import { s, initials } from '../../dashboardShared.js'
 import CoachSessionNotes from './SessionNotesView.mjs'
+import ProgramEndingView from './ProgramEndingView.mjs'
 import ProgramOverblik from '../../dashboard/ProgramOverblikView.mjs'
 import { DEFAULT_ENTROPI2_COACH, coachHomeModel, hasUndatedPlannedWeek, openCoachRow, selectCoachTab } from './coachModel.mjs'
 
@@ -62,6 +63,7 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
           style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },
           h('strong', null, a.name), h('span', { style: { display: 'block' } }, model.nutrition.get(a.id).text))))),
     !inbox && h(CoachSessionNotes, { source: props, context: model }),
+    !inbox && h(ProgramEndingView, { context: model, openProfile: props.openProfile }),
     h('section', { 'aria-label': inbox ? 'Ulæste beskeder og indsendelser' : 'Atleter der kræver handling' },
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
