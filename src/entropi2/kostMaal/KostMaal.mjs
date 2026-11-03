@@ -1,4 +1,5 @@
 import { createElement as h, useRef, useState } from 'react'
+import { nutritionWeek } from './nutritionWeek.mjs'
 import { DEFAULT_ENABLED, kostMaalModel, displayNumber, positive, validTargetDraft, proteinSuggestion } from './model.mjs'
 
 const button = { minHeight: 44, padding: '10px 16px', font: 'inherit', border: '1px solid #777267', borderRadius: 8, color: 'inherit', background: '#282820', cursor: 'pointer' }
@@ -10,13 +11,15 @@ export default function KostMaal(props = {}) {
   return h(EnabledKostMaal, { ...props, key: props.athlete?.id })
 }
 
-function EnabledKostMaal({ enabled = DEFAULT_ENABLED, athlete, weightLogs, today,
-  editing, editData = {}, startEdit, setEditData, setEditing, saveEdit, saving = false }) {
+function EnabledKostMaal(props) {
+  const { enabled = DEFAULT_ENABLED, athlete, weightLogs, today,
+    editing, editData = {}, startEdit, setEditData, setEditing, saveEdit, saving = false } = props
   const pending = useRef(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const model = kostMaalModel({ athlete, weightLogs, today })
   const suggestion = proteinSuggestion(model)
+  const week = nutritionWeek(props)
   const connected = typeof startEdit === 'function' && typeof setEditData === 'function' &&
     typeof setEditing === 'function' && typeof saveEdit === 'function' && athlete?.id != null
   const locked = saving || busy
@@ -46,6 +49,7 @@ function EnabledKostMaal({ enabled = DEFAULT_ENABLED, athlete, weightLogs, today
     h('dl', null,
       value('Energi', model.kcal === null ? 'Ingen mål endnu' : `${displayNumber(model.kcal)} kcal`),
       value('Protein', model.protein === null ? 'Ingen mål endnu' : `${displayNumber(model.protein)} g`)),
+    week && h('p', null, week.text),
     active ? h('form', { onSubmit: submit, 'aria-busy': Boolean(locked) },
       h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 12 } }, field('kcal_target', 'Kcal-mål'), field('protein_target', 'Proteinmål (g)')),
       h('p', null, 'Et tomt felt fjerner målet.'),
