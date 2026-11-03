@@ -6,7 +6,7 @@ const timestamp = /^\d{4}-\d{2}-\d{2}(?:$|T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\
 
 // Persisted IDs take precedence; without IDs, use a set position or timestamp.
 // Conflicting copies are excluded rather than picking an input-order winner.
-function uniqueSets(rows) {
+export function uniqueSets(rows) {
   const groups = new Map()
   rows.forEach((row, index) => {
     if (!row || typeof row !== 'object' || Array.isArray(row)) return
