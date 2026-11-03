@@ -24,7 +24,7 @@ test('four distinct days show daily averages and both targets', () => {
   const value = line(fixture())
   assert.equal(value.days, 4); assert.equal(value.kcal, 2000); assert.equal(value.protein, 100)
   assert.match(value.text, /2000 kcal \/ 100 g protein/)
-  assert.match(value.text, /Mål: 2400 kcal \/ 150 g protein/)
+  assert.equal(value.text, 'Kost · 4/7 dage · Gns. pr. logget dag: 2000 kcal / 100 g protein · Mål: 2400 kcal / 150 g protein · Protein nået 0 af 4 dage')
 })
 test('all meals sum before dividing by logged days', () => {
   const p = fixture(); p.coachNutrition.rows.push({ ...p.coachNutrition.rows[0], id: 'extra', kcal: 400, protein: 20 })
@@ -42,11 +42,11 @@ test('seven days use seven as denominator', () => {
   assert.equal(line(p).days, 7); assert.equal(line(p).kcal, 2000)
 })
 test('missing target rows display Ingen mål endnu', () => {
-  const p = fixture(); p.coachNutrition.targets = []; assert.match(line(p).text, /Ingen mål endnu/)
+  const p = fixture(); p.coachNutrition.targets = []; assert.match(line(p).text, /Ingen mål endnu$/)
 })
-for (const value of [null, '', 0, -1, 'bad', Infinity, false]) test(`missing or invalid goal ${String(value)}`, () => {
+for (const value of [undefined, null, '', 0, -1, 'bad', Infinity, false]) test(`missing or invalid goal ${String(value)}`, () => {
   const p = fixture(); p.coachNutrition.targets[0].protein_target = value
-  assert.match(line(p).text, /Ingen mål endnu/)
+  assert.match(line(p).text, /Ingen mål endnu$/)
 })
 test('decimal strings follow existing app number parser', () => {
   const p = fixture(); p.coachNutrition.rows.forEach(r => { r.kcal = '2000,5'; r.protein = '100.5' })
@@ -144,4 +144,75 @@ test('inputs are not mutated and priority/completeness remain unchanged', () => 
   const b = model({ ...p, coachNutrition: undefined })
   assert.deepEqual(p, before)
   for (const key of ['actions', 'inbox', 'complete', 'state']) assert.deepEqual(a[key], b[key])
+})
+
+// Protein attainment uses validated daily meal sums, before display rounding.
+test('all four logged days exactly at the protein goal count as reached', () => {
+  const p = fixture(); p.coachNutrition.rows.forEach(r => { r.protein = 150 })
+  assert.match(line(p).text, / · Protein nået 4 af 4 dage$/)
+})
+
+test('just under target does not count even when display rounds up', () => {
+  const p = fixture(); p.coachNutrition.rows.forEach(r => { r.protein = 149.99 })
+  assert.equal(line(p).protein, 149.99)
+  assert.match(line(p).text, /150 g protein · Mål: .* · Protein nået 0 af 4 dage$/)
+})
+
+test('multiple meals count once per logged day and comma decimals compare exactly', () => {
+  const p = fixture(); p.coachNutrition.targets[0].protein_target = '150,5'
+  p.coachNutrition.rows.forEach((r, i) => { r.protein = ['100,25', '150,49', '150,5', '151'][i] })
+  p.coachNutrition.rows.push({ ...p.coachNutrition.rows[0], id: 'extra-protein', protein: '50,25', kcal: 0 })
+  assert.match(line(p).text, / · Protein nået 3 af 4 dage$/)
+})
+
+test('protein progress does not require a valid calorie target', () => {
+  for (const kcal of [undefined, null, 0, -1, 'bad']) {
+    const p = fixture(); p.coachNutrition.targets[0].kcal_target = kcal
+    assert.match(line(p).text, /Ingen mål endnu · Protein nået 0 af 4 dage$/)
+  }
+})
+
+test('confirmation on a logged day cannot contribute to protein attainment', () => {
+  const p = fixture(); p.coachNutrition.rows.push({ ...p.coachNutrition.rows[0], id: 'same-day-metadata',
+    meal: '  [appData2-day-v1][]', kcal: 9999, protein: 9999 })
+  assert.equal(line(p).days, 4); assert.equal(line(p).protein, 100)
+  assert.match(line(p).text, / · Protein nået 0 af 4 dage$/)
+})
+
+test('all seven days in the window count; inputs stay unchanged', () => {
+  const p = fixture()
+  for (const date of ['2026-10-30', '2026-10-31', '2026-11-01'])
+    p.coachNutrition.rows.push({ ...p.coachNutrition.rows[0], id: date, date, protein: 150 })
+  const before = structuredClone(p)
+  assert.match(line(p).text, / · Protein nået 3 af 7 dage$/)
+  assert.deepEqual(p, before)
+})
+
+test('protein days and targets stay within each athlete', () => {
+  const p = fixture(); p.athletes.push({ id: 'athlete-2' }); p.readContext.athleteIds.push('athlete-2')
+  p.coachNutrition.athleteIds.push('athlete-2')
+  p.coachNutrition.rows.push(...p.coachNutrition.rows.map(r => ({ ...r, id: r.id + '-2', athlete_id: 'athlete-2', protein: 200 })))
+  p.coachNutrition.targets.push({ athlete_id: 'athlete-2', protein_target: 200, kcal_target: 2400 })
+  const nutrition = model(p).nutrition
+  assert.match(nutrition.get('athlete-1').text, / · Protein nået 0 af 4 dage$/)
+  assert.match(nutrition.get('athlete-2').text, / · Protein nået 4 af 4 dage$/)
+})
+
+// Regression: daily decimal sums can sit a few ulps below the exact goal.
+for (const { label, meals, target, reached } of [
+  { label: '10.1 + 20.2 + 30.3 exactly reaches 60.6', meals: [10.1, 20.2, 30.3], target: 60.6, reached: 4 },
+  { label: '0.1 + 0.7 exactly reaches 0.8', meals: [0.1, 0.7], target: 0.8, reached: 4 },
+  { label: 'comma text meals exactly reach comma text goal', meals: ['10,1', '20,2', '30,3'], target: '60,6', reached: 4 },
+  { label: 'multiple decimal meals remain 0.01 under 60.6', meals: [10.1, 20.2, 30.29], target: 60.6, reached: 0 },
+  { label: 'comma text meals remain 0.01 under 150', meals: ['49,99', '50', '50'], target: '150', reached: 0 },
+]) test(`daily decimal protein sums: ${label}`, () => {
+  const p = fixture()
+  p.coachNutrition.targets[0].protein_target = target
+  p.coachNutrition.rows = p.coachNutrition.rows.flatMap(row => meals.map((protein, i) => ({
+    ...row, id: `${row.id}-decimal-${i}`, protein,
+  })))
+  const before = structuredClone(p), value = line(p)
+  assert.equal(value.days, 4)
+  assert.match(value.text, new RegExp(` · Protein nået ${reached} af 4 dage$`))
+  assert.deepEqual(p, before)
 })
