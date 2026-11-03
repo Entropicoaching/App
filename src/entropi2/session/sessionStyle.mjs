@@ -14,6 +14,11 @@ export const sessionStyle = `
 .e2-session .fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .e2-session label {display:block;min-width:0}
 .e2-session input {display:block;width:100%;min-width:0;margin-top:8px;padding:12px;background:#141410;color:#edeae2;border:1px solid #77776b;border-radius:8px}
+.e2-session .steppers {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.e2-session .steppers button {min-height:56px;font-size:20px;font-weight:600;padding:8px}
+.e2-session .rpe-row {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}
+.e2-session .rpe-row button {min-height:48px;padding:6px}
+.e2-session .rpe-row button[aria-pressed="true"] {background:#c8923a;color:#141410;border-color:#c8923a}
 .e2-session .approve {width:100%;min-height:52px;background:#c8923a;color:#141410;font-weight:600;margin-top:20px}
 .e2-session .muted {color:#b8b4a8}
 .e2-session .plan {font-size:26px;margin:8px 0}
