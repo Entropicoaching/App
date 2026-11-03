@@ -42,7 +42,9 @@ export default function AthleteHome(props) {
     // Marc 3. nov.: datoen stod tre gange (topbjaelke, her og i kortet). Topbjaelken viser datoen;
     // her kun ugen, og kortet siger "I dag" eller en dansk dato.
     (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
-    h('h1', { style: s.title }, athlete?.name ? `Klar til dit pas, ${athlete.name}?` : 'Klar til dit pas?'),
+    // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
+    h('h1', { style: s.title }, model.kind === 'done' ? (athlete?.name ? `Godt arbejde i dag, ${athlete.name}` : 'Godt arbejde i dag')
+      : athlete?.name ? `Klar til dit pas, ${athlete.name}?` : 'Klar til dit pas?'),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas' },
       h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
