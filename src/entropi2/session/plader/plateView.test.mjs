@@ -1,0 +1,53 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { syntheticDom } from '../sessionSyntheticDom.mjs'
+import { mountPlateCalculator } from './plateView.mjs'
+
+test('actual view: input, both bars, status, decimals, no stale plate list', () => {
+  const { root } = syntheticDom()
+  const cleanup = mountPlateCalculator(root)
+  const input = root.querySelector('input'), select = root.querySelector('select')
+  const status = root.querySelector('[role="status"]'), list = root.querySelector('ul')
+  assert.equal(select.value, '20')
+  assert.equal(input.getAttribute('inputmode'), 'decimal')
+  assert.equal(input.getAttribute('aria-invalid'), 'true')
+  assert.equal(root.querySelectorAll('label').length, 2)
+  input.value = '22,5'; input.fire('input')
+  assert.match(status.textContent, /Samlet vægt: 22,5 kg/)
+  assert.match(list.textContent, /1 × 1,25 kg pr. side/)
+  assert.equal(input.getAttribute('aria-invalid'), 'false')
+  input.value = '20,5'; input.fire('input')
+  assert.match(status.textContent, /kan ikke lægges.*20 kg/)
+  assert.match(list.textContent, /Kun stangen/)
+  input.value = '10'; input.fire('input')
+  assert.match(status.textContent, /under stangens 20 kg/)
+  select.value = '15'; select.fire('change')
+  assert.match(status.textContent, /under stangens 15 kg/)
+  input.value = '16'; input.fire('input')
+  assert.match(list.textContent, /0,5 kg pr. side/)
+  input.value = '<script>oops</script>'; input.fire('input')
+  assert.equal(list.children.length, 0)
+  assert.equal(root.querySelectorAll('script').length, 0)
+  assert.equal(status.getAttribute('aria-live'), 'polite')
+  cleanup()
+  assert.equal(root.children.length, 0)
+  assert.equal(input.listeners.get('input').size, 0)
+  assert.equal(select.listeners.get('change').size, 0)
+})
+
+test('independent mounts own only their subtree, labels and cleanup', () => {
+  const { root, doc } = syntheticDom()
+  const sibling = doc.createElement('p'); sibling.textContent = 'Host'
+  root.append(sibling)
+  const first = mountPlateCalculator(root, { weight: 100 })
+  const second = mountPlateCalculator(root, { weight: 15, barWeightKg: 15 })
+  const sections = root.querySelectorAll('section')
+  assert.match(sections[0].textContent, /100 kg/)
+  assert.match(sections[1].textContent, /Kun stangen/)
+  assert.ok(sections.every(s => s.querySelectorAll('label').every(label => label.children.length === 1)))
+  first(); first()
+  assert.equal(root.children.length, 2)
+  second()
+  assert.equal(root.children[0], sibling)
+  assert.equal(root.children.length, 1)
+})
