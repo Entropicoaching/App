@@ -26,6 +26,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   if (enabled !== true) return null
   if (!validId(athlete?.id) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
   const id = athlete.id
+  const yesterdayDate = new Date(calendarTime(date) - 86400000).toISOString().slice(0, 10)
   const targets = { kcal: parseInputNumber(athlete.kcal_target), protein: parseInputNumber(athlete.protein_target) }
   const storageKey = 'entropi2:nutrition:favorites:v1:' + encodeURIComponent(id)
   let rows = [], favorites = [], phase = 'idle', message = '', disposed = false, loadToken = 0
@@ -48,6 +49,14 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     for (const row of known()) { const m = cleanMeal(row); if (!map.has(mealKey(m))) map.set(mealKey(m), m) }
     return [...map.values()]
   }
+  const yesterday = () => {
+    const map = new Map()
+    // A separate sorted copy keeps the existing newest-first diary/history intact.
+    const previous = known().filter(r => r.date === yesterdayDate)
+      .sort((a, b) => String(a.created_at || '').localeCompare(String(b.created_at || '')))
+    for (const row of previous) { const m = cleanMeal(row); if (!map.has(mealKey(m))) map.set(mealKey(m), m) }
+    return [...map.values()]
+  }
   const api = {
     subscribe(fn) { if (disposed) return () => {}; listeners.add(fn); return () => listeners.delete(fn) },
     snapshot() {
@@ -61,6 +70,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         totals: finite ? totals : null, targets: { ...targets }, invalid: !finite,
         logs: todayRows.map(r => ({ ...r })),
         historyRows: rows.filter(r => !receipt(r)).map(r => ({ ...r })),
+        yesterday: yesterday(),
         recent: list.slice(0, 20), favorites: favorites.map(r => ({ ...r })),
         favoriteKeys: favorites.map(mealKey), foods: foods.map(f => ({ ...f })),
       }
