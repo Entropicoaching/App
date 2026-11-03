@@ -67,6 +67,10 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
     ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
     ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
     ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],
+    // Marc 3. nov.: et fanebyt i Entropi 2 starter oeverst; samme separate delta, kun aktivt med e2.
+    [`  // Marc 3. nov. (Entropi 2): et fanebyt starter oeverst, ogsaa naar det kom fra et link midt paa Hjem.
+  useEffect(() => { if (e2 && tab !== 'beskeder' && typeof window !== 'undefined') window.scrollTo?.(0, 0) }, [tab, e2])
+`, ''],
     // E2-OVERSKRIFT1: Entropi 2-stilen indlæses, så snart flaget er tændt; atletens ramme markeres kun med e2Atlet.
     ['  useEffect(() => { if (e2) loadEntropi2Styles() }, [e2])\n', ''],
     [" {...(e2Atlet ? { 'data-entropi2-athlete': '' } : {})} style={s.wrap}>", ' style={s.wrap}>'],
