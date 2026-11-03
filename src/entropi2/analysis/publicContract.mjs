@@ -23,9 +23,10 @@ export function uniqueLogs(rows) {
   return [...groups.values()].filter(rs => new Set(rs.map(signature)).size === 1).map(rs => rs[0])
 }
 
+// Default 84-day trend window; records may explicitly request all loaded dates.
 // Read-only adapter for AthleteView's existing props. No queries or writes.
 // An explicit local snapshot owns edits/undo for this week's exercise IDs.
-export function adaptPublicContract(props = {}, now = new Date()) {
+export function adaptPublicContract(props = {}, now = new Date(), { maxAgeDays = 84 } = {}) {
   const today = calendarDay(now)
   const week = props.currentWeek
   const start = typeof week?.start_date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(week.start_date)
@@ -48,7 +49,7 @@ export function adaptPublicContract(props = {}, now = new Date()) {
     const day = timestamp ? calendarDay(r.logged_at) : null
     const weight = parseInputNumber(r.weight), reps = parseInputNumber(r.reps_completed)
     const block = r.exercises?.sessions?.weeks?.block_name
-    if (!today || !day || day > today || (r.logged_at.includes('T') && Date.parse(r.logged_at) > new Date(now).getTime()) || calendarDaysBetween(day, today) > 84 ||
+    if (!today || !day || day > today || (r.logged_at.includes('T') && Date.parse(r.logged_at) > new Date(now).getTime()) || calendarDaysBetween(day, today) > maxAgeDays ||
         typeof rawName !== 'string' || !rawName.trim() || r.skipped ||
         !(weight > 0) || !Number.isSafeInteger(reps) || !erTungtSaet(rawName, reps) ||
         typeof block !== 'string' || !block.trim() || erDeloadLog(r)) return []

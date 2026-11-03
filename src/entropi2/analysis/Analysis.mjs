@@ -7,7 +7,7 @@ import RpeHistoryView from './RpeHistoryView.mjs'
 // AthleteView props. Importing this module changes no existing entry or flag.
 export default function Analysis(props = {}) {
   if (props.entropi2 !== true) return null
-  const { answers, weekOverview: week, fourWeekHistory: history, rpeHistory, setTab } = analysisModel(props, props.now ?? new Date())
+  const { answers, weekOverview: week, fourWeekHistory: history, rpeHistory, personalRecords: records, setTab } = analysisModel(props, props.now ?? new Date())
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
@@ -44,6 +44,20 @@ export default function Analysis(props = {}) {
         h('p', { 'data-history-summary': true, style: { lineHeight: 1.6 } }, row.summary))
     })),
   RpeHistoryView({ history: rpeHistory }),
+  h('section', { 'aria-label': 'Dine rekorder', 'data-analysis-records': true,
+    style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
+    h('h2', { style: { fontSize: '1.15rem' } }, 'Dine rekorder'),
+    h('p', null, records.message),
+    records.lifts.length > 0 && h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } },
+      ...records.lifts.map(row => {
+        const heavy = row.heaviest, best = row.bestEstimate
+        const date = day => `${day.slice(8, 10)}.${day.slice(5, 7)}.${day.slice(0, 4)}`
+        return h('li', { key: row.lift },
+          h('strong', null, row.lift),
+          h('p', null, `Tungeste sæt: ${formatHistoryKg(heavy.weight)} kg × ${heavy.reps} — ${date(heavy.date)}.`),
+          h('p', null, `Bedste e1RM: ${formatHistoryKg(best.value)} kg e1RM fra ${formatHistoryKg(best.weight)} kg × ${best.reps} — ${date(best.date)}.`))
+      })),
+    h('p', { style: { lineHeight: 1.6 } }, records.note)),
   ...answers.map(a => h('section', { key: a.key, 'aria-label': a.title,
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
   h('h2', { style: { fontSize: '1.15rem' } }, a.title),
