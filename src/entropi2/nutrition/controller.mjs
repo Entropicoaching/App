@@ -64,7 +64,8 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       const valid = todayRows.every(r => cleanMeal(r))
       const totals = Object.fromEntries(metrics.map(k => [k, valid ? todayRows.reduce((s, r) => s + parseInputNumber(r[k]), 0) : null]))
       const finite = valid && Object.values(totals).every(Number.isFinite)
-      const list = recent()
+      const favoriteKeys = new Set(favorites.map(mealKey))
+      const list = recent().filter(meal => !favoriteKeys.has(mealKey(meal)))
       return { athleteId: id, date, phase, message, history, pending: !!pending, favoriteError,
         loaded: phase !== 'idle' && phase !== 'loading' && phase !== 'load-error',
         totals: finite ? totals : null, targets: { ...targets }, invalid: !finite,
