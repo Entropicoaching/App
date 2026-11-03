@@ -50,6 +50,10 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
   Object.assign(list.style, { textAlign: 'left', paddingInlineStart: '32px', listStylePosition: 'outside' })
   const input = node('textarea'); input.value = ''; input.maxLength = 10000
   input.setAttribute('aria-label', 'Din besked'); input.style.width = '100%'; input.style.boxSizing = 'border-box'
+  input.setAttribute('placeholder', 'Skriv en besked')
+  // Marc 3. nov.: knapperne under beskedfeltet staar med luft imellem, ikke klistret sammen.
+  const actions = node('div')
+  Object.assign(actions.style, { display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' })
   input.addEventListener('input', () => controller.draft(input.value))
   const send = button('Send', () => controller.send()), retry = button('Prøv afsendelse igen', () => controller.retry())
   Object.assign(send.style, { background: '#d8b16b', color: '#141410' })
@@ -102,7 +106,9 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     if (disposed) return
     title.textContent = state.role === 'coach' ? 'Samtale med atleten' : 'Din coach'
     const unread = state.thread.filter(item => state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach).length
-    status.textContent = state.error || (state.loading ? 'Henter samtalen…' : `${unread} ulæste`)
+    // Marc 3. nov. (keep it simple): antallet ulaeste staar paa spring-knappen; statuslinjen siger kun det, der mangler.
+    status.textContent = state.error || (state.loading ? 'Henter samtalen…' : state.thread.length ? '' : state.role === 'coach' ? 'Ingen beskeder endnu.' : 'Ingen beskeder endnu. Skriv til din coach herunder.')
+    status.hidden = !status.textContent
     status.setAttribute('role', state.error ? 'alert' : 'status')
     input.value = state.draft
     const locked = state.busy || state.operation?.status === 'error'
@@ -113,8 +119,8 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     const nextComposition = `${state.role}:${retry.hidden}`
     if (composition !== nextComposition) {
       composition = nextComposition
-      compose.replaceChildren(input, send, ...(retry.hidden ? [] : [retry]),
-        ...(state.role === 'athlete' ? [upload] : []), ...(state.role === 'coach' ? [coach] : []))
+      actions.replaceChildren(send, ...(retry.hidden ? [] : [retry]), ...(state.role === 'athlete' ? [upload] : []))
+      compose.replaceChildren(input, actions, ...(state.role === 'coach' ? [coach] : []))
     }
     loadQuick.disabled = Boolean(locked); timed.disabled = Boolean(locked || !state.draft.trim())
     if (state.operation?.status === 'sent' && state.operation.row.category === 'teknik'
