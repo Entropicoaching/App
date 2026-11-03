@@ -1,3 +1,4 @@
+import { createMealTemplates } from './skabeloner/model.mjs'
 import { parseInputNumber, calendarTime, nutritionValues } from '../../athlete/kostNumbers.mjs'
 import { mealTemplateItems } from '../../athlete/kostSkabeloner.mjs'
 import { unitsForFood } from '../../athleteShared.js'
@@ -35,6 +36,8 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   let pending = null, history = false, favoriteError = '', committed = new Set()
   const listeners = new Set()
   const selectedParts = new Set()
+  const refreshTemplates = () => createMealTemplates({ enabled: true, athleteId: id, date, rows, storage })
+  let templates = refreshTemplates()
   const today = () => rows.filter(r => r?.date === date && !receipt(r))
   try {
     const raw = storage?.getItem(storageKey)
@@ -70,6 +73,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       if (disposed) return false
       selectedParts.delete(row)
       rows = kind === 'remove' ? rows.filter(r => r !== row) : rows.map(r => r === row ? { ...row, ...value } : r)
+      templates = refreshTemplates()
       phase = 'saved'; message = kind === 'remove' ? 'Måltid fjernet.' : 'Måltid rettet.'; return true
     } catch {
       if (!disposed) { phase = 'save-error'; message = kind === 'remove' ? 'Måltidet blev ikke fjernet. Prøv igen.' : 'Ændringen blev ikke gemt. Prøv igen.' }
@@ -100,6 +104,8 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       const favoriteKeys = new Set(favorites.map(mealKey))
       const list = recent().filter(meal => !favoriteKeys.has(mealKey(meal)))
       return { athleteId: id, date, phase, message, history, pending: !!pending, favoriteError,
+        mealTemplates: templates.snapshot(),
+        ownMeals: favorites.map(meal => ({ ...meal, id: mealKey(meal) })),
         loaded: phase !== 'idle' && phase !== 'loading' && phase !== 'load-error',
         totals: finite ? totals : null, targets: { ...targets }, invalid: !finite,
         logs: todayRows.map(r => ({ ...r })),
@@ -122,6 +128,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         const result = await contracts.load(id, date)
         if (disposed || token !== loadToken) return false
         rows = checkedRows(result)
+        templates = refreshTemplates()
         selectedParts.clear()
         phase = 'ready'; emit(); return true
       } catch {
@@ -129,6 +136,11 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         phase = 'load-error'; message = 'Kostloggen kunne ikke hentes. Prøv igen.'; emit(); return false
       }
     },
+    acceptTemplate(templateId) {
+      if (disposed || pending) return false
+      const ok = templates.accept(templateId); emit(); return ok
+    },
+    logTemplate(templateId, intent) { return api.log(templates.useTemplate(templateId), intent) },
     toggleHistory() { if (!disposed) { history = !history; emit() } },
     toggleFavorite(meal) {
       const value = cleanMeal(meal)
@@ -207,6 +219,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
           } catch { /* Keep the confirmed local log; a later load resolves its ID. */ }
         }
         if (disposed) return false
+        templates = refreshTemplates()
         phase = 'saved'; message = 'Måltid gemt.'
         if (day !== date) { try { onDayChanged?.(day) } catch { /* ignoreret */ } }
         return true

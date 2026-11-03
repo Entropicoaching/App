@@ -1,13 +1,15 @@
 // Minimal owned DOM, sufficient for actual mount/event handlers. No browser emulation claim.
 export class Element {
   constructor(tag, doc) { this.tagName = tag.toUpperCase(); this.ownerDocument = doc; this.children = []; this.attrs = {}; this.events = {}; this.disabled = false; this.open = false; this._text = '' }
-  append(...nodes) { for (const n of nodes) { this.children.push(n); n.parentElement = this } }
+  append(...nodes) { for (const n of nodes) { n.remove(); this.children.push(n); n.parentElement = this } }
   replaceChildren(...nodes) { this.children = []; this._text = ''; this.append(...nodes) }
   set textContent(value) { this._text = String(value); this.children = [] }
   get textContent() { return this._text + this.children.map(n => n.textContent).join(' ') }
   setAttribute(key, value) { this.attrs[key] = String(value) }
   getAttribute(key) { return this.attrs[key] ?? null }
   addEventListener(event, fn) { (this.events[event] ||= []).push(fn) }
+  removeEventListener(event, fn) { this.events[event] = (this.events[event] || []).filter(item => item !== fn) }
+  remove() { if (this.parentElement) this.parentElement.children = this.parentElement.children.filter(item => item !== this); this.parentElement = null }
   async fire(event, extra = {}) {
     if (event === 'click' && this.disabled) return
     for (const fn of this.events[event] || []) await fn({ target: this, preventDefault() {}, ...extra })

@@ -1,3 +1,4 @@
+import { mountShoppingList } from './indkoeb/index.mjs'
 import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { historyDays } from './historyDays.mjs'
@@ -16,6 +17,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
   let weightPending = false, weightError = ''
+  let shoppingHost, shoppingKey, disposeShopping = () => {}
   let editing = null, removing = null, ownMealName = ''
   const intent = () => 'nutrition-' + (++sequence)
   const node = (tag, cls, text) => {
@@ -52,15 +54,19 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     if (s.loaded) {
       const fast = append(main, 'section', 'card'); fast.setAttribute('data-kost-del', 'hurtig')
       append(fast, 'h2', '', 'Log hurtigt')
-      if (s.yesterday.length) {
+      const templateState = s.mealTemplates
+      const templateKeys = new Set(templateState?.templates.map(item => mealKey(item.meal)) || [])
+      const yesterdayMeals = s.yesterday.filter(meal => !templateKeys.has(mealKey(meal)))
+      if (yesterdayMeals.length) {
         const section = append(fast, 'section', 'space'); append(section, 'h2', '', 'Gentag i går')
-        s.yesterday.forEach((meal, i) => {
+        yesterdayMeals.forEach((meal, i) => {
           const row = append(section, 'div', 'space stack')
           const b = button(row, 'Log igen: ' + meal.meal, () => action(meal), s.pending)
           b.setAttribute('data-focus', 'yesterday-log-' + i)
         })
       }
       const quick = (title, items, prefix) => {
+        items = items.filter(meal => !templateKeys.has(mealKey(meal))).slice(0, 5)
         if (!items.length) return
         const section = append(fast, 'section', 'space'); append(section, 'h2', '', title)
         items.forEach((meal, i) => {
@@ -72,8 +78,25 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const favoriteKeys = new Set(s.favorites.map(mealKey))
       // Yesterday already supplies a log button for these exact meal identities.
       const yesterdayKeys = new Set(s.yesterday.map(mealKey))
-      quick('Favoritter', s.favorites.filter(meal => !yesterdayKeys.has(mealKey(meal))).slice(0, 5), 'fav')
-      quick('Seneste måltider', s.recent.filter(meal => !favoriteKeys.has(mealKey(meal)) && !yesterdayKeys.has(mealKey(meal))).slice(0, 5), 'recent')
+      quick('Favoritter', s.favorites.filter(meal => !yesterdayKeys.has(mealKey(meal))), 'fav')
+      quick('Seneste måltider', s.recent.filter(meal => !favoriteKeys.has(mealKey(meal)) && !yesterdayKeys.has(mealKey(meal))), 'recent')
+      const templates = append(fast, 'section', 'space')
+      append(templates, 'h3', '', 'Skabeloner')
+      if (!templateState?.templates.length) append(templates, 'p', 'muted', 'Ingen skabeloner endnu.')
+      for (const [i, item] of (templateState?.templates || []).entries()) {
+        const b = button(templates, 'Log skabelon: ' + item.name, () => controller.logTemplate(item.id, intent()), s.pending)
+        b.setAttribute('data-focus', 'template-log-' + i)
+      }
+      if (templateState?.suggestions.length) {
+        const suggestions = append(templates, 'details', 'space')
+        suggestions.setAttribute('data-focus', 'template-suggestions')
+        append(suggestions, 'summary', '', 'Forslag fra ofte loggede måltider')
+        for (const [i, item] of templateState.suggestions.entries()) {
+          const b = button(suggestions, 'Gem skabelon: ' + item.name, () => controller.acceptTemplate(item.id), s.pending)
+          b.setAttribute('data-focus', 'template-accept-' + i)
+        }
+      }
+      if (templateState?.error) { const p = append(templates, 'p', 'space', templateState.error); p.setAttribute('role', 'alert') }
       const details = append(fast, 'details', 'space'); details.setAttribute('data-focus', 'log-form')
       append(details, 'summary', '', 'Notér et måltid')
       const inner = append(details, 'div')
@@ -327,6 +350,21 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
       }
     }
+    if (s.loaded) {
+      const shopping = append(main, 'details', 'card')
+      shopping.setAttribute('data-focus', 'shopping-list')
+      append(shopping, 'summary', '', 'Indkøb fra dine favoritter')
+      // Reuse the mounted child across diary/weight redraws to preserve choices.
+      const key = JSON.stringify(s.ownMeals || [])
+      if (!shoppingHost || key !== shoppingKey) {
+        disposeShopping()
+        shoppingHost = node('div'); shoppingKey = key
+        disposeShopping = () => {}
+        try { disposeShopping = mountShoppingList(shoppingHost, { enabled: true, ownMeals: s.ownMeals || [] }) }
+        catch { const p = append(shoppingHost, 'p', '', 'Indkøbslisten kunne ikke vises. Prøv at hente kostloggen igen.'); p.setAttribute('role', 'alert') }
+      }
+      shopping.append(shoppingHost)
+    }
     // Marc 3. nov. (keep it simple): overskriften foerst; vejningen bliver oeverst som bestilt i
     // APP-KOST-START1 ("vaegttrenden er det vigtigste tal"), derefter log hurtigt og dagens maal.
     const kids = [...main.children], del = n => n.getAttribute?.('data-kost-del')
@@ -342,7 +380,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const unsubscribe = controller.subscribe(draw)
   draw()
   controller.load()
-  const cleanup = () => { destroyed = true; unsubscribe(); controller.dispose(); host.replaceChildren() }
+  const cleanup = () => { destroyed = true; disposeShopping(); unsubscribe(); controller.dispose(); host.replaceChildren() }
   // Update weight props without remounting the diary or losing a meal draft.
   cleanup.updateWeight = props => {
     if (destroyed) return
