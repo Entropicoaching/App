@@ -65,7 +65,8 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // Marc 3. nov.: genvejen 'Film et saet' paa Entropi 2-hjem er en del af det samme delta (onFilmSet).
   const entropi2Delta = [
     ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
-    ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
+    // K-R4-ENTROPI-SAMLET fund 2: propen har ingen false-standard, saa flag.mjs' standard gaelder uden prop.
+    ['hjemoevKompakt = false, rel1101 = false, entropi2})', 'hjemoevKompakt = false, rel1101 = false})'],
     ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],
     // Marc 3. nov.: et fanebyt i Entropi 2 starter oeverst; samme separate delta, kun aktivt med e2.
     [`  // Marc 3. nov. (Entropi 2): et fanebyt starter oeverst, ogsaa naar det kom fra et link midt paa Hjem.

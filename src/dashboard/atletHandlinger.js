@@ -136,7 +136,13 @@ export function lavAtletHandlinger({
     }
     // Rydder man feriedatoen mens status ikke er ferie, så nulstil den helt.
     if (payload.status && payload.status !== 'ferie') payload.vacation_until = null
-    const { data, error } = await supabase.from('athletes').update(payload).eq('id', selectedAthlete.id).select().single()
+    let data = null, error = null
+    try {
+      ({ data, error } = await supabase.from('athletes').update(payload).eq('id', selectedAthlete.id).select().single())
+    } catch (thrown) {
+      // En kastet fejl (fx netfejl) maa aldrig efterlade gemningen laast (K-R4-ENTROPI-SAMLET fund 1).
+      error = thrown || new Error('save failed')
+    }
     // En afvist gemning bevarer formularen og udkastet og siger det (K-R3-ENTROPI-SAMLET fund 1).
     if (error || !data) {
       showFlash('Ændringen blev ikke gemt. Prøv igen.', 'error'); setSaving(false); return false

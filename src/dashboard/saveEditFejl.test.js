@@ -49,3 +49,17 @@ test('ugyldige tal afvises foer skrivning med false', async () => {
     setSaving() {}, setSelectedAthlete() {}, setAthletes() {}, setEditing() {}, showFlash() {} })
   assert.equal(await h.saveEdit(), false)
 })
+
+// K-R4-ENTROPI-SAMLET fund 1: en kastet fejl (fx netfejl) maa ikke laase gemningen.
+test('kastet gemmefejl returnerer false, slipper ventetilstanden og viser en fejl', async () => {
+  resetFake({ then(_resolve, reject) { reject(new Error('synthetic network')) } })
+  const saving = [], calls = { editing: [], flash: [] }
+  const h = lavAtletHandlinger({ editData: { kcal_target: '2500', protein_target: '160' }, selectedAthlete: { id: 'a' },
+    setSaving: v => saving.push(v), setSelectedAthlete() {}, setAthletes() {},
+    setEditing: v => calls.editing.push(v), showFlash: (msg, kind) => calls.flash.push([msg, kind]) })
+  assert.equal(await h.saveEdit(), false)
+  assert.equal(saving.at(-1), false)
+  assert.deepEqual(calls.editing, [])
+  assert.equal(calls.flash.length, 1)
+  assert.equal(calls.flash[0][1], 'error')
+})
