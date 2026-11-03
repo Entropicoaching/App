@@ -57,7 +57,9 @@ test('missing target rows display Ingen mål endnu', () => {
 })
 for (const value of [undefined, null, '', 0, -1, 'bad', Infinity, false]) test(`missing or invalid goal ${String(value)}`, () => {
   const p = fixture(); p.coachNutrition.targets[0].protein_target = value
-  assert.match(line(p).text, /Ingen mål endnu$/)
+  assert.match(line(p).text, /Mål: 2400 kcal$/)
+  assert.equal(line(p).proteinTarget, null)
+  assert.equal(line(p).proteinReachedDays, null)
 })
 test('decimal strings follow existing app number parser', () => {
   const p = fixture(); p.coachNutrition.rows.forEach(r => { r.kcal = '2000,5'; r.protein = '100.5' })
@@ -179,7 +181,7 @@ test('multiple meals count once per logged day and comma decimals compare exactl
 test('protein progress does not require a valid calorie target', () => {
   for (const kcal of [undefined, null, 0, -1, 'bad']) {
     const p = fixture(); p.coachNutrition.targets[0].kcal_target = kcal
-    assert.match(line(p).text, /Ingen mål endnu · Protein nået 0 af 4 dage$/)
+    assert.match(line(p).text, /Mål: 150 g protein · Protein nået 0 af 4 dage$/)
   }
 })
 
@@ -226,4 +228,39 @@ for (const { label, meals, target, reached } of [
   assert.equal(value.days, 4)
   assert.match(value.text, new RegExp(` · Protein nået ${reached} af 4 dage$`))
   assert.deepEqual(p, before)
+})
+
+
+test('week summary exposes raw goals, inclusive dates and attainment without rounding', () => {
+  const p = fixture()
+  Object.assign(p.coachNutrition.targets[0], { kcal_target: '2400,5', protein_target: '150,5' })
+  p.coachNutrition.rows.forEach((r, i) => { r.protein = [150.5, 150.49, 151, 100][i] })
+  const value = line(p)
+  assert.deepEqual({ from: value.from, through: value.through, days: value.days,
+    kcalTarget: value.kcalTarget, proteinTarget: value.proteinTarget,
+    proteinReachedDays: value.proteinReachedDays }, {
+    from: '2026-10-27', through: today, days: 4,
+    kcalTarget: 2400.5, proteinTarget: 150.5, proteinReachedDays: 2 })
+  assert.match(value.text, /Protein nået 2 af 4 dage$/)
+})
+
+test('each goal displays independently in actual overview text children', () => {
+  const content = n => Array.isArray(n) ? n.map(content).join(' ') :
+    !n || typeof n === 'boolean' ? '' : typeof n === 'object'
+      ? content(n.props?.children ?? n.children) : String(n)
+  for (const [kcal, protein, expected, reached] of [
+    [2400, null, 'Mål: 2400 kcal', null],
+    [null, 150, 'Mål: 150 g protein · Protein nået 0 af 4 dage', 0],
+    [null, null, 'Ingen mål endnu', null],
+  ]) {
+    const p = fixture()
+    Object.assign(p.coachNutrition.targets[0], { kcal_target: kcal, protein_target: protein })
+    const snapshot = structuredClone(p)
+    assert.ok(line(p).text.endsWith(expected))
+    assert.equal(line(p).proteinReachedDays, reached)
+    const rendered = nutritionNodes(CoachView({ ...p, enabled: true, today }))
+    assert.equal(rendered.length, 1)
+    assert.ok(content(rendered[0]).includes(expected))
+    assert.deepEqual(p, snapshot)
+  }
 })

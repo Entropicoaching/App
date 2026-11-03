@@ -46,11 +46,18 @@ export function coachNutritionLines(props, day, athletes, rosterReady) {
     if (!Number.isFinite(kcal) || !Number.isFinite(protein)) continue
     const target = targets.get(athlete.id)
     const kcalTarget = parseInputNumber(target?.kcal_target), proteinTarget = parseInputNumber(target?.protein_target)
-    const goals = kcalTarget > 0 && proteinTarget > 0
-      ? `Mål: ${Math.round(kcalTarget)} kcal / ${Math.round(proteinTarget)} g protein` : 'Ingen mål endnu'
-    const proteinProgress = proteinTarget > 0
-      ? ` · Protein nået ${[...days.values()].filter(d => d.protein + 1e-9 >= proteinTarget).length} af ${days.size} dage` : ''
-    result.set(athlete.id, { days: days.size, kcal, protein,
+    // Each available goal remains visible even if the other goal is unknown.
+    const goalParts = []
+    if (kcalTarget > 0) goalParts.push(`${Math.round(kcalTarget)} kcal`)
+    if (proteinTarget > 0) goalParts.push(`${Math.round(proteinTarget)} g protein`)
+    const goals = goalParts.length ? `Mål: ${goalParts.join(' / ')}` : 'Ingen mål endnu'
+    const proteinReachedDays = proteinTarget > 0
+      ? [...days.values()].filter(d => d.protein + 1e-9 >= proteinTarget).length : null
+    const proteinProgress = proteinReachedDays !== null
+      ? ` · Protein nået ${proteinReachedDays} af ${days.size} dage` : ''
+    result.set(athlete.id, { from: source.from, through: day, days: days.size, kcal, protein,
+      kcalTarget: kcalTarget > 0 ? kcalTarget : null,
+      proteinTarget: proteinTarget > 0 ? proteinTarget : null, proteinReachedDays,
       text: `Kost · ${days.size}/7 dage · Gns. pr. logget dag: ${Math.round(kcal)} kcal / ${Math.round(protein)} g protein · ${goals}${proteinProgress}` })
   }
   return result
