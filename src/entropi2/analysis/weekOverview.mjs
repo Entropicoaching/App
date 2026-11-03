@@ -77,7 +77,8 @@ export function weekOverview(contract, now) {
     : `Sæt bekræftet: ${format(c.confirmed)}. Sprunget over: ${format(c.skipped)}.`
   const rows = contract.rows.filter(r => !r._optimistic && mainLiftName(r.lift))
   return {
-    period: `${date(start)} til ${date(end)}. Sidste uge: ${date(previousStart)} til ${date(addCalendarDays(start, -1))}.`,
+    // Marc 3. nov. (keep it simple): kun denne uges periode; sammenligningen staar ved hvert loeft.
+    period: `${date(start)} til ${date(end)}.`,
     sessions, sets,
     note: 'Et pas er gennemført, når alle planlagte sæt er logget eller sprunget over. Bekræftede sæt omfatter ikke oversprungne eller afventende sæt. Denne uge kan være ufuldstændig.',
     lifts: MAIN_LIFTS.map(lift => {
@@ -90,11 +91,11 @@ export function weekOverview(contract, now) {
         r.logged_at >= previousStart && calendarDaysBetween(r.logged_at, start) > 0)
         .map(r => estimatedOneRepMax(r.weight, r.reps_completed)).filter(v => v > 0)
       const value = `${format(best.value)} kg e1RM`
-      const source = `Bedste estimat denne uge fra ${format(best.weight)} kg × ${format(best.reps_completed)}. ${best.repZone} gentagelser.`
-      if (!previous.length) return { lift, value, message: `${source} Sidste uge mangler sammenlignelige tunge sæt i samme rep-område.` }
+      const source = `Fra ${format(best.weight)} kg × ${format(best.reps_completed)}. ${best.repZone} gentagelser.`
+      if (!previous.length) return { lift, value, message: `${source} Ingen tunge sæt i samme rep-område ugen før.` }
       const previousBest = Math.max(...previous)
       const delta = Math.round((best.value - previousBest) * 10) / 10
-      return { lift, value, message: `${source} Sidste uge: ${format(previousBest)} kg e1RM. Ændring: ${delta > 0 ? '+' : ''}${format(delta === 0 ? 0 : delta)} kg e1RM. Forskellen beskriver registreringerne, ikke årsagen eller parathed.` }
+      return { lift, value, message: `${source} Sidste uge: ${format(previousBest)} kg e1RM. Ændring: ${delta > 0 ? '+' : ''}${format(delta === 0 ? 0 : delta)} kg e1RM.` }
     }),
   }
 }

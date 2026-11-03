@@ -100,7 +100,8 @@ test('missing prior week and incompatible rep zone have explicit messages', () =
     [history('Squat', '2026-10-28', 100, 6)]]) {
     const row = lift(overview({ exerciseLogs: [local('sq', 1)], fremgangLogs }))
     assert.equal(row.value, '110 kg e1RM')
-    assert.match(row.message, /Sidste uge mangler.*samme rep-område/)
+    // Marc 3. nov. (keep it simple): kortere, men stadig eksplicit besked om den manglende uge.
+    assert.match(row.message, /Ingen tunge sæt i samme rep-område ugen før/)
     assert.doesNotMatch(row.message, /Ændring:/)
   }
 })
@@ -174,7 +175,7 @@ test('render exposes empty, partial, full, missing-history and decimal snapshots
     [{}, ['Pas gennemført: 0 af 2 planlagt.', 'Sæt bekræftet: 0.']],
     [{ exerciseLogs: [local('sq', 1)] }, ['Pas gennemført: 0 af 2 planlagt.', 'Sæt bekræftet: 1.']],
     [{ exerciseLogs: [local('sq', 1), local('sq', 2), local('bp', 1)] }, ['Pas gennemført: 2 af 2 planlagt.', 'Sæt bekræftet: 3.']],
-    [{ exerciseLogs: [local('sq', 1, { weight: '102,5' })] }, ['112,8 kg e1RM', 'Sidste uge mangler sammenlignelige']],
+    [{ exerciseLogs: [local('sq', 1, { weight: '102,5' })] }, ['112,8 kg e1RM', 'Ingen tunge sæt i samme rep-område ugen før']],
     [{ fremgangLogs: undefined }, ['Løftehistorik mangler.', 'Sammenligningen er ikke klar.']],
     [{ fremgangLogs: [history('Bench', '2026-11-03', 80), history('Sumo deadlift', '2026-11-03', 160)] }, ['88 kg e1RM', '176 kg e1RM']],
   ]
