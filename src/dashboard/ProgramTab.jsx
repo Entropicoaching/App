@@ -18,6 +18,8 @@ import { DEFAULT_COACH_PLAN_COPY } from './coachPlanCopy.mjs'
 import { activateOnKey, cancelRecommended, restoreRecommendedFocus } from './coachAccessibility.mjs'
 import UgeFeedbackKort from './UgeFeedbackKort.jsx'
 import VideoCoachNote from './VideoCoachNote.jsx'
+import CoachProgramTools from '../entropi2/coach/blokplan/CoachProgramTools.mjs'
+import * as Entropi2 from '../entropi2/flag.mjs'
 
 export default function ProgramTab({
   addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
@@ -39,6 +41,7 @@ export default function ProgramTab({
   videoCoachNotes = [],
   coachPlanCopyEnabled = DEFAULT_COACH_PLAN_COPY,
   programCopyEnabled = DEFAULT_PROGRAM_COPY,
+  coachProgramToolsEnabled = Entropi2.DEFAULT_ENTROPI2,
 }) {
   const recommendedReturn = useRef(null)
   const copyAthleteRef = useRef(null)
@@ -1087,5 +1090,7 @@ export default function ProgramTab({
                     )}
                   </div>
                 ))}
+                <CoachProgramTools enabled={coachProgramToolsEnabled} athleteId={selectedAthlete?.id}
+                  weeks={weeks} client={supabase} />
               </div>)
 }

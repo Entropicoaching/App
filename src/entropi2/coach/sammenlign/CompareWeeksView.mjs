@@ -22,7 +22,7 @@ export default function CompareWeeksView(props = {}) {
         h('th', { scope: 'row' }, `${row.label} (${row.unit})`),
         h('td', null, format(row.first)), h('td', null, format(row.second)), h('td', null, delta(row.delta)))))))
   return h('section', { 'aria-label': 'Sammenlign to uger' },
-    h('h2', null, 'Sammenlign to uger'),
+    !props.embedded && h('h2', null, 'Sammenlign to uger'),
     h('p', null, 'Observerede forskelle for samme atlet. Ugerne kan have forskellig datadækning; tallene er ikke en vurdering eller en trend.'),
     table('Træning, kost og kropsvægt', model.metrics),
     h('p', null, `RPE: ${format(first.training.rpeCount)} / ${format(second.training.rpeCount)} sæt med dokumenteret atletindtastning. Vægt: ${format(first.weight.days)} / ${format(second.weight.days)} entydige vejedage; ${format(first.weight.conflicts)} / ${format(second.weight.conflicts)} dage med modstridende værdier udeladt.`),
