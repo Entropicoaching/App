@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
 import { energySuggestion } from './energySuggestion.mjs'
 import { kostMaalModel, proteinSuggestion, validTargetDraft } from './model.mjs'
-import { nutritionWeek } from './nutritionWeek.mjs'
+import { nutritionBasis, nutritionWeek } from './nutritionWeek.mjs'
 import { mount, nodes, one, text } from './reactFixture.mjs'
 
 registerHooks({ resolve(specifier, context, next) {
@@ -25,7 +25,7 @@ function fixture(count = 4) {
         date: new Date(Date.parse(today + 'T00:00:00Z') - i * 86400000).toISOString().slice(0, 10),
         meal: 'Synthetic meal', kcal: '2450,4', protein: 150 })) } }
 }
-const energy = p => energySuggestion(kostMaalModel(p), nutritionWeek(p))
+const energy = p => energySuggestion(kostMaalModel(p), nutritionWeek(p), nutritionBasis(p))
 const energyButtons = tree => nodes(tree, n => n.type === 'button' && n.props['aria-label'] === 'Brug forslag til energimål')
 function editor(extra = {}) {
   let saves = 0, writes = 0

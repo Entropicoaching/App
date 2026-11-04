@@ -76,7 +76,7 @@ test('untrusted, stale, malformed and out-of-period receipts stay hidden', () =>
     p => { p.coachNutrition.from = '2026-10-26' }, p => { p.coachNutrition.through = '2026-11-01' },
     p => { p.coachNutrition.athleteIds = [] }, p => { p.coachNutrition.targets = null },
     p => { p.coachNutrition.rows[0].date = '2026-10-26' }, p => { p.coachNutrition.rows[0].date = '2026-11-03' },
-    p => { p.coachNutrition.rows[0].protein = 'oops' }, p => { p.coachNutrition.rows[0].athlete_id = 'foreign' },
+    p => { p.coachNutrition.rows[0].athlete_id = 'foreign' },
     p => { p.coachNutrition.rows.push({ ...p.coachNutrition.rows[0] }) },
     p => { p.coachNutrition.rows.push({ ...p.coachNutrition.rows[0], id: 'overflow', kcal: Number.MAX_VALUE }); p.coachNutrition.rows[0].kcal = Number.MAX_VALUE }]
   for (const change of changes) {

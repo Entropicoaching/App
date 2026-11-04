@@ -58,7 +58,10 @@ for (const [name, change] of Object.entries({
   const p = nutritionFixture(); change(p)
   const out = text(view(p))
   assert.doesNotMatch(out, /Seneste 7 dage: gns\.|Typisk indtag:/)
-  assert.match(out, /Energimålet kræver mindst 4 loggede dage/)
+  assert.doesNotMatch(out, /Energimålet kræver mindst 4 loggede dage/)
+  assert.match(out, name === 'loading' ? /endnu ikke indlæst/
+    : name === 'loadError' || name === 'receiptError' ? /kunne ikke hentes/
+      : name === 'incomplete' ? /ufuldstændigt/ : /ikke tilgængeligt/)
 })
 
 test('K-R5: Dashboard forwards original receipt, context, session and read status to kost tab', () => {

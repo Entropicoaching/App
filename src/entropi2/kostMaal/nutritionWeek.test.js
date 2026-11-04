@@ -97,10 +97,16 @@ const invalidRows = [null, { id: '' }, { athlete_id: 'foreign' }, { date: '2026-
   { date: '2026-11-01T23:30:00Z' }, { meal: '' }, { meal: '  ' }, { meal: null },
   { kcal: NaN }, { kcal: Infinity }, { kcal: null }, { kcal: '12oops' },
   { protein: undefined }, { protein: -1 }, { protein: true }, { protein: {} }]
-for (const [i, change] of invalidRows.entries()) test(`invalid row ${i} silences the entire batch like coachNutrition`, () => {
+for (const [i, change] of invalidRows.entries()) test(`invalid row ${i} preserves guards or skips invalid meal content`, () => {
   const p = fixture(4)
   p.coachNutrition.rows[0] = change === null ? null : { ...p.coachNutrition.rows[0], ...change }
-  assert.equal(nutritionWeek(p), null); assert.equal(coach(p), undefined)
+  if (i < 5) assert.equal(nutritionWeek(p), null)
+  else {
+    assert.equal(nutritionWeek(p).days, 3)
+    assert.equal(nutritionWeek(p).kcal, 2430)
+    assert.match(text(render(p)), /1 ugyldigt måltid er udeladt/)
+  }
+  assert.equal(coach(p), undefined) // coach overview is deliberately outside this ticket
 })
 
 test('duplicates and numeric overflow never produce a misleading average', () => {
