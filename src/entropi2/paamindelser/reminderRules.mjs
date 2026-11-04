@@ -63,6 +63,19 @@ export function friendlyReminders(input = {}) {
     })
   }
 
+  // A local draft is a separate, explicit snapshot; never infer server submission
+  // from it. Unknown/failed storage must not become a missing check-in reminder.
+  const local = input.localCheckin
+  if (!checkin && local?.complete === true && local.status === 'empty' && validDay(local.weekStart) &&
+      new Date(`${local.weekStart}T00:00:00Z`).getUTCDay() === 1) {
+    const age = calendarDaysBetween(local.weekStart, today)
+    if (age >= 0 && age < 7) reminders.push({
+      key: `local-checkin:${local.weekStart}`, kind: 'checkin', date: local.weekStart,
+      title: 'Lyst til ugens check-in?',
+      text: 'Du kan gemme en lokal kladde, når det passer dig.', action: 'checkin',
+    })
+  }
+
   // Dismissal is caller-owned and scoped to stable keys; no writes here.
   const dismissed = Array.isArray(input.dismissedKeys) ? input.dismissedKeys : []
   return reminders.filter(reminder => !dismissed.includes(reminder.key))

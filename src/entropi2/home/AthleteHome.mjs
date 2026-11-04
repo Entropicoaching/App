@@ -5,6 +5,7 @@ import { nutritionTodayModel } from './nutritionTodayModel.mjs'
 import { homeWeekOverview } from './homeWeekOverview.mjs'
 import WeekPlan from './ugeplan/WeekPlan.mjs'
 import HomeOnboarding from './HomeIntroduction.mjs'
+import HomeCheckIn from './HomeCheckIn.mjs'
 
 const clock = () => new Date()
 const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
@@ -69,6 +70,7 @@ export default function AthleteHome(props) {
     // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
     h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
       disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
+    h(HomeCheckIn, { enabled, athleteId: athlete?.id, now, onHoliday: props.onHoliday, storage: props.storage }),
     week?.plan && h('details', { style: s.card, 'data-home-week-plan': '' },
       h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 44 } }, 'Se ugens plan'),
       h(WeekPlan, week.plan)),
