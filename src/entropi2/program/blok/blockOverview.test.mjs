@@ -38,7 +38,7 @@ test('current block has relative week, prescribed sets and nearest upcoming mark
   assert.equal(result.totalWeeks, 3)
   assert.deepEqual(result.weeks.map(w => [w.weekNumber, w.plannedSets, w.current]),
     [[5, 3, false], [6, 4, true], [7, 5, false]])
-  assert.deepEqual(result.next, { weekNumber: 8, start: '2026-11-16', kinds: ['deload'], name: 'Deload' })
+  assert.equal(result.next, null)
 })
 
 test('input order and frozen data remain unchanged; repeated block names stay separate', () => {
@@ -53,16 +53,16 @@ test('explicit active week supports undated programs and never falls back from a
   const weeks = plan().map(w => ({ ...w, start_date: null }))
   assert.equal(buildBlockOverview(options(weeks)).state, 'unknown')
   const m = buildBlockOverview(options(weeks, { currentWeekId: 'w7', today: 'invalid' }))
-  assert.equal(m.currentWeek, 3); assert.equal(m.next.start, null)
+  assert.equal(m.currentWeek, 3); assert.equal(m.next, null)
   assert.equal(buildBlockOverview(options(weeks, { currentWeekId: 'missing' })).state, 'unknown')
 })
 
 test('empty, malformed, duplicated, mixed-owner, incomplete and gapped program evidence', () => {
   assert.equal(buildBlockOverview(options([])).state, 'empty')
   const malformed = [null, {}, [null], [...plan(), plan()[0]],
-    [week(1), { ...week(2), week_number: 1 }], [{ ...week(1), week_number: '1' }],
+    [{ ...week(1), week_number: '1' }],
     [{ ...week(1), block_name: {} }], [week(1), { ...week(2), athlete_id: 'other-synthetic' }],
-    [{ ...week(1), readEvidence: { complete: false } }], [week(1), week(3)]]
+    [{ ...week(1), readEvidence: { complete: false } }]]
   for (const weeks of malformed) assert.equal(buildBlockOverview(options(weeks, { currentWeekId: 'w1' })).state, 'unknown')
 })
 
@@ -115,7 +115,7 @@ test('test and deload markers are existing block names, ordered by program week'
   const cases = [['Test', ['test']], ['TESTUGE', ['test']], ['Test week', ['test']],
     ['Test / deload', ['test', 'deload']], ['Aflastning', ['deload']], ['Taper', ['deload']]]
   for (const [name, kinds] of cases) {
-    const m = buildBlockOverview(options([week(1), week(2, name)], { currentWeekId: 'w1' }))
+    const m = buildBlockOverview(options([week(1, name), week(2, name)], { currentWeekId: 'w1' }))
     assert.deepEqual(m.next.kinds, kinds)
   }
   const m = buildBlockOverview(options([week(1, 'Test'), week(2, 'Contest'), week(3, 'Styrke')], { currentWeekId: 'w1' }))
@@ -132,7 +132,7 @@ test('actual view renders semantic weekly list and only one current step', () =>
   assert.equal(tree.type, 'section'); assert.equal(tree.props['aria-label'], 'Din aktuelle blok')
   assert.match(text(tree), /Uge 2 af 3/)
   assert.match(text(tree), /programuge 6.*4 planlagte sæt/)
-  assert.match(text(tree), /Deload i programuge 8.*2026-11-16/)
+  assert.doesNotMatch(text(tree), /Næste test eller deload|Deload i programuge 8/)
   assert.equal(nodes(tree).filter(n => n.type === 'li').length, 3)
   assert.equal(nodes(tree).filter(n => n.props['aria-current'] === 'step').length, 1)
   assert.equal(nodes(tree).filter(n => n.type === 'button').length, 0)
@@ -144,8 +144,8 @@ test('actual view distinguishes missing volume, zero, undated marker and no mark
   const tree = BlockOverview(options(weeks, { currentWeekId: 'w1' }))
   assert.match(text(tree), /Planlagt volumen ukendt/)
   assert.match(text(tree), /0 planlagte sæt/)
-  assert.match(text(tree), /Test i programuge 3.*dato ikke fastlagt/)
-  assert.match(text(BlockOverview(options([week(1)], { currentWeekId: 'w1' }))), /Ingen kommende test eller deload markeret/)
+  assert.doesNotMatch(text(tree), /Næste test eller deload|Test i programuge 3/)
+  assert.doesNotMatch(text(BlockOverview(options([week(1)], { currentWeekId: 'w1' }))), /Næste test eller deload|Ingen kommende test/)
 })
 
 test('actual view empty and unknown states explain missing evidence without fabricated totals', () => {

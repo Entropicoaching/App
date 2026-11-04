@@ -11,6 +11,7 @@ export default function BlockOverview(options = {}) {
     h('h2', { style: { fontSize: '1.15rem', marginTop: 0 } }, model.name || 'Din aktuelle blok'),
     model.state !== 'ready' ? h('p', { role: 'status' }, model.message) : h('div', null,
       h('p', null, `Uge ${model.currentWeek} af ${model.totalWeeks}`),
+      model.partial ? h('p', { role: 'status' }, 'Nogle programuger kunne ikke vises.') : null,
       h('h3', { style: { fontSize: '1rem' } }, 'Planlagt volumen pr. uge'),
       h('p', null, 'Antal sæt i programmet. Det viser planen, ikke gennemført træning.'),
       h('ol', { style: { paddingLeft: 24 } }, ...model.weeks.map(row => h('li', {
@@ -18,10 +19,10 @@ export default function BlockOverview(options = {}) {
         style: { marginBottom: 12, lineHeight: 1.6 } },
       `Uge ${row.blockWeek} (programuge ${row.weekNumber})${row.current ? ' · Aktuel uge' : ''}: `,
       row.plannedSets === null ? 'Planlagt volumen ukendt' : `${row.plannedSets} planlagte sæt`))),
-      h('h3', { style: { fontSize: '1rem' } }, 'Næste test eller deload'),
+      model.next ? h('div', null, h('h3', { style: { fontSize: '1rem' } }, 'Næste test eller deload'),
       h('p', null, model.next
         ? `${model.next.kinds.map(kind => kind === 'test' ? 'Test' : 'Deload').join(' og ')} i programuge ${model.next.weekNumber}${model.next.start ? ` · fra ${model.next.start}` : ' · dato ikke fastlagt'}`
-        : 'Ingen kommende test eller deload markeret i programmet.'),
+        : '' )) : null,
       h('p', { style: { color: '#b8b4a8', fontSize: '0.85rem' } },
         'Test og deload vises ud fra blokkens navn i planen.')))
 }

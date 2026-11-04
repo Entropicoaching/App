@@ -14,7 +14,7 @@ const urls = new Set(paths.map(path => new URL(path, root).href))
 const stubs = {
   './programNaesteUge.mjs': 'export const upcomingProgramWeek=()=>false, programDayPreview=()=>null',
   './IntensityExplanation.jsx': 'export default ()=>null',
-  './programBlockOverview.mjs': 'export const blockWeeks=()=>[],renderProgramBlockOverview=()=>null',
+  './programBlockOverview.mjs': 'export const DEFAULT_ENTROPI2=false,blockWeeks=()=>[],renderProgramBlockOverview=()=>null',
   './RestDays.jsx': 'export default ()=>null',
   './restDays.mjs': 'export const isRestSession=()=>false',
   '../rpeEvidence.mjs': 'export const chooseRpeInput=()=>null, visibleRpeNote=()=>null',

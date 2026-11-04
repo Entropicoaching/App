@@ -1,5 +1,7 @@
 import { calendarDay, addCalendarDays } from '../calendarDate.js'
 import { weekFullyLogged } from './ugeHjaelp.js'
+import { buildBlockOverview } from '../entropi2/program/blok/blockOverviewModel.mjs'
+export { DEFAULT_ENTROPI2 } from '../entropi2/flag.mjs'
 
 // A block is a contiguous phase, as in the existing program navigation.
 // Its anchor stays the active week when the athlete opens another week.
@@ -43,23 +45,55 @@ function startDay(allWeeks, week) {
   return anchor ? addCalendarDays(anchor.start_date, (week.week_number - anchor.week_number) * 7) : null
 }
 export function programBlockRows({ allWeeks, activeWeekIdx, logs }) {
-  return blockWeeks(allWeeks, activeWeekIdx).map(({ week, index }) => {
+  return blockWeeks(allWeeks, activeWeekIdx).map(({ week, index }) => programBlockRow(allWeeks, week, index, activeWeekIdx, logs))
+}
+function programBlockRow(allWeeks, week, index, activeWeekIdx, logs) {
     const start = startDay(allWeeks, week)
     const end = start && addCalendarDays(start, 6)
-    const sessions = week.sessions || []
-    const hasSets = sessions.some(s => (s.exercises || []).some(e => e.sets > 0))
-    const status = !hasSets ? 'Ingen planlagte sæt' : logs == null ? 'Logstatus ikke tilgængelig'
+    const sessions = Array.isArray(week.sessions) ? week.sessions : []
+    const complete = Array.isArray(week.sessions) && sessions.every(s => s
+      && Array.isArray(s.exercises) && s.exercises.every(e => e))
+    const hasSets = complete && sessions.some(s => s.exercises.some(e => e.sets > 0))
+    const status = !complete ? 'Logstatus ikke tilgængelig' : !hasSets ? 'Ingen planlagte sæt' : logs == null ? 'Logstatus ikke tilgængelig'
       : weekFullyLogged(week, logs) ? 'Ugen er logget' : 'Ugen er ikke fuldt logget'
     return { index, week, start, end, date: start && end ? `${formatDay(start)} til ${formatDay(end)}` : 'Dato ikke fastlagt',
-      sessions: sessions.length, rest: restLabel(sessions), status, current: index === activeWeekIdx }
-  })
+      sessions: Array.isArray(week.sessions) && sessions.every(Boolean) ? sessions.length : null,
+      rest: complete ? restLabel(sessions) : 'Hviledage ikke fastlagt', status, current: index === activeWeekIdx }
 }
 
 export function renderProgramBlockOverview(h, options) {
-  const rows = programBlockRows(options)
+  const model = options.programError
+    ? { state: 'unknown', message: 'Dit blokoverblik kunne ikke hentes. Prøv at hente programmet igen.' }
+    : buildBlockOverview({ enabled: true, weeks: options.allWeeks,
+      currentWeekId: options.allWeeks[options.activeWeekIdx]?.id })
+  const style = { marginBottom: '1.5rem', minWidth: 0, overflowWrap: 'anywhere', color: '#edeae2' }
+  if (model.state !== 'ready') return h('section', { 'aria-label': 'Din aktuelle blok', style },
+    h('p', { role: 'status' }, model.message),
+    options.programError && typeof options.onRetry === 'function'
+      ? h('button', { type: 'button', onClick: options.onRetry,
+        style: { minHeight: 44, padding: '0.75rem', cursor: 'pointer' } }, 'Prøv igen') : null)
+  return h('section', { 'aria-label': 'Din aktuelle blok', style },
+    h('h2', { style: { fontSize: '1.2rem', marginTop: 0 } }, model.name),
+    h('p', null, `Uge ${model.currentWeek} af ${model.totalWeeks}`),
+    model.partial ? h('p', { role: 'status' }, 'Nogle programuger kunne ikke vises.') : null,
+    model.next ? h('div', null,
+      h('h3', { style: { fontSize: '1rem' } }, 'Næste test eller deload'),
+      h('p', null, `${model.next.kinds.map(kind => kind === 'test' ? 'Test' : 'Deload').join(' og ')} i programuge ${model.next.weekNumber}${model.next.start ? ` · fra ${model.next.start}` : ' · dato ikke fastlagt'}`)) : null,
+    h('details', null,
+      h('summary', { style: { cursor: 'pointer', minHeight: 44, padding: '0.75rem 0', boxSizing: 'border-box' } }, 'Blokkens uger og planlagte sæt'),
+      h('p', null, 'Test og deload vises ud fra blokkens navn i planen. Sættene viser planen, ikke gennemført træning.'),
+      renderBlockNavigation(h, options, model)))
+}
+
+function renderBlockNavigation(h, options, model) {
+  const planned = new Map(model.weeks.map(row => [row.id, row.plannedSets]))
+  // Model ids select usable weeks, original indices preserve screen navigation.
+  const rows = model.weeks.map(week => {
+    const index = options.allWeeks.findIndex(w => w?.id === week.id)
+    return programBlockRow(options.allWeeks, options.allWeeks[index], index, options.activeWeekIdx, options.logs)
+  }).filter(Boolean).map(row => ({ ...row, current: row.index === options.activeWeekIdx, plannedSets: planned.get(row.week.id) }))
   if (!rows.length) return null
   return h('section', { 'aria-label': 'Hele din aktuelle blok', style: { marginBottom: '1.5rem' } },
-    h('h2', { style: { color: '#edeae2', fontSize: '1.2rem' } }, rows[0].week.block_name || 'Din aktuelle blok'),
     h('p', { style: { color: '#b8b4a8' } }, 'Hele blokken. Tryk på en uge for at åbne den.'),
     h('ul', { style: { listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 8 } },
       ...rows.map(row => h('li', { key: row.week.id }, h('button', {
@@ -70,6 +104,10 @@ export function renderProgramBlockOverview(h, options) {
           textAlign: 'left', whiteSpace: 'normal', overflowWrap: 'anywhere', padding: '0.85rem',
           border: `1px solid ${row.current ? '#c8923a' : '#59564c'}`, background: '#1c1c18', color: '#edeae2', cursor: 'pointer', font: 'inherit' },
       }, h('strong', null, `Uge ${row.week.week_number}${row.current ? ' · Aktuel uge' : ''}`),
-      h('span', null, row.date), h('span', null, `${row.sessions} pas`), h('span', null, row.rest), h('span', null, row.status)))))
+      h('span', null, row.date),
+      h('span', null, row.plannedSets == null ? 'Planlagt volumen ukendt' : `${row.plannedSets} planlagte sæt`),
+      h('span', null, row.sessions == null ? 'Antal pas ukendt' : `${row.sessions} pas`),
+      h('span', null, row.rest),
+      h('span', null, row.plannedSets == null ? 'Logstatus ikke tilgængelig' : row.status)))))
   )
 }

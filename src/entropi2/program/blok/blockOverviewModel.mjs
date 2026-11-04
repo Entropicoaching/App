@@ -39,17 +39,17 @@ export function buildBlockOverview({ enabled = DEFAULT_BLOCK_OVERVIEW, weeks = [
   if (enabled !== true) return null
   if (!Array.isArray(weeks)) return unknown('Programdata er ikke tilgængelige.')
   if (!weeks.length) return { state: 'empty', message: 'Din blok er ikke planlagt endnu.', weeks: [], next: null }
-  const ids = new Set(), numbers = new Set(), owners = new Set()
-  for (const week of weeks) {
-    if (!week || week.id == null || ids.has(week.id) || !Number.isSafeInteger(week.week_number)
-      || week.week_number < 1 || numbers.has(week.week_number)
-      || (week.block_name != null && typeof week.block_name !== 'string')
-      || week.readEvidence?.complete === false) return unknown('Programugerne er ikke entydige eller komplette.')
-    ids.add(week.id); numbers.add(week.week_number)
-    if (week.athlete_id != null) owners.add(week.athlete_id)
-  }
+  const owners = new Set(weeks.filter(Boolean).map(w => w.athlete_id).filter(id => id != null))
   if (owners.size > 1) return unknown('Programmet indeholder uger fra flere atleter.')
-  const sorted = [...weeks].sort((a, b) => a.week_number - b.week_number)
+  // Week zero and repeated week numbers exist in older plans. Identity is the id;
+  // ambiguous ids are excluded rather than making every other week disappear.
+  const counts = new Map()
+  for (const week of weeks) if (week?.id != null) counts.set(week.id, (counts.get(week.id) || 0) + 1)
+  const sorted = weeks.filter(week => week && week.id != null && counts.get(week.id) === 1
+    && Number.isSafeInteger(week.week_number) && week.week_number >= 0
+    && (week.block_name == null || typeof week.block_name === 'string')
+    && week.readEvidence?.complete !== false).sort((a, b) => a.week_number - b.week_number)
+  if (!sorted.length) return unknown('Ingen brugbare programuger er tilgængelige.')
   let active
   if (currentWeekId != null) {
     active = sorted.findIndex(w => w.id === currentWeekId)
@@ -68,11 +68,8 @@ export function buildBlockOverview({ enabled = DEFAULT_BLOCK_OVERVIEW, weeks = [
   while (start > 0 && (sorted[start - 1].block_name || null) === name) start--
   while (end + 1 < sorted.length && (sorted[end + 1].block_name || null) === name) end++
   const block = sorted.slice(start, end + 1)
-  if (block.some((w, i) => i > 0 && w.week_number !== block[i - 1].week_number + 1)) {
-    return unknown('Der mangler uger i den aktuelle blok.')
-  }
-  const upcoming = sorted.slice(active + 1).find(w => markers(w.block_name).length)
-  return { state: 'ready', name: name || 'Din aktuelle blok',
+  const upcoming = block.slice(active - start + 1).find(w => markers(w.block_name).length)
+  return { state: 'ready', partial: sorted.length !== weeks.length, name: name || 'Din aktuelle blok',
     currentWeek: active - start + 1, totalWeeks: block.length,
     weeks: block.map((w, i) => ({ id: w.id, weekNumber: w.week_number, blockWeek: i + 1,
       current: sorted[active] === w, start: civilDay(w.start_date), plannedSets: plannedWeekSets(w) })),

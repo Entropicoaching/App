@@ -27,7 +27,7 @@ function at(instant, fn) {
   try { return fn() } finally { globalThis.Date = NativeDate }
 }
 function programProps(extra = {}) {
-  return { ...helpers, allWeeks: [week, next], currentWeek: week, viewingWeekIdx: 0, hviledageListe: true,
+  return { entropi2: false, ...helpers, allWeeks: [week, next], currentWeek: week, viewingWeekIdx: 0, hviledageListe: true,
     athlete: { id: 'synthetic' }, exerciseLogs: [], pastLogs: [], readinessLog: {}, progOpenSession: null,
     sessionRefs: { current: {} }, dismissedFeedback: new Set(), feedbackInputs: {}, logInputs: {}, setConfirm: {},
     lastLogByExerciseName: {}, exerciseHistory: {}, exWarmupExpanded: {}, exWarmupWeightOverride: {}, warmupChecked: {},

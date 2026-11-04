@@ -5,7 +5,7 @@ import { mount, nodes, text, button } from './hvileDom.mjs'
 import { restDays, REST_DAY_TEXT, restDate } from './restDays.mjs'
 install()
 const { default: ProgramUtenFlag } = await import('./ProgramTab.jsx')
-const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
+const Program = p => ProgramUtenFlag({ entropi2: false, hviledageListe: true, ...p })
 const { default: CalendarUtenFlag } = await import('./WeekCalendar.jsx')
 const Calendar = p => CalendarUtenFlag({ hviledageListe: true, ...p })
 const helpers = await import('./ugeHjaelp.js')

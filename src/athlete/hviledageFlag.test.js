@@ -43,7 +43,7 @@ test('WeekCalendar ON list, rest classification and click handler; URL resolves 
  assert.equal(list(expand(WeekCalendar({...props,hviledageListe:true,week:{sessions:[]}}))).length,1)
  assert.equal(WeekCalendar({...props,week:{sessions:[]}}),null)
 })
-const pp={allWeeks:[week],currentWeek:week,viewingWeekIdx:0,computeActiveWeekIdx:()=>0,
+const pp={entropi2:false,allWeeks:[week],currentWeek:week,viewingWeekIdx:0,computeActiveWeekIdx:()=>0,
  weekStartDate:()=>weekStart,fmtWeekRange:()=>'',exerciseLogs:[],pastLogs:[],athlete:{},
  WEEKDAYS_LONG:['Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Loerdag','Soendag'],
  isSessionDone:()=>false,progOpenSession:null,readinessLog:{readiness_score:100},

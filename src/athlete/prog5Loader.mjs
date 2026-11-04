@@ -9,6 +9,10 @@ const shared = new Set(registryRecipe(import.meta.url, 'shared'))
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      // Admit only the two new program block dependencies; keep all other guards.
+      if (context.parentURL === new URL('./programBlockOverview.mjs', import.meta.url).href
+        && ['../entropi2/program/blok/blockOverviewModel.mjs', '../entropi2/flag.mjs'].includes(specifier))
+        return { url: new URL(specifier, context.parentURL).href, shortCircuit: true }
       if (context.parentURL?.startsWith(root.href) || context.parentURL === new URL('../mobilityHomework.mjs', root).href) assertRestMobilityEdge(specifier, context.parentURL, root)
       if (specifier === 'react' || /supabase(?:\.js)?$/.test(specifier)) return { url: new URL('prog5Dom.mjs', root).href, shortCircuit: true }
       if (specifier.startsWith('.') && context.parentURL?.startsWith(root.href)) {

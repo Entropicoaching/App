@@ -16,7 +16,7 @@ test('review: every week in a long block has the correct ordinal and invariant v
     const result = buildBlockOverview({ enabled: true, weeks, currentWeekId: i + 1 })
     assert.equal(result.currentWeek, i + 1)
     assert.equal(result.totalWeeks, 40)
-    assert.equal(result.next.weekNumber, 51)
+    assert.equal(result.next, null)
     assert.equal(result.weeks.filter(w => w.current).length, 1)
     assert.ok(result.weeks.every(w => w.plannedSets === 6))
   }

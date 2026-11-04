@@ -4,7 +4,7 @@ import { install } from './prog3Loader.mjs'
 import { mount, nodes, text } from './prog3Dom.mjs'
 install()
 const { default: ProgramUtenFlag } = await import('./ProgramTab.jsx')
-const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
+const Program = p => ProgramUtenFlag({ entropi2: false, hviledageListe: true, ...p })
 const { default: Baseline } = await import('./prog3Baseline.jsx')
 const { programBlockRows, readProgramBlockLogs, blockWeeks } = await import('./programBlockOverview.mjs')
 const helpers = await import('./ugeHjaelp.js')
@@ -90,6 +90,76 @@ test('athlete without a block keeps the existing empty program view',()=>{
   const tree=render(Program,p)
   assert.equal(overview(tree),undefined);assert.match(text(tree),/Dit program er på vej/)
 })
+
+test('block module is wired above the program with active ordinal and next milestone',()=>{
+  const w=weeks();w.push(week('3','2026-04-06',[],'Test / deload'))
+  const p=props(w);p.programBlokOversigt=true;p.currentWeek=w[1];p.viewingWeekIdx=0
+  const tree=render(Program,p)
+  const header=nodes(tree,n=>n.type==='section' && n.props['aria-label']==='Din aktuelle blok')[0]
+  assert.match(text(header),/Uge 2 af 2/)
+  assert.doesNotMatch(text(header),/Næste test eller deload|programuge 3/)
+  assert.equal(nodes(tree,n=>n.type==='section')[0],header,'block summary is first')
+  assert.equal(nodes(tree,n=>n.type==='details').length,1,'coach information remains outside the fold')
+  assert.deepEqual(w.map(x=>x.week_number),[1,2,3])
+})
+
+test('only the summary is visible until native details is opened',()=>{
+  const p=props();p.programBlokOversigt=true
+  const tree=render(Program,p)
+  const header=nodes(tree,n=>n.type==='section' && n.props['aria-label']==='Din aktuelle blok')[0]
+  const details=nodes(header,n=>n.type==='details')[0]
+  assert.equal(details.props.open,undefined)
+  assert.match(text(details),/Uge 1.*2 planlagte sæt/)
+  assert.equal(nodes(details,n=>n.type==='button').length,2,'existing navigation lives inside details')
+  const outside=header.props.children.filter(n=>n!==details).map(text).join(' ')
+  assert.match(outside,/Uge 1 af 2/)
+  assert.doesNotMatch(outside,/Næste test eller deload|Ingen kommende test/)
+  assert.doesNotMatch(outside,/planlagte sæt|Hviledage|Ugen er/)
+  assert.equal(nodes(details,n=>n.type==='summary')[0].props.style.minHeight,44)
+})
+
+test('failed program refresh never presents stale block facts as current',()=>{
+  const p=props();p.programBlokOversigt=true;p.programError=true
+  let retries=0;p.fetchProgram=id=>{assert.equal(id,'synthetic');retries++}
+  const tree=render(Program,p)
+  const header=nodes(tree,n=>n.type==='section' && n.props['aria-label']==='Din aktuelle blok')[0]
+  assert.match(text(header),/kunne ikke hentes/)
+  assert.equal(nodes(header,n=>n.props.role==='status').length,1)
+  assert.doesNotMatch(text(header),/Uge \d+ af|planlagte sæt/)
+  assert.equal(overview(tree),undefined)
+  nodes(header,n=>n.type==='button' && text(n)==='Prøv igen')[0].props.onClick()
+  assert.equal(retries,1)
+})
+
+test('current Entropi 2 default enables the real screen without a parent change',()=>{
+  const p=props();p.entropi2=undefined
+  const tree=render(Program,p)
+  assert.match(text(tree),/Uge 1 af 2/)
+  assert.equal(nodes(tree,n=>n.type==='section' && n.props['aria-label']==='Din aktuelle blok').length,1)
+})
+
+test('explicit Entropi 2 OFF with the legacy flag OFF preserves the pinned screen',()=>{
+  const p=props();p.entropi2=false;p.programBlokOversigt=false
+  assert.deepEqual(shape(render(Program,p)),shape(render(Baseline,p)))
+})
+
+test('empty read failure preserves the program retry action',()=>{
+  const p=props([]);p.programBlokOversigt=true;p.programError=true
+  let retries=0;p.fetchProgram=id=>{assert.equal(id,'synthetic');retries++}
+  const tree=render(Program,p)
+  assert.match(text(tree),/Dit program kunne ikke hentes/)
+  assert.doesNotMatch(text(tree),/Dit program er på vej|Uge \d+ af/)
+  nodes(tree,n=>n.type==='button' && text(n)==='Prøv igen')[0].props.onClick()
+  assert.equal(retries,1)
+})
+
+test('incomplete week is excluded while usable weeks remain visible',()=>{
+  const p=props();p.programBlokOversigt=true;p.allWeeks[1].readEvidence={complete:false}
+  const tree=render(Program,p)
+  const header=nodes(tree,n=>n.type==='section' && n.props['aria-label']==='Din aktuelle blok')[0]
+  assert.match(text(header),/Uge 1 af 1/)
+  assert.equal(nodes(header,n=>n.type==='button').length,1)
+})
 test('reader is chunked, paginated, side-effect free and honest on partial failure',async()=>{
   const w=[week('1',null,Array.from({length:101},(_,i)=>session('s'+i)))],calls=[]
   const result=await readProgramBlockLogs(w,async(ids,from,to)=>{calls.push([ids.length,from,to]);return {ok:true,data:from===0&&ids.length===100?Array(500).fill({exercise_id:'s0-ex',set_number:1}):[]}})
@@ -136,4 +206,15 @@ test('real component effect loads status, refreshes and ignores a late previous 
   p.exerciseLogs=[];p.fetchProgramBlockLogs=async()=>{throw Error('synthetic offline')}
   view.render();await flushEffects()
   assert.match(text(buttons(view.render())[0]),/Logstatus ikke tilgængelig/)
+})
+
+test('Entropi 2 default reuses the existing scoped status reader',async()=>{
+  const {enableEffects,flushEffects}=await import('./prog3Dom.mjs');enableEffects()
+  const p=props();p.entropi2=undefined
+  let reads=0;p.fetchProgramBlockLogs=async(id,block)=>{
+    assert.equal(id,'synthetic');assert.deepEqual(block,p.allWeeks);reads++;return []
+  }
+  const view=mount(Program,p);view.render();await flushEffects()
+  assert.equal(reads,1)
+  assert.match(text(buttons(view.render())[0]),/Ugen er ikke fuldt logget/)
 })

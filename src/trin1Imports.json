@@ -159,7 +159,9 @@
   },
   "src/athlete/programBlockOverview.mjs": {
     "../calendarDate.js": "src/calendarDate.js",
-    "./ugeHjaelp.js": "src/athlete/ugeHjaelp.js"
+    "./ugeHjaelp.js": "src/athlete/ugeHjaelp.js",
+    "../entropi2/program/blok/blockOverviewModel.mjs": "src/entropi2/program/blok/blockOverviewModel.mjs",
+    "../entropi2/flag.mjs": "src/entropi2/flag.mjs"
   },
   "src/athlete/IntensityExplanation.jsx": {
     "react": "@dom",
@@ -311,5 +313,12 @@
     "./coachMobility.mjs": "src/athlete/coachMobility.mjs",
     "./mobilityFocus.mjs": "src/athlete/mobilityFocus.mjs",
     "./mobilityCatalog.mjs": "src/athlete/mobilityCatalog.mjs"
-  }
+  },
+  "src/entropi2/program/blok/blockOverviewModel.mjs": {
+    "../../../programOverblik.mjs": "src/programOverblik.mjs",
+    "../../../inputValues.js": "src/inputValues.js",
+    "../../../exerciseProgress.js": "src/exerciseProgress.js"
+  },
+  "src/programOverblik.mjs": {},
+  "src/entropi2/flag.mjs": {}
 }

@@ -10,7 +10,7 @@ import { install } from './hvileLoader.mjs'
 import { mount, nodes, text, io } from './hvileDom.mjs'
 const hvile = install()
 const { default: ProgramUtenFlag } = await import('./ProgramTab.jsx')
-const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
+const Program = p => ProgramUtenFlag({ entropi2: false, hviledageListe: true, ...p })
 const helpers = await import('./ugeHjaelp.js')
 const source = n => readFileSync(new URL(n, import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const hash = s => createHash('sha256').update(s).digest('hex')

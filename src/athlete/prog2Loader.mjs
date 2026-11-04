@@ -14,6 +14,10 @@ const dom = new URL('./prog2Dom.mjs', import.meta.url).href
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      // Admit only the two new program block dependencies; keep all other guards.
+      if (context.parentURL === new URL('./programBlockOverview.mjs', import.meta.url).href
+        && ['../entropi2/program/blok/blockOverviewModel.mjs', '../entropi2/flag.mjs'].includes(specifier))
+        return { url: new URL(specifier, context.parentURL).href, shortCircuit: true }
       if ([...urls.values()].includes(context.parentURL)) assertRestMobilityEdge(specifier, context.parentURL, new URL('./', import.meta.url))
       const restName = specifier.split('/').at(-1)
       if (['RestDays.jsx', 'restDays.mjs'].includes(restName) && specifier !== './' + restName) throw new Error('Unapproved synthetic dependency: ' + specifier)

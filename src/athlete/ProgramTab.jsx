@@ -2,7 +2,7 @@ import OpvarmStige from './WarmupLadderView.mjs'
 import { upcomingProgramWeek, programDayPreview } from './programNaesteUge.mjs'
 import IntensityExplanation from './IntensityExplanation.jsx'
 import { createElement } from 'react'
-import { blockWeeks, renderProgramBlockOverview } from './programBlockOverview.mjs'
+import { blockWeeks, renderProgramBlockOverview, DEFAULT_ENTROPI2 } from './programBlockOverview.mjs'
 import RestDays from './RestDays.jsx'
 import { isRestSession } from './restDays.mjs'
 import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
@@ -135,18 +135,19 @@ export default function ProgramTab({
   setProgOpenSession, setShowRpeGuide, setSkipConfirmEx, setViewingWeekIdx, setWarmupChecked,
   setWarmupOverrideTick, setWarmupSetEditing, skipConfirmEx, skipExercise, skipRemainingSets,
   skipSet, suggestNextWeight, suggestWarmupOverride, unskipSet, viewingWeekIdx, warmupChecked,
-  warmupOverrideTick, warmupSetEditing, weekStartDate, vaerdF6 = false,
+  warmupOverrideTick, warmupSetEditing, weekStartDate, vaerdF6 = false, entropi2 = DEFAULT_ENTROPI2,
 }) {
           // Følg den aktive uge der blev ankret i fetchProgram (kan være rykket
           // frem til næste uge når den aktuelle er fuldt logget). Fald tilbage til
           // den rene dato-beregning hvis ankeret ikke findes.
-          const ugeFoerst = programUgeFoerst === true
+          const blockOverviewOn = entropi2 === true || programBlokOversigt === true
+          const ugeFoerst = programUgeFoerst === true && !blockOverviewOn
           const anchoredIdx = allWeeks.findIndex(w => w.id === currentWeek?.id)
           const activeWeekIdx = anchoredIdx >= 0 ? anchoredIdx : computeActiveWeekIdx(allWeeks)
           const block = blockWeeks(allWeeks, activeWeekIdx)
           const [blockStatus, setBlockStatus] = useState(null)
           useEffect(() => {
-            if (programBlokOversigt !== true || !athlete?.id || !block.length) return
+            if (!blockOverviewOn || !athlete?.id || !block.length) return
             let cancelled = false
             setBlockStatus(null)
             Promise.resolve().then(() => fetchProgramBlockLogs(athlete.id, block.map(row => row.week)))
@@ -155,7 +156,7 @@ export default function ProgramTab({
             return () => { cancelled = true }
             // The reader is recreated by the parent; data changes trigger a fresh status read.
             // eslint-disable-next-line react-hooks/exhaustive-deps
-          }, [programBlokOversigt, allWeeks, activeWeekIdx, athlete?.id, exerciseLogs, pastLogs])
+          }, [blockOverviewOn, allWeeks, activeWeekIdx, athlete?.id, exerciseLogs, pastLogs])
           const viewedWeek = allWeeks[viewingWeekIdx] || null
           const viewedRange = viewedWeek ? fmtWeekRange(weekStartDate(allWeeks, viewedWeek.week_number)) : null
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
@@ -253,7 +254,7 @@ export default function ProgramTab({
                         </div>
 
                         {/* Uge-prikker */}
-                        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                        {!blockOverviewOn && <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                           {phase.weeks.map((w, j) => {
                             const gi = startGlobal + j
                             const isViewed = gi === viewingWeekIdx
@@ -284,7 +285,7 @@ export default function ProgramTab({
                               </div>
                             )
                           })}
-                        </div>
+                        </div>}
 
                         {/* Caption */}
                         <div style={{ marginTop: '0.9rem', textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
@@ -296,7 +297,7 @@ export default function ProgramTab({
                               ? <span style={{ color: '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
                               : <span style={{ color: '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
                           {viewedRange && <span style={{ color: '#a8a498' }}> · {viewedRange}</span>}
-                          <span style={{ color: '#a8a498' }}> · aktiv uge {activeWeekIdx + 1} af {totalWeeks}</span>
+                          {!blockOverviewOn && <span style={{ color: '#a8a498' }}> · aktiv uge {activeWeekIdx + 1} af {totalWeeks}</span>}
                         </div>
                       </div>
                     )
@@ -349,8 +350,9 @@ export default function ProgramTab({
                 </>
               ) : (
                 <>
-                  {programBlokOversigt === true && renderProgramBlockOverview(createElement, {
-                    allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate,
+                  {blockOverviewOn && renderProgramBlockOverview(createElement, {
+                    allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate, programError,
+                    onRetry: () => fetchProgram(athlete.id),
                     logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
                     goToWeek,
                   })}

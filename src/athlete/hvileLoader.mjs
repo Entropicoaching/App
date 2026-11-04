@@ -14,6 +14,10 @@ const allowed = new Set(urls.values())
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      // Admit only the two new program block dependencies; keep all other guards.
+      if (context.parentURL === new URL('./programBlockOverview.mjs', import.meta.url).href
+        && ['../entropi2/program/blok/blockOverviewModel.mjs', '../entropi2/flag.mjs'].includes(specifier))
+        return { url: new URL(specifier, context.parentURL).href, shortCircuit: true }
       if (allowed.has(context.parentURL)) assertRestMobilityEdge(specifier, context.parentURL, root)
       if (!allowed.has(context.parentURL) || specifier === new URL('hvileDom.mjs', root).href) return next(specifier, context)
       if (specifier === 'react' || /\/supabase(?:\.js)?$/.test(specifier))

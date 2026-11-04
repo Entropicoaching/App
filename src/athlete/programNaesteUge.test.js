@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mount, nodes, text, button } from './prog2Dom.mjs'
 import { Program as ProgramUtenFlag, Baseline, helpers, model } from './prog2Loader.mjs'
-const Program = p => ProgramUtenFlag({ hviledageListe: true, ...p })
+const Program = p => ProgramUtenFlag({ entropi2: false, hviledageListe: true, ...p })
 
 function props(index = 1, count = 6) {
   const weeks = ['2026-10-19','2026-10-26','2026-11-02'].map((start_date, i) => ({

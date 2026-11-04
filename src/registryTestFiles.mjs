@@ -12,5 +12,9 @@ export function snapshotFiles(root) {
     }
   }
   for (const dir of ['src/', 'scripts/', 'e2e/']) walk(dir)
+  // Exact new screen dependencies; do not recursively admit entropi2.
+  for (const name of ['src/entropi2/flag.mjs', 'src/entropi2/program/blok/blockOverviewModel.mjs']) {
+    files.set(new URL(name, root).href, readFileSync(new URL(name, root), 'utf8'))
+  }
   return files
 }

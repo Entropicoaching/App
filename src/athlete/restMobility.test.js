@@ -3,7 +3,14 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { install } from '../../scripts/restMobilityLoader.mjs'
 import { createElement as h, expand, nodes, text } from '../../scripts/restMobilityDom.mjs'
+import { registerHooks } from 'node:module'
 install()
+// Keep this mobility fixture's unrelated block presentation explicitly OFF.
+registerHooks({ load(url, context, next) {
+  const result = next(url, context)
+  return url === 'rest-stub:' + encodeURIComponent('./programBlockOverview.mjs')
+    ? { ...result, source: result.source + '\nexport const DEFAULT_ENTROPI2 = false;' } : result
+} })
 const { restMobilityText } = await import('./restMobility.mjs')
 const { coachNotes } = await import('./coachMobility.mjs')
 const { WARMUP_BASE } = await import('./mobilityCatalog.mjs')

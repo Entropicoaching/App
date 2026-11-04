@@ -8,6 +8,7 @@ export function fixture(extra = {}) {
   const week = { id: 'w1', week_number: 1, sessions: [{ id: 's1', exercises: [ex] }] }
   const writes = []
   const props = {
+    entropi2: false,
     allWeeks: [week], currentWeek: week, viewingWeekIdx: 0, athlete: { id: 'synthetic-a' },
     computeActiveWeekIdx: () => 0, fmtWeekRange: () => null, weekStartDate: () => null,
     exerciseLogs: [], pastLogs: [], readinessLog: { readiness_score: 90 },

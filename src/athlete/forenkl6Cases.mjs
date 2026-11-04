@@ -14,7 +14,7 @@ export function propsFor(start = '2026-10-19') {
     block_description: `Beskrivelse ${i}`, coach_note: `Ugenote ${i}`,
     sessions: [{ id: `session-${i}`, title: `Pas ${i}`, weekday: null, exercises: [] }],
   }))
-  const p = { ...helpers, allWeeks: weeks, currentWeek: weeks[0], viewingWeekIdx: 0,
+  const p = { entropi2: false, ...helpers, allWeeks: weeks, currentWeek: weeks[0], viewingWeekIdx: 0,
     athlete: { id: 'synthetic-athlete' }, exerciseLogs: [], pastLogs: [],
     progOpenSession: null, readinessLog: { readiness_score: 90 }, sessionRefs: { current: {} },
     dismissedFeedback: new Set(), feedbackInputs: {}, logInputs: {},
