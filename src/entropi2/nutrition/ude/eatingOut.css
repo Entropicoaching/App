@@ -1,0 +1,7 @@
+/* Assembly loads this stylesheet when opting into the standalone view. */
+.e2-eating-out { display: grid; gap: 1rem; max-width: 40rem; min-width: 0; }
+.e2-eating-out label { display: grid; gap: .35rem; font-weight: 600; }
+.e2-eating-out select { font: inherit; color: inherit; background: inherit; width: 100%; min-width: 0; min-height: 44px; padding: .65rem; border: 1px solid currentColor; border-radius: .5rem; }
+.e2-eating-out select:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.e2-eating-out p, .e2-eating-out h2, .e2-eating-out h3 { margin: 0; overflow-wrap: anywhere; }
+.e2-eating-out [role="status"] { display: grid; gap: .6rem; padding: 1rem; border: 1px solid currentColor; border-radius: .5rem; }
