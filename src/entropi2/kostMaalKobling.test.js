@@ -189,7 +189,7 @@ test('KOSTMÅL: OFF giver ingen gengivelse, og Dashboard bevarer KostTab uændre
   for (const enabled of [undefined, false, 'true', 1]) assert.equal(CoachKostMaal({ enabled, get athlete() { throw Error('OFF læst') } }), null)
   const source = read('../Dashboard.jsx')
   assert.match(source, /const e2KostVaegt = useEntropi2KostVaegt\(\{ enabled: e2 && activeTab === 'kost', athleteId: selectedAthlete\?\.id, client: supabase \}\)/)
-  assert.match(source, /\{e2 && activeTab === 'kost' && \(\n {14}<CoachKostMaal enabled=\{true\} athlete=\{a\} weightStatus=\{e2KostVaegt\} today=\{calendarDay\(\)\} \{\.\.\.\{\n {16}editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,\n {14}\}\} \/>/)
+  assert.match(source, /\{e2 && activeTab === 'kost' && \(\n {14}<CoachKostMaal enabled=\{true\} athlete=\{a\} weightStatus=\{e2KostVaegt\} today=\{calendarDay\(\)\} \{\.\.\.\{\n {16}editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,\n {16}session, loading, loadError,\n {14}\}\} coachNutrition=\{e2CoachNutrition\} readContext=\{e2ReadContext\} \/>/)
   assert.match(source, /\{!e2 && activeTab === 'kost' && \(\n {14}<KostTab \{\.\.\.\{\n {16}a, editData, editing, isMobile, saveEdit, saving,\n {16}setEditData, setEditing, startEdit,\n {14}\}\} \/>/)
   assert.equal(source.match(/<KostTab /g).length, 1)
 })
