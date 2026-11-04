@@ -1,6 +1,8 @@
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Stævne: stævneplan, historik og rekorder.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
+import CoachStaevnePlan from '../entropi2/staevne/CoachStaevnePlan.mjs'
+import { entropi2Enabled } from '../entropi2/flag.mjs'
 import { s } from '../dashboardShared'
 import { exerciseSetView } from '../exerciseSetView'
 import { supabase } from '../supabase'
@@ -84,6 +86,12 @@ export default function StaevneTab({
                     </button>
                   )}
                 </div>
+
+                {entropi2Enabled() === true && <CoachStaevnePlan
+                  key={`${a.id}:${meetPlanForm.meet_type}`}
+                  enabled={true} meetType={meetPlanForm.meet_type}
+                  setMeetPlanForm={setMeetPlanForm} saving={savingMeetPlan}
+                />}
 
                 {/* Stævnehistorik */}
                 <div style={{ ...s.card, marginTop: '1.5rem' }}>

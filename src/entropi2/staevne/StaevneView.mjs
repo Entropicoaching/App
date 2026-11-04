@@ -9,7 +9,7 @@ export default function StaevneView(props = {}) {
   return props.enabled === true ? h(EnabledStaevne, props) : null
 }
 
-export function EnabledStaevne({ lifts = {}, strategy = 'normal', referenceDate, results = {}, onResultChange, onStrategyChange, error }) {
+export function EnabledStaevne({ lifts = {}, strategy = 'normal', referenceDate, results = {}, onResultChange, onStrategyChange, error, activeLifts = Object.keys(LIFTS), onApplyPlan, applyingDisabled = false }) {
   const prefix = useId()
   if (error) return h('section', { 'aria-label': 'Stævnedag' }, h('h2', null, 'Stævnedag'), h('p', { role: 'alert' }, 'Stævnedata kunne ikke indlæses. Prøv igen.'))
   const editable = typeof onResultChange === 'function'
@@ -21,12 +21,13 @@ export function EnabledStaevne({ lifts = {}, strategy = 'normal', referenceDate,
     h('select', { id: `${prefix}-strategy`, value: strategy, style: fieldStyle, disabled: typeof onStrategyChange !== 'function', onChange: event => onStrategyChange?.(event.target.value) },
       ...Object.entries(STRATEGIES).map(([value, label]) => h('option', { key: value, value }, label))),
     !editable && h('p', null, 'Resultater vises kun. Registrering kræver en tilsluttet resultatfunktion.'),
-    formError ? h('p', { role: 'alert' }, 'Løftenes data har forkert format.') : Object.entries(LIFTS).map(([lift, label]) => {
+    formError ? h('p', { role: 'alert' }, 'Løftenes data har forkert format.') : Object.entries(LIFTS).filter(([lift]) => activeLifts.includes(lift)).map(([lift, label]) => {
       const plan = planLift(lifts[lift], strategy, referenceDate)
       return h('section', { key: lift, 'aria-label': label, style: { marginBlock: '1.5rem' } },
         h('h3', null, label),
         plan.status !== 'ready' ? h('p', { role: plan.status === 'error' ? 'alert' : 'status' }, plan.message) : [
           h('p', { key: 'attempts' }, `Forslag: åbner ${kgText(plan.attempts[0])} kg · andet ${kgText(plan.attempts[1])} kg · tredje ${kgText(plan.attempts[2])} kg`),
+          typeof onApplyPlan === 'function' && h('button', { key: 'apply', type: 'button', style: fieldStyle, disabled: applyingDisabled, onClick: () => onApplyPlan(lift, plan.attempts) }, `Brug ${label.toLowerCase()}-forslag i planen`),
           h('details', { key: 'warmup' }, h('summary', { style: { minHeight: 44 } }, 'Opvarmning og grundlag'),
             h('p', null, `${plan.basis} Reference: ${kgText(Math.round(plan.reference * 10) / 10)} kg. ${plan.recentCount} af de seneste singler (højst 3, inden for 42 dage).`),
             h('p', null, plan.openerTime ? `Åbner kl. ${plan.openerTime}.` : 'Åbnertid mangler; tider vises relativt til åbneren.'),
