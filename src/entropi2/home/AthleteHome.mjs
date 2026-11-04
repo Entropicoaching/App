@@ -8,6 +8,7 @@ import HomeOnboarding from './HomeIntroduction.mjs'
 import HomeCheckIn from './HomeCheckIn.mjs'
 
 const clock = () => new Date()
+const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
 const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
 const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${MONTHS[Number(m[2]) - 1]}` : String(iso) }
 const labels = { holiday: 'Du er på ferie', missing: 'Programdata mangler', 'no-program': 'Intet program endnu',
@@ -27,6 +28,7 @@ export default function AthleteHome(props) {
     return () => clearInterval(id)
   }, [enabled])
   if (enabled !== true) return null
+  const name = firstName(athlete?.name)
   void tick
   const now = props.now ?? getNow()
   const model = homeModel({ ...props, now })
@@ -49,8 +51,8 @@ export default function AthleteHome(props) {
     // her kun ugen, og kortet siger "I dag" eller en dansk dato.
     (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
-    h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (athlete?.name ? `Godt arbejde i dag, ${athlete.name}` : 'Godt arbejde i dag')
-      : athlete?.name ? `Klar til dit pas, ${athlete.name}?` : 'Klar til dit pas?'),
+    h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (name ? `Godt arbejde i dag, ${name}` : 'Godt arbejde i dag')
+      : name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?'),
     h(HomeOnboarding, { enabled, athleteId: athlete?.id, storage: props.storage, headingRef }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas' },
       h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
