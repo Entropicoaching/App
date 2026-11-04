@@ -66,6 +66,14 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   // Marc 3. nov.: genvejen 'Film et saet' paa Entropi 2-hjem er en del af det samme delta (onFilmSet).
   const entropi2Delta = [
+    // R2-E2-HJEM-HURTIG2: Hjem-genveje gives kun skrivehandlere uden for read-only preview.
+    [`            {...(!e2ReadOnly ? {
+              readinessLog, readinessInput, setReadinessInput,
+              saveReadiness, savingReadiness, readinessError,
+              weightLogs, weightInput, setWeightInput,
+              logWeight, savingWeight,
+            } : {})}
+`, ''],
     // R2-TRACK-KOBL-ATLET2: own readiness read only on the athlete's active Fremgang tab.
     ["\nimport { useOwnTracking } from './entropi2/tracking/useOwnTracking.mjs'\n", ''],
     [`  const { trackingSnapshot, onRetryTracking } = useOwnTracking({

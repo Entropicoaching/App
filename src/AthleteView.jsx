@@ -814,6 +814,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
             {...(e2ReadOnly ? { onLogSet: undefined, setLogInputs: undefined, storage: coachPreviewStorage } : {})}
             pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}
+            {...(!e2ReadOnly ? {
+              readinessLog, readinessInput, setReadinessInput,
+              saveReadiness, savingReadiness, readinessError,
+              weightLogs, weightInput, setWeightInput,
+              logWeight, savingWeight,
+            } : {})}
             onFilmSet={() => { if (!athlete?.id) return; setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) }}
             {...(e2ReadOnly ? { onFilmSet: undefined } : {})} />
         )}

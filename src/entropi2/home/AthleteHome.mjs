@@ -6,6 +6,7 @@ import { homeWeekOverview } from './homeWeekOverview.mjs'
 import WeekPlan from './ugeplan/WeekPlan.mjs'
 import HomeOnboarding from '../onboarding/AthleteIntroduction.mjs'
 import HomeCheckIn from './HomeCheckIn.mjs'
+import QuickLogs from './QuickLogs.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -69,6 +70,7 @@ export default function AthleteHome(props) {
         : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
+    h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow }),
     // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
     h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
       disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
