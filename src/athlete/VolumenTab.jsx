@@ -23,7 +23,9 @@
 // Data ejes af AthleteView.jsx (volumeLogs/volumeLoading, hentet når fanen
 // åbnes — se dens fetchVolumeLogs) og gives ned som props, samme mønster
 // som de øvrige lazy-loadede faner (ordre 232).
-import { useState } from 'react'
+import { createElement, useState } from 'react'
+import Volume from '../entropi2/volume/Volume.mjs'
+import { DEFAULT_ENTROPI2 } from '../entropi2/flag.mjs'
 import { beregnVolumenPrUge } from '../volume/beregn.js'
 import { MUSKELGRUPPER } from '../volume/muskelkort.js'
 import VolumenGraf from '../dashboard/VolumenGraf'
@@ -43,7 +45,15 @@ function raekkerFraVolumeLogs(volumeLogs) {
   }))
 }
 
-export default function VolumenTab({ volumeLogs, volumeLoading }) {
+// AthleteView's existing lazy boundary supplies the read-only volume snapshot.
+// Return one screen only; the legacy component retains its own hooks when OFF.
+export default function VolumenTab({ entropi2 = DEFAULT_ENTROPI2, ...props }) {
+  return entropi2 === true
+    ? createElement(Volume, { ...props, entropi2: true })
+    : createElement(LegacyVolumenTab, props)
+}
+
+function LegacyVolumenTab({ volumeLogs, volumeLoading }) {
   const [visning, setVisning] = useState('uge')
 
   const raekker = raekkerFraVolumeLogs(volumeLogs)
