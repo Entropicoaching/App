@@ -17,7 +17,7 @@ function timestamp(value) {
   return Number.isFinite(at) && Number.isFinite(date) && new Date(date).toISOString().slice(0, 10) === day ? at : null
 }
 
-// Unwired, pure read model. Caller supplies confirmed logs for ONE athlete and
+// Pure read model. Caller supplies confirmed logs for ONE athlete and
 // exact exercise ID, explicit clock, pending/parked keys and load error. No name
 // matching across program IDs. Missing athlete_id is rejected, never inferred.
 // Heavy = existing <=8 reps rule, excluding light set names and deload blocks.
@@ -29,6 +29,7 @@ export function exerciseHistory(input = {}) {
   if (error || typeof athleteId !== 'string' || !athleteId.trim() || typeof exerciseId !== 'string' || !exerciseId.trim() ||
       typeof exerciseName !== 'string' || !exerciseName.trim() || !Array.isArray(logs) || !Number.isFinite(now) ||
       !Array.isArray(pendingSyncKeys) || !Array.isArray(parkedSets)) return failure
+  if (input.loading === true) return { status: 'loading' }
   const sets = [], seen = new Set()
   let omitted = 0
   for (const row of logs) {

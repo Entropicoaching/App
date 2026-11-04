@@ -16,6 +16,7 @@ import { parseInputNumber } from '../../inputValues.js'
 import { createSessionFeeling } from './afslut/sessionFeelingDom.mjs'
 import { groupSessionExercises } from './supersaet/supersetModel.mjs'
 import { mountSupersetView } from './supersaet/supersetView.mjs'
+import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps } from './historik/exerciseHistoryDom.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
@@ -69,7 +70,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       announcement = el('p', '', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', 'data-announce': '' })
       errorStatus = el('p', '', { role: 'alert', 'aria-atomic': 'true' })
       frame.append(handle, close, rest.node, announcement, body, errorStatus); dialog.append(frame); root.append(dialog)
-      unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => controller.close() })
+      unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => controller.close(),
+        dismissLayer: () => closeExerciseHistory(body, doc.activeElement) })
     }
     const nextStep = JSON.stringify([s.selection.stamp, s.key, s.summary]), stepChanged = nextStep !== stepIdentity
     stepIdentity = nextStep
@@ -89,6 +91,17 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     if (oldBar) plateBar = Number(oldBar.value)
     clearBlocks()
     body.replaceChildren()
+    const showHistory = (parent, ex, detail) => {
+      const active = () => {
+        const current = controller.state()
+        return !dead && current.open && current.selection.stamp === s.selection.stamp
+      }
+      const read = () => sessionHistoryProps(latest(), ex, clock.Date.now())
+      // An error/loading snapshot must not advertise stale values as the last set.
+      const previous = !p.exerciseLogsError && !p.exerciseLogsLoading ? lastSetLine(p, ex.id, clock.Date.now()) : null
+      cleanBlocks.push(mountExerciseHistory(parent, { detail, previous, read, active,
+        open: !stepChanged && detailsOpen.includes(detail), aboutOpen: !stepChanged && detailsOpen.includes(`${detail}-about`) }))
+    }
     const first = nextSetInSession(s.session, [])
     const dailyWarmup = !summary && s.next?.setNumber === 1 && s.next.exercise.id === first?.exercise.id
     if (dailyWarmup) {
@@ -148,8 +161,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       body.append(plan)
       const tempo = mountTempoView(plan, { enabled: true, ...sessionPrescription(ex), compact: true })
       cleanBlocks.push(() => tempo.dispose())
-      const previous = lastSetLine(p, ex.id, clock.Date.now())
-      if (previous) plan.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
+      showHistory(plan, ex, 'exercise-history-current')
       if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
       // Later exercises keep their own ramp. The first exercise shares the daily fold.
       if (n.setNumber === 1 && !dailyWarmup) {
@@ -238,12 +250,11 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     history.append(el('summary', 'Hele passet og klarede sæt'))
     const grouping = groupSessionExercises(s.session.exercises)
     for (const warning of grouping.warnings) history.append(el('p', `Gruppering: ${warning}`, { class: 'hint' }))
-    for (const ex of s.session.exercises || []) {
+    for (const [index, ex] of (s.session.exercises || []).entries()) {
       const group = grouping.groups.find(group => group.kind !== 'single' && group.members[0].exerciseId === ex.id)
       if (group) history.append(el('h2', group.label))
       history.append(el('h2', ex.name), el('p', `${ex.sets} × ${present(ex.reps)}`))
-      const previous = lastSetLine(p, ex.id, clock.Date.now())
-      if (previous) history.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
+      showHistory(history, ex, `exercise-history-${index}`)
       for (const log of s.logs.filter(l => l.exercise_id === ex.id).slice().sort((a, b) => a.set_number - b.set_number))
         history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} reps, RPE ${present(log.rpe_actual)}`}`))
     }

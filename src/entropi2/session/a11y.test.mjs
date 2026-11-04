@@ -55,7 +55,7 @@ test('session: invalid/error status is persistent, focus trap wraps, updates do 
   const alert = root.querySelector('[role="alert"]')
   await view.controller.approve('lift_1', { weight: '', reps: '' }, view.controller.state().selection.stamp)
   assert.equal(root.querySelector('[role="alert"]'), alert); assert.match(alert.textContent, /Skriv vægt/)
-  const dialog = root.querySelector('dialog'), last = root.querySelectorAll('summary').at(-1)
+  const dialog = root.querySelector('dialog'), last = root.querySelector('[data-detail="history"]').querySelector('summary')
   close.focus(); dialog.dispatch('keydown', { key: 'Tab', shiftKey: true }); assert.equal(root.ownerDocument.activeElement, last)
   dialog.dispatch('keydown', { key: 'Tab' }); assert.equal(root.ownerDocument.activeElement, close)
   view.dispose()

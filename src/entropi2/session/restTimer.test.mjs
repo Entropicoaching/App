@@ -154,7 +154,7 @@ test('390px structural CSS contract, reduced motion, keyboard trap and stable ti
     const choice = button(f.rest(), '90 s'); choice.focus(); f.view.update(); f.advance(1000)
     assert.equal(f.root.ownerDocument.activeElement, choice)
     const dialog = f.root.querySelector('dialog'), close = button(f.root, 'Luk pas')
-    const last = f.root.querySelectorAll('summary').at(-1)
+    const last = f.root.querySelector('[data-detail="history"]').querySelector('summary')
     close.focus(); dialog.dispatch('keydown', { key: 'Tab', shiftKey: true })
     assert.equal(f.root.ownerDocument.activeElement, last)
     dialog.dispatch('keydown', { key: 'Tab' }); assert.equal(f.root.ownerDocument.activeElement, close)

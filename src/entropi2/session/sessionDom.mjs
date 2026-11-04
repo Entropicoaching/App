@@ -12,10 +12,10 @@ export function watchRest(pause, update, clock = globalThis) {
   if (remainingRest(pause, clock.Date.now()) > 0) id = clock.setInterval(tick, 250)
   return () => { if (id != null) clock.clearInterval(id); id = null }
 }
-export function bindDialog({ dialog, handle, close, trigger, dismiss, document }) {
+export function bindDialog({ dialog, handle, close, trigger, dismiss, document, dismissLayer = () => false }) {
   let start = null
   const hide = () => { if (dialog.open) dialog.close() }
-  const cancel = event => { event.preventDefault(); hide() }
+  const cancel = event => { event.preventDefault(); if (!dismissLayer()) hide() }
   const down = e => {
     start = null
     if (e.isPrimary && e.pointerType === 'touch') {
@@ -30,6 +30,7 @@ export function bindDialog({ dialog, handle, close, trigger, dismiss, document }
     reset(); if (dy >= 60 && dy > dx) hide()
   }
   const keys = e => {
+    if (e.key === 'Escape' && dismissLayer()) { e.preventDefault(); return }
     if (e.key !== 'Tab') return
     const nodes = [...dialog.querySelectorAll('button, input, textarea, select, summary, [tabindex="0"]')].filter(n => {
       if (n.disabled || n.hidden) return false
