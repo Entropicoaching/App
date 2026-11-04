@@ -5,6 +5,7 @@ import { createElement as h, isValidElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Ugeplan, UgeplanView } from './Ugeplan.mjs'
 import { createWeekPlan } from './model.mjs'
+import { createNutritionController, mealKey } from '../controller.mjs'
 
 const template = { id: 'synthetic:meal', name: 'Min <skål>', meal: { meal: 'Skål', kcal: 400, protein: 25 },
   ingredients: [{ name: 'Havre', quantity: 50, unit: 'g' }] }
@@ -96,4 +97,71 @@ test('missing ingredient warning, deleted template warning and strict OFF', () =
     assert.equal(UgeplanView(props), null)
   }
   assert.equal(renderToStaticMarkup(h(Ugeplan)), '')
+})
+
+function screenInputs(t, { raw, storageError = false, writeError = false } = {}) {
+  const athleteId = 'synthetic:screen', date = '2026-11-04'
+  const meal = { meal: 'Min <ret>', kcal: 400, protein: 25, carb: 50, fat: 10 }
+  const template = { id: mealKey(meal), name: meal.meal, meal }
+  const data = new Map([[`entropi2:nutrition:skabeloner:v1:${encodeURIComponent(athleteId)}`,
+    raw ?? JSON.stringify({ version: 1, templates: [template] })]])
+  const writes = [], backend = []
+  const storage = { getItem(key) { if (storageError) throw Error('synthetic read'); return data.get(key) ?? null },
+    setItem(key, value) { if (writeError) throw Error('synthetic quota'); writes.push(key); data.set(key, value) } }
+  const controller = createNutritionController({ enabled: true,
+    athlete: { id: athleteId, kcal_target: 2000, protein_target: 120 }, date, storage,
+    contracts: { load: async () => [], save: async value => { backend.push(value); return true } } })
+  t.after(() => controller.dispose())
+  return { controller, template, data, writes, backend }
+}
+
+test('real React screen inputs show saved days and targets, one weekly list, and no repeated Ugeplan heading', t => {
+  const f = screenInputs(t), props = f.controller.weekPlanInputs(), model = createWeekPlan(props)
+  model.add(0, f.template.id); model.add(6, f.template.id)
+  const markup = renderToStaticMarkup(h(Ugeplan, props))
+  assert.match(markup, /Min &lt;ret&gt;/)
+  assert.match(markup, /400 kcal \/ 2.000 kcal/)
+  assert.match(markup, /25 g protein \/ 120 g protein/)
+  assert.equal((markup.match(/Ugens indkøbsliste/g) || []).length, 1)
+  assert.doesNotMatch(markup, /<h2>Ugeplan/)
+  assert.match(markup, /Listen er ufuldstændig: 2/)
+  assert.doesNotMatch(markup, /Indkøb fra dine favoritter/)
+  assert.equal(f.writes.every(key => key.startsWith('entropi2:nutrition:ugeplan:v1:')), true)
+  assert.deepEqual(f.backend, [])
+})
+
+test('real React screen empty templates and source failure have distinct, honest output and no writes', t => {
+  const empty = screenInputs(t, { raw: JSON.stringify({ version: 1, templates: [] }) })
+  const markup = renderToStaticMarkup(h(Ugeplan, empty.controller.weekPlanInputs()))
+  assert.match(markup, /ingen egne måltidsskabeloner/)
+  assert.match(markup, /Ingen måltider planlagt/)
+  assert.match(markup, /Ukendt kcal/)
+  assert.match(markup, /Ingen ingredienser at vise/)
+  for (const options of [{ raw: '{broken' }, { storageError: true }]) {
+    const f = screenInputs(t, options), props = f.controller.weekPlanInputs()
+    const failed = renderToStaticMarkup(h(Ugeplan, props))
+    assert.match(failed, /role="alert"/)
+    assert.match(failed, /Egne skabeloner kunne ikke læses/)
+    assert.match(failed, /Hent skabeloner igen/)
+    assert.doesNotMatch(failed, /ingen egne måltidsskabeloner|Ingen måltider planlagt/)
+    assert.deepEqual(f.writes, [])
+    const retry = nodes(Ugeplan(props)).find(node => node.type === 'button')
+    assert.equal(retry.props.onClick, props.onRetry)
+  }
+  assert.deepEqual(empty.writes, [])
+})
+
+test('real React integrated draft read/write failures remain visible and offer read retry', t => {
+  const f = screenInputs(t), props = f.controller.weekPlanInputs()
+  const key = 'entropi2:nutrition:ugeplan:v1:synthetic%3Ascreen:2026-11-02'
+  f.data.set(key, '{broken')
+  const markup = renderToStaticMarkup(h(Ugeplan, props))
+  assert.match(markup, /Ugekladden kunne ikke læses/)
+  assert.match(markup, /Prøv at læse ugekladden igen/)
+  assert.equal(f.data.get(key), '{broken')
+  assert.deepEqual(f.writes, [])
+  const quota = screenInputs(t, { writeError: true }), model = createWeekPlan(quota.controller.weekPlanInputs())
+  assert.equal(model.add(0, quota.template.id), false)
+  assert.match(html(model), /Ændringen blev ikke gemt/)
+  assert.deepEqual(quota.backend, [])
 })

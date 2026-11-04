@@ -12,15 +12,16 @@ function metricText(value, target, unit) {
 // Controlled real React view, also usable by another assembly/controller.
 export function UgeplanView(props = {}) {
   if (props.enabled !== true) return null
-  const { snapshot, onAdd, onRemove } = props
+  const { snapshot, onAdd, onRemove, onRetry, embedded } = props
   if (!snapshot) return h('p', { role: 'alert' }, 'Ugeplanen kunne ikke åbnes. Tjek dato og egne skabeloner.')
   const { days, shopping, error, readFailed, saved, templates, week } = snapshot
-  return h('section', { 'aria-label': 'Ugeplan fra egne måltidsskabeloner', style: { maxWidth: '42rem', overflowWrap: 'anywhere' } },
-    h('h2', null, 'Ugeplan'),
+  return h('section', { className: 'e2-week-plan', 'aria-label': 'Ugeplan fra egne måltidsskabeloner', style: { maxWidth: '42rem', overflowWrap: 'anywhere' } },
+    !embedded && h('h2', null, 'Ugeplan'),
     h('p', null, `Ugen fra ${week}. Planlagte måltider – ingen måltider bliver logget.`),
     h('p', { role: 'status', 'aria-live': 'polite' }, readFailed ? 'Lokal kladde kunne ikke læses.'
       : saved ? 'Lokal kladde. Gemt på denne enhed.' : 'Ingen gemt ugekladde.'),
     error && h('p', { role: 'alert' }, error),
+    readFailed && onRetry && h('button', { type: 'button', style: buttonStyle, onClick: onRetry }, 'Prøv at læse ugekladden igen'),
     templates.length === 0 && h('p', null, 'Du har ingen egne måltidsskabeloner. Gem en skabelon først.'),
     ...days.map((day, index) => h('section', { key: day.date, 'aria-label': `${day.name} ${day.date}` },
       h('h3', null, `${day.name} · ${day.date}`),
@@ -30,10 +31,12 @@ export function UgeplanView(props = {}) {
         ...day.entries.map((entry, slot) => h('li', { key: slot },
           entry.name,
           h('button', { type: 'button', style: buttonStyle, disabled: readFailed,
+            'data-focus': `week-plan-remove-${index}-${slot}`,
             'aria-label': `Fjern ${entry.name} fra ${day.name}, måltid ${slot + 1}`,
             onClick: () => onRemove?.(index, slot) }, 'Fjern')))),
       h('label', null, `Tilføj måltid til ${day.name}`,
         h('select', { value: '', style: { ...buttonStyle, width: '100%' },
+          'data-focus': `week-plan-add-${index}`,
           disabled: readFailed || templates.length === 0 || day.entries.length >= 20,
           onChange: event => { if (event.currentTarget.value) onAdd?.(index, event.currentTarget.value) } },
         h('option', { value: '' }, 'Vælg egen skabelon'),
@@ -50,20 +53,24 @@ export function UgeplanView(props = {}) {
           : h('p', null, 'Ingen ingredienser at vise.'))))
 }
 
-function UgeplanSession({ athleteId, date, templates, targets, storage }) {
+function UgeplanSession({ athleteId, date, templates, targets, storage, embedded }) {
   const [, refresh] = useReducer(value => value + 1, 0)
+  const [attempt, retry] = useReducer(value => value + 1, 0)
   const model = useMemo(() => {
     try { return createWeekPlan({ enabled: true, athleteId, date, templates, targets, storage }) }
     catch { return null }
-  }, [athleteId, date, templates, targets, storage])
-  return h(UgeplanView, { enabled: true, snapshot: model?.snapshot(),
+  }, [athleteId, date, templates, targets, storage, attempt])
+  return h(UgeplanView, { enabled: true, embedded, snapshot: model?.snapshot(), onRetry: retry,
     onAdd: (day, id) => { model.add(day, id); refresh() },
     onRemove: (day, slot) => { model.remove(day, slot); refresh() } })
 }
 
-// Deliberately unconnected: the application must explicitly opt in and provide
-// current-athlete inputs. No browser globals or persistence effects on mount.
+// The nutrition screen supplies current-athlete inputs behind its strict gate.
+// Still usable independently; no browser globals or persistence effects on mount.
 export function Ugeplan(props = {}) {
   if (props.enabled !== true) return null
+  if (props.templateError) return h('div', null,
+    h('p', { role: 'alert' }, 'Ugeplanen kunne ikke åbnes. Egne skabeloner kunne ikke læses.'),
+    props.onRetry && h('button', { type: 'button', style: buttonStyle, onClick: props.onRetry }, 'Hent skabeloner igen'))
   return h(UgeplanSession, props)
 }

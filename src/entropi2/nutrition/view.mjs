@@ -1,4 +1,4 @@
-import { mountShoppingList } from './indkoeb/index.mjs'
+import { mountUgeplan } from './ugeplan/mount.mjs'
 import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { historyDays } from './historyDays.mjs'
@@ -11,13 +11,17 @@ let mountSequence = 0
 
 // Mount inside an assembly-owned host; load nutrition.css separately. No global DOM.
 // The caller disposes/remounts on athlete/date change. No shared entry is changed.
-export function mountNutrition(host, controller, { onCoach, onNavigate, clock = () => new Date(), ...weightProps } = {}) {
+export function mountNutrition(host, controller, { onCoach, onNavigate, clock = () => new Date(), mountWeekPlan = mountUgeplan, ...weightProps } = {}) {
   if (!controller) return () => {} // default OFF: do not even touch the host.
   const doc = host.ownerDocument
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
   let weightPending = false, weightError = ''
-  let shoppingHost, shoppingKey, disposeShopping = () => {}
+  let planHost, planKey, currentPlanFold, disposePlan = () => {}, planMounted = false
+  const clearPlan = () => {
+    disposePlan(); disposePlan = () => {}; planHost = undefined; planKey = undefined
+    currentPlanFold = undefined; planMounted = false
+  }
   let editing = null, removing = null, ownMealName = ''
   const intent = () => 'nutrition-' + (++sequence)
   const node = (tag, cls, text) => {
@@ -333,6 +337,23 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       if (weeks.length) append(weekly, 'p', 'small muted space',
         'Loggede dage pr. kalenderuge: ' + weeks.map(week => week.loggedDays).join(' → ')
         + ' · ældste først, denne uge indtil nu.')
+      const planInputs = controller.weekPlanInputs()
+      const key = JSON.stringify({ ...planInputs, storage: undefined })
+      if (!planHost || key !== planKey) {
+        clearPlan(); planHost = node('div'); planKey = key
+      }
+      const plan = append(weekly, 'details', 'space')
+      plan.setAttribute('data-focus', 'week-plan')
+      append(plan, 'summary', '', 'Ugeplan')
+      plan.append(planHost)
+      currentPlanFold = plan
+      const openPlan = () => {
+        if (destroyed || currentPlanFold !== plan || !plan.open || planMounted) return
+        planMounted = true
+        disposePlan = mountWeekPlan(planHost, planInputs)
+      }
+      plan.addEventListener('toggle', openPlan)
+      if (openDetails.includes('week-plan')) { plan.open = true; openPlan() }
       const hb = button(main, 'Se historik', () => controller.toggleHistory(), s.pending)
       hb.setAttribute('aria-expanded', String(s.history)); hb.setAttribute('data-focus', 'history')
       if (s.history) {
@@ -354,24 +375,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
       }
     }
-    const shoppingMeals = (s.ownMeals || []).filter(meal => Array.isArray(meal.ingredients) && meal.ingredients.length)
-    if (!s.loaded || !shoppingMeals.length) {
-      disposeShopping(); disposeShopping = () => {}; shoppingHost = undefined; shoppingKey = undefined
-    } else {
-      const shopping = append(main, 'details', 'card')
-      shopping.setAttribute('data-focus', 'shopping-list')
-      append(shopping, 'summary', '', 'Indkøb fra dine favoritter')
-      // Reuse the mounted child across diary/weight redraws to preserve choices.
-      const key = JSON.stringify(shoppingMeals)
-      if (!shoppingHost || key !== shoppingKey) {
-        disposeShopping()
-        shoppingHost = node('div'); shoppingKey = key
-        disposeShopping = () => {}
-        try { disposeShopping = mountShoppingList(shoppingHost, { enabled: true, ownMeals: shoppingMeals }) }
-        catch { const p = append(shoppingHost, 'p', '', 'Indkøbslisten kunne ikke vises. Prøv at hente kostloggen igen.'); p.setAttribute('role', 'alert') }
-      }
-      shopping.append(shoppingHost)
-    }
+    if (!s.loaded) clearPlan()
     // Marc 3. nov. (keep it simple): overskriften foerst; vejningen bliver oeverst som bestilt i
     // APP-KOST-START1 ("vaegttrenden er det vigtigste tal"), derefter log hurtigt og dagens maal.
     const kids = [...main.children], del = n => n.getAttribute?.('data-kost-del')
@@ -387,7 +391,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const unsubscribe = controller.subscribe(draw)
   draw()
   controller.load()
-  const cleanup = () => { destroyed = true; disposeShopping(); unsubscribe(); controller.dispose(); host.replaceChildren() }
+  const cleanup = () => { destroyed = true; clearPlan(); unsubscribe(); controller.dispose(); host.replaceChildren() }
   // Update weight props without remounting the diary or losing a meal draft.
   cleanup.updateWeight = props => {
     if (destroyed) return

@@ -96,6 +96,15 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   }
   const api = {
     subscribe(fn) { if (disposed) return () => {}; listeners.add(fn); return () => listeners.delete(fn) },
+    // Current-athlete inputs for the owned React island; never diary rows or a client.
+    // Read only on demand. The week model owns its separate local draft namespace.
+    weekPlanInputs() {
+      if (disposed) return null
+      const state = templates.snapshot()
+      return { enabled: true, embedded: true, athleteId: id, date, templates: state.templates,
+        templateError: state.error === 'Skabeloner kunne ikke læses.' ? state.error : '',
+        targets: { ...targets }, storage, onRetry: () => api.load() }
+    },
     snapshot() {
       const todayRows = today()
       const valid = todayRows.every(r => cleanMeal(r))
