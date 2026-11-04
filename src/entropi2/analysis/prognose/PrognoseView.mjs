@@ -4,7 +4,7 @@ import { meetPrognose } from './prognoseModel.mjs'
 const number = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 0 })
 const date = day => `${day.slice(8, 10)}.${day.slice(5, 7)}.${day.slice(0, 4)}`
 
-// Unwired, controlled leaf. OFF returns before reading clock/data/callbacks.
+// Controlled leaf. OFF returns before reading clock/data/callbacks.
 export default function PrognoseView(props = {}) {
   if (props?.entropi2 !== true) return null
   const model = meetPrognose(props)
@@ -21,7 +21,7 @@ export default function PrognoseView(props = {}) {
       onChange: event => props.onMeetDateChange?.(event.target.value) })),
   !editable && h('p', null, 'Datoen vises som læst. Valg af dato kræver tilkobling.'),
   h('p', { role: model.status === 'error' ? 'alert' : 'status' }, model.message),
-  ...model.lifts.map(lift => h('section', { key: lift.lift, 'aria-label': lift.lift },
+  ...model.lifts.filter(lift => props.meetType !== 'bench' || lift.lift === 'Bænkpres').map(lift => h('section', { key: lift.lift, 'aria-label': lift.lift },
     h('h3', null, lift.lift),
     lift.status === 'ready' ? h('p', null,
       `Skøn: ${number.format(Math.round(lift.estimate))} kg. Usikkerhedsinterval: ${number.format(Math.floor(lift.lower))}–${number.format(Math.ceil(lift.upper))} kg.`)

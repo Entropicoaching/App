@@ -2,6 +2,7 @@
 // Profilfanen Stævne: stævneplan, historik og rekorder.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import CoachStaevnePlan from '../entropi2/staevne/CoachStaevnePlan.mjs'
+import CoachMeetPrognose from '../entropi2/analysis/prognose/CoachMeetPrognose.mjs'
 import { entropi2Enabled } from '../entropi2/flag.mjs'
 import { s } from '../dashboardShared'
 import { exerciseSetView } from '../exerciseSetView'
@@ -91,6 +92,12 @@ export default function StaevneTab({
                   key={`${a.id}:${meetPlanForm.meet_type}`}
                   enabled={true} meetType={meetPlanForm.meet_type}
                   setMeetPlanForm={setMeetPlanForm} saving={savingMeetPlan}
+                />}
+
+                {entropi2Enabled() === true && <CoachMeetPrognose
+                  key={`${a.id}:${meetPlanForm.meet_type}:${a.competition_date ?? ''}`}
+                  enabled={true} client={supabase} athleteId={a.id}
+                  meetDate={a.competition_date} meetType={meetPlanForm.meet_type}
                 />}
 
                 {/* Stævnehistorik */}
