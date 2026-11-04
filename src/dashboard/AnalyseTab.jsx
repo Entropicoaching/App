@@ -41,7 +41,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
   selectedAthlete, setAiExportCopied, setAiExportText, setAiExportWeeks, setShowAiExport,
   setVideoLiftFilter, showAiExport, videoAnalyses, videoAnalysisError, videoAnalysisLoading,
   videoAnalysisReviewError, videoAnalysisReviewLoadingId, videoAnalysisUpdatingId, videoBaselines,
-  videoLiftFilter, weeks,
+  videoLiftFilter, weeks, weeklyEvaluation = null,
 }) {
               const missing = (rule, evidence, legacy, scopeKey = '') => analyseMissingData === true
                 ? <AnalyseMissingData enabled={true} key={`${rule}:${scopeKey}`} rule={rule} evidence={evidence()} scopeKey={scopeKey}
@@ -120,6 +120,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     analyses={filteredVideoAnalyses} logs={athleteLogs} liftFilter={videoLiftFilter}
                     loading={videoAnalysisLoading} error={videoAnalysisError} sendMessage={sendConclusionMessage} /> : null} error={videoAnalysisError}>
                 <div>
+                  {weeklyEvaluation}
                   {/* ORDRE 137 · commit 2: video-review-rækkens hoved (titel + "Gennemgå
                       måling"-knap/status) går fra titel+knapper på samme linje til titel
                       øverst og knapperne i en fuld-bredde 44px-række under, når der ikke

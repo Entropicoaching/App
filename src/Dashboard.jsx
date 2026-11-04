@@ -81,6 +81,7 @@ const indbakke2Factory = async () => {
 }
 const indbakkeFactory = () => import('./dashboard/IndbakkeView.jsx')
 const analyseTabFactory = () => import('./dashboard/AnalyseTab.jsx')
+const coachWeekFactory = () => import('./dashboard/AnalyseUgeevaluering.mjs')
 const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // ORDRE 228 · commit 2: Volumenkortet (177/185/209/210) trækker hele
 // src/volume/-træet med sig, inkl. den 53 kB genererede kortlægnings-JSON
@@ -808,6 +809,9 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
                   videoAnalysisLoading, videoAnalysisReviewError,
                   videoAnalysisReviewLoadingId, videoAnalysisUpdatingId,
                   videoBaselines, videoLiftFilter, weeks,
+                  weeklyEvaluation: e2 ? <LazyBoundary factory={coachWeekFactory} label="Ugeevaluering"
+                    loading={<p role="status">Henter ugeevaluering …</p>}
+                    componentProps={{ enabled: true, client: supabase, coachId: session?.user?.id, athleteId: a.id, asOf: e2Dag.day }} /> : null,
                 }}
               />
             )}
