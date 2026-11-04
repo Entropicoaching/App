@@ -56,7 +56,9 @@ async function openMessages({ e2, role = 'athlete', coachAthleteId = null, onExi
 }
 
 test('E2-ATLET-LAEST1: effekten og betingelsen findes i AthleteView.jsx', () => {
-  assert.equal(condition, "e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id")
+  // R1-E2-COACH-EGEN-TRAENING1: E2 renders for coach too. Suppress the legacy bulk receipt
+  // for BOTH own training and read-only preview; only the own conversation can explicitly acknowledge.
+  assert.equal(condition, "e2 && (role === 'athlete' || role === 'coach') && !!athlete?.id")
   assert.ok(body?.includes('markRead: e2SelvKvittering ? () => {} : markTrackRead'))
 })
 
@@ -81,10 +83,11 @@ test('E2-ATLET-LAEST1: flaget slukket markerer sporets coachbeskeder læst som f
   }
 })
 
-test('E2-ATLET-LAEST1: coachens forhåndsvisning bruger den gamle visning og markering uændret', async () => {
+test('E2-ATLET-LAEST1: coach og preview henter beskeder uden automatisk atletkvittering', async () => {
   for (const props of [{ coachAthleteId: 'syn-atlet' }, { onExitPreview: () => {} }, { role: 'coach' }]) {
-    const { writes } = await openMessages({ e2: true, ...props })
-    assert.equal(writes.length, 1, JSON.stringify(Object.keys(props)))
+    const { writes, reads } = await openMessages({ e2: true, ...props })
+    assert.equal(writes.length, 0, JSON.stringify(Object.keys(props)))
+    assert.ok(reads.length >= 1)
   }
 })
 

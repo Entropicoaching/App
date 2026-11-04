@@ -46,6 +46,9 @@ import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from 
 import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
 import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'
+import Conversation from './entropi2/conversation/Conversation.mjs'
+import { createConversation } from './entropi2/conversation/conversationController.mjs'
+import { mountKost } from './entropi2/Entropi2Kost.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -89,6 +92,50 @@ function Ro2EnkelHjemTab(props) {
   return createElement(LazyBoundary, { factory: ro2EnkelHjemFactory, label: 'Hjem', componentProps: props })
 }
 
+// Preview has no persistent storage capability; even retained handlers cannot save a draft.
+const coachPreviewStorage = Object.freeze({
+  getItem: () => null,
+  setItem: () => { throw Error('Forhåndsvisningen kan ikke gemme som atlet.') },
+  removeItem: () => { throw Error('Forhåndsvisningen kan ikke gemme som atlet.') },
+})
+
+// Keep the existing nutrition reads, but never hand preview a mutation capability.
+function coachPreviewDatabase(database) {
+  const reads = new Set(['select', 'eq', 'gte', 'lte', 'order', 'limit', 'range', 'single', 'maybeSingle', 'then', 'catch', 'finally'])
+  const wrap = query => new Proxy(query, { get(target, key) {
+    if (!reads.has(key)) return () => { throw Error('Forhåndsvisningen kan ikke gemme som atlet.') }
+    const value = Reflect.get(target, key)
+    return typeof value === 'function' ? (...args) => {
+      const result = value.apply(target, args)
+      return result && typeof result === 'object' ? wrap(result) : result
+    } : value
+  } })
+  return { from: table => wrap(database.from(table)) }
+}
+
+// Use the existing nutrition mount with a non-persistent preview storage capability.
+function PreviewKost(props) {
+  const root = useRef(null), latest = useRef(props)
+  latest.current = props
+  useEffect(() => {
+    if (props.enabled !== true || !root.current || !props.athlete?.id) return undefined
+    return mountKost(root.current, { ...props, storage: coachPreviewStorage }, latest, { weightLogs: props.weightLogs })
+  }, [props.enabled, props.athlete, props.date, props.client, props.foods, props.weightLogs])
+  return props.enabled === true ? createElement('div', { ref: root, 'data-entropi2-kost': '' }) : null
+}
+
+// Same Entropi 2 conversation renderer, using the already fetched preview snapshots.
+// Its athlete role describes presentation only: no database/session impersonation.
+function coachPreviewConversation({ athlete, ownerId, messages, analyses }) {
+  const deny = () => { throw Error('Forhåndsvisningen kan ikke gemme som atlet.') }
+  return createConversation({ enabled: true, storage: () => coachPreviewStorage, adapters: {
+    scope: () => ({ role: 'athlete', ownerId, athleteId: athlete.id }),
+    load: async () => ({ messages: messages.filter(row => row.athlete_id === athlete.id),
+      analyses: analyses.filter(row => row.athlete_id === athlete.id && row.status === 'shared') }),
+    seen: async item => item.value, send: deny, upload: deny, submission: deny, open: deny,
+  } })
+}
+
 export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false, rel1101 = false, entropi2}) {
   const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
@@ -119,6 +166,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     setRecheckMsg('Din konto er registreret som atlet — ingen coach-adgang fundet.')
   }
   const [athlete, setAthlete] = useState(null)
+  // MIN TRÆNING and Se som atlet share coachAthleteId; only the loaded user's profile is writable.
+  const e2EgenCoach = e2 && role === 'coach' && !!athlete?.id &&
+    typeof session?.user?.id === 'string' && !!session.user.id && athlete.user_id === session.user.id &&
+    (!coachAthleteId || coachAthleteId === athlete.id)
+  const e2ReadOnly = e2 && !!athlete?.id && !e2EgenCoach &&
+    (role === 'coach' || role === 'athlete' && (!!coachAthleteId || !!onExitPreview))
   const visKost = kostSynlig(athlete, kostPerAtlet, kostValg)
   const tab = kostDestination(requestedTab, visKost)
   const route = enkelRoute === 'kost' && !visKost ? 'traening' : enkelRoute
@@ -438,7 +491,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     setConfirmDialog({ message, onConfirm })
   }
 
-  useParathedUdkast({ athlete, readinessInput, setReadinessInput, lastReadiness })
+  useParathedUdkast({ athlete: e2ReadOnly ? null : athlete, readinessInput, setReadinessInput, lastReadiness })
 
   const [videoSetChoice, setVideoSetChoice] = useState(null)
   const [videoSetReady, setVideoSetReady] = useState(false)
@@ -460,11 +513,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     videoSetRef, videoOptag2: arguments[0]?.videoOptag2 === true,
     athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
     setAthleteVideoCoachOpen, setFlash,
+    ...(e2ReadOnly ? { athlete: null } : {}),
   })
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- kører bevidst kun ved mount; coachAthleteId/role/session er faste for denne AthleteView-instans (nyt preview = nyt mount, se App.jsx)
   useEffect(() => { fetchAthlete() }, [])
-  useAfbrudtUploadVarsel({ athlete, flashTimerRef, setFlash })
+  useAfbrudtUploadVarsel({ athlete: e2ReadOnly ? null : athlete, flashTimerRef, setFlash })
   // Entropi 2: stabile props, så skærmene ikke monteres om ved hver gengivelse.
   const e2Day = today()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- nyt tidspunkt kun ved dagsskifte eller atletskift
@@ -472,6 +526,9 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const e2SetTabRef = useRef(setTab)
   useEffect(() => { e2SetTabRef.current = setTab })
   const e2GoProgram = useMemo(() => () => e2SetTabRef.current('program'), [])
+  const e2PreviewDatabase = useMemo(() => e2ReadOnly ? coachPreviewDatabase(inboxDatabase) : inboxDatabase, [e2ReadOnly, inboxDatabase])
+  const e2PreviewConversation = useMemo(() => () => coachPreviewConversation({ athlete, ownerId: session?.user?.id,
+    messages, analyses: sharedVideoAnalyses }), [athlete, session?.user?.id, messages, sharedVideoAnalyses])
   const e2Foods = useMemo(() => [...(Array.isArray(customFoods) ? customFoods : []), ...(Array.isArray(LOCAL_FOODS) ? LOCAL_FOODS : [])], [customFoods])
   // Entropi 2: dagsur. Ved dagsskifte gengives skærmene igen, kostens dato følger med, hvis den stod
   // på dagen før, og samtalen hentes igen, så tidsangivelserne passer.
@@ -495,7 +552,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   // ORDRE 280 · commit 4 — ventende sæt (offlineSetQueue.js) sendes igen ved
   // app-åbning og hver gang forbindelsen kommer tilbage ('online'-event).
   useEffect(() => {
-    if (!athlete?.id) return
+    if (!athlete?.id || e2ReadOnly) return
     // eslint-disable-next-line react-hooks/set-state-in-effect -- uændret fra før ordre 373; lint ser det først nu (se RAPPORT-373)
     setPendingSyncCount(countOfflineSets(athlete.id))
     flushRef.current()
@@ -509,20 +566,20 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
       window.removeEventListener('online', onOnline)
       window.removeEventListener('entropi:forbindelse', onForbindelse)
     }
-  }, [athlete?.id])
+  }, [athlete?.id, e2ReadOnly])
   // ORDRE 397: vises Dagens pas fra øjebliksbilledet (ingen forbindelse ved
   // åbning), hentes alt igen fra serveren når nettet kommer.
   // ORDRE 397: ligger der sæt og venter, prøves der igen hvert 20. sekund.
   // Et lykket forsøg er selv det der opdager at nettet er tilbage.
   useEffect(() => {
-    if (!athlete?.id || (pendingSyncCount === 0 && !offlineSnapshotAt)) return
+    if (e2ReadOnly || !athlete?.id || (pendingSyncCount === 0 && !offlineSnapshotAt)) return
     const id = setInterval(() => {
       if (pendingSyncCount > 0) flushRef.current()
       else if (offlineSnapshotAt && !browserSaysOffline()) fetchAthlete()
     }, 20000)
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- flushOfflineSets/fetchAthlete læser friske værdier ved kald; genstartes når der er/ikke er noget at sende
-  }, [athlete?.id, pendingSyncCount, offlineSnapshotAt])
+  }, [athlete?.id, pendingSyncCount, offlineSnapshotAt, e2ReadOnly])
   useEffect(() => {
     if (!offlineSnapshotAt) return
     const refetch = (e) => { if (!e?.detail?.offline) fetchAthlete() }
@@ -532,14 +589,14 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchAthlete læser kun faste props (session/role/coachAthleteId), samme mønster som mount-effekten ovenfor
   }, [offlineSnapshotAt])
   useEffect(() => {
-    if (role === 'athlete' && athlete?.id) fetchSharedVideoAnalyses()
+    if ((role === 'athlete' || e2 && role === 'coach') && athlete?.id) fetchSharedVideoAnalyses()
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchSharedVideoAnalyses er ren ift. role/athlete.id, som er i deps; uændret fra før ordre 373
-  }, [role, athlete?.id])
+  }, [role, athlete?.id, e2])
   const contactLatest = contactLatestEnabled() || indbakke2
   const openReadiness = enkelOn ? () => setTab('dagsform') : legacyOpenReadiness
 
   // Entropi 2: samtalen kvitterer selv ved eksplicit åbning; den gamle automatiske læst-markering må ikke køre.
-  const e2SelvKvittering = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id
+  const e2SelvKvittering = e2 && (role === 'athlete' || role === 'coach') && !!athlete?.id
   // eslint-disable-next-line react-hooks/exhaustive-deps -- begge kaldes synkront i denne kørsel og læser kun athlete/msgTrack, som allerede er i deps
   useEffect(() => { if (tab === 'beskeder' && athlete?.id) enterContact({ enabled: contactLatest, fetchMessages: fetchAthleteMessages, markRead: e2SelvKvittering ? () => {} : markTrackRead, fetchVideos: fetchSharedVideoAnalyses, track: msgTrack }) }, [tab, athlete?.id, msgTrack, contactLatest, e2SelvKvittering])
   useEffect(() => { if (tab === 'beskeder') scrollContactEnd(contactLatest, messagesEndRef) }, [messages, tab, contactLatest])
@@ -594,9 +651,9 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   }, [fremgangLogs])
   // (d) ... og gemmes på telefonen, så det også findes uden net.
   useEffect(() => {
-    if (coachAthleteId || !session?.user?.id || !rekordIndeks) return
+    if (e2ReadOnly || coachAthleteId || !session?.user?.id || !rekordIndeks) return
     saveRekordIndeks(session.user.id, rekordIndeks)
-  }, [rekordIndeks, coachAthleteId, session?.user?.id])
+  }, [rekordIndeks, coachAthleteId, session?.user?.id, e2ReadOnly])
 
   useEffect(() => {
     if (tab === 'mobilisering' && mobilityMode === 'opvarmning' && currentWeek && warmupPhase === 'focus' && !warmupFocus) {
@@ -700,11 +757,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const pendingSyncKeys = pendingSyncCount > 0 ? pendingSetKeys(athlete.id) : []
   const parkedSets = Object.values(loadParkedSets(athlete.id))
 
-  // Entropi 2: atletens egen forside erstatter den gamle hjem-visning og passtart.
-  const e2Atlet = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id
+  // Entropi 2 is a presentation choice; e2ReadOnly separately protects another athlete's preview.
+  const e2Atlet = e2 && (role === 'athlete' || role === 'coach') && !!athlete?.id
   const e2Home = e2Atlet && tab === 'hjem'
-  const e2ProfileAllowed = e2Atlet && typeof session?.user?.id === 'string' && !!session.user.id && athlete.user_id === session.user.id
+  const e2ProfileAllowed = e2Atlet && !e2ReadOnly && typeof session?.user?.id === 'string' && !!session.user.id && athlete.user_id === session.user.id
   const e2ProfileOpen = e2ProfileAllowed && profileOwner === `${session.user.id}:${athlete.id}`
+  const PageContent = e2ReadOnly ? 'fieldset' : 'div'
   const toastSlot = (prToast || flash) ? (
     <ToastPlads {...{ flash, prToast, prToastFading }} />
   ) : null
@@ -721,9 +779,9 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
           setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
         }}
-        {...(e2ProfileAllowed ? { backBtn: <ProfileMenu enabled={true} summaryRef={profileMenuRef} onOpen={() => {
+        {...(e2ProfileAllowed ? { backBtn: <span>{backBtn}<ProfileMenu enabled={true} summaryRef={profileMenuRef} onOpen={() => {
           setAccountMenuOpen(false); setProfileOwner(`${session.user.id}:${athlete.id}`)
-        }} /> } : {})}
+        }} /></span> } : {})}
       />
       {e2ProfileOpen && <ProfilePage key={`${session.user.id}:${athlete.id}`} enabled={true}
         athlete={athlete} ownerId={session.user.id} client={inboxDatabase} visKost={visKost}
@@ -737,15 +795,20 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
       )}
 
       {/* Page content */}
-      <div {...(forenklinger === true ? { 'data-app-375-page': '' } : {})} style={e2ProfileOpen ? { ...s.page, display: 'none' } : s.page}>
+      {e2ReadOnly && <p role="status" style={s.page}>Forhåndsvisning · du kan ikke gemme som denne atlet. Brug fanerne nederst for at se resten.</p>}
+      <PageContent {...(forenklinger === true ? { 'data-app-375-page': '' } : {})}
+        {...(e2ReadOnly ? { disabled: true, 'aria-label': 'Atletvisning uden skrivninger' } : {})}
+        style={e2ProfileOpen ? { ...s.page, display: 'none' } : e2ReadOnly ? { ...s.page, border: 0, margin: 0, minWidth: 0 } : s.page}>
 
         {e2Home && (
           <HomeSession key={athlete.id} enabled={true} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
             setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
             programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
+            {...(e2ReadOnly ? { onLogSet: undefined, setLogInputs: undefined, storage: coachPreviewStorage } : {})}
             pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}
-            onFilmSet={() => { if (!athlete?.id) return; setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) }} />
+            onFilmSet={() => { if (!athlete?.id) return; setAthleteVideoCoachInstant(true); setAthleteVideoCoachOpen(true) }}
+            {...(e2ReadOnly ? { onFilmSet: undefined } : {})} />
         )}
         {!e2Home && tab === 'hjem' && !onHoliday && role === 'athlete' && !coachAthleteId && athlete?.id &&
           (!enkelOn || ['traening', 'alle'].includes(route)) &&
@@ -850,7 +913,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
 
         {/* KOST */}
-        {e2Atlet && visKost && tab === 'kost' && (
+        {e2Atlet && e2ReadOnly && visKost && tab === 'kost' && (
+          <PreviewKost enabled={true} athlete={athlete} date={kostDate} client={e2PreviewDatabase} foods={e2Foods}
+            onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
+            weightLogs={weightLogs} />
+        )}
+        {e2Atlet && !e2ReadOnly && visKost && tab === 'kost' && (
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
             weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
@@ -876,9 +944,15 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
 
         {/* BESKEDER */}
-        {e2Atlet && tab === 'beskeder' && (
+        {e2Atlet && e2ReadOnly && tab === 'beskeder' && (
+          <section aria-label="Samlet samtale">
+            <p>Senest hentede beskeder og delte videoer. Læst-kvitteringer er slået fra i forhåndsvisningen.</p>
+            <Conversation key={athlete.id} enabled={true} createController={e2PreviewConversation} />
+          </section>
+        )}
+        {e2Atlet && !e2ReadOnly && tab === 'beskeder' && (
           <ConversationEntry enabled={true} role="athlete" controllerRef={e2ConversationRef} getEntry={() => ({
-            enabled: true, session, athlete, coachAthleteId, inboxDatabase,
+            enabled: true, session, athlete, coachAthleteId: e2EgenCoach ? null : coachAthleteId, inboxDatabase,
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setOpenSharedVideoId, renderSharedFeedbackCards,
             storage: () => localStorage,
           })} />
@@ -900,7 +974,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {e2Atlet && tab === 'mobilisering' && (
           <Entropi2Mobility enabled={true} athlete={athlete} allWeeks={allWeeks} currentWeek={currentWeek}
             exerciseLogs={exerciseLogs} now={e2MobilityNow} homeworkEnabled={mobilitetHjemme === true}
-            coachEnabled={mobilitetCoach === true} storage={typeof localStorage === 'undefined' ? undefined : localStorage}
+            coachEnabled={mobilitetCoach === true} storage={e2ReadOnly ? coachPreviewStorage : typeof localStorage === 'undefined' ? undefined : localStorage}
             onProgram={e2GoProgram} isCurrentDay={e2MobilityCurrent} onStaleDay={e2Dag.refresh} />
         )}
         {!e2Atlet && compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser' && (
@@ -939,7 +1013,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             }}
           />
         )}
-      </div>
+      </PageContent>
 
       {!e2ProfileOpen && (enkelOn ? renderNav(createElement, { route, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
         <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount, visKost }} />)}
