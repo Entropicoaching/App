@@ -1,54 +1,66 @@
 # Smertehistorik til coachen
 
-Ny, ukoblet komponent: `PainHistory.mjs`. Modellen `buildPainHistory` er ren og
-udfører ingen læsning, skrivning eller automatisk ændring af træning.
-Begge kræver `enabled: true`; OFF læser ikke `data`.
+Coachens atletfane Oversigt viser kun den lukkede fold
+`Smerte pr. område (4-8 uger)`, når der er gyldige, indtastede
+smerteobservationer med kropsområde. Placering: efter dagens parathed,
+før resultatkortene. Standard er seks kalenderuger inklusive i dag (4–8 støttes).
 
-```js
-const data = {
-  state: 'ready', complete: true,
-  athleteId: 'synthetic-athlete', asOf: '2026-11-04',
-  daily: [{ day: '2026-11-04', source: 'athlete_manual',
-    pain: 7, painLocation: 'Testknæ' }],
-}
-// React.createElement(PainHistory, { enabled: true, data, weeks: 6 })
-```
+## Eksisterende data, ingen ekstra tabel
 
-Dette er den eksisterende normaliserede dagsformkontrakt fra
-`tracking/coachuge/evaluate.mjs` og dens README, ikke en ny tabel.
-Caller skal levere et komplet, autoriseret snapshot for én atlet.
-Eventuelle `athleteId`/`athlete_id` på rækker skal stemme med snapshot.
-`asOf` er sidste inkluderede kalenderdato, eksplicit valgt af caller.
-`weeks` er et heltal 4–8 (standard 6), inklusive slutdato og de foregående
-`weeks * 7 - 1` dage. Vinduer er kalenderdage, også over sommertid.
+`src/dashboard/laesninger.js::fetchAthleteReadiness` læser allerede de seneste
+90 `readiness_logs` for den valgte `athletes.id`, nyeste dato først, med `select('*')`.
+Oversigt giver samme `athleteReadiness` videre som `readiness`. `painRead.mjs`
+projicerer kun `athlete_id`, `logged_date`, eventuel `source`, `pain` og
+`pain_location`. Der er ingen ekstra forespørgsel, klientimport, lagring eller effekt.
+Den tidligere læsning af `tracking_daily_v1` er fjernet helt.
 
-Rå legacy `readiness_logs` har `soreness_level` (1–5) og `sore_zones`.
-De felter dokumenterer ømhed, ikke smerte 0–10, og må ikke konverteres.
-Denne leverance tilføjer hverken indtastning, persistens eller forespørgsler.
-Uden faktiske smerteobservationer viser modellen derfor tomt datagrundlag.
-Den normaliserede kontrakt findes i basen; det er ikke bevis på, at en
-produktionslæser allerede leverer dens smertefelter.
+Den kopierede atletskriver `src/athlete/laesninger.js::saveReadiness` gemmer
+`soreness_level` (1–5) og `sore_zones`, men ingen `pain` eller `pain_location`.
+De eksisterende ømhedsdata er ikke smerte og konverteres aldrig. Derfor viser
+koblingen med disse nuværende data ingen fold, loadingtekst eller fejl.
+Produktionsdata er ikke tilgået; vurderingen bygger på den fastlåste kildekode.
 
-En række pr. dato, højst 10000 inputrækker. Manglende `pain` betyder ukendt.
-Kendt `pain` skal være et heltal 0–10. Positiv smerte kræver `painLocation`
-(1–120 tegn, ikke kun mellemrum). 0 uden område tælles særskilt og tilskrives
-aldrig alle områder. Områdenavne trimmes, men slås ikke sammen på tværs af
-stavemåder. Modstridende/dobbelte datoer afvises; ingen vilkårlig vinder.
-Udenfor perioden ignoreres værdier efter kontrol af dato og evt. atlet-id.
+Kun hvis readiness-rækker faktisk har heltallig `pain` 0–10 og et ikke-tomt
+`pain_location`, kan de indgå i områdehistorikken. En eksplicit 0 med område
+er en observation; 0 uden område etablerer ikke smertefrihed for alle områder.
+Positiv smerte uden område, ugyldige tal, dubletdatoer, fremmede atleter eller
+en eksplicit kilde forskellig fra `athlete_manual` skjuler den valgfrie kobling.
+Kilden må mangle på eksisterende manuelle check-ins.
 
-Flag 7+: mindst én observation ≥7 i den viste periode, med alle udløsende
-datoer og værdier altid synlige. Det er historik, ikke en påstand om aktuel smerte.
-Stigende tendens: de seneste 14 kalenderdage mod de foregående 14;
-middelstigning ≥2 point og mindst 3 registrerede dage i hvert vindue for
-samme område. Begge vinduer og alle deres værdier vises ved flaget.
-Ugemidler bruger kun indtastede værdier. Huller udfyldes ikke.
+Manglende/utilgængelige data giver ingen valgfri sektion. En manglende relation
+(42P01/PGRST205/404) kan ikke udløse en ny læsefejl her: koblingen læser slet
+ingen tabel. Den eksisterende loader giver `[]`, når den ikke har data.
+Der foretages ingen migration eller ny indtastning i denne leverance.
 
-Fejl: `state: 'error'`, ufuldstændigt snapshot eller ugyldige værdier.
-Indlæsning: `state: 'loading'`. Valgfri `onRetry` kaldes kun ved brugerklik.
-Ingen rå fejldata eller ekstra metadata sendes videre til visningen.
+## Afgrænsning og model
 
-Alle `.test.mjs` opdages af appens eksisterende `npm test`-runner.
-`painReact.test.mjs` kræver ægte React/react-dom og springes ikke over.
-`painView.test.mjs` bruger den snævert afgrænsede syntetiske loader til at
-undersøge den faktiske komponents elementtræ; det beviser ikke ReactDOM,
-browserlayout eller hjælpemiddelfunktion. Ingen browser/server er nødvendig.
+Alle nye indgange kræver bogstaveligt `enabled: true`. OFF læser ikke scope
+eller readiness. Fanen kontrollerer flag og datagrundlag før lazy-importen.
+`CoachPainHistory` kræver coach-id; eksisterende autorisation/RLS afgør fortsat
+adgang. Fremmede readiness-rækker afvises, også under atletskift.
+Komponenten har kun synkrone props: ingen cache, ventende svar eller state fra
+forrige atlet, coach eller dag. Ingen cyklusfelter eller metadata projiceres.
+
+Snapshotkontrakten er den eksisterende seneste-90-læsning, ikke et nyt kald med
+eksakt count. Rækkerne valideres som unikke kalenderdatoer. Et fuldt 90-rækkers
+snapshot skal nå vinduets start; ellers vises intet. Normale 90 unikke dage
+dækker de højst 56 viste kalenderdage. `buildPainHistory` modtager et valideret
+snapshot med `{state:'ready', complete:true, athleteId, asOf, daily}`.
+
+`painModel.mjs` og de eksisterende evidensregler er uændrede: 7+ markerer mindst
+én observation ≥7; stigende tendens kræver middelstigning på mindst 2 point
+og mindst 3 observationer i hvert af de seneste to 14-dagesvinduer for området.
+Huller er ukendte, aldrig 0. Ugehistorik er foldet, og flag viser dato/talgrundlag.
+Flag er samtaleanledninger, ikke diagnoser eller automatisk træningsændring.
+
+`PainHistory` er den eksisterende selvstændige indholdsvisning og bevarer sine
+loading-/fejltilstande. Coachkoblingen monterer den kun ved gyldige områdedata.
+
+## Prøver
+
+`painRead.test.mjs` importerer den faktiske projektion med syntetiske readiness-rækker.
+`painCoach.test.mjs` importerer den faktiske Oversigt-fane, lazy-factory,
+coachkomponent og indhold med en snæver syntetisk elementprobe.
+Den probe er ikke React eller DOM. `painReact.test.mjs` kræver ægte
+React/react-dom, springer ikke over og prøver også hele readiness-til-coach-flowet.
+Ingen prøve kræver browser, server eller database.

@@ -7,6 +7,10 @@ import { calendarDay } from '../calendarDate.js'
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { s, readinessSignal } from '../dashboardShared.js'
 import LazyBoundary from '../LazyBoundary.jsx'
+import { entropi2Enabled } from '../entropi2/flag.mjs'
+import { hasReadinessPain } from '../entropi2/tracking/smerte/painRead.mjs'
+
+const painHistoryFactory = () => import('../entropi2/tracking/smerte/CoachPainHistory.mjs')
 
 export default function OversigtTab({
   a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
@@ -88,6 +92,11 @@ export default function OversigtTab({
                   </div>
                 )
               })()}
+              {entropi2Enabled() === true && hasReadinessPain({ enabled: true, athleteId: a.id,
+                asOf: calendarDay(), readiness: athleteReadiness }) && <LazyBoundary
+                factory={painHistoryFactory} label="Smertehistorik" loading={null}
+                componentProps={{ enabled: true, athleteId: a.id, coachId: session.user.id, readiness: athleteReadiness }}
+              />}
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                 <div style={s.card}>
                   <div style={s.cardLabel}>

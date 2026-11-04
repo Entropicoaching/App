@@ -6,7 +6,7 @@ const dated = row => `${row.day}: ${row.value}/10`
 const block = { padding: '1rem', border: '1px solid currentColor', borderRadius: '8px', minWidth: 0 }
 const disclosure = { minHeight: '44px', cursor: 'pointer', display: 'flex', alignItems: 'center' }
 
-/** Unwired coach view. Literal enabled=true required; no reads while OFF. */
+/** Coach history content. Literal enabled=true required; no reads while OFF. */
 export default function PainHistory(props = {}) {
   if (props.enabled !== true) return null
   const model = buildPainHistory({ enabled: true, data: props.data, weeks: props.weeks })
