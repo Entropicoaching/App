@@ -11,6 +11,9 @@ import { mountTempoView } from './tempo/tempoView.mjs'
 import { createSetNote } from './noter/noteDom.mjs'
 import { sessionPrescription } from './sessionPrescription.mjs'
 import { parseInputNumber } from '../../inputValues.js'
+import { createSessionFeeling } from './afslut/sessionFeelingDom.mjs'
+import { groupSessionExercises } from './supersaet/supersetModel.mjs'
+import { mountSupersetView } from './supersaet/supersetView.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
@@ -105,6 +108,12 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         for (const ex of heavy) card.append(el('p', `${ex.name}: ${ex.heaviest}`))
       }
       body.append(card)
+      if (s.feeling) {
+        const feeling = createSessionFeeling(doc, { value: s.feeling.draft,
+          onChange: draft => !dead && body.contains(feeling) && controller.editFeeling(s.feeling.scope, draft),
+        })
+        body.append(feeling)
+      }
       if (s.next) {
         const resume = el('button', 'Fortsæt passet', { type: 'button' })
         resume.addEventListener('click', () => controller.resume()); body.append(resume)
@@ -119,6 +128,9 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     if (s.next && !summary) {
       const n = s.next, ex = n.exercise, key = s.key
       body.append(el('p', `Sæt ${n.setNumber} af ${n.totalSets}`, { class: 'muted' }))
+      const groupView = mountSupersetView(body, { enabled: true, exercises: s.session.exercises,
+        compact: true, currentExerciseId: ex.id })
+      cleanBlocks.push(() => groupView.dispose())
       const plan = el('section', null, { class: 'card', 'aria-label': 'Planlagt belastning' })
       plan.append(el('p', `${present(ex.reps)} gentagelser`, { class: 'plan' }),
         el('p', `${present(ex.recommended_weight)} kg`, { class: 'plan' }), el('p', `Intensitet: ${present(ex.intensity)}`))
@@ -213,7 +225,11 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     }
     const history = el('details', null, { class: 'card', 'data-detail': 'history' })
     history.append(el('summary', 'Hele passet og klarede sæt'))
+    const grouping = groupSessionExercises(s.session.exercises)
+    for (const warning of grouping.warnings) history.append(el('p', `Gruppering: ${warning}`, { class: 'hint' }))
     for (const ex of s.session.exercises || []) {
+      const group = grouping.groups.find(group => group.kind !== 'single' && group.members[0].exerciseId === ex.id)
+      if (group) history.append(el('h2', group.label))
       history.append(el('h2', ex.name), el('p', `${ex.sets} × ${present(ex.reps)}`))
       const previous = lastSetLine(p, ex.id, clock.Date.now())
       if (previous) history.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
@@ -225,7 +241,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const replacement = fieldName ? body.querySelector(`[data-field="${fieldName}"]`) : null
     if (stepChanged) body.querySelector('[data-heading]')?.focus()
     else if (replacement && !replacement.disabled) {
-      replacement.focus(); if (position[0] != null) replacement.setSelectionRange(...position)
+      replacement.focus(); if (position[0] != null && typeof replacement.setSelectionRange === 'function') replacement.setSelectionRange(...position)
     } else if (detailFocus) body.querySelector(`[data-detail="${detailFocus}"] summary`)?.focus()
     else if (approveFocus && !body.querySelector('.approve')?.disabled) body.querySelector('.approve')?.focus()
     else if (hadBodyFocus) body.querySelector('[data-heading]')?.focus()

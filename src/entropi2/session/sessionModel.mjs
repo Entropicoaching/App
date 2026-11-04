@@ -46,6 +46,7 @@ export function warmup(n, input) {
 export function createSessionController(latest, changed = () => {}) {
   let selection = null, open = false, finished = false, error = ''
   const writes = new Map(), notes = new Map()
+  let feelingScope = null, feelingDraft = {}
   function confirmed(p) {
     return (p.exerciseLogs || []).filter(l => !l._optimistic &&
       (l.athlete_id == null || l.athlete_id === p.athleteId) &&
@@ -71,7 +72,15 @@ export function createSessionController(latest, changed = () => {}) {
     const day = programStamp(p) ? findDagensPas(p.allWeeks, p.currentWeek, logs) : null
     const next = session ? nextSetInSession(session, logs) : null
     const key = setKey(next), phase = key ? status(p, key) : 'idle'
+    // Completion is optional and local. Queued/parked/optimistic rows cannot unlock it.
+    const canFeel = !!session && !next && sessionSetTotal(session) > 0 &&
+      session.exercises.every(ex => Array.from({ length: ex.sets || 0 }, (_, i) =>
+        status(p, `${ex.id}_${i + 1}`) === 'saved').every(Boolean)) &&
+      logs.some(row => !row.skipped && session.exercises.some(ex =>
+        ex.id === row.exercise_id && row.set_number > 0 && row.set_number <= ex.sets))
+    const scope = canFeel ? JSON.stringify([selection.stamp, session.id]) : null
     return { open: open && !!session, selection, session, next, key, phase, error,
+      feeling: scope ? { scope, draft: scope === feelingScope ? { ...feelingDraft } : {} } : null,
       summary: !!session && (finished || (!next && sessionSetTotal(session) > 0)),
       canStart: !!session || !!day?.next, day, input: defaults(p, next),
       note: noteValue(notes.get(`${selection?.stamp}:${key}`) ?? { text: defaults(p, next).note }),
@@ -80,7 +89,7 @@ export function createSessionController(latest, changed = () => {}) {
   return {
     state,
     refresh() {
-      if (selection && !resolve(latest())) { selection = null; open = false; finished = false; error = '' }
+      if (selection && !resolve(latest())) { selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {} }
       changed()
     },
     start() {
@@ -105,6 +114,14 @@ export function createSessionController(latest, changed = () => {}) {
       const p = latest(), s = state()
       if (!s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
       p.setLogInputs(prev => ({ ...prev, [expected]: { ...(prev[expected] || {}), [name]: value } }))
+    },
+    editFeeling(scope, draft) {
+      const s = state()
+      if (!s.open || !s.feeling || s.feeling.scope !== scope) return false
+      // Keep invalid input visible for validation, never pass it to onLogSet.
+      feelingScope = scope
+      feelingDraft = { rpe: draft?.rpe ?? '', energy: draft?.energy ?? '', note: draft?.note ?? '' }
+      return true
     },
     editNote(expected, value, stamp) {
       const s = state()

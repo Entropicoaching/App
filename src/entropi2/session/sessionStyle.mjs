@@ -12,6 +12,8 @@ export const sessionStyle = `
 .e2-session h2 {font-size:24px;line-height:1.2}
 .e2-session .card {background:#1c1c18;border:1px solid #414139;border-radius:16px;padding:20px;margin:20px 0}
 .e2-session .fields {display:grid;grid-template-columns:1fr;gap:10px}
+.e2-session [data-e2-session-feeling] {min-width:0;max-width:100%;box-sizing:border-box}
+.e2-session [data-e2-session-feeling] legend {font-size:18px}
 .e2-session .stepper-line {display:grid;grid-template-columns:64px minmax(0,1fr) 64px;gap:8px;align-items:end}
 .e2-session .stepper-line > button {min-height:56px;font-size:20px;font-weight:600;padding:4px}
 .e2-session .stepper-line label {display:flex;flex-direction:column;gap:4px;text-align:center}

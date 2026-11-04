@@ -3,7 +3,7 @@ import { groupSessionExercises } from './supersetModel.mjs'
 // Explicit mount only. OFF never touches root; each instance owns its section.
 export function mountSupersetView(root, initial = {}) {
   let section = null, disposed = false
-  function update({ enabled = false, exercises = [] } = {}) {
+  function update({ enabled = false, exercises = [], compact = false, currentExerciseId } = {}) {
     if (disposed) return
     if (enabled !== true) { section?.remove(); section = null; return }
     const el = (tag, text) => {
@@ -12,12 +12,24 @@ export function mountSupersetView(root, initial = {}) {
       return node
     }
     const model = groupSessionExercises(exercises)
+    // Today's set keeps its existing logging order. Show membership only here,
+    // never round/pause instructions that the host controller does not execute.
+    const active = compact ? model.groups.filter(group => group.kind !== 'single' &&
+      group.members.some(member => member.exerciseId === currentExerciseId)) : []
+    if (compact && !active.length) { section?.remove(); section = null; return }
     if (!section) {
       section = el('section')
       section.setAttribute('data-e2-supersaet', '')
       section.setAttribute('aria-label', 'Øvelsesgrupper og rækkefølge')
       root.append(section)
     }
+    if (compact) {
+      section.setAttribute('aria-label', 'Øvelsesgruppe')
+      section.replaceChildren(...active.map(group => el('p',
+        `${group.label}: ${group.members.map(member => member.name).join(' + ')}`)))
+      return
+    }
+    section.setAttribute('aria-label', 'Øvelsesgrupper og rækkefølge')
     const content = [el('h3', 'Øvelser i rækkefølge')]
     if (!model.groups.length) content.push(el('p', 'Ingen øvelser i dette pas.'))
     for (const warning of model.warnings) content.push(el('p', warning))
