@@ -4,6 +4,8 @@ import { createElement, act } from 'react'
 import { createRoot } from 'react-dom/client'
 import Conversation from './Conversation.mjs'
 import { createConversation } from './conversationController.mjs'
+import { createWeeklyLetter } from '../coach/ugebrev/weeklyLetterModel.mjs'
+import { letterFixture, emptyFixture } from '../coach/ugebrev/letterFixture.mjs'
 
 // Minimal host document for React's real renderer and the actual imperative view.
 // No module hooks, fake React, network, browser, timers or layout assertions.
@@ -11,7 +13,7 @@ class Element {
   constructor(tag, ownerDocument) {
     Object.assign(this, { nodeType: 1, tagName: tag.toUpperCase(), nodeName: tag.toUpperCase(),
       namespaceURI: 'http://www.w3.org/1999/xhtml', ownerDocument, parentNode: null,
-      style: {}, dataset: {}, attributes: {}, children: [], value: '', _text: '', disabled: false })
+      style: {}, dataset: {}, attributes: {}, children: [], value: '', _text: '', disabled: false, events: new Map() })
   }
   set textContent(value) { this.replaceChildren(); this._text = String(value) }
   get textContent() { return this._text + this.children.map(n => n.textContent).join(' ') }
@@ -37,7 +39,7 @@ class Element {
   }
   setAttribute(key, value) { this.attributes[key] = String(value) }
   removeAttribute(key) { delete this.attributes[key] }
-  addEventListener() {}
+  addEventListener(type, fn) { this.events.set(type, fn) }
   removeEventListener() {}
 }
 const find = (el, tag) => [...(el.tagName === tag.toUpperCase() ? [el] : []), ...el.children.flatMap(n => find(n, tag))]
@@ -50,7 +52,7 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
   doc.defaultView = win; doc.documentElement = doc.createElement('html'); doc.body = doc.createElement('body')
   globalThis.window = win; globalThis.IS_REACT_ACT_ENVIRONMENT = true
   const host = doc.createElement('div'), root = createRoot(host), ref = { current: null }
-  let fail = false, scopeReads = 0, controller
+  let fail = false, scopeReads = 0, controller, letterData = letterFixture(), sends = 0
   // Choose a timestamp in the current week without consulting data outside this fixture.
   const at = new Date().toISOString()
   const messages = [{ id: 'synthetic-message', athlete_id: 'synthetic', sender_role: 'athlete',
@@ -59,7 +61,9 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
     controller = createConversation({ enabled: true, storage: () => null, adapters: {
       scope: () => { scopeReads++; return { role: 'coach', athleteId: 'synthetic', ownerId: 'synthetic-owner' } },
       load: async () => { if (fail) throw Error('Synthetic read failure'); return { messages, analyses: [] } },
+      send: async () => { sends++; throw Error('Unexpected send') },
     } })
+    controller.weeklyLetter = async () => createWeeklyLetter({ enabled: true, data: letterData })
     return controller
   }
   try {
@@ -69,6 +73,22 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
     const details = find(host, 'details')[0]
     assert.equal(details.open, false); assert.equal(details.hidden, false)
     assert.equal(details.children[0].tagName, 'SUMMARY')
+    const letterButton = find(host, 'button').find(b => b.textContent === 'Lav udkast til ugebrev')
+    const input = find(host, 'textarea')[0]
+    assert.equal(letterButton.disabled, false)
+    await act(async () => { await letterButton.events.get('click')() })
+    assert.match(input.value, /Godt arbejde/)
+    assert.match(host.textContent, /Redigér teksten, og tryk selv Send/)
+    assert.equal(sends, 0); assert.equal(letterButton.disabled, true)
+    await act(async () => { controller.draft('') })
+    letterData = emptyFixture()
+    await act(async () => { await letterButton.events.get('click')() })
+    assert.match(host.textContent, /Ingen kendte søvnregistreringer/)
+    assert.equal(input.value, '')
+    letterData = { state: 'error' }
+    await act(async () => { await letterButton.events.get('click')() })
+    assert.match(host.textContent, /Udkastet kunne ikke dannes/)
+    assert.equal(input.value, ''); assert.equal(sends, 0)
     details.open = true
     await act(async () => { controller.draft('Syntetisk kladde') })
     assert.equal(details.open, true)

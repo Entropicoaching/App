@@ -1,5 +1,6 @@
 import { createElement as h, useMemo, useRef, useState } from 'react'
 import Conversation from './Conversation.mjs'
+import { readWeeklyLetter } from '../coach/ugebrev/readWeeklyLetter.mjs'
 import { createConversation } from './conversationController.mjs'
 import { createConversationAdapters, athleteConversationScope, coachConversationScope, athleteUploadEntry } from './conversationAdapters.mjs'
 
@@ -22,7 +23,11 @@ export function createEntryFactory({ enabled = false, role, getEntry, openFeedba
         getEntry().setOpenSharedVideoId(row.id)
         openFeedback(row)
       } })
-    return createConversation({ enabled, adapters, storage: () => getEntry().storage() })
+    const controller = createConversation({ enabled, adapters, storage: () => getEntry().storage() })
+    if (enabled === true && role === 'coach') controller.weeklyLetter = () => readWeeklyLetter({
+      enabled: true, getScope: adapters.scope, database: entry.inboxDatabase,
+    })
+    return controller
   }
 }
 

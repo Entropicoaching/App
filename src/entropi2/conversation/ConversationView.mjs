@@ -53,6 +53,46 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   status.style.marginBottom = '12px'
   Object.assign(list.style, { textAlign: 'left', paddingInlineStart: '32px', listStylePosition: 'outside' })
   const input = node('textarea'); input.value = ''; input.maxLength = 10000
+  let latestState, letterBusy = false
+  const letterStatus = node('p'); letterStatus.setAttribute('role', 'status')
+  const letter = button('Lav udkast til ugebrev', async () => {
+    if (disposed || letter.disabled || !latestState || latestState.draft.trim()) return
+    const athleteId = latestState.athleteId
+    letterBusy = true; letter.disabled = true
+    letterStatus.setAttribute('role', 'status'); letterStatus.textContent = 'Henter ugens grundlag …'
+    try {
+      const model = await controller.weeklyLetter()
+      if (disposed) return
+      const state = controller.snapshot()
+      if (state.role !== 'coach' || state.athleteId !== athleteId || state.error || !state.loaded
+        || state.loading || state.busy || state.operation?.status === 'error')
+        throw Error('Samtalen er ændret. Opdatér og prøv igen.')
+      if (state.draft.trim()) {
+        letterStatus.textContent = 'Din tekst er bevaret. Tøm beskedfeltet, før du laver et nyt udkast.'
+      } else if (model.state === 'ready') {
+        if (controller.draft(model.text) === false) throw Error('Beskedfeltet er låst.')
+        letterStatus.textContent = `${model.from} – ${model.asOf}. Udkastet bygger kun på registreret søvn. Øvrige data er ukendte. Redigér teksten, og tryk selv Send.`
+        input.focus?.()
+      } else if (model.state === 'empty') {
+        letterStatus.textContent = 'Der er endnu ikke et sikkert grundlag for et ugebrev. Ingen kendte søvnregistreringer i de seneste 7 dage.'
+      } else throw Error('Udkastet kunne ikke dannes.')
+    } catch {
+      if (!disposed) {
+        letterStatus.setAttribute('role', 'alert')
+        letterStatus.textContent = 'Udkastet kunne ikke dannes. Din tekst er bevaret. Opdatér samtalen og prøv igen.'
+      }
+    } finally {
+      letterBusy = false
+      if (!disposed) updateLetter(latestState)
+    }
+  })
+  const letterTools = node('div')
+  letterTools.append(letter, letterStatus)
+  const updateLetter = state => {
+    letter.disabled = Boolean(letterBusy || state.busy || state.loading || !state.loaded || state.error
+      || state.operation?.status === 'error' || state.draft.trim())
+    letter.title = state.draft.trim() ? 'Tøm beskedfeltet først. Din tekst bliver ikke overskrevet.' : ''
+  }
   input.setAttribute('aria-label', 'Din besked'); input.style.width = '100%'; input.style.boxSizing = 'border-box'
   input.setAttribute('placeholder', 'Skriv en besked')
   // Marc 3. nov.: knapperne under beskedfeltet staar med luft imellem, ikke klistret sammen.
@@ -116,6 +156,8 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   root.replaceChildren(title, week, status, jump, reload, list, compose)
   const unsubscribe = controller.subscribe(state => {
     if (disposed) return
+    latestState = state
+    updateLetter(state)
     ownReplies.update(state)
     // Only the coach's complete, scoped snapshot may produce week counters.
     week.hidden = state.role !== 'coach'
@@ -154,7 +196,8 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     if (composition !== nextComposition) {
       composition = nextComposition
       actions.replaceChildren(send, ...(retry.hidden ? [] : [retry]), ...(state.role === 'athlete' ? [upload] : []))
-      compose.replaceChildren(input, actions, ...(state.role === 'coach' ? [coach] : []))
+      compose.replaceChildren(...(state.role === 'coach' && controller.weeklyLetter ? [letterTools] : []),
+        input, actions, ...(state.role === 'coach' ? [coach] : []))
     }
     loadQuick.disabled = Boolean(locked); timed.disabled = Boolean(locked || !state.draft.trim())
     if (state.operation?.status === 'sent' && state.operation.row.category === 'teknik'

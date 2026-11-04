@@ -227,3 +227,23 @@ test('failed read acknowledgement retains unread count and can be retried on exp
   assert.equal(f.controller.snapshot().thread[0].unreadCoach, false)
   f.cleanup()
 })
+
+test('actual entry factory wires the ugebrev reader only for coach and rechecks authorization', async () => {
+  let reads = 0
+  const storage = store()
+  const query = Object.fromEntries(['select', 'eq', 'gte', 'lte', 'order'].map(method => [method, () => query]))
+  query.range = async () => { reads++; return { data: [] } }
+  const entry = { enabled: true, session: { user: { id: 'synthetic-owner' } },
+    selectedAthlete: { id: 'synthetic-athlete' }, athletes: [{ id: 'synthetic-athlete' }],
+    storage: () => storage, inboxDatabase: { from: table => { assert.equal(table, 'readiness_logs'); return query } } }
+  const c = createEntryFactory({ enabled: true, role: 'coach', getEntry: () => entry })()
+  assert.equal((await c.weeklyLetter()).state, 'empty'); assert.equal(reads, 1)
+  assert.equal(c.snapshot().draft, ''); assert.deepEqual(storage.writes, [])
+  entry.athletes = []
+  await assert.rejects(c.weeklyLetter()); assert.equal(reads, 1); c.dispose()
+  entry.athlete = { id: 'synthetic-athlete', user_id: 'synthetic-owner' }
+  const athlete = createEntryFactory({ enabled: true, role: 'athlete', getEntry: () => entry })()
+  assert.equal(athlete.weeklyLetter, undefined); athlete.dispose()
+  const off = createEntryFactory({ enabled: false, role: 'coach', getEntry: () => entry })()
+  assert.equal(off.weeklyLetter, undefined); off.dispose()
+})
