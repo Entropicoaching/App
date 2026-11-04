@@ -20,7 +20,7 @@ import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps } from 
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
-  queued: 'Gemt lokalt. Afventer synkronisering.', parked: 'Sættet kunne ikke synkroniseres. Kontakt din coach.',
+  queued: 'Venter på net. Sættet ligger lokalt og er endnu ikke bekræftet gemt.', parked: 'Sættet kunne ikke synkroniseres. Kontakt din coach.',
   error: 'Sættet blev ikke gemt. Dine tal er bevaret. Prøv igen.' }
 
 // This is the production DOM renderer, also imported by hermetic DOM tests.
@@ -232,7 +232,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         fields.append(lab)
       }
       form.append(el('h2', 'Dit sæt'), fields, el('p', 'Skriv 0 kg ved en øvelse uden ekstra vægt.', { class: 'hint' }))
-      const approve = el('button', busy ? 'Afventer svar' : 'Godkendt', { type: 'submit', class: 'approve' })
+      const approve = el('button', s.phase === 'queued' ? 'Venter på net' : busy ? 'Afventer svar' : 'Godkendt', { type: 'submit', class: 'approve' })
       approve.disabled = busy
       form.addEventListener('submit', e => {
         e.preventDefault()

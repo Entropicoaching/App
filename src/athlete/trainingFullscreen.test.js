@@ -235,7 +235,25 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   candidate = candidate.replace(entry, '').replace("import TrainingFullscreen from './athlete/TrainingFullscreen.mjs'\r\nimport { rel1101Enabled } from './rel1101.mjs'\r\n", '')
     .replace('hjemoevKompakt = false, rel1101 = false})', 'hjemoevKompakt = false})')
   assert.equal(createHash('sha256').update(candidate).digest('hex'), base)
-  const handler = readFileSync(new URL('./saetSkrivning.js', import.meta.url), 'utf8')
+  let handler = readFileSync(new URL('./saetSkrivning.js', import.meta.url), 'utf8').replace(/\r?\n/g, '\n')
+  // Remove only E2's explicitly delimited additions, retaining the original SHA.
+  for (const label of ['save adapter', 'replay adapter']) {
+    const block = new RegExp(`^ *// E2-OFFLINE-SAET1: ${label} begin\\n[\\s\\S]*?^ *// E2-OFFLINE-SAET1: ${label} end\\n(?:\\n)?`, 'gm')
+    assert.equal([...handler.matchAll(block)].length, 1, label)
+    handler = handler.replace(block, '')
+  }
+  for (const added of [
+    "    if (!sessionStorage()) return // Storage access itself may be denied.\n",
+    "import { saveSessionSet, sessionStorage } from '../entropi2/session/sessionSetSave.mjs'\n",
+    "\n    if (sessionOnly === true) return logSessionOnly(exerciseId, setNumber, payload, realExisting?.id)\n",
+    "    if (sessionOnly === true) return logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true, inputOverride, preserveMissingRpe, sessionOnly })\n",
+  ]) {
+    assert.equal(handler.split(added).length, 2)
+    handler = handler.replace(added, '')
+  }
+  handler = handler.replaceAll('preserveMissingRpe = false, sessionOnly = false', 'preserveMissingRpe = false')
+  assert.doesNotMatch(handler, /sessionOnly|saveSessionSet|sessionStorage|logSessionOnly/)
+  handler = handler.replace(/\r?\n/g, '\r\n')
     .replace('{ localFallback = false, inputOverride, preserveMissingRpe = false } = {})', '{ localFallback = false, inputOverride } = {})')
     .replace('(preserveMissingRpe === true || dataEnoughEnabled() ? null : parseInputNumber(plannedRpe))', '(dataEnoughEnabled() ? null : parseInputNumber(plannedRpe))')
     .replace('plannedRpe, inputOverride, { preserveMissingRpe = false } = {}) {', 'plannedRpe, inputOverride) {')

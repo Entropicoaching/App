@@ -19,7 +19,7 @@ function setup(prescription = {}) {
   const save = async () => {
     p.onLogSet = (exercise, set_number, total, reps, rpe, input, options) => {
       assert.equal(exercise, ex); assert.equal(total, ex.sets); assert.equal(reps, 5); assert.equal(rpe, null)
-      assert.deepEqual(options, { preserveMissingRpe: true }); assert.equal(input.weight, '60')
+      assert.deepEqual(options, { preserveMissingRpe: true, sessionOnly: true }); assert.equal(input.weight, '60')
       p.exerciseLogs.push(row(set_number))
     }
     const s = view.controller.state()

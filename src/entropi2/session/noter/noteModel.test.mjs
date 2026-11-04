@@ -50,7 +50,7 @@ test('actual copied session controller passes note in inputOverride and preserve
   assert.equal(calls[0][1], 1)
   assert.equal(calls[0][5].note, 'Tungt: Sidste rep')
   assert.equal(calls[0][5].rpe, '')
-  assert.deepEqual(calls[0][6], { preserveMissingRpe: true })
+  assert.deepEqual(calls[0][6], { preserveMissingRpe: true, sessionOnly: true })
   assert.equal(controller.state().next.setNumber, 2)
   assert.equal(controller.state().input.note, undefined)
 })

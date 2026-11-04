@@ -1,3 +1,4 @@
+import { saveSessionSet, sessionStorage } from '../entropi2/session/sessionSetSave.mjs'
 import { rpeNote } from '../rpeEvidence.mjs'
 import { dataEnoughEnabled } from '../dataEnough.mjs'
 import { parseInputNumber, inputInteger, optionalInput } from '../inputValues.js'
@@ -254,7 +255,7 @@ export function lavSaetSkrivning({
     return isSessionDone(sess, [...logs, { exercise_id: exerciseId, set_number: setNumber }])
   }
 
-  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false, inputOverride, preserveMissingRpe = false } = {}) {
+  async function logSet(exerciseId, setNumber, totalSets, repsCompleted, plannedRpe, { localFallback = false, inputOverride, preserveMissingRpe = false, sessionOnly = false } = {}) {
     const key = `${exerciseId}_${setNumber}`
     const input = inputOverride || logInputs[key] || {}
     // Kun en rigtig (bekræftet) række afgør INSERT vs. UPDATE i databasen — en
@@ -286,6 +287,8 @@ export function lavSaetSkrivning({
     }
 
     if (dataEnoughEnabled()) payload.note = rpeNote(input.note, payload, input.rpe_source === 'athlete' && !optionalInput(input.rpe))
+
+    if (sessionOnly === true) return logSessionOnly(exerciseId, setNumber, payload, realExisting?.id)
 
     // OPTIMISTISK: vis fluebenet ØJEBLIKKELIGT og skriv i baggrunden. Atleten skal
     // aldrig vente på netværket for at se at sættet er registreret — det var netop
@@ -409,13 +412,33 @@ export function lavSaetSkrivning({
     gemRekordRaekke(pr)
   }
 
+  // E2-OFFLINE-SAET1: save adapter begin
+  // Entropi 2 opts in per invocation; legacy logSet remains unchanged.
+  async function logSessionOnly(exerciseId, setNumber, payload, realId) {
+    const key = `${exerciseId}_${setNumber}`, storage = sessionStorage()
+    const exerciseName = allWeeks.flatMap(w => w.sessions || []).flatMap(s => s.exercises || []).find(e => e.id === exerciseId)?.name || null
+    return saveSessionSet({ athleteId: athlete.id, exerciseId, setNumber, payload, exerciseName, realId,
+      knownClientId: setWriteRef.current[key]?.clientId, storage, send: persistSetLog,
+      notify: () => setPendingSyncCount(countOfflineSets(athlete.id, storage)),
+      confirm(row) {
+        setExerciseLogs(prev => [...prev.filter(l => !(l.exercise_id === exerciseId && l.set_number === setNumber &&
+          (l.athlete_id == null || l.athlete_id === athlete.id))), row])
+        setSetConfirm(prev => ({ ...prev, [key]: 'saved' }))
+        fetchExerciseLogs(athlete.id, currentWeek)
+      },
+    })
+  }
+
+  // E2-OFFLINE-SAET1: save adapter end
+
   // ORDRE 280 · commit 2 — Dagens pas' "Godkendt"-knap kalder logSet gennem
   // her (i stedet for direkte), så kortet kan huske hvilket sæt der lige blev
   // logget (til "Fortryd sidste sæt" nedenfor). Program-fanens egen Log-knap
   // rører IKKE dette — den kalder stadig logSet direkte, uændret adfærd
   // (verify:athlete-write-failures/e2e:fejl låser den offline-fejlflowet der).
-  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe, inputOverride, { preserveMissingRpe = false } = {}) {
+  async function logDagensPasSet(ex, setNumber, totalSets, repsToLog, plannedRpe, inputOverride, { preserveMissingRpe = false, sessionOnly = false } = {}) {
     setLastLoggedSet({ exerciseId: ex.id, setNumber })
+    if (sessionOnly === true) return logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true, inputOverride, preserveMissingRpe, sessionOnly })
     await logSet(ex.id, setNumber, totalSets, repsToLog, plannedRpe, { localFallback: true, inputOverride, preserveMissingRpe })
   }
 
@@ -439,6 +462,7 @@ export function lavSaetSkrivning({
 
   async function flushOfflineSets() {
     if (!athlete?.id || browserSaysOffline()) return
+    if (!sessionStorage()) return // Storage access itself may be denied.
     // ORDRE 456 (A3, A5): ventende vurderinger af passet og rekord-rækker sendes
     // ved samme lejligheder.
     sendVurderinger()
@@ -452,6 +476,19 @@ export function lavSaetSkrivning({
         if (browserSaysOffline()) break
         const { exerciseId, setNumber, clientId } = entry
         const payload = queuedPayloadWithTime(entry)
+        // E2-OFFLINE-SAET1: replay adapter begin
+        if (entry.sessionOnly === true && entry.op !== 'delete') {
+          // A failed head stays ahead of later E2 sets, including thrown errors.
+          // Probe even after a remembered network failure: a successful read
+          // resets that signal in the existing client (wifi may stay "online").
+          let found
+          try { found = await withSlowNetCutoff(findSetRow(exerciseId, setNumber)) } catch { break }
+          if (found?.error) break
+          const result = await logSessionOnly(exerciseId, setNumber, payload, found?.data?.[0]?.id)
+          if (result.phase !== 'saved') break
+          continue
+        }
+        // E2-OFFLINE-SAET1: replay adapter end
         if (entry.op === 'delete') {
           // Fortryd uden net af et sæt der måske nåede serveren (se undoLoggedSet).
           let markSent

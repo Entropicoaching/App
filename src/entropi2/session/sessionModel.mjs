@@ -30,7 +30,11 @@ export function sessionInput(input = {}) {
     rpe_source: rpe == null ? null : 'athlete' }
 }
 export function defaults(p, n) {
-  const input = p.logInputs?.[setKey(n)] || {}
+  const key = setKey(n), pending = queued(p, key) ? rowFor(p, key) : null
+  // Reloaded queue overlays carry the approved values; never show plan defaults
+  // as if they were the values waiting to reach the server.
+  const input = { ...(pending ? { weight: pending.weight, reps: pending.reps_completed,
+    rpe: pending.rpe_actual ?? '', note: pending.note ?? '' } : {}), ...(p.logInputs?.[key] || {}) }
   // Marc 3. nov.: an empty stored field is not a choice; the next set starts from the plan.
   const given = v => v != null && String(v).trim() !== ''
   return { ...input, weight: given(input.weight) ? input.weight : n?.exercise.recommended_weight ?? '',
@@ -49,6 +53,7 @@ export function createSessionController(latest, changed = () => {}) {
   let feelingScope = null, feelingDraft = {}
   function confirmed(p) {
     return (p.exerciseLogs || []).filter(l => !l._optimistic &&
+      !queued(p, `${l.exercise_id}_${l.set_number}`) && !parked(p, `${l.exercise_id}_${l.set_number}`) &&
       (l.athlete_id == null || l.athlete_id === p.athleteId) &&
       writes.get(`${programStamp(p)}:${l.exercise_id}_${l.set_number}`)?.phase !== 'saving')
   }
@@ -59,10 +64,11 @@ export function createSessionController(latest, changed = () => {}) {
   function status(p, key) {
     const entry = writes.get(`${programStamp(p)}:${key}`)
     if (entry?.phase === 'saving') return 'saving'
-    if (parked(p, key)) return 'parked'
+    if (parked(p, key) || entry?.phase === 'parked') return 'parked'
     if (queued(p, key)) return 'queued'
     const row = rowFor(p, key)
     if (row && !row._optimistic) return 'saved'
+    if (entry?.phase === 'queued') return 'queued'
     if (row?._optimistic) return 'waiting'
     if (entry?.phase === 'error' || (entry && p.setConfirm?.[key] === 'error')) return 'error'
     return entry ? 'waiting' : 'idle'
@@ -148,10 +154,11 @@ export function createSessionController(latest, changed = () => {}) {
       try {
         const n = valid.next
         const result = await current.onLogSet(n.exercise, n.setNumber, n.totalSets,
-          Number(input.reps), current.parsePlannedRpe(n.exercise.intensity), input, { preserveMissingRpe: true })
+          Number(input.reps), current.parsePlannedRpe(n.exercise.intensity), input, { preserveMissingRpe: true, sessionOnly: true })
         // The pinned callback resolves undefined on both success and handled error.
         // Never infer success from resolution, an optimistic row, or setConfirm=saved.
-        write.phase = result === false ? 'error' : 'settled'
+        write.phase = ['saved', 'queued', 'parked', 'error'].includes(result?.phase) ? result.phase : result === false ? 'error' : 'settled'
+        if (result?.storageFailed) error = 'Sættet kunne ikke gemmes lokalt. Behold passet åbent og prøv igen, når der er net.'
       } catch {
         write.phase = 'error'
       }
