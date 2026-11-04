@@ -90,7 +90,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false, entropi2 = false }) {
+export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false, entropi2 }) {
   const analyseMissingData = analyseMissingDataEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const analyseConclusionMessage = analyseConclusionMessageEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const programOverview = programOverblik === true || programOverblikEnabled(typeof window === 'undefined' ? '' : window.location.search)
