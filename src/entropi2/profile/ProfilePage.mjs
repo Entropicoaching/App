@@ -1,0 +1,43 @@
+import { createElement as h, useEffect, useRef, useState } from 'react'
+import Profile from './Profile.mjs'
+import { profileStyles as s } from './profileStyles.mjs'
+import { ExportPanel } from '../eksport/ExportPanel.mjs'
+
+// Uses the host's existing topbar slot; no changes to the shared account menu.
+export function ProfileMenu({ enabled, onOpen, summaryRef } = {}) {
+  if (enabled !== true) return null
+  return h('details', { style: { position: 'static' } },
+    h('summary', { ref: summaryRef, style: { ...s.button, width: 'auto', minHeight: 44,
+      padding: '8px 6px', fontSize: 14, boxSizing: 'border-box', margin: 0, cursor: 'pointer' } }, 'Mig'),
+    h('button', { type: 'button', style: { ...s.button, position: 'absolute', right: 0,
+      width: 220, boxSizing: 'border-box', zIndex: 101 }, onClick: event => {
+        const details = event?.currentTarget?.closest('details')
+        if (details) details.open = false
+        onOpen?.()
+      } }, 'Profil og dataeksport'))
+}
+
+export function ProfilePage(props = {}) {
+  if (props.enabled !== true) return null
+  if (!props.ownerId || props.athlete?.user_id !== props.ownerId) return null
+  return h(ActiveProfilePage, props)
+}
+
+function ActiveProfilePage(props) {
+  const live = useRef(props); live.current = props
+  const root = useRef(null)
+  useEffect(() => { root.current?.focus() }, [])
+  const [active, setActive] = useState(true)
+  useEffect(() => { live.current = props; return () => { live.current = { enabled: false } } }, [props])
+  if (props.enabled !== true || !props.ownerId || props.athlete?.user_id !== props.ownerId) return null
+  const close = () => { live.current = { enabled: false }; setActive(false); props.onClose() }
+  return h('section', { 'aria-label': 'Profil og dataeksport', tabIndex: -1, ref: root },
+    h('button', { type: 'button', style: s.button, onClick: close }, 'Tilbage'),
+    h(Profile, { enabled: true, athlete: props.athlete, visKost: props.visKost, hideLogout: true },
+      h('p', { style: s.label }, 'Log ud findes i kontomenuen ⋯.'),
+      active && h(ExportPanel, { enabled: true, client: props.client, getScope: () => {
+        const current = live.current
+        return { enabled: current.enabled, athleteId: current.athlete?.id,
+          athleteUserId: current.athlete?.user_id, ownerId: current.ownerId }
+      } })))
+}

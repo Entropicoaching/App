@@ -66,6 +66,28 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   // Marc 3. nov.: genvejen 'Film et saet' paa Entropi 2-hjem er en del af det samme delta (onFilmSet).
   const entropi2Delta = [
+    // R1-E2-KOBL-PROFIL2: profil og dataeksport i atletens topbar, kun med e2Atlet og egen bruger.
+    ["import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'\n\n", ''],
+    [`  const [profileOwner, setProfileOwner] = useState(null)
+  const profileMenuRef = useRef(null)
+`, ''],
+    [`  const e2ProfileAllowed = e2Atlet && typeof session?.user?.id === 'string' && !!session.user.id && athlete.user_id === session.user.id
+  const e2ProfileOpen = e2ProfileAllowed && profileOwner === \`\${session.user.id}:\${athlete.id}\`
+`, ''],
+    [`        {...(e2ProfileAllowed ? { backBtn: <ProfileMenu enabled={true} summaryRef={profileMenuRef} onOpen={() => {
+          setAccountMenuOpen(false); setProfileOwner(\`\${session.user.id}:\${athlete.id}\`)
+        }} /> } : {})}
+`, ''],
+    [`      {e2ProfileOpen && <ProfilePage key={\`\${session.user.id}:\${athlete.id}\`} enabled={true}
+        athlete={athlete} ownerId={session.user.id} client={inboxDatabase} visKost={visKost}
+        onClose={() => { setProfileOwner(null); profileMenuRef.current?.focus() }} />}
+`, ''],
+    ['style={e2ProfileOpen ? { ...s.page, display: \'none\' } : s.page}>', 'style={s.page}>'],
+    [`      {!e2ProfileOpen && (enkelOn ? renderNav(createElement, { route, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
+        <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount, visKost }} />)}
+`, `      {enkelOn ? renderNav(createElement, { route, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
+        <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount, visKost }} />}
+`],
     ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n", ''],
     ['hjemoevKompakt = false, rel1101 = false, entropi2 = false})', 'hjemoevKompakt = false, rel1101 = false})'],
     ['  const e2 = entropi2Enabled(entropi2) === true\n', ''],

@@ -45,6 +45,8 @@ import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgen
 import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
 import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
+import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'
+
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
 const staevnedagFactory = () => import('./athlete/StaevnedagTab.jsx')
@@ -102,6 +104,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const [recheckingRole, setRecheckingRole] = useState(false)
   const [recheckMsg, setRecheckMsg] = useState('')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const [profileOwner, setProfileOwner] = useState(null)
+  const profileMenuRef = useRef(null)
   // Undgår setState efter unmount: lykkes genopslaget og rollen bliver
   // 'coach', skifter App.jsx denne gren ud med Dashboard FØR onRecheckRole's
   // promise resolver — komponentet er da allerede væk.
@@ -699,6 +703,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   // Entropi 2: atletens egen forside erstatter den gamle hjem-visning og passtart.
   const e2Atlet = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id
   const e2Home = e2Atlet && tab === 'hjem'
+  const e2ProfileAllowed = e2Atlet && typeof session?.user?.id === 'string' && !!session.user.id && athlete.user_id === session.user.id
+  const e2ProfileOpen = e2ProfileAllowed && profileOwner === `${session.user.id}:${athlete.id}`
   const toastSlot = (prToast || flash) ? (
     <ToastPlads {...{ flash, prToast, prToastFading }} />
   ) : null
@@ -715,7 +721,13 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
           setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
         }}
+        {...(e2ProfileAllowed ? { backBtn: <ProfileMenu enabled={true} summaryRef={profileMenuRef} onOpen={() => {
+          setAccountMenuOpen(false); setProfileOwner(`${session.user.id}:${athlete.id}`)
+        }} /> } : {})}
       />
+      {e2ProfileOpen && <ProfilePage key={`${session.user.id}:${athlete.id}`} enabled={true}
+        athlete={athlete} ownerId={session.user.id} client={inboxDatabase} visKost={visKost}
+        onClose={() => { setProfileOwner(null); profileMenuRef.current?.focus() }} />}
       {/* Toast-pladsen (ORDRE 339 · F5): under topbaren på alle faner undtagen
           forsiden, hvor den ligger under overskrift + strimmel (se toastSlot). */}
       <IngenForbindelse {...{ offlineSnapshotAt }} />
@@ -725,7 +737,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
       )}
 
       {/* Page content */}
-      <div {...(forenklinger === true ? { 'data-app-375-page': '' } : {})} style={s.page}>
+      <div {...(forenklinger === true ? { 'data-app-375-page': '' } : {})} style={e2ProfileOpen ? { ...s.page, display: 'none' } : s.page}>
 
         {e2Home && (
           <HomeSession key={athlete.id} enabled={true} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
@@ -929,8 +941,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         )}
       </div>
 
-      {enkelOn ? renderNav(createElement, { route, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
-        <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount, visKost }} />}
+      {!e2ProfileOpen && (enkelOn ? renderNav(createElement, { route, go: setTab, unreadMsgCount, sharedVideoAnalyses }) :
+        <BundNav {...{ athlete, hasMeetPlan, setTab, sharedVideoAnalyses, tab, unreadMsgCount, visKost }} />)}
     </div>
   )
 }

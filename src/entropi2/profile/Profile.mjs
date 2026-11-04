@@ -18,9 +18,10 @@ export default function Profile(props = {}) {
       h('h2', { style: s.heading }, 'Mine kostmål'),
       h('p', { style: s.label }, 'Pr. dag'),
       h('dl', { style: s.list }, field('Kalorier', model.kcal), field('Protein', model.protein))),
-    h('button', { type: 'button', style: s.button, disabled: !canLogOut,
+    props.children,
+    props.hideLogout !== true && h('button', { type: 'button', style: s.button, disabled: !canLogOut,
       onClick: () => { if (canLogOut) return onLogOut() } }, loggingOut === true ? 'Logger ud…' : 'Log ud'),
     preview === true && h('p', { style: s.label }, 'Log ud er ikke tilgængeligt i forhåndsvisning.'),
-    !preview && typeof onLogOut !== 'function' && h('p', { role: 'status', style: s.label }, 'Log ud er ikke tilgængeligt lige nu.'),
+    props.hideLogout !== true && !preview && typeof onLogOut !== 'function' && h('p', { role: 'status', style: s.label }, 'Log ud er ikke tilgængeligt lige nu.'),
     logoutError === true && h('p', { role: 'alert', style: s.value }, 'Du kunne ikke logges ud. Prøv igen.'))
 }
