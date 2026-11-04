@@ -4,7 +4,7 @@ import { homeStyles as s } from './homeStyles.mjs'
 import { nutritionTodayModel } from './nutritionTodayModel.mjs'
 import { homeWeekOverview } from './homeWeekOverview.mjs'
 import WeekPlan from './ugeplan/WeekPlan.mjs'
-import HomeOnboarding from './HomeIntroduction.mjs'
+import HomeOnboarding from '../onboarding/AthleteIntroduction.mjs'
 import HomeCheckIn from './HomeCheckIn.mjs'
 
 const clock = () => new Date()
@@ -53,7 +53,7 @@ export default function AthleteHome(props) {
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
     h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (name ? `Godt arbejde i dag, ${name}` : 'Godt arbejde i dag')
       : name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?'),
-    h(HomeOnboarding, { enabled, athleteId: athlete?.id, storage: props.storage, headingRef }),
+    h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas' },
       h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
