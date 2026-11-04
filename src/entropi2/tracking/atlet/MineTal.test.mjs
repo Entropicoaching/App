@@ -48,3 +48,12 @@ test('real React: seven domains, coverage, dated values and native disclosure', 
   assert.match(html, /min-height:44px/)
   assert.ok(!/cyklus|cycle|sundhedsscore|100 %/.test(html))
 })
+
+
+test('real React: wellbeing-only integration omits overlapping domains', options, () => {
+  const html = render({ enabled: true, snapshot: fixture(), wellbeingOnly: true })
+  for (const label of ['Søvn', 'Energi', 'Stress', 'Ømhed']) assert.ok(html.includes(label))
+  assert.doesNotMatch(html, /<h3>Træning|<h3>Kost|<h3>Vægt|Styrke · ugeestimater/)
+  // The default seven-domain leaf contract remains intact.
+  assert.match(render({ enabled: true, snapshot: fixture() }), /<h3>Træning/)
+})

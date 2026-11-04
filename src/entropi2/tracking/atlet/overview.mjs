@@ -28,7 +28,8 @@ const observation = (row, field) => {
 /** Pure, unwired view model. Explicit complete, single-athlete snapshot; no IO.
  * Daily rows are canonical athlete_manual tracking_daily_v1 projections:
  * athlete_id, logged_date, sleep_hours, energy, stress, soreness (0..10).
- * Never pass legacy soreness_level as soreness. Other properties are ignored.
+ * With dailySource=readiness_logs, daily rows retain source=readiness_logs and
+ * native soreness_level (1..5). Never pass it as soreness. Other properties are ignored.
  * endDate is the last completed Copenhagen calendar day, chosen by the caller.
  */
 export function buildAthleteOverview(input = {}, { enabled = false } = {}) {
@@ -49,12 +50,16 @@ export function buildAthleteOverview(input = {}, { enabled = false } = {}) {
     if (weightDates.has(row.logged_at)) return { status: 'error' }
     weightDates.add(row.logged_at)
   }
+  // Legacy check-in soreness is 1..5; it is never recast as canonical 0..10.
+  const readiness = input.dailySource === 'readiness_logs'
+  const fields = readiness ? [...FIELDS.slice(0, 3),
+    { key: 'soreness_level', label: 'Ømhed', unit: 'af 5 (5 mest)', min: 1, max: 5 }] : FIELDS
   const daily = new Map()
   for (const row of dailyRows) {
     if (!validDay(row.logged_date)) return { status: 'error' }
     if (row.logged_date < from || row.logged_date > endDate) continue
-    if (row.source !== 'athlete_manual' || daily.has(row.logged_date)) return { status: 'error' }
-    daily.set(row.logged_date, Object.fromEntries(FIELDS.map(field => [field.key, observation(row, field)])))
+    if (row.source !== (readiness ? 'readiness_logs' : 'athlete_manual') || daily.has(row.logged_date)) return { status: 'error' }
+    daily.set(row.logged_date, Object.fromEntries(fields.map(field => [field.key, observation(row, field)])))
   }
   // A final snapshot excludes optimistic and conflicting set copies for BOTH models.
   const logs = uniqueSets(exerciseLogs).filter(row => !row._optimistic
@@ -71,7 +76,7 @@ export function buildAthleteOverview(input = {}, { enabled = false } = {}) {
     // No current targets are retroactively applied to historical meals.
     const nutrition = nutritionTrend(mealRows, {}, end).days.filter(day => inWeek(day.date))
     const dates = Array.from({ length: 7 }, (_, i) => addCalendarDays(start, i))
-    const wellbeing = FIELDS.map(field => {
+    const wellbeing = fields.map(field => {
       const days = dates.map(date => ({ date, value: daily.get(date)?.[field.key] ?? null }))
       const known = days.filter(day => day.value !== null)
       return { key: field.key, label: field.label, unit: field.unit, days,

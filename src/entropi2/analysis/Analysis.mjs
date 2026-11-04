@@ -1,3 +1,4 @@
+import FremgangMineTal from '../tracking/atlet/FremgangMineTal.mjs'
 import { createElement as h } from 'react'
 import DevelopmentView from './DevelopmentView.mjs'
 import { analysisModel } from './analysisModel.mjs'
@@ -30,6 +31,7 @@ export default function Analysis(props = {}) {
   h('details', { 'data-analysis-mine-data': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Mine data'),
     h(MineData, { ...analysisMineData(props, now), showRecords: false })),
+  h(FremgangMineTal, { enabled: true, athleteId: props.athlete?.id, now, snapshot: props.trackingSnapshot, onRetry: props.onRetryTracking }),
   h('details', { 'data-analysis-intensity': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Intensitet pr. uge'),
     props.fremgangError || props.exerciseLogsError

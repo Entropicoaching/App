@@ -14,7 +14,7 @@ const enough = (average, count, unit) => average !== null
   : count === 0 ? 'Ingen registreringer i perioden · 0/7 dage'
     : `For lidt data: ${count} af mindst 4 dage · ${coverage(count)}`
 
-function weekView(week, latest) {
+function weekView(week, latest, wellbeingOnly) {
   return detail(week.from, `${latest ? 'Seneste 7 dage' : '7 dage'} · ${week.from}–${week.to}`,
     h('div', null,
       h('h3', null, 'Søvn, energi, stress og ømhed'),
@@ -22,6 +22,7 @@ function weekView(week, latest) {
         h('dt', null, field.label), h('dd', null, enough(field.average, field.count, field.unit))))),
       detail('daily', 'Se dine daglige svar', week.wellbeing.map(field => h('section', { key: field.key },
         h('h4', null, field.label), dated(field.key, field.days, day => value(day.value, field.unit))))),
+      !wellbeingOnly && h('div', null,
       h('h3', null, 'Træning'),
       h('p', null, week.training.observedDays
         ? `${week.training.sets} registrerede sæt · ${value(week.training.tonnage, 'kg × gentagelser')} · ${coverage(week.training.observedDays, 'registrerede dage')}`
@@ -41,27 +42,27 @@ function weekView(week, latest) {
         : h('p', null, 'Ingen registreringer i perioden')),
       h('h3', null, 'Vægt'),
       h('p', null, enough(week.weight.average, week.weight.count, 'kg')),
-      detail('weight', 'Vis vægtgrundlag', dated('kg', week.weight.days, day => value(day.value, 'kg'))),
+      detail('weight', 'Vis vægtgrundlag', dated('kg', week.weight.days, day => value(day.value, 'kg')))),
     ), latest)
 }
 
-/** No fetch, storage, writes or wiring. Default OFF never reads snapshot data. */
+/** Read-only view. Default OFF never reads snapshot data. */
 export default function MineTal(props = {}) {
   if (props.enabled !== true) return null
   const model = buildAthleteOverview(props.snapshot, { enabled: true })
   if (model.status === 'loading') return h('section', { 'aria-label': 'Mine tal', 'aria-busy': true },
-    h('h2', null, 'Mine tal'), h('p', { role: 'status' }, 'Henter dine registreringer…'))
+    props.showHeading !== false && h('h2', null, 'Mine tal'), h('p', { role: 'status' }, 'Henter dine registreringer…'))
   if (model.status === 'error') return h('section', { 'aria-label': 'Mine tal' },
-    h('h2', null, 'Mine tal'), h('p', { role: 'alert' }, 'Kunne ikke hente hele perioden — prøv igen'),
+    props.showHeading !== false && h('h2', null, 'Mine tal'), h('p', { role: 'alert' }, 'Kunne ikke hente hele perioden — prøv igen'),
     typeof props.onRetry === 'function' && h('button', { type: 'button', onClick: props.onRetry,
       style: { minHeight: 44, minWidth: 44 } }, 'Prøv igen'))
   return h('section', { 'aria-label': 'Mine tal', className: 'e2-track-atlet', style: { width: '100%', maxWidth: 560,
     minWidth: 0, boxSizing: 'border-box', overflowWrap: 'anywhere', lineHeight: 1.5 } },
     h('style', null, '.e2-track-atlet summary:focus-visible{outline:2px solid currentColor;outline-offset:3px}.e2-track-atlet dd{margin-inline-start:0}'),
-    h('h2', null, 'Mine tal'), h('p', null, `4 uger · ${model.from}–${model.to}`),
+    props.showHeading !== false && h('h2', null, 'Mine tal'), h('p', null, `4 uger · ${model.from}–${model.to}`),
     model.status === 'empty' && h('p', { role: 'status' }, 'Ingen registreringer i perioden'),
-    [...model.weeks].reverse().map((week, i) => weekView(week, i === 0)),
-    detail('strength', 'Styrke · ugeestimater', h('div', null,
+    [...model.weeks].reverse().map((week, i) => weekView(week, i === 0, props.wellbeingOnly === true)),
+    props.wellbeingOnly !== true && detail('strength', 'Styrke · ugeestimater', h('div', null,
       h('p', null, 'e1RM i kg, estimeret fra registrerede tunge sæt. Kalenderuger kan være delvise. Ingen trendvurdering.'),
       model.strength.length
         ? h('ul', null, model.strength.map(lift =>

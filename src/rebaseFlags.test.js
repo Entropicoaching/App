@@ -1,8 +1,29 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { registerHooks } from 'node:module'
 import { install } from './athlete/kost2Loader.mjs'
 import { reset, begin, nodes } from './athlete/kost2Dom.mjs'
 const hooks = install()
+// This legacy renderer's named state slots belong to AthleteView alone.
+// Keep tracking explicitly inert for these OFF regressions; the actual tracking
+// hook and its enabled scope are exercised in tracking/ownTrackingIntegration.
+const trackingHooks = registerHooks({
+  resolve(specifier, context, next) {
+    if (specifier === './entropi2/tracking/useOwnTracking.mjs' && context.parentURL?.endsWith('/AthleteView.jsx'))
+      return { url: 'rebase-tracking:off', shortCircuit: true }
+    return next(specifier, context)
+  },
+  load(url, context, next) {
+    if (url === 'rebase-tracking:off') return { format: 'module', shortCircuit: true, source: `
+      import assert from 'node:assert/strict'
+      export function useOwnTracking(props) {
+        assert.notEqual(props.enabled, true, 'rebase OFF scenarios must not start tracking')
+        return { trackingSnapshot: null, onRetryTracking() {} }
+      }
+    ` }
+    return next(url, context)
+  },
+})
 const { default: AthleteView } = await import('./AthleteView.jsx')
 const component = (tree, name) => nodes(tree, n => n.type?.name === name)[0]
 const render = props => { begin(); return AthleteView(props) }
@@ -51,4 +72,4 @@ test('rebase counterexample: repRecords baseline prop survives the two AthleteVi
     assert.equal(progress.props.componentProps.repRecords, repRecords ? true : undefined)
   }
 })
-test.after(() => hooks.deregister())
+test.after(() => { trackingHooks.deregister(); hooks.deregister() })

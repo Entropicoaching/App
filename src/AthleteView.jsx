@@ -45,6 +45,8 @@ import { tomtIndeks, loadRekordIndeks, saveRekordIndeks, laegRaekkerTil, medUgen
 import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from './athlete/hjemoevKompakt.mjs'
 import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
+import { useOwnTracking } from './entropi2/tracking/useOwnTracking.mjs'
+
 import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'
 import Conversation from './entropi2/conversation/Conversation.mjs'
 import { createConversation } from './entropi2/conversation/conversationController.mjs'
@@ -533,6 +535,11 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   // Entropi 2: dagsur. Ved dagsskifte gengives skærmene igen, kostens dato følger med, hvis den stod
   // på dagen før, og samtalen hentes igen, så tidsangivelserne passer.
   const e2Dag = useEntropi2Dag({ enabled: e2, today }) ?? {}
+  const { trackingSnapshot, onRetryTracking } = useOwnTracking({
+    enabled: e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && tab === 'fremgang'
+      && !!session?.user?.id && athlete?.user_id === session.user.id,
+    athleteId: athlete?.id, day: e2Dag.day, client: inboxDatabase,
+  }) ?? {}
   const e2ForrigeDag = useRef(e2Dag.day)
   useEffect(() => {
     const forrige = e2ForrigeDag.current
@@ -903,7 +910,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {e2Atlet && tab === 'fremgang' && (
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
-            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs} />
+            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}
+            trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} />
         )}
         {tab === 'fremgang' && (
           <LazyBoundary

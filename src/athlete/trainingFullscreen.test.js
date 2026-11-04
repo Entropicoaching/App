@@ -66,6 +66,14 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   // Marc 3. nov.: genvejen 'Film et saet' paa Entropi 2-hjem er en del af det samme delta (onFilmSet).
   const entropi2Delta = [
+    // R2-TRACK-KOBL-ATLET2: own readiness read only on the athlete's active Fremgang tab.
+    ["\nimport { useOwnTracking } from './entropi2/tracking/useOwnTracking.mjs'\n", ''],
+    [`  const { trackingSnapshot, onRetryTracking } = useOwnTracking({
+    enabled: e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && tab === 'fremgang'
+      && !!session?.user?.id && athlete?.user_id === session.user.id,
+    athleteId: athlete?.id, day: e2Dag.day, client: inboxDatabase,
+  }) ?? {}
+`, ''],
     // R1-E2-COACH-EGEN-TRAENING1: coachens egen traening og read-only preview i Entropi 2 er et
     // eksplicit, separat delta. Hvert hunk vendes praecist tilbage foer de oevrige delta-linjer.
     ["import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n\nimport { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'\nimport Conversation from './entropi2/conversation/Conversation.mjs'\nimport { createConversation } from './entropi2/conversation/conversationController.mjs'\nimport { mountKost } from './entropi2/Entropi2Kost.mjs'\n\n// Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.\nconst mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')\n", "import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'\n\nimport { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'\n\n// Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.\nconst mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')\n"],
@@ -202,7 +210,8 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
     [`        {e2Atlet && tab === 'fremgang' && (
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
-            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs} />
+            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}
+            trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} />
         )}
 `, ''],
     // Ret1: med flaget tændt skjules den gamle analyse i fremgangsvisningen; resten af fremgang er uændret.
