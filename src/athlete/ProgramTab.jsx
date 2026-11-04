@@ -29,6 +29,72 @@ import { SMERTE_LINJE } from '../saetSmerte.js'
 
 const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 
+// Round-one Entropi 2 palette, applied to the mounted athlete program only.
+const programColors = { surface: '#1c1c18', text: '#edeae2', muted: '#c4c0b5',
+  accent: '#c8923a', done: '#b9d5a0', border: '#777267' }
+const programLayout = {
+  block: { padding: 16, borderRadius: 12, background: programColors.surface,
+    borderInlineStart: `4px solid ${programColors.accent}`, boxSizing: 'border-box' },
+  week: { padding: 16, borderRadius: 12, background: programColors.surface,
+    border: `1px solid ${programColors.border}`, borderInlineStart: `4px solid ${programColors.accent}`,
+    minWidth: 0, overflowWrap: 'anywhere', boxSizing: 'border-box' },
+  badge: { display: 'inline-block', padding: '3px 8px', borderRadius: 6,
+    border: '1px solid currentColor', color: programColors.accent, fontSize: '0.8rem',
+    lineHeight: 1.5, textTransform: 'none', letterSpacing: 'normal', maxWidth: '100%',
+    overflowWrap: 'anywhere', boxSizing: 'border-box' },
+}
+function programBlockElement(type, props, ...children) {
+  return createElement(type, props?.['aria-label'] === 'Din aktuelle blok'
+    ? { ...props, style: { ...props.style, ...programLayout.block } } : props, ...children)
+}
+
+// Keep unlike prescriptions as coach-written text, never average RPE and percent.
+function programWeekIntensity(week) {
+  const targets = new Set()
+  if (!Array.isArray(week?.sessions) || week?.readEvidence?.complete === false) return { targets: [], unavailable: true }
+  let missing = false
+  for (const session of week?.sessions || []) {
+    if (!Array.isArray(session?.exercises)) { missing = true; continue }
+    for (const exercise of session.exercises) {
+      const value = typeof exercise?.intensity === 'string' ? exercise.intensity.trim() : ''
+      if (value) targets.add(value)
+      else missing = true
+    }
+  }
+  return { targets: [...targets], missing }
+}
+
+// Use the displayed week's civil date, not the active-week anchor (which can advance).
+function programTodaySession(week, session, weekStart, today) {
+  if (!Number.isInteger(session.weekday) || session.weekday < 0 || session.weekday > 6) return false
+  const start = week.start_date || (weekStart instanceof Date && Number.isFinite(weekStart.getTime())
+    ? `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, '0')}-${String(weekStart.getDate()).padStart(2, '0')}` : null)
+  if (typeof start !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(start)) return false
+  const date = new Date(start + 'T12:00:00Z')
+  if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== start) return false
+  date.setUTCDate(date.getUTCDate() + session.weekday)
+  return date.toISOString().slice(0, 10) === today
+}
+
+// A green completion marker needs every exact prescribed set, with no skipped sets.
+// The logger's existing isDone rule and write handlers are left intact.
+function programSessionCompletion(session, logs) {
+  if (!Array.isArray(session.exercises) || !session.exercises.length) return null
+  let count = 0, skipped = false
+  for (const exercise of session.exercises) {
+    const rawSets = exercise?.sets
+    const sets = typeof rawSets === 'number' || (typeof rawSets === 'string' && rawSets.trim()) ? Number(rawSets) : NaN
+    if (!exercise?.id || !Number.isSafeInteger(sets) || sets < 0) return null
+    for (let number = 1; number <= sets; number++) {
+      const log = logs.find(row => row.exercise_id === exercise.id && row.set_number === number)
+      if (!log) return null
+      skipped ||= !!log.skipped
+      count++
+    }
+  }
+  return count ? (skipped ? 'closed' : 'done') : null
+}
+
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
   if (!name) return '#4a4844'
@@ -218,6 +284,10 @@ export default function ProgramTab({
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
           const isFutureWeek = viewingWeekIdx > activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
+          const programAppearanceOn = entropi2 === true
+          const intensity = programAppearanceOn && !programError ? programWeekIntensity(viewedWeek) : null
+          const programToday = programAppearanceOn ? new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Copenhagen' }) : null
+          const viewedStart = programAppearanceOn && viewedWeek ? weekStartDate(allWeeks, viewedWeek.week_number) : null
           const upcomingPreview = programNaesteUge === true && upcomingProgramWeek(
             viewedWeek ? weekStartDate(allWeeks, viewedWeek.week_number) : null, isFutureWeek,
           )
@@ -248,7 +318,7 @@ export default function ProgramTab({
                     }
                     const phase = phases[viewedPhaseIdx]
                     const startGlobal = phaseStart[viewedPhaseIdx]
-                    const color = phase.name ? blockColor(phase.name) : '#7a7770'
+                    const color = programAppearanceOn ? programColors.accent : phase.name ? blockColor(phase.name) : '#7a7770'
 
                     const fmt = ds => new Date(ds + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
                     const firstDate = phase.weeks[0]?.start_date
@@ -272,7 +342,7 @@ export default function ProgramTab({
                     }
 
                     return (
-                      <div style={{ marginBottom: '1.5rem' }}>
+                      <div style={{ marginBottom: '1.5rem', ...(programAppearanceOn ? programLayout.block : {}) }}>
                         {weeksToComp != null && weeksToComp > 0 && (
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.7rem' }}>
                             🏆 {weeksToComp} uger til stævne
@@ -297,7 +367,7 @@ export default function ProgramTab({
                         )}
 
                         {/* Blok-header */}
-                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem', ...(programAppearanceOn ? { flexWrap: 'wrap' } : {}) }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
                             <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: color, flexShrink: 0 }} />
                             <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -406,7 +476,7 @@ export default function ProgramTab({
                 </>
               ) : (
                 <>
-                  {blockOverviewOn && renderProgramBlockOverview(createElement, {
+                  {blockOverviewOn && renderProgramBlockOverview(programAppearanceOn ? programBlockElement : createElement, {
                     allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate, programError,
                     onRetry: () => fetchProgram(athlete.id),
                     logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
@@ -442,12 +512,12 @@ export default function ProgramTab({
                   {!ugeFoerst && blokOversigt}
 
                   {/* Week header — navigation only shown when multiple weeks exist */}
-                  <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? programLayout.week : {}) }}>
                     {allWeeks.length > 1 ? (
                       <>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 } : {}) }}>
                         <button
-                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1 }}
+                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
                           disabled={viewingWeekIdx === 0}
                           onClick={() => {
                             const ni = viewingWeekIdx - 1
@@ -456,7 +526,7 @@ export default function ProgramTab({
                             fetchPastLogs(allWeeks[ni], athlete.id)
                           }}
                         >← Forrige uge</button>
-                        <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem' }}>
+                        <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem', ...(programAppearanceOn ? { gridColumn: '1 / -1', gridRow: 1, minWidth: 0 } : {}) }}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
                             Uge {viewedWeek.week_number}{viewedRange ? ` · ${viewedRange}` : ''}
                             {isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· planlagt</span>}
@@ -467,7 +537,7 @@ export default function ProgramTab({
                           )}
                         </div>
                         <button
-                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx >= allWeeks.length - 1 ? 0.25 : 1 }}
+                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx >= allWeeks.length - 1 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
                           disabled={viewingWeekIdx >= allWeeks.length - 1}
                           onClick={() => {
                             const ni = viewingWeekIdx + 1
@@ -504,6 +574,17 @@ export default function ProgramTab({
                         </h1>
                       </div>
                     )}
+                    {programAppearanceOn && (
+                      <div data-program-intensity="" style={{ marginTop: 16, color: programColors.muted, lineHeight: 1.6 }}>
+                        <h2 style={{ margin: '0 0 8px', fontSize: '0.95rem', fontWeight: 500, color: programColors.text }}>Ugens intensitet · plan</h2>
+                        {programError || intensity.unavailable ? 'Intensiteten er ikke tilgængelig.' : intensity.targets.length ? (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                            {intensity.targets.map(target => <span key={target} style={programLayout.badge}>{target}</span>)}
+                          </div>
+                        ) : 'Ikke angivet i planen.'}
+                        {!programError && intensity.missing && intensity.targets.length > 0 && <p style={{ margin: '8px 0 0' }}>Ikke angivet for alle øvelser.</p>}
+                      </div>
+                    )}
                   </div>
 
                   {!ugeFoerst && blokTekst}
@@ -520,31 +601,41 @@ export default function ProgramTab({
                     // aldrig giver "5/4".
                     const loggedSets = new Set(sessionLogs.filter(l => !l.skipped).map(l => `${l.exercise_id}|${l.set_number}`)).size
                     const isDone = totalSets > 0 && new Set(sessionLogs.map(l => `${l.exercise_id}|${l.set_number}`)).size >= totalSets
+                    const isToday = programAppearanceOn && !programError && viewedWeek.readEvidence?.complete !== false
+                      && programTodaySession(viewedWeek, session, viewedStart, programToday)
+                    const completion = programAppearanceOn && !programError && viewedWeek.readEvidence?.complete !== false
+                      ? programSessionCompletion(session, sessionLogs) : null
+                    const sessionAccent = completion === 'done' ? programColors.done : isToday || isOpen ? programColors.accent : programColors.border
 
                     return (
                       <div
                         key={session.id}
                         ref={el => { sessionRefs.current[session.id] = el }}
-                        style={{ marginBottom: '0.75rem', scrollMarginTop: '64px' }}
+                        style={{ marginBottom: programAppearanceOn ? '1.25rem' : '0.75rem', scrollMarginTop: '64px', ...(programAppearanceOn ? { minWidth: 0, overflowWrap: 'anywhere' } : {}) }}
                       >
                         <div
-                          style={{ ...s.card, marginBottom: 0, cursor: 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent' }}
+                          style={{ ...s.card, marginBottom: 0, cursor: 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent', ...(programAppearanceOn ? { border: `1px solid ${sessionAccent}`, borderInlineStart: `4px solid ${sessionAccent}`, borderRadius: isOpen ? '12px 12px 0 0' : 12, padding: 16, background: isToday ? '#292216' : programColors.surface } : {}) }}
                           onClick={() => openSession(isOpen ? null : session.id)}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { flexWrap: 'wrap', gap: 16 } : {}) }}>
+                            <div {...(programAppearanceOn ? { style: { minWidth: 0, flex: '1 1 180px' } } : {})}>
                               <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                                {session.title}
+                                {programAppearanceOn ? <h2 style={{ margin: 0, font: 'inherit', fontSize: '1.1rem', color: programColors.text, letterSpacing: 'normal', textTransform: 'none' }}>{session.title}</h2> : session.title}
+                                {isToday && <span style={programLayout.badge}>I dag</span>}
                                 {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.35rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
                                 )}
                               </div>
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: programAppearanceOn ? programColors.muted : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                                 {exerciseViewGroups(session.exercises).length} {exerciseViewGroups(session.exercises).length === 1 ? 'øvelse' : 'øvelser'} · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                              {isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
+                              {programAppearanceOn ? (
+                                completion && <span style={{ ...programLayout.badge, color: completion === 'done' ? programColors.done : programColors.muted }}>
+                                  {completion === 'done' ? 'Gennemført ✓' : 'Afsluttet · sæt sprunget over'}
+                                </span>
+                              ) : isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
                               {!upcomingPreview && !isDone && totalSets > 0 && (
                                 <>
                                   <button
@@ -578,7 +669,7 @@ export default function ProgramTab({
                         )}
 
                         {isOpen && (
-                          <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem' }}>
+                          <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem', ...(programAppearanceOn ? { borderColor: programColors.border, borderRadius: '0 0 12px 12px', minWidth: 0 } : {}) }}>
 
 
                             {opvarmStige === true && isCurrentWeek && !upcomingPreview && createElement(OpvarmStige, { enabled: true, exercises: session.exercises, scope: `${athlete?.id}|${viewedWeek.id}|${session.id}` })}
@@ -588,7 +679,7 @@ export default function ProgramTab({
                                 <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast || !endsGroup ? 0 : '1.25rem', borderBottom: isLast || !endsGroup ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
                                   <div style={{ marginBottom: '0.6rem' }}>
                                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.1rem' }}>
-                                      {startsGroup && <div data-exercise-heading={name} style={{ fontSize: '1.05rem', color: '#edeae2' }}>{name}</div>}
+                                      {startsGroup && (programAppearanceOn ? <h3 data-exercise-heading={name} style={{ margin: 0, fontSize: '1.05rem', fontWeight: 500, color: programColors.text }}>{name}</h3> : <div data-exercise-heading={name} style={{ fontSize: '1.05rem', color: '#edeae2' }}>{name}</div>)}
                                       {isCurrentWeek && (() => {
                                         const allSetsLogged = Array.from({ length: ex.sets || 0 }, (_, i) => i + 1)
                                           .every(setNum => exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum))
