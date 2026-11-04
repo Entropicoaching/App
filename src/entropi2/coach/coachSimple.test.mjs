@@ -25,7 +25,8 @@ test('coach home: "Kræver dit blik" comes first; kost and programmes are folded
   // E2-KOBL-COACH1: atletliste og ugerapport er nye lukkede folde.
   // Runde 3: passenes noter (E2-COACH-PASNOTER1) er også foldet ind under det vigtigste.
   // E2-COACH-PROGRAMSLUT1: programmer der slutter er sin egen fold (bevidst tilføjelse).
-  assert.deepEqual(folds, ['atleter', 'ugerapport', 'kost', 'noter', 'programslut', 'programmer'])
+  // Existing validated nutrition days make the team fold useful here.
+  assert.deepEqual(folds, ['hold', 'atleter', 'ugerapport', 'kost', 'noter', 'programslut', 'programmer'])
   for (const d of all.filter(n => n.type === 'details')) assert.notEqual(d.props.open, true)
   assert.ok(all.some(n => n.props?.['data-coach-nutrition'] === 'athlete-1'), 'kost line still rendered inside the fold')
 })

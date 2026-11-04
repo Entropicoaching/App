@@ -1,9 +1,41 @@
 # Coachens holdoverblik
 
-Nye, ikke tilkoblede moduler. `CoachTeam.mjs` er en rigtig React-komponent;
+`CoachTeam.mjs` indeholder rigtige React-komponenter;
 `overview.mjs` er en ren model. Begge kræver `enabled === true`, før input læses.
 Ingen requests, hooks, lagring, writes, automatisk planlægning eller ændring af
-eksisterende OFF-adfærd. Importeres ikke fra eksisterende appkode.
+eksisterende OFF-adfærd.
+
+## Tilkoblet forside
+
+CoachScreen monterer den navngivne `CoachTeamRegistrations`-visning i en lukket
+"Holdoverblik"-fold lige efter "Kræver dit blik". Foldens summary ejer den eneste
+titel. Indbakken beregner eller monterer ikke holdmodellen.
+
+`coach/coachTeamModel.mjs` bruger den allerede validerede coach-kontekst fra
+`coachHomeModel` og kostgrundlaget fra `weeklyReportModel`. Ejer, dansk dato og
+hele den indfangede atletliste skal stemme; skjulte atleter er filtreret fra.
+Der læses ingen `coachAnalysis.byAthlete[id].team`, profil-log, vægt, dagsform
+eller cyklus. Navne kommer kun fra den synlige atletliste.
+
+Kun atleter med mindst én træningslogdag i de seneste 28 dage eller én kostdag
+i de seneste 7 dage vises. Findes ingen sådanne atleter, vises hele folden ikke.
+Manglende, fejlende, afkortede og forældede kilder udelades; de giver hverken
+"ukendt"-rækker eller opdigtede nuller. En færdig læsning kan give et kendt nul
+for den ene kilde, når den anden kilde har registreringer. Antal træningsdage
+er distinkte danske datoer, uden sprungne eller optimistiske logs. Kostens
+bekræftelsesmetadata tæller ikke som måltider.
+
+Positive registreringssignalantal kommer fra den samme `coachTrackingModel`
+som atletkortene (belastning og protein). Antallet er ikke en samlet ugevurdering.
+Manglende signalgrundlag vises ikke som nul flag. Flest signaler kommer først,
+ved lighed bruges atlet-id i fast strengrækkefølge. Signalernes tekster, seneste
+pas, beskeder, vægttrends og åbneknapper gentages ikke i folden. Datointervaller
+vises eksplicit; 7 dages kost bliver ikke til fire ugers dækning. Dage med log
+er ikke bevis for komplette pas eller kostdage; manglende log kan være hvile.
+
+Den tilkoblede visning erstatter ikke den nedenstående, selvstændige
+snapshot-kontrakt. Standardeksporten og `overview.mjs` bevarer deres adfærd.
+Deres snapshots bruges ikke af coachforsiden.
 
 ## Inputkontrakt
 

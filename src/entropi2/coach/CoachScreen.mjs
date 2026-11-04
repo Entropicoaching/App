@@ -7,6 +7,8 @@ import { coachAthleteWorkspace } from './coachWorkspaceModel.mjs'
 import CoachSessionNotes from './SessionNotesView.mjs'
 import ProgramEndingView from './ProgramEndingView.mjs'
 import ProgramOverblik from '../../dashboard/ProgramOverblikView.mjs'
+import { CoachTeamRegistrations } from '../tracking/hold/CoachTeam.mjs'
+import { coachTeamModel } from './coachTeamModel.mjs'
 import { coachHomeModel, hasUndatedPlannedWeek, openCoachRow, selectCoachTab } from './coachModel.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
@@ -37,6 +39,7 @@ export function CoachView(input = {}) {
   const model = coachHomeModel(props, today)
   const inbox = tab === 'inbox'
   const report = inbox ? null : weeklyReportModel(props, today)
+  const team = inbox ? null : coachTeamModel({ enabled: true, props, context: model })
   const unknownPrograms = model.athletes.filter(a => hasUndatedPlannedWeek(model.plans[a.id]))
   const datedPrograms = model.athletes.filter(a => !hasUndatedPlannedWeek(model.plans[a.id]))
   const available = typeof props.openProfile === 'function' && typeof props.openCoachPriorityItem === 'function'
@@ -76,6 +79,9 @@ export function CoachView(input = {}) {
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
         model.complete && h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.')),
+    team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
+      h(CoachTeamRegistrations, { enabled: true, model: team })),
     !inbox && model.summaries.length > 0 && h('details', { 'aria-label': 'Atletoverblik', 'data-coach-fold': 'atleter', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Dine atleter (${model.summaries.length})`)),
       h('ul', { style: { listStyle: 'none', padding: 0 } },

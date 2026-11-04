@@ -51,3 +51,26 @@ export default function CoachTeam(options = {}) {
     h('p', null, 'Dage med registreringer er ikke bevis for komplette pas eller kostdage. Manglende træningslog kan være hvile. Hvert flag kræver sit eget grundlag.'),
     h('p', null, 'Coachen vurderer og planlægger. Ingen automatiske programændringer.'))
 }
+
+// Connected view: shorter, existing Dashboard reads have their own honest
+// windows. The standalone snapshot view above keeps its explicit contract.
+export function CoachTeamRegistrations(options = {}) {
+  if (options.enabled !== true) return null
+  const model = options.model
+  if (!model?.athletes?.length) return null
+  return h('section', { 'aria-label': 'Holdets registreringer',
+    style: { minWidth: 0, maxWidth: '100%', overflowWrap: 'anywhere' } },
+    h('p', null, `Registreringer til og med ${model.asOf}. Atleter med data vises; flest registreringssignaler først.`),
+    h('p', null, 'Signaler beregnes kun fra tilstrækkelige belastnings- og kostdata. Dage med log er ikke bevis for komplette pas eller kostdage. Manglende træningslog kan være hvile.'),
+    h('ol', { style: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12, paddingLeft: 24 } },
+      ...model.athletes.map(athlete => h('li', { key: athlete.athleteId, style: { minWidth: 0 } },
+        h('article', { 'aria-label': `Holdregistreringer: ${athlete.name}`,
+          style: { border: '1px solid #66756e', borderRadius: 12, padding: 12, minWidth: 0 } },
+          h('h3', null, athlete.name),
+          athlete.signalCount > 0 && h('p', null,
+            `${athlete.signalCount} registreringssignal${athlete.signalCount === 1 ? '' : 'er'}`),
+          athlete.trainingDays !== null && h('p', null,
+            `Træningslog ${model.trainingFrom} – ${model.asOf}: ${athlete.trainingDays}/28 dage registreret.`),
+          athlete.nutritionDays !== null && h('p', null,
+            `Kost ${model.nutritionFrom} – ${model.asOf}: ${athlete.nutritionDays}/7 dage registreret.`))))))
+}
