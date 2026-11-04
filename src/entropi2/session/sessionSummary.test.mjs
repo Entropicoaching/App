@@ -71,7 +71,7 @@ test('actual DOM: manual zero/partial finish, repeat, resume, close/reopen, hist
   const { p } = fixture(), root = dom(), view = mountSession(root, () => p, { clock })
   try {
     button(root, 'Start dagens pas').click()
-    const live = root.querySelectorAll('[role="status"]').at(-1)
+    const live = root.querySelector('[data-announce]')
     button(root, 'Afslut pas').click()
     const heading = root.querySelector('[data-heading]')
     assert.equal(heading.textContent, 'Opsummering af passet')
@@ -86,7 +86,7 @@ test('actual DOM: manual zero/partial finish, repeat, resume, close/reopen, hist
     assert.equal(root.querySelector('[data-session-summary]'), null)
     p.exerciseLogs.push(row('a', 1, { rpe_actual: 8.5 })); view.update()
     button(root, 'Afslut pas').click()
-    assert.equal(root.querySelectorAll('[role="status"]').at(-1), live)
+    assert.equal(root.querySelector('[data-announce]'), live)
     assert.equal(live.textContent, '1 af 3 sæt klaret')
     assert.match(root.textContent, /Løft A: 1 sæt tilbage/)
     assert.match(root.textContent, /Højeste RPE i dag: 8,5/)

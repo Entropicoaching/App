@@ -1,3 +1,5 @@
+import { nextSetInSession } from '../../nextSet.js'
+import { createMobilityPlan } from '../mobility/plan/mobilityPlanDom.mjs'
 import { createSessionController } from './sessionModel.mjs'
 import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
@@ -87,6 +89,15 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     if (oldBar) plateBar = Number(oldBar.value)
     clearBlocks()
     body.replaceChildren()
+    const first = nextSetInSession(s.session, [])
+    const dailyWarmup = !summary && s.next?.setNumber === 1 && s.next.exercise.id === first?.exercise.id
+    if (dailyWarmup) {
+      const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
+      warm.append(el('summary', 'Opvarmning (5-10 min)'),
+        createMobilityPlan(doc, { enabled: true, session: s.session }),
+        createOpvarmning(doc, { enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) } }))
+      body.append(warm)
+    }
     body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
     if (summary) {
       const card = el('section', null, { class: 'card', 'aria-label': 'Opsummering', 'data-session-summary': '' })
@@ -140,8 +151,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       const previous = lastSetLine(p, ex.id, clock.Date.now())
       if (previous) plan.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
       if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
-      // Only the first work set needs a warmup ramp; it starts folded above the form.
-      if (n.setNumber === 1) {
+      // Later exercises keep their own ramp. The first exercise shares the daily fold.
+      if (n.setNumber === 1 && !dailyWarmup) {
         const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
         warm.append(el('summary', 'Opvarmningssæt'), createOpvarmning(doc, {
           enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) }
