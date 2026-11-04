@@ -3,7 +3,7 @@
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { buildPlanOverview, planOverviewCounts } from '../planOverview'
 import { currentWeekNo, s, computePhases, blockColor } from '../dashboardShared'
-import { createWeekDate, createTimelineScale } from './calendarWeekDate.mjs'
+import { calendarToday, createWeekDate, createTimelineScale, focusTimelineToday } from './calendarWeekDate.mjs'
 import { holidayInfo } from './coachKonstanter'
 import CoachCalendarEvents from './CoachCalendarEvents.jsx'
 
@@ -15,10 +15,11 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
   setCalBlockAthlete, setHoverCell, setPlanStartDate, setTimelineEdit, showFlash, snoozeAthlete,
   snoozedAthletes, timelineEdit,
 }) {
-          const today0 = new Date(); today0.setHours(0, 0, 0, 0)
+          const today0 = calendarToday()
+          const todayDay = `${today0.getFullYear()}-${String(today0.getMonth() + 1).padStart(2, '0')}-${String(today0.getDate()).padStart(2, '0')}`
           const dayMs = 86400000
           const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
-          const planEntries = buildPlanOverview({ athletes: visibleAthletes, calendarWeeks, today: today0 })
+          const planEntries = buildPlanOverview({ athletes: visibleAthletes, calendarWeeks, today: todayDay })
           const planCounts = planOverviewCounts(planEntries)
           const planningNeeds = planEntries.filter(entry => entry.status !== 'covered')
           const featuredPlanEntries = planningNeeds.slice(0, 3)
@@ -204,7 +205,7 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                 const tray = rows.filter(r => !r.hasAnchor && r.wks.length > 0)
 
                 // Global kolonneskala (ISO-uger). Pad én uge i hver ende.
-                const { nCols, colOf, todayCol, trackW, cols } = createTimelineScale(placed, today0, COL_W)
+                const { colOf, todayCol, todayLeft, trackW, cols } = createTimelineScale(placed, today0, COL_W)
 
                 const openEdit = (r, ph) => {
                   const first = ph.weeks[0]
@@ -254,7 +255,8 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                     ) : (
                       <>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.4rem' }}>
-                        Tip: tryk på en tom celle for at oprette en uge på den dato.
+                        <time dateTime={todayDay}>I dag · {today0.toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long' })}</time>
+                        {' · Denne uge er fremhævet. Tryk på en tom celle for at oprette en uge.'}
                       </div>
                       <div style={{ display: 'flex', marginTop: '0.5rem', border: '1px solid rgba(237,234,226,0.06)' }}>
                         {/* Sticky navne-kolonne */}
@@ -268,12 +270,13 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                           ))}
                         </div>
                         {/* Scrollbart spor */}
-                        <div style={{ overflowX: 'auto', flex: 1 }}>
-                          <div style={{ width: trackW }}>
+                        <div ref={node => focusTimelineToday(node, todayLeft, todayDay)} aria-label="Kalenderens tidslinje" tabIndex={0} style={{ overflowX: 'auto', flex: 1, minWidth: 0 }}>
+                          <div style={{ width: trackW, position: 'relative', overflow: 'hidden' }}>
+                            <div aria-hidden="true" data-calendar-current-week={isoLocal(cols[todayCol])} style={{ position: 'absolute', left: todayCol * COL_W, top: 0, bottom: 0, width: COL_W, background: 'rgba(200,146,58,0.14)', pointerEvents: 'none' }} />
                             {/* Dato-header */}
                             <div style={{ display: 'flex', height: 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
                               {cols.map((d, i) => (
-                                <div key={i} style={{ width: COL_W, flexShrink: 0, textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: i === todayCol ? '#c8923a' : '#4a4844', background: i === todayCol ? 'rgba(200,146,58,0.08)' : 'transparent', lineHeight: '22px' }}>
+                                <div key={i} aria-current={i === todayCol ? 'date' : undefined} title={i === todayCol ? 'Denne uge' : undefined} style={{ position: 'relative', width: COL_W, flexShrink: 0, textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: i === todayCol ? '#f1c675' : '#4a4844', background: i === todayCol ? 'rgba(200,146,58,0.18)' : 'transparent', fontWeight: i === todayCol ? 700 : 400, lineHeight: '22px' }}>
                                   {d.getDate()}/{d.getMonth() + 1}
                                 </div>
                               ))}
@@ -309,10 +312,6 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                                     </div>
                                   )
                                 })}
-                                {/* i dag-linje */}
-                                {todayCol >= 0 && todayCol < nCols && (
-                                  <div style={{ position: 'absolute', left: todayCol * COL_W + COL_W / 2, top: 0, bottom: 0, width: 1, background: 'rgba(200,146,58,0.4)', pointerEvents: 'none' }} />
-                                )}
                                 {r.phases.map((ph, pi) => {
                                   const first = ph.weeks[0], last = ph.weeks[ph.weeks.length - 1]
                                   const c0 = colOf(r.weekDate(first.week_number))
@@ -341,6 +340,7 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                               </div>
                               )
                             })}
+                            <div aria-hidden="true" data-calendar-today={todayDay} style={{ position: 'absolute', left: todayLeft, top: 0, bottom: 0, width: 2, background: '#f1c675', zIndex: 2, pointerEvents: 'none' }} />
                           </div>
                         </div>
                       </div>
@@ -377,7 +377,10 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                         </div>
                         {tray.map(r => (
                           <div key={r.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', flexWrap: 'wrap' }}>
-                            <span onClick={() => openProfile(r.a, 'program')} style={{ fontSize: '0.82rem', color: '#edeae2', cursor: 'pointer' }}>{r.a.name}</span>
+                            <div>
+                              <span onClick={() => openProfile(r.a, 'program')} style={{ fontSize: '0.82rem', color: '#edeae2', cursor: 'pointer' }}>{r.a.name}</span>
+                              {r.wks.some(w => w.start_date) && <div role="alert" style={{ fontSize: '0.65rem', color: '#e99b86' }}>Startdato kunne ikke vises. Ret datoen.</div>}
+                            </div>
                             <div style={{ display: 'flex', gap: '0.4rem' }}>
                               <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.25rem 0.5rem' }}
                                 onClick={() => r.phases[0] && openEdit(r, r.phases[0])}>Sæt startdato</button>
