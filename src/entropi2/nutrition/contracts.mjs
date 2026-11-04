@@ -32,6 +32,21 @@ export function nutritionContracts({ client, onReadError = () => {}, onWriteErro
       if (result.data.some(row => row?.athlete_id !== athleteId)) throw new Error('Forkert atlet i kostloggen')
       return result.data
     },
+    // Preserve save's boolean contract for existing consumers. The nutrition
+    // controller uses this insert-returning path for safe five-second undo.
+    async saveWithIdentity(row) {
+      const items = mealTemplateItems([row])
+      if (!row?.athlete_id || calendarTime(row.date) === null || !items || isDayReceipt({ meal: items[0].meal.trimStart() })) return { ok: false, id: null }
+      let id = null
+      const ok = await runGuardedWrite(async () => {
+        const query = client.from('meal_logs').insert({ athlete_id: row.athlete_id, date: row.date, ...items[0] })
+        const result = await (typeof query?.select === 'function' ? query.select('id') : query)
+        const value = result?.data?.[0]?.id
+        if (Array.isArray(result?.data) && result.data.length === 1 && typeof value === 'string' && value.trim() && !value.startsWith('local:')) id = value
+        return result
+      }, onWriteError)
+      return { ok: ok === true, id: ok === true ? id : null }
+    },
     async save(row) {
       const items = mealTemplateItems([row])
       if (!row?.athlete_id || calendarTime(row.date) === null || !items || isDayReceipt({ meal: items[0].meal.trimStart() })) return false

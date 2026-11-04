@@ -1,5 +1,5 @@
 import { mountUgeplan } from './ugeplan/mount.mjs'
-import { foodPortion, unitsForFood, mealKey } from './controller.mjs'
+import { unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { historyDays } from './historyDays.mjs'
 import { weekText } from './weekText.mjs'
@@ -16,6 +16,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const doc = host.ownerDocument
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
+  amount = String(controller.foodAmount(0))
   let weightPending = false, weightError = ''
   let planHost, planKey, currentPlanFold, disposePlan = () => {}, planMounted = false
   const clearPlan = () => {
@@ -76,7 +77,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         items.forEach((meal, i) => {
           quickKeys.add(mealKey(meal))
           const row = append(section, 'div', 'space stack')
-          const b = button(row, 'Log ' + meal.meal, () => action(meal), s.pending)
+          const b = button(row, (prefix === 'recent' ? 'Gentag dette måltid: ' : 'Log ') + meal.meal, () => action(meal), s.pending)
           b.setAttribute('data-focus', prefix + '-log-' + i)
         })
       }
@@ -125,15 +126,31 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         select.setAttribute('data-focus', 'food-choice')
         s.foods.forEach((f, i) => { const opt = append(select, 'option', '', f.name); opt.value = String(i) })
         select.value = selection
-        select.addEventListener('change', e => { selection = e.target.value; unit = '0'; draw() })
+        select.addEventListener('change', e => { selection = e.target.value; unit = '0'; amount = String(controller.foodAmount(Number(selection))); draw() })
         const food = s.foods[Number(selection)]
         field(foodForm, 'Mængde', amount, v => { amount = v })
         const unitLabel = append(foodForm, 'label', '', 'Enhed'), unitSelect = append(unitLabel, 'select')
         unitSelect.setAttribute('data-focus', 'unit-choice')
         unitsForFood(food).forEach((u, i) => { const opt = append(unitSelect, 'option', '', u.label); opt.value = String(i) })
-        unitSelect.value = unit; unitSelect.addEventListener('change', e => { unit = e.target.value })
+        unitSelect.value = unit; unitSelect.addEventListener('change', e => { unit = e.target.value; draw() })
+        const steps = append(foodForm, 'div', 'gram-steps')
+        steps.setAttribute('role', 'group'); steps.setAttribute('aria-label', 'Justér mængde i gram')
+        for (const step of [10, 50, 100]) for (const delta of [-step, step]) {
+          const b = button(steps, (delta > 0 ? '+' : '−') + step + ' g', () => {
+            if (destroyed || controller.snapshot().pending) return
+            const n = parseInputNumber(amount), u = unitsForFood(food)[Number(unit)]
+            if (!(n > 0) || !u) return
+            const grams = Math.max(1, Math.round((n * u.grams + delta) * 1000) / 1000)
+            if (!Number.isFinite(grams)) return
+            amount = String(grams); unit = '0'; draw()
+          }, s.pending)
+          b.setAttribute('data-focus', 'gram-step-' + delta)
+          b.setAttribute('aria-label', (delta > 0 ? 'Tilføj ' : 'Træk ') + step + ' gram' + (delta < 0 ? ' fra' : ''))
+        }
+        append(foodForm, 'p', 'small muted', 'Gramknapperne justerer mængden. Log portion gemmer måltidet.')
+        if (s.portionError) { const p = append(foodForm, 'p', 'small', s.portionError); p.setAttribute('role', 'alert') }
         const add = button(foodForm, 'Log portion', () => {}, s.pending); add.type = 'submit'
-        foodForm.addEventListener('submit', e => { e.preventDefault(); action(foodPortion(food, amount, Number(unit))) })
+        foodForm.addEventListener('submit', e => { e.preventDefault(); return controller.logFood(Number(selection), amount, Number(unit), intent()) })
       }
       if (availableTemplates.length || templateState?.suggestions.length) fast.append(templates)
     }
@@ -374,6 +391,13 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
             append(list, 'li', '', typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid'))
         }
       }
+    }
+    if (s.undo) {
+      const undo = append(app, 'section', 'undo-bar')
+      undo.setAttribute('role', 'status'); undo.setAttribute('aria-live', 'polite')
+      append(undo, 'p', 'small', 'Gemt: ' + s.undo.meal + ' · Fortryd inden 5 sekunder')
+      const b = button(undo, 'Fortryd', () => controller.undoLog(s.undo.token, intent()), s.pending)
+      b.setAttribute('data-focus', 'undo-log')
     }
     if (!s.loaded) clearPlan()
     // Marc 3. nov. (keep it simple): overskriften foerst; vejningen bliver oeverst som bestilt i

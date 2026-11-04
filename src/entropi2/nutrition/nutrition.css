@@ -49,3 +49,7 @@
 .e2-nutrition .e2-week-plan>section{margin-top:20px}
 .e2-nutrition .e2-week-plan button{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
 .e2-nutrition .e2-week-plan li{overflow-wrap:anywhere}
+
+.e2-nutrition .gram-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.e2-nutrition .gram-steps .cta{min-height:56px;font-size:18px;background:var(--raised)}
+.e2-nutrition .undo-bar{position:sticky;bottom:calc(72px + env(safe-area-inset-bottom, 0px));z-index:2;margin:12px;padding:12px;display:grid;gap:8px;border:1px solid var(--gold);border-radius:12px;background:var(--raised);box-shadow:0 4px 20px #0008}

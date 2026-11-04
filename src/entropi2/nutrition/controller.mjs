@@ -1,3 +1,4 @@
+import { createPortionMemory } from './portionMemory.mjs'
 import { createMealTemplates } from './skabeloner/model.mjs'
 import { parseInputNumber, calendarTime, nutritionValues } from '../../athlete/kostNumbers.mjs'
 import { mealTemplateItems } from '../../athlete/kostSkabeloner.mjs'
@@ -25,7 +26,8 @@ const validId = id => typeof id === 'string' && id.trim().length > 0
 // enabled must be the assembly's strict boolean entropi2 gate; default is OFF.
 // Entropi 2: currentDay (valgfri) giver den aktuelle kalenderdag, når skærmen følger dags dato. Et måltid
 // får da dagen i det øjeblik, det gemmes, og onDayChanged får besked, når den ikke længere er date.
-export function createNutritionController({ enabled = false, athlete, date, contracts, storage, foods = [], currentDay, onDayChanged } = {}) {
+export function createNutritionController({ enabled = false, athlete, date, contracts, storage, foods = [], currentDay, onDayChanged,
+  now = () => Date.now(), schedule = setTimeout, cancel = clearTimeout } = {}) {
   if (enabled !== true) return null
   if (!validId(athlete?.id) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
   const id = athlete.id
@@ -34,6 +36,12 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   const storageKey = 'entropi2:nutrition:favorites:v1:' + encodeURIComponent(id)
   let rows = [], favorites = [], phase = 'idle', message = '', disposed = false, loadToken = 0
   let pending = null, history = false, favoriteError = '', committed = new Set()
+  const portions = foods.length ? createPortionMemory(storage, id) : null
+  let undo = null, undoTimer = null
+  const clearUndo = () => {
+    if (undoTimer !== null) cancel(undoTimer)
+    undoTimer = null; undo = null
+  }
   const listeners = new Set()
   const selectedParts = new Set()
   const refreshTemplates = () => createMealTemplates({ enabled: true, athleteId: id, date, rows, storage })
@@ -59,7 +67,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     && rows.filter(r => r.id === row.id).length === 1
   const ready = intent => !disposed && validId(intent) && !pending && !committed.has(intent)
     && ['ready', 'saved', 'save-error'].includes(phase)
-  const mutate = async (kind, rowId, meal, intent, confirmed) => {
+  const mutate = async (kind, rowId, meal, intent, confirmed, undoing = false) => {
     if (!ready(intent) || typeof contracts?.[kind] !== 'function' || (kind === 'remove' && confirmed !== true)) return false
     const row = rows.find(r => r.id === rowId)
     if (!mutable(row)) return false
@@ -71,12 +79,13 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       if (await contracts[kind](payload) !== true) throw new Error()
       committed.add(intent)
       if (disposed) return false
+      if (undo?.rowId === row.id) clearUndo()
       selectedParts.delete(row)
       rows = kind === 'remove' ? rows.filter(r => r !== row) : rows.map(r => r === row ? { ...row, ...value } : r)
       templates = refreshTemplates()
-      phase = 'saved'; message = kind === 'remove' ? 'Måltid fjernet.' : 'Måltid rettet.'; return true
+      phase = 'saved'; message = undoing ? 'Måltid fortrudt.' : kind === 'remove' ? 'Måltid fjernet.' : 'Måltid rettet.'; return true
     } catch {
-      if (!disposed) { phase = 'save-error'; message = kind === 'remove' ? 'Måltidet blev ikke fjernet. Prøv igen.' : 'Ændringen blev ikke gemt. Prøv igen.' }
+      if (!disposed) { phase = 'save-error'; message = undoing ? 'Måltidet blev ikke fortrudt. Det er stadig gemt.' : kind === 'remove' ? 'Måltidet blev ikke fjernet. Prøv igen.' : 'Ændringen blev ikke gemt. Prøv igen.' }
       return false
     } finally { pending = null; emit() }
   }
@@ -113,6 +122,8 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       const favoriteKeys = new Set(favorites.map(mealKey))
       const list = recent().filter(meal => !favoriteKeys.has(mealKey(meal)))
       return { athleteId: id, date, phase, message, history, pending: !!pending, favoriteError,
+        portionError: portions?.error() || '',
+        undo: undo && now() < undo.expiresAt ? { ...undo } : null,
         mealTemplates: templates.snapshot(),
         ownMeals: favorites.map(meal => ({ ...meal, id: mealKey(meal) })),
         loaded: phase !== 'idle' && phase !== 'loading' && phase !== 'load-error',
@@ -129,6 +140,22 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         favoriteKeys: favorites.map(mealKey), foods: foods.map(f => ({ ...f })),
       }
     },
+    foodAmount(index) {
+      return !disposed && foods[index] ? portions?.get(foods[index]) ?? 100 : 100
+    },
+    async logFood(index, amount, unitIndex, intent) {
+      if (disposed || !Number.isInteger(index)) return false
+      const food = foods[index], value = foodPortion(food, amount, unitIndex)
+      if (!value) return api.log(null, intent)
+      const grams = parseInputNumber(amount) * unitsForFood(food)[unitIndex].grams
+      const ok = await api.log(value, intent)
+      if (ok && !disposed) { portions?.remember(food, grams); emit() }
+      return ok
+    },
+    undoLog(token, intent) {
+      if (!undo || undo.token !== token || now() >= undo.expiresAt) return Promise.resolve(false)
+      return mutate('remove', undo.rowId, null, intent, true, true)
+    },
     async load() {
       if (disposed || pending) return false
       const token = ++loadToken
@@ -137,6 +164,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         const result = await contracts.load(id, date)
         if (disposed || token !== loadToken) return false
         rows = checkedRows(result)
+        clearUndo()
         templates = refreshTemplates()
         selectedParts.clear()
         phase = 'ready'; emit(); return true
@@ -204,19 +232,24 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       const payload = { athlete_id: id, date: day, ...value }
       pending = intent; phase = 'saving'; message = 'Gemmer måltid…'; emit()
       try {
-        const ok = await contracts.save(payload)
-        if (ok !== true) throw new Error()
+        // The production adapter returns the identity from this exact insert.
+        // Legacy boolean fixtures retain their existing unambiguous read-back path.
+        const identified = typeof contracts.saveWithIdentity === 'function'
+        const result = identified ? await contracts.saveWithIdentity(payload) : await contracts.save(payload)
+        if (identified ? result?.ok !== true : result !== true) throw new Error()
+        const savedId = identified && validId(result.id) && !result.id.startsWith('local:') ? result.id : null
         committed.add(intent)
         if (disposed) return false
         // No optimistic totals: failures leave the diary exactly as it was.
         const existingIds = new Set(rows.map(r => r.id))
-        const localRow = { ...payload, id: 'local:' + intent }
+        const localRow = { ...payload, id: savedId || 'local:' + intent }
+        let savedRow = localRow
         rows.unshift(localRow)
-        // The existing insert returns a boolean, not its generated database ID.
-        // Resolve canonical identities before offering edit/remove on a new meal.
+        // Legacy save adapters return a boolean without the generated database ID.
+        // Resolve canonical identities before offering edit/remove on those meals.
         // Runde 12 (fletning): only for the controller's own day; after midnight the
         // assembly replaces this controller via onDayChanged and a fresh load resolves it.
-        if (day === date && (typeof contracts.remove === 'function' || typeof contracts.update === 'function')) {
+        if (!savedId && day === date && (typeof contracts.remove === 'function' || typeof contracts.update === 'function')) {
           try {
             const result = await contracts.load(id, date)
             if (disposed) return false
@@ -224,12 +257,19 @@ export function createNutritionController({ enabled = false, athlete, date, cont
             // only an unambiguous new identity with exactly the saved values.
             const candidates = checkedRows(result).filter(r => validId(r.id) && !r.id.startsWith('local:')
               && !existingIds.has(r.id) && r.date === date && cleanMeal(r) && mealKey(cleanMeal(r)) === mealKey(value))
-            if (candidates.length === 1) rows = rows.map(r => r === localRow ? candidates[0] : r)
+            if (candidates.length === 1) { savedRow = candidates[0]; rows = rows.map(r => r === localRow ? savedRow : r) }
           } catch { /* Keep the confirmed local log; a later load resolves its ID. */ }
         }
         if (disposed) return false
         templates = refreshTemplates()
+        clearUndo()
+        if (savedId && day === date && mutable(savedRow) && typeof contracts.remove === 'function') {
+          undo = { rowId: savedRow.id, token: intent, meal: value.meal, expiresAt: now() + 5000 }
+          undoTimer = schedule(() => { clearUndo(); emit() }, 5000)
+        }
         phase = 'saved'; message = 'Måltid gemt.'
+        if (day === date && typeof contracts.remove === 'function' && !undo)
+          message += ' Fortryd kunne ikke klargøres. Hent dagbogen igen for at fjerne måltidet.'
         if (day !== date) { try { onDayChanged?.(day) } catch { /* ignoreret */ } }
         return true
       } catch {
@@ -239,7 +279,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     },
     update(rowId, meal, intent) { return mutate('update', rowId, meal, intent) },
     remove(rowId, intent, confirmed = false) { return mutate('remove', rowId, null, intent, confirmed) },
-    dispose() { disposed = true; loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
+    dispose() { clearUndo(); disposed = true; loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
   }
   return api
 }

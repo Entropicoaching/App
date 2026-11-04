@@ -27,7 +27,7 @@ const recurring = (m, day = '2026-11-02') => Array.from({ length: 3 }, (_, i) =>
 for (const source of ['favorite', 'recent']) test('round2: accepting template retains visible ' + source + ' action', async t => {
   const m = meal(1), f = await fixture(t, { favorites: source === 'favorite' ? [m] : [], rows: recurring(m) })
   const heading = source === 'favorite' ? 'Favoritter' : 'Seneste måltider'
-  const label = 'Log ' + m.meal
+  const label = (source === 'recent' ? 'Gentag dette måltid: ' : 'Log ') + m.meal
   assert.ok(find(find(f.host, 'h2', heading).parentElement, 'button', label))
   await find(f.host, 'button', 'Gem skabelon: ' + m.meal).fire('click')
   const b = find(find(f.host, 'h2', heading).parentElement, 'button', label)

@@ -88,7 +88,7 @@ test('wiring: failed/pending template log shares controller guards, diary unchan
   let first = true
   const f = fixture(t, { rows: rows.map(r => ({ ...r, date: '2026-11-02' })), save: () => { if (first) { first = false; return gate } return true } }); await flush()
   await find(f.host, 'button', 'Gem skabelon: ' + meal.meal).fire('click')
-  const b = find(f.host, 'button', 'Log ' + meal.meal)
+  const b = find(f.host, 'button', 'Gentag dette måltid: ' + meal.meal)
   assert.equal(templateSection(f.host), undefined)
   const pending = b.fire('click'); await b.fire('click')
   assert.equal(find(f.host, 'button', b.textContent).disabled, true)

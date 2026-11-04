@@ -9,7 +9,7 @@ const meal = i => ({ meal: 'Synthetic next ' + i, kcal: 100 + i, protein: 10, ca
 const row = (i, day = date) => ({ ...meal(i), athlete_id: id, date: day,
   created_at: day + 'T12:00:' + String(59 - i).padStart(2, '0') + 'Z' })
 const buttons = host => find(host, 'h2', 'Log hurtigt').parentElement.querySelectorAll('button')
-  .filter(b => b.textContent.startsWith('Log '))
+  .filter(b => /^(Log |Gentag dette måltid: )/.test(b.textContent))
 async function mount(t, rows, favorites = [], save = async () => true) {
   const writes = [], saves = []
   const controller = createNutritionController({ enabled: true, athlete: { id }, date,
@@ -26,7 +26,7 @@ test('next: 25 rows with 20 newest favorites expose all five older non-favorites
   const { controller, host, writes } = await mount(t, rows, rows.slice(0, 20).map((_, i) => meal(i)))
   assert.deepEqual(controller.snapshot().recent.map(mealKey), [20, 21, 22, 23, 24].map(i => mealKey(meal(i))))
   const section = find(host, 'h2', 'Seneste måltider').parentElement
-  assert.deepEqual(section.querySelectorAll('button').map(b => b.textContent), [20, 21, 22, 23, 24].map(i => 'Log Synthetic next ' + i))
+  assert.deepEqual(section.querySelectorAll('button').map(b => b.textContent), [20, 21, 22, 23, 24].map(i => 'Gentag dette måltid: Synthetic next ' + i))
   assert.equal(find(host, 'h2', 'Favoritter').parentElement.querySelectorAll('button').length, 5)
   assert.deepEqual(rows, original)
   assert.deepEqual(writes, [])
@@ -42,7 +42,7 @@ test('next: yesterday takes precedence by full mealKey; filtering precedes each 
   assert.deepEqual(find(host, 'h2', 'Favoritter').parentElement.querySelectorAll('button').map(b => b.textContent),
     [20, 21, 22, 23, 0].map(i => 'Log Synthetic next ' + i))
   assert.deepEqual(find(host, 'h2', 'Seneste måltider').parentElement.querySelectorAll('button').map(b => b.textContent),
-    [10, 11, 12, 13, 14].map(i => 'Log Synthetic next ' + i))
+    [10, 11, 12, 13, 14].map(i => 'Gentag dette måltid: Synthetic next ' + i))
   assert.equal(buttons(host).filter(b => b.textContent === 'Log Synthetic next 1').length, 0)
   assert.equal(buttons(host).filter(b => b.textContent === 'Log igen: Synthetic next 1').length, 1)
   assert.equal(controller.snapshot().favorites.length, favorites.length)
@@ -71,7 +71,7 @@ for (const firstSource of ['yesterday', 'favorite', 'recent']) {
     const stale = {
       yesterday: find(host, 'button', 'Log igen: Synthetic next 1'),
       favorite: find(host, 'button', 'Log Synthetic next 2'),
-      recent: find(host, 'button', 'Log Synthetic next 3'),
+      recent: find(host, 'button', 'Gentag dette måltid: Synthetic next 3'),
     }
     const first = stale[firstSource].fire('click')
     for (const button of Object.values(stale)) await button.fire('click')

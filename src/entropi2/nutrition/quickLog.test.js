@@ -19,7 +19,7 @@ async function mounted(t, { rows = [], favorites = [], save = async () => true }
   return { host, controller, saves, writes, intents }
 }
 const block = host => find(host, 'h2', 'Log hurtigt').parentElement
-const quickButtons = host => block(host).querySelectorAll('button').filter(b => b.textContent.startsWith('Log '))
+const quickButtons = host => block(host).querySelectorAll('button').filter(b => /^(Log |Gentag dette måltid: )/.test(b.textContent))
 
 test('quick: first block orders yesterday, five favorites, five non-favorite recents; library keeps single controls', async t => {
   const favorites = Array.from({ length: 7 }, (_, i) => meal(i))
@@ -31,8 +31,8 @@ test('quick: first block orders yesterday, five favorites, five non-favorite rec
   assert.equal(host.querySelectorAll('main')[0].children[2], block(host))
   assert.deepEqual(block(host).querySelectorAll('h2').map(n => n.textContent), ['Log hurtigt', 'Gentag i går', 'Favoritter', 'Seneste måltider'])
   const buttons = quickButtons(host)
-  assert.deepEqual(buttons.map(n => n.textContent), ['Log igen: Synthetic meal 30', ...[0, 1, 2, 3, 4, 7, 8, 9, 10, 11].map(i => 'Log Synthetic meal ' + i)])
-  assert.equal(host.querySelectorAll('button').filter(b => b.textContent.startsWith('Log ')).length, buttons.length)
+  assert.deepEqual(buttons.map(n => n.textContent), ['Log igen: Synthetic meal 30', ...[0, 1, 2, 3, 4].map(i => 'Log Synthetic meal ' + i), ...[7, 8, 9, 10, 11].map(i => 'Gentag dette måltid: Synthetic meal ' + i)])
+  assert.equal(host.querySelectorAll('button').filter(b => /^(Log |Gentag dette måltid: )/.test(b.textContent)).length, buttons.length)
   const library = host.querySelectorAll('button').filter(b => /^(Gem|Fjern) favorit:/.test(b.textContent))
   assert.equal(new Set(library.map(b => b.textContent)).size, library.length)
   assert.equal(find(host, 'h2', 'Dine favoritter').parentElement.querySelectorAll('button').length, 7)
@@ -51,12 +51,13 @@ test('quick: empty lists hidden; first block offers only manual meal entry', asy
 })
 
 for (const source of ['favorite', 'recent']) {
+  const label = source === 'favorite' ? 'Log Synthetic meal 1' : 'Gentag dette måltid: Synthetic meal 1'
   const options = source === 'favorite' ? { favorites: [meal(1)] } : { rows: [row(1, '2026-11-01')] }
   test('quick ' + source + ': one tap, pending double tap, deliberate repeat use actual log and fresh intents', async t => {
     let resolve
     const gate = new Promise(r => { resolve = r })
     const { host, controller, saves, intents, writes } = await mounted(t, { ...options, save: () => gate })
-    const original = find(host, 'button', 'Log Synthetic meal 1')
+    const original = find(host, 'button', label)
     const first = original.fire('click')
     await original.fire('click')
     assert.equal(saves.length, 1)
@@ -65,7 +66,7 @@ for (const source of ['favorite', 'recent']) {
     resolve(true); await first; await flush()
     assert.deepEqual(saves[0], { athlete_id: id, date, ...meal(1) })
     assert.equal(controller.snapshot().logs.length, 1)
-    await find(host, 'button', 'Log Synthetic meal 1').fire('click')
+    await find(host, 'button', label).fire('click')
     assert.equal(saves.length, 2)
     assert.equal(controller.snapshot().logs.length, 2)
     assert.equal(new Set(intents).size, intents.length)
@@ -75,12 +76,12 @@ for (const source of ['favorite', 'recent']) {
     const { host, controller, saves } = await mounted(t, { ...options, rows: [...(options.rows || []), row(9)],
       save: async () => { if (failure === 'throw') throw Error('synthetic'); return false } })
     const before = controller.snapshot()
-    await find(host, 'button', 'Log Synthetic meal 1').fire('click'); await flush()
+    await find(host, 'button', label).fire('click'); await flush()
     assert.equal(saves.length, 1)
     assert.deepEqual(controller.snapshot().totals, before.totals)
     assert.deepEqual(controller.snapshot().logs, before.logs)
     assert.equal(find(host, 'p', 'Måltidet blev ikke gemt. Prøv igen.').getAttribute('role'), 'alert')
-    assert.equal(find(host, 'button', 'Log Synthetic meal 1').disabled, false)
+    assert.equal(find(host, 'button', label).disabled, false)
   })
 }
 
