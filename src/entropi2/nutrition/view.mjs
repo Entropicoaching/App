@@ -55,8 +55,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const fast = append(main, 'section', 'card'); fast.setAttribute('data-kost-del', 'hurtig')
       append(fast, 'h2', '', 'Log hurtigt')
       const templateState = s.mealTemplates
-      const templateKeys = new Set(templateState?.templates.map(item => mealKey(item.meal)) || [])
-      const yesterdayMeals = s.yesterday.filter(meal => !templateKeys.has(mealKey(meal)))
+      const yesterdayMeals = s.yesterday
       if (yesterdayMeals.length) {
         const section = append(fast, 'section', 'space'); append(section, 'h2', '', 'Gentag i går')
         yesterdayMeals.forEach((meal, i) => {
@@ -65,11 +64,13 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           b.setAttribute('data-focus', 'yesterday-log-' + i)
         })
       }
+      const quickKeys = new Set(yesterdayMeals.map(mealKey))
       const quick = (title, items, prefix) => {
-        items = items.filter(meal => !templateKeys.has(mealKey(meal))).slice(0, 5)
+        items = items.slice(0, 5)
         if (!items.length) return
         const section = append(fast, 'section', 'space'); append(section, 'h2', '', title)
         items.forEach((meal, i) => {
+          quickKeys.add(mealKey(meal))
           const row = append(section, 'div', 'space stack')
           const b = button(row, 'Log ' + meal.meal, () => action(meal), s.pending)
           b.setAttribute('data-focus', prefix + '-log-' + i)
@@ -80,10 +81,12 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const yesterdayKeys = new Set(s.yesterday.map(mealKey))
       quick('Favoritter', s.favorites.filter(meal => !yesterdayKeys.has(mealKey(meal))), 'fav')
       quick('Seneste måltider', s.recent.filter(meal => !favoriteKeys.has(mealKey(meal)) && !yesterdayKeys.has(mealKey(meal))), 'recent')
-      const templates = append(fast, 'section', 'space')
-      append(templates, 'h3', '', 'Skabeloner')
-      if (!templateState?.templates.length) append(templates, 'p', 'muted', 'Ingen skabeloner endnu.')
-      for (const [i, item] of (templateState?.templates || []).entries()) {
+      const availableTemplates = (templateState?.templates || []).filter(item => !quickKeys.has(mealKey(item.meal)))
+      const templates = node('details', 'space')
+      templates.setAttribute('data-focus', 'templates')
+      const templateSummary = append(templates, 'summary')
+      append(templateSummary, 'h2', '', 'Skabeloner')
+      for (const [i, item] of availableTemplates.entries()) {
         const b = button(templates, 'Log skabelon: ' + item.name, () => controller.logTemplate(item.id, intent()), s.pending)
         b.setAttribute('data-focus', 'template-log-' + i)
       }
@@ -96,7 +99,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           b.setAttribute('data-focus', 'template-accept-' + i)
         }
       }
-      if (templateState?.error) { const p = append(templates, 'p', 'space', templateState.error); p.setAttribute('role', 'alert') }
+      if (templateState?.error) { const p = append(fast, 'p', 'space', templateState.error); p.setAttribute('role', 'alert') }
       const details = append(fast, 'details', 'space'); details.setAttribute('data-focus', 'log-form')
       append(details, 'summary', '', 'Notér et måltid')
       const inner = append(details, 'div')
@@ -128,6 +131,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         const add = button(foodForm, 'Log portion', () => {}, s.pending); add.type = 'submit'
         foodForm.addEventListener('submit', e => { e.preventDefault(); action(foodPortion(food, amount, Number(unit))) })
       }
+      if (availableTemplates.length || templateState?.suggestions.length) fast.append(templates)
     }
     const weighing = append(main, 'section', 'card'); weighing.setAttribute('data-kost-del', 'vaegt')
     append(weighing, 'h2', '', 'Din vægt')
@@ -350,17 +354,20 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
       }
     }
-    if (s.loaded) {
+    const shoppingMeals = (s.ownMeals || []).filter(meal => Array.isArray(meal.ingredients) && meal.ingredients.length)
+    if (!s.loaded || !shoppingMeals.length) {
+      disposeShopping(); disposeShopping = () => {}; shoppingHost = undefined; shoppingKey = undefined
+    } else {
       const shopping = append(main, 'details', 'card')
       shopping.setAttribute('data-focus', 'shopping-list')
       append(shopping, 'summary', '', 'Indkøb fra dine favoritter')
       // Reuse the mounted child across diary/weight redraws to preserve choices.
-      const key = JSON.stringify(s.ownMeals || [])
+      const key = JSON.stringify(shoppingMeals)
       if (!shoppingHost || key !== shoppingKey) {
         disposeShopping()
         shoppingHost = node('div'); shoppingKey = key
         disposeShopping = () => {}
-        try { disposeShopping = mountShoppingList(shoppingHost, { enabled: true, ownMeals: s.ownMeals || [] }) }
+        try { disposeShopping = mountShoppingList(shoppingHost, { enabled: true, ownMeals: shoppingMeals }) }
         catch { const p = append(shoppingHost, 'p', '', 'Indkøbslisten kunne ikke vises. Prøv at hente kostloggen igen.'); p.setAttribute('role', 'alert') }
       }
       shopping.append(shoppingHost)
