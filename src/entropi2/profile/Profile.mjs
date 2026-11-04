@@ -13,7 +13,7 @@ export default function Profile(props = {}) {
     h('dt', { style: s.label }, label), h('dd', { style: s.value }, value))
   return h('section', { 'aria-label': 'Mig', 'data-entropi2-profile': '', style: s.page },
     h('h1', { style: s.title }, 'Mig'),
-    h('dl', { style: s.card }, field('Navn', model.name), field('Mit mål', model.goal)),
+    h('dl', { style: s.card }, field('Navn', model.name), props.hideGoal !== true && field('Mit mål', model.goal)),
     props.visKost !== false && h('section', { 'aria-label': 'Mine kostmål', style: s.card },
       h('h2', { style: s.heading }, 'Mine kostmål'),
       h('p', { style: s.label }, 'Pr. dag'),

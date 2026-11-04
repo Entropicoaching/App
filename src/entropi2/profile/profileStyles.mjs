@@ -9,6 +9,8 @@ export const profileStyles = {
   field: { margin: '0 0 16px', minWidth: 0 },
   label: { fontSize: 16, color: '#b8b4a8', margin: '0 0 4px' },
   value: { fontSize: 18, color: '#edeae2', margin: 0, whiteSpace: 'pre-wrap' },
+  input: { width: '100%', minWidth: 0, minHeight: 52, boxSizing: 'border-box', padding: '12px',
+    border: '1px solid #77756b', borderRadius: 8, background: '#141410', color: '#edeae2', font: 'inherit', fontSize: 16 },
   button: { width: '100%', minHeight: 52, padding: '12px 16px', border: '1px solid #77756b',
     borderRadius: 8, background: '#1c1c18', color: '#edeae2', font: 'inherit', fontSize: 16,
     whiteSpace: 'normal', overflowWrap: 'anywhere', marginBottom: 12 },

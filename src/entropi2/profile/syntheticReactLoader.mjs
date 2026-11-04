@@ -3,7 +3,8 @@
 // including scalar/array children, booleans and the special key property.
 // It does not simulate ReactDOM, hooks or layout.
 export async function resolve(specifier, context, nextResolve) {
-  if (specifier !== 'react' || context.parentURL !== new URL('./Profile.mjs', import.meta.url).href) {
+  const leaves = ['Profile.mjs', 'ProfileGoalsView.mjs'].map(name => new URL(name, import.meta.url).href)
+  if (specifier !== 'react' || !leaves.includes(context.parentURL)) {
     return nextResolve(specifier, context)
   }
   try { return await nextResolve(specifier, context) }
