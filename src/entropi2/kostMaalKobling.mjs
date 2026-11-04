@@ -48,10 +48,12 @@ export function kostMaalVaegt(status, athleteId) {
 // Standard OFF: læser hverken props, data eller callbacks.
 export default function CoachKostMaal(props = {}) {
   if (props.enabled !== true) return null
-  const { athlete, weightStatus, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving } = props
+  const { athlete, weightStatus, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
+    session, loading, loadError, coachNutrition, readContext } = props
   const weight = kostMaalVaegt(weightStatus, athlete?.id)
   if (weight.state === 'error') return h('p', { role: 'alert' }, 'Vægtgrundlaget kunne ikke hentes. Prøv igen ved at åbne kostfanen.')
   if (weight.state !== 'ready') return h('p', { role: 'status' }, 'Indlæser vægtgrundlag…')
   return h(KostMaal, { key: athlete.id, enabled: true, athlete, weightLogs: weight.rows, today,
-    editing, editData, startEdit, setEditData, setEditing, saveEdit, saving })
+    editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
+    session, loading, loadError, coachNutrition, readContext })
 }
