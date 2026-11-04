@@ -1,3 +1,4 @@
+import { athleteQuestion, athleteAnswerContent, athleteSetContent } from './athleteConversation.mjs'
 import { createQuickReplyUsage } from './quickReplyUsage.mjs'
 import { createOwnQuickReplies } from './ownQuickReplies.mjs'
 import { threadFor, timestampContent } from './conversationModel.mjs'
@@ -19,7 +20,7 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
   const snapshot = () => {
     let available = false
     try { guard(); available = true } catch { /* Never expose a previous scope's records or draft. */ }
-    return { loaded: available && loaded, loading: available && loading, busy: available && busy,
+    return { available, loaded: available && loaded, loading: available && loading, busy: available && busy,
       error: available ? error : enabled === true ? 'Samtalen er ikke længere tilgængelig.' : '',
       draft: available ? draft : '', role: initial?.role, athleteId: initial?.athleteId,
       thread: available ? threadFor(initial?.athleteId, messages, [...submissions.values(), ...analyses]) : [],
@@ -61,6 +62,31 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
     catch (e) { if (active) error = e.message; return false }
     finally { emit() }
   }
+  function send({ analysisId, seconds } = {}) {
+    if (busy || operation?.status === 'error') return Promise.resolve(false)
+    try {
+      const s = guard()
+      if (!draft.trim()) return Promise.resolve(false)
+      let content = draft.trim(), category = 'besked'
+      if (analysisId !== undefined) {
+        const row = snapshot().thread.find(item => item.kind === 'video' && item.value.id === analysisId)?.value
+        if (s.role !== 'coach') throw Error('Tidsfeedback kræver coachrollen.')
+        content = timestampContent(row, seconds, draft); category = 'teknik'
+      }
+      operation = { status: 'pending', draft, row: { id: uuid(), athlete_id: s.athleteId,
+        sender_role: s.role, content, category } }
+      return transmit()
+    } catch (e) { error = e.message; emit(); return Promise.resolve(false) }
+  }
+  function athleteSend(content) {
+    try {
+      const s = guard()
+      if (s.role !== 'athlete' || !loaded || loading || busy || error
+        || operation?.status === 'error' || draft.trim()) return Promise.resolve(false)
+      draft = content()
+      return send()
+    } catch (e) { error = e.message; emit(); return Promise.resolve(false) }
+  }
   return {
     snapshot, refresh,
     subscribe(fn) { listeners.add(fn); fn(snapshot()); return () => listeners.delete(fn) },
@@ -69,22 +95,15 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
       if (busy || operation?.status === 'error') return false
       draft = String(text).slice(0, 10000); emit(); return true
     },
-    send({ analysisId, seconds } = {}) {
-      if (busy || operation?.status === 'error') return Promise.resolve(false)
-      try {
-        const s = guard()
-        if (!draft.trim()) return Promise.resolve(false)
-        let content = draft.trim(), category = 'besked'
-        if (analysisId !== undefined) {
-          const row = snapshot().thread.find(item => item.kind === 'video' && item.value.id === analysisId)?.value
-          if (s.role !== 'coach') throw Error('Tidsfeedback kræver coachrollen.')
-          content = timestampContent(row, seconds, draft); category = 'teknik'
-        }
-        operation = { status: 'pending', draft, row: { id: uuid(), athlete_id: s.athleteId,
-          sender_role: s.role, content, category } }
-        return transmit()
-      } catch (e) { error = e.message; emit(); return Promise.resolve(false) }
+    send,
+    answerQuestion(key, answer) {
+      return athleteSend(() => {
+        const question = athleteQuestion(snapshot().thread)
+        if (!question || question.key !== key) throw Error('Spørgsmålet er ændret. Opdatér samtalen.')
+        return athleteAnswerContent(question, answer)
+      })
     },
+    shareSet(set, note) { return athleteSend(() => athleteSetContent(set, note)) },
     retry: transmit,
     // Do not discard an unknown outcome and silently allocate a new send identity.
     async seen(key) {

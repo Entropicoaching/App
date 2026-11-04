@@ -2,6 +2,8 @@ import { feedbackText, videoLabel } from './conversationModel.mjs'
 import { weeklyConversationSummary } from './uge/weeklyConversationSummary.mjs'
 import { conversationWeek } from './conversationWeek.mjs'
 import { ownQuickRepliesView } from './ownQuickRepliesView.mjs'
+import { athleteQuestion, athleteAnswers } from './athleteConversation.mjs'
+import { athleteSharingView } from './athleteSharingView.mjs'
 
 const copenhagen = new Intl.DateTimeFormat('da-DK', {
   timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -103,6 +105,8 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   Object.assign(send.style, { background: '#d8b16b', color: '#141410' })
   const reload = button('Opdatér samtalen', () => controller.refresh())
   const upload = button('Send video', () => controller.upload())
+  upload.title = 'Åbn videodeling fra passet og tilføj en kort note.'
+  const sharing = typeof controller.shareSet === 'function' ? athleteSharingView({ node, button, controller }) : null
   const quick = node('div'), quickStatus = node('p')
   Object.assign(quick.style, { display: 'flex', flexWrap: 'wrap', gap: '8px' })
   const renderQuick = () => quick.replaceChildren(...templates.map(row => button(row.name, () => {
@@ -159,6 +163,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     latestState = state
     updateLetter(state)
     ownReplies.update(state)
+    sharing?.update(state)
     // Only the coach's complete, scoped snapshot may produce week counters.
     week.hidden = state.role !== 'coach'
     weekDetails.hidden = true
@@ -183,7 +188,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     title.textContent = state.role === 'coach' ? 'Samtale med atleten' : 'Din coach'
     const unread = state.thread.filter(item => state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach).length
     // Marc 3. nov. (keep it simple): antallet ulaeste staar paa spring-knappen; statuslinjen siger kun det, der mangler.
-    status.textContent = state.error || (state.loading ? 'Henter samtalen…' : state.thread.length ? '' : state.role === 'coach' ? 'Ingen beskeder endnu.' : 'Ingen beskeder endnu. Skriv til din coach herunder.')
+    status.textContent = state.error || (state.loading || !state.loaded ? 'Henter samtalen…' : state.thread.length ? '' : state.role === 'coach' ? 'Ingen beskeder endnu.' : 'Ingen beskeder endnu. Skriv til din coach herunder.')
     status.hidden = !status.textContent
     status.setAttribute('role', state.error ? 'alert' : 'status')
     input.value = state.draft
@@ -197,7 +202,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       composition = nextComposition
       actions.replaceChildren(send, ...(retry.hidden ? [] : [retry]), ...(state.role === 'athlete' ? [upload] : []))
       compose.replaceChildren(...(state.role === 'coach' && controller.weeklyLetter ? [letterTools] : []),
-        input, actions, ...(state.role === 'coach' ? [coach] : []))
+        input, actions, ...(state.role === 'coach' ? [coach] : sharing ? [sharing.root] : []))
     }
     loadQuick.disabled = Boolean(locked); timed.disabled = Boolean(locked || !state.draft.trim())
     if (state.operation?.status === 'sent' && state.operation.row.category === 'teknik'
@@ -216,6 +221,8 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     }
     videoSelect.value = selected
     const isUnread = item => Boolean(state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach)
+    const question = state.role === 'athlete' && state.loaded && !state.loading && !state.error
+      && typeof controller.answerQuestion === 'function' ? athleteQuestion(state.thread) : null
     // Stable partition: preserve the original timeline inside each group.
     const ordered = [...state.thread.filter(isUnread), ...state.thread.filter(item => !isUnread(item))]
     firstUnread = null
@@ -225,6 +232,11 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       const li = node('li'), row = item.value
       li.dataset.key = item.key; li.style.whiteSpace = 'pre-wrap'; li.style.marginBottom = '20px'
       const unread = state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach
+      if (state.role === 'athlete') {
+        li.dataset.unread = String(Boolean(unread))
+        Object.assign(li.style, { borderInlineStart: `3px solid ${unread ? '#d8b16b' : 'transparent'}`,
+          paddingInlineStart: '8px' })
+      }
       const label = `${item.kind === 'video' ? 'Video' : row.sender_role === 'coach' ? 'Coach' : 'Atlet'} · ${formatConversationTime(item.at)}${unread ? ' · Ulæst' : ''}`
       const toggle = button(label, async () => {
         if (disposed) return
@@ -243,12 +255,30 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       const characters = Array.from(text)
       const preview = node('p', characters.slice(0, 120).join('') + (characters.length > 120 ? '…' : ''))
       preview.hidden = expanded.has(item.key)
-      li.append(toggle, content, preview); return li
+      li.append(toggle, content, preview)
+      if (question?.key === item.key) {
+        const replies = node('div')
+        replies.setAttribute('aria-label', 'Hurtige svar til coachens spørgsmål')
+        Object.assign(replies.style, { display: 'flex', flexWrap: 'wrap', gap: '8px' })
+        replies.append(node('p', state.draft.trim()
+          ? 'Din besked er bevaret. Send eller tøm den for at bruge hurtigsvar.' : 'Send svar med ét tryk:'))
+        for (const answer of athleteAnswers(question)) {
+          const reply = button(answer, async () => {
+            if (disposed || reply.disabled) return
+            await controller.answerQuestion(item.key, answer)
+            if (!disposed) input.focus?.()
+          })
+          reply.disabled = Boolean(locked || state.draft.trim())
+          replies.append(reply)
+        }
+        li.append(replies)
+      }
+      return li
     }))
     if (state.operation && state.operation.status !== 'sent') {
       const pending = node('li', `${state.operation.row.content}\n${state.operation.status === 'error' ? 'Ikke bekræftet. Prøv igen med samme besked.' : 'Sender…'}`)
       pending.dataset.pending = state.operation.row.id; list.append(pending)
     }
   })
-  return () => { disposed = true; ownReplies.dispose(); unsubscribe(); controller.dispose(); root.replaceChildren() }
+  return () => { disposed = true; sharing?.dispose(); ownReplies.dispose(); unsubscribe(); controller.dispose(); root.replaceChildren() }
 }
