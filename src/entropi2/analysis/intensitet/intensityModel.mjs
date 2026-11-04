@@ -44,11 +44,14 @@ function uniqueSets(rows) {
 }
 
 /** Four Danish Monday-Sunday weeks. Caller supplies one athlete's authoritative
+ * Optional third argument { weeks: 1..26 }; default remains four weeks.
  * snapshot, enriched with reference_e1rm in the SAME weight unit and exercise
  * variation, chosen independently and known at the time of that set.
  * No fetching, current clock, writes, recommendations or screen integration.
  */
-export function weeklyIntensity(exerciseLogs, asOf) {
+export function weeklyIntensity(exerciseLogs, asOf, { weeks: weekCount = 4 } = {}) {
+  if (!Number.isSafeInteger(weekCount) || weekCount < 1 || weekCount > 26)
+    return { ready: false, weeks: [], message: 'Ugeperioden er ugyldig.' }
   const isDay = typeof asOf === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(asOf)
   if (!(asOf instanceof Date) && !(typeof asOf === 'string' && timestamp.test(asOf)))
     return { ready: false, weeks: [], message: 'Dato mangler eller er ugyldig.' }
@@ -57,8 +60,8 @@ export function weeklyIntensity(exerciseLogs, asOf) {
   if (!Array.isArray(exerciseLogs)) return { ready: false, weeks: [], message: 'Sætdata er ikke klar.' }
   const cutoff = isDay ? null : new Date(asOf).getTime()
   const monday = addCalendarDays(today, -((new Date(`${today}T00:00:00Z`).getUTCDay() + 6) % 7))
-  const weeks = Array.from({ length: 4 }, (_, i) => {
-    const start = addCalendarDays(monday, (i - 3) * 7)
+  const weeks = Array.from({ length: weekCount }, (_, i) => {
+    const start = addCalendarDays(monday, (i - weekCount + 1) * 7)
     return { start, end: addCalendarDays(start, 6), total: 0, classified: 0, unknown: 0,
       zones: INTENSITY_ZONES.map(zone => ({ ...zone, count: 0, share: null })) }
   })

@@ -27,6 +27,8 @@ export function uniqueSets(rows) {
 
 /**
  * Descriptive load for four Danish Monday–Sunday calendar weeks, oldest first.
+ * Optional { weeks: 1..26 } extends the display window; ratios always use
+ * the latest four weeks. The default remains four for all existing callers.
  * `asOf` is required: YYYY-MM-DD (whole day) or an explicitly zoned timestamp /
  * Date (exact instant). No clock, queries, flags, UI, recommendations or writes.
  * Input is one already scoped, authoritative exercise_logs snapshot: one row
@@ -36,15 +38,16 @@ export function uniqueSets(rows) {
  * Ratio needs at least one measurable set in EACH week and a positive chronic
  * mean. It compares the current (possibly partial) week to the previous three.
  */
-export function weeklyLoad(exerciseLogs, asOf) {
+export function weeklyLoad(exerciseLogs, asOf, { weeks: weekCount = 4 } = {}) {
+  if (!Number.isSafeInteger(weekCount) || weekCount < 1 || weekCount > 26) return null
   const isDay = typeof asOf === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(asOf)
   if (!(asOf instanceof Date) && !(typeof asOf === 'string' && timestamp.test(asOf))) return null
   const today = calendarDay(asOf)
   if (!today || !Array.isArray(exerciseLogs)) return null
   const cutoff = isDay ? null : new Date(asOf).getTime()
   const monday = addCalendarDays(today, -((new Date(`${today}T00:00:00Z`).getUTCDay() + 6) % 7))
-  const weeks = Array.from({ length: 4 }, (_, i) => {
-    const start = addCalendarDays(monday, (i - 3) * 7)
+  const weeks = Array.from({ length: weekCount }, (_, i) => {
+    const start = addCalendarDays(monday, (i - weekCount + 1) * 7)
     return { start, end: start && addCalendarDays(start, 6), sets: 0,
       tonnage: 0, averageRpe: null, rpeCount: 0 }
   })
@@ -67,8 +70,9 @@ export function weeklyLoad(exerciseLogs, asOf) {
         : week.averageRpe + (rating - week.averageRpe) / week.rpeCount
     }
   }
-  const previous = weeks.slice(0, 3), current = weeks[3]
-  const chronicLoad = previous.every(w => w.sets > 0 && w.tonnage !== null)
+  // Existing ratio semantics stay tied to the latest four calendar weeks.
+  const previous = weeks.slice(-4, -1), current = weeks.at(-1)
+  const chronicLoad = previous.length === 3 && previous.every(w => w.sets > 0 && w.tonnage !== null)
     ? previous.reduce((sum, w) => sum + w.tonnage / 3, 0) : null
   const ratio = chronicLoad > 0 && current.sets > 0 && current.tonnage !== null
     ? current.tonnage / chronicLoad : null

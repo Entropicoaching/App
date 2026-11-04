@@ -106,40 +106,35 @@ test('history: local undo, frozen inputs and strict OFF preserve behavior', () =
   assert.equal(Analysis({ entropi2: false, get now() { throw Error('OFF read') }, get fremgangLogs() { throw Error('OFF read') } }), null)
 })
 
-test('history DOM: placed below overview, bars have visible text equivalents and gaps have no bars', () => {
+// The requested 26-week view replaces the old four-week graph. The pure
+// fourWeekHistory contract above remains unchanged for existing consumers.
+test('history DOM: long-term development replaces the four-week graph above folded reports', () => {
   const dom = Analysis(props([log(dates[0], 100), log(dates[3], '102,5')]))
-  const sections = dom.querySelectorAll('section')
-  assert.ok(sections.findIndex(n => n.getAttribute('data-entropi2-ugerapport')) < sections.findIndex(n => n.getAttribute('data-analysis-history')))
   const history = dom.querySelectorAll('[data-analysis-history]')[0]
-  assert.equal(history.querySelectorAll('figure').length, 1)
-  assert.equal(history.querySelectorAll('ol').length, 4)
-  assert.equal(history.querySelectorAll('li').length, 16)
+  assert.equal(dom.querySelectorAll('h2')[0].textContent, 'Din udvikling')
   assert.equal(history.querySelectorAll('[data-history-bar]').length, 2)
-  assert.equal(history.querySelectorAll('[data-history-value]').filter(n => n.textContent === 'Ingen data').length, 14)
-  assert.ok(history.textContent.includes('112,8 kg e1RM'))
-  assert.ok(history.textContent.includes('12.10.2026 til 18.10.2026'))
-  assert.ok(history.textContent.includes('Op ca. 2,8 kg e1RM'))
-  for (const list of history.querySelectorAll('ol')) assert.ok(list.getAttribute('aria-label').includes('værdier pr. uge'))
-  const hidden = history.querySelectorAll('span').filter(n => n.getAttribute('aria-hidden') === 'true')
-  assert.equal(hidden.length, 16)
-  assert.ok(hidden.every(n => n.textContent === ''))
-  assert.equal(history.querySelectorAll('button').length, 0)
+  assert.equal(history.querySelectorAll('[data-history-value]').length, 26)
+  assert.equal(history.querySelectorAll('[data-history-value]').filter(n => n.textContent.includes('Ingen sammenlignelige data')).length, 24)
+  assert.match(history.textContent, /112,8 kg e1RM/)
+  assert.match(history.textContent, /for lidt data/)
+  assert.doesNotMatch(dom.textContent, /De seneste 4 uger/)
+  const secondary = dom.querySelectorAll('[data-analysis-secondary]')[0]
+  assert.equal(secondary.getAttribute('open'), null)
+  assert.equal(secondary.querySelectorAll('[data-entropi2-ugerapport]').length, 1)
 })
 
-
-test('history DOM: zero, one, two and four weeks, loading and missing history expose complete text', () => {
+test('history DOM: gaps, short histories, loading and missing snapshots are honest', () => {
   for (const count of [0, 1, 2, 4]) {
-    const logs = dates.slice(0, count).map(day => log(day))
-    const history = Analysis(props(logs)).querySelectorAll('[data-analysis-history]')[0]
+    const history = Analysis(props(dates.slice(0, count).map(day => log(day))))
+      .querySelectorAll('[data-development]')[0]
     assert.equal(history.querySelectorAll('[data-history-bar]').length, count)
-    assert.equal(history.querySelectorAll('[data-history-value]').length, 16)
-    assert.equal(history.querySelectorAll('[data-history-value]').filter(n => n.textContent === 'Ingen data').length, 16 - count)
-    assert.equal(history.querySelectorAll('[data-history-summary]').length, 4)
+    assert.equal(history.querySelectorAll('[data-history-value]').length, count === 0 ? 0 : 26)
+    assert.equal(history.querySelectorAll('[data-history-summary]').length, count === 0 ? 0 : 1)
   }
   for (const extra of [{ fremgangLoading: true }, { fremgangLogs: undefined }]) {
-    const history = Analysis({ ...props([log(dates[3])]), ...extra }).querySelectorAll('[data-analysis-history]')[0]
+    const history = Analysis({ ...props([log(dates[3])]), ...extra }).querySelectorAll('[data-development]')[0]
     assert.equal(history.querySelectorAll('[data-history-bar]').length, 0)
-    assert.ok(history.querySelectorAll('[data-history-value]').every(n => n.textContent === 'Data ikke klar'))
-    assert.match(history.textContent, /ikke klar/)
+    assert.equal(history.querySelectorAll('[data-history-value]').length, 0)
+    assert.match(history.textContent, /Henter|løftehistorikken mangler/)
   }
 })

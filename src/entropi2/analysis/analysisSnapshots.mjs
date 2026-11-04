@@ -59,17 +59,20 @@ export function analysisSessions(props, now) {
 // Current-week edits/undo own their exercise IDs. Keep conflicts for the
 // intensity model; pending positions suppress confirmed stale copies as well.
 // Reference values are passed through, never derived from the measured set.
-export function analysisIntensity(props) {
+export function analysisIntensity(props, { includePending = false } = {}) {
   if (props.fremgangLoading || props.fremgangError || props.exerciseLogsLoading || props.exerciseLogsError ||
       !Array.isArray(props.fremgangLogs)) return undefined
   const ids = new Set(list(props.currentWeek?.sessions).flatMap(s => list(s.exercises)).map(e => e.id))
   const hasLocal = Array.isArray(props.exerciseLogs)
-  const start = calendarDay(props.currentWeek?.start_date), end = start && addCalendarDays(start, 6)
+  const start = typeof props.currentWeek?.start_date === 'string' ? calendarDay(props.currentWeek.start_date) : null
+  const end = start && addCalendarDays(start, 6)
   const rows = [...props.fremgangLogs.filter(r => r && (!hasLocal || !ids.has(r.exercise_id))),
     ...(hasLocal ? props.exerciseLogs.filter(r => {
       const date = typeof r?.logged_at === 'string' ? calendarDay(r.logged_at) : null
       return r && ids.has(r.exercise_id) && start && date && date >= start && date <= end
     }) : [])].filter(r => owned(r, props))
+  // Long-term consumers resolve pending identities across dates and IDs too.
+  if (includePending) return rows
   const pending = new Set(rows.filter(r => r.pending || r._optimistic).map(position))
   return rows.filter(r => !pending.has(position(r)))
 }

@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import Analysis from './Analysis.mjs'
 import WeeklyReport from './ugerapport/WeeklyReport.mjs'
+import DevelopmentView from './DevelopmentView.mjs'
 import { renderTree } from './testDom.mjs'
 import { analysisMineData } from './analysisMineData.mjs'
 import { mineDataModel } from '../athlete/minedata/mineDataModel.mjs'
@@ -17,20 +18,24 @@ const nodes = n => !n || typeof n !== 'object' ? [] : [n, ...[n.props?.children]
 const marked = (tree, key) => nodes(tree).find(n => n.props?.[key])
 const model = p => mineDataModel(analysisMineData(p, now))
 
-test('composition: weekly report is first, Mine data and all further analysis are closed', () => {
+test('composition: development is first, weekly report and secondary analysis start closed', () => {
   const tree = Analysis(props()), children = tree.props.children
   assert.equal(children[0].type, 'h1')
-  assert.equal(children[1].type, WeeklyReport)
+  assert.equal(children[1].type, DevelopmentView)
+  assert.equal(children[2].type, 'details')
+  assert.equal(children[2].props.open, undefined)
+  assert.equal(children[2].props.children[1].type, WeeklyReport)
   for (const key of ['data-analysis-mine-data', 'data-analysis-more']) {
     const detail = marked(tree, key)
     assert.equal(detail.type, 'details'); assert.equal(detail.props.open, undefined)
     assert.equal(detail.props.children[0].type, 'summary')
     assert.ok(detail.props.children[0].props.style.minHeight >= 44)
   }
-  assert.equal(children[2], marked(tree, 'data-analysis-mine-data'))
+  const mineData = marked(tree, 'data-analysis-mine-data')
+  assert.ok(nodes(children[2]).includes(mineData))
   // This fold combines current-program-week sessions and four-week snapshots.
   // The summary must not imply four weeks of session coverage.
-  assert.equal(children[2].props.children[0].props.children, 'Mine data')
+  assert.equal(mineData.props.children[0].props.children, 'Mine data')
   const dom = renderTree(tree)
   assert.equal(dom.querySelectorAll('[data-entropi2-ugerapport]').length, 1)
   assert.equal(dom.querySelectorAll('[data-analysis-week]').length, 0)

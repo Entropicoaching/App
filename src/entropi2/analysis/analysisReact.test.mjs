@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { createElement as h } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import Analysis from './Analysis.mjs'
+import DevelopmentView from './DevelopmentView.mjs'
 import WeeklyReport from './ugerapport/WeeklyReport.mjs'
 import MineData from '../athlete/minedata/MineData.mjs'
 import IntensityView from './intensitet/IntensityView.mjs'
@@ -29,7 +30,7 @@ test('real React renders connected data and keeps leaves as component elements',
   assert.equal((rendered.match(/data-analysis-records=/g) ?? []).length, 1)
 })
 
-test('strength graph has no collapsed ancestor; secondary sections start closed', () => {
+test('long-term development has no collapsed ancestor; secondary sections start closed', () => {
   const tree = Analysis(props())
   const find = (node, key, ancestors = []) => {
     if (!node || typeof node !== 'object') return null
@@ -39,13 +40,15 @@ test('strength graph has no collapsed ancestor; secondary sections start closed'
     }
     return null
   }
-  assert.equal(find(tree, 'data-analysis-history').ancestors.some(n => n.type === 'details'), false)
+  assert.equal(tree.props.children[1].type, DevelopmentView)
+  assert.equal(tree.props.children[2].props['data-analysis-secondary'], true)
+  assert.equal(tree.props.children[2].props.open, undefined)
   for (const key of ['data-analysis-mine-data', 'data-analysis-more', 'data-analysis-intensity']) {
     const { node } = find(tree, key)
     assert.equal(node.type, 'details'); assert.equal(node.props.open, undefined)
     assert.ok(node.props.children[0].props.style.minHeight >= 44)
   }
-  assert.equal((html(props()).match(/<figure/g) ?? []).length, 1)
+  assert.equal((html(props()).match(/<figure/g) ?? []).length, 2)
 })
 
 test('real React renders empty, missing, loading and error sources honestly', () => {
