@@ -12,6 +12,21 @@ export default function AthleteCard(props = {}) {
   if (props.enabled !== true) return null
   const model = athleteCardModel(props.facts)
   const canOpen = typeof props.onOpen === 'function'
+  if (props.compact) {
+    const status = [model.lastSession.state === 'ready' && model.lastSession.text,
+      model.messages.state === 'ready' && model.messages.count > 0 && model.messages.text].filter(Boolean).join(' · ')
+    return h('article', { 'aria-label': `Atletkort: ${model.name}`, style: { ...panel, padding: 12 } },
+      h('button', { type: 'button', disabled: !canOpen, 'data-coach-summary': model.id,
+        'aria-label': `Åbn atlet: ${model.name}`,
+        style: { ...action, marginTop: 0, width: '100%', textAlign: 'left', minWidth: 0,
+          overflowWrap: 'anywhere', boxSizing: 'border-box' },
+        onClick: canOpen ? () => props.onOpen(model.id) : undefined },
+        h('strong', null, model.name),
+        status && h('span', { style: { display: 'block' } }, status),
+        ...props.compact.signals.slice(0, 2).map(text => h('span', { key: text,
+          'data-coach-short-signal': true, style: { display: 'block' } }, text)),
+        h('span', { style: { display: 'block' } }, 'Åbn')))
+  }
   const rows = [['Træning', model.lastSession], ['Kost', model.nutrition],
     ['Vægt', model.weight], ['Beskeder', model.messages]]
   return h('article', { 'aria-label': `Atletkort: ${model.name}`, style: panel },

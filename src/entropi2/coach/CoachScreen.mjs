@@ -1,10 +1,13 @@
 import { createElement as h, useEffect, useState } from 'react'
 import { s, initials } from '../../dashboardShared.js'
 import WeeklyReport from './WeeklyReport.mjs'
+import { weeklyReportModel } from './weeklyReportModel.mjs'
+import CoachAthleteWorkspace from './CoachAthleteWorkspace.mjs'
+import { coachAthleteWorkspace } from './coachWorkspaceModel.mjs'
 import CoachSessionNotes from './SessionNotesView.mjs'
 import ProgramEndingView from './ProgramEndingView.mjs'
 import ProgramOverblik from '../../dashboard/ProgramOverblikView.mjs'
-import { DEFAULT_ENTROPI2_COACH, coachHomeModel, hasUndatedPlannedWeek, openCoachRow, selectCoachTab } from './coachModel.mjs'
+import { coachHomeModel, hasUndatedPlannedWeek, openCoachRow, selectCoachTab } from './coachModel.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
   background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
@@ -28,10 +31,12 @@ function ClockedCoach(props) {
   return h(CoachView, { ...props, today: props.today ?? now })
 }
 
-export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', today = new Date(), ...props }) {
-  if (enabled !== true) return null
+export function CoachView(input = {}) {
+  if (input.enabled !== true) return null
+  const { tab = 'home', today = new Date(), ...props } = input
   const model = coachHomeModel(props, today)
   const inbox = tab === 'inbox'
+  const report = inbox ? null : weeklyReportModel(props, today)
   const unknownPrograms = model.athletes.filter(a => hasUndatedPlannedWeek(model.plans[a.id]))
   const datedPrograms = model.athletes.filter(a => !hasUndatedPlannedWeek(model.plans[a.id]))
   const available = typeof props.openProfile === 'function' && typeof props.openCoachPriorityItem === 'function'
@@ -75,13 +80,10 @@ export function CoachView({ enabled = DEFAULT_ENTROPI2_COACH, tab = 'home', toda
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Dine atleter (${model.summaries.length})`)),
       h('ul', { style: { listStyle: 'none', padding: 0 } },
         ...model.summaries.map(row => h('li', { key: row.athlete.id },
-          h('button', { type: 'button', 'data-coach-summary': row.athlete.id,
-            disabled: typeof props.openProfile !== 'function',
-            style: { ...button, width: '100%', minWidth: 0, boxSizing: 'border-box', marginBlock: 6 },
-            onClick: typeof props.openProfile === 'function'
-              ? () => props.openProfile(row.athlete, 'hub', 'list') : undefined },
-          h('strong', null, row.athlete.name),
-          row.text && h('span', { style: { display: 'block', marginTop: 8 } }, row.text)))))),
+          h(CoachAthleteWorkspace, { key: `${props.readContext?.coachId}:${row.athlete.id}:${model.day}`,
+            athlete: row.athlete, data: coachAthleteWorkspace(props, model, row.athlete, report),
+            onOpen: typeof props.openProfile === 'function'
+              ? () => props.openProfile(row.athlete, 'hub', 'list') : undefined }))))),
     !inbox && model.rosterReady && model.athletes.length > 0 && h('details', {
       'aria-label': 'Ugerapport', 'data-coach-fold': 'ugerapport', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Ugerapport')),

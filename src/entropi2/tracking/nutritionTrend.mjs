@@ -41,7 +41,10 @@ function value(sum, count = 1) {
  * Numbers are converted only for output; overflow is null, never Infinity.
  * No I/O, implicit clock, mutation, identity filtering or goal prescription.
  */
-export function nutritionTrend(historyRows, targets, date) {
+// The coach roster read projects only meal/kcal/protein. In that explicit
+// projection, unselected carb/fat fields are not evidence about protein quality.
+// Default callers retain the complete-meal validation contract.
+export function nutritionTrend(historyRows, targets, date, { projection = 'full' } = {}) {
   const end = calendarTime(date)
   if (end === null) return { days: [], weeks: [], recent: null, signal: null }
   const monday = end - ((new Date(end).getUTCDay() + 6) % 7) * DAY
@@ -65,7 +68,9 @@ export function nutritionTrend(historyRows, targets, date) {
       grouped.set(row.date, day)
     }
     day.meals++
-    const meal = mealTemplateItems([row])?.[0]
+    const meal = projection === 'kcal-protein'
+      ? typeof row.meal === 'string' && row.meal.trim() ? { meal: row.meal } : null
+      : mealTemplateItems([row])?.[0]
     const amounts = KEYS.map(key => units(row[key]))
     if (!meal || isDayReceipt({ meal: meal.meal.trimStart() }) || amounts.includes(null)) {
       day.kcal = day.protein = null

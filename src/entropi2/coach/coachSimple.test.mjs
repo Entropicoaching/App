@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import CoachAthleteWorkspace from './CoachAthleteWorkspace.mjs'
 import WeeklyReport from './WeeklyReport.mjs'
 import { CoachView } from './CoachScreen.mjs'
 
@@ -49,7 +50,7 @@ test('new content stays inside native closed folds after the open attention sect
     assert.ok(summary.props.style.minHeight >= 44)
     assert.ok(all.indexOf(attention) < all.indexOf(fold))
   }
-  assert.equal(nodes(athletes).filter(n => n.props?.['data-coach-summary']).length, 1)
+  assert.equal(nodes(athletes).filter(n => n.type === CoachAthleteWorkspace).length, 1)
   const report = nodes(weekly).find(n => n.type === WeeklyReport)
   assert.ok(report)
   assert.equal(nodes(report.type(report.props)).filter(n => n.props?.['data-coach-weekly-report']).length, 1)

@@ -1,6 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import CoachScreen, { CoachView } from './CoachScreen.mjs'
+import CoachAthleteWorkspace from './CoachAthleteWorkspace.mjs'
+import AthleteCard from './atletkort/AthleteCard.mjs'
 import { coachHomeModel } from './coachModel.mjs'
 const today = '2026-11-03'
 function fixture(ids = ['a']) {
@@ -27,11 +29,13 @@ function nutrition(p) {
 }
 const nodes = n => Array.isArray(n) ? n.flatMap(nodes) : !n || typeof n !== 'object' ? [] : [n, ...nodes(n.props?.children ?? n.children)]
 const text = n => typeof n === 'string' ? n : Array.isArray(n) ? n.map(text).join('') : n && typeof n === 'object' ? text(n.props?.children ?? n.children) : ''
-const summaries = p => nodes(CoachView({ ...p, today, enabled: true })).filter(n => n.props?.['data-coach-summary'])
+const cards = p => nodes(CoachView({ ...p, today, enabled: true })).filter(n => n.type === CoachAthleteWorkspace)
+  .flatMap(n => nodes(n.type(n.props))).filter(n => n.type === AthleteCard).map(n => n.type(n.props))
+const summaries = p => cards(p).map(card => nodes(card).find(n => n.type === 'button'))
 
 test('no data keeps one named athlete without placeholder parts', () => {
   const p = fixture(); assert.equal(line(p), ''); assert.equal(summaries(p).length, 1)
-  assert.equal(text(summaries(p)[0]), 'Atlet a')
+  assert.match(text(cards(p)[0]), /Atlet a/); assert.doesNotMatch(text(cards(p)[0]), /ukendt|Kost logget|0 ulæste/i)
 })
 test('nutrition alone retains exact existing text and protein progress', () => {
   const p = fixture(); nutrition(p)
@@ -52,7 +56,7 @@ test('combined line includes one activity, exact nutrition and summed unread tra
   const p = fixture(); log(p); nutrition(p); message(p, 'a', '2026-11-02', 1); message(p, 'a', today, 2, 'teknik')
   const before = structuredClone(p)
   assert.equal(line(p), `Sidste besked i dag · ${model(p).nutrition.get('a').text} · 3 ulæste beskeder`)
-  assert.equal(text(summaries(p)[0]), `Atlet a${line(p)}`)
+  assert.match(text(cards(p)[0]), /Seneste pas i dag/); assert.match(text(cards(p)[0]), /3 ulæste beskeder/)
   assert.deepEqual(p, before)
 })
 test('unread alone needs usable message evidence; note signal follows existing branch', () => {
@@ -92,13 +96,13 @@ test('synthetic DOM: semantic keyboard button, named section, wrapping styles fo
   const p = fixture(); const calls = []; p.openProfile = (...args) => calls.push(args)
   const tree = CoachView({ ...p, enabled: true, today }); const row = summaries(p)[0]
   assert.equal(row.type, 'button'); assert.equal(row.props.type, 'button'); assert.equal(row.props.disabled, false)
-  assert.equal(row.props.style.width, '100%'); assert.equal(row.props.style.boxSizing, 'border-box')
-  assert.equal(row.props.style.minWidth, 0); assert.equal(row.props.style.overflowWrap, 'anywhere')
+  assert.ok(row.props.style.minHeight >= 44)
+  assert.equal(cards(p)[0].props.style.minWidth, 0); assert.equal(cards(p)[0].props.style.overflowWrap, 'anywhere')
   assert.ok(nodes(tree).some(n => n.props?.['aria-label'] === 'Atletoverblik'))
   assert.match(text(tree), /focus-visible/)
   row.props.onClick(); assert.deepEqual(calls, [[p.athletes[0], 'hub', 'list']])
   assert.equal(summaries(fixture())[0].props.disabled, true)
-  assert.equal(nodes(CoachView({ ...p, enabled: true, today, tab: 'inbox' })).filter(n => n.props?.['data-coach-summary']).length, 0)
+  assert.equal(nodes(CoachView({ ...p, enabled: true, today, tab: 'inbox' })).filter(n => n.type === CoachAthleteWorkspace).length, 0)
 })
 test('OFF does not access data or mount clock hooks', () => {
   const p = { get athletes() { throw Error('OFF access') } }

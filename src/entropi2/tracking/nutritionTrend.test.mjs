@@ -180,3 +180,16 @@ test('actual copied controller supplies synthetic snapshot; OFF remains inert', 
     } finally { controller.dispose() }
   }
 })
+
+
+test('explicit coach projection accepts only selected meal/kcal/protein; default still requires full meals', () => {
+  const rows = seven().map(({ carb, fat, ...selected }) => selected)
+  assert.equal(trend(rows).signal, null)
+  const result = nutritionTrend(rows, goals, date, { projection: 'kcal-protein' })
+  assert.equal(result.signal, 'lavt protein')
+  assert.equal(result.recent.belowProtein80Days, 4)
+  for (const field of ['meal', 'kcal', 'protein']) {
+    const bad = structuredClone(rows); bad[6][field] = null
+    assert.equal(nutritionTrend(bad, goals, date, { projection: 'kcal-protein' }).signal, null)
+  }
+})
