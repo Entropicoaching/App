@@ -1,0 +1,15 @@
+export const profileStyles = {
+  page: { width: '100%', maxWidth: 480, margin: '0 auto', padding: '20px 16px',
+    boxSizing: 'border-box', minWidth: 0, overflowWrap: 'anywhere', color: '#edeae2',
+    fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: 1.5 },
+  title: { fontSize: 36, lineHeight: 1.2, margin: '0 0 24px', fontFamily: "'Playfair Display', Georgia, serif" },
+  card: { margin: '0 0 20px', padding: 20, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' },
+  heading: { fontSize: 24, margin: '0 0 8px' },
+  list: { margin: 0 },
+  field: { margin: '0 0 16px', minWidth: 0 },
+  label: { fontSize: 16, color: '#b8b4a8', margin: '0 0 4px' },
+  value: { fontSize: 18, color: '#edeae2', margin: 0, whiteSpace: 'pre-wrap' },
+  button: { width: '100%', minHeight: 52, padding: '12px 16px', border: '1px solid #77756b',
+    borderRadius: 8, background: '#1c1c18', color: '#edeae2', font: 'inherit', fontSize: 16,
+    whiteSpace: 'normal', overflowWrap: 'anywhere', marginBottom: 12 },
+}
