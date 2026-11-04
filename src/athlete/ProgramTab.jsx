@@ -122,6 +122,62 @@ function ExerciseTimer({ duration, label }) {
   )
 }
 
+// Mounted only for strict Entropi 2 ON; report state is separate from the legacy logger.
+function ProgramBlokslut({ allWeeks, athlete, programError }) {
+  const [blokslut, setBlokslut] = useState(null)
+  const [blokslutRetry, setBlokslutRetry] = useState(0)
+  // Lazy analysis owns its full-block reader. OFF never loads it or touches storage.
+  const athleteId = athlete?.id
+  const day = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Copenhagen' })
+  const weekStart = allWeeks.map(week => week.start_date)
+    .filter(start => typeof start === 'string' && start <= day).at(-1)
+  const blokslutWeek = weekStart + ':' + Math.floor(
+    (new Date(day + 'T12:00:00Z') - new Date(weekStart + 'T12:00:00Z')) / 604800000)
+  // Plan content, not array identity or per-set logs, defines the read snapshot.
+  const blokslutPlan = JSON.stringify(allWeeks)
+  // Keep this athlete's previous report visible while confirming/reading a new one.
+  const blokslutCurrent = blokslut?.athleteId === athleteId ? blokslut : null
+  useEffect(() => {
+    const weeks = JSON.parse(blokslutPlan)
+    if (!athleteId || !weeks.length) return
+    let cancelled = false
+    const now = new Date()
+    import('../entropi2/analysis/blokslut/programBlokslut.mjs').then(async api => {
+      const reportBlock = await api.confirmProgramBlock(athleteId, weeks, now)
+      if (cancelled || !reportBlock) { if (!cancelled) setBlokslut(null); return }
+      const key = api.blokslutSeenKey(athleteId, reportBlock)
+      let storage
+      try { storage = globalThis.localStorage } catch { /* Optional persistence. */ }
+      const scope = { athleteId, key, api, storage }
+      setBlokslut(previous => previous?.athleteId === athleteId && previous.model ? previous :
+        { ...scope, open: !api.wasBlokslutSeen(storage, key), model: { status: 'loading', message: 'Henter blokkens data.' } })
+      const model = await api.programBlokslutModel({ athleteId, block: reportBlock, now, programError })
+      if (!cancelled) setBlokslut(previous => ({ ...scope,
+        open: previous?.key === key ? previous.open : !api.wasBlokslutSeen(storage, key), model }))
+    }).catch(() => { if (!cancelled) setBlokslut({ athleteId, planError: true }) })
+    return () => { cancelled = true }
+  }, [blokslutPlan, athleteId, programError, blokslutWeek, blokslutRetry])
+  useEffect(() => {
+    if (blokslutCurrent?.model?.status === 'ready')
+      blokslutCurrent.api.markBlokslutSeen(blokslutCurrent.storage, blokslutCurrent.key)
+  }, [blokslutCurrent])
+  if (blokslutCurrent?.planError) return (
+    <div role="alert" style={{ marginBottom: 20, color: '#edeae2' }}>
+      Blokrapporten kunne ikke hentes.
+      <button type="button" style={{ minHeight: 44, padding: '8px 16px' }}
+        onClick={() => setBlokslutRetry(value => value + 1)}>Prøv igen</button>
+    </div>
+  )
+  return (blokslutCurrent && blokslutCurrent.api.renderProgramBlokslut(createElement, blokslutCurrent.model, {
+    open: blokslutCurrent.open,
+    onToggle: event => {
+      const open = event.currentTarget.open
+      setBlokslut(previous => previous?.key === blokslutCurrent.key ? { ...previous, open } : previous)
+    },
+    onRetry: () => setBlokslutRetry(value => value + 1),
+  }))
+}
+
 export default function ProgramTab({
   opvarmStige = false, hviledageListe = false, restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
@@ -356,6 +412,7 @@ export default function ProgramTab({
                     logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
                     goToWeek,
                   })}
+                  {entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} />}
                   {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
                       (kun aktuel uge; readinessLog er allerede i state). */}
                   {isCurrentWeek && readinessLog && readinessLog.readiness_score != null && readinessLog.readiness_score < 75 && (() => {
