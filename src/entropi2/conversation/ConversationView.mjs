@@ -1,4 +1,6 @@
 import { feedbackText, videoLabel } from './conversationModel.mjs'
+import { weeklyConversationSummary } from './uge/weeklyConversationSummary.mjs'
+import { conversationWeek } from './conversationWeek.mjs'
 import { ownQuickRepliesView } from './ownQuickRepliesView.mjs'
 
 const copenhagen = new Intl.DateTimeFormat('da-DK', {
@@ -31,7 +33,7 @@ export function formatConversationTime(value, now = new Date()) {
 }
 
 // Explicit expansion is the view acknowledgement. No mount/load/scroll read effects.
-export function mountConversation(root, controller, { enabled = false } = {}) {
+export function mountConversation(root, controller, { enabled = false, now = () => new Date() } = {}) {
   if (enabled !== true) return () => {}
   const doc = root.ownerDocument, expanded = new Set()
   let disposed = false, templateError = '', templates = [], composition = '', clearedTimedId = null
@@ -104,10 +106,38 @@ export function mountConversation(root, controller, { enabled = false } = {}) {
     firstUnread.focus?.()
   })
   jump.hidden = true
-  root.replaceChildren(title, status, jump, reload, list, compose)
+  const week = node('div'), weekLine = node('p'), weekDetails = node('details')
+  week.setAttribute('aria-label', 'Ugens samtale')
+  const weekToggle = node('summary', 'Ugens detaljer'), weekCounts = node('p')
+  weekToggle.style.minHeight = '44px'; weekToggle.style.cursor = 'pointer'
+  weekDetails.open = false
+  weekDetails.append(weekToggle, weekCounts)
+  week.append(weekLine, weekDetails)
+  root.replaceChildren(title, week, status, jump, reload, list, compose)
   const unsubscribe = controller.subscribe(state => {
     if (disposed) return
     ownReplies.update(state)
+    // Only the coach's complete, scoped snapshot may produce week counters.
+    week.hidden = state.role !== 'coach'
+    weekDetails.hidden = true
+    weekCounts.textContent = ''
+    weekLine.textContent = ''
+    if (state.role === 'coach') {
+      if (state.error) weekLine.textContent = 'Ugens opsummering er ikke tilgængelig. Opdatér samtalen.'
+      else if (state.loading || !state.loaded) weekLine.textContent = 'Henter ugens opsummering…'
+      else try {
+        const counts = weeklyConversationSummary({ enabled: true, athleteId: state.athleteId,
+          ...conversationWeek(now()),
+          messages: state.thread.filter(item => item.kind === 'message').map(item => item.value),
+          analyses: state.thread.filter(item => item.kind === 'video').map(item => item.value),
+        })
+        weekLine.textContent = `Denne uge · ${counts.totalMessages} beskeder · ${counts.unansweredMessages} ubesvarede · ${counts.videoFeedback} video-feedback`
+        weekCounts.textContent = counts.totalMessages === 0 && counts.videoFeedback === 0
+          ? 'Ingen beskeder eller video-feedback i denne uge.'
+          : `${counts.athleteMessages} fra atleten · ${counts.coachMessages} fra coachen. Ubesvarede er atletbeskeder uden en senere coachbesked i ugen. Video-feedback tælles efter delingstidspunktet.`
+        weekDetails.hidden = false
+      } catch { weekLine.textContent = 'Ugens opsummering kunne ikke beregnes. Opdatér samtalen.' }
+    }
     title.textContent = state.role === 'coach' ? 'Samtale med atleten' : 'Din coach'
     const unread = state.thread.filter(item => state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach).length
     // Marc 3. nov. (keep it simple): antallet ulaeste staar paa spring-knappen; statuslinjen siger kun det, der mangler.
