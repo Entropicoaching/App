@@ -27,5 +27,6 @@ test('home shows the date once: only the week in the eyebrow and "I dag" in the 
     sessions: [{ id: 's1', title: 'Dag 1', weekday: 1, exercises: [{ id: 'e1', name: 'Squat', sets: 4 }] }] }
   const html = renderToStaticMarkup(createElement(AthleteHome, props({ allWeeks: [week], currentWeek: week, exerciseLogs: [], onStartSession() {} })))
   assert.ok(html.includes('>Uge 1<'))
-  assert.doesNotMatch(html, /2026-11-03/)
+  // The folded week plan uses ISO dates in machine-readable <time> attributes.
+  assert.doesNotMatch(html.replace(/<[^>]*>/g, ''), /2026-11-03/)
 })

@@ -2,7 +2,8 @@ import { createElement as h, useEffect, useRef, useState } from 'react'
 import { homeModel, startHomeSession } from './homeModel.mjs'
 import { homeStyles as s } from './homeStyles.mjs'
 import { nutritionTodayModel } from './nutritionTodayModel.mjs'
-import { weekSummary } from './weekSummary.mjs'
+import { homeWeekOverview } from './homeWeekOverview.mjs'
+import WeekPlan from './ugeplan/WeekPlan.mjs'
 import HomeOnboarding from './HomeIntroduction.mjs'
 
 const clock = () => new Date()
@@ -28,7 +29,7 @@ export default function AthleteHome(props) {
   void tick
   const now = props.now ?? getNow()
   const model = homeModel({ ...props, now })
-  const weekText = weekSummary({ ...props, now })
+  const week = homeWeekOverview({ ...props, now })
   const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
   const target = model.target
   // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
@@ -64,10 +65,13 @@ export default function AthleteHome(props) {
           : typeof onStartSession !== 'function' && h('p', { role: 'status', style: s.text }, 'Passtart er ikke tilgængelig endnu.'))
         : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
-    weekText && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, weekText),
+    week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
     h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
       disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
+    week?.plan && h('details', { style: s.card, 'data-home-week-plan': '' },
+      h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 44 } }, 'Se ugens plan'),
+      h(WeekPlan, week.plan)),
     nutrition && h('button', { type: 'button',
       style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left' },
       disabled: typeof setTab !== 'function', onClick: go('kost') }, nutrition.text),
