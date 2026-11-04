@@ -34,6 +34,8 @@ import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'
 import AnalyseSamletPrototype from './AnalyseSamletPrototype.jsx'
 import { analyseSamletEnabled } from './analyseSamlet.mjs'
 
+const monthlyExportFactory = () => import('../entropi2/tracking/eksport/CoachMonthlyExport.mjs')
+
 export default function AnalyseTab({ analyseMissingData = false, sendMissingDataMessage, analyseConclusionMessage = false, coachId, sendConclusionMessage, coachRyd = false, videoRetentionObjects,
   a, aiExportCopied, aiExportText, aiExportWeeks, athleteLogs, athletePRHistory, athleteReadiness,
   athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory, generateAIReport, isMobile,
@@ -43,6 +45,12 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
   videoAnalysisReviewError, videoAnalysisReviewLoadingId, videoAnalysisUpdatingId, videoBaselines,
   videoLiftFilter, weeks, weeklyEvaluation = null,
 }) {
+              // Reuse the existing Entropi 2 boundary and its authorized scope.
+              // A missing/OFF evaluation never imports or mounts export code.
+              const exportScope = weeklyEvaluation?.props?.componentProps
+              const ExportBoundary = weeklyEvaluation?.type
+              const showMonthlyExport = exportScope?.enabled === true && exportScope.client &&
+                exportScope.coachId === coachId && exportScope.athleteId === (selectedAthlete?.id || a?.id)
               const missing = (rule, evidence, legacy, scopeKey = '') => analyseMissingData === true
                 ? <AnalyseMissingData enabled={true} key={`${rule}:${scopeKey}`} rule={rule} evidence={evidence()} scopeKey={scopeKey}
                     coachId={coachId} athleteId={selectedAthlete?.id || a?.id}
@@ -121,6 +129,10 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     loading={videoAnalysisLoading} error={videoAnalysisError} sendMessage={sendConclusionMessage} /> : null} error={videoAnalysisError}>
                 <div>
                   {weeklyEvaluation}
+                  {showMonthlyExport && <ExportBoundary
+                    key={`${exportScope.coachId}:${exportScope.athleteId}:${exportScope.asOf}`}
+                    factory={monthlyExportFactory} label="4-ugers eksport" loading={null}
+                    componentProps={exportScope} />}
                   {/* ORDRE 137 · commit 2: video-review-rækkens hoved (titel + "Gennemgå
                       måling"-knap/status) går fra titel+knapper på samme linje til titel
                       øverst og knapperne i en fuld-bredde 44px-række under, når der ikke

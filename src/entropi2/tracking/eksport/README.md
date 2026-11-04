@@ -1,12 +1,16 @@
 # Coachens lokale 4-ugers eksport
 
-Ny, frakoblet funktion. Intet vises i appen endnu; ingen eksisterende filer ændres.
+Koblet til coachens Analyse-fane umiddelbart under Ugeevaluering og før de
+øvrige analyseværktøjer. Den lille disclosure-knap "Eksportér 4 uger (CSV/JSON)"
+åbner valget Hent CSV / Hent JSON. Detaljerne er lukkede fra start.
+Eksportens lazy-grænse genbruger ugeevalueringens eksisterende Entropi 2-scope;
+OFF eller uoverensstemmende coach/atlet monterer ingen eksportkode.
 `buildCoachMonthlyReport(snapshot, { enabled: true })` giver rapportmodellen.
 `exportCoachMonthlyReport(snapshot, { enabled: true, format: 'csv' })` giver
 `{ status, filename, mimeType, content }`; format kan også være `json`.
 Standard/OFF returnerer `null` uden at læse snapshot eller format.
 
-## Input og kommende adapter
+## Input og adapter
 
 Kun ét autoriseret atlet-snapshot ad gangen, samme kontrakt som
 `atlet/overview.mjs`: `status: 'ready'`, `complete: true`, `athleteId`, `endDate`
@@ -28,10 +32,26 @@ Hvert array må have højst 10.000 poster; sparse arrays afvises.
 Ingen fritekstnoter, cyklusfelter, samtykke eller personnavne projiceres til output.
 Send altid kun de nødvendige offentligt definerede felter til denne funktion.
 
-En senere browseradapter kan efter et udtrykkeligt coachklik lægge `content` i
-en Blob med `mimeType`, hente den under `filename` og frigive objekt-URL'en.
-Denne leverance foretager intet DOM-kald, ingen filskrivning, ingen download,
-ingen storage og ingen netværkskald. Den er ikke importeret af appens UI.
+`monthlyDownload.mjs` læser først ved et udtrykkeligt formatklik. Fire kilder
+læses gennem den allerede tilsluttede coach-klient med athlete_id-filter,
+datoafgrænsning og deterministisk dato/id-sortering. Sider på 500 rækker læses
+til en kort side beviser fuldstændighed; mere end 10.000 rækker pr. kilde,
+dublerede id'er, forkert atlet eller fejl afviser hele eksporten.
+Der er ingen mutationer, auth-kald eller opslag i cykluskilder.
+
+Adapteren vælger de sidste 28 afsluttede danske kalenderdage: endDate =
+ugeevalueringens asOf minus én dag. Træningens UTC-interval overhenter ved
+midnat; de eksisterende modeller klipper efter dansk kalenderdato.
+Søvn, energi og stress hentes fra atletens manuelle readiness_logs. source
+sættes til athlete_manual i den kanoniske projektion; legacy soreness_level
+omregnes ikke til modellens 0–10-skala. Ømhed forbliver ukendt.
+
+`CoachMonthlyExport.mjs` viser loading, tom og fejl adskilt. Et tomt komplet
+snapshot kan downloades med forklaring om manglende data. Fejl giver ingen fil;
+formatknapperne tillader et nyt forsøg. Dobbeltklik blokeres, og resultater
+fra en tidligere coach, atlet, dato, klient eller afmonteret visning downloades
+ikke. Browseradapteren opretter en lokal Blob, klikker et downloadlink, fjerner
+linket og frigiver objekt-URL'en i næste task. Ingen browser er kørt i workeren.
 
 ## Felter i begge formater
 
@@ -85,7 +105,10 @@ eller JSON.stringify(snapshot).
 
 `node --test --test-concurrency=1 src/entropi2/tracking/eksport/*.test.mjs`
 
-Filerne opdages automatisk af den eksisterende `scripts/test.mjs` ved appens
-`npm test`. Ingen React-stub eller loader bruges: dette er rene funktioner uden
-React-afhængighed og uden UI. Fuld npm test, rigtig React og build er Dhurvas
-integrationsgate; de er ikke kørt i denne hermetiske worker.
+Filerne opdages automatisk af den eksisterende scripts/test.mjs ved npm test.
+monthlyReport-prøverne og monthlyDownload-prøverne importerer de faktiske
+kopierede modeller. monthlyIntegration-prøverne importerer den faktiske
+AnalyseTab og eksportkomponent gennem en udtrykkeligt syntetisk JSX/React-rig.
+monthlyRealReact-prøverne bruger rigtig React og react-dom/server, når pakkerne
+er tilgængelige; de markeres SKIP i den fastlåste kopi uden node_modules.
+Fuld npm test, rigtig React og build er Dhurvas integrationsgate.
