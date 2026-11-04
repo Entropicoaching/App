@@ -127,12 +127,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       cleanBlocks.push(() => tempo.dispose())
       const previous = lastSetLine(p, ex.id, clock.Date.now())
       if (previous) plan.append(el('p', previous, { class: 'muted', 'data-last-set': ex.id }))
-      if (ex.note) {
-        if (/(?:^|[\s;,])(?:tempo|pause|hvile|rest)\b/i.test(ex.note)) {
-          const instructions = el('details', null, { 'data-detail': 'coach-note' })
-          instructions.append(el('summary', 'Coachens instruktioner'), el('p', ex.note)); plan.append(instructions)
-        } else plan.append(el('p', `Coachens fokus: ${ex.note}`))
-      }
+      if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
       // Only the first work set needs a warmup ramp; it starts folded above the form.
       if (n.setNumber === 1) {
         const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
@@ -182,7 +177,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
               }
             }
             // Enter in the read-only calculator must never approve the work set.
-            plates.addEventListener('keydown', event => { if (event.key === 'Enter') event.preventDefault() })
+            plates.addEventListener('keydown', event => { if (event.key === 'Enter' && event.target?.tagName?.toLowerCase() === 'input') event.preventDefault() })
             plates.addEventListener('toggle', toggle)
             cleanBlocks.push(() => { plates.removeEventListener('toggle', toggle); disposePlates?.() })
             plates.open = !stepChanged && detailsOpen.includes('plates'); toggle()

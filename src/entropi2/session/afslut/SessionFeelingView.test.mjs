@@ -1,16 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { registerHooks } from 'node:module'
+import SessionFeeling from './SessionFeelingView.mjs'
 
-// Import the delivered module; only React host-element creation is synthetic.
-const hooks = registerHooks({ resolve(specifier, context, next) {
-  if (specifier === 'react' && context.parentURL === new URL('./SessionFeelingView.mjs', import.meta.url).href) {
-    return { url: new URL('../../analysis/reactElementFixture.mjs', import.meta.url).href, shortCircuit: true }
-  }
-  return next(specifier, context)
-} })
-const { default: SessionFeeling } = await import('./SessionFeelingView.mjs')
-hooks.deregister()
 const children = node => [node?.props?.children].flat().filter(x => x != null && x !== false)
 const all = node => typeof node === 'object' && node ? [node, ...children(node).flatMap(all)] : []
 const find = (tree, type) => all(tree).filter(node => node.type === type)

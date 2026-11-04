@@ -17,10 +17,10 @@ test('actual view: ordered explanation and planned pause, update clears stale co
   assert.match(root.textContent, /Planlagt pause kan ikke vises/)
   assert.doesNotMatch(root.textContent, /1 min. 30 sek./)
   view.update({ enabled: true, restSeconds: 0 })
-  assert.match(root.textContent, /Tempo er ikke angivet/)
+  assert.doesNotMatch(root.textContent, /Tempo er ikke angivet/)
   assert.match(root.textContent, /Ingen planlagt pause \(0 sek.\)/)
   view.update({ enabled: true })
-  assert.match(root.textContent, /Pause mellem sæt er ikke angivet/)
+  assert.equal(root.querySelector('[data-e2-tempo]') === null, true)
 })
 
 test('OFF touches no DOM; mounts, updates and disposal preserve host and other instances', () => {
@@ -37,7 +37,7 @@ test('OFF touches no DOM; mounts, updates and disposal preserve host and other i
   first.update(props); first.dispose(); first.dispose(); first.update(props)
   assert.equal(root.children.length, 2)
   second.dispose()
-  assert.deepEqual(root.children, [host])
+  assert.equal(root.children.length, 1); assert.equal(root.children[0] === host, true)
   assert.equal(timers.size, 0)
 })
 
@@ -47,4 +47,20 @@ test('hostile content is never rendered as markup; view has no controls or live 
   assert.equal(root.querySelectorAll('script,img,input,button,[aria-live]').length, 0)
   assert.doesNotMatch(root.textContent, /alert|onerror/)
   view.dispose()
+})
+
+test('missing values remove the owned block and allow later remount without touching the host', () => {
+  const { root, doc } = syntheticDom()
+  const host = doc.createElement('p'); host.textContent = 'Host'; root.append(host)
+  const view = mountTempoView(root, { enabled: true, tempo: ' ', restSeconds: null })
+  assert.equal(root.children.length, 1); assert.equal(root.children[0] === host, true)
+  view.update({ enabled: true, tempo: '3-1-X-0' })
+  assert.equal(root.querySelectorAll('[data-e2-tempo]').length, 1)
+  assert.doesNotMatch(root.textContent, /Pause mellem sæt er ikke angivet/)
+  view.update({ enabled: true, tempo: null, restSeconds: '' })
+  assert.equal(root.children.length, 1); assert.equal(root.children[0] === host, true)
+  view.update({ enabled: true, restSeconds: 0 })
+  assert.match(root.textContent, /Ingen planlagt pause \(0 sek.\)/)
+  assert.equal(root.querySelectorAll('ol').length, 0)
+  view.dispose(); assert.equal(root.children.length, 1); assert.equal(root.children[0] === host, true)
 })

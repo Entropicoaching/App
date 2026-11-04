@@ -1,17 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { registerHooks } from 'node:module'
+import SetNote from './SetNote.mjs'
 
-// Only React host-element creation is replaced; import the actual component.
-// No React reconciliation, browser layout or backend is exercised here.
-const hook = registerHooks({ resolve(specifier, context, next) {
-  if (specifier === 'react' && context.parentURL === new URL('./SetNote.mjs', import.meta.url).href) {
-    return { url: new URL('../../analysis/reactElementFixture.mjs', import.meta.url).href, shortCircuit: true }
-  }
-  return next(specifier, context)
-} })
-const { default: SetNote } = await import('./SetNote.mjs')
-hook.deregister()
 const children = node => [node?.props?.children].flat().filter(Boolean)
 const all = node => [node, ...children(node).flatMap(all)].filter(n => typeof n === 'object')
 const find = (tree, type) => all(tree).filter(node => node.type === type)

@@ -117,9 +117,11 @@ test('missing and malformed prescriptions, zero work weight and calculator error
     const t = setup(props)
     try {
       assert.match(detail(t.root, 'warmup').textContent, /Intet beregnet forslag/)
-      const plan = t.root.querySelector('[data-e2-tempo]').textContent
-      assert.match(plan, props.tempo ? /Tempo kan ikke vises/ : /Tempo er ikke angivet/)
-      assert.match(plan, props.tempo ? /Planlagt pause kan ikke vises/ : /Pause mellem sæt er ikke angivet/)
+      const plan = t.root.querySelector('[data-e2-tempo]')
+      if (props.tempo) {
+        assert.match(plan.textContent, /Tempo kan ikke vises/)
+        assert.match(plan.textContent, /Planlagt pause kan ikke vises/)
+      } else assert.equal(plan === null, true)
       openPlates(t.root)
       assert.match(detail(t.root, 'plates').textContent, props.tempo ? /Angiv en gyldig/ : /under stangens/)
       const input = detail(t.root, 'plates').querySelector('input'); input.value = ''; input.dispatch('input')
@@ -159,7 +161,7 @@ test('real form submit merges current numbers and draft; calculator Enter cannot
   const t = setup()
   try {
     const plates = openPlates(t.root); let prevented = false
-    plates.dispatch('keydown', { key: 'Enter', preventDefault() { prevented = true } })
+    plates.dispatch('keydown', { key: 'Enter', target: plates.querySelector('input'), preventDefault() { prevented = true } })
     assert.equal(prevented, true); assert.equal(t.calls, 0)
     const input = t.root.querySelector('[data-field="weight"]'); input.value = '87,5'
     button(t.root, 'Teknik').click()
@@ -194,4 +196,58 @@ test('existing host input note is visible and preserved until the athlete explic
     const text = t.root.querySelector('textarea'); text.value = ''; text.dispatch('input')
     await t.approve(); assert.equal(t.saved.note, '')
   } finally { t.view.dispose() }
+})
+
+test('Skiver preserves native Enter and Space activation on summary; only calculator input Enter is cancelled', () => {
+  const t = setup()
+  try {
+    const plates = openPlates(t.root), summary = plates.querySelector('summary')
+    for (const target of [summary, plates, plates.querySelector('select'), plates.querySelector('input')]) {
+      for (const key of ['Enter', ' ', 'Escape']) {
+        let prevented = false
+        plates.dispatch('keydown', { target, key, preventDefault() { prevented = true } })
+        assert.equal(prevented, target === plates.querySelector('input') && key === 'Enter')
+      }
+    }
+    assert.equal(t.calls, 0)
+    summary.focus(); t.view.update()
+    assert.equal(t.root.ownerDocument.activeElement, detail(t.root, 'plates').querySelector('summary'))
+  } finally { t.view.dispose() }
+  assert.equal(t.timers.size, 0)
+})
+
+test('coach focus stays visible in full even when it includes tempo, pause, hvile or rest', () => {
+  for (const note of ['Hold spændet; Tempo 3-1-X-0; Pause 90 sek',
+    'Roligt tempo og stabil teknik', 'Tag en pause og hold spændet',
+    'Hvile efter behov; fokus på knæ', 'Rest 60 sek; hold ryggen']) {
+    const t = setup({ note })
+    try {
+      const focus = t.root.querySelectorAll('p').find(n => n.textContent === `Coachens fokus: ${note}`)
+      assert.ok(focus, note)
+      assert.equal(focus.parentElement.getAttribute('aria-label'), 'Planlagt belastning')
+      assert.equal(detail(t.root, 'coach-note') === null, true)
+      assert.equal(t.calls, 0)
+    } finally { t.view.dispose() }
+  }
+})
+
+test('empty prescriptions render no tempo block; one supplied value shows only that value', () => {
+  for (const patch of [{}, { tempo: '', restSeconds: '  ' }, { tempo: '3-1-X-0' }, { restSeconds: 0 }]) {
+    const t = setup(patch)
+    try {
+      const block = t.root.querySelector('[data-e2-tempo]')
+      if (patch.tempo || patch.restSeconds === 0) {
+        assert.ok(block)
+        if (patch.tempo) {
+          assert.match(block.textContent, /Tempo: 3-1-X-0/)
+          assert.equal(detail(t.root, 'tempo-phases').open, false)
+          assert.doesNotMatch(block.textContent, /Planlagt pause/)
+        } else {
+          assert.match(block.textContent, /Ingen planlagt pause \(0 sek.\)/)
+          assert.equal(detail(t.root, 'tempo-phases'), null)
+        }
+      } else assert.equal(block === null, true)
+      assert.doesNotMatch(t.root.textContent, /Tempo er ikke angivet|Pause mellem sæt er ikke angivet/)
+    } finally { t.view.dispose() }
+  }
 })

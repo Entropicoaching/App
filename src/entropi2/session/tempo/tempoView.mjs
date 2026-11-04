@@ -6,6 +6,8 @@ export function mountTempoView(root, initial = {}) {
   function update({ enabled = false, tempo, restSeconds, compact = false } = {}) {
     if (disposed) return
     if (enabled !== true) { section?.remove(); section = null; return }
+    const parsed = parseTempo(tempo), rest = parsePlannedRest(restSeconds)
+    if (parsed.status === 'missing' && rest.status === 'missing') { section?.remove(); section = null; return }
     const doc = root.ownerDocument
     const el = (tag, text) => {
       const node = doc.createElement(tag)
@@ -18,7 +20,6 @@ export function mountTempoView(root, initial = {}) {
       section.setAttribute('aria-label', 'Tempo og planlagt pause')
       root.append(section)
     }
-    const parsed = parseTempo(tempo), rest = parsePlannedRest(restSeconds)
     const content = [el('h3', 'Tempo og pause')]
     if (parsed.status === 'valid') {
       content.push(el('p', `Tempo: ${parsed.notation}`))
@@ -30,11 +31,10 @@ export function mountTempoView(root, initial = {}) {
         phases.setAttribute('data-detail', 'tempo-phases')
         phases.append(el('summary', 'Tempoets faser'), list); content.push(phases)
       } else content.push(list)
-    } else content.push(el('p', parsed.status === 'missing' ? 'Tempo er ikke angivet.'
-      : 'Tempo kan ikke vises. Brug fire faser, fx 3-1-1-0. X betyder eksplosivt.'))
-    content.push(el('p', rest.status === 'valid' ? `Planlagt pause mellem sæt: ${rest.label}`
-      : rest.status === 'missing' ? 'Pause mellem sæt er ikke angivet.'
-        : 'Planlagt pause kan ikke vises. Brug sekunder, min:sek eller minutter med min.'))
+    } else if (parsed.status === 'invalid') content.push(el('p',
+      'Tempo kan ikke vises. Brug fire faser, fx 3-1-1-0. X betyder eksplosivt.'))
+    if (rest.status !== 'missing') content.push(el('p', rest.status === 'valid' ? `Planlagt pause mellem sæt: ${rest.label}`
+      : 'Planlagt pause kan ikke vises. Brug sekunder, min:sek eller minutter med min.'))
     section.replaceChildren(...content)
   }
   update(initial)
