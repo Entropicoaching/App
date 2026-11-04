@@ -1,6 +1,7 @@
 import { calendarDay, addCalendarDays } from '../../calendarDate.js'
 import { parseInputNumber } from '../../inputValues.js'
 import { isDayReceipt } from '../../mealEvidence.mjs'
+import { analysisSessions } from './analysisSnapshots.mjs'
 
 const state = (rows, loading, error) => error ? 'error' : loading === true ? 'loading'
   : Array.isArray(rows) ? 'ready' : 'unavailable'
@@ -43,11 +44,13 @@ export function analysisMineData(props = {}, now) {
     parseInputNumber(r.kcal) !== null).map(r => ({ athlete_id: athleteId, date: r.date }))
   const weights = list(props.weightLogs).filter(r => confirmed(r) && r.athlete_id === athleteId)
     .map(r => ({ athlete_id: athleteId, date: date(r), kg: parseInputNumber(r.weight) }))
-  // A current program week cannot prove completed sessions over all 28 days.
+  // The current program week supplies explicitly limited session coverage.
   // Explicit normalized snapshots may supply sources the legacy host lacks.
   // Host identity/date always win; MineData validates each row's athlete_id.
   return { athleteId, today,
-    sessions: props.mineData?.sessions ?? { state: 'unavailable', rows: [] },
+    sessions: props.mineData?.sessions ?? analysisSessions(props, now),
+    sessionsNote: props.mineData?.sessions ? null
+      : 'Pas vises kun for den viste programuge. En samlet optælling for alle 4 uger er ikke tilgængelig.',
     records: props.mineData?.records ?? recordSource,
     nutritionDays: props.mineData?.nutritionDays ?? source(meals,
       props.mealLoading, props.mealError),

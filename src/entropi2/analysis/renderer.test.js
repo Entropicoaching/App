@@ -38,6 +38,11 @@ test('renderer: navigation errors propagate from host descriptions', () => {
 })
 
 test('renderer: unsupported component descriptions fail instead of fabricating DOM', () => {
-  for (const input of [{}, { type() {}, props: {} }, { type: 'p' }])
+  for (const input of [{}, { type: 'p' }])
     assert.throws(() => renderTree(input), /Expected a host React element/)
+})
+
+test('renderer: leaf element descriptions are resolved for legacy event probes', () => {
+  const Leaf = ({ children }) => ({ type: 'p', props: { children } })
+  assert.equal(renderTree({ type: Leaf, props: { children: 'leaf' } }).textContent, 'leaf')
 })

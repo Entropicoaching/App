@@ -130,7 +130,8 @@ test('RPE DOM: text for all weeks and lifts, accessible disclosure, placement an
   dom.querySelectorAll('[data-analysis-destination]').forEach(b => b.dispatchEvent({ type: 'click' }))
   assert.deepEqual(calls, ['hjem', 'hjem', 'program'])
   const titles = dom.querySelectorAll('h2').map(n => n.textContent)
-  assert.equal(titles[3], 'RPE de seneste 6 uger')
+  assert.equal(titles[3], 'Intensitet pr. uge')
+  assert.equal(titles[4], 'RPE de seneste 6 uger')
 })
 
 test('RPE: strict OFF reads no props and frozen input stays unchanged', () => {

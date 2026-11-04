@@ -40,6 +40,7 @@ export function renderTree(node) {
   if (node == null || typeof node === 'boolean') return null
   if (node instanceof Element || node instanceof Text) return node
   if (typeof node === 'string' || typeof node === 'number') return new Text(node)
+  if (typeof node?.type === 'function' && node.props) return renderTree(node.type(node.props))
   if (typeof node !== 'object' || typeof node.type !== 'string' || !node.props)
     throw new TypeError('Expected a host React element or synthetic node')
   const { children, ...props } = node.props

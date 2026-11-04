@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import Analysis from './Analysis.mjs'
+import WeeklyReport from './ugerapport/WeeklyReport.mjs'
 import { renderTree } from './testDom.mjs'
 import { analysisMineData } from './analysisMineData.mjs'
 import { mineDataModel } from '../athlete/minedata/mineDataModel.mjs'
@@ -19,7 +20,7 @@ const model = p => mineDataModel(analysisMineData(p, now))
 test('composition: weekly report is first, Mine data and all further analysis are closed', () => {
   const tree = Analysis(props()), children = tree.props.children
   assert.equal(children[0].type, 'h1')
-  assert.equal(children[1].props['aria-label'], 'Din ugerapport')
+  assert.equal(children[1].type, WeeklyReport)
   for (const key of ['data-analysis-mine-data', 'data-analysis-more']) {
     const detail = marked(tree, key)
     assert.equal(detail.type, 'details'); assert.equal(detail.props.open, undefined)
@@ -27,13 +28,16 @@ test('composition: weekly report is first, Mine data and all further analysis ar
     assert.ok(detail.props.children[0].props.style.minHeight >= 44)
   }
   assert.equal(children[2], marked(tree, 'data-analysis-mine-data'))
+  // This fold combines current-program-week sessions and four-week snapshots.
+  // The summary must not imply four weeks of session coverage.
+  assert.equal(children[2].props.children[0].props.children, 'Mine data')
   const dom = renderTree(tree)
   assert.equal(dom.querySelectorAll('[data-entropi2-ugerapport]').length, 1)
   assert.equal(dom.querySelectorAll('[data-analysis-week]').length, 0)
   assert.equal(dom.querySelectorAll('[data-analysis-history]').length, 1)
   assert.equal(dom.querySelectorAll('figure').length, 1)
   assert.equal(nodes(marked(tree, 'data-analysis-mine-data')).filter(n => n.type === 'figure').length, 0)
-  assert.equal(nodes(marked(tree, 'data-analysis-more')).filter(n => n.props?.['data-analysis-history']).length, 1)
+  assert.equal(nodes(marked(tree, 'data-analysis-more')).filter(n => n.props?.['data-analysis-history']).length, 0)
 })
 
 test('actual connected leaf imports display normalized four-week data', () => {
@@ -43,7 +47,7 @@ test('actual connected leaf imports display normalized four-week data', () => {
   const dom = renderTree(Analysis(props({ mineData })))
   assert.match(dom.textContent, /08.10.2026 til 04.11.2026/)
   assert.match(dom.textContent, /1 registrerede, gennemførte pas/)
-  assert.match(dom.textContent, /Squat: 100 kg × 3/)
+  assert.doesNotMatch(dom.textContent, /Rekorder i perioden/)
   assert.match(dom.textContent, /1 af 1 kostdage/)
   assert.match(dom.textContent, /1 dage med registreret kropsvægt/)
 })
@@ -63,7 +67,7 @@ test('legacy bridge uses real logs; absent 28-day session coverage and meal goal
 
 test('empty, missing, loading and error render without fabricated observations', () => {
   assert.equal(model(props()).records.state, 'ready')
-  assert.match(renderTree(Analysis(props())).textContent, /Ingen registrerede sæt/)
+  assert.equal(model(props()).records.lifts.length, 0)
   const missing = props({ fremgangLogs: undefined, weightLogs: undefined, historicalMealLogs: undefined })
   assert.equal(model(missing).records.state, 'unavailable')
   for (const state of ['loading', 'error']) {

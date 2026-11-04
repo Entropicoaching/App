@@ -152,7 +152,7 @@ test('Danish calendar midnight and previous-week boundaries are respected', () =
 test('render places overview above unchanged questions, escapes text and preserves navigation', () => {
   const calls = []
   const dom = Analysis(props({ setTab: tab => calls.push(tab), currentWeek: { ...currentWeek, block_name: '<img src=x>' } }))
-  assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Din ugerapport', 'Mine data', 'De seneste 4 uger', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
+  assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Din ugerapport', 'Mine data', 'De seneste 4 uger', 'Intensitet pr. uge', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
   assert.equal(dom.querySelectorAll('[data-entropi2-ugerapport]').length, 1)
   // Marc 3. nov. (keep it simple): loeft uden data samles i een linje; alle fire loeft naevnes stadig.
   assert.ok(dom.querySelectorAll('h3').length + dom.querySelectorAll('[data-week-lifts-none]').length >= 1)
@@ -184,6 +184,6 @@ test('render exposes empty, partial, full, missing-history and decimal snapshots
   for (const [extra, texts] of cases) {
     const dom = Analysis(props(extra))
     for (const text of texts) assert.ok(dom.textContent.includes(text), text)
-    assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Din ugerapport', 'Mine data', 'De seneste 4 uger', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
+    assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Din ugerapport', 'Mine data', 'De seneste 4 uger', 'Intensitet pr. uge', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
   }
 })

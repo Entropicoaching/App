@@ -48,7 +48,8 @@ test('ANALYSE: AthleteView viser analysen øverst i fremgang-fanen kun med e2Atl
   const block = `        {/* FREMGANG */}
         {e2Atlet && tab === 'fremgang' && (
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
-            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab} />
+            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
+            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs} />
         )}
         {tab === 'fremgang' && (
           <LazyBoundary

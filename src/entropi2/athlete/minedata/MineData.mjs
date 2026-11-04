@@ -17,7 +17,7 @@ const unavailable = state => state === 'loading' ? 'Henter dine registreringer�
 const card = (key, heading, ...children) => h('section', { key, style: styles.card, 'aria-label': heading },
   h('h3', { style: styles.heading }, heading), ...children)
 
-// Unwired view. The future host owns feature gating, identity and data reads.
+// The host owns feature gating, identity and data reads.
 export default function MineData(props = {}) {
   const model = mineDataModel(props)
   const { sessions, records, nutrition, weight } = model
@@ -26,10 +26,11 @@ export default function MineData(props = {}) {
     h('h2', { style: styles.title }, 'Mine data'),
     text(model.start ? `Seneste 4 uger · ${date(model.start)} til ${date(model.end)} (begge dage med).`
       : 'Vælg en gyldig dato for at se de seneste 4 uger.'),
-    card('sessions', 'Pas gennemført', sessions.state !== 'ready' ? text(unavailable(sessions.state))
+    card('sessions', props.sessionsNote ? 'Pas i vist programuge' : 'Pas gennemført', sessions.state !== 'ready' ? text(unavailable(sessions.state))
       : text(`${sessions.completed} registrerede, gennemførte pas.`),
+    props.sessionsNote ? text(props.sessionsNote) : null,
     text('Kun færdigregistrerede pas tæller med. Delvise og oversprungne pas er udeladt.')),
-    card('records', 'Rekorder i perioden', records.state !== 'ready' ? text(unavailable(records.state))
+    props.showRecords !== false && card('records', 'Rekorder i perioden', records.state !== 'ready' ? text(unavailable(records.state))
       : lifts.length === 0 ? text('Ingen registrerede sæt med vægt og gentagelser i perioden.')
         : h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } }, ...lifts.map(lift =>
           h('li', { key: lift.exerciseId }, `${lift.exercise}: ${number.format(lift.weightKg)} kg × ${lift.reps} · ${date(lift.date)}`))),

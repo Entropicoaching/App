@@ -827,7 +827,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {/* FREMGANG */}
         {e2Atlet && tab === 'fremgang' && (
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
-            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab} />
+            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
+            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs} />
         )}
         {tab === 'fremgang' && (
           <LazyBoundary

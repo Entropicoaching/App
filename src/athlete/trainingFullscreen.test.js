@@ -58,7 +58,9 @@ test('rel1101 accepts only boolean true or one exact query value; default OFF', 
 })
 
 test('OFF integration reconstructs exact base; only current Hjem entry changes', () => {
-  let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')
+  // LF patches may be applied to a CRLF public copy. Keep the original SHA
+  // guard's CRLF convention while checking the exact source and all deltas.
+  let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
   // Entropi 2-koblingen (flaget entropi2, slukket som standard) er et eksplicit, separat delta.
   // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
@@ -157,7 +159,8 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
     // Analysen (R2-ENTROPI2-ANALYSE) øverst i fremgang-fanen, kun med flaget tændt.
     [`        {e2Atlet && tab === 'fremgang' && (
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
-            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab} />
+            fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
+            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs} />
         )}
 `, ''],
     // Ret1: med flaget tændt skjules den gamle analyse i fremgangsvisningen; resten af fremgang er uændret.
