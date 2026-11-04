@@ -26,15 +26,17 @@ const styles = `
 `
 
 /** Stateless React component. Opt in explicitly; host owns period/retry state.
- * Not imported by any entry point. No data access, storage or writes here.
+ * Coach adapter opts into hoursOnly for existing production readiness data.
+ * No data access, storage or writes here.
  */
 export default function SleepOverview(props = {}) {
   if (props.enabled !== true) return null
+  const hoursOnly = props.hoursOnly === true
   const model = buildSleepOverview(props.snapshot, { enabled: true, weeks: props.weeks })
   const section = (...children) => h('section', { className: 'e2-sleep', 'aria-label': 'Søvn over tid' },
     h('style', null, styles), h('h2', null, 'Søvn over tid'), ...children)
   if (model.status === 'loading') return section(
-    h('p', { role: 'status', 'aria-busy': true }, 'Henter dine søvnregistreringer…'))
+    h('p', { role: 'status', 'aria-busy': true }, hoursOnly ? 'Henter søvnregistreringer…' : 'Henter dine søvnregistreringer…'))
   if (model.status === 'error') return section(
     h('p', { role: 'alert' }, 'Kunne ikke vise hele perioden. Prøv igen.'),
     typeof props.onRetry === 'function' && h('button', { type: 'button', onClick: props.onRetry }, 'Prøv igen'))
@@ -50,13 +52,13 @@ export default function SleepOverview(props = {}) {
         h('h3', null, `${index === 0 ? 'Seneste 7 dage · ' : ''}${range(week.from, week.to)}`),
         h('dl', null,
           h('div', null, h('dt', null, 'Søvntimer'), h('dd', null, weekly(week.hours, 'timer'))),
-          h('div', null, h('dt', null, 'Søvnkvalitet'), h('dd', null, weekly(week.quality, 'af 5'))))))),
+          !hoursOnly && h('div', null, h('dt', null, 'Søvnkvalitet'), h('dd', null, weekly(week.quality, 'af 5'))))))),
     detail('days', 'Se daglige registreringer', h('div', null,
-      h('p', null, 'Timer fra dagsform; kvalitet fra din søvnregistrering (1–5). Ukendt betyder manglende eller ugyldig måling. Ingen kvalitet udledes af energi eller dagsformscore.'),
+      h('p', null, hoursOnly ? 'Atletens selvregistrerede søvntimer fra dagsform. Ukendt betyder manglende eller ugyldig måling.' : 'Timer fra dagsform; kvalitet fra din søvnregistrering (1–5). Ukendt betyder manglende eller ugyldig måling. Ingen kvalitet udledes af energi eller dagsformscore.'),
       h('ul', { className: 'e2-sleep-days' }, [...model.days].reverse().map(d =>
         h('li', { key: d.date, className: 'e2-sleep-day' }, h('time', { dateTime: d.date }, d.date),
-          h('div', null, `Søvn: ${value(d.hours, 'timer')} · Kvalitet: ${value(d.quality, 'af 5')}`)))))),
-    detail('training', 'Søvn og dine pas', h('div', null,
+          h('div', null, hoursOnly ? `Søvn: ${value(d.hours, 'timer')}` : `Søvn: ${value(d.hours, 'timer')} · Kvalitet: ${value(d.quality, 'af 5')}`)))))),
+    !hoursOnly && detail('training', 'Søvn og dine pas', h('div', null,
       h('p', null, 'Registreringer på samme dato i dansk tid. Søvnens og passets indbyrdes tidspunkt er ikke bekræftet. Det viser ikke, at søvn er årsagen til et resultat; program, belastning og andre forhold kan også spille ind.'),
       h('p', null, `${model.pairedRpeDays} dage med både søvntimer og RPE · ${model.pairedPerformanceDays} dage med både søvntimer og præstationsestimat.`),
       h('p', null, 'RPE er gennemsnittet af dine egne svar på registrerede sæt i hvert pas, ikke en samlet pasvurdering. Dækningen vises som besvarede sæt ud af registrerede sæt.'),

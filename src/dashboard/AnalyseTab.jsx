@@ -34,6 +34,7 @@ import { analyseSammenlignEnabled } from './analyseSammenlign.mjs'
 import AnalyseSamletPrototype from './AnalyseSamletPrototype.jsx'
 import { analyseSamletEnabled } from './analyseSamlet.mjs'
 
+const sleepOverviewFactory = () => import('../entropi2/tracking/soevn/CoachSleep.mjs')
 const monthlyExportFactory = () => import('../entropi2/tracking/eksport/CoachMonthlyExport.mjs')
 
 export default function AnalyseTab({ analyseMissingData = false, sendMissingDataMessage, analyseConclusionMessage = false, coachId, sendConclusionMessage, coachRyd = false, videoRetentionObjects,
@@ -129,6 +130,10 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     loading={videoAnalysisLoading} error={videoAnalysisError} sendMessage={sendConclusionMessage} /> : null} error={videoAnalysisError}>
                 <div>
                   {weeklyEvaluation}
+                  {showMonthlyExport && <ExportBoundary
+                    key={`sleep:${exportScope.coachId}:${exportScope.athleteId}:${exportScope.asOf}`}
+                    factory={sleepOverviewFactory} label="Søvn (4-8 uger)" loading={null}
+                    componentProps={{ ...exportScope, readinessRows: athleteReadiness }} />}
                   {showMonthlyExport && <ExportBoundary
                     key={`${exportScope.coachId}:${exportScope.athleteId}:${exportScope.asOf}`}
                     factory={monthlyExportFactory} label="4-ugers eksport" loading={null}
