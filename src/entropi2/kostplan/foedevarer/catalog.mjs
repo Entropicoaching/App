@@ -19,6 +19,17 @@ export const NUTRIENTS = Object.freeze(Object.fromEntries([
   ['leucineG', 'Leucin', 'g'],
 ].map(([key, label, unit]) => [key, Object.freeze({ label, unit })])))
 
+// Flat plan snapshots use these names; units share the catalog's authority.
+// No values are supplied here: a named source must accompany each flat value.
+export const MICRONUTRIENTS = Object.freeze(Object.fromEntries([
+  ['iron', 'ironMg'], ['calcium', 'calciumMg'], ['magnesium', 'magnesiumMg'],
+  ['zinc', 'zincMg'], ['potassium', 'potassiumMg'], ['sodium', 'sodiumMg'],
+  ['vitaminD', 'vitaminDUg'], ['vitaminB12', 'vitaminB12Ug'], ['folate', 'folateUg'],
+].map(([name, nutrient]) => [name, Object.freeze({
+  nutrient, label: NUTRIENTS[nutrient].label,
+  unit: NUTRIENTS[nutrient].unit === 'µg' ? 'ug' : NUTRIENTS[nutrient].unit,
+})])))
+
 const text = value => typeof value === 'string' && value.trim().length > 0
 export const isAmount = value => typeof value === 'number' && Number.isFinite(value) && value >= 0
 

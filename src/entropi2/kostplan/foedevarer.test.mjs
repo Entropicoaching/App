@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { LOCAL_FOODS } from '../../athlete/lokaleFoedevarer.js'
 import { foodPortion } from '../nutrition/controller.mjs'
+import { MICRONUTRIENTS } from './foedevarer/index.mjs'
 import { calculateMeals } from './foedevarer.mjs'
 
 const food = { name: 'Syntetisk fødevare', kcal100: 200, protein100: 20, carb100: 25, fat100: 5 }
@@ -43,20 +44,29 @@ test('meal and plan totals both calculated from original quantities, not rounded
 })
 
 test('empty draft has zero macro totals and no invented micronutrients', () => {
-  assert.deepEqual(calculateMeals([]), { meals: [], totals: { kcal: 0, protein: 0, carb: 0, fat: 0 }, micronutrients: {} })
+  const result = calculateMeals([])
+  assert.deepEqual(result.meals, [])
+  assert.deepEqual(result.totals, { kcal: 0, protein: 0, carb: 0, fat: 0 })
+  assert.equal(Object.keys(result.micronutrients).length, 9)
+  for (const [name, nutrient] of Object.entries(result.micronutrients)) {
+    assert.deepEqual(nutrient, { value: null, unit: MICRONUTRIENTS[name].unit,
+      knownItems: 0, totalItems: 0, status: 'insufficient-data', sources: [] })
+  }
 })
 
 test('micronutrients scale with grams only when every selected food has the value', () => {
-  const a = item(200, { micronutrients100: { iron: { value: 2, unit: 'mg' }, vitaminD: { value: 0, unit: 'ug' } } })
-  const b = item(50, { micronutrients100: { iron: { value: 1, unit: 'mg' } } })
+  const a = item(200, { micronutrients100: { iron: { value: 2, unit: 'mg', source: 'Synthetic fixture A' }, vitaminD: { value: 0, unit: 'ug', source: 'Synthetic fixture A' } } })
+  const b = item(50, { micronutrients100: { iron: { value: 1, unit: 'mg', source: 'Synthetic fixture B' } } })
   const result = calculateMeals([meal([a, b])])
-  assert.deepEqual(result.micronutrients.iron, { value: 4.5, unit: 'mg', knownItems: 2, totalItems: 2 })
-  assert.deepEqual(result.micronutrients.vitaminD, { value: null, unit: 'ug', knownItems: 1, totalItems: 2 })
+  assert.deepEqual(result.micronutrients.iron, { value: 4.5, unit: 'mg', knownItems: 2, totalItems: 2,
+    status: 'complete', sources: ['Synthetic fixture A', 'Synthetic fixture B'] })
+  assert.deepEqual(result.micronutrients.vitaminD, { value: null, unit: 'ug', knownItems: 1, totalItems: 2,
+    status: 'insufficient-data', sources: ['Synthetic fixture A'] })
   assert.equal(calculateMeals([meal([item(100), b])]).micronutrients.iron.value, null)
 })
 
 test('input and returned food snapshots are detached; catalog entries never mutated', () => {
-  const meals = [meal([item(100, { micronutrients100: { iron: { value: 2, unit: 'mg' } } })])]
+  const meals = [meal([item(100, { micronutrients100: { iron: { value: 2, unit: 'mg', source: 'Synthetic fixture A' } } })])]
   const before = JSON.stringify(meals), result = calculateMeals(meals)
   assert.equal(JSON.stringify(meals), before)
   result.meals[0].items[0].food.micronutrients100.iron.value = 99
@@ -84,12 +94,12 @@ test('invalid meal shapes, duplicate IDs and unbounded lists are rejected', () =
 
 test('ambiguous micronutrient units, non-finite amounts and invalid names fail explicitly', () => {
   for (const micronutrients100 of [[], { iron: { value: Infinity, unit: 'mg' } },
-    { iron: { value: 2, unit: 'IU' } }, { 'bad name': { value: 2, unit: 'mg' } },
-    { iron: { value: null, unit: 'mg' } }]) {
+    { iron: { value: 2, unit: 'IU' } }, { 'bad name': { value: 2, unit: 'mg', source: 'Synthetic fixture A' } },
+    { iron: { value: -1, unit: 'mg' } }]) {
     assert.throws(() => calculateMeals([meal([item(100, { micronutrients100 })])]), TypeError)
   }
   assert.throws(() => calculateMeals([meal([
-    item(100, { micronutrients100: { iron: { value: 2, unit: 'mg' } } }),
+    item(100, { micronutrients100: { iron: { value: 2, unit: 'mg', source: 'Synthetic fixture A' } } }),
     item(100, { micronutrients100: { iron: { value: 2, unit: 'ug' } } }),
   ])]), /enheder/)
 })
