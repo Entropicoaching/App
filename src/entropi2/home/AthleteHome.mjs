@@ -80,7 +80,11 @@ export default function AthleteHome(props) {
   const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
   const coach = (Array.isArray(messages) ? [...messages] : []).reverse()
     .find(m => m?.sender_role === 'coach' && typeof m.content === 'string' && m.content.trim())
-  const coachText = coach && coachMessageParts(messageText(coach))
+  const coachContent = coach && messageText(coach, { hideStandaloneVideoId: true })
+  // A valid technique reference can be the entire message. Keep its existing
+  // conversation link useful without exposing metadata or inventing video data.
+  const coachText = coach && coachMessageParts(coachContent.trim()
+    ? coachContent : 'Din coach har sendt feedback på din video')
   const namedExercises = target?.session.exercises.filter(e => typeof e.name === 'string' && e.name.trim()) ?? []
   const canStart = !props.sessionReadOnly && typeof onStartSession === 'function'
   const go = route => () => latest.current.setTab?.(route)

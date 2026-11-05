@@ -24,6 +24,19 @@ test('display removes the complete metadata suffix with CRLF and trailing whites
   }
 })
 
+test('Home can hide metadata-only technique messages without changing default first-line behavior', () => {
+  for (const id of ['a', '_-0', 'a'.repeat(120), '00000000-0000-4000-8000-000000000001']) {
+    for (const prefix of ['', '\n', '\r\n', ' \t\r\n']) {
+      for (const suffix of ['', ' \t\r\n']) {
+        const content = `${prefix}Video-id: ${id}${suffix}`, value = row(content)
+        assert.equal(messageText(value, { hideStandaloneVideoId: true }).trim(), '')
+        assert.equal(messageText(value), prefix === '' ? content : prefix.replace(/\r?\n$/, ''))
+        assert.equal(value.content, content)
+      }
+    }
+  }
+})
+
 test('ordinary text, athlete messages, invalid IDs and non-final markers stay byte-identical', () => {
   for (const id of ['', 'a'.repeat(121), 'ugyldigt id', 'æ', '<script>', ' leading']) {
     assert.equal(validId(id), false)
@@ -48,4 +61,11 @@ test('quick answers quote the visible question without propagating its internal 
   assert.equal(athleteAnswerContent({ value }, 'Jeg har brug for hjælp'),
     'Svar på: Video ved 0 s\nKan du prøve igen?\nJeg har brug for hjælp')
   assert.equal(value.content, content)
+})
+
+test('Home metadata option preserves non-technique, invalid and non-final standalone text', () => {
+  const content = 'Video-id: synthetic-video'
+  for (const value of [{ ...row(content), sender_role: 'athlete' }, { ...row(content), category: 'besked' },
+    row('Video-id: ugyldigt id'), row('Video-id: synthetic-video\nForklaring'), row('video-id: synthetic-video')])
+    assert.equal(messageText(value, { hideStandaloneVideoId: true }), value.content)
 })

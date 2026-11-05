@@ -8,10 +8,13 @@ export function entropi2Enabled(search = '') {
 export const validId = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,120}$/.test(value)
 // Presentation only: keep the stored reference and all ordinary message text intact.
 // Use the producer's ID contract; tolerate CRLF and trailing whitespace in old data.
-export function messageText(row) {
+export function messageText(row, { hideStandaloneVideoId = false } = {}) {
   const content = row?.content
   if (row?.sender_role !== 'coach' || row.category !== 'teknik' || typeof content !== 'string') return content
-  const marker = /\r?\nVideo-id: ([^\r\n]*)\s*$/.exec(content)
+  // Home opts in to hiding a standalone reference; other surfaces retain their
+  // existing first-line behavior, including the legacy Home when Entropi 2 is OFF.
+  const marker = (hideStandaloneVideoId ? /(?:^|\r?\n)Video-id: ([^\r\n]*)\s*$/
+    : /\r?\nVideo-id: ([^\r\n]*)\s*$/).exec(content)
   return marker && validId(marker[1].trimEnd()) ? content.slice(0, marker.index) : content
 }
 const validRole = role => role === 'athlete' || role === 'coach'
