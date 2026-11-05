@@ -1,9 +1,9 @@
-# Restitution (frakoblet)
+# Restitution og coachens Analyse-fane
 
 Ren model `buildRestitution(snapshot, { enabled: true })` og stateless React-visning
 `RestitutionOverview({ enabled, snapshot, onRetry? })`. Begge returnerer `null`,
-medmindre `enabled === true`; snapshot læses ikke ved OFF. Ingen entry-point,
-flagændring, query, lagring, programændring eller ny databasekontrakt.
+medmindre `enabled === true`; snapshot læses ikke ved OFF. Ingen flagændring, lagring, programændring eller ny databasekontrakt.
+Coach-koblingen beskrives nedenfor; selve modellen og bladvisningen laver ingen IO.
 
 ## Inputkontrakt
 
@@ -15,7 +15,7 @@ fejlfrit snapshot med `status: 'ready'`, `complete: true`, `dailySource:
 sidebegrænsning, uafsluttet paginering og delvise data må aldrig markeres komplette.
 `status: 'loading'` giver ventetekst; alle øvrige utilstrækkelige transportkontrakter
 giver generisk fejl. Ingen fejltekst fra input vises. Tomme komplette arrays er
-gyldige og giver “For lidt data”. Der leveres ingen læseadapter i denne billet.
+gyldige og giver “For lidt data”. Coach-adapteren sikrer denne kontrakt med egne afgrænsede læsninger.
 
 Eksisterende produktionsfelter:
 
@@ -57,7 +57,7 @@ Skift i øvelser og registreringsdækning kan ændre belastningstotalen.
 
 ## Visning og afprøvning
 
-Atlet og en fremtidig autoriseret coach-vært får samme lille visning: status først,
+Atletens eksisterende bladvisning og den autoriserede coach-vært genbruger samme model: status først,
 periode og kort forbehold. Én native, lukket `details` indeholder målinger med
 antal/7 dage, seneste komplette dato, begge belastningssummer, forholdet, huller,
 udeladelser og de præcise grænser. Scope-CSS, fleksibel bredde, én kolonne på små
@@ -70,3 +70,38 @@ bruger kun den fastlåste offentlige testfixture og er ikke React/layoutbevis.
 `RestitutionOverview.test.mjs` bruger rigtig React og ReactDOM; uden pakkerne er
 dens tre tests eksplicit SKIP. Dhurva skal køre disse uden SKIP samt fuld suite og
 build i den afhængighedsklare integration. Ingen installation her.
+
+## Kobling til Analyse (TRACK-KOBL-RESTITUTION2)
+
+`AnalyseTab.jsx` genbruger den eksisterende Entropi 2/LazyBoundary-scope fra
+ugeevalueringen. Kun `enabled === true`, et eksisterende klientobjekt og samme
+coach/valgte atlet giver en lazy `CoachRestitution`. Den står umiddelbart under
+Søvn og før eksport. OFF importerer eller monterer ikke restitution-koblingen.
+
+`hasRestitutionData` bruger de gamle grafarrays som et tilstedeværelsessignal:
+mindst ét gyldigt søvn-/dagsformfelt i de sidste 7 afsluttede dage samt mindst én
+ikke foreløbig/oversprunget træningslog i de sidste 14 afsluttede dage, begge for
+den valgte atlet. Ingen `score`, søvnkvalitet eller planlagt træning erstatter dem.
+
+`coachRestitutionData.mjs` henter kun de ovennævnte produktionskolonner fra
+`readiness_logs` og `exercise_logs` med atletfilter og periode. Hver kilde har et
+loft på 1000 rækker; nås loftet, vises fejl, aldrig en delvis beregning. Zonede
+træningstidsstempler overhentes ved UTC-kanterne, hvorefter modellen anvender
+præcise danske datoer. Numeriske sætid normaliseres til strenge. Fremmede rækker,
+transportfejl og ugyldige snapshots giver generisk fejl uden rå fejltekst.
+
+Coach ser en native, lukket “Restitution (7-14 dage)”. Ved åbning vises den
+forsigtige status eller “For lidt data”, periode og forbehold uden årsagspåstande.
+Datagrundlag og grænser er yderligere foldet. Teksten omtaler atletens svar og
+restitution; titlen gentages ikke inde i folden. Bekræftet fravær af en af
+kilderne skjuler hele sektionen. Fejl skjules ikke som tomme data; genforsøg
+starter en ny læsning. Klient-, coach-, atlet-, dato- og genforsøgsskift invaliderer
+resultater synkront; forsinkede svar kan ikke erstatte det aktuelle scope.
+Atletens eksisterende visning ændres ikke.
+
+`coachRestitution.react.test.mjs` bruger rigtig React/ReactDOM og appens eksisterende
+JSX-testadapter; den opdages af `npm test`. Uden pakker er dens fire prøver eksplicit
+SKIP. De syntetiske integrationsprøver importerer den faktiske AnalyseTab og
+restitutionsmodulerne med de fastlåste elementfixtures; de er supplerende, ikke
+ReactDOM- eller visuelt layoutbevis. Dhurva skal køre fuld `npm test` og build ved
+fletning; ingen pakker installeres og ingen fuld suite/build køres i worker-kopien.

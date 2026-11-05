@@ -23,9 +23,10 @@ const styles = `
  */
 export default function RestitutionOverview(props = {}) {
   if (props.enabled !== true) return null
+  const coach = props.audience === 'coach'
   const model = buildRestitution(props.snapshot, { enabled: true })
   const section = (...children) => h('section', { className: 'e2-restitution', 'aria-label': 'Restitution' },
-    h('style', null, styles), h('h2', null, 'Restitution'), ...children)
+    h('style', null, styles), !coach && h('h2', null, 'Restitution'), ...children)
   if (model.status === 'loading') return section(h('p', { role: 'status', 'aria-busy': true }, 'Henter registreringer…'))
   if (model.status === 'error') return section(
     h('p', { role: 'alert' }, 'Kunne ikke vise hele datagrundlaget. Prøv igen.'),
@@ -34,9 +35,9 @@ export default function RestitutionOverview(props = {}) {
     h('p', { role: 'status' }, model.status === 'insufficient' ? 'For lidt data'
       : `Forsigtig restitutionsstatus: ${{ god: 'God', ok: 'Ok', lav: 'Lav' }[model.level]}`),
     h('p', null, `Til og med ${model.to} · seneste 7 dage med 14 dages belastningshistorik.`),
-    h('p', null, 'Et enkelt overblik over registreringer, ikke en måling af din restitution eller en forklaring på årsager. Programmet ændres ikke.'),
+    h('p', null, `Et enkelt overblik over registreringer, ikke en måling af ${coach ? 'atletens' : 'din'} restitution eller en forklaring på årsager. Programmet ændres ikke.`),
     h('details', null, h('summary', null, 'Se datagrundlag og vurdering'),
-      h('p', null, `Søvn og dagsform (${model.recentFrom}–${model.to}) fra dine egne svar i dagsform.`),
+      h('p', null, `Søvn og dagsform (${model.recentFrom}–${model.to}) fra ${coach ? 'atletens' : 'dine'} egne svar i dagsform.`),
       h('dl', null,
         metric('Søvn', model.metrics.sleep_hours, 'timer'),
         metric('Energi', model.metrics.energy, 'af 5'),
