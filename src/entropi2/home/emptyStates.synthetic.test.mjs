@@ -7,12 +7,13 @@ import { weekPlanModel } from './ugeplan/weekPlanModel.mjs'
 // Shallow synthetic hook host: actual Home, wrapper, model and navigation imports.
 // Effects are disabled only in the session wrapper, which otherwise mounts a DOM renderer.
 const hostURL = new URL('../../athlete/trainingFullscreenFake.mjs', import.meta.url).href
+const homeHooks = 'data:text/javascript,' + encodeURIComponent(`export * from ${JSON.stringify(hostURL)}; export const useMemo = fn => fn();`)
 const wrapperURL = new URL('./HomeSession.mjs', import.meta.url).href
 const wrapperHooks = 'data:text/javascript,' + encodeURIComponent(
   `export * from ${JSON.stringify(hostURL)}; export const useEffect = () => {};`)
 registerHooks({ resolve(specifier, context, next) {
   if (specifier === 'react') return { shortCircuit: true,
-    url: context.parentURL === wrapperURL ? wrapperHooks : hostURL }
+    url: context.parentURL === wrapperURL ? wrapperHooks : homeHooks }
   return next(specifier, context)
 } })
 const { default: Home } = await import('./AthleteHome.mjs')

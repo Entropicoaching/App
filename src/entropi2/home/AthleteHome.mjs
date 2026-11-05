@@ -1,5 +1,5 @@
 import { messageText } from '../conversation/conversationModel.mjs'
-import { createElement as h, useEffect, useRef, useState } from 'react'
+import { createElement as h, useEffect, useMemo, useRef, useState } from 'react'
 import { homeModel, startHomeSession } from './homeModel.mjs'
 import { homeStyles as s } from './homeStyles.mjs'
 import { nutritionTodayModel } from './nutritionTodayModel.mjs'
@@ -12,6 +12,9 @@ import { calendarDay } from '../../calendarDate.js'
 import { readHomeReadiness, homeWeekSnapshot } from './homeTrackingRead.mjs'
 import AthleteWeek from '../tracking/ugeatlet/AthleteWeek.mjs'
 import { buildAthleteWeek } from '../tracking/ugeatlet/athleteWeekModel.mjs'
+import { homeRecordSnapshot } from './homeRecord.mjs'
+import { readHomeRecordHistory } from './homeRecordRead.mjs'
+import { formatHistoryKg } from '../analysis/fourWeekHistory.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -19,6 +22,14 @@ const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', '
 const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${MONTHS[Number(m[2]) - 1]}` : String(iso) }
 const labels = { holiday: 'Du er på ferie', missing: 'Programmet er ikke tilgængeligt', 'no-program': 'Intet program endnu',
   'no-next': 'Intet kommende pas planlagt', done: 'Dagens pas er klaret' }
+
+export function HomeRecordCard({ record }) {
+  if (!record) return null
+  return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'Ny rekord', 'data-home-record': '' },
+    h('h2', { style: { ...s.text, color: '#edeae2', margin: '0 0 4px', fontWeight: 600 } },
+      `Ny rekord: ${record.lift} ${formatHistoryKg(record.weight)} kg × ${record.reps}`),
+    h('time', { dateTime: record.date, style: { ...s.text, fontSize: 14 } }, danishDate(record.date)))
+}
 
 // Keep the preview short without losing whitespace or splitting a surrogate pair.
 // The disclosure contains only the remainder, so expanded text is not duplicated.
@@ -37,6 +48,7 @@ export default function AthleteHome(props) {
   const [tick, setTick] = useState(0)
   const [tracking, setTracking] = useState(null)
   const [readAttempt, setReadAttempt] = useState(0)
+  const [recordHistory, setRecordHistory] = useState(null)
   const headingRef = useRef(null)
   const latest = useRef(props)
   latest.current = props
@@ -47,6 +59,23 @@ export default function AthleteHome(props) {
   const trackingId = ownTracking ? props.athlete.id : null
   const trackingDay = ownTracking ? calendarDay(props.now ?? (props.getNow ?? clock)()) : null
   const read = enabled === true ? props.readHomeReadiness ?? readHomeReadiness : readHomeReadiness
+  const ownRecords = enabled === true && !props.sessionReadOnly && !props.readOnly && !!props.athlete?.id &&
+    !props.programError && props.offlineSnapshotAt == null && !!props.currentWeek &&
+    Array.isArray(props.allWeeks) && Array.isArray(props.exerciseLogs) &&
+    typeof props.onLogSet === 'function' && typeof props.setLogInputs === 'function'
+  const recordId = ownRecords ? props.athlete.id : null
+  const recordDay = ownRecords ? calendarDay(props.now ?? (props.getNow ?? clock)()) : null
+  const recordRead = ownRecords ? props.readHomeRecordHistory ?? readHomeRecordHistory : readHomeRecordHistory
+  const recordLogs = ownRecords ? props.exerciseLogs : null
+  const recordWeek = ownRecords ? props.currentWeek : null
+  useEffect(() => {
+    if (!recordId || !recordDay) return
+    let active = true
+    Promise.resolve().then(() => active ? recordRead({ athleteId: recordId }) : null).then(
+      history => { if (active) setRecordHistory({ history, athleteId: recordId, reader: recordRead }) },
+      () => { if (active) setRecordHistory({ history: { status: 'error' }, athleteId: recordId, reader: recordRead }) })
+    return () => { active = false }
+  }, [recordId, recordDay, recordRead, recordLogs, recordWeek])
   useEffect(() => {
     if (!trackingId || !trackingDay) return
     let active = true
@@ -62,12 +91,26 @@ export default function AthleteHome(props) {
     const id = setInterval(() => setTick(n => n + 1), 30000)
     return () => clearInterval(id)
   }, [enabled])
+  const recordProps = ownRecords ? props : {}
+  const recordNow = ownRecords ? props.now ?? (props.getNow ?? clock)() : null
+  const recordSnapshot = useMemo(() => ownRecords && recordHistory?.athleteId === recordId && recordHistory?.reader === recordRead
+    ? homeRecordSnapshot({ enabled: true, athlete: { id: recordId }, currentWeek: recordWeek,
+      allWeeks: recordProps.allWeeks, exerciseLogs: recordLogs, pendingSyncKeys: recordProps.pendingSyncKeys, parkedSets: recordProps.parkedSets,
+      exerciseLogsError: recordProps.exerciseLogsError, exerciseLogsLoading: recordProps.exerciseLogsLoading,
+      fremgangError: recordProps.fremgangError, fremgangLoading: recordProps.fremgangLoading }, recordHistory.history, recordNow) : null,
+  // Data/day changes select the record. Clock ticks only expire the snapshot below.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [ownRecords, recordHistory, recordId, recordRead, recordDay, recordWeek, recordLogs, recordProps.allWeeks,
+    recordProps.pendingSyncKeys, recordProps.parkedSets, recordProps.exerciseLogsError, recordProps.exerciseLogsLoading, recordProps.fremgangError, recordProps.fremgangLoading])
   if (enabled !== true) return null
   const { athlete, messages = [], formatMsgTime, setTab, onStartSession, onFilmSet, getNow = clock } = props
   const name = firstName(athlete?.name)
   void tick
   const now = props.now ?? getNow()
   const model = homeModel({ ...props, now })
+  const recordAt = new Date(now).getTime()
+  const record = recordSnapshot && recordAt < recordSnapshot.expiresAt && recordAt >= recordSnapshot.expiresAt - 3 * 86400000
+    ? recordSnapshot.record : null
   const week = homeWeekOverview({ ...props, now })
   const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
   const trackingData = ownTracking && tracking?.athleteId === athlete?.id && tracking?.today === model.today
@@ -121,6 +164,7 @@ export default function AthleteHome(props) {
             : props.programError ? 'Programmet kunne ikke hentes. Prøv at genindlæse siden.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
+    record && h(HomeRecordCard, { record }),
     h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow,
       trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
     // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.

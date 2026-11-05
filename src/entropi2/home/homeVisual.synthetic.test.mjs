@@ -6,7 +6,7 @@ import { mount } from '../../athlete/trainingFullscreenFake.mjs'
 // Actual copied Home and models; synthetic hook host, no browser/layout claim.
 const loader = registerHooks({ resolve(specifier, context, next) {
   return specifier === 'react'
-    ? { shortCircuit: true, url: new URL('../../athlete/trainingFullscreenFake.mjs', import.meta.url).href }
+    ? { shortCircuit: true, url: 'data:text/javascript,' + encodeURIComponent(`export * from ${JSON.stringify(new URL('../../athlete/trainingFullscreenFake.mjs', import.meta.url).href)}; export const useMemo = fn => fn();`) }
     : next(specifier, context)
 } })
 test.after(() => loader.deregister())

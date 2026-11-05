@@ -7,7 +7,7 @@ import { timestampContent } from '../conversation/conversationModel.mjs'
 // Supplementary synthetic hooks; actual Home and child modules, no React claim.
 const host = new URL('../onboarding/firstVisitTestHost.mjs', import.meta.url).href
 const hooks = 'data:text/javascript,' + encodeURIComponent(`
-  export * from ${JSON.stringify(host)};
+  export * from ${JSON.stringify(host)}; export const useMemo = fn => fn();
   import { useState } from ${JSON.stringify(host)};
   export const useId = () => useState(() => 'synthetic-timed-home')[0];`)
 const parents = new Set(['./AthleteHome.mjs', './HomeCheckIn.mjs', './QuickLogs.mjs',

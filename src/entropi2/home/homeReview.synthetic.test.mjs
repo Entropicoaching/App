@@ -10,7 +10,7 @@ import { firstVisitKey } from '../onboarding/firstVisitState.mjs'
 // Every presentation component below is imported from the actual copied module.
 const host = new URL('../onboarding/firstVisitTestHost.mjs', import.meta.url).href
 const hooks = 'data:text/javascript,' + encodeURIComponent(`
-  export * from ${JSON.stringify(host)};
+  export * from ${JSON.stringify(host)}; export const useMemo = fn => fn();
   import { useState } from ${JSON.stringify(host)};
   let nextId = 0;
   export const useId = () => useState(() => 'home-review-' + nextId++)[0];`)

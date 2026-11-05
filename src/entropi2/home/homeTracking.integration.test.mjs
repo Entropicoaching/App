@@ -8,7 +8,7 @@ import { manualClock, scores } from '../tracking/hurtig/testFixtures.mjs'
 // Recursive synthetic event host; imports all actual Home children. Service
 // access is injected and no default client, auth, browser or server is loaded.
 const host = new URL('../onboarding/firstVisitTestHost.mjs', import.meta.url).href
-const react = 'data:text/javascript,' + encodeURIComponent(`export * from ${JSON.stringify(host)};
+const react = 'data:text/javascript,' + encodeURIComponent(`export * from ${JSON.stringify(host)}; export const useMemo = fn => fn();
   import { useState } from ${JSON.stringify(host)}; let next=0;
   export const useId=()=>useState(()=>'home-tracking-'+next++)[0];`)
 const loader = registerHooks({ resolve(specifier, context, next) {
