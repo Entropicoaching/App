@@ -36,6 +36,17 @@ export function quickLogStatus(props = {}) {
   }
 }
 
+export function confirmedReadinessEnergy(props = {}) {
+  if (props.enabled !== true || props.sessionReadOnly || props.readinessError) return null
+  const { athlete, today, readinessLog: row, trackingData: data } = props
+  if (data && (data.status !== 'ready' || data.complete !== true ||
+      data.athleteId !== athlete?.id || data.today !== today)) return null
+  if (!athlete?.id || !calendarDay(today) || row?.athlete_id !== athlete.id ||
+      row.logged_date !== today || row._optimistic) return null
+  const energy = parseInputNumber(row.energy)
+  return Number.isInteger(energy) && energy >= 1 && energy <= 5 ? energy : null
+}
+
 export function quickLogError(kind, props) {
   if (kind === 'weight') return parseInputNumber(props.weightInput) > 0 ? null : 'Skriv din vægt i kg, fx 82,5.'
   const input = props.readinessInput ?? {}

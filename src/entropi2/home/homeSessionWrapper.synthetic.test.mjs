@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
 import { mount } from '../../athlete/trainingFullscreenFake.mjs'
 import { syntheticDom } from '../session/sessionSyntheticDom.mjs'
+import { saveSessionSet } from '../session/sessionSetSave.mjs'
+import { bygGrundlag } from '../../athlete/rekorder.js'
 
 // Shallow synthetic hook scheduling only. The actual wrapper, Home, bridge and
 // default dynamic renderer all execute; this is supplementary to genuine React.
@@ -78,4 +80,40 @@ test('unmount during the default import cannot open a session later', async t =>
   assert.equal(await pending, false)
   assert.equal(dom.root.children.length, 0)
   assert.equal(start('synthetic-s', 'synthetic-w'), false)
+})
+
+test('actual HomeSession retains a confirmed receipt after expiry, prunes corrections and resets scope', async t => {
+  const dom = syntheticDom(), timers = new Map()
+  const original = Object.fromEntries(['setTimeout', 'clearTimeout'].map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]))
+  Object.defineProperty(globalThis, 'setTimeout', { configurable: true, value(fn) { const id = {}; timers.set(id, fn); return id } })
+  Object.defineProperty(globalThis, 'clearTimeout', { configurable: true, value(id) { timers.delete(id) } })
+  const exercise = { ...week.sessions[0].exercises[0], name: 'Squat', recommended_weight: 90 }
+  const selected = { ...week, sessions: [{ ...week.sessions[0], exercises: [exercise] }] }
+  const p = { ...props(), allWeeks: [selected], currentWeek: selected, athleteId: selected.athlete_id,
+    rekordGrundlagFoer: bygGrundlag([{ navn: 'Squat', weight: 80, reps: 5 }]),
+    fejredeRef: { current: new Set() }, rekordFejring: null }
+  p.setRekordFejring = value => { p.rekordFejring = typeof value === 'function' ? value(p.rekordFejring) : value }
+  const view = mount(HomeSession, p)
+  t.after(() => {
+    cleanupEffects(); view.unmount(); assert.equal(timers.size, 0)
+    for (const [key, descriptor] of Object.entries(original)) Object.defineProperty(globalThis, key, descriptor)
+  })
+  const render = () => { view.render(); flushEffects() }
+  child(view).props.sessionRootRef.current = dom.root; flushEffects()
+  assert.equal(await child(view).props.onStartSession(selected.sessions[0].id, selected.id), true)
+  await saveSessionSet({ athleteId: selected.athlete_id, exerciseId: exercise.id, setNumber: 1,
+    payload: { weight: 90, reps_completed: 5 }, storage: null, offline: () => false,
+    send: () => ({ data: { id: 'synthetic-confirmed' } }), confirm(row) { p.exerciseLogs = [row] } })
+  render(); assert.ok(dom.root.querySelector('[data-rekord-fejring]'))
+  for (const [id, fn] of timers) { timers.delete(id); fn() }
+  render(); assert.equal(dom.root.querySelector('[data-rekord-fejring]'), null)
+  dom.root.querySelectorAll('button').find(b => b.textContent === 'Afslut pas').fire('click')
+  assert.equal(dom.root.querySelectorAll('[data-session-record]').length, 1)
+  p.exerciseLogs = [{ ...p.exerciseLogs[0], weight: 80 }]; render()
+  assert.equal(dom.root.querySelector('[data-detail="session-records"]'), null)
+  p.exerciseLogs = [{ ...p.exerciseLogs[0], weight: 90 }]; render()
+  assert.equal(dom.root.querySelector('[data-detail="session-records"]'), null)
+  p.athlete = { id: 'synthetic-other' }; render()
+  p.athlete = { id: selected.athlete_id }; render()
+  assert.equal(dom.root.querySelector('[data-session-record]'), null)
 })

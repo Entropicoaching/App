@@ -29,6 +29,7 @@ test('one existing receipt names its confirmed set and survives progression and 
   assert.equal(receipts(f)[0].getAttribute('role'), 'status')
   assert.ok(!f.root.querySelector('[data-detail="history"]').contains(receipts(f)[0]))
   f.view.controller.finish(); assert.equal(receipts(f).length, 1)
+  assert.equal(f.root.querySelectorAll('[data-session-record]').length, 0, 'the live line is never repeated in the summary')
   assert.ok(f.root.querySelector('[data-session-summary]'))
   assert.equal(f.calls.length, 0)
 })

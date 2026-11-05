@@ -8,10 +8,13 @@ import { sessionRecordFixture } from './sessionRecordFixture.mjs'
 import { calls, mode, rows } from './sessionSaveBoundary.mjs'
 import { mountSession } from './sessionView.mjs'
 import { dom } from './a11y-dom.mjs'
+import { createSessionRecordReceipts } from './sessionRecordReceipt.mjs'
 
 function fixture(t, extra) {
   const f = sessionRecordFixture(t, extra)
-  const dispose = subscribeSessionRecordCelebrations(() => f.p, f.clock)
+  const records = createSessionRecordReceipts()
+  Object.defineProperty(f.p, 'sessionRecordReceipts', { get: () => records.read(f.p) })
+  const dispose = subscribeSessionRecordCelebrations(() => f.p, f.clock, receipt => records.remember(f.p, receipt))
   t.after(() => { dispose(); assert.equal(f.timers.size, 0) })
   return { ...f, dispose, get fetches() { return f.fetches } }
 }
@@ -35,6 +38,55 @@ test('actual session-only save publishes one existing receipt in the open sessio
   assert.equal(f.receipts.length, count, 'a repeated acknowledgement never celebrates twice')
   for (const [id, { fn, ms }] of f.timers) { assert.equal(ms, 5000); f.timers.delete(id); fn() }
   view.update(); assert.equal(root.querySelector('[data-rekord-fejring]'), null)
+})
+
+test('confirmed records survive five seconds in one collapsed summary fold and survive close/reopen', async t => {
+  const f = fixture(t), root = dom()
+  const view = mountSession(root, () => f.p, { clock: { Date, setInterval: () => 1, clearInterval() {} } })
+  t.after(view.dispose); view.controller.start()
+  await f.save(); await f.save(2, 100)
+  view.update(); view.controller.finish()
+  assert.equal(root.querySelectorAll('[data-rekord-fejring]').length, 1)
+  assert.equal(root.querySelectorAll('[data-session-record]').length, 1, 'the latest live receipt is excluded from the fold')
+  for (const [id, { fn, ms }] of f.timers) { assert.equal(ms, 5000); f.timers.delete(id); fn() }
+  view.update()
+  const fold = root.querySelector('[data-detail="session-records"]')
+  assert.ok(fold); assert.equal(fold.open, false)
+  assert.equal(fold.querySelector('summary').textContent, 'Rekorder i dette pas')
+  assert.equal(fold.querySelectorAll('[data-session-record]').length, 2)
+  assert.equal(root.querySelector('[data-rekord-fejring]'), null)
+  fold.open = true; fold.querySelector('summary').focus(); view.update()
+  assert.equal(root.querySelector('[data-detail="session-records"]').open, true)
+  assert.equal(root.ownerDocument.activeElement.textContent, 'Rekorder i dette pas')
+  view.controller.close(); view.controller.start()
+  assert.equal(root.querySelectorAll('[data-session-record]').length, 2)
+  f.dispose()
+})
+
+test('archived acknowledgement is removed by correction, undo, pending or foreign values and scope change', async t => {
+  for (const change of [
+    f => { f.p.exerciseLogs[0].weight = 80 },
+    f => { f.p.exerciseLogs[0].reps_completed = 4 },
+    f => { f.p.exerciseLogs[0].id = 'synthetic-replacement' },
+    f => { f.p.exerciseLogs[0]._optimistic = true },
+    f => { f.p.exerciseLogs[0].skipped = true },
+    f => { f.p.exerciseLogs[0].athlete_id = 'synthetic-other' },
+    f => { f.p.exerciseLogs = [] },
+    f => { f.p.pendingSyncKeys = ['record-lift_1'] },
+    f => { f.p.parkedSets = [{ exerciseId: 'record-lift', setNumber: 1 }] },
+    f => { f.p.athlete = { id: 'synthetic-other' } },
+    f => { f.p.currentWeek = { ...f.week, id: 'synthetic-other-week' } },
+    f => { f.p.enabled = false },
+  ]) {
+    const f = fixture(t)
+    await f.save(); assert.equal(f.p.sessionRecordReceipts.length, 1)
+    const original = f.p.exerciseLogs.map(row => ({ ...row }))
+    change(f); assert.equal(f.p.sessionRecordReceipts.length, 0)
+    Object.assign(f.p, { exerciseLogs: original, pendingSyncKeys: [], parkedSets: [],
+      athlete: { id: f.week.athlete_id }, currentWeek: f.week, enabled: true })
+    assert.equal(f.p.sessionRecordReceipts.length, 0, 'an invalidated receipt cannot resurrect')
+    f.dispose()
+  }
 })
 
 test('offline and lost replies wait for confirmed replay and never announce twice', async t => {

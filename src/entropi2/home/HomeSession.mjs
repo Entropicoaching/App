@@ -2,16 +2,24 @@ import { createElement as h, useEffect, useRef, useState } from 'react'
 import AthleteHome from './AthleteHome.mjs'
 import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
+import { createSessionRecordReceipts } from '../session/sessionRecordReceipt.mjs'
 
 // Functional opt-in entry, entirely within the home namespace.
 export default function HomeSession(props) {
   const root = useRef(null), latest = useRef(props), bridge = useRef(null)
+  const records = useRef(null)
+  if (!records.current) records.current = createSessionRecordReceipts()
   const [loading, setLoading] = useState(false)
-  latest.current = props
+  const sessionRecordReceipts = records.current.read(props)
+  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts } : props
+  const athleteId = props.enabled === true ? props.athlete?.id : undefined
+  const weekId = props.enabled === true ? props.currentWeek?.id : undefined
   useEffect(() => {
     if (props.enabled !== true) return
-    return subscribeSessionRecordCelebrations(() => latest.current)
-  }, [props.enabled])
+    const dispose = subscribeSessionRecordCelebrations(() => latest.current, globalThis,
+      receipt => records.current.remember(latest.current, receipt))
+    return () => { dispose(); records.current.clear() }
+  }, [props.enabled, athleteId, weekId])
   useEffect(() => {
     if (props.enabled !== true) return
     let active = true

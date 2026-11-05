@@ -22,10 +22,11 @@ export function confirmedSessionRecord(p, row, logs = p.exerciseLogs) {
   const basis = bygGrundlag(ugensSaet(confirmed, week, p.allWeeks, key), p.rekordGrundlagFoer)
   const record = findRekord(basis, { navn: ex.name, weight: row.weight, reps: row.reps_completed,
     deload: erDeloadBlok(week.block_name) })
-  return record ? { key, id: `${key}:${row.weight}:${row.reps_completed}`, tekst: rekordTekst(record) } : null
+  return record ? { key, id: `${key}:${row.weight}:${row.reps_completed}`, tekst: rekordTekst(record),
+    athleteId, weekId: week.id, rowId: row.id } : null
 }
 
-export function subscribeSessionRecordCelebrations(latest, clock = globalThis) {
+export function subscribeSessionRecordCelebrations(latest, clock = globalThis, remember = () => {}) {
   const timers = new Map(), recent = new Map()
   let scope, lastLogs
   const unsubscribe = subscribeSessionSetConfirmed(row => {
@@ -41,6 +42,7 @@ export function subscribeSessionRecordCelebrations(latest, clock = globalThis) {
       parkedSets: (p.parkedSets || []).filter(s => !recent.has(`${s.exerciseId}_${s.setNumber}`)),
     }, row, logs)
     if (row.athlete_id === p.athlete?.id) recent.set(key, row)
+    if (receipt) remember(receipt)
     if (!receipt || typeof p.setRekordFejring !== 'function' || !p.fejredeRef?.current ||
         p.fejredeRef.current.has(receipt.id)) return
     p.fejredeRef.current.add(receipt.id)

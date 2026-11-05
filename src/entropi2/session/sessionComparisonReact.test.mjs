@@ -28,6 +28,8 @@ test('real React renders the production comparison content, escaped names and em
   assert.match(html, /aria-label="Sammenligning med sidst"/)
   assert.match(html, /60 kg × 5 → 65 kg × 5/)
   assert.match(html, /300 kg → 325 kg/)
+  assert.match(html, /<details[^>]*><summary[^>]*>Løft A · Tungeste sæt: 60 kg × 5 → 65 kg × 5<\/summary>/)
+  assert.doesNotMatch(html, /<details[^>]*\sopen/)
   session.exercises[0].name = '<img src=x onerror=alert(1)>'
   assert.match(render(), /&lt;img/); assert.doesNotMatch(render(), /<img/)
   p.exerciseLogsError = true; assert.equal(render(), '')
@@ -68,6 +70,12 @@ test('real React SessionScreen opens summary, refreshes comparison, resumes and 
     await render(); await press('Start dagens pas'); assert.equal(comparison(), null)
     await press('Afslut pas'); assert.match(comparison().textContent, /300 kg → 325 kg/)
     assert.equal(doc.activeElement, host.querySelector('[data-heading]'))
+    let fold = comparison().querySelector('details')
+    assert.equal(fold.open, false)
+    fold.open = true; fold.querySelector('summary').focus(); await render()
+    fold = comparison().querySelector('details')
+    assert.equal(fold.open, true)
+    assert.equal(doc.activeElement, fold.querySelector('summary'))
     const previous = p.exerciseLogs[0], today = p.exerciseLogs[1]
     p.exerciseLogs = [...[1, 2, 3].map(set_number => ({ ...previous, set_number })), today]
     for (const unavailable of [{ pendingSyncKeys: ['lift_1'], parkedSets: [] },

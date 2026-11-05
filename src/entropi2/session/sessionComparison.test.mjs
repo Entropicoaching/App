@@ -15,6 +15,28 @@ const row = (extra = {}) => ({ athlete_id: 'synthetic', exercise_id: 'lift', set
 const current = (extra = {}) => row({ logged_at: '2026-11-05T10:00:00Z', weight: 65, ...extra })
 const read = (logs, extra = {}, selected = session, at = now) => sessionComparisons(selected, logs, { ...p, ...extra }, at)
 
+test('two and eight comparisons have one closed row each, compact summaries and one shared explanation', () => {
+  for (const size of [2, 8]) {
+    const item = read([row(), current()])[0]
+    const doc = historyTestDom().ownerDocument
+    const content = sessionComparisonContent((...args) => historyElement(doc, ...args),
+      Array.from({ length: size }, (_, i) => ({ ...item, exerciseId: `synthetic-${i}`, name: `Løft ${i}` })))
+    const folds = content.querySelectorAll('details')
+    assert.equal(folds.length, size)
+    for (const [i, fold] of folds.entries()) {
+      assert.ok(!fold.open)
+      assert.equal(fold.getAttribute('data-detail'), `comparison-synthetic-${i}`)
+      const summary = fold.querySelector('summary')
+      assert.equal(summary.textContent, `Løft ${i} · Tungeste sæt: 60 kg × 5 → 65 kg × 5`)
+      assert.doesNotMatch(summary.textContent, /volumen|bekræftede|nov\./)
+      assert.match(fold.textContent, /nov\.|november/)
+      assert.match(fold.textContent, /Samlet volumen/)
+    }
+    assert.equal(content.textContent.split('Før → nu.').length - 1, 1)
+  }
+  assert.equal(sessionComparisonContent(() => assert.fail('empty section'), []), null)
+})
+
 test('compares latest prior exact exercise day with today: all confirmed slots, decimals, zero kg and stable ties', () => {
   const logs = [row({ weight: 999, logged_at: '2026-11-01T10:00:00Z' }),
     row(), row({ set_number: 2, weight: '62,5', reps_completed: 4 }),

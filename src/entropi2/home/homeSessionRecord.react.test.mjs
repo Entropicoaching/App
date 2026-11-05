@@ -59,8 +59,21 @@ test('real HomeSession: actual confirmed writer receipt reaches the open pass an
     assert.equal(receipt.getAttribute('role'), 'status')
     assert.equal(f.receipts.length, 1)
     assert.equal(historyReads, 1, 'sets reuse the existing loaded Home history')
+    await act(async () => {
+      for (const [id, { fn, ms }] of f.timers) {
+        assert.equal(ms, 5000); f.timers.delete(id); fn()
+      }
+    })
+    assert.equal(host.querySelector('[data-rekord-fejring]'), null)
+    await act(async () => host.querySelectorAll('button').find(b => b.textContent === 'Afslut pas').click())
+    const records = host.querySelector('[data-detail="session-records"]')
+    assert.ok(records); assert.equal(records.open, false)
+    assert.match(records.textContent, /Rekorder i dette pas.*Squat · Sæt 1: Ny rekord/)
+    assert.equal(host.querySelectorAll('[data-session-record]').length, 1)
+    assert.equal(host.querySelector('[data-rekord-fejring]'), null)
     await act(async () => { f.p.exerciseLogs = []; f.p.rekordFejring = null; rerender() })
     assert.equal(host.querySelector('[data-rekord-fejring]'), null)
+    assert.equal(host.querySelector('[data-detail="session-records"]'), null)
     await act(async () => { f.p.enabled = false; rerender() })
     assert.equal(host.querySelector('dialog'), null)
     assert.equal(f.timers.size, 0)

@@ -125,6 +125,17 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     if (summary) {
       const card = el('section', null, { class: 'card', 'aria-label': 'Opsummering', 'data-session-summary': '' })
       card.append(el('p', `${summary.done} af ${summary.total} sæt klaret`))
+      const records = new Map()
+      for (const item of p.sessionRecordReceipts || []) {
+        const valid = sessionRecordReceipt(p, s, item)
+        if (valid && valid.key !== receipt?.key) records.set(valid.key, valid)
+      }
+      if (records.size) {
+        const fold = el('details', null, { 'data-detail': 'session-records' })
+        fold.append(el('summary', 'Rekorder i dette pas'))
+        for (const item of records.values()) fold.append(el('p', item.text, { 'data-session-record': item.key }))
+        card.append(fold)
+      }
       const complete = summary.exercises.filter(ex => ex.total > 0 && ex.missing === 0)
       const missing = summary.exercises.filter(ex => ex.missing > 0)
       if (complete.length) card.append(el('h2', 'Øvelser med alle sæt klaret'))

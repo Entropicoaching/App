@@ -67,7 +67,7 @@ test('actual existing handlers: readiness and weight success/failure feed the co
     assert.equal(saved.payload.athlete_id, p.athlete.id)
     assert.equal(saved.payload[kind === 'weight' ? 'logged_at' : 'logged_date'], p.today)
     if (fail) {
-      assert.doesNotMatch(view.text(), /Logget i dag/)
+      assert.doesNotMatch(view.text(), /[Ll]ogget i dag|Energi [1-5]\/5/)
       const alerts = view.nodes(n => n.props.role === 'alert')
       assert.equal(flashes.length + alerts.length, 1, 'existing flash and local form must not duplicate the failure')
       if (kind === 'weight') {
@@ -76,7 +76,7 @@ test('actual existing handlers: readiness and weight success/failure feed the co
       } else assert.match(view.text(), /Kunne ikke gemme/)
       assert.equal(p.weightInput, '82,5')
     } else {
-      assert.match(view.text(), /Logget i dag/)
+      assert.match(view.text(), kind === 'readiness' ? /Energi 3\/5 · logget i dag/ : /Logget i dag/)
       assert.equal(flashes.length, 0)
       if (kind === 'weight') assert.equal(saved.payload.weight, 82.5)
       else assert.equal(saved.payload.sleep_hours, 7.5)
@@ -123,9 +123,9 @@ test('one-tap Home uses actual readiness handler with all four scores, undo and 
       })
       assert.equal(typeof saved[0].payload.readiness_score, 'number')
       if (fail) {
-        assert.match(view.text(), /Tjek din forbindelse/); assert.doesNotMatch(view.text(), /Logget i dag/)
+        assert.match(view.text(), /Tjek din forbindelse/); assert.doesNotMatch(view.text(), /[Ll]ogget i dag|Energi [1-5]\/5/)
         assert.equal(p.readinessInput.energy, '5')
-      } else assert.match(view.text(), /Logget i dag/)
+      } else assert.match(view.text(), /Energi 5\/5 · logget i dag/)
     } finally { view.unmount() }
     assert.equal(time.handles(), 0)
   }

@@ -73,6 +73,39 @@ test('yesterday is prefilled; repeat changes the selected domain only and never 
   assert.deepEqual(f.calls, [])
 })
 
+test('confirmed energy appears once in the row or open receipt, including history and reopened panels', t => {
+  for (const fromHistory of [false, true]) {
+    const row = { athlete_id: athlete.id, logged_date: today, ...scores }
+    const f = fixture(t, fromHistory ? { trackingData: { status: 'ready', complete: true,
+      athleteId: athlete.id, today, readinessRows: [row] } } : { readinessLog: row })
+    const energyCount = () => (f.view.text().match(/Energi 3\/5 · logget i dag/g) || []).length
+    assert.equal(energyCount(), 1)
+    f.click('Dagsform'); assert.equal(energyCount(), 1)
+    assert.equal(f.view.nodes(n => n.type === 'form').length, 0)
+    f.click('Luk'); assert.equal(energyCount(), 1)
+    f.click('Dagsform'); assert.equal(energyCount(), 1)
+    assert.deepEqual(f.calls, [])
+  }
+})
+
+test('no confirmed energy from drafts, yesterday, errors, optimistic, foreign or malformed records', t => {
+  const row = { athlete_id: athlete.id, logged_date: today, ...scores }
+  for (const extra of [
+    { readinessInput: { ...empty, energy: 5 } },
+    ...[{ logged_date: '2026-11-03' }, { athlete_id: 'synthetic-other' }, { _optimistic: true },
+      { energy: null }, { energy: 0 }, { energy: 6 }, { energy: 2.5 }, { energy: 'invalid' }]
+      .map(patch => ({ readinessLog: { ...row, ...patch } })),
+    { readinessLog: row, trackingData: { status: 'error' } },
+    { readinessLog: row, trackingData: { status: 'loading' } },
+    { readinessLog: row, readinessError: 'synthetic error' },
+  ]) {
+    const f = fixture(t, extra)
+    assert.doesNotMatch(f.view.text(), /Energi [1-5]\/5/)
+    f.click('Dagsform'); assert.doesNotMatch(f.view.text(), /Energi [1-5]\/5/)
+    assert.deepEqual(f.calls, [])
+  }
+})
+
 test('manual draft wins over suggestions; unrelated/older/optimistic rows are never copied', t => {
   const f = fixture(t, { weightInput: '82,5', weightLogs: [
     { athlete_id: 'other', logged_at: '2026-11-03', weight: 99 },
@@ -91,7 +124,7 @@ test('undo before 5 s cancels every write and retains edits; double submit is he
   assert.deepEqual(f.calls, []); assert.equal(f.props.weightInput, '82,5')
   assert.equal(f.time.handles(), 0); assert.match(f.view.text(), /Fortrudt/)
   f.submit(); await f.advance(5000)
-  assert.deepEqual(f.calls, ['weight']); assert.match(f.view.text(), /Logget i dag/)
+  assert.deepEqual(f.calls, ['weight']); assert.match(f.view.text(), /[Ll]ogget i dag/)
   f.click('Luk'); f.click('Vægt i dag · Logget i dag')
   assert.equal(f.view.nodes(n => n.type === 'form').length, 0)
 })
@@ -103,7 +136,7 @@ test('readiness requires all scores and confirms an exact record after the delay
   for (const label of ['Energi', 'Motivation', 'Stress', 'Ømhed']) f.click(`${label} 3`)
   const submit = f.view.nodes(n => n.type === 'form')[0].props.onSubmit
   f.submit(); await f.advance(4999); assert.deepEqual(f.calls, [])
-  await f.advance(1); assert.deepEqual(f.calls, ['readiness']); assert.match(f.view.text(), /Logget i dag/)
+  await f.advance(1); assert.deepEqual(f.calls, ['readiness']); assert.match(f.view.text(), /[Ll]ogget i dag/)
   submit({ preventDefault() {} }); await f.advance(5000); assert.deepEqual(f.calls, ['readiness'])
 })
 
@@ -115,7 +148,7 @@ test('resolved failures and thrown errors preserve draft and permit retry withou
     if (throws) assert.match(f.view.text(), /Kunne ikke bekræfte/)
     assert.equal(f.props.weightInput, '82,5')
     f.props.logWeight = async () => { f.props.weightInput = '' }
-    f.submit(); await f.advance(5000); assert.match(f.view.text(), /Logget i dag/)
+    f.submit(); await f.advance(5000); assert.match(f.view.text(), /[Ll]ogget i dag/)
   }
 })
 
@@ -126,7 +159,7 @@ test('an unrelated record or a changed parent draft cannot confirm or save this 
   assert.match(f.view.text(), /Kunne ikke bekræfte/)
   const w = fixture(t, { weightInput: '82,5' }); w.click('Vægt i dag'); w.submit()
   w.props.weightInput = '99'; await w.advance(5000)
-  assert.deepEqual(w.calls, []); assert.doesNotMatch(w.view.text(), /Logget i dag/)
+  assert.deepEqual(w.calls, []); assert.doesNotMatch(w.view.text(), /[Ll]ogget i dag/)
 })
 
 test('pending and in-flight writes lock fields, close, switching and retained submit events', async t => {
@@ -138,7 +171,7 @@ test('pending and in-flight writes lock fields, close, switching and retained su
   assert.ok(f.view.nodes(n => n.type === 'input').every(n => n.props.disabled))
   await f.advance(5000); assert.match(f.view.text(), /Gemmer/)
   f.props.weightInput = ''; resolve(); await f.advance(0)
-  assert.match(f.view.text(), /Logget i dag/)
+  assert.match(f.view.text(), /[Ll]ogget i dag/)
 })
 
 test('unmount, athlete replacement, OFF and Copenhagen midnight cancel delayed writes', async t => {
@@ -175,8 +208,8 @@ test('read loading/error never looks like an empty log, and weight reuses parent
 test('a server-confirmed today record from history blocks a duplicate readiness insert', t => {
   const f = fixture(t, { trackingData: { status: 'ready', complete: true, athleteId: athlete.id, today,
     readinessRows: [{ athlete_id: athlete.id, logged_date: today, ...scores }] } })
-  f.click('Dagsform · Logget i dag')
-  assert.match(f.view.text(), /Logget i dag/)
+  f.click('Dagsform · Energi 3/5 · logget i dag')
+  assert.match(f.view.text(), /[Ll]ogget i dag/)
   assert.equal(f.view.nodes(n => n.type === 'form').length, 0)
   assert.deepEqual(f.calls, [])
 })
@@ -226,7 +259,7 @@ test('Home energy is one click; three yesterday proposals and one explicit save 
   await f.advance(1); assert.deepEqual(f.calls, ['readiness'])
   assert.deepEqual(f.props.readinessLog, { athlete_id: athlete.id, logged_date: today,
     sleep_hours: null, energy: 5, motivation: 4, stress: 2, soreness_level: 1 })
-  assert.match(f.view.text(), /Logget i dag/); assert.equal(f.time.handles(), 0)
+  assert.match(f.view.text(), /[Ll]ogget i dag/); assert.equal(f.time.handles(), 0)
 })
 
 test('fast readiness undo retains the chosen energy and never sends a write', async t => {
@@ -257,12 +290,12 @@ test('fast proposal can expand for edits without losing energy; absent yesterday
 test('fast readiness failures keep the selections and permit an explicit retry', async t => {
   const f = fixture(t, { trackingData: yesterdayHistory(), saveReadiness: async () => {} })
   f.click('Energi 3'); f.submit(); await f.advance(5000)
-  assert.match(f.view.text(), /Kunne ikke bekræfte/); assert.doesNotMatch(f.view.text(), /Logget i dag/)
+  assert.match(f.view.text(), /Kunne ikke bekræfte/); assert.doesNotMatch(f.view.text(), /[Ll]ogget i dag/)
   assert.equal(f.props.readinessInput.motivation, '4')
   f.props.saveReadiness = async () => { f.calls.push('readiness'); f.props.readinessLog = {
     athlete_id: athlete.id, logged_date: today, sleep_hours: null, energy: 3, motivation: 4, stress: 2, soreness_level: 1 } }
   f.submit(); await f.advance(5000); assert.deepEqual(f.calls, ['readiness'])
-  assert.match(f.view.text(), /Logget i dag/)
+  assert.match(f.view.text(), /[Ll]ogget i dag/)
 })
 
 test('fast readiness delayed events cannot write after undo, unmount, preview, OFF, scope or date change', async t => {

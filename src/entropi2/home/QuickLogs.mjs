@@ -1,7 +1,7 @@
 import { createElement as h, useEffect, useId, useRef, useState } from 'react'
 import { calendarDay } from '../../calendarDate.js'
 import { homeStyles as s } from './homeStyles.mjs'
-import { homeReadinessSuggestion, quickLogStatus } from './quickLogModel.mjs'
+import { homeReadinessSuggestion, quickLogStatus, confirmedReadinessEnergy } from './quickLogModel.mjs'
 import { createQuickController } from '../tracking/hurtig/controller.mjs'
 import { readinessValue, weightValue } from '../tracking/hurtig/model.mjs'
 
@@ -25,7 +25,8 @@ const statusFor = props => {
   const row = data?.status === 'ready' && data.complete === true && data.athleteId === props.athlete?.id &&
     data.today === props.today && Array.isArray(data.readinessRows)
     ? data.readinessRows.find(row => row.athlete_id === props.athlete.id && row.logged_date === props.today) : null
-  return quickLogStatus({ ...props, readinessLog: props.readinessLog ?? row })
+  const scoped = { ...props, readinessLog: props.readinessLog ?? row }
+  return { ...quickLogStatus(scoped), energy: confirmedReadinessEnergy(scoped) }
 }
 
 // Controller owns the five-second grace period; the existing host owns drafts
@@ -79,6 +80,7 @@ export default function QuickLogs(props) {
   if (readOnly) return null
   const status = statusFor(props)
   if (!status) return null
+  const readinessReceipt = status.energy == null ? 'Logget i dag' : `Energi ${status.energy}/5 · logget i dag`
   const state = control.current?.snapshot()
   const renderedController = control.current
   const busy = Boolean(state?.busy || props.savingReadiness || props.savingWeight)
@@ -159,11 +161,13 @@ export default function QuickLogs(props) {
   const rowButton = (kind, label, logged) => props.sessionReadOnly || !available(kind) ? null : h('button', { type: 'button',
     ref: kind === 'readiness' ? readinessOpener : undefined,
     style: { ...s.secondary, marginTop: 0, whiteSpace: 'nowrap', minWidth: 0 },
-    'aria-label': logged ? `${label} · Logget i dag` : label,
+    'aria-label': logged ? `${label} · ${kind === 'readiness' && open !== kind && status.energy != null ? readinessReceipt : 'Logget i dag'}` : label,
     'aria-expanded': open === kind || kind === 'readiness' && fast,
     'aria-controls': open || fast ? `${id}-panel` : undefined,
     title: logged ? 'Logget i dag' : undefined, disabled: busy, onClick: launch(kind) },
-  label, logged && h('span', { 'aria-hidden': true }, ' ✓'))
+  label, logged && h('span', { 'aria-hidden': true }, ' ✓'),
+  kind === 'readiness' && logged && open !== kind && status.energy != null &&
+    h('span', { 'aria-hidden': true, style: { display: 'block', whiteSpace: 'normal' } }, readinessReceipt))
   // Read-only previews expose no write buttons, including disconnected controls.
   if (props.sessionReadOnly || !available('readiness') && !available('weight')) return null
   const draft = state?.draft
@@ -183,7 +187,7 @@ export default function QuickLogs(props) {
       rowButton('readiness', 'Dagsform', status.readiness), rowButton('weight', 'Vægt i dag', weightDone)),
     fast && h('section', { id: `${id}-panel`, 'data-home-readiness-fast': '', 'aria-label': 'Dagsform',
       style: { ...s.card, marginTop: 12, marginBottom: 0 } },
-      status.readiness || saved ? h('p', { role: 'status', style: s.text }, 'Logget i dag') :
+      status.readiness || saved ? h('p', { role: 'status', style: s.text }, readinessReceipt) :
         h('form', { 'aria-busy': busy, onSubmit: event => {
           event.preventDefault()
           if (current() && available('readiness') && control.current === renderedController && open === 'readiness')
@@ -209,7 +213,7 @@ export default function QuickLogs(props) {
     open && !fast && h('section', { id: `${id}-panel`, style: { ...s.card, marginTop: 12, marginBottom: 0 },
       'aria-labelledby': `${id}-heading`, onKeyDown: event => { if (event.key === 'Escape') close() } },
     h('h2', { id: `${id}-heading`, ref: heading, tabIndex: -1, style: s.heading }, open === 'readiness' ? 'Dagsform' : 'Vægt i dag'),
-    done || saved ? h('p', { role: 'status', style: s.text }, 'Logget i dag') : !draft ? h('div', null,
+    done || saved ? h('p', { role: 'status', style: s.text }, open === 'readiness' ? readinessReceipt : 'Logget i dag') : !draft ? h('div', null,
       h('p', { role: state?.phase === 'error' ? 'alert' : 'status', style: s.text }, state?.phase === 'error'
         ? 'Dagsformen kunne ikke hentes sikkert. Prøv igen.' : 'Henter dine registreringer…'),
       state?.phase === 'error' && h('button', { type: 'button', style: s.secondary,

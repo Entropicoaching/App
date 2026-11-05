@@ -42,6 +42,19 @@ const history = { status: 'ready', complete: true, athleteId: props.athlete.id, 
   readinessRows: [{ athlete_id: props.athlete.id, logged_date: '2026-11-03',
     sleep_hours: 8, energy: 2, motivation: 4, stress: 2, soreness_level: 1 }] }
 
+test('real React: confirmed today energy is visible once, with no score from unconfirmed or failed reads', () => {
+  const row = { athlete_id: props.athlete.id, logged_date: props.today, energy: 3 }
+  const html = renderToStaticMarkup(h(QuickLogs, { ...props, readinessLog: row }))
+  assert.equal((html.match(/>Energi 3\/5 · logget i dag</g) || []).length, 1)
+  for (const extra of [
+    { readinessLog: { ...row, _optimistic: true } },
+    { readinessLog: { ...row, athlete_id: 'synthetic-other' } },
+    { readinessLog: { ...row, logged_date: '2026-11-03' } },
+    { trackingData: { status: 'error' } },
+    { readinessLog: null, readinessInput: { energy: 3 } },
+  ]) assert.doesNotMatch(renderToStaticMarkup(h(QuickLogs, { ...props, readinessLog: row, ...extra })), /Energi 3\/5/)
+})
+
 test('real React: Home offers five unselected energy choices and explicit yesterday proposals without a draft mutation', () => {
   const html = renderToStaticMarkup(h(QuickLogs, { ...props, trackingData: history,
     setReadinessInput() { assert.fail('render must not update draft') }, saveReadiness() { assert.fail('render must not save') } }))
@@ -75,6 +88,11 @@ test('real ReactDOM: one energy click, explicit save, undo, retry and confirmed 
       } })
   }
   const root = createRoot(host)
+  const openReadiness = async () => {
+    const button = elements(host).find(n => n.tagName === 'BUTTON' && n.getAttribute('aria-label')?.startsWith('Dagsform'))
+    assert.ok(button)
+    await act(async () => click(host, button.textContent))
+  }
   const submit = async () => {
     const target = elements(host).find(n => n.tagName === 'FORM')
     assert.ok(target)
@@ -95,7 +113,14 @@ test('real ReactDOM: one energy click, explicit save, undo, retry and confirmed 
     await submit(); await act(async () => time.advance(5000))
     assert.deepEqual(writes, [{ athlete_id: props.athlete.id, logged_date: props.today, sleep_hours: null,
       energy: 5, motivation: 4, stress: 2, soreness_level: 1 }])
-    assert.match(host.textContent, /Logget i dag/)
+    assert.match(host.textContent, /[Ll]ogget i dag/)
+    assert.equal((host.textContent.match(/Energi 5\/5 · logget i dag/g) || []).length, 1)
+    await openReadiness()
+    assert.equal((host.textContent.match(/Energi 5\/5 · logget i dag/g) || []).length, 1)
+    await act(async () => click(host, 'Luk'))
+    assert.equal((host.textContent.match(/Energi 5\/5 · logget i dag/g) || []).length, 1)
+    await openReadiness()
+    assert.equal((host.textContent.match(/Energi 5\/5 · logget i dag/g) || []).length, 1)
     assert.equal(time.handles(), 0)
   } finally {
     await act(async () => root.unmount())
