@@ -240,7 +240,7 @@ test('pause uses completed exercise at a transition; supersets and other set too
     assert.equal(f.view.controller.state().next.exercise.id, 'b')
     assert.match(f.rest().textContent, /0:45/); assert.match(f.rest().textContent, /Efter Squat/)
     assert.match(f.root.textContent, /Supersæt A: Squat \+ Rows/)
-    for (const label of ['−2,5', '+2,5', 'Godkendt', 'Afslut pas']) assert.ok(button(f.root, label))
+    for (const label of ['−2,5', '+2,5', 'Som planlagt', 'Afslut pas']) assert.ok(button(f.root, label))
     assert.match(f.root.textContent, /Skiver|Gentagelser|RPE/)
   } finally { f.view.dispose() }
 })

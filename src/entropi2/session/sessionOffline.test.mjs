@@ -2,7 +2,7 @@ import './sessionSaveRegister.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mountSession } from './sessionView.mjs'
-import { dom } from './a11y-dom.mjs'
+import { dom, button } from './a11y-dom.mjs'
 import { loadOfflineSets, saveOfflineSet, newSetClientId, overlayQueuedSets } from '../../offlineSetQueue.js'
 import { markNetworkFailure, markNetworkSuccess } from '../../offlineSession.js'
 import { rows, calls, reset, mode } from './sessionSaveBoundary.mjs'
@@ -121,4 +121,35 @@ test('freshly mounted session shows exact queued weight, reps, missing RPE and n
   assert.equal(root.querySelector('textarea').value, 'Teknik')
   assert.match(root.textContent, /Venter på net/)
   assert.equal(view.controller.state().done, 0)
+})
+
+// Exercise the new single submit through the existing copied writer and outbox.
+test('quick submit stays queued offline; replay unlocks next same-exercise defaults and only the athlete submits again', async t => {
+  const f = setup(t, false)
+  assert.ok(button(f.root, 'Som planlagt'))
+  assert.equal(f.values.size, 0); assert.equal(calls.length, 0)
+  const field = f.root.querySelector('[data-field="weight"]'); field.value = '82,5'; field.dispatch('input')
+  const reps = f.root.querySelector('[data-field="reps"]'); reps.value = '6'; reps.dispatch('input')
+  f.view.update()
+  f.root.querySelector('form').dispatch('submit'); await new Promise(resolve => setImmediate(resolve))
+  assert.equal(f.view.controller.state().phase, 'queued')
+  assert.equal(f.view.controller.state().next.setNumber, 1)
+  const queued = loadOfflineSets('synthetic-a', f.storage).lift_1
+  assert.equal(queued.payload.weight, 82.5); assert.equal(queued.payload.reps_completed, 6)
+  assert.equal(calls.length, 0); assert.ok(button(f.root, 'Venter på net'))
+  globalThis.navigator.onLine = true
+  await f.handlers().flushOfflineSets(); f.view.update()
+  assert.equal(f.view.controller.state().next.setNumber, 2)
+  assert.equal(f.root.querySelector('[data-field="weight"]').value, '82.5')
+  assert.equal(f.root.querySelector('[data-field="reps"]').value, '6')
+  assert.equal(f.root.querySelector('[data-field="rpe"]').value, '')
+  assert.ok(button(f.root, 'Som sidste sæt'))
+  const inserts = () => calls.filter(call => call.op === 'insert').length
+  assert.equal(inserts(), 1)
+  f.view.update(); assert.equal(inserts(), 1)
+  // This promise is the same production controller path used by form submit.
+  const current = f.view.controller.state()
+  await f.view.controller.approve(current.key, current.input, current.selection.stamp)
+  assert.equal(inserts(), 2); assert.equal(rows.size, 2)
+  assert.ok([...f.values.keys()].every(key => key === 'entropi_offline_sets:synthetic-a'))
 })

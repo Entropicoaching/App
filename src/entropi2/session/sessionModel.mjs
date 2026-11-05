@@ -29,16 +29,34 @@ export function sessionInput(input = {}) {
   return { ...input, weight: String(weight), reps: String(reps), rpe: rpe == null ? '' : String(rpe),
     rpe_source: rpe == null ? null : 'athlete' }
 }
-export function defaults(p, n) {
+// Only earlier confirmed sets of this exact program exercise can supply a pair.
+// RPE and notes describe an effort; they are never copied into another set.
+export function setSuggestion(p, n, logs = p.exerciseLogs || []) {
+  if (p.enabled !== true || !p.athleteId || !n) return { weight: '', reps: '', label: null }
+  const previous = (p.exerciseLogsError || p.exerciseLogsLoading ? [] : logs).filter(row => row.exercise_id === n.exercise.id &&
+    Number.isInteger(row.set_number) && row.set_number > 0 && row.set_number < n.setNumber &&
+    !row.skipped && !row._optimistic && (row.athlete_id == null || row.athlete_id === p.athleteId) &&
+    !queued(p, `${row.exercise_id}_${row.set_number}`) && !parked(p, `${row.exercise_id}_${row.set_number}`))
+    .sort((a, b) => b.set_number - a.set_number)
+    .map(row => sessionInput({ weight: row.weight, reps: row.reps_completed, rpe: '' })).find(Boolean)
+  return previous ? { weight: previous.weight, reps: previous.reps, label: 'Som sidste sæt' }
+    : { weight: n.exercise.recommended_weight ?? '', reps: fixedRepsEntry(n.exercise.reps) ?? '', label: 'Som planlagt' }
+}
+export function quickSetLabel(input, suggestion) {
+  const entered = sessionInput(input), proposed = sessionInput({ ...suggestion, rpe: '' })
+  return entered && proposed && entered.weight === proposed.weight && entered.reps === proposed.reps
+    ? suggestion.label : 'Godkendt'
+}
+export function defaults(p, n, suggestion = setSuggestion(p, n), edited = new Set()) {
   const key = setKey(n), pending = queued(p, key) ? rowFor(p, key) : null
   // Reloaded queue overlays carry the approved values; never show plan defaults
   // as if they were the values waiting to reach the server.
   const input = { ...(pending ? { weight: pending.weight, reps: pending.reps_completed,
     rpe: pending.rpe_actual ?? '', note: pending.note ?? '' } : {}), ...(p.logInputs?.[key] || {}) }
-  // Marc 3. nov.: an empty stored field is not a choice; the next set starts from the plan.
   const given = v => v != null && String(v).trim() !== ''
-  return { ...input, weight: given(input.weight) ? input.weight : n?.exercise.recommended_weight ?? '',
-    reps: given(input.reps) ? input.reps : fixedRepsEntry(n?.exercise.reps) ?? '', rpe: input.rpe ?? '' }
+  // Host placeholders may be empty, but a field cleared here is an explicit edit.
+  return { ...input, weight: edited.has('weight') || given(input.weight) ? input.weight : suggestion.weight,
+    reps: edited.has('reps') || given(input.reps) ? input.reps : suggestion.reps, rpe: input.rpe ?? '' }
 }
 export function warmup(n, input) {
   const w = parseInputNumber(input?.weight)
@@ -49,7 +67,7 @@ export function warmup(n, input) {
 
 export function createSessionController(latest, changed = () => {}) {
   let selection = null, open = false, finished = false, error = ''
-  const writes = new Map(), notes = new Map()
+  const writes = new Map(), notes = new Map(), edits = new Map()
   let feelingScope = null, feelingDraft = {}
   function confirmed(p) {
     return (p.exerciseLogs || []).filter(l => !l._optimistic &&
@@ -78,6 +96,8 @@ export function createSessionController(latest, changed = () => {}) {
     const day = programStamp(p) ? findDagensPas(p.allWeeks, p.currentWeek, logs) : null
     const next = session ? nextSetInSession(session, logs) : null
     const key = setKey(next), phase = key ? status(p, key) : 'idle'
+    const suggestion = setSuggestion(p, next, logs)
+    const input = defaults(p, next, suggestion, edits.get(`${selection?.stamp}:${key}`))
     // Completion is optional and local. Queued/parked/optimistic rows cannot unlock it.
     const canFeel = !!session && !next && sessionSetTotal(session) > 0 &&
       session.exercises.every(ex => Array.from({ length: ex.sets || 0 }, (_, i) =>
@@ -88,8 +108,8 @@ export function createSessionController(latest, changed = () => {}) {
     return { open: open && !!session, selection, session, next, key, phase, error,
       feeling: scope ? { scope, draft: scope === feelingScope ? { ...feelingDraft } : {} } : null,
       summary: !!session && (finished || (!next && sessionSetTotal(session) > 0)),
-      canStart: !!session || !!day?.next, day, input: defaults(p, next),
-      note: noteValue(notes.get(`${selection?.stamp}:${key}`) ?? { text: defaults(p, next).note }),
+      canStart: !!session || !!day?.next, day, input, approveLabel: quickSetLabel(input, suggestion),
+      note: noteValue(notes.get(`${selection?.stamp}:${key}`) ?? { text: input.note }),
       done: sessionLoggedCount(session, logs), total: sessionSetTotal(session), logs }
   }
   return {
@@ -119,6 +139,9 @@ export function createSessionController(latest, changed = () => {}) {
     edit(expected, name, value, stamp) {
       const p = latest(), s = state()
       if (p.readOnly === true || !s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
+      const id = `${stamp}:${expected}`
+      if (!edits.has(id)) edits.set(id, new Set())
+      edits.get(id).add(name)
       p.setLogInputs(prev => ({ ...prev, [expected]: { ...(prev[expected] || {}), [name]: value } }))
     },
     editFeeling(scope, draft) {

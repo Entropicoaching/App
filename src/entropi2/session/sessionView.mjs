@@ -231,7 +231,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
           fields.append(lab)
         }
         form.append(el('h2', 'Dit sæt'), fields, el('p', 'Skriv 0 kg ved en øvelse uden ekstra vægt.', { class: 'hint' }))
-        const approve = el('button', s.phase === 'queued' ? 'Venter på net' : busy ? 'Afventer svar' : 'Godkendt', { type: 'submit', class: 'approve' })
+        const approve = el('button', s.phase === 'queued' ? 'Venter på net' : busy ? 'Afventer svar' : s.approveLabel, { type: 'submit', class: 'approve' })
         approve.disabled = busy
         form.addEventListener('submit', e => {
           e.preventDefault()
