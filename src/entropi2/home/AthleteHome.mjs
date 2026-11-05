@@ -19,6 +19,17 @@ const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(is
 const labels = { holiday: 'Du er på ferie', missing: 'Programmet er ikke tilgængeligt', 'no-program': 'Intet program endnu',
   'no-next': 'Intet kommende pas planlagt', done: 'Dagens pas er klaret' }
 
+// Keep the preview short without losing whitespace or splitting a surrogate pair.
+// The disclosure contains only the remainder, so expanded text is not duplicated.
+function coachMessageParts(content) {
+  const characters = Array.from(content)
+  if (characters.length <= 160) return { preview: content, rest: '' }
+  const prefix = characters.slice(0, 160).join('')
+  const boundary = prefix.search(/\s+\S*$/)
+  const cut = boundary > 0 ? boundary : prefix.length
+  return { preview: content.slice(0, cut), rest: content.slice(cut) }
+}
+
 // Only an explicit enabled=true renders this opt-in component. No flag reader.
 export default function AthleteHome(props) {
   const { enabled = false } = props
@@ -68,6 +79,7 @@ export default function AthleteHome(props) {
   const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
   const coach = (Array.isArray(messages) ? [...messages] : []).reverse()
     .find(m => m?.sender_role === 'coach' && typeof m.content === 'string' && m.content.trim())
+  const coachText = coach && coachMessageParts(coach.content)
   const namedExercises = target?.session.exercises.filter(e => typeof e.name === 'string' && e.name.trim()) ?? []
   const canStart = !props.sessionReadOnly && typeof onStartSession === 'function'
   const go = route => () => latest.current.setTab?.(route)
@@ -92,13 +104,13 @@ export default function AthleteHome(props) {
       h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
       target ? h('div', null,
         model.date && h('p', { style: s.text }, model.date === model.today ? 'I dag' : danishDate(model.date)),
-        namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
-        model.logged != null && h('p', { style: s.text }, `${model.logged} af ${model.total} sæt klaret`),
-        ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)),
         !props.sessionReadOnly && h('button', { type: 'button', style: s.primary, disabled: !canStart || staleWeek, onClick: start },
           model.kind === 'today' ? 'Start dagens pas' : 'Start næste pas'),
         !props.sessionReadOnly && (staleWeek ? h('p', { role: 'status', style: s.text }, 'En ny uge er startet. Genindlæs siden for at registrere passet.')
-          : !canStart && h('p', { role: 'status', style: s.text }, 'Passet kunne ikke åbnes. Prøv at genindlæse siden.')))
+          : !canStart && h('p', { role: 'status', style: s.text }, 'Passet kunne ikke åbnes. Prøv at genindlæse siden.')),
+        namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
+        model.logged != null && h('p', { style: s.text }, `${model.logged} af ${model.total} sæt klaret`),
+        ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)))
         : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.'
           : props.offlineSnapshotAt != null ? 'Opdatér programmet, når du har net, før du registrerer et pas.'
             : props.programError ? 'Programmet kunne ikke hentes. Prøv at genindlæse siden.' : 'Se programmet eller kontakt din coach.'),
@@ -119,7 +131,10 @@ export default function AthleteHome(props) {
     coach && h('section', { style: s.card, 'aria-label': 'Fra din coach' },
       h('p', { style: s.eyebrow }, 'Fra din coach'),
       h('h2', { style: s.heading }, 'Seneste besked'),
-      h('p', { style: s.text }, coach.content),
+      h('p', { style: s.text }, coachText.preview),
+      coachText.rest && h('details', null,
+        h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Læs resten af beskeden'),
+        h('p', { style: s.text }, coachText.rest)),
       coach?.created_at && typeof formatMsgTime === 'function' && h('p', { style: s.text }, formatMsgTime(coach.created_at)),
       link('beskeder', 'Se besked og video')),
     h('h2', { style: s.heading }, 'Resten af din dag'),
