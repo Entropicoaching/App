@@ -8,6 +8,7 @@ import { holidayInfo } from './coachKonstanter'
 import CoachCalendarEvents from './CoachCalendarEvents.jsx'
 
 export default function KalenderView({ coachRyd = false, tasksOnly = false,
+  entropi2 = false, loading, loadError, calendarStatus, calendarReady, onRetry,
   coachCalendarEvents = false,
   askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,
   calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,
@@ -15,6 +16,33 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
   setCalBlockAthlete, setHoverCell, setPlanStartDate, setTimelineEdit, showFlash, snoozeAthlete,
   snoozedAthletes, timelineEdit,
 }) {
+          const modern = entropi2 === true
+          // The reader keeps the previous map during refresh, including [] for a
+          // successfully read athlete without weeks. Do not unmount that track.
+          const hasCalendarData = modern && athletes.some(a => Array.isArray(calendarWeeks[a.id]))
+          const readFailed = modern && loading === false && (loadError || calendarStatus === 'error')
+          const readPending = modern && (loading !== false || (athletes.length > 0 && (calendarStatus !== 'ready' || !calendarReady)))
+          const readNotice = (readFailed || readPending) ? (
+            <div role={readFailed ? 'alert' : 'status'} style={{ ...s.card, color: '#edeae2', fontSize: 14 }}>
+              {readFailed ? (loadError ? 'Atleterne kunne ikke indlæses.' : 'Kalenderen kunne ikke indlæses.') : hasCalendarData ? 'Opdaterer…' : 'Indlæser kalender…'}
+              {readFailed && <button type="button" onClick={onRetry} style={{ ...s.btnGhost, display: 'block', minHeight: 44, fontSize: 14, marginTop: '0.75rem' }}>Prøv igen</button>}
+            </div>
+          ) : null
+          if (modern && !hasCalendarData && (readFailed || readPending)) {
+            return (
+              <section aria-label="Kalender" style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+                <h1 style={{ color: '#edeae2', fontSize: '1.8rem', fontWeight: 400 }}>Overblik</h1>
+                {readNotice}
+              </section>
+            )
+          }
+          const BoardContainer = modern ? 'details' : 'div'
+          const TimelineAction = modern ? 'button' : 'div'
+          const boardLegend = (
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.75rem', letterSpacing: '0.05em', lineHeight: 1.7 }}>
+              "Klar · N uger" = N fyldte uger tilbage fra og med den uge atleten træner nu. "Sidste uge — planlæg næste" = kun den nuværende uge er fyldt. Brug "Udsæt" hvis du allerede har styr på det og ikke vil mindes om det i nogle dage. Prikken = sidst loggede træning.
+            </div>
+          )
           const today0 = calendarToday()
           const todayDay = `${today0.getFullYear()}-${String(today0.getMonth() + 1).padStart(2, '0')}-${String(today0.getDate()).padStart(2, '0')}`
           const dayMs = 86400000
@@ -186,14 +214,15 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                 </div>
               </div>
 
+              {readNotice}
               {coachCalendarEvents === true && <CoachCalendarEvents athletes={visibleAthletes} openProfile={openProfile} />}
               {!coachRyd && renderPlanTasks()}
 
               {/* Tidslinje — alle atleters blokke på tværs af tid */}
               {(() => {
-                const COL_W = isMobile ? 40 : 48
+                const COL_W = modern ? (isMobile ? 64 : 72) : (isMobile ? 40 : 48)
                 const NAME_W = isMobile ? 88 : 132
-                const ROW_H = 34
+                const ROW_H = modern ? 56 : 34
                 const isoOf = (d) => d.toISOString().slice(0, 10)
 
                 const rows = visibleAthletes.map(a => {
@@ -241,7 +270,7 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                       <select
                         value=""
                         onChange={e => { const a = visibleAthletes.find(x => x.id === e.target.value); if (a) openCalBlockBuilder(a) }}
-                        style={{ ...s.fieldSelect, fontSize: '0.6rem', padding: '0.3rem 0.5rem', width: 'auto', color: '#c8923a', borderColor: 'rgba(200,146,58,0.4)' }}
+                        style={{ ...s.fieldSelect, fontSize: modern ? 14 : '0.6rem', ...(modern ? { minHeight: 44 } : {}), padding: '0.3rem 0.5rem', width: 'auto', color: '#c8923a', borderColor: 'rgba(200,146,58,0.4)' }}
                       >
                         <option value="">+ Opstil blokke for…</option>
                         {visibleAthletes.map(a => <option key={a.id} value={a.id} style={{ color: '#edeae2' }}>{a.name}</option>)}
@@ -254,14 +283,14 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                       </div>
                     ) : (
                       <>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', color: '#4a4844', marginTop: '0.4rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: modern ? 12 : '0.46rem', letterSpacing: modern ? 'normal' : '0.06em', color: modern ? '#c4c0b5' : '#4a4844', marginTop: '0.4rem', ...(modern ? { lineHeight: 1.5 } : {}) }}>
                         <time dateTime={todayDay}>I dag · {today0.toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long' })}</time>
                         {' · Denne uge er fremhævet. Tryk på en tom celle for at oprette en uge.'}
                       </div>
                       <div style={{ display: 'flex', marginTop: '0.5rem', border: '1px solid rgba(237,234,226,0.06)' }}>
                         {/* Sticky navne-kolonne */}
                         <div style={{ flexShrink: 0, width: NAME_W, borderRight: '1px solid rgba(237,234,226,0.08)', background: '#16160f' }}>
-                          <div style={{ height: 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }} />
+                          <div style={{ height: modern ? 32 : 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }} />
                           {placed.map(r => (
                             <div key={r.a.id} onClick={() => openProfile(r.a, 'program')}
                               style={{ height: ROW_H, display: 'flex', alignItems: 'center', padding: '0 0.5rem', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.04)', fontSize: isMobile ? '0.72rem' : '0.8rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -274,9 +303,9 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                           <div style={{ width: trackW, position: 'relative', overflow: 'hidden' }}>
                             <div aria-hidden="true" data-calendar-current-week={isoLocal(cols[todayCol])} style={{ position: 'absolute', left: todayCol * COL_W, top: 0, bottom: 0, width: COL_W, background: 'rgba(200,146,58,0.14)', pointerEvents: 'none' }} />
                             {/* Dato-header */}
-                            <div style={{ display: 'flex', height: 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
+                            <div style={{ display: 'flex', height: modern ? 32 : 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }}>
                               {cols.map((d, i) => (
-                                <div key={i} aria-current={i === todayCol ? 'date' : undefined} title={i === todayCol ? 'Denne uge' : undefined} style={{ position: 'relative', width: COL_W, flexShrink: 0, textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', color: i === todayCol ? '#f1c675' : '#4a4844', background: i === todayCol ? 'rgba(200,146,58,0.18)' : 'transparent', fontWeight: i === todayCol ? 700 : 400, lineHeight: '22px' }}>
+                                <div key={i} aria-current={i === todayCol ? 'date' : undefined} title={i === todayCol ? 'Denne uge' : undefined} style={{ position: 'relative', width: COL_W, flexShrink: 0, textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: modern ? 12 : '0.42rem', color: i === todayCol ? '#f1c675' : (modern ? '#c4c0b5' : '#4a4844'), background: i === todayCol ? 'rgba(200,146,58,0.18)' : 'transparent', fontWeight: i === todayCol ? 700 : 400, lineHeight: modern ? '32px' : '22px' }}>
                                   {d.getDate()}/{d.getMonth() + 1}
                                 </div>
                               ))}
@@ -302,14 +331,15 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                                   if (newNo == null || newNo < 1 || r.wks.some(w => w.week_number === newNo)) return null
                                   const hov = hoverCell && hoverCell.aid === r.a.id && hoverCell.col === i
                                   return (
-                                    <div key={`cell${i}`}
+                                    <TimelineAction key={`cell${i}`}
+                                      {...(modern ? { type: 'button', 'aria-label': `Opret uge ${newNo} for ${r.a.name} · ${d.toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })}` } : {})}
                                       onClick={() => onEmptyCellClick(r, i, d)}
                                       onMouseEnter={() => setHoverCell({ aid: r.a.id, col: i })}
                                       onMouseLeave={() => setHoverCell(null)}
                                       title={`+ Opret uge · ${d.getDate()}/${d.getMonth() + 1}`}
-                                      style={{ position: 'absolute', left: i * COL_W, top: 0, width: COL_W, height: ROW_H, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: hov ? 'rgba(200,146,58,0.08)' : 'transparent' }}>
-                                      {hov && <span style={{ color: '#c8923a', fontSize: '0.8rem', opacity: 0.8, lineHeight: 1 }}>+</span>}
-                                    </div>
+                                      style={{ position: 'absolute', left: i * COL_W, top: 0, width: COL_W, height: ROW_H, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', ...(modern ? { minHeight: 44, padding: 0, border: 0, boxSizing: 'border-box' } : {}), background: hov ? 'rgba(200,146,58,0.08)' : 'transparent' }}>
+                                      {(modern || hov) && <span style={{ color: '#c8923a', fontSize: modern ? 18 : '0.8rem', opacity: 0.8, lineHeight: 1 }}>+</span>}
+                                    </TimelineAction>
                                   )
                                 })}
                                 {r.phases.map((ph, pi) => {
@@ -321,20 +351,21 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                                   const isActive = r.currentWk != null && first.week_number <= r.currentWk && r.currentWk <= last.week_number
                                   const range = first.week_number === last.week_number ? `u${first.week_number}` : `u${first.week_number}–${last.week_number}`
                                   return (
-                                    <div key={pi} title={`${ph.name || 'Uden blok'} · ${range}`}
+                                    <TimelineAction key={pi} title={`${ph.name || 'Uden blok'} · ${range}`}
+                                      {...(modern ? { type: 'button', 'aria-label': `Rediger blok: ${ph.name || 'Uden blok'} · ${r.a.name} · Uge ${first.week_number}–${last.week_number}` } : {})}
                                       onClick={() => openEdit(r, ph)}
                                       style={{
                                         position: 'absolute', left: c0 * COL_W + 2, width: Math.max((c1 - c0 + 1) * COL_W - 4, COL_W - 4),
-                                        top: 5, height: ROW_H - 12, cursor: 'pointer', borderRadius: 3, overflow: 'hidden',
+                                        top: modern ? 6 : 5, height: ROW_H - 12, ...(modern ? { minHeight: 44, boxSizing: 'border-box', textAlign: 'left', fontFamily: 'inherit' } : {}), cursor: 'pointer', borderRadius: 3, overflow: 'hidden',
                                         background: isActive ? color + '33' : color + (isDone ? '14' : '22'),
                                         border: `1px solid ${isActive ? color : color + '66'}`, opacity: isDone ? 0.7 : 1,
                                         display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0 0.35rem',
                                       }}>
                                       <span style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-                                      <span style={{ fontSize: '0.6rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ph.name || 'Uden blok'}</span>
+                                      <span style={{ fontSize: modern ? 14 : '0.6rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ph.name || 'Uden blok'}</span>
                                       {isDone && <span style={{ color, fontSize: '0.55rem', flexShrink: 0 }}>✓</span>}
                                       {isActive && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', textTransform: 'uppercase', color, flexShrink: 0 }}>nu</span>}
-                                    </div>
+                                    </TimelineAction>
                                   )
                                 })}
                               </div>
@@ -350,18 +381,19 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                     {/* Dato-redigerings-panel */}
                     {timelineEdit && (
                       <div style={{ marginTop: '0.75rem', padding: '0.6rem 0.75rem', background: '#16160f', border: '1px solid rgba(200,146,58,0.3)', borderRadius: 3 }}>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>
-                          Startdato — {timelineEdit.name} · {timelineEdit.block}
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: modern ? 14 : '0.5rem', letterSpacing: modern ? 'normal' : '0.08em', textTransform: modern ? 'none' : 'uppercase', color: '#c8923a', marginBottom: '0.4rem', ...(modern ? { overflowWrap: 'anywhere' } : {}) }}>
+                          {modern ? <>Rediger blok: {timelineEdit.block} · {timelineEdit.name} · Uge {timelineEdit.weeks[0].week_number}–{timelineEdit.weeks[timelineEdit.weeks.length - 1].week_number}<br />Startdato: <time dateTime={timelineEdit.firstStartIso}>{timelineEdit.firstStartIso}</time></> : <>Startdato — {timelineEdit.name} · {timelineEdit.block}</>}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                          <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.3rem 0.5rem' }}
+                          <button style={{ ...s.btnGhost, fontSize: modern ? 14 : '0.6rem', ...(modern ? { minHeight: 44 } : {}), padding: '0.3rem 0.5rem' }}
                             onClick={() => { const d = new Date(timelineEdit.firstStartIso + 'T12:00:00'); const iso = isoOf(new Date(d.getTime() - 7 * dayMs)); setTimelineEdit(p => ({ ...p, firstStartIso: iso })); setBlockStartDate(timelineEdit.athleteId, timelineEdit.weeks, iso) }}>‹ 1 uge</button>
                           <input type="date" value={timelineEdit.firstStartIso}
+                            {...(modern ? { 'aria-label': 'Blokkens startdato' } : {})}
                             onChange={e => { if (e.target.value) { setTimelineEdit(p => ({ ...p, firstStartIso: e.target.value })); setBlockStartDate(timelineEdit.athleteId, timelineEdit.weeks, e.target.value) } }}
-                            style={{ ...s.fieldInput, fontSize: '0.7rem', padding: '0.25rem 0.4rem', width: 'auto' }} />
-                          <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.3rem 0.5rem' }}
+                            style={{ ...s.fieldInput, fontSize: modern ? 14 : '0.7rem', ...(modern ? { minHeight: 44, boxSizing: 'border-box' } : {}), padding: '0.25rem 0.4rem', width: 'auto' }} />
+                          <button style={{ ...s.btnGhost, fontSize: modern ? 14 : '0.6rem', ...(modern ? { minHeight: 44 } : {}), padding: '0.3rem 0.5rem' }}
                             onClick={() => { const d = new Date(timelineEdit.firstStartIso + 'T12:00:00'); const iso = isoOf(new Date(d.getTime() + 7 * dayMs)); setTimelineEdit(p => ({ ...p, firstStartIso: iso })); setBlockStartDate(timelineEdit.athleteId, timelineEdit.weeks, iso) }}>1 uge ›</button>
-                          <button style={{ ...s.btnGhost, fontSize: '0.6rem', padding: '0.3rem 0.5rem', marginLeft: 'auto' }} onClick={() => setTimelineEdit(null)}>Luk</button>
+                          <button style={{ ...s.btnGhost, fontSize: modern ? 14 : '0.6rem', ...(modern ? { minHeight: 44 } : {}), padding: '0.3rem 0.5rem', marginLeft: 'auto' }} onClick={() => setTimelineEdit(null)}>Luk</button>
                         </div>
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', marginTop: '0.35rem', lineHeight: 1.6 }}>
                           Sætter blokkens første uge til datoen og fordeler resten af ugerne fortløbende (7 dage pr. uge).
@@ -450,8 +482,8 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
               {!coachRyd && renderAttentionTasks()}
 
               {/* Fuldt board — alle atleter */}
-              <div style={{ ...s.card }}>
-                <div style={s.cardLabel}>Alle atleter</div>
+              <BoardContainer style={{ ...s.card }} {...(modern ? { 'data-calendar-board': true } : {})}>
+                {modern ? <summary style={{ minHeight: 44, cursor: 'pointer', color: '#edeae2', fontSize: 14, overflowWrap: 'anywhere' }}>Alle atleter ({board.length})</summary> : <div style={s.cardLabel}>Alle atleter</div>}
                 {board.length === 0 ? (
                   <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '1rem 0' }}>Ingen atleter</div>
                 ) : board.map((b, i) => {
@@ -479,10 +511,9 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                     </div>
                   )
                 })}
-              </div>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.75rem', letterSpacing: '0.05em', lineHeight: 1.7 }}>
-                "Klar · N uger" = N fyldte uger tilbage fra og med den uge atleten træner nu. "Sidste uge — planlæg næste" = kun den nuværende uge er fyldt. Brug "Udsæt" hvis du allerede har styr på det og ikke vil mindes om det i nogle dage. Prikken = sidst loggede træning.
-              </div>
+                {modern && boardLegend}
+              </BoardContainer>
+              {!modern && boardLegend}
             </div>
           )
 }

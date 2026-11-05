@@ -742,6 +742,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         {view === 'calendar' && (() => {
           return (
             programOverview ? <ProgramOverblik {...{ athletes, calendarWeeks, hiddenAthleteIds, openProfile, loading, loadError }} /> : <KalenderView {...{ coachRyd,
+              ...(e2 ? { entropi2: true, loading, loadError, calendarStatus: coachActionsStatus.calendar, calendarReady: !!e2ReadContext,
+                onRetry: async () => { if (loadError) { setLoading(true); await fetchAthletes() } await refreshCoachInbox() } } : {}),
               coachCalendarEvents: coachCalendarEvents === true,
               askConfirm, athleteCurrentWeek, athleteLastLogs, athletes, blockPlan, blockSequenceRows,
               calBlockAthlete, calendarWeeks, createCalendarWeek, generateWeeksFromPlan, hiddenAthleteIds, hoverCell,

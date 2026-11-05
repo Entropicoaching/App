@@ -22,7 +22,11 @@ test('repair: OFF trees equal all twelve pinned Dashboard baseline trees',t=>{
 })
 
 test('repair: OFF calendar source and callback identities remain pinned',()=>{
-  const source=readFileSync(new URL('./Dashboard.jsx',import.meta.url),'utf8').replaceAll('\r\n','\n')
+  const addedOnStatus = "              ...(e2 ? { entropi2: true, loading, loadError, calendarStatus: coachActionsStatus.calendar, calendarReady: !!e2ReadContext,\n"
+    + "                onRetry: async () => { if (loadError) { setLoading(true); await fetchAthletes() } await refreshCoachInbox() } } : {}),\n"
+  const current=readFileSync(new URL('./Dashboard.jsx',import.meta.url),'utf8').replaceAll('\r\n','\n')
+  assert.equal(current.split(addedOnStatus).length,2,'exact ON-only status addition; OFF source remains pinned below')
+  const source=current.replace(addedOnStatus,'')
   const start=source.indexOf('<KalenderView {...{ coachRyd,',source.indexOf('{/* CALENDAR VIEW */}'))
   assert.ok(start>=0)
   assert.equal(source.slice(start,source.indexOf('}} />',start)+5),baseline.calendar)
