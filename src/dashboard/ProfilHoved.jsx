@@ -5,7 +5,7 @@ import { ProfileActions, CoachFold } from '../coachRyd.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilens hoved: tilbage/kø-kontekst, aktuel opgave, profilkort, sektions-navigation.
 // Samme navne som props som i Dashboard; linjerne står i et fragment (ingen DOM-ændring).
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../supabase.js'
 import { s, initials, formatLastSeen } from '../dashboardShared.js'
 import { styrkeLinje, styrkeSmerteRegel } from '../coachFremgang.js'
@@ -23,6 +23,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
   // STYRKE_LOG_DAGE dage den bruger), så Hjem ikke trækker de op til 2000 fulde rækker
   // som Log-fanen. Rækker fra en tidligere profil vises aldrig (ignore-flag + athlete_id).
   const [styrkeLogs, setStyrkeLogs] = useState([])
+  const moreButton = useRef(null)
   useEffect(() => {
     let ignore = false
     const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
@@ -141,7 +142,8 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
               const more = navItems.filter(n => !PRIMARY.includes(n.key))
               const activeInMore = more.some(n => n.key === activeTab)
               const activeMoreLabel = more.find(n => n.key === activeTab)?.label
-              const go = (key) => { setActiveTab(key); setEditing(null); setNavMenuOpen(false) }
+              const closeMenu = () => { setNavMenuOpen(false); moreButton.current?.focus() }
+              const go = (key) => { setActiveTab(key); setEditing(null); setNavMenuOpen(false); if (coachTabCleanup && navMenuOpen) moreButton.current?.focus() }
               const tabBtn = (active) => ({
                 position: 'relative', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem',
                 fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
@@ -149,15 +151,20 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
                 color: active ? '#c8923a' : '#7a7770', background: 'none', border: 'none',
                 borderBottom: active ? '2px solid #c8923a' : '2px solid transparent',
                 marginBottom: '-1px', whiteSpace: 'nowrap',
+                ...(coachTabCleanup ? { fontSize: 14, minHeight: 44, textTransform: 'none', letterSpacing: 'normal', whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}),
               })
               return (
-                <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
+                <div style={{ marginBottom: '1.5rem', position: 'relative' }}
+                  {...(coachTabCleanup ? { onKeyDown: event => {
+                    if (event.key === 'Escape' && navMenuOpen) { event.preventDefault(); event.stopPropagation(); closeMenu() }
+                  } } : {})}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.1rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
                     {primary.map(n => {
                       const active = activeTab === n.key
                       return (
                         <button
                           key={n.key}
+                          {...(coachTabCleanup ? { type: 'button', 'aria-current': active ? 'page' : undefined } : {})}
                           onClick={() => go(n.key)}
                           style={tabBtn(active)}
                           onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#b8b4a8' }}
@@ -171,12 +178,13 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
                       )
                     })}
                     <button
+                      {...(coachTabCleanup ? { type: 'button', ref: moreButton, 'aria-expanded': Boolean(navMenuOpen) } : {})}
                       onClick={() => setNavMenuOpen(o => !o)}
                       style={{ ...tabBtn(activeInMore), display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
                       onMouseEnter={e => { if (!activeInMore) e.currentTarget.style.color = '#b8b4a8' }}
                       onMouseLeave={e => { if (!activeInMore) e.currentTarget.style.color = '#7a7770' }}
                     >
-                      {coachRyd ? 'Mere' : activeInMore ? <><span style={{ marginRight: '0.35rem' }}>{EMOJI[activeTab]}</span>{activeMoreLabel}</> : 'Mere'}
+                      {coachRyd && !coachTabCleanup ? 'Mere' : activeInMore ? <><span style={{ marginRight: '0.35rem' }}>{EMOJI[activeTab]}</span>{activeMoreLabel}</> : 'Mere'}
                       <span style={{ fontSize: '0.5rem', transform: navMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▾</span>
                     </button>
                   </div>
@@ -185,15 +193,16 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
                     <>
                       {/* usynligt lag: klik udenfor lukker menuen */}
                       <div onClick={() => setNavMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
-                      <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '0.25rem', zIndex: 41, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', minWidth: '11rem', padding: '0.3rem 0' }}>
-                        {coachRyd && <button style={s.btnDanger} onClick={() => setShowDeleteModal(true)}>Fjern</button>}
+                      <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '0.25rem', zIndex: 41, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.13)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', minWidth: '11rem', padding: '0.3rem 0', ...(coachTabCleanup ? { minWidth: 0, width: 'max-content', maxWidth: 'min(100%, calc(100vw - 32px))', boxSizing: 'border-box' } : {}) }}>
+                        {coachRyd && <button style={{ ...s.btnDanger, ...(coachTabCleanup ? { minHeight: 44, fontSize: 14 } : {}) }} onClick={() => setShowDeleteModal(true)}>Fjern</button>}
                         {more.map(n => {
                           const active = activeTab === n.key
                           return (
                             <button
                               key={n.key}
+                              {...(coachTabCleanup ? { type: 'button', 'aria-current': active ? 'page' : undefined } : {})}
                               onClick={() => go(n.key)}
-                              style={{ display: 'block', width: '100%', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.6rem 1rem', cursor: 'pointer', background: active ? 'rgba(200,146,58,0.1)' : 'none', border: 'none', borderLeft: active ? '2px solid #c8923a' : '2px solid transparent', color: active ? '#c8923a' : '#b8b4a8' }}
+                              style={{ display: 'block', width: '100%', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.6rem 1rem', cursor: 'pointer', background: active ? 'rgba(200,146,58,0.1)' : 'none', border: 'none', borderLeft: active ? '2px solid #c8923a' : '2px solid transparent', color: active ? '#c8923a' : '#b8b4a8', ...(coachTabCleanup ? { fontSize: 14, minHeight: 44, textTransform: 'none', letterSpacing: 'normal', whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
                               onMouseEnter={e => { e.currentTarget.style.color = '#edeae2' }}
                               onMouseLeave={e => { e.currentTarget.style.color = active ? '#c8923a' : '#b8b4a8' }}
                             >

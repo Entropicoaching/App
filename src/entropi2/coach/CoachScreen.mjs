@@ -26,16 +26,17 @@ export default function CoachScreen(props = {}) {
 }
 function ClockedCoach(props) {
   const [now, setNow] = useState(() => new Date())
+  const [athleteQuery, setAthleteQuery] = useState('')
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000)
     return () => clearInterval(timer)
   }, [])
-  return h(CoachView, { ...props, today: props.today ?? now })
+  return h(CoachView, { ...props, today: props.today ?? now, athleteQuery, onAthleteQueryChange: setAthleteQuery })
 }
 
 export function CoachView(input = {}) {
   if (input.enabled !== true) return null
-  const { tab = 'home', today = new Date(), ...props } = input
+  const { tab = 'home', today = new Date(), athleteQuery = '', onAthleteQueryChange, ...props } = input
   const model = coachHomeModel(props, today)
   const inbox = tab === 'inbox'
   const report = inbox ? null : weeklyReportModel(props, today)
@@ -52,6 +53,9 @@ export function CoachView(input = {}) {
     h('span', { style: { ...s.avatar, display: 'inline-flex', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
     h('strong', null, row.athlete.name), h('span', { style: { display: 'block', marginTop: 8 } }, row.reason)))
   const rows = inbox ? model.inbox : model.actions
+  const firstRows = inbox ? rows : rows.slice(0, 3)
+  const query = athleteQuery.trim().toLocaleLowerCase('da')
+  const summaries = model.summaries.filter(row => row.athlete.name.toLocaleLowerCase('da').includes(query))
   // Marc 3. nov.: keep it simple. Kun det vigtigste staar aabent; resten er foldet ind.
   const fold = { marginBlock: 16, borderTop: '1px solid #414139', paddingTop: 8 }
   const foldSummary = { cursor: 'pointer', minHeight: 48, display: 'flex', alignItems: 'center', minWidth: 0, overflowWrap: 'anywhere' }
@@ -79,16 +83,29 @@ export function CoachView(input = {}) {
           model.state === 'empty' ? h('p', { role: 'status' }, 'Ingen synlige atleter.') :
             !model.complete && h('p', { role: 'status' }, 'Overblikket skal opdateres. ',
               reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket')),
-      rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
+      (rows.length > 0 || model.complete && !model.isLoading && !model.hasError) &&
+        h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
+      rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map(rowButton)) :
         model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError &&
-          h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.')),
+          h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.'),
+      !inbox && rows.length > 3 && h('details', { 'data-coach-fold': 'opgaver', style: fold },
+        h('summary', { style: foldSummary }, arrow, `Vis resten (${rows.length - 3})`),
+        h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.slice(3).map((row, index) => rowButton(row, index + 3))))),
     team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
       h(CoachTeamRegistrations, { enabled: true, model: team })),
     !inbox && model.summaries.length > 0 && h('details', { 'aria-label': 'Atletoverblik', 'data-coach-fold': 'atleter', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Dine atleter (${model.summaries.length})`)),
+      h('label', { style: { display: 'block' } }, 'Søg efter atletnavn',
+        h('input', { type: 'search', value: athleteQuery,
+          onChange: event => onAthleteQueryChange?.(event.target.value),
+          style: { ...button, display: 'block', boxSizing: 'border-box', width: '100%', minHeight: 44, marginTop: 8 } })),
+      query && h('button', { type: 'button', style: { ...button, marginTop: 8 },
+        onClick: () => onAthleteQueryChange?.('') }, 'Nulstil søgning'),
+      h('p', { 'aria-live': 'polite' }, `${summaries.length} af ${model.summaries.length}`),
+      summaries.length === 0 && h('p', null, 'Ingen match på atletnavnet.'),
       h('ul', { style: { listStyle: 'none', padding: 0 } },
-        ...model.summaries.map(row => h('li', { key: row.athlete.id },
+        ...summaries.map(row => h('li', { key: row.athlete.id },
           h(CoachAthleteWorkspace, { key: `${props.readContext?.coachId}:${row.athlete.id}:${model.day}`,
             athlete: row.athlete, data: coachAthleteWorkspace(props, model, row.athlete, report),
             onOpen: typeof props.openProfile === 'function'
