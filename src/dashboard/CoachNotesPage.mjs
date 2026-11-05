@@ -28,13 +28,14 @@ export default function CoachNotesPage({ athlete, onAddNote }) {
   }
   return h('section', { 'aria-label': 'Coachens noter', style: { color: '#edeae2', minWidth: 0 } },
     h('h2', null, 'Coachens noter'),
-    h('p', null, 'Nyeste noter først. Tidligere noter uden dato står nederst.'),
     h('label', null, 'Søg i noter', h('input', { type: 'search', value: query, style: field,
       onChange: event => setQuery(event.target.value) })),
+    query.trim() && h('button', { type: 'button', onClick: () => setQuery(''),
+      style: { ...field, width: 'auto', marginTop: '0.5rem', cursor: 'pointer' } }, 'Nulstil søgning'),
     h('div', { role: 'status', 'aria-live': 'polite' }, status),
     rows.length ? h('ol', { style: { paddingLeft: '1.4rem' } }, rows.map(row =>
       h('li', { key: row.id, style: { marginBlock: '1rem', overflowWrap: 'anywhere' } },
-        row.date ? h('time', { dateTime: row.date }, new Date(row.date).toLocaleString('da-DK')) : h('strong', null, 'Dato ukendt'),
+        row.date ? h('time', { dateTime: row.date }, new Date(row.date).toLocaleString('da-DK')) : null,
         h('p', { style: { whiteSpace: 'pre-wrap' } }, row.text))))
       : h('p', null, query.trim() ? 'Ingen noter matcher din søgning.' : 'Ingen noter endnu.'),
     h('form', { onSubmit: add },

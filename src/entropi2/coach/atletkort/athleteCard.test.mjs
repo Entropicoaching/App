@@ -153,5 +153,26 @@ test('unconnected action is disabled; errors remain visible next to their field'
   const facts = fixture(); facts.nutrition.state = 'error'
   const tree = AthleteCard({ enabled: true, facts }), button = nodes(tree).find(n => n.type === 'button')
   assert.equal(button.props.disabled, true); assert.equal(button.props.onClick, undefined)
-  assert.match(content(tree), /Koststatus ukendt\s+· Kunne ikke indlæses/)
+  assert.match(content(tree), /Kost\s+Kunne ikke indlæses/)
+  assert.equal(nodes(tree).filter(n => n.props.role === 'alert').length, 1)
+  assert.doesNotMatch(content(tree), /ukendt/)
+})
+
+test('full sparse card hides only unknown summaries and retains known empty, insufficient, zero and error states', () => {
+  const facts = { today, athlete: { id: 'synthetic-a', name: 'Syntetisk atlet' } }
+  const render = () => AthleteCard({ enabled: true, facts })
+  assert.equal(nodes(render()).filter(n => ['dl', 'dt'].includes(n.type)).length, 0)
+  assert.doesNotMatch(content(render()), /ukendt|Kost|Vægt|Beskeder|Træning/)
+  facts.session = receipt({ lastDay: null })
+  facts.weight = receipt({ from: '2026-10-21', through: today, points: [] })
+  assert.equal(nodes(render()).filter(n => n.type === 'dt').length, 2)
+  assert.match(content(render()), /Ingen registrerede pas/)
+  assert.match(content(render()), /Vægttrend: for få vejninger/)
+  facts.nutrition = receipt({ from: '2026-10-28', through: today, loggedDays: 0 })
+  facts.messages = receipt({ count: 0 })
+  assert.match(content(render()), /Kost logget 0\/7 dage/)
+  assert.match(content(render()), /0 ulæste beskeder/)
+  assert.equal(nodes(render()).filter(n => n.type === 'dt').length, 4)
+  facts.session = receipt({ state: 'error' })
+  assert.equal(nodes(render()).filter(n => n.props.role === 'alert').length, 1)
 })

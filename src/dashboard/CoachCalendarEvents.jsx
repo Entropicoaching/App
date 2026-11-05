@@ -3,10 +3,10 @@ import { coachCalendarDays } from './coachCalendarEvents.mjs'
 
 export default function CoachCalendarEvents({ athletes, openProfile }) {
   const days = coachCalendarDays(athletes)
+  if (days.length === 0) return null
   return (
     <section aria-label="Stævnedatoer" style={{ ...s.card, marginBottom: '1.5rem' }}>
       <h2 style={{ ...s.cardLabel, marginTop: 0 }}>Stævnedatoer</h2>
-      {days.length === 0 && <p style={{ color: '#98948a' }}>Ingen stævnedatoer angivet.</p>}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '0.75rem' }}>
         {days.map(day => (
           <div key={day.date} data-coach-event-day={day.date} style={{ minWidth: 0, border: '1px solid rgba(200,146,58,0.35)', padding: '0.6rem' }}>

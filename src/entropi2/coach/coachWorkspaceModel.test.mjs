@@ -61,3 +61,15 @@ test('rejected rosters return null; assembly does not mutate captured inputs', (
   coachAthleteWorkspace(p, c, athlete, report)
   assert.deepEqual({ p, c }, before)
 })
+
+test('loading, truncated and stale rich receipts leave all optional tools hidden', () => {
+  for (const mutate of [p => { p.coachAnalysis.state = 'loading' },
+    p => { p.coachAnalysis.byAthlete[athlete.id].state = 'loading' },
+    p => { delete p.coachAnalysis.byAthlete[athlete.id].complete },
+    p => { p.coachAnalysis.byAthlete[athlete.id].day = '2026-11-02' }]) {
+    const p = props(); mutate(p)
+    const result = model(p)
+    for (const key of ['evaluation', 'plan', 'tracking']) assert.equal(result[key], undefined)
+    assert.equal(result.error, false)
+  }
+})

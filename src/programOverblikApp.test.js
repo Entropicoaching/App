@@ -53,7 +53,7 @@ test('imported overview renders one row per visible athlete, urgency text, dates
   assert.equal(buttons.length,4)
   assert.match(text(buttons[0]), /Roed.*01\.11\.2026.*Uge 44, 2026.*Under 1 uge.*01\.12\.2026/)
   assert.match(text(buttons[1]), /Gul.*1 uge tilbage.*Under 2 uger/)
-  assert.match(text(buttons[3]), /Intet program/)
+  assert.match(text(buttons[3]), /Åbn program/)
   assert.equal(buttons[0].props.style.color, '#ffb0a0')
   assert.equal(buttons[1].props.style.color, '#f1cf7b')
   assert.doesNotMatch(text(tree), /Skjult/)
@@ -93,6 +93,57 @@ test('actual full Dashboard connects strict flag to Sidebar, header and overview
     if (priorWindow === undefined) delete globalThis.window; else globalThis.window = priorWindow
     if (priorStorage === undefined) delete globalThis.localStorage; else globalThis.localStorage = priorStorage
   }
+})
+
+test('overview never inspects data during explicit loading or errors', () => {
+  const athletes = new Proxy([], { get() { throw Error('Unconfirmed roster read') } })
+  for (const status of [{ loading: true }, { loading: 'false' }, { loading: false, loadError: true },
+    { loading: true, loadError: true }]) {
+    const tree = ProgramOverblik({ ...status, athletes })
+    assert.equal(nodes(tree, n => n.type === 'button').length, 0)
+    assert.doesNotMatch(text(tree), /Ingen atleter|Opret program|Åbn program/)
+    assert.match(text(tree), status.loadError ? /kunne ikke hentes/ : /Henter atleter/)
+  }
+  assert.match(text(ProgramOverblik({ loading: false, athletes: [] })), /Ingen atleter at vise/)
+})
+
+test('overview preserves loading=false by default for omitted and undefined props', () => {
+  const props = { athletes: [{ id: 'synthetic-default', name: 'Syntetisk atlet' }],
+    calendarWeeks: { 'synthetic-default': [{ start_date: '2026-11-02', exercise_count: 1 }] },
+    today: '2026-11-05' }
+  for (const status of [{}, { loading: undefined }, { loading: false }]) {
+    const tree = ProgramOverblik({ ...props, ...status })
+    assert.equal(nodes(tree, n => n.type === 'button').length, 1)
+    assert.match(text(tree), /Planlagt til 08\.11\.2026/)
+    assert.doesNotMatch(text(tree), /Henter atleter|Ingen atleter|Programuge|ukendt/)
+  }
+  assert.match(text(ProgramOverblik({})), /Ingen atleter at vise/)
+})
+
+test('overview preserves known dates, hides missing week numbers and offers the existing program route', () => {
+  const athlete = { id: 'synthetic-tool', name: 'Syntetisk atlet' }, opened = []
+  const props = { loading: false, athletes: [athlete], today: '2026-11-05',
+    openProfile: (...args) => opened.push(args) }
+  for (const week_number of [undefined, null, '', 0, -1, NaN]) {
+    const tree = ProgramOverblik({ ...props,
+      calendarWeeks: { [athlete.id]: [{ start_date: '2026-11-02', exercise_count: 1, week_number }] } })
+    assert.match(text(tree), /Planlagt til 08\.11\.2026/)
+    assert.doesNotMatch(text(tree), /Programuge|ukendt/)
+  }
+  for (const [calendarWeeks, label] of [[{}, 'Åbn program'], [{ [athlete.id]: [] }, 'Opret program'],
+    [{ [athlete.id]: [{ exercise_count: 1 }] }, 'Sæt dato på programmet']]) {
+    const tree = ProgramOverblik({ ...props, calendarWeeks })
+    const button = nodes(tree, n => n.type === 'button')[0]
+    assert.match(text(button), new RegExp(label))
+    button.props.onClick()
+    const method = nodes(tree, n => n.type === 'details')[0]
+    assert.equal(method.props.open, undefined)
+    assert.match(text(method), /Sidste planlagte uge/)
+  }
+  assert.deepEqual(opened, Array.from({ length: 3 }, () => [athlete, 'program']))
+  const invalid = ProgramOverblik({ ...props, today: '2026-02-30' })
+  assert.equal(nodes(invalid, n => n.props.role === 'alert').length, 1)
+  assert.doesNotMatch(text(invalid), /Ingen atleter at vise/)
 })
 
 test('closed release list and registry include exact new modules and canonical dependency', () => {

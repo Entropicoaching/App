@@ -41,7 +41,8 @@ test('actual calendar marker handlers open the matching athlete profile', () => 
 test('missing dates and athletes without meets produce no markers', () => {
   const tree = render({ coachCalendarEvents: true, athletes: athletes.slice(2, 4) })
   assert.equal(eventButtons(tree).length, 0)
-  assert.match(text(sections(tree)[0]), /Ingen stævnedatoer angivet/)
+  assert.equal(sections(tree).length, 0)
+  assert.doesNotMatch(text(tree), /Ingen stævnedatoer angivet/)
 })
 
 test('hidden athlete scope applies before grouping', () => {

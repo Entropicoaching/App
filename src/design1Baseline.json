@@ -13,10 +13,23 @@
         ]
       },
       {
-        "type": "p",
+        "type": "details",
         "props": {},
         "children": [
-          "Sidste planlagte uge dækker syv dage fra startdatoen. Uger tilbage beregnes fra i dag i dansk tid."
+          {
+            "type": "summary",
+            "props": {},
+            "children": [
+              "Om datoerne"
+            ]
+          },
+          {
+            "type": "p",
+            "props": {},
+            "children": [
+              "Sidste planlagte uge dækker syv dage fra startdatoen. Uger tilbage beregnes fra i dag i dansk tid."
+            ]
+          }
         ]
       },
       {
@@ -47,7 +60,7 @@
                     "type": "div",
                     "props": {},
                     "children": [
-                      "Intet program"
+                      "Åbn program"
                     ]
                   }
                 ]
