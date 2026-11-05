@@ -50,7 +50,7 @@ test('goals are independent; missing and invalid values never display zero', () 
     const m = model([], { athlete: { ...athlete, kcal_target: value } })
     assert.equal(m.kcal, null); assert.equal(m.protein, 160)
     const tree = mount(KostMaal, { enabled: true, athlete: { ...athlete, kcal_target: value }, today }).render()
-    assert.match(text(tree), /Ingen mål endnu/); assert.doesNotMatch(text(tree), /Ikke sat|ukendt|0 kcal/)
+    assert.match(text(tree), /160 g/); assert.doesNotMatch(text(tree), /Ingen mål endnu|Energi/); assert.doesNotMatch(text(tree), /Ikke sat|ukendt|0 kcal/)
   }
   assert.equal(positive('80,5'), 80.5)
   const extremes = Array.from({ length: 7 }, (_,i) => row(new Date(Date.parse(today + 'T00:00:00Z') - i * 86400000).toISOString().slice(0,10), Number.MAX_VALUE))

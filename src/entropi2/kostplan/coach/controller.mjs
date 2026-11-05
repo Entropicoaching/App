@@ -45,7 +45,7 @@ export function createCoachPlan(options = {}) {
     draftBase = { planId: restoredPlan.id, revision: restoredPlan.revision }
     state = { ...state, form, meals: restoredPlan.meals, planTargets: restoredPlan.targets,
       version: restored.clientVersion, saved: { ...draftBase, status: 'draft', clientVersion: restored.clientVersion },
-      message: 'Lokal kladde indlæst. Aktivering kræver Marcs migration.' }
+      message: 'Lokal kladde indlæst.' }
   }
   const listeners = new Set()
   let snapshot
@@ -134,7 +134,7 @@ export function createCoachPlan(options = {}) {
         draftBase = { planId: receipt.planId, revision: receipt.revision }
         const saved = { ...draftBase, clientVersion: request.clientVersion, status: 'draft' }
         const record = { ...plan, id: saved.planId, revision: saved.revision, status: 'draft' }
-        publish({ busy: null, saved, message: localDraftOnly ? 'Gemt som kladde; aktivering kræver Marcs migration'
+        publish({ busy: null, saved, message: localDraftOnly ? 'Lokal kladde gemt.'
           : 'Kladde gemt. Atleten ser den først efter aktivering.',
           history: { ...state.history, plans: [record, ...state.history.plans.filter(row => row.id !== record.id)] } })
         return true

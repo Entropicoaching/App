@@ -18,12 +18,15 @@ function EnabledKostMaal(props) {
   const pending = useRef(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const model = kostMaalModel({ athlete, weightLogs, today })
+  const [helpRequested, setHelpRequested] = useState(false)
+  const weightReady = props.weightState == null || props.weightState === 'ready'
+  const model = kostMaalModel({ athlete, weightLogs: weightReady ? weightLogs : [], today })
   const suggestion = proteinSuggestion(model)
   const basis = nutritionBasis(props)
   const week = nutritionWeek(props, basis)
   const goalWeek = nutritionGoalWeek(props, basis)
-  const energy = energySuggestion(model, week, basis)
+  const energy = weightReady ? energySuggestion(model, week, basis) : { kcal: null }
+  const showEnergy = basis.state === 'ready' && weightReady && (energy.kcal !== null || helpRequested)
   const connected = typeof startEdit === 'function' && typeof setEditData === 'function' &&
     typeof setEditing === 'function' && typeof saveEdit === 'function' && athlete?.id != null
   const locked = saving || busy
@@ -50,9 +53,10 @@ function EnabledKostMaal(props) {
   return h('section', { 'data-entropi2-kost-maal': true, 'aria-label': 'Kostmål og vægtgrundlag',
     style: { boxSizing: 'border-box', width: '100%', minWidth: 0, padding: 16, color: '#edeae2', background: '#1c1c18', borderRadius: 12, lineHeight: 1.5, overflowWrap: 'anywhere' } },
     h('h2', null, 'Kostmål'),
-    h('dl', null,
-      value('Energi', model.kcal === null ? 'Ingen mål endnu' : `${displayNumber(model.kcal)} kcal`),
-      value('Protein', model.protein === null ? 'Ingen mål endnu' : `${displayNumber(model.protein)} g`)),
+    (model.kcal !== null || model.protein !== null) && h('dl', null,
+      model.kcal !== null && value('Energi', `${displayNumber(model.kcal)} kcal`),
+      model.protein !== null && value('Protein', `${displayNumber(model.protein)} g`)),
+    basis.state !== 'ready' && h('p', { role: basis.state === 'error' ? 'alert' : 'status' }, basis.text),
     week && h('p', null, week.text),
     goalWeek && h('p', null, goalWeek.text),
     basis.skipped > 0 && h('p', { role: 'status' }, basis.skipped === 1
@@ -71,15 +75,21 @@ function EnabledKostMaal(props) {
             kcal_target: positive(athlete.kcal_target) === null ? '' : athlete.kcal_target,
             protein_target: positive(athlete.protein_target) === null ? '' : athlete.protein_target,
           })
-        } } }, 'Rediger'),
+        } } }, model.kcal === null && model.protein === null ? 'Sæt kostmål' : 'Rediger'),
     !connected && h('p', { role: 'status' }, 'Redigering af mål skal tilsluttes af coachen.'),
     h('h3', null, 'Vægtgrundlag'),
-    h('dl', null,
-      value('Kropsvægt i profilen', model.bodyweight === null ? 'Ingen kropsvægt angivet' : `${displayNumber(model.bodyweight)} kg`),
-      value('Seneste vejning', model.latest ? `${displayNumber(model.latest.weight)} kg · ${model.latest.date}` : 'Ingen vejninger endnu'),
-      value('Ugegennemsnit · seneste 7 dage', model.average === null ? 'Ingen vejninger i perioden' : `${displayNumber(model.average)} kg · ${model.days} vejedage`),
-      value('Trend · mod de foregående 7 dage', model.trend === null ? 'Flere vejninger nødvendige' :
+    !weightReady && h('p', { role: props.weightState === 'error' ? 'alert' : 'status' },
+      props.weightState === 'error' ? 'Vægtgrundlaget kunne ikke hentes.' : 'Indlæser vægtgrundlag…'),
+    props.weightState === 'error' && typeof props.retryWeight === 'function' && h('button', {
+      type: 'button', style: button, onClick: props.retryWeight }, 'Hent vægt igen'),
+    (model.bodyweight !== null || model.latest) && h('dl', null,
+      model.bodyweight !== null && value('Kropsvægt i profilen', `${displayNumber(model.bodyweight)} kg`),
+      model.latest && value('Seneste vejning', `${displayNumber(model.latest.weight)} kg · ${model.latest.date}`),
+      model.average !== null && value('Ugegennemsnit · seneste 7 dage', `${displayNumber(model.average)} kg · ${model.days} vejedage`),
+      model.trend !== null && value('Trend · mod de foregående 7 dage',
         Math.abs(model.trend) < 0.05 ? 'Stabil vægt · 0 kg' : `${model.trend > 0 ? '+' : ''}${displayNumber(model.trend)} kg`)),
+    weightReady && model.day && !model.latest && h('p', null, 'Ingen vejninger endnu.'),
+    weightReady && !model.day && h('p', { role: 'status' }, 'Vælg en gyldig dagsdato for vægtgrundlaget.'),
     suggestion && h('p', null, `Forslag: ${displayNumber(suggestion.min)} til ${displayNumber(suggestion.max)} g protein (1,6 til 2,2 g pr. kg ud fra ${displayNumber(suggestion.weight)} kg)`),
     active && suggestion && h('button', { type: 'button', style: button, disabled: locked || !connected,
       onClick: () => {
@@ -87,8 +97,11 @@ function EnabledKostMaal(props) {
           setError(''); setEditData(previous => ({ ...previous, protein_target: suggestion.midpoint }))
         }
       } }, 'Brug forslag'),
-    h('h3', null, 'Hjælp til energimål'),
-    h('p', null, energy.text),
+    basis.state === 'ready' && weightReady && !showEnergy && h('button', { type: 'button', style: button,
+      onClick: () => setHelpRequested(true) }, 'Hjælp til energimål'),
+    showEnergy && h('div', null, h('h3', null, 'Hjælp til energimål'),
+      h('p', null, energy.kcal !== null ? energy.text
+        : 'Log en gyldig vejning og mindst 4 kostdage med gyldigt indtag i de seneste 7 dage for at få et energiforslag.')),
     energy.kcal !== null && active && h('button', { type: 'button', style: button,
       'aria-label': 'Brug forslag til energimål', disabled: locked || !connected,
       onClick: () => {
@@ -96,6 +109,6 @@ function EnabledKostMaal(props) {
           setError(''); setEditData(previous => ({ ...previous, kcal_target: energy.kcal }))
         }
       } }, 'Brug forslag'),
-    model.day && h('p', null, `Grundlag til og med ${model.day}. Trenden er forskellen mellem to ugegennemsnit.`),
-    ...model.actions.map(text => h('p', { key: text }, text)))
+    weightReady && model.latest && h('details', null, h('summary', { style: { minHeight: 44 } }, 'Om vægtgrundlaget'),
+      h('p', null, `Grundlag til og med ${model.day}. Trenden kræver mindst 2 vejedage i hver af to på hinanden følgende 7-dagesperioder og er forskellen mellem ugegennemsnittene.`)))
 }

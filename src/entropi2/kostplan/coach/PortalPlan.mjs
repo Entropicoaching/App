@@ -5,8 +5,6 @@ import { FOODS } from '../foedevarer/index.mjs'
 import { identifier, day, number, catalogFoods } from './model.mjs'
 import { recipeItems, portalNutritionReport } from './connections.mjs'
 import { nutritionReportView } from '../rapport/reportView.mjs'
-import KostJustering from '../justering/KostJustering.mjs'
-import { evaluateAdjustment } from '../justering/model.mjs'
 
 const h = React.createElement
 const control = { minHeight: 44, width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', font: 'inherit' }
@@ -67,7 +65,7 @@ function PlanEditor(props) {
     coachPlanView(h, snapshot, opened.controller),
     !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
-      h('p', null, 'Brug appens fødevareliste. Mængderne skaleres efter energi; gennemgå makroerne. Kilder og rå/kogt tilstand er ikke alle verificeret.'),
+      h('p', null, 'Vælg fødevarer og angiv gram i hvert måltid. Kontrollér rå/kogt tilstand og næringsindhold; ikke alle fødevarekilder er verificeret.'),
       ...rows.map((items, mi) => h('fieldset', { key: mi, style: { minWidth: 0, marginBottom: 12 } },
         h('legend', null, meals[mi]),
         recipeChoice(h, { foods, name: `template-recipe-${mi}`, mealName: meals[mi],
@@ -88,8 +86,7 @@ function PlanEditor(props) {
         items.length < 12 && h('button', { type: 'button', style: control,
           onClick: () => setRows(old => old.map((meal, m) => m !== mi ? meal : [...meal, { foodId: '', grams: '' }])) }, 'Tilføj fødevare'))),
       error && h('p', { role: 'alert' }, error),
-      h('button', { type: 'submit', style: control }, 'Brug måltider og generér dagsplan')),
-    // Only a confirmed saved plan warrants a weekly state. A device draft is
-    // not an active, versioned energy basis, so it cannot produce a proposal.
-    snapshot.saved && h(KostJustering, { enabled: true, snapshot: evaluateAdjustment({ enabled: true, plan: null }) }))
+      h('button', { type: 'submit', style: control }, 'Brug måltider og generér dagsplan')))
+  // Weekly evaluation requires an active production plan and a complete receipt.
+  // This portal can only provide local drafts.
 }

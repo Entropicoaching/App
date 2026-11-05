@@ -42,7 +42,7 @@ for (const count of [0, 3, 4, 7]) test(`energy threshold at ${count} distinct lo
   const tree = mount(KostMaal, { ...p, editing: 'setup' }).render()
   assert.equal(energyButtons(tree).length, count >= 4 ? 1 : 0)
   if (count >= 4) assert.match(text(tree), new RegExp(`Typisk indtag: 2\\.450 kcal på ${count} loggede dage`))
-  else assert.match(text(tree), /mindst 4 loggede dage/)
+  else assert.doesNotMatch(text(tree), /mindst 4 loggede dage|mindst 4 kostdage/)
   assert.deepEqual(p, before)
 })
 

@@ -26,6 +26,8 @@ export function recipeChoice(h, { foods, name, mealName, disabled, onChoose, sca
 export function coachPlanView(h, snapshot, actions) {
   if (!snapshot) return null
   const s = snapshot, busy = Boolean(s.busy)
+  const context = Object.entries(CONTEXT_LABELS).filter(([key]) =>
+    typeof s.context[key] === 'string' && s.context[key].trim())
   const active = s.history.plans.find(plan => plan.date === s.date && plan.status === 'active')
   const field = (name, title, value, handler) => h('label', { key: name, style: { display: 'grid', gap: '0.25rem' } }, title,
     h('input', { name, style: control, value, type: 'text', inputMode: 'decimal', disabled: busy,
@@ -34,7 +36,7 @@ export function coachPlanView(h, snapshot, actions) {
     style: { maxWidth: '46rem', width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', padding: '1rem' } },
   h(s.localDraftOnly ? 'h3' : 'h2', null, s.localDraftOnly ? 'Dagsplan' : 'Kostplan'),
   h('p', null, `${s.athleteName} · ${s.date}`),
-  h('p', null, s.localDraftOnly ? 'Kun kladde på denne enhed. Atleten ser den ikke. Aktivering kræver Marcs migration.' : active ? 'Atleten har en aktiv dagsplan. Dine rettelser bliver først synlige efter ny aktivering.'
+  h('p', null, s.localDraftOnly ? 'Lokal kladde · ikke delt med atleten' : active ? 'Atleten har en aktiv dagsplan. Dine rettelser bliver først synlige efter ny aktivering.'
     : s.history.state === 'ready' ? 'Ingen aktiv dagsplan for denne dato. Atleten kan bruge kcal-trackeren.'
       : 'Status for atletens aktive dagsplan er endnu ikke tilgængelig.'),
   h('form', { onSubmit: event => { event.preventDefault(); if (!s.localDraftOnly || s.meals.length) actions.generate() } },
@@ -56,22 +58,22 @@ export function coachPlanView(h, snapshot, actions) {
         : 'Bulk lægger den valgte procent til, cut trækker den fra. Vedligehold bruger 0 %. Kulhydrat udfylder resten af energimålet.'),
       (!s.localDraftOnly || s.meals.length > 0) && h('button', { type: 'submit', style: button }, s.meals.length ? 'Generér ny dagsplan' : 'Generér dagsplan'))),
   s.suggestion && !s.planTargets && h('p', null, `Forslag til dagens mål: ${macroText(s.suggestion)}`),
-  h('details', null,
-    h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Grundlag og tidligere erfaringer'),
+  (context.length > 0 || s.proposal?.reasons.length > 0) && h('details', null,
+    h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, context.length ? 'Grundlag og tidligere erfaringer' : 'Beregningsgrundlag'),
     h('p', null, s.calculated ? 'Beregningsgrundlaget bruges kun for den valgte atlet og dato. Frie kontekstnoter indgår ikke automatisk i beregningen.'
       : 'Coachen angiver udgangspunktet og tilpasser det efter atletens data. Procentforslaget vurderer ikke disse oplysninger automatisk.'),
     s.proposal && h('ul', null, ...s.proposal.reasons.map(reason => h('li', { key: reason.code }, reason.text))),
-    h('dl', null, ...Object.entries(CONTEXT_LABELS).flatMap(([key, title]) => [
-      h('dt', { key: `${key}-title` }, title), h('dd', { key }, s.context[key] ?? 'Ikke oplyst.'),
+    h('dl', null, ...context.flatMap(([key, title]) => [
+      h('dt', { key: `${key}-title` }, title), h('dd', { key }, s.context[key]),
     ]))),
   s.error && h('p', { role: 'alert' }, s.error),
   s.proposal?.warnings.map((warning, index) => h('p', { key: index, role: 'status' }, warning)),
-  h('p', { role: 'status', 'aria-live': 'polite' }, busy
+  (busy || s.message || s.meals.length > 0) && h('p', { role: 'status', 'aria-live': 'polite' }, busy
     ? s.busy === 'save' ? 'Gemmer kladde…' : 'Aktiverer planen…'
-    : s.message ?? (s.meals.length ? s.dirty ? 'Rettelserne er ikke gemt.' : s.saved?.status === 'active' ? 'Denne plan er aktiv.' : 'Kladde gemt.' : 'Ingen kladde på skærmen.')),
+    : s.message ?? (s.meals.length ? s.dirty ? 'Rettelserne er ikke gemt.' : s.saved?.status === 'active' ? 'Denne plan er aktiv.' : 'Kladde gemt.' : '')),
   s.meals.length > 0 && h('section', { 'aria-label': 'Dagsplan til gennemgang' },
     h('h3', null, 'Dagsplan til gennemgang'),
-    h('p', null, 'Måltidsskabelonen skaleres efter energi og afrundes til hele gram. Kontrollér fødevarer, tilberedning og fordeling før aktivering.'),
+    h('p', null, 'Måltidsskabelonen skaleres efter energi og afrundes til hele gram. Kontrollér fødevarer, tilberedning og fordeling før gemning.'),
     s.planTargets ? h('div', { style: { overflowX: 'auto' } }, h('table', { style: { width: '100%', textAlign: 'left' } },
       h('caption', null, 'Dagens plan og mål'),
       h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Indhold'), h('th', { scope: 'col' }, 'Plan'), h('th', { scope: 'col' }, 'Mål'))),
@@ -104,7 +106,7 @@ export function coachPlanView(h, snapshot, actions) {
         || s.saved?.status === 'active' && !s.dirty, onClick: () => actions.save() }, 'Gem som kladde'),
       h('button', { type: 'button', style: button, disabled: s.localDraftOnly ? busy || !s.canSaveAdapter || !s.planTargets || !s.totals
         : busy || !s.canActivateAdapter || !s.saved || s.saved.status !== 'draft' || s.dirty || !s.planTargets || !s.totals,
-        onClick: () => actions.activate() }, s.localDraftOnly ? 'Gem som klar til aktivering' : 'Aktivér for atleten')),
+        onClick: () => actions.activate() }, s.localDraftOnly ? 'Markér lokal kladde som klar' : 'Aktivér for atleten')),
     !s.canSaveAdapter && h('p', null, 'Gemning er ikke tilgængelig. Kladden er kun på skærmen.'),
     !s.localDraftOnly && !s.canActivateAdapter && h('p', null, 'Aktivering er ikke tilgængelig.')),
   !s.localDraftOnly && h('details', null,

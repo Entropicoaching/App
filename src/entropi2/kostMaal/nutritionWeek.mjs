@@ -27,7 +27,7 @@ export function nutritionBasis(props = {}) {
   if (source.state === 'error') return { state: 'error', text: 'Kostgrundlaget kunne ikke hentes. Prøv igen fra coachens overblik.' }
   if (source.state === 'loading') return { state: 'loading', text: 'Kostgrundlaget er endnu ikke indlæst.' }
   if (source.state === 'partial' || source.state === 'ready' && source.complete !== true)
-    return { state: 'partial', text: 'Kostgrundlaget er ufuldstændigt. Ugegennemsnit og energiforslag kan ikke vises.' }
+    return { state: 'partial', text: 'Kostgrundlaget er ufuldstændigt.' }
   if (source.state !== 'ready' ||
     !civilDay(source.from) || source.through !== day || ordinal(source.from) !== ordinal(day) - 6 ||
     !Array.isArray(source.rows) || !Array.isArray(source.targets)) return unavailable
@@ -79,8 +79,10 @@ export function nutritionGoalWeek(props = {}, basis = nutritionBasis(props)) {
   const count = (key, target) => target === null ? null :
     [...days.values()].filter(day => target - day[key] <= 1e-9).length
   const kcal = count('kcal', model.kcal), protein = count('protein', model.protein)
-  const goal = (label, count) => count === null ? `${label}: mål mangler` : `${label} ${count} af 7 dage`
+  if (kcal === null && protein === null) return null
+  const goals = [['energi', kcal], ['protein', protein]].filter(([, count]) => count !== null)
+    .map(([label, count]) => `${label} ${count} af 7 dage`).join(' · ')
   const logged = days.size === 1 ? '1 logget dag' : `${days.size} loggede dage`
   return { days: days.size, kcal, protein,
-    text: `Seneste 7 dage med nuværende mål: ${goal('energi', kcal)} · ${goal('protein', protein)} (${logged}).` }
+    text: `Seneste 7 dage med nuværende mål: ${goals} (${logged}).` }
 }

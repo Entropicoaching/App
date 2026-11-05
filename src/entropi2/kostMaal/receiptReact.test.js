@@ -45,3 +45,24 @@ test('real React renders honest receipt states and retains valid meals', {
   assert.deepEqual(props, before)
   assert.equal(render({ enabled: false }), '')
 })
+
+test('real React sparse coach tab preserves independent goals and draft during a weight error', {
+  skip: !React || !renderToStaticMarkup ? 'Pinned public copy has no React dependencies; REQUIRED at app merge' : false,
+}, async () => {
+  const { default: CoachKostMaal } = await import('../kostMaalKobling.mjs')
+  const props = { enabled: true, today: '2026-11-02', athlete: { id: 'synthetic-a', kcal_target: 2200 },
+    session: { user: { id: 'synthetic-coach' } },
+    weightStatus: { athleteId: 'synthetic-a', state: 'error', retry() {} } }
+  const render = p => renderToStaticMarkup(React.createElement(CoachKostMaal, p))
+  const html = render(props)
+  assert.match(html, /2\.200 kcal/)
+  assert.match(html, /role="alert"[^>]*>Vægtgrundlaget kunne ikke hentes/)
+  assert.match(html, /Hent vægt igen/)
+  assert.match(html, /<summary[^>]*>Kostplan/)
+  assert.doesNotMatch(html, /Ingen vejninger|Typisk indtag|Ingen mål endnu|Ugegennemsnit|Trend ·/)
+  const empty = render({ ...props, athlete: { id: 'synthetic-a' },
+    weightStatus: { athleteId: 'synthetic-a', state: 'ready', rows: [] } })
+  assert.match(empty, /Sæt kostmål/)
+  assert.equal((empty.match(/Ingen vejninger endnu/g) ?? []).length, 1)
+  assert.doesNotMatch(empty, /Ingen kropsvægt|Ingen vejninger i perioden|Flere vejninger nødvendige/)
+})

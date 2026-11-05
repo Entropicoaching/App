@@ -23,7 +23,7 @@ const change = (tree, name, value) => nodes(tree).find(n => n.props.name === nam
 const open = tree => nodes(tree).find(n => n.type === 'details' && text(n).trim() === 'Kostplan').props.onToggle({ currentTarget: { open: true } })
 
 // All storage is an in-memory synthetic fixture, never the device store.
-test('actual coach tab: weekly state requires a confirmed saved draft, and both buttons honestly save locally', async () => {
+test('actual coach tab: local drafts never mount weekly adjustment; both buttons save locally', async () => {
   const storage = memoryStorage(), descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage })
   try {
@@ -47,18 +47,18 @@ test('actual coach tab: weekly state requires a confirmed saved draft, and both 
     assert.equal(storage.calls.filter(c => c[0] === 'set').length, 0)
     change(tree, 'grams-0-0', '123,5'); tree = screen.render()
     await one(tree, 'button', 'Gem som kladde').props.onClick()
-    tree = screen.render(); assert.match(text(tree), /Gemt som kladde; aktivering kræver Marcs migration/)
-    assert.match(text(tree), /Der er ingen aktiv kostplan at vurdere\./)
+    tree = screen.render(); assert.match(text(tree), /Lokal kladde gemt./)
+    assert.doesNotMatch(text(tree), /ingen aktiv kostplan at vurdere|Ugens kostjustering/)
     assert.doesNotMatch(text(tree), /Aktivér for atleten|Acceptér forslag|Afvis forslag/)
-    await one(tree, 'button', 'Gem som klar til aktivering').props.onClick()
-    tree = screen.render(); assert.match(text(tree), /Gemt som kladde; aktivering kræver Marcs migration/)
+    await one(tree, 'button', 'Markér lokal kladde som klar').props.onClick()
+    tree = screen.render(); assert.match(text(tree), /Lokal kladde gemt./)
     assert.equal(JSON.parse([...storage.data.values()][0]).plan.status, 'draft')
     assert.doesNotMatch(text(tree), /Planen er aktiveret|Ingen tidligere planer eller respons/)
     assert.equal(storage.calls.filter(c => c[0] === 'set').length, 2)
     const restoredScreen = mount(CoachKostMaal, props)
     open(restoredScreen.render()); const restored = restoredScreen.render()
     assert.equal(one(restored, 'input', 'grams-0-0').props.value, 123.5)
-    assert.match(text(restored), /Der er ingen aktiv kostplan at vurdere\./)
+    assert.doesNotMatch(text(restored), /ingen aktiv kostplan at vurdere|Ugens kostjustering/)
     for (const changeProps of [{ session: { user: { id: 'synthetic-coach-b' } } },
       { today: '2026-11-05' }, { athlete: { id: 'synthetic-b' }, weightStatus: { athleteId: 'synthetic-b', state: 'ready', rows: [] } }]) {
       const next = restoredScreen.render({ ...props, ...changeProps })
@@ -89,7 +89,7 @@ test('a rejected local write keeps weekly adjustment hidden and preserves unsave
     const generate = one(tree, 'button', 'Brug måltider og generér dagsplan')
     nodes(tree).find(n => n.type === 'form' && nodes(n).includes(generate)).props.onSubmit({ preventDefault() {} })
     tree = screen.render()
-    await one(tree, 'button', 'Gem som klar til aktivering').props.onClick()
+    await one(tree, 'button', 'Markér lokal kladde som klar').props.onClick()
     tree = screen.render()
     assert.match(text(tree), /Kladden blev ikke bekræftet gemt/)
     assert.match(text(tree), /Dagsplan til gennemgang/)

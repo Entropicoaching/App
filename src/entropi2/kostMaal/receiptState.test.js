@@ -54,7 +54,10 @@ for (const [name, change, expected] of [
 test('complete receipts alone explain genuinely insufficient valid logged days', () => {
   for (const count of [0, 1, 2, 3]) {
     const p = fixture(count)
-    assert.match(text(render(p)), /mindst 4 loggede dage/)
+    const view = mount(KostMaal, p)
+    assert.doesNotMatch(text(view.render()), /mindst 4 kostdage/)
+    nodes(view.render(), n => n.type === 'button' && text(n) === 'Hjælp til energimål')[0].props.onClick()
+    assert.match(text(view.render()), /mindst 4 kostdage/)
   }
 })
 
@@ -83,7 +86,7 @@ test('invalid-only days do not count and warning remains below display threshold
   assert.equal(nutritionGoalWeek(p).days, 0)
   const tree = render(p)
   assert.match(text(tree), /2 ugyldige måltider er udeladt/)
-  assert.match(text(tree), /mindst 4 loggede dage/)
+  assert.doesNotMatch(text(tree), /mindst 4 kostdage/)
   assert.doesNotMatch(text(tree), /Seneste 7 dage: gns\./)
 })
 
@@ -96,7 +99,7 @@ test('bad content for another allowed athlete never hides selected athlete data 
   assert.equal(nutritionGoalWeek(p).kcal, 4)
   assert.doesNotMatch(text(render(p)), /udeladt/)
   p.athlete = { id: 'synthetic-b' }
-  assert.equal(nutritionGoalWeek(p).days, 0)
+  assert.equal(nutritionGoalWeek(p), null)
   assert.match(text(render(p)), /1 ugyldigt måltid er udeladt/)
 })
 

@@ -2,7 +2,7 @@ import { createCoachPlan } from './controller.mjs'
 import { NAMESPACE, identifier, day, normalizePlan, targets, number } from './model.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
 
-export const DRAFT_MESSAGE = 'Gemt som kladde; aktivering kræver Marcs migration'
+export const DRAFT_MESSAGE = 'Lokal kladde gemt.'
 const SCHEMA = 'entropi2:kostplan:coach:device-draft:v1'
 export const draftKey = (coachId, athleteId, date) => `${SCHEMA}:${[coachId, athleteId, date].map(encodeURIComponent).join(':')}`
 

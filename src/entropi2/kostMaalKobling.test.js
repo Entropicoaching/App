@@ -60,27 +60,29 @@ test('KOSTMÅL: coachen ser mål, kropsvægt, ugegennemsnit og trend fra atleten
   assert.equal(logs[0].logged_at.startsWith('2026-11-02'), true)
 })
 
-test('KOSTMÅL: manglende mål vises som Ingen mål endnu, aldrig som nul', () => {
+test('KOSTMÅL: manglende mål samles i Sæt kostmål, aldrig som nul', () => {
   for (const goals of [{ kcal_target: null, protein_target: null }, { kcal_target: '', protein_target: 0 }, { kcal_target: undefined, protein_target: undefined }]) {
     const out = text(view({ athlete: { ...athlete, ...goals } }))
-    assert.equal(out.match(/Ingen mål endnu/g).length, 2, JSON.stringify(goals))
+    assert.equal((out.match(/Sæt kostmål/g) ?? []).length, 1, JSON.stringify(goals))
+    assert.doesNotMatch(out, /Ingen mål endnu/)
     assert.doesNotMatch(out, /0 kcal|Ikke sat/)
   }
 })
 
 test('KOSTMÅL: manglende vægt, igangværende læsning, fremmed atlet og læsefejl', () => {
   const empty = text(view({ weightStatus: { ...ready, rows: [] }, athlete: { ...athlete, bodyweight: null } }))
-  assert.match(empty, /Ingen kropsvægt angivet/); assert.match(empty, /Ingen vejninger endnu/)
-  assert.match(empty, /Ingen vejninger i perioden/); assert.match(empty, /Flere vejninger nødvendige/)
+  assert.equal((empty.match(/Ingen vejninger endnu/g) ?? []).length, 1)
+  assert.doesNotMatch(empty, /Ingen kropsvægt angivet|Ingen vejninger i perioden|Flere vejninger nødvendige/)
   // Ikke afsluttet læsning for netop denne atlet er aldrig "ingen vejninger".
   for (const props of [{ weightStatus: null }, { weightStatus: { athleteId: 'syn-a', state: 'loading' } },
     { weightStatus: { athleteId: 'syn-b', state: 'ready' } }, { weightStatus: { ...ready, rows: [{ ...logs[0], athlete_id: 'syn-b' }] } }]) {
     const out = text(view(props))
     assert.match(out, /Indlæser vægtgrundlag/, JSON.stringify(Object.keys(props)))
-    assert.doesNotMatch(out, /Ingen vejninger|Kostmål/)
+    assert.doesNotMatch(out, /Ingen vejninger/)
+    assert.match(out, /Kostmål/)
   }
   const failed = view({ weightStatus: { athleteId: 'syn-a', state: 'error' } })
-  assert.equal(failed.props.role, 'alert'); assert.match(text(failed), /kunne ikke hentes/)
+  assert.equal(nodes(failed, n => n.props.role === 'alert').length, 1); assert.match(text(failed), /kunne ikke hentes/)
 })
 
 test('KOSTMÅL: Rediger og Gem bruger den eksisterende startEdit og saveEdit; kun målfelterne skrives', async () => {
@@ -179,7 +181,7 @@ test('KOSTMÅL R11: databasefejl i svaret vises som fejl, ikke som tomme vejning
     await flush(); reads[0].resolve(answer); await flush()
     assert.deepEqual(seen.at(-1), { athleteId: 'syn-a', state: 'error' }, JSON.stringify(answer))
     const out = view({ weightStatus: seen.at(-1) })
-    assert.equal(out.props.role, 'alert'); assert.doesNotMatch(text(out), /Ingen vejninger/)
+    assert.equal(nodes(out, n => n.props.role === 'alert').length, 1); assert.doesNotMatch(text(out), /Ingen vejninger/)
   }
   // En ready-status uden rækker er aldrig bevis for "ingen vejninger".
   assert.deepEqual(kostMaalVaegt({ athleteId: 'syn-a', state: 'ready' }, 'syn-a'), { state: 'error' })

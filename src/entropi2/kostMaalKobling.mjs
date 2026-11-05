@@ -29,10 +29,11 @@ export function startKostVaegt({ enabled, athleteId, client }, onStatus) {
 
 export function useEntropi2KostVaegt({ enabled, athleteId, client }) {
   const [status, setStatus] = useState(null)
+  const [attempt, setAttempt] = useState(0)
   const live = enabled === true ? athleteId : undefined
-  // Læsningen startes kun ved atlet-, flag- eller klientskift.
-  useEffect(() => startKostVaegt({ enabled, athleteId: live, client }, setStatus), [enabled, live, client])
-  return status
+  // Genforsøg gentager kun den eksisterende, afgrænsede læsning.
+  useEffect(() => startKostVaegt({ enabled, athleteId: live, client }, setStatus), [enabled, live, client, attempt])
+  return status && { ...status, retry: () => setAttempt(value => value + 1) }
 }
 
 // Vægtrækkerne gives kun videre, når læsningen for netop denne atlet er afsluttet, og alle
@@ -52,9 +53,8 @@ export default function CoachKostMaal(props = {}) {
   const { athlete, weightStatus, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
     session, loading, loadError, coachNutrition, readContext } = props
   const weight = kostMaalVaegt(weightStatus, athlete?.id)
-  if (weight.state === 'error') return h('p', { role: 'alert' }, 'Vægtgrundlaget kunne ikke hentes. Prøv igen ved at åbne kostfanen.')
-  if (weight.state !== 'ready') return h('p', { role: 'status' }, 'Indlæser vægtgrundlag…')
-  return h('div', null, h(KostMaal, { key: athlete.id, enabled: true, athlete, weightLogs: weight.rows, today,
+  return h('div', null, h(KostMaal, { key: athlete?.id, enabled: true, athlete, weightLogs: weight.rows, today,
+    weightState: weight.state, retryWeight: weightStatus?.athleteId === athlete?.id ? weightStatus?.retry : undefined,
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
     session, loading, loadError, coachNutrition, readContext }),
     h(PortalPlan, { enabled: true, athlete, today, session }))

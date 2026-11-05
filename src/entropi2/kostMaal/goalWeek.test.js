@@ -52,11 +52,11 @@ test('missing or invalid goals are independent and follow existing integer targe
   for (const invalid of [undefined, null, '', 0, -1, NaN, Infinity, true, 'oops', '2000,5']) {
     const p = fixture(); meal(p, today, 2500, 160)
     p.athlete.kcal_target = invalid
-    assert.match(line(p), /energi: mål mangler · protein 1 af 7 dage/)
+    assert.match(line(p), /mål: protein 1 af 7 dage/)
     p.athlete.protein_target = invalid
-    assert.match(line(p), /energi: mål mangler · protein: mål mangler/)
+    assert.equal(lines(render(p)).length, 0)
     p.athlete.kcal_target = '2000'
-    assert.match(line(p), /energi 1 af 7 dage · protein: mål mangler/)
+    assert.match(line(p), /mål: energi 1 af 7 dage/)
   }
 })
 

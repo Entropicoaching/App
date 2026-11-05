@@ -63,7 +63,7 @@ test('empty, loading, failed and foreign history have distinct honest output and
     assert.doesNotMatch(text(f.render()), /Ingen tidligere planer eller respons|Ingen aktiv dagsplan/)
   }
   const f = fixture({ basis: undefined })
-  assert.match(text(f.render()), /Ikke oplyst/)
+  assert.doesNotMatch(text(f.render()), /Ikke oplyst|Grundlag og tidligere erfaringer/)
   assert.equal(nodes(f.render(), node => node.type === 'details').every(node => node.props.open == null), true)
   generate(f); assert.match(text(f.render()), /Angiv gyldig/)
   assert.equal(nodes(f.render(), node => node.props.role === 'alert').length, 1)
@@ -106,4 +106,15 @@ test('accessible controls have labels, touch sizes, responsive wrapping and pend
 test('OFF view produces no tree, reads no actions and cannot write', () => {
   assert.equal(coachPlanView(() => { throw Error('unexpected element') }, null,
     new Proxy({}, { get() { throw Error('unexpected action') } })), null)
+})
+
+test('context displays only actual values and hides an empty context fold', () => {
+  const f = fixture({ basis: { athleteId: 'synthetic-athlete-a', date: '2026-11-04',
+    context: { weightTrend: 'Syntetisk vægttrend', training: '  ', nutrition: null } } })
+  const tree = f.render()
+  const context = nodes(tree, n => n.type === 'details' && /Grundlag og tidligere erfaringer/.test(text(n)))
+  assert.equal(context.length, 1)
+  assert.match(text(context[0]), /Syntetisk vægttrend/)
+  assert.equal(nodes(context[0], n => n.type === 'dt').length, 1)
+  assert.doesNotMatch(text(tree), /Ikke oplyst/)
 })
