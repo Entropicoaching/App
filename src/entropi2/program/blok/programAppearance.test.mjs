@@ -101,7 +101,12 @@ test('existing session opener and set logging stay outside every details fold wi
   opener(tree).props.onClick()
   assert.deepEqual(calls.at(-1), null)
   const legacy = render({ ...props, entropi2: false })
-  assert.equal(nodes(tree, n => n.type === 'details').length, nodes(legacy, n => n.type === 'details').length + 1)
+  // The secondary pass actions now own a separate fold; the existing history
+  // fold and the logger's position remain unchanged.
+  const secondary = nodes(tree, n => n.type === 'details' && n.props['data-program-session-actions'])
+  assert.equal(secondary.length, 1)
+  assert.equal(nodes(tree, n => n.type === 'details' && !n.props['data-program-session-actions']).length,
+    nodes(legacy, n => n.type === 'details').length + 1)
 })
 
 test('OFF/nonboolean gates have no new appearance, while read errors suppress status and intensity facts', () => {

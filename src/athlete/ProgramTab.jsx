@@ -29,6 +29,7 @@ import { SMERTE_LINJE } from '../saetSmerte.js'
 
 // The inline input styles reset outline; keep this override inside the program namespace.
 const programFocusCss = `[data-program-accessible] :is(input, textarea, select, button):focus-visible,
+[data-program-accessible] summary:focus-visible,
 [data-program-week-navigation] button:focus-visible {
   outline: 3px solid #c8923a !important;
   outline-offset: 3px;
@@ -40,6 +41,8 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 const programColors = { surface: '#1c1c18', text: '#edeae2', muted: '#c4c0b5',
   accent: '#c8923a', done: '#b9d5a0', border: '#777267' }
 const programLayout = {
+  label: { fontSize: 14, lineHeight: 1.5, letterSpacing: 'normal', textTransform: 'none',
+    whiteSpace: 'normal', overflowWrap: 'anywhere' },
   weekText: { fontSize: '1rem', lineHeight: 1.5, letterSpacing: 'normal',
     textTransform: 'none', whiteSpace: 'normal', overflowWrap: 'anywhere' },
   block: { padding: 16, borderRadius: 12, background: programColors.surface,
@@ -617,7 +620,7 @@ export default function ProgramTab({
                       <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '0.85rem 1rem', marginBottom: '1.25rem', background: low ? 'rgba(224,85,85,0.07)' : 'rgba(200,146,58,0.07)', border: `1px solid ${low ? 'rgba(224,85,85,0.25)' : 'rgba(200,146,58,0.2)'}` }}>
                         <span style={{ color: low ? '#e05555' : '#c8923a', fontSize: '1rem', lineHeight: 1, flexShrink: 0 }}>{low ? '⚠' : '◐'}</span>
                         <div>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: low ? '#e05555' : '#c8923a', marginBottom: '0.3rem' }}>Parathed {sc}/100 i dag</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: low ? '#e05555' : '#c8923a', marginBottom: '0.3rem', ...(programAppearanceOn ? programLayout.label : {}) }}>Parathed {sc}/100 i dag</div>
                           <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.6 }}>
                             {low
                               ? 'Lav parathed. Du kan skrue intensiteten ned, droppe de sidste sæt, eller tage en let session. Skriv til din coach, hvis det varer ved.'
@@ -630,7 +633,7 @@ export default function ProgramTab({
                   {!readOnly && isCurrentWeek && !readinessLog && (
                     <button type="button" onClick={openReadiness} style={{ ...programTapTarget, display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
                       <span style={{ color: '#c8923a', fontSize: '0.9rem', flexShrink: 0 }}>◐</span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5 }}>Log dagens parathed for en tilpasset anbefaling →</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5, ...(programAppearanceOn ? programLayout.label : {}) }}>Log dagens parathed for en tilpasset anbefaling →</span>
                     </button>
                   )}
 
@@ -736,6 +739,22 @@ export default function ProgramTab({
                     const completion = programAppearanceOn && !programError && viewedWeek.readEvidence?.complete !== false
                       ? programSessionCompletion(session, sessionLogs) : null
                     const sessionAccent = completion === 'done' ? programColors.done : isToday || isOpen ? programColors.accent : programColors.border
+                    const sessionActions = !readOnly && !upcomingPreview && !isDone && totalSets > 0 && (
+                      <>
+                        <button
+                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1, ...(programAppearanceOn ? programLayout.label : {}) }}
+                          disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
+                          {...a11y({ type: 'button', 'aria-label': `Spring resten over · ${sessionContext}` })}
+                          onClick={e => { e.stopPropagation(); askConfirm('Spring de resterende sæt over? De markeres som ikke gennemført, så træningen lukkes.', () => skipRemainingSets(session)) }}
+                        >{pendingSessionAction === `${session.id}:skip` ? '...' : 'Spring resten over'}</button>
+                        <button
+                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1, ...(programAppearanceOn ? programLayout.label : {}) }}
+                          disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
+                          {...a11y({ type: 'button', 'aria-label': `Auto-udfyld · ${sessionContext}` })}
+                          onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps? Brug kun hvis du faktisk lavede sættene.', () => autoCompleteSession(session)) }}
+                        >{pendingSessionAction === `${session.id}:autofill` ? '...' : 'Auto-udfyld'}</button>
+                      </>
+                    )
 
                     return (
                       <div
@@ -761,10 +780,10 @@ export default function ProgramTab({
                                 </h2> : session.title}
                                 {isToday && <span style={programLayout.badge}>I dag</span>}
                                 {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
-                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.35rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.35rem', ...(programAppearanceOn ? programLayout.label : {}) }}>{WEEKDAYS_LONG[session.weekday]}</span>
                                 )}
                               </div>
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: programAppearanceOn ? programColors.muted : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: programAppearanceOn ? programColors.muted : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', ...(programAppearanceOn ? programLayout.label : {}) }}>
                                 {exerciseViewGroups(session.exercises).length} {exerciseViewGroups(session.exercises).length === 1 ? 'øvelse' : 'øvelser'} · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>
                             </div>
@@ -774,25 +793,21 @@ export default function ProgramTab({
                                   {completion === 'done' ? 'Gennemført ✓' : 'Afsluttet · sæt sprunget over'}
                                 </span>
                               ) : isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
-                              {!readOnly && !upcomingPreview && !isDone && totalSets > 0 && (
-                                <>
-                                  <button
-                                    style={{ ...programTapTarget, ...programGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
-                                    disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
-                                    {...a11y({ type: 'button', 'aria-label': `Spring resten over · ${sessionContext}` })}
-                                    onClick={e => { e.stopPropagation(); askConfirm('Spring de resterende sæt over? De markeres som ikke gennemført, så træningen lukkes.', () => skipRemainingSets(session)) }}
-                                  >{pendingSessionAction === `${session.id}:skip` ? '...' : 'Spring resten over'}</button>
-                                  <button
-                                    style={{ ...programTapTarget, ...programGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
-                                    disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
-                                    {...a11y({ type: 'button', 'aria-label': `Auto-udfyld · ${sessionContext}` })}
-                                    onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps? Brug kun hvis du faktisk lavede sættene.', () => autoCompleteSession(session)) }}
-                                  >{pendingSessionAction === `${session.id}:autofill` ? '...' : 'Auto-udfyld'}</button>
-                                </>
-                              )}
+                              {!programAppearanceOn && sessionActions}
                               {!programAppearanceOn && <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>}
                             </div>
                           </div>
+                          {programAppearanceOn && sessionActions && (
+                            <details data-program-session-actions={session.id} style={{ marginTop: 8, minWidth: 0 }}>
+                              <summary aria-label={`Flere handlinger for passet · ${sessionContext}`}
+                                style={{ ...programTapTarget, ...programLayout.label, padding: '12px 0', color: programColors.muted, cursor: 'pointer' }}>
+                                Flere handlinger for passet
+                              </summary>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingTop: 8 }}>
+                                {sessionActions}
+                              </div>
+                            </details>
+                          )}
                         </div>
 
                         {preview && (
