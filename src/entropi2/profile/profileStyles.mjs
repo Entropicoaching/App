@@ -1,6 +1,6 @@
 export const profileStyles = {
   page: { width: '100%', maxWidth: 480, margin: '0 auto', padding: '20px 16px',
-    boxSizing: 'border-box', minWidth: 0, overflowWrap: 'anywhere', color: '#edeae2',
+    boxSizing: 'border-box', minWidth: 0, overflowWrap: 'anywhere', color: '#edeae2', background: '#141410',
     fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: 1.5 },
   title: { color: '#edeae2', fontSize: 36, lineHeight: 1.2, margin: '0 0 24px', fontFamily: "'Playfair Display', Georgia, serif" },
   card: { margin: '0 0 20px', padding: 20, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' },

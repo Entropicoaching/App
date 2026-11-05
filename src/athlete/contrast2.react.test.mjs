@@ -34,7 +34,8 @@ test('real React F4/F6: return, retry and RPE help buttons preserve text with ac
     const button = [...html.matchAll(/<button\b[^>]*style="([^"]*)"[^>]*>([^<]*)<\/button>/g)]
       .find(match => match[2] === label)
     assert.ok(button, label)
-    assert.match(button[1], /(?:^|;)min-height:44px(?:;|$)/)
+    // R1-E2-VIS-PROFIL1: the E2 retry may be taller (48 px); every button keeps at least 44 px.
+    assert.ok(Number(/(?:^|;)min-height:(\d+)px(?:;|$)/.exec(button[1])?.[1]) >= 44, label)
     assert.match(button[1], /(?:^|;)min-width:44px(?:;|$)/)
     assert.doesNotMatch(html, /(?:^|;)color:#(?:4a4844|7a7770)(?:;|&quot;|")/)
     for (const background of ['#141410', '#1c1c18', '#181816', '#292216'])

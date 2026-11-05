@@ -553,7 +553,26 @@ export default function ProgramTab({
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: (programAppearanceOn ? programColors.muted : '#4a4844'), marginBottom: '0.5rem' }}>Program</div>
                     <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
                   </div>
-                  {programError ? (
+                  {programAppearanceOn ? (
+                    <section data-program-empty-state="" role={programError ? 'alert' : 'status'} data-program-accessible=""
+                      style={{ ...programLayout.week, padding: 20, borderRadius: 16, color: programColors.text }}>
+                      {!programError && <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem',
+                        color: programColors.accent, marginBottom: 12, letterSpacing: '0.02em' }}>Entropi.</div>}
+                      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400,
+                        color: programColors.text, lineHeight: 1.3, margin: '0 0 12px' }}>
+                        {programError ? 'Dit program kunne ikke hentes.' : 'Dit program er på vej.'}
+                      </h2>
+                      <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 16, lineHeight: 1.6,
+                        letterSpacing: 'normal', color: programColors.muted, margin: 0 }}>
+                        {programError ? 'Tjek din forbindelse og prøv igen.'
+                          : 'Din coach sætter det op inden din næste træning.'}
+                      </p>
+                      {programError && <button type="button" style={{ ...programTapTarget, ...programGhost, minHeight: 48, marginTop: 16,
+                        fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 16, lineHeight: 1.5,
+                        letterSpacing: 'normal', textTransform: 'none', whiteSpace: 'normal', overflowWrap: 'anywhere' }}
+                        onClick={() => fetchProgram(athlete.id)}>Prøv igen</button>}
+                    </section>
+                  ) : programError ? (
                     // G1: en fejlet hentning må aldrig ligne "du har intet program" —
                     // ærlig fejllinje + en vej til at prøve igen, ikke stilhed.
                     <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
