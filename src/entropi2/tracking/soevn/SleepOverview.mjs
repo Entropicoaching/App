@@ -40,6 +40,18 @@ export default function SleepOverview(props = {}) {
   if (model.status === 'error') return section(
     h('p', { role: 'alert' }, 'Kunne ikke vise hele perioden. Prøv igen.'),
     typeof props.onRetry === 'function' && h('button', { type: 'button', onClick: props.onRetry }, 'Prøv igen'))
+  if (props.compact === true && hoursOnly) {
+    const format = new Intl.NumberFormat('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+    return h('section', { className: 'e2-sleep', 'aria-label': 'Søvntimer' },
+      h('style', null, styles),
+      h('p', null, `4 uger · ${model.from}–${model.to}. Gennemsnit kræver mindst 4/7 dage. Huller er ukendte.`),
+      h('ul', null, [...model.weeks].reverse().map(week => h('li', { key: week.from },
+        `${range(week.from, week.to)}: ${week.hours.average === null ? 'For lidt data'
+          : `${format.format(week.hours.average)} timer`} · ${week.hours.count}/7 dage`))),
+      detail('days', 'Se daglige søvntimer', h('ul', null, [...model.days].reverse().map(day =>
+        h('li', { key: day.date }, h('time', { dateTime: day.date }, day.date), ': ',
+          day.hours === null ? 'Ukendt' : `${format.format(day.hours)} timer`)))))
+  }
   return section(
     h('p', null, `${model.weeks.length} uger · ${model.from}–${model.to}`),
     model.status === 'empty' && h('p', { role: 'status' }, model.invalidMeasurements

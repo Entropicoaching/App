@@ -16,6 +16,7 @@ import { weeklyReportModel, weeklyReportHasContent } from './ugerapport/weeklyRe
 import { mineDataModel, hasMineData } from '../athlete/minedata/mineDataModel.mjs'
 import { fremgangSnapshot } from '../tracking/atlet/fremgangSnapshot.mjs'
 import { buildAthleteOverview } from '../tracking/atlet/overview.mjs'
+import { readinessSections } from '../tracking/atlet/readinessSections.mjs'
 
 // Explicit opt-in only. Assembly must supply entropi2 === true and the existing
 // AthleteView props. Importing this module changes no existing entry or flag.
@@ -36,8 +37,10 @@ export default function Analysis(props = {}) {
     snapshot: props.trackingSnapshot, onRetry: props.onRetryTracking }
   const tracking = fremgangSnapshot(trackingProps)
   const trackingModel = tracking.status === 'unavailable' ? null : buildAthleteOverview(tracking, { enabled: true })
-  const showTracking = trackingModel?.status === 'error' || trackingModel?.status === 'loading' ||
-    trackingModel?.weeks?.some(week => week.wellbeing.some(field => field.count > 0))
+  const readiness = readinessSections(tracking, { enabled: true })
+  const showTracking = readiness ? !!(readiness.sleep || readiness.restitution)
+    : trackingModel?.status === 'error' || trackingModel?.status === 'loading' ||
+      trackingModel?.weeks?.some(week => week.wellbeing.some(field => field.count > 0))
   // A failed/loading read cannot turn retained history into fresh secondary data.
   const strengthUnavailable = props.fremgangError || props.fremgangLoading || props.exerciseLogsError || props.exerciseLogsLoading
   const visibleAnswers = answers.filter(answer => answer.value && (answer.key === 'focus' || !strengthUnavailable))

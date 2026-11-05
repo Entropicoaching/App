@@ -31,6 +31,22 @@ export default function RestitutionOverview(props = {}) {
   if (model.status === 'error') return section(
     h('p', { role: 'alert' }, 'Kunne ikke vise hele datagrundlaget. Prøv igen.'),
     typeof props.onRetry === 'function' && h('button', { type: 'button', onClick: props.onRetry }, 'Prøv igen'))
+  // Athlete connection has readiness only. Never publish a recovery level or
+  // empty training totals from that source, and do not repeat the sleep panel.
+  if (props.compact === true) {
+    const format = new Intl.NumberFormat('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+    return h('section', { className: 'e2-restitution', 'aria-label': 'Din dagsform' },
+      h('style', null, styles),
+      h('p', null, `Seneste 7 dage · ${model.recentFrom}–${model.to}`),
+      h('dl', null, [['energy', 'Energi', '5 højest'], ['stress', 'Stress', '5 højest'],
+        ['soreness_level', 'Ømhed', '5 mest']].map(([key, label, scale]) => {
+        const metric = model.metrics[key]
+        return h('div', { key }, h('dt', null, label), h('dd', null,
+          `${metric.average === null ? 'For lidt data' : `${format.format(metric.average)} af 5 (${scale})`} · ${metric.count}/7 dage`))
+      })),
+      h('p', null, 'Gennemsnit kræver mindst 4/7 dage for hvert svar. Manglende og ugyldige svar er ukendte.'),
+      h('p', null, 'Dine egne dagsformssvar, ikke en måling af din restitution eller en forklaring på årsager. Der beregnes ingen samlet restitutionsstatus.'))
+  }
   return section(
     h('p', { role: 'status' }, model.status === 'insufficient' ? 'For lidt data'
       : `Forsigtig restitutionsstatus: ${{ god: 'God', ok: 'Ok', lav: 'Lav' }[model.level]}`),
