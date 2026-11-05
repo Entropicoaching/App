@@ -4,7 +4,8 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { rel1101Enabled, DEFAULT_REL1101 } from '../rel1101.mjs'
 const { default: TrainingFullscreen } = await import('./TrainingFullscreen.mjs')
-const source = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')
+// LF delivery and CRLF checkout enforce the same exact source contract.
+const source = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
 const prefix = [
   "import NytIAppen, { nytAthleteNavigation } from './nytIAppen.mjs'",
   "import { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/contactLatest.mjs'",

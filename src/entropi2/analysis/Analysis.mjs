@@ -17,11 +17,14 @@ import { mineDataModel, hasMineData } from '../athlete/minedata/mineDataModel.mj
 import { fremgangSnapshot } from '../tracking/atlet/fremgangSnapshot.mjs'
 import { buildAthleteOverview } from '../tracking/atlet/overview.mjs'
 import { readinessSections } from '../tracking/atlet/readinessSections.mjs'
+import { analysisWeightProps, latestAnalysisWeightDate } from './analysisWeight.mjs'
+import WeightReadStatus from './WeightReadStatus.mjs'
 
 // Explicit opt-in only. Assembly must supply entropi2 === true and the existing
 // AthleteView props. Importing this module changes no existing entry or flag.
 export default function Analysis(props = {}) {
   if (props.entropi2 !== true) return null
+  props = analysisWeightProps(props)
   const now = props.now ?? new Date()
   const { answers, rpeHistory, personalRecords: records, setTab } = analysisModel(props, now)
   const volume = muscleVolume(props, now)
@@ -30,7 +33,12 @@ export default function Analysis(props = {}) {
     exerciseLogs: props.exerciseLogsError || props.exerciseLogsLoading ? undefined : props.exerciseLogs,
   }, now)
   const mineProps = analysisMineData(props, now)
-  const showMineData = hasMineData(mineDataModel(mineProps), false)
+  const mineModel = mineDataModel(mineProps)
+  const hasWeightStatus = Object.hasOwn(props, 'weightStatus')
+  // The visible weight notice owns this error; avoid repeating it inside Mine data.
+  const mineViewProps = hasWeightStatus && mineProps.weights.state !== 'ready'
+    ? { ...mineProps, weights: { state: 'unavailable', rows: [] } } : mineProps
+  const showMineData = hasMineData(mineDataModel(mineViewProps), false)
   const showReport = weeklyReportHasContent(weeklyReportModel(props, now))
   const showIntensity = weeklyIntensity(analysisIntensity(props), now).weeks.some(week => week.classified > 0)
   const trackingProps = { enabled: true, athleteId: props.athlete?.id, now,
@@ -56,13 +64,16 @@ export default function Analysis(props = {}) {
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
   h(DevelopmentView, { ...props, now }),
+  ...(hasWeightStatus ? [h(WeightReadStatus, { state: mineProps.weights.state,
+    latestDate: latestAnalysisWeightDate(mineProps.weights, mineProps.athleteId, mineModel.end, mineModel.start),
+    retry: props.retryWeight })] : []),
   showTracking && h(FremgangMineTal, trackingProps),
   showSecondary && h('details', { 'data-analysis-secondary': true },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Ugerapport og flere analyser'),
   showReport && h(WeeklyReport, { ...props, now }),
   showMineData && h('details', { 'data-analysis-mine-data': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Mine data'),
-    h(MineData, { ...mineProps, showRecords: false })),
+    h(MineData, { ...mineViewProps, showRecords: false })),
   showIntensity && h('details', { 'data-analysis-intensity': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Intensitet pr. uge'),
     h(IntensityView, { entropi2: true, exerciseLogs: analysisIntensity(props), asOf: now })),

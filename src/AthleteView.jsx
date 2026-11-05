@@ -51,6 +51,7 @@ import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'
 import Conversation from './entropi2/conversation/Conversation.mjs'
 import { createConversation } from './entropi2/conversation/conversationController.mjs'
 import { mountKost } from './entropi2/Entropi2Kost.mjs'
+import { readInitialAnalysisWeight } from './entropi2/analysis/analysisWeight.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -447,6 +448,9 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   retryWeightRef.current = () => fetchWeightLogs(athlete.id)
   const retryWeight = useMemo(() => () => retryWeightRef.current(), [])
 
+  const initialWeightReadRef = useRef(null)
+  const fetchInitialWeightLogs = id => readInitialAnalysisWeight(e2, id, initialWeightReadRef, fetchWeightLogs)
+
   const {
     confirmCompleteDay, fetchLogs, fetchHistoricalMealLogs, fetchFrequentFoods, quickLogFood, fetchMealTemplates, copyYesterday, saveTemplate, logTemplate,
     deleteTemplate, fetchCustomFoods, onSearchInput, selectFood, addFromSearch, quickAddSearchFood, saveCustomFood, deleteLog,
@@ -468,7 +472,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   } = lavLaesninger({
     indbakke2,
     athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
-    fetchLogs, fetchMealTemplates, fetchWeightLogs, guideStep, mountedRef, onReadError, readinessCardRef, readinessInput,
+    fetchLogs, fetchMealTemplates, fetchWeightLogs: fetchInitialWeightLogs, guideStep, mountedRef, onReadError, readinessCardRef, readinessInput,
     role, session, sessionRefs, setAllWeeks, setAthlete, setCurrentWeek, setExerciseHistory, setExerciseLogs,
     setForloebLoading, setForloebLogs, setFremgangLoading, setFremgangLogs, setGuideOpen, setGuideStep, setHasMeetPlan, setLastLogByExerciseName,
     setLastReadiness, setLiftProgress, setLoadError, setLoading, setLogInputs, setMeetAttempts, setMeetPlanNotes, setMeetResults,
@@ -571,10 +575,11 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   }, [e2, e2Dag.day])
   // Entropi 2: mobiliteten må kun starte et pas for den dag, skærmen blev beregnet for.
   const e2MobilityCurrent = useMemo(() => () => today() === e2Day, [e2Day])
-  // Entropi 2: kostskærmen viser vægten; hent den eksisterende vægtlog, når kostfanen åbnes.
-  const e2KostAaben = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id && visKost && tab === 'kost'
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchWeightLogs er ren ift. atlet-id'et, som er i deps
-  useEffect(() => { if (e2KostAaben) fetchWeightLogs(athlete.id) }, [e2KostAaben, athlete?.id])
+  // Startup, nutrition and analysis share the same initial weight read, including previews.
+  const e2WeightOpen = e2 && (role === 'athlete' || role === 'coach') && !!athlete?.id &&
+    (tab === 'fremgang' || visKost && tab === 'kost')
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- the initial reader uses the current athlete; the ref deduplicates startup and tab entries
+  useEffect(() => { if (e2WeightOpen) fetchInitialWeightLogs(athlete.id) }, [e2WeightOpen, athlete?.id])
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchLogs er ren ift. sine parametre (athleteId, dato), begge allerede i deps
   useEffect(() => { if (athlete?.id) fetchLogs(athlete.id, kostDate) }, [kostDate, athlete?.id])
   // ORDRE 280 · commit 4 — ventende sæt (offlineSetQueue.js) sendes igen ved
@@ -939,6 +944,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
             historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}
+            weightStatus={weightStatus} retryWeight={retryWeight}
             trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} readOnly={e2ReadOnly} />
         )}
         {tab === 'fremgang' && (

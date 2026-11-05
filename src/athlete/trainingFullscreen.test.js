@@ -61,6 +61,34 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // R1-E2-FEJL-ANALYSE1: invert only the exact shared read and analysis props.
+  const analysisWeightDeltas = [
+    [
+        "import { readInitialAnalysisWeight } from './entropi2/analysis/analysisWeight.mjs'\n",
+        ""
+    ],
+    [
+        "  const initialWeightReadRef = useRef(null)\n  const fetchInitialWeightLogs = id => readInitialAnalysisWeight(e2, id, initialWeightReadRef, fetchWeightLogs)\n\n",
+        ""
+    ],
+    [
+        "fetchLogs, fetchMealTemplates, fetchWeightLogs: fetchInitialWeightLogs, guideStep",
+        "fetchLogs, fetchMealTemplates, fetchWeightLogs, guideStep"
+    ],
+    [
+        "  // Startup, nutrition and analysis share the same initial weight read, including previews.\n  const e2WeightOpen = e2 && (role === 'athlete' || role === 'coach') && !!athlete?.id &&\n    (tab === 'fremgang' || visKost && tab === 'kost')\n  // eslint-disable-next-line react-hooks/exhaustive-deps -- the initial reader uses the current athlete; the ref deduplicates startup and tab entries\n  useEffect(() => { if (e2WeightOpen) fetchInitialWeightLogs(athlete.id) }, [e2WeightOpen, athlete?.id])\n",
+        "  // Entropi 2: kostskærmen viser vægten; hent den eksisterende vægtlog, når kostfanen åbnes.\n  const e2KostAaben = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete?.id && visKost && tab === 'kost'\n  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchWeightLogs er ren ift. atlet-id'et, som er i deps\n  useEffect(() => { if (e2KostAaben) fetchWeightLogs(athlete.id) }, [e2KostAaben, athlete?.id])\n"
+    ],
+    [
+        "            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}\n            weightStatus={weightStatus} retryWeight={retryWeight}\n",
+        "            historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}\n"
+    ]
+]
+  for (const [added, original] of analysisWeightDeltas) {
+    const exact = added.replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(exact).length, 2, 'Exact analysis weight delta: ' + added.slice(0, 80))
+    candidate = candidate.replace(exact, original.replace(/\r?\n/g, '\r\n'))
+  }
   // E2-FEJL-OFFLINE1: invert only the exact banner prop; retain the historic SHA guards.
   const offlineBannerDelta = '<IngenForbindelse {...{ offlineSnapshotAt }} entropi2={e2} />'
   assert.equal(candidate.split(offlineBannerDelta).length, 2, 'Exact Entropi 2 offline banner wiring')

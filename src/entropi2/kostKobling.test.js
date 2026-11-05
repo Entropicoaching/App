@@ -107,28 +107,35 @@ test('KOST: med flaget slukket monteres intet, og OFF-cleanup tåler vægtvidere
   assert.equal(renderToString(createElement(Entropi2Kost, { enabled: 'true', athlete, date: day })), '')
 })
 
-test('KOST: AthleteView leverer mål, vægt og logWeight kun på dagens dato og henter vægt ved kostfanen', () => {
+test('KOST: AthleteView leverer mål, vægt og logWeight kun på dagens dato og henter vægt ved kost- og fremgangsfanen', () => {
   const source = read('../AthleteView.jsx')
   assert.match(source, /<Entropi2Kost enabled=\{true\} athlete=\{athlete\} date=\{kostDate\}/)
   assert.match(source, /weightLogs=\{weightLogs\} weightInput=\{weightInput\} savingWeight=\{savingWeight\}/)
   assert.match(source, /\{\.\.\.\(kostDate === e2Dag\.day \|\| kostDate === e2Day \? \{ onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag\.refresh \} : \{\}\)\} \/>/)
-  assert.match(source, /const e2KostAaben = e2 && role === 'athlete' && !coachAthleteId && !onExitPreview && !!athlete\?\.id && visKost && tab === 'kost'\n/)
-  assert.match(source, /useEffect\(\(\) => \{ if \(e2KostAaben\) fetchWeightLogs\(athlete\.id\) \}, \[e2KostAaben, athlete\?\.id\]\)/)
+  // R1-E2-FEJL-ANALYSE1: kost og analysen deler opstartens ene vægtlæsning pr. atlet.
+  assert.match(source, /const e2WeightOpen = e2 && \(role === 'athlete' \|\| role === 'coach'\) && !!athlete\?\.id &&\n {4}\(tab === 'fremgang' \|\| visKost && tab === 'kost'\)\n/)
+  assert.match(source, /useEffect\(\(\) => \{ if \(e2WeightOpen\) fetchInitialWeightLogs\(athlete\.id\) \}, \[e2WeightOpen, athlete\?\.id\]\)/)
+  assert.match(source, /const fetchInitialWeightLogs = id => readInitialAnalysisWeight\(e2, id, initialWeightReadRef, fetchWeightLogs\)/)
   // Den gamle kostfane med flaget slukket er uændret og får ingen nye props.
   assert.match(source, /\{!e2Atlet && visKost && tab === 'kost' && \(\n {10}<LazyBoundary\n {12}factory=\{kostFactory\}/)
 })
 
-test('KOST: vægthentningens betingelse er falsk med flaget slukket og i coachens forhåndsvisning', () => {
-  const line = read('../AthleteView.jsx').split('\n').find(l => l.startsWith('  const e2KostAaben = '))
-  const condition = new Function('e2', 'role', 'coachAthleteId', 'onExitPreview', 'athlete', 'visKost', 'tab',
-    'return Boolean(' + line.slice('  const e2KostAaben = '.length) + ')')
-  const on = ['athlete', null, undefined, { id: 'syn' }, true, 'kost']
-  assert.equal(condition(true, ...on), true)
-  assert.equal(condition(false, ...on), false)
-  assert.equal(condition(true, 'coach', 'syn', undefined, { id: 'syn' }, true, 'kost'), false)
-  assert.equal(condition(true, 'athlete', null, () => {}, { id: 'syn' }, true, 'kost'), false)
-  assert.equal(condition(true, 'athlete', null, undefined, { id: 'syn' }, true, 'hjem'), false)
-  assert.equal(condition(true, 'athlete', null, undefined, { id: 'syn' }, false, 'kost'), false)
+test('KOST: vægthentningens betingelse er falsk med flaget slukket og gælder kun kost og fremgang', () => {
+  const lines = read('../AthleteView.jsx').replace(/\r\n/g, '\n').split('\n')
+  const at = lines.findIndex(l => l.startsWith('  const e2WeightOpen = '))
+  const expr = (lines[at] + ' ' + lines[at + 1]).slice('  const e2WeightOpen = '.length)
+  const condition = new Function('e2', 'role', 'athlete', 'visKost', 'tab', 'return Boolean(' + expr + ')')
+  assert.equal(condition(true, 'athlete', { id: 'syn' }, true, 'kost'), true)
+  assert.equal(condition(false, 'athlete', { id: 'syn' }, true, 'kost'), false)
+  assert.equal(condition(false, 'athlete', { id: 'syn' }, true, 'fremgang'), false)
+  // Fremgang/analysen læser også uden kostfanen; selve læsningen er delt og dedupliceret.
+  assert.equal(condition(true, 'athlete', { id: 'syn' }, false, 'fremgang'), true)
+  // Coachens visning deler opstartens samme læsning (readInitialAnalysisWeight); ingen skrivning.
+  assert.equal(condition(true, 'coach', { id: 'syn' }, true, 'kost'), true)
+  assert.equal(condition(true, 'athlete', { id: 'syn' }, true, 'hjem'), false)
+  assert.equal(condition(true, 'athlete', { id: 'syn' }, false, 'kost'), false)
+  assert.equal(condition(true, 'athlete', null, true, 'fremgang'), false)
+  assert.equal(condition(true, 'anon', { id: 'syn' }, true, 'fremgang'), false)
 })
 
 // R1-E2-VAERT-VAEGTSTATUS1: run with the real React imports above in npm test.

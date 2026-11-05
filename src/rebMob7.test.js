@@ -41,7 +41,8 @@ test('REB actual wrapped Home mounts assigned controls once; click reaches scope
 })
 
 test('REB existing full Home JSX line and exact initial Athlete import contract survive',()=>{
- const athlete=read('AthleteView.jsx')
+ // LF delivery and CRLF checkout enforce the same exact import contract.
+ const athlete=read('AthleteView.jsx').replace(/\r?\n/g, '\r\n')
  assert.ok(athlete.split(/\r?\n/).includes("        {tab === 'hjem' && (!enkelOn || ['traening', 'alle'].includes(route)) && <MobilityHomeworkHome key={athlete?.id} enabled={mobilitetHjemme} athleteId={athlete?.id} />}"))
  assert.ok(athlete.startsWith("import NytIAppen, { nytAthleteNavigation } from './nytIAppen.mjs'\r\nimport { contactLatestEnabled, enterContact, scrollContactEnd } from './athlete/contactLatest.mjs'\r\nimport { VIDEO_SET_SELECTION_ENABLED, videoOptionsForDay, resolveVideoSet } from './athlete/videoSetSelection.mjs'\r\nimport { findDagensPas } from './nextSet.js'\r\n"))
  assert.match(athlete,/<MobilityHomeworkProgress enabled=\{mobilitetOpfoelgning === true && !coachAthleteId\} athleteId=\{athlete\?\.id\}>\s*\{tab === 'hjem'/)

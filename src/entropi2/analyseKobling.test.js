@@ -50,6 +50,7 @@ test('ANALYSE: AthleteView viser analysen øverst i fremgang-fanen kun med e2Atl
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
             historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}
+            weightStatus={weightStatus} retryWeight={retryWeight}
             trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} readOnly={e2ReadOnly} />
         )}
         {tab === 'fremgang' && (
