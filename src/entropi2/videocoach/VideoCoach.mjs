@@ -1,6 +1,7 @@
 import { createElement as h, useEffect, useState } from 'react'
 import { renderUpload, renderReview } from './view.mjs'
 import { renderFilmSetEntry, renderAthleteAccess } from './accessView.mjs'
+import { renderVideoAnalyses } from './analysisView.mjs'
 
 // The host owns controllers for the full session, including while logging.
 // Unmounting a view unsubscribes; logout/scope change must dispose its controllers.
@@ -28,4 +29,8 @@ export function AthleteVideoCoachEntry(props) {
 export function AthleteVideoCoachAccess(props) {
   const state = useController(props.controller)
   return renderAthleteAccess(h, { ...props, state })
+}
+export function AthleteVideoAnalyses(props) {
+  const state = useController(props.controller)
+  return renderVideoAnalyses(h, { ...props, state })
 }

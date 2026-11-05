@@ -105,6 +105,10 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
       if (state.step === 2 && selectionAllowed()) { update({ step: 3 }); return true }
       return false
     },
+    selectWindow(window) {
+      if (!editable() || !state.source || !validWindow(window, state.source.duration)) return false
+      update({ window: { start: window.start, end: window.end }, setBoundary: manualBoundary() }); return true
+    },
     back() { if (!editable()) return false; update({ step: Math.max(1, state.step - 1) }); return true },
     move(start) {
       if (!editable() || !state.source || !finite(start)) return false

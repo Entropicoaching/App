@@ -30,7 +30,11 @@ test('independent: imports and visible clicks need no browser, media, network or
     assert.match(text(tree), /1 gentagelse registreret/)
     assert.doesNotMatch(text(tree), /1 gentagelser/)
     assert.equal(walk(tree).filter(n => n.tag === 'polyline').length, 1)
-    assert.equal(walk(tree).filter(n => ['iframe', 'video', 'input'].includes(n.tag)).length, 0)
+    assert.equal(walk(tree).filter(n => ['iframe', 'video'].includes(n.tag)).length, 0)
+    // Interval editing adds two metadata-only sliders, never a media/file picker.
+    const inputs = walk(tree).filter(n => n.tag === 'input')
+    assert.equal(inputs.length, 2)
+    assert.ok(inputs.every(n => n.props.type === 'range'))
     c.dispose()
   } finally { globalThis.fetch = oldFetch }
 })

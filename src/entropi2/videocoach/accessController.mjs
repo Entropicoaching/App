@@ -1,4 +1,5 @@
-import { DEFAULT_VIDEOCOACH, finite, initialWindow } from './model.mjs'
+import { DEFAULT_VIDEOCOACH, finite, initialWindow, validWindow, moveWindow, resizeWindow } from './model.mjs'
+import { findSetBoundary } from './setBoundary.mjs'
 import { createUploadController } from './uploadController.mjs'
 
 // The host owns opaque source handles and the existing tracker/local store.
@@ -23,7 +24,7 @@ const inactive = () => {
   const snapshot = () => ({ enabled: false })
   const no = () => false, asyncNo = async () => false
   return { snapshot, subscribe(fn) { fn(snapshot()); return () => {} },
-    open: no, close: no, chooseSet: no, reset: no, cancel: no, dispose: no,
+    open: no, close: no, chooseSet: no, move: no, resize: no, reset: no, cancel: no, dispose: no,
     chooseSource: asyncNo, analyze: asyncNo, saveLocal: asyncNo, send: asyncNo, retrySend: asyncNo }
 }
 
@@ -43,7 +44,7 @@ export function createAthleteAccessController(config = {}) {
   if (new Set(options.map(o => o.key)).size !== options.length) throw Error('Sættene skal have forskellige nøgler.')
   const listeners = new Set()
   let active = true, generation = 0, abort = null, upload = null, unsubscribe = null
-  let state = { open: false, choice: null, source: null, window: null, analysis: null,
+  let state = { open: false, choice: null, source: null, window: null, setBoundary: null, analysis: null,
     phase: 'idle', error: '', status: '', localId: null, clientAnalysisId: null, delivery: null }
   function disposeUpload() { unsubscribe?.(); unsubscribe = null; upload?.dispose(); upload = null }
   function available() {
@@ -56,9 +57,11 @@ export function createAthleteAccessController(config = {}) {
   const locked = () => !!state.delivery?.operationId
   const editable = () => available() && state.open && !busy() && !locked()
   const has = name => typeof callbacks[name] === 'function'
+  const selectionAllowed = () => state.source && (!state.setBoundary || state.setBoundary.manual || state.setBoundary.status === 'ready')
   const snapshot = () => available() ? structuredClone({ ...state, enabled: true, options, busy: busy(), locked: locked(),
-    canChoose: has('chooseSource'), canAnalyze: has('analyze'), canSaveLocal: has('saveLocal'),
-    canSend: has('prepare') && has('upload') && !!state.choice }) : { enabled: false }
+    canChoose: has('chooseSource'), canAnalyze: has('analyze'), selectionAllowed: !!selectionAllowed(), canSaveLocal: has('saveLocal'),
+    canSend: has('prepare') && has('upload') && !!state.choice && !!selectionAllowed()
+      && (config.requireAnalysis !== true || !!state.analysis) }) : { enabled: false }
   const emit = () => { for (const fn of listeners) fn(snapshot()) }
   const update = patch => { state = { ...state, ...patch }; emit() }
   const payload = () => structuredClone({ clientAnalysisId: state.clientAnalysisId, choice: state.choice,
@@ -126,17 +129,24 @@ export function createAthleteAccessController(config = {}) {
         if (value == null) return // Native picker cancellation preserves the draft.
         if (typeof value.id !== 'string' || !value.id || typeof value.label !== 'string' || !value.label.trim())
           throw Error('Videoen kunne ikke åbnes. Vælg en anden video.')
-        const window = initialWindow(value.duration)
+        let window = initialWindow(value.duration), setBoundary = null
+        if (value.motion !== undefined) {
+          setBoundary = { ...findSetBoundary({ ...value.motion, duration: value.duration }), manual: false }
+          if (setBoundary.status === 'ready') {
+            if (validWindow(setBoundary.window, value.duration)) window = { ...setBoundary.window }
+            else setBoundary.status = 'too-long'
+          }
+        }
         const clientAnalysisId = uuid()
         if (typeof clientAnalysisId !== 'string' || !clientAnalysisId) throw Error('Klippet mangler en lokal identitet.')
-        update({ source: { id: value.id, label: value.label, duration: value.duration }, window,
+        update({ source: { id: value.id, label: value.label, duration: value.duration }, window, setBoundary,
           clientAnalysisId, analysis: null, localId: null, status: 'Video valgt.' })
       })
-      if (chosen && state.source && state.status === 'Video valgt.' && has('analyze')) return api.analyze()
+      if (chosen && selectionAllowed() && state.status === 'Video valgt.' && has('analyze')) return api.analyze()
       return chosen
     },
     analyze() {
-      if (!state.source) return Promise.resolve(false)
+      if (!selectionAllowed()) return Promise.resolve(false)
       return action('analyzing', 'analyze', payload(), value => {
         const analysis = normalizeOwnAnalysis(value, state.window)
         update({ analysis, localId: null, status: 'Din analyse er klar.' })
@@ -150,12 +160,22 @@ export function createAthleteAccessController(config = {}) {
         update({ localId: value.localId, status: 'Gemt lokalt på denne enhed.' })
       })
     },
+    move(start) {
+      if (!editable() || !state.source || !finite(start)) return false
+      return changeWindow(moveWindow(state.window, start, state.source.duration))
+    },
+    resize(edge, value) {
+      if (!editable() || !state.source || !finite(value) || !['start', 'end'].includes(edge)) return false
+      return changeWindow(resizeWindow(state.window, edge, value, state.source.duration))
+    },
     async send() {
-      if (!editable() || !state.source || !state.choice || !has('prepare') || !has('upload')) return false
+      if (!editable() || !selectionAllowed() || !state.choice || !has('prepare') || !has('upload')
+        || config.requireAnalysis === true && !state.analysis) return false
+      const analysis = structuredClone(state.analysis)
       const transport = createUploadController({ enabled: true, options, getScope, uuid: () => state.clientAnalysisId, clock, timeoutMs,
-        callbacks: { prepare: request => callbacks.prepare(request), upload: request => callbacks.upload(request) } })
+        callbacks: { prepare: request => callbacks.prepare(request), upload: request => callbacks.upload({ ...request, analysis }) } })
       upload = transport
-      transport.choose(state.choice.key); transport.next(); transport.select(state.source); transport.next()
+      transport.choose(state.choice.key); transport.next(); transport.select(state.source); transport.selectWindow(state.window); transport.next()
       unsubscribe = transport.subscribe(delivery => { if (available()) update({ delivery }) })
       return transport.send()
     },
@@ -177,10 +197,17 @@ export function createAthleteAccessController(config = {}) {
         update({ error: 'Prøv den ventende afsendelse igen, før du vælger et nyt klip.' }); return false
       }
       disposeUpload()
-      update({ choice: null, source: null, window: null, analysis: null, phase: 'idle',
+      update({ choice: null, source: null, window: null, setBoundary: null, analysis: null, phase: 'idle',
         error: '', status: '', localId: null, clientAnalysisId: null, delivery: null }); return true
     },
     dispose() { active = false; generation++; abort?.abort(); disposeUpload(); listeners.clear() },
+  }
+  function changeWindow(window) {
+    const clientAnalysisId = uuid()
+    if (typeof clientAnalysisId !== 'string' || !clientAnalysisId) return false
+    update({ window, setBoundary: state.setBoundary ? { ...state.setBoundary, manual: true } : null,
+      analysis: null, localId: null, clientAnalysisId, status: '', error: '' })
+    return true
   }
   return api
 }

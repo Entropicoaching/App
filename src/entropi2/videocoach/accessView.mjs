@@ -38,9 +38,18 @@ export function renderAthleteAccess(h, { state: s, controller: c, renderPreview 
     s.source && h('div', null,
       h('p', null, s.source.label),
       renderPreview ? renderPreview({ source: s.source, window: s.window }) : h('p', { role: 'status' }, 'Forhåndsvisning er ikke tilgængelig her endnu.'),
-      h('p', null, `Valgt klip: ${seconds(s.window.start)} – ${seconds(s.window.end)}. Op til de sidste 15 sekunder.`),
+      h('p', null, `Valgt klip: ${seconds(s.window.start)} – ${seconds(s.window.end)}.`),
+      h('p', { role: 'status' }, s.setBoundary?.manual ? 'Interval valgt manuelt. Kontrollér, at hele sættet er med.'
+        : s.setBoundary?.status === 'ready' ? 'Hele sættet er markeret med buffer og afsluttende hvile.'
+          : s.setBoundary ? 'Hele sættet kunne ikke vælges automatisk. Vælg et interval manuelt på højst 15 sekunder.'
+            : 'Op til de sidste 15 sekunder er valgt. Kontrollér intervallet.'),
+      h('details', null, h('summary', { style: { minHeight: 44 } }, 'Ret klippets interval'),
+        ...[['start', 'Start'], ['end', 'Slut']].map(([edge, label]) => h('label', { key: edge }, label,
+          h('input', { type: 'range', min: 0, max: s.source.duration, step: .01, value: s.window[edge],
+            disabled: s.busy || s.locked, style: { width: '100%', minHeight: 44 },
+            onChange: e => c.resize(edge, Number(e.target.value)) })))),
       !s.canAnalyze && h('p', { role: 'status' }, 'Egen analyse er ikke tilgængelig her endnu.'),
-      s.canAnalyze && button(s.analysis ? 'Analysér igen' : 'Analysér klippet', () => c.analyze(), s.busy || s.locked)),
+      s.canAnalyze && button(s.analysis ? 'Analysér igen' : 'Analysér klippet', () => c.analyze(), s.busy || s.locked || s.selectionAllowed === false)),
     s.analysis && h('figure', { style: { margin: '16px 0' } },
       h('figcaption', null, `${s.analysis.reps} ${antalOrd(s.analysis.reps, 'gentagelse', 'gentagelser')} registreret`),
       h('svg', { viewBox: '0 0 100 100', role: 'img', 'aria-label': 'Registreret bane i det valgte klip',
