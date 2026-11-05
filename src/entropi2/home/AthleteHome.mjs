@@ -181,9 +181,12 @@ export default function AthleteHome(props) {
           model.kind === 'today' ? 'Start dagens pas' : 'Start næste pas'),
         !props.sessionReadOnly && (staleWeek ? h('p', { role: 'status', style: s.text }, 'En ny uge er startet. Genindlæs siden for at registrere passet.')
           : !canStart && h('p', { role: 'status', style: s.text }, 'Passet kunne ikke åbnes. Prøv at genindlæse siden.')),
-        namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
         model.logged != null && h('p', { style: s.text }, `${model.logged} af ${model.total} sæt klaret`),
-        ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)))
+        (namedExercises.length > 0 || target.session.exercises.some(e => e.note)) && h('details', {
+          key: `${target.week.id}:${target.session.id}`, 'data-home-session-details': '' },
+          h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Se øvelser og coachnoter'),
+          namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
+          ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`))))
         : h('p', { role: programError && !programLoading ? 'alert' : 'status', style: s.text }, programLoading ? 'Indlæser dit program…'
           : programError ? 'Programmet kunne ikke hentes. Tjek din forbindelse og prøv igen.'
           : model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.'
