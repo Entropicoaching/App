@@ -9,6 +9,12 @@ const fields = [['energy', 'Energi', 'Lav', 'Høj'], ['motivation', 'Motivation'
   ['stress', 'Stress', 'Lav', 'Høj'], ['soreness_level', 'Ømhed', 'Ingen', 'Meget']]
 const parentKey = key => ({ sleep_hours: 'sleep', soreness_level: 'soreness' })[key] ?? key
 const inputStyle = { ...s.secondary, boxSizing: 'border-box', padding: 12, background: '#171814', color: '#edeae2' }
+const scoreButton = (label, value, selected, onClick) => h('button', { key: value, type: 'button',
+  'aria-label': `${label} ${value}`, 'aria-pressed': selected,
+  style: { ...s.secondary, marginTop: 0, minWidth: 44, padding: 0, boxSizing: 'border-box',
+    borderWidth: 2, borderColor: selected ? '#b8b4a8' : '#414139',
+    background: selected ? '#414139' : 'transparent' }, onClick },
+String(value), selected && h('span', { 'aria-hidden': true }, ' ✓'))
 const clock = () => new Date()
 const parentReadiness = props => Object.fromEntries(['sleep_hours', ...fields.map(([key]) => key)]
   .map(key => [key, props.readinessInput?.[parentKey(key)] ?? '']))
@@ -32,6 +38,7 @@ export default function QuickLogs(props) {
   const [, setVersion] = useState(0)
   const latest = useRef(props), active = useRef(false), control = useRef(null), unsubscribe = useRef(null)
   const confirmation = useRef(null), opener = useRef(null), heading = useRef(null)
+  const readinessOpener = useRef(null)
   const relaunch = useRef(null)
   const id = useId()
   latest.current = props
@@ -52,7 +59,9 @@ export default function QuickLogs(props) {
     active.current = true
     return () => { active.current = false; reset() }
   }, [enabled, athlete?.id, today, readOnly])
-  useEffect(() => { if (open) heading.current?.focus() }, [open])
+  // The full heading mounts when the fast form expands, even if open is unchanged.
+  // Score edits leave both dependencies unchanged and keep focus on the button.
+  useEffect(() => { if (open && !quick) heading.current?.focus() }, [open, quick])
   useEffect(() => {
     if (control.current?.snapshot().phase === 'loading' && trackingData?.status !== 'loading') relaunch.current?.()
   }, [trackingData])
@@ -106,7 +115,8 @@ export default function QuickLogs(props) {
     const suggestion = energy === undefined ? null : homeReadinessSuggestion(latest.current)
     if (energy !== undefined && (!suggestion || statusFor(latest.current)?.readiness)) return
     reset(); setAttempt(null)
-    opener.current = event.currentTarget
+    // Fast-form buttons disappear on expansion; return to the stable row button.
+    opener.current = kind === 'readiness' ? readinessOpener.current : event.currentTarget
     const p = latest.current
     const history = p.trackingData
     const scoped = history?.athleteId === athlete.id && history?.today === today
@@ -147,6 +157,7 @@ export default function QuickLogs(props) {
       control.current?.setField(kind, key, value)) mirror(kind, control.current.snapshot().draft)
   }
   const rowButton = (kind, label, logged) => props.sessionReadOnly || !available(kind) ? null : h('button', { type: 'button',
+    ref: kind === 'readiness' ? readinessOpener : undefined,
     style: { ...s.secondary, marginTop: 0, whiteSpace: 'nowrap', minWidth: 0 },
     'aria-label': logged ? `${label} · Logget i dag` : label,
     'aria-expanded': open === kind || kind === 'readiness' && fast,
@@ -181,11 +192,8 @@ export default function QuickLogs(props) {
         h('fieldset', { disabled: busy, style: { border: 0, margin: 0, padding: 0 } },
           h('legend', { style: s.text }, 'Energi i dag · 1 lav, 5 høj'),
           h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 4 } },
-            ...[1, 2, 3, 4, 5].map(value => h('button', { key: value, type: 'button',
-              'aria-label': `Energi ${value}`, 'aria-pressed': Number(fastInput?.energy) === value,
-              style: { ...s.secondary, marginTop: 0, minWidth: 44, padding: 0,
-                background: Number(fastInput?.energy) === value ? '#414139' : 'transparent' },
-              onClick: event => selectEnergy(value, event) }, String(value))))),
+            ...[1, 2, 3, 4, 5].map(value => scoreButton('Energi', value,
+              Number(fastInput?.energy) === value, event => selectEnergy(value, event))))),
         h('p', { style: s.text }, `Motivation ${fastInput?.motivation} · Stress ${fastInput?.stress} · Ømhed ${fastInput?.soreness_level} · samme som i går (forslag).`),
         h('button', { type: 'button', style: s.secondary, disabled: busy, onClick: event => {
           if (!current() || control.current !== renderedController || busy) return
@@ -223,11 +231,8 @@ export default function QuickLogs(props) {
             ...fields.map(([key, label, low, high]) => h('fieldset', { key, disabled: busy, style: { border: 0, margin: '12px 0', padding: 0 } },
               h('legend', { style: s.text }, `${label} · 1 ${low.toLowerCase()}, 5 ${high.toLowerCase()}`),
               h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 4 } },
-                ...[1, 2, 3, 4, 5].map(value => h('button', { key: value, type: 'button',
-                  'aria-pressed': Number(readinessInput[key]) === value, 'aria-label': `${label} ${value}`,
-                  style: { ...s.secondary, minWidth: 44, marginTop: 0, padding: 0,
-                    background: Number(readinessInput[key]) === value ? '#414139' : 'transparent' },
-                  onClick: () => edit('readiness', key, String(value)) }, String(value))))))),
+                ...[1, 2, 3, 4, 5].map(value => scoreButton(label, value,
+                  Number(readinessInput[key]) === value, () => edit('readiness', key, String(value)))))))),
         !(state.phase === 'save-error' && attempt?.weightReturned) &&
           h('p', { role: state.phase === 'save-error' ? 'alert' : 'status', 'aria-live': 'polite', style: s.text },
             (state.phase === 'save-error' && open === 'readiness' && props.readinessError) || state.message || ''),
