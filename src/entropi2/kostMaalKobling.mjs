@@ -1,7 +1,7 @@
 import { createElement as h, useEffect, useState } from 'react'
 import KostMaal from './kostMaal/KostMaal.mjs'
 import { nutritionBasis } from './kostMaal/nutritionWeek.mjs'
-import PortalPlan from './kostplan/coach/PortalPlan.mjs'
+import PortalPlan, { PortalKostJustering } from './kostplan/coach/PortalPlan.mjs'
 
 // Entropi 2 (APP-KOST-MAAL1): coachens kostfane. Kostmål og vægtgrundlag vises med pakken
 // KostMaal; redigering og gem går gennem Dashboardets eksisterende startEdit('setup', ...) og
@@ -68,10 +68,11 @@ export default function CoachKostMaal(props = {}) {
   const { athlete, weightStatus, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
     session, loading, loadError, coachNutrition, readContext, nutritionRead } = props
   const weight = kostMaalVaegt(weightStatus, athlete?.id)
+  const receipt = nutritionRead === undefined ? kostMaalNutritionRead(props) : nutritionRead
   return h('div', null, h(KostMaal, { key: athlete?.id, enabled: true, athlete, weightLogs: weight.rows, today,
     weightState: weight.state, retryWeight: weightStatus?.athleteId === athlete?.id ? weightStatus?.retry : undefined,
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
     session, loading, loadError, coachNutrition, readContext }),
-    h(PortalPlan, { enabled: true, athlete, today, session,
-      nutritionRead: nutritionRead === undefined ? kostMaalNutritionRead(props) : nutritionRead }))
+    h(PortalKostJustering, { enabled: true, athlete, coachId: session?.user?.id, date: today, loading, loadError, nutritionRead: receipt }),
+    h(PortalPlan, { enabled: true, athlete, today, session, nutritionRead: receipt }))
 }

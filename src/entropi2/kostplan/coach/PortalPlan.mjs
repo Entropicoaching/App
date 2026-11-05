@@ -5,6 +5,8 @@ import { FOODS } from '../foedevarer/index.mjs'
 import { identifier, day, number, catalogFoods } from './model.mjs'
 import { recipeItems, portalNutritionReport } from './connections.mjs'
 import { nutritionReportView } from '../rapport/reportView.mjs'
+import KostJustering from '../justering/KostJustering.mjs'
+import { portalAdjustment, choosePortalAdjustment } from './adjustment.mjs'
 
 const h = React.createElement
 const control = { minHeight: 44, width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', font: 'inherit' }
@@ -19,6 +21,37 @@ export default function PortalPlan(props = {}) {
   if (!identifier(athlete?.id) || !identifier(session?.user?.id) || !day(today)) return null
   return h(ScopedPortalPlan, { key: JSON.stringify([session.user.id, athlete.id, today]),
     coachId: session.user.id, athlete, date: today, nutritionRead: props.nutritionRead })
+}
+
+// Mounted directly in Kost & mål, independently of opening the meal editor.
+// All state belongs to the current coach/athlete/date and exact evidence snapshot.
+export function PortalKostJustering(props = {}) {
+  if (props.enabled !== true) return null
+  if (props.loading || props.loadError) return null
+  const options = { enabled: true, coachId: props.coachId, athleteId: props.athlete?.id,
+    date: props.date, receipt: props.nutritionRead }
+  const proposal = portalAdjustment(options)
+  if (!proposal) return null
+  return h(ScopedKostJustering, { key: JSON.stringify(proposal.snapshot), options, proposal })
+}
+
+function ScopedKostJustering({ options, proposal }) {
+  const [result, setResult] = React.useState(null)
+  const [error, setError] = React.useState(false)
+  const chosen = React.useRef(false)
+  const s = result?.snapshot ?? proposal.snapshot
+  const readiness = s.evidence.readiness
+  return h('div', null,
+    h(KostJustering, { enabled: true, snapshot: s, error,
+      onDecision: (decision, shown) => {
+        if (chosen.current) return
+        chosen.current = true
+        try { setResult(choosePortalAdjustment(options, shown, decision)) }
+        catch { setError(true) }
+      } }),
+    !error && h('p', null, `Efterlevelse: ${s.evidence.diet.completeDays} bekræftede kostdage i perioden. Dagsform: ${readiness
+      ? `energi ${readiness.energy}/5, sult ${readiness.hunger}/5` : 'ikke registreret'}.`),
+    !error && h('p', null, 'Valget gælder kun denne åbne visning. Der gemmes eller aktiveres ingen plan.'))
 }
 
 function ScopedPortalPlan(props) {
@@ -98,6 +131,4 @@ function PlanEditor(props) {
           onClick: () => setRows(old => old.map((meal, m) => m !== mi ? meal : [...meal, { foodId: '', grams: '' }])) }, 'Tilføj fødevare'))),
       error && h('p', { role: 'alert' }, error),
       h('button', { type: 'submit', style: control }, gramGenerator ? 'Generér forslag' : 'Brug måltider og generér dagsplan')))
-  // Weekly evaluation requires an active production plan and a complete receipt.
-  // This portal can only provide local drafts.
 }
