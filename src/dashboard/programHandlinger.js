@@ -19,7 +19,7 @@ import { DEFAULT_PROGRAM_COPY, copyProgramWeeks, copyBlockName, skippedProgressi
 let kopiererUge = false
 
 export function lavProgramHandlinger({
-  askConfirm, athleteLogs, athletes, blockPlan, calendarWeeks, exerciseForm,
+  coachTabCleanup = false, askConfirm, athleteLogs, athletes, blockPlan, calendarWeeks, exerciseForm,
   exerciseLibrary, fetchAthleteWeekSummaries, fetchCalendarWeeks, fetchExerciseLibrary, fetchWeeks, libraryAddForm,
   libraryEditForm, openSessionId, openWeekId, planAssistantFocus, planStartDate, programBlockStart,
   recommendedInput, selectedAthlete, session, sessionForm, setAddingExercise, setAddingLibraryEx,
@@ -121,7 +121,7 @@ export function lavProgramHandlinger({
       return
     }
     setApprovingProgression(true)
-    const { data, error } = await supabase.functions.invoke('draft-next-week', {
+    const approvalRequest = supabase.functions.invoke('draft-next-week', {
       body: {
         mode: 'approve_progression_state',
         athlete_id: selectedAthlete.id,
@@ -134,10 +134,13 @@ export function lavProgramHandlinger({
         },
       },
     })
+    const { data, error } = await (coachTabCleanup ? Promise.resolve(approvalRequest).catch(() => ({ error: true })) : approvalRequest)
     setApprovingProgression(false)
+    if (coachTabCleanup && currentProgramAthleteRef && currentProgramAthleteRef.current !== selectedAthlete.id) return
     if (error || data?.error || !data?.progression?.state_id) {
       let msg = data?.error || error?.message || 'Progressionstilstanden kunne ikke godkendes'
-      try { const body = await error?.context?.json(); if (body?.error) msg = body.error } catch { /* behold msg */ }
+      if (coachTabCleanup) msg = 'Progressionen blev ikke godkendt. Prøv igen.'
+      else try { const body = await error?.context?.json(); if (body?.error) msg = body.error } catch { /* behold msg */ }
       setWeekDraft(current => current?.data ? {
         ...current,
         data: {
@@ -340,7 +343,7 @@ export function lavProgramHandlinger({
           if (error) throw error
         },
         onDeleted: () => {
-          setWeeks(current => current.filter(w => w.id !== weekId))
+          setWeeks(current => current.coachRead ? Object.assign(current.filter(w => w.id !== weekId), { coachRead: current.coachRead, ...(current.readEvidence ? { readEvidence: current.readEvidence } : {}) }) : current.filter(w => w.id !== weekId))
           fetchCalendarWeeks(athletes.map(a => a.id))
           fetchAthleteWeekSummaries(athletes.map(a => a.id))
         },
@@ -557,8 +560,9 @@ export function lavProgramHandlinger({
   async function saveRecommendedWeight(exerciseId) {
     const val = parseInputNumber(recommendedInput)
     if (val === null && !optionalInput(recommendedInput)) { showFlash('Brug en gyldig vægt.', 'error'); return }
-    const { error } = await supabase.from('exercises').update({ recommended_weight: val }).eq('id', exerciseId)
-    if (error) { showFlash(`Kunne ikke gemme: ${error.message}`, 'error'); return }
+    const request = supabase.from('exercises').update({ recommended_weight: val }).eq('id', exerciseId)
+    const { error } = await (coachTabCleanup ? Promise.resolve(request).catch(() => ({ error: true })) : request)
+    if (error) { showFlash(coachTabCleanup ? 'Vægten blev ikke gemt. Prøv igen.' : `Kunne ikke gemme: ${error.message}`, 'error'); return }
     setEditingRecommended(null)
     fetchWeeks(selectedAthlete.id)
   }
@@ -663,7 +667,7 @@ export function lavProgramHandlinger({
       return true
     } catch (error) {
       if (isCurrent()) await fetchWeeks(athleteId)
-      showFlash(error.message || 'Kopieringen fejlede. Prøv igen.', 'error')
+      showFlash(coachTabCleanup ? 'Kopieringen fejlede. Prøv igen.' : error.message || 'Kopieringen fejlede. Prøv igen.', 'error')
       return false
     } finally {
       kopiererUge = false

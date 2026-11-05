@@ -378,6 +378,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     fetchWarmupTemplates,
   } = lavLaesninger({
     blokFremgang: blokFremgang === true,
+    ...(e2 ? { coachTabCleanup: true } : {}),
     fourWeekCapture, profileWeekCapture: coachProfileWeek ? fourWeekCapture : undefined,
     setCoachActionsStatus, coachMorning, setCoachMorningData,
     coachMeetSoon, setCoachMeetData,
@@ -390,7 +391,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     setMessages, setMessageSendError, setMessageThreadError, setProfilesLastSeen, setSnoozedAthletes, setTodayData,
     setTrainingSignals, setTrainingSignalsError, setUnreadByTrack, setUnreadCounts, setVideoAnalyses, setVideoAnalysisError,
     setVideoAnalysisLoading, setVideoBaselines, setVideoReviewQueue, setVideoReviewQueueError, setWarmupTemplates, setWeeklyActivity,
-    setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true ? currentProgramAthleteRef : undefined,
+    setWeeks, videoCoachAthletesRef, currentProgramAthleteRef: programCopyEnabled === true || e2 ? currentProgramAthleteRef : undefined,
     ...(coachTemplateMessages === true || e2 ? { coachActions: true } : {}),
     ...(e2 ? { entropi2CalendarRead, entropi2ReadGate, inboxRefreshRunnerRef: e2InboxRefreshRunnerRef } : {}),
   })
@@ -496,6 +497,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     updateLibraryExercise, deleteLibraryExercise, addToLibraryQuick, parseIntensity, addExercise, updateExercise,
     deleteExercise, saveRecommendedWeight, copyWeek, copyBlock, previewWeekDateFill, applyWeekDateFill,
   } = lavProgramHandlinger({
+    ...(e2 ? { coachTabCleanup: true } : {}),
     askConfirm, athleteLogs, athletes, blockPlan, calendarWeeks, exerciseForm,
     exerciseLibrary, fetchAthleteWeekSummaries, fetchCalendarWeeks, fetchExerciseLibrary, fetchWeeks, libraryAddForm,
     libraryEditForm, openSessionId, openWeekId, planAssistantFocus, planStartDate, programBlockStart,
@@ -773,6 +775,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
           <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
             {coachProfileWeek && <ProfileWeekSummary enabled={coachProfileWeek} athleteId={a.id} reads={fourWeekReads[a.id]} />}
             <ProfilHoved {...{ mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, adherenceContent: mobilitetOpfoelgning === true ? <MobilityAdherenceProfile key={a.id} enabled={true} athleteId={a.id} /> : null, mobilityCoachId: session?.user?.id, onMobilitySaved: updated => { setSelectedAthlete(previous => previous?.id === updated.id ? updated : previous); setAthletes(previous => previous.map(item => item.id === updated.id ? updated : item)) }, mobilitetHjalp: mobilitetHjalp === true, coachRyd,
+              ...(e2 ? { coachTabCleanup: true } : {}),
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
               priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
@@ -786,6 +789,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               const plannedPas = hubUger.find(week => week.week_number === hubNo)?.session_count ?? null
               return (
                 <HubTab {...{ coachRyd,
+                  ...(e2 ? { coachTabCleanup: true } : {}),
                   a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
                   videoAnalyses, weeklyActivity,
                 }} />
@@ -797,6 +801,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               <LazyBoundary
                 factory={analyseTabFactory} label="Analyse" loading={<div style={s.page}>Indlæser…</div>}
                 componentProps={{ coachRyd,
+                  ...(e2 ? { coachTabCleanup: true } : {}),
                   analyseMissingData, sendMissingDataMessage,
                   analyseConclusionMessage, coachId: session?.user?.id, sendConclusionMessage,
                   a, aiExportCopied, aiExportText, aiExportWeeks,
@@ -833,6 +838,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               {coachFourWeeksEnabled === true && <CoachFourWeeks athlete={a} reads={fourWeekReads[a.id]} onOpenVideo={openVideoAnalysisReview} onOpenAwaitingVideo={openAwaitingAnalysisVideo} videoOpening={videoAnalysisReviewLoadingId} videoError={videoAnalysisReviewError} />}
               <OversigtTab {...{
                 blokFremgang: blokFremgang === true,
+                ...(e2 ? { coachTabCleanup: true } : {}),
                 a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
                 isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
                 setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
@@ -860,6 +866,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               <LazyBoundary
                 factory={programTabFactory} label="Program" loading={<div style={s.page}>Indlæser…</div>}
                 componentProps={{
+                  ...(e2 ? { coachTabCleanup: true } : {}),
                   addExercise, addingExercise, addingSession,
                   addingWeek, addSession, addWeek,
                   applyPeriodizationSuggestion, applyWeekDateFill, approveDraftProgressionState,
@@ -894,6 +901,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             {activeTab === 'log' && (() => {
               return (
                 <LogTab {...{
+                  ...(e2 ? { coachTabCleanup: true, athleteId: a.id } : {}),
                   athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
                 }} />
               )
@@ -903,6 +911,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             {activeTab === 'stævne' && (() => {
               return (
                 <StaevneTab {...{
+                  ...(e2 ? { coachTabCleanup: true } : {}),
                   a, athletePRs, deleteMeetResult, meetPlan, meetPlanForm, meetResults,
                   openMeetResult, saveMeetPlan, savingMeetPlan, setMeetPlan, setMeetPlanForm,
                 }} />
@@ -911,6 +920,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
 
             {activeTab === 'noter' && (
               <NoterTab {...{ mobilitetCoach: mobilitetCoach === true, mobilityCoachId: session?.user?.id, mobilityClient: supabase, setSaving, showFlash, onMobilitySaved: updated => { setSelectedAthlete(previous => previous?.id === updated.id ? updated : previous); setAthletes(previous => previous.map(item => item.id === updated.id ? updated : item)) } }} {...(coachNotesEnabled ? { key: `${session.user.id}:${a.id}` } : {})} {...{
+                ...(e2 ? { coachTabCleanup: true } : {}),
                 coachNotesEnabled,
                 onAddNote: coachNotesEnabled ? createCoachNoteSaver({
                   enabled: coachNotesEnabled, athlete: a, coachId: session.user.id, client: supabase,

@@ -57,13 +57,14 @@ export function useDashboardEffekter({
   // henter friskt.
   useEffect(() => {
     if ((coachProfileWeek === true || activeTab === 'program' || activeTab === 'analyse' || activeTab === 'log' || activeTab === 'oversigt') && selectedAthlete?.id) {
-      if (weeksLogsLoadedForRef.current === selectedAthlete.id && coachProfileWeek !== true) return
-      weeksLogsLoadedForRef.current = selectedAthlete.id
+      const profileReadKey = e2Effects ? `entropi2:${selectedAthlete.id}` : selectedAthlete.id
+      if (weeksLogsLoadedForRef.current === profileReadKey && coachProfileWeek !== true) return
+      weeksLogsLoadedForRef.current = profileReadKey
       fetchWeeks(selectedAthlete.id)
       fetchAthleteLogs(selectedAthlete.id)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id, coachProfileWeek])
+  }, [activeTab, selectedAthlete?.id, coachProfileWeek, e2Effects])
   useEffect(() => {
     if (!selectedAthlete) weeksLogsLoadedForRef.current = null
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
@@ -89,7 +90,7 @@ export function useDashboardEffekter({
     // Hubben viser dagens parathed i statuslinjen.
     if (activeTab === 'hub' && selectedAthlete?.id) fetchAthleteReadiness(selectedAthlete.id)
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id])
+  }, [activeTab, selectedAthlete?.id, e2Effects])
 
   useEffect(() => {
     if ((coachProfileWeek === true || activeTab === 'hub' || activeTab === 'analyse' || (coachFourWeeksEnabled === true && activeTab === 'oversigt')) && selectedAthlete?.id) {
@@ -125,7 +126,7 @@ export function useDashboardEffekter({
       fetchWarmupTemplates(selectedAthlete.id)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id])
+  }, [activeTab, selectedAthlete?.id, e2Effects])
 
   useEffect(() => {
     if (activeTab === 'stævne' && selectedAthlete?.id) {
@@ -134,7 +135,7 @@ export function useDashboardEffekter({
       fetchAthletePRs(selectedAthlete.id)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch-funktionerne kommer fra lavLaesninger (nye i hvert render, som de hoistede funktioner før ordre 377) og refs er Dashboards stabile ref-objekter; effekten kører bevidst på de samme deps som før
-  }, [activeTab, selectedAthlete?.id])
+  }, [activeTab, selectedAthlete?.id, e2Effects])
 
 
   // Coachens forside og indbakke holdes friske ved navigation, tilbagevenden

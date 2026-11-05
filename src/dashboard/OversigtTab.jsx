@@ -12,8 +12,33 @@ import { hasReadinessPain } from '../entropi2/tracking/smerte/painRead.mjs'
 
 const painHistoryFactory = () => import('../entropi2/tracking/smerte/CoachPainHistory.mjs')
 
+function coachTabState(value, athleteId, enabled) {
+  if (enabled !== true) return 'ready'
+  const read = value?.coachRead
+  if (!read || (athleteId != null && read.athleteId !== athleteId) || read.current?.() === false) return 'loading'
+  return read.state
+}
+
+// Kept local so the existing closed test/import graphs and the OFF path stay intact.
+function CoachReadStatus({ value, athleteId, enabled, label }) {
+  const state = coachTabState(value, athleteId, enabled)
+  if (state === 'ready') return null
+  const failed = state === 'error' || state === 'incomplete'
+  const message = state === 'incomplete' ? `${label} er kun delvist hentet.`
+    : failed ? `${label} kunne ikke hentes.` : `Henter ${label.toLocaleLowerCase('da-DK')}…`
+  return <div role={failed ? 'alert' : 'status'} style={{ padding: '1rem 0', color: failed ? '#e0a555' : '#7a7770' }}>
+    {message}{failed && <button type="button" onClick={() => value.coachRead.retry()} style={{ marginLeft: '0.75rem', minHeight: '44px' }}>Prøv igen</button>}
+  </div>
+}
+
+const knownNumber = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value))
+const registeredMax = value => knownNumber(value) && Number(value) > 0
+function fullLiftTotal(athlete, prefix = '') {
+  const values = ['squat', 'bench', 'deadlift'].map(key => athlete[prefix + key])
+  return values.every(registeredMax) ? values.reduce((sum, value) => sum + Number(value), 0) : null
+}
 export default function OversigtTab({
-  a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
+  coachTabCleanup = false, a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
   isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
   setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
   volumenKortFactory, weeks, weightTrend, blokFremgang = false,
@@ -33,6 +58,7 @@ export default function OversigtTab({
                 )
               })()}
               {(() => {
+                if (coachTabState(athleteReadiness, a.id, coachTabCleanup) !== 'ready') return <CoachReadStatus value={athleteReadiness} athleteId={a.id} enabled={coachTabCleanup} label="Dagens check-in" />
                 const todayStr = calendarDay()
                 const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
                 if (!todayR) return (
@@ -148,6 +174,25 @@ export default function OversigtTab({
                     </div>
                   ) : (
                     <div>
+                      {coachTabCleanup ? <>
+                        <div style={{ display: 'flex', gap: '2rem', marginBottom: '1rem' }}>
+                          {a.age > 0 && <div><div style={s.fieldLabel}>Alder</div><div>{a.age} år</div></div>}
+                          {a.weight_class > 0 && <div><div style={s.fieldLabel}>Vægtklasse</div><div>{a.weight_class} kg</div></div>}
+                        </div>
+                        {['', 'training_'].map(prefix => {
+                          const values = [['Squat', 'squat'], ['Bænk', 'bench'], ['Dødløft', 'deadlift']]
+                            .filter(([, key]) => registeredMax(a[prefix + key]))
+                          if (!values.length) return null
+                          const sum = fullLiftTotal(a, prefix)
+                          return <div key={prefix} style={{ marginBottom: '1rem' }}>
+                            <div style={s.fieldLabel}>{prefix ? 'Træningsmaks' : 'Konkurrencemaks'}</div>
+                            <div style={s.statRow}>{values.map(([label, key]) => <div key={key} style={s.statCell}>
+                              <div style={s.statNum}>{a[prefix + key]}</div><div style={s.statLabel}>{label}</div>
+                            </div>)}</div>
+                            {sum != null && <div>{prefix ? 'Trænings total' : 'Comp total'}: {sum} kg</div>}
+                          </div>
+                        })}
+                      </> : <>
                       <div style={{ display: 'flex', gap: '2rem', marginBottom: '1rem' }}>
                         <div><div style={s.fieldLabel}>Alder</div><div style={{ fontSize: '0.9rem', color: '#b8b4a8' }}>{a.age ? a.age + ' år' : 'Ikke angivet'}</div></div>
                         <div><div style={s.fieldLabel}>Vægtklasse</div><div style={{ fontSize: '0.9rem', color: '#b8b4a8' }}>{a.weight_class ? a.weight_class + ' kg' : 'Ikke angivet'}</div></div>
@@ -170,6 +215,7 @@ export default function OversigtTab({
                         <div><div style={s.fieldLabel}>Comp total</div><div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#edeae2' }}>{total} <span style={{ fontSize: '0.9rem', color: '#7a7770' }}>kg</span></div></div>
                         <div><div style={s.fieldLabel}>Trænings total</div><div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#7a7770' }}>{trainingTotal} <span style={{ fontSize: '0.9rem', color: '#4a4844' }}>kg</span></div></div>
                       </div>
+                      </>}
                       {currentWeight !== null && (
                         <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
                           <div style={s.fieldLabel}>Aktuel kropsvægt</div>
@@ -192,21 +238,24 @@ export default function OversigtTab({
                 <div style={s.card}>
                   <div style={s.cardLabel}>Kostmål</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    <div>
+                    {(!coachTabCleanup || a.kcal_target > 0) && <div>
                       <div style={s.fieldLabel}>Dagligt kcal-mål</div>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: a.kcal_target ? '#edeae2' : '#4a4844' }}>{a.kcal_target || 'Ikke sat'} {a.kcal_target ? <span style={{ fontSize: '0.85rem', color: '#7a7770', fontFamily: 'sans-serif' }}>kcal</span> : ''}</div>
-                    </div>
-                    <div>
+                    </div>}
+                    {(!coachTabCleanup || a.protein_target > 0) && <div>
                       <div style={s.fieldLabel}>Dagligt proteinmål</div>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: a.protein_target ? '#edeae2' : '#4a4844' }}>{a.protein_target || 'Ikke sat'} {a.protein_target ? <span style={{ fontSize: '0.85rem', color: '#7a7770', fontFamily: 'sans-serif', fontWeight: 300 }}>g</span> : ''}</div>
-                    </div>
-                    <button style={{ ...s.btnGhost, alignSelf: 'flex-start', marginTop: '0.5rem' }} onClick={() => { setActiveTab('kost'); setEditing('setup') }}>Rediger mål</button>
+                    </div>}
+                    <button style={{ ...s.btnGhost, alignSelf: 'flex-start', marginTop: '0.5rem' }} onClick={() => { setActiveTab('kost'); setEditing('setup') }}>{coachTabCleanup && !(a.kcal_target > 0 || a.protein_target > 0) ? 'Sæt kostmål' : 'Rediger mål'}</button>
                   </div>
                 </div>
               </div>
 
               {/* Competition date card */}
-              <div style={{ ...s.card, marginTop: '1.5rem' }}>
+              {coachTabCleanup && !a.competition_date && editing !== 'competition' ? <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }}>
+                <button style={s.btnGhost} onClick={() => startEdit('competition', { competition_date: '' })}>Tilføj stævnedato</button>
+                <button style={s.btnGhost} onClick={() => openMeetResult()}>Registrér resultat</button>
+              </div> : <div style={{ ...s.card, marginTop: '1.5rem' }}>
                 <div style={s.cardLabel}>
                   Næste stævne
                   {editing !== 'competition' && (
@@ -245,12 +294,12 @@ export default function OversigtTab({
                 })() : (
                   <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævnedato sat endnu.</div>
                 )}
-              </div>
+              </div>}
 
-              <LazyBoundary
+              {coachTabState(athleteLogs, a.id, coachTabCleanup) === 'ready' && coachTabState(weeks, a.id, coachTabCleanup) === 'ready' ? <LazyBoundary
                 factory={volumenKortFactory} label="Volumenkort" loading={<div style={s.page}>Indlæser…</div>}
-                componentProps={{ athleteLogs, weeks, coachId: session.user.id }}
-              />
+                componentProps={{ athleteLogs, weeks, coachId: session.user.id, coachTabCleanup }}
+              /> : <><CoachReadStatus value={athleteLogs} athleteId={a.id} enabled={coachTabCleanup} label="Træningslog" /><CoachReadStatus value={weeks} athleteId={a.id} enabled={coachTabCleanup} label="Program" /></>}
               </div>
   )
 }

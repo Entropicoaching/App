@@ -7,12 +7,19 @@ import { calendarDay } from '../calendarDate.js'
 import { readinessSignal, s } from '../dashboardShared.js'
 import { HUB_SECTIONS } from './hubSektioner.jsx'
 
+function coachTabState(value, athleteId, enabled) {
+  if (enabled !== true) return 'ready'
+  const read = value?.coachRead
+  if (!read || (athleteId != null && read.athleteId !== athleteId) || read.current?.() === false) return 'loading'
+  return read.state
+}
+
 export default function HubTab({ coachRyd = false,
-  a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
+  coachTabCleanup = false, a, athleteReadiness, isMobile, plannedPas, setActiveTab, setEditing, unreadCounts,
   videoAnalyses, weeklyActivity,
 }) {
               const todayStr = calendarDay()
-              const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
+              const todayR = coachTabState(athleteReadiness, a.id, coachTabCleanup) !== 'ready' ? null : athleteReadiness.find(r => r.logged_date === todayStr)
               const sig = todayR && todayR.readiness_score != null ? readinessSignal(todayR.readiness_score) : null
               const trainings = weeklyActivity[a.id]?.sessions ?? 0
               const unread = unreadCounts[a.id] ?? 0
@@ -21,8 +28,8 @@ export default function HubTab({ coachRyd = false,
               const weeksToComp = compDate ? Math.ceil((new Date(compDate + 'T12:00:00') - new Date()) / (7 * 24 * 3600 * 1000)) : null
               const stat = [
                 sig && { label: 'Parathed i dag', value: todayR.readiness_score, sub: sig.text, color: sig.color },
-                { label: 'Træninger denne uge', value: plannedPas != null ? `${trainings} af ${plannedPas}` : trainings, sub: weeklyActivity[a.id]?.sets ? `${weeklyActivity[a.id].sets} sæt` : 'logget', color: '#edeae2' },
-                { label: 'Ulæste beskeder', value: unread, sub: unread > 0 ? 'fra atleten' : 'ingen nye', color: unread > 0 ? '#c8923a' : '#7a7770' },
+                (!coachTabCleanup || Object.hasOwn(weeklyActivity, a.id)) && { label: 'Træninger denne uge', value: plannedPas != null ? `${trainings} af ${plannedPas}` : trainings, sub: weeklyActivity[a.id]?.sets ? `${weeklyActivity[a.id].sets} sæt` : 'logget', color: '#edeae2' },
+                (!coachTabCleanup || unread > 0) && { label: 'Ulæste beskeder', value: unread, sub: unread > 0 ? 'fra atleten' : 'ingen nye', color: unread > 0 ? '#c8923a' : '#7a7770' },
                 pendingVideoCount > 0 && { label: 'Målinger til review', value: pendingVideoCount, sub: 'afventer dig', color: '#67dff5' },
                 weeksToComp != null && { label: 'Til stævne', value: weeksToComp > 0 ? weeksToComp : '0', sub: weeksToComp > 0 ? 'uger' : 'passeret', color: '#c8923a' },
               ].filter(Boolean)

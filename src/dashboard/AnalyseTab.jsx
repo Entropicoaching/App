@@ -38,8 +38,29 @@ const sleepOverviewFactory = () => import('../entropi2/tracking/soevn/CoachSleep
 const restitutionFactory = () => import('../entropi2/tracking/restitution/CoachRestitution.mjs')
 const monthlyExportFactory = () => import('../entropi2/tracking/eksport/CoachMonthlyExport.mjs')
 
+function coachTabState(value, athleteId, enabled) {
+  if (enabled !== true) return 'ready'
+  const read = value?.coachRead
+  if (!read || (athleteId != null && read.athleteId !== athleteId) || read.current?.() === false) return 'loading'
+  return read.state
+}
+
+// Kept local so the existing closed test/import graphs and the OFF path stay intact.
+function CoachReadStatus({ value, athleteId, enabled, label }) {
+  const state = coachTabState(value, athleteId, enabled)
+  if (state === 'ready') return null
+  const failed = state === 'error' || state === 'incomplete'
+  const message = state === 'incomplete' ? `${label} er kun delvist hentet.`
+    : failed ? `${label} kunne ikke hentes.` : `Henter ${label.toLocaleLowerCase('da-DK')}…`
+  return <div role={failed ? 'alert' : 'status'} style={{ padding: '1rem 0', color: failed ? '#e0a555' : '#7a7770' }}>
+    {message}{failed && <button type="button" onClick={() => value.coachRead.retry()} style={{ marginLeft: '0.75rem', minHeight: '44px' }}>Prøv igen</button>}
+  </div>
+}
+
+const knownNumber = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value))
+
 export default function AnalyseTab({ analyseMissingData = false, sendMissingDataMessage, analyseConclusionMessage = false, coachId, sendConclusionMessage, coachRyd = false, videoRetentionObjects,
-  a, aiExportCopied, aiExportText, aiExportWeeks, athleteLogs, athletePRHistory, athleteReadiness,
+  coachTabCleanup = false, a, aiExportCopied, aiExportText, aiExportWeeks, athleteLogs, athletePRHistory, athleteReadiness,
   athleteWeightLogs, exerciseLibrary, fetchVideoCoachHistory, generateAIReport, isMobile,
   openAwaitingAnalysisVideo, openVideoAnalysisReview, openVideoCoachV3, reviewVideoAnalysis,
   selectedAthlete, setAiExportCopied, setAiExportText, setAiExportWeeks, setShowAiExport,
@@ -47,6 +68,20 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
   videoAnalysisReviewError, videoAnalysisReviewLoadingId, videoAnalysisUpdatingId, videoBaselines,
   videoLiftFilter, weeks, weeklyEvaluation = null,
 }) {
+              const logState = coachTabState(athleteLogs, a.id, coachTabCleanup)
+              const programState = coachTabState(weeks, a.id, coachTabCleanup)
+              const readinessState = coachTabState(athleteReadiness, a.id, coachTabCleanup)
+              const historyState = coachTabState(athletePRHistory, a.id, coachTabCleanup)
+              const readStatuses = coachTabCleanup ? <>
+                <CoachReadStatus value={athleteLogs} athleteId={a.id} enabled={true} label="Træningslog" />
+                <CoachReadStatus value={weeks} athleteId={a.id} enabled={true} label="Program" />
+                <CoachReadStatus value={athleteReadiness} athleteId={a.id} enabled={true} label="Dagsform" />
+                <CoachReadStatus value={athletePRHistory} athleteId={a.id} enabled={true} label="Rekorder" />
+              </> : null
+              if (logState !== 'ready') athleteLogs = []
+              if (programState !== 'ready') weeks = []
+              if (readinessState !== 'ready') athleteReadiness = []
+              if (historyState !== 'ready') athletePRHistory = []
               // Reuse the existing Entropi 2 boundary and its authorized scope.
               // A missing/OFF evaluation never imports or mounts export code.
               const exportScope = weeklyEvaluation?.props?.componentProps
@@ -96,7 +131,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
               for (const log of athleteLogs) {
                 const sid = log.exercises?.session_id
                 if (!sid) continue
-                if (!sessionMap[sid]) sessionMap[sid] = { id: sid, title: log.exercises?.sessions?.title || 'Ukendt', date: log.logged_at.slice(0, 10), setsLogged: 0, exSets: {} }
+                if (!sessionMap[sid]) sessionMap[sid] = { id: sid, title: log.exercises?.sessions?.title || (coachTabCleanup ? 'Pas' : 'Ukendt'), date: log.logged_at.slice(0, 10), setsLogged: 0, exSets: {} }
                 if (log.logged_at.slice(0, 10) > sessionMap[sid].date) sessionMap[sid].date = log.logged_at.slice(0, 10)
                 sessionMap[sid].setsLogged++
                 if (!sessionMap[sid].exSets[log.exercise_id]) sessionMap[sid].exSets[log.exercise_id] = log.exercises?.sets || 0
@@ -130,7 +165,8 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     analyses={filteredVideoAnalyses} logs={athleteLogs} liftFilter={videoLiftFilter}
                     loading={videoAnalysisLoading} error={videoAnalysisError} sendMessage={sendConclusionMessage} /> : null} error={videoAnalysisError}>
                 <div>
-                  {weeklyEvaluation}
+                  {readStatuses}
+                  {(!coachTabCleanup || logState === 'ready' && readinessState === 'ready') && weeklyEvaluation}
                   {showMonthlyExport && <ExportBoundary
                     key={`sleep:${exportScope.coachId}:${exportScope.athleteId}:${exportScope.asOf}`}
                     factory={sleepOverviewFactory} label="Søvn (4-8 uger)" loading={null}
@@ -207,7 +243,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     </div>
                   )}
 
-                  <CoachFold enabled={coachRyd} title="Mere: lokalt analyseværktøj"><AnalyseLokaltVaerktoej key={selectedAthlete?.id || 'no-athlete'} /></CoachFold>
+                  {!coachTabCleanup && <CoachFold enabled={coachRyd} title="Mere: lokalt analyseværktøj"><AnalyseLokaltVaerktoej key={selectedAthlete?.id || 'no-athlete'} /></CoachFold>}
                   <VideoRetentionLocalPreview key={a.id} analyses={videoAnalyses} objects={videoRetentionObjects} athleteId={a.id} />
                   {/* VideoCoach v3 · individuel historik (read-only første lag) */}
                   <div style={{ ...s.card, borderColor: 'rgba(200,146,58,0.24)', background: 'linear-gradient(145deg, rgba(200,146,58,0.055), #1c1c18 38%)' }}>
@@ -223,7 +259,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                       </button>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: '1rem' }}>
+                    {(!coachTabCleanup || !videoAnalysisLoading && !videoAnalysisError && videoAnalyses.length > 0) && <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: '1rem' }}>
                       {[
                         ['Analyser', videoAnalyses.length],
                         ['Afventer coach', draftVideoCount],
@@ -235,7 +271,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                           <div style={{ fontFamily: "'Playfair Display', serif", color: '#edeae2', fontSize: '1.25rem' }}>{value}</div>
                         </div>
                       ))}
-                    </div>
+                    </div>}
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
                       {[['all', 'Alle'], ['squat', 'Squat'], ['bench', 'Bænk'], ['deadlift', 'Dødløft']].map(([key, label]) => (
@@ -250,17 +286,17 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                       )}
                     </div>
 
-                    {visibleBaselineProfiles.length > 0 && (
+                    {visibleBaselineProfiles.some(profile => !coachTabCleanup || profile.nAnalyses > 0) && (
                       <div style={{ border: '1px solid rgba(103,223,245,0.14)', background: 'rgba(103,223,245,0.025)', padding: isMobile ? '0.75rem' : '0.85rem 0.95rem', marginBottom: '0.9rem' }}>
                         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.65rem' }}>
                           <div style={s.cardLabel}>Personlig baseline</div>
                           <span style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem' }}>5 brugbare, godkendte = klar</span>
                         </div>
                         <div style={{ display: 'grid', gap: '0.6rem' }}>
-                          {visibleBaselineProfiles.map(profile => {
+                          {visibleBaselineProfiles.filter(profile => !coachTabCleanup || profile.nAnalyses > 0).map(profile => {
                             const ready = profile.stage === 'ready'
                             const preliminary = profile.stage === 'preliminary'
-                            const statusText = ready
+                            const statusText = coachTabCleanup ? `${profile.nAnalyses} brugbare målinger${ready ? ' · klar' : ' · tilføj en godkendt video'}` : ready
                               ? `${profile.nAnalyses} målinger · klar`
                               : preliminary
                                 ? `${profile.nAnalyses}/5 · foreløbig · mangler ${profile.remaining}`
@@ -283,7 +319,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
 
                     {visibleBaselineProfiles.length === 0 && visibleApprovedVideoCount > 0 && (
                       <div style={{ border: '1px solid rgba(103,223,245,0.14)', background: 'rgba(103,223,245,0.025)', padding: '0.75rem 0.9rem', marginBottom: '0.9rem', color: '#8f918b', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.68rem', lineHeight: 1.5 }}>
-                        Den nye kvalitetssikrede baseline bygges fra målinger med dokumenteret tracking-confidence. Den tidligere historik er bevaret, men bruges ikke til automatiske sammenligninger.
+                        {coachTabCleanup ? <details><summary>Grundlag for baseline</summary>Baseline kræver godkendte videoer med tilstrækkelig målekvalitet. Tidligere historik er bevaret.</details> : 'Den nye kvalitetssikrede baseline bygges fra målinger med dokumenteret tracking-confidence. Den tidligere historik er bevaret, men bruges ikke til automatiske sammenligninger.'}
                       </div>
                     )}
 
@@ -292,7 +328,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     )}
                     {videoAnalysisError && !videoAnalysisLoading && (
                       <div style={{ border: '1px solid rgba(207,107,78,0.28)', background: 'rgba(207,107,78,0.06)', padding: '0.85rem', color: '#d79a83', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', lineHeight: 1.5 }}>
-                        {videoAnalysisError} <button onClick={() => fetchVideoCoachHistory(selectedAthlete.id)} style={{ background: 'none', border: 0, padding: 0, color: '#c8923a', cursor: 'pointer', font: 'inherit' }}>Prøv igen</button>
+                        {coachTabCleanup ? 'Videoanalyserne kunne ikke hentes.' : videoAnalysisError} <button onClick={() => fetchVideoCoachHistory(selectedAthlete.id)} style={{ background: 'none', border: 0, padding: 0, color: '#c8923a', cursor: 'pointer', font: 'inherit' }}>Prøv igen</button>
                       </div>
                     )}
                     {videoAnalysisReviewError && (
@@ -303,10 +339,10 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     {!videoAnalysisLoading && !videoAnalysisError && filteredVideoAnalyses.length === 0 && (
                       <div style={{ border: '1px dashed rgba(237,234,226,0.12)', padding: isMobile ? '1rem' : '1.3rem', textAlign: 'center' }}>
                         <div style={{ color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.76rem', marginBottom: '0.35rem' }}>
-                          {videoAnalyses.length ? 'Ingen analyser for dette løft endnu.' : 'Første bevægelsesprofil er ikke oprettet endnu.'}
+                          {videoAnalyses.length ? 'Ingen analyser for dette løft endnu.' : coachTabCleanup ? 'Ingen bevægelsesanalyser endnu.' : 'Første bevægelsesprofil er ikke oprettet endnu.'}
                         </div>
                         <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', lineHeight: 1.5 }}>
-                          Efter 3 godkendte analyser vises en foreløbig personlig retning. Ved 5+ kan baseline bruges i feedback.
+                          {coachTabCleanup ? <button style={s.btnGhost} onClick={() => openVideoCoachV3()}>Tilføj video</button> : 'Efter 3 godkendte analyser vises en foreløbig personlig retning. Ved 5+ kan baseline bruges i feedback.'}
                         </div>
                       </div>
                     )}
@@ -354,9 +390,11 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                                   <div style={{ color: '#edeae2', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.8rem' }}>
                                     {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
                                   </div>
-                                  <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
+                                  {coachTabCleanup ? <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
+                                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')}{coachTabCleanup ? [knownNumber(analysis.load_kg) && `${analysis.load_kg} kg`, knownNumber(analysis.reps_count) && `${analysis.reps_count} reps`].filter(Boolean).map(value => ` · ${value}`).join('') : ` · ${analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · ${analysis.reps_count || 0} reps`}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                                  </div> : <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
                                     {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
-                                  </div>
+                                  </div>}
                                   {analysis.source_mode === 'athlete_submission' && (
                                     <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', marginTop: '0.3rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                                       Sendt af atleten
@@ -447,17 +485,17 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     )}
                   </div>
 
-<CoachFold enabled={coachRyd} title="Mere: træningsgrafer og historik">
+{(!coachTabCleanup || logState === 'ready') && <CoachFold enabled={coachRyd} title="Mere: træningsgrafer og historik">
                   {/* 1. Træningsoverblik */}
-                  <div style={s.card}>
+                  {(!coachTabCleanup || athleteLogs.length > 0) && <div style={s.card}>
                     <div style={s.cardLabel}>Træningsoverblik</div>
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: '1rem' }}>
                       {[
                         ['Sessioner (4 uger)', completedSessionIds.size],
                         ['Sæt logget (4 uger)', totalSets4w],
-                        ['Sessioner i program', totalPlannedSessions || '—'],
-                        ['Seneste aktivitet', lastActivityDate ? fmtDate(lastActivityDate) : '—'],
-                      ].map(([label, value]) => (
+                        ['Sessioner i program', coachTabCleanup ? (programState === 'ready' ? totalPlannedSessions : null) : totalPlannedSessions || '—'],
+                        ['Seneste aktivitet', lastActivityDate ? fmtDate(lastActivityDate) : coachTabCleanup ? null : '—'],
+                      ].filter(([, value]) => value != null).map(([label, value]) => (
                         <div key={label} style={{ background: '#1c1c18', padding: '1rem' }}>
                           <div style={s.fieldLabel}>{label}</div>
                           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{value}</div>
@@ -478,10 +516,11 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                         </div>
                       </div>
                     )}
-                  </div>
+                  </div>}
 
                   {/* 2. Træningskonsistens heatmap */}
                   {(() => {
+                    if (coachTabCleanup && !athleteLogs.length) return null
                     const trainingDates = new Set(athleteLogs.filter(l => !dataEnoughEnabled() || !l.skipped).map(l => l.logged_at.slice(0, 10)))
                     const todayDate = new Date()
                     const WEEKS = 16, CELL = 22, GAP = 3, STEP = CELL + GAP
@@ -533,17 +572,17 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                   })()}
 
                   {/* 3. Primære løft */}
-                  <div style={s.card}>
+                  {(!coachTabCleanup || lifts.some(l => primaerKurve(l.s).data.length > 0)) && <div style={s.card}>
                     <div style={s.cardLabel}>{primaerOverskrift(lifts)}</div>
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${lifts.length}, 1fr)`, gap: '1.5rem' }}>
-                      {lifts.map(({ label, s: ls }) => (
+                      {lifts.filter(l => !coachTabCleanup || primaerKurve(l.s).data.length > 0).map(({ label, s: ls }) => (
                         <div key={label}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}{primaerKurve(ls).note ? ` · ${primaerKurve(ls).note}` : ''}</div>
                           <LineChart series={[{ data: primaerKurve(ls).data, color: '#c8923a' }]} />
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </div>}
 
                   {/* 3. Planlagt vs faktisk */}
                   {hasPlanVsActual && (
@@ -562,7 +601,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                         </div>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${lifts.length}, 1fr)`, gap: '1.5rem' }}>
-                        {lifts.map(({ label, s: ls }) => (
+                        {lifts.filter(l => !coachTabCleanup || l.s.plannedData.length > 0 || (dataEnoughEnabled() ? liftEvidence(athleteLogs, l.label).rows.length > 0 : l.s.actualData.length > 0)).map(({ label, s: ls }) => (
                           <div key={label}>
                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
                             <LineChart series={[
@@ -617,7 +656,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>tons (vægt × reps / 1000)</span>
                         </div>
                         <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
-                          {volLifts.map(({ label, color, data }) => data.length > 0 && (
+                          {volLifts.filter(l => !coachTabCleanup || l.data.length > 0).map(({ label, color, data }) => data.length > 0 && (
                             <span key={label} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color }}>
                               <svg width="16" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke={color} strokeWidth="1.75" /></svg>
                               {label}
@@ -625,7 +664,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                           ))}
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
-                          {volLifts.map(({ label, data, color }) => data.length > 1 && (
+                          {volLifts.filter(l => !coachTabCleanup || l.data.length > 0).map(({ label, data, color }) => data.length > 1 && (
                             <div key={label}>
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770', marginBottom: '0.5rem' }}>{label}</div>
                               <LineChart series={[{ data, color }]} height={110} />
@@ -835,7 +874,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                   {(() => {
                     if (athleteReadiness.length === 0) return null
                     const fmtR = date => { const d = new Date(date + 'T12:00:00'); return `${d.getDate()}/${d.getMonth() + 1}` }
-                    const scoreData = [...athleteReadiness].reverse().map(r => ({ y: r.readiness_score, label: fmtR(r.logged_date) }))
+                    const scoreData = [...athleteReadiness].filter(r => !coachTabCleanup || knownNumber(r.readiness_score)).reverse().map(r => ({ y: r.readiness_score, label: fmtR(r.logged_date) }))
                     // eslint-disable-next-line react-hooks/purity -- uændret adfærd fra Dashboard.jsx; flaget først nu fordi denne kode er en topniveau-komponent i stedet for en indlejret IIFE
                     const d14str = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10)
                     const last14 = athleteReadiness.filter(r => r.logged_date >= d14str)
@@ -846,7 +885,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     const topZones = Object.entries(soreMap).sort((a, b) => b[1] - a[1]).slice(0, 4)
                     const sorted = [...athleteReadiness].sort((a, b) => b.logged_date.localeCompare(a.logged_date))
                     let lowStreak = 0
-                    for (const r of sorted) { if (r.readiness_score < 50) lowStreak++; else break }
+                    for (const r of sorted) { if (coachTabCleanup && !knownNumber(r.readiness_score)) break; if (r.readiness_score < 50) lowStreak++; else break }
 
                     if (dataEnoughEnabled()) lowStreak = consecutiveLowStreak(athleteReadiness)
                     return (
@@ -863,19 +902,19 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                           </div>
                         )}
                         <div style={s.card}>
-                          <div style={s.cardLabel}>Parathed over tid</div>
+                          <div style={s.cardLabel}>{coachTabCleanup && scoreData.length < 2 ? 'Seneste parathed' : 'Parathed over tid'}</div>
                           {scoreData.length > 1
                             ? <LineChart series={[{ data: scoreData, color: '#6cba6c' }]} height={110} />
-                            : <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ikke nok data endnu.</div>}
+                            : coachTabCleanup ? scoreData.length > 0 && <div>{scoreData[0].label}: {scoreData[0].y}/100</div> : <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ikke nok data endnu.</div>}
                         </div>
                         <div style={s.card}>
                           <div style={s.cardLabel}>Parathed — nøgletal</div>
                           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: '1px', background: 'rgba(237,234,226,0.07)', marginBottom: topZones.length > 0 ? '1rem' : 0 }}>
                             {[
                               ['Logs i alt', athleteReadiness.length],
-                              ['Gns. søvn (2 uger)', avgSleep != null ? `${avgSleep}t` : '—'],
-                              ['Seneste score', athleteReadiness[0]?.readiness_score ?? '—'],
-                            ].map(([label, value]) => (
+                              ['Gns. søvn (2 uger)', avgSleep != null ? `${avgSleep}t` : coachTabCleanup ? null : '—'],
+                              ['Seneste score', athleteReadiness[0]?.readiness_score ?? (coachTabCleanup ? null : '—')],
+                            ].filter(([, value]) => value != null).map(([label, value]) => (
                               <div key={label} style={{ background: '#1c1c18', padding: '1rem' }}>
                                 <div style={s.fieldLabel}>{label}</div>
                                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', lineHeight: 1 }}>{value}</div>
@@ -1143,7 +1182,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                     )
                   })()}
 
-</CoachFold>
+</CoachFold>}
                 </div>
                 </AnalyseConclusion>
               )}

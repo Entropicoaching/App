@@ -15,7 +15,7 @@ import { HUB_SECTIONS } from './hubSektioner.jsx'
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
 export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgning = false, adherenceContent = null, mobilitetCoach = false, mobilityCoachId, onMobilitySaved, mobilitetHjalp = false, coachRyd = false,
-  a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
+  coachTabCleanup = false, a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
   setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
 }) {
@@ -97,6 +97,11 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
               <div style={isMobile ? { flex: 1, minWidth: 0 } : undefined}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 400, color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'nowrap' : 'normal' }}>{a.name}</div>
                 {!isMobile && <div style={{ fontSize: '0.8rem', color: '#7a7770', marginTop: '0.2rem' }}>{a.email}{a.age ? ' · ' + a.age + ' år' : ''}</div>}
+                {coachTabCleanup ? <details style={{ marginTop: '0.3rem', color: '#7a7770', fontSize: '0.75rem' }}>
+                  <summary>Supportoplysninger</summary>
+                  <button style={s.btnGhost} onClick={() => { navigator.clipboard?.writeText(a.id); showFlash('Atlet-ID kopieret') }}>Kopiér atlet-ID</button>
+                  <div style={{ wordBreak: 'break-all' }}>{a.id}</div>
+                </details> : <>
                 {/* Det lange atlet-ID er skjult på mobil — det bruges kun til scripts på desktop */}
                 {!isMobile && <div
                   onClick={() => { navigator.clipboard?.writeText(a.id); showFlash('Atlet-ID kopieret') }}
@@ -106,6 +111,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
                   <span>ID: {a.id}</span>
                   <span style={{ color: '#7a7770' }}>⧉</span>
                 </div>}
+                </>}
                 {(() => {
                   const ls = formatLastSeen(profilesLastSeen[a.user_id])
                   if (!ls) return null

@@ -129,7 +129,7 @@ function DenneUgePlanlagtModGennemfoert({ gennemfoertUge, planlagtUge }) {
   )
 }
 
-export default function VolumenKort({ athleteLogs, weeks, coachId }) {
+export default function VolumenKort({ athleteLogs, weeks, coachId, coachTabCleanup = false }) {
   const [rettelser, setRettelser] = useState(new Map())
   const [lagerType, setLagerType] = useState('lokalt')
 
@@ -183,7 +183,7 @@ export default function VolumenKort({ athleteLogs, weeks, coachId }) {
       <div style={{ fontSize: '0.72rem', color: '#7a7770', lineHeight: 1.5, marginBottom: '1rem' }}>
         Sæt er ikke belastning. Tallene tæller gennemførte sæt, vægtet efter hvad øvelsen belaster.
       </div>
-      <DenneUgePlanlagtModGennemfoert gennemfoertUge={uger[0]} planlagtUge={planlagtDenneUge} />
+      {(!coachTabCleanup || grupperMedData.length > 0 || harUkendte || Object.values(planlagtDenneUge.grupper || {}).some(group => (group?.ialt || 0) > 0)) && <DenneUgePlanlagtModGennemfoert gennemfoertUge={uger[0]} planlagtUge={planlagtDenneUge} />}
       {grupperMedData.length === 0 && !harUkendte ? (
         <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
           Ingen loggede sæt de seneste {ANTAL_UGER} uger endnu.
@@ -210,7 +210,7 @@ export default function VolumenKort({ athleteLogs, weeks, coachId }) {
                 ))}
                 {harUkendte && (
                   <tr>
-                    <td style={{ ...labelCellStyle, color: '#e0a555' }}>Ukendt øvelse</td>
+                    <td style={{ ...labelCellStyle, color: '#e0a555' }}>{coachTabCleanup ? 'Ikke kortlagt' : 'Ukendt øvelse'}</td>
                     {uger.map(u => <td key={u.uge} style={{ ...cellStyle, color: '#e0a555' }}>{u.ukendteSaet}</td>)}
                   </tr>
                 )}

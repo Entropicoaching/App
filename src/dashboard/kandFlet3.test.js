@@ -64,9 +64,13 @@ test('modproeve: actual modal button forwards same analysis and status in both l
 test('modproeve: merged Dashboard retains coach note state and new actions state', () => {
   const source = readFileSync(new URL('../Dashboard.jsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
   for (const name of ['pendingByTrack', 'setPendingByTrack', 'coachActionsStatus', 'setCoachActionsStatus']) assert.ok(source.includes(name), name)
-  const readerOptions = source.match(/lavLaesninger\(\{([\s\S]*?)\}\)/)?.[1]
-  assert.ok(readerOptions)
-  assert.match(readerOptions, /\bsetCoachActionsStatus,/)
+  // Nested conditional spreads are reader options too; stop at the call's own closing line.
+  for (const ending of ['\n', '\r\n']) {
+    const value = source.replace(/\r?\n/g, ending)
+    const readerOptions = value.match(/lavLaesninger\(\{([\s\S]*?)\r?\n {2}\}\)/)?.[1]
+    assert.ok(readerOptions)
+    assert.match(readerOptions, /\bsetCoachActionsStatus,/)
+  }
 })
 
 test('notesignalets transitive kaede har ingen net eller lagring', () => {

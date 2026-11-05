@@ -21,8 +21,27 @@ import VideoCoachNote from './VideoCoachNote.jsx'
 import CoachProgramTools from '../entropi2/coach/blokplan/CoachProgramTools.mjs'
 import * as Entropi2 from '../entropi2/flag.mjs'
 
+function coachTabState(value, athleteId, enabled) {
+  if (enabled !== true) return 'ready'
+  const read = value?.coachRead
+  if (!read || (athleteId != null && read.athleteId !== athleteId) || read.current?.() === false) return 'loading'
+  return read.state
+}
+
+// Kept local so the existing closed test/import graphs and the OFF path stay intact.
+function CoachReadStatus({ value, athleteId, enabled, label }) {
+  const state = coachTabState(value, athleteId, enabled)
+  if (state === 'ready') return null
+  const failed = state === 'error' || state === 'incomplete'
+  const message = state === 'incomplete' ? `${label} er kun delvist hentet.`
+    : failed ? `${label} kunne ikke hentes.` : `Henter ${label.toLocaleLowerCase('da-DK')}…`
+  return <div role={failed ? 'alert' : 'status'} style={{ padding: '1rem 0', color: failed ? '#e0a555' : '#7a7770' }}>
+    {message}{failed && <button type="button" onClick={() => value.coachRead.retry()} style={{ marginLeft: '0.75rem', minHeight: '44px' }}>Prøv igen</button>}
+  </div>
+}
+
 export default function ProgramTab({
-  addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
+  coachTabCleanup = false, addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
   applyPeriodizationSuggestion, applyWeekDateFill,
   approveDraftProgressionState, approvingProgression, assignEdits, athleteLogs, bestLog,
   blockPlan, copyExerciseToSession, copyingExercise, copyingSession, copySessionToWeek, copyWeek, copyBlock, copyingWeek, pendingWeekDeletes = [],
@@ -53,6 +72,7 @@ export default function ProgramTab({
     setCopyRequest(null)
   }
   const [blockToCopy, setBlockToCopy] = useState('')
+  const [toolsRequested, setToolsRequested] = useState(false)
   const pendingIds = new Set((programCopyEnabled === true ? pendingWeekDeletes : []).map(entry => entry.weekId))
   const weeks = programCopyEnabled === true ? allWeeks.filter(w => !pendingIds.has(w.id)) : allWeeks
   const phases = computePhases(weeks)
@@ -65,6 +85,7 @@ export default function ProgramTab({
   const request = programCopyEnabled === true && copyFormAthleteRef.current === copyRequest?.athleteId && copyRequest?.athleteId === selectedAthlete?.id && requestedWeeks?.length
     ? { ...copyRequest, weeks: requestedWeeks } : null
   const requestCopy = (kind, sourceWeeks) => setCopyRequest({ kind, weeks: sourceWeeks, athleteId: selectedAthlete.id })
+  if (coachTabState(allWeeks, selectedAthlete?.id, coachTabCleanup) !== 'ready') return <CoachReadStatus value={allWeeks} athleteId={selectedAthlete?.id} enabled={coachTabCleanup} label="Program" />
   return (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
@@ -79,7 +100,7 @@ export default function ProgramTab({
                       }
                       setShowBlockPlanner(p => !p)
                     }}>
-                      Periodiseringsplan
+                      {coachTabCleanup && !weeks.length ? 'Opret flere uger' : 'Periodiseringsplan'}
                     </button>
                     {(programCopyEnabled === true || coachPlanCopyEnabled !== true) && weeks.length > 0 && (
                       <button style={{ ...s.btnGhost, opacity: copyDisabled ? 0.5 : 1 }} disabled={!!copyDisabled} aria-busy={!!copyingWeek} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
@@ -98,6 +119,17 @@ export default function ProgramTab({
                         onClick={async () => {
                           if (weekDraft) { setWeekDraft(null); return }
                           setWeekDraft({ loading: true })
+                          if (coachTabCleanup) {
+                            const athleteId = selectedAthlete.id
+                            try {
+                              const { data, error } = await supabase.functions.invoke('draft-next-week', { body: { mode: 'preview', athlete_id: athleteId } })
+                              if (copyAthleteRef.current !== athleteId) return
+                              setWeekDraft(error || data?.error || !data?.draft ? { error: 'Udkastet kunne ikke dannes. Prøv igen.' } : { data })
+                            } catch {
+                              if (copyAthleteRef.current === athleteId) setWeekDraft({ error: 'Udkastet kunne ikke dannes. Prøv igen.' })
+                            }
+                            return
+                          }
                           const { data, error } = await supabase.functions.invoke('draft-next-week', {
                             body: { mode: 'preview', athlete_id: selectedAthlete.id },
                           })
@@ -188,6 +220,7 @@ export default function ProgramTab({
                           const proposal = progression.proposal
                           const forecastState = progression.display_state || proposal
                           const rawForecast = forecastState?.expected_progression?.exercises || []
+                          if (coachTabCleanup && (!rawForecast.length || !['approval_required', 'approved_for_draft'].includes(progression.status))) return null
                           const forecast = dataAllowed('D69', { rows: rawForecast }) ? rawForecast : []
                           const statusLabel = progression.status === 'approved_for_draft'
                             ? 'Godkendt for dette udkast'
@@ -277,7 +310,7 @@ export default function ProgramTab({
                             ))}
                           </div>
                         ) : (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', marginBottom: '0.85rem' }}>Ingen automatiske justeringer — ren kopi af kildeugen.</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', marginBottom: '0.85rem' }}>{coachTabCleanup ? 'Kopi af kildeugen.' : 'Ingen automatiske justeringer — ren kopi af kildeugen.'}</div>
                         )}
                         {weekDraft.data.warnings.length > 0 && (
                           <div style={{ marginBottom: '0.85rem' }}>
@@ -286,10 +319,25 @@ export default function ProgramTab({
                             ))}
                           </div>
                         )}
+                        {coachTabCleanup && weekDraft.saveError && <div role="alert">{weekDraft.saveError}</div>}
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <button style={s.btnPrimary} disabled={sendingDraft || weekDraft.data.progression?.can_commit !== true} onClick={async () => {
                             if (weekDraft.data.progression?.can_commit !== true) return
                             setSendingDraft(true)
+                            if (coachTabCleanup) {
+                              const athleteId = selectedAthlete.id
+                              try {
+                                const { data, error } = await supabase.functions.invoke('draft-next-week', { body: { mode: 'commit', athlete_id: athleteId, payload: weekDraft.data.draft } })
+                                if (copyAthleteRef.current !== athleteId) return
+                                if (error || data?.error || !data) throw Error('save failed')
+                                showFlash('Ugen er gemt til atleten', 'success')
+                                setWeekDraft(null)
+                                fetchWeeks(athleteId)
+                              } catch {
+                                if (copyAthleteRef.current === athleteId) setWeekDraft(current => ({ ...current, saveError: 'Ugen blev ikke gemt. Prøv igen.' }))
+                              } finally { setSendingDraft(false) }
+                              return
+                            }
                             const { data, error } = await supabase.functions.invoke('draft-next-week', {
                               body: { mode: 'commit', athlete_id: selectedAthlete.id, payload: weekDraft.data.draft },
                             })
@@ -1090,7 +1138,8 @@ export default function ProgramTab({
                     )}
                   </div>
                 ))}
-                <CoachProgramTools enabled={coachProgramToolsEnabled} athleteId={selectedAthlete?.id}
-                  weeks={weeks} client={supabase} />
+                {coachTabCleanup && !weeks.some(w => w.sessions?.length > 0) && toolsRequested !== selectedAthlete?.id && <button style={s.btnGhost} onClick={() => setToolsRequested(selectedAthlete?.id)}>Åbn programværktøjer</button>}
+                {(!coachTabCleanup || weeks.some(w => w.sessions?.length > 0) || toolsRequested === selectedAthlete?.id) && <CoachProgramTools enabled={coachProgramToolsEnabled} athleteId={selectedAthlete?.id}
+                  weeks={weeks} client={supabase} />}
               </div>)
 }

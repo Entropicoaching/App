@@ -9,10 +9,33 @@ import { s } from '../dashboardShared'
 import { exerciseSetView } from '../exerciseSetView'
 import { supabase } from '../supabase'
 
+function coachTabState(value, athleteId, enabled) {
+  if (enabled !== true) return 'ready'
+  const read = value?.coachRead
+  if (!read || (athleteId != null && read.athleteId !== athleteId) || read.current?.() === false) return 'loading'
+  return read.state
+}
+
+// Kept local so the existing closed test/import graphs and the OFF path stay intact.
+function CoachReadStatus({ value, athleteId, enabled, label }) {
+  const state = coachTabState(value, athleteId, enabled)
+  if (state === 'ready') return null
+  const failed = state === 'error' || state === 'incomplete'
+  const message = state === 'incomplete' ? `${label} er kun delvist hentet.`
+    : failed ? `${label} kunne ikke hentes.` : `Henter ${label.toLocaleLowerCase('da-DK')}…`
+  return <div role={failed ? 'alert' : 'status'} style={{ padding: '1rem 0', color: failed ? '#e0a555' : '#7a7770' }}>
+    {message}{failed && <button type="button" onClick={() => value.coachRead.retry()} style={{ marginLeft: '0.75rem', minHeight: '44px' }}>Prøv igen</button>}
+  </div>
+}
+
 export default function StaevneTab({
-  a, athletePRs, deleteMeetResult, meetPlan, meetPlanForm, meetResults,
+  coachTabCleanup = false, a, athletePRs, deleteMeetResult, meetPlan, meetPlanForm, meetResults,
   openMeetResult, saveMeetPlan, savingMeetPlan, setMeetPlan, setMeetPlanForm,
 }) {
+              const planReady = coachTabState(meetPlanForm, a.id, coachTabCleanup) === 'ready'
+              const historySource = coachTabState(meetResults, a.id, coachTabCleanup) !== 'ready' ? meetResults : athletePRs
+              const resultsReady = coachTabState(meetResults, a.id, coachTabCleanup) === 'ready'
+              const prsReady = coachTabState(athletePRs, a.id, coachTabCleanup) === 'ready'
               const lifts = meetPlanForm.meet_type === 'sbd'
                 ? [{ key: 'squat', label: 'Squat' }, { key: 'bench', label: 'Bænkpres' }, { key: 'deadlift', label: 'Dødløft' }]
                 : [{ key: 'bench', label: 'Bænkpres' }]
@@ -20,6 +43,8 @@ export default function StaevneTab({
 
               return (
                 <>
+                <CoachReadStatus value={meetPlanForm} athleteId={a.id} enabled={coachTabCleanup} label="Stævneplan" />
+                {planReady && <>
                 <div style={s.card}>
                   <div style={s.cardLabel}>
                     Stævneplan — {a.name.split(' ')[0]}
@@ -82,7 +107,7 @@ export default function StaevneTab({
                     <button style={{ ...s.btnDanger, marginLeft: '0.75rem' }} onClick={async () => {
                       await supabase.from('meet_plans').delete().eq('athlete_id', a.id)
                       setMeetPlan(null)
-                      setMeetPlanForm({ meet_type: 'sbd', squat1: '', squat2: '', squat3: '', bench1: '', bench2: '', bench3: '', dead1: '', dead2: '', dead3: '', notes: '' })
+                      setMeetPlanForm({ meet_type: 'sbd', squat1: '', squat2: '', squat3: '', bench1: '', bench2: '', bench3: '', dead1: '', dead2: '', dead3: '', notes: '', ...(coachTabCleanup ? { coachRead: meetPlanForm.coachRead } : {}) })
                     }}>
                       Slet plan
                     </button>
@@ -105,6 +130,9 @@ export default function StaevneTab({
                   enabled={true} role="coach" athlete={a} meetType={meetPlanForm.meet_type}
                 />}
 
+                </>}
+                <CoachReadStatus value={historySource} athleteId={a.id} enabled={coachTabCleanup} label="Stævnehistorik" />
+                {resultsReady && <>
                 {/* Stævnehistorik */}
                 <div style={{ ...s.card, marginTop: '1.5rem' }}>
                   <div style={s.cardLabel}>
@@ -112,7 +140,7 @@ export default function StaevneTab({
                     <button style={s.btnEdit} onClick={() => openMeetResult()}>Registrér resultat</button>
                   </div>
                   {meetResults.length === 0 ? (
-                    <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævner registreret endnu.</div>
+                    coachTabCleanup ? null : <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen stævner registreret endnu.</div>
                   ) : (
                     <div style={{ overflowX: 'auto' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'IBM Plex Mono', monospace" }}>
@@ -131,11 +159,11 @@ export default function StaevneTab({
                           {meetResults.map(m => (
                             <tr key={m.id} style={{ borderTop: '1px solid rgba(237,234,226,0.07)', fontSize: '0.78rem', color: '#edeae2' }}>
                               <td style={{ padding: '0.5rem 0.5rem 0.5rem 0', whiteSpace: 'nowrap' }}>{new Date(m.meet_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: '2-digit' })}</td>
-                              <td style={{ padding: '0.5rem', color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif" }}>{m.meet_name || <span style={{ color: '#4a4844' }}>—</span>}</td>
-                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.squat != null ? '#edeae2' : '#3a3a36' }}>{m.squat != null ? m.squat : '–'}</td>
-                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.bench != null ? '#edeae2' : '#3a3a36' }}>{m.bench != null ? m.bench : '–'}</td>
-                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.deadlift != null ? '#edeae2' : '#3a3a36' }}>{m.deadlift != null ? m.deadlift : '–'}</td>
-                              <td style={{ padding: '0.5rem', textAlign: 'right', color: '#c8923a' }}>{m.total != null ? m.total : '–'}</td>
+                              <td style={{ padding: '0.5rem', color: '#b8b4a8', fontFamily: "'IBM Plex Sans', sans-serif" }}>{m.meet_name || (coachTabCleanup ? '' : <span style={{ color: '#4a4844' }}>—</span>)}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.squat != null ? '#edeae2' : '#3a3a36' }}>{m.squat != null ? m.squat : coachTabCleanup ? 'Ikke registreret' : '–'}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.bench != null ? '#edeae2' : '#3a3a36' }}>{m.bench != null ? m.bench : coachTabCleanup ? 'Ikke registreret' : '–'}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: m.deadlift != null ? '#edeae2' : '#3a3a36' }}>{m.deadlift != null ? m.deadlift : coachTabCleanup ? 'Ikke registreret' : '–'}</td>
+                              <td style={{ padding: '0.5rem', textAlign: 'right', color: '#c8923a' }}>{m.total != null ? m.total : coachTabCleanup ? 'Ikke registreret' : '–'}</td>
                               <td style={{ padding: '0.5rem 0 0.5rem 0.5rem', textAlign: 'right' }}>
                                 <button onClick={() => deleteMeetResult(m.id)} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.85rem', padding: 0 }} title="Slet">✕</button>
                               </td>
@@ -147,8 +175,9 @@ export default function StaevneTab({
                   )}
                 </div>
 
+                </>}
                 {/* PRs */}
-                <div style={{ ...s.card, marginTop: '1.5rem' }}>
+                {prsReady && (!coachTabCleanup || athletePRs.length > 0) && <div style={{ ...s.card, marginTop: '1.5rem' }}>
                   <div style={s.cardLabel}>Rekorder</div>
                   {athletePRs.length === 0 ? (
                     <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen PR'er registreret endnu.</div>
@@ -165,7 +194,7 @@ export default function StaevneTab({
                       ))}
                     </div>
                   )}
-                </div>
+                </div>}
                 </>
               )
 }

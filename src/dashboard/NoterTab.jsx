@@ -8,7 +8,7 @@ import { s } from '../dashboardShared'
 
 export default function NoterTab({ coachNotesEnabled = false, onAddNote,
   mobilitetCoach = false, mobilityCoachId, mobilityClient, onMobilitySaved, setSaving, showFlash,
-  a, editData, editing, saveEdit, saving, setEditData,
+  coachTabCleanup = false, a, editData, editing, saveEdit, saving, setEditData,
   setEditing, startEdit,
 }) {
   if (coachNotesEnabled === true) return <CoachNotesPage key={a.id} athlete={mobilitetCoach === true ? { ...a, notes: visibleCoachNotes(a.notes) } : a} onAddNote={onAddNote} />
@@ -26,7 +26,7 @@ export default function NoterTab({ coachNotesEnabled = false, onAddNote,
               <div style={s.card}>
                 <div style={s.cardLabel}>
                   Coach-noter
-                  <button style={s.btnEdit} onClick={() => startEdit('notes', { notes: notes || '' })}>Rediger</button>
+                  <button style={s.btnEdit} onClick={() => startEdit('notes', { notes: notes || '' })}>{coachTabCleanup && !String(notes || '').trim() ? 'Tilføj note' : 'Rediger'}</button>
                 </div>
                 {editing === 'notes' ? (
                   <div>

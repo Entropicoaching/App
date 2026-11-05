@@ -26,6 +26,43 @@ import { normaliserRekorder, bedsteRekorder, tungeRekorder } from '../personalRe
 import { danskDag } from '../danskDato.js'
 import { COACH_ACTIONS_ENABLED, coachActionsEnabled, actionSessions } from './coachActions.mjs'
 
+// Read receipts travel with existing props; the legacy/OFF readers never call this boundary.
+const requests = new WeakMap()
+// Last athlete whose rows were confirmed per setter: a refresh of the same athlete keeps those rows
+// visible (no blank "Henter …" after every program edit) until the new answer or an error arrives.
+const shownReady = new WeakMap()
+
+function beginCoachTabRead({ setter, athleteId, retry, current = () => true }) {
+  const token = {}
+  requests.set(setter, token)
+  const isCurrent = () => requests.get(setter) === token && current()
+  const receipt = state => ({ athleteId, state, retry, current })
+  return {
+    current: isCurrent,
+    rows: (rows, state = 'ready') => Object.assign([...rows], { coachRead: receipt(state) }),
+    form: (form, state) => ({ ...form, coachRead: receipt(state) }),
+  }
+}
+
+async function readCoachTabRows(options) {
+  const { setter, query, map = rows => rows, limit = Infinity, publish = setter } = options
+  const read = beginCoachTabRead(options)
+  if (shownReady.get(setter) !== options.athleteId) publish(read.rows([], 'loading'))
+  try {
+    const { data, error } = await query()
+    if (!read.current()) return false
+    if (error || !Array.isArray(data)) throw Error('unconfirmed read')
+    if (data.some(row => row.athlete_id != null && row.athlete_id !== options.athleteId)) throw Error('wrong athlete')
+    const state = data.length >= limit ? 'incomplete' : 'ready'
+    if (state === 'ready') shownReady.set(setter, options.athleteId); else shownReady.delete(setter)
+    publish(read.rows(map(data), state))
+    return true
+  } catch {
+    if (read.current()) { shownReady.delete(setter); publish(read.rows([], 'error')) }
+    return false
+  }
+}
+
 // Entropi 2: flaggeneration pr. Dashboard, nøglet på den stabile setCalendarWeeks. Den øges, når
 // læseren bygges med en anden flagtilstand end sidst (et flagskift på samme instans). Et svar fra
 // en læsning, der startede før skiftet, kasseres derfor i begge tilstande. Ændres flaget aldrig,
@@ -40,7 +77,7 @@ function e2Generation(owner, on) {
 }
 
 export function lavLaesninger({
-  blokFremgang = false,
+  coachTabCleanup = false, blokFremgang = false,
   coachMeetSoon = false, setCoachMeetData = () => {},
   fourWeekCapture, profileWeekCapture, coachMorning = false, setCoachMorningData = () => {},
   coachWeekEnabled = false, setCoachWeekDataStatus = () => {},
@@ -63,6 +100,12 @@ export function lavLaesninger({
   if (e2Gen) e2Gen.fetchAthletes = fetchAthletes
   const e2Started = () => e2Gen?.n
   const e2Replaced = started => e2Gen !== null && e2Gen.n !== started
+  const tabReads = coachTabCleanup === true && typeof entropi2CalendarRead === 'function'
+  function tabOptions(setter, athleteId, retry) {
+    const generation = e2Started()
+    return { setter, athleteId, retry: () => retry(athleteId),
+      current: () => !e2Replaced(generation) && (!currentProgramAthleteRef || currentProgramAthleteRef.current === athleteId) }
+  }
   async function refreshCoachInbox() {
     return inboxRefreshRunnerRef.current(async () => {
       setInboxRefreshing(true)
@@ -499,6 +542,16 @@ export function lavLaesninger({
   }
 
   async function fetchWeeks(athleteId) {
+    if (tabReads) return readCoachTabRows({ ...tabOptions(setWeeks, athleteId, fetchWeeks),
+      limit: 1000,
+      query: () => readFourWeekSource(fourWeekCapture, 'weeks', athleteId, () => supabase
+        .from('weeks').select('*, sessions(*, exercises(*))').eq('athlete_id', athleteId).order('week_number').limit(1000)),
+      map: rows => rows.map(w => ({ ...w, sessions: (w.sessions || [])
+        .sort((a, b) => (a.session_order - b.session_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+        .map(s => ({ ...s, exercises: (s.exercises || []).sort((a, b) => (a.exercise_order - b.exercise_order) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)) })) })),
+      publish: rows => setWeeks(dataEnoughEnabled() ? Object.assign(rows, {
+        readEvidence: { athleteId, complete: rows.coachRead.state === 'ready' } }) : rows),
+    })
     if (dataEnoughEnabled()) setWeeks(prev => Object.assign([...prev], { readEvidence: { athleteId, complete: false } }))
     const { data, error } = await readFourWeekSource(fourWeekCapture, 'weeks', athleteId, () => {
       const query = supabase
@@ -567,6 +620,16 @@ export function lavLaesninger({
   }
 
   async function fetchAthleteLogs(athleteId) {
+    if (tabReads) return readCoachTabRows({ ...tabOptions(setAthleteLogs, athleteId, fetchAthleteLogs),
+      limit: ATHLETE_LOGS_LIMIT,
+      query: () => readFourWeekSource(fourWeekCapture, 'logs', athleteId, () => blokFremgang === true
+        ? readBlockLogs(supabase, athleteId)
+        : supabase.from('exercise_logs')
+          .select('id, athlete_id, set_number, weight, reps_completed, note, logged_at, rpe_actual, rpe_planned, skipped, exercise_id, exercises(id, name, sets, reps, intensity, recommended_weight, session_id, sessions(id, title, athlete_rating, athlete_comment, weeks(week_number, block_name)))')
+          .eq('athlete_id', athleteId).order('logged_at', { ascending: false }).limit(ATHLETE_LOGS_LIMIT)),
+      publish: rows => setAthleteLogs(dataEnoughEnabled() ? Object.assign(rows, {
+        readEvidence: { athleteId, complete: rows.coachRead.state === 'ready' } }) : rows),
+    })
     if (dataEnoughEnabled()) setAthleteLogs(prev => Object.assign([...prev], { readEvidence: { athleteId, complete: false } }))
     if (blokFremgang === true) {
       // Both opt-ins share the same scoped read and its error state.
@@ -585,6 +648,32 @@ export function lavLaesninger({
   }
 
   async function fetchVideoCoachHistory(athleteId) {
+    if (tabReads) {
+      const read = beginCoachTabRead(tabOptions(setVideoAnalyses, athleteId, fetchVideoCoachHistory))
+      setVideoAnalysisLoading(true)
+      setVideoAnalysisError(null)
+      setVideoAnalyses([])
+      setVideoBaselines([])
+      try {
+        const [history, baseline] = await Promise.all([
+          readFourWeekSource(fourWeekCapture, 'videos', athleteId, () => supabase.from('video_analyses')
+            .select('id,client_analysis_id,athlete_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,session_context,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path')
+            .eq('athlete_id', athleteId).order('analyzed_at', { ascending: false }).limit(30)),
+          supabase.from('athlete_baselines_v3')
+            .select('lift,variation,metric_key,metric_method,baseline_version,median,mad,n_analyses,n_reps,last_analyzed_at')
+            .eq('athlete_id', athleteId).eq('baseline_version', VIDEOCOACH_BASELINE_VERSION).order('last_analyzed_at', { ascending: false }),
+        ])
+        if (!read.current()) return
+        if (history.error || baseline.error || !Array.isArray(history.data) || !Array.isArray(baseline.data)) throw Error('unconfirmed video read')
+        setVideoAnalyses(history.data)
+        setVideoBaselines(dataEnoughEnabled() ? attachVideoReferences(baseline.data, history.data) : baseline.data)
+      } catch {
+        if (read.current()) setVideoAnalysisError('Videoanalyserne kunne ikke hentes. Prøv igen.')
+      } finally {
+        if (read.current()) setVideoAnalysisLoading(false)
+      }
+      return
+    }
     setVideoAnalysisLoading(true)
     setVideoAnalysisError(null)
     const [historyResult, baselineResult] = await Promise.all([
@@ -622,6 +711,11 @@ export function lavLaesninger({
   }
 
   async function fetchAthleteReadiness(athleteId) {
+    if (tabReads) return readCoachTabRows({ ...tabOptions(setAthleteReadiness, athleteId, fetchAthleteReadiness),
+      // This is a deliberate recent window, not a claim about the athlete's entire history.
+      query: () => supabase.from('readiness_logs').select('*').eq('athlete_id', athleteId)
+        .order('logged_date', { ascending: false }).limit(90),
+    })
     const { data } = await supabase
       .from('readiness_logs')
       .select('*')
@@ -632,6 +726,14 @@ export function lavLaesninger({
   }
 
   async function fetchAthletePRs(athleteId) {
+    if (tabReads) return readCoachTabRows({ ...tabOptions(setAthletePRs, athleteId, fetchAthletePRs),
+      query: () => supabase.from('personal_records').select('*').eq('athlete_id', athleteId).order('logged_at', { ascending: false }),
+      publish: rows => {
+        const heavy = tungeRekorder(rows)
+        setAthletePRs(Object.assign(bedsteRekorder(heavy), { coachRead: rows.coachRead }))
+        setAthletePRHistory(Object.assign(normaliserRekorder(heavy), { coachRead: rows.coachRead }))
+      },
+    })
     const { data } = await supabase
       .from('personal_records')
       .select('*')
@@ -647,6 +749,9 @@ export function lavLaesninger({
   }
 
   async function fetchMeetResults(athleteId) {
+    if (tabReads) return readCoachTabRows({ ...tabOptions(setMeetResults, athleteId, fetchMeetResults),
+      query: () => supabase.from('meet_results').select('*').eq('athlete_id', athleteId).order('meet_date', { ascending: false }),
+    })
     const { data } = await supabase
       .from('meet_results')
       .select('*')
@@ -656,6 +761,24 @@ export function lavLaesninger({
   }
 
   async function fetchMeetPlan(athleteId) {
+    if (tabReads) {
+      const read = beginCoachTabRead(tabOptions(setMeetPlanForm, athleteId, fetchMeetPlan))
+      setMeetPlanForm(prev => read.form(prev, 'loading'))
+      try {
+        const { data, error } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
+        if (!read.current()) return
+        if (error || data?.athlete_id && data.athlete_id !== athleteId) throw Error('unconfirmed plan read')
+        setMeetPlan(data || null)
+        setMeetPlanForm(read.form({ meet_type: data?.meet_type || 'sbd',
+          squat1: data?.squat1 ?? '', squat2: data?.squat2 ?? '', squat3: data?.squat3 ?? '',
+          bench1: data?.bench1 ?? '', bench2: data?.bench2 ?? '', bench3: data?.bench3 ?? '',
+          dead1: data?.dead1 ?? '', dead2: data?.dead2 ?? '', dead3: data?.dead3 ?? '', notes: data?.notes || '',
+        }, 'ready'))
+      } catch {
+        if (read.current()) setMeetPlanForm(prev => read.form(prev, 'error'))
+      }
+      return
+    }
     const { data } = await supabase.from('meet_plans').select('*').eq('athlete_id', athleteId).maybeSingle()
     setMeetPlan(data || null)
     setMeetPlanForm({

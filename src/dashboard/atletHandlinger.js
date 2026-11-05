@@ -244,7 +244,7 @@ export function lavAtletHandlinger({
   function deleteMeetResult(id) {
     askConfirm('Slet dette stævneresultat?', async () => {
       await supabase.from('meet_results').delete().eq('id', id)
-      setMeetResults(prev => prev.filter(m => m.id !== id))
+      setMeetResults(prev => prev.coachRead ? Object.assign(prev.filter(m => m.id !== id), { coachRead: prev.coachRead }) : prev.filter(m => m.id !== id))
       showFlash('Resultat slettet', 'success')
     })
   }

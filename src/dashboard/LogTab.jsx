@@ -11,9 +11,29 @@ import { parsePlannedRpe } from '../dashboardShared.js'
 // ORDRE 456 (A8): dagen i dansk tid, ikke UTC (logged_at.slice(0, 10)).
 import { danskDag, danskDatoTekst } from '../danskDato.js'
 
+function coachTabState(value, athleteId, enabled) {
+  if (enabled !== true) return 'ready'
+  const read = value?.coachRead
+  if (!read || (athleteId != null && read.athleteId !== athleteId) || read.current?.() === false) return 'loading'
+  return read.state
+}
+
+// Kept local so the existing closed test/import graphs and the OFF path stay intact.
+function CoachReadStatus({ value, athleteId, enabled, label }) {
+  const state = coachTabState(value, athleteId, enabled)
+  if (state === 'ready') return null
+  const failed = state === 'error' || state === 'incomplete'
+  const message = state === 'incomplete' ? `${label} er kun delvist hentet.`
+    : failed ? `${label} kunne ikke hentes.` : `Henter ${label.toLocaleLowerCase('da-DK')}…`
+  return <div role={failed ? 'alert' : 'status'} style={{ padding: '1rem 0', color: failed ? '#e0a555' : '#7a7770' }}>
+    {message}{failed && <button type="button" onClick={() => value.coachRead.retry()} style={{ marginLeft: '0.75rem', minHeight: '44px' }}>Prøv igen</button>}
+  </div>
+}
+
 export default function LogTab({
-  athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
+  coachTabCleanup = false, athleteId, athleteLogs, isMobile, logExerciseFilter, openLogWeeks, setLogExerciseFilter, setOpenLogWeeks,
 }) {
+  if (coachTabState(athleteLogs, athleteId, coachTabCleanup) !== 'ready') return <CoachReadStatus value={athleteLogs} athleteId={athleteId} enabled={coachTabCleanup} label="Træningslog" />
   // Telefon: saet og noter i Log skal kunne laeses uden at zoome (ordre 433).
   const chipSize = isMobile ? '0.72rem' : '0.54rem'
               // Build trend index: exName → sorted [{ date, avg }]
@@ -99,7 +119,7 @@ export default function LogTab({
               // Øvelses-filter: liste over loggede øvelser + progression for den valgte
               const exerciseNames = [...new Map(athleteLogs.map(l => exerciseSetView(l.exercises?.name)).filter(v => v.key).map(v => [v.key, v.name])).values()]
                 .sort((a, b) => a.localeCompare(b, 'da'))
-              const filterName = logExerciseFilter && exerciseNames.includes(logExerciseFilter) ? logExerciseFilter : null
+              const filterName = logExerciseFilter && (coachTabCleanup || exerciseNames.includes(logExerciseFilter)) ? logExerciseFilter : null
               const e1rmOf = s => (s.weight || 0) * (1 + (s.reps || 1) / 30)
               const progression = filterName ? logSessions.map(sess => {
                 const entries = Object.values(sess.exerciseMap).filter(ex => exerciseSetView(ex.name).key === exerciseSetView(filterName).key)
@@ -182,9 +202,9 @@ export default function LogTab({
                                 <div style={{ fontSize: '0.85rem', color: '#b8b4a8' }}>{ex.name}</div>
                                 {trend && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: trend.color, letterSpacing: '0.06em', flexShrink: 0, marginLeft: '0.75rem' }}>{trend.text}</div>}
                               </div>
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginBottom: '0.4rem' }}>
+                              {(!coachTabCleanup || planText) && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginBottom: '0.4rem' }}>
                                 Plan: {planText}
-                              </div>
+                              </div>}
                               {ex.plannedSets > 0 && (
                                 <div style={{ marginBottom: '0.45rem' }}>
                                   <div style={{ height: '3px', background: '#242420', borderRadius: '2px', marginBottom: '0.25rem' }}>
@@ -256,6 +276,7 @@ export default function LogTab({
                           progression.length === 0 ? (
                             <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                               Ingen loggede sæt for {filterName} endnu
+                              {coachTabCleanup && <button style={{ marginLeft: '0.75rem', minHeight: '44px' }} onClick={() => setLogExerciseFilter(null)}>Vis alle øvelser</button>}
                             </div>
                           ) : (
                             <div>
