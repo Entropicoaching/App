@@ -1,7 +1,6 @@
-// Actual component/effect and adapter, synthetic hooks/client only. No DOM claim.
+// Actual compatibility reader and adapter, synthetic client only. No DOM claim.
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { registerHooks } from 'node:module'
 import { createElement, text } from '../coach/portal.fixture.mjs'
 import { syntheticTables, tableNames, flush } from '../coach/activation.fixture.mjs'
 import { createPlanAdapter } from '../planAdapter.mjs'
@@ -9,52 +8,34 @@ import { openPortalPlan } from '../coach/portalModel.mjs'
 import { memoryStorage } from '../coach/portal.fixture.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
 
-let current
-const fixture = {
-  createElement,
-  useState(initial) {
-    const owner = current, i = owner.cursor++
-    if (!(i in owner.values)) owner.values[i] = initial
-    return [owner.values[i], value => { owner.values[i] = value }]
-  },
-  useEffect(effect, deps) {
-    const owner = current
-    if (!owner.deps || deps.some((value, i) => value !== owner.deps[i])) {
-      owner.deps = deps; owner.pending = effect
-    }
-  },
-}
-globalThis.__syntheticActivePlanHooks = fixture
-const hooks = registerHooks({ resolve(specifier, context, next) {
-  if (specifier === 'react' && context.parentURL?.endsWith('/atlet/ActivePlan.mjs'))
-    return { url: 'data:text/javascript,' + encodeURIComponent(
-      'export const { createElement, useState, useEffect } = globalThis.__syntheticActivePlanHooks'), shortCircuit: true }
-  return next(specifier, context)
-} })
-let ActivePlan
-try { ({ default: ActivePlan } = await import('./ActivePlan.mjs')) }
-finally { hooks.deregister(); delete globalThis.__syntheticActivePlanHooks }
+import ActivePlan, { startActivePlan, activePlanView } from './ActivePlan.mjs'
 
 const scope = { athleteId: 'synthetic-athlete', date: '2026-11-05' }
+// Reader compatibility is tested separately from the retired visual surface.
 function mount(client) {
-  const owner = { values: [], cursor: 0 }
+  let receipt = null, cleanup, previous
   return {
-    receipt: () => owner.values[0],
+    receipt: () => receipt,
     render(next = {}) {
-      owner.cursor = 0; current = owner
-      let tree
-      try {
-        const node = ActivePlan({ enabled: true, ...scope, client, ...next })
-        tree = node?.type(node.props) ?? null
-      } finally { current = undefined }
-      if (owner.pending) { owner.cleanup?.(); owner.cleanup = owner.pending(); owner.pending = undefined }
-      return tree
+      const scopeKey = JSON.stringify({ ...scope, ...next })
+      if (scopeKey !== previous) {
+        cleanup?.(); previous = scopeKey
+        cleanup = startActivePlan({ ...scope, ...next, client }, result => { receipt = result })
+      }
+      if (receipt?.athleteId !== (next.athleteId ?? scope.athleteId) || receipt?.date !== (next.date ?? scope.date)) return null
+      return activePlanView(createElement, receipt)
     },
-    unmount() { owner.cleanup?.() },
+    unmount() { cleanup?.() },
   }
 }
 
-test('actual athlete component stays empty for each missing table and both exact missing codes', async () => {
+test('retired ActivePlan sibling is always empty and never inspects props', () => {
+  const poison = new Proxy({}, { get() { throw Error('retired surface read') } })
+  assert.equal(ActivePlan(poison), null)
+  assert.equal(ActivePlan({ enabled: true, ...scope }), null)
+})
+
+test('actual compatibility reader stays empty for each missing table and both exact missing codes', async () => {
   for (const missing of tableNames) for (const missingCode of ['42P01', 'PGRST205']) {
     const f = syntheticTables({ missing, missingCode }), screen = mount(f.client)
     try {
@@ -67,7 +48,7 @@ test('actual athlete component stays empty for each missing table and both exact
   }
 })
 
-test('actual athlete component hides permission, session, unknown and transport errors without classifying them as missing', async () => {
+test('actual compatibility reader hides permission, session, unknown and transport errors without classifying them as missing', async () => {
   for (const error of ['42501', 'PGRST301', 'XX000', '404', '42p01', 'pgrst205']) {
     const f = syntheticTables({ error }), screen = mount(f.client)
     try {
@@ -85,7 +66,7 @@ test('actual athlete component hides permission, session, unknown and transport 
   } finally { screen.unmount() }
 })
 
-test('actual athlete component still renders an approved plan and hides stale scope immediately', async () => {
+test('actual compatibility reader still renders an approved plan and hides stale scope immediately', async () => {
   const f = syntheticTables(), { controller } = openPortalPlan({ enabled: true, coachId: 'synthetic-coach',
     athlete: { id: scope.athleteId, protein_target: 120 }, date: scope.date, storage: () => memoryStorage(),
     template: [{ id: 'meal', name: 'Synthetic meal', items: [{ foodId: FOODS[0].id, grams: 100 }] }] })
@@ -144,7 +125,7 @@ test('overlapping athlete mounts share the in-flight probe and cleanup still sup
   } finally { release(); first.unmount(); second.unmount(); reopened.unmount() }
 })
 
-test('athlete probe errors stay errors on reentry without repeated permission or transport calls', async () => {
+test('athlete probe errors stay errors but a later entry retries permission and transport checks', async () => {
   for (const error of ['42501', 'PGRST301', 'XX000', '404', '42p01', 'pgrst205']) {
     const f = syntheticTables({ error })
     for (let i = 0; i < 2; i++) {
@@ -155,7 +136,7 @@ test('athlete probe errors stay errors on reentry without repeated permission or
         assert.equal(screen.render(), null)
       } finally { screen.unmount() }
     }
-    assert.equal(f.calls.length, 1)
+    assert.equal(f.calls.length, 2)
     assert.equal(f.writes().length, 0)
   }
   let calls = 0
@@ -165,5 +146,5 @@ test('athlete probe errors stay errors on reentry without repeated permission or
     try { screen.render(); await flush(); assert.equal(screen.receipt().error, true) }
     finally { screen.unmount() }
   }
-  assert.equal(calls, 1)
+  assert.equal(calls, 2)
 })

@@ -4,7 +4,8 @@ import { catalogFoods, day, identifier, totals } from './coach/model.mjs'
 const tables = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
 const missing = error => ['42P01', 'PGRST205'].includes(error?.code)
-// One schema probe per client in this page session, including pending/errors.
+// Share pending and confirmed schema probes per client in this page session.
+// A rejected probe is transient: the next load must be able to try again.
 // Cache capabilities only: athlete/date plan data is always read again. Coach
 // checks and every activation remain uncached. No storage or session/auth reads.
 const athleteAvailability = new WeakMap()
@@ -98,7 +99,13 @@ export function createPlanAdapter(options = {}) {
       return { ok: true, athleteId, date, planId: operation.planId, versionId: operation.versionId }
     },
     async loadActive() {
-      if (!athleteAvailability.has(client)) athleteAvailability.set(client, available())
+      if (!athleteAvailability.has(client)) {
+        const probe = available().catch(error => {
+          if (athleteAvailability.get(client) === probe) athleteAvailability.delete(client)
+          throw error
+        })
+        athleteAvailability.set(client, probe)
+      }
       if (!await athleteAvailability.get(client)) return null
       const plans = rows(await client.from(tables[0]).select('id,athlete_id,valid_from,status')
         .eq('athlete_id', athleteId).eq('status', 'godkendt').lte('valid_from', date).limit(501))

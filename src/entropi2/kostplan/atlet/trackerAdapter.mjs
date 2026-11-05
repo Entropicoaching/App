@@ -11,7 +11,28 @@ export function mountExistingTracker(host, options = {}) {
   const { athlete, date, contracts, storage, foods, currentDay, onDayChanged, ...view } = options
   const controller = createNutritionController({ enabled: true, athlete, date,
     contracts, storage, foods, currentDay, onDayChanged })
-  try { return mountNutrition(host, controller, view) }
+  try {
+    const unmount = mountNutrition(host, controller, view)
+    let alive = true, requested = false, scheduled = false
+    const refresh = () => {
+      if (!alive || !requested || scheduled) return
+      scheduled = true
+      queueMicrotask(() => {
+        scheduled = false
+        const s = controller.snapshot()
+        if (!alive || !requested || s.pending || s.phase === 'loading') return
+        requested = false
+        void controller.load()
+      })
+    }
+    const unsubscribe = controller.subscribe(refresh)
+    const cleanup = () => { alive = false; unsubscribe(); unmount() }
+    cleanup.updateWeight = unmount.updateWeight
+    // A plan insert (including a lost response) must be visible when the athlete
+    // opens the existing log. Wait for an in-flight tracker mutation to finish.
+    cleanup.refresh = () => { requested = true; refresh() }
+    return cleanup
+  }
   catch (error) { controller.dispose(); throw error }
 }
 

@@ -201,13 +201,17 @@ test('schema success is cached across scopes, while approved plan data stays fre
   assert.equal(f.writes().length, 3, 'cached athlete availability never authorizes a coach write')
 })
 
-test('coach retry checks again after an athlete probe error without clearing that session error', async () => {
+test('coach and athlete both recover after an athlete probe error; coach checks stay uncached', async () => {
   const f = syntheticTables({ error: '42501' }), a = adapterOf(f)
   await assert.rejects(a.loadActive())
   delete f.options.error
   assert.equal(await a.available(), true)
   const probes = f.calls.length
-  await assert.rejects(adapterOf(f).loadActive())
-  assert.equal(f.calls.length, probes)
+  assert.equal(await adapterOf(f).loadActive(), null)
+  assert.equal(f.calls.length, probes + 4) // Fresh athlete schema check plus active plans.
+  assert.equal(await a.available(), true)
+  assert.equal(f.calls.length, probes + 7) // Coach capability remains independent.
+  assert.equal(await a.loadActive(), null)
+  assert.equal(f.calls.length, probes + 8) // Successful athlete schema check is shared.
   assert.equal(f.writes().length, 0)
 })

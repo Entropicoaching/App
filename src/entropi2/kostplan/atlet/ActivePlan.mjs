@@ -1,4 +1,3 @@
-import { createElement as h, useEffect, useState } from 'react'
 import { createPlanAdapter } from '../planAdapter.mjs'
 
 // Loading and late-result suppression are independently testable with the actual
@@ -25,18 +24,8 @@ export function activePlanView(create, result) {
         `${food.name} · ${food.grams.toLocaleString('da-DK', { maximumFractionDigits: 1 })} g`))))))
 }
 
-function ActivePlanSession({ athleteId, date, client }) {
-  const [result, setResult] = useState(null)
-  useEffect(() => startActivePlan({ athleteId, date, client }, setResult), [athleteId, date, client])
-  if (result?.athleteId !== athleteId || result?.date !== date || result?.client !== client) return null
-  // An optional coach plan never interrupts the athlete's existing food log.
-  // Preserve the error receipt; only the coach exposes activation/read failures.
-  if (result.error) return null
-  return activePlanView(h, result)
-}
-
-export default function ActivePlan(props = {}) {
-  if (props.enabled !== true) return null
-  return h(ActivePlanSession, { key: JSON.stringify([props.athleteId, props.date]),
-    athleteId: props.athleteId, date: props.date, client: props.client })
+// Compatibility for the existing sibling in AthleteView. Entropi2Kost now owns
+// the single tracked day view; this retired surface neither reads nor renders.
+export default function ActivePlan() {
+  return null
 }

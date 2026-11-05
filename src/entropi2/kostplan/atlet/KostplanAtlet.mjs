@@ -1,6 +1,8 @@
 import { antalOrd } from '../../antalOrd.mjs'
-import { createElement as h, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import * as React from 'react'
 import { mountExistingTracker } from './trackerAdapter.mjs'
+
+const { createElement: h, useEffect, useRef, useState, useSyncExternalStore } = React
 
 const control = { minHeight: 44, minWidth: 44, maxWidth: '100%', whiteSpace: 'normal', font: 'inherit' }
 const number = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
