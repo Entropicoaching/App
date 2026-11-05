@@ -70,32 +70,37 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const fast = append(main, 'section', 'card'); fast.setAttribute('data-kost-del', 'hurtig')
       append(fast, 'h2', '', 'Log hurtigt')
       const templateState = s.mealTemplates
-      const yesterdayMeals = s.yesterday
-      if (yesterdayMeals.length) {
-        const section = append(fast, 'section', 'space'); append(section, 'h2', '', 'Gentag i går')
-        yesterdayMeals.forEach((meal, i) => {
+      // One shared limit across sources, using the controller's existing identity.
+      // Keep every remaining choice reachable without adding duplicate log buttons.
+      const quickKeys = new Set(), choices = []
+      for (const [title, items, prefix] of [
+        ['Gentag i går', s.yesterday, 'yesterday'],
+        ['Favoritter', s.favorites, 'fav'],
+        ['Seneste måltider', s.recent, 'recent'],
+      ]) items.forEach((meal, i) => {
+        const key = mealKey(meal)
+        if (quickKeys.has(key)) return
+        quickKeys.add(key); choices.push({ title, meal, prefix, i })
+      })
+      const quick = (parent, items) => {
+        let section, previousPrefix
+        for (const { title, meal, prefix, i } of items) {
+          if (prefix !== previousPrefix) {
+            section = append(parent, 'section', 'space'); append(section, 'h2', '', title)
+            previousPrefix = prefix
+          }
           const row = append(section, 'div', 'space stack')
-          const b = button(row, 'Log igen: ' + meal.meal, () => action(meal), s.pending)
-          b.setAttribute('data-focus', 'yesterday-log-' + i)
-        })
-      }
-      const quickKeys = new Set(yesterdayMeals.map(mealKey))
-      const quick = (title, items, prefix) => {
-        items = items.slice(0, 5)
-        if (!items.length) return
-        const section = append(fast, 'section', 'space'); append(section, 'h2', '', title)
-        items.forEach((meal, i) => {
-          quickKeys.add(mealKey(meal))
-          const row = append(section, 'div', 'space stack')
-          const b = button(row, (prefix === 'recent' ? 'Gentag dette måltid: ' : 'Log ') + meal.meal, () => action(meal), s.pending)
+          const label = prefix === 'yesterday' ? 'Log igen: ' : prefix === 'recent' ? 'Gentag dette måltid: ' : 'Log '
+          const b = button(row, label + meal.meal, () => action(meal), s.pending)
           b.setAttribute('data-focus', prefix + '-log-' + i)
-        })
+        }
       }
-      const favoriteKeys = new Set(s.favorites.map(mealKey))
-      // Yesterday already supplies a log button for these exact meal identities.
-      const yesterdayKeys = new Set(s.yesterday.map(mealKey))
-      quick('Favoritter', s.favorites.filter(meal => !yesterdayKeys.has(mealKey(meal))), 'fav')
-      quick('Seneste måltider', s.recent.filter(meal => !favoriteKeys.has(mealKey(meal)) && !yesterdayKeys.has(mealKey(meal))), 'recent')
+      quick(fast, choices.slice(0, 3))
+      if (choices.length > 3) {
+        const more = append(fast, 'details', 'space'); more.setAttribute('data-focus', 'more-meals')
+        append(more, 'summary', '', 'Flere måltider')
+        quick(more, choices.slice(3))
+      }
       const availableTemplates = (templateState?.templates || []).filter(item => !quickKeys.has(mealKey(item.meal)))
       const templates = node('details', 'space')
       templates.setAttribute('data-focus', 'templates')
@@ -454,9 +459,9 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     }
     if (!s.loaded) clearPlan()
     // Marc 3. nov. (keep it simple): overskriften foerst; vejningen bliver oeverst som bestilt i
-    // APP-KOST-START1 ("vaegttrenden er det vigtigste tal"), derefter log hurtigt og dagens maal.
+    // APP-KOST-START1 ("vaegttrenden er det vigtigste tal"), derefter dagens maal og valgfri logning.
     const kids = [...main.children], del = n => n.getAttribute?.('data-kost-del')
-    const first = ['intro', 'vaegt', 'hurtig', 'maal'].map(k => kids.find(n => del(n) === k)).filter(Boolean)
+    const first = ['intro', 'vaegt', 'maal', 'hurtig'].map(k => kids.find(n => del(n) === k)).filter(Boolean)
     main.replaceChildren(...first, ...kids.filter(n => !first.includes(n)))
     host.replaceChildren(app)
     for (const n of host.querySelectorAll('[data-focus]')) {

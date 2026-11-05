@@ -21,17 +21,20 @@ async function mounted(t, { rows = [], favorites = [], save = async () => true }
 const block = host => find(host, 'h2', 'Log hurtigt').parentElement
 const quickButtons = host => block(host).querySelectorAll('button').filter(b => /^(Log |Gentag dette måltid: )/.test(b.textContent))
 
-test('quick: first block orders yesterday, five favorites, five non-favorite recents; library keeps single controls', async t => {
+test('quick: goals precede three visible choices; remaining sources and library controls stay reachable', async t => {
   const favorites = Array.from({ length: 7 }, (_, i) => meal(i))
   const rows = Array.from({ length: 16 }, (_, i) => row(i)).concat(row(30, '2026-11-02'))
   const { host, controller, writes } = await mounted(t, { rows, favorites })
   // Uden bekræftet vægt eller skrivecallbacks skjules den tomme vægtsektion.
   const order = host.querySelectorAll('main')[0].children.map(n => n.getAttribute('data-kost-del'))
-  assert.deepEqual(order.slice(0, 3), ['intro', 'hurtig', 'maal'])
-  assert.equal(host.querySelectorAll('main')[0].children[1], block(host))
-  assert.deepEqual(block(host).querySelectorAll('h2').map(n => n.textContent), ['Log hurtigt', 'Gentag i går', 'Favoritter', 'Seneste måltider'])
+  assert.deepEqual(order.slice(0, 3), ['intro', 'maal', 'hurtig'])
+  assert.equal(host.querySelectorAll('main')[0].children[2], block(host))
+  const more = find(block(host), 'summary', 'Flere måltider').parentElement
+  assert.equal(more.open, false)
+  assert.equal(quickButtons(host).filter(b => !more.querySelectorAll('button').includes(b)).length, 3)
+  assert.ok(find(more, 'h2', 'Seneste måltider'))
   const buttons = quickButtons(host)
-  assert.deepEqual(buttons.map(n => n.textContent), ['Log igen: Synthetic meal 30', ...[0, 1, 2, 3, 4].map(i => 'Log Synthetic meal ' + i), ...[7, 8, 9, 10, 11].map(i => 'Gentag dette måltid: Synthetic meal ' + i)])
+  assert.deepEqual(buttons.map(n => n.textContent), ['Log igen: Synthetic meal 30', ...[0, 1, 2, 3, 4, 5, 6].map(i => 'Log Synthetic meal ' + i), ...[7, 8, 9, 10, 11, 12, 13, 14, 15].map(i => 'Gentag dette måltid: Synthetic meal ' + i)])
   assert.equal(host.querySelectorAll('button').filter(b => /^(Log |Gentag dette måltid: )/.test(b.textContent)).length, buttons.length)
   const library = host.querySelectorAll('button').filter(b => /^(Gem|Fjern) favorit:/.test(b.textContent))
   assert.equal(new Set(library.map(b => b.textContent)).size, library.length)

@@ -116,10 +116,11 @@ test('START: refreshed props preserve diary draft and weight completion cannot r
   const gate = deferred()
   const { host, cleanup } = mount({}, { weightInput: '80', onWeightInput() {}, logWeight: () => gate.promise })
   await flush()
-  const details = host.querySelectorAll('details')[0]; details.open = true
+  const mealDetails = () => host.querySelectorAll('details').find(n => n.getAttribute('data-focus') === 'log-form')
+  const details = mealDetails(); details.open = true
   const mealInput = details.querySelectorAll('input')[0]; mealInput.value = 'Synthetic draft'; await mealInput.fire('input'); mealInput.focus()
   cleanup.updateWeight({ weightLogs: [weight(date, 80)] })
-  assert.equal(host.querySelectorAll('details')[0].open, true)
+  assert.equal(mealDetails().open, true)
   assert.equal(host.ownerDocument.activeElement.value, 'Synthetic draft')
   const pending = weightForm(host).fire('submit'); cleanup(); gate.resolve(); await pending
   cleanup.updateWeight({ weightInput: '99' }); assert.equal(host.textContent, '')

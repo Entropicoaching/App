@@ -27,12 +27,12 @@ test('next: 25 rows with 20 newest favorites expose all five older non-favorites
   assert.deepEqual(controller.snapshot().recent.map(mealKey), [20, 21, 22, 23, 24].map(i => mealKey(meal(i))))
   const section = find(host, 'h2', 'Seneste måltider').parentElement
   assert.deepEqual(section.querySelectorAll('button').map(b => b.textContent), [20, 21, 22, 23, 24].map(i => 'Gentag dette måltid: Synthetic next ' + i))
-  assert.equal(find(host, 'h2', 'Favoritter').parentElement.querySelectorAll('button').length, 5)
+  assert.equal(buttons(host).filter(b => b.textContent.startsWith('Log Synthetic next ')).length, 20)
   assert.deepEqual(rows, original)
   assert.deepEqual(writes, [])
 })
 
-test('next: yesterday takes precedence by full mealKey; filtering precedes each five-button cap', async t => {
+test('next: yesterday takes precedence by full mealKey; deduplication precedes the shared three-button limit', async t => {
   const rows = [0, 1, 2, 3, 4, 5, 6].map(i => row(i, '2026-11-02'))
     .concat([10, 11, 12, 13, 14].map(i => row(i, '2026-11-01')))
   // Same label, different nutrients must remain a distinct meal.

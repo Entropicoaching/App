@@ -117,12 +117,15 @@ test('wiring: failed load has retry, no template/shopping claims; OFF never read
   for (const entropi2 of [false, undefined, 'true', 1]) mountNutritionScreen(poison, { entropi2, athlete: poison, client: poison, storage: poison })()
 })
 
-test('wiring: yesterday keeps its button and favorites retain five slots after template acceptance', async t => {
+test('wiring: yesterday keeps its button and favorites remain reachable across the three-choice fold after template acceptance', async t => {
   const favorites = [meal, ...Array.from({ length: 5 }, (_, i) => ({ ...meal, meal: 'Synthetic favorite ' + i }))]
   const data = new Map([[favoriteKey(id), JSON.stringify(favorites)]])
   const f = fixture(t, { data }); await flush()
   await find(f.host, 'button', 'Gem skabelon: ' + meal.meal).fire('click')
-  const quick = find(f.host, 'h2', 'Favoritter').parentElement
-  assert.deepEqual(quick.querySelectorAll('button').map(n => n.textContent),
+  const quick = find(f.host, 'h2', 'Log hurtigt').parentElement
+  const more = details(f.host, 'more-meals')
+  assert.equal(more.open, false)
+  assert.equal(more.querySelectorAll('button').length, 3)
+  assert.deepEqual(quick.querySelectorAll('button').filter(n => n.textContent.startsWith('Log Synthetic favorite ')).map(n => n.textContent),
     favorites.slice(1).map(m => 'Log ' + m.meal))
 })

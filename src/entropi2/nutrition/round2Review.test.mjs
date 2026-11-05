@@ -40,14 +40,16 @@ for (const source of ['favorite', 'recent']) test('round2: accepting template re
   assert.deepEqual(f.writes, ['entropi2:nutrition:skabeloner:v1:' + id])
 })
 
-test('round2: template beyond five visible favorites retains a reachable log action', async t => {
+test('round2: template matching a folded favorite retains one reachable log action', async t => {
   const favorites = Array.from({ length: 6 }, (_, i) => meal(i))
   const f = await fixture(t, { favorites, rows: recurring(favorites[5]) })
   await find(f.host, 'button', 'Gem skabelon: ' + favorites[5].meal).fire('click')
-  assert.equal(find(f.host, 'button', 'Log ' + favorites[5].meal), undefined)
-  assert.equal(templates(f.host).open, false)
-  assert.ok(find(templates(f.host), 'h2', 'Skabeloner'))
-  await find(templates(f.host), 'button', 'Log skabelon: ' + favorites[5].meal).fire('click')
+  const more = find(f.host, 'summary', 'Flere måltider').parentElement
+  assert.equal(more.open, false)
+  assert.equal(templates(f.host), undefined)
+  assert.equal(find(f.host, 'button', 'Log skabelon: ' + favorites[5].meal), undefined)
+  more.open = true
+  await find(more, 'button', 'Log ' + favorites[5].meal).fire('click')
   assert.deepEqual(f.saves, [{ ...favorites[5], athlete_id: id, date }])
 })
 

@@ -149,6 +149,13 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     firstUnread.focus?.({ preventScroll: true })
   })
   jump.hidden = true
+  const write = button('Skriv til din coach', () => {
+    if (disposed || write.hidden || write.disabled || input.disabled) return
+    const reduceMotion = doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true
+    input.focus?.({ preventScroll: true })
+    input.scrollIntoView?.({ block: 'center', behavior: reduceMotion ? 'instant' : 'smooth' })
+  })
+  write.hidden = true
   const week = node('div'), weekLine = node('p'), weekDetails = node('details')
   week.setAttribute('aria-label', 'Ugens samtale')
   const weekToggle = node('summary', 'Ugens detaljer'), weekCounts = node('p')
@@ -156,7 +163,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   weekDetails.open = false
   weekDetails.append(weekToggle, weekCounts)
   week.append(weekLine, weekDetails)
-  root.replaceChildren(title, week, status, jump, reload, list, compose)
+  root.replaceChildren(title, week, write, status, jump, reload, list, compose)
   const unsubscribe = controller.subscribe(state => {
     if (disposed) return
     latestState = state
@@ -193,6 +200,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     input.value = state.draft
     const locked = state.busy || state.operation?.status === 'error'
     input.disabled = Boolean(locked); send.disabled = Boolean(locked || !state.draft.trim())
+    write.hidden = state.role !== 'athlete'; write.disabled = input.disabled
     retry.hidden = state.operation?.status !== 'error'; retry.disabled = state.busy
     upload.hidden = state.role !== 'athlete'; coach.hidden = state.role !== 'coach'
     // Attach privileged tools and retry only when applicable; do not rely on CSS hiding.

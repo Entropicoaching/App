@@ -15,6 +15,16 @@ test('React F2/F7: StrictMode mount, reduced-motion jump, acknowledgement focus 
   try {
     await act(async () => root.render(createElement(StrictMode, null,
       createElement(Conversation, { enabled: true, createController: f.createController, controllerRef: ref }))))
+    const input = find(f.host, 'textarea')[0]
+    await act(async () => ref.current.draft('Syntetisk React-kladde'))
+    const write = find(f.host, 'button').find(n => n.textContent === 'Skriv til din coach')
+    assert.equal(write.style.minHeight, '44px')
+    await act(async () => { await write.click() })
+    assert.equal(f.doc.activeElement, input)
+    assert.equal(f.doc.scrolled.node, input)
+    assert.equal(f.doc.scrolled.options.behavior, 'instant')
+    assert.equal(input.value, 'Syntetisk React-kladde')
+    assert.deepEqual(f.calls, [])
     const list = find(f.host, 'ol')[0], sender = row(f.host, 'message:one').children[0]
     assert.equal(list.attributes.role, 'list')
     assert.equal(list.style.paddingInlineStart, '0'); assert.equal(list.style.listStyle, 'none')
