@@ -54,7 +54,7 @@ test('real React: full sparse card hides unknown fields, keeps known zero and an
   facts.session = receipt({ lastDay: null })
   facts.weight = receipt({ from: '2026-10-23', through: today, points: [] })
   const empty = render(AthleteCard, { enabled: true, facts })
-  assert.match(empty, /Ingen registrerede pas/)
+  assert.match(empty, /Ingen pas i det indlæste grundlag/)
   assert.match(empty, /Vægttrend: for få vejninger/)
   assert.doesNotMatch(empty, /ukendt/)
   facts.nutrition = receipt({ from: '2026-10-30', through: today, loggedDays: 0 })

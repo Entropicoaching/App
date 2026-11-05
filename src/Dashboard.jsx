@@ -653,6 +653,16 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     )
   })()
 
+  // Only presentation state survives the list/profile mounting boundary.
+  // Reset in this host render so another coach (or OFF -> ON) cannot revive it.
+  const coachListOwner = e2 ? session?.user?.id ?? null : null
+  const [coachListView, setCoachListView] = useState({ owner: coachListOwner, athleteQuery: '', athletesOpen: false, inboxLimit: 10 })
+  const currentCoachListView = coachListView.owner === coachListOwner ? coachListView
+    : { owner: coachListOwner, athleteQuery: '', athletesOpen: false, inboxLimit: 10 }
+  if (coachListView.owner !== coachListOwner) setCoachListView(currentCoachListView)
+  const changeCoachListView = patch => setCoachListView(current =>
+    current.owner === coachListOwner ? { ...current, ...(typeof patch === 'function' ? patch(current) : patch) } : current)
+
   return (
     <div {...(coachWeekEnabled === true ? { 'data-app-375': 'coach' } : {})} {...(e2 ? { 'data-entropi2-coach-root': '' } : {})} style={s.wrap}>
       <Overlays {...{
@@ -702,6 +712,12 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             inboxRefreshing,
             openCoachPriorityItem, openProfile, setSelectedAthlete, setView,
           }}
+          athleteQuery={currentCoachListView.athleteQuery}
+          onAthleteQueryChange={athleteQuery => changeCoachListView({ athleteQuery })}
+          athletesOpen={currentCoachListView.athletesOpen}
+          onAthletesOpenChange={athletesOpen => changeCoachListView({ athletesOpen })}
+          inboxLimit={currentCoachListView.inboxLimit}
+          onShowMoreInbox={() => changeCoachListView(current => ({ inboxLimit: current.inboxLimit + 10 }))}
           {...e2Beskeder}
           videoReviewQueueError={entropi2VideoQueueError(coachMorningData.videos)}
           reloadOverview={async () => { if (loadError) await fetchAthletes(); await refreshCoachInbox() }}

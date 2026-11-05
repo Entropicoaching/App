@@ -15,6 +15,8 @@ registerHooks({ resolve(specifier, context, next) {
 } })
 const { default: CoachScreen, CoachView } = await import('./CoachScreen.mjs')
 const { default: Workspace } = await import('./CoachAthleteWorkspace.mjs')
+const { coachAthleteWorkspace } = await import('./coachWorkspaceModel.mjs')
+const { default: AthleteCard } = await import('./atletkort/AthleteCard.mjs')
 
 function fixture(count = 10) {
   const p = productionFixture(), ids = Array.from({ length: count }, (_, i) => `synthetic-${i}`)
@@ -34,7 +36,7 @@ const all = tree => nodes(tree, () => true)
 const actions = tree => all(tree).filter(n => n.props['data-coach-action'])
 const fold = (tree, name) => all(tree).find(n => n.props['data-coach-fold'] === name)
 
-test('home shows 0, 1 or 3 tasks before a closed remainder; inbox keeps every task and callback', () => {
+test('home shows 0, 1 or 3 tasks before a closed remainder; inbox starts with ten in model order', () => {
   for (const count of [0, 1, 10]) {
     const p = fixture(count), calls = []
     // Inbox can contain more than one task for the same athlete.
@@ -60,10 +62,49 @@ test('home shows 0, 1 or 3 tasks before a closed remainder; inbox keeps every ta
     }
     const inbox = CoachView({ ...p, tab: 'inbox' })
     assert.equal(fold(inbox, 'opgaver'), undefined)
-    assert.deepEqual(actions(inbox).map(n => n.props['data-coach-action']), model.inbox.map(r => r.key))
-    assert.equal(actions(inbox).length, count === 10 ? 20 : count)
+    assert.deepEqual(actions(inbox).map(n => n.props['data-coach-action']), model.inbox.slice(0, 10).map(r => r.key))
+    assert.equal(actions(inbox).length, Math.min(10, model.inbox.length))
     for (const button of actions(inbox)) { button.props.onClick(); assert.equal(calls.at(-1)[1], 'inbox') }
   }
+})
+
+test('inbox reveals ten more locally, preserves every task key and callback, and keeps all conversations reachable', () => {
+  for (const count of [0, 1, 10, 20, 25]) {
+    const p = fixture(count), calls = []
+    p.openCoachPriorityItem = (...args) => calls.push(args)
+    p.openProfile = (...args) => calls.push(args)
+    const expected = coachHomeModel(p, day).inbox
+    const app = mount(CoachScreen, { ...p, tab: 'inbox' })
+    let visible = Math.min(10, count), tree = app.render()
+    for (;;) {
+      assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), expected.slice(0, visible).map(r => r.key))
+      assert.match(text(tree), new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
+      assert.equal(text(all(tree).find(n => n.props['data-coach-inbox-count'])), `${visible} af ${count}`)
+      assert.ok(fold(tree, 'samtaler'))
+      const more = all(tree).find(n => n.type === 'button' && text(n) === 'Vis 10 flere')
+      assert.equal(Boolean(more), visible < count)
+      if (!more) break
+      assert.ok(more.props.style.minHeight >= 44)
+      more.props.onClick()
+      assert.deepEqual(calls, [], 'show-more must not navigate, send or acknowledge')
+      visible = Math.min(count, visible + 10); tree = app.render()
+    }
+    for (const [i, button] of actions(tree).entries()) {
+      button.props.onClick(); assert.deepEqual(calls.at(-1), [expected[i].item, 'inbox'])
+    }
+  }
+})
+
+test('controlled athlete fold ignores nested toggles and records both open and closed states', () => {
+  const p = fixture(), changes = []
+  const list = fold(CoachView({ ...p, athletesOpen: true, onAthletesOpenChange: value => changes.push(value) }), 'atleter')
+  assert.equal(list.props.open, true)
+  const currentTarget = { open: true }
+  list.props.onToggle({ target: {}, currentTarget }); assert.deepEqual(changes, [])
+  list.props.onToggle({ target: currentTarget, currentTarget })
+  currentTarget.open = false
+  list.props.onToggle({ target: currentTarget, currentTarget })
+  assert.deepEqual(changes, [true, false])
 })
 
 test('program task callbacks in the folded remainder retain the same profile tab and return route', () => {
@@ -126,4 +167,35 @@ test('loading, failed and empty reads cannot become search misses or task counts
   }
   const off = { enabled: false, get athletes() { throw Error('OFF accessed data') } }
   assert.equal(CoachScreen(off), null); assert.equal(CoachView(off), null)
+})
+
+test('actual read adapter and compact card distinguish complete empty activity from missing or invalid evidence', () => {
+  const cases = [
+    ['empty', () => {}, 'Ingen pas i det indlæste grundlag'],
+    ['recorded', p => { p.coachActionsStatus.activity.rows = [{ athlete_id: p.athletes[0].id, logged_at: `${day}T10:00:00Z` }] }, 'Seneste pas i dag'],
+    ...['partial', 'error', 'loading'].map(state => [state, p => { p.coachActionsStatus.activity.state = state }, null]),
+    ['wrong athlete scope', p => { p.coachActionsStatus.activity.ids = ['synthetic-other'] }, null],
+    ['wrong source day', p => { p.coachActionsStatus.activity.day = '2026-11-02' }, null],
+    ['missing source', p => { delete p.coachActionsStatus.activity }, null],
+    ...['not-a-date', '2026-11-04T10:00:00Z'].map(logged_at => [logged_at, p => {
+      p.coachActionsStatus.activity.rows = [{ athlete_id: p.athletes[0].id, logged_at }]
+    }, null]),
+    ['truncated', p => { p.coachActionsStatus.activity.rows = Array.from({ length: 1000 }, () => ({ athlete_id: p.athletes[0].id, logged_at: `${day}T10:00:00Z` })) }, null],
+  ]
+  for (const [label, change, expected] of cases) {
+    const p = fixture(1); change(p)
+    const before = JSON.stringify(p), context = coachHomeModel(p, day)
+    const data = coachAthleteWorkspace(p, context, p.athletes[0])
+    const tree = AthleteCard({ enabled: true, facts: data.facts, compact: data.compact })
+    if (expected) assert.ok(text(tree).includes(expected), label)
+    else {
+      assert.equal(data.facts.session, undefined, label)
+      assert.doesNotMatch(text(tree), /Ingen pas|Seneste pas/, label)
+    }
+    assert.equal(JSON.stringify(p), before)
+  }
+  for (const change of [p => { p.readContext.day = '2026-11-02' }, p => { p.session.user.id = 'synthetic-other' }]) {
+    const p = fixture(1); change(p)
+    assert.equal(coachAthleteWorkspace(p, coachHomeModel(p, day), p.athletes[0]), null)
+  }
 })

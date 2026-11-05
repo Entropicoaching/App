@@ -27,16 +27,25 @@ export default function CoachScreen(props = {}) {
 function ClockedCoach(props) {
   const [now, setNow] = useState(() => new Date())
   const [athleteQuery, setAthleteQuery] = useState('')
+  const [athletesOpen, setAthletesOpen] = useState(false)
+  const [inboxLimit, setInboxLimit] = useState(10)
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000)
     return () => clearInterval(timer)
   }, [])
-  return h(CoachView, { ...props, today: props.today ?? now, athleteQuery, onAthleteQueryChange: setAthleteQuery })
+  return h(CoachView, { ...props, today: props.today ?? now,
+    athleteQuery: props.athleteQuery ?? athleteQuery,
+    onAthleteQueryChange: props.onAthleteQueryChange ?? setAthleteQuery,
+    athletesOpen: props.athletesOpen ?? athletesOpen,
+    onAthletesOpenChange: props.onAthletesOpenChange ?? setAthletesOpen,
+    inboxLimit: props.inboxLimit ?? inboxLimit,
+    onShowMoreInbox: props.onShowMoreInbox ?? (() => setInboxLimit(limit => limit + 10)) })
 }
 
 export function CoachView(input = {}) {
   if (input.enabled !== true) return null
-  const { tab = 'home', today = new Date(), athleteQuery = '', onAthleteQueryChange, ...props } = input
+  const { tab = 'home', today = new Date(), athleteQuery = '', onAthleteQueryChange,
+    athletesOpen = false, onAthletesOpenChange, inboxLimit = 10, onShowMoreInbox, ...props } = input
   const model = coachHomeModel(props, today)
   const inbox = tab === 'inbox'
   const report = inbox ? null : weeklyReportModel(props, today)
@@ -53,7 +62,7 @@ export function CoachView(input = {}) {
     h('span', { style: { ...s.avatar, display: 'inline-flex', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
     h('strong', null, row.athlete.name), h('span', { style: { display: 'block', marginTop: 8 } }, row.reason)))
   const rows = inbox ? model.inbox : model.actions
-  const firstRows = inbox ? rows : rows.slice(0, 3)
+  const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
   const query = athleteQuery.trim().toLocaleLowerCase('da')
   const summaries = model.summaries.filter(row => row.athlete.name.toLocaleLowerCase('da').includes(query))
   // Marc 3. nov.: keep it simple. Kun det vigtigste staar aabent; resten er foldet ind.
@@ -85,16 +94,24 @@ export function CoachView(input = {}) {
               reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket')),
       (rows.length > 0 || model.complete && !model.isLoading && !model.hasError) &&
         h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
+      inbox && (rows.length > 0 || model.complete && !model.isLoading && !model.hasError) &&
+        h('p', { 'aria-live': 'polite', 'data-coach-inbox-count': true }, `${firstRows.length} af ${rows.length}`),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map(rowButton)) :
         model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError &&
           h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.'),
+      inbox && firstRows.length < rows.length && h('button', { type: 'button', style: button,
+        disabled: typeof onShowMoreInbox !== 'function', onClick: onShowMoreInbox }, 'Vis 10 flere'),
       !inbox && rows.length > 3 && h('details', { 'data-coach-fold': 'opgaver', style: fold },
         h('summary', { style: foldSummary }, arrow, `Vis resten (${rows.length - 3})`),
         h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.slice(3).map((row, index) => rowButton(row, index + 3))))),
     team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
       h(CoachTeamRegistrations, { enabled: true, model: team })),
-    !inbox && model.summaries.length > 0 && h('details', { 'aria-label': 'Atletoverblik', 'data-coach-fold': 'atleter', style: fold },
+    !inbox && model.summaries.length > 0 && h('details', { 'aria-label': 'Atletoverblik', 'data-coach-fold': 'atleter', style: fold,
+      open: athletesOpen, onToggle: event => {
+        if (event.target !== event.currentTarget) return
+        onAthletesOpenChange?.(event.currentTarget.open)
+      } },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Dine atleter (${model.summaries.length})`)),
       h('label', { style: { display: 'block' } }, 'Søg efter atletnavn',
         h('input', { type: 'search', value: athleteQuery,

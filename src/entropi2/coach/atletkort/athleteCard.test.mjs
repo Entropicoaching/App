@@ -166,7 +166,7 @@ test('full sparse card hides only unknown summaries and retains known empty, ins
   facts.session = receipt({ lastDay: null })
   facts.weight = receipt({ from: '2026-10-21', through: today, points: [] })
   assert.equal(nodes(render()).filter(n => n.type === 'dt').length, 2)
-  assert.match(content(render()), /Ingen registrerede pas/)
+  assert.match(content(render()), /Ingen pas i det indlæste grundlag/)
   assert.match(content(render()), /Vægttrend: for få vejninger/)
   facts.nutrition = receipt({ from: '2026-10-28', through: today, loggedDays: 0 })
   facts.messages = receipt({ count: 0 })
@@ -175,4 +175,18 @@ test('full sparse card hides only unknown summaries and retains known empty, ins
   assert.equal(nodes(render()).filter(n => n.type === 'dt').length, 4)
   facts.session = receipt({ state: 'error' })
   assert.equal(nodes(render()).filter(n => n.props.role === 'alert').length, 1)
+})
+
+test('compact card shows confirmed absence, keeps unknown silent and never describes an all-time absence', () => {
+  const facts = { today, athlete: { id: 'synthetic-a', name: 'Syntetisk atlet' } }
+  const render = () => AthleteCard({ enabled: true, facts, compact: { signals: [] } })
+  assert.doesNotMatch(content(render()), /Ingen pas|Seneste pas/)
+  facts.session = receipt({ lastDay: null })
+  assert.match(content(render()), /Ingen pas i det indlæste grundlag/)
+  facts.session.lastDay = '2026-11-02'
+  assert.match(content(render()), /Seneste pas i går/)
+  for (const patch of [{ complete: false }, { state: 'error' }, { athleteId: 'foreign' }, { day: '2026-11-02' }]) {
+    facts.session = { ...receipt({ lastDay: null }), ...patch }
+    assert.doesNotMatch(content(render()), /Ingen pas|Seneste pas/)
+  }
 })

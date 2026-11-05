@@ -35,7 +35,7 @@ export function coachAthleteWorkspace(props, context, athlete, report = weeklyRe
     compact: { signals: [...(derived.weight ? [derived.weight.text] : []),
       ...signals.map(signal => signal.reasons[0])].filter((text, index, all) => all.indexOf(text) === index).slice(0, 2) },
     facts: { athlete, today: day,
-      session: validLogs && dates.length > 0 ? { ...receipt, lastDay: dates.sort().at(-1) ?? null } : undefined,
+      session: validLogs ? { ...receipt, lastDay: dates.sort().at(-1) ?? null } : undefined,
       nutrition: row?.nutrition ? { ...receipt, from: props.coachNutrition?.from,
         through: day, loggedDays: row.nutrition.logged } : undefined,
       messages: context.messages.complete ? { ...receipt, count: unread } : undefined,

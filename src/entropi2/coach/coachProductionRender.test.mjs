@@ -25,12 +25,13 @@ test('real React SSR: Dashboard-shaped props without coachAnalysis show supporte
   assert.doesNotMatch(html, /Opfølgningssignal ukendt|Vægttrend ukendt/)
 })
 
-test('real React SSR: sparse production data leave just name and open action, no empty draft fold', () => {
+test('real React SSR: confirmed empty activity is visible without inventing rich data or an empty draft fold', () => {
   const p = productionFixture(); delete p.coachNutrition
   p.coachActionsStatus.activity.rows = []; p.calendarWeeks = { [athleteId]: [] }
   const html = render(p), list = cards(html)
   assert.equal(list.length, 1)
   assert.doesNotMatch(list[0], /ukendt|Vægttrend|Opfølgningssignal|Kost|Seneste pas|data-coach-short-signal/i)
+  assert.match(list[0], /Ingen pas i det indlæste grundlag/)
   assert.doesNotMatch(html, /Beskedudkast fra ugerapport|Lav beskedudkast/)
 })
 

@@ -13,7 +13,7 @@ export default function AthleteCard(props = {}) {
   const model = athleteCardModel(props.facts)
   const canOpen = typeof props.onOpen === 'function'
   if (props.compact) {
-    const status = [model.lastSession.state === 'ready' && model.lastSession.text,
+    const status = [['ready', 'empty'].includes(model.lastSession.state) && model.lastSession.text,
       model.messages.state === 'ready' && model.messages.count > 0 && model.messages.text].filter(Boolean).join(' · ')
     return h('article', { 'aria-label': `Atletkort: ${model.name}`, style: { ...panel, padding: 12 } },
       h('button', { type: 'button', disabled: !canOpen, 'data-coach-summary': model.id,

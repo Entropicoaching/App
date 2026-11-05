@@ -27,7 +27,7 @@ export function athleteCardModel({ athlete, today, session, nutrition, weight, m
   let lastSession = unavailable(session, 'Seneste pas')
   if (usable(session)) {
     const last = ordinal(session.lastDay)
-    if (session.lastDay === null) lastSession = { state: 'empty', text: 'Ingen registrerede pas' }
+    if (session.lastDay === null) lastSession = { state: 'empty', text: 'Ingen pas i det indlæste grundlag' }
     else if (last !== null && last <= day) {
       const ago = day - last
       lastSession = { state: 'ready', day: session.lastDay,
