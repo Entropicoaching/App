@@ -117,11 +117,12 @@ test('meal actions: same log validation for updates, immutable scope and no inva
 test('meal actions: failed DOM edit retains draft/focus and failed confirmation remains retryable', async t => {
   let ok = false
   const { host, c } = await mount(t, { update: async () => ok, remove: async () => ok })
+  host.querySelectorAll('details').find(n => n.getAttribute('data-focus') === 'diary').open = true
   await edit(host).fire('click'); await fill(host)
   find(host, 'button', 'Gem ændring').focus()
   await editor(host).fire('submit')
   assert.equal(editor(host).querySelectorAll('input')[0].value, next.meal)
-  assert.equal(host.ownerDocument.activeElement.textContent, 'Gem ændring')
+  assert.equal(host.ownerDocument.activeElement.getAttribute('data-focus'), 'diary-summary')
   assert.deepEqual(c.snapshot().logs, [row])
   await find(host, 'button', 'Annuller rettelse').fire('click')
   await remove(host).fire('click'); await find(host, 'button', 'Ja, fjern måltid').fire('click')

@@ -1,5 +1,5 @@
 /* Screen05 palette, spacing and typography; confined to the nutrition host. */
-.e2-nutrition{color-scheme:dark;--bg:#141410;--surface:#1c1c18;--raised:#25251f;--ink:#edeae2;--muted:#b8b4a8;--gold:#c8923a;--line:#414139;--sans:'IBM Plex Sans',Arial,sans-serif;--mono:'IBM Plex Mono',Consolas,monospace;--display:'Playfair Display',Georgia,serif;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);width:100%;max-width:480px;margin:auto;min-height:100svh;border-inline:1px solid var(--line)}
+.e2-nutrition{color-scheme:dark;--bg:#141410;--surface:#1c1c18;--raised:#25251f;--ink:#edeae2;--muted:#b8b4a8;--gold:#c8923a;--line:#414139;--field-line:#858579;--sans:'IBM Plex Sans',Arial,sans-serif;--mono:'IBM Plex Mono',Consolas,monospace;--display:'Playfair Display',Georgia,serif;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans);width:100%;max-width:480px;margin:auto;min-height:100svh;border-inline:1px solid var(--line)}
 .e2-nutrition *{box-sizing:border-box;min-width:0}
 .e2-nutrition .top{padding:12px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .e2-nutrition .brand{font:22px var(--display)}
@@ -40,7 +40,7 @@
 .e2-nutrition details>div{padding-top:16px}
 .e2-nutrition details.card{padding-block:12px}
 .e2-nutrition label{display:block;font-size:14px}
-.e2-nutrition input,.e2-nutrition select{display:block;width:100%;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;font:16px var(--sans);color:var(--ink);margin-top:6px}
+.e2-nutrition input,.e2-nutrition select{display:block;width:100%;padding:12px;background:var(--bg);border:1px solid var(--field-line);border-radius:8px;font:16px var(--sans);color:var(--ink);margin-top:6px}
 .e2-nutrition progress{width:100%;accent-color:var(--gold)}
 .e2-nutrition .nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);padding:8px 12px 16px;gap:4px;background:var(--surface)}
 .e2-nutrition .nav button{font-size:13px;padding:8px 4px}

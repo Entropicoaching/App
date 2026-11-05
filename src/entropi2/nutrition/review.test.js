@@ -59,7 +59,7 @@ test('counterexample: form draft, disclosure and keyboard focus survive a failed
   find(host, 'button', 'Gem måltid').focus()
   await host.querySelectorAll('form')[0].fire('submit')
   assert.equal(host.querySelectorAll('details')[0].open, true)
-  assert.equal(host.ownerDocument.activeElement.getAttribute('data-focus'), 'save')
+  assert.equal(host.ownerDocument.activeElement.getAttribute('data-focus'), 'log-form-summary')
   assert.equal(host.querySelectorAll('input')[0].value, 'Synthetic draft')
   assert.equal(host.querySelectorAll('input').every(n => n.required), true)
 })

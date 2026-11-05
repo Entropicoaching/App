@@ -67,9 +67,10 @@ test('goals first: overflow actions preserve focus, pending lock, external error
   assert.equal(f.saves.length, 1)
   assert.ok(logButtons(f.host).every(b => b.disabled))
   assert.equal(focus(f.host, 'more-meals').open, true)
+  // A disabled action cannot hold browser focus; retain the visible disclosure.
+  assert.ok(f.host.ownerDocument.activeElement === focus(f.host, 'more-meals-summary'))
   resolve(); await clicking; await flush()
-  const current = find(f.host, 'button', button.textContent)
-  assert.equal(f.host.ownerDocument.activeElement, current)
+  assert.ok(f.host.ownerDocument.activeElement === focus(f.host, 'more-meals-summary'))
   focus(f.host, 'more-meals').open = false; f.cleanup.updateWeight({})
   const alert = find(f.host, 'p', 'Måltidet blev ikke gemt. Prøv igen.')
   assert.equal(alert.getAttribute('role'), 'alert')

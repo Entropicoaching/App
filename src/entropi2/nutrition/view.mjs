@@ -54,18 +54,48 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     input.addEventListener('input', e => change(e.target.value))
     return input
   }
+  const inHost = target => {
+    for (let n = target; n; n = n.parentElement) if (n === host) return true
+    return false
+  }
+  const canFocus = target => {
+    if (!target || !inHost(target) || target.isConnected === false || target.disabled) return false
+    for (let n = target; n; n = n.parentElement) {
+      if (n.hidden || n.getAttribute('hidden') !== null) return false
+      const parent = n.parentElement
+      if (parent?.tagName.toLowerCase() === 'details' && !parent.open && n !== parent.children[0]) return false
+    }
+    return true
+  }
+  const focusControl = key => {
+    const controls = [...host.querySelectorAll('[data-focus]')]
+    const target = controls.find(n => n.getAttribute('data-focus') === key)
+    const fallback = controls.find(n => n.getAttribute('data-focus') === 'diary-summary')
+    if (canFocus(target)) target.focus()
+    else if (canFocus(fallback)) fallback.focus()
+  }
   const draw = () => {
     if (destroyed) return
     const s = controller.snapshot()
     const isToday = s.date === calendarDay(clock())
     // Preserve focus on state updates; all user data enters the DOM as textContent.
-    const focused = doc.activeElement?.getAttribute('data-focus')
+    const active = inHost(doc.activeElement) ? doc.activeElement : null
+    const focusKeys = []
+    for (let n = active; n && n !== host; n = n.parentElement) {
+      const target = n.tagName.toLowerCase() === 'details' ? n.children[0] : n
+      const key = target?.getAttribute('data-focus')
+      if (key) focusKeys.push(key)
+    }
+    const selectionRange = active && typeof active.selectionStart === 'number'
+      ? [active.selectionStart, active.selectionEnd, active.selectionDirection] : null
     const openDetails = [...host.querySelectorAll('details')].filter(n => n.open).map(n => n.getAttribute('data-focus'))
     const app = node('div', 'e2-nutrition')
     const skip = append(app, 'a', 'skip', 'Gå til indhold')
+    skip.setAttribute('data-focus', 'skip')
     skip.setAttribute('href', '#' + contentId)
     const main = append(app, 'main')
     main.setAttribute('id', contentId); main.setAttribute('tabindex', '-1')
+    main.setAttribute('data-focus', 'main')
     if (s.loaded) {
       const fast = append(main, 'section', 'card'); fast.setAttribute('data-kost-del', 'hurtig')
       append(fast, 'h2', '', 'Log hurtigt')
@@ -98,13 +128,14 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       quick(fast, choices.slice(0, 3))
       if (choices.length > 3) {
         const more = append(fast, 'details', 'space'); more.setAttribute('data-focus', 'more-meals')
-        append(more, 'summary', '', 'Flere måltider')
+        append(more, 'summary', '', 'Flere måltider').setAttribute('data-focus', 'more-meals-summary')
         quick(more, choices.slice(3))
       }
       const availableTemplates = (templateState?.templates || []).filter(item => !quickKeys.has(mealKey(item.meal)))
       const templates = node('details', 'space')
       templates.setAttribute('data-focus', 'templates')
       const templateSummary = append(templates, 'summary')
+      templateSummary.setAttribute('data-focus', 'templates-summary')
       append(templateSummary, 'h2', '', 'Skabeloner')
       for (const [i, item] of availableTemplates.entries()) {
         const b = button(templates, 'Log skabelon: ' + item.name, () => controller.logTemplate(item.id, intent()), s.pending)
@@ -113,7 +144,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       if (templateState?.suggestions.length) {
         const suggestions = append(templates, 'details', 'space')
         suggestions.setAttribute('data-focus', 'template-suggestions')
-        append(suggestions, 'summary', '', 'Forslag fra ofte loggede måltider')
+        append(suggestions, 'summary', '', 'Forslag fra ofte loggede måltider').setAttribute('data-focus', 'template-suggestions-summary')
         for (const [i, item] of templateState.suggestions.entries()) {
           const b = button(suggestions, 'Gem skabelon: ' + item.name, () => controller.acceptTemplate(item.id), s.pending)
           b.setAttribute('data-focus', 'template-accept-' + i)
@@ -121,7 +152,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       }
       if (templateState?.error) { const p = append(fast, 'p', 'space', templateState.error); p.setAttribute('role', 'alert') }
       const details = append(fast, 'details', 'space'); details.setAttribute('data-focus', 'log-form')
-      append(details, 'summary', '', 'Notér et måltid')
+      append(details, 'summary', '', 'Notér et måltid').setAttribute('data-focus', 'log-form-summary')
       const inner = append(details, 'div')
       const form = append(inner, 'form', 'stack')
       field(form, 'Måltid', manual.meal || '', v => { manual.meal = v })
@@ -165,6 +196,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         append(foodForm, 'p', 'small muted', 'Gramknapperne justerer mængden. Log portion gemmer måltidet.')
         if (s.portionError) { const p = append(foodForm, 'p', 'small', s.portionError); p.setAttribute('role', 'alert') }
         const add = button(foodForm, 'Log portion', () => {}, s.pending); add.className += ' cta-primary'; add.type = 'submit'
+        add.setAttribute('data-focus', 'log-portion')
         foodForm.addEventListener('submit', e => { e.preventDefault(); return controller.logFood(Number(selection), amount, Number(unit), intent()) })
       }
       if (availableTemplates.length || templateState?.suggestions.length) fast.append(templates)
@@ -245,13 +277,13 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     if (advice.protein) append(hero, 'p', 'space', `Protein: ${displayNumber(advice.protein)} g`)
     if (advice.tips.length) {
       const help = append(hero, 'details', 'space'); help.setAttribute('data-focus', 'general-meal-help')
-      append(help, 'summary', '', 'Generel hjælp til måltider')
+      append(help, 'summary', '', 'Generel hjælp til måltider').setAttribute('data-focus', 'general-meal-help-summary')
       append(help, 'p', 'muted', 'Et generelt eksempel, som du kan tilpasse med din coach. Det er ikke en individuel måltidsplan.')
       const tips = append(help, 'ul', 'list')
       advice.tips.forEach(tip => append(tips, 'li', '', tip))
     }
     if ((!advice.kcal || !advice.protein) && typeof onCoach !== 'function') append(hero, 'p', 'muted space', 'Aftal dine kostmål med din coach.')
-    if (typeof onCoach === 'function') button(hero, 'Tal med din coach', onCoach)
+    if (typeof onCoach === 'function') button(hero, 'Tal med din coach', onCoach).setAttribute('data-focus', 'coach')
     // Keep feedback outside the fold, including failures from meal actions.
     const diary = node('details', 'card')
     diary.setAttribute('data-focus', 'diary')
@@ -263,7 +295,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     status.setAttribute('aria-live', 'polite')
     main.setAttribute('aria-busy', String(s.pending || s.phase === 'loading'))
     if (s.phase === 'idle' || s.phase === 'loading') append(main, 'p', 'muted', readText.diaryLoading)
-    if (s.phase === 'load-error') button(main, readText.retry, () => controller.load())
+    if (s.phase === 'load-error') button(main, readText.retry, () => controller.load()).setAttribute('data-focus', 'retry-diary')
     if (s.loaded) {
       // Marc 3. nov.: uden maaltider stod "Ingen maaltider registreret i dag." to gange;
       // fordelingen vises kun, naar der er noget at fordele (dagbogen siger det tomme).
@@ -277,7 +309,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const ul = append(diary, 'ul', 'list')
       if (s.needsRefresh) {
         append(diary, 'p', 'muted', 'Hent dagbogen igen for at kunne rette eller fjerne det nye måltid.')
-        button(diary, readText.retry, () => controller.load(), s.pending)
+        button(diary, readText.retry, () => controller.load(), s.pending).setAttribute('data-focus', 'refresh-diary')
       }
       if (!s.logs.length) append(ul, 'li', 'muted', isToday ? 'Ingen måltider registreret i dag.' : 'Ingen måltider registreret den valgte dag.')
       for (const [index, row] of s.logs.entries()) {
@@ -300,7 +332,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
             editing = { id: row.id, intent: intent(), meal: row.meal,
               ...Object.fromEntries(['kcal', 'protein', 'carb', 'fat'].map(k => [k, row[k] ?? ''])) }
             removing = null; draw()
-            Array.from(host.querySelectorAll('input')).find(n => n.getAttribute('data-focus') === 'edit-Måltid')?.focus()
+            focusControl('edit-Måltid')
           }, s.pending)
           edit.setAttribute('data-focus', 'edit-' + row.id)
         }
@@ -308,7 +340,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           const remove = button(li, 'Fjern måltid: ' + label, () => {
             if (destroyed || controller.snapshot().pending) return
             removing = { id: row.id, intent: intent() }; editing = null; draw()
-            Array.from(host.querySelectorAll('button')).find(n => n.getAttribute('data-focus') === 'cancel-remove')?.focus()
+            focusControl('cancel-remove')
           }, s.pending)
           remove.setAttribute('data-focus', 'remove-' + row.id)
         }
@@ -322,13 +354,14 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           append(form, 'p', 'small muted', 'Angiv kendte værdier. Brug 0 kun når værdien er kendt som nul.')
           const save = button(form, 'Gem ændring', () => {}, s.pending); save.className += ' cta-primary'; save.type = 'submit'
           save.setAttribute('data-focus', 'save-edit')
-          button(form, 'Annuller rettelse', () => { editing = null; draw() }, s.pending)
+          button(form, 'Annuller rettelse', () => { editing = null; draw() }, s.pending).setAttribute('data-focus', 'cancel-edit')
           form.addEventListener('submit', async e => {
             e.preventDefault()
             if (destroyed || editing !== draft) return
             if (await controller.update(draft.id, { ...draft }, draft.intent)) {
+              const ownedFocus = inHost(doc.activeElement)
               editing = null; draw()
-              Array.from(host.querySelectorAll('button')).find(n => n.getAttribute('data-focus') === 'edit-' + row.id)?.focus()
+              if (ownedFocus) focusControl('edit-' + row.id)
             }
           })
         }
@@ -338,10 +371,10 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           button(group, 'Ja, fjern måltid', async () => {
             if (destroyed || removing !== confirmation) return
             if (await controller.remove(row.id, confirmation.intent, true)) { removing = null; draw() }
-          }, s.pending)
+          }, s.pending).setAttribute('data-focus', 'confirm-remove')
           const cancel = button(group, 'Behold måltid', () => {
             removing = null; draw()
-            Array.from(host.querySelectorAll('button')).find(n => n.getAttribute('data-focus') === 'remove-' + row.id)?.focus()
+            focusControl('remove-' + row.id)
           }, s.pending)
           cancel.setAttribute('data-focus', 'cancel-remove')
         }
@@ -419,7 +452,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       }
       const plan = append(weekly, 'details', 'space')
       plan.setAttribute('data-focus', 'week-plan')
-      append(plan, 'summary', '', 'Ugeplan')
+      append(plan, 'summary', '', 'Ugeplan').setAttribute('data-focus', 'week-plan-summary')
       plan.append(planHost)
       currentPlanFold = plan
       const openPlan = () => {
@@ -467,7 +500,16 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     for (const n of host.querySelectorAll('[data-focus]')) {
       const key = n.getAttribute('data-focus')
       if (n.tagName.toLowerCase() === 'details' && openDetails.includes(key)) n.open = true
-      if (key === focused) n.focus()
+    }
+    // Restore folds before testing visibility. Never take focus from another host,
+    // a detached view, or restore into a closed fold / disabled pending action.
+    const targets = [...host.querySelectorAll('[data-focus]')]
+    for (const key of focusKeys) {
+      const target = targets.find(n => n.getAttribute('data-focus') === key)
+      if (!canFocus(target)) continue
+      target.focus({ preventScroll: true })
+      if (key === focusKeys[0] && selectionRange && typeof target.setSelectionRange === 'function') target.setSelectionRange(...selectionRange)
+      break
     }
   }
   const unsubscribe = controller.subscribe(draw)
