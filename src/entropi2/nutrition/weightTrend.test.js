@@ -61,7 +61,7 @@ test('TREND: actual synthetic DOM adds plain comparison after unchanged average,
       async order() { return { data: [], error: null } } }
     return query
   } }
-  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete, date, client, weightLogs: weeks() })
+  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete, date, client, weightStatus: { athleteId: athlete.id, state: 'ready' }, weightLogs: weeks() })
   await flush()
   const section = find(host, 'h2', 'Din vægt').parentElement, paragraphs = section.querySelectorAll('p')
   // Marc 3. nov.: datoen vises paa dansk (2026-11-03 -> 3. nov.).

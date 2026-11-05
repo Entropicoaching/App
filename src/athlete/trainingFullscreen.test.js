@@ -61,6 +61,38 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // R1-E2-VAERT-VAEGTSTATUS1: invert only the explicit weight-read status plumbing.
+  const weightStatusDelta = [
+    [
+        "{ weightLogs: props.weightLogs, weightStatus: props.weightStatus, retryWeight: props.retryWeight })",
+        "{ weightLogs: props.weightLogs })"
+    ],
+    [
+        "props.client, props.foods, props.weightLogs, props.weightStatus, props.retryWeight])",
+        "props.client, props.foods, props.weightLogs])"
+    ],
+    [
+        "  const [weightLogs, setWeightLogs] = useState([])\n  const [weightStatus, setWeightStatus] = useState(null)\n  const weightReadRef = useRef(0)\n",
+        "  const [weightLogs, setWeightLogs] = useState([])\n"
+    ],
+    [
+        "    weightLogs, setMsgTrack, setTab,\n    ...(e2 ? { setWeightStatus, weightReadRef } : {}),\n",
+        "    weightLogs, setMsgTrack, setTab,\n"
+    ],
+    [
+        "            weightLogs={weightLogs} weightStatus={weightStatus} retryWeight={() => fetchWeightLogs(athlete.id)} />",
+        "            weightLogs={weightLogs} />"
+    ],
+    [
+        "            weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}\n            weightStatus={weightStatus} retryWeight={() => fetchWeightLogs(athlete.id)}\n",
+        "            weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}\n"
+    ]
+]
+  for (const [added, original] of weightStatusDelta) {
+    const exact = added.replaceAll('\n', '\r\n')
+    assert.equal(candidate.split(exact).length, 2, 'Weight-status delta must occur exactly once: ' + added.slice(0, 80))
+    candidate = candidate.replace(exact, original.replaceAll('\n', '\r\n'))
+  }
   // Entropi 2-koblingen (flaget entropi2, slukket som standard) er et eksplicit, separat delta.
   // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.

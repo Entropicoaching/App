@@ -18,7 +18,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
   amount = String(controller.foodAmount(0))
-  let weightPending = false, weightError = ''
+  let weightPending = false, weightReadPending = false, weightError = ''
   let planHost, planKey, currentPlanFold, disposePlan = () => {}, planMounted = false
   const clearPlan = () => {
     disposePlan(); disposePlan = () => {}; planHost = undefined; planKey = undefined
@@ -159,18 +159,39 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     const weightStatus = weightProps.weightStatus
     const weightReady = weightStatus?.athleteId === s.athleteId && weightStatus.state === 'ready'
     const weightReadError = weightStatus?.athleteId === s.athleteId && weightStatus.state === 'error'
-    const summary = weightSummary(!weightStatus || weightReady ? weightProps.weightLogs : [], s.athleteId, s.date)
+    const weightLoading = weightStatus?.athleteId === s.athleteId && weightStatus.state === 'loading'
+    const weightEmpty = weightReady && Array.isArray(weightProps.weightLogs) && weightProps.weightLogs.length === 0
+    const summary = weightSummary(weightReady ? weightProps.weightLogs : [], s.athleteId, s.date)
     const weightConnected = isToday && typeof weightProps.logWeight === 'function' && typeof weightProps.onWeightInput === 'function'
     const weighing = node('section', 'card'); weighing.setAttribute('data-kost-del', 'vaegt')
-    if (summary.latest || weightReady || weightReadError || weightConnected || weightError) {
+    if (summary.latest || weightReady || weightLoading || weightReadError || weightConnected || weightError) {
       main.append(weighing)
       append(weighing, 'h2', '', 'Din vægt')
     }
     // Marc 3. nov.: dansk dato i stedet for ISO, og kun én tom-tekst, når der ingen vejninger er.
     const dag = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.'][Number(m[2]) - 1]}` : String(iso) }
-    if (summary.latest || weightReady) append(weighing, 'p', 'muted space', summary.latest
+    weighing.setAttribute('aria-busy', String(weightLoading || weightReadPending))
+    if (weightLoading) {
+      const p = append(weighing, 'p', 'muted space', 'Indlæser vejninger…')
+      p.setAttribute('role', 'status'); p.setAttribute('aria-live', 'polite')
+    }
+    if (summary.latest || weightEmpty) append(weighing, 'p', 'muted space', summary.latest
       ? `Seneste vægt: ${displayNumber(summary.latest.weight)} kg · ${dag(summary.latest.date)}` : 'Ingen vejninger endnu')
-    if (weightReadError) { const p = append(weighing, 'p', 'space', 'Vejningerne kunne ikke hentes. Prøv igen.'); p.setAttribute('role', 'alert') }
+    if (weightReady && !summary.latest && !weightEmpty) append(weighing, 'p', 'muted space', 'Ingen vejninger at vise for den valgte dag.')
+    if (weightReadError) {
+      const p = append(weighing, 'p', 'space', 'Vejningerne kunne ikke hentes. Prøv igen.'); p.setAttribute('role', 'alert')
+      const retry = weightProps.retryWeight
+      if (typeof retry === 'function') {
+        const b = button(weighing, weightReadPending ? 'Henter vejninger…' : 'Hent igen', async () => {
+          if (destroyed || weightReadPending || weightProps.weightStatus !== weightStatus || weightProps.retryWeight !== retry) return
+          weightReadPending = true; draw()
+          try { await retry() }
+          catch { /* The owner retains the read error; the button permits another attempt. */ }
+          finally { weightReadPending = false; draw() }
+        }, weightReadPending)
+        b.setAttribute('data-focus', 'retry-weight')
+      }
+    }
     if (summary.latest) append(weighing, 'p', 'muted', summary.average !== null
       ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} ${summary.days === 1 ? 'vejedag' : 'vejedage'} (seneste 7 dage)`
       : 'Ingen vejninger de seneste 7 dage')

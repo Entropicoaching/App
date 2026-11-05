@@ -14,7 +14,7 @@ function mount(options = {}, view = {}) {
   const host = syntheticHost()
   const controller = createNutritionController({ enabled: true, athlete, date,
     contracts: { async load() { return [] } }, ...options })
-  const cleanup = mountNutrition(host, controller, { clock: () => new Date(date + 'T12:00:00+01:00'), ...view })
+  const cleanup = mountNutrition(host, controller, { clock: () => new Date(date + 'T12:00:00+01:00'), ...(Array.isArray(view.weightLogs) ? { weightStatus: { athleteId: id, state: 'ready' } } : {}), ...view })
   return { host, controller, cleanup }
 }
 function goalCard(host) { return host.querySelectorAll('section').find(n => n.textContent.startsWith('Dagens mål')) }
@@ -90,7 +90,7 @@ test('START: top weight form submits once with zero arguments, controlled input,
   gate.resolve(); await first
   assert.equal(weightForm(host).querySelectorAll('input')[0].value, '82,5') // void is not proof of success
   assert.doesNotMatch(host.textContent, /Vægt gemt/)
-  cleanup.updateWeight({ weightInput: '', weightLogs: [weight(date, 82.5)] })
+  cleanup.updateWeight({ weightStatus: { athleteId: id, state: 'ready' }, weightInput: '', weightLogs: [weight(date, 82.5)] })
   assert.match(host.textContent, /Seneste vægt: 82,5 kg/)
   assert.equal(weightForm(host).querySelectorAll('input')[0].value, '')
   cleanup()

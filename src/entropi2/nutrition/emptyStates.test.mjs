@@ -79,7 +79,7 @@ test('selected day: date-aware labels, historical measurements and no weight for
   let writes = 0
   const f = await mount(t, { rows: [row()], athlete: { kcal_target: 2000, protein_target: 120 },
     view: { clock: () => new Date('2026-11-06T19:00:00+01:00'),
-      weightLogs: [{ athlete_id: id, logged_at: date, weight: 80 }], onWeightInput() {}, logWeight() { writes++ } } })
+      weightStatus: { athleteId: id, state: 'ready' }, weightLogs: [{ athlete_id: id, logged_at: date, weight: 80 }], onWeightInput() {}, logWeight() { writes++ } } })
   for (const label of ['Kost · den valgte dag', 'Mål for den valgte dag', 'Dagbog for den valgte dag']) assert.ok(f.host.textContent.includes(label))
   assert.match(f.host.textContent, /Seneste vægt: 80 kg/)
   assert.equal(find(f.host, 'h2', 'Din vægt').parentElement.querySelectorAll('form').length, 0)

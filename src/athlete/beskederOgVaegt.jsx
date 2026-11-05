@@ -24,20 +24,39 @@ import { parseInputNumber } from './kostNumbers.mjs'
 export function lavBeskederOgVaegt({
   athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
   setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
-  weightLogs, setMsgTrack, setTab,
+  weightLogs, setMsgTrack, setTab, setWeightStatus, weightReadRef,
 }) {
   async function fetchWeightLogs(athleteId) {
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('weight_logs')
-        .select('*')
-        .eq('athlete_id', athleteId)
-        .order('logged_at', { ascending: false })
-        .limit(30),
-      onReadError('Vægtloggen', athleteId),
-    )
-    if (!ok) return
-    setWeightLogs(data || [])
+    // The ref belongs to AthleteView, so overlapping reads across renders share one sequence.
+    // Without the optional E2 status capability, the legacy read/error contract is unchanged.
+    const request = setWeightStatus && weightReadRef ? ++weightReadRef.current : undefined
+    const current = () => request === undefined || weightReadRef.current === request
+    setWeightStatus?.({ athleteId, state: 'loading' })
+    let result
+    try {
+      result = await runGuardedRead(
+        () => supabase
+          .from('weight_logs')
+          .select('*')
+          .eq('athlete_id', athleteId)
+          .order('logged_at', { ascending: false })
+          .limit(30),
+        error => { if (current()) onReadError('Vægtloggen', athleteId)(error) },
+      )
+    } catch (error) {
+      if (!setWeightStatus) throw error
+      if (!current()) return
+      setWeightStatus({ athleteId, state: 'error' })
+      onReadError('Vægtloggen', athleteId)(error)
+      return
+    }
+    if (!current()) return
+    if (!result.ok) {
+      setWeightStatus?.({ athleteId, state: 'error' })
+      return
+    }
+    setWeightLogs(result.data || [])
+    setWeightStatus?.({ athleteId, state: 'ready' })
   }
 
   // G15 (ordre 131): var før et rent "fyr og glem" — feltet blev ryddet og

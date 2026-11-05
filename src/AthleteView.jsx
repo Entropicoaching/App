@@ -121,8 +121,8 @@ function PreviewKost(props) {
   latest.current = props
   useEffect(() => {
     if (props.enabled !== true || !root.current || !props.athlete?.id) return undefined
-    return mountKost(root.current, { ...props, storage: coachPreviewStorage }, latest, { weightLogs: props.weightLogs })
-  }, [props.enabled, props.athlete, props.date, props.client, props.foods, props.weightLogs])
+    return mountKost(root.current, { ...props, storage: coachPreviewStorage }, latest, { weightLogs: props.weightLogs, weightStatus: props.weightStatus, retryWeight: props.retryWeight })
+  }, [props.enabled, props.athlete, props.date, props.client, props.foods, props.weightLogs, props.weightStatus, props.retryWeight])
   return props.enabled === true ? createElement('div', { ref: root, 'data-entropi2-kost': '' }) : null
 }
 
@@ -286,6 +286,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const [weeklyTonnage, setWeeklyTonnage] = useState([])
   const [liftProgress, setLiftProgress] = useState([])
   const [weightLogs, setWeightLogs] = useState([])
+  const [weightStatus, setWeightStatus] = useState(null)
+  const weightReadRef = useRef(0)
   const [weightInput, setWeightInput] = useState('')
   const [savingWeight, setSavingWeight] = useState(false)
 
@@ -431,6 +433,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
     setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
     weightLogs, setMsgTrack, setTab,
+    ...(e2 ? { setWeightStatus, weightReadRef } : {}),
   })
 
   const {
@@ -931,12 +934,13 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {e2Atlet && e2ReadOnly && visKost && tab === 'kost' && (
           <PreviewKost enabled={true} athlete={athlete} date={kostDate} client={e2PreviewDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
-            weightLogs={weightLogs} />
+            weightLogs={weightLogs} weightStatus={weightStatus} retryWeight={() => fetchWeightLogs(athlete.id)} />
         )}
         {e2Atlet && !e2ReadOnly && visKost && tab === 'kost' && (
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
             weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
+            weightStatus={weightStatus} retryWeight={() => fetchWeightLogs(athlete.id)}
             {...(kostDate === e2Dag.day || kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />
         )}
         {!e2Atlet && visKost && tab === 'kost' && (

@@ -50,7 +50,7 @@ test('KOST: kostskærmen får atletens mål og vægt fra de eksisterende rækker
   t.mock.timers.enable({ apis: ['Date'], now: new Date(day + 'T12:00:00+01:00') })
   const host = syntheticHost()
   const cleanup = mountKost(host, { athlete, date: day, client: fakeClient(), foods: [] }, latestRef(),
-    { weightLogs: [weightRow('2026-11-01', 82.4), weightRow(day, 82.0), { ...weightRow(day, 99), athlete_id: 'syn-anden' }],
+    { weightStatus: { athleteId: athlete.id, state: 'ready' }, weightLogs: [weightRow('2026-11-01', 82.4), weightRow(day, 82.0), { ...weightRow(day, 99), athlete_id: 'syn-anden' }],
       weightInput: '', onWeightInput() {}, logWeight() {}, savingWeight: false })
   await flush()
   assert.match(goalCard(host).textContent, /2.400 kcal/)
@@ -88,7 +88,7 @@ test('KOST: uden skrivecallbacks (historisk dato) vises ingen vægtformular, men
   t.mock.timers.enable({ apis: ['Date'], now: new Date('2026-11-03T12:00:00+01:00') })
   const host = syntheticHost()
   const cleanup = mountKost(host, { athlete, date: day, client: fakeClient(), foods: [] }, latestRef(),
-    { weightLogs: [weightRow(day, 81.5)], weightInput: '', savingWeight: false })
+    { weightStatus: { athleteId: athlete.id, state: 'ready' }, weightLogs: [weightRow(day, 81.5)], weightInput: '', savingWeight: false })
   await flush()
   assert.equal(weightSection(host).querySelectorAll('form').length, 0)
   assert.match(weightSection(host).textContent, /Seneste vægt: 81,5 kg/)
@@ -129,6 +129,35 @@ test('KOST: vægthentningens betingelse er falsk med flaget slukket og i coachen
   assert.equal(condition(true, 'athlete', null, () => {}, { id: 'syn' }, true, 'kost'), false)
   assert.equal(condition(true, 'athlete', null, undefined, { id: 'syn' }, true, 'hjem'), false)
   assert.equal(condition(true, 'athlete', null, undefined, { id: 'syn' }, false, 'kost'), false)
+})
+
+// R1-E2-VAERT-VAEGTSTATUS1: run with the real React imports above in npm test.
+test('KOST: initial status and latest retry survive both weight prop filters without remounting', async t => {
+  const host = syntheticHost(), status = { athleteId: athlete.id, state: 'error' }
+  const calls = []
+  const retry = () => calls.push('initial')
+  const cleanup = mountKost(host, { athlete, date: day, client: fakeClient(), foods: [] }, latestRef(),
+    { weightLogs: [], weightStatus: status, retryWeight: retry })
+  t.after(cleanup); await flush()
+  assert.match(weightSection(host).textContent, /Vejningerne kunne ikke hentes/)
+  await weightSection(host).querySelectorAll('button').find(b => b.textContent === 'Hent igen').fire('click')
+  assert.deepEqual(calls, ['initial'])
+  const latestStatus = { athleteId: athlete.id, state: 'error' }
+  const latestRetry = () => calls.push('latest')
+  let forwarded
+  forwardKostWeight({ updateWeight: props => { forwarded = props; cleanup.updateWeight(props) } },
+    { weightLogs: [], weightStatus: latestStatus, retryWeight: latestRetry })
+  assert.equal(forwarded.weightStatus, latestStatus)
+  assert.equal(forwarded.retryWeight, latestRetry)
+  await weightSection(host).querySelectorAll('button').find(b => b.textContent === 'Hent igen').fire('click')
+  assert.deepEqual(calls, ['initial', 'latest'])
+  forwardKostWeight(cleanup, { weightLogs: [], weightStatus: { athleteId: athlete.id, state: 'ready' } })
+  assert.match(weightSection(host).textContent, /Ingen vejninger endnu/)
+  assert.doesNotMatch(weightSection(host).textContent, /Vejningerne kunne ikke hentes/)
+  // The real component must include both props in its effect dependencies and initial prop bundle.
+  const source = read('./Entropi2Kost.mjs')
+  assert.match(source, /const weight = \{[^\n]*weightStatus, retryWeight \}/)
+  assert.match(source, /\}, \[weightLogs, weightInput, onWeightInput, logWeight, savingWeight, weightStatus, retryWeight\]\)/)
 })
 
 // ---- Coach (APP-KOST-COACH1) ----
