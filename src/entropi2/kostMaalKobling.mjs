@@ -1,5 +1,6 @@
 import { createElement as h, useEffect, useState } from 'react'
 import KostMaal from './kostMaal/KostMaal.mjs'
+import { nutritionBasis } from './kostMaal/nutritionWeek.mjs'
 import PortalPlan from './kostplan/coach/PortalPlan.mjs'
 
 // Entropi 2 (APP-KOST-MAAL1): coachens kostfane. Kostmål og vægtgrundlag vises med pakken
@@ -47,6 +48,20 @@ export function kostMaalVaegt(status, athleteId) {
   return { state: 'ready', rows: [...status.rows].reverse() }
 }
 
+// Dashboard already supplies the coach's completed meal read to this host.
+// Reuse its scope guards and original meal rows; never fetch or reconstruct history
+// from current targets or the portal's device draft. This base has no saved plan
+// history reader, so the report must remain hidden until one supplies nutritionRead.
+export function kostMaalNutritionRead(props = {}) {
+  if (props.enabled !== true || nutritionBasis(props).state !== 'ready') return undefined
+  const { athlete, today, coachNutrition, readContext, weightStatus } = props
+  const weight = kostMaalVaegt(weightStatus, athlete.id)
+  if (weight.state !== 'ready') return undefined
+  return { coachId: readContext.coachId, athleteId: athlete.id, date: today,
+    state: 'ready', complete: true, planHistory: 'unavailable',
+    mealLogs: coachNutrition.rows.filter(row => row.athlete_id === athlete.id), weightLogs: weight.rows }
+}
+
 // Standard OFF: læser hverken props, data eller callbacks.
 export default function CoachKostMaal(props = {}) {
   if (props.enabled !== true) return null
@@ -57,5 +72,6 @@ export default function CoachKostMaal(props = {}) {
     weightState: weight.state, retryWeight: weightStatus?.athleteId === athlete?.id ? weightStatus?.retry : undefined,
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
     session, loading, loadError, coachNutrition, readContext }),
-    h(PortalPlan, { enabled: true, athlete, today, session, nutritionRead }))
+    h(PortalPlan, { enabled: true, athlete, today, session,
+      nutritionRead: nutritionRead === undefined ? kostMaalNutritionRead(props) : nutritionRead }))
 }
