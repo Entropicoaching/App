@@ -68,3 +68,13 @@ test('real React: actual readiness-to-coach pipeline hides existing soreness and
   for (const enabled of [false, undefined, 'true', 1]) assert.equal(renderToStaticMarkup(h(CoachPainHistory,
     { enabled, readiness: new Proxy({}, { get() { throw Error('OFF read') } }) })), '')
 })
+
+test('real React: scoped malformed observations have an alert and retry, without pain evidence or foreign content', () => {
+  const props = { enabled: true, athleteId: 'synthetic-athlete', coachId: 'synthetic-coach', asOf: '2026-11-04', onRetry() {} }
+  const row = { athlete_id: props.athleteId, logged_date: props.asOf, pain: 8, pain_location: null }
+  const html = renderToStaticMarkup(h(CoachPainHistory, { ...props, readiness: [row] }))
+  assert.match(html, /role="alert"/)
+  assert.match(html, /Smertehistorikken kunne ikke vises. Nogle registreringer mangler oplysninger./)
+  assert.match(html, /Prøv igen/); assert.doesNotMatch(html, /Flag:|Datagrundlag:|<details/)
+  assert.equal(renderToStaticMarkup(h(CoachPainHistory, { ...props, readiness: [{ ...row, athlete_id: 'other' }] })), '')
+})

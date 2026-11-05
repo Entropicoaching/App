@@ -2,6 +2,8 @@ import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { weeklyReportModel, hasWeeklyReportData } from './weeklyReportModel.mjs'
 
+const displayDate = day => day.split('-').reverse().join('.')
+
 export default function WeeklyReport({ today, ...props }) {
   const model = weeklyReportModel(props, today)
   const rows = model.rows.filter(hasWeeklyReportData)
@@ -12,7 +14,7 @@ export default function WeeklyReport({ today, ...props }) {
     h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(({ athlete, training: t, nutrition: n }) =>
       h('li', { key: athlete.id, 'data-coach-weekly-report': athlete.id, style: { marginBlock: 16 } },
         h('h3', null, athlete.name),
-        t.start && h('p', null, `Programuge fra ${t.start}`),
+        t.start && h('p', null, 'Programuge fra ', h('time', { dateTime: t.start }, displayDate(t.start))),
         t.completed !== null ? h('p', null, t.planned !== null
           ? `Pas logget: ${t.completed} af ${t.planned} ${antalOrd(t.planned, 'planlagt', 'planlagte')}` : `Pas logget: ${t.completed}`) :
           t.planned !== null && h('p', null, `Pas planlagt: ${t.planned}`),

@@ -7,6 +7,7 @@ import { createElement as h } from 'react'
 import { renderToStaticMarkup as render } from 'react-dom/server'
 import Tools, { BlockToolContent, CompareToolContent } from './CoachProgramTools.mjs'
 import Templates from '../../program/skabeloner/ProgramTemplatesView.mjs'
+import { templateFromWeek } from '../../program/skabeloner/portalTemplates.mjs'
 import { fixture, today } from '../planlaegning/syntheticFixture.mjs'
 import { fixture as comparison, today as compareToday } from '../sammenlign/syntheticFixture.mjs'
 
@@ -45,7 +46,7 @@ test('real React: comparison shown, empty and failed', () => {
 })
 
 test('real React: template shown, empty and failed', () => {
-  const base = { weeks: [], sourceId: '', name: '', library: [], draft: null }
+  const base = { libraryState: 'ready', weeks: [], sourceId: '', name: '', library: [], draft: null }
   const empty = render(h(Templates, base))
   assert.match(empty, /Ingen gemte skabeloner/); assert.match(empty, /Ingen uger/)
   assert.match(render(h(Templates, { ...base, error: 'Syntetisk lagerfejl' })), /role="alert"/)
@@ -60,4 +61,36 @@ test('portal source mounts actual tools after the final week list, with shared d
   assert.match(source, /coachProgramToolsEnabled = Entropi2.DEFAULT_ENTROPI2/)
   assert.ok(source.lastIndexOf('<CoachProgramTools') > source.lastIndexOf('weeks.map('))
   assert.match(source, /<CoachProgramTools enabled=\{coachProgramToolsEnabled\} athleteId=\{selectedAthlete\?\.id\}/)
+})
+
+test('real React: unknown block and comparison diagnostics never cross presentation boundary', () => {
+  for (const Component of [BlockToolContent, CompareToolContent]) {
+    const html = render(h(Component, { result: { state: 'error', message: 'Failed to fetch synthetic-id' } }))
+    assert.match(html, /Programgrundlaget kunne ikke hentes. Prøv igen./)
+    assert.doesNotMatch(html, /Failed to fetch|synthetic-id/)
+  }
+})
+
+test('real React: unconfirmed template library has one alert and disabled creation, never false empty claims', () => {
+  const html = render(h(Templates, { libraryState: 'error', weeks: [{ id: 'synthetic-week', week_number: 1 }],
+    sourceId: 'synthetic-week', name: 'Syntetisk navn', library: [], draft: null, error: 'Skabeloner kunne ikke læses.' }))
+  assert.equal((html.match(/role="alert"/g) || []).length, 1)
+  assert.doesNotMatch(html, /Ingen gemte skabeloner|Ingen uger at oprette/)
+  assert.match(html, /disabled=""/)
+})
+
+test('real React: valid template preview uses all Danish weekdays and set notation without mutating prescriptions', () => {
+  const week = { athlete_id: 'synthetic-athlete', sessions: Array.from({ length: 7 }, (_, weekday) => ({
+    title: 'Syntetisk pas', weekday, exercises: [
+      { name: 'Squat', sets: 1, reps: '1', intensity: 'RPE 7,5' },
+      { name: 'Bænkpres', sets: 1, reps: '5', intensity: '' },
+    ] })) }
+  const draft = templateFromWeek(week, 'Syntetisk skabelon', 'synthetic-athlete'), before = structuredClone(draft)
+  const html = render(h(Templates, { libraryState: 'ready', weeks: [], name: '', sourceId: '', library: [draft], draft }))
+  for (const day of ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']) assert.ok(html.includes(day))
+  assert.match(html, /1 gentagelse · mål-RPE 7,5/)
+  assert.match(html, /5 gentagelser/)
+  assert.equal((html.match(/mål-RPE/g) || []).length, 7)
+  assert.doesNotMatch(html, /ugedag [1-7]|reps|@ RPE|7\.5/)
+  assert.deepEqual(draft, before)
 })

@@ -4,6 +4,7 @@ import { createElement as h } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { CoachView } from './CoachScreen.mjs'
 import { productionFixture, day, athleteId } from './coachProductionFixture.mjs'
+import { SessionNotesView } from './SessionNotesView.mjs'
 import { addCalendarDays } from '../../calendarDate.js'
 const render = props => renderToStaticMarkup(h(CoachView, props))
 const cards = html => [...html.matchAll(/<article aria-label="Atletkort:[\s\S]*?<\/article>/g)].map(match => match[0])
@@ -54,5 +55,27 @@ test('real React SSR: known zero permits a draft; inbox and OFF do not mount the
   for (const enabled of [false, undefined, 1, 'true']) {
     assert.equal(CoachView({ enabled, get athletes() { throw Error('OFF read') } }), null)
     assert.equal(render({ enabled }), '')
+  }
+})
+
+test('real React: empty roster names have visible conversation names; weekly civil date remains ISO in time attribute', () => {
+  for (const name of ['', '  ', undefined]) {
+    const p = productionFixture(); p.athletes[0].name = name
+    const html = render({ ...p, tab: 'inbox', openProfile() {} })
+    assert.match(html, />Atlet uden navn<\/button>/)
+  }
+  const p = productionFixture()
+  const start = p.calendarWeeks[athleteId][0].start_date
+  const html = render(p)
+  assert.ok(html.includes(`dateTime="${start}"`) || html.includes(`datetime="${start}"`))
+  assert.ok(html.includes(start.split('-').reverse().join('.')))
+})
+
+test('real React: session-note civil dates use Danish text and unchanged machine dates across DST', () => {
+  for (const day of ['2026-11-03', '2026-10-25', '2026-03-29']) {
+    const html = renderToStaticMarkup(h(SessionNotesView, { athletes: [], model: { state: 'loaded',
+      entries: [{ key: 'synthetic-note', day, title: 'Syntetisk pas', comments: [], notes: [] }] } }))
+    assert.ok(html.includes(`dateTime="${day}"`) || html.includes(`datetime="${day}"`))
+    assert.ok(html.includes(`>${day.split('-').reverse().join('.')}</time>`))
   }
 })

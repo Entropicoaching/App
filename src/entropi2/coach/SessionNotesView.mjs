@@ -4,6 +4,8 @@ import { loadSessionNotes } from './sessionNotesRead.mjs'
 
 // Med en klient henter vaelgeren selv den valgte atlets logs; et forældet svar
 // for en anden atlet eller en tidligere anmodning kasseres (K-R3-ENTROPI-SAMLET fund 2).
+const displayDate = day => day.split('-').reverse().join('.')
+
 export default function CoachSessionNotes({ source, context }) {
   const [chosen, setChosen] = useState(null)
   const [read, setRead] = useState({ athleteId: '', state: 'idle', logs: null })
@@ -57,7 +59,7 @@ export function SessionNotesView({ model, athletes, onSelect, onRetry }) {
     model.entries.length > 0 && h('ul', { style: { listStyle: 'none', padding: 0 } },
       ...model.entries.map(entry => h('li', { key: entry.key,
         style: { border: '1px solid #59564c', borderRadius: 12, padding: 16, marginBlock: 12 } },
-        h('h3', null, h('time', { dateTime: entry.day }, entry.day), ' · ', entry.title),
+        h('h3', null, h('time', { dateTime: entry.day }, displayDate(entry.day)), ' · ', entry.title),
         ...entry.comments.map(comment => h('div', { key: comment.text },
           h('span', null, 'Paskommentar'), markedText(comment))),
         ...entry.notes.map(note => h('div', { key: note.key },

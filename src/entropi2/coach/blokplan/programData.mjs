@@ -42,7 +42,7 @@ export async function readBlockBasis(options) {
   const groups = []
   for (const week of sorted) {
     if (!id(week.id) || !day(week.start_date) || !Number.isSafeInteger(week.week_number) || !id(week.block_name))
-      throw Error('Alle uger skal have gyldige id’er, datoer, ugenumre og bloknavne før blokforslaget.')
+      throw Error('Programgrundlaget er ufuldstændigt og kan ikke bruges. Hent grundlaget igen.')
     if (!Array.isArray(week.sessions) || week.sessions.length >= PROGRAM_READ_CAP || week.sessions.some(session =>
       !Array.isArray(session.exercises) || session.exercises.length >= PROGRAM_READ_CAP))
       throw Error('Pas eller øvelser kan være ufuldstændige. Intet komplet forslag vises.')
@@ -96,4 +96,21 @@ export function saveProgramDraft(storage, athleteId, kind, value) {
   const key = programDraftKey(athleteId, kind), raw = JSON.stringify(value)
   if (typeof raw !== 'string' || raw.length > 400000) throw Error('Udkastet er for stort til det lokale lager.')
   storage.setItem(key, raw)
+}
+
+// Only controlled validation text crosses the presentation boundary.
+const readMessages = new Set([
+  'Læsningen mislykkedes. Prøv igen.',
+  'Grundlaget kan være afkortet. Intet komplet forslag vises.',
+  'Grundlaget tilhører ikke den valgte atlet.',
+  'Grundlaget indeholder en ugyldig dato. Intet komplet forslag vises.',
+  'Vælg en atlet og en gyldig dato.',
+  'Ugeplanen indeholder dubletter.',
+  'Programgrundlaget er ufuldstændigt og kan ikke bruges. Hent grundlaget igen.',
+  'Pas eller øvelser kan være ufuldstændige. Intet komplet forslag vises.',
+  'Ugeplanen har huller eller overlap. Kontrollér datoerne før blokforslaget.',
+  'Vælg to adskilte uger i datoorden for én atlet.',
+])
+export function programReadMessage(failure) {
+  return readMessages.has(failure?.message) ? failure.message : 'Programgrundlaget kunne ikke hentes. Prøv igen.'
 }

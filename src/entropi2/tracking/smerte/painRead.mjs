@@ -32,11 +32,20 @@ export function readPainHistory(options = {}) {
   // If a full 90-row response does not reach the window start, it may be cut off.
   if (readiness.length === 90 && ![...dates].some(day => day <= from)) return failure()
   const data = { state: 'ready', complete: true, athleteId, asOf, daily }
-  return buildPainHistory({ enabled: true, data, weeks }).state === 'error' ? failure() : data
+  return buildPainHistory({ enabled: true, data, weeks }).state === 'error'
+    ? { state: 'error', athleteId, asOf, invalidObservations: true } : data
 }
 
 // The tab uses the same projection before loading any optional view chunk.
 export function hasReadinessPain(options = {}) {
   if (options.enabled !== true) return false
   return buildPainHistory({ enabled: true, data: readPainHistory(options), weeks: options.weeks }).state === 'ready'
+}
+
+// Invalid observations may be explained only after athlete, dates and origin passed.
+export function shouldShowPainHistory(options = {}) {
+  if (options.enabled !== true) return false
+  const data = readPainHistory(options)
+  return data.invalidObservations === true ||
+    buildPainHistory({ enabled: true, data, weeks: options.weeks }).state === 'ready'
 }

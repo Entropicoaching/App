@@ -31,7 +31,9 @@ test('actual modules group repeated session comments once, retain separate set n
   assert.equal(result.entries[0].day, today); assert.equal(result.entries[0].notes.length, 2)
   assert.equal(result.entries[0].comments.length, 1)
   const dom = view(result)
-  assert.equal(nodes(dom).filter(n => n.type === 'time').length, 2)
+  const times = nodes(dom).filter(n => n.type === 'time')
+  assert.deepEqual(times.map(n => n.props.dateTime), ['2026-11-03', '2026-10-28'])
+  assert.deepEqual(times.map(content), ['03.11.2026', '28.10.2026'])
   assert.match(content(dom), /Syntetisk paskommentar/)
 })
 
@@ -164,4 +166,18 @@ test('literal STOP mark in a note is shown without treating an ordinary blank no
   assert.deepEqual(model(p).entries[0].notes[0].marks, ['Smerte nævnt', 'Stop nævnt'])
   p.athleteLogs[0].note = ''
   assert.equal(model(p).entries[0].notes.length, 0)
+})
+
+test('roster display trims names and gives blank names an accessible conversation button without changing identity', () => {
+  for (const name of ['', '   ', undefined, '  Syntetisk navn  ']) {
+    const p = fixture(); p.athletes[0].name = name
+    const before = structuredClone(p), expected = name?.trim() || 'Atlet uden navn'
+    assert.equal(adaptCoachState(p, today).athletes[0].name, expected)
+    let opened
+    const tree = CoachView({ ...p, enabled: true, today, tab: 'inbox', openCoachPriorityItem() {}, openProfile: (...args) => { opened = args } })
+    const button = nodes(tree).find(n => n.type === 'button' && content(n) === expected)
+    assert.ok(button); button.props.onClick()
+    assert.equal(opened[0].id, 'synthetic-a'); assert.equal(opened[1], 'beskeder'); assert.equal(opened[2], 'inbox')
+    assert.deepEqual(p, before)
+  }
 })

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readPainHistory, hasReadinessPain } from './painRead.mjs'
+import { readPainHistory, hasReadinessPain, shouldShowPainHistory } from './painRead.mjs'
 import { buildPainHistory } from './painModel.mjs'
 import { addCalendarDays } from '../../../calendarDate.js'
 
@@ -63,7 +63,7 @@ test('invalid scope, duplicate dates, foreign athletes, origins and malformed ob
     [{ ...row, pain: '8' }], [{ ...row, pain: 11 }], [{ ...row, pain: 2.5 }],
     [{ ...row, pain_location: null }], [{ ...row, pain_location: ' ' }],
     [{ ...row, logged_date: '2026-02-30' }], Array(91).fill(row)]) {
-    assert.deepEqual(run(readiness), { state: 'error' })
+    assert.equal(run(readiness).state, 'error')
     assert.equal(hasReadinessPain({ ...options, readiness }), false)
   }
 })
@@ -75,4 +75,17 @@ test('latest-90 existing snapshot covers eight weeks; future-heavy truncated sna
   assert.equal(buildPainHistory({ enabled: true, data, weeks: 8 }).absentDays, 0)
   const future = readiness.map((r, i) => ({ ...r, logged_date: addCalendarDays(asOf, 80 - i) }))
   assert.deepEqual(run(future, { weeks: 8 }), { state: 'error' })
+})
+
+test('only scoped invalid observations open the explanatory gate; empty, foreign and invalid dates stay hidden', () => {
+  for (const change of [{ pain_location: null }, { pain: '8' }, { pain: 11 }]) {
+    const readiness = [{ ...row, ...change }]
+    assert.deepEqual(run(readiness), { state: 'error', athleteId, asOf, invalidObservations: true })
+    assert.equal(shouldShowPainHistory({ ...options, readiness }), true)
+  }
+  for (const readiness of [[], undefined, [row, row], [{ ...row, athlete_id: 'other', pain_location: null }],
+    [{ ...row, logged_date: '2026-02-30', pain_location: null }], [{ ...row, source: 'watch', pain_location: null }],
+    [{ ...row, pain: null, pain_location: null }]]) assert.equal(shouldShowPainHistory({ ...options, readiness }), false)
+  assert.equal(shouldShowPainHistory({ ...options, readiness: [row] }), true)
+  assert.equal(shouldShowPainHistory({ enabled: false, get readiness() { throw Error('OFF') } }), false)
 })

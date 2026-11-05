@@ -8,7 +8,7 @@ import { calendarDay } from '../calendarDate.js'
 import { s, readinessSignal } from '../dashboardShared.js'
 import LazyBoundary from '../LazyBoundary.jsx'
 import { entropi2Enabled } from '../entropi2/flag.mjs'
-import { hasReadinessPain } from '../entropi2/tracking/smerte/painRead.mjs'
+import { shouldShowPainHistory } from '../entropi2/tracking/smerte/painRead.mjs'
 
 const painHistoryFactory = () => import('../entropi2/tracking/smerte/CoachPainHistory.mjs')
 
@@ -118,10 +118,11 @@ export default function OversigtTab({
                   </div>
                 )
               })()}
-              {entropi2Enabled() === true && hasReadinessPain({ enabled: true, athleteId: a.id,
+              {entropi2Enabled() === true && shouldShowPainHistory({ enabled: true, athleteId: a.id,
                 asOf: calendarDay(), readiness: athleteReadiness }) && <LazyBoundary
                 factory={painHistoryFactory} label="Smertehistorik" loading={null}
-                componentProps={{ enabled: true, athleteId: a.id, coachId: session.user.id, readiness: athleteReadiness }}
+                componentProps={{ enabled: true, athleteId: a.id, coachId: session.user.id, readiness: athleteReadiness,
+                  onRetry: athleteReadiness?.coachRead?.retry }}
               />}
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                 <div style={s.card}>

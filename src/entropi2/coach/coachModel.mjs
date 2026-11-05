@@ -34,7 +34,7 @@ export function adaptCoachState(props = {}, today = new Date()) {
   if (validContext && !loading && !loadError) for (const a of athletes) {
     if (typeof a?.id !== 'string' || !readContext.athleteIds.includes(a.id) ||
       a.hidden || hiddenAthleteIds.has(a.id)) continue
-    visible.set(a.id, { ...a, name: typeof a.name === 'string' ? a.name : 'Atlet' })
+    visible.set(a.id, { ...a, name: typeof a.name === 'string' && a.name.trim() ? a.name.trim() : 'Atlet uden navn' })
   }
   const scoped = [...visible.values()]
   const plans = Object.fromEntries(scoped.map(a => [a.id,

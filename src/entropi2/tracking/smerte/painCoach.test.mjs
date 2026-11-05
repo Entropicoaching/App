@@ -21,7 +21,7 @@ test('actual tab: lazy factory only with explicit selected-athlete pain; OFF and
     const tree = OversigtTab(input)
     const boundary = nodes(tree).find(n => n.type === LazyBoundary && n.props.label === 'Smertehistorik')
     assert.ok(boundary)
-    assert.deepEqual(boundary.props.componentProps, { enabled: true, athleteId, coachId, readiness: input.athleteReadiness })
+    assert.deepEqual(boundary.props.componentProps, { enabled: true, athleteId, coachId, readiness: input.athleteReadiness, onRetry: undefined })
     assert.equal((await boundary.props.factory()).default, CoachPainHistory)
     assert.match(text(expand(CoachPainHistory({ ...boundary.props.componentProps, asOf }))), /Testknæ/)
     const children = tree.children
@@ -66,4 +66,32 @@ test('actual wrapper: props changes immediately remove old athlete/day/data; mis
     assert.equal(render(extra), null)
   assert.match(text(render({ coachId: 'other-coach' })), /Testknæ/)
   assert.match(text(render()), /Testknæ/)
+})
+
+test('actual tab and wrapper: scoped malformed pain shows one explanation and existing retry; recovery hides it', () => {
+  mock.timers.enable({ apis: ['Date'], now: new Date(asOf + 'T12:00:00Z') })
+  let retries = 0
+  const retry = () => { retries++ }
+  const readiness = Object.assign([{ ...readinessRow, pain_location: null }], { coachRead: { retry } })
+  const input = { a: { id: athleteId, user_id: 'synthetic-user' }, athleteReadiness: readiness, profilesLastSeen: {},
+    session: { user: { id: coachId } }, currentWeight: null, weightTrend: null }
+  try {
+    setFlag(true)
+    const boundary = nodes(OversigtTab(input)).find(n => n.props.label === 'Smertehistorik')
+    assert.ok(boundary); assert.equal(boundary.props.componentProps.onRetry, retry)
+    const tree = expand(CoachPainHistory({ ...boundary.props.componentProps, asOf }))
+    assert.match(text(tree), /Smertehistorikken kunne ikke vises. Nogle registreringer mangler oplysninger./)
+    assert.equal(nodes(tree).filter(n => n.props.role === 'alert').length, 1)
+    nodes(tree).find(n => n.type === 'button').props.onClick(); assert.equal(retries, 1)
+    assert.equal(expand(CoachPainHistory({ ...props, readiness: [] })), null)
+    for (const extra of [{ athleteId: 'other' }, { asOf: '2026-02-30' }, { coachId: '' }, { enabled: false }])
+      assert.equal(expand(CoachPainHistory({ ...props, readiness, ...extra })), null)
+    setFlag(false); assert.equal(nodes(OversigtTab(input)).filter(n => n.props.label === 'Smertehistorik').length, 0)
+  } finally { setFlag(true); mock.timers.reset() }
+})
+
+test('missing or invalid overview scope never renders a scoped error', () => {
+  assert.equal(PainOverview({ enabled: true }), null)
+  const failed = { state: 'error', athleteId, asOf, invalidObservations: true }
+  for (const extra of [{ athleteId: '' }, { asOf: '2026-02-30' }, { weeks: 3 }]) assert.equal(view(failed, extra), null)
 })

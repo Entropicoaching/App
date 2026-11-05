@@ -12,6 +12,8 @@ registerHooks({ resolve(specifier, context, next) {
   return next(specifier, context)
 } })
 const { default: Tools } = await import('./CoachProgramTools.mjs')
+const { default: Templates } = await import('../../program/skabeloner/ProgramTemplatesView.mjs')
+const { templateFromWeek } = await import('../../program/skabeloner/portalTemplates.mjs')
 const button = (tree, label) => one(tree, n => n.type === 'button' && text(n) === label)
 const settle = () => new Promise(resolve => setImmediate(resolve))
 function setup(t, tables) {
@@ -68,9 +70,11 @@ test('synthetic interaction: collapsed tools do no IO; block edits require expli
 })
 
 test('synthetic interaction: empty and failed block reads are distinct, retry works', async t => {
-  const tables = { weeks: new Error('synthetic') }, f = setup(t, tables)
+  const tables = { weeks: new Error('Failed to fetch synthetic-internal-id') }, f = setup(t, tables)
   f.open('Forslag til næste blok'); await settle()
   assert.ok(nodes(f.app.render(), n => n.props.role === 'alert').length > 0)
+  assert.match(text(f.app.render()), /Programgrundlaget kunne ikke hentes. Prøv igen./)
+  assert.doesNotMatch(text(f.app.render()), /Failed to fetch|synthetic-internal-id/)
   tables.weeks = []
   button(f.app.render(), 'Hent blokgrundlag igen').props.onClick(); f.app.render(); await settle()
   assert.match(text(f.app.render()), /Intet blokforslag er lavet/)
@@ -113,4 +117,81 @@ test('synthetic interaction: old comparison response is discarded after changing
   assert.match(text(f.app.render()), /Vælg to uger/)
   assert.equal(nodes(f.app.render(), n => n.type === 'table').length, 0)
   assert.deepEqual(f.writes, [])
+})
+
+test('synthetic interaction: comparison rejection uses Danish fallback, then a retry succeeds', async t => {
+  const weeks = [{ athlete_id: 'synthetic-athlete', start_date: '2020-01-06' }, { athlete_id: 'synthetic-athlete', start_date: '2020-01-13' }]
+  const tables = { weeks, exercise_logs: new Error('Failed to fetch private-diagnostic') }, f = setup(t, tables)
+  const selects = nodes(f.open('Sammenlign to uger'), n => n.type === 'select')
+  selects.forEach((select, i) => select.props.onChange({ target: { value: weeks[i].start_date } }))
+  await button(f.app.render(), 'Sammenlign').props.onClick()
+  assert.match(text(f.app.render()), /Programgrundlaget kunne ikke hentes. Prøv igen./)
+  assert.doesNotMatch(text(f.app.render()), /Failed to fetch|private-diagnostic/)
+  tables.exercise_logs = []
+  await button(f.app.render(), 'Sammenlign').props.onClick()
+  assert.equal(nodes(f.app.render(), n => n.props.role === 'alert').length, 0)
+  assert.deepEqual(f.writes, [])
+})
+
+test('synthetic interaction: incomplete week has controlled text without internal identifier requirements', async t => {
+  const f = setup(t, { weeks: [{ athlete_id: 'synthetic-athlete', start_date: '2020-01-06' }] })
+  f.open('Forslag til næste blok'); await settle()
+  assert.match(text(f.app.render()), /Programgrundlaget er ufuldstændigt og kan ikke bruges. Hent grundlaget igen./)
+  assert.doesNotMatch(text(f.app.render()), /id’er|gyldige id/)
+  assert.deepEqual(f.writes, [])
+})
+
+const sourceWeek = () => ({ id: 'synthetic-week', athlete_id: 'synthetic-athlete', week_number: 1,
+  sessions: [{ title: 'Syntetisk pas', weekday: 0, exercises: [{ name: 'Squat', sets: 2, reps: '5', intensity: 'RPE 7' }] }] })
+
+test('synthetic interaction: failed template read keeps source weeks, blocks writes and recovers to confirmed empty library', t => {
+  const week = sourceWeek(), f = setup(t, { weeks: [week] })
+  const getItem = globalThis.localStorage.getItem
+  globalThis.localStorage.getItem = () => { throw Error('synthetic storage failure') }
+  let tree = f.open('Programskabeloner')
+  assert.match(text(tree), /Skabeloner kunne ikke læses/)
+  assert.doesNotMatch(text(tree), /Ingen gemte skabeloner|Ingen uger at oprette|synthetic storage failure/)
+  assert.equal(nodes(tree, n => n.props.role === 'alert').length, 1)
+  assert.ok(nodes(tree, n => n.type === 'option').some(n => n.props.value === week.id))
+  one(tree, n => n.type === 'select').props.onChange({ target: { value: week.id } })
+  one(tree, n => n.type === 'input').props.onChange({ target: { value: 'Syntetisk navn' } })
+  assert.equal(button(f.app.render(), 'Gem som skabelon').props.disabled, true)
+  button(f.app.render(), 'Gem som skabelon').props.onClick() // defensive callback guard, even outside the DOM
+  assert.deepEqual(f.writes, [])
+  globalThis.localStorage.getItem = getItem
+  button(f.app.render(), 'Hent skabeloner igen').props.onClick(); tree = f.app.render()
+  assert.match(text(tree), /Ingen gemte skabeloner/)
+  assert.doesNotMatch(text(tree), /Skabeloner kunne ikke læses|Ingen uger at oprette/)
+  assert.equal(button(tree, 'Gem som skabelon').props.disabled, false)
+  button(tree, 'Gem som skabelon').props.onClick(); assert.equal(f.writes.length, 1)
+})
+
+test('synthetic interaction: invalid saved program never exposes an unconfirmed or stale library as empty', t => {
+  const f = setup(t, { weeks: [sourceWeek()] })
+  f.values.set('entropi2:coach-program:v1:synthetic-athlete:program', '{invalid')
+  let tree = f.open('Programskabeloner')
+  assert.match(text(tree), /Skabeloner kunne ikke læses/)
+  assert.doesNotMatch(text(tree), /Ingen gemte skabeloner|Gem programudkast lokalt/)
+  assert.equal(button(tree, 'Gem som skabelon').props.disabled, true)
+  f.values.delete('entropi2:coach-program:v1:synthetic-athlete:program')
+  button(tree, 'Hent skabeloner igen').props.onClick()
+  assert.match(text(f.app.render()), /Ingen gemte skabeloner/)
+  assert.deepEqual(f.writes, [])
+})
+
+test('synthetic actual template and preview: all weekdays, singular/plural, half RPE and null preserve data', t => {
+  const week = sourceWeek()
+  week.sessions = Array.from({ length: 7 }, (_, weekday) => ({ title: 'Syntetisk pas', weekday,
+    exercises: [{ name: 'Squat', sets: 1, reps: '1', intensity: 'RPE 7,5' },
+      { name: 'Bænkpres', sets: 1, reps: '5', intensity: '' }] }))
+  const draft = templateFromWeek(week, 'Syntetisk skabelon', 'synthetic-athlete'), before = structuredClone(draft)
+  const app = mount(Templates, { libraryState: 'ready', weeks: [week], sourceId: '', name: '', library: [draft], draft })
+  t.after(() => app.dispose())
+  const content = text(app.render())
+  for (const day of ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']) assert.ok(content.includes(day))
+  assert.match(content, /1 gentagelse · mål-RPE 7,5/)
+  assert.match(content, /Bænkpres:  5 gentagelser/)
+  assert.equal((content.match(/mål-RPE/g) || []).length, 7)
+  assert.doesNotMatch(content, /ugedag [1-7]|reps|@ RPE|7\.5/)
+  assert.deepEqual(draft, before)
 })

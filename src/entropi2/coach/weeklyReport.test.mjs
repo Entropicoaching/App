@@ -42,8 +42,9 @@ test('counts sessions once, skips omitted sets and averages latest session only'
 })
 test('actual overview renders report and inbox stays unchanged', () => {
   const p = fixture(), tree = view(p)
+  assert.equal(nodes(tree).find(n => n.type === 'time').props.dateTime, '2026-11-02')
   assert.equal(nodes(tree).filter(n => n.props?.['data-coach-weekly-report']).length, 1)
-  for (const expected of ['Pas logget: 2 af 3 planlagte', 'RPE-snit: 9,0', 'Kostdage logget: 2/7', 'Proteinmål nået: 1 af 2'])
+  for (const expected of ['02.11.2026', 'Pas logget: 2 af 3 planlagte', 'RPE-snit: 9,0', 'Kostdage logget: 2/7', 'Proteinmål nået: 1 af 2'])
     assert.ok(text(tree).includes(expected), expected)
   assert.equal(nodes(CoachView({ ...p, enabled: true, today, tab: 'inbox' })).filter(n => n.props?.['data-coach-weekly-report']).length, 0)
 })

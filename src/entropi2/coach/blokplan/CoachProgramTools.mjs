@@ -6,7 +6,7 @@ import CompareWeeksView from '../sammenlign/CompareWeeksView.mjs'
 import { createProgramTemplate } from '../../program/skabeloner/programTemplates.mjs'
 import { templateFromWeek, readTemplateLibrary } from '../../program/skabeloner/portalTemplates.mjs'
 import ProgramTemplatesView from '../../program/skabeloner/ProgramTemplatesView.mjs'
-import { readBlockBasis, readComparison, programDraftKey, saveProgramDraft } from './programData.mjs'
+import { programReadMessage, readBlockBasis, readComparison, programDraftKey, saveProgramDraft } from './programData.mjs'
 
 const control = { minHeight: 44, maxWidth: '100%', boxSizing: 'border-box' }
 const storage = () => globalThis.localStorage
@@ -22,7 +22,7 @@ export default function CoachProgramTools(props) {
 export function BlockToolContent({ result, today, edits, onChange, onSave, message }) {
   if (!result) return h('p', { role: 'status' }, 'Åbn værktøjet for at hente grundlaget.')
   if (result.state === 'loading') return h('p', { role: 'status' }, 'Henter blokgrundlag…')
-  if (result.state === 'error') return h('p', { role: 'alert' }, result.message)
+  if (result.state === 'error') return h('p', { role: 'alert' }, programReadMessage(result))
   const model = suggestBlock(result.snapshot, today, { edits })
   return h('div', null, h(BlockPlanView, { enabled: true, embedded: true, snapshot: result.snapshot, today, edits, onChange }),
     model.state !== 'unknown' && h('button', { type: 'button', style: control, disabled: model.state !== 'ready', onClick: onSave }, 'Gem blokudkast lokalt'),
@@ -33,7 +33,7 @@ export function BlockToolContent({ result, today, edits, onChange, onSave, messa
 export function CompareToolContent({ result, today }) {
   if (!result) return h('p', { role: 'status' }, 'Vælg to uger og tryk Sammenlign.')
   if (result.state === 'loading') return h('p', { role: 'status' }, 'Henter de to uger…')
-  if (result.state === 'error') return h('p', { role: 'alert' }, result.message)
+  if (result.state === 'error') return h('p', { role: 'alert' }, programReadMessage(result))
   return h(CompareWeeksView, { enabled: true, embedded: true, snapshot: result.snapshot, today })
 }
 
@@ -49,7 +49,8 @@ function Tools({ athleteId, weeks: inputWeeks, client }) {
   const [name, setName] = useState('')
   const [library, setLibrary] = useState([])
   const [draft, setDraft] = useState(null)
-  const [libraryReady, setLibraryReady] = useState(false)
+  const [libraryState, setLibraryState] = useState('idle')
+  const libraryReady = libraryState === 'ready'
   const [templateError, setTemplateError] = useState('')
   const [templateMessage, setTemplateMessage] = useState('')
   const [blockMessage, setBlockMessage] = useState('')
@@ -77,22 +78,25 @@ function Tools({ athleteId, weeks: inputWeeks, client }) {
           setEdits(saved.edits); setBlockMessage('Gemt blokudkast hentet lokalt. Gennemgå før brug.')
         } else setBlockMessage('Det gemte blokudkast har et ældre grundlag. Et nyt forslag vises.')
       } catch { setBlockError('Det lokale blokudkast kunne ikke læses. Det nye forslag er ikke gemt.') }
-    }, failure => { if (current) setBasis({ state: 'error', message: failure.message }) })
+    }, failure => { if (current) setBasis({ state: 'error', message: programReadMessage(failure) }) })
     return () => { current = false }
   }, [open.block, client, athleteId, attempt])
   const loadTemplates = () => {
-    setTemplateError(''); setTemplateMessage('')
+    setTemplateError(''); setTemplateMessage(''); setLibraryState('loading'); setDraft(null)
     try {
-      setLibrary(readTemplateLibrary(storage().getItem(programDraftKey(athleteId, 'templates')))); setLibraryReady(true)
+      const nextLibrary = readTemplateLibrary(storage().getItem(programDraftKey(athleteId, 'templates')))
       const raw = storage().getItem(programDraftKey(athleteId, 'program'))
+      let nextDraft = null
       if (raw) {
         if (raw.length > 400000) throw Error('Ugyldigt lager')
         const result = createProgramTemplate(JSON.parse(raw), { enabled: true })
         if (result.state !== 'ready') throw Error('Ugyldigt udkast')
-        setDraft(result.template); setTemplateMessage('Gemt programudkast hentet lokalt.')
+        nextDraft = result.template
       }
+      setLibrary(nextLibrary); setDraft(nextDraft); setLibraryState('ready')
+      if (nextDraft) setTemplateMessage('Gemt programudkast hentet lokalt.')
     }
-    catch { setLibraryReady(false); setTemplateError('Skabeloner kunne ikke læses. Prøv at hente dem igen. Eksisterende lager er ikke overskrevet.') }
+    catch { setLibraryState('error'); setTemplateError('Skabeloner kunne ikke læses. Prøv at hente dem igen. Eksisterende lager er ikke overskrevet.') }
   }
   const toggle = (kind, expanded) => {
     setOpen(previous => ({ ...previous, [kind]: expanded }))
@@ -113,7 +117,7 @@ function Tools({ athleteId, weeks: inputWeeks, client }) {
       const snapshot = await readComparison({ enabled: true, client, athleteId, today, first, second })
       if (live.current && generation === compareGeneration.current) setComparison({ state: 'ready', snapshot, today })
     } catch (failure) {
-      if (live.current && generation === compareGeneration.current) setComparison({ state: 'error', message: failure.message })
+      if (live.current && generation === compareGeneration.current) setComparison({ state: 'error', message: programReadMessage(failure) })
     }
   }
   const templateAction = action => {
@@ -142,7 +146,7 @@ function Tools({ athleteId, weeks: inputWeeks, client }) {
       h(CompareToolContent, { result: comparison, today: comparison?.today }))),
     details('templates', 'Programskabeloner', h('div', null,
       !libraryReady && h('button', { type: 'button', style: control, onClick: loadTemplates }, 'Hent skabeloner igen'),
-      h(ProgramTemplatesView, { weeks: libraryReady ? weeks : [], sourceId, name, library, draft, error: templateError, message: templateMessage,
+      h(ProgramTemplatesView, { weeks, libraryState, sourceId, name, library, draft, error: templateError, message: templateMessage,
         onSource: setSourceId, onName: setName,
         onCreate: () => templateAction(() => {
           if (!libraryReady || library.length >= 25) throw Error('Hent skabelonerne igen eller brug en eksisterende skabelon.')
@@ -152,12 +156,13 @@ function Tools({ athleteId, weeks: inputWeeks, client }) {
           setLibrary(next); setTemplateMessage('Skabelon gemt lokalt. Vælg Brug som udkast for at genbruge den.')
         }),
         onUse: template => templateAction(() => {
+          if (!libraryReady) throw Error('Hent skabelonerne igen eller brug en eksisterende skabelon.')
           const result = createProgramTemplate(template, { enabled: true })
           if (result.state !== 'ready') throw Error('Skabelonen er ugyldig.')
           setDraft(result.template)
         }),
         onSave: () => templateAction(() => {
-          if (!draft) throw Error('Vælg en skabelon først.')
+          if (!libraryReady || !draft) throw Error('Hent skabelonerne og vælg en skabelon først.')
           saveProgramDraft(storage(), athleteId, 'program', draft)
           setTemplateMessage('Programudkast gemt lokalt. Atletens program er uændret.')
         }) }))))
