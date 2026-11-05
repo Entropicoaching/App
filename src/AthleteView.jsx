@@ -46,6 +46,7 @@ import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from 
 import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
 import { useOwnTracking } from './entropi2/tracking/useOwnTracking.mjs'
+import { homeProgramReadSetters, retryHomeProgram } from './entropi2/home/homeProgramRead.mjs'
 
 import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'
 import Conversation from './entropi2/conversation/Conversation.mjs'
@@ -210,6 +211,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   // G1: skelner "programmet er tomt" fra "programmet kunne ikke hentes", så
   // en fejlet fetchProgram ikke viser samme skærm som en atlet uden program.
   const [programError, setProgramError] = useState(false)
+  const [homeProgramLoading, setHomeProgramLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [selectedFood, setSelectedFood] = useState(null)
@@ -481,6 +483,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
     setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setVolumeError, setWarmupTemplates, setWeeklyTonnage,
     setOfflineSnapshotAt, setUgensLogsHentet,
+    ...(e2 ? homeProgramReadSetters({ onReadError, setProgramError, setProgramLoading: setHomeProgramLoading,
+      setAllWeeks, setCurrentWeek, setOfflineSnapshotAt }) : {}),
     ...(e2 ? { setExerciseLogsStatus, exerciseLogsReadRef } : {}),
   })
   // Read the latest athlete/week without replacing the open session or its draft.
@@ -839,6 +843,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
             exerciseLogsError={exerciseLogsError} exerciseLogsLoading={exerciseLogsLoading} onRetryExerciseLogs={onRetryExerciseLogs}
             programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}
+            programLoading={homeProgramLoading} onRetryProgram={() => retryHomeProgram(() => fetchProgram(athlete.id),
+              { setProgramError, setProgramLoading: setHomeProgramLoading })}
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
             {...(e2ReadOnly ? { onLogSet: undefined, setLogInputs: undefined, storage: coachPreviewStorage } : {})}
             pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}

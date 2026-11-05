@@ -61,6 +61,18 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // E2-FEJL-HJEM1: invert the exact opt-in program-read plumbing. Keep the
+  // existing OFF SHA guards below unchanged.
+  for (const addition of [
+    "import { homeProgramReadSetters, retryHomeProgram } from './entropi2/home/homeProgramRead.mjs'\n",
+    '  const [homeProgramLoading, setHomeProgramLoading] = useState(true)\n',
+    '    ...(e2 ? homeProgramReadSetters({ onReadError, setProgramError, setProgramLoading: setHomeProgramLoading,\n      setAllWeeks, setCurrentWeek, setOfflineSnapshotAt }) : {}),\n',
+    '            programLoading={homeProgramLoading} onRetryProgram={() => retryHomeProgram(() => fetchProgram(athlete.id),\n              { setProgramError, setProgramLoading: setHomeProgramLoading })}\n',
+  ]) {
+    const delta = addition.replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(delta).length, 2, 'Exact E2 program-read delta')
+    candidate = candidate.replace(delta, '')
+  }
   // R1-E2-FEJL-ANALYSE1: invert only the exact shared read and analysis props.
   const analysisWeightDeltas = [
     [

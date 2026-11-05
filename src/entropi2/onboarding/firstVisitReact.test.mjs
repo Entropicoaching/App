@@ -35,7 +35,7 @@ test('real React: empty name/data and program failure remain honest in the actua
     const html = render(h(AthleteHome, { enabled: true, athlete: { id: 'synthetic-react' },
       now: new Date('2026-11-04T12:00:00Z'), allWeeks: [], exerciseLogs: [], programError, storage: memoryStorage() }))
     assert.match(html, /Trin 1 af 4/)
-    assert.match(html, programError ? /Programmet er ikke tilgængeligt/ : /Intet program endnu/)
+    assert.match(html, programError ? /Programmet kunne ikke hentes/ : /Intet program endnu/)
     assert.doesNotMatch(html, /Start dagens pas|af 4 pas/)
   }
 })

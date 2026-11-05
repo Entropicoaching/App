@@ -23,7 +23,7 @@ export function seed(values = {}, app = false) {
   current = app ? appURL : viewURL
   cursor = 0; states = {}; effects = []
   seeds = app ? { session, role: 'coach', loading: false, previewMode: false, ...values }
-    : { athlete: ownAthlete, loading: false, onboardingDone: true, currentWeek: week, allWeeks: [week], ...values }
+    : { athlete: ownAthlete, loading: false, homeProgramLoading: false, onboardingDone: true, currentWeek: week, allWeeks: [week], ...values }
   fixture.calls = []; fixture.bridge = null; fixture.readiness = null
 }
 export function begin() { cursor = 0; effects = [] }
@@ -67,6 +67,7 @@ export const database = { from: spy('database.from'), rpc: spy('database.rpc') }
 export async function loadViews({ realReact = false } = {}) {
   if (realReact) real = await import('react')
   const actual = new Set(['./athlete/kostValg.mjs', './athlete/enkelPrototype.mjs', './entropi2/athleteEntry.mjs',
+    './entropi2/home/homeProgramRead.mjs',
     './entropi2/profile/ProfilePage.mjs', './entropi2/conversation/Conversation.mjs', './entropi2/conversation/conversationController.mjs', './entropi2/Entropi2Kost.mjs',
     './opvarmStige.mjs', './hviledageListe.mjs', './rel1030.mjs', './release3TestFlags.mjs', './e2eTestFlags.mjs'])
   const special = new Set(['s', 'today', 'parsePlannedRpe', 'WEEKDAYS_LONG', 'useVideoCoachBro', 'useParathedUdkast'])

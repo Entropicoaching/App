@@ -66,7 +66,7 @@ for (const mode of modes) for (const tab of ['hjem', 'program']) {
   test(`partial program failure stays distinct from empty: ${mode}/${tab}`, async () => {
     const html = await renderScenario(scenario(mode, tab, 'empty', { programError: true }))
     const tree = assertCleanMarkup(html)
-    assert.match(nodeText(tree), tab === 'hjem' ? /Programmet er ikke tilgængeligt/ : /Dit program kunne ikke hentes/)
+    assert.match(nodeText(tree), tab === 'hjem' ? /Programmet kunne ikke hentes/ : /Dit program kunne ikke hentes/)
     assert.doesNotMatch(nodeText(tree), /Intet program endnu|Dit program er på vej/)
   })
 }

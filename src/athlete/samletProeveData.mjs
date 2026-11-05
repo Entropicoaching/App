@@ -24,7 +24,7 @@ export function scenario(mode, tab, state = 'ready', extra = {}) {
   const logs = [{ id: 'synthetic-log', athlete_id: athlete.id, exercise_id: 'synthetic-exercise', set_number: 1,
     logged_at: '2026-11-04T09:00:00Z', weight: 60, reps_completed: 3, rpe: 7, exercises: { name: 'Squat' } }]
   const seed = {
-    athlete, requestedTab: tab === 'profil' ? 'hjem' : tab, loading: false, loadError: false,
+    athlete, requestedTab: tab === 'profil' ? 'hjem' : tab, loading: false, loadError: false, homeProgramLoading: false,
     onboardingDone: true, rekordIndeks: null, currentWeek, allWeeks: [currentWeek],
     progOpenSession: 'synthetic-session', exerciseLogs: logs, volumeLogs: logs, fremgangLogs: logs,
     messages: [{ id: 'synthetic-message', athlete_id: athlete.id, sender_role: 'coach', content: 'Syntetisk besked fra din coach', created_at: '2026-11-04T10:00:00Z' }],

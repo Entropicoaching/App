@@ -80,7 +80,7 @@ test('samlet næste: empty, failed and OFF Home cannot invent a weekly count or 
   assert.match(text(empty), /Intet program endnu/)
   assert.doesNotMatch(empty, /data-week-sessions|data-home-record/)
   const failure = await renderScenario(scenario('athlete', 'hjem', 'ready', { programError: true }))
-  assert.match(text(failure), /Programmet er ikke tilgængeligt/)
+  assert.match(text(failure), /Programmet kunne ikke hentes/)
   assert.doesNotMatch(failure, /data-week-sessions|data-home-record/)
   const off = scenario('athlete', 'hjem'); off.props.entropi2 = false
   for (const node of elements(markupTree(await renderScenario(off))))

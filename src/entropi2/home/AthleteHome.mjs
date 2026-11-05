@@ -49,9 +49,12 @@ export default function AthleteHome(props) {
   const [tracking, setTracking] = useState(null)
   const [readAttempt, setReadAttempt] = useState(0)
   const [recordHistory, setRecordHistory] = useState(null)
+  const [programRetry, setProgramRetry] = useState(null)
+  const programAttempt = useRef(null)
   const headingRef = useRef(null)
   const latest = useRef(props)
   latest.current = props
+  useEffect(() => () => { programAttempt.current = null }, [])
   // The existing host removes write callbacks in "Se som atlet". Own coach
   // training retains them. Do not read history for a different athlete preview.
   const ownTracking = enabled === true && !props.sessionReadOnly && !!props.athlete?.id &&
@@ -107,11 +110,15 @@ export default function AthleteHome(props) {
   const name = firstName(athlete?.name)
   void tick
   const now = props.now ?? getNow()
-  const model = homeModel({ ...props, now })
+  const retryState = programRetry?.athleteId === athlete?.id ? programRetry : null
+  const programLoading = props.programLoading === true || retryState?.busy === true
+  const programError = props.programError || retryState?.failed === true
+  const programProps = { ...props, programLoading, programError, now }
+  const model = homeModel(programProps)
   const recordAt = new Date(now).getTime()
   const record = recordSnapshot && recordAt < recordSnapshot.expiresAt && recordAt >= recordSnapshot.expiresAt - 3 * 86400000
     ? recordSnapshot.record : null
-  const week = homeWeekOverview({ ...props, now })
+  const week = homeWeekOverview(programProps)
   const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
   const trackingData = ownTracking && tracking?.athleteId === athlete?.id && tracking?.today === model.today
     ? tracking : { status: 'loading' }
@@ -133,23 +140,41 @@ export default function AthleteHome(props) {
   const go = route => () => latest.current.setTab?.(route)
   const start = () => {
     const current = latest.current
+    if (programAttempt.current?.athleteId === current.athlete?.id || current.programLoading) return false
     return startHomeSession(current, model, current.getNow ? current.getNow() : current.now ?? clock())
+  }
+  const retryProgram = async () => {
+    const current = latest.current
+    if (current.enabled !== true || current.athlete?.id !== athlete?.id || current.programLoading ||
+        programAttempt.current?.athleteId === athlete?.id || typeof current.onRetryProgram !== 'function') return false
+    const attempt = { athleteId: athlete?.id }
+    programAttempt.current = attempt
+    setProgramRetry({ ...attempt, busy: true, failed: false })
+    let failed = false
+    try { await current.onRetryProgram() } catch { failed = true }
+    if (programAttempt.current === attempt) {
+      programAttempt.current = null
+      if (latest.current.enabled === true && latest.current.athlete?.id === attempt.athleteId)
+        setProgramRetry({ ...attempt, busy: false, failed })
+    }
+    return !failed
   }
   const link = (route, text) => h('button', { key: route, type: 'button', style: s.secondary,
     disabled: typeof setTab !== 'function', onClick: go(route) }, text)
   return h('main', { style: s.page, 'aria-label': 'Hjem', 'data-entropi2-home': '' },
     // Marc 3. nov.: datoen stod tre gange (topbjaelke, her og i kortet). Topbjaelken viser datoen;
     // her kun ugen, og kortet siger "I dag" eller en dansk dato.
-    (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
+    !programLoading && !programError && props.offlineSnapshotAt == null && (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
     h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (name ? `Godt arbejde i dag, ${name}` : 'Godt arbejde i dag')
       : target ? (name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?') : (name ? `Dit overblik, ${name}` : 'Dit overblik')),
     h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
       canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost }),
-    h('section', { style: s.card, 'aria-label': 'Dit næste pas' },
-      h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
-      h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
+    h('section', { style: s.card, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading },
+      !(programLoading || programError) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
+      h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'
+        : target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
       target ? h('div', null,
         model.date && h('p', { style: s.text }, model.date === model.today ? 'I dag' : danishDate(model.date)),
         !props.sessionReadOnly && h('button', { type: 'button', style: s.primary, disabled: !canStart || staleWeek, onClick: start },
@@ -159,9 +184,14 @@ export default function AthleteHome(props) {
         namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
         model.logged != null && h('p', { style: s.text }, `${model.logged} af ${model.total} sæt klaret`),
         ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)))
-        : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.'
+        : h('p', { role: programError && !programLoading ? 'alert' : 'status', style: s.text }, programLoading ? 'Indlæser dit program…'
+          : programError ? 'Programmet kunne ikke hentes. Tjek din forbindelse og prøv igen.'
+          : model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.'
           : props.offlineSnapshotAt != null ? 'Opdatér programmet, når du har net, før du registrerer et pas.'
-            : props.programError ? 'Programmet kunne ikke hentes. Prøv at genindlæse siden.' : 'Se programmet eller kontakt din coach.'),
+            : 'Se programmet eller kontakt din coach.'),
+      !programLoading && (programError || props.offlineSnapshotAt != null) && h('button', {
+        type: 'button', style: s.primary, disabled: typeof props.onRetryProgram !== 'function', onClick: retryProgram,
+      }, 'Hent igen'),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     record && h(HomeRecordCard, { record }),

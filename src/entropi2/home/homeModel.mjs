@@ -26,9 +26,10 @@ function validSession(session) {
     new Set(session.exercises.map(e => e.id)).size === session.exercises.length
 }
 
-export function homeModel({ allWeeks = [], currentWeek, exerciseLogs, now = new Date(), onHoliday = false, programError = false, offlineSnapshotAt, athlete } = {}) {
+export function homeModel({ allWeeks = [], currentWeek, exerciseLogs, now = new Date(), onHoliday = false, programError = false, programLoading = false, offlineSnapshotAt, athlete } = {}) {
   const today = calendarDay(now)
   const unavailable = kind => ({ kind, today, target: null })
+  if (programLoading) return unavailable('loading')
   if (onHoliday) return unavailable('holiday')
   if (programError || offlineSnapshotAt != null) return unavailable('missing')
   if (!today || !Array.isArray(allWeeks) || !Array.isArray(exerciseLogs)) return unavailable('missing')

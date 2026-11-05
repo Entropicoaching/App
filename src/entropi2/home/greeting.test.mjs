@@ -47,7 +47,7 @@ test('empty and failed program data retain the first-name greeting and honest st
   assert.match(empty, /Intet program endnu/)
   const failed = render({ programError: true })
   assert.equal(heading(failed), 'Dit overblik, Testfornavn')
-  assert.match(failed, /Programmet er ikke tilgængeligt/)
+  assert.match(failed, /Programmet kunne ikke hentes/)
   assert.doesNotMatch(failed, /Testefternavn|Start dagens pas/)
 })
 

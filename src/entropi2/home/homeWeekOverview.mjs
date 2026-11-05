@@ -7,7 +7,7 @@ import { weekSummary } from './weekSummary.mjs'
 // Keep Home's existing addressed-slot completion semantics.
 export function homeWeekOverview(props = {}) {
   if (props.enabled !== true) return null
-  if (props.onHoliday || props.loading || props.programError || props.offlineSnapshotAt != null ||
+  if (props.onHoliday || props.loading || props.programLoading || props.programError || props.offlineSnapshotAt != null ||
       !Array.isArray(props.allWeeks) || !Array.isArray(props.exerciseLogs)) return null
   const today = weekSessions({ now: props.now }).today
   if (!today) return null

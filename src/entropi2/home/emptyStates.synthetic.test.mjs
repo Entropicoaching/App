@@ -36,7 +36,8 @@ test('empty/error/holiday headings are calm; genuine errors and offline restrict
     assert.equal(view.nodes(n => n.type === 'h1')[0].children[0], 'Dit overblik, Testfornavn')
     assert.equal(view.nodes(n => n.type === 'button' && n.children.includes('Start dagens pas')).length, 0)
   }
-  assert.match(show(t, { programError: true }).text(), /kunne ikke hentes.*genindlæse/)
+  assert.match(show(t, { programError: true }).text(), /kunne ikke hentes.*Tjek din forbindelse/)
+  assert.ok(show(t, { programError: true, onRetryProgram() {} }).nodes(n => n.type === 'button' && n.children.includes('Hent igen')).length)
   assert.match(show(t, { offlineSnapshotAt: 'synthetic' }).text(), /Opdatér programmet.*før du registrerer/)
 })
 
