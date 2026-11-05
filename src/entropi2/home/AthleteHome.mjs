@@ -71,6 +71,10 @@ export default function AthleteHome(props) {
   const recordRead = ownRecords ? props.readHomeRecordHistory ?? readHomeRecordHistory : readHomeRecordHistory
   const recordLogs = ownRecords ? props.exerciseLogs : null
   const recordWeek = ownRecords ? props.currentWeek : null
+  const recordWeekId = recordWeek?.id ?? null
+  // homeRecordSnapshot overlays the current week's confirmed local logs on the
+  // loaded history, including edits and undo. Refetch only on scope/day changes;
+  // fresh logs and equivalent prescription objects must not reload all history.
   useEffect(() => {
     if (!recordId || !recordDay) return
     let active = true
@@ -78,7 +82,7 @@ export default function AthleteHome(props) {
       history => { if (active) setRecordHistory({ history, athleteId: recordId, reader: recordRead }) },
       () => { if (active) setRecordHistory({ history: { status: 'error' }, athleteId: recordId, reader: recordRead }) })
     return () => { active = false }
-  }, [recordId, recordDay, recordRead, recordLogs, recordWeek])
+  }, [recordId, recordDay, recordRead, recordWeekId])
   useEffect(() => {
     if (!trackingId || !trackingDay) return
     let active = true

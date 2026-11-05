@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
+import { readHomeRecordHistory } from './homeRecordRead.mjs'
 import { createHost, descendants, textContent } from '../onboarding/firstVisitTestHost.mjs'
 
 // Supplementary event/effect fixture around actual copied Home and children.
@@ -83,20 +84,20 @@ test('late reads cannot restore cards after identity/preview/day changes, local 
   assert.equal(f.view.tree, null)
 })
 
-test('rejections, partial history and foreign results stay quiet; changed confirmed logs refetch', async t => {
+test('rejections, partial history and foreign results stay quiet; confirmed edits reuse history', async t => {
   for (const readHomeRecordHistory of [async () => { throw Error('synthetic') },
     async () => ({ ...history(), complete: false }), async () => ({ ...history(), athleteId: 'synthetic-other' })]) {
     const f = show(t, { readHomeRecordHistory }); await settle(f.view); assert.equal(card(f.view), undefined)
   }
   const f = show(t); await settle(f.view)
   f.view.render({ ...f.props, exerciseLogs: [row('synthetic-squat', 150)] })
-  assert.match(textContent(card(f.view)), /150 kg/, 'current confirmed edits apply immediately during reload')
+  assert.match(textContent(card(f.view)), /150 kg/, 'current confirmed edits apply immediately without a reload')
   await settle(f.view)
-  assert.equal(f.reads.length, 2)
+  assert.equal(f.reads.length, 1)
   assert.match(textContent(card(f.view)), /150 kg/)
 })
 
-test('reloads retain a confirmed card across equivalent logs/week and date changes, then hide on failure', async t => {
+test('equivalent logs/week reuse history; calendar revalidation retains the card until a failure', async t => {
   const pending = []
   const read = () => new Promise((resolve, reject) => pending.push({ resolve, reject }))
   const f = show(t, { readHomeRecordHistory: read })
@@ -105,11 +106,10 @@ test('reloads retain a confirmed card across equivalent logs/week and date chang
   const week = { ...f.props.currentWeek }
   const next = { ...f.props, currentWeek: week, allWeeks: [week], exerciseLogs: [...f.props.exerciseLogs] }
   f.view.render(next)
-  assert.ok(card(f.view), 'first render of reload')
+  assert.ok(card(f.view), 'equivalent objects preserve the card')
   await settle(f.view)
-  assert.ok(card(f.view), 'while reload is unresolved')
-  pending.shift().resolve(history()); await settle(f.view)
-  assert.ok(card(f.view))
+  assert.ok(card(f.view), 'no asynchronous reload or blink')
+  assert.equal(pending.length, 0, 'equivalent arrays and week object do not read')
   f.view.render({ ...next, now: new Date('2026-11-06T00:00:00Z') })
   await settle(f.view); assert.ok(card(f.view), 'calendar rollover while revalidating')
   pending.shift().reject(Error('synthetic failed reload')); await settle(f.view)
@@ -148,4 +148,108 @@ test('loaded cards disappear immediately on OFF/preview, identity change, errors
     f.view.render({ ...f.props, ...extra })
     assert.equal(card(f.view), undefined)
   }
+})
+
+
+test('twelve confirmed sets reuse one paginated history read, including cloned week objects', async t => {
+  let historyReads = 0, pageReads = 0
+  const client = { from(table) {
+    assert.equal(table, 'exercise_logs')
+    const query = {
+      select() { return query },
+      eq(column, value) { assert.equal(column, 'athlete_id'); assert.equal(value, athlete.id); return query },
+      order() { return query },
+      range(from) { pageReads++; return Promise.resolve({ data: from === 0 ? history().rows : [] }) },
+    }
+    return query
+  } }
+  const f = show(t, { exerciseLogs: [], readHomeRecordHistory: scope => {
+    historyReads++
+    return readHomeRecordHistory({ ...scope, client })
+  } })
+  const exercise = { ...f.props.currentWeek.sessions[0].exercises[0], sets: 12 }
+  const week = { ...f.props.currentWeek, sessions: [{ ...f.props.currentWeek.sessions[0], exercises: [exercise] }] }
+  f.view.render({ ...f.props, currentWeek: week, allWeeks: [week] })
+  await settle(f.view)
+  assert.equal(card(f.view), undefined)
+  const logs = []
+  for (let set = 1; set <= 12; set++) {
+    logs.push({ ...row('synthetic-squat', 140), set_number: set })
+    const clone = { ...week }
+    f.view.render({ ...f.props, currentWeek: clone, allWeeks: [clone], exerciseLogs: [...logs] })
+    assert.equal(Boolean(card(f.view)), set === 12, 'completion updates synchronously with the confirmed set')
+    await settle(f.view)
+    assert.equal(Boolean(card(f.view)), set === 12)
+  }
+  t.diagnostic(`12 confirmed sets: history reads=${historyReads}; page reads=${pageReads}`)
+  assert.equal(historyReads, 1, 'sets and equivalent week objects do not fetch history')
+  assert.equal(pageReads, 2, 'one synthetic data page and its terminal empty page')
+  assert.match(textContent(card(f.view)), /140 kg/)
+})
+
+
+test('sets arriving during the initial history read use latest local confirmations without restarting it', async t => {
+  let reads = 0, resolve
+  const f = show(t, { exerciseLogs: [], readHomeRecordHistory: () => {
+    reads++
+    return new Promise(r => { resolve = r })
+  } })
+  await settle(f.view)
+  const props = { ...f.props, exerciseLogs: [row('synthetic-squat', 150)] }
+  f.view.render(props); await settle(f.view)
+  assert.equal(card(f.view), undefined, 'no celebration until baseline has loaded')
+  assert.equal(reads, 1, 'local confirmations do not cancel the initial baseline read')
+  resolve(history()); await settle(f.view)
+  assert.match(textContent(card(f.view)), /150 kg/)
+})
+
+test('pending, queued, failed, parked, edited and undone sets never need a history reload', async t => {
+  const f = show(t); await settle(f.view)
+  for (const extra of [
+    { exerciseLogs: [{ ...row('synthetic-squat', 150), pending: true }] },
+    { exerciseLogs: [{ ...row('synthetic-squat', 150), _optimistic: true }] },
+    { exerciseLogs: [row('synthetic-squat', 150)], pendingSyncKeys: ['synthetic-squat_1'] },
+    { exerciseLogs: [row('synthetic-squat', 150)], parkedSets: [{ exerciseId: 'synthetic-squat', setNumber: 1 }] },
+    { exerciseLogs: [row('synthetic-squat', 150)], exerciseLogsError: true },
+    { exerciseLogs: [row('synthetic-squat', 120)] },
+    { exerciseLogs: [] },
+  ]) {
+    f.view.render({ ...f.props, ...extra }); await settle(f.view)
+    assert.equal(card(f.view), undefined)
+    f.view.render({ ...f.props, exerciseLogs: [row('synthetic-squat', 150)] })
+    assert.match(textContent(card(f.view)), /150 kg/)
+    await settle(f.view)
+    assert.equal(f.reads.length, 1)
+  }
+})
+
+test('later sessions use confirmed local baseline even when the initial history was empty', async t => {
+  const f = show(t, { exerciseLogs: [], readHomeRecordHistory: async () => ({ ...history(), rows: [] }) })
+  const week = { ...f.props.currentWeek, sessions: [...f.props.currentWeek.sessions,
+    { id: 'synthetic-second-session', exercises: [{ id: 'synthetic-second-squat', name: 'Squat', sets: 1 }] }] }
+  const first = row('synthetic-squat', 140), second = row('synthetic-second-squat', 150, '2026-11-05T10:00:00Z')
+  await settle(f.view)
+  const props = { ...f.props, currentWeek: week, allWeeks: [week], exerciseLogs: [first] }
+  f.view.render(props); await settle(f.view)
+  assert.equal(card(f.view), undefined, 'first registration establishes only a baseline')
+  f.view.render({ ...props, exerciseLogs: [first, second] }); await settle(f.view)
+  assert.match(textContent(card(f.view)), /150 kg/)
+})
+
+test('history revalidates on a different week id or reader, and ignores replaced in-flight requests', async t => {
+  const pending = []
+  const f = show(t, { readHomeRecordHistory: () => new Promise(resolve => pending.push(resolve)) })
+  await settle(f.view)
+  const week = { ...f.props.currentWeek, id: 'synthetic-other-week' }
+  const next = { ...f.props, currentWeek: week, allWeeks: [week] }
+  f.view.render(next); await settle(f.view)
+  assert.equal(pending.length, 2, 'week id changes fetch even within the same day')
+  pending[0](history()); await settle(f.view)
+  assert.equal(card(f.view), undefined, 'replaced week request must not populate the baseline')
+  pending[1](history()); await settle(f.view)
+  assert.ok(card(f.view))
+  let readerCalls = 0
+  f.view.render({ ...next, readHomeRecordHistory: async () => { readerCalls++; return { status: 'error' } } })
+  assert.equal(card(f.view), undefined, 'different reader cannot reuse the old success')
+  await settle(f.view); assert.equal(readerCalls, 1); assert.equal(card(f.view), undefined)
 })

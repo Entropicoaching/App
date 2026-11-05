@@ -44,7 +44,7 @@ test('genuine React OFF, preview and initial Home never display stale or invente
   }
 })
 
-test('genuine ReactDOM: memoization, reload without blinking, immediate undo and failure', gate, async () => {
+test('genuine ReactDOM: sets reuse history without blinking; undo and revalidation failure remain immediate', gate, async () => {
   const priorWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
   const priorAct = Object.getOwnPropertyDescriptor(globalThis, 'IS_REACT_ACT_ENVIRONMENT')
   const doc = createDocument(), createElement = doc.createElement
@@ -70,16 +70,34 @@ test('genuine ReactDOM: memoization, reload without blinking, immediate undo and
   const cards = () => elements(host).filter(n => n.getAttribute('data-home-record') !== null)
   try {
     await show(props); assert.equal(cards().length, 1)
+    const originalCard = cards()[0]
     const count = rowReads
     await show({ ...props, now: new Date('2026-11-05T12:00:30Z'), messages: [] })
     assert.equal(rowReads, count); assert.equal(reads, 1); assert.equal(cards().length, 1)
     const changed = { ...props, exerciseLogs: [{ ...props.exerciseLogs[0], weight: 150 }] }
     await show(changed)
     assert.equal(cards().length, 1); assert.match(cards()[0].textContent, /150 kg/)
-    await act(async () => pending.shift().resolve(history)); assert.equal(cards().length, 1)
+    assert.equal(reads, 1); assert.equal(pending.length, 0)
+    assert.equal(cards()[0], originalCard, 'the existing card DOM node survives the confirmed edit')
     await show({ ...changed, exerciseLogs: [] }); assert.equal(cards().length, 0)
-    await act(async () => pending.shift().resolve(history))
-    await show(props); assert.equal(cards().length, 1)
+    assert.equal(reads, 1)
+    await show(props); assert.equal(cards().length, 1); assert.equal(reads, 1)
+    const weekClone = { ...week }
+    await show({ ...props, currentWeek: weekClone, allWeeks: [weekClone], exerciseLogs: [...props.exerciseLogs] })
+    assert.equal(reads, 1); assert.equal(cards().length, 1)
+    const longerWeek = { ...week, sessions: [{ ...week.sessions[0], exercises: [
+      { ...week.sessions[0].exercises[0], sets: 12 },
+    ] }] }
+    const logs = []
+    for (let set = 1; set <= 12; set++) {
+      logs.push({ ...props.exerciseLogs[0], set_number: set, weight: set === 12 ? 150 : 140 })
+      await show({ ...props, currentWeek: { ...longerWeek }, allWeeks: [longerWeek], exerciseLogs: [...logs] })
+      assert.equal(cards().length, set === 12 ? 1 : 0)
+      assert.equal(reads, 1, 'twelve confirmations reuse the initial history in genuine React')
+    }
+    assert.match(cards()[0].textContent, /150 kg/)
+    await show({ ...props, now: new Date('2026-11-06T00:00:00Z') })
+    assert.equal(reads, 2); assert.equal(cards().length, 1)
     await act(async () => pending.shift().reject(Error('synthetic failure'))); assert.equal(cards().length, 0)
   } finally {
     await act(async () => root.unmount())
