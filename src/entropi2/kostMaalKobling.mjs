@@ -1,5 +1,6 @@
 import { createElement as h, useEffect, useState } from 'react'
 import KostMaal from './kostMaal/KostMaal.mjs'
+import PortalPlan from './kostplan/coach/PortalPlan.mjs'
 
 // Entropi 2 (APP-KOST-MAAL1): coachens kostfane. Kostmål og vægtgrundlag vises med pakken
 // KostMaal; redigering og gem går gennem Dashboardets eksisterende startEdit('setup', ...) og
@@ -53,7 +54,8 @@ export default function CoachKostMaal(props = {}) {
   const weight = kostMaalVaegt(weightStatus, athlete?.id)
   if (weight.state === 'error') return h('p', { role: 'alert' }, 'Vægtgrundlaget kunne ikke hentes. Prøv igen ved at åbne kostfanen.')
   if (weight.state !== 'ready') return h('p', { role: 'status' }, 'Indlæser vægtgrundlag…')
-  return h(KostMaal, { key: athlete.id, enabled: true, athlete, weightLogs: weight.rows, today,
+  return h('div', null, h(KostMaal, { key: athlete.id, enabled: true, athlete, weightLogs: weight.rows, today,
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
-    session, loading, loadError, coachNutrition, readContext })
+    session, loading, loadError, coachNutrition, readContext }),
+    h(PortalPlan, { enabled: true, athlete, today, session }))
 }

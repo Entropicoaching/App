@@ -1,5 +1,5 @@
 import { NAMESPACE, CONTEXT_LABELS, GOALS, INTENSITIES, identifier, day, number, copy, freeze,
-  catalogFoods, targets, nutritionProposal, totals, generateMeals, historyReceipt } from './model.mjs'
+  catalogFoods, targets, nutritionProposal, totals, generateMeals, historyReceipt, normalizePlan } from './model.mjs'
 
 // All side effects are explicit coach actions through the two supplied functions.
 // The adapter owns authorization, atomic activation and optimistic concurrency.
@@ -21,15 +21,30 @@ export function createCoachPlan(options = {}) {
       ? basis.context[key].trim() : null]))
   const history = historyReceipt(options.history, athleteId)
   const saveDraft = options.saveDraft, activatePlan = options.activatePlan
-  const form = { goal: 'maintain', intensity: 10,
+  let form = { goal: Object.hasOwn(GOALS, options.goal) ? options.goal : 'maintain', intensity: 10,
     maintenanceKcal: number(basis.maintenanceKcal) ?? '', protein: number(basis.protein) ?? '', fat: number(basis.fat) ?? '' }
   const athleteName = typeof options.athlete.name === 'string' && options.athlete.name.trim()
     && options.athlete.name.length <= 160 ? options.athlete.name.trim() : 'Valgt atlet'
-  let state = { athleteId, athleteName, date, foods, form, context, history, meals: [], planTargets: null,
+  const localDraftOnly = options.localDraftOnly === true
+  const restored = localDraftOnly ? options.restoreDraft : null
+  const restoredPlan = restored && normalizePlan(restored.plan, athleteId)
+  if (restored && (!restoredPlan || restoredPlan.status !== 'draft' || restoredPlan.date !== date
+    || !Number.isSafeInteger(restored.clientVersion) || restored.clientVersion < 0
+    || !restored.form || restored.form.goal !== restoredPlan.goal || restored.form.intensity !== restoredPlan.intensity
+    || JSON.stringify(targets(restored.form)) !== JSON.stringify(restoredPlan.targets)))
+    throw new TypeError('Den lokale kladde er ugyldig.')
+  if (restoredPlan) form = copy(restored.form)
+  let state = { localDraftOnly, athleteId, athleteName, date, foods, form, context, history, meals: [], planTargets: null,
     version: 0, saved: null, busy: null, error: null, message: null,
     calculated: calculation !== undefined,
     canSaveAdapter: typeof saveDraft === 'function', canActivateAdapter: typeof activatePlan === 'function' }
   let draftBase = null
+  if (restoredPlan) {
+    draftBase = { planId: restoredPlan.id, revision: restoredPlan.revision }
+    state = { ...state, form, meals: restoredPlan.meals, planTargets: restoredPlan.targets,
+      version: restored.clientVersion, saved: { ...draftBase, status: 'draft', clientVersion: restored.clientVersion },
+      message: 'Lokal kladde indlæst. Aktivering kræver Marcs migration.' }
+  }
   const listeners = new Set()
   let snapshot
   const publish = patch => {
@@ -54,7 +69,7 @@ export function createCoachPlan(options = {}) {
       && receipt.date === date && receipt.clientVersion === request.clientVersion && receipt.status === status
       && identifier(receipt.planId) && identifier(receipt.revision)
   }
-  return Object.freeze({
+  const controller = Object.freeze({
     snapshot: () => snapshot,
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener) },
     set(field, value) {
@@ -105,7 +120,8 @@ export function createCoachPlan(options = {}) {
         draftBase = { planId: receipt.planId, revision: receipt.revision }
         const saved = { ...draftBase, clientVersion: request.clientVersion, status: 'draft' }
         const record = { ...plan, id: saved.planId, revision: saved.revision, status: 'draft' }
-        publish({ busy: null, saved, message: 'Kladde gemt. Atleten ser den først efter aktivering.',
+        publish({ busy: null, saved, message: localDraftOnly ? 'Gemt som kladde; aktivering kræver Marcs migration'
+          : 'Kladde gemt. Atleten ser den først efter aktivering.',
           history: { ...state.history, plans: [record, ...state.history.plans.filter(row => row.id !== record.id)] } })
         return true
       } catch {
@@ -114,6 +130,7 @@ export function createCoachPlan(options = {}) {
       }
     },
     async activate() {
+      if (localDraftOnly) return controller.save()
       if (state.busy) return false
       const saved = state.saved
       if (!saved || saved.status !== 'draft' || saved.clientVersion !== state.version || !validCurrent()) {
@@ -139,4 +156,5 @@ export function createCoachPlan(options = {}) {
       }
     },
   })
+  return controller
 }

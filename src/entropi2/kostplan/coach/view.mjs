@@ -20,12 +20,12 @@ export function coachPlanView(h, snapshot, actions) {
       onChange: event => handler(event.currentTarget.value) }))
   return h('section', { className: 'e2-coach-plan', 'aria-label': 'Coachens kostplan', 'aria-busy': busy,
     style: { maxWidth: '46rem', width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', padding: '1rem' } },
-  h('h2', null, 'Kostplan'),
+  h(s.localDraftOnly ? 'h3' : 'h2', null, s.localDraftOnly ? 'Dagsplan' : 'Kostplan'),
   h('p', null, `${s.athleteName} · ${s.date}`),
-  h('p', null, active ? 'Atleten har en aktiv dagsplan. Dine rettelser bliver først synlige efter ny aktivering.'
+  h('p', null, s.localDraftOnly ? 'Kun kladde på denne enhed. Atleten ser den ikke. Aktivering kræver Marcs migration.' : active ? 'Atleten har en aktiv dagsplan. Dine rettelser bliver først synlige efter ny aktivering.'
     : s.history.state === 'ready' ? 'Ingen aktiv dagsplan for denne dato. Atleten kan bruge kcal-trackeren.'
       : 'Status for atletens aktive dagsplan er endnu ikke tilgængelig.'),
-  h('form', { onSubmit: event => { event.preventDefault(); actions.generate() } },
+  h('form', { onSubmit: event => { event.preventDefault(); if (!s.localDraftOnly || s.meals.length) actions.generate() } },
     h('fieldset', { disabled: busy, style: { minWidth: 0, margin: 0, padding: '0.75rem' } },
       h('legend', null, 'Dagens mål'),
       h('div', { style: grid },
@@ -42,7 +42,7 @@ export function coachPlanView(h, snapshot, actions) {
       h('p', null, s.calculated
         ? 'Forslaget bruger atletens beregningsgrundlag. Træning, dagsform og modellens gulve kan ændre procentmålet. Coachen skal gennemgå og aktivere planen.'
         : 'Bulk lægger den valgte procent til, cut trækker den fra. Vedligehold bruger 0 %. Kulhydrat udfylder resten af energimålet.'),
-      h('button', { type: 'submit', style: button }, s.meals.length ? 'Generér ny dagsplan' : 'Generér dagsplan'))),
+      (!s.localDraftOnly || s.meals.length > 0) && h('button', { type: 'submit', style: button }, s.meals.length ? 'Generér ny dagsplan' : 'Generér dagsplan'))),
   s.suggestion && !s.planTargets && h('p', null, `Forslag til dagens mål: ${macroText(s.suggestion)}`),
   h('details', null,
     h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Grundlag og tidligere erfaringer'),
@@ -82,12 +82,12 @@ export function coachPlanView(h, snapshot, actions) {
     h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '0.75rem' } },
       h('button', { type: 'button', style: button, disabled: busy || !s.canSaveAdapter || !s.planTargets || !s.totals
         || s.saved?.status === 'active' && !s.dirty, onClick: () => actions.save() }, 'Gem som kladde'),
-      h('button', { type: 'button', style: button, disabled: busy || !s.canActivateAdapter || !s.saved
-        || s.saved.status !== 'draft' || s.dirty || !s.planTargets || !s.totals,
-      onClick: () => actions.activate() }, 'Aktivér for atleten')),
+      h('button', { type: 'button', style: button, disabled: s.localDraftOnly ? busy || !s.canSaveAdapter || !s.planTargets || !s.totals
+        : busy || !s.canActivateAdapter || !s.saved || s.saved.status !== 'draft' || s.dirty || !s.planTargets || !s.totals,
+        onClick: () => actions.activate() }, s.localDraftOnly ? 'Gem som klar til aktivering' : 'Aktivér for atleten')),
     !s.canSaveAdapter && h('p', null, 'Gemning er ikke tilgængelig. Kladden er kun på skærmen.'),
-    !s.canActivateAdapter && h('p', null, 'Aktivering er ikke tilgængelig.')),
-  h('details', null,
+    !s.localDraftOnly && !s.canActivateAdapter && h('p', null, 'Aktivering er ikke tilgængelig.')),
+  !s.localDraftOnly && h('details', null,
     h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Tidligere planer og atletens respons'),
     s.history.state !== 'ready' && h('p', { role: s.history.state === 'error' ? 'alert' : 'status' },
       s.history.state === 'error' ? 'Tidligere planer og respons kunne ikke hentes. Oversigten kan være ufuldstændig.' : 'Tidligere planer og respons er endnu ikke indlæst.'),

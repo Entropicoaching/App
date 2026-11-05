@@ -8,7 +8,7 @@ const fixture = new URL('./kostMaal/reactFixture.mjs', import.meta.url).href
 const hooks = registerHooks({ resolve(specifier, context, next) {
   if (specifier === 'react' && context.parentURL?.endsWith('/kostMaalKobling.mjs'))
     return { url: 'data:text/javascript,' + encodeURIComponent(`export { createElement, useState } from '${fixture}'; export const useEffect = () => { throw Error('Unexpected effect') }`), shortCircuit: true }
-  if (specifier === 'react' && context.parentURL?.endsWith('/kostMaal/KostMaal.mjs'))
+  if (specifier === 'react' && (context.parentURL?.endsWith('/kostMaal/KostMaal.mjs') || context.parentURL?.endsWith('/kostplan/coach/PortalPlan.mjs') || context.parentURL?.endsWith('/kostplan/justering/KostJustering.mjs')))
     return { url: fixture, shortCircuit: true }
   return next(specifier, context)
 } })
@@ -74,7 +74,10 @@ test('K-R5: Dashboard forwards original receipt, context, session and read statu
 
 test('K-R5: adapter forwards the original receipt and context by identity', () => {
   const p = nutritionFixture()
-  const element = CoachKostMaal({ enabled: true, athlete, weightStatus: ready, today, ...p })
+  const tree = CoachKostMaal({ enabled: true, athlete, weightStatus: ready, today, ...p })
+  const matches = nodes(tree, node => node.type?.name === 'KostMaal')
+  assert.equal(matches.length, 1)
+  const element = matches[0]
   for (const key of ['session', 'loading', 'loadError', 'coachNutrition', 'readContext'])
     assert.equal(element.props[key], p[key], key)
 })
