@@ -14,11 +14,11 @@ export default function Volume(props = {}) {
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, margin: '0 0 12px' } }, 'Din volumen'),
   model.state !== 'ready'
     ? h('p', { role: model.state === 'error' ? 'alert' : 'status', style: text }, model.message)
+    : model.empty ? h('p', { role: 'status', style: text }, 'Du har ikke gennemført sæt i disse to uger endnu. Når du logger, vises din volumen her.')
     : h('div', null,
       h('p', { style: text }, 'Sæt pr. muskelgruppe'),
       h('p', { style: text }, `Denne uge: ${weekLabel(model.current.uge)}. Sidste uge: ${weekLabel(model.previous.uge)}.`),
       h('p', { style: text }, 'Denne uge er stadig i gang.'),
-      model.empty && h('p', { role: 'status', style: text }, 'Du har ikke gennemført sæt i disse to uger endnu. Når du logger, vises din volumen her.'),
       model.rows.length > 0 && h('table', { style: { width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', fontSize: 16 } },
         h('caption', { style: { textAlign: 'left', padding: '8px 0', ...text } }, 'Gennemførte sæt · vægtet'),
         h('thead', null, h('tr', null,

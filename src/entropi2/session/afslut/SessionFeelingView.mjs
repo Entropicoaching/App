@@ -1,11 +1,11 @@
 import { createElement as h } from 'react'
-import { sessionFeeling, SESSION_NOTE_LIMIT, ENERGY_LEVELS } from './sessionFeelingModel.mjs'
+import { sessionFeeling, SESSION_NOTE_LIMIT, ENERGY_LEVELS, SESSION_FEELING_WRITABLE } from './sessionFeelingModel.mjs'
 
 // Unwired controlled view. Caller owns one value per athlete/plan/session scope.
 // onChange(scope, draft) and onComplete(scope, value) only deliver local values.
 // Caller must clear/replace value on identity change and disable after completion.
 export default function SessionFeeling(props = {}) {
-  if (props.enabled !== true) return null
+  if (props.enabled !== true || !SESSION_FEELING_WRITABLE) return null
   const { scope, value, onChange, onComplete, disabled = false } = props
   if (typeof scope !== 'string' || !scope.trim()) return null
   const draft = value && typeof value === 'object' && !Array.isArray(value) ? value : {}

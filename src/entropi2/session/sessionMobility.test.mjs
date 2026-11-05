@@ -70,13 +70,13 @@ test('later sets, later lifts, resume and summary do not repeat daily mobility',
   assert.equal(t.timers.size, 0)
 })
 
-test('unsupported lifts and malformed plan show honest empty/error, preserving the ramp and set form', () => {
+test('unsupported mobility is hidden and malformed plan keeps an actionable error and the ramp', () => {
   for (const [names, role, text] of [[['Row'], 'status', /Ingen rutine klar/], [['Squat', ''], 'alert', /Rutinen kunne ikke laves/]]) {
     const t = setup(names)
     try {
-      const mobility = t.root.querySelector('[data-session-mobility]')
-      assert.match(mobility.querySelector(`[role="${role}"]`).textContent, text)
-      assert.equal(mobility.querySelector('ol'), null)
+      assert.equal(t.root.querySelector('[data-session-mobility]'), null)
+      if (role === 'alert') assert.match(warmup(t.root).textContent, /Bed din coach kontrollere planen/)
+      else assert.doesNotMatch(warmup(t.root).textContent, text)
       assert.match(warmup(t.root).textContent, /32,5 kg × 5/)
       assert.ok(t.root.querySelector('form'))
       assert.equal(t.calls, 0)

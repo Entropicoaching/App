@@ -27,6 +27,7 @@ function Curve(h, { points }) {
 export function exerciseHistoryContent(h, props = {}) {
   if (props.enabled !== true) return null
   const model = exerciseHistory(props)
+  if (model.status === 'empty') return null
   return h('section', { 'aria-label': 'Øvelseshistorik', 'data-e2-exercise-history': '',
     style: { minWidth: 0, maxWidth: '100%', padding: 16, borderRadius: 12,
       color: '#f5f5ee', background: '#1c1c18', overflowWrap: 'anywhere', boxSizing: 'border-box' } },
@@ -34,13 +35,12 @@ export function exerciseHistoryContent(h, props = {}) {
     h('p', null, typeof props.exerciseName === 'string' ? props.exerciseName : 'Øvelse'),
     model.status === 'loading' ? h('p', { role: 'status' }, 'Historikken hentes…') :
     model.status === 'error' ? h('p', { role: 'alert' }, model.message) :
-    model.status === 'empty' ? h('p', null, 'Ingen bekræftede tunge sæt at vise for denne øvelse endnu.') :
     h('div', { style: { display: 'grid', gap: 16 } },
       h('div', null, h('h3', null, 'Seneste tunge sæt'),
         h('ol', { style: { margin: 0, paddingLeft: 24 } }, ...model.sets.map((s, i) =>
           h('li', { key: i, style: { paddingBlock: 6, lineHeight: 1.5 } },
             h('time', { dateTime: s.day }, s.date), ' · ',
-            `${n(s.weight)} kg × ${s.reps} @ ${s.rpe == null ? 'RPE ikke angivet' : `RPE ${n(s.rpe)}`}`)))),
+            `${n(s.weight)} kg × ${s.reps}${s.rpe == null ? '' : ` @ RPE ${n(s.rpe)}`}`)))),
       Curve(h, { points: model.curve }),
       h('details', null, h('summary', { style: { minHeight: 44, paddingBlock: 10, boxSizing: 'border-box', cursor: 'pointer' } }, 'Om historikken'),
         h('p', null, 'Op til otte seneste bekræftede sæt, nyeste først. Tunge sæt har 1–8 reps; lette sæt og deload er udeladt. Kun denne øvelses id vises.'),

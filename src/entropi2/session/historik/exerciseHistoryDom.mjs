@@ -1,4 +1,5 @@
 import { exerciseHistoryContent } from './exerciseHistoryContent.mjs'
+import { exerciseHistory } from './exerciseHistory.mjs'
 
 const svgTags = new Set(['svg', 'line', 'text', 'polyline', 'circle'])
 export function sessionHistoryProps(p, ex, now) {
@@ -25,6 +26,8 @@ export function historyElement(doc, tag, attrs, ...children) {
 }
 
 export function mountExerciseHistory(root, { detail, previous, read, active, open = false, aboutOpen = false }) {
+  // No empty optional fold; errors/loading remain reachable and replace stale data.
+  if (exerciseHistory(read()).status === 'empty') return () => {}
   const doc = root.ownerDocument, fold = doc.createElement('details'), summary = doc.createElement('summary')
   fold.setAttribute('data-detail', detail)
   fold.setAttribute('data-exercise-history-fold', '')
@@ -38,6 +41,7 @@ export function mountExerciseHistory(root, { detail, previous, read, active, ope
     content?.remove(); content = null
     if (!fold.open || !active()) return
     content = exerciseHistoryContent((...args) => historyElement(doc, ...args), read())
+    if (!content) { fold.remove(); return }
     const about = content.querySelector('details')
     if (about) { about.setAttribute('data-detail', `${detail}-about`); about.open = aboutOpen }
     fold.append(content)

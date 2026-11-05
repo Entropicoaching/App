@@ -25,7 +25,7 @@ test('actual React renders set, date, estimate and collapsed explanation', () =>
 
 test('actual React renders honest empty and error, never stale sets on error', () => {
   const empty = render()
-  assert.match(empty, /Ingen bekræftede tunge sæt/)
+  assert.equal(empty, '')
   assert.doesNotMatch(empty, /<svg|<ol|role="alert"/)
   const error = render({ error: new Error('PRIVATE RAW ERROR'), logs: [row()] })
   assert.match(error, /role="alert"/)
@@ -38,7 +38,8 @@ test('OFF exits before inputs; single day and missing RPE stay honest', () => {
   assert.equal(ExerciseHistoryView({ enabled: false, get logs() { assert.fail('OFF read') } }), null)
   assert.equal(renderToStaticMarkup(h(ExerciseHistoryView, { enabled: false })), '')
   const html = render({ logs: [row({ rpe_actual: null })] })
-  assert.match(html, /RPE ikke angivet/)
+  assert.doesNotMatch(html, /RPE ikke angivet|@ RPE/)
+  assert.match(html, /80 kg × 5/)
   assert.match(html, /Én træningsdag endnu/)
   assert.doesNotMatch(html, /<polyline/)
   assert.equal((html.match(/<circle /g) || []).length, 1)
@@ -51,7 +52,7 @@ test('safe text, eight-set cap and per-render identity isolation', () => {
   assert.equal((html.match(/<li /g) || []).length, 8)
   assert.match(html, /&lt;img/); assert.doesNotMatch(html, /<img/)
   const changed = render({ athleteId: 'synthetic-b', logs })
-  assert.match(changed, /Ingen bekræftede/); assert.doesNotMatch(changed, /80 kg/)
+  assert.equal(changed, '')
 })
 
 test('invalid rows disclose omissions; constant curve has finite geometry', () => {

@@ -15,7 +15,7 @@ const render = extra => renderToStaticMarkup(h(ExerciseHistoryView,
 test('session adapter renders actual React history, empty, error and loading', () => {
   assert.match(render({ exerciseLogs: [row] }), /80 kg × 5 @ RPE 8/)
   assert.match(render({ exerciseLogs: [row] }), /Estimeret 1RM/)
-  assert.match(render(), /Ingen bekræftede tunge sæt/)
+  assert.equal(render(), '')
   const error = render({ exerciseLogs: [row], exerciseLogsError: Error('RAW ERROR') })
   assert.match(error, /role="alert"/); assert.doesNotMatch(error, /80 kg|RAW ERROR|<svg/)
   const loading = render({ exerciseLogs: [row], exerciseLogsLoading: true })
@@ -26,6 +26,6 @@ test('session adapter forwards exact identity, pending and parked protection to 
   for (const extra of [{ athleteId: 'synthetic-b' }, { pendingSyncKeys: ['lift_20'] },
     { parkedSets: [{ exerciseId: 'lift', setNumber: 20 }] }]) {
     const html = render({ exerciseLogs: [row], ...extra })
-    assert.match(html, /Ingen bekræftede/); assert.doesNotMatch(html, /80 kg|<svg/)
+    assert.equal(html, '')
   }
 })

@@ -34,9 +34,9 @@ function markers(name) {
  * Without it, only an explicit, unambiguous seven-day date span locates today.
  * Test/deload markers come only from block_name; no inferred training advice.
  */
-export function buildBlockOverview({ enabled = DEFAULT_BLOCK_OVERVIEW, weeks = [],
-  currentWeekId, today = new Date() } = {}) {
-  if (enabled !== true) return null
+export function buildBlockOverview(options = {}) {
+  if (options.enabled !== true) return null
+  const { weeks = [], currentWeekId, today = new Date() } = options
   if (!Array.isArray(weeks)) return unknown('Programdata er ikke tilgængelige.')
   if (!weeks.length) return { state: 'empty', message: 'Din blok er ikke planlagt endnu.', weeks: [], next: null }
   const owners = new Set(weeks.filter(Boolean).map(w => w.athlete_id).filter(id => id != null))

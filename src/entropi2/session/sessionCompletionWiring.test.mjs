@@ -23,104 +23,35 @@ function setup(notes = ['', '']) {
   return { root, view, p, exercises, timers, approve, get calls() { return calls } }
 }
 const feeling = root => root.querySelector('[data-e2-session-feeling]')
-const field = (root, name) => root.querySelector(`[data-field="feeling-${name}"]`)
-function change(root, name, value) {
-  const n = field(root, name); n.value = value; n.dispatch(name === 'note' ? 'input' : 'change')
-}
 
-test('final confirmed set reveals optional local feeling after summary, without another write', async () => {
+test('confirmed completion keeps summary and hides rating without a persistence route', async () => {
   const t = setup()
   try {
+    await t.approve(); await t.approve()
+    assert.ok(t.root.querySelector('[data-session-summary]'))
     assert.equal(feeling(t.root), null)
-    button(t.root, 'Afslut pas').click(); assert.equal(feeling(t.root), null)
-    button(t.root, 'Fortsæt passet').click()
-    await t.approve(); assert.equal(feeling(t.root), null)
-    await t.approve()
-    assert.ok(feeling(t.root))
-    assert.match(feeling(t.root).textContent, /Lokal kladde.*kan ikke gemmes/)
-    assert.match(feeling(t.root).textContent, /sendes ikke til din coach/)
-    const summary = t.root.querySelector('[data-session-summary]'), box = feeling(t.root)
-    assert.ok(box.parentElement.children.indexOf(box) > box.parentElement.children.indexOf(summary))
-    assert.equal(box.querySelector('form'), null)
-    assert.equal(box.querySelector('button'), null)
-    assert.equal(box.querySelector('details').open, false)
-    assert.equal(box.querySelectorAll('label').length, 3)
-    assert.equal(field(t.root, 'note').getAttribute('maxlength'), '280')
-    assert.equal(field(t.root, 'rpe').querySelectorAll('option').length, 22)
-    assert.equal(field(t.root, 'energy').querySelectorAll('option').length, 6)
-    change(t.root, 'rpe', '0'); change(t.root, 'energy', '1'); change(t.root, 'note', '<b>Kun tekst</b>')
-    assert.match(feeling(t.root).textContent, /Kladde udfyldt. Den er ikke gemt/)
-    assert.equal(t.root.querySelector('b'), null)
-    field(t.root, 'energy').focus(); t.view.update()
-    assert.equal(t.root.ownerDocument.activeElement, field(t.root, 'energy'))
-    assert.equal(field(t.root, 'rpe').value, '0')
-    assert.equal(field(t.root, 'note').value, '<b>Kun tekst</b>')
-    const scope = t.view.controller.state().feeling.scope
-    button(t.root, 'Luk pas').click()
-    assert.equal(t.view.controller.editFeeling(scope, { note: 'closed' }), false)
-    button(t.root, 'Åbn dagens pas').click()
-    assert.equal(field(t.root, 'note').value, '<b>Kun tekst</b>')
+    assert.doesNotMatch(t.root.textContent, /Hvordan var passet|Lokal kladde|Kladde udfyldt/)
+    assert.equal(t.calls, 2)
+    button(t.root, 'Luk pas').click(); button(t.root, 'Åbn dagens pas').click()
+    assert.equal(feeling(t.root), null)
     assert.equal(t.calls, 2)
   } finally { t.view.dispose() }
   assert.equal(t.timers.size, 0)
 })
 
-test('empty, invalid and cleared feeling remains optional; failed set save cannot unlock it', async () => {
+test('manual finish, failed save and skipped rows never reveal the unsaved rating', async () => {
   const t = setup([''])
   try {
+    button(t.root, 'Afslut pas').click(); assert.equal(feeling(t.root), null)
+    button(t.root, 'Fortsæt passet').click()
     t.p.onLogSet = () => { throw new Error('synthetic failure') }
-    assert.equal(await t.approve(), false); assert.equal(feeling(t.root), null)
-    t.p.exerciseLogs = [{ exercise_id: 'ex-0', set_number: 1 }]; t.view.update()
-    assert.ok(feeling(t.root))
-    assert.equal(feeling(t.root).querySelector('[role="alert"]').textContent, '')
-    change(t.root, 'rpe', '11')
-    assert.match(feeling(t.root).querySelector('[role="alert"]').textContent, /Brug RPE/)
-    change(t.root, 'rpe', '8'); change(t.root, 'energy', '3'); change(t.root, 'note', 'x'.repeat(281))
-    assert.match(feeling(t.root).querySelector('[role="alert"]').textContent, /280 tegn/)
-    change(t.root, 'note', ''); change(t.root, 'rpe', '')
-    assert.equal(feeling(t.root).querySelector('[role="alert"]').textContent, '')
-    assert.match(feeling(t.root).textContent, /springe vurderingen over/)
+    assert.equal(await t.approve(), false)
+    assert.equal(feeling(t.root), null)
+    t.p.exerciseLogs = [{ exercise_id: 'ex-0', set_number: 1, skipped: true }]
+    t.view.update(); assert.equal(feeling(t.root), null)
+    assert.ok(t.root.querySelector('[data-session-summary]'))
   } finally { t.view.dispose() }
-})
-
-test('saving, optimistic, queued, parked and all-skipped rows do not unlock completion', async () => {
-  for (const phase of ['saving', 'optimistic', 'queued', 'parked', 'skipped']) {
-    const t = setup([''])
-    let settle, pending
-    try {
-      if (phase === 'saving') {
-        t.p.onLogSet = () => new Promise(resolve => { settle = resolve })
-        pending = t.approve()
-      }
-      t.p.exerciseLogs = [{ exercise_id: 'ex-0', set_number: 1,
-        ...(phase === 'optimistic' ? { _optimistic: true } : {}), ...(phase === 'skipped' ? { skipped: true } : {}) }]
-      if (phase === 'queued') t.p.pendingSyncKeys = ['ex-0_1']
-      if (phase === 'parked') t.p.parkedSets = [{ exerciseId: 'ex-0', setNumber: 1 }]
-      t.view.update(); assert.equal(feeling(t.root), null, phase)
-      if (settle) { settle(); await pending; assert.ok(feeling(t.root)) }
-    } finally { if (settle) { settle(); await pending }; t.view.dispose() }
-  }
-})
-
-test('draft isolation and stale handlers across rerender, plan, athlete, OFF and disposal', async () => {
-  const t = setup([''])
-  try {
-    await t.approve(); change(t.root, 'note', 'local')
-    const stale = field(t.root, 'note'), scope = t.view.controller.state().feeling.scope
-    t.view.update(); stale.value = 'stale'; stale.dispatch('input')
-    assert.equal(t.view.controller.state().feeling.draft.note, 'local')
-    t.exercises[0].note = 'Ny plan'; t.view.update()
-    assert.equal(t.root.querySelector('dialog'), null)
-    assert.equal(t.view.controller.editFeeling(scope, { note: 'stale' }), false)
-    t.p.exerciseLogs = []; t.view.controller.start(); await t.approve()
-    assert.equal(field(t.root, 'note').value, '')
-    change(t.root, 'note', 'new')
-    t.p.athleteId = 'other'; t.p.currentWeek.athlete_id = 'other'; t.view.update()
-    t.p.exerciseLogs = []; t.view.controller.start(); assert.equal(feeling(t.root), null)
-    await t.approve(); assert.equal(field(t.root, 'note').value, '')
-    t.p.enabled = false; t.view.update(); assert.equal(t.root.hidden, true)
-    assert.equal(t.root.querySelector('dialog'), null); assert.equal(t.timers.size, 0)
-  } finally { t.view.dispose() }
+  assert.equal(t.timers.size, 0)
 })
 
 test('superset/circuit membership is simple, conditional, read-only and folded in history', () => {
@@ -143,8 +74,10 @@ test('superset/circuit membership is simple, conditional, read-only and folded i
   for (const notes of [['', ''], ['Supersæt: A', ''], ['Supersæt: ???', 'Supersæt: A']]) {
     const t = setup(notes)
     try {
-      assert.equal(t.root.querySelector('[data-e2-supersaet]'), null)
-      if (notes[0]) assert.match(t.root.querySelector('[data-detail="history"]').textContent, /Gruppering:/)
+      if (notes[0]) {
+        assert.match(t.root.querySelector('[data-e2-supersaet]').textContent, /bed din coach rette gruppen/)
+        assert.doesNotMatch(t.root.querySelector('[data-detail="history"]').textContent, /Gruppering:/)
+      } else assert.equal(t.root.querySelector('[data-e2-supersaet]'), null)
     } finally { t.view.dispose() }
   }
 })

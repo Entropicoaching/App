@@ -30,3 +30,6 @@ export function sessionFeeling(input) {
   const invalid = (!missing(draft.rpe) && !!errors.rpe) || (!missing(draft.energy) && !!errors.energy) || !!errors.note
   return { status: invalid ? 'invalid' : Object.keys(errors).length ? 'incomplete' : 'ready', value, errors }
 }
+// No existing persistence route for a session rating in the pinned source.
+// Keep both UI variants hidden until a separate integration supplies one.
+export const SESSION_FEELING_WRITABLE = false

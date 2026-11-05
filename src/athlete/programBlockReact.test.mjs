@@ -28,7 +28,8 @@ test('real React view preserves weekly volume, zero and repeated numbers, and cu
   assert.doesNotMatch(text(BlockOverview(options({ currentWeekId: 'react-2' }))), /Næste test eller deload/)
 })
 test('real React view keeps empty, unknown and OFF states honest', () => {
-  assert.match(text(BlockOverview(options({ weeks: [] }))), /ikke planlagt endnu/)
+  // An empty optional overview is omitted; unknown program evidence still gets a status.
+  assert.equal(BlockOverview(options({ weeks: [] })), null)
   const failed = BlockOverview(options({ currentWeekId: 'missing' }))
   assert.doesNotMatch(text(failed), /Uge \d+ af|planlagte sæt/)
   assert.equal(nodes(failed).filter(n => n.props.role === 'status').length, 1)

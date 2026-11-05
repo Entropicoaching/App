@@ -46,9 +46,8 @@ test('Sidst is a native, initially closed fold; shows eight sets and calendar e1
   } finally { t.dispose() }
 })
 
-test('empty, load error and loading are honest and never reveal stale sets or raw errors', () => {
-  for (const [extra, expected] of [[{}, /Ingen bekræftede tunge sæt/],
-    [{ exerciseLogs: [row()], exerciseLogsError: new Error('RAW SECRET') }, /Historikken kunne ikke vises/],
+test('load error and loading are honest and never reveal stale sets or raw errors', () => {
+  for (const [extra, expected] of [[{ exerciseLogs: [row()], exerciseLogsError: new Error('RAW SECRET') }, /Historikken kunne ikke vises/],
     [{ exerciseLogs: [row()], exerciseLogsLoading: true }, /Historikken hentes/]]) {
     const t = setup(extra)
     try {
@@ -89,7 +88,7 @@ test('refresh keeps open fold, explanation and focus; changed data/error replace
     assert.match(fold(t).textContent, /Historikken kunne ikke vises/)
     assert.equal(fold(t).querySelector('ol'), null)
     t.p.exerciseLogsError = false; t.p.exerciseLogs = []; t.view.update()
-    assert.match(fold(t).textContent, /Ingen bekræftede/)
+    assert.equal(fold(t), null)
   } finally { t.dispose() }
 })
 
@@ -149,7 +148,9 @@ test('close, OFF, plan/athlete change and disposal reset folds and make retained
       toggle(old, true); assert.equal(t.root.querySelector('[data-e2-exercise-history]'), null)
       assert.equal(t.writes, 0)
       if (change === 'close' || change === 'plan' || change === 'athlete') {
-        t.view.controller.start(); assert.equal(fold(t).open, false)
+        t.view.controller.start()
+        if (change === 'athlete') assert.equal(fold(t), null)
+        else assert.equal(fold(t).open, false)
       }
     } finally { t.dispose() }
   }

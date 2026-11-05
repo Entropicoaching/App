@@ -118,7 +118,7 @@ export function createSessionController(latest, changed = () => {}) {
     },
     edit(expected, name, value, stamp) {
       const p = latest(), s = state()
-      if (!s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
+      if (p.readOnly === true || !s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
       p.setLogInputs(prev => ({ ...prev, [expected]: { ...(prev[expected] || {}), [name]: value } }))
     },
     editFeeling(scope, draft) {
@@ -131,13 +131,13 @@ export function createSessionController(latest, changed = () => {}) {
     },
     editNote(expected, value, stamp) {
       const s = state()
-      if (!s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
+      if (latest().readOnly === true || !s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
       notes.set(`${stamp}:${expected}`, noteValue(value))
       return true
     },
     async approve(expected, values, stamp) {
       const p = latest(), s = state()
-      if (!s.open || s.summary || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
+      if (p.readOnly === true || !s.open || s.summary || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
       const input = sessionInput(notes.has(`${stamp}:${expected}`) ? withSetNote(values, s.note) : values)
       if (!input) { error = 'Skriv vægt og hele reps over 0. RPE er valgfri fra 0 til 10.'; changed(); return false }
       if (typeof p.onLogSet !== 'function' || typeof p.parsePlannedRpe !== 'function') {
@@ -148,7 +148,7 @@ export function createSessionController(latest, changed = () => {}) {
       writes.set(id, write); error = ''; changed()
       // Re-read after notifications as well: no retained exercise or callback crosses a plan change.
       const current = latest(), valid = state()
-      if (!valid.open || valid.summary || valid.selection.stamp !== stamp || !valid.next || valid.key !== expected || !resolve(current)) {
+      if (current.readOnly === true || !valid.open || valid.summary || valid.selection.stamp !== stamp || !valid.next || valid.key !== expected || !resolve(current)) {
         writes.delete(id); changed(); return false
       }
       try {

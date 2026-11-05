@@ -23,6 +23,7 @@ const freeze = value => {
 }
 
 test('strict default OFF does not inspect program input', () => {
+  assert.equal(buildBlockOverview({ enabled: false, get weeks() { assert.fail('OFF read weeks') } }), null)
   for (const enabled of [undefined, false, 0, 1, 'true', '1', null]) {
     const input = { enabled, weeks: new Proxy([], { get() { throw Error('OFF iterated input') } }) }
     assert.equal(buildBlockOverview(input), null)
@@ -142,14 +143,15 @@ test('actual view distinguishes missing volume, zero, undated marker and no mark
   const weeks = [week(1), week(2, 'Styrke', null, 0), week(3, 'Test')]
   delete weeks[0].sessions
   const tree = BlockOverview(options(weeks, { currentWeekId: 'w1' }))
-  assert.match(text(tree), /Planlagt volumen ukendt/)
+  assert.doesNotMatch(text(tree), /Planlagt volumen ukendt/)
   assert.match(text(tree), /0 planlagte sæt/)
   assert.doesNotMatch(text(tree), /Næste test eller deload|Test i programuge 3/)
   assert.doesNotMatch(text(BlockOverview(options([week(1)], { currentWeekId: 'w1' }))), /Næste test eller deload|Ingen kommende test/)
 })
 
 test('actual view empty and unknown states explain missing evidence without fabricated totals', () => {
-  for (const input of [options([]), options(plan(), { currentWeekId: 'missing' })]) {
+  assert.equal(BlockOverview(options([])), null)
+  for (const input of [options(plan(), { currentWeekId: 'missing' }), options(plan(), { today: 'invalid' })]) {
     const tree = BlockOverview(input)
     assert.equal(nodes(tree).filter(n => n.props.role === 'status').length, 1)
     assert.doesNotMatch(text(tree), /Uge \d+ af|planlagte sæt/)

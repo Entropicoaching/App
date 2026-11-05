@@ -1,8 +1,10 @@
-import { sessionFeeling, SESSION_NOTE_LIMIT, ENERGY_LEVELS } from './sessionFeelingModel.mjs'
+import { sessionFeeling, SESSION_NOTE_LIMIT, ENERGY_LEVELS, SESSION_FEELING_WRITABLE } from './sessionFeelingModel.mjs'
 
 // Adapter for the existing imperative session renderer, like noter/noteDom.
 // The controller owns a scoped in-memory draft. No persistence or completion write.
-export function createSessionFeeling(doc, { value = {}, onChange }) {
+export function createSessionFeeling(doc, options = {}) {
+  if (!SESSION_FEELING_WRITABLE) return null
+  const { value = {}, onChange } = options
   const el = (tag, text, attrs = {}) => {
     const node = doc.createElement(tag)
     if (text != null) node.textContent = text

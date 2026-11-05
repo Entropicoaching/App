@@ -1,5 +1,6 @@
 import { nextSetInSession } from '../../nextSet.js'
 import { createMobilityPlan } from '../mobility/plan/mobilityPlanDom.mjs'
+import { mobilityPlan } from '../mobility/plan/mobility-plan.mjs'
 import { createSessionController } from './sessionModel.mjs'
 import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
@@ -13,12 +14,12 @@ import { mountTempoView } from './tempo/tempoView.mjs'
 import { createSetNote } from './noter/noteDom.mjs'
 import { sessionPrescription } from './sessionPrescription.mjs'
 import { parseInputNumber } from '../../inputValues.js'
-import { createSessionFeeling } from './afslut/sessionFeelingDom.mjs'
-import { groupSessionExercises } from './supersaet/supersetModel.mjs'
+import { sessionGroupsForDisplay } from './supersaet/supersetModel.mjs'
 import { mountSupersetView } from './supersaet/supersetView.mjs'
 import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps } from './historik/exerciseHistoryDom.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
+const given = v => v != null && String(v).trim() !== ''
 const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer bekræftelse. Sættet er endnu ikke bekræftet gemt.',
   queued: 'Venter på net. Sættet ligger lokalt og er endnu ikke bekræftet gemt.', parked: 'Sættet kunne ikke synkroniseres. Kontakt din coach.',
   error: 'Sættet blev ikke gemt. Dine tal er bevaret. Prøv igen.' }
@@ -106,9 +107,11 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const dailyWarmup = !summary && s.next?.setNumber === 1 && s.next.exercise.id === first?.exercise.id
     if (dailyWarmup) {
       const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
-      warm.append(el('summary', 'Opvarmning (5-10 min)'),
-        createMobilityPlan(doc, { enabled: true, session: s.session }),
-        createOpvarmning(doc, { enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) } }))
+      const mobility = mobilityPlan({ enabled: true, session: s.session })
+      warm.append(el('summary', mobility.kind === 'ready' ? 'Opvarmning (5-10 min)' : 'Opvarmningssæt'))
+      if (mobility.kind === 'ready') warm.append(createMobilityPlan(doc, { enabled: true, session: s.session }))
+      else if (mobility.kind === 'error') warm.append(el('p', 'Opvarmningen kunne ikke vises. Bed din coach kontrollere planen.', { role: 'alert' }))
+      warm.append(createOpvarmning(doc, { enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) } }))
       body.append(warm)
     }
     body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
@@ -117,27 +120,20 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       card.append(el('p', `${summary.done} af ${summary.total} sæt klaret`))
       const complete = summary.exercises.filter(ex => ex.total > 0 && ex.missing === 0)
       const missing = summary.exercises.filter(ex => ex.missing > 0)
-      card.append(el('h2', 'Øvelser med alle sæt klaret'))
-      if (!complete.length) card.append(el('p', 'Ingen endnu.'))
+      if (complete.length) card.append(el('h2', 'Øvelser med alle sæt klaret'))
       for (const ex of complete) card.append(el('p', ex.name))
       if (missing.length) {
         card.append(el('h2', 'Øvelser med sæt tilbage'))
         for (const ex of missing) card.append(el('p', `${ex.name}: ${ex.missing} sæt tilbage`))
       }
       for (const ex of summary.exercises.filter(ex => ex.total === 0)) card.append(el('p', `${ex.name}: ingen planlagte sæt`))
-      card.append(el('p', `Højeste RPE i dag: ${summary.highestRpe ?? 'ikke angivet'}`))
+      if (summary.highestRpe != null) card.append(el('p', `Højeste RPE i dag: ${summary.highestRpe}`))
       const heavy = summary.exercises.filter(ex => ex.heaviest)
       if (heavy.length) {
         card.append(el('h2', 'Tungeste sæt i dag'))
         for (const ex of heavy) card.append(el('p', `${ex.name}: ${ex.heaviest}`))
       }
       body.append(card)
-      if (s.feeling) {
-        const feeling = createSessionFeeling(doc, { value: s.feeling.draft,
-          onChange: draft => !dead && body.contains(feeling) && controller.editFeeling(s.feeling.scope, draft),
-        })
-        body.append(feeling)
-      }
       if (s.next) {
         const resume = el('button', 'Fortsæt passet', { type: 'button' })
         resume.addEventListener('click', () => controller.resume()); body.append(resume)
@@ -156,8 +152,10 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         compact: true, currentExerciseId: ex.id })
       cleanBlocks.push(() => groupView.dispose())
       const plan = el('section', null, { class: 'card', 'aria-label': 'Planlagt belastning' })
-      plan.append(el('p', `${present(ex.reps)} gentagelser`, { class: 'plan' }),
-        el('p', `${present(ex.recommended_weight)} kg`, { class: 'plan' }), el('p', `Intensitet: ${present(ex.intensity)}`))
+      plan.append(given(ex.reps) ? el('p', `${ex.reps} gentagelser`, { class: 'plan' })
+        : el('p', 'Gentagelser mangler i planen. Bed din coach rette øvelsen.', { role: 'alert' }))
+      if (given(ex.recommended_weight)) plan.append(el('p', `${ex.recommended_weight} kg`, { class: 'plan' }))
+      if (given(ex.intensity)) plan.append(el('p', `Intensitet: ${ex.intensity}`))
       body.append(plan)
       const tempo = mountTempoView(plan, { enabled: true, ...sessionPrescription(ex), compact: true })
       cleanBlocks.push(() => tempo.dispose())
@@ -171,76 +169,78 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         }))
         body.append(warm)
       }
-      const form = el('form', null, { class: 'card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
-      const busy = !['idle', 'error'].includes(s.phase)
-      // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
-      // "−2,5 [vægt] +2,5", "−1 [reps] +1", and the RPE buttons directly under the RPE field.
-      const set = (name, value) => controller.edit(key, name, value, s.selection.stamp)
-      // Read the live value at tap time, so repeated taps add up even before a rerender.
-      const now = name => controller.state().input?.[name] ?? inputs[name].value
-      const tap = (text, label, run, cls = 'step', id = label) => {
-        const b = el('button', text, { type: 'button', class: cls, 'aria-label': label, 'data-step': id })
-        b.disabled = busy; b.addEventListener('click', run); return b
-      }
-      const stepButtons = {
-        weight: [['−2,5', '2,5 kg mindre', v => stepWeight(v, -2.5), 'weight-down'], ['+2,5', '2,5 kg mere', v => stepWeight(v, 2.5), 'weight-up']],
-        reps: [['−1', '1 gentagelse mindre', v => stepReps(v, -1), 'reps-down'], ['+1', '1 gentagelse mere', v => stepReps(v, 1), 'reps-up']]
-      }
-      for (const [name, label, mode] of [['weight', 'Vægt i kg', 'decimal'], ['reps', 'Gentagelser', 'numeric'], ['rpe', 'Oplevet RPE (valgfri)', 'decimal']]) {
-        const lab = el('label', label), input = el('input', null, { type: 'text', inputmode: mode, 'data-field': name })
-        input.value = String(s.input[name]); input.disabled = busy
-        input.addEventListener('input', () => controller.edit(key, name, input.value, s.selection.stamp))
-        inputs[name] = input
-        if (stepButtons[name]) {
-          // The input stays directly inside its own label; the buttons sit on either side of it.
-          const [down, up] = stepButtons[name]
-          const line = el('div', null, { class: 'stepper-line' })
-          lab.append(input)
-          line.append(tap(down[0], down[1], () => set(name, down[2](now(name))), 'step', down[3]), lab,
-            tap(up[0], up[1], () => set(name, up[2](now(name))), 'step', up[3]))
-          fields.append(line)
-          if (name === 'weight') {
-            const plates = el('details', null, { 'data-detail': 'plates', class: 'plate-tool' })
-            plates.append(el('summary', 'Skiver'))
-            let disposePlates = null
-            const toggle = () => {
-              if (plates.open && !disposePlates) disposePlates = mountPlateCalculator(plates,
-                { weight: controller.state().input.weight, barWeightKg: plateBar })
-              else if (!plates.open && disposePlates) {
-                plateBar = Number(plates.querySelector('select')?.value || 20)
-                disposePlates(); disposePlates = null
-              }
-            }
-            // Enter in the read-only calculator must never approve the work set.
-            plates.addEventListener('keydown', event => { if (event.key === 'Enter' && event.target?.tagName?.toLowerCase() === 'input') event.preventDefault() })
-            plates.addEventListener('toggle', toggle)
-            cleanBlocks.push(() => { plates.removeEventListener('toggle', toggle); disposePlates?.() })
-            plates.open = !stepChanged && detailsOpen.includes('plates'); toggle()
-            fields.append(plates)
-          }
-          continue
-        } else {
-          lab.append(input)
-          const rpeRow = el('div', null, { class: 'rpe-row', role: 'group', 'aria-label': 'Vælg RPE' })
-          for (const v of ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10']) {
-            const shown = v.replace('.', ',')
-            const b = tap(shown, `RPE ${shown}`, () => set('rpe', String(now('rpe')) === v ? '' : v), 'rpe', `rpe-${v}`)
-            b.setAttribute('aria-pressed', String(String(s.input.rpe) === v)); rpeRow.append(b)
-          }
-          lab.append(rpeRow)
+      if (p.readOnly !== true) {
+        const form = el('form', null, { class: 'card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
+        const busy = !['idle', 'error'].includes(s.phase)
+        // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
+        // "−2,5 [vægt] +2,5", "−1 [reps] +1", and the RPE buttons directly under the RPE field.
+        const set = (name, value) => controller.edit(key, name, value, s.selection.stamp)
+        // Read the live value at tap time, so repeated taps add up even before a rerender.
+        const now = name => controller.state().input?.[name] ?? inputs[name].value
+        const tap = (text, label, run, cls = 'step', id = label) => {
+          const b = el('button', text, { type: 'button', class: cls, 'aria-label': label, 'data-step': id })
+          b.disabled = busy; b.addEventListener('click', run); return b
         }
-        fields.append(lab)
+        const stepButtons = {
+          weight: [['−2,5', '2,5 kg mindre', v => stepWeight(v, -2.5), 'weight-down'], ['+2,5', '2,5 kg mere', v => stepWeight(v, 2.5), 'weight-up']],
+          reps: [['−1', '1 gentagelse mindre', v => stepReps(v, -1), 'reps-down'], ['+1', '1 gentagelse mere', v => stepReps(v, 1), 'reps-up']]
+        }
+        for (const [name, label, mode] of [['weight', 'Vægt i kg', 'decimal'], ['reps', 'Gentagelser', 'numeric'], ['rpe', 'Oplevet RPE (valgfri)', 'decimal']]) {
+          const lab = el('label', label), input = el('input', null, { type: 'text', inputmode: mode, 'data-field': name })
+          input.value = String(s.input[name]); input.disabled = busy
+          input.addEventListener('input', () => controller.edit(key, name, input.value, s.selection.stamp))
+          inputs[name] = input
+          if (stepButtons[name]) {
+            // The input stays directly inside its own label; the buttons sit on either side of it.
+            const [down, up] = stepButtons[name]
+            const line = el('div', null, { class: 'stepper-line' })
+            lab.append(input)
+            line.append(tap(down[0], down[1], () => set(name, down[2](now(name))), 'step', down[3]), lab,
+              tap(up[0], up[1], () => set(name, up[2](now(name))), 'step', up[3]))
+            fields.append(line)
+            if (name === 'weight') {
+              const plates = el('details', null, { 'data-detail': 'plates', class: 'plate-tool' })
+              plates.append(el('summary', 'Skiver'))
+              let disposePlates = null
+              const toggle = () => {
+                if (plates.open && !disposePlates) disposePlates = mountPlateCalculator(plates,
+                  { weight: controller.state().input.weight, barWeightKg: plateBar })
+                else if (!plates.open && disposePlates) {
+                  plateBar = Number(plates.querySelector('select')?.value || 20)
+                  disposePlates(); disposePlates = null
+                }
+              }
+              // Enter in the read-only calculator must never approve the work set.
+              plates.addEventListener('keydown', event => { if (event.key === 'Enter' && event.target?.tagName?.toLowerCase() === 'input') event.preventDefault() })
+              plates.addEventListener('toggle', toggle)
+              cleanBlocks.push(() => { plates.removeEventListener('toggle', toggle); disposePlates?.() })
+              plates.open = !stepChanged && detailsOpen.includes('plates'); toggle()
+              fields.append(plates)
+            }
+            continue
+          } else {
+            lab.append(input)
+            const rpeRow = el('div', null, { class: 'rpe-row', role: 'group', 'aria-label': 'Vælg RPE' })
+            for (const v of ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10']) {
+              const shown = v.replace('.', ',')
+              const b = tap(shown, `RPE ${shown}`, () => set('rpe', String(now('rpe')) === v ? '' : v), 'rpe', `rpe-${v}`)
+              b.setAttribute('aria-pressed', String(String(s.input.rpe) === v)); rpeRow.append(b)
+            }
+            lab.append(rpeRow)
+          }
+          fields.append(lab)
+        }
+        form.append(el('h2', 'Dit sæt'), fields, el('p', 'Skriv 0 kg ved en øvelse uden ekstra vægt.', { class: 'hint' }))
+        const approve = el('button', s.phase === 'queued' ? 'Venter på net' : busy ? 'Afventer svar' : 'Godkendt', { type: 'submit', class: 'approve' })
+        approve.disabled = busy
+        form.addEventListener('submit', e => {
+          e.preventDefault()
+          return controller.approve(key, { ...s.input, ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, v.value])) }, s.selection.stamp)
+        })
+        form.append(createSetNote(doc, { value: s.note, disabled: busy,
+          onChange: value => controller.editNote(key, value, s.selection.stamp) }), approve)
+        body.append(form)
       }
-      form.append(el('h2', 'Dit sæt'), fields, el('p', 'Skriv 0 kg ved en øvelse uden ekstra vægt.', { class: 'hint' }))
-      const approve = el('button', s.phase === 'queued' ? 'Venter på net' : busy ? 'Afventer svar' : 'Godkendt', { type: 'submit', class: 'approve' })
-      approve.disabled = busy
-      form.addEventListener('submit', e => {
-        e.preventDefault()
-        return controller.approve(key, { ...s.input, ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, v.value])) }, s.selection.stamp)
-      })
-      form.append(createSetNote(doc, { value: s.note, disabled: busy,
-        onChange: value => controller.editNote(key, value, s.selection.stamp) }), approve)
-      body.append(form)
     }
     if (!summary) {
       const finish = el('button', 'Afslut pas', { type: 'button' })
@@ -248,15 +248,15 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     }
     const history = el('details', null, { class: 'card', 'data-detail': 'history' })
     history.append(el('summary', 'Hele passet og klarede sæt'))
-    const grouping = groupSessionExercises(s.session.exercises)
-    for (const warning of grouping.warnings) history.append(el('p', `Gruppering: ${warning}`, { class: 'hint' }))
+    const grouping = sessionGroupsForDisplay(s.session.exercises)
     for (const [index, ex] of (s.session.exercises || []).entries()) {
       const group = grouping.groups.find(group => group.kind !== 'single' && group.members[0].exerciseId === ex.id)
       if (group) history.append(el('h2', group.label))
-      history.append(el('h2', ex.name), el('p', `${ex.sets} × ${present(ex.reps)}`))
+      history.append(el('h2', ex.name))
+      if (given(ex.sets) && given(ex.reps)) history.append(el('p', `${ex.sets} × ${ex.reps}`))
       showHistory(history, ex, `exercise-history-${index}`)
       for (const log of s.logs.filter(l => l.exercise_id === ex.id).slice().sort((a, b) => a.set_number - b.set_number))
-        history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} reps, RPE ${present(log.rpe_actual)}`}`))
+        history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} reps${given(log.rpe_actual) ? `, RPE ${log.rpe_actual}` : ''}`}`))
     }
     body.append(history)
     for (const node of body.querySelectorAll('details')) node.open = !stepChanged && detailsOpen.includes(node.getAttribute('data-detail'))

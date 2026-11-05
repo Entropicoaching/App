@@ -63,6 +63,9 @@ test('empty loaded history differs from loading and absent history', () => {
   const empty = render([])
   assert.match(text(empty), /ikke gennemført sæt i disse to uger/)
   assert.equal(tags(empty, 'table').length, 0)
+  assert.equal(tags(empty, 'p').length, 1)
+  assert.equal(tags(empty, 'details').length, 0)
+  assert.doesNotMatch(text(empty), /Sæt pr. muskelgruppe|Denne uge er stadig i gang/)
 })
 
 test('unknown sets are explained separately for each week, including unknown-only history', () => {

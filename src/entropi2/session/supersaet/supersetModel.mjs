@@ -27,6 +27,17 @@ function metadata(exercise) {
 const numeric = value => (typeof value === 'number' || typeof value === 'string' && value.trim() !== '')
   && Number.isFinite(Number(value)) ? Number(value) : null
 
+// Optional overview only advertises groups with known members and dosage.
+// Preserve the underlying parser and each exercise's independent logging plan.
+export function sessionGroupsForDisplay(exercises) {
+  const model = groupSessionExercises(exercises)
+  const groups = model.groups.filter(group => group.members.every(member =>
+    typeof exercises?.[member.sourceIndex]?.name === 'string' && exercises[member.sourceIndex].name.trim()
+    && member.sets != null && member.sets > 0))
+  return { groups, message: model.warnings.length || groups.length !== model.groups.length
+    ? 'Øvelsesgruppen er ufuldstændig. Følg planen for hver øvelse, og bed din coach rette gruppen.' : null }
+}
+
 export function groupSessionExercises(exercises = []) {
   const warnings = []
   if (!Array.isArray(exercises)) return { groups: [], warnings: ['Øvelseslisten kan ikke læses.'] }
