@@ -51,7 +51,7 @@ test('actual Volume model counts fixture sets and keeps missing/loading/error se
     assert.equal(volumeModel({ volumeLogs: [], volumeLoading: false, now }).empty, true)
     assert.equal(volumeModel({ volumeLogs: null, volumeLoading: false, now }).state, 'unavailable')
     assert.equal(volumeModel({ volumeLoading: true, now }).state, 'loading')
-    // Model capability only: AthleteView has no volumeError state/forwarding.
+    // AthleteView now forwards the reader's explicit error state.
     assert.equal(volumeModel({ volumeError: true, now }).state, 'error')
   }
 })

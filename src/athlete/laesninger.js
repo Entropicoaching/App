@@ -43,7 +43,7 @@ export function lavLaesninger({
   setLastReadiness, setLiftProgress, setLoadError, setLoading, setLogInputs, setMeetAttempts, setMeetPlanNotes, setMeetResults,
   setMeetType, setMereOpen, setReadinessOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
   setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
-  setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
+  setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setVolumeError = () => {}, setWarmupTemplates, setWeeklyTonnage,
   setOfflineSnapshotAt, setUgensLogsHentet,
 }) {
   // ORDRE 397 (docs/OFFLINE-PAS.md): kun atletens egen visning, aldrig
@@ -248,20 +248,27 @@ export function lavLaesninger({
   // her — atleten har ikke læseadgang til dem, se docs/RAPPORT-259.md.
   async function fetchVolumeLogs(athleteId) {
     setVolumeLoading(true)
+    setVolumeError(false)
     const since = new Date(Date.now() - 5 * 7 * 86400000).toISOString()
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('exercise_logs')
-        .select('logged_at, skipped, exercises(name)')
-        .eq('athlete_id', athleteId)
-        .gte('logged_at', since)
-        .order('logged_at', { ascending: false })
-        .limit(2000),
-      onReadError('Din volumen', athleteId),
-    )
-    setVolumeLoading(false)
-    if (!ok) return
-    setVolumeLogs(data || [])
+    try {
+      const { data, ok } = await runGuardedRead(
+        () => supabase
+          .from('exercise_logs')
+          .select('logged_at, skipped, exercises(name)')
+          .eq('athlete_id', athleteId)
+          .gte('logged_at', since)
+          .order('logged_at', { ascending: false })
+          .limit(2000),
+        onReadError('Din volumen', athleteId),
+      )
+      setVolumeError(!ok)
+      if (ok) setVolumeLogs(data || [])
+    } catch (error) {
+      setVolumeError(true)
+      onReadError('Din volumen', athleteId)(error)
+    } finally {
+      setVolumeLoading(false)
+    }
   }
 
   // ORDRE 284 · commit 1: al historik for Fremgang-fanen — ingen datogrænse

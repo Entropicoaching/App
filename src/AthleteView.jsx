@@ -258,6 +258,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   // fanen åbnes, se effekten ved fetchMeetPlan/fetchMeetResults nedenfor.
   const [volumeLogs, setVolumeLogs] = useState([])
   const [volumeLoading, setVolumeLoading] = useState(false)
+  const [volumeError, setVolumeError] = useState(false)
   // ORDRE 268 · commit 2: "hele forløbet" i UgensStatusKort (Hjem) — lazy-
   // hentet først når atleten faktisk skifter til den visning (se
   // UgensStatusKort's onAabnForloeb), samme mønster som volumeLogs ovenfor.
@@ -459,7 +460,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     setLastReadiness, setLiftProgress, setLoadError, setLoading, setLogInputs, setMeetAttempts, setMeetPlanNotes, setMeetResults,
     setMeetType, setMereOpen, setReadinessOpen, setOnboardingDone, setOpenSharedVideoId, setPastLogs, setProgOpenSession, setProgramError, setPrs,
     setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
-    setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,
+    setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setVolumeError, setWarmupTemplates, setWeeklyTonnage,
     setOfflineSnapshotAt, setUgensLogsHentet,
   })
   // Ordre 1502: en smerte-note i seneste uger standser appens stigningsforslag (D3, V10 3A).
@@ -908,7 +909,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {tab === 'volumen' && (
           <LazyBoundary
             factory={volumenFactory} label="Volumen" loading={<div style={s.page}>Indlæser…</div>}
-            componentProps={{ volumeLogs, volumeLoading }}
+            componentProps={{ volumeLogs, volumeLoading, volumeError }}
           />
         )}
 

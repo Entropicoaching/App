@@ -86,7 +86,7 @@ export function rekordListe(saetListe, start = {}) {
 // Øvelsens navn ud fra id (programmet, allWeeks).
 export function navnForOevelse(allWeeks) {
   const m = new Map()
-  for (const w of allWeeks || []) for (const s of w.sessions || []) for (const e of s.exercises || []) m.set(e.id, e.name)
+  for (const w of allWeeks || []) for (const s of w?.sessions || []) for (const e of s.exercises || []) m.set(e.id, e.name)
   return m
 }
 

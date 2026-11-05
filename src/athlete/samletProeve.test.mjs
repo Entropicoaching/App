@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { assertCleanMarkup, assertNoWriteButtons, elements, nodeText } from './samletProeveMarkup.mjs'
+import { assertCleanMarkup, assertNoWriteButtons, elements, nodeText, markupTree } from './samletProeveMarkup.mjs'
 import { dispose, importedModules, renderScenario, scenario, tabs, week } from './samletProeveFixture.mjs'
 
 test.after(dispose)
@@ -14,7 +14,6 @@ test('the test loader imports the actual local stylesheet without executing CSS'
 const modes = ['athlete', 'preview', 'own']
 // Only these source-confirmed defects are TODOs. Other pages and states stay hard gates.
 const analysisTextTodo = 'F5: src/entropi2/analysis/DevelopmentView.mjs:68, src/entropi2/athlete/minedata/MineData.mjs:42 and src/entropi2/analysis/intensitet/IntensityView.mjs:22 render "ukendt", forbidden by this order.'
-const emptyAnalysisTodo = 'F6: src/athlete/rekorder.js:89,109 dereferences null.sessions when currentWeek=null and allWeeks=[]; empty Fremgang throws.'
 const pageMarkers = {
   hjem: /data-entropi2-home-session/, program: /Testpas/,
   fremgang: /data-entropi2-analysis/, kost: /data-entropi2-kost/,
@@ -23,7 +22,9 @@ const pageMarkers = {
 }
 
 for (const mode of modes) for (const tab of tabs) for (const state of ['ready', 'empty', 'loading', 'error']) {
-  const todo = tab === 'fremgang' ? { ready: analysisTextTodo, empty: emptyAnalysisTodo }[state] : undefined
+  // Once F6 stops the crash, empty analysis reaches the existing F5 text defect.
+  // F6 itself is a separate hard gate below and is never covered by this TODO.
+  const todo = tab === 'fremgang' && ['ready', 'empty'].includes(state) ? analysisTextTodo : undefined
   test(`samlet SSR: ${mode}/${tab}/${state}`, { todo }, async () => {
     const html = await renderScenario(scenario(mode, tab, state))
     const tree = assertCleanMarkup(html)
@@ -50,6 +51,16 @@ for (const mode of modes) for (const tab of tabs) for (const state of ['ready', 
     if (state === 'empty' && tab === 'volumen') assert.match(nodeText(tree), /ikke gennemført sæt i disse to uger/)
     if (mode === 'preview') assert.match(html, /<fieldset[^>]*disabled=""[^>]*aria-label="Atletvisning uden skrivninger"/)
     else assert.doesNotMatch(html, /<fieldset[^>]*disabled/)
+  })
+}
+
+for (const mode of modes) {
+  test(`F6: empty Fremgang renders without a program: ${mode}`, async () => {
+    const html = await renderScenario(scenario(mode, 'fremgang', 'empty'))
+    const tree = markupTree(html)
+    assert.match(html, /data-entropi2-analysis/)
+    assert.match(nodeText(tree), /Din udvikling kommer frem, når du logger vægt og gentagelser i programmet/)
+    assert.doesNotMatch(nodeText(tree), /undefined|NaN|\[object Object\]/)
   })
 }
 
@@ -149,17 +160,16 @@ test('first-name greeting also survives a completed session', async () => {
   }
 })
 
-test('TODO F4: a failed first volume read must not claim a successful empty log', {
-  todo: 'F4: src/athlete/laesninger.js:249-264 leaves initial [] after a failed read; src/AthleteView.jsx:911 forwards no volumeError.',
-}, async () => {
+test('F4: a failed first volume read must not claim a successful empty log', async () => {
   for (const mode of modes) {
-    // Exact host snapshot after onReadError + setVolumeLoading(false), including
-    // the existing transient toast. No invented volumeError prop is injected.
-    const input = scenario(mode, 'volumen', 'empty', { volumeLoading: false, flash: {
-      kind: 'error', message: 'Din volumen kunne ikke hentes. Tjek din forbindelse og prøv igen.',
-    } })
-    const tree = assertCleanMarkup(await renderScenario(input))
-    assert.match(nodeText(tree), /Din volumen kunne ikke hentes/)
-    assert.doesNotMatch(nodeText(tree), /Du har ikke gennemført sæt i disse to uger/)
+    // The reader sets this real host error state; the existing toast may expire.
+    for (const flash of [null, { kind: 'error', message: 'Din volumen kunne ikke hentes. Tjek din forbindelse og prøv igen.' }]) {
+      const input = scenario(mode, 'volumen', 'empty', { volumeLoading: false, volumeError: true, flash })
+      const html = await renderScenario(input)
+      const tree = assertCleanMarkup(html)
+      assert.match(nodeText(tree), /Din volumen kunne ikke hentes/)
+      assert.match(html, /role="alert"/)
+      assert.doesNotMatch(nodeText(tree), /Du har ikke gennemført sæt i disse to uger/)
+    }
   }
 })

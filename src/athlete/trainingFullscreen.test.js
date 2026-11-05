@@ -66,6 +66,12 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   // Marc 3. nov.: genvejen 'Film et saet' paa Entropi 2-hjem er en del af det samme delta (onFilmSet).
   const entropi2Delta = [
+    // R1-E2-FEJL-FREMGANG1: explicit volume read-error plumbing; legacy rendering stays unchanged.
+    ['  const [volumeError, setVolumeError] = useState(false)\n', ''],
+    ['    setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setVolumeError, setWarmupTemplates, setWeeklyTonnage,\n',
+      '    setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setWarmupTemplates, setWeeklyTonnage,\n'],
+    ['            componentProps={{ volumeLogs, volumeLoading, volumeError }}\n',
+      '            componentProps={{ volumeLogs, volumeLoading }}\n'],
     // R2-E2-HJEM-HURTIG2: Hjem-genveje gives kun skrivehandlere uden for read-only preview.
     [`            {...(!e2ReadOnly ? {
               readinessLog, readinessInput, setReadinessInput,
