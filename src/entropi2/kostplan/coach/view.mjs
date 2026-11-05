@@ -1,5 +1,6 @@
 import { GOALS, INTENSITIES, CONTEXT_LABELS, totals } from './model.mjs'
 import { recipeChoices } from './connections.mjs'
+import { suggestionReason } from '../generator/reasons.mjs'
 
 const format = value => value.toLocaleString('da-DK', { maximumFractionDigits: 1 })
 const macroText = value => value
@@ -95,7 +96,7 @@ export function coachPlanView(h, snapshot, actions) {
     s.gramFeedback && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om afvigelser og tolerance'),
       h('p', null, 'Afvigelse er plan minus mål. Tolerance er det største af 5 % af målet og henholdsvis 50 kcal, 5 g protein, 10 g kulhydrat og 3 g fedt. Det er en planlægningsregel. Der optimeres på dagens sum; måltidernes fordeling skal gennemgås.'),
-      h('p', null, 'I tomme måltider vælges blandt tilgængelige, prioriterede katalogvarer efter højeste kendte protein-, kulhydrat- og fedtindhold pr. 100 g, når dagens mål indeholder disse makroer. Det er et enkelt udgangspunkt til gennemgang; træningstid, allergier, præferencer og variation er ikke koblet ind.'),
+      h('p', null, 'Tomme måltider får prioriterede katalogvarer efter måltidets navn: morgenmad, frokost, aftensmad eller mellemmåltid. Varerne roterer efter dagens valg; samme input giver samme forslag. Andre måltidsnavne bruger makroindhold og rotation. Udvalget kan begrænse variationen. Træningstid, allergier og præferencer er ikke koblet ind.'),
       h('p', null, `Dagens tolerance: ±${format(s.gramFeedback.tolerance.kcal)} kcal · ±${format(s.gramFeedback.tolerance.protein)} g protein · ±${format(s.gramFeedback.tolerance.carb)} g kulhydrat · ±${format(s.gramFeedback.tolerance.fat)} g fedt.`)),
     ...s.meals.map((meal, mi) => h('fieldset', { key: meal.id, disabled: busy,
       style: { minWidth: 0, margin: '1rem 0', padding: '0.75rem' } },
@@ -112,8 +113,9 @@ export function coachPlanView(h, snapshot, actions) {
       }, ...s.foods.map(food => h('option', { key: food.id, value: food.id }, food.name)))),
       field(`grams-${mi}-${ii}`, `Gram af ${item.food.name} i ${meal.name}`, item.grams,
         value => actions.editGrams(mi, ii, value)),
-      s.gramGenerator && item.food.nutrition?.prioritetBegrundelse && h('small', { style: { gridColumn: '1 / -1' } },
-        `Katalogets begrundelse: ${item.food.nutrition.prioritetBegrundelse}`))),
+      s.gramGenerator && suggestionReason(item.food.id, item.food.nutrition?.prioritetBegrundelse)
+        && h('small', { style: { gridColumn: '1 / -1' } },
+          suggestionReason(item.food.id, item.food.nutrition.prioritetBegrundelse)))),
     s.gramGenerator && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, `Portionsgrænser i ${meal.name}`),
       h('p', null, 'Grænser bruges ved næste generering. Vælg min./maks. i trin på 5 g fra 5 til 1.000 g.'),

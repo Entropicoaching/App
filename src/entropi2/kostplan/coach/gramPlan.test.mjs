@@ -165,3 +165,20 @@ test('empty coach meals use only matching available catalogue data and save as o
   available[0].per100g.carb += 1
   assert.throws(() => generateCoachGrams([empty], c.snapshot().planTargets, available), /ingen tilgængelige/)
 })
+
+test('four named coach meals retain variation through scoped save, restore and regeneration', async () => {
+  const { controller: c, storage } = setup()
+  const template = ['Morgenmad', 'Frokost', 'Aftensmad', 'Mellemmåltid'].map((name, i) =>
+    ({ id: `synthetic-${i}`, name, items: [] }))
+  assert.equal(c.generate(template), true)
+  const selected = c.snapshot().meals.map(meal => meal.items.map(item => item.food.name))
+  assert.deepEqual(selected, [['Skyr naturel', 'Havregryn'], ['Kyllingebryst', 'Ris kogt', 'Broccoli'],
+    ['Laks fersk', 'Linser kogte', 'Broccoli'], ['Skyr naturel']])
+  assert.equal(storage.data.size, 0)
+  assert.equal(await c.save(), true)
+  assert.deepEqual([...storage.data.keys()], [draftKey(scope.coachId, athlete.id, date)])
+  const restored = setup(storage).controller
+  assert.equal(restored.generate(), true)
+  assert.deepEqual(restored.snapshot().meals.map(meal => meal.items.map(item => item.food.name)), selected)
+  assert.equal(JSON.parse([...storage.data.values()][0]).plan.status, 'draft')
+})

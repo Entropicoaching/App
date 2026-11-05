@@ -55,7 +55,7 @@ test('real React preserves the collapsed host, strict OFF and selected-athlete g
   assert.equal(renderToStaticMarkup(h(CoachPlan, { enabled: true, controller, athleteId: 'synthetic-other' })), '')
 })
 
-test('real React renders catalogue reasons for empty-meal suggestions and removes a reason after a coach food change', () => {
+test('real React renders one short catalogue reason per food and removes it after a coach food change', () => {
   const storage = memoryStorage()
   const template = [{ id: 'm', name: '<synthetic-empty>', items: [] }]
   const { controller: c } = openPortalPlan({ ...scope, template, storage: () => storage })
@@ -63,11 +63,34 @@ test('real React renders catalogue reasons for empty-meal suggestions and remove
   const render = () => renderToStaticMarkup(h(CoachPlan, { enabled: true, controller: c }))
   assert.match(render(), /&lt;synthetic-empty&gt;/)
   const first = c.snapshot().meals[0].items[0].food
-  const reason = FOODS.find(food => food.id === first.id).prioritetBegrundelse
+  assert.equal(first.name, 'Kyllingebryst')
+  const reason = 'Protein med essentielle aminosyrer; andre kilder kan dække behovet.'
   assert.ok(render().includes(reason))
+  assert.ok(!render().includes(FOODS.find(food => food.id === first.id).prioritetBegrundelse))
   const choices = walk(coachPlanView(h, c.snapshot(), c))
   choices.find(node => node.props.name === 'food-0-0').props.onChange({ currentTarget: { value: 'local:Sukker' } })
   assert.ok(!render().includes(reason))
   assert.ok(!/<details[^>]* open/.test(render()))
   assert.equal(storage.data.size, 0)
+})
+
+test('real React shows four distinct named meals, preserves regenerated choices and writes only the scoped local draft', async () => {
+  const storage = memoryStorage()
+  const template = ['Morgenmad', 'Frokost', 'Aftensmad', 'Mellemmåltid'].map((name, i) =>
+    ({ id: `synthetic-${i}`, name, items: [] }))
+  const { controller: c } = openPortalPlan({ ...scope, template, storage: () => storage })
+  assert.equal(c.generate(), true)
+  const selected = c.snapshot().meals.map(meal => meal.items.map(item => item.food.name))
+  assert.deepEqual(selected, [['Skyr naturel', 'Havregryn'], ['Kyllingebryst', 'Ris kogt', 'Broccoli'],
+    ['Laks fersk', 'Linser kogte', 'Broccoli'], ['Skyr naturel']])
+  const render = () => renderToStaticMarkup(h(CoachPlan, { enabled: true, controller: c }))
+  assert.equal((render().match(/<legend>/g) ?? []).length, 5)
+  assert.equal((render().match(/Mælkeprotein; leucinmængden er ikke registreret\./g) ?? []).length, 2)
+  assert.doesNotMatch(render(), /Katalogets begrundelse:|højeste kendte protein|variation er ikke koblet ind/)
+  assert.ok(!/<details[^>]* open/.test(render())); assert.equal(storage.data.size, 0)
+  assert.equal(c.generate(), true)
+  assert.deepEqual(c.snapshot().meals.map(meal => meal.items.map(item => item.food.name)), selected)
+  await c.save()
+  assert.deepEqual([...storage.data.keys()], [draftKey(scope.coachId, scope.athlete.id, scope.date)])
+  assert.equal(JSON.parse([...storage.data.values()][0]).plan.status, 'draft')
 })

@@ -26,17 +26,25 @@ export function generateGramPlan(input) {
     || availableFoodIds.length > FOODS.length || new Set(availableFoodIds).size !== availableFoodIds.length
     || Array.from(availableFoodIds).some(id => !catalog.has(id)))) throw new TypeError('Tilgængelige fødevarer kræver unikke katalog-id’er')
   const available = availableFoodIds === undefined ? null : new Set(availableFoodIds)
-  const suggestions = suggestFoodItems(FOODS.filter(food => !available || available.has(food.id)), targets)
+  const suggestionFoods = FOODS.filter(food => !available || available.has(food.id))
+  // Count all explicit choices first, including later meals, so automatic
+  // choices can vary around them without replacing any coach selection.
+  const usage = new Map()
+  for (const meal of meals) if (Array.isArray(meal?.items)) for (const item of meal.items) {
+    if (catalog.has(item?.foodId)) usage.set(item.foodId, (usage.get(item.foodId) ?? 0) + 1)
+  }
   const ids = new Set(), selected = new Set(), rows = []
   const normalizedMeals = Array.from(meals, (meal, mealIndex) => {
     if (!text(meal?.id) || ids.has(meal.id) || !text(meal.name) || !Array.isArray(meal.items)
       || meal.items.length > GENERATOR_POLICY.maxItemsPerMeal) throw new TypeError('Måltid kræver unikt id, navn og højst 12 fødevarer')
     ids.add(meal.id)
     const seen = new Set()
-    Array.from(meal.items.length ? meal.items : suggestions, item => {
+    const suggested = meal.items.length ? null : suggestFoodItems(suggestionFoods, targets, { mealName: meal.name, usage })
+    Array.from(suggested ?? meal.items, item => {
       const food = catalog.get(item?.foodId)
       if (!food || seen.has(food.id)) throw new TypeError('Vælg et kendt katalog-id én gang pr. måltid')
       seen.add(food.id); selected.add(food.id)
+      if (suggested) usage.set(food.id, (usage.get(food.id) ?? 0) + 1)
       const { minGrams, maxGrams } = item
       if (!amount(minGrams, 1000) || !amount(maxGrams, 1000) || minGrams < 5 || minGrams > maxGrams
         || minGrams % 5 || maxGrams % 5) throw new TypeError('Hver fødevare kræver min/max i trin på 5 g mellem 5 og 1000 g')

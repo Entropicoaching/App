@@ -109,13 +109,33 @@ test('actual portal generates untouched meals, explains current marked foods and
   assert.equal(named(tree, 'grams-0-0').props.value, 25)
   assert.equal(named(tree, 'food-0-1'), undefined)
   const food = FOODS.find(food => food.id === named(tree, 'food-1-0').props.value)
-  assert.ok(text(tree).includes('Katalogets begrundelse: ' + food.prioritetBegrundelse))
+  assert.ok(text(tree).includes('Protein med essentielle aminosyrer; andre kilder kan dække behovet.'))
+  assert.ok(!text(tree).includes(food.prioritetBegrundelse))
   assert.equal(storage.calls.filter(call => call[0] === 'set').length, 0)
   change(tree, 'food-1-0', 'local:Sukker'); tree = screen.render()
   const meal = nodes(tree).find(n => n.type === 'fieldset' && text(n).includes('Frokost'))
   assert.ok(!text(meal).includes(food.prioritetBegrundelse))
+  assert.ok(!text(meal).includes('Protein med essentielle aminosyrer; andre kilder kan dække behovet.'))
   await button(tree, 'Gem som kladde').props.onClick(); tree = screen.render()
   assert.deepEqual([...storage.data.keys()], [draftKey(props.session.user.id, props.athlete.id, props.today)])
   assert.match(text(tree), /Lokal kladde gemt/)
   assert.ok(nodes(tree).filter(n => n.type === 'details').every(n => !n.props.open))
+}))
+
+test('actual portal empty form shows three distinct meals and keeps them after regenerating', () => withStorage(async storage => {
+  const screen = mount(PortalPlan, props)
+  open(screen.render()); generate(screen.render())
+  const read = tree => [2, 3, 3].map((count, mi) => Array.from({ length: count }, (_, ii) =>
+    named(tree, `food-${mi}-${ii}`).props.value))
+  const tree = screen.render(), selected = read(tree)
+  assert.deepEqual(selected, [
+    ['Skyr naturel', 'Havregryn'], ['Kyllingebryst', 'Ris kogt', 'Broccoli'],
+    ['Laks fersk', 'Linser kogte', 'Broccoli'],
+  ].map(meal => meal.map(name => 'local:' + encodeURIComponent(name))))
+  assert.match(text(tree), /roterer efter dagens valg/)
+  assert.doesNotMatch(text(tree), /højeste kendte protein|variation er ikke koblet ind/)
+  assert.equal(storage.data.size, 0)
+  generate(tree)
+  assert.deepEqual(read(screen.render()), selected)
+  assert.equal(storage.data.size, 0)
 }))
