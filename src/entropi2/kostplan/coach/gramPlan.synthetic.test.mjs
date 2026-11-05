@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
 import { mount, nodes, text, memoryStorage } from './portal.fixture.mjs'
 import { draftKey } from './portalModel.mjs'
+import { FOODS } from '../foedevarer/catalog.mjs'
 
 const root = new URL('../../../', import.meta.url).href
 const hooks = registerHooks({ resolve(specifier, context, next) {
@@ -43,6 +44,7 @@ test('actual portal selects explicit bounds, generates, shows deviation, edits a
   open(tree); tree = screen.render()
   assert.ok(button(tree, 'Generér forslag')); assert.equal(named(tree, 'fat'), undefined)
   assert.equal(named(tree, 'template-minGrams-0-0').props.value, '')
+  change(tree, 'template-food-0-0', 'local:Ris%20kogt'); tree = screen.render()
   generate(tree); tree = screen.render()
   assert.equal(nodes(tree).filter(n => n.props.role === 'alert').length, 1)
   assert.match(text(tree), /kunne ikke genereres/); assert.equal(storage.data.size, 0)
@@ -93,3 +95,27 @@ test('strict OFF reads no profile, storage or calculation props', () => {
   for (const enabled of [undefined, false, 'true', 1]) assert.equal(PortalPlan({ enabled,
     get athlete() { throw Error('OFF profile') }, get session() { throw Error('OFF identity') } }), null)
 })
+
+test('actual portal generates untouched meals, explains current marked foods and preserves coach overrides', () => withStorage(async storage => {
+  const screen = mount(PortalPlan, props)
+  open(screen.render()); let tree = screen.render()
+  assert.match(text(tree), /5–300 g/)
+  change(tree, 'template-food-0-0', 'local:Sukker')
+  change(screen.render(), 'template-minGrams-0-0', '25')
+  change(screen.render(), 'template-maxGrams-0-0', '25')
+  generate(screen.render()); tree = screen.render()
+  assert.equal(nodes(tree).filter(n => n.props.role === 'alert').length, 0)
+  assert.equal(named(tree, 'food-0-0').props.value, 'local:Sukker')
+  assert.equal(named(tree, 'grams-0-0').props.value, 25)
+  assert.equal(named(tree, 'food-0-1'), undefined)
+  const food = FOODS.find(food => food.id === named(tree, 'food-1-0').props.value)
+  assert.ok(text(tree).includes('Katalogets begrundelse: ' + food.prioritetBegrundelse))
+  assert.equal(storage.calls.filter(call => call[0] === 'set').length, 0)
+  change(tree, 'food-1-0', 'local:Sukker'); tree = screen.render()
+  const meal = nodes(tree).find(n => n.type === 'fieldset' && text(n).includes('Frokost'))
+  assert.ok(!text(meal).includes(food.prioritetBegrundelse))
+  await button(tree, 'Gem som kladde').props.onClick(); tree = screen.render()
+  assert.deepEqual([...storage.data.keys()], [draftKey(props.session.user.id, props.athlete.id, props.today)])
+  assert.match(text(tree), /Lokal kladde gemt/)
+  assert.ok(nodes(tree).filter(n => n.type === 'details').every(n => !n.props.open))
+}))

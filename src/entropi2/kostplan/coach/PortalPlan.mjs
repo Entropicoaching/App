@@ -84,7 +84,9 @@ function PlanEditor(props) {
     : meal.map((item, i) => i !== ii ? item : { ...item, [key]: value })))
   const start = event => {
     event.preventDefault()
-    const template = rows.map((items, index) => ({ id: `meal-${index}`, name: meals[index], items }))
+    const template = rows.map((items, index) => ({ id: `meal-${index}`, name: meals[index],
+      items: gramGenerator ? items.filter(item => !(item.foodId === ''
+        && (item.minGrams ?? '') === '' && (item.maxGrams ?? '') === '')) : items }))
     if (gramGenerator) {
       setError(''); opened.controller.generate(template); return
     }
@@ -104,7 +106,7 @@ function PlanEditor(props) {
     !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
       h('p', null, gramGenerator
-        ? 'Vælg fødevarer og min./maks. portion i hvert måltid. Forslaget bruger kun dine valg, i trin på 5 g. Kontrollér rå/kogt tilstand; ikke alle fødevarekilder er verificeret.'
+        ? 'Dine fødevarevalg og min./maks. går forud. Lad et måltid stå tomt for forslag fra katalogets prioriterede fødevarer. Tomme måltider får foreløbige grænser på 5–300 g pr. fødevare, i trin på 5 g. Kontrollér rå/kogt tilstand, tolerancer og præferencer; ikke alle fødevarekilder er verificeret.'
         : 'Vælg fødevarer og angiv gram i hvert måltid. Kontrollér rå/kogt tilstand og næringsindhold; ikke alle fødevarekilder er verificeret.'),
       ...rows.map((items, mi) => h('fieldset', { key: mi, style: { minWidth: 0, marginBottom: 12 } },
         h('legend', null, meals[mi]),

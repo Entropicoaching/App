@@ -16,7 +16,8 @@ export function profileCalculation(athlete, date) {
 }
 
 // Only the catalogue used by the actual generator may supply nutrient values.
-// Bounds are explicit coach input, never guessed from food type or old grams.
+// Selected foods keep explicit coach bounds. Empty meals use the generator's
+// disclosed draft bounds and only canonically matching, available foods.
 export function generateCoachGrams(selection, targets, catalog) {
   const meals = selection.map(meal => ({ id: meal.id, name: meal.name,
     items: meal.items.map(item => {
@@ -26,7 +27,11 @@ export function generateCoachGrams(selection, targets, catalog) {
         throw TypeError('Fødevaren stemmer ikke med generatorens katalog.')
       return { foodId: item.foodId, minGrams: number(item.minGrams, 1000), maxGrams: number(item.maxGrams, 1000) }
     }) }))
-  const result = generateGramPlan({ targets, mealCount: meals.length, meals })
+  const availableFoodIds = catalog.filter(selected => {
+    const canonical = foods.find(food => food.id === selected.id)
+    return canonical && keys.every(key => canonical.per100g[key] === selected.per100g[key])
+  }).map(food => food.id)
+  const result = generateGramPlan({ targets, mealCount: meals.length, meals, availableFoodIds })
   if (result.status === 'no-plan') throw TypeError(result.message)
   return { result: { status: result.status, message: result.message },
     meals: result.meals.map(meal => ({ id: meal.id, name: meal.name,

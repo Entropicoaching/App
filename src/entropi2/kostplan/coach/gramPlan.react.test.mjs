@@ -10,6 +10,7 @@ import { coachPlanView } from './view.mjs'
 import { openPortalPlan, draftKey } from './portalModel.mjs'
 import { memoryStorage } from './portal.fixture.mjs'
 import { strengthDays } from '../generator/days.fixture.mjs'
+import { FOODS } from '../foedevarer/catalog.mjs'
 
 const scope = { enabled: true, coachId: 'synthetic-coach', date: '2026-11-05',
   athlete: { id: 'synthetic-adult', age: 30, bodyweight: 80, goal: 'maintain' } }
@@ -52,4 +53,21 @@ test('real React preserves the collapsed host, strict OFF and selected-athlete g
   assert.match(html, /<summary[^>]*>Kostplan/); assert.doesNotMatch(html, /Generér forslag|Afvigelse|<details[^>]* open/)
   const { controller } = openPortalPlan({ ...scope, storage: () => memoryStorage() })
   assert.equal(renderToStaticMarkup(h(CoachPlan, { enabled: true, controller, athleteId: 'synthetic-other' })), '')
+})
+
+test('real React renders catalogue reasons for empty-meal suggestions and removes a reason after a coach food change', () => {
+  const storage = memoryStorage()
+  const template = [{ id: 'm', name: '<synthetic-empty>', items: [] }]
+  const { controller: c } = openPortalPlan({ ...scope, template, storage: () => storage })
+  assert.equal(c.generate(), true)
+  const render = () => renderToStaticMarkup(h(CoachPlan, { enabled: true, controller: c }))
+  assert.match(render(), /&lt;synthetic-empty&gt;/)
+  const first = c.snapshot().meals[0].items[0].food
+  const reason = FOODS.find(food => food.id === first.id).prioritetBegrundelse
+  assert.ok(render().includes(reason))
+  const choices = walk(coachPlanView(h, c.snapshot(), c))
+  choices.find(node => node.props.name === 'food-0-0').props.onChange({ currentTarget: { value: 'local:Sukker' } })
+  assert.ok(!render().includes(reason))
+  assert.ok(!/<details[^>]* open/.test(render()))
+  assert.equal(storage.data.size, 0)
 })

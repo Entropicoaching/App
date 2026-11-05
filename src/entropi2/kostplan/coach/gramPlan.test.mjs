@@ -92,7 +92,7 @@ test('infeasible and unmet statuses remain honest; manual edits update feedback 
 test('invalid choices keep current meals, cannot fabricate food macros or save changed bounds', async () => {
   const { controller: c, storage } = setup(); c.generate(choices())
   const before = c.snapshot().meals
-  for (const items of [[], [selection('unknown', 5, 50)], [selection('Ris kogt', 0, 100)],
+  for (const items of [[selection('unknown', 5, 50)], [selection('Ris kogt', 0, 100)],
     [selection('Ris kogt', 5, 53)], [selection('Ris kogt', 100, 50)],
     [selection('Ris kogt', 5, 50), selection('Ris kogt', 5, 50)]]) {
     assert.equal(c.generate([{ id: 'm', name: 'Syntetisk', items }]), false)
@@ -139,4 +139,29 @@ test('pending local writes lock generation and bounds; failed writes preserve th
   pending.generate(choices()); const saving = pending.save()
   assert.equal(pending.generate(choices()), false); assert.equal(pending.editBounds(0, 0, 'minGrams', '50'), false)
   finish(false); assert.equal(await saving, false)
+})
+
+test('empty coach meals use only matching available catalogue data and save as ordinary namespaced drafts', async () => {
+  const { controller: c, storage } = setup()
+  const manual = { id: 'manual', name: 'Coachens valg', items: [selection('Sukker', 25, 25)] }
+  const empty = { id: 'empty', name: 'Syntetisk forslag', items: [] }
+  assert.equal(c.generate([manual, empty]), true)
+  assert.deepEqual(c.snapshot().meals[0].items.map(item => [item.food.id, item.grams]), [[selection('Sukker').foodId, 25]])
+  for (const item of c.snapshot().meals[1].items) {
+    const food = FOODS.find(food => food.id === item.food.id)
+    assert.equal(item.food.nutrition.prioritetBegrundelse, food.prioritetBegrundelse)
+  }
+  assert.equal(storage.calls.filter(call => call[0] === 'set').length, 0)
+  assert.equal(await c.save(), true)
+  assert.deepEqual([...storage.data.keys()], [draftKey(scope.coachId, athlete.id, date)])
+  const restored = setup(storage).controller
+  assert.deepEqual(restored.snapshot().meals, c.snapshot().meals)
+  const ids = restored.snapshot().meals.map(meal => meal.items.map(item => item.food.id))
+  assert.equal(restored.generate(), true)
+  assert.deepEqual(restored.snapshot().meals.map(meal => meal.items.map(item => item.food.id)), ids)
+  const available = catalogFoods(FOODS).filter(food => food.name === 'Ris kogt')
+  const generated = generateCoachGrams([empty], c.snapshot().planTargets, available)
+  assert.deepEqual(generated.meals[0].items.map(item => item.food.id), [available[0].id])
+  available[0].per100g.carb += 1
+  assert.throws(() => generateCoachGrams([empty], c.snapshot().planTargets, available), /ingen tilgængelige/)
 })

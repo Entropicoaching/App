@@ -29,17 +29,33 @@ id'er eller næringsværdier. Beregningsmodulets `targets` har nøglerne `kcal`,
 endelige, ikke-negative tal; kcal skal være positiv. Kcal højst 100000, øvrige
 højst 10000. Grænserne er tekniske inputværn, ikke kostanbefalinger.
 
-Hver valgt portion skal have eksplicitte `minGrams`/`maxGrams` i trin på 5 g,
+Hver portion valgt af coachen skal have eksplicitte `minGrams`/`maxGrams` i trin på 5 g,
 5–1000 g, min <= max. De er coachens praktiske valg pr. fødevare OG måltid;
-generatoren gætter ikke portionsstørrelser for fx olie, tør ris eller kogt ris.
+generatoren ændrer ikke disse grænser for fx olie, tør ris eller kogt ris.
 Alle valgte fødevarer indgår med mindst minimum. At fravælge en fødevare betyder
-at fjerne den fra `items`. Ingen valgte fødevarer erstattes eller tilføjes.
+at fjerne den fra `items`. Et ikke-tomt måltid får aldrig andre fødevarer tilføjet
+eller erstattet, heller ikke hvis coachens valg er uden prioritetsmærke.
 Minimum og maksimum kan være ens for en fast portion. Grænser gælder pr. portion,
 ikke hele dagen; daglige fødevarelofter er ikke implementeret.
 
 1–8 måltider, højst 12 forskellige fødevarer pr. måltid og 64 portioner pr. dag.
-Et katalog-id må gentages på tværs af måltider. Tomt `items` giver `no-plan`, ingen
-måltider og `null` for totals/afvigelser/grænser. Ugyldige input giver `TypeError`.
+Et katalog-id må gentages på tværs af måltider. Tomt `items` udløser et forslag fra
+de eksisterende katalogfelter `prioritet` og `prioritetBegrundelse`. Blandt de
+tilgængelige mærkede varer med kendte makroer vælges højeste indhold pr. 100 g for
+hvert positivt protein-, kulhydrat- og fedtmål. Katalogrækkefølge afgør lighed;
+samme vare til flere makroer tilføjes kun én gang. Ingen indbyrdes rangorden udledes
+af mærkerne basis/god/særlig. Der foreslås højst tre varer pr. tomt måltid.
+Det er en enkel redaktionel makroheuristik, ikke et mål for proteinkvalitet eller
+ernæringsmæssig dækning. Der udledes ikke træningstid, allergier eller præferencer.
+
+Automatiske forslag bruger foreløbige 5–300 g pr. vare, i trin på 5 g; disse grænser
+er produktregler og skal gennemgås af coachen. Alle tomme måltider bruger samme
+valg; variation og måltidsfordeling kræver coachens gennemgang. `availableFoodIds`
+kan begrænse automatiske forslag til en unik liste af kendte katalog-id'er;
+udeladt betyder hele kataloget, `[]` betyder ingen. Coachadapteren sender kun
+katalogvarer med kanonisk matchende makroer. Et måltid uden nogen tilgængelige
+forslag giver `no-plan`, ingen måltider og `null` for totals/afvigelser/grænser.
+Ugyldige eksplicitte valg giver stadig `TypeError`; de erstattes aldrig automatisk.
 `prioritizedFoodIds` er valgfri, ordnet og uden dubletter; kun allerede valgte
 id'er tillades. Prioritet bestemmer søgeorden og afgør lige gode kandidater,
 fx to fødevarer med identiske makroer. Det er ikke et garanteret gramminimum
@@ -72,6 +88,11 @@ Portionerne indeholder `foodId`, `food` (samme snapshotformat som
 De kan beregnes igen med `calculateMeals(plan.meals)`. Kildens legacy-værdier er
 uændrede; kildeverifikation og uklar rå/kogt tilstand forbliver synlige. Ingen
 kcal udledes af 4/4/9, og ukendte mikronæringsværdier udfyldes ikke.
+
+Når katalogvaren har prioritet, medfølger `prioritet` og `prioritetBegrundelse`
+uændret i generatorens portionsresultat. Coachens forslagsvisning viser den korte
+katalogbegrundelse fra den valgte vares kanoniske ernæringssnapshot; umærkede varer
+viser ingen begrundelse. At skifte fødevare skifter derfor også begrundelsen.
 
 Alle tests her er almindelige `.test.mjs`-filer og opdages af appens eksisterende
 `npm test`-runner. Modulet kræver ikke React, og ingen React-stub eller loader

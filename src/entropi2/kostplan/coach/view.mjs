@@ -76,7 +76,7 @@ export function coachPlanView(h, snapshot, actions) {
   s.meals.length > 0 && h('section', { 'aria-label': 'Dagsplan til gennemgang' },
     h('h3', null, 'Dagsplan til gennemgang'),
     h('p', null, s.gramGenerator
-      ? 'Forslaget fordeler gram inden for dine portionsgrænser. Du kan rette gram frit før gemning. En ny generering erstatter rettelserne og bruger portionsgrænserne igen.'
+      ? 'Forslaget fordeler gram inden for portionsgrænserne. Tomme måltider får prioriterede katalogvarer med foreløbige grænser på 5–300 g pr. fødevare. Du kan rette fødevarer, grænser og gram før gemning. En ny generering bevarer fødevarevalgene og bruger grænserne igen.'
       : 'Måltidsskabelonen skaleres efter energi og afrundes til hele gram. Kontrollér fødevarer, tilberedning og fordeling før gemning.'),
     s.gramFeedback && h('p', { role: 'status', 'aria-live': 'polite' }, s.gramFeedback.message),
     s.planTargets ? h('div', { style: { overflowX: 'auto' } }, h('table', { style: { width: '100%', textAlign: 'left' } },
@@ -95,6 +95,7 @@ export function coachPlanView(h, snapshot, actions) {
     s.gramFeedback && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om afvigelser og tolerance'),
       h('p', null, 'Afvigelse er plan minus mål. Tolerance er det største af 5 % af målet og henholdsvis 50 kcal, 5 g protein, 10 g kulhydrat og 3 g fedt. Det er en planlægningsregel. Der optimeres på dagens sum; måltidernes fordeling skal gennemgås.'),
+      h('p', null, 'I tomme måltider vælges blandt tilgængelige, prioriterede katalogvarer efter højeste kendte protein-, kulhydrat- og fedtindhold pr. 100 g, når dagens mål indeholder disse makroer. Det er et enkelt udgangspunkt til gennemgang; træningstid, allergier, præferencer og variation er ikke koblet ind.'),
       h('p', null, `Dagens tolerance: ±${format(s.gramFeedback.tolerance.kcal)} kcal · ±${format(s.gramFeedback.tolerance.protein)} g protein · ±${format(s.gramFeedback.tolerance.carb)} g kulhydrat · ±${format(s.gramFeedback.tolerance.fat)} g fedt.`)),
     ...s.meals.map((meal, mi) => h('fieldset', { key: meal.id, disabled: busy,
       style: { minWidth: 0, margin: '1rem 0', padding: '0.75rem' } },
@@ -110,7 +111,9 @@ export function coachPlanView(h, snapshot, actions) {
         onChange: event => actions.editFood(mi, ii, event.currentTarget.value),
       }, ...s.foods.map(food => h('option', { key: food.id, value: food.id }, food.name)))),
       field(`grams-${mi}-${ii}`, `Gram af ${item.food.name} i ${meal.name}`, item.grams,
-        value => actions.editGrams(mi, ii, value)))),
+        value => actions.editGrams(mi, ii, value)),
+      s.gramGenerator && item.food.nutrition?.prioritetBegrundelse && h('small', { style: { gridColumn: '1 / -1' } },
+        `Katalogets begrundelse: ${item.food.nutrition.prioritetBegrundelse}`))),
     s.gramGenerator && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, `Portionsgrænser i ${meal.name}`),
       h('p', null, 'Grænser bruges ved næste generering. Vælg min./maks. i trin på 5 g fra 5 til 1.000 g.'),

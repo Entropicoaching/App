@@ -86,10 +86,10 @@ test('coupled infeasibility is reported as unmet without claiming a mathematical
   assert.match(result.message, /beviser ikke/)
 })
 
-test('empty selections produce no plan and null totals instead of an invented zero intake', () => {
+test('empty selections without available marked foods produce no plan and null totals', () => {
   const input = strengthDays()[0].input
   input.meals[1].items = []
-  const result = generateGramPlan(input)
+  const result = generateGramPlan({ ...input, availableFoodIds: [foodId('Sukker')] })
   assert.equal(result.status, 'no-plan')
   for (const key of ['totals', 'displayTotals', 'deviation', 'bounds']) assert.equal(result[key], null)
   assert.deepEqual(result.meals, [])

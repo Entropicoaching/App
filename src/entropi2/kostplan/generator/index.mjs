@@ -1,6 +1,7 @@
 import { FOODS } from '../foedevarer/catalog.mjs'
 import { calculateMeals } from '../foedevarer.mjs'
 import { solvePortions } from './solver.mjs'
+import { suggestFoodItems } from './suggestions.mjs'
 
 const KEYS = ['kcal', 'protein', 'carb', 'fat']
 const NUTRIENTS = ['energyKcal', 'proteinG', 'carbohydrateG', 'fatG']
@@ -15,19 +16,24 @@ export const GENERATOR_POLICY = Object.freeze({
 
 /** Pure draft generator. Bounds are explicit editorial choices, never nutrition data. */
 export function generateGramPlan(input) {
-  const { targets, mealCount, meals, prioritizedFoodIds = [] } = input ?? {}
+  const { targets, mealCount, meals, prioritizedFoodIds = [], availableFoodIds } = input ?? {}
   if (!targets || KEYS.some(key => !amount(targets[key], key === 'kcal' ? 100000 : 10000)) || targets.kcal === 0) {
     throw new TypeError('Dagens mål kræver kendte tal: kcal, protein, carb og fat')
   }
   if (!Number.isInteger(mealCount) || mealCount < 1 || mealCount > GENERATOR_POLICY.maxMeals
     || !Array.isArray(meals) || meals.length !== mealCount) throw new TypeError('Antal måltider skal svare til 1–8 måltider')
+  if (availableFoodIds !== undefined && (!Array.isArray(availableFoodIds)
+    || availableFoodIds.length > FOODS.length || new Set(availableFoodIds).size !== availableFoodIds.length
+    || Array.from(availableFoodIds).some(id => !catalog.has(id)))) throw new TypeError('Tilgængelige fødevarer kræver unikke katalog-id’er')
+  const available = availableFoodIds === undefined ? null : new Set(availableFoodIds)
+  const suggestions = suggestFoodItems(FOODS.filter(food => !available || available.has(food.id)), targets)
   const ids = new Set(), selected = new Set(), rows = []
   const normalizedMeals = Array.from(meals, (meal, mealIndex) => {
     if (!text(meal?.id) || ids.has(meal.id) || !text(meal.name) || !Array.isArray(meal.items)
       || meal.items.length > GENERATOR_POLICY.maxItemsPerMeal) throw new TypeError('Måltid kræver unikt id, navn og højst 12 fødevarer')
     ids.add(meal.id)
     const seen = new Set()
-    Array.from(meal.items, item => {
+    Array.from(meal.items.length ? meal.items : suggestions, item => {
       const food = catalog.get(item?.foodId)
       if (!food || seen.has(food.id)) throw new TypeError('Vælg et kendt katalog-id én gang pr. måltid')
       seen.add(food.id); selected.add(food.id)
@@ -51,10 +57,10 @@ export function generateGramPlan(input) {
   const target = Object.fromEntries(KEYS.map(key => [key, targets[key]]))
   const tolerance = Object.fromEntries(KEYS.map(key => [key,
     Math.max(GENERATOR_POLICY.absoluteTolerance[key], target[key] * GENERATOR_POLICY.relativeTolerance)]))
-  if (meals.some(meal => meal.items.length === 0)) {
+  if (normalizedMeals.some((_, index) => !rows.some(row => row.mealIndex === index))) {
     return { policyVersion: GENERATOR_POLICY.version, status: 'no-plan', targets: target, tolerance,
       meals: [], totals: null, displayTotals: null, deviation: null, bounds: null,
-      message: 'Vælg mindst én fødevare i hvert måltid. Der er endnu ingen gramplan.' }
+      message: 'Der er ingen tilgængelige prioriterede fødevarer til et tomt måltid. Vælg fødevarer og portionsgrænser. Der er endnu ingen gramplan.' }
   }
   const grams = solvePortions(rows, KEYS.map(key => target[key]), KEYS.map(key => tolerance[key]))
   const totals = Object.fromEntries(KEYS.map((key, k) => [key,
@@ -79,7 +85,8 @@ export function generateGramPlan(input) {
   const resultMeals = calculated.meals.map(meal => ({ ...meal, items: meal.items.map(item => {
     const row = rows[offset++]
     return { ...item, foodId: row.foodId, preparation: row.food.preparation, source: { ...row.food.source },
-      minGrams: row.minGrams, maxGrams: row.maxGrams }
+      minGrams: row.minGrams, maxGrams: row.maxGrams,
+      ...(row.food.prioritetBegrundelse ? { prioritet: row.food.prioritet, prioritetBegrundelse: row.food.prioritetBegrundelse } : {}) }
   }) }))
   const met = KEYS.every(key => deviation[key].withinTolerance)
   const status = met ? 'matched' : KEYS.some(key => bounds[key].excludesTarget) ? 'infeasible' : 'unmet'
