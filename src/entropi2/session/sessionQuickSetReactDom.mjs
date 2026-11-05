@@ -31,10 +31,20 @@ export function sessionReactDocument() {
         : this.tagName.toLowerCase() === selector
     }
   }
+  // The shared synthetic tree walks every child, including React's text nodes.
+  // Keep its traversal API while text never matches an element selector.
+  class Text extends Element {
+    constructor(value) {
+      super('#text', doc)
+      this.nodeType = 3; this.nodeName = '#text'; this.nodeValue = String(value); this.parentNode = null
+    }
+    get textContent() { return this.nodeValue }
+    set textContent(value) { this.nodeValue = String(value) }
+    matches() { return false }
+  }
   doc = { nodeType: 9, activeElement: null, addEventListener() {}, removeEventListener() {},
     createElement: tag => new Node(tag), createElementNS: (_namespace, tag) => new Node(tag),
-    createTextNode: value => ({ nodeType: 3, nodeName: '#text', nodeValue: String(value), parentNode: null,
-      get textContent() { return this.nodeValue }, set textContent(text) { this.nodeValue = String(text) } }) }
+    createTextNode: value => new Text(value) }
   doc.defaultView = { document: doc, HTMLElement: Node, HTMLIFrameElement: class {} }
   doc.documentElement = doc.createElement('html'); doc.body = doc.createElement('body'); doc.root = doc.body
   doc.documentElement.append(doc.body)

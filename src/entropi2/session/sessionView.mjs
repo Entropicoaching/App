@@ -6,6 +6,8 @@ import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
 import { lastSetLine } from './sessionHistory.mjs'
 import { sessionSummary } from './sessionSummary.mjs'
+import { sessionComparisons } from './sessionComparison.mjs'
+import { sessionComparisonContent } from './sessionComparisonContent.mjs'
 import { stepWeight, stepReps } from '../../setLogDefaults.js'
 import { createRestTimer } from './restTimer.mjs'
 import { mountPlateCalculator } from './plader/plateView.mjs'
@@ -16,7 +18,7 @@ import { sessionPrescription } from './sessionPrescription.mjs'
 import { parseInputNumber } from '../../inputValues.js'
 import { sessionGroupsForDisplay } from './supersaet/supersetModel.mjs'
 import { mountSupersetView } from './supersaet/supersetView.mjs'
-import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps } from './historik/exerciseHistoryDom.mjs'
+import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps, historyElement } from './historik/exerciseHistoryDom.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const given = v => v != null && String(v).trim() !== ''
@@ -128,11 +130,15 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       }
       for (const ex of summary.exercises.filter(ex => ex.total === 0)) card.append(el('p', `${ex.name}: ingen planlagte sæt`))
       if (summary.highestRpe != null) card.append(el('p', `Højeste RPE i dag: ${summary.highestRpe}`))
-      const heavy = summary.exercises.filter(ex => ex.heaviest)
+      const comparisons = sessionComparisons(s.session, p.exerciseLogs, p, clock.Date.now(), s.logs)
+      const compared = new Set(comparisons.map(item => item.exerciseId))
+      const heavy = summary.exercises.filter((ex, index) => ex.heaviest && !compared.has(s.session.exercises[index].id))
       if (heavy.length) {
         card.append(el('h2', 'Tungeste sæt i dag'))
         for (const ex of heavy) card.append(el('p', `${ex.name}: ${ex.heaviest}`))
       }
+      const comparison = sessionComparisonContent((...args) => historyElement(doc, ...args), comparisons)
+      if (comparison) card.append(comparison)
       body.append(card)
       if (s.next) {
         const resume = el('button', 'Fortsæt passet', { type: 'button' })
