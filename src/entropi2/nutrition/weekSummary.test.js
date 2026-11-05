@@ -129,7 +129,7 @@ test('week view: no duplicate goal line; invalid day shows unknown', async t => 
     assert.doesNotMatch(week.textContent, /Protein nået/)
   }
   const { week } = await mounted(t, [row({ protein: null }), rows[1]], { protein_target: 10 })
-  assert.ok(find(week, 'p', 'Seneste 7 dage: 2 af 7 dage logget · gennemsnit ukendt.'))
+  assert.ok(find(week, 'p', 'Seneste 7 dage: 2 af 7 dage logget · gennemsnittet kan ikke beregnes, fordi næringsdata mangler eller skal kontrolleres.'))
   assert.doesNotMatch(week.textContent, /Protein nået/)
 })
 

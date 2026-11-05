@@ -81,7 +81,7 @@ test('weekText compact: one short summary, sparse/unknown days and unchanged ful
   assert.equal(compact([row(), row()]), 'Seneste 7 dage: 1 af 7 dage logget · for få dage til et gennemsnit.')
   const rows = [row({ kcal: '100,5', protein: 10 }), row({ date: '2026-11-02', kcal: 200, protein: 20 })]
   assert.equal(compact(rows), 'Seneste 7 dage: 2 af 7 dage logget · snit 150,3 kcal · 15 g protein pr. logget dag.')
-  assert.equal(compact([row({ kcal: null }), rows[1]]), 'Seneste 7 dage: 2 af 7 dage logget · gennemsnit ukendt.')
+  assert.equal(compact([row({ kcal: null }), rows[1]]), 'Seneste 7 dage: 2 af 7 dage logget · gennemsnittet kan ikke beregnes, fordi næringsdata mangler eller skal kontrolleres.')
   assert.equal(compact([row({ kcal: 0, protein: 0 }), row({ date: '2026-11-02', kcal: 0, protein: 0 })]),
     'Seneste 7 dage: 2 af 7 dage logget · snit 0 kcal · 0 g protein pr. logget dag.')
   assert.match(weekText(rows, {}, date), /^Kost /)

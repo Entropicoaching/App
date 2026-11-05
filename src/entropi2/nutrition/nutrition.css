@@ -30,6 +30,8 @@
 .e2-nutrition button,.e2-nutrition summary,.e2-nutrition input,.e2-nutrition select{min-height:44px;min-width:44px;touch-action:manipulation}
 .e2-nutrition .cta{display:flex;align-items:center;justify-content:center;min-height:52px;padding:12px 16px;border:1px solid var(--line);border-radius:10px;font:600 15px var(--sans);text-align:center;background:var(--surface);color:var(--ink);width:100%;overflow-wrap:anywhere;cursor:pointer}
 .e2-nutrition button:hover{color:var(--gold)}
+.e2-nutrition .cta-primary{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.e2-nutrition .cta-primary:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .e2-nutrition button:disabled{opacity:.65;cursor:wait}
 .e2-nutrition :focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .e2-nutrition summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-size:15px;list-style:none}

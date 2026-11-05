@@ -1,11 +1,12 @@
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
+import { mealLabel } from './mealLabel.mjs'
 import { displayNumber } from './startModel.mjs'
 
 // Existing snapshot.logs already contains only this diary date's meals.
 // Preserve individual entries (including identical meals); unknown is never zero.
 export function mealProtein(logs) {
   return logs.map(row => ({
-    meal: typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid',
+    meal: mealLabel(row.meal),
     protein: parseInputNumber(row.protein),
   }))
 }

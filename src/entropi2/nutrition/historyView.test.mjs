@@ -89,7 +89,7 @@ test('history view: closing/reopening and redraw preserve controls without new I
 
 test('history view: unknown meal labels and HTML-like text stay inert text', async t => {
   const { history } = await mounted(t, [row({ meal: null }), row({ meal: '<img src=x onerror=synthetic()>' })])
-  assert.ok(find(history, 'li', 'Ugyldigt måltid'))
+  assert.ok(find(history, 'li', 'Måltid uden navn'))
   assert.ok(find(history, 'li', '<img src=x onerror=synthetic()>'))
   assert.equal(history.querySelectorAll('img').length, 0)
   assert.ok(find(history, 'p', 'Næringsdata skal kontrolleres'))

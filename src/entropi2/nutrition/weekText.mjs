@@ -17,7 +17,7 @@ export function weekText(historyRows, targets, date, { compact = false } = {}) {
   // Compact athlete view; the default projection retains dates and agreed goals.
   if (compact) {
     const detail = loggedDays < 2 ? 'for få dage til et gennemsnit'
-      : averages.kcal === null || averages.protein === null ? 'gennemsnit ukendt'
+      : averages.kcal === null || averages.protein === null ? 'gennemsnittet kan ikke beregnes, fordi næringsdata mangler eller skal kontrolleres'
       : `snit ${amount(averages.kcal, 'kcal')} · ${amount(averages.protein, 'g protein')} pr. logget dag`
     return `Seneste 7 dage: ${loggedDays} af 7 dage logget · ${detail}.`
   }

@@ -101,7 +101,7 @@ test('own meal: reload clears selection; disposed calls are inert', async t => {
   assert.equal(writes.length, 0)
 })
 
-test('own meal DOM: invalid selected part leaves both storage and diary intact with inline alert', async t => {
+test('own meal DOM: invalid selected part leaves storage and diary intact with visible alert outside the fold', async t => {
   const { c, writes } = await fixture(t, [meal(1), meal(2, { fat: null })])
   const host = syntheticHost(); t.after(mountNutrition(host, c)); await flush()
   for (const index of [0, 1]) await host.querySelectorAll('input').find(n => n.getAttribute('data-focus') === 'meal-part-' + index).fire('change')
@@ -110,7 +110,9 @@ test('own meal DOM: invalid selected part leaves both storage and diary intact w
   const form = () => host.querySelectorAll('form').find(n => n.getAttribute('aria-label') === 'Gem eget måltid')
   await form().fire('submit')
   assert.equal(writes.length, 0); assert.equal(c.snapshot().logs.length, 2)
-  assert.equal(form().querySelectorAll('p').some(n => n.getAttribute('role') === 'alert' && n.textContent.includes('Intet blev gemt')), true)
+  const alerts = host.querySelectorAll('p').filter(n => n.getAttribute('role') === 'alert' && n.textContent.includes('Intet blev gemt'))
+  assert.equal(alerts.length, 1)
+  assert.equal(alerts[0].parentElement.tagName, 'MAIN')
   assert.equal(form().querySelectorAll('input')[0].value, 'Min ret')
   await host.querySelectorAll('input').find(n => n.getAttribute('data-focus') === 'meal-part-1').fire('change')
   assert.equal(find(host, 'button', 'Gem i Favoritter').disabled, true)

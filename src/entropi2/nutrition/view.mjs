@@ -4,6 +4,7 @@ import { startAdvice, weightSummary, displayNumber, remainingToday } from './sta
 import { historyDays } from './historyDays.mjs'
 import { weekText } from './weekText.mjs'
 import { weeklyTrend } from './weeklyTrend.mjs'
+import { mealLabel } from './mealLabel.mjs'
 import { mealProtein, eveningProtein } from './dailyProtein.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
@@ -116,7 +117,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         field(form, l, manual[k] ?? '', v => { manual[k] = v })
       }
       append(form, 'p', 'small muted', 'Angiv kendte værdier. Brug 0 kun når værdien er kendt som nul.')
-      const save = button(form, s.pending ? 'Gemmer…' : 'Gem måltid', () => {}, s.pending); save.type = 'submit'; save.setAttribute('data-focus', 'save')
+      const save = button(form, s.pending ? 'Gemmer…' : 'Gem måltid', () => {}, s.pending); save.className += ' cta-primary'; save.type = 'submit'; save.setAttribute('data-focus', 'save')
       form.addEventListener('submit', async e => {
         e.preventDefault()
         if (await action({ ...manual })) { manual = {}; draw() }
@@ -151,7 +152,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
         append(foodForm, 'p', 'small muted', 'Gramknapperne justerer mængden. Log portion gemmer måltidet.')
         if (s.portionError) { const p = append(foodForm, 'p', 'small', s.portionError); p.setAttribute('role', 'alert') }
-        const add = button(foodForm, 'Log portion', () => {}, s.pending); add.type = 'submit'
+        const add = button(foodForm, 'Log portion', () => {}, s.pending); add.className += ' cta-primary'; add.type = 'submit'
         foodForm.addEventListener('submit', e => { e.preventDefault(); return controller.logFood(Number(selection), amount, Number(unit), intent()) })
       }
       if (availableTemplates.length || templateState?.suggestions.length) fast.append(templates)
@@ -204,7 +205,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       })
       input.disabled = weightPending || weightProps.savingWeight === true
       const save = button(form, input.disabled ? 'Gemmer vægt…' : 'Gem vægt', () => {}, input.disabled)
-      save.type = 'submit'; save.setAttribute('data-focus', 'save-weight')
+      save.className += ' cta-primary'; save.type = 'submit'; save.setAttribute('data-focus', 'save-weight')
       form.addEventListener('submit', async e => {
         e.preventDefault()
         if (destroyed || weightPending || weightProps.savingWeight === true || s.date !== calendarDay(clock())) return
@@ -239,7 +240,12 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     }
     if ((!advice.kcal || !advice.protein) && typeof onCoach !== 'function') append(hero, 'p', 'muted space', 'Aftal dine kostmål med din coach.')
     if (typeof onCoach === 'function') button(hero, 'Tal med din coach', onCoach)
-    append(main, 'h2', 'section-head', isToday ? 'Dagens dagbog' : 'Dagbog for den valgte dag')
+    // Keep feedback outside the fold, including failures from meal actions.
+    const diary = node('details', 'card')
+    diary.setAttribute('data-focus', 'diary')
+    const diarySummary = append(diary, 'summary')
+    diarySummary.setAttribute('data-focus', 'diary-summary')
+    append(s.loaded ? diarySummary : main, 'h2', s.loaded ? '' : 'section-head', isToday ? 'Dagens dagbog' : 'Dagbog for den valgte dag')
     const status = append(main, 'p', 'space', s.message)
     status.setAttribute('role', s.phase.endsWith('error') ? 'alert' : 'status')
     status.setAttribute('aria-live', 'polite')
@@ -251,32 +257,33 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       // fordelingen vises kun, naar der er noget at fordele (dagbogen siger det tomme).
       const knownProtein = mealProtein(s.logs).filter(meal => meal.protein !== null)
       if (knownProtein.length) {
-        const distribution = append(main, 'section', 'space')
+        const distribution = append(diary, 'section', 'space')
         append(distribution, 'h3', '', 'Protein pr. måltid')
         const list = append(distribution, 'ul', 'list')
         for (const meal of knownProtein) append(list, 'li', '', `${meal.meal}: ${displayNumber(meal.protein)} g protein`)
       }
-      const ul = append(main, 'ul', 'list')
+      const ul = append(diary, 'ul', 'list')
       if (s.needsRefresh) {
-        append(main, 'p', 'muted', 'Hent dagbogen igen for at kunne rette eller fjerne det nye måltid.')
-        button(main, 'Hent dagbogen igen', () => controller.load(), s.pending)
+        append(diary, 'p', 'muted', 'Hent dagbogen igen for at kunne rette eller fjerne det nye måltid.')
+        button(diary, 'Hent dagbogen igen', () => controller.load(), s.pending)
       }
       if (!s.logs.length) append(ul, 'li', 'muted', isToday ? 'Ingen måltider registreret i dag.' : 'Ingen måltider registreret den valgte dag.')
       for (const [index, row] of s.logs.entries()) {
         const li = append(ul, 'li')
+        const label = mealLabel(row.meal)
         const partLabel = append(li, 'label', 'meal-part')
         const part = append(partLabel, 'input')
         part.type = 'checkbox'; part.checked = s.selectedParts.includes(index); part.disabled = s.pending
-        part.setAttribute('aria-label', 'Vælg del ' + (index + 1) + ': ' + row.meal)
+        part.setAttribute('aria-label', 'Vælg del ' + (index + 1) + ': ' + label)
         part.setAttribute('data-focus', 'meal-part-' + index)
         part.addEventListener('change', () => controller.toggleMealPart(index))
         append(partLabel, 'span', '', 'Vælg til eget måltid')
-        append(li, 'strong', '', typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid')
+        append(li, 'strong', '', label)
         const validRow = typeof row.meal === 'string' && row.meal.trim()
           && ['kcal', 'protein', 'carb', 'fat'].every(key => parseInputNumber(row[key]) !== null)
-        append(li, 'small', '', validRow ? `${row.kcal} kcal · ${row.protein} g protein` : 'Kontrollér næringsværdierne for dette måltid.')
+        append(li, 'small', '', validRow ? `${displayNumber(parseInputNumber(row.kcal))} kcal · ${displayNumber(parseInputNumber(row.protein))} g protein` : 'Kontrollér næringsværdierne for dette måltid.')
         if (s.editableIds?.includes(row.id)) {
-          const edit = button(li, 'Ret måltid: ' + row.meal, () => {
+          const edit = button(li, 'Ret måltid: ' + label, () => {
             if (destroyed || controller.snapshot().pending) return
             editing = { id: row.id, intent: intent(), meal: row.meal,
               ...Object.fromEntries(['kcal', 'protein', 'carb', 'fat'].map(k => [k, row[k] ?? ''])) }
@@ -286,7 +293,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           edit.setAttribute('data-focus', 'edit-' + row.id)
         }
         if (s.removableIds?.includes(row.id)) {
-          const remove = button(li, 'Fjern måltid: ' + row.meal, () => {
+          const remove = button(li, 'Fjern måltid: ' + label, () => {
             if (destroyed || controller.snapshot().pending) return
             removing = { id: row.id, intent: intent() }; editing = null; draw()
             Array.from(host.querySelectorAll('button')).find(n => n.getAttribute('data-focus') === 'cancel-remove')?.focus()
@@ -295,13 +302,13 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
         if (editing?.id === row.id && s.editableIds?.includes(row.id)) {
           const draft = editing, form = append(li, 'form', 'stack space')
-          form.setAttribute('aria-label', 'Ret måltid: ' + row.meal)
+          form.setAttribute('aria-label', 'Ret måltid: ' + label)
           for (const [k, label] of [['meal', 'Måltid'], ['kcal', 'Energi (kcal)'], ['protein', 'Protein (g)'], ['carb', 'Kulhydrat (g)'], ['fat', 'Fedt (g)']]) {
             const input = field(form, label, draft[k], v => { draft[k] = v })
             input.setAttribute('data-focus', 'edit-' + label); input.disabled = s.pending
           }
           append(form, 'p', 'small muted', 'Angiv kendte værdier. Brug 0 kun når værdien er kendt som nul.')
-          const save = button(form, 'Gem ændring', () => {}, s.pending); save.type = 'submit'
+          const save = button(form, 'Gem ændring', () => {}, s.pending); save.className += ' cta-primary'; save.type = 'submit'
           save.setAttribute('data-focus', 'save-edit')
           button(form, 'Annuller rettelse', () => { editing = null; draw() }, s.pending)
           form.addEventListener('submit', async e => {
@@ -315,7 +322,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
         if (removing?.id === row.id && s.removableIds?.includes(row.id)) {
           const confirmation = removing, group = append(li, 'div', 'stack space')
-          append(group, 'p', '', 'Vil du fjerne måltidet ' + row.meal + '?')
+          append(group, 'p', '', 'Vil du fjerne måltidet ' + label + '?')
           button(group, 'Ja, fjern måltid', async () => {
             if (destroyed || removing !== confirmation) return
             if (await controller.remove(row.id, confirmation.intent, true)) { removing = null; draw() }
@@ -328,7 +335,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         }
       }
       if (s.logs.length >= 2) {
-        const own = append(main, 'form', 'card stack')
+        const own = append(diary, 'form', 'card stack')
         own.setAttribute('aria-label', 'Gem eget måltid')
         append(own, 'h2', '', 'Gem eget måltid')
         append(own, 'p', 'muted', 'Vælg mindst to af dagens måltider og gem dem samlet i Favoritter.')
@@ -336,8 +343,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         const name = field(own, 'Navn på eget måltid', ownMealName, v => { ownMealName = v })
         name.inputMode = 'text'; name.maxLength = 60; name.disabled = s.pending
         const save = button(own, 'Gem i Favoritter', () => {}, s.pending || s.selectedParts.length < 2)
-        save.type = 'submit'; save.setAttribute('data-focus', 'save-own-meal')
-        if (s.favoriteError) { const p = append(own, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
+        save.className += ' cta-primary'; save.type = 'submit'; save.setAttribute('data-focus', 'save-own-meal')
         own.addEventListener('submit', e => {
           e.preventDefault()
           if (destroyed) return
@@ -352,8 +358,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         append(goals, 'h2', '', 'Registreret indtag')
         for (const [key, label, unitName] of [['kcal', 'Energi', 'kcal'], ['protein', 'Protein', 'g']]) {
           const target = s.targets[key] > 0 ? s.targets[key] : null
-          append(goals, 'p', 'muted space', `${label}: ${s.totals[key]} ${unitName}`
-            + (target ? ` · aftalt mål ${target} ${unitName}` : ''))
+          append(goals, 'p', 'muted space', `${label}: ${displayNumber(s.totals[key])} ${unitName}`)
           if (target && s.totals && s.logs.length) {
             const progress = append(goals, 'progress'); progress.max = target; progress.value = Math.min(target, s.totals[key])
             progress.setAttribute('aria-label', label + ', registreret i forhold til aftalt mål')
@@ -369,6 +374,8 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const evening = isToday ? eveningProtein(remaining, clock()) : null
       if (evening) append(goals, 'p', 'muted space', evening)
       if (s.logs.length && s.totals) append(goals, 'p', 'small muted space', 'Registreringer viser ikke nødvendigvis hele ' + (isToday ? 'dagens' : 'den valgte dags') + ' indtag. Ingen samlet kostvurdering.')
+      // Intake and remaining goals stay reachable before the collapsed diary.
+      main.append(diary)
       // Keep the existing library controls below the diary, without duplicate log buttons.
       const library = (title, items, prefix) => {
         if (!items.length) return
@@ -383,7 +390,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       }
       library('Dine favoritter', s.favorites, 'fav')
       library('Måltidsbibliotek', s.recent.filter(meal => !s.favoriteKeys.includes(mealKey(meal))), 'recent')
-      if (s.favoriteError && s.logs.length < 2) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
+      if (s.favoriteError) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
       const weekly = append(main, 'section', 'card')
       if (s.historyRows.length) {
         append(weekly, 'h2', '', 'Din uge')
@@ -427,7 +434,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
             : `${displayNumber(day.kcal)} kcal · ${displayNumber(day.protein)} g protein`)
           const list = append(group, 'ul', 'list')
           s.historyRows.filter(row => row.date === day.date && !isDayReceipt(row)).forEach(row =>
-            append(list, 'li', '', typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid'))
+            append(list, 'li', '', mealLabel(row.meal)))
         }
       }
     }
