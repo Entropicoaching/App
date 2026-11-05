@@ -50,13 +50,15 @@ export function coachPlanView(h, snapshot, actions) {
           disabled: busy || s.form.goal === 'maintain',
           onChange: event => actions.set('intensity', Number(event.currentTarget.value)) },
         ...INTENSITIES.map(value => h('option', { key: value, value }, `${value} %`)))),
-        field('maintenanceKcal', 'Vedligeholdelsesenergi (kcal)', s.form.maintenanceKcal, value => actions.set('maintenanceKcal', value)),
+        field('maintenanceKcal', s.gramGenerator ? 'Vedligeholdelsesenergi (kcal, valgfrit estimat)' : 'Vedligeholdelsesenergi (kcal)', s.form.maintenanceKcal, value => actions.set('maintenanceKcal', value)),
         !s.calculated && field('protein', 'Proteinmål (g)', s.form.protein, value => actions.set('protein', value)),
         !s.calculated && field('fat', 'Fedtmål (g)', s.form.fat, value => actions.set('fat', value))),
-      h('p', null, s.calculated
+      h('p', null, s.gramGenerator
+        ? 'Målene beregnes fra profilens alder, kropsvægt og dit valgte mål. Tom vedligehold bruger modellens foreløbige vægtestimat. Træningsbelastning, dagsform og historik er ikke koblet ind; modellen bruger en hviledag som standard. Gennemgå portionerne før lokal gemning.'
+        : s.calculated
         ? 'Forslaget bruger atletens beregningsgrundlag. Træning, dagsform og modellens gulve kan ændre procentmålet. Coachen skal gennemgå og aktivere planen.'
         : 'Bulk lægger den valgte procent til, cut trækker den fra. Vedligehold bruger 0 %. Kulhydrat udfylder resten af energimålet.'),
-      (!s.localDraftOnly || s.meals.length > 0) && h('button', { type: 'submit', style: button }, s.meals.length ? 'Generér ny dagsplan' : 'Generér dagsplan'))),
+      (!s.localDraftOnly || s.meals.length > 0) && h('button', { type: 'submit', style: button }, s.gramGenerator ? 'Generér forslag' : s.meals.length ? 'Generér ny dagsplan' : 'Generér dagsplan'))),
   s.suggestion && !s.planTargets && h('p', null, `Forslag til dagens mål: ${macroText(s.suggestion)}`),
   (context.length > 0 || s.proposal?.reasons.length > 0) && h('details', null,
     h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, context.length ? 'Grundlag og tidligere erfaringer' : 'Beregningsgrundlag'),
@@ -73,22 +75,34 @@ export function coachPlanView(h, snapshot, actions) {
     : s.message ?? (s.meals.length ? s.dirty ? 'Rettelserne er ikke gemt.' : s.saved?.status === 'active' ? 'Denne plan er aktiv.' : 'Kladde gemt.' : '')),
   s.meals.length > 0 && h('section', { 'aria-label': 'Dagsplan til gennemgang' },
     h('h3', null, 'Dagsplan til gennemgang'),
-    h('p', null, 'Måltidsskabelonen skaleres efter energi og afrundes til hele gram. Kontrollér fødevarer, tilberedning og fordeling før gemning.'),
+    h('p', null, s.gramGenerator
+      ? 'Forslaget fordeler gram inden for dine portionsgrænser. Du kan rette gram frit før gemning. En ny generering erstatter rettelserne og bruger portionsgrænserne igen.'
+      : 'Måltidsskabelonen skaleres efter energi og afrundes til hele gram. Kontrollér fødevarer, tilberedning og fordeling før gemning.'),
+    s.gramFeedback && h('p', { role: 'status', 'aria-live': 'polite' }, s.gramFeedback.message),
     s.planTargets ? h('div', { style: { overflowX: 'auto' } }, h('table', { style: { width: '100%', textAlign: 'left' } },
       h('caption', null, 'Dagens plan og mål'),
-      h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Indhold'), h('th', { scope: 'col' }, 'Plan'), h('th', { scope: 'col' }, 'Mål'))),
+      h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Indhold'), h('th', { scope: 'col' }, 'Plan'), h('th', { scope: 'col' }, 'Mål'),
+        s.gramGenerator && h('th', { scope: 'col' }, 'Afvigelse'))),
       h('tbody', null, ...[['kcal', 'Energi', 'kcal'], ['protein', 'Protein', 'g'], ['carb', 'Kulhydrat', 'g'], ['fat', 'Fedt', 'g']]
         .map(([key, title, unit]) => h('tr', { key }, h('th', { scope: 'row' }, title),
           h('td', null, s.totals ? `${format(s.totals[key])} ${unit}` : 'Kan ikke beregnes'),
-          h('td', null, `${format(s.planTargets[key])} ${unit}`))))))
-      : h('p', { role: 'status' }, 'Målene er ændret. Generér en ny dagsplan før gemning.'),
+          h('td', null, `${format(s.planTargets[key])} ${unit}`),
+          s.gramGenerator && h('td', null, s.gramFeedback
+            ? `${s.gramFeedback.deviation[key] > 0 ? '+' : ''}${format(s.gramFeedback.deviation[key])} ${unit}` : 'Kan ikke beregnes'))))))
+      : h('p', { role: 'status' }, s.gramGenerator
+        ? 'Mål eller portionsgrænser er ændret. Generér et nyt forslag før gemning.'
+        : 'Målene er ændret. Generér en ny dagsplan før gemning.'),
+    s.gramFeedback && h('details', null,
+      h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om afvigelser og tolerance'),
+      h('p', null, 'Afvigelse er plan minus mål. Tolerance er det største af 5 % af målet og henholdsvis 50 kcal, 5 g protein, 10 g kulhydrat og 3 g fedt. Det er en planlægningsregel. Der optimeres på dagens sum; måltidernes fordeling skal gennemgås.'),
+      h('p', null, `Dagens tolerance: ±${format(s.gramFeedback.tolerance.kcal)} kcal · ±${format(s.gramFeedback.tolerance.protein)} g protein · ±${format(s.gramFeedback.tolerance.carb)} g kulhydrat · ±${format(s.gramFeedback.tolerance.fat)} g fedt.`)),
     ...s.meals.map((meal, mi) => h('fieldset', { key: meal.id, disabled: busy,
       style: { minWidth: 0, margin: '1rem 0', padding: '0.75rem' } },
     h('legend', null, meal.name),
     s.proteinDistribution && h('small', {
       'aria-label': `Proteinfordeling i ${meal.name}: ${s.proteinDistribution.meals[mi].belowThreshold === null ? 'ukendt' : s.proteinDistribution.meals[mi].belowThreshold ? 'under pejlemærke' : 'pejlemærke nået'}. Pejlemærke ${format(s.proteinDistribution.thresholdG)} g ud fra profilvægten.`,
     }, `Proteinfordeling: ${s.proteinDistribution.meals[mi].belowThreshold === null ? 'ukendt' : s.proteinDistribution.meals[mi].belowThreshold ? 'under pejlemærke' : 'pejlemærke nået'}`),
-    recipeChoice(h, { foods: s.foods, name: `recipe-${mi}`, mealName: meal.name, disabled: busy,
+    !s.gramGenerator && recipeChoice(h, { foods: s.foods, name: `recipe-${mi}`, mealName: meal.name, disabled: busy,
       scaled: true, onChoose: recipeId => actions.chooseRecipe(mi, recipeId) }),
     ...meal.items.map((item, ii) => h('div', { key: ii, style: { ...grid, marginBottom: '0.75rem' } },
       h('label', null, `Fødevare ${ii + 1} i ${meal.name}`, h('select', {
@@ -97,6 +111,13 @@ export function coachPlanView(h, snapshot, actions) {
       }, ...s.foods.map(food => h('option', { key: food.id, value: food.id }, food.name)))),
       field(`grams-${mi}-${ii}`, `Gram af ${item.food.name} i ${meal.name}`, item.grams,
         value => actions.editGrams(mi, ii, value)))),
+    s.gramGenerator && h('details', null,
+      h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, `Portionsgrænser i ${meal.name}`),
+      h('p', null, 'Grænser bruges ved næste generering. Vælg min./maks. i trin på 5 g fra 5 til 1.000 g.'),
+      ...meal.items.map((item, ii) => h('div', { key: ii, style: grid },
+        ...[['minGrams', 'Mindst'], ['maxGrams', 'Højst']].map(([key, title]) =>
+          field(`${key}-${mi}-${ii}`, `${title} gram af ${item.food.name} i ${meal.name}`, item[key] ?? '',
+            value => actions.editBounds(mi, ii, key, value)))))),
     h('p', null, macroText(totals([meal]))))),
     s.proteinDistribution && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om proteinfordelingen'),

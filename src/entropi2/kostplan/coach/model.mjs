@@ -70,10 +70,12 @@ export function catalogFoods(catalog) {
 export function nutritionProposal(form, calculation) {
   if (!calculation || !Object.hasOwn(GOALS, form.goal) || !INTENSITIES.includes(form.intensity)) return null
   const maintenanceKcal = number(form.maintenanceKcal)
-  if (maintenanceKcal === null || maintenanceKcal <= 0) return null
+  const estimate = form.maintenanceKcal === '' && calculation.profileEstimate === true
+  if (!estimate && (maintenanceKcal === null || maintenanceKcal <= 0)) return null
   try {
     return calculateNutrition({ ...calculation, goal: form.goal,
-      intensity: { 5: 'light', 10: 'moderate', 15: 'aggressive' }[form.intensity], maintenanceKcal })
+      intensity: { 5: 'light', 10: 'moderate', 15: 'aggressive' }[form.intensity],
+      maintenanceKcal: estimate ? undefined : maintenanceKcal })
   } catch { return null }
 }
 export function targets(form, calculation) {
@@ -131,10 +133,15 @@ export function normalizePlan(raw, athleteId) {
     || !Object.hasOwn(GOALS, raw.goal) || !INTENSITIES.includes(raw.intensity)) return null
   const goal = macros(raw.targets)
   if (!goal || goal.kcal <= 0 || !totals(raw.meals)) return null
+  if (raw.meals.some(meal => meal.items.some(item =>
+    (item.minGrams !== undefined || item.maxGrams !== undefined)
+    && (![item.minGrams, item.maxGrams].every(n => typeof n === 'number' && Number.isInteger(n) && n >= 5 && n <= 1000 && n % 5 === 0)
+      || item.minGrams > item.maxGrams)))) return null
   return { namespace: NAMESPACE, athleteId, id: raw.id, revision: raw.revision,
     date: raw.date, status: raw.status, goal: raw.goal, intensity: raw.intensity, targets: goal,
     meals: raw.meals.map(meal => ({ id: meal.id, name: meal.name.trim(),
-      items: meal.items.map(item => ({ grams: number(item.grams), food: {
+      items: meal.items.map(item => ({ grams: number(item.grams),
+        ...(item.minGrams === undefined ? {} : { minGrams: item.minGrams, maxGrams: item.maxGrams }), food: {
         id: item.food.id, name: item.food.name.trim(), per100g: macros(item.food.per100g),
         ...(item.food.nutrition ? { nutrition: copy(catalogFoods([item.food])[0].nutrition) } : {}),
       } })) })) }

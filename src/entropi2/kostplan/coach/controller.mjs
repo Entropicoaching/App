@@ -1,12 +1,13 @@
 import { NAMESPACE, CONTEXT_LABELS, GOALS, INTENSITIES, identifier, day, number, copy, freeze,
   catalogFoods, targets, nutritionProposal, totals, generateMeals, historyReceipt, normalizePlan } from './model.mjs'
 import { recipeItems, proteinDistribution } from './connections.mjs'
+import { generateCoachGrams, gramFeedback } from './gramPlan.mjs'
 
 // All side effects are explicit coach actions through the two supplied functions.
 // The adapter owns authorization, atomic activation and optimistic concurrency.
 export function createCoachPlan(options = {}) {
   if (options.enabled !== true) return Object.freeze({ snapshot: () => null, subscribe: () => () => {},
-    set: () => false, generate: () => false, editGrams: () => false, editFood: () => false, chooseRecipe: () => false,
+    set: () => false, generate: () => false, editGrams: () => false, editFood: () => false, editBounds: () => false, chooseRecipe: () => false,
     save: async () => false, activate: async () => false })
   const athleteId = options.athlete?.id, date = options.date
   if (!identifier(athleteId) || !day(date)) throw new TypeError('Vælg en atlet og en gyldig dato.')
@@ -18,6 +19,7 @@ export function createCoachPlan(options = {}) {
   // A supplied but invalid/mismatched calculation never falls back to that path.
   const calculation = basis.calculation === undefined ? undefined
     : basis.calculation?.date === date ? copy(basis.calculation) : null
+  const gramGenerator = options.gramGenerator === true && calculation != null
   const context = Object.fromEntries(Object.keys(CONTEXT_LABELS).map(key => [key,
     typeof basis.context?.[key] === 'string' && basis.context[key].trim() && basis.context[key].length <= 600
       ? basis.context[key].trim() : null]))
@@ -33,19 +35,20 @@ export function createCoachPlan(options = {}) {
   if (restored && (!restoredPlan || restoredPlan.status !== 'draft' || restoredPlan.date !== date
     || !Number.isSafeInteger(restored.clientVersion) || restored.clientVersion < 0
     || !restored.form || restored.form.goal !== restoredPlan.goal || restored.form.intensity !== restoredPlan.intensity
-    || JSON.stringify(targets(restored.form)) !== JSON.stringify(restoredPlan.targets)))
+    || JSON.stringify(targets(restored.form, restored.calculation)) !== JSON.stringify(restoredPlan.targets)))
     throw new TypeError('Den lokale kladde er ugyldig.')
   if (restoredPlan) form = copy(restored.form)
-  let state = { localDraftOnly, athleteId, athleteName, date, foods, form, context, history, meals: [], planTargets: null,
+  let state = { localDraftOnly, gramGenerator, generation: null, athleteId, athleteName, date, foods, form, context, history, meals: [], planTargets: null,
     version: 0, saved: null, busy: null, error: null, message: null,
     calculated: calculation !== undefined,
     canSaveAdapter: typeof saveDraft === 'function', canActivateAdapter: typeof activatePlan === 'function' }
   let draftBase = null
   if (restoredPlan) {
     draftBase = { planId: restoredPlan.id, revision: restoredPlan.revision }
-    state = { ...state, form, meals: restoredPlan.meals, planTargets: restoredPlan.targets,
+    const current = JSON.stringify(targets(form, calculation)) === JSON.stringify(restoredPlan.targets)
+    state = { ...state, form, meals: restoredPlan.meals, planTargets: current ? restoredPlan.targets : null,
       version: restored.clientVersion, saved: { ...draftBase, status: 'draft', clientVersion: restored.clientVersion },
-      message: 'Lokal kladde indlæst.' }
+      message: current ? 'Lokal kladde indlæst.' : 'Lokal kladde indlæst. Beregningsgrundlaget er ændret; generér igen før gemning.' }
   }
   const listeners = new Set()
   let snapshot
@@ -53,6 +56,7 @@ export function createCoachPlan(options = {}) {
     state = { ...state, ...patch }
     snapshot = freeze(copy({ ...state, suggestion: targets(state.form, calculation),
       proposal: calculation === undefined ? null : nutritionProposal(state.form, calculation), totals: totals(state.meals),
+      gramFeedback: gramGenerator ? gramFeedback(totals(state.meals), state.planTargets, state.generation) : null,
       proteinDistribution: proteinDistribution(state.meals, state.planTargets, weightKg),
       dirty: state.meals.length > 0 && state.saved?.clientVersion !== state.version }))
     for (const listener of listeners) listener()
@@ -62,7 +66,7 @@ export function createCoachPlan(options = {}) {
     if (state.busy) return false
     // Editing an activated plan starts a new draft; it never updates that plan.
     if (state.saved?.status === 'active') draftBase = null
-    publish({ ...patch, version: state.version + 1, error: null, message: null })
+    publish({ generation: null, ...patch, version: state.version + 1, error: null, message: null })
     return true
   }
   const validCurrent = () => state.planTargets && totals(state.meals) && targets(state.form, calculation)
@@ -83,12 +87,23 @@ export function createCoachPlan(options = {}) {
       // New target inputs require regeneration, so the saved foods cannot acquire new targets silently.
       return edit({ form: { ...state.form, [field]: value }, planTargets: null })
     },
-    generate() {
+    generate(selection) {
       if (state.busy) return false
       const suggestion = targets(state.form, calculation)
       if (!suggestion) { publish({ error: state.calculated
         ? 'Beregningsgrundlaget mangler eller er ugyldigt. Kontrollér atlet, dato, voksenstatus, kropsvægt og vedligeholdelsesenergi.'
         : 'Angiv gyldig vedligeholdelsesenergi, protein og fedt. Makroerne skal kunne rummes i energimålet.' }); return false }
+      if (gramGenerator) {
+        try {
+          const chosen = selection ?? (state.meals.length ? state.meals.map(meal => ({ id: meal.id, name: meal.name,
+            items: meal.items.map(item => ({ foodId: item.food.id, minGrams: item.minGrams, maxGrams: item.maxGrams })) })) : template)
+          const generated = generateCoachGrams(chosen, suggestion, foods)
+          return edit({ meals: generated.meals, planTargets: suggestion, generation: generated.result })
+        } catch {
+          publish({ error: 'Forslaget kunne ikke genereres. Vælg mindst én kendt fødevare pr. måltid og min./maks. i trin på 5 g fra 5 til 1.000 g. Brug hver fødevare én gang pr. måltid.' })
+          return false
+        }
+      }
       const meals = generateMeals(template, foods, suggestion.kcal)
       if (!meals) { publish({ error: 'Et forslag kræver et gyldigt fødevarekatalog og en måltidsskabelon fra coachen.' }); return false }
       return edit({ meals, planTargets: suggestion })
@@ -104,8 +119,14 @@ export function createCoachPlan(options = {}) {
       const meals = copy(state.meals); meals[mealIndex].items[itemIndex].food = copy(food)
       return edit({ meals })
     },
+    editBounds(mealIndex, itemIndex, field, value) {
+      if (!gramGenerator || !['minGrams', 'maxGrams'].includes(field)
+        || !state.meals[mealIndex]?.items[itemIndex] || typeof value !== 'string' && typeof value !== 'number') return false
+      const meals = copy(state.meals); meals[mealIndex].items[itemIndex][field] = value
+      return edit({ meals, planTargets: null })
+    },
     chooseRecipe(mealIndex, recipeId) {
-      if (state.busy || !Number.isInteger(mealIndex) || !state.meals[mealIndex]) return false
+      if (gramGenerator || state.busy || !Number.isInteger(mealIndex) || !state.meals[mealIndex]) return false
       const kcal = totals([state.meals[mealIndex]])?.kcal
       const items = recipeItems(recipeId, foods, kcal ?? 0)
       if (!items) {

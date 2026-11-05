@@ -26,7 +26,8 @@ function ScopedPortalPlan(props) {
   return h('details', { style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
     onToggle: event => { if (event.currentTarget.open) setOpened(true) } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
-    opened && h(PlanEditor, props),
+    opened && h(PlanEditor, { ...props,
+      key: JSON.stringify([props.athlete.age, props.athlete.bodyweight, props.athlete.goal]) }),
     opened && h(PortalNutritionReport, { ...props, enabled: true }))
 }
 
@@ -45,11 +46,15 @@ function PlanEditor(props) {
   const [rows, setRows] = React.useState(() => meals.map(() => [{ foodId: '', grams: '' }]))
   const [error, setError] = React.useState('')
   const snapshot = React.useSyncExternalStore(opened.controller.subscribe, opened.controller.snapshot, opened.controller.snapshot)
+  const gramGenerator = snapshot.gramGenerator
   const change = (mi, ii, key, value) => setRows(old => old.map((meal, m) => m !== mi ? meal
     : meal.map((item, i) => i !== ii ? item : { ...item, [key]: value })))
   const start = event => {
     event.preventDefault()
     const template = rows.map((items, index) => ({ id: `meal-${index}`, name: meals[index], items }))
+    if (gramGenerator) {
+      setError(''); opened.controller.generate(template); return
+    }
     if (template.some(meal => !meal.items.length || meal.items.some(item => !FOODS.some(food => food.id === item.foodId)
       || !(number(item.grams, 10000) > 0)) || new Set(meal.items.map(item => item.foodId)).size !== meal.items.length)) {
       setError('Vælg fødevarer og gram over 0 i hvert måltid. Brug hver fødevare én gang pr. måltid.'); return
@@ -65,10 +70,12 @@ function PlanEditor(props) {
     coachPlanView(h, snapshot, opened.controller),
     !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
-      h('p', null, 'Vælg fødevarer og angiv gram i hvert måltid. Kontrollér rå/kogt tilstand og næringsindhold; ikke alle fødevarekilder er verificeret.'),
+      h('p', null, gramGenerator
+        ? 'Vælg fødevarer og min./maks. portion i hvert måltid. Forslaget bruger kun dine valg, i trin på 5 g. Kontrollér rå/kogt tilstand; ikke alle fødevarekilder er verificeret.'
+        : 'Vælg fødevarer og angiv gram i hvert måltid. Kontrollér rå/kogt tilstand og næringsindhold; ikke alle fødevarekilder er verificeret.'),
       ...rows.map((items, mi) => h('fieldset', { key: mi, style: { minWidth: 0, marginBottom: 12 } },
         h('legend', null, meals[mi]),
-        recipeChoice(h, { foods, name: `template-recipe-${mi}`, mealName: meals[mi],
+        !gramGenerator && recipeChoice(h, { foods, name: `template-recipe-${mi}`, mealName: meals[mi],
           onChoose: recipeId => {
             const selected = recipeItems(recipeId, foods)
             if (!selected) { setError('Opskriften kunne ikke åbnes. Vælg fødevarer manuelt.'); return }
@@ -79,14 +86,18 @@ function PlanEditor(props) {
             name: `template-food-${mi}-${ii}`, onChange: e => change(mi, ii, 'foodId', e.currentTarget.value) },
             h('option', { value: '' }, 'Vælg fødevare'),
             ...FOODS.map(food => h('option', { key: food.id, value: food.id }, food.name)))),
-          h('label', null, 'Gram', h('input', { style: control, type: 'text', inputMode: 'decimal', value: item.grams,
+          gramGenerator ? h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 10rem), 1fr))', gap: 8 } },
+            ...[['minGrams', 'Mindst'], ['maxGrams', 'Højst']].map(([key, title]) => h('label', { key }, `${title} gram af fødevare ${ii + 1} i ${meals[mi]}`,
+              h('input', { style: control, type: 'text', inputMode: 'numeric', value: item[key] ?? '',
+                name: `template-${key}-${mi}-${ii}`, onChange: e => change(mi, ii, key, e.currentTarget.value) }))))
+          : h('label', null, 'Gram', h('input', { style: control, type: 'text', inputMode: 'decimal', value: item.grams,
             name: `template-grams-${mi}-${ii}`, onChange: e => change(mi, ii, 'grams', e.currentTarget.value) })),
           items.length > 1 && h('button', { type: 'button', style: control,
             onClick: () => setRows(old => old.map((meal, m) => m !== mi ? meal : meal.filter((_, i) => i !== ii))) }, 'Fjern fødevare'))),
         items.length < 12 && h('button', { type: 'button', style: control,
           onClick: () => setRows(old => old.map((meal, m) => m !== mi ? meal : [...meal, { foodId: '', grams: '' }])) }, 'Tilføj fødevare'))),
       error && h('p', { role: 'alert' }, error),
-      h('button', { type: 'submit', style: control }, 'Brug måltider og generér dagsplan')))
+      h('button', { type: 'submit', style: control }, gramGenerator ? 'Generér forslag' : 'Brug måltider og generér dagsplan')))
   // Weekly evaluation requires an active production plan and a complete receipt.
   // This portal can only provide local drafts.
 }
