@@ -2,6 +2,7 @@ import { GOALS, INTENSITIES, CONTEXT_LABELS, totals } from './model.mjs'
 import { recipeChoices } from './connections.mjs'
 import { suggestionReason } from '../generator/reasons.mjs'
 import { control, button, primaryButton, formCss } from './formStyles.mjs'
+import { micronutrientsView } from './micronutrients.mjs'
 
 const format = value => value.toLocaleString('da-DK', { maximumFractionDigits: 1 })
 const macroText = value => value
@@ -125,6 +126,7 @@ export function coachPlanView(h, snapshot, actions) {
           field(`${key}-${mi}-${ii}`, `${title} gram af ${item.food.name} i ${meal.name}`, item[key] ?? '',
             value => actions.editBounds(mi, ii, key, value)))))),
     h('p', null, macroText(totals([meal]))))),
+    micronutrientsView(h, s.meals),
     s.proteinDistribution && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om proteinfordelingen'),
       h('p', null, `Markeringen bruger profilvægten ${format(s.proteinDistribution.weightKg)} kg og 0,3 g/kg pr. måltid som planlægningspejlemærke. Det er hverken et individuelt minimum eller et loft. Dagens proteinmål ændres ikke; ingen fødevarer tilføjes automatisk.`)),
@@ -147,6 +149,7 @@ export function coachPlanView(h, snapshot, actions) {
       h('p', null, macroText(totals(plan.meals))),
       h('ul', null, ...plan.meals.map(meal => h('li', { key: meal.id }, `${meal.name}: `,
         meal.items.map(item => `${format(Number(item.grams))} g ${item.food.name}`).join(', ')))),
+      micronutrientsView(h, plan.meals),
       ...s.history.responses.filter(row => row.planId === plan.id).map((row, index) => h('p', { key: index }, `${row.date} · Atletens respons: ${row.text}`)),
       !s.history.responses.some(row => row.planId === plan.id) && h('p', null, 'Ingen respons fra atleten endnu.')))))
 }
