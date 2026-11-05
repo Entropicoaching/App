@@ -11,7 +11,7 @@ const render = extra => renderToStaticMarkup(createElement(Program, programQolFi
 
 test('React: next action leads; historical weeks occur once in a closed fold; logger stays outside', () => {
   const html = render({ progOpenSession: 'session-1-0' })
-  assert.match(html, /^<button[^>]*data-program-next=""/)
+  assert.match(html, /^<div data-entropi2-program-motion="" style="display:contents"><button[^>]*data-program-next=""/)
   assert.match(html, /Næste pas · Pas 1-0/)
   const history = /<details\b[^>]*data-program-history="true"[^>]*>.*?<\/details>/.exec(html)?.[0]
   assert.ok(history)
@@ -33,5 +33,6 @@ test('React: exact completion and skips advance next action; errors and strict O
     const html = render(extra)
     assert.doesNotMatch(html, /data-program-next/)
     if (!extra.programError) assert.doesNotMatch(html, /data-program-history/)
+    if (extra.entropi2 !== undefined) assert.doesNotMatch(html, /data-entropi2-program-motion/)
   }
 })

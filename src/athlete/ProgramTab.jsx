@@ -541,7 +541,7 @@ export default function ProgramTab({
             </>
           ) : null
 
-          return (
+          const programContent = (
             <>
               {allWeeks.length === 0 ? (
                 <>
@@ -1268,4 +1268,8 @@ export default function ProgramTab({
               {programAppearanceOn && <style>{programFocusCss}</style>}
             </>
           )
+          // A layout-neutral scope for motion preferences, only in Entropi 2.
+          return programAppearanceOn ? createElement('div', {
+            'data-entropi2-program-motion': '', style: { display: 'contents' },
+          }, programContent) : programContent
 }

@@ -36,6 +36,19 @@ function app(extra = {}) {
     render() { return view.render(props) } }
 }
 
+test('F7: motion scope contains the program and logger only in Entropi 2', () => {
+  const tree = mount(Program, programQolFixture({ progOpenSession: 'session-1-0' })).render()
+  assert.equal(tree.type, 'div')
+  assert.equal(tree.props['data-entropi2-program-motion'], '')
+  assert.deepEqual(tree.props.style, { display: 'contents' })
+  assert.ok(next(tree))
+  assert.ok(nodes(tree, n => n.type === 'input' && n.props['aria-label'] === 'Vægt · Pas 1-0 · pas 1, uge 1, Squat, øvelse 1, sæt 1').length)
+  for (const entropi2 of [false, null, 0, 1, 'true']) {
+    const off = mount(Program, programQolFixture({ entropi2 })).render()
+    assert.equal(nodes(off, n => Object.hasOwn(n.props, 'data-entropi2-program-motion')).length, 0)
+  }
+})
+
 test('next uses exact set identities, skips closed passes and ignores the browsed historical week', () => {
   const props = programQolFixture({ viewingWeekIdx: 0 })
   let tree = mount(Program, props).render()

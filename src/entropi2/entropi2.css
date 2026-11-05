@@ -27,3 +27,18 @@ section[aria-label="Beskeder og video"] :is(h1, h2, h3),
   min-width: 44px;
   box-sizing: border-box;
 }
+
+/* Keep the athlete's conversation and program still, including inline timers
+   and save confirmations. Explicit OFF has neither of these E2 scopes. */
+@media (prefers-reduced-motion: reduce) {
+  [data-entropi2-athlete] :is(section[aria-label="Beskeder og video"], [data-entropi2-program-motion]),
+  [data-entropi2-athlete] :is(section[aria-label="Beskeder og video"], [data-entropi2-program-motion]) *,
+  [data-entropi2-athlete] :is(section[aria-label="Beskeder og video"], [data-entropi2-program-motion])::before,
+  [data-entropi2-athlete] :is(section[aria-label="Beskeder og video"], [data-entropi2-program-motion])::after,
+  [data-entropi2-athlete] :is(section[aria-label="Beskeder og video"], [data-entropi2-program-motion]) *::before,
+  [data-entropi2-athlete] :is(section[aria-label="Beskeder og video"], [data-entropi2-program-motion]) *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

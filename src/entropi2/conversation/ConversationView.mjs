@@ -137,8 +137,9 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   let firstUnread = null
   const jump = button('Spring til første ulæste', () => {
     if (disposed || !firstUnread) return
-    firstUnread.scrollIntoView?.({ block: 'start', behavior: 'smooth' })
-    firstUnread.focus?.()
+    const reduceMotion = doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true
+    firstUnread.scrollIntoView?.({ block: 'start', behavior: reduceMotion ? 'instant' : 'smooth' })
+    firstUnread.focus?.({ preventScroll: true })
   })
   jump.hidden = true
   const week = node('div'), weekLine = node('p'), weekDetails = node('details')
@@ -218,6 +219,10 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     firstUnread = null
     jump.hidden = unread === 0; jump.disabled = unread === 0
     jump.textContent = `${unread} ulæste · Spring til første ulæste`
+    // A read acknowledgement can reorder the list. Restore only the toggle
+    // that owns focus at this update, never steal focus back after an async read.
+    const focusedKey = Array.from(list.children).find(li => li.children[0] === doc.activeElement)?.dataset.key
+    let focusedToggle = null
     list.replaceChildren(...ordered.map(item => {
       const li = node('li'), row = item.value
       li.dataset.key = item.key; li.style.whiteSpace = 'pre-wrap'; li.style.marginBottom = '20px'
@@ -236,6 +241,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
         content.hidden = false; preview.hidden = true; toggle.setAttribute('aria-expanded', 'true')
         await controller.seen(item.key)
       })
+      if (item.key === focusedKey) focusedToggle = toggle
       if (isUnread(item) && !firstUnread) firstUnread = toggle
       toggle.style.textAlign = 'left'
       toggle.setAttribute('aria-expanded', String(expanded.has(item.key)))
@@ -270,6 +276,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       const pending = node('li', `${state.operation.row.content}\n${state.operation.status === 'error' ? 'Ikke bekræftet. Prøv igen med samme besked.' : 'Sender…'}`)
       pending.dataset.pending = state.operation.row.id; list.append(pending)
     }
+    focusedToggle?.focus?.({ preventScroll: true })
   })
   return () => { disposed = true; sharing?.dispose(); ownReplies.dispose(); unsubscribe(); controller.dispose(); root.replaceChildren() }
 }
