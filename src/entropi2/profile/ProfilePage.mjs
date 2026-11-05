@@ -7,15 +7,10 @@ import { ProfileGoals } from './ProfileGoals.mjs'
 // Uses the host's existing topbar slot; no changes to the shared account menu.
 export function ProfileMenu({ enabled, onOpen, summaryRef } = {}) {
   if (enabled !== true) return null
-  return h('details', { style: { position: 'static' } },
-    h('summary', { ref: summaryRef, style: { ...s.button, width: 'auto', minHeight: 44,
-      padding: '8px 6px', fontSize: 14, boxSizing: 'border-box', margin: 0, cursor: 'pointer' } }, 'Mig'),
-    h('button', { type: 'button', style: { ...s.button, position: 'absolute', right: 0,
-      width: 220, boxSizing: 'border-box', zIndex: 101 }, onClick: event => {
-        const details = event?.currentTarget?.closest('details')
-        if (details) details.open = false
-        onOpen?.()
-      } }, 'Profil og dataeksport'))
+  return h('button', { type: 'button', ref: summaryRef,
+    style: { ...s.button, width: 'auto', minHeight: 44, minWidth: 44,
+      padding: '8px 6px', fontSize: 14, boxSizing: 'border-box', margin: 0, cursor: 'pointer' },
+    onClick: () => onOpen?.() }, 'Mig')
 }
 
 export function ProfilePage(props = {}) {
