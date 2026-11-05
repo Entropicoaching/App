@@ -84,3 +84,49 @@ test('actual existing handlers: readiness and weight success/failure feed the co
     view.unmount()
   }
 })
+
+test('one-tap Home uses actual readiness handler with all four scores, undo and existing connection failure', async t => {
+  const RealDate = globalThis.Date
+  globalThis.Date = class extends RealDate { constructor(...args) { super(...(args.length ? args : ['2026-11-04T12:00:00Z'])) } }
+  globalThis.localStorage = { removeItem() {}, getItem() { return null }, setItem() {} }
+  t.after(() => { globalThis.Date = RealDate; delete globalThis.localStorage })
+  for (const fail of [true, false]) {
+    resetFake({ data: [], error: fail ? { message: 'synthetic connection failure' } : null })
+    const time = manualClock()
+    const p = { enabled: true, athlete: { id: 'synthetic-athlete' }, today: '2026-11-04',
+      getNow: () => new Date(), quickClock: time.clock, readinessLog: null,
+      readinessInput: { sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] },
+      trackingData: { status: 'ready', complete: true, athleteId: 'synthetic-athlete', today: '2026-11-04',
+        readinessRows: [{ athlete_id: 'synthetic-athlete', logged_date: '2026-11-03',
+          sleep_hours: 8, energy: 2, motivation: 4, stress: 2, soreness_level: 1 }] } }
+    for (const [key, setter] of [['readinessInput', 'setReadinessInput'], ['readinessLog', 'setReadinessLog'],
+      ['savingReadiness', 'setSavingReadiness'], ['readinessError', 'setReadinessError']])
+      p[setter] = value => { p[key] = typeof value === 'function' ? value(p[key]) : value }
+    p.saveReadiness = () => lavLaesninger(p).saveReadiness()
+    const view = mount(QuickLogs, p)
+    try {
+      const click = label => {
+        const button = view.nodes(n => n.type === 'button' && (n.props['aria-label'] === label || n.children.includes(label)))[0]
+        assert.ok(button, label); button.props.onClick({ currentTarget: { focus() {} } }); view.render()
+      }
+      const submit = () => { view.nodes(n => n.type === 'form')[0].props.onSubmit({ preventDefault() {} }); view.render() }
+      click('Energi 5'); assert.equal(writes.length, 0)
+      submit(); await time.advance(4999); view.render(); click('Fortryd')
+      await time.advance(10000); assert.equal(writes.length, 0)
+      submit(); await time.advance(5000); view.render(); await time.advance(0); view.render()
+      const saved = writes.filter(w => w.table === 'readiness_logs')
+      assert.equal(saved.length, 1)
+      assert.deepEqual(Object.fromEntries(['athlete_id', 'logged_date', 'sleep_hours', 'energy', 'motivation', 'stress',
+        'soreness_level', 'sore_zones'].map(key => [key, saved[0].payload[key]])), {
+        athlete_id: p.athlete.id, logged_date: p.today, sleep_hours: null,
+        energy: 5, motivation: 4, stress: 2, soreness_level: 1, sore_zones: null,
+      })
+      assert.equal(typeof saved[0].payload.readiness_score, 'number')
+      if (fail) {
+        assert.match(view.text(), /Tjek din forbindelse/); assert.doesNotMatch(view.text(), /Logget i dag/)
+        assert.equal(p.readinessInput.energy, '5')
+      } else assert.match(view.text(), /Logget i dag/)
+    } finally { view.unmount() }
+    assert.equal(time.handles(), 0)
+  }
+})

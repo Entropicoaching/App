@@ -1,5 +1,27 @@
-import { calendarDay } from '../../calendarDate.js'
+import { calendarDay, addCalendarDays } from '../../calendarDate.js'
 import { parseInputNumber, optionalInput } from '../../inputValues.js'
+
+// A Home suggestion is deliberately narrower than the full tracking draft.
+// Energy is today's answer; yesterday's sleep and private fields are not copied.
+export function homeReadinessSuggestion(props = {}) {
+  if (props.enabled !== true || props.sessionReadOnly) return null
+  const { athlete, today, trackingData: data } = props
+  if (typeof athlete?.id !== 'string' || !athlete.id.trim() || typeof today !== 'string' ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(today) || calendarDay(today) !== today || data?.status !== 'ready' || data.complete !== true ||
+      data.athleteId !== athlete.id || data.today !== today || !Array.isArray(data.readinessRows)) return null
+  const own = row => row?.athlete_id === athlete.id && !row._optimistic
+  if (own(props.readinessLog) && props.readinessLog.logged_date === today ||
+      data.readinessRows.some(row => own(row) && row.logged_date === today)) return null
+  // Never silently replace an athlete's existing draft with a suggestion.
+  if (['sleep', 'energy', 'motivation', 'stress', 'soreness'].some(key => !optionalInput(props.readinessInput?.[key]))) return null
+  const rows = data.readinessRows.filter(row => own(row) && row.logged_date === addCalendarDays(today, -1))
+  if (rows.length !== 1) return null
+  const scores = Object.fromEntries(['energy', 'motivation', 'stress', 'soreness_level']
+    .map(key => [key, parseInputNumber(rows[0][key])]))
+  if (Object.values(scores).some(value => !Number.isInteger(value) || value < 1 || value > 5)) return null
+  return { sleep_hours: '', energy: '', motivation: String(scores.motivation),
+    stress: String(scores.stress), soreness_level: String(scores.soreness_level) }
+}
 
 export function quickLogStatus(props = {}) {
   if (props.enabled !== true) return null

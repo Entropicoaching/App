@@ -199,3 +199,90 @@ test('write capability removal during grace period prevents a service call', asy
   await f.advance(5000); assert.deepEqual(f.calls, [])
   assert.equal(f.time.handles(), 0)
 })
+
+const yesterdayHistory = () => ({ status: 'ready', complete: true, athleteId: athlete.id, today,
+  readinessRows: [{ athlete_id: athlete.id, logged_date: '2026-11-03', ...scores }] })
+
+test('Home energy is one click; three yesterday proposals and one explicit save submit all four', async t => {
+  const f = fixture(t, { trackingData: yesterdayHistory() })
+  assert.equal(f.view.nodes(n => n.props['data-home-readiness-fast'] !== undefined).length, 1)
+  assert.equal(f.view.nodes(n => n.props['aria-pressed'] !== undefined).length, 5)
+  assert.ok(f.view.nodes(n => n.props['aria-pressed'] !== undefined).every(n => n.props['aria-pressed'] === false))
+  assert.match(f.view.text(), /Motivation 4 · Stress 2 · Ømhed 1 · samme som i går \(forslag\)/)
+  assert.ok(f.button('Gem dagsform').props.disabled)
+  assert.deepEqual(f.props.readinessInput, empty, 'render must not even update the parent draft')
+  f.click('Energi 5')
+  assert.equal(f.props.readinessInput.energy, '5')
+  assert.equal(f.props.readinessInput.motivation, '4')
+  assert.equal(f.props.readinessInput.stress, '2')
+  assert.equal(f.props.readinessInput.soreness, '1')
+  assert.equal(f.props.readinessInput.sleep, '', 'yesterday sleep is not today sleep')
+  assert.equal(f.view.nodes(n => n.type === 'fieldset').length, 1)
+  await f.advance(10000); assert.deepEqual(f.calls, [], 'energy alone must never save')
+  for (const b of f.view.nodes(n => n.type === 'button')) assert.ok(b.props.style.minHeight >= 44)
+  f.submit(); f.submit(); assert.equal(f.time.handles(), 1)
+  assert.match(f.view.text(), /fortryde i 5 sekunder/)
+  await f.advance(4999); assert.deepEqual(f.calls, [])
+  await f.advance(1); assert.deepEqual(f.calls, ['readiness'])
+  assert.deepEqual(f.props.readinessLog, { athlete_id: athlete.id, logged_date: today,
+    sleep_hours: null, energy: 5, motivation: 4, stress: 2, soreness_level: 1 })
+  assert.match(f.view.text(), /Logget i dag/); assert.equal(f.time.handles(), 0)
+})
+
+test('fast readiness undo retains the chosen energy and never sends a write', async t => {
+  const f = fixture(t, { trackingData: yesterdayHistory() })
+  f.click('Energi 2'); f.submit(); await f.advance(4999); f.click('Fortryd')
+  await f.advance(10000); assert.deepEqual(f.calls, []); assert.equal(f.time.handles(), 0)
+  assert.match(f.view.text(), /Fortrudt/); assert.equal(f.props.readinessInput.energy, '2')
+  f.click('Energi 4'); f.submit(); await f.advance(5000)
+  assert.deepEqual(f.calls, ['readiness']); assert.equal(f.props.readinessLog.energy, 4)
+})
+
+test('fast proposal can expand for edits without losing energy; absent yesterday opens the full form', t => {
+  const f = fixture(t, { trackingData: yesterdayHistory() })
+  f.click('Energi 5'); f.click('Ret øvrige svar')
+  assert.equal(f.view.nodes(n => n.type === 'fieldset').length, 4)
+  assert.equal(f.props.readinessInput.energy, '5')
+  f.click('Motivation 2'); assert.equal(f.props.readinessInput.motivation, '2')
+  assert.deepEqual(f.calls, [])
+  for (const readinessRows of [[], [{ athlete_id: athlete.id, logged_date: '2026-11-02', ...scores }],
+    [{ athlete_id: athlete.id, logged_date: '2026-11-03', ...scores, motivation: null }]]) {
+    const e = fixture(t, { trackingData: { ...yesterdayHistory(), readinessRows } })
+    assert.equal(e.view.nodes(n => n.props['data-home-readiness-fast'] !== undefined).length, 0)
+    e.click('Dagsform'); assert.equal(e.view.nodes(n => n.type === 'fieldset').length, 4)
+    assert.deepEqual(e.calls, [])
+  }
+})
+
+test('fast readiness failures keep the selections and permit an explicit retry', async t => {
+  const f = fixture(t, { trackingData: yesterdayHistory(), saveReadiness: async () => {} })
+  f.click('Energi 3'); f.submit(); await f.advance(5000)
+  assert.match(f.view.text(), /Kunne ikke bekræfte/); assert.doesNotMatch(f.view.text(), /Logget i dag/)
+  assert.equal(f.props.readinessInput.motivation, '4')
+  f.props.saveReadiness = async () => { f.calls.push('readiness'); f.props.readinessLog = {
+    athlete_id: athlete.id, logged_date: today, sleep_hours: null, energy: 3, motivation: 4, stress: 2, soreness_level: 1 } }
+  f.submit(); await f.advance(5000); assert.deepEqual(f.calls, ['readiness'])
+  assert.match(f.view.text(), /Logget i dag/)
+})
+
+test('fast readiness delayed events cannot write after undo, unmount, preview, OFF, scope or date change', async t => {
+  for (const change of [f => f.view.unmount(), f => f.view.render({ sessionReadOnly: true }),
+    f => f.view.render({ enabled: false }), f => f.view.render({ athlete: { id: 'synthetic-other' } }),
+    f => f.view.render({ today: '2026-11-05' }),
+    f => { f.props.getNow = () => new Date('2026-11-04T23:00:00Z') },
+    f => { f.props.saveReadiness = undefined }, f => { f.props.readinessInput.stress = '5' }]) {
+    const f = fixture(t, { trackingData: yesterdayHistory() })
+    f.click('Energi 4'); const retained = f.view.nodes(n => n.type === 'form')[0].props.onSubmit
+    f.submit(); change(f); retained({ preventDefault() {} }); await f.advance(5000)
+    assert.deepEqual(f.calls, []); assert.equal(f.time.handles(), 0)
+  }
+})
+
+test('retained fast energy and form events cannot replace a newer weight controller', t => {
+  const f = fixture(t, { trackingData: yesterdayHistory() })
+  const energy = f.button('Energi 4').props.onClick
+  const form = f.view.nodes(n => n.type === 'form')[0].props.onSubmit
+  f.click('Vægt i dag'); energy({ currentTarget: { focus() {} } }); form({ preventDefault() {} }); f.view.render()
+  assert.equal(f.props.readinessInput.energy, null); assert.equal(f.time.handles(), 0)
+  assert.equal(f.view.nodes(n => n.type === 'fieldset').length, 0)
+})

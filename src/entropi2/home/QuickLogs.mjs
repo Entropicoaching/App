@@ -1,7 +1,7 @@
 import { createElement as h, useEffect, useId, useRef, useState } from 'react'
 import { calendarDay } from '../../calendarDate.js'
 import { homeStyles as s } from './homeStyles.mjs'
-import { quickLogStatus } from './quickLogModel.mjs'
+import { homeReadinessSuggestion, quickLogStatus } from './quickLogModel.mjs'
 import { createQuickController } from '../tracking/hurtig/controller.mjs'
 import { readinessValue, weightValue } from '../tracking/hurtig/model.mjs'
 
@@ -26,6 +26,7 @@ const statusFor = props => {
 // and writes. Never call a closed-over handler after a parent draft changes.
 export default function QuickLogs(props) {
   const [open, setOpen] = useState(null)
+  const [quick, setQuick] = useState(false)
   const [attempt, setAttempt] = useState(null)
   const [savedWeightDay, setSavedWeightDay] = useState(null)
   const [, setVersion] = useState(0)
@@ -100,8 +101,10 @@ export default function QuickLogs(props) {
     setAttempt({ finished: true, weightReturned: kind === 'weight' })
     return result
   }
-  const launch = kind => event => {
+  const launch = (kind, energy) => event => {
     if (!current() || control.current?.snapshot().busy || props.savingReadiness || props.savingWeight || !available(kind)) return
+    const suggestion = energy === undefined ? null : homeReadinessSuggestion(latest.current)
+    if (energy !== undefined && (!suggestion || statusFor(latest.current)?.readiness)) return
     reset(); setAttempt(null)
     opener.current = event.currentTarget
     const p = latest.current
@@ -121,12 +124,15 @@ export default function QuickLogs(props) {
       save: { [kind]: confirmedSave(kind) } })
     control.current = controller
     if (controller.snapshot().phase === 'ready') {
-      if (kind === 'weight' && String(p.weightInput ?? '').trim()) controller.setField('weight', 'weight', String(p.weightInput))
-      if (kind === 'readiness' && Object.values(parentReadiness(p)).some(value => value !== '' && value != null))
+      if (suggestion) {
+        for (const [key, value] of Object.entries({ ...suggestion, energy })) controller.setField('readiness', key, value)
+      } else if (kind === 'weight' && String(p.weightInput ?? '').trim()) controller.setField('weight', 'weight', String(p.weightInput))
+      if (!suggestion && kind === 'readiness' && Object.values(parentReadiness(p)).some(value => value !== '' && value != null))
         for (const [key, value] of Object.entries(parentReadiness(p))) controller.setField('readiness', key, String(value))
       mirror(kind, controller.snapshot().draft)
     }
     unsubscribe.current = controller.subscribe(() => setVersion(n => n + 1))
+    setQuick(Boolean(suggestion))
     setOpen(kind)
   }
   relaunch.current = () => launch('readiness')({ currentTarget: opener.current })
@@ -134,7 +140,7 @@ export default function QuickLogs(props) {
     if (!active.current || latest.current.enabled !== true || latest.current.athlete?.id !== athlete.id ||
       control.current !== renderedController ||
       control.current?.snapshot().busy || latest.current.savingReadiness || latest.current.savingWeight) return
-    reset(); setOpen(null); setAttempt(null); opener.current?.focus()
+    reset(); setOpen(null); setQuick(false); setAttempt(null); opener.current?.focus()
   }
   const edit = (kind, key, value) => {
     if (current() && available(kind) && control.current === renderedController &&
@@ -143,7 +149,8 @@ export default function QuickLogs(props) {
   const rowButton = (kind, label, logged) => props.sessionReadOnly || !available(kind) ? null : h('button', { type: 'button',
     style: { ...s.secondary, marginTop: 0, whiteSpace: 'nowrap', minWidth: 0 },
     'aria-label': logged ? `${label} · Logget i dag` : label,
-    'aria-expanded': open === kind, 'aria-controls': open ? `${id}-panel` : undefined,
+    'aria-expanded': open === kind || kind === 'readiness' && fast,
+    'aria-controls': open || fast ? `${id}-panel` : undefined,
     title: logged ? 'Logget i dag' : undefined, disabled: busy, onClick: launch(kind) },
   label, logged && h('span', { 'aria-hidden': true }, ' ✓'))
   // Read-only previews expose no write buttons, including disconnected controls.
@@ -152,10 +159,46 @@ export default function QuickLogs(props) {
   const readinessInput = draft?.readiness ?? {}
   const repeat = state?.canRepeat && (open === 'weight' ? state.weightSource !== undefined : state.readinessSource !== undefined)
   const saved = state?.phase === 'saved'
+  const suggestion = !open && available('readiness') ? homeReadinessSuggestion(props) : null
+  const fast = Boolean(suggestion || open === 'readiness' && quick)
+  const fastInput = open ? readinessInput : suggestion
+  const selectEnergy = (value, event) => {
+    if (!current() || control.current !== renderedController || busy) return
+    if (open) edit('readiness', 'energy', String(value))
+    else launch('readiness', String(value))(event)
+  }
   return h('div', { 'data-home-quick-logs': '', style: { marginBottom: 20 } },
     h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }, 'aria-label': 'Log i dag' },
       rowButton('readiness', 'Dagsform', status.readiness), rowButton('weight', 'Vægt i dag', weightDone)),
-    open && h('section', { id: `${id}-panel`, style: { ...s.card, marginTop: 12, marginBottom: 0 },
+    fast && h('section', { id: `${id}-panel`, 'data-home-readiness-fast': '', 'aria-label': 'Dagsform',
+      style: { ...s.card, marginTop: 12, marginBottom: 0 } },
+      status.readiness || saved ? h('p', { role: 'status', style: s.text }, 'Logget i dag') :
+        h('form', { 'aria-busy': busy, onSubmit: event => {
+          event.preventDefault()
+          if (current() && available('readiness') && control.current === renderedController && open === 'readiness')
+            control.current?.save('readiness')
+        } },
+        h('fieldset', { disabled: busy, style: { border: 0, margin: 0, padding: 0 } },
+          h('legend', { style: s.text }, 'Energi i dag · 1 lav, 5 høj'),
+          h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 4 } },
+            ...[1, 2, 3, 4, 5].map(value => h('button', { key: value, type: 'button',
+              'aria-label': `Energi ${value}`, 'aria-pressed': Number(fastInput?.energy) === value,
+              style: { ...s.secondary, marginTop: 0, minWidth: 44, padding: 0,
+                background: Number(fastInput?.energy) === value ? '#414139' : 'transparent' },
+              onClick: event => selectEnergy(value, event) }, String(value))))),
+        h('p', { style: s.text }, `Motivation ${fastInput?.motivation} · Stress ${fastInput?.stress} · Ømhed ${fastInput?.soreness_level} · samme som i går (forslag).`),
+        h('button', { type: 'button', style: s.secondary, disabled: busy, onClick: event => {
+          if (!current() || control.current !== renderedController || busy) return
+          if (open) setQuick(false)
+          else launch('readiness')(event)
+        } }, 'Ret øvrige svar'),
+        state?.message && h('p', { role: state.phase === 'save-error' ? 'alert' : 'status', style: s.text },
+          state.phase === 'save-error' && props.readinessError || state.message),
+        state?.phase === 'pending' && h('button', { type: 'button', style: s.secondary,
+          onClick: () => { if (current() && control.current === renderedController) control.current?.undo() } }, 'Fortryd'),
+        h('button', { type: 'submit', style: s.primary, disabled: busy || !fastInput?.energy },
+          busy ? state?.phase === 'pending' ? 'Gemmer om 5 sekunder…' : 'Gemmer…' : 'Gem dagsform'))),
+    open && !fast && h('section', { id: `${id}-panel`, style: { ...s.card, marginTop: 12, marginBottom: 0 },
       'aria-labelledby': `${id}-heading`, onKeyDown: event => { if (event.key === 'Escape') close() } },
     h('h2', { id: `${id}-heading`, ref: heading, tabIndex: -1, style: s.heading }, open === 'readiness' ? 'Dagsform' : 'Vægt i dag'),
     done || saved ? h('p', { role: 'status', style: s.text }, 'Logget i dag') : !draft ? h('div', null,
