@@ -50,19 +50,19 @@ export default function Analysis(props = {}) {
   const showRpe = !strengthUnavailable && rpeHistory.series.some(row => row.points.some(point => point.count > 0))
   const showMore = extras.progress || (!strengthUnavailable && extras.load) || extras.share || showRpe ||
     visibleRecords || volumeWeeks.length > 0 || visibleAnswers.length > 0
-  const showSecondary = showReport || showMineData || showTracking || showIntensity || showMore
+  const showSecondary = showReport || showMineData || showIntensity || showMore
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
   h(DevelopmentView, { ...props, now }),
+  showTracking && h(FremgangMineTal, trackingProps),
   showSecondary && h('details', { 'data-analysis-secondary': true },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Ugerapport og flere analyser'),
   showReport && h(WeeklyReport, { ...props, now }),
   showMineData && h('details', { 'data-analysis-mine-data': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Mine data'),
     h(MineData, { ...mineProps, showRecords: false })),
-  showTracking && h(FremgangMineTal, trackingProps),
   showIntensity && h('details', { 'data-analysis-intensity': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Intensitet pr. uge'),
     h(IntensityView, { entropi2: true, exerciseLogs: analysisIntensity(props), asOf: now })),

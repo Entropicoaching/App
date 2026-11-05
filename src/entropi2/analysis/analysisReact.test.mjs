@@ -43,8 +43,9 @@ test('long-term development has no collapsed ancestor; secondary sections start 
     return null
   }
   assert.equal(tree.props.children[1].type, DevelopmentView)
-  assert.equal(tree.props.children[2].props['data-analysis-secondary'], true)
-  assert.equal(tree.props.children[2].props.open, undefined)
+  const secondary = find(tree, 'data-analysis-secondary').node
+  assert.equal(secondary.type, 'details')
+  assert.equal(secondary.props.open, undefined)
   for (const key of ['data-analysis-mine-data', 'data-analysis-more']) {
     const { node } = find(tree, key)
     assert.equal(node.type, 'details'); assert.equal(node.props.open, undefined)
@@ -111,4 +112,26 @@ test('real React: existing readiness reader reaches Mine tal with native scale a
   assert.match(fold, /0,0 timer/); assert.match(fold, /5,0 af 5 \(5 mest\)/)
   assert.match(fold, /oprindelige skala fra 1 til 5/)
   assert.doesNotMatch(fold, /<h2>Mine tal|Vis træningsgrundlag|Vis kostgrundlag|Vis vægtgrundlag/)
+})
+
+
+test('real React: Mine tal follows development with no outer fold and no empty secondary wrapper', () => {
+  const trackingSnapshot = { athleteId: 'synthetic-a', endDate: '2026-11-03',
+    status: 'ready', complete: true, dailySource: 'readiness_logs',
+    dailyRows: [{ athlete_id: 'synthetic-a', source: 'readiness_logs', logged_date: '2026-11-03',
+      sleep_hours: 8, energy: 3, stress: 2, soreness_level: 1 }] }
+  const rendered = html(props({ trackingSnapshot }))
+  const mine = rendered.indexOf('<details data-fremgang-mine-tal=')
+  assert.ok(mine > rendered.indexOf('data-development='))
+  assert.ok(mine < rendered.indexOf('data-analysis-secondary='))
+  const depth = [...rendered.slice(0, mine).matchAll(/<\/?details\b[^>]*>/g)]
+    .reduce((count, [tag]) => count + (tag.startsWith('</') ? -1 : 1), 0)
+  assert.equal(depth, 0)
+  assert.doesNotMatch(rendered.slice(mine, rendered.indexOf('>', mine) + 1), / open=/)
+  assert.match(rendered, /data-athlete-sleep="true"/)
+  assert.match(rendered, /data-athlete-restitution="true"/)
+  const trackingOnly = html(props({ trackingSnapshot, currentWeek: undefined, exerciseLogs: [],
+    fremgangLogs: [], historicalMealLogs: [], weightLogs: [] }))
+  assert.match(trackingOnly, /data-fremgang-mine-tal/)
+  assert.doesNotMatch(trackingOnly, /data-analysis-secondary/)
 })

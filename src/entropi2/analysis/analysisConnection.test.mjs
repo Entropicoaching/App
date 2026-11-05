@@ -22,9 +22,10 @@ test('composition: development is first, weekly report and secondary analysis st
   const tree = Analysis(props({ fremgangLogs: [log()], historicalMealLogs: [{ date: '2026-11-03', kcal: 500 }] })), children = tree.props.children
   assert.equal(children[0].type, 'h1')
   assert.equal(children[1].type, DevelopmentView)
-  assert.equal(children[2].type, 'details')
-  assert.equal(children[2].props.open, undefined)
-  assert.equal(children[2].props.children[1].type, WeeklyReport)
+  const secondary = marked(tree, 'data-analysis-secondary')
+  assert.equal(secondary.type, 'details')
+  assert.equal(secondary.props.open, undefined)
+  assert.equal(secondary.props.children[1].type, WeeklyReport)
   for (const key of ['data-analysis-mine-data', 'data-analysis-more']) {
     const detail = marked(tree, key)
     assert.equal(detail.type, 'details'); assert.equal(detail.props.open, undefined)
@@ -32,7 +33,7 @@ test('composition: development is first, weekly report and secondary analysis st
     assert.ok(detail.props.children[0].props.style.minHeight >= 44)
   }
   const mineData = marked(tree, 'data-analysis-mine-data')
-  assert.ok(nodes(children[2]).includes(mineData))
+  assert.ok(nodes(secondary).includes(mineData))
   // This fold combines current-program-week sessions and four-week snapshots.
   // The summary must not imply four weeks of session coverage.
   assert.equal(mineData.props.children[0].props.children, 'Mine data')

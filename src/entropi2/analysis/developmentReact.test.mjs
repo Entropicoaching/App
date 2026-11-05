@@ -46,3 +46,19 @@ test('real React shows only the trained deadlift style throughout development an
     else assert.doesNotMatch(primary, /Dødløft/)
   }
 })
+
+
+test('real React gives the existing latest estimate priority over comparison and dated evidence', () => {
+  const rendered = html()
+  const latest = rendered.match(/<div data-development-latest="true"[\s\S]*?<\/time>\.<\/p><\/div>/)?.[0]
+  assert.ok(latest)
+  assert.match(latest, /Seneste e1RM/)
+  assert.match(latest, /<strong[^>]*font-size:32px[^>]*>137,5<\/strong>/)
+  assert.match(latest, /Registreret <time date[Tt]ime="2026-11-04">04\.11\.2026<\/time>/)
+  assert.match(rendered, /<p data-history-summary="true"[^>]*font-size:16px[^>]*font-weight:600/)
+  assert.match(rendered, /steget 27,5 kg/)
+  assert.match(rendered, /Squat: tal og datagrundlag/)
+  for (const extra of [{ fremgangLogs: [] }, { fremgangLogs: undefined },
+    { fremgangLoading: true }, { fremgangError: true }])
+    assert.doesNotMatch(html(extra), /data-development-latest|data-history-summary/)
+})
