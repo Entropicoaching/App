@@ -1209,7 +1209,7 @@ export default function ProgramTab({
                                             style={{ ...programTapTarget, background: 'none', border: 'none', color: (programAppearanceOn ? programColors.muted : '#4a4844'), cursor: 'pointer', fontSize: '0.75rem', padding: '0.3rem 0.2rem', lineHeight: 1, flexShrink: 0 }}
                                           >ℹ</button>
                                           <input
-                                            style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), fontStyle: 'italic' }}
+                                            style={{ ...s.fieldInput, ...programTapTarget, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), fontStyle: 'italic' }}
                                             {...a11y({ 'aria-label': `Note · ${setContext}` })}
                                             type="text" placeholder="Tilføj note..." value={input.note}
                                             onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], note: e.target.value } }))}

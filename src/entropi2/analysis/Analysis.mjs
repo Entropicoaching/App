@@ -20,6 +20,9 @@ import { readinessSections } from '../tracking/atlet/readinessSections.mjs'
 import { analysisWeightProps, latestAnalysisWeightDate } from './analysisWeight.mjs'
 import WeightReadStatus from './WeightReadStatus.mjs'
 
+const explanationSummaryStyle = { minHeight: 44, paddingTop: 12, paddingBottom: 12,
+  boxSizing: 'border-box', cursor: 'pointer', opacity: 0.8 }
+
 // Explicit opt-in only. Assembly must supply entropi2 === true and the existing
 // AthleteView props. Importing this module changes no existing entry or flag.
 export default function Analysis(props = {}) {
@@ -90,7 +93,7 @@ export default function Analysis(props = {}) {
     style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'Dine rekorder'),
     // Marc 3. nov.: forklaringen foldes ind; rekorderne staar oeverst.
-    h('details', { style: { marginTop: 8 } }, h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'), h('p', null, records.message), h('p', { style: { lineHeight: 1.6 } }, records.note)),
+    h('details', { style: { marginTop: 8 } }, h('summary', { style: explanationSummaryStyle }, 'Sådan tælles det'), h('p', null, records.message), h('p', { style: { lineHeight: 1.6 } }, records.note)),
     records.lifts.length > 0 && h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } },
       ...records.lifts.map(row => {
         const heavy = row.heaviest, best = row.bestEstimate
@@ -104,7 +107,7 @@ export default function Analysis(props = {}) {
   volumeWeeks.length > 0 && h('section', { 'aria-label': 'Volumen pr. muskelgruppe', 'data-analysis-volume': true,
     style: { padding: 12, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18', minWidth: 0 } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'Volumen pr. muskelgruppe'),
-    h('details', { style: { marginTop: 8 } }, h('summary', { style: { cursor: 'pointer', opacity: 0.8 } }, 'Sådan tælles det'), h('p', { style: { lineHeight: 1.6 } }, volume.message)),
+    h('details', { style: { marginTop: 8 } }, h('summary', { style: explanationSummaryStyle }, 'Sådan tælles det'), h('p', { style: { lineHeight: 1.6 } }, volume.message)),
     ...volumeWeeks.map(week => h('table', { key: week.start,
       style: { width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', marginBottom: 20, fontSize: '0.85rem' } },
       h('caption', { style: { textAlign: 'left', paddingBottom: 8 } }, week.label),

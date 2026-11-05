@@ -144,3 +144,20 @@ test('real React: Mine tal follows development with no outer fold and no empty s
   assert.match(trackingOnly, /data-fremgang-mine-tal/)
   assert.doesNotMatch(trackingOnly, /data-analysis-secondary/)
 })
+
+
+test('real React E2-TILG-TRYK3: both native explanation targets render at least 44px', () => {
+  const rendered = html(props({ currentWeek: undefined, exerciseLogs: [], fremgangLogs: [{
+    exercise_id: 'synthetic-target', logged_at: '2026-11-03', weight: 100, reps_completed: 3,
+    exercises: { name: 'Squat', sessions: { weeks: { block_name: 'Styrke' } } },
+  }] }))
+  const targets = [...rendered.matchAll(/<details[^>]*><summary([^>]*)>Sådan tælles det<\/summary>/g)]
+  assert.equal(targets.length, 2)
+  for (const [whole, attributes] of targets) {
+    assert.doesNotMatch(whole, /<details[^>]* open=/)
+    assert.match(attributes, /min-height:44px/)
+    assert.match(attributes, /box-sizing:border-box/)
+    assert.match(attributes, /padding-top:12px/)
+    assert.match(attributes, /padding-bottom:12px/)
+  }
+})

@@ -159,3 +159,36 @@ test('read-only, historical, future, closed and empty views never gain write con
     assert.equal(nodes(tree, n => /^Log sæt|^Gem feedback/.test(n.props['aria-label'] || '')).length, 0)
   }
 })
+
+
+test('E2-TILG-TRYK3: all four note inputs have 44px targets and retain names, values and updates', () => {
+  const key = inputKey(1, 1)
+  let inputs = { [key]: { weight: '80', reps: '5', rpe: '8', note: 'Før' } }
+  const props = accessibilityFixture({ logInputs: inputs, setLogInputs: update => { inputs = update(inputs) } })
+  const view = mount(Program, props)
+  const tree = view.render()
+  const notes = nodes(tree, n => n.type === 'input' && n.props.placeholder === 'Tilføj note...')
+  assert.equal(notes.length, 4)
+  assert.equal(new Set(notes.map(n => n.props['aria-label'])).size, 4)
+  for (const note of notes) {
+    assert.ok(note.props.style.minHeight >= 44)
+    assert.equal(note.props.style.boxSizing, 'border-box')
+    assert.ok(note.props.style.minWidth >= 44)
+  }
+  assert.equal(named(tree, `Note · ${setName(1, 1)}`).props.value, 'Før')
+  named(tree, `Note · ${setName(1, 1)}`).props.onChange({ target: { value: 'Efter' } })
+  assert.deepEqual(inputs[key], { weight: '80', reps: '5', rpe: '8', note: 'Efter' })
+  assert.equal(named(view.render({ ...props, logInputs: inputs }), `Note · ${setName(1, 1)}`).props.value, 'Efter')
+  for (const entropi2 of [false, null, 0, 1, 'true']) {
+    const offNotes = nodes(render({ entropi2 }), n => n.type === 'input' && n.props.placeholder === 'Tilføj note...')
+    assert.equal(offNotes.length, 4)
+    for (const note of offNotes) {
+      assert.equal(note.props.style.minHeight, undefined)
+      assert.equal(note.props.style.minWidth, undefined)
+      assert.equal(note.props.style.boxSizing, undefined)
+      assert.equal(note.props.style.padding, '0.3rem 0.6rem')
+      assert.equal(note.props.style.fontSize, '0.75rem')
+      assert.equal(note.props.style.color, '#7a7770')
+    }
+  }
+})

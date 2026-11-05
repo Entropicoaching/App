@@ -79,3 +79,19 @@ test('real React OFF and read-only retain existing gates and never introduce wri
   const readOnly = render({ readOnly: true })
   assert.doesNotMatch(readOnly, /<input\b|<textarea\b|aria-label="Log sæt/)
 })
+
+
+test('real React E2-TILG-TRYK3: note inputs themselves carry 44px, with OFF unchanged', () => {
+  const html = render()
+  for (const exercise of [1, 2]) for (const set of [1, 2]) {
+    const tag = namedTag(html, 'input', `Note · ${setName(exercise, set)}`)
+    assert.match(tag, /min-height:44px/)
+    assert.match(tag, /min-width:44px/)
+    assert.match(tag, /box-sizing:border-box/)
+  }
+  for (const entropi2 of [false, null, 0, 1, 'true']) {
+    const notes = render({ entropi2 }).match(/<input[^>]*placeholder="Tilføj note\.\.\."[^>]*>/g) || []
+    assert.equal(notes.length, 4)
+    for (const tag of notes) assert.doesNotMatch(tag, /min-height:|min-width:|box-sizing:/)
+  }
+})
