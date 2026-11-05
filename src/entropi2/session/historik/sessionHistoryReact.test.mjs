@@ -29,3 +29,23 @@ test('session adapter forwards exact identity, pending and parked protection to 
     assert.equal(html, '')
   }
 })
+
+
+test('React retry button carries the session reader; loading suppresses retained errors and stale sets', async () => {
+  let reads = 0
+  const props = sessionHistoryProps({ athleteId: 'synthetic-a', exerciseLogs: [row], exerciseLogsError: true,
+    onRetryExerciseLogs: async () => { reads++ } }, ex, now)
+  const tree = ExerciseHistoryView(props)
+  const find = node => !node || typeof node !== 'object' ? [] : [
+    ...(node.type === 'button' ? [node] : []), ...[node.props?.children].flat(Infinity).flatMap(find),
+  ]
+  const [button] = find(tree)
+  assert.equal(button.props.children, 'Hent igen'); assert.equal(button.props.type, 'button')
+  assert.ok(button.props.style.minHeight >= 44)
+  assert.equal(reads, 0); await button.props.onClick(); assert.equal(reads, 1)
+  const loading = renderToStaticMarkup(h(ExerciseHistoryView, { ...props, loading: true }))
+  assert.match(loading, /Historikken hentes/)
+  assert.doesNotMatch(loading, /Hent igen|role="alert"|80 kg|<svg/)
+  const noReader = render({ exerciseLogsError: true })
+  assert.doesNotMatch(noReader, /<button/)
+})

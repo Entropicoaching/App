@@ -45,6 +45,7 @@ export function lavLaesninger({
   setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
   setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setVolumeError = () => {}, setWarmupTemplates, setWeeklyTonnage,
   setOfflineSnapshotAt, setUgensLogsHentet,
+  setExerciseLogsStatus, exerciseLogsReadRef,
 }) {
   // ORDRE 397 (docs/OFFLINE-PAS.md): kun atletens egen visning, aldrig
   // coachens forhåndsvisning.
@@ -537,7 +538,7 @@ export function lavLaesninger({
     const activeWeek = weeks[activeIdx]
     setCurrentWeek(activeWeek)
     rememberForOffline({ week: activeWeek })
-    fetchExerciseLogs(athleteId, activeWeek)
+    fetchExerciseLogs(athleteId, activeWeek, { program: true })
     fetchLastLogs(athleteId, activeWeek)
     fetchExerciseHistory(athleteId)
     fetchWeeklyTonnage(athleteId)
@@ -676,37 +677,71 @@ export function lavLaesninger({
     setPastLogs(data || [])
   }
 
-  async function fetchExerciseLogs(athleteId, week) {
+  async function fetchExerciseLogs(athleteId, week, { program = false } = {}) {
     // ORDRE 406 (O1 i docs/kritik-403): uden uge ved vi ikke, hvilke sæt der
     // hører til. Så lader vi listen stå i stedet for at tømme Dagens pas.
-    if (!week) return
+    if (!week) return exerciseLogsReadRef ? false : undefined
+    const tracked = !!exerciseLogsReadRef
+    if (tracked) {
+      const scope = exerciseLogsReadRef.current
+      if (mountedRef?.current === false || scope.enabled !== true || scope.athleteId !== athleteId ||
+          (!program && scope.weekId !== week.id)) return false
+      // fetchProgram just selected this week; React may not have rendered it yet.
+      if (program) scope.weekId = week.id
+    }
+    const request = tracked ? ++exerciseLogsReadRef.current.request : null
+    const current = () => !tracked || (mountedRef?.current !== false &&
+      exerciseLogsReadRef.current.enabled === true && exerciseLogsReadRef.current.request === request &&
+      exerciseLogsReadRef.current.athleteId === athleteId && exerciseLogsReadRef.current.weekId === week.id)
+    const status = (loading, error) => setExerciseLogsStatus?.({ athleteId, weekId: week.id, loading, error })
+    if (tracked) status(true, false)
     const exerciseIds = (week?.sessions || []).flatMap(s => (s.exercises || []).map(e => e.id))
-    if (exerciseIds.length === 0) { setExerciseLogs([]); return }
-    const { data, ok } = await runGuardedRead(
-      () => supabase
-        .from('exercise_logs')
-        .select('*')
-        .eq('athlete_id', athleteId)
-        .in('exercise_id', exerciseIds),
-      onReadError('Sæt-loggen', athleteId),
-    )
-    if (!ok) return
-    const rows = data || []
-    if (week?.id) rememberForOffline({ logs: rows, logsWeekId: week.id })
-    // ORDRE 397: sæt der venter i den lokale kø er nyere end serverens rækker
-    // (og findes måske slet ikke der endnu); de lægges ovenpå, så et sæt logget
-    // uden net aldrig ser ulogget ud efter en genhentning.
-    const merged = overlayQueuedSets(rows, loadOfflineSets(athleteId), athleteId)
-    setExerciseLogs(prev => {
-      // Behold endnu-ikke-bekræftede optimistiske rækker (baggrundsskrivning stadig
-      // i kø), så et flueben ikke blinker væk mens en anden skrivning er undervejs.
-      const pending = prev.filter(l => l._optimistic &&
-        !merged.some(r => r.exercise_id === l.exercise_id && r.set_number === l.set_number))
-      return [...merged, ...pending]
-    })
-    setLogInputs(prev => mergeAthleteSetInputs(prev, rows))
-    // ORDRE 450: nu er Dagens pas brugbart; først derefter hentes rekord-rækkerne.
-    setUgensLogsHentet?.(week.id)
+    if (exerciseIds.length === 0) {
+      if (!current()) return tracked ? false : undefined
+      setExerciseLogs([])
+      if (tracked) status(false, false)
+      return tracked ? true : undefined
+    }
+    try {
+      const { data, ok } = await runGuardedRead(
+        () => supabase
+          .from('exercise_logs')
+          .select('*')
+          .eq('athlete_id', athleteId)
+          .in('exercise_id', exerciseIds),
+        error => { if (current()) onReadError('Sæt-loggen', athleteId)(error) },
+      )
+      if (!current()) return tracked ? false : undefined
+      if (!ok) {
+        if (tracked) status(false, true)
+        return tracked ? false : undefined
+      }
+      const rows = data || []
+      if (week?.id) rememberForOffline({ logs: rows, logsWeekId: week.id })
+      // ORDRE 397: sæt der venter i den lokale kø er nyere end serverens rækker
+      // (og findes måske slet ikke der endnu); de lægges ovenpå, så et sæt logget
+      // uden net aldrig ser ulogget ud efter en genhentning.
+      const merged = overlayQueuedSets(rows, loadOfflineSets(athleteId), athleteId)
+      setExerciseLogs(prev => {
+        // Behold endnu-ikke-bekræftede optimistiske rækker (baggrundsskrivning stadig
+        // i kø), så et flueben ikke blinker væk mens en anden skrivning er undervejs.
+        const pending = prev.filter(l => l._optimistic &&
+          !merged.some(r => r.exercise_id === l.exercise_id && r.set_number === l.set_number))
+        return [...merged, ...pending]
+      })
+      setLogInputs(prev => mergeAthleteSetInputs(prev, rows))
+      // ORDRE 450: nu er Dagens pas brugbart; først derefter hentes rekord-rækkerne.
+      setUgensLogsHentet?.(week.id)
+      if (tracked) status(false, false)
+      return tracked ? true : undefined
+    } catch (error) {
+      if (!tracked) throw error
+      if (current()) {
+        status(false, true)
+        onReadError('Sæt-loggen', athleteId)(error)
+      }
+      return false
+    }
   }
 
   async function fetchLastLogs(athleteId, week) {

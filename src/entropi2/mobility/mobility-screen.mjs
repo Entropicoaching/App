@@ -8,7 +8,7 @@ const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(is
 // A real DOM mount with explicit lifecycle; no routing, fetch or write globals.
 // Assembly can mount this from its React effect and return the disposer.
 export function mountMobility(root, options = {}) {
-  const model = mobilityModel(options)
+  let model = mobilityModel(options)
   if (!model) return () => {}
   const doc = root.ownerDocument
   root.setAttribute('data-e2-mobility', '')
@@ -52,7 +52,15 @@ export function mountMobility(root, options = {}) {
     element('h3', ex.name, item); element('p', ex.label, item); element('p', ex.desc, item)
   }
   const go = () => { dispose(); options.onProgram?.() }
-  function home(focusHeading = true) {
+  function reload(section) {
+    if (options.enabled !== true || options.athlete?.id !== historyOptions.athleteId || !currentDay()) return
+    // Read the original local sources again; never repair or write on retry.
+    const refreshed = mobilityModel(options)
+    if (!refreshed) return
+    model = refreshed
+    home(false, section)
+  }
+  function home(focusHeading = true, retrySection = null) {
     clear()
     element('style', styles)
     Object.assign(root.style, { maxWidth: '640px', overflowWrap: 'anywhere', boxSizing: 'border-box',
@@ -83,9 +91,13 @@ export function mountMobility(root, options = {}) {
       if (typeof options.onProgram === 'function') action('Til programmet', go, before)
     } else if (typeof options.onProgram === 'function') action('Til programmet', go)
     const overview = element('section'); overview.setAttribute('aria-label', 'Mobilitet denne uge')
-    element('h2', 'Denne uge', overview)
-    if (week.error) element('p', 'Ugeoversigten kunne ikke læses på denne enhed.', overview).setAttribute('role', 'status')
-    else {
+    const weekHeading = element('h2', 'Denne uge', overview)
+    weekHeading.setAttribute('tabindex', '-1')
+    if (retrySection === 'week') weekHeading.focus?.()
+    if (week.error) {
+      element('p', 'Ugeoversigten kunne ikke læses på denne enhed.', overview).setAttribute('role', 'alert')
+      if (week.error !== 'invalid-input') action('Hent igen', () => reload('week'), overview)
+    } else {
       element('p', `${week.completed} ${week.completed === 1 ? 'rutine' : 'rutiner'} gennemført på denne enhed`, overview).setAttribute('role', 'status')
       const days = element('ul', undefined, overview)
       Object.assign(days.style, { display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0', listStyle: 'none' })
@@ -97,7 +109,9 @@ export function mountMobility(root, options = {}) {
     }
     // Marc 3. nov. (keep it simple): hjemmeoevelser vises kun, naar der er nogen; ingen teknisk lagringstekst.
     const coach = element('section'); coach.hidden = !(model.assigned.length || model.choices.length || model.error)
-    element('h2', 'Hjemmeøvelser fra din coach', coach)
+    const coachHeading = element('h2', 'Hjemmeøvelser fra din coach', coach)
+    coachHeading.setAttribute('tabindex', '-1')
+    if (retrySection === 'coach') (coach.hidden ? weekHeading : coachHeading).focus?.()
     if (model.assigned.length) {
       model.assigned.forEach(ex => exercise(ex, coach))
       element('p', 'Gemt på denne enhed.', coach)
@@ -107,7 +121,10 @@ export function mountMobility(root, options = {}) {
       element('h3', `${choice.lift}: ${choice.need}`, coach)
       choice.exercises.forEach(ex => exercise(ex, coach))
     }
-    if (model.error) element('p', model.error, coach).setAttribute('role', 'status')
+    if (model.error) {
+      element('p', model.error, coach).setAttribute('role', 'alert')
+      action('Hent igen', () => reload('coach'), coach)
+    }
     const library = element('section'); element('h2', 'Find øvelser efter problematik', library)
     for (const problem of model.problems) {
       const details = element('details', undefined, library)

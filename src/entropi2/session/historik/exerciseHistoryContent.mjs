@@ -34,7 +34,12 @@ export function exerciseHistoryContent(h, props = {}) {
     h('h2', null, 'Øvelseshistorik'),
     h('p', null, typeof props.exerciseName === 'string' ? props.exerciseName : 'Øvelse'),
     model.status === 'loading' ? h('p', { role: 'status' }, 'Historikken hentes…') :
-    model.status === 'error' ? h('p', { role: 'alert' }, model.message) :
+    model.status === 'error' ? h('div', null,
+      h('p', { role: 'alert' }, model.message),
+      typeof props.onRetry === 'function' ? h('button', { type: 'button', onClick: props.onRetry,
+        style: { minHeight: 48, minWidth: 44, maxWidth: '100%', padding: '12px 16px',
+          whiteSpace: 'normal', font: 'inherit', color: '#f5f5ee', background: '#1c1c18',
+          border: '1px solid #77776d', borderRadius: 10 } }, 'Hent igen') : null) :
     h('div', { style: { display: 'grid', gap: 16 } },
       h('div', null, h('h3', null, 'Seneste tunge sæt'),
         h('ol', { style: { margin: 0, paddingLeft: 24 } }, ...model.sets.map((s, i) =>

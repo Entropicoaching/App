@@ -65,6 +65,31 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   const offlineBannerDelta = '<IngenForbindelse {...{ offlineSnapshotAt }} entropi2={e2} />'
   assert.equal(candidate.split(offlineBannerDelta).length, 2, 'Exact Entropi 2 offline banner wiring')
   candidate = candidate.replace(offlineBannerDelta, '<IngenForbindelse {...{ offlineSnapshotAt }} />')
+  // R1-E2-FEJL-GENLAES1: invert only the exact E2 read-status/retry additions.
+  // The original host SHA guards below continue to protect all legacy behavior.
+  for (const added of [
+    `  const [exerciseLogsStatus, setExerciseLogsStatus] = useState(null)
+  const exerciseLogsReadRef = useRef({ request: 0 })
+  Object.assign(exerciseLogsReadRef.current, { enabled: e2, athleteId: athlete?.id, weekId: currentWeek?.id })
+  const exerciseLogsScope = exerciseLogsStatus?.athleteId === athlete?.id && exerciseLogsStatus?.weekId === currentWeek?.id
+  const exerciseLogsError = exerciseLogsScope && exerciseLogsStatus?.error === true
+  const exerciseLogsLoading = !exerciseLogsScope || exerciseLogsStatus?.loading === true
+`,
+    `    ...(e2 ? { setExerciseLogsStatus, exerciseLogsReadRef } : {}),
+`,
+    `  // Read the latest athlete/week without replacing the open session or its draft.
+  const retryExerciseLogsRef = useRef(null)
+  retryExerciseLogsRef.current = () => e2 && mountedRef.current && athlete?.id && currentWeek
+    ? fetchExerciseLogs(athlete.id, currentWeek) : false
+  const onRetryExerciseLogs = useMemo(() => () => retryExerciseLogsRef.current(), [])
+`,
+    `            exerciseLogsError={exerciseLogsError} exerciseLogsLoading={exerciseLogsLoading} onRetryExerciseLogs={onRetryExerciseLogs}
+`,
+  ]) {
+    const exact = added.replaceAll('\n', '\r\n')
+    assert.equal(candidate.split(exact).length, 2, 'Exact exercise log read delta')
+    candidate = candidate.replace(exact, '')
+  }
   // Stable retry callback: invert the exact addition before the existing SHA guards.
   const retryWeightDelta = `  // Keep nutrition mounted across renders while retry reads the latest athlete and reader.
   const retryWeightRef = useRef(null)

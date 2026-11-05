@@ -244,6 +244,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const [pastLogs, setPastLogs] = useState([])
   const [progOpenSession, setProgOpenSession] = useState(null)
   const [exerciseLogs, setExerciseLogs] = useState([])
+  const [exerciseLogsStatus, setExerciseLogsStatus] = useState(null)
+  const exerciseLogsReadRef = useRef({ request: 0 })
+  Object.assign(exerciseLogsReadRef.current, { enabled: e2, athleteId: athlete?.id, weekId: currentWeek?.id })
+  const exerciseLogsScope = exerciseLogsStatus?.athleteId === athlete?.id && exerciseLogsStatus?.weekId === currentWeek?.id
+  const exerciseLogsError = exerciseLogsScope && exerciseLogsStatus?.error === true
+  const exerciseLogsLoading = !exerciseLogsScope || exerciseLogsStatus?.loading === true
   const [prs, setPrs] = useState([]) // atletens egne rekorder (personal_records)
   const [prsError, setPrsError] = useState(false) // se fetchPRs — ordre 163 · del 3
   const [logInputs, setLogInputs] = useState({})
@@ -470,7 +476,13 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     setPrsError, setReadinessError, setReadinessHistory, setReadinessLog, setRestPause, setSavingReadiness, setSharedVideoAnalyses, setSharedVideoError,
     setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setVolumeError, setWarmupTemplates, setWeeklyTonnage,
     setOfflineSnapshotAt, setUgensLogsHentet,
+    ...(e2 ? { setExerciseLogsStatus, exerciseLogsReadRef } : {}),
   })
+  // Read the latest athlete/week without replacing the open session or its draft.
+  const retryExerciseLogsRef = useRef(null)
+  retryExerciseLogsRef.current = () => e2 && mountedRef.current && athlete?.id && currentWeek
+    ? fetchExerciseLogs(athlete.id, currentWeek) : false
+  const onRetryExerciseLogs = useMemo(() => () => retryExerciseLogsRef.current(), [])
   // Ordre 1502: en smerte-note i seneste uger standser appens stigningsforslag (D3, V10 3A).
   const suggestNextWeight = udenForslagVedSmerte(suggestNextWeightRaa, allWeeks, exerciseHistory)
 
@@ -819,6 +831,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {e2Home && (
           <HomeSession key={athlete.id} enabled={true} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
             setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
+            exerciseLogsError={exerciseLogsError} exerciseLogsLoading={exerciseLogsLoading} onRetryExerciseLogs={onRetryExerciseLogs}
             programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
             {...(e2ReadOnly ? { onLogSet: undefined, setLogInputs: undefined, storage: coachPreviewStorage } : {})}

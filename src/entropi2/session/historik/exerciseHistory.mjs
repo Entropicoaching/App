@@ -25,11 +25,11 @@ function timestamp(value) {
 export function exerciseHistory(input = {}) {
   if (input.enabled !== true) return { status: 'off' }
   const { athleteId, exerciseId, exerciseName, logs, now, error, pendingSyncKeys = [], parkedSets = [] } = input
-  const failure = { status: 'error', message: 'Historikken kunne ikke vises. Prøv igen, når data er hentet.' }
+  const failure = { status: 'error', message: 'Historikken kunne ikke vises.' }
+  if (input.loading === true) return { status: 'loading' }
   if (error || typeof athleteId !== 'string' || !athleteId.trim() || typeof exerciseId !== 'string' || !exerciseId.trim() ||
       typeof exerciseName !== 'string' || !exerciseName.trim() || !Array.isArray(logs) || !Number.isFinite(now) ||
       !Array.isArray(pendingSyncKeys) || !Array.isArray(parkedSets)) return failure
-  if (input.loading === true) return { status: 'loading' }
   const sets = [], seen = new Set()
   let omitted = 0
   for (const row of logs) {
