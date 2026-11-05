@@ -1,4 +1,5 @@
 import { evaluateCoachWeek } from '../../tracking/coachuge/evaluate.mjs'
+import { weeklyLetterContext } from './weeklyLetterContext.mjs'
 
 const focusText = {
   pain: ['Lad os afklare den registrerede smerte, før vi taler om at øge træningen.', 'Hvordan oplever du smerten i din træning lige nu?'],
@@ -24,6 +25,9 @@ export function createWeeklyLetter(options = {}) {
   if (['loading', 'error'].includes(evaluation.state)) return { ...base, state: evaluation.state }
   const { data } = options
   const { from, asOf } = evaluation
+  let context
+  try { context = weeklyLetterContext(data, evaluation) }
+  catch { return { ...base, state: 'error' } }
   const compliance = evaluation.sections.find(s => s.id === 'compliance')
   const trainingKnown = ['ready', 'notPlanned'].includes(compliance.state)
   const training = trainingKnown ? {
@@ -39,27 +43,28 @@ export function createWeeklyLetter(options = {}) {
   const dailyCount = Math.max(0, ...evaluation.sections.filter(s =>
     ['pain', 'sleepHours', 'sleepQuality', 'energy', 'stress', 'soreness'].includes(s.id))
     .map(s => s.dataBasis.sampleCount ?? 0))
-  const hasEvidence = evaluation.sections.some(s => s.dataBasis.sampleCount > 0) || trainingKnown
+  const hasEvidence = evaluation.sections.some(s => s.dataBasis.sampleCount > 0) || trainingKnown || context.length > 0
   if (!hasEvidence) return { ...base, state: 'empty', from, asOf }
   const selected = evaluation.flags[0] ?? null
   const [focus, question] = selected ? focusText[selected.id] : [
     'Lad os vælge ét realistisk fokus for den kommende uge.',
     'Hvad vil du helst have, at vi arbejder med i den kommende uge?',
   ]
+  const nutritionPraiseDays = context.some(c => c.id === 'nutrition') ? 0 : nutritionDays
   const trainingPraise = training?.completed > 0
     ? `Godt arbejde med de ${training.completed} af ${training.planned} planlagte pas, der er bekræftet gennemført i denne uge.`
-    : nutritionDays > 0 ? `Tak for dine komplette kostregistreringer på ${nutritionDays} af ugens 7 dage.`
+    : nutritionPraiseDays > 0 ? `Tak for dine komplette kostregistreringer på ${nutritionPraiseDays} af ugens 7 dage.`
       : dailyCount > 0 ? 'Tak for dine registreringer om, hvordan du har det.'
         : 'Tak fordi du tager dig tid til at samle op på ugen sammen med mig.'
-  const praise = training?.completed > 0 && nutritionDays > 0
-    ? `${trainingPraise} Tak også for dine komplette kostregistreringer på ${nutritionDays} af ugens 7 dage.`
+  const praise = training?.completed > 0 && nutritionPraiseDays > 0
+    ? `${trainingPraise} Tak også for dine komplette kostregistreringer på ${nutritionPraiseDays} af ugens 7 dage.`
     : trainingPraise
   const b = selected?.dataBasis
   const evidence = selected ? { id: selected.id, title: selected.title,
     from: b.from, to: b.to, sampleCount: b.sampleCount, minimumSampleCount: b.minimumSampleCount,
     rule: b.rule, formula: b.formula, value: selected.value } : null
   return { ...base, state: 'ready', from, asOf, praise, focus, question,
-    text: [praise, focus, question].join('\n\n'),
+    text: [[praise, ...context.map(c => c.text)].join('\n'), focus, question].join('\n\n'), context,
     training, nutritionDays, evidence, incomplete: evaluation.insufficient,
     otherFlags: Math.max(0, evaluation.flags.length - 1) }
 }

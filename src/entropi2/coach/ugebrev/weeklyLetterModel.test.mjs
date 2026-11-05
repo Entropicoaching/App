@@ -21,7 +21,9 @@ test('actual evaluator gives pain priority, one focus and one question with date
   assert.equal(m.evidence.to, '2026-11-01'); assert.equal(m.otherFlags, 3)
   assert.match(m.focus, /afklare/); assert.equal((m.text.match(/\?/g) || []).length, 1)
   assert.equal(m.text.split('\n\n').length, 3); assert.match(m.praise, /1 af 2 planlagte pas/)
-  assert.doesNotMatch(m.text, /stress|søvn|diagnose|knæ/i)
+  assert.doesNotMatch(m.focus, /stress|søvn|diagnose|knæ/i)
+  assert.match(m.text, /5 timer på 7\/7 dage/)
+  assert.doesNotMatch(m.text, /diagnose|knæ/i)
 })
 test('weekly nutrition counts seven days while nutrition flag carries 28-day basis', () => {
   const d = letterFixture(); d.compliance = null; d.nutritionDays.forEach(r => { r.proteinG = 50 })
