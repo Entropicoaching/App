@@ -62,3 +62,22 @@ test('real React gives the existing latest estimate priority over comparison and
     { fremgangLoading: true }, { fremgangError: true }])
     assert.doesNotMatch(html(extra), /data-development-latest|data-history-summary/)
 })
+
+test('real React folds three complete lift graphs while dated estimates and old-data warnings stay visible', () => {
+  const names = ['Squat', 'Bænkpres', 'Dødløft']
+  const rendered = html({ now: '2026-11-20T12:00:00Z',
+    fremgangLogs: names.flatMap((name, lift) => props().fremgangLogs.map(row => ({ ...row,
+      exercise_id: `${lift}-${row.exercise_id}`, exercises: { ...row.exercises, name } }))) })
+  const charts = [...rendered.matchAll(/<details data-development-chart="([^"]+)"[^>]*>[\s\S]*?<\/details>/g)]
+  assert.deepEqual(charts.map(match => match[1]), names)
+  for (const [chart] of charts) {
+    assert.doesNotMatch(chart.slice(0, chart.indexOf('>')), /\bopen=/)
+    assert.match(chart, /<summary[^>]*>Se udviklingen over 26 uger<\/summary>/)
+    assert.equal((chart.match(/<span\b/g) ?? []).length, 28) // 26 positions and two date labels
+  }
+  const outsideCharts = charts.reduce((markup, [chart]) => markup.replace(chart, ''), rendered)
+  assert.equal((outsideCharts.match(/Seneste e1RM · skøn/g) ?? []).length, 3)
+  assert.equal((outsideCharts.match(/Registreret <time date[Tt]ime="2026-11-04"/g) ?? []).length, 3)
+  assert.equal((outsideCharts.match(/mere end 14 dage gammelt/g) ?? []).length, 3)
+  assert.equal((outsideCharts.match(/data-history-summary=/g) ?? []).length, 3)
+})

@@ -46,13 +46,22 @@ test('long-term development has no collapsed ancestor; secondary sections start 
   const secondary = find(tree, 'data-analysis-secondary').node
   assert.equal(secondary.type, 'details')
   assert.equal(secondary.props.open, undefined)
-  for (const key of ['data-analysis-mine-data', 'data-analysis-more']) {
+  for (const key of ['data-analysis-mine-data', 'data-analysis-share']) {
     const { node } = find(tree, key)
     assert.equal(node.type, 'details'); assert.equal(node.props.open, undefined)
     assert.ok(node.props.children[0].props.style.minHeight >= 44)
   }
+  assert.equal(find(tree, 'data-analysis-more'), null)
+  assert.deepEqual(find(tree, 'data-analysis-share').ancestors.filter(n => n.type === 'details'), [secondary])
   assert.equal(find(tree, 'data-analysis-intensity'), null)
   assert.equal((html(props()).match(/<figure/g) ?? []).length, 1)
+  const rendered = html(props())
+  const share = rendered.indexOf('<details data-analysis-share=')
+  assert.ok(share > 0)
+  const depth = [...rendered.slice(0, share).matchAll(/<\/?details\b[^>]*>/g)]
+    .reduce((count, [tag]) => count + (tag.startsWith('</') ? -1 : 1), 0)
+  assert.equal(depth, 1)
+  assert.doesNotMatch(rendered, /<summary[^>]*>Flere analyser<\/summary>/)
 })
 
 test('real React renders empty, missing, loading and error sources honestly', () => {
@@ -106,7 +115,7 @@ test('real React: existing readiness reader reaches Mine tal with native scale a
     athleteId: 'synthetic-a', day: '2026-11-04' })
   const rendered = html(props({ trackingSnapshot }))
   const start = rendered.indexOf('<details data-fremgang-mine-tal=')
-  const end = rendered.indexOf('<details data-analysis-more=')
+  const end = rendered.indexOf('<details data-analysis-secondary=')
   const fold = rendered.slice(start, end)
   assert.ok(start >= 0 && end > start)
   assert.match(fold, /0,0 timer/); assert.match(fold, /5,0 af 5 \(5 mest\)/)

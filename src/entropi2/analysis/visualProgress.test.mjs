@@ -66,7 +66,7 @@ test('latest estimate is primary, comparison secondary and observation date sepa
   const tree = DevelopmentView(props()), all = entries(tree)
   const [latest] = marked(all, 'data-development-latest')
   assert.ok(latest)
-  assert.match(text(latest.node), /Seneste e1RM143 kg/)
+  assert.match(text(latest.node), /Seneste e1RM · skøn143 kg/)
   const value = entries(latest.node).find(({ node }) => node.type === 'strong').node
   assert.equal(value.props.style.fontSize, 32)
   const [comparison] = marked(all, 'data-history-summary')

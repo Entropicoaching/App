@@ -26,12 +26,13 @@ test('composition: development is first, weekly report and secondary analysis st
   assert.equal(secondary.type, 'details')
   assert.equal(secondary.props.open, undefined)
   assert.equal(secondary.props.children[1].type, WeeklyReport)
-  for (const key of ['data-analysis-mine-data', 'data-analysis-more']) {
+  for (const key of ['data-analysis-mine-data', 'data-analysis-share']) {
     const detail = marked(tree, key)
     assert.equal(detail.type, 'details'); assert.equal(detail.props.open, undefined)
     assert.equal(detail.props.children[0].type, 'summary')
     assert.ok(detail.props.children[0].props.style.minHeight >= 44)
   }
+  assert.equal(marked(tree, 'data-analysis-more'), undefined)
   const mineData = marked(tree, 'data-analysis-mine-data')
   assert.ok(nodes(secondary).includes(mineData))
   // This fold combines current-program-week sessions and four-week snapshots.
@@ -43,7 +44,7 @@ test('composition: development is first, weekly report and secondary analysis st
   assert.equal(dom.querySelectorAll('[data-analysis-history]').length, 1)
   assert.equal(dom.querySelectorAll('figure').length, 1)
   assert.equal(nodes(marked(tree, 'data-analysis-mine-data')).filter(n => n.type === 'figure').length, 0)
-  assert.equal(nodes(marked(tree, 'data-analysis-more')).filter(n => n.props?.['data-analysis-history']).length, 0)
+  assert.equal(nodes(secondary).filter(n => n.props?.['data-analysis-history']).length, 0)
 })
 
 test('actual connected leaf imports display normalized four-week data', () => {
