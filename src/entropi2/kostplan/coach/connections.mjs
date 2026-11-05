@@ -37,8 +37,8 @@ export function proteinDistribution(meals, planTargets, weightKg) {
 }
 
 // No new query or fabricated activation history. This boundary accepts only a
-// completed, scoped read. The current portal host supplies no such receipt, so
-// the report stays absent there. Never compare a device draft to historical logs.
+// completed, scoped read with saved plan history and logged meals in the week.
+// Never compare a device draft to historical logs.
 export function portalNutritionReport(options = {}) {
   if (options.enabled !== true) return null
   const { athleteId, coachId, date, receipt } = options
@@ -53,9 +53,11 @@ export function portalNutritionReport(options = {}) {
   try {
     // An explicit unavailable capability means there is no production history
     // to compare. Missing reads are not silently turned into empty lists.
-    const plans = receipt.planHistory === 'unavailable' ? [] : receipt.plans
+    if (receipt.planHistory === 'unavailable') return null
+    const plans = receipt.plans
     const report = buildNutritionReport({ enabled: true, athleteId, date, plans,
       mealLogs: receipt.mealLogs, weightLogs: receipt.weightLogs })
-    return report.week.loggedDays > 0 ? { state: 'ready', report } : null
+    const hasPlan = report.week.plannedDays > 0 || report.week.conflictDays > 0
+    return report.week.loggedDays > 0 && hasPlan ? { state: 'ready', report } : null
   } catch { return { state: 'error' } }
 }

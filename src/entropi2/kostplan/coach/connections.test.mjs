@@ -98,8 +98,7 @@ test('scoped complete reports use actual day/week model and real historical targ
   const read = receipt(), connected = report(read)
   assert.deepEqual(connected, { state: 'ready', report: buildNutritionReport(input()) })
   assert.equal(connected.report.week.loggedDays, 2)
-  const unavailable = report(receipt({ planHistory: 'unavailable', plans: undefined }))
-  assert.equal(unavailable.report.week.metrics.kcal.target, null)
+  assert.equal(report(receipt({ planHistory: 'unavailable', plans: undefined })), null)
   const missing = report(receipt({ plans: undefined }))
   assert.deepEqual(missing, { state: 'error' })
   const overlapping = report(receipt({ plans: [activePlan(), activePlan({ id: 'synthetic-overlap' })] }))
@@ -121,4 +120,15 @@ test('reports hide OFF, incomplete, stale, foreign, receipt-only and out-of-week
   assert.deepEqual(report(receipt({ weightLogs: undefined })), { state: 'error' })
   const duplicate = meal('2026-11-04', 'same')
   assert.deepEqual(report(receipt({ mealLogs: [duplicate, duplicate] })), { state: 'error' })
+})
+
+test('comparison requires saved plan history in the elapsed week; device drafts and unrelated plans stay hidden', () => {
+  const active = activePlan()
+  for (const plans of [[], [{ ...active, status: 'draft' }], [{ ...active, athleteId: 'foreign' }],
+    [activePlan({ on: '2026-11-09' })],
+    [{ ...active, status: 'archived', archived: { on: '2026-11-02', by: coach.id } }]]) {
+    assert.equal(report(receipt({ plans })), null)
+  }
+  const archived = { ...active, status: 'archived', archived: { on: '2026-11-05', by: coach.id } }
+  assert.equal(report(receipt({ plans: [archived] })).report.week.metrics.kcal.target, 4000)
 })

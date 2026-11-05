@@ -22,7 +22,9 @@ test('real React report is folded and scoped, compares day/week targets, and has
   assert.match(html, /^<details><summary[^>]*>Kostrapport<\/summary>/)
   assert.doesNotMatch(html, /<details[^>]* open/)
   assert.match(html, /Ugens kost/); assert.match(html, /3.500 kcal/); assert.match(html, /4.000 kcal plan for loggede dage/)
-  for (const read of [undefined, { ...receipt(), mealLogs: [] }, { ...receipt(), date: '2026-11-07' },
+  for (const read of [undefined, { ...receipt(), mealLogs: [] }, { ...receipt(), plans: [] },
+    { ...receipt(), planHistory: 'unavailable', plans: undefined },
+    { ...receipt(), plans: receipt().plans.map(plan => ({ ...plan, status: 'draft' })) }, { ...receipt(), date: '2026-11-07' },
     { ...receipt(), coachId: 'foreign' }, { ...receipt(), state: 'loading' }]) assert.equal(render(read), '')
   assert.match(render({ ...receipt(), weightLogs: undefined }), /role="alert"/)
   assert.equal(PortalNutritionReport({ enabled: false, get nutritionRead() { throw Error('OFF read') } }), null)

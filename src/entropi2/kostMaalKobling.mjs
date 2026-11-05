@@ -51,11 +51,11 @@ export function kostMaalVaegt(status, athleteId) {
 export default function CoachKostMaal(props = {}) {
   if (props.enabled !== true) return null
   const { athlete, weightStatus, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
-    session, loading, loadError, coachNutrition, readContext } = props
+    session, loading, loadError, coachNutrition, readContext, nutritionRead } = props
   const weight = kostMaalVaegt(weightStatus, athlete?.id)
   return h('div', null, h(KostMaal, { key: athlete?.id, enabled: true, athlete, weightLogs: weight.rows, today,
     weightState: weight.state, retryWeight: weightStatus?.athleteId === athlete?.id ? weightStatus?.retry : undefined,
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
     session, loading, loadError, coachNutrition, readContext }),
-    h(PortalPlan, { enabled: true, athlete, today, session }))
+    h(PortalPlan, { enabled: true, athlete, today, session, nutritionRead }))
 }

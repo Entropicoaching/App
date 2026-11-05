@@ -87,12 +87,42 @@ test('actual portal folds a scoped report below the plan, removes stale reads im
   assert.equal(storage.data.size, 0)
 }))
 
-test('production host has no complete report receipt; absent logs stay hidden and strict OFF never reads connections', () => withStorage(async () => {
-  for (const enabled of [undefined, false, 'true', 1]) assert.equal(PortalPlan({ enabled,
-    get nutritionRead() { throw Error('OFF receipt') }, get athlete() { throw Error('OFF athlete') } }), null)
+test('coach host forwards the exact report receipt and shows saved plan versus logged nutrition only after opening', () => withStorage(async storage => {
+  const nutritionRead = read(), before = structuredClone(nutritionRead)
+  const hostProps = { ...props, weightStatus: { athleteId, state: 'ready', rows: [] }, nutritionRead }
+  const element = CoachKostMaal(hostProps).props.children.find(child => child.type === PortalPlan)
+  assert.equal(element.props.nutritionRead, nutritionRead)
+  const screen = mount(CoachKostMaal, hostProps)
+  assert.doesNotMatch(text(screen.render()), /Kostrapport|Ugens kost/)
+  assert.equal(storage.calls.length, 0)
+  open(screen.render()); const tree = screen.render()
+  assert.match(text(tree), /Plan og registreret kost/)
+  assert.match(text(tree), /3.500 kcal registreret/)
+  assert.match(text(tree), /4.000 kcal plan for loggede dage/)
+  assert.ok(nodes(tree).filter(n => n.type === 'details').every(n => !n.props.open))
+  assert.deepEqual(nutritionRead, before)
+  assert.equal(storage.data.size, 0)
+}))
+
+test('coach host hides absent, stale or unplanned evidence and strict OFF never reads the receipt', () => withStorage(async storage => {
+  for (const Component of [CoachKostMaal, PortalPlan]) {
+    for (const enabled of [undefined, false, 'true', 1]) assert.equal(Component({ enabled,
+      get nutritionRead() { throw Error('OFF receipt') }, get athlete() { throw Error('OFF athlete') } }), null)
+  }
   const screen = mount(CoachKostMaal, { ...props, weightStatus: { athleteId, state: 'ready', rows: [] },
     coachNutrition: { rows: read().mealLogs }, nutritionRead: read() })
-  open(screen.render()); const tree = screen.render()
-  assert.doesNotMatch(text(tree), /Ugens kost|Plan og registreret kost/)
-  assert.ok(named(tree, 'template-recipe-0'))
+  open(screen.render())
+  const plan = read().plans[0]
+  for (const nutritionRead of [undefined, { ...read(), mealLogs: [] }, { ...read(), plans: [] },
+    { ...read(), planHistory: 'unavailable', plans: undefined },
+    { ...read(), plans: [{ ...plan, status: 'draft' }] },
+    { ...read(), plans: [{ ...plan, athleteId: 'foreign' }] },
+    { ...read(), state: 'loading' }, { ...read(), state: 'error' }, { ...read(), complete: false },
+    { ...read(), athleteId: 'foreign' }, { ...read(), coachId: 'foreign' }, { ...read(), date: '2026-11-07' }]) {
+    const tree = screen.render({ nutritionRead })
+    assert.doesNotMatch(text(tree), /Kostrapport|Ugens kost|Plan og registreret kost/)
+    assert.ok(named(tree, 'template-recipe-0'))
+  }
+  assert.match(text(screen.render({ nutritionRead: { ...read(), weightLogs: undefined } })), /Kostrapporten kunne ikke hentes/)
+  assert.equal(storage.data.size, 0)
 }))
