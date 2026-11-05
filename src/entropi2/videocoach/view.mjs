@@ -1,5 +1,6 @@
 import { antalOrd } from '../antalOrd.mjs'
 import { markerAt, seconds, MAX_SECONDS } from './model.mjs'
+import { renderSyntheticBarPath } from './barPathView.mjs'
 
 const buttonStyle = { minHeight: 44, padding: '10px 14px', borderRadius: 8, border: '1px solid #77746b', background: '#25251f', color: '#edeae2', font: 'inherit', cursor: 'pointer' }
 const inputStyle = { minHeight: 44, width: '100%', boxSizing: 'border-box', font: 'inherit', color: '#edeae2', background: '#1c1c18', border: '1px solid #77746b', borderRadius: 8, padding: 8 }
@@ -111,6 +112,7 @@ export function renderReview(h, { state: s, controller: c, renderPreview, render
       onPointerMove: e => c.drawMove(e.pointerId, ...point(e)), onPointerUp: e => c.drawEnd(e.pointerId), onPointerCancel: () => c.drawCancel() },
       ...strokes.map((stroke, i) => h('polyline', { key: i, points: stroke.points.map(p => p.join(',')).join(' '), stroke: stroke.color, fill: 'none', strokeWidth: 3, vectorEffect: 'non-scaling-stroke' })))),
     renderTransport && renderTransport(),
+    renderSyntheticBarPath(h, { result: s.barPath, error: s.barPathError }),
     button('Fortryd sidste streg', () => c.undo(), s.busy || !s.strokes.length),
     field('Markering fra (sekunder)', { type: 'number', min: 0, max: s.duration, step: 0.01, value: s.start, disabled: s.busy, onChange: e => c.marker('start', Number(e.target.value)) }),
     field('Markering til (sekunder)', { type: 'number', min: 0, max: s.duration, step: 0.01, value: s.end, disabled: s.busy, onChange: e => c.marker('end', Number(e.target.value)) }),

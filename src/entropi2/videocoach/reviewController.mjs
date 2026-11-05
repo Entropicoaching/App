@@ -1,4 +1,5 @@
 import { DEFAULT_VIDEOCOACH, finite, clamp, normalizeMarker } from './model.mjs'
+import { analyzeSyntheticBarPath } from './barPath.mjs'
 
 export function createReviewController({ enabled = DEFAULT_VIDEOCOACH, analysisId, duration,
   conclusion = {}, markers = [], callbacks = {}, conversation, getScope = () => 'local',
@@ -10,7 +11,8 @@ export function createReviewController({ enabled = DEFAULT_VIDEOCOACH, analysisI
     throw Error('Gennemgangen mangler videoidentitet eller varighed.')
   let state = { time: 0, conclusion: { works: conclusion.works || '', focus: conclusion.focus || '', next_set: conclusion.next_set || '' },
     markers: markers.map(m => ({ ...normalizeMarker(m, duration), id: m.id || uuid() })),
-    start: 0, end: Math.min(1, duration), text: '', strokes: [], reply: '', error: '', status: '', dirty: false }
+    start: 0, end: Math.min(1, duration), text: '', strokes: [], reply: '', error: '', status: '', dirty: false,
+    barPath: null, barPathError: '' }
   const snapshot = () => available() ? structuredClone({ ...state, drawing, busy, duration, analysisId,
     canSaveConclusion: typeof callbacks.saveConclusion === 'function', canSaveMarkers: typeof callbacks.saveMarkers === 'function',
     canSend: !!conversation, canSeek: typeof callbacks.seek === 'function' }) : { enabled: false }
@@ -29,6 +31,11 @@ export function createReviewController({ enabled = DEFAULT_VIDEOCOACH, analysisI
   return {
     snapshot,
     subscribe(fn) { listeners.add(fn); fn(snapshot()); return () => listeners.delete(fn) },
+    syntheticBarPath(samples, options = {}) {
+      if (!available() || busy) return false
+      try { return edit({ barPath: analyzeSyntheticBarPath(samples, options), barPathError: '' }) }
+      catch { edit({ barPath: null, barPathError: 'Den syntetiske stangbane er ugyldig. Kontrollér målepunkter og skala.' }); return false }
+    },
     conclusion(field, value) {
       if (!['works', 'focus', 'next_set'].includes(field) || typeof value !== 'string' || value.length > 600) return false
       return edit({ conclusion: { ...state.conclusion, [field]: value }, dirty: true })
