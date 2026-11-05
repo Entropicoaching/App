@@ -62,7 +62,7 @@ export function developmentModel(props = {}, now) {
   if (props.fremgangLoading || props.exerciseLogsLoading) return empty('loading', 'Henter din udvikling…')
   // The host does not forward a read error. Missing history cannot establish
   // the cause, so describe the failed display without inventing a network error.
-  if (!Array.isArray(props.fremgangLogs)) return empty('unavailable', 'Din udvikling kunne ikke vises: løftehistorikken mangler. Prøv at åbne analyse igen.')
+  if (!Array.isArray(props.fremgangLogs)) return empty('unavailable', 'Din udvikling er ikke klar endnu. Prøv at åbne analyse igen.')
   const rows = developmentSnapshot(props, now)
   const calendarRows = rows.map(r => ({ ...r, day: calendarDay(r.logged_at) }))
   // Preserve original timestamps as set identities. The host history does not

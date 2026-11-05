@@ -115,23 +115,23 @@ test('RPE: note provenance uses original timestamp, loading and missing fields s
   }
 })
 
-test('RPE DOM: text for all weeks and lifts, accessible disclosure, placement and unchanged navigation', () => {
+test('RPE DOM: only rated weeks and lifts, accessible disclosure and program shortcut', () => {
   const calls = []
   const dom = Analysis({ entropi2: true, now, fremgangLogs: [log('a', 8.5)], setTab: tab => calls.push(tab) })
   const view = dom.querySelectorAll('[data-analysis-rpe]')[0]
-  assert.equal(view.querySelectorAll('details').length, 5)
-  assert.equal(view.querySelectorAll('ol').length, 5)
-  assert.equal(view.querySelectorAll('li').length, 30)
+  assert.equal(view.querySelectorAll('details').length, 2)
+  assert.equal(view.querySelectorAll('ol').length, 2)
+  assert.equal(view.querySelectorAll('li').length, 2)
   assert.match(view.textContent, /RPE 8,5/)
   assert.match(view.textContent, /1 svar af 1 registrerede sæt/)
-  assert.match(view.textContent, /Ingen RPE-data/)
-  assert.match(view.textContent, /Historik uden RPE-felter/)
+  assert.doesNotMatch(view.textContent, /Ingen RPE-data|0 svar/)
+  assert.match(view.textContent, /dokumenterede egne RPE-svar/)
   assert.equal(view.querySelectorAll('[data-analysis-destination]').length, 0)
   dom.querySelectorAll('[data-analysis-destination]').forEach(b => b.dispatchEvent({ type: 'click' }))
-  assert.deepEqual(calls, ['hjem', 'hjem', 'program'])
+  assert.deepEqual(calls, ['program'])
   const titles = dom.querySelectorAll('h2').map(n => n.textContent)
-  assert.equal(titles[3], 'Intensitet pr. uge')
-  assert.equal(titles[4], 'RPE de seneste 6 uger')
+  assert.ok(!titles.includes('Intensitet pr. uge'))
+  assert.ok(titles.includes('RPE de seneste 6 uger'))
 })
 
 test('RPE: strict OFF reads no props and frozen input stays unchanged', () => {

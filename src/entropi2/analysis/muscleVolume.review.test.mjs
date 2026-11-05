@@ -28,7 +28,7 @@ test('own review: incomplete tonnage is visible and does not erase the confirmed
   const fremgangLogs = [row('a', '2026-11-03', 'Bench', '', 10)]
   const section = Analysis({ entropi2: true, now, fremgangLogs }).querySelectorAll('[data-analysis-volume]')[0]
   const rows = section.querySelectorAll('tbody').at(-1).querySelectorAll('tr')
-  assert.equal(rows[1].textContent, 'Bryst1Kan ikke beregnes')
+  assert.equal(rows[0].textContent, 'Bryst1Kan ikke beregnes')
 })
 
 test('own review: volume does not create strength evidence or change navigation/OFF', () => {
@@ -38,9 +38,9 @@ test('own review: volume does not create strength evidence or change navigation/
   const dom = Analysis(p)
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 0)
   const buttons = dom.querySelectorAll('[data-analysis-destination]')
-  assert.equal(buttons.length, 3)
+  assert.equal(buttons.length, 1)
   assert.equal(calls, 0)
   for (const button of buttons) button.dispatchEvent({ type: 'click' })
-  assert.equal(calls, 3)
+  assert.equal(calls, 1)
   assert.equal(Analysis({ entropi2: false, get now() { throw Error('OFF must be lazy') } }), null)
 })

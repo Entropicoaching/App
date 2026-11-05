@@ -19,7 +19,7 @@ const marked = (tree, key) => nodes(tree).find(n => n.props?.[key])
 const model = p => mineDataModel(analysisMineData(p, now))
 
 test('composition: development is first, weekly report and secondary analysis start closed', () => {
-  const tree = Analysis(props()), children = tree.props.children
+  const tree = Analysis(props({ fremgangLogs: [log()], historicalMealLogs: [{ date: '2026-11-03', kcal: 500 }] })), children = tree.props.children
   assert.equal(children[0].type, 'h1')
   assert.equal(children[1].type, DevelopmentView)
   assert.equal(children[2].type, 'details')
@@ -66,8 +66,8 @@ test('legacy bridge uses real logs; absent 28-day session coverage and meal goal
   assert.equal(m.nutrition.loggedDays, 1); assert.equal(m.nutrition.assessedDays, 0)
   assert.equal(m.weight.weeks[3].kg, 80.5)
   const text = renderTree(Analysis(p)).textContent
-  assert.match(text, /Ingen kostdage med et kendt mål/)
-  assert.match(text, /1 registrerede dage af 28. 1 dage har ukendt målstatus/)
+  assert.match(text, /Loggede kostdage1 registrerede dage af 28/)
+  assert.doesNotMatch(text, /Ingen kostdage med et kendt mål|ukendt målstatus/)
 })
 
 test('empty, missing, loading and error render without fabricated observations', () => {
@@ -79,7 +79,7 @@ test('empty, missing, loading and error render without fabricated observations',
     const mineData = Object.fromEntries(['sessions', 'records', 'nutritionDays', 'weights']
       .map(key => [key, { state, rows: [row({ kg: 80 })] }]))
     const dom = renderTree(Analysis(props({ mineData, fremgangLoading: state === 'loading', fremgangError: state === 'error' })))
-    assert.match(dom.textContent, state === 'loading' ? /Henter dine registreringer/ : /kunne ikke hentes/)
+    assert.match(dom.textContent, state === 'loading' ? /Henter din udvikling/ : /kunne ikke hentes/)
     assert.equal(model(props({ mineData })).weight.recordedDays, 0)
   }
   assert.equal(model(props({ weightError: true })).weight.state, 'error')

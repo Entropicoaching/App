@@ -25,10 +25,10 @@ test('real React displays development before the closed weekly report with forec
 })
 
 test('real React renders empty, missing, loading, error and OFF honestly', () => {
-  assert.match(html({ fremgangLogs: [] }), /For lidt data til personlige indsigter/)
+  assert.match(html({ fremgangLogs: [] }), /Din udvikling kommer frem/)
   for (const extra of [{ fremgangLogs: undefined }, { fremgangLoading: true }, { fremgangError: true }]) {
     const rendered = html(extra)
-    assert.match(rendered, /løftehistorikken mangler|Henter din udvikling|Din udvikling kunne ikke hentes/)
+    assert.match(rendered, /ikke klar endnu|Henter din udvikling|Din udvikling kunne ikke hentes/)
     assert.doesNotMatch(rendered, /steget 27,5 kg|modelmargin/)
   }
   assert.equal(html({ entropi2: false }), '')

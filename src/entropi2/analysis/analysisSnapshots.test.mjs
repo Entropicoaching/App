@@ -16,7 +16,7 @@ test('session bridge counts only fully confirmed positions of the displayed week
   assert.equal(source.state, 'ready'); assert.equal(source.rows.length, 1)
   const bridge = analysisMineData(p, now)
   assert.equal(mineDataModel(bridge).sessions.completed, 1)
-  assert.match(bridge.sessionsNote, /kun for den viste programuge/)
+  assert.equal(bridge.sessionsLabel, 'Pas i den viste programuge')
   for (const exerciseLogs of [[], [row({ skipped: true })], [row({ pending: true })],
     [row(), row({ _optimistic: true })], [row(), row({ weight: 99 })],
     [row({ athlete_id: 'foreign' })], [row({ set_number: 2 })], [row({ reps_completed: 0 })],

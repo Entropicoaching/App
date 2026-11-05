@@ -93,11 +93,11 @@ test('empty, unavailable, error and loading states never expose stale observatio
     const p = props(extra), m = model(p, now), dom = view(p)
     assert.equal(m.weeks.length, 0); assert.equal(m.forecast, null)
     assert.equal(dom.querySelectorAll('figure').length, 0)
-    assert.match(dom.textContent, /kunne ikke hentes|Henter|løftehistorikken mangler/)
+    assert.match(dom.textContent, /kunne ikke hentes|Henter|ikke klar endnu/)
   }
   const empty = model(props({ fremgangLogs: [] }), now)
   assert.deepEqual(empty.insights, []); assert.ok(empty.lifts.every(l => l.delta === null))
-  assert.match(view(props({ fremgangLogs: [] })).textContent, /For lidt data til personlige indsigter/)
+  assert.match(view(props({ fremgangLogs: [] })).textContent, /Din udvikling kommer frem/)
   assert.equal(model(props(), '2026-02-30').state, 'error')
 })
 
@@ -158,7 +158,7 @@ test('rendered charts have text equivalents, closed details and no invented inte
   assert.equal(dom.querySelectorAll('[data-history-value]').length, 26)
   assert.equal(dom.querySelectorAll('[data-history-bar]').length, 26)
   assert.ok(dom.querySelectorAll('details').every(d => d.getAttribute('open') === null))
-  assert.match(dom.textContent, /ingen gyldige e1RM-referencer/)
+  assert.doesNotMatch(dom.textContent, /ingen gyldige e1RM-referencer|Ingen reference|Sæt ≥80 %/)
   assert.match(dom.textContent, /Blok ukendt|Volumen/)
   assert.equal(dom.querySelectorAll('input').length, 0)
 })

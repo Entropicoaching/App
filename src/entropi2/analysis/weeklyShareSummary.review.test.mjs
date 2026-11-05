@@ -17,14 +17,14 @@ const share = (rows, extra = {}) => weeklyShareSummary({ currentWeek: week,
 test('review: overflowing estimate cannot hide another valid best set', () => {
   const text = share([set(1, Number.MAX_VALUE), set(2, 110)])
   assert.match(text, /Bedste sæt: Squat 110 kg × 3 \(121 kg e1RM\)/)
-  assert.match(text, /Tonnage: kan ikke beregnes/)
+  assert.doesNotMatch(text, /Tonnage:|Infinity|NaN/)
 })
 
 test('review: actual note provenance is accepted and stale proof is excluded', () => {
   const row = set(1, 110, { rpe_actual: 7.5 })
   row.note = rpeNote(null, row, true)
   assert.match(share([row]), /RPE: 7,5 \(1 atletregistreringer\)/)
-  assert.match(share([{ ...row, rpe_actual: 8 }]), /RPE: ingen atletregistreringer/)
+  assert.doesNotMatch(share([{ ...row, rpe_actual: 8 }]), /RPE:/)
 })
 
 test('review: permutations preserve output and mixed exercise id types stay distinct', () => {
@@ -47,15 +47,15 @@ test('review: missing plan uses calendar week for meals and rejects normalized d
   ] }), /Kostdage logget: 1 af 7/)
   for (const sessions of [[{ exercises: [{ id: 'x', sets: 1 }, { id: 'x', sets: 1 }] }],
     [{ exercises: [{ id: '', sets: 1 }] }], [null]]) {
-    assert.match(share([], { currentWeek: { ...week, sessions } }), /Pas gennemført: data mangler/)
+    assert.equal(share([], { currentWeek: { ...week, sessions } }), '')
   }
 })
 
-test('review: larger representative snapshot has a fixed seven-line share text', () => {
+test('review: larger representative snapshot has only known share lines', () => {
   const rows = [set(1, 80), set(2, 90), set(3, 100)]
   const text = share(rows, { historicalMealLogs: Array.from({ length: 200 }, (_, i) =>
     ({ date: `2026-11-0${2 + i % 4}`, kcal: 100 })) })
-  assert.equal(text.split('\n').length, 7)
+  assert.equal(text.split('\n').length, 6)
   assert.match(text, /Tonnage: 810 kg/)
   assert.match(text, /Kostdage logget: 4 af 7/)
   assert.doesNotMatch(text, /undefined|NaN|Infinity|overtræning|klar til/)

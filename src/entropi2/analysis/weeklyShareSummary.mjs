@@ -75,11 +75,11 @@ export function weeklyShareSummary(props = {}, now) {
   props = object(props) ? props : {}
   const validNow = now instanceof Date || (typeof now === 'string' && timestamp.test(now) && now.includes('T'))
   const today = validNow ? calendarDay(now) : null
-  if (!today) return 'Ugesammendrag: dato mangler eller er ugyldig.'
+  if (!today) return ''
   const plan = planFor(props.currentWeek, today)
   const monday = addCalendarDays(today, -((new Date(`${today}T00:00:00Z`).getUTCDay() + 6) % 7))
   const start = plan?.start ?? monday, end = addCalendarDays(start, 6)
-  const loaded = !!plan && Array.isArray(props.exerciseLogs)
+  const loaded = !!plan && Array.isArray(props.exerciseLogs) && !props.exerciseLogsLoading && !props.exerciseLogsError
   const rows = loaded ? confirmedRows(props.exerciseLogs, plan, today, now) : []
   const done = plan?.sessions.filter(session => session.every(ex =>
     rows.filter(r => r.exercise_id === ex.id).length === ex.sets)).length
@@ -91,10 +91,6 @@ export function weeklyShareSummary(props = {}, now) {
   const rpes = rows.filter(r => !r.skipped && rpeOrigin(r) === 'athlete')
     .map(r => parseInputNumber(r.rpe_actual)).filter(r => r !== null && r <= 10)
   const meanRpe = rpes.reduce((sum, r) => sum + r / rpes.length, 0)
-  const sessions = loaded ? `${done} af ${plan.sessions.length} planlagt`
-    : 'data mangler'
-  const volume = !loaded ? 'data mangler' : !Number.isFinite(tonnage) ? 'kan ikke beregnes'
-    : `${format(tonnage)} kg${measured.length < rows.filter(r => !r.skipped).length ? ' (kun gyldige sæt)' : ''}`
   // Supply the de-duplicated local snapshot; never revive undone saved rows for
   // current exercise IDs. The existing adapter owns heavy-set eligibility.
   const contract = adaptPublicContract({ ...props, exerciseLogs: loaded ? rows : undefined }, now)
@@ -104,20 +100,23 @@ export function weeklyShareSummary(props = {}, now) {
       return row && Number.isFinite(row.value)
         ? [`${lift} ${format(row.weight)} kg × ${format(row.reps_completed)} (${format(row.value)} kg e1RM)`] : []
     }) : []
-  const bestText = !plan || !loaded || contract.loading || !contract.historyReady ? 'data mangler'
-    : best.length ? best.join('; ') : 'ingen sammenlignelige tunge sæt'
-  const meals = Array.isArray(props.historicalMealLogs) ? new Set(props.historicalMealLogs
+  const meals = Array.isArray(props.historicalMealLogs) && !props.mealLoading && !props.mealError ? new Set(props.historicalMealLogs
     .filter(r => object(r) && !r._optimistic && !isDayReceipt({ meal: typeof r.meal === 'string' ? r.meal.trimStart() : r.meal }) &&
       typeof r.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.date) && calendarDay(r.date) &&
       r.date >= start && r.date <= today && parseInputNumber(r.kcal) !== null)
     .map(r => r.date)).size : null
+  const lines = [
+    loaded && rows.length > 0 ? `Pas gennemført: ${done} af ${plan.sessions.length} planlagt.` : null,
+    measured.length > 0 && Number.isFinite(tonnage)
+      ? `Tonnage: ${format(tonnage)} kg${measured.length < rows.filter(r => !r.skipped).length ? ' (kun gyldige sæt)' : ''}.` : null,
+    best.length && !props.fremgangError ? `Bedste sæt: ${best.join('; ')}.` : null,
+    rpes.length ? `Gennemsnitlig RPE: ${format(meanRpe)} (${rpes.length} atletregistreringer).` : null,
+    meals > 0 ? `Kostdage logget: ${meals} af 7.` : null,
+  ].filter(Boolean)
+  if (!lines.length) return ''
   return [
     `Ugesammendrag ${date(start)} til ${date(end)}`,
-    `Pas gennemført: ${sessions}.`,
-    `Tonnage: ${volume}.`,
-    `Bedste sæt: ${bestText}.`,
-    `Gennemsnitlig RPE: ${!loaded ? 'data mangler' : rpes.length ? `${format(meanRpe)} (${rpes.length} atletregistreringer)` : 'ingen atletregistreringer'}.`,
-    `Kostdage logget: ${meals === null ? 'data mangler' : `${meals} af 7`}.`,
+    ...lines,
     'Ugen kan være ufuldstændig. Pas tæller loggede eller oversprungne sæt; kostdage er dage med en log, ikke nødvendigvis hele kostdage.',
   ].join('\n')
 }

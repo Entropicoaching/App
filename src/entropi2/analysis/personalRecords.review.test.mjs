@@ -28,7 +28,7 @@ test('review probe: four-lift display stays short and does not change answer nav
   assert.equal(records.querySelectorAll('li').length, 4)
   assert.doesNotMatch(records.textContent, /999|Pause squat/)
   tree.querySelectorAll('[data-analysis-destination]').forEach(b => b.dispatchEvent({ type: 'click' }))
-  assert.deepEqual(calls, ['hjem', 'hjem', 'program'])
+  assert.deepEqual(calls, ['program'])
 })
 
 test('review probe: invalid and pending outliers cannot dominate a valid prior record', () => {

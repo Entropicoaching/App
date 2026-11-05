@@ -37,13 +37,13 @@ function weightChange(props, start, today, now) {
   const measured = [...days].filter(([, values]) => values.size === 1)
     .map(([day, values]) => ({ date: day, weight: [...values][0] }))
     .sort((a, b) => a.date.localeCompare(b.date))
-  if (measured.length < 2) return { delta: null, days: measured.length,
+  if (measured.length < 2) return { delta: null, days: measured.length, observations: measured,
     message: 'Vægtændring kræver mindst to entydige vejedage i ugen.' }
   const first = measured[0], last = measured.at(-1)
   const raw = last.weight - first.weight
   // Avoid multiplication overflow; Intl rounds only for display.
   const delta = Math.abs(raw) < 0.05 ? 0 : raw
-  return { delta, days: measured.length, first, last,
+  return { delta, days: measured.length, observations: measured, first, last,
     message: `Fra ${formatReportNumber(first.weight)} kg den ${date(first.date)} til ${formatReportNumber(last.weight)} kg den ${date(last.date)}. Observeret forskel, ikke en vægttrend.` }
 }
 
@@ -82,7 +82,13 @@ export function weeklyReportModel(props = {}, now) {
     typeof row.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(row.date) && calendarDay(row.date) &&
     row.date >= start && row.date <= today && parseInputNumber(row.kcal) !== null).map(row => row.date)).size : null
   return { ready: true, start, end, today, period: `${date(start)} til ${date(end)}`,
-    sessions: overview.sessions, sessionNote: overview.note,
+    sessions: overview.sessions, sessionCounts: overview.counts, sessionNote: overview.note,
     lifts, mealDays, weight: weightChange(props, start, today, now),
     note: 'Ugen kan være ufuldstændig. Kostdage er dage med en kostlog, ikke nødvendigvis hele kostdage. e1RM er beregnet enrepetitionsmaksimum fra tunge sæt; deload, taper og aflastning er udeladt.' }
 }
+
+// Visibility uses observations, never the presence of placeholder strings.
+export const weeklyReportHasContent = report => report.ready && (
+  report.sessionCounts?.confirmed > 0 || report.sessionCounts?.skipped > 0 ||
+  report.lifts.some(row => row.value !== null) || report.mealDays > 0 ||
+  report.weight.observations?.length > 0)

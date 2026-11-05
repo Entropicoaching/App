@@ -48,7 +48,8 @@ test('light or deload training makes a lift visible without fabricating a streng
     assert.equal(result.lifts[0].observed, 0)
     assert.equal(result.lifts[0].delta, null)
     assert.equal(dom.querySelectorAll('[data-history-bar]').length, 0)
-    assert.match(dom.textContent, /for lidt data/)
+    assert.equal(dom.querySelectorAll('[data-history-value]').length, 0)
+    assert.equal(dom.querySelectorAll('figure').length, 1) // measured volume remains
     assert.doesNotMatch(dom.textContent, /Sumo dødløft/)
   }
 })
@@ -80,7 +81,7 @@ test('undo of the only recorded lift removes its chart and forecast row', () => 
     sessions: [{ exercises: [{ id: 'synthetic-local', name: 'Dødløft' }] }] }, exerciseLogs: [] })
   assert.deepEqual(model(props).lifts, [])
   assert.deepEqual(model(props).forecast.lifts, [])
-  assert.match(view(props).textContent, /Ingen registrerede hovedløft/)
+  assert.match(view(props).textContent, /Din udvikling kommer frem/)
 })
 
 test('explicit load failures are alerts, suppress stale data and never say not ready', () => {
@@ -99,7 +100,7 @@ test('missing history without an error flag describes the missing data without c
   const props = input(null, { fremgangLoading: false })
   assert.equal(model(props).state, 'unavailable')
   const dom = view(props)
-  assert.match(dom.textContent, /kunne ikke vises: løftehistorikken mangler/)
-  assert.doesNotMatch(dom.textContent, /ikke klar|netværksfejl|kunne ikke hentes/)
+  assert.match(dom.textContent, /Din udvikling er ikke klar endnu/)
+  assert.doesNotMatch(dom.textContent, /netværksfejl|kunne ikke hentes/)
   assert.match(view(input(null, { fremgangLoading: true })).textContent, /Henter din udvikling/)
 })

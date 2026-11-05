@@ -101,11 +101,10 @@ test('records rendering: short list has both records, source sets and dates', ()
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 0)
 })
 
-test('records rendering: missing/loading messages and strict OFF remain safe', () => {
+test('records rendering: empty/missing/loading cards are hidden and strict OFF remains safe', () => {
   for (const p of [props([]), props(undefined), { ...props([]), fremgangLoading: true }]) {
     const section = Analysis(p).querySelectorAll('[data-analysis-records]')[0]
-    assert.equal(section.querySelectorAll('li').length, 0)
-    assert.ok(section.textContent.length > 20)
+    assert.equal(section, undefined)
   }
   for (const entropi2 of [false, undefined, 'true', 1])
     assert.equal(Analysis({ entropi2, get fremgangLogs() { throw Error('OFF read') }, get exerciseLogs() { throw Error('OFF read') } }), null)

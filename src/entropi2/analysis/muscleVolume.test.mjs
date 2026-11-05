@@ -101,15 +101,15 @@ test('volume: incomplete or overflowing tonnage remains explicit; zero weight is
   assert.equal(group(await model([log('Squat', { weight: 0 })])).tonnage, 0)
 })
 
-test('volume render: four accessible tables show actual week values, gaps and unknown names', () => {
+test('volume render: accessible tables show only observed weeks and muscle groups', () => {
   const section = dom(props([log('Unknown')])).querySelectorAll('[data-analysis-volume]')[0]
   assert.ok(section)
-  assert.equal(section.querySelectorAll('table').length, 4)
-  assert.equal(section.querySelectorAll('caption').length, 4)
-  assert.equal(section.querySelectorAll('tbody').length, 4)
-  assert.equal(section.querySelectorAll('td').length, 56)
-  const latest = section.querySelectorAll('tbody')[3]
-  assert.equal(latest.querySelectorAll('tr')[6].textContent, 'Øvrigt1150')
+  assert.equal(section.querySelectorAll('table').length, 1)
+  assert.equal(section.querySelectorAll('caption').length, 1)
+  assert.equal(section.querySelectorAll('tbody').length, 1)
+  assert.equal(section.querySelectorAll('td').length, 2)
+  const latest = section.querySelectorAll('tbody')[0]
+  assert.equal(latest.querySelectorAll('tr')[0].textContent, 'Øvrigt1150')
   assert.ok(section.querySelectorAll('th').every(n => ['col', 'row'].includes(n.getAttribute('scope'))))
   assert.match(section.textContent, /02.11.2026 til 08.11.2026/)
   assert.match(section.textContent, /kg × gentagelser/)
@@ -125,13 +125,12 @@ test('volume render: OFF is lazy, frozen inputs remain untouched and missing dat
   freeze(p); dom(p); assert.equal(JSON.stringify(p), before)
   for (const extra of [{ fremgangLogs: undefined }, { fremgangLoading: true }]) {
     const section = dom({ ...p, ...extra }).querySelectorAll('[data-analysis-volume]')[0]
-    assert.equal(section.querySelectorAll('table').length, 0)
-    assert.match(section.textContent, /ikke klar/)
+    assert.equal(section, undefined)
   }
 })
 
 test('volume render: 390px structure uses fixed fluid tables, wrap and no added navigation', () => {
-  const tree = Analysis(props([]))
+  const tree = Analysis(props([log()]))
   const section = treeNodes(tree).find(n => n.props?.['data-analysis-volume'])
   assert.ok(section)
   assert.equal(tree.props.style.width, '100%')

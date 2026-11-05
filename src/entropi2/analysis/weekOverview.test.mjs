@@ -152,14 +152,12 @@ test('Danish calendar midnight and previous-week boundaries are respected', () =
 test('render places overview above unchanged questions, escapes text and preserves navigation', () => {
   const calls = []
   const dom = Analysis(props({ setTab: tab => calls.push(tab), currentWeek: { ...currentWeek, block_name: '<img src=x>' } }))
-  assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Din udvikling', 'Din ugerapport', 'Mine data', 'Intensitet pr. uge', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
-  assert.equal(dom.querySelectorAll('[data-entropi2-ugerapport]').length, 1)
-  // Marc 3. nov. (keep it simple): loeft uden data samles i een linje; alle fire loeft naevnes stadig.
-  assert.ok(dom.querySelectorAll('h3').length + dom.querySelectorAll('[data-week-lifts-none]').length >= 1)
-  for (const name of ['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft']) assert.match(dom.querySelectorAll('[data-entropi2-ugerapport]')[0].textContent, new RegExp(name))
+  assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Din udvikling', QUESTIONS[2]])
+  assert.equal(dom.querySelectorAll('[data-entropi2-ugerapport]').length, 0)
+  assert.match(dom.textContent, /<img src=x>/)
   assert.equal(dom.querySelectorAll('img').length, 0)
   dom.querySelectorAll('[data-analysis-destination]').forEach(b => b.dispatchEvent({ type: 'click' }))
-  assert.deepEqual(calls, ['hjem', 'hjem', 'program'])
+  assert.deepEqual(calls, ['program'])
 })
 
 test('OFF never reads overview props; frozen data is unchanged', () => {
@@ -174,16 +172,18 @@ test('OFF never reads overview props; frozen data is unchanged', () => {
 
 test('render exposes empty, partial, full, missing-history and decimal snapshots', () => {
   const cases = [
-    [{}, ['Pas gennemført: 0 af 2 planlagt.']],
+    [{}, ['Din udvikling kommer frem']],
     [{ exerciseLogs: [local('sq', 1)] }, ['Pas gennemført: 0 af 2 planlagt.']],
     [{ exerciseLogs: [local('sq', 1), local('sq', 2), local('bp', 1)] }, ['Pas gennemført: 2 af 2 planlagt.']],
     [{ exerciseLogs: [local('sq', 1, { weight: '102,5' })] }, ['112,8 kg e1RM', 'Fra 102,5 kg × 3']],
-    [{ fremgangLogs: undefined }, ['Løftehistorik er ikke klar.']],
+    [{ fremgangLogs: undefined }, ['Din udvikling er ikke klar endnu.']],
     [{ fremgangLogs: [history('Bench', '2026-11-03', 80), history('Sumo deadlift', '2026-11-03', 160)] }, ['88 kg e1RM', '176 kg e1RM']],
   ]
   for (const [extra, texts] of cases) {
     const dom = Analysis(props(extra))
     for (const text of texts) assert.ok(dom.textContent.includes(text), text)
-    assert.deepEqual(dom.querySelectorAll('h2').map(n => n.textContent), ['Din udvikling', 'Din ugerapport', 'Mine data', 'Intensitet pr. uge', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
+    assert.equal(dom.querySelectorAll('[data-analysis-intensity]').length, 0)
+    assert.equal(dom.querySelectorAll('[data-analysis-rpe]').length, 0)
+    assert.doesNotMatch(dom.textContent, /Ingen sammenlignelige tunge sæt|ukendt målstatus/)
   }
 })

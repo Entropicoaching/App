@@ -24,10 +24,10 @@ test('real imports use the existing formula and four-day D18 gate', () => {
   assert.equal(hasEnoughData('D18', { rows: [] }), false)
   assert.deepEqual(values(), ['127 kg e1RM', '+17 kg e1RM'])
 })
-test('synthetic DOM preserves three questions below the week overview and one value per answer', () => {
+test('synthetic DOM shows answered questions and observed cards with one value per answer', () => {
   const dom = Analysis(props())
   assert.ok(dom instanceof Element)
-  assert.deepEqual(dom.querySelectorAll('h2').map(e => e.textContent), ['Din udvikling', 'Din ugerapport', 'Mine data', 'Intensitet pr. uge', 'RPE de seneste 6 uger', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS])
+  assert.deepEqual(dom.querySelectorAll('h2').map(e => e.textContent), ['Din udvikling', 'Dine rekorder', 'Volumen pr. muskelgruppe', ...QUESTIONS.slice(0, 2)])
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 2)
   assert.equal(dom.querySelectorAll('svg').length, 0)
   assert.equal(dom.querySelectorAll('[data-analysis-destination]').length, 0)
@@ -57,7 +57,7 @@ test('empty, missing and loading states give instructions without metrics', () =
   for (const rows of [[], null, undefined, {}, [null]]) noValues(rows)
   assert.deepEqual(values({ fremgangLoading: true }), [undefined, undefined])
   assert.match(Analysis(props({ fremgangLogs: [] })).textContent, /Log vægt og gentagelser/)
-  assert.match(Analysis(props({ fremgangLoading: true })).textContent, /Henter løftehistorik/)
+  assert.match(Analysis(props({ fremgangLoading: true })).textContent, /Henter din udvikling/)
 })
 test('three days or four days over less than 21 days are insufficient', () => {
   noValues(logs().slice(1))

@@ -108,15 +108,15 @@ test('history: local undo, frozen inputs and strict OFF preserve behavior', () =
 
 // The requested 26-week view replaces the old four-week graph. The pure
 // fourWeekHistory contract above remains unchanged for existing consumers.
-test('history DOM: long-term development replaces the four-week graph above folded reports', () => {
+test('history DOM: long-term development retains gaps and lists only dated observations', () => {
   const dom = Analysis(props([log(dates[0], 100), log(dates[3], '102,5')]))
   const history = dom.querySelectorAll('[data-analysis-history]')[0]
   assert.equal(dom.querySelectorAll('h2')[0].textContent, 'Din udvikling')
   assert.equal(history.querySelectorAll('[data-history-bar]').length, 2)
-  assert.equal(history.querySelectorAll('[data-history-value]').length, 26)
-  assert.equal(history.querySelectorAll('[data-history-value]').filter(n => n.textContent.includes('Ingen sammenlignelige data')).length, 24)
+  assert.equal(history.querySelectorAll('[data-history-value]').length, 2)
+  assert.equal(history.querySelectorAll('[data-history-value]').filter(n => n.textContent.includes('Ingen sammenlignelige data')).length, 0)
   assert.match(history.textContent, /112,8 kg e1RM/)
-  assert.match(history.textContent, /for lidt data/)
+  assert.match(history.textContent, /mindst 4 uger/)
   assert.doesNotMatch(dom.textContent, /De seneste 4 uger/)
   const secondary = dom.querySelectorAll('[data-analysis-secondary]')[0]
   assert.equal(secondary.getAttribute('open'), null)
@@ -128,13 +128,13 @@ test('history DOM: gaps, short histories, loading and missing snapshots are hone
     const history = Analysis(props(dates.slice(0, count).map(day => log(day))))
       .querySelectorAll('[data-development]')[0]
     assert.equal(history.querySelectorAll('[data-history-bar]').length, count)
-    assert.equal(history.querySelectorAll('[data-history-value]').length, count === 0 ? 0 : 26)
-    assert.equal(history.querySelectorAll('[data-history-summary]').length, count === 0 ? 0 : 1)
+    assert.equal(history.querySelectorAll('[data-history-value]').length, count)
+    assert.equal(history.querySelectorAll('[data-history-summary]').length, 0) // four observed weeks span only 20 days
   }
   for (const extra of [{ fremgangLoading: true }, { fremgangLogs: undefined }]) {
     const history = Analysis({ ...props([log(dates[3])]), ...extra }).querySelectorAll('[data-development]')[0]
     assert.equal(history.querySelectorAll('[data-history-bar]').length, 0)
     assert.equal(history.querySelectorAll('[data-history-value]').length, 0)
-    assert.match(history.textContent, /Henter|løftehistorikken mangler/)
+    assert.match(history.textContent, /Henter|ikke klar endnu/)
   }
 })

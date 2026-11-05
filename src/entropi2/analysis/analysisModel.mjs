@@ -10,12 +10,12 @@ import { personalRecords } from './personalRecords.mjs'
 
 export const QUESTIONS = Object.freeze(['Hvor står jeg?', 'Hvad går godt?', 'Hvad arbejder vi med nu?'])
 const kg = n => String(n).replace('.', ',')
-const instruction = 'Log vægt og gentagelser på tunge sæt i samme øvelse og samme rep-område (1–3, 4–6 eller 7–8) på mindst fire forskellige dage over mindst 21 dage inden for 84 dage. Nyeste dag skal være højst 14 dage gammel. Programblokken skal være kendt; deload, taper og aflastning indgår ikke.'
+export const analysisDataHelp = 'Log vægt og gentagelser på tunge sæt i samme øvelse og samme rep-område (1–3, 4–6 eller 7–8) på mindst fire forskellige dage over mindst 21 dage inden for 84 dage. Nyeste dag skal være højst 14 dage gammel. Programblokken skal være kendt; deload, taper og aflastning indgår ikke.'
 
 export function analysisModel(props = {}, now = new Date()) {
   const contract = adaptPublicContract(props, now)
   const answers = QUESTIONS.map((title, i) => ({ key: ['status', 'good', 'focus'][i], title,
-    message: i === 2 ? 'Åbn dit program og log vægt og gentagelser efter hvert sæt. En aktuel dateret programuge er nødvendig for at vise fokus.' : instruction,
+    message: i === 2 ? 'Åbn dit program og log vægt og gentagelser efter hvert sæt. En aktuel dateret programuge er nødvendig for at vise fokus.' : analysisDataHelp,
     destination: i === 2 ? 'program' : 'hjem', action: i === 2 ? 'Åbn program' : 'Log i dagens pas' }))
   const groups = new Map()
   for (const row of contract.rows) {

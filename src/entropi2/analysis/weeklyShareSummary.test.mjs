@@ -14,16 +14,8 @@ const row = (exercise_id = 'sq', set_number = 1, extra = {}) => ({
 const props = extra => ({ currentWeek: week, exerciseLogs: [], fremgangLogs: [], historicalMealLogs: [], ...extra })
 const summary = extra => weeklyShareSummary(props(extra), now)
 
-test('empty loaded week gives short readable zero snapshot', () => {
-  assert.equal(summary(), [
-    'Ugesammendrag 02.11.2026 til 08.11.2026',
-    'Pas gennemført: 0 af 2 planlagt.',
-    'Tonnage: 0 kg.',
-    'Bedste sæt: ingen sammenlignelige tunge sæt.',
-    'Gennemsnitlig RPE: ingen atletregistreringer.',
-    'Kostdage logget: 0 af 7.',
-    'Ugen kan være ufuldstændig. Pas tæller loggede eller oversprungne sæt; kostdage er dage med en log, ikke nødvendigvis hele kostdage.',
-  ].join('\n'))
+test('empty loaded week produces no share text', () => {
+  assert.equal(summary(), '')
 })
 
 test('partial week uses actual sets, Danish decimals and distinct meal days', () => {
@@ -42,7 +34,7 @@ test('full week counts skips but skips and optimistic sets supply no metrics', (
   assert.match(text, /Pas gennemført: 2 af 2/)
   assert.match(text, /Tonnage: 600 kg/)
   assert.match(text, /RPE: 8 \(2 atletregistreringer\)/)
-  assert.match(summary({ exerciseLogs: [row('sq', 1, { _optimistic: true })] }), /Tonnage: 0 kg/)
+  assert.equal(summary({ exerciseLogs: [row('sq', 1, { _optimistic: true })] }), '')
 })
 
 test('missing, stale and malformed plans and absent arrays stay explicitly unknown', () => {
@@ -50,31 +42,31 @@ test('missing, stale and malformed plans and absent arrays stay explicitly unkno
     { ...week, start_date: '2026-11-09' }, { ...week, start_date: '2026-02-30' },
     { ...week, sessions: [{}] }, { ...week, sessions: [{ exercises: [{ id: 'a', sets: 1.5 }] }] }]) {
     const text = summary({ currentWeek, exerciseLogs: [row()] })
-    assert.match(text, /Pas gennemført: data mangler/)
-    assert.match(text, /Tonnage: data mangler/)
+    assert.doesNotMatch(text, /Pas gennemført:/)
+    assert.doesNotMatch(text, /Tonnage:/)
   }
   const text = summary({ exerciseLogs: undefined, historicalMealLogs: undefined })
-  assert.match(text, /RPE: data mangler/)
-  assert.match(text, /Kostdage logget: data mangler/)
+  assert.doesNotMatch(text, /RPE:/)
+  assert.doesNotMatch(text, /Kostdage logget:/)
 })
 
 test('bad numeric metrics never become NaN, Infinity or negative tonnage', () => {
   for (const weight of [NaN, Infinity, -1, '', null, {}, '1e999', true]) {
     const text = summary({ exerciseLogs: [row('sq', 1, { weight })] })
-    assert.match(text, /Tonnage: 0 kg \(kun gyldige sæt\)/)
+    assert.doesNotMatch(text, /Tonnage:/)
     assert.doesNotMatch(text, /NaN|Infinity/)
-    assert.match(text, /Bedste sæt: ingen sammenlignelige/)
+    assert.doesNotMatch(text, /Bedste sæt:/)
   }
   for (const reps_completed of [0, -1, 1.5, Infinity, null, '']) {
-    assert.match(summary({ exerciseLogs: [row('sq', 1, { reps_completed })] }), /Tonnage: 0 kg/)
+    assert.doesNotMatch(summary({ exerciseLogs: [row('sq', 1, { reps_completed })] }), /Tonnage:/)
   }
-  assert.match(summary({ exerciseLogs: [row('sq', 1, { weight: Number.MAX_VALUE })] }), /Tonnage: kan ikke beregnes/)
+  assert.doesNotMatch(summary({ exerciseLogs: [row('sq', 1, { weight: Number.MAX_VALUE })] }), /Tonnage:|NaN|Infinity/)
 })
 
 test('invalid and unchosen RPE is excluded; each chosen valid set weighs equally', () => {
   for (const change of [{ rpe_actual: 11 }, { rpe_actual: -1 }, { rpe_actual: '' },
     { rpe_actual: Infinity }, { rpe_source: 'default' }, { rpe_source: undefined }]) {
-    assert.match(summary({ exerciseLogs: [row('sq', 1, change)] }), /RPE: ingen atletregistreringer/)
+    assert.doesNotMatch(summary({ exerciseLogs: [row('sq', 1, change)] }), /RPE:/)
   }
   assert.match(summary({ exerciseLogs: [row('sq', 1, { rpe_actual: 0 }), row('sq', 2, { rpe_actual: 10 })] }), /RPE: 5 \(2 atletregistreringer\)/)
 })
@@ -84,7 +76,7 @@ test('duplicates count once; conflicting retries never select an arbitrary RPE o
   assert.equal(summary({ exerciseLogs: [a, { ...a, id: 'retry' }] }), summary({ exerciseLogs: [a] }))
   for (const change of [{ weight: 200 }, { rpe_actual: 9 }, { rpe_source: 'default' }, { skipped: true }]) {
     const rows = [a, { ...a, ...change }]
-    assert.match(summary({ exerciseLogs: rows }), /Tonnage: 0 kg/)
+    assert.equal(summary({ exerciseLogs: rows }), '')
     assert.equal(summary({ exerciseLogs: rows }), summary({ exerciseLogs: rows.reverse() }))
   }
 })
@@ -111,15 +103,15 @@ test('nutrition accepts existing date/kcal projection; excludes receipts, invali
 
 test('undo owns current exercises; backoff and deload add volume without heavy best sets', () => {
   const saved = { ...row(), exercises: { name: 'Squat', sessions: { weeks: { block_name: 'Styrke' } } } }
-  assert.match(summary({ fremgangLogs: [saved] }), /Bedste sæt: ingen sammenlignelige/)
+  assert.equal(summary({ fremgangLogs: [saved] }), '')
   for (const currentWeek of [{ ...week, block_name: 'Deload' }, { ...week,
     sessions: [{ exercises: [{ id: 'sq', name: 'Squat backoff', sets: 2 }] }] }]) {
     const text = summary({ currentWeek, exerciseLogs: [row()] })
     assert.match(text, /Tonnage: 300 kg/)
-    assert.match(text, /Bedste sæt: ingen sammenlignelige/)
+    assert.doesNotMatch(text, /Bedste sæt:/)
   }
   for (const extra of [{ fremgangLoading: true }, { fremgangLogs: undefined }]) {
-    assert.match(summary({ exerciseLogs: [row()], ...extra }), /Bedste sæt: data mangler/)
+    assert.doesNotMatch(summary({ exerciseLogs: [row()], ...extra }), /Bedste sæt:/)
   }
 })
 
@@ -135,6 +127,6 @@ test('Danish midnight, explicit date and frozen snapshots are deterministic', ()
   assert.equal(JSON.stringify(input), before)
   assert.equal(weeklyShareSummary(input, midnight.toISOString()), text)
   for (const bad of [undefined, null, '', '2026-11-04', new Date('bad'), '2026-02-30T12:00:00Z']) {
-    assert.equal(weeklyShareSummary(input, bad), 'Ugesammendrag: dato mangler eller er ugyldig.')
+    assert.equal(weeklyShareSummary(input, bad), '')
   }
 })

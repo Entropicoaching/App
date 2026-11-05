@@ -55,5 +55,5 @@ export function muscleVolume(props = {}, now = new Date()) {
     group.tonnage = group.tonnage !== null && Number.isFinite(tonnage) && Number.isFinite(group.tonnage + tonnage)
       ? group.tonnage + tonnage : null
   }
-  return { weeks, message: 'Registrerede sæt og tonnage (kg × gentagelser) pr. kalenderuge, inklusive denne uge. Ét sæt tælles i én fast primær muskelgruppe; ukendte navne vises som Øvrigt. Lettere sæt og deload indgår; oversprungne og afventende sæt gør ikke. Uger uden registreringer vises med 0. Manglende vægt eller gentagelser betyder, at tonnagen ikke kan beregnes. Denne uge kan være ufuldstændig.' }
+  return { weeks, message: 'Registrerede sæt og tonnage (kg × gentagelser) pr. kalenderuge, inklusive denne uge. Ét sæt tælles i én fast primær muskelgruppe; ukendte navne vises som Øvrigt. Lettere sæt og deload indgår; oversprungne og afventende sæt gør ikke. Uger uden registreringer er ikke et mål for træning. Manglende vægt eller gentagelser betyder, at tonnagen ikke kan beregnes. Denne uge kan være ufuldstændig.' }
 }

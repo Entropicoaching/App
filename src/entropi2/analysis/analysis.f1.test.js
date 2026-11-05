@@ -19,8 +19,10 @@ function checkUnknown(p) {
   const dom = Analysis(props)
   assert.equal(dom.querySelectorAll('[data-analysis-value]').length, 0)
   assert.match(dom.textContent, /Programblokken skal v\u00e6re kendt/)
-  // Ugeoversigt, 4 uger, intensitet, RPE (E2-ANALYSE-RPE1), Dine rekorder (E2-ANALYSE-PR1), Volumen pr. muskelgruppe (E2-ANALYSE4) og tre spørgsmål.
-  assert.equal(dom.querySelectorAll('h2').length, 10)
+  // Recorded volume remains, but unanswerable questions and empty intensity/RPE do not.
+  assert.equal(dom.querySelectorAll('[data-analysis-intensity]').length, 0)
+  assert.equal(dom.querySelectorAll('[data-analysis-rpe]').length, 0)
+  assert.equal(dom.querySelectorAll('[data-analysis-volume]').length, 1)
 }
 for (const block of ['', '   ', '\t\r\n', '\u00a0\u2003']) {
   test(`F1: unknown whitespace block ${JSON.stringify(block)} has no metrics`, () => {

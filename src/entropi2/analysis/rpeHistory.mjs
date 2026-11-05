@@ -71,7 +71,7 @@ export function rpeHistory(props = {}, now = new Date()) {
     return [{ day, lift, rpe: explicitRpe(r) ? (r.rpe_actual ?? r.rpe) : null }]
   })
   return {
-    message: unavailable || 'Gennemsnit af registrerede RPE-svar pr. sæt i de seneste 6 kalenderuger, inklusive denne ufuldstændige uge. Kun hovedløft indgår. Manglende, ugyldige eller ikke bekræftede egne RPE-svar er udeladt af gennemsnittet. Historik uden RPE-felter vises som manglende. Tallene beskriver svarene, ikke årsag eller parathed.',
+    message: unavailable || 'Gennemsnit af registrerede RPE-svar pr. sæt i de seneste 6 kalenderuger, inklusive denne ufuldstændige uge. Kun hovedløft indgår. Manglende, ugyldige eller ikke bekræftede egne RPE-svar er udeladt af gennemsnittet. Kun uger med dokumenterede egne RPE-svar vises. Tallene beskriver svarene, ikke årsag eller parathed.',
     series: [null, ...LIFTS].map(lift => ({
       lift: lift ?? 'Alle hovedløft',
       points: weeks.map(week => {

@@ -136,7 +136,7 @@ test('frozen data is unchanged and synthetic view contains accessible compact fl
   assert.equal(tree.props.style.width, '100%'); assert.equal(tree.props.style.maxWidth, 480)
   assert.equal(tree.props.style.boxSizing, 'border-box'); assert.equal(tree.props.style.overflowWrap, 'anywhere')
   assert.equal(tree.props['aria-label'], 'Din ugerapport')
-  assert.equal(dom.querySelectorAll('h2').length, 1); assert.equal(dom.querySelectorAll('li').length, 4)
+  assert.equal(dom.querySelectorAll('h2').length, 1); assert.equal(dom.querySelectorAll('li').length, 1)
   assert.equal(dom.querySelectorAll('details').length, 1); assert.equal(dom.querySelectorAll('button').length, 0)
   assert.match(dom.textContent, /110 kg e1RM/); assert.match(dom.textContent, /Kostdage logget: 2 af 7/)
   assert.match(dom.textContent, /Vægtændring: \+0,3 kg/)

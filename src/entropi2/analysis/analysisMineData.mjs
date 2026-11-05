@@ -49,8 +49,7 @@ export function analysisMineData(props = {}, now) {
   // Host identity/date always win; MineData validates each row's athlete_id.
   return { athleteId, today,
     sessions: props.mineData?.sessions ?? analysisSessions(props, now),
-    sessionsNote: props.mineData?.sessions ? null
-      : 'Pas vises kun for den viste programuge. En samlet optælling for alle 4 uger er ikke tilgængelig.',
+    sessionsLabel: props.mineData?.sessions ? 'Pas gennemført' : 'Pas i den viste programuge',
     records: props.mineData?.records ?? recordSource,
     nutritionDays: props.mineData?.nutritionDays ?? source(meals,
       props.mealLoading, props.mealError),

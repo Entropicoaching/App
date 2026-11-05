@@ -21,14 +21,15 @@ const html = p => renderToStaticMarkup(h(Analysis, p))
 
 test('real React renders connected data and keeps leaves as component elements', () => {
   const tree = Analysis(props()), all = nodes(tree)
-  for (const leaf of [WeeklyReport, MineData, IntensityView]) assert.equal(all.filter(n => n.type === leaf).length, 1)
+  for (const leaf of [WeeklyReport, MineData]) assert.equal(all.filter(n => n.type === leaf).length, 1)
   const rendered = html(props())
   assert.match(rendered, /1 registrerede, gennemførte pas/)
   assert.match(rendered, /1 registrerede dage af 28/)
   assert.match(rendered, /1 dage med registreret kropsvægt/)
-  assert.match(rendered, /1 sæt uden gyldig måling/)
+  assert.equal(all.filter(n => n.type === IntensityView).length, 0)
+  assert.doesNotMatch(rendered, /1 sæt uden gyldig måling|andel ukendt/)
   assert.doesNotMatch(rendered, /Rekorder i perioden/)
-  assert.equal((rendered.match(/data-analysis-records=/g) ?? []).length, 1)
+  assert.equal((rendered.match(/data-analysis-records=/g) ?? []).length, 0)
 })
 
 test('long-term development has no collapsed ancestor; secondary sections start closed', () => {
@@ -44,19 +45,20 @@ test('long-term development has no collapsed ancestor; secondary sections start 
   assert.equal(tree.props.children[1].type, DevelopmentView)
   assert.equal(tree.props.children[2].props['data-analysis-secondary'], true)
   assert.equal(tree.props.children[2].props.open, undefined)
-  for (const key of ['data-analysis-mine-data', 'data-analysis-more', 'data-analysis-intensity']) {
+  for (const key of ['data-analysis-mine-data', 'data-analysis-more']) {
     const { node } = find(tree, key)
     assert.equal(node.type, 'details'); assert.equal(node.props.open, undefined)
     assert.ok(node.props.children[0].props.style.minHeight >= 44)
   }
-  assert.equal((html(props()).match(/<figure/g) ?? []).length, 2)
+  assert.equal(find(tree, 'data-analysis-intensity'), null)
+  assert.equal((html(props()).match(/<figure/g) ?? []).length, 1)
 })
 
 test('real React renders empty, missing, loading and error sources honestly', () => {
-  assert.match(html(props({ exerciseLogs: [], historicalMealLogs: [], weightLogs: [] })), /0 registrerede, gennemførte pas/)
-  assert.match(html(props({ fremgangLogs: undefined })), /Sætdata er ikke klar/)
-  assert.match(html(props({ fremgangLoading: true })), /Henter intensitetsdata/)
-  assert.match(html(props({ fremgangError: true })), /Intensitetsdata kunne ikke hentes/)
+  assert.match(html(props({ exerciseLogs: [], historicalMealLogs: [], weightLogs: [] })), /Din udvikling kommer frem/)
+  assert.match(html(props({ fremgangLogs: undefined })), /Din udvikling er ikke klar endnu/)
+  assert.match(html(props({ fremgangLoading: true })), /Henter din udvikling/)
+  assert.match(html(props({ fremgangError: true })), /Din udvikling kunne ikke hentes/)
   assert.match(html(props({ weightError: true, mealError: true, exerciseLogsError: true })), /Dine registreringer kunne ikke hentes/)
   for (const entropi2 of [false, undefined, 1, 'true']) {
     const p = { entropi2, get now() { throw Error('OFF read') }, get athlete() { throw Error('OFF read') } }
@@ -77,15 +79,15 @@ test('real React: Mine tal is closed below strength, displays empty and error tr
   const trackingSnapshot = { athleteId: 'synthetic-a', endDate: '2026-11-03',
     status: 'ready', complete: true, dailyRows: [] }
   const rendered = html(props({ trackingSnapshot }))
-  assert.ok(rendered.indexOf('data-analysis-history') < rendered.indexOf('data-fremgang-mine-tal'))
-  assert.match(rendered, /<details data-fremgang-mine-tal="true"/)
-  assert.doesNotMatch(rendered, /<details[^>]*data-fremgang-mine-tal[^>]* open=/)
-  assert.match(rendered, /Ingen registreringer i perioden/)
+  assert.doesNotMatch(rendered, /data-fremgang-mine-tal|Ingen registreringer i perioden/)
   const error = html(props({ trackingSnapshot: { ...trackingSnapshot, status: 'error' }, onRetryTracking() {} }))
   assert.match(error, /role="alert"/); assert.match(error, /Prøv igen/)
   const dailyRows = [1, 2, 3].map(i => ({ athlete_id: 'synthetic-a', source: 'athlete_manual',
     logged_date: `2026-11-0${i}`, sleep_hours: 0, energy: 2, stress: 3, soreness: 0 }))
   const withData = html(props({ trackingSnapshot: { ...trackingSnapshot, dailyRows } }))
+  assert.ok(withData.indexOf('data-analysis-history') < withData.indexOf('data-fremgang-mine-tal'))
+  assert.match(withData, /<details data-fremgang-mine-tal="true"/)
+  assert.doesNotMatch(withData, /<details[^>]*data-fremgang-mine-tal[^>]* open=/)
   assert.match(withData, /0,0 timer/); assert.match(withData, /For lidt data: 3 af mindst 4 dage/)
   assert.doesNotMatch(withData, /Styrke · ugeestimater|Vis vægtgrundlag|Vis kostgrundlag|Vis træningsgrundlag/)
 })
@@ -103,7 +105,7 @@ test('real React: existing readiness reader reaches Mine tal with native scale a
     athleteId: 'synthetic-a', day: '2026-11-04' })
   const rendered = html(props({ trackingSnapshot }))
   const start = rendered.indexOf('<details data-fremgang-mine-tal=')
-  const end = rendered.indexOf('<details data-analysis-intensity=')
+  const end = rendered.indexOf('<details data-analysis-more=')
   const fold = rendered.slice(start, end)
   assert.ok(start >= 0 && end > start)
   assert.match(fold, /0,0 timer/); assert.match(fold, /5,0 af 5 \(5 mest\)/)

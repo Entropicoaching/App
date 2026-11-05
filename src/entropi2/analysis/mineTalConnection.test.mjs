@@ -10,16 +10,11 @@ const snapshot = (extra = {}) => Object.defineProperties({ athleteId: 'synthetic
 const view = extra => renderTree(Analysis(props(extra)))
 const fold = dom => dom.querySelectorAll('[data-fremgang-mine-tal]')[0]
 
-test('actual Fremgang composition places one closed Mine tal after strength history', () => {
-  const tree = Analysis(props()), children = tree.props.children[2].props.children
-  const index = children.findIndex(n => n?.type === FremgangMineTal)
-  assert.equal(children[index - 1].props['data-analysis-mine-data'], true)
-  assert.equal(children[index + 1].props['data-analysis-intensity'], true)
-  const dom = view(), detail = fold(dom)
-  assert.equal(dom.querySelectorAll('[data-fremgang-mine-tal]').length, 1)
-  assert.equal(detail.tagName, 'details'); assert.equal(detail.getAttribute('open'), null)
-  assert.match(detail.textContent, /ikke klar/)
-  assert.equal(dom.querySelectorAll('[data-analysis-mine-data]').length, 1)
+test('empty Mine tal and unavailable sources do not create folds', () => {
+  for (const extra of [{}, { trackingSnapshot: snapshot() }]) {
+    assert.equal(fold(view(extra)), undefined)
+    assert.equal(view(extra).querySelectorAll('[data-analysis-secondary]').length, 0)
+  }
 })
 test('actual copied view displays canonical wellbeing only, no duplicate numeric domains or cycle', () => {
   const dailyRows = [1, 2, 3].map(i => ({ athlete_id: 'synthetic-a', source: 'athlete_manual',
@@ -32,15 +27,14 @@ test('actual copied view displays canonical wellbeing only, no duplicate numeric
   assert.doesNotMatch(dom.textContent, /ugeestimater|cyklus|cycle|kcal|e1RM|kg/)
 })
 test('missing, complete empty, loading, failed and foreign source stay distinct', () => {
-  const absent = fold(view()).textContent
-  assert.match(absent, /ikke klar/); assert.doesNotMatch(absent, /Ingen registreringer i perioden/)
-  assert.match(fold(view({ trackingSnapshot: snapshot() })).textContent, /Ingen registreringer i perioden/)
-  assert.match(fold(view({ trackingSnapshot: snapshot({ status: 'loading' }) })).textContent, /Henter dine/)
+  assert.equal(fold(view()), undefined)
+  assert.equal(fold(view({ trackingSnapshot: snapshot() })), undefined)
+  assert.match(fold(view({ trackingSnapshot: snapshot({ status: 'loading' }) })).textContent, /Henter dine registreringer/)
   const onRetryTracking = () => {}
   const error = fold(view({ trackingSnapshot: snapshot({ status: 'error' }), onRetryTracking }))
   assert.match(error.textContent, /Kunne ikke hente/)
   assert.equal(error.querySelectorAll('button')[0].listeners.click, onRetryTracking)
-  assert.match(fold(view({ trackingSnapshot: snapshot({ athleteId: 'foreign' }) })).textContent, /ikke klar/)
+  assert.equal(fold(view({ trackingSnapshot: snapshot({ athleteId: 'foreign' }) })), undefined)
 })
 test('strict OFF is inert at host and fold boundary', () => {
   for (const enabled of [false, undefined, 'true', 1]) assert.equal(FremgangMineTal({ enabled,

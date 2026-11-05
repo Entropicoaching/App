@@ -90,11 +90,12 @@ test('model and actual view accept frozen synthetic inputs without mutation', ()
   mineDataModel(props); MineData(props); assert.equal(JSON.stringify(props), before)
 })
 test('actual view has four cards, dated window, mobile wrapping and no actions', () => {
-  const v = MineData(input()), all = nodes(v)
-  assert.deepEqual(all.filter(n => n.type === 'h3').map(content), ['Pas gennemført', 'Rekorder i perioden', 'Kostdage mod mål', 'Kropsvægt'])
+  assert.equal(MineData(input()), null)
+  const v = MineData(input({ weights: ready([row({ kg: 80 })]) })), all = nodes(v)
+  assert.deepEqual(all.filter(n => n.type === 'h3').map(content), ['Kropsvægt'])
   assert.equal(v.props.style.maxWidth, 480); assert.equal(v.props.style.overflowWrap, 'anywhere')
   assert.match(content(v), /07\.10\.2026 til 03\.11\.2026/)
-  assert.match(content(v), /Ingen registreret kropsvægt/)
+  assert.match(content(v), /80 kg/)
   assert.equal(all.some(n => n.type === 'button' || n.type === 'a' || n.props.onClick), false)
 })
 test('view displays real projections, Danish units, coverage and neutral weight change', () => {
@@ -115,8 +116,9 @@ test('untrusted exercise labels remain text; records list capped at three', () =
 test('view reports failures and absent date without fabricated zero counts', () => {
   const s = content(MineData(input({ sessions: { state: 'loading' }, records: { state: 'error' },
     nutritionDays: undefined, weights: { state: 'error' } })))
-  for (const pattern of [/Henter dine registreringer/, /kunne ikke hentes/, /ikke klar/]) assert.match(s, pattern)
-  assert.doesNotMatch(s, /0 registrerede, gennemførte/); assert.match(content(MineData()), /Vælg en gyldig dato/)
+  assert.match(s, /kunne ikke hentes/)
+  assert.equal((s.match(/kunne ikke hentes/g) ?? []).length, 1)
+  assert.doesNotMatch(s, /0 registrerede, gennemførte/); assert.equal(MineData(), null)
 })
 
 test('equal records on the same date resolve consistently by stable record ID', () => {

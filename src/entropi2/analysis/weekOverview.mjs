@@ -79,7 +79,7 @@ export function weekOverview(contract, now) {
   return {
     // Marc 3. nov. (keep it simple): kun denne uges periode; sammenligningen staar ved hvert loeft.
     period: `${date(start)} til ${date(end)}.`,
-    sessions, sets,
+    sessions, sets, counts: c,
     note: 'Et pas er gennemført, når alle planlagte sæt er logget eller sprunget over. Bekræftede sæt omfatter ikke oversprungne eller afventende sæt. Denne uge kan være ufuldstændig.',
     lifts: MAIN_LIFTS.map(lift => {
       const missing = message => ({ lift, message })

@@ -80,3 +80,17 @@ export function mineDataModel({ athleteId, today, sessions, records, nutritionDa
       deltaKg: delta, from: observed[0]?.start ?? null, to: observed.at(-1)?.start ?? null },
   }
 }
+
+export function mineDataVisibility(model, showRecords = true) {
+  const { sessions, records, nutrition, weight } = model
+  const sources = [sessions, nutrition, weight, ...(showRecords ? [records] : [])]
+  return {
+    sessions: sessions.state === 'ready' && sessions.completed > 0,
+    records: showRecords && records.state === 'ready' && records.lifts.length > 0,
+    nutrition: nutrition.state === 'ready' && nutrition.loggedDays > 0,
+    weight: weight.state === 'ready' && weight.recordedDays > 0,
+    error: sources.some(source => source.state === 'error'),
+  }
+}
+export const hasMineData = (model, showRecords = true) =>
+  Object.values(mineDataVisibility(model, showRecords)).some(Boolean)
