@@ -18,7 +18,7 @@ for (const isMobile of [false, true]) {
     assert.match(error, /role="alert".*Kalenderen kunne ikke indlæses/)
     assert.match(error, /<button type="button"[^>]*>Prøv igen<\/button>/)
     assert.doesNotMatch(error, /Intet program/)
-    assert.match(render({ isMobile, athletes: [] }), /Ingen atleter/)
+    assert.match(render({ isMobile, athletes: [] }), /Ingen synlige atleter/)
     const athletes = Array.from({ length: 20 }, (_, i) => ({ id: `synthetic-${i}`, name: `Syntetisk ${i}` }))
     const html = render({ isMobile, athletes, calendarWeeks: {} })
     const board = /<details\b([^>]*data-calendar-board[^>]*)>([\s\S]*?)<\/details>/.exec(html)
@@ -67,5 +67,43 @@ for (const isMobile of [false, true]) {
     assert.match(html, /<time dateTime="2026-11-02">2026-11-02<\/time>/)
     assert.match(html, /data-calendar-today=/)
     assert.match(html, /aria-current="date"/)
+  })
+
+  test(`real React ${isMobile ? 390 : 1280}: twenty name and track rows share the same total height`, () => {
+    const athletes = Array.from({ length: 20 }, (_, i) => ({
+      id: `synthetic-row-${i}`, name: `Syntetisk ${i} ${'langt navn '.repeat(20)}`,
+    }))
+    const html = render({ isMobile, athletes,
+      calendarWeeks: Object.fromEntries(athletes.map(a => [a.id, weeks])) })
+    const names = [...html.matchAll(/<button\b[^>]*class="entropi2-calendar-profile"[^>]*style="([^"]*height:56px[^"]*)"/g)]
+    const rows = [...html.matchAll(/<div\b[^>]*style="(position:relative;height:56px;[^"]*)"/g)]
+    assert.equal(names.length, 20)
+    assert.equal(rows.length, 20)
+    for (const [, style] of [...names, ...rows]) {
+      assert.match(style, /(?:^|;)box-sizing:border-box(?:;|$)/)
+      assert.match(style, /(?:^|;)height:56px(?:;|$)/)
+      assert.match(style, /(?:^|;)border-bottom:1px solid /)
+    }
+  })
+
+  test(`real React ${isMobile ? 390 : 1280}: profile controls use valid native button content`, () => {
+    const undated = { id: 'synthetic-undated', name: 'Syntetisk langt navn '.repeat(20) }
+    const html = render({ isMobile, athletes: [athlete, undated],
+      calendarWeeks: { [athlete.id]: weeks, [undated.id]: [{ ...weeks[0], start_date: null }] } })
+    const shortcuts = [...html.matchAll(/<button\b([^>]*class="entropi2-calendar-profile"[^>]*)>([\s\S]*?)<\/button>/g)]
+    assert.equal(shortcuts.length, 4)
+    for (const [, attrs, content] of shortcuts) {
+      assert.match(attrs, /type="button"/)
+      assert.match(attrs, /min-height:44px/)
+      assert.doesNotMatch(attrs, /tabindex="-1"/)
+      assert.doesNotMatch(content, /<(?:button|a|input|select|div)\b/)
+    }
+    assert.match(html, /\.entropi2-calendar-profile:focus-visible/)
+    assert.match(html, /text-overflow:ellipsis/)
+    for (const extra of [{ athletes: [] }, { hiddenAthleteIds: new Set([athlete.id]) }]) {
+      const empty = render({ isMobile, ...extra })
+      assert.match(empty, /role="status"[^>]*>Ingen synlige atleter/)
+      assert.doesNotMatch(empty, /data-calendar-board|Kalenderens tidslinje|sæt en startdato/)
+    }
   })
 }

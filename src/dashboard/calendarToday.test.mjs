@@ -71,6 +71,10 @@ test('empty, undated, invalid and hidden calendars do not invent dated rows', ()
     const tree = render(extra)
     assert.match(text(tree), /Ingen atleter med datoer endnu/)
     assert.equal(nodes(tree, n => n.props['data-calendar-today']).length, 0)
+    const modern = render({ entropi2: true, loading: false, calendarStatus: 'ready', calendarReady: true, ...extra })
+    assert.match(text(modern), extra.athletes?.length === 0 || extra.hiddenAthleteIds
+      ? /Ingen synlige atleter/ : /Ingen atleter med datoer endnu/)
+    assert.equal(nodes(modern, n => n.props['data-calendar-today']).length, 0)
   }
   for (const start_date of ['bad', '2026-02-30', '2026-11-05T12:00:00Z']) {
     const tree = render({ calendarWeeks: { 'synthetic-a': [{ week_number: 1, start_date }] } })

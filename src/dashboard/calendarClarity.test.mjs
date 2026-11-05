@@ -35,7 +35,7 @@ for (const isMobile of [false, true]) {
       assert.equal(retry.props.style.minHeight, 44)
       retry.props.onClick(); assert.equal(retries, 1)
     }
-    assert.match(text(render({ isMobile, athletes: [], calendarReady: false })), /Ingen atleter/)
+    assert.match(text(render({ isMobile, athletes: [], calendarReady: false })), /Ingen synlige atleter/)
     assert.match(text(render({ isMobile, calendarWeeks: {} })), /Intet program/)
     assert.equal(blockButtons(render({ isMobile })).length, 1)
   })
@@ -185,6 +185,83 @@ for (const isMobile of [false, true]) {
     nodes(board, n => typeof n.props.onClick === 'function')[0].props.onClick()
     assert.deepEqual(calls, [[athletes[0], 'program']])
   })
+
+  test(`${width}: all three profile shortcuts are native buttons with one existing program callback`, () => {
+    const undated = { id: 'synthetic-undated', name: 'Syntetisk navn '.repeat(30) }
+    const calls = []
+    const tree = render({ isMobile, athletes: [athlete, undated],
+      calendarWeeks: { [athlete.id]: weeks, [undated.id]: [{ ...weeks[0], start_date: null }] },
+      openProfile: (...args) => calls.push(args) })
+    const shortcuts = nodes(tree, n => n.props.className === 'entropi2-calendar-profile')
+    assert.equal(shortcuts.length, 4, 'timeline name, undated name and two board rows')
+    for (const shortcut of shortcuts) {
+      assert.equal(shortcut.type, 'button')
+      assert.equal(shortcut.props.type, 'button')
+      assert.ok(shortcut.props.style.minHeight >= 44)
+      assert.equal(shortcut.props.tabIndex, undefined, 'native Tab order')
+      assert.equal(shortcut.props.onKeyDown, undefined, 'native activation has no duplicate keyboard handler')
+      assert.equal(nodes(shortcut, n => n !== shortcut && ['button', 'a', 'input', 'select', 'div'].includes(n.type)).length, 0)
+      const before = calls.length
+      shortcut.props.onClick()
+      assert.equal(calls.length, before + 1)
+      assert.equal(calls.at(-1)[1], 'program')
+    }
+    assert.deepEqual(calls.map(c => c[0]), [athlete, undated, athlete, undated])
+    assert.equal(shortcuts[0].props.style.width, '100%')
+    assert.equal(shortcuts[1].props.style.maxWidth, '100%')
+    assert.equal(shortcuts[1].props.style.textOverflow, 'ellipsis')
+    for (const row of shortcuts.slice(2)) {
+      const name = nodes(row, n => n.props.style?.fontSize === '0.9rem')[0]
+      assert.equal(name.props.style.maxWidth, '100%')
+      assert.equal(name.props.style.textOverflow, 'ellipsis')
+    }
+    assert.match(text(nodes(tree, n => n.type === 'style')[0]), /\.entropi2-calendar-profile:focus-visible.*outline: 2px solid #f1c675/)
+  })
+
+  test(`${width}: twenty timeline names stay aligned with their track rows`, () => {
+    const athletes = Array.from({ length: 20 }, (_, i) => ({
+      id: `synthetic-row-${i}`, name: `Syntetisk ${i} ${'langt navn '.repeat(20)}`,
+    }))
+    const calendarWeeks = Object.fromEntries(athletes.map(a => [a.id, weeks]))
+    const tree = render({ isMobile, athletes, calendarWeeks })
+    const [track] = nodes(tree, n => n.props['aria-label'] === 'Kalenderens tidslinje')
+    const rows = nodes(track, n => n.props.style?.position === 'relative' &&
+      n.props.style.height === 56 && n.props.style.borderBottom)
+    const names = nodes(tree, n => n.props.className === 'entropi2-calendar-profile' &&
+      n.props.style.height === 56)
+    assert.equal(rows.length, 20)
+    assert.equal(names.length, 20)
+    // Compare border-box totals, not just declared height or minimum tap size.
+    const outerHeight = ({ props: { style } }) => style.height +
+      (style.boxSizing === 'border-box' ? 0 : Number.parseFloat(style.borderBottom))
+    let nameBottom = 0, trackBottom = 0
+    for (let i = 0; i < names.length; i++) {
+      assert.equal(text(names[i]), athletes[i].name)
+      assert.equal(outerHeight(names[i]), outerHeight(rows[i]), `row ${i + 1} total height`)
+      nameBottom += outerHeight(names[i]); trackBottom += outerHeight(rows[i])
+      assert.equal(nameBottom, trackBottom, `row ${i + 1} bottom edge`)
+    }
+  })
+
+  test(`${width}: completed empty or hidden roster shows one open precise state without calendar sections`, () => {
+    for (const extra of [{ athletes: [] }, { hiddenAthleteIds: new Set([athlete.id]) }]) {
+      for (const tasksOnly of [false, true]) {
+        const tree = render({ isMobile, ...extra, tasksOnly, coachCalendarEvents: true })
+        assert.equal(nodes(tree, n => n.props.role === 'status').length, 1)
+        assert.equal(text(nodes(tree, n => n.props.role === 'status')[0]), 'Ingen synlige atleter')
+        assert.doesNotMatch(text(tree), /sæt en startdato|Tidslinje|Alle atleter|Alle planer har luft|Stævnedatoer|har du husket/)
+        assert.equal(buttons(tree).length, 0)
+        assert.equal(nodes(tree, n => n.type === 'details' || n.type === 'select').length, 0)
+      }
+    }
+    const undated = render({ isMobile, calendarWeeks: { [athlete.id]: [{ ...weeks[0], start_date: null }] } })
+    assert.match(text(undated), /Ingen atleter med datoer endnu.*Sæt startdato/)
+    assert.doesNotMatch(text(undated), /Ingen synlige atleter/)
+    for (const extra of [{ loading: true }, { loadError: true }, { calendarStatus: 'error' },
+      { calendarStatus: 'loading', calendarReady: false }]) {
+      assert.doesNotMatch(text(render({ isMobile, hiddenAthleteIds: new Set([athlete.id]), ...extra })), /Ingen synlige atleter/)
+    }
+  })
 }
 
 test('today, manual scroll, hidden scope, invalid dates and tasks-only retain existing behavior in ON', () => {
@@ -208,6 +285,7 @@ test('only boolean ON changes the calendar; OFF ignores the new read props', () 
     assert.equal(nodes(tree, n => n.props.role === 'status' || n.props.role === 'alert').length, 0)
     assert.equal(nodes(tree, n => n.props['data-calendar-board']).length, 0)
     assert.equal(blockButtons(tree).length, 0)
+    assert.equal(nodes(tree, n => n.props.className === 'entropi2-calendar-profile' || n.type === 'style').length, 0)
     assert.equal(nodes(tree, n => n.props['aria-current'] === 'date')[0].props.style.fontSize, '0.42rem')
   }
 })

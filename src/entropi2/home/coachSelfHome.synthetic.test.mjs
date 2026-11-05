@@ -1,13 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { loadViews, seed, render, named, nodes, session, ownAthlete, otherAthlete } from '../../athlete/coachOwnTrainingFixture.mjs'
+import { loadViews, seed, render, named, nodes, session, ownAthlete, otherAthlete, week } from '../../athlete/coachOwnTrainingFixture.mjs'
 
 // Actual copied AthleteView -> HomeSession -> AthleteHome. This shallow synthetic
 // host does not run effects or claim genuine React rendering fidelity.
 const { default: AthleteView, dispose } = await loadViews()
 test.after(dispose)
-const homeFor = (athlete, extra = {}) => {
-  seed({ athlete })
+const homeFor = (athlete, extra = {}, state = {}) => {
+  seed({ athlete, ...state })
   const view = render(AthleteView, { role: 'coach', session,
     coachAthleteId: athlete.id, onExitPreview() {}, ...extra })
   const wrapper = named(view, 'HomeSession')
@@ -50,6 +50,17 @@ test('R3: explicit OFF leaves the actual host legacy route intact for own and ot
     assert.equal(named(tree, 'HomeSession'), undefined)
     assert.ok(named(tree, 'HjemTab'))
   }
+})
+
+test('MIN TRÆNING: the actual coach host retains its existing retry capability at a week change', () => {
+  const nextWeek = { ...week, id: 'synthetic-next-week', week_number: 2, start_date: '2026-11-09' }
+  const { home } = homeFor(ownAthlete, {}, { allWeeks: [week, nextWeek] })
+  assert.equal(typeof home.props.onRetryProgram, 'function')
+  const tree = home.type({ ...home.props, now: new Date('2026-11-10T12:00:00Z') })
+  assert.equal(startButtons(tree)[0].props.disabled, true)
+  const retry = nodes(tree).find(n => n.type === 'button' && n.props.children.includes('Hent igen'))
+  assert.ok(retry)
+  assert.equal(retry.props.disabled, false)
 })
 
 const text = tree => nodes(tree).flatMap(node => (node.props?.children ?? []).filter(value => typeof value === 'string')).join(' ')

@@ -43,6 +43,9 @@ test('real React: day line, highlighted week and Danish date render at desktop a
 
 test('real React: empty calendar, invalid date error and tasks-only state stay honest', () => {
   assert.match(render({ athletes: [] }), /Ingen atleter med datoer endnu/)
+  const modern = render({ entropi2: true, loading: false, calendarStatus: 'ready', calendarReady: true, athletes: [] })
+  assert.match(modern, /Ingen synlige atleter/)
+  assert.doesNotMatch(modern, /Ingen atleter med datoer|data-calendar-board/)
   const error = render({ calendarWeeks: { 'synthetic-a': [{ week_number: 1, start_date: '2026-02-30' }] } })
   assert.match(error, /role="alert"/)
   assert.match(error, /Startdato kunne ikke vises/)

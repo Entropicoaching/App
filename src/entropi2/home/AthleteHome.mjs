@@ -132,6 +132,8 @@ export default function AthleteHome(props) {
   // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
   // gamle. Registrering kræver samme uge; ellers bedes atleten genindlæse, ikke registrere forgæves.
   const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
+  const retryWeek = props.coachOwnTraining === true && !props.sessionReadOnly &&
+    (staleWeek || (retryState?.weekRefresh === true && retryState.busy === true))
   const coach = (Array.isArray(messages) ? [...messages] : []).reverse()
     .find(m => m?.sender_role === 'coach' && typeof m.content === 'string' && m.content.trim())
   const coachContent = coach && messageText(coach, { hideStandaloneVideoId: true })
@@ -145,13 +147,15 @@ export default function AthleteHome(props) {
   const start = () => {
     const current = latest.current
     if (programAttempt.current?.athleteId === current.athlete?.id || current.programLoading) return false
+    if (current.coachOwnTraining === true && current.currentWeek?.id !== model.target?.week.id) return false
     return startHomeSession(current, model, current.getNow ? current.getNow() : current.now ?? clock())
   }
   const retryProgram = async () => {
     const current = latest.current
     if (current.enabled !== true || current.athlete?.id !== athlete?.id || current.programLoading ||
         programAttempt.current?.athleteId === athlete?.id || typeof current.onRetryProgram !== 'function') return false
-    const attempt = { athleteId: athlete?.id }
+    if (retryWeek && (current.coachOwnTraining !== true || current.sessionReadOnly)) return false
+    const attempt = { athleteId: athlete?.id, weekRefresh: retryWeek }
     programAttempt.current = attempt
     setProgramRetry({ ...attempt, busy: true, failed: false })
     let failed = false
@@ -183,7 +187,9 @@ export default function AthleteHome(props) {
         model.date && h('p', { style: s.text }, model.date === model.today ? 'I dag' : danishDate(model.date)),
         !props.sessionReadOnly && h('button', { type: 'button', style: s.primary, disabled: !canStart || staleWeek || props.sessionLoading === true, onClick: start },
           model.kind === 'today' ? 'Start dagens pas' : 'Start næste pas'),
-        !props.sessionReadOnly && (staleWeek ? h('p', { role: 'status', style: s.text }, 'En ny uge er startet. Genindlæs siden for at registrere passet.')
+        !props.sessionReadOnly && (staleWeek ? h('p', { role: 'status', style: s.text }, retryWeek
+          ? 'En ny uge er startet. Hent programmet igen for at registrere passet.'
+          : 'En ny uge er startet. Genindlæs siden for at registrere passet.')
           : !canStart && h('p', { role: 'status', style: s.text }, 'Passet kunne ikke åbnes. Prøv at genindlæse siden.')),
         model.logged != null && h('p', { style: s.text }, `${model.logged} af ${model.total} sæt klaret`),
         (namedExercises.length > 0 || target.session.exercises.some(e => e.note)) && h('details', {
@@ -196,9 +202,9 @@ export default function AthleteHome(props) {
           : model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.'
           : props.offlineSnapshotAt != null ? 'Opdatér programmet, når du har net, før du registrerer et pas.'
             : 'Se programmet eller kontakt din coach.'),
-      !programLoading && (programError || props.offlineSnapshotAt != null) && h('button', {
-        type: 'button', style: s.primary, disabled: typeof props.onRetryProgram !== 'function', onClick: retryProgram,
-      }, 'Hent igen'),
+      (retryWeek || (!programLoading && (programError || props.offlineSnapshotAt != null))) && h('button', {
+        type: 'button', style: s.primary, disabled: programLoading || typeof props.onRetryProgram !== 'function', onClick: retryProgram,
+      }, retryWeek && programLoading ? 'Henter…' : 'Hent igen'),
       props.sessionRootRef && h('section', { ref: props.sessionRootRef, 'aria-label': 'Dit valgte pas' }),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),

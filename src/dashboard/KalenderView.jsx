@@ -38,6 +38,12 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
           }
           const BoardContainer = modern ? 'details' : 'div'
           const TimelineAction = modern ? 'button' : 'div'
+          const ProfileRow = modern ? 'button' : 'div'
+          const ProfileName = modern ? 'button' : 'span'
+          const ProfileContent = modern ? 'span' : 'div'
+          const profileProps = modern ? { type: 'button', className: 'entropi2-calendar-profile' } : {}
+          const profileStyle = modern ? { background: 'transparent', border: 0, borderRadius: 0, margin: 0,
+            font: 'inherit', color: 'inherit', textAlign: 'left', boxSizing: 'border-box', minHeight: 44 } : {}
           const boardLegend = (
             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginTop: '0.75rem', letterSpacing: '0.05em', lineHeight: 1.7 }}>
               "Klar · N uger" = N fyldte uger tilbage fra og med den uge atleten træner nu. "Sidste uge — planlæg næste" = kun den nuværende uge er fyldt. Brug "Udsæt" hvis du allerede har styr på det og ikke vil mindes om det i nogle dage. Prikken = sidst loggede træning.
@@ -47,6 +53,14 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
           const todayDay = `${today0.getFullYear()}-${String(today0.getMonth() + 1).padStart(2, '0')}-${String(today0.getDate()).padStart(2, '0')}`
           const dayMs = 86400000
           const visibleAthletes = athletes.filter(a => !hiddenAthleteIds.has(a.id))
+          if (modern && !readFailed && !readPending && visibleAthletes.length === 0) {
+            return (
+              <section aria-label={tasksOnly ? 'Kalenderopgaver' : 'Kalender'} style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+                <h1 style={{ color: '#edeae2', fontSize: '1.8rem', fontWeight: 400 }}>Overblik</h1>
+                <p role="status" style={{ color: '#edeae2', fontSize: 14 }}>Ingen synlige atleter</p>
+              </section>
+            )
+          }
           const planEntries = buildPlanOverview({ athletes: visibleAthletes, calendarWeeks, today: todayDay })
           const planCounts = planOverviewCounts(planEntries)
           const planningNeeds = planEntries.filter(entry => entry.status !== 'covered')
@@ -207,6 +221,7 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
 
           return (
             <div style={{ ...s.page, ...(isMobile ? { padding: '1rem' } : {}) }}>
+              {modern && <style>{`.entropi2-calendar-profile:focus-visible { outline: 2px solid #f1c675; outline-offset: -3px; }`}</style>}
               <div style={{ marginBottom: '1.5rem' }}>
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', margin: 0 }}>Overblik</h1>
                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
@@ -292,10 +307,10 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                         <div style={{ flexShrink: 0, width: NAME_W, borderRight: '1px solid rgba(237,234,226,0.08)', background: '#16160f' }}>
                           <div style={{ height: modern ? 32 : 22, borderBottom: '1px solid rgba(237,234,226,0.06)' }} />
                           {placed.map(r => (
-                            <div key={r.a.id} onClick={() => openProfile(r.a, 'program')}
-                              style={{ height: ROW_H, display: 'flex', alignItems: 'center', padding: '0 0.5rem', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.04)', fontSize: isMobile ? '0.72rem' : '0.8rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              {r.a.name}
-                            </div>
+                            <ProfileRow key={r.a.id} {...profileProps} onClick={() => openProfile(r.a, 'program')}
+                              style={{ ...profileStyle, ...(modern ? { width: '100%' } : {}), height: ROW_H, display: 'flex', alignItems: 'center', padding: '0 0.5rem', cursor: 'pointer', borderBottom: '1px solid rgba(237,234,226,0.04)', fontSize: isMobile ? '0.72rem' : '0.8rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {modern ? <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.a.name}</span> : r.a.name}
+                            </ProfileRow>
                           ))}
                         </div>
                         {/* Scrollbart spor */}
@@ -321,7 +336,7 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                                 for (let c = a0; c <= a1; c++) covered.add(c)
                               }
                               return (
-                              <div key={r.a.id} style={{ position: 'relative', height: ROW_H, borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
+                              <div key={r.a.id} style={{ position: 'relative', height: ROW_H, ...(modern ? { boxSizing: 'border-box' } : {}), borderBottom: '1px solid rgba(237,234,226,0.04)' }}>
                                 {/* Tomme celler: klik = opret uge på den dato (kun gyldige slots:
                                     ledig + ugenummer >= 1). Ligger under bjælkerne i DOM → bjælker
                                     fanger deres egne klik. */}
@@ -409,8 +424,8 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                         </div>
                         {tray.map(r => (
                           <div key={r.a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', padding: '0.4rem 0', borderBottom: '1px solid rgba(237,234,226,0.04)', flexWrap: 'wrap' }}>
-                            <div>
-                              <span onClick={() => openProfile(r.a, 'program')} style={{ fontSize: '0.82rem', color: '#edeae2', cursor: 'pointer' }}>{r.a.name}</span>
+                            <div style={modern ? { minWidth: 0, maxWidth: '100%' } : undefined}>
+                              <ProfileName {...profileProps} onClick={() => openProfile(r.a, 'program')} style={{ ...profileStyle, ...(modern ? { padding: 0, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}), fontSize: '0.82rem', color: '#edeae2', cursor: 'pointer' }}>{r.a.name}</ProfileName>
                               {r.wks.some(w => w.start_date) && <div role="alert" style={{ fontSize: '0.65rem', color: '#e99b86' }}>Startdato kunne ikke vises. Ret datoen.</div>}
                             </div>
                             <div style={{ display: 'flex', gap: '0.4rem' }}>
@@ -499,16 +514,16 @@ export default function KalenderView({ coachRyd = false, tasksOnly = false,
                     : b.planned.length === 0 ? `${b.weeks.length} uger oprettet · ingen øvelser endnu`
                     : `${b.loggedWeek != null ? `Træner uge ${b.loggedWeek}` : 'Ikke startet'} · ${b.runway} fyldte uger tilbage · planlagt til uge ${b.maxPlannedWeekNo}`
                   return (
-                    <div key={b.a.id} onClick={() => openProfile(b.a, 'program')}
-                      style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.7rem 0', borderBottom: i < board.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', flexWrap: 'wrap' }}>
-                      <div style={{ fontSize: '0.9rem', color: '#edeae2', minWidth: '130px', flexShrink: 0 }}>{b.a.name}</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', flex: 1, minWidth: '160px' }}>{detail}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
-                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: lastColor(b.daysSince) }} />
+                    <ProfileRow key={b.a.id} {...profileProps} onClick={() => openProfile(b.a, 'program')}
+                      style={{ ...profileStyle, ...(modern ? { width: '100%' } : {}), display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.7rem 0', borderBottom: i < board.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none', cursor: 'pointer', flexWrap: 'wrap' }}>
+                      <ProfileContent style={{ fontSize: '0.9rem', color: '#edeae2', minWidth: '130px', flexShrink: 0, ...(modern ? { maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}) }}>{b.a.name}</ProfileContent>
+                      <ProfileContent style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770', flex: 1, minWidth: '160px' }}>{detail}</ProfileContent>
+                      <ProfileContent style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
+                        <ProfileContent style={{ width: '6px', height: '6px', borderRadius: '50%', background: lastColor(b.daysSince) }} />
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: lastColor(b.daysSince), minWidth: '64px' }}>{lastText(b.daysSince)}</span>
-                      </div>
+                      </ProfileContent>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.06em', color: chip.c, border: `1px solid ${chip.c}55`, padding: '0.2rem 0.5rem', flexShrink: 0 }}>{chip.t}</span>
-                    </div>
+                    </ProfileRow>
                   )
                 })}
                 {modern && boardLegend}
