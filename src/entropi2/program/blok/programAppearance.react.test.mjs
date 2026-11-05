@@ -60,5 +60,5 @@ test('real React escapes long coach text and wraps mobile week navigation', () =
   assert.match(html, /&lt;script&gt;fixture\(\)&lt;\/script&gt;/)
   assert.doesNotMatch(html, /<script>/)
   assert.match(html, /grid-template-columns:repeat\(2, minmax\(0, 1fr\)\)/)
-  assert.match(html, /min-height:44px;white-space:normal/)
+  assert.match(html, /<button[^>]*style="[^"]*min-height:44px;[^"]*white-space:normal/)
 })

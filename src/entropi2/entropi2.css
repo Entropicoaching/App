@@ -19,3 +19,11 @@ section[aria-label="Beskeder og video"] :is(h1, h2, h3),
 [data-entropi2-kost-maal] {
   text-align: left;
 }
+
+/* Rekordhistorik har 32 px inline i begge gamle fremgangsvisninger.
+   Kun Entropi 2-rammen hæver selve knappens trykmål; OFF beholder sin stil. */
+[data-entropi2-athlete] [data-rekord-historik-knap] {
+  min-height: 44px !important;
+  min-width: 44px;
+  box-sizing: border-box;
+}

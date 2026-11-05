@@ -187,7 +187,8 @@ function parseDuration(...parts) {
 // adfærd som mobilitetens timer (CountdownRing + start/pause/fortsæt/gentag), men
 // med sin EGEN state så flere kan stå på siden uden at kollidere med hinanden
 // eller med den delte mobilitets-timer.
-function ExerciseTimer({ duration, label, accessible = false, context }) {
+function ExerciseTimer({ duration, label, accessible = false, context, entropi2 = false }) {
+  const control = entropi2 === true ? { ...s.btnGhost, minHeight: 44, minWidth: 44, boxSizing: 'border-box', color: programColors.muted } : s.btnGhost
   // G5: 'remaining' er sekunder tilbage NÅR ikke aktiv (frosset ved
   // pause/klar/gentag). Mens aktiv driver 'liveSeconds' visningen, opdateret
   // af effekten nedenfor ud fra tidsstempler i startRef — aldrig ved at
@@ -224,15 +225,15 @@ function ExerciseTimer({ duration, label, accessible = false, context }) {
       <div style={{ marginBottom: '0.6rem' }}>
         <CountdownRing total={duration} remaining={seconds > 0 ? seconds : duration} done={done} />
       </div>
-      {label && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>{label}</div>}
+      {label && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: entropi2 === true ? programColors.muted : '#7a7770', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>{label}</div>}
       {!done ? (
-        <button {...(accessible ? { type: 'button', 'aria-label': `${active ? 'Pause' : seconds > 0 && seconds < duration ? 'Fortsæt' : 'Start timer'} · ${context}` } : {})} style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => {
+        <button {...(accessible ? { type: 'button', 'aria-label': `${active ? 'Pause' : seconds > 0 && seconds < duration ? 'Fortsæt' : 'Start timer'} · ${context}` } : {})} style={{ ...control, padding: '0.5rem 1.25rem' }} onClick={() => {
           if (active) { setRemaining(seconds); setActive(false) } else setActive(true)
         }}>
           {active ? '⏸ Pause' : (seconds > 0 && seconds < duration) ? '▶ Fortsæt' : '▶ Start timer'}
         </button>
       ) : (
-        <button {...(accessible ? { type: 'button', 'aria-label': `Gentag timer · ${context}` } : {})} style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setRemaining(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
+        <button {...(accessible ? { type: 'button', 'aria-label': `Gentag timer · ${context}` } : {})} style={{ ...control, padding: '0.5rem 1.25rem' }} onClick={() => { setRemaining(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
       )}
     </div>
   )
@@ -336,6 +337,8 @@ export default function ProgramTab({
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
           const programAppearanceOn = entropi2 === true
           const a11y = attributes => programAppearanceOn ? attributes : {}
+          const programGhost = programAppearanceOn ? { ...s.btnGhost, color: programColors.muted } : s.btnGhost
+          const programTapTarget = programAppearanceOn ? { minHeight: 44, minWidth: 44, boxSizing: 'border-box' } : {}
           const intensity = programAppearanceOn && !programError ? programWeekIntensity(viewedWeek) : null
           const programToday = programAppearanceOn ? new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Copenhagen' }) : null
           const viewedStart = programAppearanceOn && viewedWeek ? weekStartDate(allWeeks, viewedWeek.week_number) : null
@@ -427,7 +430,7 @@ export default function ProgramTab({
                     const chipStyle = {
                       background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem 0',
                       fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em',
-                      color: '#7a7770', whiteSpace: 'nowrap', maxWidth: '45%', overflow: 'hidden', textOverflow: 'ellipsis',
+                      color: (programAppearanceOn ? programColors.muted : '#7a7770'), whiteSpace: 'nowrap', maxWidth: '45%', overflow: 'hidden', textOverflow: 'ellipsis',
                       // G9: kun 17px høj med nul vandret padding — samme mønster/metode som F13-F16
                       // (ordre 68): minHeight + boxSizing, bredden på tekstknappen bevares.
                       minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center',
@@ -450,10 +453,10 @@ export default function ProgramTab({
                         {(prevPhase || nextPhase) && (
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                             {prevPhase
-                              ? <button style={chipStyle} onClick={() => goToWeek(phaseStart[viewedPhaseIdx - 1])}>‹ {prevPhase.name || 'Tidligere'}</button>
+                              ? <button style={{ ...programTapTarget, ...chipStyle }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx - 1])}>‹ {prevPhase.name || 'Tidligere'}</button>
                               : <span />}
                             {nextPhase
-                              ? <button style={{ ...chipStyle, textAlign: 'right', justifyContent: 'flex-end' }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx + 1])}>{nextPhase.name || 'Næste blok'} ›</button>
+                              ? <button style={{ ...programTapTarget, ...chipStyle, textAlign: 'right', justifyContent: 'flex-end' }} onClick={() => goToWeek(phaseStart[viewedPhaseIdx + 1])}>{nextPhase.name || 'Næste blok'} ›</button>
                               : <span />}
                           </div>
                         )}
@@ -523,7 +526,7 @@ export default function ProgramTab({
           const blokTekst = viewedWeek ? (
             <>
                   {viewedWeek.coach_note && (
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: '#7a7770', marginBottom: '1rem', letterSpacing: '0.04em' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), marginBottom: '1rem', letterSpacing: '0.04em' }}>
                       {viewedWeek.coach_note}
                     </div>
                   )}
@@ -531,7 +534,7 @@ export default function ProgramTab({
                   {viewedWeek.block_description && (
                     <div style={{ borderLeft: '2px solid rgba(200,146,58,0.3)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>Fra din coach</div>
-                      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: '#7a7770', fontStyle: 'italic', lineHeight: 1.6 }}>{viewedWeek.block_description}</div>
+                      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.85rem', fontWeight: 300, color: (programAppearanceOn ? programColors.muted : '#7a7770'), fontStyle: 'italic', lineHeight: 1.6 }}>{viewedWeek.block_description}</div>
                     </div>
                   )}
 
@@ -543,7 +546,7 @@ export default function ProgramTab({
               {allWeeks.length === 0 ? (
                 <>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Program</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: (programAppearanceOn ? programColors.muted : '#4a4844'), marginBottom: '0.5rem' }}>Program</div>
                     <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Dit program.</h1>
                   </div>
                   {programError ? (
@@ -551,16 +554,16 @@ export default function ProgramTab({
                     // ærlig fejllinje + en vej til at prøve igen, ikke stilhed.
                     <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program kunne ikke hentes.</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7, marginBottom: '1.25rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), letterSpacing: '0.08em', lineHeight: 1.7, marginBottom: '1.25rem' }}>
                         Tjek din forbindelse og prøv igen.
                       </div>
-                      <button style={s.btnGhost} onClick={() => fetchProgram(athlete.id)}>Prøv igen</button>
+                      <button style={{ ...programTapTarget, ...programGhost }} onClick={() => fetchProgram(athlete.id)}>Prøv igen</button>
                     </div>
                   ) : (
                     <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', letterSpacing: '0.08em', lineHeight: 1.7 }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), letterSpacing: '0.08em', lineHeight: 1.7 }}>
                         Din coach sætter det op inden din næste træning.
                       </div>
                     </div>
@@ -569,7 +572,7 @@ export default function ProgramTab({
               ) : (
                 <>
                   {nextSession && <button type="button" data-program-next=""
-                    style={{ ...s.btnPrimary, minHeight: 48, width: '100%', marginBottom: 16, whiteSpace: 'normal', overflowWrap: 'anywhere' }}
+                    style={{ ...programTapTarget, ...s.btnPrimary, minHeight: 48, width: '100%', marginBottom: 16, whiteSpace: 'normal', overflowWrap: 'anywhere' }}
                     onClick={() => {
                       goToWeek(nextSession.index)
                       setProgOpenSession(nextSession.sessionId)
@@ -602,7 +605,7 @@ export default function ProgramTab({
                     )
                   })()}
                   {!readOnly && isCurrentWeek && !readinessLog && (
-                    <button type="button" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
+                    <button type="button" onClick={openReadiness} style={{ ...programTapTarget, display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
                       <span style={{ color: '#c8923a', fontSize: '0.9rem', flexShrink: 0 }}>◐</span>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5 }}>Log dagens parathed for en tilpasset anbefaling →</span>
                     </button>
@@ -616,7 +619,7 @@ export default function ProgramTab({
                       <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 } : {}) }}>
                         <button
-                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
+                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
                           disabled={viewingWeekIdx === 0}
                           onClick={() => {
                             const ni = viewingWeekIdx - 1
@@ -629,15 +632,15 @@ export default function ProgramTab({
                         <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem', ...(programAppearanceOn ? { gridColumn: '1 / -1', gridRow: 1, minWidth: 0 } : {}) }}>
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
                             Uge {viewedWeek.week_number}{viewedRange ? ` · ${viewedRange}` : ''}
-                            {isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· planlagt</span>}
-                            {!isCurrentWeek && !isFutureWeek && <span style={{ color: '#4a4844', marginLeft: '0.5em' }}>· historisk</span>}
+                            {isFutureWeek && <span style={{ color: (programAppearanceOn ? programColors.muted : '#4a4844'), marginLeft: '0.5em' }}>· planlagt</span>}
+                            {!isCurrentWeek && !isFutureWeek && <span style={{ color: (programAppearanceOn ? programColors.muted : '#4a4844'), marginLeft: '0.5em' }}>· historisk</span>}
                           </div>
                           {!ugeFoerst && viewedWeek.block_name && (
                             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#edeae2', marginTop: '0.1rem' }}>{viewedWeek.block_name}</div>
                           )}
                         </div>
                         <button
-                          style={{ ...s.btnGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx >= allWeeks.length - 1 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
+                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx >= allWeeks.length - 1 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
                           disabled={viewingWeekIdx >= allWeeks.length - 1}
                           onClick={() => {
                             const ni = viewingWeekIdx + 1
@@ -655,7 +658,7 @@ export default function ProgramTab({
                       {!isCurrentWeek && (
                         <div style={{ textAlign: 'center', marginTop: '0.6rem' }}>
                           <button
-                            style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
+                            style={{ ...programTapTarget, ...programGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
                             onClick={() => {
                               if (programAppearanceOn) { goToWeek(activeWeekIdx); return }
                               setViewingWeekIdx(activeWeekIdx)
@@ -751,13 +754,13 @@ export default function ProgramTab({
                               {!readOnly && !upcomingPreview && !isDone && totalSets > 0 && (
                                 <>
                                   <button
-                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
+                                    style={{ ...programTapTarget, ...programGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
                                     disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
                                     {...a11y({ type: 'button', 'aria-label': `Spring resten over · ${sessionContext}` })}
                                     onClick={e => { e.stopPropagation(); askConfirm('Spring de resterende sæt over? De markeres som ikke gennemført, så træningen lukkes.', () => skipRemainingSets(session)) }}
                                   >{pendingSessionAction === `${session.id}:skip` ? '...' : 'Spring resten over'}</button>
                                   <button
-                                    style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
+                                    style={{ ...programTapTarget, ...programGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
                                     disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
                                     {...a11y({ type: 'button', 'aria-label': `Auto-udfyld · ${sessionContext}` })}
                                     onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps? Brug kun hvis du faktisk lavede sættene.', () => autoCompleteSession(session)) }}
@@ -801,14 +804,14 @@ export default function ProgramTab({
                                         if (allSetsLogged) return null
                                         if (skipConfirmEx === ex.id) return (
                                           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0 }}>
-                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', letterSpacing: '0.06em' }}>Er du sikker?</span>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), letterSpacing: '0.06em' }}>Er du sikker?</span>
                                             <button
-                                              style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: '#e05555', borderColor: 'rgba(224,85,85,0.3)' }}
+                                              style={{ ...programTapTarget, ...programGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: '#e05555', borderColor: 'rgba(224,85,85,0.3)' }}
                                               {...a11y({ type: 'button', 'aria-label': `Ja, spring øvelsen over · ${exerciseContext}` })}
                                               onClick={() => { skipExercise(ex); setSkipConfirmEx(null) }}
                                             >Ja</button>
                                             <button
-                                              style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem' }}
+                                              style={{ ...programTapTarget, ...programGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem' }}
                                               {...a11y({ type: 'button', 'aria-label': `Annuller spring over · ${exerciseContext}` })}
                                               onClick={() => setSkipConfirmEx(null)}
                                             >Annuller</button>
@@ -816,7 +819,7 @@ export default function ProgramTab({
                                         )
                                         return (
                                           <button
-                                            style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                            style={{ ...programTapTarget, ...programGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: (programAppearanceOn ? programColors.muted : '#4a4844'), borderColor: 'rgba(237,234,226,0.08)' }}
                                             {...a11y({ type: 'button', 'aria-label': `Spring ${label.toLowerCase()} over · ${exerciseContext}` })}
                                             onClick={() => setSkipConfirmEx(ex.id)}
                                           >Spring {label.toLowerCase()} over</button>
@@ -832,12 +835,12 @@ export default function ProgramTab({
                                         ) : (() => {
                                           const s = suggestNextWeight(ex.name, ex.intensity, ex.reps)
                                           if (!s) return null
-                                          if (s.stop) return <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginBottom: '0.2rem' }}>{SMERTE_LINJE}</div>
+                                          if (s.stop) return <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), marginBottom: '0.2rem' }}>{SMERTE_LINJE}</div>
                                           const diff = s.weight - s.baseWeight
                                           const diffStr = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : '='
                                           return (
                                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
-                                              Forslag: {s.weight} kg <span style={{ color: '#7a7770' }}>({diffStr} kg · RPE {s.fromRpe})</span>{s.basisDates && <small>Grundlag: {s.basisDates.join(', ')}</small>}
+                                              Forslag: {s.weight} kg <span style={{ color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>({diffStr} kg · RPE {s.fromRpe})</span>{s.basisDates && <small>Grundlag: {s.basisDates.join(', ')}</small>}
                                             </div>
                                           )
                                         })())}
@@ -846,8 +849,8 @@ export default function ProgramTab({
                                           const label = `${d.getDate()}/${d.getMonth() + 1}`
                                           const setsStr = sets.map(s => `${s.weight}×${s.reps}${s.rpe ? ` @${s.rpe}` : ''}`).join('  ')
                                           return (
-                                            <div key={date} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#4a4844', marginBottom: '0.1rem' }}>
-                                              <span style={{ color: '#7a7770', marginRight: '0.5rem' }}>{label}</span>{setsStr}
+                                            <div key={date} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), marginBottom: '0.1rem' }}>
+                                              <span style={{ color: (programAppearanceOn ? programColors.muted : '#7a7770'), marginRight: '0.5rem' }}>{label}</span>{setsStr}
                                             </div>
                                           )
                                         })}
@@ -860,7 +863,7 @@ export default function ProgramTab({
                                       </> : [ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`, ex.intensity && ex.intensity].filter(Boolean).join(' · ')}
                                     </div>}
                                     {ex.note && (
-                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770', marginTop: '0.1rem', fontStyle: 'italic' }}>{ex.note}</div>
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), marginTop: '0.1rem', fontStyle: 'italic' }}>{ex.note}</div>
                                     )}
                                   </div>
 
@@ -896,7 +899,7 @@ export default function ProgramTab({
                                           })}
                                         >
                                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Opvarmningssæt</span>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>Opvarmningssæt</span>
                                             {isEditingWeight ? (
                                               <input
                                                 {...a11y({ 'aria-label': `Arbejdsvægt til opvarmning · ${exerciseContext}` })}
@@ -921,14 +924,14 @@ export default function ProgramTab({
                                               />
                                             ) : (
                                               <span
-                                                style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: exWarmupWeightOverride[exKey] ? '#c8923a' : '#7a7770', textDecoration: 'underline dotted', cursor: 'text' }}
+                                                style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: exWarmupWeightOverride[exKey] ? '#c8923a' : (programAppearanceOn ? programColors.muted : '#7a7770'), textDecoration: 'underline dotted', cursor: 'text' }}
                                                 onClick={e => { e.stopPropagation(); setExWarmupWeightEditing(exKey) }}
                                               >{w}kg</span>
                                             )}
                                             {doneCnt > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#6cba6c' }}>{doneCnt}/{sets.length}</span>}
                                             {usingOwn && <span title="Genbruger dine egne vægte fra sidste gang (samme øvelse, arbejdsvægt inden for 5%)" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.42rem', letterSpacing: '0.06em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.05rem 0.3rem' }}>{vaerdF6 === true ? 'Din lokale rettelse af opvarmningen' : 'dine sidste'}</span>}
                                           </div>
-                                          <span style={{ color: '#4a4844', fontSize: '0.55rem' }}>{isOpen ? '▲' : '▼'}</span>
+                                          <span style={{ color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontSize: '0.55rem' }}>{isOpen ? '▲' : '▼'}</span>
                                         </div>
                                         {isOpen && (
                                           <div style={{ padding: '0 0.75rem 0.6rem' }}>
@@ -949,7 +952,7 @@ export default function ProgramTab({
                                                   <div style={{ width: '14px', height: '14px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                                     {done && <span style={{ color: '#6cba6c', fontSize: '0.55rem', lineHeight: 1 }}>✓</span>}
                                                   </div>
-                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: done ? '#4a4844' : '#c8923a', minWidth: '28px' }}>{ws.pct}</span>
+                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: done ? (programAppearanceOn ? programColors.muted : '#4a4844') : '#c8923a', minWidth: '28px' }}>{ws.pct}</span>
                                                   {isEditingSet ? (
                                                     <input
                                                       {...a11y({ 'aria-label': `Opvarmningsvægt, sæt ${i + 1} · ${exerciseContext}` })}
@@ -966,16 +969,16 @@ export default function ProgramTab({
                                                     />
                                                   ) : (
                                                     <span
-                                                      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.82rem', color: done ? '#4a4844' : '#edeae2', textDecoration: done ? 'line-through' : 'underline dotted', cursor: 'text' }}
+                                                      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.82rem', color: done ? (programAppearanceOn ? programColors.muted : '#4a4844') : '#edeae2', textDecoration: done ? 'line-through' : 'underline dotted', cursor: 'text' }}
                                                       onClick={e => { e.stopPropagation(); setWarmupSetEditing(editKey) }}
                                                     >{ws.weight}kg</span>
                                                   )}
-                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>× {ws.reps}</span>
+                                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>× {ws.reps}</span>
                                                   <button
                                                     {...a11y({ type: 'button', 'aria-label': `Spring opvarmningssæt ${i + 1} over · ${exerciseContext}` })}
                                                     title="Spring dette opvarmningssæt over"
                                                     onClick={e => { e.stopPropagation(); korrigerSæt(i, { skipped: true }) }}
-                                                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.6rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box' }}
+                                                    style={{ ...programTapTarget, marginLeft: 'auto', background: 'none', border: 'none', color: (programAppearanceOn ? programColors.muted : '#4a4844'), cursor: 'pointer', fontSize: '0.6rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box' }}
                                                   >✕</button>
                                                 </div>
                                               )
@@ -990,7 +993,7 @@ export default function ProgramTab({
                                   {!readOnly && isCurrentWeek && (() => {
                                     const dur = parseDuration(ex.reps, ex.intensity)
                                     if (!dur) return null
-                                    return <ExerciseTimer key={`tmr_${ex.id}`} duration={dur.seconds} label={dur.text} {...a11y({ accessible: true, context: exerciseContext })} />
+                                    return <ExerciseTimer key={`tmr_${ex.id}`} duration={dur.seconds} label={dur.text} {...a11y({ accessible: true, context: exerciseContext })} entropi2={programAppearanceOn} />
                                   })()}
 
                                   {Array.from({ length: ex.sets || 0 }, (_, i) => i + 1).map(setNum => {
@@ -1000,17 +1003,17 @@ export default function ProgramTab({
                                     if (readOnly || !isCurrentWeek) {
                                       return (
                                         <div key={setNum} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
                                           {logged?.skipped ? (
-                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844' }}>✕ Sprunget over</span>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: (programAppearanceOn ? programColors.muted : '#4a4844') }}>✕ Sprunget over</span>
                                           ) : logged ? (
                                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'baseline' }}>
                                               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{logged.weight}kg × {logged.reps_completed}</span>
-                                              {logged.rpe_actual != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#7a7770' }}>RPE {logged.rpe_actual}</span>}
-                                              {logged.note && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#4a4844', fontStyle: 'italic' }}>{visibleRpeNote(logged.note)}</span>}
+                                              {logged.rpe_actual != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>RPE {logged.rpe_actual}</span>}
+                                              {logged.note && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontStyle: 'italic' }}>{visibleRpeNote(logged.note)}</span>}
                                             </div>
                                           ) : (
-                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844' }}>—</span>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: (programAppearanceOn ? programColors.muted : '#4a4844') }}>—</span>
                                           )}
                                         </div>
                                       )
@@ -1029,11 +1032,11 @@ export default function ProgramTab({
 
                                     if (logged?.skipped) return (
                                       <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
-                                        <span style={{ color: '#4a4844', fontSize: '1rem' }}>✕</span>
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
+                                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
+                                        <span style={{ color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontSize: '1rem' }}>✕</span>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
                                         <button
-                                          style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: '#7a7770' }}
+                                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}
                                           {...a11y({ type: 'button', 'aria-label': `Fortryd spring over · ${setContext}` })}
                                           onClick={() => unskipSet(ex.id, setNum)}
                                         >Fortryd</button>
@@ -1043,7 +1046,7 @@ export default function ProgramTab({
                                     return (
                                       <div key={setNum} style={{ marginBottom: '0.75rem' }}>
                                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>
                                             {label} {setNum}
                                           </div>
                                           <input
@@ -1082,12 +1085,12 @@ export default function ProgramTab({
                                               den mest gentagne tryk-handling i appen. min-height 44px holder dem
                                               inden for anbefalet tommelfinger-trykflade, også med svedige hænder. */}
                                           <button
-                                            style={{ ...s.btnPrimary, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
+                                            style={{ ...programTapTarget, ...s.btnPrimary, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
                                             {...a11y({ type: 'button', 'aria-label': `${logged ? 'Gemt ✓, opdatér sæt' : 'Log sæt'} · ${setContext}` })}
                                             onClick={() => logSet(ex.id, setNum, ex.sets, repsToLog, plannedRpe)}
                                           >{logged ? (programAppearanceOn ? 'Gemt ✓' : '✓') : 'Log'}</button>
                                           <button
-                                            style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                            style={{ ...programTapTarget, ...programGhost, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), borderColor: 'rgba(237,234,226,0.08)' }}
                                             {...a11y({ type: 'button', 'aria-label': `Spring over · ${setContext}` })}
                                             onClick={() => skipSet(ex.id, setNum, plannedRpe)}
                                           >Spring over</button>
@@ -1097,10 +1100,10 @@ export default function ProgramTab({
                                             <button
                                               {...a11y({ type: 'button', 'aria-label': `Vælg RPE ${input.rpe || (plannedRpe != null ? plannedRpe : '–')} · ${setContext}`, 'aria-expanded': openRpePicker === key })}
                                               onClick={() => setOpenRpePicker(openRpePicker === key ? null : key)}
-                                              style={{
+                                              style={{ ...programTapTarget,
                                                 background: input.rpe ? 'rgba(200,146,58,0.15)' : 'rgba(237,234,226,0.04)',
                                                 border: `1px solid ${input.rpe ? 'rgba(200,146,58,0.4)' : 'rgba(237,234,226,0.13)'}`,
-                                                color: input.rpe ? '#c8923a' : '#7a7770',
+                                                color: input.rpe ? '#c8923a' : (programAppearanceOn ? programColors.muted : '#7a7770'),
                                                 fontFamily: "'IBM Plex Mono', monospace",
                                                 fontSize: '0.6rem',
                                                 letterSpacing: '0.08em',
@@ -1140,7 +1143,7 @@ export default function ProgramTab({
                                                         setLogInputs(p => chooseRpeInput(p, key, v))
                                                         setOpenRpePicker(null)
                                                       }}
-                                                      style={{
+                                                      style={{ ...programTapTarget,
                                                         display: 'block',
                                                         width: '100%',
                                                         background: isSelected ? 'rgba(200,146,58,0.15)' : 'transparent',
@@ -1164,10 +1167,10 @@ export default function ProgramTab({
                                             {...a11y({ type: 'button', 'aria-label': `Hvad er RPE? · ${setContext}` })}
                                             onClick={() => setShowRpeGuide(true)}
                                             title="Hvad er RPE? Din egen vurdering af, hvor hårdt et sæt føltes. Det er subjektivt og afhænger af dig og dagsformen, så to personer kan give samme sæt forskellige tal. Tallet svarer til gentagelser i reserve: 10 betyder ingen tilbage, 9 én, 8 to, og så videre. Vurderingen kan ramme ved siden af, og i gennemsnit har man omkring én gentagelse mere tilbage, end man tror. Den bliver mere præcis, jo tættere på grænsen sættet er. Kilderne er uenige om erfaring: én finder, at øvede vurderer bedre, andre finder ingen forskel. Er du ny, så øv dig i at notere tallet, men lad det ikke stå alene."
-                                            style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', padding: '0.3rem 0.2rem', lineHeight: 1, flexShrink: 0 }}
+                                            style={{ ...programTapTarget, background: 'none', border: 'none', color: (programAppearanceOn ? programColors.muted : '#4a4844'), cursor: 'pointer', fontSize: '0.75rem', padding: '0.3rem 0.2rem', lineHeight: 1, flexShrink: 0 }}
                                           >ℹ</button>
                                           <input
-                                            style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
+                                            style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), fontStyle: 'italic' }}
                                             {...a11y({ 'aria-label': `Note · ${setContext}` })}
                                             type="text" placeholder="Tilføj note..." value={input.note}
                                             onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], note: e.target.value } }))}
@@ -1195,7 +1198,7 @@ export default function ProgramTab({
                               )
                             })}
                             {(session.exercises || []).length === 0 && (
-                              <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen øvelser i denne træning endnu.</div>
+                              <div style={{ fontSize: '0.85rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontStyle: 'italic' }}>Ingen øvelser i denne træning endnu.</div>
                             )}
                             {programAppearanceOn && !readOnly && isDone && isCurrentWeek && !!session.athlete_rating && (
                               <div role="status" style={{ color: programColors.done, marginTop: '1rem' }}>
@@ -1215,7 +1218,7 @@ export default function ProgramTab({
                                           {...a11y({ type: 'button', 'aria-label': `Vurder træningen ${n} af 5 · ${sessionContext}`, 'aria-pressed': fi.rating === n })}
                                           onClick={() => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), rating: n } }))}
                                           // G13: 40×40px, lige under 44px — samme metode som F13-F16 (ordre 68).
-                                          style={{ width: '44px', height: '44px', boxSizing: 'border-box', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
+                                          style={{ ...programTapTarget, width: '44px', height: '44px', boxSizing: 'border-box', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : (programAppearanceOn ? programColors.muted : '#7a7770'), fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
                                         >{programAppearanceOn && fi.rating === n ? `${n} ✓` : n}</button>
                                       )
                                     })}
@@ -1230,9 +1233,9 @@ export default function ProgramTab({
                                   onChange={e => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), comment: e.target.value } }))}
                                 />
                                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
-                                  <button {...a11y({ type: 'button', 'aria-label': `Spring træningsfeedback over · ${sessionContext}` })} style={s.btnGhost} onClick={() => setDismissedFeedback(p => new Set([...p, session.id]))}>Spring over</button>
+                                  <button {...a11y({ type: 'button', 'aria-label': `Spring træningsfeedback over · ${sessionContext}` })} style={{ ...programTapTarget, ...programGhost }} onClick={() => setDismissedFeedback(p => new Set([...p, session.id]))}>Spring over</button>
                                   <button
-                                    style={{ ...s.btnPrimary, opacity: !(feedbackInputs[session.id]?.rating) || pendingSessionAction === `${session.id}:feedback` ? 0.4 : 1 }}
+                                    style={{ ...programTapTarget, ...s.btnPrimary, opacity: !(feedbackInputs[session.id]?.rating) || pendingSessionAction === `${session.id}:feedback` ? 0.4 : 1 }}
                                     {...a11y({ type: 'button', 'aria-label': `Gem feedback · ${sessionContext}` })}
                                     onClick={() => saveFeedback(session.id)}
                                     disabled={!feedbackInputs[session.id]?.rating || pendingSessionAction === `${session.id}:feedback`}
@@ -1248,7 +1251,7 @@ export default function ProgramTab({
 
                   {(viewedWeek.sessions || []).length === 0 && (
                     <div style={s.card}>
-                      <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
+                      <div style={{ fontSize: '0.85rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
                     </div>
                   )}
                   {ugeFoerst && (
