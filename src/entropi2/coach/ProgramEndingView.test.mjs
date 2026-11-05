@@ -20,9 +20,9 @@ const text = n => Array.isArray(n) ? n.map(text).join(' ') : n == null || typeof
   typeof n === 'object' ? text(n.props?.children ?? n.children) : String(n)
 const view = (p = fixture(), openProfile) => ProgramEndingView({ context: coachHomeModel(p, today), openProfile })
 
-test('zero athletes has an honest empty state and no action', () => {
+test('zero athletes leaves no empty program-ending view or action', () => {
   assert.deepEqual(model(fixture([])), { state: 'ready', rows: [] })
-  assert.match(text(view(fixture([]))), /Ingen programmer slutter/)
+  assert.equal(view(fixture([])), null)
   assert.equal(nodes(view(fixture([]))).filter(n => n.type === 'button').length, 0)
 })
 
@@ -53,16 +53,17 @@ test('last planned week wins even for unordered weeks; empty future weeks do not
   assert.equal(model(p).rows[0].endDate, today)
 })
 
-test('missing, malformed and partly undated weeks show unknown after known dates', () => {
+test('missing, malformed and partly undated weeks stay out of program endings', () => {
   const p = fixture([null, '2026-02-30', '2026-11-03', '2026-11-03T00:00:00Z', '2026-11-03'])
   p.calendarWeeks['synthetic-4'].push({ exercise_count: 1 })
   const result = model(p)
   assert.equal(result.rows[0].athlete.id, 'synthetic-2')
-  assert.equal(result.rows.filter(r => r.endDate === null).length, 4)
+  assert.equal(result.rows.length, 1)
   assert.equal(nodes(view(p)).filter(n => n.type === 'time').length, 1)
-  assert.match(text(view(p)), /Ukendt slutdato/)
+  assert.doesNotMatch(text(view(p)), /Ukendt slutdato/)
   p.calendarWeeks['synthetic-2'] = []
-  assert.equal(model(p).rows.every(r => r.endDate === null), true)
+  assert.equal(model(p).rows.length, 0)
+  assert.equal(view(p), null)
 })
 
 for (const [label, mutate] of Object.entries({
@@ -76,7 +77,7 @@ for (const [label, mutate] of Object.entries({
 })) test(`${label} data never claims a known end date or an empty result`, () => {
   const p = fixture(); mutate(p)
   assert.deepEqual(model(p), { state: 'unknown', rows: [] })
-  assert.match(text(view(p)), /Ukendt slutdato/)
+  assert.equal(view(p), null)
   assert.doesNotMatch(text(view(p)), /Ingen programmer slutter/)
 })
 

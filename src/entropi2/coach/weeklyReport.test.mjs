@@ -89,7 +89,9 @@ test('invalid plan count and missing RPE are explicit unknowns', () => {
   const p = fixture(); p.calendarWeeks.a[0].session_count = undefined
   p.coachActionsStatus.activity.rows.forEach(r => { r.rpe_actual = '' })
   assert.equal(row(p).training.planned, null); assert.equal(row(p).training.rpe, null)
-  assert.match(text(view(p)), /RPE-snit: ukendt/)
+  assert.doesNotMatch(text(view(p)), /RPE-snit/)
+  assert.match(text(view(p)), /Pas logget: 2/)
+  assert.doesNotMatch(text(view(p)), /af ukendt/)
 })
 test('nutrition rejects stale, malformed, foreign and duplicate data', () => {
   for (const change of [p => { p.coachNutrition.complete = false }, p => { p.coachNutrition.state = 'partial' },
@@ -100,13 +102,14 @@ test('nutrition rejects stale, malformed, foreign and duplicate data', () => {
     p => { p.coachNutrition.rows.push(p.coachNutrition.rows[0]) },
     p => { p.coachNutrition.targets.push(p.coachNutrition.targets[0]) }]) {
     const p = fixture(); change(p); assert.equal(row(p).nutrition, null)
-    assert.match(text(view(p)), /Kostdage logget: ukendt/)
+    assert.doesNotMatch(text(view(p)), /Kostdage logget|Proteinmål nået/)
   }
 })
 test('missing protein target preserves known logged day count', () => {
   const p = fixture(); p.coachNutrition.targets = []
   assert.equal(row(p).nutrition.logged, 2); assert.equal(row(p).nutrition.reached, null)
-  assert.match(text(view(p)), /Proteinmål: ikke angivet/)
+  assert.match(text(view(p)), /Kostdage logget: 2\/7/)
+  assert.doesNotMatch(text(view(p)), /Proteinmål/)
 })
 test('Danish midnight and week start exclude prior days', () => {
   const p = fixture()

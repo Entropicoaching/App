@@ -22,6 +22,8 @@ export function adaptCoachState(props = {}, today = new Date()) {
     coachMorningData = {}, latestByTrack = {}, unreadByTrack = {},
     pendingByTrack = {}, noteSignalEnabled = false, inboxRefreshing = false,
     messageInboxError, videoReviewQueueError } = props
+  const reads = [coachActionsStatus.activity, coachMorningData.logs,
+    coachMorningData.messages, coachMorningData.videos]
   const owner = session?.user?.id
   const validContext = Boolean(day) && typeof owner === 'string' && owner.length > 0 &&
     readContext?.coachId === owner && readContext.day === day &&
@@ -58,8 +60,10 @@ export function adaptCoachState(props = {}, today = new Date()) {
     rosterReady: Boolean(validContext && !loading && !loadError),
     messages: source('messages', messageInboxError), videos: source('videos', videoReviewQueueError),
     logs: source('logs'), latestByTrack, unreadByTrack, pendingByTrack, noteSignalEnabled,
+    isLoading: Boolean(loading || inboxRefreshing || coachActionsStatus.calendar === 'loading' ||
+      coachActionsStatus.e2Calendar?.pending > 0 || reads.some(read => read?.state === 'loading')),
     hasError: Boolean(loadError || messageInboxError || videoReviewQueueError ||
-      Object.values(coachActionsStatus).includes('error')) }
+      Object.values(coachActionsStatus).includes('error') || reads.some(read => read?.state === 'error')) }
 }
 
 export function coachHomeModel(props = {}, today = new Date()) {

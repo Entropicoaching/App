@@ -49,10 +49,11 @@ export function SessionNotesView({ model, athletes, onSelect, onRetry }) {
     model.state === 'loading' && h('p', { role: 'status' }, 'Henter pasnoter …'),
     model.state === 'error' && h('p', { role: 'alert' }, 'Pasnoterne kunne ikke hentes. ',
       onRetry && h('button', { type: 'button', style: { minHeight: 44, font: 'inherit' }, onClick: onRetry }, 'Prøv igen')),
-    !['loaded', 'loading', 'error'].includes(model.state) && h('p', { role: 'status' }, model.state === 'select'
-      ? 'Vælg en atlet for at se pasnoter.' : 'Pasgrundlaget er ukendt. Detaljerede logs er ikke tilgængelige for valget.'),
+    model.state === 'unknown' && model.athlete && h('p', { role: 'status' },
+      'Pasnoterne skal opdateres. ', onRetry && h('button', {
+        type: 'button', style: { minHeight: 44, font: 'inherit' }, onClick: onRetry }, 'Prøv igen')),
     model.state === 'loaded' && model.entries.length === 0 && h('p', { role: 'status' },
-      'Ingen noter eller markeringer i de indlæste pas de seneste 7 dage.'),
+      'Ingen pasnoter de seneste 7 dage'),
     model.entries.length > 0 && h('ul', { style: { listStyle: 'none', padding: 0 } },
       ...model.entries.map(entry => h('li', { key: entry.key,
         style: { border: '1px solid #59564c', borderRadius: 12, padding: 16, marginBlock: 12 } },

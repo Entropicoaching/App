@@ -10,29 +10,26 @@ export function programEndingModel(context) {
   const rows = buildProgramOverblik({ athletes: context.athletes,
     calendarWeeks: context.plans, today: context.day }).flatMap(entry => {
     const unknown = hasUndatedPlannedWeek(context.plans[entry.athlete.id]) || entry.lastDate === null
-    if (unknown) return [{ athlete: entry.athlete, endDate: null }]
+    if (unknown) return []
     return entry.daysLeft >= 0 && entry.daysLeft <= 7
       ? [{ athlete: entry.athlete, endDate: entry.lastDate }] : []
   })
-  rows.sort((a, b) => (a.endDate ?? '9999').localeCompare(b.endDate ?? '9999') ||
+  rows.sort((a, b) => a.endDate.localeCompare(b.endDate) ||
     a.athlete.name.localeCompare(b.athlete.name, 'da') || a.athlete.id.localeCompare(b.athlete.id))
   return { state: 'ready', rows }
 }
 
 export default function ProgramEndingView({ context, openProfile }) {
   const model = programEndingModel(context)
+  if (model.state !== 'ready' || model.rows.length === 0) return null
   const canOpen = typeof openProfile === 'function'
   return h('section', { 'aria-label': 'Programmer der slutter snart' },
     h('h2', null, 'Programmer der slutter snart'),
-    h('p', null, 'Sidste planlagte uge slutter i dag eller inden for 7 dage. Ukendte slutdatoer vises nederst.'),
-    model.state === 'unknown' ? h('p', { role: 'status' }, 'Programgrundlaget er ukendt. Ukendt slutdato.') :
-      model.rows.length === 0 ? h('p', { role: 'status' }, 'Ingen programmer slutter inden for 7 dage i de indlæste data.') :
+    h('p', null, 'Sidste planlagte uge slutter i dag eller inden for 7 dage.'),
         h('ul', { style: { listStyle: 'none', padding: 0 } }, ...model.rows.map(row =>
           h('li', { key: row.athlete.id, style: { marginBlock: 16 } },
             h('strong', null, row.athlete.name),
-            h('p', null, row.endDate
-              ? h('span', null, 'Slutter ', h('time', { dateTime: row.endDate }, row.endDate.split('-').reverse().join('.')))
-              : 'Ukendt slutdato'),
+            h('p', null, 'Slutter ', h('time', { dateTime: row.endDate }, row.endDate.split('-').reverse().join('.'))),
             h('button', { type: 'button', disabled: !canOpen,
               'aria-label': `Planlæg næste blok for ${row.athlete.name}`,
               style: { minHeight: 48, padding: '12px 16px', font: 'inherit', color: '#edeae2',

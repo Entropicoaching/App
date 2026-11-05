@@ -702,6 +702,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
           }}
           {...e2Beskeder}
           videoReviewQueueError={entropi2VideoQueueError(coachMorningData.videos)}
+          reloadOverview={async () => { if (loadError) await fetchAthletes(); await refreshCoachInbox() }}
           notesClient={supabase}
           noteSignalEnabled={COACH_NOTE_SIGNAL_ENABLED} coachNutrition={e2CoachNutrition}
           readContext={e2ReadContext} />

@@ -79,3 +79,7 @@ export function weeklyReportModel(props = {}, today = new Date()) {
     rows: data.athletes.map(athlete => ({ athlete, training: training(data, athlete),
       nutrition: nutrition.get(athlete.id) ?? null })) }
 }
+
+// Presentation only: retain the full model for the existing athlete workspace.
+export const hasWeeklyReportData = ({ training: t, nutrition: n }) =>
+  t.start !== null || t.completed !== null || t.planned !== null || t.rpe !== null || n !== null

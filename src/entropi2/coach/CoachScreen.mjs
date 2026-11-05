@@ -1,15 +1,15 @@
 import { createElement as h, useEffect, useState } from 'react'
 import { s, initials } from '../../dashboardShared.js'
 import WeeklyReport from './WeeklyReport.mjs'
-import { weeklyReportModel } from './weeklyReportModel.mjs'
+import { weeklyReportModel, hasWeeklyReportData } from './weeklyReportModel.mjs'
 import CoachAthleteWorkspace from './CoachAthleteWorkspace.mjs'
 import { coachAthleteWorkspace } from './coachWorkspaceModel.mjs'
 import CoachSessionNotes from './SessionNotesView.mjs'
-import ProgramEndingView from './ProgramEndingView.mjs'
-import ProgramOverblik from '../../dashboard/ProgramOverblikView.mjs'
+import ProgramEndingView, { programEndingModel } from './ProgramEndingView.mjs'
+import CoachProgramsView from './CoachProgramsView.mjs'
 import { CoachTeamRegistrations } from '../tracking/hold/CoachTeam.mjs'
 import { coachTeamModel } from './coachTeamModel.mjs'
-import { coachHomeModel, hasUndatedPlannedWeek, openCoachRow, selectCoachTab } from './coachModel.mjs'
+import { coachHomeModel, openCoachRow, selectCoachTab } from './coachModel.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
   background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
@@ -40,8 +40,8 @@ export function CoachView(input = {}) {
   const inbox = tab === 'inbox'
   const report = inbox ? null : weeklyReportModel(props, today)
   const team = inbox ? null : coachTeamModel({ enabled: true, props, context: model })
-  const unknownPrograms = model.athletes.filter(a => hasUndatedPlannedWeek(model.plans[a.id]))
-  const datedPrograms = model.athletes.filter(a => !hasUndatedPlannedWeek(model.plans[a.id]))
+  const ending = inbox ? null : programEndingModel(model)
+  const reload = typeof props.reloadOverview === 'function' ? props.reloadOverview : null
   const available = typeof props.openProfile === 'function' && typeof props.openCoachPriorityItem === 'function'
   const canTab = typeof props.setView === 'function' && typeof props.setSelectedAthlete === 'function'
   const rowButton = (row, index) => h('li', { key: row.key }, h('button', {
@@ -71,14 +71,17 @@ export function CoachView(input = {}) {
     h('p', { style: { marginTop: 20, marginBottom: 0, color: '#b9b4a8' } }, `Coach · ${coachDay(model.day)}`),
     h('h1', { style: { fontFamily: 'Georgia, serif', fontSize: 36, lineHeight: 1.15 } }, inbox ? 'Indbakke' : 'Det vigtigste først.'),
     !available && h('p', { role: 'alert' }, 'Navigationen er ikke tilsluttet.'),
-    model.state === 'empty' ? h('p', { role: 'status' }, 'Ingen synlige atleter.') :
-      model.state !== 'ready' && h('p', { role: 'status' }, model.hasError
-        ? 'Nogle data kunne ikke hentes. Overblikket er ufuldstændigt.'
-        : 'Grundlaget afventer opdatering. Ukendt antal handlinger.'),
     h('section', { 'aria-label': inbox ? 'Ulæste beskeder og indsendelser' : 'Atleter der kræver handling' },
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
+      model.hasError ? h('p', { role: 'alert' }, 'Nogle data kunne ikke hentes. Overblikket er ufuldstændigt. ',
+        reload && h('button', { type: 'button', style: button, disabled: model.isLoading, onClick: reload }, 'Prøv igen')) :
+        model.isLoading ? h('p', { role: 'status' }, 'Opdaterer overblikket…') :
+          model.state === 'empty' ? h('p', { role: 'status' }, 'Ingen synlige atleter.') :
+            !model.complete && h('p', { role: 'status' }, 'Overblikket skal opdateres. ',
+              reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket')),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(rowButton)) :
-        model.complete && h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.')),
+        model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError &&
+          h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.')),
     team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
       h(CoachTeamRegistrations, { enabled: true, model: team })),
@@ -90,7 +93,7 @@ export function CoachView(input = {}) {
             athlete: row.athlete, data: coachAthleteWorkspace(props, model, row.athlete, report),
             onOpen: typeof props.openProfile === 'function'
               ? () => props.openProfile(row.athlete, 'hub', 'list') : undefined }))))),
-    !inbox && model.rosterReady && model.athletes.length > 0 && h('details', {
+    !inbox && report.ready && report.rows.some(hasWeeklyReportData) && h('details', {
       'aria-label': 'Ugerapport', 'data-coach-fold': 'ugerapport', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Ugerapport')),
       h(WeeklyReport, { ...props, today })),
@@ -107,28 +110,19 @@ export function CoachView(input = {}) {
         ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,
           style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },
           h('strong', null, a.name), h('span', { style: { display: 'block' } }, model.nutrition.get(a.id).text))))),
-    !inbox && h('details', { 'aria-label': 'Noter fra passene', 'data-coach-fold': 'noter', style: fold },
-      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Noter fra passene')),
+    !inbox && model.rosterReady && model.athletes.length > 0 && h('details', {
+      'aria-label': 'Noter fra passene', 'data-coach-fold': 'noter', style: fold },
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Noter fra passene · Vælg atlet')),
       h(CoachSessionNotes, { source: props, context: model })),
-    !inbox && h('details', { 'aria-label': 'Programmer der slutter', 'data-coach-fold': 'programslut', style: fold },
+    !inbox && ending.rows.length > 0 && h('details', { 'aria-label': 'Programmer der slutter', 'data-coach-fold': 'programslut', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Programmer der slutter')),
       h(ProgramEndingView, { context: model, openProfile: props.openProfile })),
     inbox ? model.rosterReady && h('details', { 'aria-label': 'Alle samtaler', 'data-coach-fold': 'samtaler', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Alle samtaler (${model.athletes.length})`)),
       ...model.athletes.map(a => h('button', { key: a.id, type: 'button', style: { ...button, margin: 4 },
         disabled: !available, onClick: available ? () => props.openProfile(a, 'beskeder', 'inbox') : undefined }, a.name))) :
-      h('details', { 'aria-label': 'Ugens programmer', 'data-coach-fold': 'programmer', style: fold },
+      model.rosterReady && model.calendarReady && model.athletes.length > 0 && h('details', {
+        'aria-label': 'Ugens programmer', 'data-coach-fold': 'programmer', style: fold },
         h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Ugens programmer (${model.athletes.length})`)),
-        model.calendarReady && available ? h('div', null,
-          // Keep uncertain athletes visible without claiming the dated subset is complete.
-          unknownPrograms.length > 0 && h('ul', { style: { listStyle: 'none', padding: 0 } },
-            ...unknownPrograms.map(a => h('li', { key: a.id }, h('button', {
-              type: 'button', style: { ...button, width: '100%', marginBlock: 6 },
-              onClick: () => props.openProfile(a, 'program', 'list') },
-              h('strong', null, a.name), h('span', { style: { display: 'block' } },
-                'Programgrundlaget er ukendt. En planlagt uge mangler en gyldig dato.'))))),
-          (datedPrograms.length > 0 || unknownPrograms.length === 0) && h(ProgramOverblik, { athletes: datedPrograms, calendarWeeks: model.plans,
-            hiddenAthleteIds: new Set(), today: model.day, loading: false, loadError: false,
-            openProfile: (a, target) => props.openProfile(a, target, 'list') })) :
-          h('p', { role: 'status' }, 'Programgrundlaget er ukendt.')))
+        h(CoachProgramsView, { context: model, openProfile: props.openProfile })))
 }

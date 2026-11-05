@@ -111,10 +111,10 @@ for (const [label, mutate] of Object.entries({
 test('missing and incomplete history is not described as no notes', () => {
   const p = fixture(); p.athleteLogs = []
   assert.equal(model(p).state, 'unknown')
-  assert.match(content(view(model(p))), /Pasgrundlaget er ukendt/)
+  assert.match(content(view(model(p))), /Pasnoterne skal opdateres/)
   p.athleteLogs.readEvidence = { athleteId: 'synthetic-a', complete: true }
   assert.equal(model(p).state, 'loaded')
-  assert.match(content(view(model(p))), /Ingen noter eller markeringer i de indlæste pas/)
+  assert.match(content(view(model(p))), /Ingen pasnoter de seneste 7 dage/)
 })
 
 test('duplicate rows deduplicate but identical notes on different sets remain', () => {

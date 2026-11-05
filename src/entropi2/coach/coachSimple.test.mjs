@@ -17,16 +17,16 @@ const nodes = n => Array.isArray(n) ? n.flatMap(nodes) :
   !n || typeof n !== 'object' ? [] : [n, ...nodes(n.props?.children ?? n.children)]
 const label = n => n.props?.['aria-label']
 
-test('coach home: "Kræver dit blik" comes first; kost and programmes are folded, nothing removed', () => {
+test('coach home: attention comes first; only useful confirmed folds are mounted', () => {
   const all = nodes(CoachView(props('home')))
   const order = all.map(label).filter(Boolean)
   assert.ok(order.indexOf('Atleter der kræver handling') < order.indexOf('Kostoverblik'))
   const folds = all.filter(n => n.type === 'details').map(n => n.props['data-coach-fold'])
   // E2-KOBL-COACH1: atletliste og ugerapport er nye lukkede folde.
   // Runde 3: passenes noter (E2-COACH-PASNOTER1) er også foldet ind under det vigtigste.
-  // E2-COACH-PROGRAMSLUT1: programmer der slutter er sin egen fold (bevidst tilføjelse).
+  // Audit 1: no calendar receipt means no empty program folds.
   // Existing validated nutrition days make the team fold useful here.
-  assert.deepEqual(folds, ['hold', 'atleter', 'ugerapport', 'kost', 'noter', 'programslut', 'programmer'])
+  assert.deepEqual(folds, ['hold', 'atleter', 'ugerapport', 'kost', 'noter'])
   for (const d of all.filter(n => n.type === 'details')) assert.notEqual(d.props.open, true)
   assert.ok(all.some(n => n.props?.['data-coach-nutrition'] === 'athlete-1'), 'kost line still rendered inside the fold')
 })
