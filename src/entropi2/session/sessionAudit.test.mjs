@@ -34,14 +34,14 @@ test('missing optional plan fields and RPE disappear; known zero remains; reps a
   try {
     assert.match(plan(t).textContent, /0 kg/)
     assert.match(plan(t).textContent, /Intensitet: 0/)
-    assert.match(t.root.querySelector('[data-detail="history"]').textContent, /0 kg, 5 reps, RPE 0/)
+    assert.match(t.root.querySelector('[data-detail="history"]').textContent, /0 kg, 5 gent\., RPE 0/)
   } finally { t.dispose() }
 })
 
 test('confirmed log without RPE has no placeholder; early summary keeps count and remaining exercises', () => {
   const t = setup({}, { exerciseLogs: [{ exercise_id: 'lift', set_number: 1, weight: 80, reps_completed: 5 }] })
   try {
-    assert.match(t.root.querySelector('[data-detail="history"]').textContent, /80 kg, 5 reps/)
+    assert.match(t.root.querySelector('[data-detail="history"]').textContent, /80 kg, 5 gent\./)
     assert.doesNotMatch(t.root.querySelector('[data-detail="history"]').textContent, /RPE/)
     t.view.controller.finish()
     const summary = t.root.querySelector('[data-session-summary]').textContent

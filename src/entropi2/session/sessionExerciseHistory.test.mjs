@@ -41,6 +41,9 @@ test('Sidst is a native, initially closed fold; shows eight sets and calendar e1
     assert.equal(f.querySelector('svg').style.maxWidth, '520px')
     assert.equal(f.querySelector('time').getAttribute('datetime'), '2026-10-10')
     assert.equal(f.querySelector('details').open, false)
+    assert.match(f.textContent, /Tunge sæt har 1–8 gentagelser/)
+    assert.match(f.textContent, /kg × \(1 \+ gentagelser \/ 30\)/)
+    assert.doesNotMatch(f.textContent, /\breps\b/i)
     toggle(f, false); assert.equal(f.querySelector('[data-e2-exercise-history]'), null)
     assert.equal(t.writes, 0)
   } finally { t.dispose() }

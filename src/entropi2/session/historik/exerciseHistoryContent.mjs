@@ -48,7 +48,7 @@ export function exerciseHistoryContent(h, props = {}) {
             `${n(s.weight)} kg × ${s.reps}${s.rpe == null ? '' : ` @ RPE ${n(s.rpe)}`}`)))),
       Curve(h, { points: model.curve }),
       h('details', null, h('summary', { style: { minHeight: 44, paddingBlock: 10, boxSizing: 'border-box', cursor: 'pointer' } }, 'Om historikken'),
-        h('p', null, 'Op til otte seneste bekræftede sæt, nyeste først. Tunge sæt har 1–8 reps; lette sæt og deload er udeladt. Kun denne øvelses id vises.'),
-        h('p', null, 'Estimeret 1RM beregnes med Epley: kg × (1 + reps / 30). Det er et skøn, ikke et testet maksimum. Afstanden mellem datoer følger kalenderen.'))),
+        h('p', null, 'Op til otte seneste bekræftede sæt, nyeste først. Tunge sæt har 1–8 gentagelser; lette sæt og deload er udeladt. Kun denne øvelses id vises.'),
+        h('p', null, 'Estimeret 1RM beregnes med Epley: kg × (1 + gentagelser / 30). Det er et skøn, ikke et testet maksimum. Afstanden mellem datoer følger kalenderen.'))),
     model.omitted > 0 ? h('p', null, 'Sæt med ugyldige eller fremtidige værdier er udeladt.') : null)
 }

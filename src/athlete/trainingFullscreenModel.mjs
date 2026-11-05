@@ -33,7 +33,7 @@ export function createTrainingApproval(latest, changed) {
       const key = `${next.exercise.id}_${next.setNumber}`
       if (pending.has(key)) return false
       const values = trainingInput(input)
-      if (!values) { changed('Skriv vægt og hele reps. RPE er valgfri fra 0 til 10.'); return false }
+      if (!values) { changed('Skriv vægt og hele gentagelser. RPE er valgfri fra 0 til 10.'); return false }
       pending.add(key)
       changed('')
       try {

@@ -258,7 +258,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       if (given(ex.sets) && given(ex.reps)) history.append(el('p', `${ex.sets} × ${ex.reps}`))
       showHistory(history, ex, `exercise-history-${index}`)
       for (const log of s.logs.filter(l => l.exercise_id === ex.id).slice().sort((a, b) => a.set_number - b.set_number))
-        history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} reps${given(log.rpe_actual) ? `, RPE ${log.rpe_actual}` : ''}`}`))
+        history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} gent.${given(log.rpe_actual) ? `, RPE ${log.rpe_actual}` : ''}`}`))
     }
     body.append(history)
     for (const node of body.querySelectorAll('details')) node.open = !stepChanged && detailsOpen.includes(node.getAttribute('data-detail'))

@@ -98,10 +98,10 @@ export default function TrainingFullscreen(props) {
       h('main', { style: { overflowY: 'auto', minHeight: 0, flex: 1, overflowWrap: 'anywhere' } },
         next ? h('div', { key },
           h('h2', null, ex.name), h('p', null, `Sæt ${next.setNumber} af ${next.totalSets}`),
-          h('p', null, `Plan: ${present(ex.reps)} reps. Intensitet: ${present(ex.intensity)}`),
+          h('p', null, `Plan: ${present(ex.reps)} gentagelser. Intensitet: ${present(ex.intensity)}`),
           ex.note && h('p', { style: { whiteSpace: 'pre-wrap' } }, 'Coachkommentar: ', ex.note),
           h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 } },
-            ...[['weight', 'Vægt i kg', weight, 'decimal'], ['reps', 'Reps', reps, 'numeric'], ['rpe', 'RPE', input.rpe ?? '', 'decimal']].map(([name, text, value, inputMode]) =>
+            ...[['weight', 'Vægt i kg', weight, 'decimal'], ['reps', 'Gentagelser', reps, 'numeric'], ['rpe', 'RPE', input.rpe ?? '', 'decimal']].map(([name, text, value, inputMode]) =>
               h('label', { key: name }, text, h('input', { type: 'text', inputMode, style: field, value,
                 onChange: event => update(name, event.target.value) })))),
           h('p', null, 'RPE er valgfri. Skriv 0 kg ved en øvelse uden ekstra vægt.'),
@@ -117,5 +117,5 @@ export default function TrainingFullscreen(props) {
           .filter(log => log.exercise_id === exercise.id)
           .sort((a, b) => a.set_number - b.set_number)
           .map(log => h('p', { key: `${exercise.id}_${log.set_number}` },
-            `${exercise.name}, sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} reps, RPE ${present(log.rpe_actual)}`}`))))))
+            `${exercise.name}, sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} gent., RPE ${present(log.rpe_actual)}`}`))))))
 }

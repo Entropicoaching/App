@@ -162,7 +162,7 @@ export function createSessionController(latest, changed = () => {}) {
       const p = latest(), s = state()
       if (p.readOnly === true || !s.open || s.summary || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
       const input = sessionInput(notes.has(`${stamp}:${expected}`) ? withSetNote(values, s.note) : values)
-      if (!input) { error = 'Skriv vægt og hele reps over 0. RPE er valgfri fra 0 til 10.'; changed(); return false }
+      if (!input) { error = 'Skriv vægt og hele gentagelser over 0. RPE er valgfri fra 0 til 10.'; changed(); return false }
       if (typeof p.onLogSet !== 'function' || typeof p.parsePlannedRpe !== 'function') {
         error = 'Registrering er ikke tilgængelig.'; changed(); return false
       }

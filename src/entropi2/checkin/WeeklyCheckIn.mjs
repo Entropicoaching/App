@@ -21,15 +21,15 @@ const scoreFields = [
 
 // The host must explicitly enable and supply an authorized athlete id and the
 // Monday of the selected week. No flag, identity, clock or backend is read here.
-export default function WeeklyCheckIn({ enabled = false, athleteId, weekStart, storage } = {}) {
+export default function WeeklyCheckIn({ enabled = false, athleteId, weekStart, storage, showHeading = true } = {}) {
   if (enabled !== true) return null
   const key = draftKey(athleteId, weekStart)
   if (!key) return h('p', { role: 'status' }, 'Vælg en atlet og en gyldig uge for at åbne check-in.')
   // A changed athlete/week remounts the inner form, preventing draft leakage.
-  return h(ScopedDraft, { key, draftStorageKey: key, weekStart, storage })
+  return h(ScopedDraft, { key, draftStorageKey: key, weekStart, storage, showHeading })
 }
 
-function ScopedDraft({ draftStorageKey, weekStart, storage }) {
+function ScopedDraft({ draftStorageKey, weekStart, storage, showHeading }) {
   const id = useId()
   const [state, setState] = useState(() => ({ ...loadDraft(draftStorageKey, storage), storage }))
   // React retries this render with the new adapter before committing children.
@@ -62,8 +62,10 @@ function ScopedDraft({ draftStorageKey, weekStart, storage }) {
       : status === 'invalid' ? 'Tjek felternes intervaller. Ændringerne er ikke gemt.'
         : status === 'clear-failed' ? 'Kladden kunne ikke slettes fra enheden. Dine svar er bevaret. Prøv igen.'
           : status === 'cleared' ? 'Kladden er slettet fra denne enhed.' : 'Ingen kladde gemt endnu.'
-  return h('section', { style: styles.page, 'aria-labelledby': `${id}-title` },
-    h('h2', { id: `${id}-title`, style: styles.title }, 'Ugentligt check-in'),
+  return h('section', { style: styles.page,
+    'aria-labelledby': showHeading ? `${id}-title` : undefined,
+    'aria-label': showHeading ? undefined : 'Ugentligt check-in' },
+    showHeading && h('h2', { id: `${id}-title`, style: styles.title }, 'Ugentligt check-in'),
     h('p', { style: styles.text }, `Ugen fra ${weekStart.split('-').reverse().join('.')}. Tænk på ugen som helhed.`),
     h('p', { style: styles.text }, 'Alle felter er valgfrie. Svar gemmes automatisk som kladde på denne enhed. De deles ikke med din coach. På en delt enhed kan andre have adgang til kladden.'),
     h('form', { onSubmit: submit },

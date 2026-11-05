@@ -66,7 +66,7 @@ test('counter 4: component close/unmount clears its timer and preserves parent l
   try {
     const start = () => { runtime.nodes(n => n.type === 'button')[0].props.onClick(); runtime.render() }
     start(); assert.equal(timers.size, 1)
-    assert.match(runtime.text(), /Ikke angivet kg, 3 reps, RPE Ikke angivet/)
+    assert.match(runtime.text(), /Ikke angivet kg, 3 gent\., RPE Ikke angivet/)
     const dialog = runtime.nodes(n => n.type === 'dialog')[0].props.ref.current
     dialog.fire('cancel', { preventDefault() {} }); runtime.render()
     assert.equal(timers.size, 0); assert.equal(logs.length, 1)

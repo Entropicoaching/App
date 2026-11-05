@@ -22,6 +22,18 @@ const submit = host => {
   host.render()
 }
 
+test('standalone heading stays; embedded form keeps its accessible name without a repeated heading', () => {
+  const standalone = setup()
+  const heading = descendants(standalone.tree).find(node => node.type === 'h2')
+  assert.equal(textContent(heading), 'Ugentligt check-in')
+  assert.equal(standalone.tree.props['aria-labelledby'], heading.props.id)
+  const embedded = setup({ showHeading: false })
+  assert.equal(descendants(embedded.tree).filter(node => node.type === 'h2').length, 0)
+  assert.equal(embedded.tree.props['aria-labelledby'], undefined)
+  assert.equal(embedded.tree.props['aria-label'], 'Ugentligt check-in')
+  assert.equal(descendants(embedded.tree).filter(node => ['input', 'select', 'textarea'].includes(node.type)).length, 5)
+})
+
 test('OFF and invalid scope never access storage, including a throwing global getter', () => {
   const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { assert.fail('OFF storage access') } })

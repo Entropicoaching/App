@@ -26,5 +26,5 @@ function ScopedCheckIn({ today, weekStart, minuteOfDay, athleteId, storage }) {
   } },
   h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 48 }, 'data-home-reminder': !open && reminder ? '' : undefined },
     !open && reminder ? `${reminder.title} Åbn check-in` : 'Ugentligt check-in'),
-  h(WeeklyCheckIn, { enabled: true, athleteId, weekStart, storage }))
+  h(WeeklyCheckIn, { enabled: true, athleteId, weekStart, storage, showHeading: false }))
 }
