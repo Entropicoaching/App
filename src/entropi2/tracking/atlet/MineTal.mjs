@@ -55,7 +55,7 @@ export default function MineTal(props = {}) {
   if (model.status === 'error') return h('section', { 'aria-label': 'Mine tal' },
     props.showHeading !== false && h('h2', null, 'Mine tal'), h('p', { role: 'alert' }, 'Kunne ikke hente hele perioden — prøv igen'),
     typeof props.onRetry === 'function' && h('button', { type: 'button', onClick: props.onRetry,
-      style: { minHeight: 44, minWidth: 44 } }, 'Prøv igen'))
+      style: { minHeight: 44, minWidth: 44 } }, 'Hent igen'))
   return h('section', { 'aria-label': 'Mine tal', className: 'e2-track-atlet', style: { width: '100%', maxWidth: 560,
     minWidth: 0, boxSizing: 'border-box', overflowWrap: 'anywhere', lineHeight: 1.5 } },
     h('style', null, '.e2-track-atlet summary:focus-visible{outline:2px solid currentColor;outline-offset:3px}.e2-track-atlet dd{margin-inline-start:0}'),

@@ -112,7 +112,7 @@ test('wiring: failed load has retry, no template/shopping claims; OFF never read
   const f = fixture(t, { loadError: true }); await flush()
   assert.equal(find(f.host, 'h2', 'Skabeloner'), undefined)
   assert.equal(details(f.host, 'shopping-list'), undefined)
-  assert.ok(find(f.host, 'button', 'Hent kostloggen igen'))
+  assert.ok(find(f.host, 'button', 'Hent igen'))
   const poison = new Proxy({}, { get() { throw Error('OFF access') } })
   for (const entropi2 of [false, undefined, 'true', 1]) mountNutritionScreen(poison, { entropi2, athlete: poison, client: poison, storage: poison })()
 })

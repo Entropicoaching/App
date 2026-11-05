@@ -148,7 +148,7 @@ test('weight flow: real factory error -> retry once -> loading -> confirmed empt
   const retry = find(host, 'button', 'Hent igen')
   const pending = retry.fire('click'); await retry.fire('click')
   assert.equal(f.calls.length, 2)
-  assert.match(host.textContent, /Indlæser vejninger/)
+  assert.match(host.textContent, /Henter vejningerne/)
   assert.doesNotMatch(host.textContent, /Ingen vejninger endnu|Vejningerne kunne ikke hentes/)
   gate.resolve({ data: [], error: null }); await pending
   assert.equal(host.querySelectorAll('p').filter(p => p.textContent === 'Ingen vejninger endnu').length, 1)

@@ -42,9 +42,9 @@ test('actual existing tracker shows read failure/retry and failed log without in
   let failRead = true, saves = 0
   const f = setup({ async load() { if (failRead) throw Error('synthetic'); return [] }, async save() { saves++; return false } })
   const cleanup = mountExistingTracker(f.host, f.options); t.after(cleanup); await flush()
-  assert.ok(find(f.host, 'button', 'Hent kostloggen igen'))
+  assert.ok(find(f.host, 'button', 'Hent igen'))
   assert.equal(find(f.host, 'button', 'Gem måltid'), undefined)
-  failRead = false; await find(f.host, 'button', 'Hent kostloggen igen').fire('click')
+  failRead = false; await find(f.host, 'button', 'Hent igen').fire('click')
   const form = find(f.host, 'button', 'Gem måltid').parentElement
   for (const [index, value] of ['Fejlmad', '100', '0', '0', '0'].entries()) {
     const input = form.querySelectorAll('input')[index]; input.value = value; await input.fire('input')

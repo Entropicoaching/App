@@ -27,7 +27,7 @@ test('real React: loading, fetch failure/retry and empty states distinct', optio
   const loading = render({ enabled: true, snapshot: { status: 'loading' } })
   assert.match(loading, /aria-busy="true"/); assert.match(loading, /Henter dine registreringer/)
   const error = render({ enabled: true, snapshot: { status: 'error' }, onRetry() {} })
-  assert.match(error, /role="alert"/); assert.match(error, /Prøv igen/)
+  assert.match(error, /role="alert"/); assert.match(error, /Hent igen/)
   const empty = render({ enabled: true, snapshot: fixture() })
   assert.match(empty, /Mine tal/); assert.match(empty, /Ingen registreringer i perioden/)
   assert.match(empty, /2026-10-08–2026-11-04/)

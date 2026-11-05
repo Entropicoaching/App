@@ -41,7 +41,7 @@ test('START: goals and coach action survive failed meal read; no nutrition write
   await flush()
   assert.match(goalCard(host).textContent, /40 g protein/)
   await find(host, 'button', 'Tal med din coach').fire('click'); assert.equal(coach, 1)
-  assert.ok(find(host, 'button', 'Hent kostloggen igen'))
+  assert.ok(find(host, 'button', 'Hent igen'))
 })
 
 test('START: missing, zero, negative and malformed targets never become zero or unknown goals', async () => {

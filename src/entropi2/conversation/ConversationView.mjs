@@ -100,7 +100,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   input.addEventListener('input', () => controller.draft(input.value))
   const send = button('Send', () => controller.send()), retry = button('Prøv afsendelse igen', () => controller.retry())
   Object.assign(send.style, { background: '#d8b16b', color: '#141410' })
-  const reload = button('Opdatér samtalen', () => controller.refresh())
+  const reload = button('Hent igen', () => controller.refresh())
   const upload = button('Send video', () => controller.upload())
   upload.title = 'Åbn videodeling fra passet og tilføj en kort note.'
   const sharing = typeof controller.shareSet === 'function' ? athleteSharingView({ node, button, controller }) : null
@@ -186,6 +186,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     const unread = state.thread.filter(item => state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach).length
     // Marc 3. nov. (keep it simple): antallet ulaeste staar paa spring-knappen; statuslinjen siger kun det, der mangler.
     status.textContent = state.error || (state.loading || !state.loaded ? 'Henter samtalen…' : state.thread.length ? '' : state.role === 'coach' ? 'Ingen beskeder endnu.' : 'Ingen beskeder endnu. Skriv til din coach herunder.')
+    reload.textContent = state.loading ? 'Henter…' : 'Hent igen'
     status.hidden = !status.textContent
     status.setAttribute('role', state.error ? 'alert' : 'status')
     input.value = state.draft

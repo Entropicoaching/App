@@ -82,7 +82,7 @@ test('real React: Mine tal is closed below strength, displays empty and error tr
   const rendered = html(props({ trackingSnapshot }))
   assert.doesNotMatch(rendered, /data-fremgang-mine-tal|Ingen registreringer i perioden/)
   const error = html(props({ trackingSnapshot: { ...trackingSnapshot, status: 'error' }, onRetryTracking() {} }))
-  assert.match(error, /role="alert"/); assert.match(error, /Prøv igen/)
+  assert.match(error, /role="alert"/); assert.match(error, /Hent igen/)
   const dailyRows = [1, 2, 3].map(i => ({ athlete_id: 'synthetic-a', source: 'athlete_manual',
     logged_date: `2026-11-0${i}`, sleep_hours: 0, energy: 2, stress: 3, soreness: 0 }))
   const withData = html(props({ trackingSnapshot: { ...trackingSnapshot, dailyRows } }))

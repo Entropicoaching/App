@@ -102,7 +102,7 @@ test('load failure retains retry and never becomes an empty diary or empty histo
   assert.match(f.host.textContent, /Kostloggen kunne ikke hentes/)
   assert.doesNotMatch(f.host.textContent, /Ingen måltider registreret|Ingen registreringer i perioden|Din uge/)
   fail = false
-  await find(f.host, 'button', 'Hent kostloggen igen').fire('click')
+  await find(f.host, 'button', 'Hent igen').fire('click')
   assert.match(f.host.textContent, /Ingen måltider registreret i dag/)
 })
 

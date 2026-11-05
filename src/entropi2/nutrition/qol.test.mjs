@@ -278,7 +278,7 @@ test('QOL: empty/load-error screens retain honest empty state/retry; strict OFF 
   assert.equal(find(empty.host, 'h2', 'Favoritter'), undefined)
   assert.equal(find(empty.host, 'button', 'Fortryd'), undefined)
   const broken = fixture(t, { controller: { contracts: { load: async () => { throw Error('synthetic') } } } }); await flush()
-  assert.ok(find(broken.host, 'button', 'Hent kostloggen igen'))
+  assert.ok(find(broken.host, 'button', 'Hent igen'))
   assert.equal(find(broken.host, 'button', 'Log portion'), undefined)
   const poison = new Proxy({}, { get() { throw Error('OFF access') } })
   for (const entropi2 of [undefined, false, 'true', 1]) {

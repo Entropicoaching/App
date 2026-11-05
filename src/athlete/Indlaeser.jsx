@@ -8,9 +8,9 @@ function Indlaeser({ backBtn, loadError }) {
       {loadError ? (
         <>
           <div style={{ color: '#7a7770' }}>Dataene kunne ikke hentes. Tjek din forbindelse og prøv igen.</div>
-          {backBtn || <button style={s.btnGhost} onClick={() => window.location.reload()}>Prøv igen</button>}
+          {backBtn || <button style={s.btnGhost} onClick={() => window.location.reload()}>Hent igen</button>}
         </>
-      ) : 'Indlæser...'}
+      ) : 'Henter dataene…'}
       {!loadError && backBtn}
     </div>
   )

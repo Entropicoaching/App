@@ -9,6 +9,12 @@ import { mealProtein, eveningProtein } from './dailyProtein.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { calendarDay } from '../../calendarDate.js'
+// Shared presentation text for diary and weight reads; no read/write ownership here.
+const readText = {
+  retry: 'Hent igen', pending: 'Henter…',
+  diaryLoading: 'Henter kostloggen…', diaryError: 'Kostloggen kunne ikke hentes.',
+  weightLoading: 'Henter vejningerne…', weightError: 'Vejningerne kunne ikke hentes.',
+}
 let mountSequence = 0
 
 // Mount inside an assembly-owned host; load nutrition.css separately. No global DOM.
@@ -173,17 +179,17 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     const dag = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.'][Number(m[2]) - 1]}` : String(iso) }
     weighing.setAttribute('aria-busy', String(weightLoading || weightReadPending))
     if (weightLoading) {
-      const p = append(weighing, 'p', 'muted space', 'Indlæser vejninger…')
+      const p = append(weighing, 'p', 'muted space', readText.weightLoading)
       p.setAttribute('role', 'status'); p.setAttribute('aria-live', 'polite')
     }
     if (summary.latest || weightEmpty) append(weighing, 'p', 'muted space', summary.latest
       ? `Seneste vægt: ${displayNumber(summary.latest.weight)} kg · ${dag(summary.latest.date)}` : 'Ingen vejninger endnu')
     if (weightReady && !summary.latest && !weightEmpty) append(weighing, 'p', 'muted space', 'Ingen vejninger at vise for den valgte dag.')
     if (weightReadError) {
-      const p = append(weighing, 'p', 'space', 'Vejningerne kunne ikke hentes. Prøv igen.'); p.setAttribute('role', 'alert')
+      const p = append(weighing, 'p', 'space', readText.weightError); p.setAttribute('role', 'alert')
       const retry = weightProps.retryWeight
       if (typeof retry === 'function') {
-        const b = button(weighing, weightReadPending ? 'Henter vejninger…' : 'Hent igen', async () => {
+        const b = button(weighing, weightReadPending ? readText.pending : readText.retry, async () => {
           if (destroyed || weightReadPending || weightProps.weightStatus !== weightStatus || weightProps.retryWeight !== retry) return
           weightReadPending = true; draw()
           try { await retry() }
@@ -246,12 +252,12 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     const diarySummary = append(diary, 'summary')
     diarySummary.setAttribute('data-focus', 'diary-summary')
     append(s.loaded ? diarySummary : main, 'h2', s.loaded ? '' : 'section-head', isToday ? 'Dagens dagbog' : 'Dagbog for den valgte dag')
-    const status = append(main, 'p', 'space', s.message)
+    const status = append(main, 'p', 'space', s.phase === 'load-error' ? readText.diaryError : s.message)
     status.setAttribute('role', s.phase.endsWith('error') ? 'alert' : 'status')
     status.setAttribute('aria-live', 'polite')
     main.setAttribute('aria-busy', String(s.pending || s.phase === 'loading'))
-    if (s.phase === 'idle' || s.phase === 'loading') append(main, 'p', 'muted', 'Indlæser kostloggen…')
-    if (s.phase === 'load-error') button(main, 'Hent kostloggen igen', () => controller.load())
+    if (s.phase === 'idle' || s.phase === 'loading') append(main, 'p', 'muted', readText.diaryLoading)
+    if (s.phase === 'load-error') button(main, readText.retry, () => controller.load())
     if (s.loaded) {
       // Marc 3. nov.: uden maaltider stod "Ingen maaltider registreret i dag." to gange;
       // fordelingen vises kun, naar der er noget at fordele (dagbogen siger det tomme).
@@ -265,7 +271,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const ul = append(diary, 'ul', 'list')
       if (s.needsRefresh) {
         append(diary, 'p', 'muted', 'Hent dagbogen igen for at kunne rette eller fjerne det nye måltid.')
-        button(diary, 'Hent dagbogen igen', () => controller.load(), s.pending)
+        button(diary, readText.retry, () => controller.load(), s.pending)
       }
       if (!s.logs.length) append(ul, 'li', 'muted', isToday ? 'Ingen måltider registreret i dag.' : 'Ingen måltider registreret den valgte dag.')
       for (const [index, row] of s.logs.entries()) {

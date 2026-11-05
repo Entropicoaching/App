@@ -91,7 +91,7 @@ test('independent review: read failure after insert offers retry without exposin
   const host = syntheticHost(); t.after(mountNutrition(host, c, { clock: () => new Date('2026-11-05T12:00:00+01:00') })); await flush()
   assert.equal(await c.log(meal, 'new-log'), true)
   assert.deepEqual(c.snapshot().editableIds, []); assert.equal(c.snapshot().needsRefresh, true)
-  await find(host, 'button', 'Hent dagbogen igen').fire('click')
+  await find(host, 'button', 'Hent igen').fire('click')
   assert.deepEqual(c.snapshot().editableIds, [row.id]); assert.equal(c.snapshot().needsRefresh, false)
 })
 

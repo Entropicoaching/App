@@ -24,7 +24,7 @@ for (const mode of modes) for (const tab of tabs) for (const state of ['ready', 
     const html = await renderScenario(scenario(mode, tab, state))
     const tree = assertCleanMarkup(html)
     if (state === 'loading' || state === 'error') {
-      assert.match(nodeText(tree), state === 'loading' ? /Indlæser/ : /Dataene kunne ikke hentes/)
+      assert.match(nodeText(tree), state === 'loading' ? /Henter dataene/ : /Dataene kunne ikke hentes/)
       assert.doesNotMatch(html, /data-entropi2-athlete|data-entropi2-profile/)
       return
     }

@@ -120,7 +120,7 @@ test('week plan wiring: empty, source error and load failure remain distinct; re
   assert.equal(bad.calls[1].model.snapshot().templates.length, 1)
   const failed = fixture(t, { loadError: true }); await flush()
   assert.equal(fold(failed.host), undefined)
-  assert.ok(find(failed.host, 'button', 'Hent kostloggen igen'))
+  assert.ok(find(failed.host, 'button', 'Hent igen'))
 })
 
 test('week plan wiring: corrupt drafts and quota failures never erase the saved plan', async t => {

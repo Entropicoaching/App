@@ -239,7 +239,7 @@ test('DOM empty/invalid/read-error states and user text injection do not claim c
   let attempts = 0
   const { c } = make({ contracts: { async load() { if (++attempts === 1) throw new Error(); return [] } } })
   const host = syntheticHost(); mountNutrition(host, c, { clock: () => new Date('2026-11-05T12:00:00+01:00') }); await flush()
-  assert.ok(find(host, 'button', 'Hent kostloggen igen'))
-  await find(host, 'button', 'Hent kostloggen igen').fire('click')
+  assert.ok(find(host, 'button', 'Hent igen'))
+  await find(host, 'button', 'Hent igen').fire('click')
   assert.match(host.textContent, /Ingen måltider registreret/)
 })

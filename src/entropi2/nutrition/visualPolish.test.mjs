@@ -135,8 +135,8 @@ test('visual: save failure stays visible outside closed diary; load failure offe
   assert.ok(find(f.host, 'button', 'Gem ændring'))
   fails = true; await f.controller.load()
   assert.equal(focus(f.host, 'diary'), undefined)
-  assert.ok(find(f.host, 'button', 'Hent kostloggen igen'))
-  fails = false; await find(f.host, 'button', 'Hent kostloggen igen').fire('click')
+  assert.ok(find(f.host, 'button', 'Hent igen'))
+  fails = false; await find(f.host, 'button', 'Hent igen').fire('click')
   assert.equal(focus(f.host, 'diary').open, false)
 })
 
