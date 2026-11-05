@@ -181,7 +181,7 @@ export default function AthleteHome(props) {
         : target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
       target ? h('div', null,
         model.date && h('p', { style: s.text }, model.date === model.today ? 'I dag' : danishDate(model.date)),
-        !props.sessionReadOnly && h('button', { type: 'button', style: s.primary, disabled: !canStart || staleWeek, onClick: start },
+        !props.sessionReadOnly && h('button', { type: 'button', style: s.primary, disabled: !canStart || staleWeek || props.sessionLoading === true, onClick: start },
           model.kind === 'today' ? 'Start dagens pas' : 'Start næste pas'),
         !props.sessionReadOnly && (staleWeek ? h('p', { role: 'status', style: s.text }, 'En ny uge er startet. Genindlæs siden for at registrere passet.')
           : !canStart && h('p', { role: 'status', style: s.text }, 'Passet kunne ikke åbnes. Prøv at genindlæse siden.')),
@@ -199,6 +199,7 @@ export default function AthleteHome(props) {
       !programLoading && (programError || props.offlineSnapshotAt != null) && h('button', {
         type: 'button', style: s.primary, disabled: typeof props.onRetryProgram !== 'function', onClick: retryProgram,
       }, 'Hent igen'),
+      props.sessionRootRef && h('section', { ref: props.sessionRootRef, 'aria-label': 'Dit valgte pas' }),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     record && h(HomeRecordCard, { record }),

@@ -36,13 +36,14 @@ test('fund 1: Hjem viser den nye uge, men registrering åbnes ikke i en anden ug
   bridge.dispose()
 })
 
-test('fund 1, kontrol: samme uge hos Hjem og forælder går videre som før', () => {
+test('fund 1, kontrol: samme uge hos Hjem og forælder går videre som før', async () => {
   const fresh = props(wNew)
   const target = homeModel(fresh).target
   assert.equal(target?.week.id, 'W-new')
   const bridge = mountHomeSession(host(), () => fresh)
-  assert.notEqual(bridge.start(target.session.id, target.week.id), false)
-  bridge.dispose()
+  try {
+    assert.equal(await bridge.start(target.session.id, target.week.id), true)
+  } finally { bridge.dispose() }
 })
 
 test('fund 2: en læsning startet før midnat bærer startdagen efter afslutning efter midnat', async () => {
