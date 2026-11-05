@@ -24,12 +24,17 @@ function useBrowserOnline() {
   return online
 }
 
-function IngenForbindelse({ offlineSnapshotAt }) {
+function IngenForbindelse({ offlineSnapshotAt, entropi2 = false }) {
   const online = useBrowserOnline()
   if (online && !offlineSnapshotAt) return null
   const tid = offlineSnapshotAt
     ? new Date(offlineSnapshotAt).toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })
     : null
+  const besked = entropi2 === true
+    ? offlineSnapshotAt
+      ? 'Du ser et gemt program. Gå på net og opdatér programmet, før du starter et pas.'
+      : 'I et åbent pas kan du gemme sæt lokalt. De sendes, når du har net.'
+    : 'Dagens pas og dine sæt virker; resten opdateres, når du har net.'
   return (
     <div
       role="status"
@@ -40,7 +45,7 @@ function IngenForbindelse({ offlineSnapshotAt }) {
         color: '#a8a49a', borderBottom: '1px solid rgba(237,234,226,0.07)',
       }}
     >
-      {online ? 'Forbindelsen er svag.' : 'Ingen forbindelse.'} Dagens pas og dine sæt virker; resten opdateres, når du har net.
+      {online ? 'Forbindelsen er svag.' : 'Ingen forbindelse.'} {besked}
       {tid && <span style={{ color: '#7a7770' }}> Program fra kl. {tid}.</span>}
     </div>
   )

@@ -61,6 +61,10 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // E2-FEJL-OFFLINE1: invert only the exact banner prop; retain the historic SHA guards.
+  const offlineBannerDelta = '<IngenForbindelse {...{ offlineSnapshotAt }} entropi2={e2} />'
+  assert.equal(candidate.split(offlineBannerDelta).length, 2, 'Exact Entropi 2 offline banner wiring')
+  candidate = candidate.replace(offlineBannerDelta, '<IngenForbindelse {...{ offlineSnapshotAt }} />')
   // Stable retry callback: invert the exact addition before the existing SHA guards.
   const retryWeightDelta = `  // Keep nutrition mounted across renders while retry reads the latest athlete and reader.
   const retryWeightRef = useRef(null)

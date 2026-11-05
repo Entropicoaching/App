@@ -804,7 +804,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         onClose={() => { setProfileOwner(null); profileMenuRef.current?.focus() }} />}
       {/* Toast-pladsen (ORDRE 339 · F5): under topbaren på alle faner undtagen
           forsiden, hvor den ligger under overskrift + strimmel (se toastSlot). */}
-      <IngenForbindelse {...{ offlineSnapshotAt }} />
+      <IngenForbindelse {...{ offlineSnapshotAt }} entropi2={e2} />
       {(!(tab === 'hjem' && !onHoliday) || (enkelOn && ['uge', 'dagsform'].includes(route))) && toastSlot}
       {recheckMsg && !onExitPreview && (
         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', textAlign: 'right', padding: '0.4rem 1.5rem 0' }}>{recheckMsg}</div>
