@@ -51,6 +51,7 @@ import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'
 import Conversation from './entropi2/conversation/Conversation.mjs'
 import { createConversation } from './entropi2/conversation/conversationController.mjs'
 import { mountKost } from './entropi2/Entropi2Kost.mjs'
+import ActivePlan from './entropi2/kostplan/atlet/ActivePlan.mjs'
 import { readInitialAnalysisWeight } from './entropi2/analysis/analysisWeight.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
@@ -961,11 +962,14 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             weightLogs={weightLogs} weightStatus={weightStatus} retryWeight={retryWeight} />
         )}
         {e2Atlet && !e2ReadOnly && visKost && tab === 'kost' && (
+          <>
+          <ActivePlan enabled={true} athleteId={athlete.id} date={kostDate} client={inboxDatabase} />
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
             weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
             weightStatus={weightStatus} retryWeight={retryWeight}
             {...(kostDate === e2Dag.day || kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />
+          </>
         )}
         {!e2Atlet && visKost && tab === 'kost' && (
           <LazyBoundary

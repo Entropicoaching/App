@@ -7,7 +7,12 @@ import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { setImmediate } from 'node:timers'
-import { mount, nodes, one, text } from './kostMaal/reactFixture.mjs'
+import { mount, nodes, one, text, createElement as h, useEffect, useSyncExternalStore } from './kostMaal/reactFixture.mjs'
+import { openPortalPlan } from './kostplan/coach/portalModel.mjs'
+import { coachPlanView } from './kostplan/coach/view.mjs'
+import { syntheticTables, tableNames, flush } from './kostplan/coach/activation.fixture.mjs'
+import { memoryStorage } from './kostplan/coach/portal.fixture.mjs'
+import { FOODS } from './kostplan/foedevarer/index.mjs'
 
 const here = new URL('./', import.meta.url).href
 const src = new URL('../', import.meta.url).href
@@ -20,7 +25,7 @@ globalThis.__kostMaalKoblingClient = { from(table) {
   return chain
 } }
 const hooks = registerHooks({ resolve(specifier, context, next) {
-  // Koblingens hook køres ikke her (effektens krop prøves direkte); fixturen har ingen useEffect.
+  // Koblingens vægteffekt køres ikke her; effektens krop prøves direkte.
   if (specifier === 'react' && context.parentURL?.endsWith('/kostMaalKobling.mjs'))
     return { url: 'data:text/javascript,' + encodeURIComponent(`export { createElement, useState } from '${new URL('./kostMaal/reactFixture.mjs', import.meta.url).href}'; export const useEffect = () => { throw Error('Uventet effekt') }`), shortCircuit: true }
   if (specifier === 'react' && context.parentURL?.startsWith(here) && !context.parentURL.endsWith('.test.js'))
@@ -35,6 +40,8 @@ const hooks = registerHooks({ resolve(specifier, context, next) {
   return next(specifier, context)
 } })
 const { default: CoachKostMaal, kostMaalVaegt, startKostVaegt } = await import('./kostMaalKobling.mjs')
+// Same import graph and React fixture as the formerly failing coach-tab import.
+const { startPlanActivation } = await import('./kostplan/coach/activation.mjs')
 const { lavNavigation } = await import('../dashboard/navigation.js')
 const { lavAtletHandlinger } = await import('../dashboard/atletHandlinger.js')
 hooks.deregister()
@@ -49,6 +56,47 @@ const logs = ['2026-11-02', '2026-11-01', '2026-10-30', '2026-10-28', '2026-10-2
 // Runde 11: rækkerne følger statusobjektet fra præcis den læsning, der gav dem.
 const ready = { athleteId: 'syn-a', state: 'ready', rows: logs }
 const view = props => mount(CoachKostMaal, { enabled: true, athlete, weightStatus: ready, today, ...props }).render()
+
+test('KOST-AKTIVER1: fixture links activation hooks without pretending to run effects or subscriptions', () => {
+  assert.throws(() => useEffect(() => assert.fail('Effect ran')), /Unexpected effect/)
+  const snapshot = () => 'synthetic snapshot'
+  assert.equal(useSyncExternalStore(() => assert.fail('Unexpected subscription'), snapshot, snapshot), 'synthetic snapshot')
+  assert.throws(() => useSyncExternalStore(() => {}, snapshot, () => null), /Matching server snapshot/)
+  // A valid coach session renders the real, collapsed portal through this fixture.
+  const tree = view({ session: { user: { id: 'syn-coach' } } })
+  assert.equal(nodes(tree, n => n.type === 'details' && text(n).trim() === 'Kostplan').length, 1)
+  assert.doesNotMatch(text(tree), /Aktivér for atleten|Kontrollér aktivering igen/)
+})
+
+test('KOST-AKTIVER1: missing tables never enable activation in the actual imported controller', async () => {
+  for (const missing of tableNames) for (const missingCode of ['42P01', 'PGRST205']) {
+    const f = syntheticTables({ missing, missingCode }), storage = memoryStorage()
+    const { controller } = openPortalPlan({ enabled: true, coachId: 'syn-coach', athlete, date: today,
+      storage: () => storage,
+      template: [{ id: 'syn-meal', name: 'Synthetic meal', items: [{ foodId: FOODS[0].id, grams: 100 }] }] })
+    controller.set('maintenanceKcal', 2400); controller.set('fat', 70)
+    assert.equal(controller.generate(), true)
+    const stop = startPlanActivation({ controller, athleteId: athlete.id, date: today, client: f.client })
+    try {
+      await flush()
+      // Assert BEFORE cleanup: cleanup itself disables publishing and can mask a regression.
+      assert.ok(f.calls.some(call => call.table === missing))
+      assert.equal(controller.snapshot().canPublish, false)
+      assert.equal(controller.snapshot().activationError, null)
+      assert.doesNotMatch(text(coachPlanView(h, controller.snapshot(), controller)), /Aktivér for atleten/)
+      assert.equal(await controller.save(), true)
+      assert.equal(await controller.activate(), true) // Local draft operation only.
+      assert.match(controller.snapshot().message, /Lokal kladde gemt/)
+      assert.equal(f.writes().length, 0)
+    } finally { stop() }
+  }
+  // Positive control: a working schema enables the button without writing.
+  const f = syntheticTables(), { controller } = openPortalPlan({ enabled: true,
+    coachId: 'syn-coach', athlete, date: today, storage: () => memoryStorage() })
+  const stop = startPlanActivation({ controller, athleteId: athlete.id, date: today, client: f.client })
+  try { await flush(); assert.equal(controller.snapshot().canPublish, true); assert.equal(f.writes().length, 0) }
+  finally { stop() }
+})
 
 test('KOSTMÅL: coachen ser mål, kropsvægt, ugegennemsnit og trend fra atletens weight_logs', () => {
   const out = text(view())

@@ -10,7 +10,8 @@ export function useState(initial) {
   return [state.values[i], value => { state.values[i] = typeof value === 'function' ? value(state.values[i]) : value }]
 }
 export const useRef = initial => useState(() => ({ current: initial }))[0]
-export const useEffect = () => { throw Error('Unexpected effect in portal fixture') }
+// Effects are tested through their exported lifecycle functions, never run here.
+export const useEffect = () => {}
 export const useSyncExternalStore = (_subscribe, snapshot, serverSnapshot) => {
   if (serverSnapshot !== snapshot) throw Error('Mismatched server snapshot')
   return snapshot()

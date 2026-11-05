@@ -8,7 +8,7 @@ const fixture = new URL('./kostMaal/reactFixture.mjs', import.meta.url).href
 const hooks = registerHooks({ resolve(specifier, context, next) {
   if (specifier === 'react' && context.parentURL?.endsWith('/kostMaalKobling.mjs'))
     return { url: 'data:text/javascript,' + encodeURIComponent(`export { createElement, useState } from '${fixture}'; export const useEffect = () => { throw Error('Unexpected effect') }`), shortCircuit: true }
-  if (specifier === 'react' && (context.parentURL?.endsWith('/kostMaal/KostMaal.mjs') || context.parentURL?.endsWith('/kostplan/coach/PortalPlan.mjs') || context.parentURL?.endsWith('/kostplan/justering/KostJustering.mjs')))
+  if (specifier === 'react' && (context.parentURL?.endsWith('/kostMaal/KostMaal.mjs') || context.parentURL?.endsWith('/kostplan/coach/PortalPlan.mjs') || context.parentURL?.endsWith('/kostplan/coach/activation.mjs') || context.parentURL?.endsWith('/kostplan/justering/KostJustering.mjs')))
     return { url: fixture, shortCircuit: true }
   return next(specifier, context)
 } })

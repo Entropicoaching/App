@@ -8,6 +8,13 @@ export function useState(initial) {
   return [owner.values[index], value => { owner.values[index] = typeof value === 'function' ? value(owner.values[index]) : value }]
 }
 export function useRef(initial) { return useState(() => ({ current: initial }))[0] }
+// Linking the collapsed coach portal must support activation's named imports.
+// Effects still fail loudly: lifecycle bodies are tested explicitly, not faked.
+export const useEffect = () => { throw Error('Unexpected effect in kostMaal fixture') }
+export const useSyncExternalStore = (_subscribe, snapshot, serverSnapshot) => {
+  assert.equal(serverSnapshot, snapshot, 'Matching server snapshot required')
+  return snapshot()
+}
 export function mount(Component, initialProps) {
   let props = initialProps, key = props.athlete?.id
   const owner = { values: [], cursor: 0 }

@@ -93,6 +93,19 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   const offlineBannerDelta = '<IngenForbindelse {...{ offlineSnapshotAt }} entropi2={e2} />'
   assert.equal(candidate.split(offlineBannerDelta).length, 2, 'Exact Entropi 2 offline banner wiring')
   candidate = candidate.replace(offlineBannerDelta, '<IngenForbindelse {...{ offlineSnapshotAt }} />')
+  // KOST-AKTIVER1: undo only the gated plan summary and its fragment. The
+  // original tracker, preview, legacy branches and existing SHA remain locked.
+  const planDeltas = [
+    ["import ActivePlan from './entropi2/kostplan/atlet/ActivePlan.mjs'\n", ''],
+    ['          <>\n          <ActivePlan enabled={true} athleteId={athlete.id} date={kostDate} client={inboxDatabase} />\n', ''],
+    ["            {...(kostDate === e2Dag.day || kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />\n          </>\n",
+     "            {...(kostDate === e2Dag.day || kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />\n"],
+  ]
+  for (const [from, to] of planDeltas) {
+    const crlf = from.replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(crlf).length, 2, 'Exact KOST-AKTIVER1 host delta')
+    candidate = candidate.replace(crlf, to.replace(/\r?\n/g, '\r\n'))
+  }
   // R1-E2-FEJL-GENLAES1: invert only the exact E2 read-status/retry additions.
   // The original host SHA guards below continue to protect all legacy behavior.
   for (const added of [

@@ -40,8 +40,10 @@ export function createCoachPlan(options = {}) {
   if (restoredPlan) form = copy(restored.form)
   let state = { localDraftOnly, gramGenerator, generation: null, athleteId, athleteName, date, foods, form, context, history, meals: [], planTargets: null,
     version: 0, saved: null, busy: null, error: null, message: null,
+    canPublish: false, publishedVersion: null, activationError: null,
     calculated: calculation !== undefined,
     canSaveAdapter: typeof saveDraft === 'function', canActivateAdapter: typeof activatePlan === 'function' }
+  let activationAdapter = null
   let draftBase = null
   if (restoredPlan) {
     draftBase = { planId: restoredPlan.id, revision: restoredPlan.revision }
@@ -164,7 +166,30 @@ export function createCoachPlan(options = {}) {
         return false
       }
     },
+    setActivationAdapter(adapter, error = null) {
+      if (!localDraftOnly) return false
+      activationAdapter = adapter
+      publish({ canPublish: typeof adapter?.activate === 'function', activationError: error })
+      return true
+    },
     async activate() {
+      if (localDraftOnly && activationAdapter) {
+        if (state.busy || !state.saved || state.saved.clientVersion !== state.version
+          || state.publishedVersion === state.version || !validCurrent()) return false
+        const version = state.version
+        const plan = { athleteId, date, goal: state.form.goal, intensity: state.form.intensity, meals: copy(state.meals) }
+        publish({ busy: 'activate', error: null, message: null })
+        try {
+          const receipt = await activationAdapter.activate(plan)
+          if (receipt?.ok !== true || receipt.athleteId !== athleteId || receipt.date !== date
+            || !identifier(receipt.planId) || !identifier(receipt.versionId)) throw Error('Invalid activation')
+          publish({ busy: null, publishedVersion: version, message: 'Planen er aktiveret for atleten.' })
+          return true
+        } catch {
+          publish({ busy: null, error: 'Aktivering blev ikke bekræftet. Den lokale kladde er bevaret. Genprøv samme plan før du ændrer den.' })
+          return false
+        }
+      }
       if (localDraftOnly) return controller.save()
       if (state.busy) return false
       const saved = state.saved

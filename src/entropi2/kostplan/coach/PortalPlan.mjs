@@ -1,4 +1,5 @@
 import * as React from 'react'
+import PlanActivation from './activation.mjs'
 import { openPortalPlan } from './portalModel.mjs'
 import { coachPlanView, recipeChoice } from './view.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
@@ -20,7 +21,8 @@ export default function PortalPlan(props = {}) {
   const { athlete, today, session } = props
   if (!identifier(athlete?.id) || !identifier(session?.user?.id) || !day(today)) return null
   return h(ScopedPortalPlan, { key: JSON.stringify([session.user.id, athlete.id, today]),
-    coachId: session.user.id, athlete, date: today, nutritionRead: props.nutritionRead })
+    coachId: session.user.id, athlete, date: today, nutritionRead: props.nutritionRead,
+    client: props.client, loadClient: props.loadClient })
 }
 
 // Mounted directly in Kost & mål, independently of opening the meal editor.
@@ -101,6 +103,8 @@ function PlanEditor(props) {
     setError(''); setOpened(next)
   }
   return h('div', null,
+    h(PlanActivation, { controller: opened.controller, athleteId: props.athlete.id, date: props.date,
+      client: props.client, loadClient: props.loadClient }),
     opened.loadError && h('p', { role: 'alert' }, opened.loadError),
     coachPlanView(h, snapshot, opened.controller),
     !snapshot.meals.length && h('form', { onSubmit: start },
