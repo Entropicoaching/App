@@ -31,6 +31,17 @@ export default function AthleteWeek(props = {}) {
     h('p', { role: 'alert' }, 'Ugens data kunne ikke vises komplet. Prøv igen.'),
     typeof props.onRetry === 'function' && h('button', { type: 'button', onClick: props.onRetry,
       style: { minHeight: 44, minWidth: 44 } }, 'Prøv igen'))
+  // Home already supplies the disclosure heading. Its adapter loads wellbeing
+  // only; do not show invented zeroes for training or unavailable nutrition.
+  if (props.compactHome === true) return h('div', { className: 'e2-ugeatlet', style: { lineHeight: 1.5 } },
+    h('p', null, 'Seneste 7 afsluttede dage · ', h('time', { dateTime: model.from }, model.from), '–',
+      h('time', { dateTime: model.to }, model.to)),
+    h('dl', { style: { margin: 0 } },
+      metric('sleep', 'Søvn i gennemsnit', mean(model.sleep, 'timer'), coverage(model.sleep)),
+      metric('energy', 'Dagsform i gennemsnit', mean(model.energy, 'af 5'),
+        `${coverage(model.energy)} · selvrapporteret energi, 5 er højest`)),
+    h('p', null, 'Kun registreret søvn og energi. Manglende dage udfyldes ikke.'),
+    h('p', null, model.encouragement))
   const best = model.bestSet, sessions = model.sessions, nutrition = model.nutrition
   return h('section', shell,
     h('style', null, '.e2-ugeatlet summary:focus-visible,.e2-ugeatlet button:focus-visible{outline:2px solid currentColor;outline-offset:3px}'),

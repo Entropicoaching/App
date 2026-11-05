@@ -4,6 +4,7 @@ import { registerHooks } from 'node:module'
 import { readFileSync, existsSync } from 'node:fs'
 import { jsx } from '../../homeRo2Jsx.mjs'
 import { mount } from '../../athlete/trainingFullscreenFake.mjs'
+import { manualClock } from '../tracking/hurtig/testFixtures.mjs'
 import { resetFake, writes } from '../../appRev2Fakes.mjs'
 
 // Import actual copied handlers. Only the service boundary and unrelated video
@@ -42,7 +43,8 @@ test('actual existing handlers: readiness and weight success/failure feed the co
   t.after(() => { globalThis.Date = RealDate; delete globalThis.localStorage })
   for (const kind of ['readiness', 'weight']) for (const fail of [true, false]) {
     resetFake({ data: [], error: fail ? { message: 'synthetic error' } : null })
-    const p = { enabled: true, athlete: { id: 'synthetic-athlete' }, today: '2026-11-04',
+    const time = manualClock()
+    const p = { quickClock: time.clock, enabled: true, athlete: { id: 'synthetic-athlete' }, today: '2026-11-04',
       getNow: () => new Date(), weightInput: '82,5', weightLogs: [], readinessLog: null,
       readinessInput: { sleep: '7,5', energy: 3, motivation: 3, stress: 3, soreness: 3, soreZones: [] } }
     for (const [key, setter] of [['weightInput','setWeightInput'], ['weightLogs','setWeightLogs'], ['savingWeight','setSavingWeight'],
@@ -56,6 +58,9 @@ test('actual existing handlers: readiness and weight success/failure feed the co
     const btn = view.nodes(n => n.type === 'button' && n.children.includes(kind === 'weight' ? 'Vægt i dag' : 'Dagsform'))[0]
     btn.props.onClick({ currentTarget: { focus() {} } }); view.render()
     await view.nodes(n => n.type === 'form')[0].props.onSubmit({ preventDefault() {} }); view.render()
+    assert.equal(writes.length, 0, 'five-second grace period must precede any service write')
+    await time.advance(5000); view.render()
+    await time.advance(0); view.render()
     const table = kind === 'weight' ? 'weight_logs' : 'readiness_logs'
     const saved = writes.find(w => w.table === table)
     assert.ok(saved, table)
@@ -64,9 +69,9 @@ test('actual existing handlers: readiness and weight success/failure feed the co
     if (fail) {
       assert.doesNotMatch(view.text(), /Logget i dag/)
       const alerts = view.nodes(n => n.props.role === 'alert')
-      assert.equal(flashes.length + alerts.length, 1, 'one failure message across the app flash and the compact form')
+      assert.equal(flashes.length + alerts.length, 1, 'existing flash and local form must not duplicate the failure')
       if (kind === 'weight') {
-        assert.equal(alerts.length, 0, 'the existing weight handler owns resolved write failures')
+        assert.equal(alerts.length, 0, 'the existing weight handler owns its resolved failure flash')
         assert.match(flashes[0][0], /Vægten blev ikke gemt/)
       } else assert.match(view.text(), /Kunne ikke gemme/)
       assert.equal(p.weightInput, '82,5')

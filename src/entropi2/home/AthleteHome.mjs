@@ -7,6 +7,10 @@ import WeekPlan from './ugeplan/WeekPlan.mjs'
 import HomeOnboarding from '../onboarding/AthleteIntroduction.mjs'
 import HomeCheckIn from './HomeCheckIn.mjs'
 import QuickLogs from './QuickLogs.mjs'
+import { calendarDay } from '../../calendarDate.js'
+import { readHomeReadiness, homeWeekSnapshot } from './homeTrackingRead.mjs'
+import AthleteWeek from '../tracking/ugeatlet/AthleteWeek.mjs'
+import { buildAthleteWeek } from '../tracking/ugeatlet/athleteWeekModel.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -19,9 +23,27 @@ const labels = { holiday: 'Du er på ferie', missing: 'Programmet er ikke tilgæ
 export default function AthleteHome(props) {
   const { enabled = false } = props
   const [tick, setTick] = useState(0)
+  const [tracking, setTracking] = useState(null)
+  const [readAttempt, setReadAttempt] = useState(0)
   const headingRef = useRef(null)
   const latest = useRef(props)
   latest.current = props
+  // The existing host removes write callbacks in "Se som atlet". Own coach
+  // training retains them. Do not read history for a different athlete preview.
+  const ownTracking = enabled === true && !props.sessionReadOnly && !!props.athlete?.id &&
+    typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function'
+  const trackingId = ownTracking ? props.athlete.id : null
+  const trackingDay = ownTracking ? calendarDay(props.now ?? (props.getNow ?? clock)()) : null
+  const read = enabled === true ? props.readHomeReadiness ?? readHomeReadiness : readHomeReadiness
+  useEffect(() => {
+    if (!trackingId || !trackingDay) return
+    let active = true
+    setTracking({ status: 'loading', athleteId: trackingId, today: trackingDay })
+    Promise.resolve().then(() => read({ athleteId: trackingId, today: trackingDay })).then(
+      data => { if (active) setTracking(data) },
+      () => { if (active) setTracking({ status: 'error', athleteId: trackingId, today: trackingDay }) })
+    return () => { active = false }
+  }, [trackingId, trackingDay, read, readAttempt])
   useEffect(() => {
     if (enabled !== true) return
     // Recompute Copenhagen calendar date while mounted.
@@ -36,6 +58,10 @@ export default function AthleteHome(props) {
   const model = homeModel({ ...props, now })
   const week = homeWeekOverview({ ...props, now })
   const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
+  const trackingData = ownTracking && tracking?.athleteId === athlete?.id && tracking?.today === model.today
+    ? tracking : { status: 'loading' }
+  const snapshot = homeWeekSnapshot(trackingData, athlete?.id, model.today)
+  const hasWeekData = snapshot && buildAthleteWeek(snapshot, { enabled: true }).status === 'ready'
   const target = model.target
   // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
   // gamle. Registrering kræver samme uge; ellers bedes atleten genindlæse, ikke registrere forgæves.
@@ -78,7 +104,8 @@ export default function AthleteHome(props) {
             : props.programError ? 'Programmet kunne ikke hentes. Prøv at genindlæse siden.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
-    h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow }),
+    h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow,
+      trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
     // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
     h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
       disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
@@ -97,5 +124,8 @@ export default function AthleteHome(props) {
       link('beskeder', 'Se besked og video')),
     h('h2', { style: s.heading }, 'Resten af din dag'),
     h('nav', { style: s.links, 'aria-label': 'Genveje' },
-      link('fremgang', 'Analyse'), link('kost', 'Kost'), link('mobilisering', 'Mobilitet'), link('beskeder', 'Din coach')))
+      link('fremgang', 'Analyse'), link('kost', 'Kost'), link('mobilisering', 'Mobilitet'), link('beskeder', 'Din coach')),
+    hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
+      h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),
+      h(AthleteWeek, { enabled: true, snapshot, compactHome: true })))
 }

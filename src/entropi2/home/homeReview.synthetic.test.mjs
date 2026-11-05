@@ -15,7 +15,7 @@ const hooks = 'data:text/javascript,' + encodeURIComponent(`
   let nextId = 0;
   export const useId = () => useState(() => 'home-review-' + nextId++)[0];`)
 const parents = new Set(['./AthleteHome.mjs', './HomeCheckIn.mjs', './QuickLogs.mjs',
-  './ugeplan/WeekPlan.mjs', '../onboarding/AthleteIntroduction.mjs', '../checkin/WeeklyCheckIn.mjs']
+  './ugeplan/WeekPlan.mjs', '../tracking/ugeatlet/AthleteWeek.mjs', '../onboarding/AthleteIntroduction.mjs', '../checkin/WeeklyCheckIn.mjs']
   .map(path => new URL(path, import.meta.url).href))
 const loader = registerHooks({ resolve(specifier, context, next) {
   return specifier === 'react' && parents.has(context.parentURL)

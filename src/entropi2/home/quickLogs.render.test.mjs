@@ -31,6 +31,6 @@ test('real React: dated status is accessible, missing callbacks are disabled, an
     readinessLog: { athlete_id: props.athlete.id, logged_date: props.today },
     weightLogs: [{ athlete_id: props.athlete.id, logged_at: props.today, weight: 82.5 }] }))
   assert.equal((html.match(/aria-label="[^"]*Logget i dag"/g) || []).length, 2)
-  assert.equal((renderToStaticMarkup(h(QuickLogs, { ...props, saveReadiness: null, logWeight: null })).match(/disabled=""/g) || []).length, 2)
+  assert.equal(renderToStaticMarkup(h(QuickLogs, { ...props, saveReadiness: null, logWeight: null })), '')
   assert.equal(renderToStaticMarkup(h(QuickLogs, { ...props, enabled: false })), '')
 })
