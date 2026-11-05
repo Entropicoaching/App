@@ -1,13 +1,12 @@
 import { GOALS, INTENSITIES, CONTEXT_LABELS, totals } from './model.mjs'
 import { recipeChoices } from './connections.mjs'
 import { suggestionReason } from '../generator/reasons.mjs'
+import { control, button, primaryButton, formCss } from './formStyles.mjs'
 
 const format = value => value.toLocaleString('da-DK', { maximumFractionDigits: 1 })
 const macroText = value => value
   ? `${format(value.kcal)} kcal · ${format(value.protein)} g protein · ${format(value.carb)} g kulhydrat · ${format(value.fat)} g fedt`
   : 'Kan ikke beregnes. Ret gram til et tal over 0 og højst 10.000.'
-const control = { minHeight: 44, width: '100%', maxWidth: '100%', boxSizing: 'border-box', font: 'inherit' }
-const button = { ...control, width: 'auto', padding: '0.5rem 1rem', whiteSpace: 'normal' }
 const grid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))', gap: '0.75rem' }
 const statuses = { draft: 'Kladde', active: 'Aktiv', archived: 'Tidligere aktiv' }
 
@@ -35,6 +34,7 @@ export function coachPlanView(h, snapshot, actions) {
       onChange: event => handler(event.currentTarget.value) }))
   return h('section', { className: 'e2-coach-plan', 'aria-label': 'Coachens kostplan', 'aria-busy': busy,
     style: { maxWidth: '46rem', width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', padding: '1rem' } },
+  h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
   h(s.localDraftOnly ? 'h3' : 'h2', null, s.localDraftOnly ? 'Dagsplan' : 'Kostplan'),
   h('p', null, `${s.athleteName} · ${s.date}`),
   !(s.localDraftOnly && s.publishedVersion === s.version) && h('p', null, s.localDraftOnly ? s.canPublish || s.activationError ? 'Lokal kladde' : 'Lokal kladde · ikke delt med atleten' : active ? 'Atleten har en aktiv dagsplan. Dine rettelser bliver først synlige efter ny aktivering.'
@@ -59,7 +59,7 @@ export function coachPlanView(h, snapshot, actions) {
         : s.calculated
         ? 'Forslaget bruger atletens beregningsgrundlag. Træning, dagsform og modellens gulve kan ændre procentmålet. Coachen skal gennemgå og aktivere planen.'
         : 'Bulk lægger den valgte procent til, cut trækker den fra. Vedligehold bruger 0 %. Kulhydrat udfylder resten af energimålet.'),
-      (!s.localDraftOnly || s.meals.length > 0) && h('button', { type: 'submit', style: button }, s.gramGenerator ? 'Generér forslag' : s.meals.length ? 'Generér ny dagsplan' : 'Generér dagsplan'))),
+      (!s.localDraftOnly || s.meals.length > 0) && h('button', { type: 'submit', style: primaryButton }, s.gramGenerator ? 'Generér forslag' : s.meals.length ? 'Generér ny dagsplan' : 'Generér dagsplan'))),
   s.suggestion && !s.planTargets && h('p', null, `Forslag til dagens mål: ${macroText(s.suggestion)}`),
   (context.length > 0 || s.proposal?.reasons.length > 0) && h('details', null,
     h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, context.length ? 'Grundlag og tidligere erfaringer' : 'Beregningsgrundlag'),

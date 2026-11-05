@@ -8,9 +8,9 @@ import { recipeItems, portalNutritionReport } from './connections.mjs'
 import { nutritionReportView } from '../rapport/reportView.mjs'
 import KostJustering from '../justering/KostJustering.mjs'
 import { portalAdjustment, choosePortalAdjustment } from './adjustment.mjs'
+import { control, button, primaryButton, formCss } from './formStyles.mjs'
 
 const h = React.createElement
-const control = { minHeight: 44, width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', font: 'inherit' }
 const meals = ['Morgenmad', 'Frokost', 'Aftensmad']
 const foods = catalogFoods(FOODS)
 
@@ -58,9 +58,10 @@ function ScopedKostJustering({ options, proposal }) {
 
 function ScopedPortalPlan(props) {
   const [opened, setOpened] = React.useState(false)
-  return h('details', { style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
+  return h('details', { className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
     onToggle: event => { if (event.currentTarget.open) setOpened(true) } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
+    h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
     opened && h(PlanEditor, { ...props,
       key: JSON.stringify([props.athlete.age, props.athlete.bodyweight, props.athlete.goal]) }),
     opened && h(PortalNutritionReport, { ...props, enabled: true }))
@@ -131,10 +132,10 @@ function PlanEditor(props) {
                 name: `template-${key}-${mi}-${ii}`, onChange: e => change(mi, ii, key, e.currentTarget.value) }))))
           : h('label', null, 'Gram', h('input', { style: control, type: 'text', inputMode: 'decimal', value: item.grams,
             name: `template-grams-${mi}-${ii}`, onChange: e => change(mi, ii, 'grams', e.currentTarget.value) })),
-          items.length > 1 && h('button', { type: 'button', style: control,
+          items.length > 1 && h('button', { type: 'button', style: { ...button, width: '100%' },
             onClick: () => setRows(old => old.map((meal, m) => m !== mi ? meal : meal.filter((_, i) => i !== ii))) }, 'Fjern fødevare'))),
-        items.length < 12 && h('button', { type: 'button', style: control,
+        items.length < 12 && h('button', { type: 'button', style: { ...button, width: '100%' },
           onClick: () => setRows(old => old.map((meal, m) => m !== mi ? meal : [...meal, { foodId: '', grams: '' }])) }, 'Tilføj fødevare'))),
       error && h('p', { role: 'alert' }, error),
-      h('button', { type: 'submit', style: control }, gramGenerator ? 'Generér forslag' : 'Brug måltider og generér dagsplan')))
+      h('button', { type: 'submit', style: { ...primaryButton, width: '100%' } }, gramGenerator ? 'Generér forslag' : 'Brug måltider og generér dagsplan')))
 }
