@@ -100,5 +100,5 @@ export function mobilityModel(options = {}) {
     coachName: validId(athlete.coach_id) && options.coach?.id === athlete.coach_id &&
       typeof options.coach.name === 'string' && options.coach.name.trim() ? options.coach.name.trim() : null,
     // Local homework stores no author. Never attribute it to a fabricated name.
-    homeworkAuthor: 'Din coach (navn ikke gemt i den lokale tildeling)' }
+    homeworkAuthor: 'Fra din coach' }
 }

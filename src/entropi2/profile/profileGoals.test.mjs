@@ -35,11 +35,22 @@ test('wrong or absent athlete ownership cannot read storage or create a controll
 
 test('model has truthful empty values and preserves existing free text without guessing', () => {
   assert.deepEqual(athleteGoals(null), { goal: null, weight_class: null, competition_date: null, target_weight: null })
-  assert.deepEqual(goalDisplay(athleteGoals(null)), { goal: 'Intet mål angivet endnu', weight_class: 'Ikke angivet endnu',
-    competition_date: 'Intet stævne angivet endnu', target_weight: 'Ikke angivet endnu' })
+  assert.deepEqual(goalDisplay(athleteGoals(null)), { goal: null, weight_class: null,
+    competition_date: null, target_weight: null })
   const saved = athleteGoals({ ...athlete, goal: 'Stærkere\nTre pas' })
   assert.equal(validateGoalDraft({ ...goalDraft(saved), weight_class: '82,5' }, saved).values.goal, saved.goal)
   assert.equal(goalDisplay(saved).competition_date, '14.03.2027')
+})
+
+test('goal display uses null consistently for every missing field and keeps known values', () => {
+  const fields = ['goal', 'weight_class', 'competition_date', 'target_weight']
+  const values = { goal: 'bulk', weight_class: 82.5, competition_date: '2027-03-14', target_weight: 81.25 }
+  const labels = { goal: 'Opbygning', weight_class: '82,5 kg', competition_date: '14.03.2027', target_weight: '81,25 kg' }
+  for (const missing of [null, undefined]) for (let mask = 0; mask < 16; mask++) {
+    const input = Object.fromEntries(fields.map((key, index) => [key, mask & (1 << index) ? values[key] : missing]))
+    const expected = Object.fromEntries(fields.map((key, index) => [key, mask & (1 << index) ? labels[key] : null]))
+    assert.deepEqual(goalDisplay(input), expected)
+  }
 })
 
 test('weight and civil date parsing reject malformed, rollover, nonfinite and nonpositive input', () => {

@@ -7,13 +7,14 @@ register('./syntheticReactLoader.mjs', import.meta.url)
 const { default: Profile } = await import('./Profile.mjs')
 const flatten = n => Array.isArray(n) ? n.flatMap(flatten) : n && typeof n === 'object' ? [n, ...flatten(n.props.children)] : []
 
-test('review: every enabled variant has one named native logout control and no automatic call', () => {
+test('review: actionable logout variants have one native control; preview has none', () => {
   for (const extra of [{}, { preview: true }, { loggingOut: true }, { logoutError: true }, { athlete: null }]) {
     let calls = 0
     const nodes = flatten(Profile({ enabled: true, onLogOut: () => calls++, ...extra }))
     assert.equal(calls, 0)
     const controls = nodes.filter(n => n.type === 'button')
-    assert.equal(controls.length, 1)
+    assert.equal(controls.length, extra.preview ? 0 : 1)
+    if (extra.preview) continue
     assert.equal(controls[0].props.type, 'button')
     assert.ok(controls[0].props.children.match(/Log ud|Logger ud/))
     assert.ok(controls[0].props.style.minHeight >= 44)

@@ -64,6 +64,6 @@ test('actual Profile model displays existing targets and honest missing values',
     assert.match(model.kcal, /2.400 kcal/)
     assert.equal(model.protein, '150 g')
   }
-  assert.equal(profileModel({}).goal, 'Intet mål angivet endnu')
-  assert.equal(profileModel({}).kcal, 'Ikke angivet endnu')
+  assert.equal(profileModel({}).goal, null)
+  assert.equal(profileModel({}).kcal, null)
 })

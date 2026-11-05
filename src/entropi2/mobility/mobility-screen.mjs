@@ -64,14 +64,14 @@ export function mountMobility(root, options = {}) {
     // A count and seven day marks; no invented weekly goal. Reads never write.
     const week = mobilityDoneWeek({ ...historyOptions, screenDate: model.screenDate, weeklyTarget: 0 })
     const done = week.days.some(day => day.day === model.screenDate && day.routineIds.includes(model.routineId))
-    const before = element('section'); before.setAttribute('aria-label', 'Før næste pas')
-    element('h2', model.routine.length ? `Forbered din ${model.lift.toLowerCase()}` : 'Ingen kort rutine klar', before)
     if (model.routine.length) {
+      const before = element('section'); before.setAttribute('aria-label', 'Før næste pas')
+      element('h2', `Forbered din ${model.lift.toLowerCase()}`, before)
       const reason = model.selected.date && model.selected.date !== model.screenDate
         ? model.recommendation.reason.replace(/^Dagens /, 'Næste pas med ') : model.recommendation.reason
       element('p', reason, before)
       element('p', `${model.routine.length} øvelser · Følg øvelsernes dosering.`, before)
-      element('p', model.selected.date ? danishDate(model.selected.date) : 'Dag ikke fastlagt', before)
+      if (model.selected.date) element('p', danishDate(model.selected.date), before)
       if (done) element('p', 'Rutine gennemført i dag · Gemt på denne enhed.', before).setAttribute('role', 'status')
       model.routine.forEach(ex => exercise(ex, before))
       // Entropi 2: et pas fra en tidligere dag startes aldrig; adapteren beregner dagen igen.
@@ -80,31 +80,30 @@ export function mountMobility(root, options = {}) {
         run(0)
       }
       Object.assign(action('Start mobilitet', start, before).style, { background: '#d8b16b', color: '#141410' })
-    } else element('p', 'Der er ingen kort rutine før næste pas lige nu. Find øvelser efter behov herunder.', before)
-    if (typeof options.onProgram === 'function') action('Til programmet', go, before)
+      if (typeof options.onProgram === 'function') action('Til programmet', go, before)
+    } else if (typeof options.onProgram === 'function') action('Til programmet', go)
     const overview = element('section'); overview.setAttribute('aria-label', 'Mobilitet denne uge')
     element('h2', 'Denne uge', overview)
     if (week.error) element('p', 'Ugeoversigten kunne ikke læses på denne enhed.', overview).setAttribute('role', 'status')
     else {
-      element('p', `${week.completed} ${week.completed === 1 ? 'rutine' : 'rutiner'} gennemført`, overview).setAttribute('role', 'status')
+      element('p', `${week.completed} ${week.completed === 1 ? 'rutine' : 'rutiner'} gennemført på denne enhed`, overview).setAttribute('role', 'status')
       const days = element('ul', undefined, overview)
       Object.assign(days.style, { display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0', listStyle: 'none' })
       const labels = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
       week.days.forEach((day, i) => {
         const item = element('li', `${labels[i]} ${day.done ? '✓' : '–'}`, days)
-        item.setAttribute('aria-label', `${labels[i]} ${danishDate(day.day)}: ${day.count} ${day.count === 1 ? 'rutine' : 'rutiner'} gennemført`)
+        item.setAttribute('aria-label', `${labels[i]} ${danishDate(day.day)}: ${day.count} ${day.count === 1 ? 'rutine' : 'rutiner'} gennemført på denne enhed`)
       })
     }
     // Marc 3. nov. (keep it simple): hjemmeoevelser vises kun, naar der er nogen; ingen teknisk lagringstekst.
     const coach = element('section'); coach.hidden = !(model.assigned.length || model.choices.length || model.error)
     element('h2', 'Hjemmeøvelser fra din coach', coach)
     if (model.assigned.length) {
-      element('p', model.homeworkAuthor, coach)
       model.assigned.forEach(ex => exercise(ex, coach))
       element('p', 'Gemt på denne enhed.', coach)
     }
     for (const choice of model.choices) {
-      element('p', model.coachName ? `Valgt af ${model.coachName}` : 'Coachens navn er ikke tilgængeligt.', coach)
+      if (model.coachName) element('p', `Valgt af ${model.coachName}`, coach)
       element('h3', `${choice.lift}: ${choice.need}`, coach)
       choice.exercises.forEach(ex => exercise(ex, coach))
     }

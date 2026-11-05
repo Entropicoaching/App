@@ -8,7 +8,7 @@ const { default: Profile } = await import('./Profile.mjs')
 const athlete = Object.freeze({ id: 'synthetic-athlete', name: 'Testatlet', goal: 'Stærkere\nTre pas om ugen', kcal_target: 2400, protein_target: '150' })
 const walk = n => Array.isArray(n) ? n.flatMap(walk) : n && typeof n === 'object' ? [n, ...walk(n.props.children)] : []
 const text = n => Array.isArray(n) ? n.map(text).join(' ') : typeof n === 'string' ? n : text(n?.props?.children ?? '')
-const render = props => Profile({ enabled: true, athlete, ...props })
+const render = props => Profile({ enabled: true, athlete, onLogOut() {}, ...props })
 const button = tree => walk(tree).find(n => n.type === 'button')
 
 test('OFF is inert and does not read data, callbacks or globals', () => {
@@ -31,14 +31,16 @@ test('actual component shows existing name, goal and daily calorie/protein targe
 })
 
 test('missing fields and invalid targets never invent numeric goals', () => {
-  assert.deepEqual(profileModel(null), { name: 'Navn ikke angivet', goal: 'Intet mål angivet endnu', kcal: 'Ikke angivet endnu', protein: 'Ikke angivet endnu' })
+  assert.deepEqual(profileModel(null), { name: null, goal: null, kcal: null, protein: null })
   for (const value of [null, undefined, '', ' ', false, true, [], {}, -1, 0, Infinity, NaN, 'NaN', '-2', '150g', '0x10']) {
     const model = profileModel({ kcal_target: value, protein_target: value })
-    assert.equal(model.kcal, 'Ikke angivet endnu')
-    assert.equal(model.protein, 'Ikke angivet endnu')
+    assert.equal(model.kcal, null)
+    assert.equal(model.protein, null)
   }
   assert.equal(profileModel({ protein_target: ' 150.5 ' }).protein, '150,5 g')
-  assert.match(text(render({ athlete: null })), /Intet mål angivet endnu/)
+  const empty = render({ athlete: null })
+  assert.equal(walk(empty).filter(n => ['dl', 'dt', 'dd'].includes(n.type)).length, 0)
+  assert.doesNotMatch(text(empty), /Mine kostmål|ikke angivet|Intet mål/)
 })
 
 test('only user action calls supplied confirmed logout, preserving promise and no arguments', async () => {
@@ -53,16 +55,15 @@ test('only user action calls supplied confirmed logout, preserving promise and n
   assert.equal(calls, 1)
 })
 
-test('preview, pending and missing callback disable logout, including direct handler invocation', () => {
-  for (const props of [{ preview: true }, { loggingOut: true }]) {
-    const b = button(render({ onLogOut: () => assert.fail('logout forbidden'), ...props }))
-    assert.equal(b.props.disabled, true); b.props.onClick()
+test('preview, hidden and missing callback omit logout; pending blocks its existing action', () => {
+  for (const props of [{ preview: true }, { hideLogout: true }, { onLogOut: undefined }, { onLogOut: null }]) {
+    const tree = render({ onLogOut: () => assert.fail('logout forbidden'), ...props })
+    assert.equal(button(tree), undefined)
+    assert.doesNotMatch(text(tree), /Log ud|ikke tilgængeligt/)
   }
-  const missing = render()
-  assert.equal(button(missing).props.disabled, true)
-  button(missing).props.onClick()
-  assert.match(text(missing), /ikke tilgængeligt lige nu/)
-  assert.equal(button(render({ loggingOut: true })).props.children, 'Logger ud…')
+  const pending = button(render({ loggingOut: true, onLogOut: () => assert.fail('logout pending') }))
+  assert.equal(pending.props.disabled, true); pending.props.onClick()
+  assert.equal(pending.props.children, 'Logger ud…')
 })
 
 test('host error is announced; retry remains the existing action', () => {
@@ -95,10 +96,10 @@ test('long untrusted text stays a text child; mobile flow has no fixed overlays'
 test('existing nutrition goal codes are Danish; free text and missing values keep their meaning', () => {
   for (const [goal, expected] of [['cut', 'Vægttab'], ['maintain', 'Vedligehold'], ['bulk', 'Opbygning'],
     ['Stærkere\nTre pas', 'Stærkere\nTre pas'], [' cut ', 'Vægttab'], ['constructor', 'constructor'],
-    ['toString', 'toString'], ['__proto__', '__proto__'], ['', 'Intet mål angivet endnu'], [null, 'Intet mål angivet endnu']]) {
+    ['toString', 'toString'], ['__proto__', '__proto__'], ['', null], [null, null]]) {
     assert.equal(profileModel({ goal }).goal, expected)
     const fields = walk(render({ athlete: { goal } })).filter(n => n.type === 'dd')
-    assert.equal(text(fields[1]), expected)
+    assert.deepEqual(fields.map(text), expected == null ? [] : [expected])
   }
 })
 
@@ -124,4 +125,22 @@ test('host catches its own logout rejection and supplies visible error state', a
   assert.equal(logoutError, true)
   const retry = render({ onLogOut, logoutError })
   assert.match(text(walk(retry).find(n => n.props.role === 'alert')), /Prøv igen/)
+})
+
+test('partial profile keeps only known fields, with no empty cards or new editing action', () => {
+  for (const [athlete, expected] of [
+    [{ name: '  Testatlet  ' }, ['Testatlet']],
+    [{ goal: 'bulk' }, ['Opbygning']],
+    [{ kcal_target: 2400 }, ['2.400 kcal']],
+    [{ protein_target: '150.5' }, ['150,5 g']],
+    [{ name: ' ', goal: '', kcal_target: 0, protein_target: 'invalid' }, []],
+  ]) {
+    const tree = render({ athlete, onLogOut: undefined })
+    assert.deepEqual(walk(tree).filter(n => n.type === 'dd').map(text), expected)
+    assert.equal(walk(tree).some(n => ['button', 'input', 'form', 'textarea'].includes(n.type)), false)
+    assert.doesNotMatch(text(tree), /ikke angivet|Intet mål|ikke tilgængeligt/)
+  }
+  const tree = render({ athlete: { goal: 'bulk' }, hideGoal: true, hideLogout: true, children: 'Eksisterende indhold' })
+  assert.equal(walk(tree).some(n => n.type === 'dl'), false)
+  assert.match(text(tree), /Eksisterende indhold/)
 })

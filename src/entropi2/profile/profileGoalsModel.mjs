@@ -51,9 +51,9 @@ export function validateGoalDraft(draft, saved) {
 }
 
 export function goalDisplay(values) {
-  const kg = value => value == null ? 'Ikke angivet endnu' : `${value.toLocaleString('da-DK', { maximumFractionDigits: 3 })} kg`
+  const kg = value => value == null ? null : `${value.toLocaleString('da-DK', { maximumFractionDigits: 3 })} kg`
   const date = values.competition_date
   return { goal: profileModel({ goal: values.goal }).goal, weight_class: kg(values.weight_class),
-    competition_date: date ? `${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}` : 'Intet stævne angivet endnu',
+    competition_date: date ? `${date.slice(8, 10)}.${date.slice(5, 7)}.${date.slice(0, 4)}` : null,
     target_weight: kg(values.target_weight) }
 }
