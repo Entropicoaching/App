@@ -10,6 +10,7 @@ import { nutritionReportView } from '../rapport/reportView.mjs'
 import KostJustering from '../justering/KostJustering.mjs'
 import { portalAdjustment, choosePortalAdjustment } from './adjustment.mjs'
 import { control, button, primaryButton, formCss } from './formStyles.mjs'
+import { activeReportScope, startActiveReport, activeReportView } from './activeReport.mjs'
 
 const h = React.createElement
 const meals = ['Morgenmad', 'Frokost', 'Aftensmad']
@@ -59,13 +60,15 @@ function ScopedKostJustering({ options, proposal }) {
 
 function ScopedPortalPlan(props) {
   const [opened, setOpened] = React.useState(false)
-  return h('details', { className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
+  const [refresh, setRefresh] = React.useState(0)
+  return h('div', null,
+    h(ActiveReport, { ...props, enabled: true, refresh }),
+    h('details', { className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
     onToggle: event => { if (event.currentTarget.open) setOpened(true) } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
     h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
-    opened && h(PlanEditor, { ...props,
-      key: JSON.stringify([props.athlete.age, props.athlete.bodyweight, props.athlete.goal]) }),
-    opened && h(PortalNutritionReport, { ...props, enabled: true }))
+    opened && h(PlanEditor, { ...props, onActivated: () => setRefresh(value => value + 1),
+      key: JSON.stringify([props.athlete.age, props.athlete.bodyweight, props.athlete.goal]) })))
 }
 
 export function PortalNutritionReport(props = {}) {
@@ -108,7 +111,12 @@ function PlanEditor(props) {
     h(PlanActivation, { controller: opened.controller, athleteId: props.athlete.id, date: props.date,
       client: props.client, loadClient: props.loadClient }),
     opened.loadError && h('p', { role: 'alert' }, opened.loadError),
-    coachPlanView(h, snapshot, opened.controller),
+    coachPlanView(h, snapshot, { ...opened.controller, activate: async () => {
+      const previous = opened.controller.snapshot().publishedVersion
+      const activated = await opened.controller.activate()
+      if (activated && opened.controller.snapshot().publishedVersion !== previous) props.onActivated()
+      return activated
+    } }),
     !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
       h('p', null, gramGenerator
@@ -139,4 +147,22 @@ function PlanEditor(props) {
           onClick: () => setRows(old => old.map((meal, m) => m !== mi ? meal : [...meal, { foodId: '', grams: '' }])) }, 'Tilføj fødevare'))),
       error && h('p', { role: 'alert' }, error),
       h('button', { type: 'submit', style: { ...primaryButton, width: '100%' } }, gramGenerator ? 'Generér forslag' : 'Brug måltider og generér dagsplan')))
+}
+
+function ActiveReportSession(props) {
+  const [result, setResult] = React.useState(null)
+  const [attempt, setAttempt] = React.useState(0)
+  React.useEffect(() => startActiveReport({ ...props, athleteId: props.athlete.id, receipt: props.nutritionRead },
+    value => setResult({ value, receipt: props.nutritionRead, client: props.client, loadClient: props.loadClient, attempt })),
+  [props.coachId, props.athlete.id, props.date, props.nutritionRead, props.client, props.loadClient, attempt])
+  if (result?.receipt !== props.nutritionRead || result?.client !== props.client
+    || result?.loadClient !== props.loadClient || result?.attempt !== attempt) return null
+  return activeReportView(h, result.value, () => setAttempt(value => value + 1))
+}
+
+export function ActiveReport(props = {}) {
+  if (props.enabled !== true) return null
+  if (!activeReportScope({ enabled: true, coachId: props.coachId, athleteId: props.athlete?.id,
+    date: props.date, receipt: props.nutritionRead })) return null
+  return h(ActiveReportSession, { ...props, key: JSON.stringify([props.coachId, props.athlete.id, props.date, props.refresh]) })
 }

@@ -71,22 +71,26 @@ export function nutritionReportView(h, props = {}) {
         style: { minHeight: 44, minWidth: 44 } }, 'Hent rapporten igen'))
     const report = props.report
     if (!report) return h('p', { role: 'alert' }, 'Kostrapporten er ikke tilsluttet.')
+    const active = report.comparison === 'active-plan'
     return h('section', { 'aria-label': 'Kostrapport for én atlet',
       style: { maxWidth: '64rem', width: '100%', minWidth: 0, boxSizing: 'border-box', padding: 16, overflowWrap: 'anywhere' } },
       h('h2', null, 'Plan og registreret kost'),
-      h('p', null, `Uge: ${range(report.from, report.through)}`),
+      h('p', null, `${active ? 'Seneste 7 dage' : 'Uge'}: ${range(report.from, report.through)}`),
       h('p', null, `Opgjort til og med ${dateLabel(report.date)}.`),
+      active && h('p', null, 'Den aktive plans dagsmål er reference for perioden. Tidligere planmål er ikke med i sammenligningen.'),
       h('div', { style: grid },
-        h('section', { 'aria-label': 'Ugens kost', style: card },
-          h('h3', null, 'Ugens kost'),
+        h('section', { 'aria-label': active ? 'Periodens kost' : 'Ugens kost', style: card },
+          h('h3', null, active ? 'Periodens kost' : 'Ugens kost'),
           h('p', null, `${report.week.loggedDays} af ${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} med kostlog · ${report.week.missingDays} uden log.`),
-          h('p', null, `${report.week.plannedDays} af ${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} med entydig aktiveret plan.`),
+          !active && h('p', null, `${report.week.plannedDays} af ${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} med entydig aktiveret plan.`),
           report.week.conflictDays > 0 && h('p', { role: 'alert' }, 'Planhistorikken overlapper. Berørte mål kan ikke sammenlignes.'),
           report.week.unknownDays > 0 && h('p', { role: 'alert' }, 'Nogle loggede dage har ukendte næringsdata.'),
           report.week.loggedDays === 0 ? h('p', null, 'Der er ingen kostlog i perioden. Indtaget er ukendt.')
             : h(MacroList, { entries: report.week.metrics, weekly: true }),
-          h('p', null, 'Ugens tal og procenter gælder kun loggede dage og deres planmål. Kostloggen fortæller ikke, om hele dagens indtag er registreret.')),
-        h(Weight, { weight: report.weight })),
+          h('p', null, active
+            ? 'Periodens tal og procenter gælder kun loggede dage sammenholdt med den aktive plans dagsmål. Kostloggen fortæller ikke, om hele dagens indtag er registreret.'
+            : 'Ugens tal og procenter gælder kun loggede dage og deres planmål. Kostloggen fortæller ikke, om hele dagens indtag er registreret.')),
+        !active && h(Weight, { weight: report.weight })),
       h('details', { style: { marginTop: 16 } },
         h('summary', { style: { minHeight: 44, cursor: 'pointer', paddingBlock: 12 } }, 'Se dage og planmål'),
         ...report.days.map(day => h(Day, { key: day.date, day }))))

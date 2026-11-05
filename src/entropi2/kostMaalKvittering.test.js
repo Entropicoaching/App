@@ -8,6 +8,10 @@ const fixture = new URL('./kostMaal/reactFixture.mjs', import.meta.url).href
 const hooks = registerHooks({ resolve(specifier, context, next) {
   if (specifier === 'react' && context.parentURL?.endsWith('/kostMaalKobling.mjs'))
     return { url: 'data:text/javascript,' + encodeURIComponent(`export { createElement, useState } from '${fixture}'; export const useEffect = () => { throw Error('Unexpected effect') }`), shortCircuit: true }
+  // This nutrition-target fixture does not execute the portal's new report
+  // effect. Its actual lifecycle/adapter is covered in activeReport.synthetic.
+  if (specifier === 'react' && context.parentURL?.endsWith('/kostplan/coach/PortalPlan.mjs'))
+    return { url: 'data:text/javascript,' + encodeURIComponent(`export { createElement, useState, useRef, useSyncExternalStore } from '${fixture}'; export const useEffect = () => {}`), shortCircuit: true }
   if (specifier === 'react' && (context.parentURL?.endsWith('/kostMaal/KostMaal.mjs') || context.parentURL?.endsWith('/kostplan/coach/PortalPlan.mjs') || context.parentURL?.endsWith('/kostplan/coach/activation.mjs') || context.parentURL?.endsWith('/kostplan/justering/KostJustering.mjs')))
     return { url: fixture, shortCircuit: true }
   return next(specifier, context)

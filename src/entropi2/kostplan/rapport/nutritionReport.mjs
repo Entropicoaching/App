@@ -68,17 +68,37 @@ function dailyLogs(rows, athleteId, from, through) {
  */
 export function buildNutritionReport(options = {}) {
   if (options.enabled !== true) return null
+  return nutritionReport(options)
+}
+
+// The adapter exposes today's approved plan, not historical activation dates.
+// Compare its targets as a current reference across the trailing seven days;
+// never manufacture a plan.mjs lifecycle or claim those targets applied then.
+export function buildActivePlanNutritionReport(options = {}) {
+  if (options.enabled !== true) return null
+  const { activePlan: plan, athleteId, date } = options
+  if (!plan) return null
+  if (plan.athlete_id !== athleteId || plan.date !== date || plan.active !== true
+    || !id(plan.id) || !id(plan.revision) || !Array.isArray(plan.meals) || !plan.meals.length
+    || !plan.targets || !metrics.every(key => plan.targets[key] === null
+      || typeof plan.targets[key] === 'number' && Number.isFinite(plan.targets[key]) && plan.targets[key] >= 0))
+    fail('Ugyldig aktiv plan')
+  return nutritionReport({ athleteId, date, mealLogs: options.mealLogs, weightLogs: [] }, plan)
+}
+
+function nutritionReport(options, activePlan = null) {
   const { athleteId, date, plans, mealLogs, weightLogs } = options
   if (!id(athleteId) || !validDay(date) || date > '9999-12-24') fail('Atlet og gyldig rapportdato kræves')
-  if (![plans, mealLogs, weightLogs].every(Array.isArray)) fail('Rapporten kræver tre færdighentede lister')
+  if (![...(activePlan ? [] : [plans]), mealLogs, weightLogs].every(Array.isArray)) fail('Rapporten kræver færdighentede lister')
   const end = calendarTime(date)
-  const monday = end - ((new Date(end).getUTCDay() + 6) % 7) * DAY
-  const from = iso(monday), through = iso(monday + 6 * DAY)
+  const start = end - (activePlan ? 6 : (new Date(end).getUTCDay() + 6) % 7) * DAY
+  const from = iso(start), through = iso(start + 6 * DAY)
   if (!validDay(from) || !validDay(through)) fail('Ugen ligger uden for datointervallet')
-  const history = planHistory(plans, athleteId)
+  const history = activePlan ? [{ id: activePlan.id, from, until: null, targets: activePlan.targets }]
+    : planHistory(plans, athleteId)
   const grouped = dailyLogs(mealLogs, athleteId, from, date)
   const days = Array.from({ length: 7 }, (_, offset) => {
-    const day = iso(monday + offset * DAY)
+    const day = iso(start + offset * DAY)
     const future = day > date
     const matches = future ? [] : history.filter(plan => plan.from <= day && (plan.until === null || day < plan.until))
     const planState = future ? 'future' : matches.length > 1 ? 'conflict' : matches.length ? 'active' : 'none'
@@ -105,6 +125,7 @@ export function buildNutritionReport(options = {}) {
     .map(row => ({ date: row.date, kg: row.weight }))
   const previous = recentWeights.filter(row => row.date < iso(end - 6 * DAY))
   return { namespace, athleteId, date, from, through, days,
+    ...(activePlan ? { comparison: 'active-plan', planRevision: activePlan.revision } : {}),
     week: { elapsedDays: elapsed.length, loggedDays: logged.length,
       missingDays: elapsed.length - logged.length,
       unknownDays: logged.filter(day => day.logState === 'unknown').length,

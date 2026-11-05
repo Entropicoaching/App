@@ -47,9 +47,9 @@ test('opened manual and bounded templates style every field and add/remove/gener
       let tree = screen.render()
       assert.equal(text(tree).trim(), 'Kostplan')
       assert.equal(storage.calls.length, 0)
-      tree.props.onToggle({ currentTarget: { open: true } }); tree = screen.render()
+      nodes(tree).find(node => node.type === 'details').props.onToggle({ currentTarget: { open: true } }); tree = screen.render()
       checkFields(tree)
-      assert.equal(tree.props.className, 'e2-portal-plan')
+      assert.equal(nodes(tree).find(node => node.type === 'details').props.className, 'e2-portal-plan')
       const css = nodes(tree).find(n => n.type === 'style').props.dangerouslySetInnerHTML.__html
       assert.match(css, /:is\(\.e2-coach-plan, \.e2-portal-plan\).*:focus-visible/)
       assert.match(css, /outline: 3px solid #c8923a;[\s\S]*outline-offset: 3px/)
