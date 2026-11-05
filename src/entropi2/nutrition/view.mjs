@@ -7,6 +7,7 @@ import { weeklyTrend } from './weeklyTrend.mjs'
 import { mealProtein, eveningProtein } from './dailyProtein.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
+import { calendarDay } from '../../calendarDate.js'
 let mountSequence = 0
 
 // Mount inside an assembly-owned host; load nutrition.css separately. No global DOM.
@@ -48,6 +49,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const draw = () => {
     if (destroyed) return
     const s = controller.snapshot()
+    const isToday = s.date === calendarDay(clock())
     // Preserve focus on state updates; all user data enters the DOM as textContent.
     const focused = doc.activeElement?.getAttribute('data-focus')
     const openDetails = [...host.querySelectorAll('details')].filter(n => n.open).map(n => n.getAttribute('data-focus'))
@@ -154,18 +156,25 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       }
       if (availableTemplates.length || templateState?.suggestions.length) fast.append(templates)
     }
-    const weighing = append(main, 'section', 'card'); weighing.setAttribute('data-kost-del', 'vaegt')
-    append(weighing, 'h2', '', 'Din vægt')
-    const summary = weightSummary(weightProps.weightLogs, s.athleteId, s.date)
+    const weightStatus = weightProps.weightStatus
+    const weightReady = weightStatus?.athleteId === s.athleteId && weightStatus.state === 'ready'
+    const weightReadError = weightStatus?.athleteId === s.athleteId && weightStatus.state === 'error'
+    const summary = weightSummary(!weightStatus || weightReady ? weightProps.weightLogs : [], s.athleteId, s.date)
+    const weightConnected = isToday && typeof weightProps.logWeight === 'function' && typeof weightProps.onWeightInput === 'function'
+    const weighing = node('section', 'card'); weighing.setAttribute('data-kost-del', 'vaegt')
+    if (summary.latest || weightReady || weightReadError || weightConnected || weightError) {
+      main.append(weighing)
+      append(weighing, 'h2', '', 'Din vægt')
+    }
     // Marc 3. nov.: dansk dato i stedet for ISO, og kun én tom-tekst, når der ingen vejninger er.
     const dag = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.'][Number(m[2]) - 1]}` : String(iso) }
-    append(weighing, 'p', 'muted space', summary.latest
+    if (summary.latest || weightReady) append(weighing, 'p', 'muted space', summary.latest
       ? `Seneste vægt: ${displayNumber(summary.latest.weight)} kg · ${dag(summary.latest.date)}` : 'Ingen vejninger endnu')
+    if (weightReadError) { const p = append(weighing, 'p', 'space', 'Vejningerne kunne ikke hentes. Prøv igen.'); p.setAttribute('role', 'alert') }
     if (summary.latest) append(weighing, 'p', 'muted', summary.average !== null
       ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} ${summary.days === 1 ? 'vejedag' : 'vejedage'} (seneste 7 dage)`
       : 'Ingen vejninger de seneste 7 dage')
     if (summary.comparison !== null) append(weighing, 'p', 'muted', summary.comparison)
-    const weightConnected = typeof weightProps.logWeight === 'function' && typeof weightProps.onWeightInput === 'function'
     if (weightConnected) {
       const form = append(weighing, 'form', 'stack space')
       const input = field(form, 'Vægt (kg)', weightProps.weightInput ?? '', value => {
@@ -177,7 +186,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       save.type = 'submit'; save.setAttribute('data-focus', 'save-weight')
       form.addEventListener('submit', async e => {
         e.preventDefault()
-        if (destroyed || weightPending || weightProps.savingWeight === true) return
+        if (destroyed || weightPending || weightProps.savingWeight === true || s.date !== calendarDay(clock())) return
         const value = parseInputNumber(weightProps.weightInput)
         if (!(value > 0)) { weightError = 'Angiv en gyldig vægt over 0 kg.'; draw(); return }
         weightPending = true; weightError = ''; draw()
@@ -188,26 +197,28 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         } catch { weightError = 'Vægten blev ikke gemt. Prøv igen.' }
         finally { weightPending = false; draw() }
       })
-    } else append(weighing, 'p', 'muted space', 'Vejning er ikke tilsluttet endnu.')
+    }
     if (weightError) { const p = append(weighing, 'p', 'space', weightError); p.setAttribute('role', 'alert') }
     const intro = append(main, 'div', 'intro'); intro.setAttribute('data-kost-del', 'intro')
     // Marc 3. nov.: datoen staar allerede i topbjaelken.
-    append(intro, 'p', 'eyebrow', 'Kost i dag')
-    append(intro, 'h1', '', 'Dit næste måltid')
+    append(intro, 'p', 'eyebrow', isToday ? 'Kost i dag' : 'Kost · den valgte dag')
+    append(intro, 'h1', '', isToday ? 'Dit næste måltid' : 'Din kostdagbog')
     append(intro, 'p', 'muted', 'Brug dine mål uden at logge. Dagbogen er valgfri.')
     const hero = append(main, 'section', 'card hero'); hero.setAttribute('data-kost-del', 'maal')
-    append(hero, 'h2', '', 'Dagens mål')
+    append(hero, 'h2', '', isToday ? 'Dagens mål' : 'Mål for den valgte dag')
     const advice = startAdvice(s.targets)
-    if (!advice.kcal && !advice.protein) append(hero, 'p', 'space', 'Ingen mål endnu')
-    else {
-      append(hero, 'p', 'space', advice.kcal ? `Energi: ${displayNumber(advice.kcal)} kcal` : 'Energi: Ingen mål endnu')
-      append(hero, 'p', 'space', advice.protein ? `Protein: ${displayNumber(advice.protein)} g` : 'Protein: Ingen mål endnu')
-      const tips = append(hero, 'ul', 'list')
+    if (advice.kcal) append(hero, 'p', 'space', `Energi: ${displayNumber(advice.kcal)} kcal`)
+    if (advice.protein) append(hero, 'p', 'space', `Protein: ${displayNumber(advice.protein)} g`)
+    if (advice.tips.length) {
+      const help = append(hero, 'details', 'space'); help.setAttribute('data-focus', 'general-meal-help')
+      append(help, 'summary', '', 'Generel hjælp til måltider')
+      append(help, 'p', 'muted', 'Et generelt eksempel, som du kan tilpasse med din coach. Det er ikke en individuel måltidsplan.')
+      const tips = append(help, 'ul', 'list')
       advice.tips.forEach(tip => append(tips, 'li', '', tip))
     }
-    if (!advice.kcal || !advice.protein) append(hero, 'p', 'muted space', 'Tal med din coach om at aftale de manglende kostmål.')
+    if ((!advice.kcal || !advice.protein) && typeof onCoach !== 'function') append(hero, 'p', 'muted space', 'Aftal dine kostmål med din coach.')
     if (typeof onCoach === 'function') button(hero, 'Tal med din coach', onCoach)
-    append(main, 'h2', 'section-head', 'Dagens dagbog')
+    append(main, 'h2', 'section-head', isToday ? 'Dagens dagbog' : 'Dagbog for den valgte dag')
     const status = append(main, 'p', 'space', s.message)
     status.setAttribute('role', s.phase.endsWith('error') ? 'alert' : 'status')
     status.setAttribute('aria-live', 'polite')
@@ -217,19 +228,19 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     if (s.loaded) {
       // Marc 3. nov.: uden maaltider stod "Ingen maaltider registreret i dag." to gange;
       // fordelingen vises kun, naar der er noget at fordele (dagbogen siger det tomme).
-      if (s.logs.length) {
+      const knownProtein = mealProtein(s.logs).filter(meal => meal.protein !== null)
+      if (knownProtein.length) {
         const distribution = append(main, 'section', 'space')
         append(distribution, 'h3', '', 'Protein pr. måltid')
         const list = append(distribution, 'ul', 'list')
-        for (const meal of mealProtein(s.logs)) append(list, 'li', '', meal.meal + ': '
-          + (meal.protein === null ? 'ukendt protein' : `${displayNumber(meal.protein)} g protein`))
+        for (const meal of knownProtein) append(list, 'li', '', `${meal.meal}: ${displayNumber(meal.protein)} g protein`)
       }
       const ul = append(main, 'ul', 'list')
       if (s.needsRefresh) {
         append(main, 'p', 'muted', 'Hent dagbogen igen for at kunne rette eller fjerne det nye måltid.')
         button(main, 'Hent dagbogen igen', () => controller.load(), s.pending)
       }
-      if (!s.logs.length) append(ul, 'li', 'muted', 'Ingen måltider registreret i dag.')
+      if (!s.logs.length) append(ul, 'li', 'muted', isToday ? 'Ingen måltider registreret i dag.' : 'Ingen måltider registreret den valgte dag.')
       for (const [index, row] of s.logs.entries()) {
         const li = append(ul, 'li')
         const partLabel = append(li, 'label', 'meal-part')
@@ -240,7 +251,9 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         part.addEventListener('change', () => controller.toggleMealPart(index))
         append(partLabel, 'span', '', 'Vælg til eget måltid')
         append(li, 'strong', '', typeof row.meal === 'string' ? row.meal : 'Ugyldigt måltid')
-        append(li, 'small', '', s.invalid ? 'Næringsdata skal kontrolleres.' : `${row.kcal} kcal · ${row.protein} g protein`)
+        const validRow = typeof row.meal === 'string' && row.meal.trim()
+          && ['kcal', 'protein', 'carb', 'fat'].every(key => parseInputNumber(row[key]) !== null)
+        append(li, 'small', '', validRow ? `${row.kcal} kcal · ${row.protein} g protein` : 'Kontrollér næringsværdierne for dette måltid.')
         if (s.editableIds?.includes(row.id)) {
           const edit = button(li, 'Ret måltid: ' + row.meal, () => {
             if (destroyed || controller.snapshot().pending) return
@@ -310,28 +323,31 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           controller.saveOwnMeal(ownMealName)
         })
       }
-      const goals = append(main, 'section', 'card')
-      append(goals, 'p', 'eyebrow', 'Dagens registreringer og mål')
-      append(goals, 'h2', '', s.invalid ? 'Næringsdata skal kontrolleres' : s.logs.length ? 'Registreret indtag' : 'Ingen vurdering endnu')
-      for (const [key, label, unitName] of [['kcal', 'Energi', 'kcal'], ['protein', 'Protein', 'g']]) {
-        const target = s.targets[key] > 0 ? s.targets[key] : null
-        append(goals, 'p', 'muted space', label + ': ' + (s.totals ? `${s.totals[key]} ${unitName}` : 'ukendt')
-          + (target ? ` · aftalt mål ${target} ${unitName}` : ' · Ingen mål endnu'))
-        if (target && s.totals && s.logs.length) {
-          const progress = append(goals, 'progress'); progress.max = target; progress.value = Math.min(target, s.totals[key])
-          progress.setAttribute('aria-label', label + ', registreret i forhold til aftalt mål')
+      const remaining = remainingToday(s.totals, s.targets)
+      const goals = node('section', 'card')
+      if (s.totals && (s.logs.length || remaining)) main.append(goals)
+      if (s.logs.length && s.totals) {
+        append(goals, 'p', 'eyebrow', isToday ? 'Dagens registreringer og mål' : 'Registreringer og mål for den valgte dag')
+        append(goals, 'h2', '', 'Registreret indtag')
+        for (const [key, label, unitName] of [['kcal', 'Energi', 'kcal'], ['protein', 'Protein', 'g']]) {
+          const target = s.targets[key] > 0 ? s.targets[key] : null
+          append(goals, 'p', 'muted space', `${label}: ${s.totals[key]} ${unitName}`
+            + (target ? ` · aftalt mål ${target} ${unitName}` : ''))
+          if (target && s.totals && s.logs.length) {
+            const progress = append(goals, 'progress'); progress.max = target; progress.value = Math.min(target, s.totals[key])
+            progress.setAttribute('aria-label', label + ', registreret i forhold til aftalt mål')
+          }
         }
       }
-      const remaining = remainingToday(s.totals, s.targets)
       if (remaining) {
         const parts = []
         if (remaining.kcal !== null) parts.push(displayNumber(remaining.kcal) === '0' ? 'Energi nået' : `${displayNumber(remaining.kcal)} kcal`)
         if (remaining.protein !== null) parts.push(displayNumber(remaining.protein) === '0' ? 'Protein nået' : `${displayNumber(remaining.protein)} g protein`)
-        append(goals, 'p', 'muted space', 'Tilbage i dag: ' + parts.join(' · '))
+        append(goals, 'p', 'muted space', (isToday ? 'Tilbage i dag: ' : 'Tilbage til målet den valgte dag: ') + parts.join(' · '))
       }
-      const evening = eveningProtein(remaining, clock())
+      const evening = isToday ? eveningProtein(remaining, clock()) : null
       if (evening) append(goals, 'p', 'muted space', evening)
-      append(goals, 'p', 'small muted space', 'Registreringer viser ikke nødvendigvis hele dagens indtag. Ingen samlet kostvurdering.')
+      if (s.logs.length && s.totals) append(goals, 'p', 'small muted space', 'Registreringer viser ikke nødvendigvis hele ' + (isToday ? 'dagens' : 'den valgte dags') + ' indtag. Ingen samlet kostvurdering.')
       // Keep the existing library controls below the diary, without duplicate log buttons.
       const library = (title, items, prefix) => {
         if (!items.length) return
@@ -348,12 +364,14 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       library('Måltidsbibliotek', s.recent.filter(meal => !s.favoriteKeys.includes(mealKey(meal))), 'recent')
       if (s.favoriteError && s.logs.length < 2) { const p = append(main, 'p', 'space', s.favoriteError); p.setAttribute('role', 'alert') }
       const weekly = append(main, 'section', 'card')
-      append(weekly, 'h2', '', 'Din uge')
-      append(weekly, 'p', 'muted space', weekText(s.historyRows, s.targets, s.date, { compact: true }))
-      const weeks = weeklyTrend(s.historyRows, s.targets, s.date)
-      if (weeks.length) append(weekly, 'p', 'small muted space',
-        'Loggede dage pr. kalenderuge: ' + weeks.map(week => week.loggedDays).join(' → ')
-        + ' · ældste først, denne uge indtil nu.')
+      if (s.historyRows.length) {
+        append(weekly, 'h2', '', 'Din uge')
+        append(weekly, 'p', 'muted space', weekText(s.historyRows, s.targets, s.date, { compact: true }))
+        const weeks = weeklyTrend(s.historyRows, s.targets, s.date)
+        if (weeks.length) append(weekly, 'p', 'small muted space',
+          'Loggede dage pr. kalenderuge: ' + weeks.map(week => week.loggedDays).join(' → ')
+          + ' · ældste først, denne uge indtil nu.')
+      }
       const planInputs = controller.weekPlanInputs()
       const key = JSON.stringify({ ...planInputs, storage: undefined })
       if (!planHost || key !== planKey) {

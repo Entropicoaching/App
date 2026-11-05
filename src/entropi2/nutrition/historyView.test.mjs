@@ -12,7 +12,7 @@ async function mounted(t, rows, date = '2026-11-03') {
     storage: { getItem() { return null }, setItem() { calls.storage++ } },
     contracts: { async load() { calls.load++; return rows }, async save() { calls.save++; return true } },
   })
-  const host = syntheticHost(), cleanup = mountNutrition(host, controller)
+  const host = syntheticHost(), cleanup = mountNutrition(host, controller, { clock: () => new Date('2026-11-05T12:00:00+01:00') })
   t.after(cleanup)
   await flush()
   assert.equal(find(host, 'h2', 'Historik · seneste 30 dage'), undefined)
@@ -75,9 +75,9 @@ for (const [date, previous, firstLabel, previousLabel] of [
 test('history view: closing/reopening and redraw preserve controls without new I/O', async t => {
   const { host, controller, calls } = await mounted(t, [row(), row({ date: '2026-11-03' })])
   const buttons = host.querySelectorAll('button').map(n => n.textContent)
-  for (const heading of ['Log hurtigt', 'Gentag i går', 'Dagens mål', 'Din vægt']) assert.ok(find(host, 'h2', heading))
+  for (const heading of ['Log hurtigt', 'Gentag i går', 'Mål for den valgte dag']) assert.ok(find(host, 'h2', heading))
   assert.equal(find(host, 'h2', 'Seneste måltider'), undefined) // Both rows repeat the same yesterday meal.
-  assert.ok(host.textContent.includes('Tilbage i dag:'))
+  assert.ok(host.textContent.includes('Tilbage til målet den valgte dag:'))
   await find(host, 'button', 'Se historik').fire('click')
   assert.equal(find(host, 'h2', 'Historik · seneste 30 dage'), undefined)
   await find(host, 'button', 'Se historik').fire('click')

@@ -55,10 +55,10 @@ test('real React change and remove handlers edit actual model and rerender total
 test('empty and unavailable data stay honest; local draft is read by real hook component', () => {
   const { props, model } = setup({ templates: [], targets: {} })
   const markup = renderToStaticMarkup(h(Ugeplan, props))
-  assert.match(markup, /ingen egne måltidsskabeloner/)
-  assert.match(markup, /Ingen måltider planlagt/)
-  assert.match(markup, /Ukendt kcal \/ mål mangler/)
-  assert.match(markup, /Ingen ingredienser at vise/)
+  assert.match(markup, /Notér dine måltider i dagbogen/)
+  assert.doesNotMatch(markup, /Ingen måltider planlagt/)
+  assert.doesNotMatch(markup, /Ukendt|mål mangler|<h3/)
+  assert.doesNotMatch(markup, /Ingen ingredienser at vise|Ugens indkøbsliste/)
   assert.equal(model.snapshot().saved, false)
   const other = setup()
   other.model.add(0, template.id)
@@ -84,12 +84,13 @@ test('read/write, setup and ingredient failures render explicit alerts; unreadab
 test('missing ingredient warning, deleted template warning and strict OFF', () => {
   const { model } = setup({ templates: [{ ...template, ingredients: undefined }] })
   model.add(0, template.id)
-  assert.match(html(model), /Listen er ufuldstændig/)
+  assert.doesNotMatch(html(model), /Listen er ufuldstændig|Ugens indkøbsliste/)
   const deleted = setup()
   deleted.model.add(0, template.id)
   const missing = createWeekPlan({ ...deleted.props, templates: [] })
   assert.match(html(missing), /Skabelon findes ikke længere/)
-  assert.match(html(missing), /Listen er ufuldstændig/)
+  assert.doesNotMatch(html(missing), /Listen er ufuldstændig|Ugens indkøbsliste|Ukendt|mål mangler/)
+  assert.equal(nodes(UgeplanView({ enabled: true, snapshot: missing.snapshot() })).filter(n => n.type === 'button').length, 1)
   for (const enabled of [undefined, false, null, 1, 'true']) {
     const props = { enabled, get storage() { throw Error('OFF read') },
       get snapshot() { throw Error('OFF snapshot read') } }
@@ -115,16 +116,16 @@ function screenInputs(t, { raw, storageError = false, writeError = false } = {})
   return { controller, template, data, writes, backend }
 }
 
-test('real React screen inputs show saved days and targets, one weekly list, and no repeated Ugeplan heading', t => {
+test('real React screen inputs show saved days and targets, no empty ingredient list, and no repeated Ugeplan heading', t => {
   const f = screenInputs(t), props = f.controller.weekPlanInputs(), model = createWeekPlan(props)
   model.add(0, f.template.id); model.add(6, f.template.id)
   const markup = renderToStaticMarkup(h(Ugeplan, props))
   assert.match(markup, /Min &lt;ret&gt;/)
   assert.match(markup, /400 kcal \/ 2.000 kcal/)
   assert.match(markup, /25 g protein \/ 120 g protein/)
-  assert.equal((markup.match(/Ugens indkøbsliste/g) || []).length, 1)
+  assert.equal((markup.match(/Ugens indkøbsliste/g) || []).length, 0)
   assert.doesNotMatch(markup, /<h2>Ugeplan/)
-  assert.match(markup, /Listen er ufuldstændig: 2/)
+  assert.doesNotMatch(markup, /Listen er ufuldstændig|Ingen ingredienser at vise/)
   assert.doesNotMatch(markup, /Indkøb fra dine favoritter/)
   assert.equal(f.writes.every(key => key.startsWith('entropi2:nutrition:ugeplan:v1:')), true)
   assert.deepEqual(f.backend, [])
@@ -133,10 +134,10 @@ test('real React screen inputs show saved days and targets, one weekly list, and
 test('real React screen empty templates and source failure have distinct, honest output and no writes', t => {
   const empty = screenInputs(t, { raw: JSON.stringify({ version: 1, templates: [] }) })
   const markup = renderToStaticMarkup(h(Ugeplan, empty.controller.weekPlanInputs()))
-  assert.match(markup, /ingen egne måltidsskabeloner/)
-  assert.match(markup, /Ingen måltider planlagt/)
-  assert.match(markup, /Ukendt kcal/)
-  assert.match(markup, /Ingen ingredienser at vise/)
+  assert.match(markup, /Notér dine måltider i dagbogen/)
+  assert.doesNotMatch(markup, /Ingen måltider planlagt/)
+  assert.doesNotMatch(markup, /Ukendt|mål mangler|<h3/)
+  assert.doesNotMatch(markup, /Ingen ingredienser at vise|Ugens indkøbsliste/)
   for (const options of [{ raw: '{broken' }, { storageError: true }]) {
     const f = screenInputs(t, options), props = f.controller.weekPlanInputs()
     const failed = renderToStaticMarkup(h(Ugeplan, props))
@@ -164,4 +165,50 @@ test('real React integrated draft read/write failures remain visible and offer r
   assert.equal(model.add(0, quota.template.id), false)
   assert.match(html(model), /Ændringen blev ikke gemt/)
   assert.deepEqual(quota.backend, [])
+})
+
+test('real React empty week has one useful template path and no empty days, local status or shopping fold', () => {
+  const { model } = setup({ templates: [] })
+  const markup = html(model)
+  assert.equal((markup.match(/Notér dine måltider i dagbogen/g) || []).length, 1)
+  assert.doesNotMatch(markup, /<h3|<select|Ingen gemt|Ingen måltider planlagt|Ukendt|mål mangler|Ugens indkøbsliste/)
+})
+
+test('real React selectable empty days omit calculations; known zero and absent targets stay distinct', () => {
+  const { model } = setup({ targets: {}, templates: [{ ...template, meal: { ...template.meal, kcal: 0, protein: null } }] })
+  assert.doesNotMatch(html(model), /kcal|g protein|Ukendt|mål mangler|Ingen måltider planlagt/)
+  model.add(0, template.id)
+  const markup = html(model)
+  assert.match(markup, /0 kcal/)
+  assert.doesNotMatch(markup, /g protein|Ukendt|mål mangler/)
+})
+
+test('real React partial ingredient list contains only known items and an explicit partial warning', () => {
+  const { model } = setup({ templates: [template, { ...template, id: 'synthetic:missing-ingredients', ingredients: undefined }] })
+  model.add(0, template.id); model.add(1, 'synthetic:missing-ingredients')
+  const markup = html(model)
+  assert.equal((markup.match(/Ugens indkøbsliste/g) || []).length, 1)
+  assert.match(markup, /Havre: 50 g/)
+  assert.match(markup, /Listen er ufuldstændig: 1/)
+  assert.doesNotMatch(markup, /Ingen ingredienser at vise/)
+})
+
+test('real React removed template remains removable and replaceable without read-time draft writes', () => {
+  const { model, props } = setup()
+  model.add(0, template.id)
+  const writes = []
+  const replacement = { ...template, id: 'synthetic:replacement', name: 'Ny ret' }
+  const restored = createWeekPlan({ ...props, templates: [replacement], storage: {
+    getItem: key => props.storage.getItem(key),
+    setItem: (key, value) => { writes.push(key); props.storage.setItem(key, value) },
+  } })
+  const render = () => UgeplanView({ enabled: true, snapshot: restored.snapshot(),
+    onRemove: (day, slot) => restored.remove(day, slot), onAdd: (day, id) => restored.add(day, id) })
+  assert.match(renderToStaticMarkup(render()), /Skabelon findes ikke længere/)
+  assert.doesNotMatch(renderToStaticMarkup(render()), /Ukendt|mål mangler|Ugens indkøbsliste/)
+  assert.deepEqual(writes, [])
+  nodes(render()).find(n => n.type === 'button').props.onClick()
+  nodes(render()).find(n => n.type === 'select').props.onChange({ currentTarget: { value: replacement.id } })
+  assert.equal(restored.snapshot().days[0].entries[0].templateId, replacement.id)
+  assert.equal(writes.every(key => key.startsWith('entropi2:nutrition:ugeplan:v1:')), true)
 })

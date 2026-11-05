@@ -14,15 +14,12 @@ export function remainingToday(totals, targets) {
   }
 }
 
-// Advice describes the agreed targets; it never infers intake from missing logs.
+// Optional general examples; targets alone do not establish a meal plan.
 export function startAdvice(targets) {
   const kcal = positive(targets.kcal), protein = positive(targets.protein)
   const tips = []
-  if (protein) tips.push(`Fordel dit proteinmål på 4 måltider: cirka ${displayNumber(protein / 4)} g protein pr. måltid.`)
-  if (kcal) tips.push(`Fordel dit energimål på 4 måltider: cirka ${displayNumber(kcal / 4)} kcal pr. måltid.`)
-  if (protein && kcal) tips.push('Planlæg 4 måltider ud fra dine mål; du behøver ikke logge dem.')
-  else if (protein) tips.push(`Planlæg 2 af dagens 4 måltider med tilsammen cirka ${displayNumber(protein / 2)} g protein.`)
-  else if (kcal) tips.push(`Planlæg 2 af dagens 4 måltider med tilsammen cirka ${displayNumber(kcal / 2)} kcal.`)
+  if (protein) tips.push(`Ved eksempelvis 4 måltider: cirka ${displayNumber(protein / 4)} g protein pr. måltid.`)
+  if (kcal) tips.push(`Ved eksempelvis 4 måltider: cirka ${displayNumber(kcal / 4)} kcal pr. måltid.`)
   return { kcal, protein, tips }
 }
 

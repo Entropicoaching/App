@@ -17,5 +17,6 @@ test('shopping wiring: ingredient-bearing favorites never create a second list o
   assert.doesNotMatch(host.textContent, /Indkøb fra dine favoritter/)
   const fold = find(host, 'summary', 'Ugeplan').parentElement
   assert.equal(fold.open, false)
-  assert.equal(fold.parentElement, find(host, 'h2', 'Din uge').parentElement)
+  assert.equal(find(host, 'h2', 'Din uge'), undefined)
+  assert.equal(fold.parentElement.tagName, 'SECTION')
 })

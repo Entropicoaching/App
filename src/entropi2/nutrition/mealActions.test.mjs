@@ -19,7 +19,7 @@ function fixture(options = {}) {
   return { c, calls, contracts }
 }
 async function mount(t, options) {
-  const f = fixture(options), host = syntheticHost(), cleanup = mountNutrition(host, f.c)
+  const f = fixture(options), host = syntheticHost(), cleanup = mountNutrition(host, f.c, { clock: () => new Date(row.date + 'T12:00:00+01:00') })
   t.after(cleanup); await flush(); return { ...f, host }
 }
 const edit = host => find(host, 'button', 'Ret måltid: ' + meal.meal)

@@ -31,7 +31,7 @@ function fixture(t, options = {}) {
     foods, storage, contracts, now: () => clock,
     schedule(fn, delay) { timers.set(++timerId, { fn, at: clock + delay }); return timerId },
     cancel(id) { timers.delete(id) }, ...options.controller })
-  const host = syntheticHost(), cleanup = mountNutrition(host, controller)
+  const host = syntheticHost(), cleanup = mountNutrition(host, controller, { clock: () => new Date('2026-11-05T12:00:00+01:00') })
   t.after(cleanup)
   return { controller, host, cleanup, data, writes, saves, removals, timers,
     advance(ms) { clock += ms; for (const [id, timer] of [...timers]) if (timer.at <= clock) { timers.delete(id); timer.fn() } } }
@@ -264,17 +264,17 @@ test('QOL: actual assembly insertion and undo exercise guarded scoped client cha
     }; return query
   } }
   const host = syntheticHost()
-  t.after(mountNutritionScreen(host, { entropi2: true, athlete: { id: athleteId }, date, client, foods }))
+  t.after(mountNutritionScreen(host, { entropi2: true, athlete: { id: athleteId }, date, client, foods, clock: () => new Date('2026-11-05T12:00:00+01:00') }))
   await flush(); await foodForm(host).fire('submit')
   assert.ok(find(host, 'button', 'Fortryd'))
   await find(host, 'button', 'Fortryd').fire('click')
   assert.deepEqual(trace[2], ['delete', [['id', 'exact-insert'], ['athlete_id', athleteId], ['date', date]], 'id'])
-  assert.equal(trace.length, 3); assert.match(host.textContent, /Ingen måltider registreret i dag/)
+  assert.equal(trace.length, 3); assert.match(host.textContent, /Ingen måltider registreret den valgte dag/)
 })
 
 test('QOL: empty/load-error screens retain honest empty state/retry; strict OFF touches nothing', async t => {
   const empty = fixture(t); await flush()
-  assert.match(empty.host.textContent, /Ingen måltider registreret i dag/)
+  assert.match(empty.host.textContent, /Ingen måltider registreret den valgte dag/)
   assert.equal(find(empty.host, 'h2', 'Favoritter'), undefined)
   assert.equal(find(empty.host, 'button', 'Fortryd'), undefined)
   const broken = fixture(t, { controller: { contracts: { load: async () => { throw Error('synthetic') } } } }); await flush()

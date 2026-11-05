@@ -14,20 +14,22 @@ function mount(options = {}, view = {}) {
   const host = syntheticHost()
   const controller = createNutritionController({ enabled: true, athlete, date,
     contracts: { async load() { return [] } }, ...options })
-  const cleanup = mountNutrition(host, controller, view)
+  const cleanup = mountNutrition(host, controller, { clock: () => new Date(date + 'T12:00:00+01:00'), ...view })
   return { host, controller, cleanup }
 }
 function goalCard(host) { return host.querySelectorAll('section').find(n => n.textContent.startsWith('Dagens mål')) }
 function weightForm(host) { return find(host, 'h2', 'Din vægt').parentElement.querySelectorAll('form')[0] }
 
-test('START: actual mount shows goals and three derived tips before any log response', async () => {
+test('START: actual mount shows goals and optional general examples before any log response', async () => {
   const gate = deferred()
   const { host, cleanup } = mount({ contracts: { load: () => gate.promise } })
   const card = goalCard(host)
   assert.match(card.textContent, /2.400 kcal/); assert.match(card.textContent, /160 g/)
   assert.match(card.textContent, /40 g protein pr. måltid/); assert.match(card.textContent, /600 kcal pr. måltid/)
-  assert.equal(card.querySelectorAll('li').length, 3)
-  assert.equal(host.querySelectorAll('section')[0].querySelectorAll('h2')[0].textContent, 'Din vægt')
+  assert.equal(card.querySelectorAll('li').length, 2)
+  assert.equal(host.querySelectorAll('section')[0].querySelectorAll('h2')[0].textContent, 'Dagens mål')
+  assert.equal(card.querySelectorAll('details')[0].open, false)
+  assert.match(card.querySelectorAll('summary')[0].textContent, /Generel hjælp/)
   gate.resolve([]); await flush()
   assert.match(host.textContent, /Dagbogen er valgfri/); assert.match(host.textContent, /Ingen måltider registreret/)
   cleanup()
@@ -47,18 +49,18 @@ test('START: missing, zero, negative and malformed targets never become zero or 
     const { host, cleanup } = mount({ athlete: { id, kcal_target: value, protein_target: value } })
     await flush()
     const card = goalCard(host)
-    assert.match(card.textContent, /Ingen mål endnu/); assert.match(card.textContent, /Tal med din coach/)
+    assert.doesNotMatch(card.textContent, /Ingen mål endnu/); assert.match(card.textContent, /Aftal dine kostmål med din coach/)
     assert.doesNotMatch(card.textContent, /0 kcal|0 g|ukendt/)
     assert.equal(card.querySelectorAll('li').length, 0); cleanup()
   }
 })
 
-test('START: either partial target gives two derived tips and missing-target coach advice', () => {
+test('START: either partial target gives one optional example and missing-target coach advice', () => {
   for (const targets of [{ kcal_target: '2000,5' }, { protein_target: 123 }]) {
     const { host, cleanup } = mount({ athlete: { id, ...targets } })
     const card = goalCard(host)
-    assert.equal(card.querySelectorAll('li').length, 2)
-    assert.match(card.textContent, /Ingen mål endnu/); assert.match(card.textContent, /Tal med din coach/)
+    assert.equal(card.querySelectorAll('li').length, 1)
+    assert.doesNotMatch(card.textContent, /Ingen mål endnu/); assert.match(card.textContent, /Aftal dine kostmål med din coach/)
     cleanup()
   }
   assert.match(startAdvice({ protein: '123' }).tips[0], /30,8 g/)
@@ -132,11 +134,11 @@ test('START: actual assembly passes props; callback is sole weight write seam', 
     return query
   } }
   const host = syntheticHost()
-  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete, date, client, weightLogs: [weight(date, 80)],
+  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete, date, client, clock: () => new Date(date + 'T12:00:00+01:00'), weightLogs: [weight(date, 80)],
     weightInput: '81', onWeightInput() {}, logWeight: (...args) => { calls.push(args) } })
   await flush(); await weightForm(host).fire('submit')
   assert.deepEqual(calls, [[]]); assert.deepEqual(tables, ['meal_logs'])
-  cleanup.updateWeight({ weightLogs: [] }); assert.match(host.textContent, /Ingen vejninger endnu/)
+  cleanup.updateWeight({ weightLogs: [], weightStatus: { athleteId: id, state: 'ready' } }); assert.match(host.textContent, /Ingen vejninger endnu/)
   cleanup()
 })
 

@@ -7,6 +7,7 @@ import { athleteId, date } from './day.fixture.mjs'
 function setup(contracts = {}) {
   const host = syntheticHost(), calls = [], writes = []
   const options = { enabled: true, athlete: { id: athleteId, kcal_target: 2000, protein_target: 140 }, date,
+    clock: () => new Date(date + 'T12:00:00+01:00'),
     contracts: { async load(id, day) { calls.push(['load', id, day]); return [] },
       async save(row) { calls.push(['save', row]); return true }, ...contracts },
     storage: { getItem() { return null }, setItem(key) { writes.push(key) } } }
@@ -21,7 +22,9 @@ test('tracker adapter OFF never reads or touches host, contracts or storage', ()
 test('actual existing tracker mounts, manual log uses existing controller.log and scoped injected save, cleanup disposes', async t => {
   const f = setup(), cleanup = mountExistingTracker(f.host, f.options); t.after(cleanup)
   await flush(); assert.deepEqual(f.calls, [['load', athleteId, date]])
-  assert.ok(find(f.host, 'h2', 'Log hurtigt')); assert.ok(find(f.host, 'h2', 'Din vægt'))
+  assert.ok(find(f.host, 'h2', 'Log hurtigt'))
+  // Ingen vejninger eller vægtcallbacks: der skal ikke stå et tomt vægtkort.
+  assert.equal(find(f.host, 'h2', 'Din vægt'), undefined)
   assert.match(f.host.textContent, /Ingen måltider registreret i dag/)
   const save = find(f.host, 'button', 'Gem måltid'), form = save.parentElement
   const fields = form.querySelectorAll('input')

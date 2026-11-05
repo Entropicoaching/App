@@ -31,9 +31,10 @@ function fixture(t, options = {}) {
 }
 async function open(f) { const node = fold(f.host); node.open = true; await node.fire('toggle'); return node }
 
-test('week plan wiring: collapsed under Din uge, lazy scoped inputs, detached templates, no mount writes', async t => {
+test('week plan wiring: collapsed without empty week summary, lazy scoped inputs, detached templates, no mount writes', async t => {
   const f = fixture(t); await flush()
-  const plan = fold(f.host), weekly = find(f.host, 'h2', 'Din uge').parentElement
+  const plan = fold(f.host), weekly = plan.parentElement
+  assert.equal(find(f.host, 'h2', 'Din uge'), undefined)
   assert.equal(plan.parentElement, weekly)
   assert.equal(weekly.children.at(-1), plan)
   assert.equal(plan.open, false)

@@ -45,7 +45,9 @@ const weightForm = host => weightSection(host).querySelectorAll('form')[0]
 const goalCard = host => host.querySelectorAll('section').find(n => n.textContent.startsWith('Dagens mål'))
 const weightRow = (logged_at, weight, extra = {}) => ({ athlete_id: athlete.id, logged_at, weight, ...extra })
 
-test('KOST: kostskærmen får atletens mål og vægt fra de eksisterende rækker', async () => {
+test('KOST: kostskærmen får atletens mål og vægt fra de eksisterende rækker', async t => {
+  // Fast København-dag: denne prøve skal altid dække dagens mål og vægtformular.
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(day + 'T12:00:00+01:00') })
   const host = syntheticHost()
   const cleanup = mountKost(host, { athlete, date: day, client: fakeClient(), foods: [] }, latestRef(),
     { weightLogs: [weightRow('2026-11-01', 82.4), weightRow(day, 82.0), { ...weightRow(day, 99), athlete_id: 'syn-anden' }],
@@ -62,7 +64,8 @@ test('KOST: kostskærmen får atletens mål og vægt fra de eksisterende rækker
   cleanup()
 })
 
-test('KOST: vejning med ét tryk kalder den nyeste logWeight-closure uden argumenter', async () => {
+test('KOST: vejning med ét tryk kalder den nyeste logWeight-closure uden argumenter', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(day + 'T12:00:00+01:00') })
   const host = syntheticHost()
   const calls = []
   const closure = input => (...args) => { calls.push({ input, args }) }
@@ -81,14 +84,16 @@ test('KOST: vejning med ét tryk kalder den nyeste logWeight-closure uden argume
   cleanup()
 })
 
-test('KOST: uden skrivecallbacks (historisk dato) vises ingen vægtformular, men vægttallene', async () => {
+test('KOST: uden skrivecallbacks (historisk dato) vises ingen vægtformular, men vægttallene', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: new Date('2026-11-03T12:00:00+01:00') })
   const host = syntheticHost()
   const cleanup = mountKost(host, { athlete, date: day, client: fakeClient(), foods: [] }, latestRef(),
     { weightLogs: [weightRow(day, 81.5)], weightInput: '', savingWeight: false })
   await flush()
   assert.equal(weightSection(host).querySelectorAll('form').length, 0)
   assert.match(weightSection(host).textContent, /Seneste vægt: 81,5 kg/)
-  assert.match(weightSection(host).textContent, /Vejning er ikke tilsluttet endnu/)
+  // Tilslutningsplaceholderen er bevidst fjernet; historiske målinger bevares.
+  assert.doesNotMatch(weightSection(host).textContent, /Vejning er ikke tilsluttet endnu/)
   cleanup()
 })
 

@@ -12,7 +12,7 @@ async function check(rows, expected, goals = { kcal_target: 2400, protein_target
   const host = syntheticHost()
   const controller = createNutritionController({ enabled: true, athlete: { id, ...goals }, date,
     contracts: { async load() { return rows } } })
-  const cleanup = mountNutrition(host, controller)
+  const cleanup = mountNutrition(host, controller, { clock: () => new Date(date + 'T12:00:00+01:00') })
   try {
     await flush()
     const lines = host.querySelectorAll('p').filter(p => p.textContent.startsWith('Tilbage i dag:'))

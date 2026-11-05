@@ -102,7 +102,8 @@ test('remaining DOM: absent/zero goals and invalid rows stay hidden; existing me
     try {
       await flush()
       assert.equal(lines(fixture.host).length, 0)
-      assert.match(fixture.host.textContent, /Ingen mål endnu/)
+      assert.match(fixture.host.textContent, /Aftal dine kostmål med din coach/)
+      assert.doesNotMatch(fixture.host.textContent, /Ingen mål endnu/)
     } finally { fixture.cleanup() }
   }
   for (const bad of [NaN, Infinity, -1, 'bad', null, '']) {
@@ -110,7 +111,7 @@ test('remaining DOM: absent/zero goals and invalid rows stay hidden; existing me
     try {
       await flush()
       assert.equal(lines(fixture.host).length, 0)
-      assert.match(fixture.host.textContent, /Næringsdata skal kontrolleres/)
+      assert.match(fixture.host.textContent, /Kontrollér næringsværdierne for dette måltid/)
     } finally { fixture.cleanup() }
   }
 })

@@ -35,7 +35,7 @@ test('independent review: full actual assembly log/edit/remove with synthetic da
     assert.equal(host.textContent, 'Legacy preserved')
   }
   const host = syntheticHost()
-  t.after(mountNutritionScreen(host, { entropi2: true, client, athlete: { id: row.athlete_id }, date: row.date }))
+  t.after(mountNutritionScreen(host, { entropi2: true, client, athlete: { id: row.athlete_id }, date: row.date, clock: () => new Date('2026-11-05T12:00:00+01:00') }))
   await flush()
   const form = host.querySelectorAll('form')[0]
   for (const [i, value] of Object.values(meal).entries()) {
@@ -50,7 +50,7 @@ test('independent review: full actual assembly log/edit/remove with synthetic da
   await find(host, 'button', 'Fjern måltid: ' + meal.meal).fire('click')
   await find(host, 'button', 'Ja, fjern måltid').fire('click')
   assert.equal(writes, 3); assert.deepEqual(rows, [])
-  assert.ok(host.textContent.includes('Ingen måltider registreret i dag.'))
+  assert.ok(host.textContent.includes('Ingen måltider registreret den valgte dag.'))
 })
 
 test('independent review: stale submit/confirmation double clicks cannot write twice', async t => {
@@ -58,7 +58,7 @@ test('independent review: stale submit/confirmation double clicks cannot write t
     let finish, writes = 0
     const c = createNutritionController({ enabled: true, athlete: { id: row.athlete_id }, date: row.date,
       contracts: { load: async () => [row], [kind]: () => { writes++; return new Promise(r => { finish = r }) } } })
-    const host = syntheticHost(); t.after(mountNutrition(host, c)); await flush()
+    const host = syntheticHost(); t.after(mountNutrition(host, c, { clock: () => new Date('2026-11-05T12:00:00+01:00') })); await flush()
     await find(host, 'button', (kind === 'update' ? 'Ret' : 'Fjern') + ' måltid: ' + meal.meal).fire('click')
     const node = kind === 'update' ? host.querySelectorAll('form').find(f => f.getAttribute('aria-label')) : find(host, 'button', 'Ja, fjern måltid')
     const event = kind === 'update' ? 'submit' : 'click'
@@ -88,7 +88,7 @@ test('independent review: read failure after insert offers retry without exposin
   const c = createNutritionController({ enabled: true, athlete: { id: row.athlete_id }, date: row.date,
     contracts: { load: async () => { if (++loads === 2) throw Error('synthetic read failure'); return loads === 1 ? [] : [row] },
       save: async () => true, update: async () => true, remove: async () => true } })
-  const host = syntheticHost(); t.after(mountNutrition(host, c)); await flush()
+  const host = syntheticHost(); t.after(mountNutrition(host, c, { clock: () => new Date('2026-11-05T12:00:00+01:00') })); await flush()
   assert.equal(await c.log(meal, 'new-log'), true)
   assert.deepEqual(c.snapshot().editableIds, []); assert.equal(c.snapshot().needsRefresh, true)
   await find(host, 'button', 'Hent dagbogen igen').fire('click')

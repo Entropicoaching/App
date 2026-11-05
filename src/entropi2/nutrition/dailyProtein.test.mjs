@@ -94,7 +94,8 @@ test('DOM: evening absent before 18, reached/missing goal, unknown totals and ro
   const f = await mounted(t, [row({ protein: 'bad' })])
   assert.equal(f.controller.snapshot().totals, null)
   assert.equal(evening(f.host).length, 0)
-  assert.equal(distribution(f.host).querySelectorAll('li')[0].textContent, 'Syntetisk måltid: ukendt protein')
+  assert.equal(find(f.host, 'h3', 'Protein pr. måltid'), undefined)
+  assert.match(f.host.textContent, /Kontrollér næringsværdierne for dette måltid/)
 })
 
 test('DOM: redraw uses current injected time; log/update/remove refresh distribution and remainder', async t => {

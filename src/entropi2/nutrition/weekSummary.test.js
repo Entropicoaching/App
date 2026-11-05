@@ -87,15 +87,16 @@ async function mounted(t, rows, goals = {}) {
     storage: { getItem() { return null }, setItem() { calls.storage++ } },
     contracts: { async load() { calls.load++; return rows }, async save() { calls.save++; return true } },
   })
-  const host = syntheticHost(), cleanup = mountNutrition(host, controller)
+  const host = syntheticHost(), cleanup = mountNutrition(host, controller, { clock: () => new Date(date + 'T12:00:00+01:00') })
   t.after(cleanup); await flush()
-  return { host, controller, calls, week: find(host, 'h2', 'Din uge').parentElement }
+  return { host, controller, calls, week: find(host, 'h2', 'Din uge')?.parentElement }
 }
 
 test('week view: zero or one logged date shows count and insufficient-days text', async t => {
   for (const rows of [[], [row(), row()], [row({ meal: '[appData2-day-v1][]' })]]) {
     const { week } = await mounted(t, rows, { protein_target: 5 })
-    assert.match(week.textContent, /Seneste 7 dage: [01] af 7 dage logget · for få dage til et gennemsnit\./)
+    if (!rows.length || rows[0].meal.startsWith('[appData2-day-v1]')) { assert.equal(week, undefined); continue }
+    assert.match(week.textContent, /Seneste 7 dage: 1 af 7 dage logget · for få dage til et gennemsnit\./)
     assert.doesNotMatch(week.textContent, /snit [0-9]|Protein nået/)
   }
 })
@@ -109,7 +110,7 @@ test('week view: compact rounding/count and trend replace goal lines; toggles/sa
   assert.equal(week.querySelectorAll('button').length, 0)
   assert.equal(week.querySelectorAll('progress').length, 0)
   assert.equal(week.querySelectorAll('p').some(p => p.getAttribute('role') === 'alert'), false)
-  for (const heading of ['Din vægt', 'Gentag i går']) assert.ok(find(host, 'h2', heading))
+  for (const heading of ['Gentag i går']) assert.ok(find(host, 'h2', heading))
   assert.ok(host.textContent.includes('Tilbage i dag:'))
   await find(host, 'button', 'Se historik').fire('click')
   await find(host, 'button', 'Se historik').fire('click')
@@ -136,7 +137,7 @@ test('week view: loading/failure hides summary; strict OFF never touches host', 
   let reject
   const controller = createNutritionController({ enabled: true, athlete: { id: 'synthetic-week' }, date,
     contracts: { load() { return new Promise((_, fail) => { reject = fail }) } } })
-  const host = syntheticHost(), cleanup = mountNutrition(host, controller); t.after(cleanup)
+  const host = syntheticHost(), cleanup = mountNutrition(host, controller, { clock: () => new Date(date + 'T12:00:00+01:00') }); t.after(cleanup)
   assert.equal(find(host, 'h2', 'Din uge'), undefined)
   reject(new Error('Synthetic failure')); await flush()
   assert.equal(find(host, 'h2', 'Din uge'), undefined)

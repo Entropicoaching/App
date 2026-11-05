@@ -176,11 +176,12 @@ test('load race and disposed controller cannot update a replaced athlete view', 
 test('real mount -> adapter -> guarded synthetic insert, one-tap favorite/log/history/navigation', async () => {
   const host = syntheticHost(), client = clientFake(), storage = storageFake(), routes = []
   let coach = 0
-  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete: { id: 'synthetic-A', kcal_target: 2200 }, date, client, storage, onCoach: () => { coach++; routes.push('beskeder') }, onNavigate: r => routes.push(r) })
+  const cleanup = mountNutritionScreen(host, { entropi2: true, athlete: { id: 'synthetic-A', kcal_target: 2200 }, date, client, storage, clock: () => new Date('2026-11-05T12:00:00+01:00'), onCoach: () => { coach++; routes.push('beskeder') }, onNavigate: r => routes.push(r) })
   await flush()
-  assert.match(host.textContent, /Dit næste måltid/)
-  assert.match(host.textContent, /Ingen mål endnu/)
-  assert.match(host.textContent, /Dagens mål/)
+  assert.match(host.textContent, /Din kostdagbog/)
+  assert.doesNotMatch(host.textContent, /Ingen mål endnu/)
+  assert.match(host.textContent, /[Cc]oach/)
+  assert.match(host.textContent, /Mål for den valgte dag/)
   await find(host, 'button', 'Gem favorit: ' + meal.meal).fire('click')
   assert.ok(find(host, 'button', 'Fjern favorit: ' + meal.meal))
   const gate = deferred(); client.writeGate = gate
@@ -206,7 +207,7 @@ test('real mount -> adapter -> guarded synthetic insert, one-tap favorite/log/hi
 
 test('real manual form and food portion handlers persist values; failure preserves draft', async () => {
   const { c, saves } = make({ foods: [{ name: 'Synthetic food', kcal100: 100, protein100: 10, carb100: 20, fat100: 5 }] })
-  const host = syntheticHost(); const cleanup = mountNutrition(host, c); await flush()
+  const host = syntheticHost(); const cleanup = mountNutrition(host, c, { clock: () => new Date('2026-11-05T12:00:00+01:00') }); await flush()
   const details = host.querySelectorAll('details')[0]; details.open = true
   const fields = host.querySelectorAll('input')
   for (const [i, value] of ['Synthetic meal', '80,5', '4', '9', '2'].entries()) { fields[i].value = value; await fields[i].fire('input') }
@@ -216,7 +217,7 @@ test('real manual form and food portion handlers persist values; failure preserv
   assert.equal(saves[1].meal, 'Synthetic food · 100 g')
   cleanup()
   const bad = make({ contracts: { async load() { return [] }, async save() { return false } } }).c
-  const other = syntheticHost(); mountNutrition(other, bad); await flush()
+  const other = syntheticHost(); mountNutrition(other, bad, { clock: () => new Date('2026-11-05T12:00:00+01:00') }); await flush()
   for (const [i, value] of ['Keep draft', '10', '1', '2', '3'].entries()) { const input = other.querySelectorAll('input')[i]; input.value = value; await input.fire('input') }
   await other.querySelectorAll('form')[0].fire('submit')
   assert.equal(other.querySelectorAll('input')[0].value, 'Keep draft')
@@ -226,17 +227,18 @@ test('real manual form and food portion handlers persist values; failure preserv
 test('DOM empty/invalid/read-error states and user text injection do not claim completeness', async () => {
   for (const rows of [[], [row({ meal: 7, kcal: Infinity })], [row({ meal: '<img src=x onerror=evil()>' })]]) {
     const { c } = make({ athlete: { id: 'synthetic-A' }, contracts: { async load() { return rows } } })
-    const host = syntheticHost(); mountNutrition(host, c); await flush()
-    assert.match(host.textContent, /Ingen mål endnu/)
+    const host = syntheticHost(); mountNutrition(host, c, { clock: () => new Date('2026-11-05T12:00:00+01:00') }); await flush()
+    assert.doesNotMatch(host.textContent, /Ingen mål endnu/)
+  assert.match(host.textContent, /[Cc]oach/)
     assert.equal(host.querySelectorAll('img').length, 0)
     assert.equal(host.querySelectorAll('progress').length, 0)
     if (!rows.length) assert.match(host.textContent, /Ingen måltider registreret/)
-    else if (rows[0].meal === 7) assert.match(host.textContent, /Næringsdata skal kontrolleres/)
+    else if (rows[0].meal === 7) assert.match(host.textContent, /Kontrollér næringsværdierne for dette måltid/)
     else assert.match(host.textContent, /<img src=x/)
   }
   let attempts = 0
   const { c } = make({ contracts: { async load() { if (++attempts === 1) throw new Error(); return [] } } })
-  const host = syntheticHost(); mountNutrition(host, c); await flush()
+  const host = syntheticHost(); mountNutrition(host, c, { clock: () => new Date('2026-11-05T12:00:00+01:00') }); await flush()
   assert.ok(find(host, 'button', 'Hent kostloggen igen'))
   await find(host, 'button', 'Hent kostloggen igen').fire('click')
   assert.match(host.textContent, /Ingen måltider registreret/)
