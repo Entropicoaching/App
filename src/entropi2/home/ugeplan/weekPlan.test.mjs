@@ -54,10 +54,10 @@ test('foreign or missing athlete context exposes no plan titles', () => {
 
 test('past unfinished, undated and unknown status never become upcoming or completed', () => {
   const p = props({ exerciseLogs: [] }); p.week.sessions.push(session('extra', null))
-  assert.deepEqual(weekPlanModel(p).rows.map(r => r.label), ['Ikke klaret', 'I dag', 'Kommende', 'Kommende', 'Planlagt'])
+  assert.deepEqual(weekPlanModel(p).rows.map(r => r.label), ['Ikke klaret', 'I dag', 'Kommende', 'Kommende', null])
   p.week.sessions[0].exercises[0].sets = '1'
-  assert.equal(weekPlanModel(p).rows[0].label, 'Status ukendt')
-  assert.equal(weekPlanModel(p).rows[4].day, 'Dag ukendt')
+  assert.equal(weekPlanModel(p).rows[0].label, null)
+  assert.equal(weekPlanModel(p).rows[4].day, null)
 })
 
 test('pending and optimistic logs never establish completion; skipped sets retain shared semantics', () => {

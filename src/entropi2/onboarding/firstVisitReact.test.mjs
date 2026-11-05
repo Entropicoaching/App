@@ -17,7 +17,7 @@ try {
   unavailable = true
 }
 const options = { skip: unavailable ? 'Pinned public bundle has no React packages; Dhurva must run this real React gate.' : false }
-const props = extra => ({ enabled: true, athleteId: 'synthetic-react', firstName: 'Testfornavn Testefternavn', storage: memoryStorage(), ...extra })
+const props = extra => ({ enabled: true, athleteId: 'synthetic-react', firstName: 'Testfornavn Testefternavn', storage: memoryStorage(), canLogReadiness: true, canLogWeight: true, ...extra })
 
 test('real React: first visit appears once, uses only first name and accessible mobile controls', options, () => {
   const p = props(), html = render(h(Introduction, p))
@@ -35,7 +35,7 @@ test('real React: empty name/data and program failure remain honest in the actua
     const html = render(h(AthleteHome, { enabled: true, athlete: { id: 'synthetic-react' },
       now: new Date('2026-11-04T12:00:00Z'), allWeeks: [], exerciseLogs: [], programError, storage: memoryStorage() }))
     assert.match(html, /Trin 1 af 4/)
-    assert.match(html, programError ? /Programdata mangler/ : /Intet program endnu/)
+    assert.match(html, programError ? /Programmet er ikke tilgængeligt/ : /Intet program endnu/)
     assert.doesNotMatch(html, /Start dagens pas|af 4 pas/)
   }
 })
@@ -68,7 +68,7 @@ test('real ReactDOM: all four steps, back, completion, reload, athlete switch, s
     await press('Næste'); assert.match(host.textContent, /Log et sæt.*Godkendt/)
     await press('Tilbage'); assert.match(host.textContent, /Trin 2 af 4/)
     await press('Næste'); await press('Næste')
-    assert.match(host.textContent, /Dagsform og vægt.*Gem vægt/)
+    assert.match(host.textContent, /Dagsform og vægt.*Vægt i dag på Hjem.*Gem/)
     await press('Kom i gang'); assert.equal(host.textContent, '')
     assert.equal(doc.activeElement, homeHeading)
     assert.deepEqual(storage.writes, [[firstVisitKey(p.athleteId), '1']])
@@ -76,7 +76,8 @@ test('real ReactDOM: all four steps, back, completion, reload, athlete switch, s
     await show({ ...p, athleteId: 'synthetic-react-other' }); assert.match(host.textContent, /Trin 1 af 4/)
     await press('Spring over'); assert.equal(host.textContent, '')
     await show({ ...p, athleteId: 'synthetic-error', storage: null })
-    await press('Spring over'); assert.match(host.textContent, /lukket.*vises igen/)
+    await press('Spring over'); assert.match(host.textContent, /kunne ikke gemmes.*vises igen/)
+    await press('Luk'); assert.equal(host.textContent, '')
     assert.equal(elements(host).some(n => n.tagName === 'BUTTON'), false)
     await show({ ...p, enabled: false }); assert.equal(host.textContent, '')
   } finally {

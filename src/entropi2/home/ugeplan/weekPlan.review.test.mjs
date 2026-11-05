@@ -35,7 +35,7 @@ test('review: conflicting and duplicate slots do not falsely complete a session'
   p.exerciseLogs = [row, { ...row }]
   assert.equal(weekPlanModel(p).rows[0].label, 'Klaret')
   p.exerciseLogs[1].skipped = true
-  assert.equal(weekPlanModel(p).rows[0].label, 'Status ukendt')
+  assert.equal(weekPlanModel(p).rows[0].label, null)
   p.exerciseLogs = [{ ...row, athlete_id: 99 }]
   assert.equal(weekPlanModel(p).rows[0].label, 'Kommende')
 })

@@ -12,9 +12,9 @@ export default function WeekPlan(props = {}) {
       model.state === 'empty' ? 'Ingen pas planlagt i denne uge.' : 'Ugens plan er ikke tilgængelig endnu.') :
       h('ul', { style: s.list }, ...model.rows.map(row =>
         h('li', { key: row.key, style: s.row },
-          row.date ? h('time', { dateTime: row.date, style: s.day }, row.day) : h('span', { style: s.day }, row.day),
-          h('span', { style: s.name, title: row.title }, row.title),
-          h('span', { style: row.status === 'done' ? s.done : s.status,
+          row.date && h('time', { dateTime: row.date, style: s.day }, row.day),
+          h('span', { style: { ...s.name, gridColumn: row.date ? 2 : '1 / 3' }, title: row.title }, row.title),
+          row.label && h('span', { style: row.status === 'done' ? s.done : s.status,
             'aria-label': row.detail ? `${row.label} · ${row.detail}` : undefined,
             title: row.detail ?? undefined }, row.label)))))
 }

@@ -7,6 +7,7 @@ import QuickLogs from './QuickLogs.mjs'
 
 const props = { enabled: true, athlete: { id: 'synthetic-athlete' }, today: '2026-11-04',
   now: new Date('2026-11-04T12:00:00Z'), weightLogs: [], readinessLog: null,
+  storage: { getItem: () => null },
   saveReadiness() {}, setReadinessInput() {}, logWeight() {}, setWeightInput() {} }
 
 test('real React: shortcuts occur once beneath the session overview and do not duplicate check-in reminders', () => {
@@ -18,6 +19,11 @@ test('real React: shortcuts occur once beneath the session overview and do not d
   const quick = html.slice(html.indexOf('data-home-quick-logs'), html.indexOf('data-film-set'))
   assert.doesNotMatch(quick, /<form|check-in|Logget i dag/)
   assert.match(html.slice(html.indexOf('data-film-set')), /data-home-checkin/)
+  assert.equal((html.match(/data-home-checkin=/g) || []).length, 1)
+  assert.equal((html.match(/data-home-reminder=/g) || []).length, 1)
+  const unknownStorage = renderToStaticMarkup(h(AthleteHome, { ...props, storage: null }))
+  assert.equal((unknownStorage.match(/data-home-checkin=/g) || []).length, 1)
+  assert.doesNotMatch(unknownStorage, /data-home-reminder=/)
 })
 
 test('real React: dated status is accessible, missing callbacks are disabled, and OFF is empty', () => {

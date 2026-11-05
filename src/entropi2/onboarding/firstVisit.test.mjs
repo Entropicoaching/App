@@ -7,7 +7,7 @@ import { memoryStorage } from './syntheticDom.mjs'
 import { firstVisitKey, readFirstVisit, rememberFirstVisit, welcomeTitle } from './firstVisitState.mjs'
 register('./firstVisitTestLoader.mjs', import.meta.url)
 const { default: Introduction } = await import('./AthleteIntroduction.mjs')
-const props = extra => ({ enabled: true, athleteId: 'synthetic-a', firstName: 'Testfornavn Testefternavn', storage: memoryStorage(), ...extra })
+const props = extra => ({ enabled: true, athleteId: 'synthetic-a', firstName: 'Testfornavn Testefternavn', storage: memoryStorage(), canLogReadiness: true, canLogWeight: true, ...extra })
 const find = (host, tag) => descendants(host.tree).find(node => node.type === tag)
 const button = (host, label) => descendants(host.tree).find(node => node.type === 'button' && textContent(node) === label)
 const click = (host, label) => { assert.ok(button(host, label), label); button(host, label).props.onClick(); host.render() }
@@ -36,7 +36,7 @@ test('four short steps cover actual pass, set approval, readiness and weight; co
   assert.match(textContent(host.tree), /Log et sæt.*kg.*gentagelser.*Godkendt.*endnu ikke bekræftet gemt/)
   click(host, 'Tilbage'); assert.match(textContent(host.tree), /Trin 2 af 4/)
   click(host, 'Næste'); click(host, 'Næste')
-  assert.match(textContent(host.tree), /Trin 4 af 4.*Dagsform og vægt.*Kost.*Gem vægt/)
+  assert.match(textContent(host.tree), /Trin 4 af 4.*Dagsform og vægt.*Dagsform på Hjem.*Vægt i dag på Hjem.*Gem/)
   click(host, 'Kom i gang')
   assert.equal(host.tree, null)
   assert.deepEqual(storage.writes, [[firstVisitKey('synthetic-a'), '1']])
@@ -77,9 +77,9 @@ test('missing/denied storage stays usable; failed completion is explicit and ret
     let focus = 0
     const host = createHost(Introduction, props({ storage, headingRef: { current: { focus() { focus++ } } } }))
     click(host, 'Næste'); click(host, 'Næste'); click(host, 'Næste'); click(host, 'Kom i gang')
-    assert.match(textContent(host.tree), /lukket.*kunne ikke gemmes.*vises igen/)
+    assert.match(textContent(host.tree), /kunne ikke gemmes.*vises igen/)
     assert.equal(find(host, 'p').props.role, 'status')
-    assert.equal(find(host, 'button'), undefined)
+    click(host, 'Luk'); assert.equal(host.tree, null)
     assert.equal(focus, 1)
   }
 })
@@ -133,6 +133,33 @@ test('existing scoped marker is respected, global marker is ignored, corrupt mar
 test('home passes only the existing first-name projection; the old DOM API remains compatible', () => {
   const source = readFileSync(new URL('../home/AthleteHome.mjs', import.meta.url), 'utf8')
   assert.match(source, /import HomeOnboarding from '\.\.\/onboarding\/AthleteIntroduction\.mjs'/)
-  assert.match(source, /h\(HomeOnboarding, \{ enabled, athleteId: athlete\?\.id, firstName: name, storage: props.storage, headingRef \}\)/)
+  assert.match(source, /h\(HomeOnboarding, \{ enabled, athleteId: athlete\?\.id, firstName: name, storage: props.storage, headingRef,/)
   assert.match(source, /const name = firstName\(athlete\?\.name\)/)
+})
+
+test('daily guidance names only available Home actions or an explicitly available Kost tab', () => {
+  for (const [extra, expected, absent] of [
+    [{ canLogReadiness: true, canLogWeight: true }, /Dagsform på Hjem.*Vægt i dag på Hjem/, /Under Kost|træningsvisningen/],
+    [{ canLogReadiness: true, canLogWeight: false }, /Dagsform på Hjem/, /Vægt i dag|under Kost/],
+    [{ canLogReadiness: false, canLogWeight: true }, /Vægt i dag på Hjem/, /Dagsform på Hjem|under Kost/],
+    [{ canLogReadiness: false, canLogWeight: false }, /Din coach på Hjem/, /Dagsform på Hjem|Vægt i dag|under Kost/],
+    [{ canLogReadiness: false, canLogWeight: false, visKost: true }, /vægt under Kost/, /Dagsform på Hjem|Vægt i dag/],
+  ]) {
+    const p = props(extra), host = createHost(Introduction, p)
+    click(host, 'Næste'); click(host, 'Næste'); click(host, 'Næste')
+    assert.match(textContent(host.tree), expected); assert.doesNotMatch(textContent(host.tree), absent)
+    click(host, 'Spring over'); assert.deepEqual(p.storage.writes, [[firstVisitKey(p.athleteId), '1']])
+    host.unmount()
+  }
+})
+
+test('retained error-dismiss handler cannot dismiss a replacement adapter introduction', () => {
+  const host = createHost(Introduction, props({ storage: null }))
+  click(host, 'Spring over')
+  const dismiss = button(host, 'Luk').props.onClick
+  host.render({ ...host.props, storage: memoryStorage() })
+  dismiss(); host.render()
+  assert.match(textContent(host.tree), /Trin 1 af 4/)
+  assert.deepEqual(host.props.storage.writes, [])
+  host.unmount(); dismiss()
 })

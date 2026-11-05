@@ -6,8 +6,18 @@ const FIRST_VISIT_STEPS = [
   { title: 'Velkommen', text: 'Her er en kort tur i appen. Du kan springe over og gå i gang med det samme.' },
   { title: 'Find dit pas', text: 'På Hjem finder du dagens eller næste pas. Tryk på Start dagens pas eller Start næste pas. Se mit program viser hele programmet. Er der intet program endnu, kan du kontakte din coach.' },
   { title: 'Log et sæt', text: 'I passet vælger du et sæt, skriver vægt i kg og gentagelser og trykker Godkendt. Vent på bekræftelsen. Står der en fejl eller afventer synkronisering, er sættet endnu ikke bekræftet gemt.' },
-  { title: 'Dagsform og vægt', text: 'Åbn Dagsform fra træningsvisningen for at registrere, hvordan du har det. Under Kost finder du Din vægt: skriv din vægt og tryk Gem vægt. Du behøver ikke udfylde noget for at afslutte denne introduktion.' },
+  { title: 'Din dag', text: 'Brug Din coach på Hjem, hvis du har spørgsmål. Du behøver ikke registrere noget for at afslutte introduktionen.' },
 ]
+
+function dailyStep({ canLogReadiness, canLogWeight, visKost }) {
+  const tips = []
+  if (canLogReadiness === true) tips.push('Tryk på Dagsform på Hjem, vælg dine svar og tryk Gem.')
+  if (canLogWeight === true) tips.push('Tryk på Vægt i dag på Hjem, skriv din vægt og tryk Gem.')
+  else if (visKost === true) tips.push('Du finder din vægt under Kost.')
+  return tips.length ? { title: canLogReadiness === true && canLogWeight === true ? 'Dagsform og vægt'
+    : canLogReadiness === true ? 'Dagsform' : 'Din vægt',
+  text: `${tips.join(' ')} Du behøver ikke registrere noget for at afslutte introduktionen.` } : FIRST_VISIT_STEPS[3]
+}
 
 // Guard before mounting hooks: OFF and invalid identities do not touch storage.
 export default function AthleteIntroduction(props = {}) {
@@ -17,7 +27,7 @@ export default function AthleteIntroduction(props = {}) {
   return h(ScopedIntroduction, { ...props, scopeKey, key: scopeKey })
 }
 
-function ScopedIntroduction({ scopeKey, firstName, storage, headingRef }) {
+function ScopedIntroduction({ scopeKey, firstName, storage, headingRef, canLogReadiness, canLogWeight, visKost }) {
   const initial = () => ({ ...readFirstVisit(scopeKey, storage), storage, step: 0 })
   const [state, setState] = useState(initial)
   const live = useRef(state), active = useRef(true), finished = useRef(false), title = useRef(null)
@@ -41,14 +51,17 @@ function ScopedIntroduction({ scopeKey, firstName, storage, headingRef }) {
     setState({ ...state, done: true, unavailable: !saved })
     headingRef?.current?.focus()
   }
-  if (state.done) return state.unavailable ? h('p', { role: 'status', style: s.text },
-    'Introduktionen er lukket. Dit valg kunne ikke gemmes på denne enhed, så den kan vises igen næste gang.') : null
+  if (state.done) return state.unavailable ? h('div', null,
+    h('p', { role: 'status', style: s.text }, 'Dit valg kunne ikke gemmes. Introduktionen kan vises igen næste gang.'),
+    h('button', { type: 'button', style: s.secondary, onClick: () => {
+      if (active.current && live.current === state) setState({ ...state, unavailable: false })
+    } }, 'Luk')) : null
   const move = step => {
     if (!current()) return
     setState({ ...state, step })
     title.current?.focus()
   }
-  const step = FIRST_VISIT_STEPS[state.step]
+  const step = state.step === 3 ? dailyStep({ canLogReadiness, canLogWeight, visKost }) : FIRST_VISIT_STEPS[state.step]
   return h('section', { 'aria-label': 'Introduktion', 'data-home-onboarding': '',
     style: { ...s.card, minWidth: 0, overflowWrap: 'anywhere' } },
     h('p', { style: s.eyebrow, 'aria-live': 'polite', 'aria-atomic': true }, `Trin ${state.step + 1} af ${FIRST_VISIT_STEPS.length}`),

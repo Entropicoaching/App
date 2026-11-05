@@ -10,7 +10,8 @@ const props = { enabled: true, athleteId: 'synthetic-a', now: new Date('2026-11-
 const render = (Component, extra = {}) => renderToStaticMarkup(h(Component, { ...props, storage: memoryStorage(), ...extra }))
 
 test('actual React renders one short reminder after the top session/week/film area', () => {
-  const html = render(AthleteHome, { athlete: { id: props.athleteId } })
+  const html = render(AthleteHome, { athlete: { id: props.athleteId },
+    messages: [{ sender_role: 'coach', content: 'Syntetisk coachbesked' }] })
   assert.equal((html.match(/data-home-reminder/g) || []).length, 1)
   assert.ok(html.indexOf('Dit næste pas') < html.indexOf('data-film-set'))
   assert.ok(html.indexOf('data-film-set') < html.indexOf('data-home-checkin'))

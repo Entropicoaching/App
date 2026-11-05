@@ -45,7 +45,10 @@ for (const mode of modes) for (const tab of tabs) for (const state of ['ready', 
       assert.ok(h1, 'Home greeting is absent')
       assert.match(nodeText(h1), /Testfornavn/)
       assert.doesNotMatch(nodeText(h1), /Testefternavn/)
-      if (state === 'empty') assert.match(nodeText(tree), /Intet program endnu/)
+      if (state === 'empty') {
+        assert.match(nodeText(h1), /Dit overblik, Testfornavn/)
+        assert.match(nodeText(tree), /Intet program endnu/)
+      }
     }
     if (state === 'empty' && tab === 'program') assert.match(nodeText(tree), /Dit program er på vej/)
     if (state === 'empty' && tab === 'volumen') assert.match(nodeText(tree), /ikke gennemført sæt i disse to uger/)
@@ -68,7 +71,7 @@ for (const mode of modes) for (const tab of ['hjem', 'program']) {
   test(`partial program failure stays distinct from empty: ${mode}/${tab}`, async () => {
     const html = await renderScenario(scenario(mode, tab, 'empty', { programError: true }))
     const tree = assertCleanMarkup(html)
-    assert.match(nodeText(tree), tab === 'hjem' ? /Programdata mangler/ : /Dit program kunne ikke hentes/)
+    assert.match(nodeText(tree), tab === 'hjem' ? /Programmet er ikke tilgængeligt/ : /Dit program kunne ikke hentes/)
     assert.doesNotMatch(nodeText(tree), /Intet program endnu|Dit program er på vej/)
   })
 }

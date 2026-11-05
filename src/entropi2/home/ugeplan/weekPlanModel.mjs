@@ -17,11 +17,11 @@ export function weekPlanModel(input = {}) {
   }
   const rows = plan.sessions.map((session, index) => {
     const date = session.date
-    const day = date ? `${days[new Date(`${date}T12:00:00Z`).getUTCDay()]} ${Number(date.slice(8))}/${Number(date.slice(5, 7))}` : 'Dag ukendt'
+    const day = date ? `${days[new Date(`${date}T12:00:00Z`).getUTCDay()]} ${Number(date.slice(8))}/${Number(date.slice(5, 7))}` : null
     const status = session.dataMissing ? 'unknown' : session.status === 'klaret' ? 'done'
       : !date ? 'undated' : date === plan.today ? 'today' : date > plan.today ? 'upcoming' : 'unfinished'
-    const label = { unknown: 'Status ukendt', done: 'Klaret', today: 'I dag',
-      upcoming: 'Kommende', unfinished: 'Ikke klaret', undated: 'Planlagt' }[status]
+    const label = { unknown: null, done: 'Klaret', today: 'I dag',
+      upcoming: 'Kommende', unfinished: 'Ikke klaret', undated: null }[status]
     const title = typeof session.title === 'string' && session.title.trim() ? session.title.trim() : 'Pas uden navn'
     return { key: `${index}:${session.sessionId ?? ''}`, date, day, title, status, label,
       // "Klaret" includes skipped sets in the shared model; preserve that detail.

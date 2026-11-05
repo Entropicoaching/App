@@ -25,6 +25,6 @@ function ScopedCheckIn({ today, weekStart, minuteOfDay, athleteId, storage }) {
     setSnapshot({ ...loadDraft(draftKey(athleteId, weekStart), storage), storage })
   } },
   h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 48 }, 'data-home-reminder': !open && reminder ? '' : undefined },
-    !open && reminder ? `${reminder.title} Åbn check-in` : 'Ugentligt check-in · lokal kladde'),
+    !open && reminder ? `${reminder.title} Åbn check-in` : 'Ugentligt check-in'),
   h(WeeklyCheckIn, { enabled: true, athleteId, weekStart, storage }))
 }

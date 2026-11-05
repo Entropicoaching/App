@@ -16,6 +16,9 @@ export default function HomeSession(props) {
   const ready = typeof props.onLogSet === 'function' && typeof props.setLogInputs === 'function' &&
     typeof props.parsePlannedRpe === 'function'
   return h('div', { 'data-entropi2-home-session': '' },
-    h(AthleteHome, { ...props, onStartSession: ready ? (sessionId, weekId) => bridge.current?.start(sessionId, weekId) ?? false : undefined }),
+    // The host deliberately removes both write callbacks for its read-only preview.
+    // A partially connected writer still receives Home's actionable start error.
+    h(AthleteHome, { ...props, sessionReadOnly: typeof props.onLogSet !== 'function' && typeof props.setLogInputs !== 'function',
+      onStartSession: ready ? (sessionId, weekId) => bridge.current?.start(sessionId, weekId) ?? false : undefined }),
     h('section', { ref: root, 'aria-label': 'Dit valgte pas' }))
 }

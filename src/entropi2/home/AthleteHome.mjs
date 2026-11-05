@@ -12,12 +12,12 @@ const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
 const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
 const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${MONTHS[Number(m[2]) - 1]}` : String(iso) }
-const labels = { holiday: 'Du er på ferie', missing: 'Programdata mangler', 'no-program': 'Intet program endnu',
+const labels = { holiday: 'Du er på ferie', missing: 'Programmet er ikke tilgængeligt', 'no-program': 'Intet program endnu',
   'no-next': 'Intet kommende pas planlagt', done: 'Dagens pas er klaret' }
 
 // Only an explicit enabled=true renders this opt-in component. No flag reader.
 export default function AthleteHome(props) {
-  const { enabled = false, athlete, messages = [], formatMsgTime, setTab, onStartSession, onFilmSet, getNow = clock } = props
+  const { enabled = false } = props
   const [tick, setTick] = useState(0)
   const headingRef = useRef(null)
   const latest = useRef(props)
@@ -29,6 +29,7 @@ export default function AthleteHome(props) {
     return () => clearInterval(id)
   }, [enabled])
   if (enabled !== true) return null
+  const { athlete, messages = [], formatMsgTime, setTab, onStartSession, onFilmSet, getNow = clock } = props
   const name = firstName(athlete?.name)
   void tick
   const now = props.now ?? getNow()
@@ -39,7 +40,10 @@ export default function AthleteHome(props) {
   // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
   // gamle. Registrering kræver samme uge; ellers bedes atleten genindlæse, ikke registrere forgæves.
   const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
-  const coach = [...messages].reverse().find(m => m.sender_role === 'coach')
+  const coach = (Array.isArray(messages) ? [...messages] : []).reverse()
+    .find(m => m?.sender_role === 'coach' && typeof m.content === 'string' && m.content.trim())
+  const namedExercises = target?.session.exercises.filter(e => typeof e.name === 'string' && e.name.trim()) ?? []
+  const canStart = !props.sessionReadOnly && typeof onStartSession === 'function'
   const go = route => () => latest.current.setTab?.(route)
   const start = () => {
     const current = latest.current
@@ -53,21 +57,25 @@ export default function AthleteHome(props) {
     (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
     h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (name ? `Godt arbejde i dag, ${name}` : 'Godt arbejde i dag')
-      : name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?'),
-    h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef }),
+      : target ? (name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?') : (name ? `Dit overblik, ${name}` : 'Dit overblik')),
+    h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
+      canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
+      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas' },
       h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
       target ? h('div', null,
-        h('p', { style: s.text }, model.date ? (model.date === model.today ? 'I dag' : danishDate(model.date)) : `Dag ikke fastlagt · uge ${target.week.week_number ?? 'ikke angivet'}`),
-        h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...target.session.exercises.map(e => h('li', { key: e.id }, e.name || 'Øvelse uden navn'))),
-        h('p', { style: s.text }, model.logged == null ? 'Sætstatus hentes, når passet åbnes.' : `${model.logged} af ${model.total} sæt klaret`),
+        model.date && h('p', { style: s.text }, model.date === model.today ? 'I dag' : danishDate(model.date)),
+        namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
+        model.logged != null && h('p', { style: s.text }, `${model.logged} af ${model.total} sæt klaret`),
         ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`)),
-        h('button', { type: 'button', style: s.primary, disabled: typeof onStartSession !== 'function' || staleWeek, onClick: start },
+        !props.sessionReadOnly && h('button', { type: 'button', style: s.primary, disabled: !canStart || staleWeek, onClick: start },
           model.kind === 'today' ? 'Start dagens pas' : 'Start næste pas'),
-        staleWeek ? h('p', { role: 'status', style: s.text }, 'En ny uge er startet. Genindlæs siden for at registrere passet.')
-          : typeof onStartSession !== 'function' && h('p', { role: 'status', style: s.text }, 'Passtart er ikke tilgængelig endnu.'))
-        : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.' : 'Se programmet eller kontakt din coach.'),
+        !props.sessionReadOnly && (staleWeek ? h('p', { role: 'status', style: s.text }, 'En ny uge er startet. Genindlæs siden for at registrere passet.')
+          : !canStart && h('p', { role: 'status', style: s.text }, 'Passet kunne ikke åbnes. Prøv at genindlæse siden.')))
+        : h('p', { role: 'status', style: s.text }, model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.'
+          : props.offlineSnapshotAt != null ? 'Opdatér programmet, når du har net, før du registrerer et pas.'
+            : props.programError ? 'Programmet kunne ikke hentes. Prøv at genindlæse siden.' : 'Se programmet eller kontakt din coach.'),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow }),
@@ -81,10 +89,10 @@ export default function AthleteHome(props) {
     nutrition && h('button', { type: 'button',
       style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left' },
       disabled: typeof setTab !== 'function', onClick: go('kost') }, nutrition.text),
-    h('section', { style: s.card, 'aria-label': 'Fra din coach' },
+    coach && h('section', { style: s.card, 'aria-label': 'Fra din coach' },
       h('p', { style: s.eyebrow }, 'Fra din coach'),
       h('h2', { style: s.heading }, 'Seneste besked'),
-      h('p', { style: s.text }, coach?.content || (coach ? 'Besked uden tekst' : 'Ingen beskeder endnu.')),
+      h('p', { style: s.text }, coach.content),
       coach?.created_at && typeof formatMsgTime === 'function' && h('p', { style: s.text }, formatMsgTime(coach.created_at)),
       link('beskeder', 'Se besked og video')),
     h('h2', { style: s.heading }, 'Resten af din dag'),
