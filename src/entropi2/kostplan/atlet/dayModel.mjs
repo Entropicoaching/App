@@ -63,7 +63,7 @@ function readPlan(value, athleteId, date) {
 function readDay(value, athleteId, date) {
   if (!value || !Object.hasOwn(value, 'plan')) fail()
   const plan = readPlan(value.plan, athleteId, date)
-  if (!plan) return { plan: null, logs: [], eaten: [] }
+  if (!plan) return { plan: null, logs: [], eaten: [], blockedMeals: [] }
   if (!Array.isArray(value.logs) || !Array.isArray(value.eaten)) fail()
   const logs = value.logs.map(row => {
     if (!id(row?.id) || row.athlete_id !== athleteId || calendarTime(row.date) === null || row.date > date) fail()
@@ -87,14 +87,18 @@ function readDay(value, athleteId, date) {
   })
   if (new Set(eaten.map(item => item.meal_id)).size !== eaten.length
     || new Set(eaten.map(item => item.log_id)).size !== eaten.length) fail()
-  return { plan, logs, eaten }
+  const blockedMeals = value.blockedMeals ?? []
+  if (!Array.isArray(blockedMeals) || new Set(blockedMeals).size !== blockedMeals.length
+    || blockedMeals.some(mealId => !plan.meals.some(meal => meal.id === mealId)
+      || eaten.some(receipt => receipt.meal_id === mealId))) fail()
+  return { plan, logs, eaten, blockedMeals: [...blockedMeals] }
 }
 
 // One immutable athlete/day session. The owner disposes and replaces it when
 // athlete, day, activation or plan revision changes. No client or storage globals.
 export function createAthleteDay(options = {}) {
   if (options.enabled !== true) return null
-  const { athleteId, date, loadDay, saveMeal, currentDay } = options
+  const { athleteId, date, loadDay, saveMeal, releaseMeal, currentDay } = options
   if (!id(athleteId) || calendarTime(date) === null || typeof loadDay !== 'function') fail()
   let phase = 'idle', data = null, message = '', pending = null, disposed = false, token = 0
   const drafts = new Map(), editing = new Set(), committed = new Set(), listeners = new Set()
@@ -107,25 +111,31 @@ export function createAthleteDay(options = {}) {
       const foods = (receipt?.foods || meal.foods).map(food => ({ ...food,
         grams: receipt ? food.grams : (drafts.get(meal.id)?.get(food.id) ?? food.grams) }))
       const values = mealValues(foods)
-      return { id: meal.id, name: meal.name, foods, values, eaten: !!receipt || committed.has(meal.id),
+      const blocked = data.blockedMeals.includes(meal.id)
+      return { id: meal.id, name: meal.name, foods, values, eaten: !!receipt || committed.has(meal.id), blocked,
+        adjusted: foods.some((food, index) => parseInputNumber(food.grams) !== meal.foods[index].grams),
         editing: editing.has(meal.id), canSave: !!values && !receipt && !committed.has(meal.id)
-          && !pending && ['ready', 'save-error', 'saved'].includes(phase) && typeof saveMeal === 'function' }
+          && !blocked && !pending && ['ready', 'save-error', 'saved'].includes(phase) && typeof saveMeal === 'function' }
     }) || []
     const totals = Object.fromEntries(metrics.map(key => {
       const values = data?.logs.map(row => row[key]) || []
       const sum = values.reduce((total, value) => total + (value ?? 0), 0)
       return [key, values.some(value => value === null) || !Number.isFinite(sum) ? null : sum]
     }))
+    const remaining = Object.fromEntries(metrics.map(key => [key,
+      plan?.targets[key] > 0 && totals[key] !== null ? Math.max(0, plan.targets[key] - totals[key]) : null]))
     cached = freeze({ athleteId, date, phase, message, pending: !!pending,
       mode: data ? plan ? 'plan' : 'tracker' : null, meals, totals,
-      targets: { ...(plan?.targets || {}) }, loggedCount: data?.logs.length || 0,
+      targets: { ...(plan?.targets || {}) }, remaining, loggedCount: data?.logs.length || 0,
       eatenCount: meals.filter(meal => meal.eaten).length,
+      canRelease: typeof releaseMeal === 'function',
       canSave: typeof saveMeal === 'function' })
     return cached
   }
   const emit = () => { cached = undefined; if (!disposed) for (const fn of listeners) fn() }
   const mutable = mealId => !disposed && !pending && ['ready', 'saved', 'save-error'].includes(phase)
     && data?.plan?.meals.some(meal => meal.id === mealId) && !committed.has(mealId)
+    && !data.blockedMeals.includes(mealId)
     && !data.eaten.some(receipt => receipt.meal_id === mealId)
   const api = {
     snapshot,
@@ -157,6 +167,20 @@ export function createAthleteDay(options = {}) {
       drafts.get(mealId).set(foodId, value)
       message = ''; emit(); return true
     },
+    // Explicit acknowledgement only unlocks a local uncertain receipt. It never
+    // logs a meal; the athlete must make a separate logging choice afterwards.
+    async confirmNotLogged(mealId) {
+      if (disposed || pending || !['ready', 'saved', 'save-error'].includes(phase)
+        || !data?.blockedMeals.includes(mealId) || typeof releaseMeal !== 'function') return false
+      pending = mealId; phase = 'saving'; message = 'Kontrollerer kostloggen…'; emit()
+      let released = false
+      try { released = await releaseMeal({ athleteId, date, mealId }) === true }
+      catch { /* Keep the block if the read or local receipt write failed. */ }
+      pending = null
+      if (disposed) return false
+      if (released) return api.load()
+      phase = 'save-error'; message = 'Måltidet kunne ikke låses op. Kontrollér kostloggen og prøv igen.'; emit(); return false
+    },
     async markEaten(mealId) {
       if (!mutable(mealId) || typeof saveMeal !== 'function') return false
       try {
@@ -173,8 +197,9 @@ export function createAthleteDay(options = {}) {
         log: { meal: meal.name, ...meal.values } })
       pending = key; phase = 'saving'; message = 'Gemmer måltid…'; emit()
       try {
-        // Strict true = durable, atomic, idempotent confirmation of BOTH log and receipt.
-        // An uncertain outcome must throw; it is reconciled by a fresh load.
+        // Strict true confirms BOTH the diary log and its receipt. The adapter
+        // owns the receipt's persistence scope; it must throw on uncertainty so
+        // a fresh load can reconcile or explicitly block another attempt.
         const result = await saveMeal(payload)
         if (disposed) return false
         if (result !== true) {

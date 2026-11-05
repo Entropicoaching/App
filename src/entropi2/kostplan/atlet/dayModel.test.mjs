@@ -160,6 +160,19 @@ test('missing targets and unknown intake remain unknown; unrelated dates are exc
   await f.model.markEaten('snack'); assert.equal(f.model.snapshot().totals.kcal, null)
 })
 
+test('remaining kcal/protein use all current logs, saturate at zero and preserve unknown values', async () => {
+  const value = source()
+  value.logs.push({ id: 'extra', athlete_id: athleteId, date, meal: 'Ekstra', kcal: 2100, protein: 150, carb: 0, fat: 0 })
+  const f = setup({ value }); await f.model.load()
+  assert.equal(f.model.snapshot().remaining.kcal, 100); assert.equal(f.model.snapshot().remaining.protein, 0)
+  await f.model.markEaten('lunch')
+  assert.equal(f.model.snapshot().remaining.kcal, 0); assert.equal(f.model.snapshot().remaining.protein, 0)
+  const unknown = source(); unknown.plan.targets.protein = null
+  unknown.logs.push({ id: 'unknown', athlete_id: athleteId, date, meal: 'Ukendt', kcal: null, protein: 10, carb: 0, fat: 0 })
+  const g = setup({ value: unknown }); await g.model.load()
+  assert.equal(g.model.snapshot().remaining.kcal, null); assert.equal(g.model.snapshot().remaining.protein, null)
+})
+
 test('day boundary guard and missing save adapter cannot produce writes', async () => {
   for (const currentDay of [() => '2026-11-05', () => { throw Error('synthetic clock failure') }]) {
     const f = setup({ currentDay }); await f.model.load()
