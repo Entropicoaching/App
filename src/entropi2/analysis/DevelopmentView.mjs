@@ -65,11 +65,13 @@ export default function DevelopmentView(props = {}) {
                 ...(point.value === null ? {} : { title: `${date(point.day)}: ${number(point.value)} kg e1RM` }),
                 style: { height: point.value === null ? 0 : `${point.value / max * 100}%`, background: '#d8b16b', borderRadius: 2 } }))),
             h('div', { style: { display: 'flex', justifyContent: 'space-between', fontSize: 13 } },
-              h('span', null, compactDate(model.start)), h('span', null, compactDate(model.today))))),
-        h('details', null, h('summary', { style: summaryStyle }, `${lift.lift}: tal og datagrundlag`),
-          lift.evidence && text(lift.evidence),
+              h('span', null, compactDate(model.start)), h('span', null, compactDate(model.today)))),
+          h('h4', null, 'Registrerede tal'),
           h('ol', { style: { paddingLeft: 20, fontSize: 14, lineHeight: 1.6 } },
-            ...lift.points.filter(p => p.value !== null).map(p => h('li', { key: p.start, 'data-history-value': true }, `${date(p.day)}: ${number(p.value)} kg e1RM`)))))
+            ...lift.points.filter(p => p.value !== null).map(p => h('li', { key: p.start, 'data-history-value': true }, `${date(p.day)}: ${number(p.value)} kg e1RM`)))),
+        h('details', { 'aria-label': `${lift.lift}: datagrundlag` },
+          h('summary', { style: summaryStyle }, 'Datagrundlag'),
+          lift.evidence && text(lift.evidence)))
     }),
     blockNames.length > 0 && h('section', { 'aria-label': 'Observerede blokke' },
       h('h3', null, 'Blokke på tidslinjen'),

@@ -57,7 +57,8 @@ test('real React gives the existing latest estimate priority over comparison and
   assert.match(latest, /Registreret <time date[Tt]ime="2026-11-04">04\.11\.2026<\/time>/)
   assert.match(rendered, /<p data-history-summary="true"[^>]*font-size:16px[^>]*font-weight:600/)
   assert.match(rendered, /steget 27,5 kg/)
-  assert.match(rendered, /Squat: tal og datagrundlag/)
+  assert.match(rendered, /aria-label="Squat: datagrundlag"/)
+  assert.match(rendered, /<summary[^>]*>Datagrundlag<\/summary>/)
   for (const extra of [{ fremgangLogs: [] }, { fremgangLogs: undefined },
     { fremgangLoading: true }, { fremgangError: true }])
     assert.doesNotMatch(html(extra), /data-development-latest|data-history-summary/)
@@ -74,10 +75,13 @@ test('real React folds three complete lift graphs while dated estimates and old-
     assert.doesNotMatch(chart.slice(0, chart.indexOf('>')), /\bopen=/)
     assert.match(chart, /<summary[^>]*>Se udviklingen over 26 uger<\/summary>/)
     assert.equal((chart.match(/<span\b/g) ?? []).length, 28) // 26 positions and two date labels
+    assert.match(chart, /<h4>Registrerede tal<\/h4>/)
+    assert.ok((chart.match(/data-history-value=/g) ?? []).length > 0)
   }
   const outsideCharts = charts.reduce((markup, [chart]) => markup.replace(chart, ''), rendered)
   assert.equal((outsideCharts.match(/Seneste e1RM · skøn/g) ?? []).length, 3)
   assert.equal((outsideCharts.match(/Registreret <time date[Tt]ime="2026-11-04"/g) ?? []).length, 3)
   assert.equal((outsideCharts.match(/mere end 14 dage gammelt/g) ?? []).length, 3)
   assert.equal((outsideCharts.match(/data-history-summary=/g) ?? []).length, 3)
+  assert.doesNotMatch(outsideCharts, /data-history-value=/)
 })

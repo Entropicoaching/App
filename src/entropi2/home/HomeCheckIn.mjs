@@ -20,11 +20,14 @@ function ScopedCheckIn({ today, weekStart, minuteOfDay, athleteId, storage }) {
   }
   const reminder = friendlyReminders({ enabled: true, today, minuteOfDay,
     localCheckin: { complete: true, status: snapshot.status, weekStart } })[0]
+  const localStatus = snapshot.status === 'saved' ? 'Lokal kladde gemt'
+    : snapshot.status === 'unavailable' ? 'Lokal status ukendt' : null
   return h('details', { style: s.card, 'data-home-checkin': '', onToggle: event => {
     setOpen(event.currentTarget.open)
     setSnapshot({ ...loadDraft(draftKey(athleteId, weekStart), storage), storage })
   } },
   h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 48 }, 'data-home-reminder': !open && reminder ? '' : undefined },
-    !open && reminder ? `${reminder.title} Åbn check-in` : 'Ugentligt check-in'),
+    !open && localStatus ? `Ugentligt check-in · ${localStatus}`
+      : !open && reminder ? `${reminder.title} Åbn check-in` : 'Ugentligt check-in'),
   h(WeeklyCheckIn, { enabled: true, athleteId, weekStart, storage, showHeading: false }))
 }

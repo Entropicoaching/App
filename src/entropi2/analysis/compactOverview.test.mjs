@@ -42,6 +42,14 @@ test('one and three lifts keep dated estimates, changes and stale warnings outsi
         assert.ok(summary.props.style.minHeight >= 44)
         assert.match(node.props['aria-label'], new RegExp(node.props['data-development-chart']))
         const chartNodes = entries(node)
+        const values = marked(chartNodes, 'data-history-value')
+        assert.equal(values.length, 4)
+        assert.equal(new Set(values.map(entry => text(entry.node))).size, 4)
+        assert.deepEqual(values.map(entry => text(entry.node)), days.map((day, i) =>
+          `${day.split('-').reverse().join('.')}: ${110 + i * 11} kg e1RM`))
+        values.forEach(entry => assert.deepEqual(folds(entry), [node]))
+        assert.equal(chartNodes.filter(({ node: n }) => n.type === 'h4' && text(n) === 'Registrerede tal').length, 1)
+        assert.doesNotMatch(text(node), /Samme rep-område|mindst 4 uger/)
         const plot = chartNodes.find(({ node: n }) => n.props?.role === 'img').node
         const positions = [plot.props.children].flat(Infinity)
         assert.equal(positions.length, 26)
@@ -67,6 +75,12 @@ test('one and three lifts keep dated estimates, changes and stale warnings outsi
       assert.equal(warnings.length, stale ? names.length : 0)
       warnings.forEach(entry => assert.equal(folds(entry).length, 0))
       assert.equal(marked(all, 'data-history-value').length, names.length * 4)
+      const evidence = all.filter(({ node }) => node.type === 'details' && node.props['aria-label']?.endsWith(': datagrundlag'))
+      assert.equal(evidence.length, names.length)
+      evidence.forEach(({ node }) => {
+        assert.equal(text(node.props.children[0]), 'Datagrundlag')
+        assert.equal(marked(entries(node), 'data-history-value').length, 0)
+      })
     }
   }
 })

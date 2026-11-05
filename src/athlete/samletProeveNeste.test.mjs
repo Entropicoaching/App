@@ -13,6 +13,7 @@ import { sessionReactDocument } from '../entropi2/session/sessionQuickSetReactDo
 import SessionScreen from '../entropi2/session/SessionScreen.mjs'
 import AthleteHome, { HomeRecordCard } from '../entropi2/home/AthleteHome.mjs'
 import HomeCheckIn from '../entropi2/home/HomeCheckIn.mjs'
+import { draftKey, emptyDraft, saveDraft } from '../entropi2/checkin/weeklyDraft.mjs'
 import { homeRecord } from '../entropi2/home/homeRecord.mjs'
 import Analysis from '../entropi2/analysis/Analysis.mjs'
 import CoachKostMaal from '../entropi2/kostMaalKobling.mjs'
@@ -242,6 +243,24 @@ test('samlet næste: one folded local check-in reminder; unavailable storage nev
   assert.doesNotMatch(render(HomeCheckIn, { ...props, now: new Date('2026-11-04T23:00:00Z') }), /data-home-reminder/)
   assert.equal(render(HomeCheckIn, { ...props, enabled: false }), '')
   assert.deepEqual(storage.writes, [])
+  assert.match(render(HomeCheckIn, { ...props, storage: null }), /<summary[^>]*>Ugentligt check-in · Lokal status ukendt<\/summary>/)
+  saveDraft(draftKey(props.athleteId, '2026-11-02'), { ...emptyDraft(), energy: '3' }, storage)
+  fold(render(HomeCheckIn, props), 'Ugentligt check-in · Lokal kladde gemt')
+  assert.doesNotMatch(render(HomeCheckIn, { ...props, now: new Date('2026-11-09T12:00:00Z') }), /Lokal kladde gemt/)
+})
+
+test('samlet næste: real Home has one nutrition and coach entry in every card combination', () => {
+  for (const hasNutrition of [false, true]) for (const hasCoach of [false, true]) {
+    const props = { enabled: true, now, athlete: { id: 'synthetic-destinations' }, storage: memory(),
+      nutritionToday: hasNutrition ? { date: '2026-11-04', kcal: 400, kcalTarget: 2400 } : null,
+      messages: hasCoach ? [{ sender_role: 'coach', content: 'Syntetisk besked' }] : [] }
+    const home = render(AthleteHome, props)
+    const buttons = elements(markupTree(home)).filter(n => n.tag === 'button').map(nodeText)
+    assert.equal(buttons.filter(label => /^Kost(?: i dag:.*)?$/.test(label)).length, 1)
+    assert.equal(buttons.filter(label => /^(Din coach|Se besked og video)$/.test(label)).length, 1)
+    assert.ok(buttons.includes('Analyse'));assert.ok(buttons.includes('Mobilitet'))
+    assert.equal(props.storage.writes.length, 0)
+  }
 })
 
 test('samlet næste: MIN TRÆNING navigation selects coach own profile and Kost & mål renders a closed Kostplan', async () => {

@@ -21,12 +21,16 @@ test('actual React keeps the missing-draft reminder as the only visible check-in
   assert.match(html, /Alle felter er valgfrie/)
 })
 
-test('actual React keeps a single summary title for saved, unavailable and quiet-hour drafts', () => {
+test('actual React names the local saved/unknown status in its single folded summary', () => {
   const storage = memoryStorage()
   saveDraft(draftKey(props.athleteId, '2026-11-02'), { ...emptyDraft(), comment: 'Syntetisk kladde' }, storage)
-  for (const extra of [{ storage }, { storage: null }, { now: new Date('2026-11-04T23:00:00Z') }]) {
+  for (const [extra, title] of [
+    [{ storage }, 'Ugentligt check-in · Lokal kladde gemt'],
+    [{ storage: null }, 'Ugentligt check-in · Lokal status ukendt'],
+    [{ now: new Date('2026-11-04T23:00:00Z') }, 'Ugentligt check-in'],
+  ]) {
     const html = render(HomeCheckIn, extra)
-    assert.match(html, /<summary[^>]*>Ugentligt check-in<\/summary>/)
+    assert.match(html, new RegExp(`<summary[^>]*>${title}</summary>`))
     assert.equal((html.match(/<summary\b/g) || []).length, 1)
     assert.doesNotMatch(html, /data-home-reminder/)
     assert.doesNotMatch(html, /<h[1-6][^>]*>Ugentligt check-in<\/h[1-6]>/)
@@ -61,6 +65,7 @@ test('saved, corrupt and unavailable storage never become missing-draft claims',
   for (const storage of [null, { getItem() { throw Error('synthetic denied') } }, { getItem() { return '{' } }]) {
     const html = render(HomeCheckIn, { storage })
     assert.doesNotMatch(html, /data-home-reminder/)
+    assert.match(html, /<summary[^>]*>Ugentligt check-in · Lokal status ukendt<\/summary>/)
     assert.match(html, /Kladden kunne ikke læses eller gemmes/)
   }
 })

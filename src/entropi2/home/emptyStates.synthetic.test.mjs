@@ -58,7 +58,8 @@ test('coach cards require text; newest displayable message and contact navigatio
   const routes = [], view = show(t, { setTab: route => routes.push(route),
     messages: [{ sender_role: 'coach', content: 'Syntetisk besked' }, { sender_role: 'coach', content: '\n' }] })
   assert.match(view.text(), /Fra din coach.*Syntetisk besked/)
-  view.nodes(n => n.type === 'button' && n.children.includes('Din coach'))[0].props.onClick()
+  assert.equal(view.nodes(n => n.type === 'button' && n.children.includes('Din coach')).length, 0)
+  view.nodes(n => n.type === 'button' && n.children.includes('Se besked og video'))[0].props.onClick()
   assert.deepEqual(routes, ['beskeder'])
 })
 

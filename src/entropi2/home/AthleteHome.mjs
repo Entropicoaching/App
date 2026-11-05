@@ -227,7 +227,8 @@ export default function AthleteHome(props) {
     // Presentation only: the host passes its existing confirmed coach ownership decision.
     props.coachOwnTraining !== true && h('h2', { style: s.heading }, 'Resten af din dag'),
     props.coachOwnTraining !== true && h('nav', { style: s.links, 'aria-label': 'Genveje' },
-      link('fremgang', 'Analyse'), link('kost', 'Kost'), link('mobilisering', 'Mobilitet'), link('beskeder', 'Din coach')),
+      link('fremgang', 'Analyse'), !nutrition && link('kost', 'Kost'),
+      link('mobilisering', 'Mobilitet'), !coach && link('beskeder', 'Din coach')),
     hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
       h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),
       h(AthleteWeek, { enabled: true, snapshot, compactHome: true })))
