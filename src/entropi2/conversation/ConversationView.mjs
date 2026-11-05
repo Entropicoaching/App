@@ -1,4 +1,4 @@
-import { feedbackText, videoLabel } from './conversationModel.mjs'
+import { feedbackText, videoLabel, conversationDate } from './conversationModel.mjs'
 import { weeklyConversationSummary } from './uge/weeklyConversationSummary.mjs'
 import { conversationWeek } from './conversationWeek.mjs'
 import { ownQuickRepliesView } from './ownQuickRepliesView.mjs'
@@ -16,17 +16,8 @@ const dateParts = date => Object.fromEntries(copenhagen.formatToParts(date).map(
 const calendarDay = parts => Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day))
 
 export function formatConversationTime(value, now = new Date()) {
-  // Require an explicit wire timezone; never interpret a timestamp in the device timezone.
-  const match = typeof value === 'string' && /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})$/.exec(value)
-  if (!match) return 'tidspunkt mangler'
-  const [, year, month, day, hour, minute, second = '0', zone] = match
-  const days = new Date(Date.UTC(Number(year), Number(month), 0)).getUTCDate()
-  if (Number(month) < 1 || Number(month) > 12 || Number(day) < 1 || Number(day) > days
-    || Number(hour) > 23 || Number(minute) > 59 || Number(second) > 59
-    || zone !== 'Z' && (Number(zone.slice(1, 3)) > 23 || Number(zone.slice(4)) > 59))
-    return 'tidspunkt mangler'
-  const date = new Date(value)
-  if (!Number.isFinite(date.getTime())) return 'tidspunkt mangler'
+  const date = conversationDate(value)
+  if (!date) return ''
   const parts = dateParts(date), today = dateParts(now)
   // Compare Copenhagen calendar dates, not 24-hour durations across DST changes.
   const difference = calendarDay(today) - calendarDay(parts)
@@ -57,7 +48,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   const input = node('textarea'); input.value = ''; input.maxLength = 10000
   let latestState, letterBusy = false
   const letterStatus = node('p'); letterStatus.setAttribute('role', 'status')
-  const letter = button('Lav udkast til ugebrev', async () => {
+  const letter = button('Lav udkast om søvn', async () => {
     if (disposed || letter.disabled || !latestState || latestState.draft.trim()) return
     const athleteId = latestState.athleteId
     letterBusy = true; letter.disabled = true
@@ -165,26 +156,25 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     ownReplies.update(state)
     sharing?.update(state)
     // Only the coach's complete, scoped snapshot may produce week counters.
-    week.hidden = state.role !== 'coach'
+    week.hidden = true
     weekDetails.hidden = true
     weekCounts.textContent = ''
     weekLine.textContent = ''
-    if (state.role === 'coach') {
-      if (state.error) weekLine.textContent = 'Ugens opsummering er ikke tilgængelig. Opdatér samtalen.'
-      else if (state.loading || !state.loaded) weekLine.textContent = 'Henter ugens opsummering…'
-      else try {
+    if (state.role === 'coach' && state.loaded && !state.loading && !state.error) {
+      try {
         const counts = weeklyConversationSummary({ enabled: true, athleteId: state.athleteId,
           ...conversationWeek(now()),
           messages: state.thread.filter(item => item.kind === 'message').map(item => item.value),
           analyses: state.thread.filter(item => item.kind === 'video').map(item => item.value),
         })
+        week.hidden = false
         weekLine.textContent = `Denne uge · ${counts.totalMessages} beskeder · ${counts.unansweredMessages} ubesvarede · ${counts.videoFeedback} video-feedback`
-        weekCounts.textContent = counts.totalMessages === 0 && counts.videoFeedback === 0
-          ? 'Ingen beskeder eller video-feedback i denne uge.'
-          : `${counts.athleteMessages} fra atleten · ${counts.coachMessages} fra coachen. Ubesvarede er atletbeskeder uden en senere coachbesked i ugen. Video-feedback tælles efter delingstidspunktet.`
-        weekDetails.hidden = false
-      } catch { weekLine.textContent = 'Ugens opsummering kunne ikke beregnes. Opdatér samtalen.' }
+        weekDetails.hidden = counts.totalMessages === 0 && counts.videoFeedback === 0
+        if (!weekDetails.hidden)
+          weekCounts.textContent = `${counts.athleteMessages} fra atleten · ${counts.coachMessages} fra coachen. Ubesvarede er atletbeskeder uden en senere coachbesked i ugen. Video-feedback tælles efter delingstidspunktet.`
+      } catch { /* No trustworthy weekly basis: keep the optional summary hidden. */ }
     }
+    if (weekDetails.hidden) weekDetails.open = false
     title.textContent = state.role === 'coach' ? 'Samtale med atleten' : 'Din coach'
     const unread = state.thread.filter(item => state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach).length
     // Marc 3. nov. (keep it simple): antallet ulaeste staar paa spring-knappen; statuslinjen siger kun det, der mangler.
@@ -237,7 +227,8 @@ export function mountConversation(root, controller, { enabled = false, now = () 
         Object.assign(li.style, { borderInlineStart: `3px solid ${unread ? '#d8b16b' : 'transparent'}`,
           paddingInlineStart: '8px' })
       }
-      const label = `${item.kind === 'video' ? 'Video' : row.sender_role === 'coach' ? 'Coach' : 'Atlet'} · ${formatConversationTime(item.at)}${unread ? ' · Ulæst' : ''}`
+      const label = [item.kind === 'video' ? 'Video' : row.sender_role === 'coach' ? 'Coach' : 'Atlet',
+        formatConversationTime(item.at), unread ? 'Ulæst' : ''].filter(Boolean).join(' · ')
       const toggle = button(label, async () => {
         if (disposed) return
         expanded.add(item.key)

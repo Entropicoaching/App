@@ -37,7 +37,7 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
       if (token !== generation) return false
       messages = data.messages; analyses = data.analyses; loaded = true
       return true
-    } catch (e) { if (active && token === generation) error = e.message; return false }
+    } catch { if (active && token === generation) error = 'Samtalen kunne ikke hentes sikkert. Opdatér og prøv igen.'; return false }
     finally { if (active && token === generation) { loading = false; emit() } }
   }
   async function transmit() {
@@ -57,9 +57,9 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
       return false
     } finally { busy = false; emit() }
   }
-  async function action(fn) {
+  async function action(fn, failure) {
     try { guard(); error = ''; const result = await fn(); guard(); return result }
-    catch (e) { if (active) error = e.message; return false }
+    catch (e) { if (active) error = failure || e.message; return false }
     finally { emit() }
   }
   function send({ analysisId, seconds } = {}) {
@@ -150,7 +150,7 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
     submission: clientAnalysisId => action(async () => {
       const row = await adapters.submission(clientAnalysisId)
       guard(); submissions.set(row.id, row); return true
-    }),
+    }, 'Videoen kunne ikke klargøres. Prøv igen med den valgte video.'),
     dispose() { active = false; generation++; listeners.clear() },
   }
 }

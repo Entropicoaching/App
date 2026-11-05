@@ -29,11 +29,23 @@ export function feedbackText(row) {
 const videoDate = new Intl.DateTimeFormat('da-DK', {
   timeZone: 'Europe/Copenhagen', day: 'numeric', month: 'short',
 })
+// A missing or ambiguous wire timestamp must never acquire the device's timezone.
+export function conversationDate(value) {
+  const match = typeof value === 'string' && /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})$/.exec(value)
+  if (!match) return null
+  const [, year, month, day, hour, minute, second = '0', zone] = match
+  const days = new Date(Date.UTC(Number(year), Number(month), 0)).getUTCDate()
+  if (Number(month) < 1 || Number(month) > 12 || Number(day) < 1 || Number(day) > days
+    || Number(hour) > 23 || Number(minute) > 59 || Number(second) > 59
+    || zone !== 'Z' && (Number(zone.slice(1, 3)) > 23 || Number(zone.slice(4)) > 59)) return null
+  const date = new Date(value)
+  return Number.isFinite(date.getTime()) ? date : null
+}
 export function videoLabel(row) {
   const lift = typeof row?.lift === 'string' && row.lift.trim() ? row.lift.trim() : ''
   const title = lift ? `${lift[0].toLocaleUpperCase('da-DK')}${lift.slice(1)}-video` : 'Video'
-  const date = typeof row?.created_at === 'string' ? new Date(row.created_at) : null
-  return `${title} ${date && Number.isFinite(date.getTime()) ? videoDate.format(date) : '(dato mangler)'}`
+  const date = conversationDate(row?.created_at)
+  return date ? `${title} ${videoDate.format(date)}` : title
 }
 const videoSeconds = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 2 })
 

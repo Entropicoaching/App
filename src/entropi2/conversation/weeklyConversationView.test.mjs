@@ -37,7 +37,8 @@ const summary = f => f.root.children[1]
 
 test('actual controller/view shows weekly counts at top with native collapsed details and no writes', async () => {
   const f = fixture()
-  assert.match(summary(f).textContent, /Henter ugens/)
+  assert.equal(summary(f).hidden, true)
+  assert.equal(summary(f).textContent.includes('Henter ugens'), false)
   f.messages.push(message('old', 'athlete', '2026-11-01T12:00:00Z'),
     message('a', 'athlete', '2026-11-02T12:00:00Z'),
     message('b', 'coach', '2026-11-03T12:00:00Z'),
@@ -61,7 +62,9 @@ test('actual controller/view shows weekly counts at top with native collapsed de
 test('loaded empty week is honest zero data, not loading or an error', async () => {
   const f = fixture(); await f.controller.refresh()
   assert.match(summary(f).children[0].textContent, /0 beskeder · 0 ubesvarede · 0 video-feedback/)
-  assert.match(summary(f).textContent, /Ingen beskeder eller video-feedback i denne uge/)
+  assert.equal(summary(f).hidden, false)
+  assert.equal(find(summary(f), 'details')[0].hidden, true)
+  assert.doesNotMatch(summary(f).textContent, /Ingen beskeder eller video-feedback/)
   assert.equal(find(summary(f), 'details')[0].open, false)
   f.dispose()
 })
@@ -70,7 +73,8 @@ test('failed refresh suppresses stale counters, retry restores them, changed sco
   const f = fixture(); f.messages.push(message('a', 'athlete', '2026-11-03T12:00:00Z'))
   await f.controller.refresh(); assert.match(summary(f).textContent, /1 beskeder/)
   f.fail(true); await f.controller.refresh()
-  assert.match(summary(f).textContent, /ikke tilgængelig/)
+  assert.equal(summary(f).hidden, true)
+  assert.match(f.root.textContent, /Samtalen kunne ikke hentes sikkert/)
   assert.doesNotMatch(summary(f).textContent, /1 beskeder/)
   assert.equal(find(summary(f), 'details')[0].hidden, true)
   f.fail(false); await f.controller.refresh(); assert.match(summary(f).textContent, /1 beskeder/)
@@ -79,9 +83,9 @@ test('failed refresh suppresses stale counters, retry restores them, changed sco
   assert.deepEqual(f.writes, []); f.dispose()
 })
 
-test('invalid calendar reports failure and athlete view never consults summary clock', async () => {
+test('invalid calendar hides optional summary and athlete view never consults summary clock', async () => {
   const f = fixture('coach', () => new Date(NaN)); await f.controller.refresh()
-  assert.match(summary(f).textContent, /kunne ikke beregnes/); f.dispose()
+  assert.equal(summary(f).hidden, true); assert.equal(summary(f).textContent.trim(), 'Ugens detaljer'); f.dispose()
   const athlete = fixture('athlete', () => assert.fail('athlete clock accessed'))
   await athlete.controller.refresh()
   assert.equal(summary(athlete).hidden, true); assert.equal(summary(athlete).textContent.includes('beskeder'), false)

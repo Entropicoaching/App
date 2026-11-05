@@ -73,7 +73,7 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
     const details = find(host, 'details')[0]
     assert.equal(details.open, false); assert.equal(details.hidden, false)
     assert.equal(details.children[0].tagName, 'SUMMARY')
-    const letterButton = find(host, 'button').find(b => b.textContent === 'Lav udkast til ugebrev')
+    const letterButton = find(host, 'button').find(b => b.textContent === 'Lav udkast om søvn')
     const input = find(host, 'textarea')[0]
     assert.equal(letterButton.disabled, false)
     await act(async () => { await letterButton.events.get('click')() })
@@ -94,10 +94,12 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
     assert.equal(details.open, true)
     messages.length = 0
     await act(async () => { await controller.refresh() })
-    assert.match(host.textContent, /Ingen beskeder eller video-feedback i denne uge/)
+    assert.match(host.textContent, /Denne uge · 0 beskeder · 0 ubesvarede · 0 video-feedback/)
+    assert.equal(details.hidden, true); assert.equal(details.open, false)
     fail = true
     await act(async () => { await controller.refresh() })
-    assert.match(host.textContent, /Ugens opsummering er ikke tilgængelig/)
+    assert.match(host.textContent, /Samtalen kunne ikke hentes sikkert/)
+    assert.equal(details.parentNode.hidden, true)
     assert.equal(find(host, 'details')[0].hidden, true)
     await act(async () => { root.render(createElement(Conversation, { enabled: false, createController, controllerRef: ref })) })
     assert.equal(host.children.length, 0); assert.equal(ref.current, null)
@@ -149,6 +151,15 @@ test('real React athlete: one-tap answer, set with note, empty, read/send error,
     assert.equal(writes.length, 0)
     assert.ok(controllers.length >= 2)
     assert.equal(await controllers[0].shareSet('set', 'note'), false)
+    rows.push({ id: 'undated', athlete_id: 'synthetic', sender_role: 'coach',
+      content: 'Bekræftet besked uden dato', created_at: null })
+    await act(async () => { await ref.current.refresh() })
+    const undated = find(host, 'li')[0]
+    assert.equal(undated.children[0].textContent, 'Coach · Ulæst')
+    assert.match(undated.textContent, /Bekræftet besked uden dato/)
+    assert.doesNotMatch(undated.textContent, /tidspunkt mangler|dato mangler|i dag|i går/)
+    assert.equal(writes.length, 0)
+    rows.length = 0
     rows.push({ id: 'question', athlete_id: 'synthetic', sender_role: 'coach',
       content: 'Har du energi?', created_at: '2026-11-04T12:00:00Z' })
     await act(async () => { await ref.current.refresh() })
@@ -176,7 +187,8 @@ test('real React athlete: one-tap answer, set with note, empty, read/send error,
     assert.equal(set.value, ''); assert.equal(note.value, '')
     await click('Send video'); assert.equal(uploads, 1)
     failRead = true; await act(async () => { await ref.current.refresh() })
-    assert.match(host.textContent, /Synthetic read failure/)
+    assert.match(host.textContent, /Samtalen kunne ikke hentes sikkert/)
+    assert.doesNotMatch(host.textContent, /Synthetic read failure/)
     const share = find(host, 'button').find(n => n.textContent === 'Send sæt til coach')
     assert.equal(share.disabled, true)
     const count = writes.length
