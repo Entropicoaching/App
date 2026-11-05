@@ -43,9 +43,12 @@ const programLayout = {
     lineHeight: 1.5, textTransform: 'none', letterSpacing: 'normal', maxWidth: '100%',
     overflowWrap: 'anywhere', boxSizing: 'border-box' },
 }
-function programBlockElement(type, props, ...children) {
-  return createElement(type, props?.['aria-label'] === 'Din aktuelle blok'
-    ? { ...props, style: { ...props.style, ...programLayout.block } } : props, ...children)
+function programBlockElement(options, appearanceOn) {
+  const block = renderProgramBlockOverview(createElement, options)
+  if (!appearanceOn) return block
+  // Mark and style the renderer's root; accessible copy can change independently.
+  return createElement(block.type, { ...block.props, 'data-program-block-overview': true,
+    style: { ...block.props.style, ...programLayout.block } }, block.props.children)
 }
 
 // Keep unlike prescriptions as coach-written text, never average RPE and percent.
@@ -375,7 +378,7 @@ export default function ProgramTab({
                             </span>
                           </div>
                           {dateRange && (
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{dateRange}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: programAppearanceOn ? programColors.muted : '#7a7770', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{dateRange}</span>
                           )}
                         </div>
 
@@ -420,8 +423,8 @@ export default function ProgramTab({
                           {viewingWeekIdx === activeWeekIdx
                             ? <span style={{ color }}>● Du er her · uge {viewedWeek?.week_number}</span>
                             : viewingWeekIdx > activeWeekIdx
-                              ? <span style={{ color: '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
-                              : <span style={{ color: '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
+                              ? <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
+                              : <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
                           {viewedRange && <span style={{ color: '#a8a498' }}> · {viewedRange}</span>}
                           {!blockOverviewOn && <span style={{ color: '#a8a498' }}> · aktiv uge {activeWeekIdx + 1} af {totalWeeks}</span>}
                         </div>
@@ -476,12 +479,12 @@ export default function ProgramTab({
                 </>
               ) : (
                 <>
-                  {blockOverviewOn && renderProgramBlockOverview(programAppearanceOn ? programBlockElement : createElement, {
+                  {blockOverviewOn && programBlockElement({
                     allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate, programError,
                     onRetry: () => fetchProgram(athlete.id),
                     logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
                     goToWeek,
-                  })}
+                  }, programAppearanceOn)}
                   {entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} />}
                   {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
                       (kun aktuel uge; readinessLog er allerede i state). */}
