@@ -1,4 +1,5 @@
 import { GOALS, INTENSITIES, CONTEXT_LABELS, totals } from './model.mjs'
+import { recipeChoices } from './connections.mjs'
 
 const format = value => value.toLocaleString('da-DK', { maximumFractionDigits: 1 })
 const macroText = value => value
@@ -8,6 +9,17 @@ const control = { minHeight: 44, width: '100%', maxWidth: '100%', boxSizing: 'bo
 const button = { ...control, width: 'auto', padding: '0.5rem 1rem', whiteSpace: 'normal' }
 const grid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))', gap: '0.75rem' }
 const statuses = { draft: 'Kladde', active: 'Aktiv', archived: 'Tidligere aktiv' }
+
+export function recipeChoice(h, { foods, name, mealName, disabled, onChoose, scaled = false }) {
+  const recipes = recipeChoices(foods)
+  if (!recipes.length) return null
+  return h('label', { style: { display: 'grid', gap: '0.25rem', marginBottom: '0.75rem' } },
+    `Hurtigt opskriftsvalg til ${mealName}${scaled ? ' (bevarer måltidets kcal)' : ''}`,
+    h('select', { name, value: '', style: control, disabled,
+      onChange: event => { if (event.currentTarget.value) onChoose(event.currentTarget.value) } },
+      h('option', { value: '' }, 'Vælg opskrift'),
+      ...recipes.map(recipe => h('option', { key: recipe.id, value: recipe.id }, recipe.name))))
+}
 
 // The application passes React.createElement. Hermetic tests pass a tiny element
 // factory to exercise this exact view and its event handlers without a browser.
@@ -71,6 +83,11 @@ export function coachPlanView(h, snapshot, actions) {
     ...s.meals.map((meal, mi) => h('fieldset', { key: meal.id, disabled: busy,
       style: { minWidth: 0, margin: '1rem 0', padding: '0.75rem' } },
     h('legend', null, meal.name),
+    s.proteinDistribution && h('small', {
+      'aria-label': `Proteinfordeling i ${meal.name}: ${s.proteinDistribution.meals[mi].belowThreshold === null ? 'ukendt' : s.proteinDistribution.meals[mi].belowThreshold ? 'under pejlemærke' : 'pejlemærke nået'}. Pejlemærke ${format(s.proteinDistribution.thresholdG)} g ud fra profilvægten.`,
+    }, `Proteinfordeling: ${s.proteinDistribution.meals[mi].belowThreshold === null ? 'ukendt' : s.proteinDistribution.meals[mi].belowThreshold ? 'under pejlemærke' : 'pejlemærke nået'}`),
+    recipeChoice(h, { foods: s.foods, name: `recipe-${mi}`, mealName: meal.name, disabled: busy,
+      scaled: true, onChoose: recipeId => actions.chooseRecipe(mi, recipeId) }),
     ...meal.items.map((item, ii) => h('div', { key: ii, style: { ...grid, marginBottom: '0.75rem' } },
       h('label', null, `Fødevare ${ii + 1} i ${meal.name}`, h('select', {
         name: `food-${mi}-${ii}`, style: control, value: item.food.id,
@@ -79,6 +96,9 @@ export function coachPlanView(h, snapshot, actions) {
       field(`grams-${mi}-${ii}`, `Gram af ${item.food.name} i ${meal.name}`, item.grams,
         value => actions.editGrams(mi, ii, value)))),
     h('p', null, macroText(totals([meal]))))),
+    s.proteinDistribution && h('details', null,
+      h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om proteinfordelingen'),
+      h('p', null, `Markeringen bruger profilvægten ${format(s.proteinDistribution.weightKg)} kg og 0,3 g/kg pr. måltid som planlægningspejlemærke. Det er hverken et individuelt minimum eller et loft. Dagens proteinmål ændres ikke; ingen fødevarer tilføjes automatisk.`)),
     h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '0.75rem' } },
       h('button', { type: 'button', style: button, disabled: busy || !s.canSaveAdapter || !s.planTargets || !s.totals
         || s.saved?.status === 'active' && !s.dirty, onClick: () => actions.save() }, 'Gem som kladde'),

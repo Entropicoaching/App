@@ -1,6 +1,12 @@
 # Kostrapport til coachen
 
-Ren model og React-visning, endnu ikke koblet ind. Kun nye filer i denne mappe.
+Ren model og React-visning med en betinget kobling under coachens kostplan.
+`../coach/PortalPlan.mjs` viser en lukket Kostrapport, når en komplet,
+coach-/atlet-/datobundet `nutritionRead` indeholder reel kostlog i rapportugen.
+Den nuværende `kostMaalKobling.mjs` sender ikke sådan en kvittering til
+planeditoren. Derfor er rapporten fortsat skjult i det aktuelle produktflow;
+der er ikke oprettet en ny læsning eller opdigtet planhistorik. Se leverancens
+ADAPTER.md for kontrakten og den resterende værtkobling uden for denne zone.
 Ingen I/O, klokke, lagring, aktivering eller andre writes. `enabled` skal være
 bogstaveligt `true`; ellers returneres `null` før øvrige props læses.
 
@@ -46,13 +52,15 @@ at hele dagen er registreret. Procenten begrænses ikke til 100. Summering sker
 før visning; kun formatteringen afrunder til én decimal. Numerisk overflow
 giver null frem for Infinity.
 
+`reportView.mjs` eksporterer samme visning som `nutritionReportView(h, props)`,
+så portalen og React-komponenten deler præcis den samme markup og formattering.
 `KostrapportCoach({ enabled, state, report, onRetry })` har `loading`, `error`
 og `ready`. Caller beregner `report` med modellen og erstatter hele snapshot ved
 atlet-/datoskift. Ingen gamle snapshots må blive stående som `ready` under et
 nyt read. Coachen ser ugens fire næringsstoffer, logdækning og vægt ved siden af
 hinanden på brede skærme; mobil lægger dem under hinanden. Dage og vejninger
 ligger i native `<details>`. Fejl vises som alert; en valgfri retry-knap bruger
-callerens callback. Atleten ser ingen ændring, da pakken ikke er koblet ind.
+callerens callback. Atletvisningen er uændret.
 
 Prøver er almindelige `.test.mjs` og opdages af appens `npm test`. De rigtige
 React-prøver importerer `react` og `react-dom/server` direkte uden skip eller

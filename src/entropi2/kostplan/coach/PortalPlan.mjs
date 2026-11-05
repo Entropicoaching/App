@@ -1,14 +1,17 @@
 import * as React from 'react'
 import { openPortalPlan } from './portalModel.mjs'
-import { coachPlanView } from './view.mjs'
+import { coachPlanView, recipeChoice } from './view.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
-import { identifier, day, number } from './model.mjs'
+import { identifier, day, number, catalogFoods } from './model.mjs'
+import { recipeItems, portalNutritionReport } from './connections.mjs'
+import { nutritionReportView } from '../rapport/reportView.mjs'
 import KostJustering from '../justering/KostJustering.mjs'
 import { evaluateAdjustment } from '../justering/model.mjs'
 
 const h = React.createElement
 const control = { minHeight: 44, width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', font: 'inherit' }
 const meals = ['Morgenmad', 'Frokost', 'Aftensmad']
+const foods = catalogFoods(FOODS)
 
 // Mounted only in the enabled coach tab. The keyed parent resets all local UI
 // immediately on coach, athlete or date changes; opening does not write anything.
@@ -17,7 +20,7 @@ export default function PortalPlan(props = {}) {
   const { athlete, today, session } = props
   if (!identifier(athlete?.id) || !identifier(session?.user?.id) || !day(today)) return null
   return h(ScopedPortalPlan, { key: JSON.stringify([session.user.id, athlete.id, today]),
-    coachId: session.user.id, athlete, date: today })
+    coachId: session.user.id, athlete, date: today, nutritionRead: props.nutritionRead })
 }
 
 function ScopedPortalPlan(props) {
@@ -25,7 +28,18 @@ function ScopedPortalPlan(props) {
   return h('details', { style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
     onToggle: event => { if (event.currentTarget.open) setOpened(true) } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
-    opened && h(PlanEditor, props))
+    opened && h(PlanEditor, props),
+    opened && h(PortalNutritionReport, { ...props, enabled: true }))
+}
+
+export function PortalNutritionReport(props = {}) {
+  if (props.enabled !== true) return null
+  const report = portalNutritionReport({ enabled: true, coachId: props.coachId,
+    athleteId: props.athlete?.id, date: props.date, receipt: props.nutritionRead })
+  if (!report) return null
+  return h('details', null,
+    h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostrapport'),
+    nutritionReportView(h, { enabled: true, ...report }))
 }
 
 function PlanEditor(props) {
@@ -56,6 +70,12 @@ function PlanEditor(props) {
       h('p', null, 'Brug appens fødevareliste. Mængderne skaleres efter energi; gennemgå makroerne. Kilder og rå/kogt tilstand er ikke alle verificeret.'),
       ...rows.map((items, mi) => h('fieldset', { key: mi, style: { minWidth: 0, marginBottom: 12 } },
         h('legend', null, meals[mi]),
+        recipeChoice(h, { foods, name: `template-recipe-${mi}`, mealName: meals[mi],
+          onChoose: recipeId => {
+            const selected = recipeItems(recipeId, foods)
+            if (!selected) { setError('Opskriften kunne ikke åbnes. Vælg fødevarer manuelt.'); return }
+            setRows(old => old.map((meal, m) => m === mi ? selected : meal)); setError('')
+          } }),
         ...items.map((item, ii) => h('div', { key: ii, style: { marginBottom: 12 } },
           h('label', null, `Fødevare ${ii + 1}`, h('select', { style: control, value: item.foodId,
             name: `template-food-${mi}-${ii}`, onChange: e => change(mi, ii, 'foodId', e.currentTarget.value) },

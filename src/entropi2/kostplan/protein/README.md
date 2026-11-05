@@ -1,7 +1,13 @@
-# Proteinfordeling — ren, ikke tilkoblet model
+# Proteinfordeling — ren model med coachmarkeringer
 
 `planProteinDistribution` fra `model.mjs` fordeler et **eksisterende** proteinmål
-over 3–5 eksplicitte måltidspladser. Intet importerer modulet i produktflowet.
+over 3–5 eksplicitte måltidspladser. Coachens kostplan bruger modellen til en
+lille tekstmarkering pr. måltid via `../coach/connections.mjs`. Den bruger
+valgt atlets `bodyweight` fra profilen, det aktuelle planmål og de faktiske
+gram i kladden. Manglende/ugyldig profilvægt eller mål skjuler markeringerne;
+ugyldige måltidsgram vises som ukendt. Profilvægten er ikke en ny vejning.
+Coachkoblingen sender `allowedFoodIds: []`, tilføjer intet og udleder ingen
+før-søvn-plads. Der er ingen ændring i dagens proteinmål.
 Det læser hverken log, klokke, lager, brugeridentitet eller netværk.
 
 ```js
@@ -54,7 +60,7 @@ Kommentarerne i modellen angiver evidensstyrke og den allerede fastlåste
 ISSN-kilde (Jäger et al., 2017, DOI 10.1186/s12970-017-0177-8). Intervallet
 0,3–0,4 g/kg er ordrens planlægningsheuristik, ikke en klinisk grænse. Kilden
 er ikke efterkontrolleret via net i denne opgave. Modellen er et forslag til
-voksenplanlægning, der kræver individuel vurdering før en eventuel tilkobling.
+voksenplanlægning, der kræver coachens individuelle vurdering.
 
 Alle mappens tests bruger `node:test`, importerer den rigtige model og det rigtige
 kopierede katalog og opdages af `scripts/test.mjs` i appens eksisterende npm test.

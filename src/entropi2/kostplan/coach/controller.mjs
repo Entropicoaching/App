@@ -1,15 +1,17 @@
 import { NAMESPACE, CONTEXT_LABELS, GOALS, INTENSITIES, identifier, day, number, copy, freeze,
   catalogFoods, targets, nutritionProposal, totals, generateMeals, historyReceipt, normalizePlan } from './model.mjs'
+import { recipeItems, proteinDistribution } from './connections.mjs'
 
 // All side effects are explicit coach actions through the two supplied functions.
 // The adapter owns authorization, atomic activation and optimistic concurrency.
 export function createCoachPlan(options = {}) {
   if (options.enabled !== true) return Object.freeze({ snapshot: () => null, subscribe: () => () => {},
-    set: () => false, generate: () => false, editGrams: () => false, editFood: () => false,
+    set: () => false, generate: () => false, editGrams: () => false, editFood: () => false, chooseRecipe: () => false,
     save: async () => false, activate: async () => false })
   const athleteId = options.athlete?.id, date = options.date
   if (!identifier(athleteId) || !day(date)) throw new TypeError('Vælg en atlet og en gyldig dato.')
   const foods = catalogFoods(options.catalog) ?? []
+  const weightKg = number(options.athlete.bodyweight, 350)
   const template = copy(options.template ?? [])
   const basis = options.basis?.athleteId === athleteId && options.basis?.date === date ? options.basis : {}
   // Undefined selects the explicit manual-target workflow from delivery 1.
@@ -51,6 +53,7 @@ export function createCoachPlan(options = {}) {
     state = { ...state, ...patch }
     snapshot = freeze(copy({ ...state, suggestion: targets(state.form, calculation),
       proposal: calculation === undefined ? null : nutritionProposal(state.form, calculation), totals: totals(state.meals),
+      proteinDistribution: proteinDistribution(state.meals, state.planTargets, weightKg),
       dirty: state.meals.length > 0 && state.saved?.clientVersion !== state.version }))
     for (const listener of listeners) listener()
   }
@@ -99,6 +102,17 @@ export function createCoachPlan(options = {}) {
       const food = foods.find(row => row.id === foodId)
       if (!food || !state.meals[mealIndex]?.items[itemIndex]) return false
       const meals = copy(state.meals); meals[mealIndex].items[itemIndex].food = copy(food)
+      return edit({ meals })
+    },
+    chooseRecipe(mealIndex, recipeId) {
+      if (state.busy || !Number.isInteger(mealIndex) || !state.meals[mealIndex]) return false
+      const kcal = totals([state.meals[mealIndex]])?.kcal
+      const items = recipeItems(recipeId, foods, kcal ?? 0)
+      if (!items) {
+        publish({ error: 'Måltidet kunne ikke erstattes. Kontrollér opskrift, fødevarer og gram.' }); return false
+      }
+      const meals = copy(state.meals)
+      meals[mealIndex].items = items.map(item => ({ grams: item.grams, food: copy(foods.find(food => food.id === item.foodId)) }))
       return edit({ meals })
     },
     async save() {

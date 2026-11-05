@@ -32,7 +32,7 @@ export function openPortalPlan(options = {}) {
     loadError = 'Den lokale kladde kunne ikke læses. Genåbn kostfanen, når enhedens lagring er tilgængelig.'
   }
   let controller
-  controller = createCoachPlan({ enabled: true, localDraftOnly: true, athlete: { id: athlete.id }, date,
+  controller = createCoachPlan({ enabled: true, localDraftOnly: true, athlete: { id: athlete.id, bodyweight: athlete.bodyweight }, date,
     goal: athlete.goal, catalog: FOODS, template: options.template ?? restoreDraft?.plan.meals.map(meal => ({
       id: meal.id, name: meal.name, items: meal.items.map(item => ({ foodId: item.food.id, grams: item.grams })),
     })) ?? [], restoreDraft,

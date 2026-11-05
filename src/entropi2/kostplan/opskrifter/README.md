@@ -4,9 +4,12 @@
 mellemmåltid, før træning og efter træning. Kategorierne er til sortering,
 ikke individuelle anbefalinger om timing eller mængder.
 
-Modulet er ikke koblet ind i appen. Coachen og atleten ser derfor ingen ny
-visning, handling eller automatisk kostændring. Ingen lagring eller netkald.
-Eksisterende adfærd med Entropi 2 slået fra eller til er uændret.
+Coachens Entropi 2-kostplan bruger nu opskrifterne som hurtigt valg før og
+efter generering. Før generering indsættes katalog-id'er og grundgram;
+den eksisterende generator skalerer hele dagen. I en genereret plan
+erstattes ét måltid med bevaret måltidsenergi via `scaleRecipe`.
+Coachen gennemgår gram og makroer og gemmer eksplicit. Modulet har fortsat
+ingen lagring eller netkald. Atletvisningen og Entropi 2 OFF er uændret.
 
 Alle ingredienser er katalog-id'er fra `../foedevarer/`, og alle mængder er
 gram af den spiselige del (æg uden skal, tun afdryppet). Ris, pasta, quinoa,
