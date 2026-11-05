@@ -66,3 +66,21 @@ test('real React sparse coach tab preserves independent goals and draft during a
   assert.equal((empty.match(/Ingen vejninger endnu/g) ?? []).length, 1)
   assert.doesNotMatch(empty, /Ingen kropsvægt|Ingen vejninger i perioden|Flere vejninger nødvendige/)
 })
+
+test('real React keeps goals and trend outside native folds and opens help during target editing', {
+  skip: !React || !renderToStaticMarkup ? 'Pinned public copy has no React dependencies; REQUIRED at app merge' : false,
+}, async () => {
+  const { default: KostMaal } = await import('./KostMaal.mjs')
+  const props = { enabled: true, today: '2026-11-02',
+    athlete: { id: 'synthetic-a', kcal_target: 2400, protein_target: 160, bodyweight: 90 },
+    weightLogs: [['2026-10-20', 88], ['2026-10-26', 86], ['2026-10-27', 82], ['2026-11-02', 80]]
+      .map(([logged_at, weight]) => ({ logged_at, weight })) }
+  const render = patch => renderToStaticMarkup(React.createElement(KostMaal, { ...props, ...patch }))
+  const html = render(), basis = html.match(/<details><summary[^>]*>Vægtgrundlag<\/summary>([\s\S]*?)<\/details>/)
+  assert.ok(basis); assert.match(basis[1], /Kropsvægt i profilen[\s\S]*90 kg/)
+  assert.match(basis[1], /Ugegennemsnit[\s\S]*81 kg/)
+  assert.match(html.slice(0, basis.index), /Seneste vejning[\s\S]*80 kg · 2026-11-02/)
+  assert.match(html.slice(0, basis.index), /Trend · mod de foregående 7 dage[\s\S]*-6 kg/)
+  assert.match(html, /<details><summary[^>]*>Hjælp til kostmål/)
+  assert.match(render({ editing: 'setup' }), /<details open=""><summary[^>]*>Hjælp til kostmål/)
+})

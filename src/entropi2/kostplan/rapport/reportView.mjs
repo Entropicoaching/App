@@ -72,7 +72,7 @@ export function nutritionReportView(h, props = {}) {
     const report = props.report
     if (!report) return h('p', { role: 'alert' }, 'Kostrapporten er ikke tilsluttet.')
     const active = report.comparison === 'active-plan'
-    return h('section', { 'aria-label': 'Kostrapport for én atlet',
+    return h('section', { 'data-entropi2-kostrapport': true, 'aria-label': 'Kostrapport for én atlet',
       style: { maxWidth: '64rem', width: '100%', minWidth: 0, boxSizing: 'border-box', padding: 16, overflowWrap: 'anywhere' } },
       h('h2', null, 'Plan og registreret kost'),
       h('p', null, `${active ? 'Seneste 7 dage' : 'Uge'}: ${range(report.from, report.through)}`),

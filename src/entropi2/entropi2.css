@@ -14,6 +14,11 @@ section[aria-label="Beskeder og video"] :is(h1, h2, h3),
   color: #edeae2;
 }
 
+/* Kostrapporten ligger uden for kostmålenes kort. Kun coachens ON-rapport. */
+[data-entropi2-coach-root] [data-entropi2-kostrapport] :is(h2, h3) {
+  color: #edeae2;
+}
+
 /* Den nye analyse og coachens kostmål arver ellers appens centrerede tekst; venstrestillet som de øvrige skærme. */
 [data-entropi2-analysis],
 [data-entropi2-kost-maal] {

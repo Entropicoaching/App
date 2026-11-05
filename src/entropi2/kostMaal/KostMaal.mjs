@@ -78,19 +78,25 @@ function EnabledKostMaal(props) {
           })
         } } }, model.kcal === null && model.protein === null ? 'Sæt kostmål' : 'Rediger'),
     !connected && h('p', { role: 'status' }, 'Redigering af mål skal tilsluttes af coachen.'),
-    h('h3', null, 'Vægtgrundlag'),
+    h('h3', null, 'Vægt'),
     !weightReady && h('p', { role: props.weightState === 'error' ? 'alert' : 'status' },
       props.weightState === 'error' ? 'Vægtgrundlaget kunne ikke hentes.' : 'Indlæser vægtgrundlag…'),
     props.weightState === 'error' && typeof props.retryWeight === 'function' && h('button', {
       type: 'button', style: button, onClick: props.retryWeight }, 'Hent vægt igen'),
-    (model.bodyweight !== null || model.latest) && h('dl', null,
-      model.bodyweight !== null && value('Kropsvægt i profilen', `${displayNumber(model.bodyweight)} kg`),
-      model.latest && value('Seneste vejning', `${displayNumber(model.latest.weight)} kg · ${model.latest.date}`),
-      model.average !== null && value('Ugegennemsnit · seneste 7 dage', `${displayNumber(model.average)} kg · ${model.days} ${antalOrd(model.days, 'vejedag', 'vejedage')}`),
+    model.latest && h('dl', null,
+      value('Seneste vejning', `${displayNumber(model.latest.weight)} kg · ${model.latest.date}`),
       model.trend !== null && value('Trend · mod de foregående 7 dage',
         Math.abs(model.trend) < 0.05 ? 'Stabil vægt · 0 kg' : `${model.trend > 0 ? '+' : ''}${displayNumber(model.trend)} kg`)),
     weightReady && model.day && !model.latest && h('p', null, 'Ingen vejninger endnu.'),
     weightReady && !model.day && h('p', { role: 'status' }, 'Vælg en gyldig dagsdato for vægtgrundlaget.'),
+    (model.bodyweight !== null || model.latest) && h('details', null,
+      h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Vægtgrundlag'),
+      h('dl', null,
+        model.bodyweight !== null && value('Kropsvægt i profilen', `${displayNumber(model.bodyweight)} kg`),
+        model.average !== null && value('Ugegennemsnit · seneste 7 dage', `${displayNumber(model.average)} kg · ${model.days} ${antalOrd(model.days, 'vejedag', 'vejedage')}`)),
+      weightReady && model.latest && h('p', null, `Grundlag til og med ${model.day}. Trenden kræver mindst 2 vejedage i hver af to på hinanden følgende 7-dagesperioder og er forskellen mellem ugegennemsnittene.`)),
+    (suggestion || basis.state === 'ready' && weightReady) && h('details', { open: active || undefined },
+    h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Hjælp til kostmål'),
     suggestion && h('p', null, `Forslag: ${displayNumber(suggestion.min)} til ${displayNumber(suggestion.max)} g protein (1,6 til 2,2 g pr. kg ud fra ${displayNumber(suggestion.weight)} kg)`),
     active && suggestion && h('button', { type: 'button', style: button, disabled: locked || !connected,
       onClick: () => {
@@ -109,7 +115,5 @@ function EnabledKostMaal(props) {
         if (!locked && !pending.current && connected && active) {
           setError(''); setEditData(previous => ({ ...previous, kcal_target: energy.kcal }))
         }
-      } }, 'Brug forslag'),
-    weightReady && model.latest && h('details', null, h('summary', { style: { minHeight: 44 } }, 'Om vægtgrundlaget'),
-      h('p', null, `Grundlag til og med ${model.day}. Trenden kræver mindst 2 vejedage i hver af to på hinanden følgende 7-dagesperioder og er forskellen mellem ugegennemsnittene.`)))
+      } }, 'Brug forslag')))
 }

@@ -87,7 +87,9 @@ test('frame: reading alignment is scoped to Home, nutrition and profile, with ce
 })
 
 test('frame: existing colors, focus, reduced motion, dialog and tap targets are untouched', () => {
-  assert.equal(digest(css.slice(0, css.indexOf(marker)).replace(/\n$/, '')), '91f4d6fae3af0fc0066ca217a5f32cde68286aecaa51e7584ea83c949427825b')
+  // E2-COACH-KOST2: only the coach report heading rule was added to this prefix.
+  // reportContrast.synthetic.test.mjs checks its ON scope; athlete frame rules stay exact.
+  assert.equal(digest(css.slice(0, css.indexOf(marker)).replace(/\n$/, '')), 'effb32c3bb459eb206804c3770583da4fcbb947526fc1c05b41ee95c916e24fd')
   assert.doesNotMatch(delta, /(?:color|background|outline|animation|transition|min-height|font-size):/)
   assert.ok(homeStyles.primary.minHeight >= 44)
   assert.ok(homeStyles.secondary.minHeight >= 44)

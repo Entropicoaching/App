@@ -16,6 +16,22 @@ const scope = { enabled: true, coachId: 'synthetic-coach', date: '2026-11-05',
   athlete: { id: 'synthetic-adult', age: 30, bodyweight: 80, goal: 'maintain' } }
 const walk = node => !isValidElement(node) ? [] : [node, ...[node.props.children].flat(Infinity).flatMap(walk)]
 
+test('real React exposes method assumptions before generation and retains a short visible review step', () => {
+  const { controller: c } = openPortalPlan({ ...scope, storage: () => memoryStorage(),
+    template: ['Morgenmad', 'Frokost', 'Aftensmad'].map((name, i) => ({ id: `synthetic-${i}`, name, items: [] })) })
+  const render = () => renderToStaticMarkup(h(CoachPlan, { enabled: true, controller: c }))
+  const method = html => html.match(/<details><summary[^>]*>Om forslaget<\/summary>([\s\S]*?)<\/details>/)
+  const initial = render()
+  assert.ok(method(initial)); assert.match(method(initial)[1], /hviledag som standard|5–300 g/)
+  assert.match(initial, /Vælg dagens mål/)
+  assert.equal(c.generate(), true)
+  const generated = render()
+  assert.equal((generated.match(/>Om forslaget<\/summary>/g) ?? []).length, 1)
+  assert.match(method(generated)[1], /Dagens tolerance/)
+  assert.match(generated.replace(method(generated)[0], ''), /Gennemgå fødevarer og portioner før gemning/)
+  assert.doesNotMatch(generated, /<details[^>]* open/)
+})
+
 test('real React events generate bounded grams, render escaped meals and live signed macro differences, then save locally', async () => {
   const storage = memoryStorage(), template = strengthDays()[2].input.meals
   template[0].name = '<synthetic-meal>'

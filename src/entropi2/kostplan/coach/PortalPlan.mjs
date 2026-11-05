@@ -120,8 +120,8 @@ function PlanEditor(props) {
     !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
       h('p', null, gramGenerator
-        ? 'Dine fødevarevalg og min./maks. går forud. Lad et måltid stå tomt for forslag fra katalogets prioriterede fødevarer. Tomme måltider får foreløbige grænser på 5–300 g pr. fødevare, i trin på 5 g. Kontrollér rå/kogt tilstand, tolerancer og præferencer; ikke alle fødevarekilder er verificeret.'
-        : 'Vælg fødevarer og angiv gram i hvert måltid. Kontrollér rå/kogt tilstand og næringsindhold; ikke alle fødevarekilder er verificeret.'),
+        ? 'Vælg fødevarer og portionsgrænser, eller lad måltider stå tomme for forslag.'
+        : 'Vælg fødevarer og angiv gram i hvert måltid.'),
       ...rows.map((items, mi) => h('fieldset', { key: mi, style: { minWidth: 0, marginBottom: 12 } },
         h('legend', null, meals[mi]),
         !gramGenerator && recipeChoice(h, { foods, name: `template-recipe-${mi}`, mealName: meals[mi],
