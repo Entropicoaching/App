@@ -1,4 +1,5 @@
 import { DEFAULT_VIDEOCOACH, finite, initialWindow, validWindow, moveWindow, resizeWindow, clamp } from './model.mjs'
+import { findSetBoundary } from './setBoundary.mjs'
 
 // Metadata and opaque artifact handles only. No media, transport or configured client.
 export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options = [], callbacks = {},
@@ -7,7 +8,7 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
   const listeners = new Set(), scope = enabled === true ? getScope() : null
   const choices = structuredClone(options)
   let active = true, generation = 0, abort = null, drag = null, operation = null
-  let state = { step: 1, choice: null, source: null, window: null, phase: 'idle', progress: null, error: '', background: false }
+  let state = { step: 1, choice: null, source: null, window: null, setBoundary: null, phase: 'idle', progress: null, error: '', background: false }
   const available = () => { try { return active && enabled === true && getScope() === scope } catch { return false } }
   const busy = () => ['preparing', 'sending'].includes(state.phase)
   const snapshot = () => available() ? structuredClone({ ...state, options: choices,
@@ -17,6 +18,9 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
   const emit = () => { for (const fn of listeners) fn(snapshot()) }
   const guard = () => { if (!available()) throw Error('Åbn videoen igen for den valgte atlet.') }
   const editable = () => available() && !busy() && !operation
+  const selectionAllowed = () => state.source && validWindow(state.window, state.source.duration)
+    && (!state.setBoundary || state.setBoundary.status === 'ready' || state.setBoundary.manual)
+  const manualBoundary = () => state.setBoundary ? { ...state.setBoundary, manual: true } : null
   const update = patch => { state = { ...state, ...patch }; emit() }
   // Called as callbacks[name](request), so an injected adapter keeps its receiver.
   async function stage(name, request, token) {
@@ -83,24 +87,32 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
       if (!editable()) return false
       try {
         if (typeof source?.id !== 'string' || !source.id || typeof source.label !== 'string') throw Error('Vælg en video.')
-        const window = initialWindow(source.duration)
-        update({ source: { id: source.id, label: source.label, duration: source.duration }, window, error: '' }); return true
+        let window = initialWindow(source.duration), setBoundary = null
+        if (source.motion !== undefined) {
+          const result = findSetBoundary({ lift: source.motion?.lift, samples: source.motion?.samples, duration: source.duration })
+          setBoundary = { ...result, manual: false }
+          if (result.status === 'ready') {
+            if (validWindow(result.window, source.duration)) window = { ...result.window }
+            else setBoundary.status = 'too-long'
+          }
+        }
+        update({ source: { id: source.id, label: source.label, duration: source.duration }, window, setBoundary, error: '' }); return true
       } catch (e) { update({ error: e.message }); return false }
     },
     next() {
       if (!editable()) return false
       if (state.step === 1 && state.choice) { update({ step: 2 }); return true }
-      if (state.step === 2 && state.source && validWindow(state.window, state.source.duration)) { update({ step: 3 }); return true }
+      if (state.step === 2 && selectionAllowed()) { update({ step: 3 }); return true }
       return false
     },
     back() { if (!editable()) return false; update({ step: Math.max(1, state.step - 1) }); return true },
     move(start) {
       if (!editable() || !state.source || !finite(start)) return false
-      update({ window: moveWindow(state.window, start, state.source.duration) }); return true
+      update({ window: moveWindow(state.window, start, state.source.duration), setBoundary: manualBoundary() }); return true
     },
     resize(edge, value) {
       if (!editable() || !state.source || !finite(value) || !['start', 'end'].includes(edge)) return false
-      update({ window: resizeWindow(state.window, edge, value, state.source.duration) }); return true
+      update({ window: resizeWindow(state.window, edge, value, state.source.duration), setBoundary: manualBoundary() }); return true
     },
     dragStart(pointerId, x, width) {
       if (!editable() || !state.source || !finite(x) || !finite(width) || width <= 0) return false
@@ -108,11 +120,11 @@ export function createUploadController({ enabled = DEFAULT_VIDEOCOACH, options =
     },
     dragMove(pointerId, x) {
       if (!drag || drag.pointerId !== pointerId || !editable() || !finite(x)) return false
-      update({ window: moveWindow(state.window, drag.start + (x - drag.x) / drag.width * state.source.duration, state.source.duration) }); return true
+      update({ window: moveWindow(state.window, drag.start + (x - drag.x) / drag.width * state.source.duration, state.source.duration), setBoundary: manualBoundary() }); return true
     },
     dragEnd() { drag = null },
     send() {
-      if (!editable() || state.step !== 3 || !state.choice || !state.source || !validWindow(state.window, state.source.duration)
+      if (!editable() || state.step !== 3 || !state.choice || !selectionAllowed()
         || typeof callbacks.prepare !== 'function' || typeof callbacks.upload !== 'function') return Promise.resolve(false)
       operation = { id: uuid(), choice: structuredClone(state.choice), source: { ...state.source }, window: { ...state.window }, prepared: null, uploaded: false }
       return transmit()

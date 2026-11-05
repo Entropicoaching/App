@@ -1,5 +1,5 @@
 import { antalOrd } from '../antalOrd.mjs'
-import { markerAt, seconds } from './model.mjs'
+import { markerAt, seconds, MAX_SECONDS } from './model.mjs'
 
 const buttonStyle = { minHeight: 44, padding: '10px 14px', borderRadius: 8, border: '1px solid #77746b', background: '#25251f', color: '#edeae2', font: 'inherit', cursor: 'pointer' }
 const inputStyle = { minHeight: 44, width: '100%', boxSizing: 'border-box', font: 'inherit', color: '#edeae2', background: '#1c1c18', border: '1px solid #77746b', borderRadius: 8, padding: 8 }
@@ -14,6 +14,8 @@ function helpers(h) {
 export function renderUpload(h, { state: s, controller: c, renderPreview, onChooseSource, onContinueLogging }) {
   if (s.enabled === false) return null
   const { button, field } = helpers(h), locked = !!s.operationId, busy = ['preparing', 'sending'].includes(s.phase)
+  const boundary = s.setBoundary
+  const boundaryBlocked = boundary && boundary.status !== 'ready' && !boundary.manual
   const queue = locked && h('section', { 'aria-label': 'Din afsendelse' },
     h('h3', null, s.phase === 'sent' ? 'Klar til din coach' : busy ? 'Dit løft er på vej' : 'Dit valgte løft'),
     h('p', { role: 'status', 'aria-live': 'polite' }, ({ preparing: 'Klargør dit løft…', sending: 'Sender til din coach…', sent: 'Sendt til din coach.', cancelled: 'Afsendelsen er stoppet.', error: 'Dit løft er bevaret. Prøv igen.' })[s.phase]),
@@ -39,7 +41,17 @@ export function renderUpload(h, { state: s, controller: c, renderPreview, onChoo
       s.source && h('div', null,
         h('p', null, s.source.label),
         renderPreview ? renderPreview({ source: s.source, window: s.window }) : h('p', { role: 'status' }, 'Forhåndsvisning skal forbindes til den eksisterende afspiller.'),
-        h('p', null, 'Vi starter med slutningen af videoen. Flyt rammen til det løft, du vil vise.'),
+        h('p', { role: 'status', 'aria-live': 'polite' }, boundary?.manual
+          ? 'Du har valgt intervallet manuelt. Kontrollér, at hele sættet er med.'
+          : boundary?.status === 'ready'
+            ? 'Hele sættet er markeret med buffer før bevægelsen og bekræftet hvile efter sidste gentagelse.'
+            : boundary?.status === 'too-long'
+              ? `Hele sættet varer ${seconds(boundary.window.end - boundary.window.start)} og overskrider grænsen på ${seconds(MAX_SECONDS)}. Det er ikke valgt automatisk. Vælg et interval manuelt for at fortsætte.`
+              : boundary?.status === 'empty'
+                ? 'Ingen tydelige gentagelser i bevægelsesdata. Vælg et interval manuelt for at fortsætte.'
+                : boundary?.status === 'incomplete'
+                  ? 'Hele sættets start og afsluttende hvile kunne ikke bekræftes. Vælg et interval manuelt for at fortsætte.'
+                  : 'Vi starter med slutningen af videoen. Flyt rammen til det løft, du vil vise.'),
         h('div', { style: { position: 'relative', height: 64, background: '#343c2d', borderRadius: 12 }, 'aria-label': 'Hele videoens tidslinje' },
           h('div', { role: 'slider', tabIndex: locked ? -1 : 0, 'aria-label': 'Flyt dit valgte løft',
             'aria-valuemin': 0, 'aria-valuemax': s.source.duration - (s.window.end - s.window.start), 'aria-valuenow': s.window.start,
@@ -64,11 +76,11 @@ export function renderUpload(h, { state: s, controller: c, renderPreview, onChoo
       h('p', null, `${s.choice?.exercise_name} · sæt ${s.choice?.set_number}`),
       h('p', null, `${seconds(s.window?.start)} – ${seconds(s.window?.end)}`),
       h('p', null, 'Ét tydeligt løft giver din coach det bedste udgangspunkt for feedback.'),
-      !locked && button('Send til din coach', () => c.send(), !s.canSend),
+      !locked && button('Send til din coach', () => c.send(), !s.canSend || boundaryBlocked),
       !s.canSend && h('p', { role: 'status' }, 'Klargøring og afsendelse skal forbindes, før du kan sende.'), queue),
     s.error && h('p', { role: 'alert' }, s.error),
     !locked && h('div', { style: rowStyle }, s.step > 1 && button('Tilbage', () => c.back()),
-      s.step < 3 && button('Fortsæt', () => c.next(), s.step === 1 ? !s.choice : !s.source)),
+      s.step < 3 && button('Fortsæt', () => c.next(), s.step === 1 ? !s.choice : !s.source || boundaryBlocked)),
     h('details', null, h('summary', null, 'Flere klip og sammenligning'),
       h('p', null, 'Denne afsendelse viser ét løft. Flere klip i samme indlæg og side om side kræver en udvidelse af den eksisterende kontrakt.')))
 }
