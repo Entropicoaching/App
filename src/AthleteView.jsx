@@ -436,6 +436,11 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     ...(e2 ? { setWeightStatus, weightReadRef } : {}),
   })
 
+  // Keep nutrition mounted across renders while retry reads the latest athlete and reader.
+  const retryWeightRef = useRef(null)
+  retryWeightRef.current = () => fetchWeightLogs(athlete.id)
+  const retryWeight = useMemo(() => () => retryWeightRef.current(), [])
+
   const {
     confirmCompleteDay, fetchLogs, fetchHistoricalMealLogs, fetchFrequentFoods, quickLogFood, fetchMealTemplates, copyYesterday, saveTemplate, logTemplate,
     deleteTemplate, fetchCustomFoods, onSearchInput, selectFood, addFromSearch, quickAddSearchFood, saveCustomFood, deleteLog,
@@ -892,7 +897,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           <LazyBoundary
             factory={programFactory} label="Program" loading={<div style={s.page}>Indlæser…</div>}
             componentProps={{
-              hviledageListe: hviledageListe === true, restMobility, WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
+              readOnly: e2ReadOnly, hviledageListe: hviledageListe === true, restMobility, WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
               calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
               exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
               fetchPastLogs, fetchProgram, fmtWeekRange, lastLogByExerciseName, logInputs, logSet,
@@ -921,7 +926,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           <Entropi2Analysis entropi2={true} athlete={athlete} currentWeek={currentWeek} exerciseLogs={exerciseLogs}
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
             historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}
-            trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} />
+            trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} readOnly={e2ReadOnly} />
         )}
         {tab === 'fremgang' && (
           <LazyBoundary
@@ -934,13 +939,13 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {e2Atlet && e2ReadOnly && visKost && tab === 'kost' && (
           <PreviewKost enabled={true} athlete={athlete} date={kostDate} client={e2PreviewDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
-            weightLogs={weightLogs} weightStatus={weightStatus} retryWeight={() => fetchWeightLogs(athlete.id)} />
+            weightLogs={weightLogs} weightStatus={weightStatus} retryWeight={retryWeight} />
         )}
         {e2Atlet && !e2ReadOnly && visKost && tab === 'kost' && (
           <Entropi2Kost enabled={true} athlete={athlete} date={kostDate} client={inboxDatabase} foods={e2Foods}
             onNavigate={route => setTab(route === 'analyse' ? 'fremgang' : route)} onCoach={() => setTab('beskeder')}
             weightLogs={weightLogs} weightInput={weightInput} savingWeight={savingWeight}
-            weightStatus={weightStatus} retryWeight={() => fetchWeightLogs(athlete.id)}
+            weightStatus={weightStatus} retryWeight={retryWeight}
             {...(kostDate === e2Dag.day || kostDate === e2Day ? { onWeightInput: setWeightInput, logWeight, currentDay: today, onDayChanged: e2Dag.refresh } : {})} />
         )}
         {!e2Atlet && visKost && tab === 'kost' && (

@@ -289,7 +289,7 @@ function ProgramBlokslut({ allWeeks, athlete, programError }) {
 }
 
 export default function ProgramTab({
-  opvarmStige = false, hviledageListe = false, restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
+  readOnly = false, opvarmStige = false, hviledageListe = false, restMobility, programIntensityHelp = false, programUgeFoerst = false, programNaesteUge = false, programBlokOversigt = false, fetchProgramBlockLogs,
   WEEKDAYS_LONG, allWeeks, applyWarmupCorrection, askConfirm, athlete, autoCompleteSession,
   calcWarmupSets, computeActiveWeekIdx, currentWeek, dismissedFeedback, exWarmupExpanded,
   exWarmupWeightEditing, exWarmupWeightOverride, exerciseHistory, exerciseLogs, feedbackInputs,
@@ -594,7 +594,7 @@ export default function ProgramTab({
                       </div>
                     )
                   })()}
-                  {isCurrentWeek && !readinessLog && (
+                  {!readOnly && isCurrentWeek && !readinessLog && (
                     <button type="button" onClick={openReadiness} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', textAlign: 'left', padding: '0.7rem 1rem', marginBottom: '1.25rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', cursor: 'pointer' }}>
                       <span style={{ color: '#c8923a', fontSize: '0.9rem', flexShrink: 0 }}>◐</span>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.06em', lineHeight: 1.5 }}>Log dagens parathed for en tilpasset anbefaling →</span>
@@ -732,7 +732,7 @@ export default function ProgramTab({
                                   {completion === 'done' ? 'Gennemført ✓' : 'Afsluttet · sæt sprunget over'}
                                 </span>
                               ) : isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
-                              {!upcomingPreview && !isDone && totalSets > 0 && (
+                              {!readOnly && !upcomingPreview && !isDone && totalSets > 0 && (
                                 <>
                                   <button
                                     style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
@@ -768,7 +768,7 @@ export default function ProgramTab({
                           <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem', ...(programAppearanceOn ? { borderColor: programColors.border, borderRadius: '0 0 12px 12px', minWidth: 0 } : {}) }}>
 
 
-                            {opvarmStige === true && isCurrentWeek && !upcomingPreview && createElement(OpvarmStige, { enabled: true, exercises: session.exercises, scope: `${athlete?.id}|${viewedWeek.id}|${session.id}` })}
+                            {!readOnly && opvarmStige === true && isCurrentWeek && !upcomingPreview && createElement(OpvarmStige, { enabled: true, exercises: session.exercises, scope: `${athlete?.id}|${viewedWeek.id}|${session.id}` })}
                             {exerciseViewRows(session.exercises).map(({ ex, name, label, startsGroup, endsGroup, showPrescription }, exIdx) => {
                               const isLast = exIdx === session.exercises.length - 1
                               return (
@@ -776,7 +776,7 @@ export default function ProgramTab({
                                   <div style={{ marginBottom: '0.6rem' }}>
                                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.1rem' }}>
                                       {startsGroup && (programAppearanceOn ? <h3 data-exercise-heading={name} style={{ margin: 0, fontSize: '1.05rem', fontWeight: 500, color: programColors.text }}>{name}</h3> : <div data-exercise-heading={name} style={{ fontSize: '1.05rem', color: '#edeae2' }}>{name}</div>)}
-                                      {isCurrentWeek && (() => {
+                                      {!readOnly && isCurrentWeek && (() => {
                                         const allSetsLogged = Array.from({ length: ex.sets || 0 }, (_, i) => i + 1)
                                           .every(setNum => exerciseLogs.find(l => l.exercise_id === ex.id && l.set_number === setNum))
                                         if (allSetsLogged) return null
@@ -843,7 +843,7 @@ export default function ProgramTab({
                                   </div>
 
                                   {/* Per-øvelse opvarmningssæt */}
-                                  {isCurrentWeek && (() => {
+                                  {!readOnly && isCurrentWeek && (() => {
                                     const baseW = ex.recommended_weight || lastLogByExerciseName[ex.name?.toLowerCase()]?.weight
                                     const exKey = ex.id
                                     const w = exWarmupWeightOverride[exKey] ?? baseW
@@ -962,7 +962,7 @@ export default function ProgramTab({
                                   })()}
 
                                   {/* Stopur for tids-øvelser (fx planke) — samme som ved mobilitet */}
-                                  {isCurrentWeek && (() => {
+                                  {!readOnly && isCurrentWeek && (() => {
                                     const dur = parseDuration(ex.reps, ex.intensity)
                                     if (!dur) return null
                                     return <ExerciseTimer key={`tmr_${ex.id}`} duration={dur.seconds} label={dur.text} />
@@ -972,7 +972,7 @@ export default function ProgramTab({
                                     const key = `${ex.id}_${setNum}`
                                     const logged = logsForView.find(l => l.exercise_id === ex.id && l.set_number === setNum)
 
-                                    if (!isCurrentWeek) {
+                                    if (readOnly || !isCurrentWeek) {
                                       return (
                                         <div key={setNum} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
                                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
@@ -1163,7 +1163,7 @@ export default function ProgramTab({
                             {(session.exercises || []).length === 0 && (
                               <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen øvelser i denne træning endnu.</div>
                             )}
-                            {isDone && isCurrentWeek && !session.athlete_rating && !dismissedFeedback.has(session.id) && (
+                            {!readOnly && isDone && isCurrentWeek && !session.athlete_rating && !dismissedFeedback.has(session.id) && (
                               <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.15)' }}>
                                 <div style={{ ...s.cardLabel, marginBottom: '0.75rem' }}>Træningsfeedback</div>
                                 <div style={{ marginBottom: '0.75rem' }}>

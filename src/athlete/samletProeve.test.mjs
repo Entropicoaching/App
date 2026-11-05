@@ -116,13 +116,26 @@ test('TODO F2: SSR Beskeder includes the fetched conversation or honest empty st
   }
 })
 
-for (const tab of ['hjem', 'program', 'fremgang', 'profil']) {
+// Home and the preview Profile fallback still expose disabled write controls.
+// Keep these requirements executable until their own presentation is addressed.
+for (const tab of ['hjem', 'profil']) {
   test(`TODO F3: preview/${tab} has no write buttons, including disabled buttons`, {
-    todo: 'F3: src/AthleteView.jsx:805-808 disables a fieldset; Home/Program/Analysis and the preview Profile fallback still render visible write buttons.',
+    todo: 'F3: Home and the preview Profile fallback still render visible write buttons.',
   }, async () => {
-    const html = await renderScenario(scenario('preview', tab))
-    assertNoWriteButtons(html)
-    assertCleanMarkup(html)
+    for (const state of ['ready', 'empty']) {
+      const html = await renderScenario(scenario('preview', tab, state))
+      assertNoWriteButtons(html)
+      assertCleanMarkup(html)
+    }
+  })
+}
+for (const tab of ['program', 'fremgang']) {
+  test(`F3: preview/${tab} has no write buttons, including disabled buttons`, async () => {
+    for (const state of ['ready', 'empty']) {
+      const html = await renderScenario(scenario('preview', tab, state))
+      assertNoWriteButtons(html)
+      assertCleanMarkup(html)
+    }
   })
 }
 for (const tab of ['kost', 'beskeder', 'volumen']) {

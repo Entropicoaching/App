@@ -61,6 +61,17 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // Stable retry callback: invert the exact addition before the existing SHA guards.
+  const retryWeightDelta = `  // Keep nutrition mounted across renders while retry reads the latest athlete and reader.
+  const retryWeightRef = useRef(null)
+  retryWeightRef.current = () => fetchWeightLogs(athlete.id)
+  const retryWeight = useMemo(() => () => retryWeightRef.current(), [])
+
+`.replace(/\r?\n/g, '\r\n')
+  assert.equal(candidate.split(retryWeightDelta).length, 2, 'Exact stable weight retry delta')
+  candidate = candidate.replace(retryWeightDelta, '')
+  assert.equal(candidate.split('retryWeight={retryWeight}').length, 3, 'Both nutrition branches use the same stable callback')
+  candidate = candidate.replaceAll('retryWeight={retryWeight}', 'retryWeight={() => fetchWeightLogs(athlete.id)}')
   // R1-E2-VAERT-VAEGTSTATUS1: invert only the explicit weight-read status plumbing.
   const weightStatusDelta = [
     [
@@ -97,6 +108,14 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // Hver tilføjet linje fjernes præcist og skal findes nøjagtigt én gang; derefter gælder
   // den oprindelige Home-entry-inversion og begge SHA-vagter uændret.
   // Marc 3. nov.: genvejen 'Film et saet' paa Entropi 2-hjem er en del af det samme delta (onFilmSet).
+  // E2-PREVIEW-SKRIV1: only presentation props; keep the original host SHA guards.
+  for (const [added, original] of [
+    ['              readOnly: e2ReadOnly, hviledageListe:', '              hviledageListe:'],
+    ['onRetryTracking={onRetryTracking} readOnly={e2ReadOnly} />', 'onRetryTracking={onRetryTracking} />'],
+  ]) {
+    assert.equal(candidate.split(added).length, 2, 'Exact preview presentation delta: ' + added)
+    candidate = candidate.replace(added, original)
+  }
   const entropi2Delta = [
     // R1-E2-FEJL-FREMGANG1: explicit volume read-error plumbing; legacy rendering stays unchanged.
     ['  const [volumeError, setVolumeError] = useState(false)\n', ''],
