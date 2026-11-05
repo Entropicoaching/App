@@ -1,3 +1,4 @@
+import { messageText } from './conversationModel.mjs'
 // Suggestions are deliberately small; the athlete chooses what is true.
 export function athleteQuestion(thread = []) {
   const messages = thread.filter(item => item.kind === 'message')
@@ -7,7 +8,7 @@ export function athleteQuestion(thread = []) {
 
 export function athleteAnswers(question) {
   if (!question) return []
-  const text = question.value.content.trim()
+  const text = messageText(question.value).trim()
   if (/^(har|er|kan|vil|skal|må|fik|gik|var|havde|kunne|føles)(?=\s|[?.,!]|$)/iu.test(text))
     return ['Ja', 'Nej', 'Jeg er i tvivl']
   return ['Jeg har brug for hjælp', 'Jeg vender tilbage']
@@ -15,7 +16,7 @@ export function athleteAnswers(question) {
 
 export function athleteAnswerContent(question, answer) {
   if (!athleteAnswers(question).includes(answer)) throw Error('Vælg et af de viste svar.')
-  const text = question.value.content.trim()
+  const text = messageText(question.value).trim()
   return `Svar på: ${text.slice(0, 240)}${text.length > 240 ? '…' : ''}\n${answer}`
 }
 

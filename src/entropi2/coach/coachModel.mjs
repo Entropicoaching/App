@@ -1,3 +1,4 @@
+import { messageText } from '../conversation/conversationModel.mjs'
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { coachAthleteList } from './athleteListModel.mjs'
@@ -79,7 +80,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
       const last = data.noteSignalEnabled === true ? pending?.latestNote : data.latestByTrack[athlete.id]?.[track]
       if (!n || !last || last.athlete_id !== athlete.id) continue
       const item = { kind: 'message', key: `message-${athlete.id}-${track}`, athlete, track,
-        title: athlete.name, detail: last.content, count: n,
+        title: athlete.name, detail: messageText(last), count: n,
         createdAt: data.noteSignalEnabled === true ? pending.oldestAt : last.created_at }
       candidates.push({ key: item.key, athlete, rank: 0, item,
         reason: `${n} ulæst${n === 1 ? '' : 'e'} ${track === 'teknik' ? 'teknikbesked' : 'besked'}${n === 1 ? '' : 'er'}` })

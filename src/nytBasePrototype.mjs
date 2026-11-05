@@ -1,3 +1,4 @@
+import { messageText } from './entropi2/conversation/conversationModel.mjs'
 // APP-FORENKL2: presentation only. Imported without React or browser side effects.
 export const DEFAULT_ENKEL_PROTOTYPE = false
 const routes = {
@@ -52,7 +53,7 @@ export function renderMore(h, { athlete, hasMeetPlan, go, visKost = true }) {
 }
 export function latestContact(messages = [], analyses = []) {
   const entries = [
-    ...messages.filter(m => m.sender_role === 'coach').map(m => ({ date: m.created_at || '', text: m.content || 'Besked fra din coach', track: m.category === 'teknik' ? 'teknik' : 'besked' })),
+    ...messages.filter(m => m.sender_role === 'coach').map(m => ({ date: m.created_at || '', text: messageText(m) || 'Besked fra din coach', track: m.category === 'teknik' ? 'teknik' : 'besked' })),
     ...analyses.map(a => ({ date: a.shared_at || a.created_at || '', text: 'Ny videofeedback fra din coach', track: 'teknik' })),
   ].sort((a, b) => b.date.localeCompare(a.date))
   const last = entries[0]

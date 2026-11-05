@@ -16,7 +16,9 @@ export function snapshotFiles(root) {
   for (const name of ['src/entropi2/flag.mjs', 'src/entropi2/program/blok/blockOverviewModel.mjs',
     'src/entropi2/analysis/blokslut/programBlokslut.mjs',
     'src/entropi2/analysis/blokslut/blokslutModel.mjs',
-    'src/entropi2/analysis/weekOverview.mjs', 'src/entropi2/analysis/publicContract.mjs']) {
+    'src/entropi2/analysis/weekOverview.mjs', 'src/entropi2/analysis/publicContract.mjs',
+    // R1-E2-COACH-TIDSFEEDBACK-ID1: shared message presentation imported by legacy surfaces.
+    'src/entropi2/conversation/conversationModel.mjs']) {
     files.set(new URL(name, root).href, readFileSync(new URL(name, root), 'utf8'))
   }
   return files

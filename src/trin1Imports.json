@@ -10,7 +10,15 @@
   "src/calendarDate.js": {
     "./athlete/kostNumbers.mjs": "src/athlete/kostNumbers.mjs"
   },
-  "src/videoMarkerReplies.mjs": {},
+  "src/videoMarkerReplies.mjs": {
+    "./entropi2/conversation/conversationModel.mjs": "src/entropi2/conversation/conversationModel.mjs"
+  },
+  "src/entropi2/conversation/conversationModel.mjs": {
+    "../../indbakke2.mjs": "src/indbakke2.mjs"
+  },
+  "src/indbakke2.mjs": {
+    "./rel1030.mjs": "src/rel1030.mjs"
+  },
   "src/dashboard/videoQueueFilter.mjs": {},
   "scripts/dashboardKilde.mjs": {
     "node:fs": "node:fs"

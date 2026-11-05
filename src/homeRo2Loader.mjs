@@ -6,6 +6,7 @@ const runtime = new URL('homeRo2Dom.mjs', root).href
 const viewRuntime = new URL('homeRo2ViewRuntime.mjs', root).href
 const view = new URL('AthleteView.jsx', root).href
 const files = ['AthleteView.jsx', 'athlete/HjemTab.jsx', 'athlete/EnkelHjemTab.jsx',
+  'entropi2/conversation/conversationModel.mjs', 'indbakke2.mjs',
   'nytIAppen.mjs', 'nytIAppenText.mjs', 'rel1030.mjs', 'rel1101.mjs',
   'athlete/hjemoevKompakt.mjs', 'mobilityHomework.mjs', 'mobilityAdherence.mjs',
   'mobilityHelped.mjs', 'athlete/mobilityCatalog.mjs', 'athlete/enkelPrototype.mjs',

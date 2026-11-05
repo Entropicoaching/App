@@ -1,10 +1,11 @@
+import { messageText } from '../entropi2/conversation/conversationModel.mjs'
 // APP-FORENKL3. Extra entry points only. No persistence or data writes.
 export const DEFAULT_FORENKLINGER = false
 
 export function contactSummary(messages = [], analyses = []) {
   const entries = [
     ...messages.filter(m => m.sender_role === 'coach').map(m => ({
-      date: Date.parse(m.created_at), text: m.content || 'Besked fra din coach',
+      date: Date.parse(m.created_at), text: messageText(m) || 'Besked fra din coach',
       track: m.category === 'teknik' ? 'teknik' : 'besked',
     })),
     ...analyses.map(a => ({ date: Date.parse(a.shared_at || a.created_at),

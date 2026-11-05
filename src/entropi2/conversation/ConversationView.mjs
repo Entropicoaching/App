@@ -1,4 +1,4 @@
-import { feedbackText, videoLabel, conversationDate } from './conversationModel.mjs'
+import { feedbackText, videoLabel, conversationDate, messageText } from './conversationModel.mjs'
 import { weeklyConversationSummary } from './uge/weeklyConversationSummary.mjs'
 import { conversationWeek } from './conversationWeek.mjs'
 import { ownQuickRepliesView } from './ownQuickRepliesView.mjs'
@@ -254,10 +254,10 @@ export function mountConversation(root, controller, { enabled = false, now = () 
         border: '0', borderRadius: '0', padding: '8px 0', background: 'transparent',
         color: '#b6b2a8', fontSize: '0.875rem', lineHeight: '1.5', whiteSpace: 'normal', cursor: 'pointer' })
       toggle.setAttribute('aria-expanded', String(expanded.has(item.key)))
-      const content = node('div', item.kind === 'video' ? feedbackText(row) : row.content)
+      const text = item.kind === 'video' ? feedbackText(row) : messageText(row)
+      const content = node('div', text)
       content.hidden = !expanded.has(item.key)
       if (item.kind === 'video') content.append(button(state.role === 'coach' ? 'Åbn videoreview' : 'Åbn videofeedback', () => controller.open(item.key)))
-      const text = item.kind === 'video' ? feedbackText(row) : row.content
       const characters = Array.from(text)
       const preview = node('p', characters.slice(0, 120).join('') + (characters.length > 120 ? '…' : ''))
       preview.hidden = expanded.has(item.key)
@@ -282,7 +282,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       return li
     }))
     if (state.operation && state.operation.status !== 'sent') {
-      const pending = node('li', `${state.operation.row.content}\n${state.operation.status === 'error' ? 'Ikke bekræftet. Prøv igen med samme besked.' : 'Sender…'}`)
+      const pending = node('li', `${messageText(state.operation.row)}\n${state.operation.status === 'error' ? 'Ikke bekræftet. Prøv igen med samme besked.' : 'Sender…'}`)
       pending.dataset.pending = state.operation.row.id; list.append(pending)
     }
     focusedToggle?.focus?.({ preventScroll: true })

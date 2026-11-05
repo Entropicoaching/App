@@ -1,3 +1,4 @@
+import { messageText } from '../../conversation/conversationModel.mjs'
 import { calendarDay, addCalendarDays } from '../../../calendarDate.js'
 import { parseInputNumber, finiteMean } from '../../../inputValues.js'
 import { estimatedOneRepMax, erTungtSaet, erDeloadBlok } from '../../../exerciseProgress.js'
@@ -154,7 +155,7 @@ function messageModel(s, start, end) {
     if (!id(r.id) || !day || !['athlete', 'coach'].includes(r.sender_role) || !text(r.content)) { partial = true; return [] }
     if (!within(day, start, end)) return []
     if (r._optimistic) { partial = true; return [] }
-    return [{ key: `message-${r.id}`, day, title: r.sender_role === 'athlete' ? 'Atlet' : 'Coach', text: r.content }]
+    return [{ key: `message-${r.id}`, day, title: r.sender_role === 'athlete' ? 'Atlet' : 'Coach', text: messageText(r) }]
   }).sort((a, b) => a.day.localeCompare(b.day) || a.key.localeCompare(b.key))
   return { state: partial ? 'partial' : 'ready', entries }
 }

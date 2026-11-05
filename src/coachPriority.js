@@ -1,3 +1,4 @@
+import { messageText } from './entropi2/conversation/conversationModel.mjs'
 import { AUTOMATION_ALERT_COLOR, AUTOMATION_ALERT_LABEL, automationAlertDetail, filterOpenAutomationAlerts } from './automationAlerts.js'
 import { MESSAGE_VIDEO_RANK, signalRank } from './coachBriefingRules.js'
 
@@ -62,7 +63,7 @@ export function buildCoachPriorityItems({ athletes, trainingSignals, unreadByTra
         rank: MESSAGE_VIDEO_RANK, color: track === 'teknik' ? '#67dff5' : '#c8923a',
         label: track === 'teknik' ? 'Teknik & løft' : 'Besked',
         title: athlete.name,
-        detail: last.content,
+        detail: messageText(last),
         createdAt: noteSignalEnabled === true ? pending.oldestAt : last.created_at,
         count: unread,
       })

@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs'
 import { jsx } from './hjemoevJsx.mjs'
 const root = new URL('./', import.meta.url)
 const runtime = new URL('hjemoevDom.mjs', root).href
-const files = ['hjemoevKompakt.mjs', '../mobilityHomework.mjs', 'mobilityCatalog.mjs', '../rel1030.mjs', 'HjemTab.jsx', 'MobiliseringTab.jsx', 'hjemoevBaseHjemTab.txt', '../mobilityAdherence.mjs', '../mobilityHelped.mjs', 'enkelPrototype.mjs']
+const files = ['hjemoevKompakt.mjs', '../mobilityHomework.mjs', 'mobilityCatalog.mjs', '../rel1030.mjs', 'HjemTab.jsx', 'MobiliseringTab.jsx', 'hjemoevBaseHjemTab.txt', '../mobilityAdherence.mjs', '../mobilityHelped.mjs', 'enkelPrototype.mjs',
+  '../entropi2/conversation/conversationModel.mjs', '../indbakke2.mjs']
 const allowed = new Set(files.map(n => new URL(n, root).href))
 const stubs = JSON.parse(readFileSync(new URL('hjemoevStubs.json', root), 'utf8'))
 export function install() {

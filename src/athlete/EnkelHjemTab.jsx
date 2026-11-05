@@ -1,3 +1,4 @@
+import { messageText } from '../entropi2/conversation/conversationModel.mjs'
 import { renderStaevneHome } from './staevneHome.mjs'
 import MobilityBeforeSession from './mobilityBeforeSession.mjs'
 import { weightTrendText } from './weightTrend.mjs'
@@ -563,7 +564,7 @@ function HjemTab({
                 if (!lastCoach) return <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen beskeder endnu. Skriver din coach til dig, kan du læse det her.</div>
                 return (
                   <>
-                    <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.6, marginBottom: '0.4rem' }}>{lastCoach.content}</div>
+                    <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.6, marginBottom: '0.4rem' }}>{messageText(lastCoach)}</div>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{formatMsgTime(lastCoach.created_at)}</div>
                   </>
                 )

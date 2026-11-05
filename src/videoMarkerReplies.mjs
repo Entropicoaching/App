@@ -1,3 +1,4 @@
+import { messageText } from './entropi2/conversation/conversationModel.mjs'
 // VC-SVAR1 uses ordinary technique messages. No schema or media persistence.
 export const DEFAULT_MARKER_REPLIES = false
 export const MARKER_REPLY_FLAG = 'vc-svar1'
@@ -36,7 +37,7 @@ export function repliesForMarker(messages, scope, markerId) {
 }
 export function markerReplyPreview(message) {
   const reply = markerRepliesEnabled() && parseMarkerReply(message)
-  return reply ? `${prefix} ved ${reply.start.toFixed(2)} s: ${reply.reply}` : message.content
+  return reply ? `${prefix} ved ${reply.start.toFixed(2)} s: ${reply.reply}` : messageText(message)
 }
 export function createMarkerReplySender({ athleteId, analysisId, insert }) {
   let busy = false

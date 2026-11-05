@@ -1,3 +1,4 @@
+import { messageText } from '../conversation/conversationModel.mjs'
 import { createElement as h, useEffect, useRef, useState } from 'react'
 import { homeModel, startHomeSession } from './homeModel.mjs'
 import { homeStyles as s } from './homeStyles.mjs'
@@ -79,7 +80,7 @@ export default function AthleteHome(props) {
   const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
   const coach = (Array.isArray(messages) ? [...messages] : []).reverse()
     .find(m => m?.sender_role === 'coach' && typeof m.content === 'string' && m.content.trim())
-  const coachText = coach && coachMessageParts(coach.content)
+  const coachText = coach && coachMessageParts(messageText(coach))
   const namedExercises = target?.session.exercises.filter(e => typeof e.name === 'string' && e.name.trim()) ?? []
   const canStart = !props.sessionReadOnly && typeof onStartSession === 'function'
   const go = route => () => latest.current.setTab?.(route)

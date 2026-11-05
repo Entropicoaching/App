@@ -1,3 +1,4 @@
+import { messageText } from '../entropi2/conversation/conversationModel.mjs'
 // Beskeder-fanen (coach-tråd + delt videofeedback) — udskilt fra
 // AthleteView.jsx (ordre 232 · commit 3) som sin egen lazy-loadede chunk,
 // samme LazyBoundary-mønster som Dashboard.jsx's fire faner (130/163/228)
@@ -76,7 +77,7 @@ export default function BeskederTab({
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.25rem' }}>
                           {msg.sender_role === 'coach' ? 'Coach' : 'Dig'} · {formatMsgTime(msg.created_at)}
                         </div>
-                        <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{msg.content}</div>
+                        <div style={{ fontSize: '0.88rem', color: '#edeae2', lineHeight: 1.55 }}>{messageText(msg)}</div>
                       </div>
                     ))}
                   </div>
@@ -105,7 +106,7 @@ export default function BeskederTab({
                             color: '#edeae2',
                             lineHeight: 1.55,
                           }}>
-                            {msg.content}
+                            {messageText(msg)}
                           </div>
                         </div>
                       </div>
