@@ -37,6 +37,7 @@ export const sessionStyle = `
 .e2-session .rpe-row button {min-height:48px;padding:6px}
 .e2-session .rpe-row button[aria-pressed="true"] {background:#c8923a;color:#141410;border-color:#c8923a}
 .e2-session .approve {width:100%;min-height:52px;background:#c8923a;color:#141410;font-weight:600;margin-top:20px}
+.e2-session .record-receipt {border-left:2px solid #c8923a;padding:8px 12px;margin:12px 0;overflow-wrap:anywhere}
 .e2-session .muted {color:#b8b4a8}
 .e2-session .plan {font-size:22px;line-height:1.4;overflow-wrap:anywhere}
 .e2-session summary {cursor:pointer;padding:8px 0}

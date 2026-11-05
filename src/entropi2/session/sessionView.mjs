@@ -20,6 +20,7 @@ import { parseInputNumber } from '../../inputValues.js'
 import { sessionGroupsForDisplay } from './supersaet/supersetModel.mjs'
 import { mountSupersetView } from './supersaet/supersetView.mjs'
 import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps, historyElement } from './historik/exerciseHistoryDom.mjs'
+import { sessionRecordReceipt } from './sessionRecordReceipt.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const given = v => v != null && String(v).trim() !== ''
@@ -91,6 +92,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const hadBodyFocus = body.contains(focused)
     const detailFocus = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
     const approveFocus = focused?.getAttribute('class') === 'approve'
+    const stepFocus = focused?.getAttribute('data-step')
     const oldBar = body.querySelector('[data-e2-plader]')?.querySelector('select')
     if (oldBar) plateBar = Number(oldBar.value)
     clearBlocks()
@@ -118,6 +120,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       body.append(warm)
     }
     body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
+    const receipt = sessionRecordReceipt(p, s)
+    if (receipt) body.append(el('p', receipt.text, { role: 'status', 'data-rekord-fejring': receipt.key, class: 'record-receipt' }))
     if (summary) {
       const card = el('section', null, { class: 'card', 'aria-label': 'Opsummering', 'data-session-summary': '' })
       card.append(el('p', `${summary.done} af ${summary.total} sæt klaret`))
@@ -235,9 +239,13 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
               const b = tap(shown, `RPE ${shown}`, () => set('rpe', String(now('rpe')) === v ? '' : v), 'rpe', `rpe-${v}`)
               b.setAttribute('aria-pressed', String(String(s.input.rpe) === v)); rpeRow.append(b)
             }
-            lab.append(rpeRow)
+            const rpe = el('details', null, { 'data-detail': 'rpe' })
+            rpe.append(el('summary', given(s.input.rpe)
+              ? `Oplevet anstrengelse (RPE): ${String(s.input.rpe).replace('.', ',')}`
+              : 'Tilføj oplevet anstrengelse (RPE)'), lab, rpeRow,
+            el('p', 'RPE er din oplevede anstrengelse fra 0 til 10. Det er valgfrit og kan stå tomt.', { class: 'hint' }))
+            fields.append(rpe)
           }
-          fields.append(lab)
         }
         form.append(el('h2', 'Dit sæt'), fields, el('p', 'Skriv 0 kg ved en øvelse uden ekstra vægt.', { class: 'hint' }))
         const approve = el('button', s.phase === 'queued' ? 'Venter på net' : busy ? 'Afventer svar' : s.approveLabel, { type: 'submit', class: 'approve' })
@@ -268,12 +276,26 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} gent.${given(log.rpe_actual) ? `, RPE ${log.rpe_actual}` : ''}`}`))
     }
     body.append(history)
-    for (const node of body.querySelectorAll('details')) node.open = !stepChanged && detailsOpen.includes(node.getAttribute('data-detail'))
+    for (const node of body.querySelectorAll('details')) {
+      const detail = node.getAttribute('data-detail')
+      node.open = (detail === 'rpe' && given(s.input.rpe)) || (!stepChanged && detailsOpen.includes(detail))
+    }
     const replacement = fieldName ? body.querySelector(`[data-field="${fieldName}"]`) : null
+    const stepReplacement = stepFocus ? body.querySelector(`[data-step="${stepFocus}"]`) : null
+    const stepAvailable = node => {
+      if (!node || node.disabled || node.hidden) return false
+      let child = node, parent = node.parentElement
+      while (parent && parent !== body) {
+        if (parent.hidden || (parent.tagName?.toLowerCase() === 'details' && !parent.open && child.tagName?.toLowerCase() !== 'summary')) return false
+        child = parent; parent = parent.parentElement
+      }
+      return true
+    }
     if (stepChanged) body.querySelector('[data-heading]')?.focus()
     else if (replacement && !replacement.disabled) {
       replacement.focus(); if (position[0] != null && typeof replacement.setSelectionRange === 'function') replacement.setSelectionRange(...position)
-    } else if (detailFocus) body.querySelector(`[data-detail="${detailFocus}"] summary`)?.focus()
+    } else if (stepAvailable(stepReplacement)) stepReplacement.focus()
+    else if (detailFocus) body.querySelector(`[data-detail="${detailFocus}"] summary`)?.focus()
     else if (approveFocus && !body.querySelector('.approve')?.disabled) body.querySelector('.approve')?.focus()
     else if (hadBodyFocus) body.querySelector('[data-heading]')?.focus()
   }
