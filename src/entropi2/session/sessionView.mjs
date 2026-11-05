@@ -151,16 +151,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       const groupView = mountSupersetView(body, { enabled: true, exercises: s.session.exercises,
         compact: true, currentExerciseId: ex.id })
       cleanBlocks.push(() => groupView.dispose())
-      const plan = el('section', null, { class: 'card', 'aria-label': 'Planlagt belastning' })
-      plan.append(given(ex.reps) ? el('p', `${ex.reps} gentagelser`, { class: 'plan' })
-        : el('p', 'Gentagelser mangler i planen. Bed din coach rette øvelsen.', { role: 'alert' }))
-      if (given(ex.recommended_weight)) plan.append(el('p', `${ex.recommended_weight} kg`, { class: 'plan' }))
-      if (given(ex.intensity)) plan.append(el('p', `Intensitet: ${ex.intensity}`))
-      body.append(plan)
-      const tempo = mountTempoView(plan, { enabled: true, ...sessionPrescription(ex), compact: true })
-      cleanBlocks.push(() => tempo.dispose())
-      showHistory(plan, ex, 'exercise-history-current')
-      if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
+      // Keep the optional ramp before the plan so registration follows the compact plan directly.
       // Later exercises keep their own ramp. The first exercise shares the daily fold.
       if (n.setNumber === 1 && !dailyWarmup) {
         const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
@@ -169,8 +160,19 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         }))
         body.append(warm)
       }
+      const plan = el('section', null, { class: 'card plan-card', 'aria-label': 'Planlagt belastning' })
+      if (!given(ex.reps)) plan.append(el('p', 'Gentagelser mangler i planen. Bed din coach rette øvelsen.', { role: 'alert' }))
+      const prescription = [given(ex.reps) ? `${ex.reps} gentagelser` : null,
+        given(ex.recommended_weight) ? `${ex.recommended_weight} kg` : null].filter(Boolean)
+      if (prescription.length) plan.append(el('p', prescription.join(' · '), { class: 'plan' }))
+      if (given(ex.intensity)) plan.append(el('p', `Intensitet: ${ex.intensity}`))
+      body.append(plan)
+      const tempo = mountTempoView(plan, { enabled: true, ...sessionPrescription(ex), compact: true })
+      cleanBlocks.push(() => tempo.dispose())
+      showHistory(plan, ex, 'exercise-history-current')
+      if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
       if (p.readOnly !== true) {
-        const form = el('form', null, { class: 'card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
+        const form = el('form', null, { class: 'card registration-card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
         const busy = !['idle', 'error'].includes(s.phase)
         // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
         // "−2,5 [vægt] +2,5", "−1 [reps] +1", and the RPE buttons directly under the RPE field.

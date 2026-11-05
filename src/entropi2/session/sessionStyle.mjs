@@ -2,7 +2,6 @@ export const sessionStyle = `
 .e2-session {background:#141410;color-scheme:dark;color:#edeae2;font:16px/1.5 'IBM Plex Sans',Arial,sans-serif}
 .e2-session button,.e2-session input,.e2-session textarea,.e2-session select,.e2-session summary {font:inherit;min-height:44px;box-sizing:border-box}
 .e2-session button {min-width:44px;padding:12px 16px;border:1px solid #77776b;border-radius:12px;background:#1c1c18;color:inherit;cursor:pointer}
-.e2-session button:disabled {opacity:1;cursor:default}
 .e2-session :focus-visible {outline:3px solid #c8923a;outline-offset:3px}
 .e2-session dialog {position:fixed;inset:0;margin:0;width:100%;height:100dvh;max-width:none;max-height:none;border:0;padding:0;background:#141410;color:inherit;overflow:auto}
 .e2-session dialog::backdrop {background:#141410}
@@ -11,6 +10,11 @@ export const sessionStyle = `
 .e2-session h1 {font:36px/1.12 'Playfair Display',Georgia,serif;margin:20px 0 12px}
 .e2-session h2 {font-size:24px;line-height:1.2}
 .e2-session .card {background:#1c1c18;border:1px solid #414139;border-radius:16px;padding:20px;margin:20px 0}
+.e2-session .plan-card {padding:16px;margin:12px 0}
+.e2-session .plan-card > p {margin:8px 0}
+.e2-session .plan-card > p:first-child {margin-top:0}
+.e2-session .plan-card > p:last-child {margin-bottom:0}
+.e2-session .registration-card {margin-top:12px}
 .e2-session .fields {display:grid;grid-template-columns:1fr;gap:10px}
 .e2-session [data-e2-session-feeling] {min-width:0;max-width:100%;box-sizing:border-box}
 .e2-session [data-e2-session-feeling] legend {font-size:18px}
@@ -34,7 +38,8 @@ export const sessionStyle = `
 .e2-session .rpe-row button[aria-pressed="true"] {background:#c8923a;color:#141410;border-color:#c8923a}
 .e2-session .approve {width:100%;min-height:52px;background:#c8923a;color:#141410;font-weight:600;margin-top:20px}
 .e2-session .muted {color:#b8b4a8}
-.e2-session .plan {font-size:26px;margin:8px 0}
+.e2-session .plan {font-size:22px;line-height:1.4;overflow-wrap:anywhere}
 .e2-session summary {cursor:pointer;padding:8px 0}
 .e2-session [role=alert] {border-left:3px solid #c8923a;padding-left:12px}
+.e2-session button:disabled,.e2-session button[aria-pressed="true"]:disabled {background:#30302a;color:#b8b4a8;border-color:#858578;border-style:dashed;opacity:1;cursor:not-allowed}
 `
