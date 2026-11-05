@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { weekEvaluation } from './evaluationModel.mjs'
 
@@ -29,7 +30,7 @@ export default function WeekEvaluation(props = {}) {
     section('Træning', status(t.state), t.state !== 'unknown' && h('div', null,
       line('Pas gennemført', `${format(t.done)} af ${format(t.planned)} planlagt`),
       line('Sæt', `${format(t.sets)} bekræftet af ${format(t.plannedSets)} planlagt · ${format(t.skipped)} sprunget over`),
-      line('Gennemsnitlig RPE', `${format(t.rpe)} · ${format(t.rpeCount)} atletregistreringer`),
+      line('Gennemsnitlig RPE', `${format(t.rpe)} · ${format(t.rpeCount)} ${antalOrd(t.rpeCount, 'atletregistrering', 'atletregistreringer')}`),
       ...t.lifts.map(lift => line(`Top-e1RM · ${lift.lift}`, metric(lift.value, 'kg'))),
       h('p', null, 'Et pas tæller som gennemført, når alle planlagte sæt er logget eller sprunget over. RPE er gennemsnit pr. bekræftet sæt med eget svar. e1RM bruger sammenlignelige tunge hovedløft; lette sæt og deload er udeladt.'))),
     section('Kost', status(n.state), n.state !== 'unknown' && h('div', null,
@@ -40,7 +41,7 @@ export default function WeekEvaluation(props = {}) {
     section('Kropsvægt', status(w.state), w.state !== 'unknown' && h('div', null,
       line('Ugegennemsnit', metric(w.average, 'kg')),
       line('Dage med vejning', format(w.days)),
-      line('Ugen før', `${metric(w.previous, 'kg')} · ${format(w.previousDays)} dage`),
+      line('Ugen før', `${metric(w.previous, 'kg')} · ${format(w.previousDays)} ${antalOrd(w.previousDays, 'dag', 'dage')}`),
       line('Ændring fra ugen før', w.delta === null ? 'data mangler' : `${w.delta > 0 ? '+' : ''}${format(w.delta)} kg`),
       h('p', null, 'Gennemsnit af dagsgennemsnit; hver dag vejer lige meget. En ændring kræver vejninger i begge uger.'))),
     section('Noter og beskeder',

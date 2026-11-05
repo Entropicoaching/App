@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { coachAthleteList } from '../athleteListModel.mjs'
 
 const DAY = 86400000
@@ -30,7 +31,7 @@ export function athleteCardModel({ athlete, today, session, nutrition, weight, m
     else if (last !== null && last <= day) {
       const ago = day - last
       lastSession = { state: 'ready', day: session.lastDay,
-        text: `Seneste pas ${ago === 0 ? 'i dag' : ago === 1 ? 'i går' : `for ${ago} dage siden`}` }
+        text: `Seneste pas ${ago === 0 ? 'i dag' : ago === 1 ? 'i går' : `for ${ago} ${antalOrd(ago, 'dag', 'dage')} siden`}` }
     }
   }
   let food = unavailable(nutrition, 'Koststatus')
@@ -60,7 +61,7 @@ export function athleteCardModel({ athlete, today, session, nutrition, weight, m
   }
   let unread = unavailable(messages, 'Ulæste beskeder')
   if (usable(messages) && count(messages.count)) unread = { state: 'ready', count: messages.count,
-    text: `${messages.count} ulæst${messages.count === 1 ? '' : 'e'} besked${messages.count === 1 ? '' : 'er'}` }
+    text: `${messages.count} ${antalOrd(messages.count, 'ulæst besked', 'ulæste beskeder')}` }
 
   const reportsUsable = usable(signals)
   const signalKnown = reportsUsable && typeof signals.painReported === 'boolean' &&

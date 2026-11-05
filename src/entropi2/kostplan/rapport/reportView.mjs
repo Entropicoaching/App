@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 export function nutritionReportView(h, props = {}) {
   const labels = [
     ['kcal', 'Energi', 'kcal'], ['protein', 'Protein', 'g'],
@@ -54,7 +55,7 @@ export function nutritionReportView(h, props = {}) {
             h('dt', null, label), h('dd', { style: { margin: 0 } }, day.targets[key] === null
               ? 'Mål mangler' : `${number(day.targets[key])} ${unit} plan`)))))
           : h('div', null,
-            h('p', null, `${day.mealCount} registrerede måltider.`),
+            h('p', null, `${day.mealCount} ${antalOrd(day.mealCount, 'registreret måltid', 'registrerede måltider')}.`),
             day.logState === 'unknown' && h('p', { role: 'alert' }, 'Nogle næringsdata mangler. Ukendte tal vises ikke som nul.'),
             h(MacroList, { entries }))))
   }
@@ -78,8 +79,8 @@ export function nutritionReportView(h, props = {}) {
       h('div', { style: grid },
         h('section', { 'aria-label': 'Ugens kost', style: card },
           h('h3', null, 'Ugens kost'),
-          h('p', null, `${report.week.loggedDays} af ${report.week.elapsedDays} dage med kostlog · ${report.week.missingDays} uden log.`),
-          h('p', null, `${report.week.plannedDays} af ${report.week.elapsedDays} dage med entydig aktiveret plan.`),
+          h('p', null, `${report.week.loggedDays} af ${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} med kostlog · ${report.week.missingDays} uden log.`),
+          h('p', null, `${report.week.plannedDays} af ${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} med entydig aktiveret plan.`),
           report.week.conflictDays > 0 && h('p', { role: 'alert' }, 'Planhistorikken overlapper. Berørte mål kan ikke sammenlignes.'),
           report.week.unknownDays > 0 && h('p', { role: 'alert' }, 'Nogle loggede dage har ukendte næringsdata.'),
           report.week.loggedDays === 0 ? h('p', null, 'Der er ingen kostlog i perioden. Indtaget er ukendt.')

@@ -44,6 +44,6 @@ test('real React: missing and invalid data are disclosed without a level', optio
   const data = fixture(); data.readinessRows[0].sleep_hours = '8'
   data.exerciseLogs[0].reps_completed = null
   const html = render({ enabled: true, snapshot: data })
-  for (const text of ['For lidt data', '3/7 dage', 'ugyldige dagsformmålinger', 'usikre sætrækker', 'Ukendt belastning']) assert.ok(html.includes(text), text)
+  for (const text of ['For lidt data', '3/7 dage', 'dagsformmåling', 'sætrække', 'Ukendt belastning']) assert.ok(html.includes(text), text)
   assert.doesNotMatch(html, /Forsigtig restitutionsstatus/)
 })

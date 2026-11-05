@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { rel1101Enabled } from '../rel1101.mjs'
 import { parseInputNumber } from '../inputValues.js'
 import { calendarDay, calendarDaysBetween, addCalendarDays } from '../calendarDate.js'
@@ -60,7 +61,7 @@ export function analyseAtlet1Model(props = {}, now = new Date()) {
     { key: 'focus', title: 'Hvad arbejder vi med nu?', message: 'Den aktuelle programuge er ikke klar. Åbn dit program; når ugens øvelser er klar, skal du logge vægt og gentagelser på dine sæt.' },
   ]
   if (recent) answers[0] = { ...answers[0], value: `${kg(recent.weight)} kg`,
-    message: `${recent.name}: senest registrerede tunge sæt med ${recent.reps} gentagelser, den ${date(recent.day)}. Det er en logget vægt, ikke en vurdering af din samlede form.` }
+    message: `${recent.name}: senest registrerede tunge sæt med ${recent.reps} ${antalOrd(recent.reps, 'gentagelse', 'gentagelser')}, den ${date(recent.day)}. Det er en logget vægt, ikke en vurdering af din samlede form.` }
   else if (latest) answers[0].message = `Din seneste gyldige registrering er fra ${date(latest.day)}. Log et nyt tungt sæt med vægt og gentagelser for en aktuel status.`
   if (recent && Array.isArray(props.fremgangLogs)) {
     // Exact raw exercise and repetition count: never pool variants or rep ranges.
@@ -72,7 +73,7 @@ export function analyseAtlet1Model(props = {}, now = new Date()) {
     if (points.length >= 4 && calendarDaysBetween(points[0].day, points.at(-1).day) >= 21) {
       const first = points[0], last = points.at(-1), delta = last.weight - first.weight
       if (delta > 0 && Number.isFinite(delta)) answers[1] = { ...answers[1], value: `+${kg(Number(delta.toPrecision(12)))} kg`,
-        message: `${recent.name}, ${recent.reps} gentagelser: forskellen mellem dagens højeste loggede vægt den ${date(first.day)} og den ${date(last.day)}. Det viser en forskel i registreringerne; årsagen kan ikke udledes.` }
+        message: `${recent.name}, ${recent.reps} ${antalOrd(recent.reps, 'gentagelse', 'gentagelser')}: forskellen mellem dagens højeste loggede vægt den ${date(first.day)} og den ${date(last.day)}. Det viser en forskel i registreringerne; årsagen kan ikke udledes.` }
       else answers[1].message = `${recent.name}: de sammenlignelige registreringer viser endnu ingen stigning fra første til seneste dagsbedste. Fortsæt med at logge vægt og gentagelser i samme øvelse. Det er ikke en vurdering af din indsats.`
     }
   }
@@ -81,7 +82,7 @@ export function analyseAtlet1Model(props = {}, now = new Date()) {
     const count = local.map(r => clean(r, today)).filter(r => r && r.day >= start && identity(r.row) !== null
       && Number.isSafeInteger(parseInputNumber(r.row.set_number)) && parseInputNumber(r.row.set_number) >= 1).length
     answers[2].message = `${block}Følg øvelserne i den aktuelle programuge og log vægt og gentagelser efter hvert sæt. Registreringer siger ikke, om hele planen er gennemført.`
-    if (count > 0) answers[2].value = `${count} ${count === 1 ? 'registreret sæt' : 'registrerede sæt'}`
+    if (count > 0) answers[2].value = `${count} ${antalOrd(count, 'registreret sæt', 'registrerede sæt')}`
     if (erDeloadBlok(week.block_name)) answers[2].message = `${block}Følg den lettere uge i programmet og log dine sæt. De bruges ikke til at vurdere styrkefremgang.`
   }
   if (props.fremgangLoading === true || !Array.isArray(props.fremgangLogs)) {

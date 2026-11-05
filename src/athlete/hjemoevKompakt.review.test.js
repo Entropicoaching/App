@@ -50,7 +50,8 @@ test('counterprobe: own page preserves exercise progress and reminder injection'
   assert.ok(text(page).includes('Hjalp i dag:'))
   assert.equal(nodes(page,n=>n.type==='ol')[0].props.tabIndex,-1)
 })
-test('counterprobe: existing assignment, warmup and before-session source bytes preserved',()=>{
+test('counterprobe: assignment, warmup and before-session sources match reviewed pins',()=>{
+  // E2-TEKST-ENTAL1: only count-text imports/phrases in MobilitetFokus and EnkelHjem have new pins.
   const pins=JSON.parse(readFileSync(new URL('hjemoevProtected.json',import.meta.url),'utf8'))
   for(const [path,hash] of Object.entries(pins)) assert.equal(createHash('sha256').update(readFileSync(new URL(path,import.meta.url),'utf8').replace(/\r\n/g,'\n').replace(/\n/g,'\r\n')).digest('hex'),hash,path)
 })

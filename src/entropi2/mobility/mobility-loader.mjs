@@ -13,8 +13,9 @@ const edges = {
     '../../athlete/coachMobility.mjs': 'public-coachMobility.mjs',
     '../../mobilityHomework.mjs': 'public-mobilityHomework.mjs',
   },
-  'mobility-screen.mjs': { './mobility-model.mjs': 'mobility-model.mjs', './mobilityDone.mjs': 'mobilityDone.mjs' },
-  'mobilityDone.mjs': {},
+  'mobility-screen.mjs': { '../antalOrd.mjs': '../antalOrd.mjs', './mobility-model.mjs': 'mobility-model.mjs', './mobilityDone.mjs': 'mobilityDone.mjs' },
+  'mobilityDone.mjs': { '../antalOrd.mjs': '../antalOrd.mjs' },
+  '../antalOrd.mjs': {},
   'mobility-recommendation.mjs': {
     '../../athlete/mobilityCatalog.mjs': 'public-mobilityCatalog.mjs',
     '../../athlete/mobilityFocus.mjs': 'public-mobilityFocus.mjs',

@@ -60,7 +60,7 @@ test('F4 Kostuge: resumé skelner sammenlignelige kalorier og protein, tabel og 
   const tree = mount(KostUge, props).render()
   const paragraphs = byType(tree, 'p').map(text)
   assert.equal(paragraphs[0], 'Dage logget: 3 · Dage med sammenlignelige kalorimål: 1 · Dage med sammenlignelige proteinmål: 2')
-  assert.match(paragraphs[1], /1 dage uden logning.*3 kommende dage/)
+  assert.match(paragraphs[1], /1 dag uden logning.*3 kommende dage/)
   assert.match(text(tree), /Dage uden logning tælles ikke som nul/)
   assert.equal(byType(tree, 'tbody')[0].props.children.length, 7)
   assert.match(text(tree), /Sammenlignelige dage: 1/)

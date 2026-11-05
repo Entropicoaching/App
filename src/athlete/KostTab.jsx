@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { dataEnoughEnabled } from '../dataEnough.mjs'
 import { parseInputNumber, nutritionValues } from './kostNumbers.mjs'
 import { finiteProduct } from '../inputValues.js'
@@ -62,7 +63,7 @@ return (
         <div style={{ fontSize: '0.82rem', color: '#4a4844' }}>
           {tdeeEstimate.reason || (tdeeEstimate.missingWeight
             ? 'Vej dig mindst 2 gange med 7 dages mellemrum for at aktivere dette estimat.'
-            : `Log kalorier i mindst ${tdeeEstimate.missingKcalDays} dage mere for at aktivere dette estimat.`)}
+            : `Log kalorier i mindst ${tdeeEstimate.missingKcalDays} ${antalOrd(tdeeEstimate.missingKcalDays, 'dag', 'dage')} mere for at aktivere dette estimat.`)}
         </div>
       </>
     ) : (

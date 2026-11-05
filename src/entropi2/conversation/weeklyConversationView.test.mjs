@@ -47,7 +47,7 @@ test('actual controller/view shows weekly counts at top with native collapsed de
   f.analyses.push({ id: 'v', athlete_id: 'synthetic', status: 'shared',
     created_at: '2026-10-01T12:00:00Z', shared_at: '2026-11-04T11:00:00Z' })
   await f.controller.refresh()
-  assert.match(summary(f).children[0].textContent, /Denne uge · 3 beskeder · 1 ubesvarede · 1 video-feedback/)
+  assert.match(summary(f).children[0].textContent, /Denne uge · 3 beskeder · 1 ubesvaret · 1 video-feedback/)
   const details = find(summary(f), 'details')[0]
   assert.equal(details.open, false); assert.equal(details.hidden, false)
   assert.equal(details.children[0].tagName, 'summary')
@@ -71,15 +71,15 @@ test('loaded empty week is honest zero data, not loading or an error', async () 
 
 test('failed refresh suppresses stale counters, retry restores them, changed scope never leaks counts', async () => {
   const f = fixture(); f.messages.push(message('a', 'athlete', '2026-11-03T12:00:00Z'))
-  await f.controller.refresh(); assert.match(summary(f).textContent, /1 beskeder/)
+  await f.controller.refresh(); assert.match(summary(f).textContent, /1 besked/)
   f.fail(true); await f.controller.refresh()
   assert.equal(summary(f).hidden, true)
   assert.match(f.root.textContent, /Samtalen kunne ikke hentes sikkert/)
-  assert.doesNotMatch(summary(f).textContent, /1 beskeder/)
+  assert.doesNotMatch(summary(f).textContent, /1 besked/)
   assert.equal(find(summary(f), 'details')[0].hidden, true)
-  f.fail(false); await f.controller.refresh(); assert.match(summary(f).textContent, /1 beskeder/)
+  f.fail(false); await f.controller.refresh(); assert.match(summary(f).textContent, /1 besked/)
   f.scope({ athleteId: 'other' }); await f.controller.refresh()
-  assert.doesNotMatch(summary(f).textContent, /1 beskeder/)
+  assert.doesNotMatch(summary(f).textContent, /1 besked/)
   assert.deepEqual(f.writes, []); f.dispose()
 })
 

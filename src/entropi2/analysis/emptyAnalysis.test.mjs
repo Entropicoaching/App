@@ -56,7 +56,7 @@ test('intensity is gated by independent supplied references, never by the same s
   const dom = view({ fremgangLogs: [row('2026-11-03', { reference_e1rm: 125 })] })
   assert.equal(marked(dom, 'data-analysis-intensity').length, 1)
   assert.match(dom.textContent, /Sæt ≥80 %/)
-  assert.match(dom.textContent, /1 af 1 registrerede sæt fordelt/)
+  assert.match(dom.textContent, /1 af 1 registreret sæt fordelt/)
 })
 
 test('RPE shows only weeks and series with confirmed athlete answers, including zero', () => {
@@ -72,7 +72,7 @@ test('RPE shows only weeks and series with confirmed athlete answers, including 
 test('logged food is visible without invented historical goal status', () => {
   const dom = view({ historicalMealLogs: [{ date: '2026-11-03', kcal: 500 }] })
   const mine = marked(dom, 'data-analysis-mine-data')[0]
-  assert.match(mine.textContent, /Loggede kostdage1 registrerede dage af 28/)
+  assert.match(mine.textContent, /Loggede kostdage1 registreret dag af 28/)
   assert.doesNotMatch(mine.textContent, /Kostdage mod mål|ukendt målstatus|Ingen kostdage/)
   const ready = rows => ({ state: 'ready', rows })
   const explicit = renderTree(MineData({ athleteId: 'synthetic-a', today: '2026-11-04',
@@ -84,7 +84,7 @@ test('current program week sessions are labelled with their real coverage', () =
   const dom = view({ currentWeek: { start_date: '2026-11-02', sessions: [
     { id: 's', exercises: [{ id: 'e', name: 'Squat', sets: 1 }] }] },
     exerciseLogs: [row('2026-11-03', { exercise_id: 'e', set_number: 1 })] })
-  assert.match(marked(dom, 'data-analysis-mine-data')[0].textContent, /Pas i den viste programuge1 registrerede/)
+  assert.match(marked(dom, 'data-analysis-mine-data')[0].textContent, /Pas i den viste programuge1 registreret/)
   assert.doesNotMatch(dom.textContent, /samlet optælling for alle 4 uger/)
 })
 

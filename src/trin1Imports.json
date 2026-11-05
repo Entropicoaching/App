@@ -328,5 +328,6 @@
     "../../../exerciseProgress.js": "src/exerciseProgress.js"
   },
   "src/programOverblik.mjs": {},
+  "src/entropi2/antalOrd.mjs": {},
   "src/entropi2/flag.mjs": {}
 }

@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { mountUgeplan } from './ugeplan/mount.mjs'
 import { unitsForFood, mealKey } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
@@ -200,7 +201,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       }
     }
     if (summary.latest) append(weighing, 'p', 'muted', summary.average !== null
-      ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} ${summary.days === 1 ? 'vejedag' : 'vejedage'} (seneste 7 dage)`
+      ? `Ugegennemsnit: ${displayNumber(summary.average)} kg · ${summary.days} ${antalOrd(summary.days, 'vejedag', 'vejedage')} (seneste 7 dage)`
       : 'Ingen vejninger de seneste 7 dage')
     if (summary.comparison !== null) append(weighing, 'p', 'muted', summary.comparison)
     if (weightConnected) {

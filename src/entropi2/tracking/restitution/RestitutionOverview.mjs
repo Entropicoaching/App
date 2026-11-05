@@ -1,10 +1,11 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { buildRestitution } from './restitutionModel.mjs'
 
 const number = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 })
 const metric = (title, value, unit) => h('div', { key: title }, h('dt', null, title),
   h('dd', null, value.average === null ? `For lidt data · ${value.count}/7 dage`
-    : `${number.format(value.average)} ${unit} · ${value.count}/7 dage`))
+    : `${number.format(value.average)} ${unit === 'timer' ? antalOrd(value.average, 'time', 'timer') : unit} · ${value.count}/7 dage`))
 const training = (title, bucket) => h('p', null,
   `${title} (${bucket.from}–${bucket.to}): ${bucket.tonnage === null ? 'Ukendt belastning'
     : `${number.format(bucket.tonnage)} kg × gentagelser`} · ${bucket.sets} sæt på ${bucket.recordedDays}/7 dage.`)
@@ -64,11 +65,11 @@ export default function RestitutionOverview(props = {}) {
       !model.fresh && h('p', null, 'Der mangler en komplet dagsform fra periodens sidste to dage.'),
       training('Seneste 7 dage', model.load.recent), training('De foregående 7 dage', model.load.previous),
       h('p', null, model.load.ratio === null ? 'For lidt data til at sammenligne belastning.'
-        : `Registreret belastning: ${number.format(model.load.ratio)} gange de foregående 7 dage.`),
+        : `Registreret belastning: ${number.format(model.load.ratio)} ${antalOrd(model.load.ratio, 'gang', 'gange')} de foregående 7 dage.`),
       h('p', null, 'Belastning er kg × udførte gentagelser fra registrerede sæt. Manglende dage er ukendte, ikke bekræftede hviledage. Øvelsesvalg og registreringsdækning kan ændre totalen.'),
-      model.invalidMeasurements > 0 && h('p', null, `${model.invalidMeasurements} ugyldige dagsformmålinger tæller som ukendte.`),
-      model.load.uncertainSets > 0 && h('p', null, `${model.load.uncertainSets} usikre sætrækker forhindrer sammenligning af belastning.`),
-      model.load.excludedSets > 0 && h('p', null, `${model.load.excludedSets} foreløbige eller oversprungne sætrækker er udeladt.`),
+      model.invalidMeasurements > 0 && h('p', null, `${model.invalidMeasurements} ${antalOrd(model.invalidMeasurements, 'ugyldig dagsformmåling tæller som ukendt', 'ugyldige dagsformmålinger tæller som ukendte')}.`),
+      model.load.uncertainSets > 0 && h('p', null, `${model.load.uncertainSets} ${antalOrd(model.load.uncertainSets, 'usikker sætrække', 'usikre sætrækker')} forhindrer sammenligning af belastning.`),
+      model.load.excludedSets > 0 && h('p', null, `${model.load.excludedSets} ${antalOrd(model.load.excludedSets, 'foreløbig eller oversprunget sætrække', 'foreløbige eller oversprungne sætrækker')} er udeladt.`),
       h('p', null, 'Status kræver mindst 4/7 dage for hver dagsformmåling, en komplet dagsform fra de sidste to dage og mindst 2 registrerede træningsdage i hver uge. Den foregående belastning skal være over nul. Huller udfyldes ikke.'),
       h('p', null, 'Enkle, ikke klinisk validerede grænser for ugegennemsnit: Lav ved søvn under 6 timer, energi højst 2/5, stress mindst 4/5 eller ømhed mindst 4/5. God ved søvn mindst 7 timer, energi mindst 4/5, stress og ømhed højst 2/5 og belastning højst 1,2 gange den foregående uge. Ellers Ok. Øget belastning alene giver ikke Lav.')))
 }

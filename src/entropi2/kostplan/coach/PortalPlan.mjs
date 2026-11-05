@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import * as React from 'react'
 import PlanActivation from './activation.mjs'
 import { openPortalPlan } from './portalModel.mjs'
@@ -51,7 +52,7 @@ function ScopedKostJustering({ options, proposal }) {
         try { setResult(choosePortalAdjustment(options, shown, decision)) }
         catch { setError(true) }
       } }),
-    !error && h('p', null, `Efterlevelse: ${s.evidence.diet.completeDays} bekræftede kostdage i perioden. Dagsform: ${readiness
+    !error && h('p', null, `Efterlevelse: ${s.evidence.diet.completeDays} ${antalOrd(s.evidence.diet.completeDays, 'bekræftet kostdag', 'bekræftede kostdage')} i perioden. Dagsform: ${readiness
       ? `energi ${readiness.energy}/5, sult ${readiness.hunger}/5` : 'ikke registreret'}.`),
     !error && h('p', null, 'Valget gælder kun denne åbne visning. Der gemmes eller aktiveres ingen plan.'))
 }

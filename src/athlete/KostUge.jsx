@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { summarizeKostWeek } from './kostUge.mjs'
 
 const statuses = { logged: 'Med logning', missing: 'Ingen logning', unavailable: 'Data ikke tilgængelige', future: 'Kommende dag' }
@@ -16,14 +17,14 @@ export default function KostUge({ selectedDate, input }) {
     <section aria-label="Kostuge" style={{ marginBottom: '1.5rem', color: '#edeae2' }}>
       <h2>Kostuge · {dateLabel(week.startDate)} til {dateLabel(week.endDate)}</h2>
       <p>Dage logget: {week.counts.logged} · Dage med sammenlignelige kalorimål: {week.metrics.kcal.comparison.days} · Dage med sammenlignelige proteinmål: {week.metrics.protein.comparison.days}</p>
-      <p>{week.counts.logged} dage med logning · {week.counts.missing} dage uden logning · {week.counts.unavailable} dage uden datadækning · {week.counts.future} kommende dage</p>
+      <p>{week.counts.logged} {antalOrd(week.counts.logged, 'dag', 'dage')} med logning · {week.counts.missing} {antalOrd(week.counts.missing, 'dag', 'dage')} uden logning · {week.counts.unavailable} {antalOrd(week.counts.unavailable, 'dag', 'dage')} uden datadækning · {week.counts.future} {antalOrd(week.counts.future, 'kommende dag', 'kommende dage')}</p>
       <p>Registrerede mængder er ikke nødvendigvis hele dagens indtag. Dage uden logning tælles ikke som nul.</p>
       { [['kcal', 'Kalorier', 'kcal'], ['protein', 'Protein', 'g']].map(([key, label, unit]) => {
         const metric = week.metrics[key]
         const pair = metric.comparison
         return <div key={key}>
           <h3>{label}</h3>
-          <p>Gennemsnit af registreret mængde: {number(metric.average)} {unit} ({metric.knownDays} dage med kendte tal).</p>
+          <p>Gennemsnit af registreret mængde: {number(metric.average)} {unit} ({metric.knownDays} {antalOrd(metric.knownDays, 'dag', 'dage')} med kendte tal).</p>
           <p>Sammenlignelige dage: {pair.days}. Registreret gennemsnit: {number(pair.intakeAverage)} {unit} · gennemsnit af datoernes mål: {number(pair.targetAverage)} {unit} · forskel: {number(pair.difference)} {unit}.</p>
         </div>
       }) }

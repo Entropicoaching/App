@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { addCalendarDays, calendarDay, calendarDaysBetween } from '../../calendarDate.js'
 import { estimatedOneRepMax } from '../../exerciseProgress.js'
 import { mainLiftName } from '../../exerciseSetView.js'
@@ -91,7 +92,7 @@ export function weekOverview(contract, now) {
         r.logged_at >= previousStart && calendarDaysBetween(r.logged_at, start) > 0)
         .map(r => estimatedOneRepMax(r.weight, r.reps_completed)).filter(v => v > 0)
       const value = `${format(best.value)} kg e1RM`
-      const source = `Fra ${format(best.weight)} kg × ${format(best.reps_completed)}. ${best.repZone} gentagelser.`
+      const source = `Fra ${format(best.weight)} kg × ${format(best.reps_completed)}. ${best.repZone} ${antalOrd(best.repZone, 'gentagelse', 'gentagelser')}.`
       if (!previous.length) return { lift, value, message: `${source} Ingen tunge sæt i samme rep-område ugen før.` }
       const previousBest = Math.max(...previous)
       const delta = Math.round((best.value - previousBest) * 10) / 10

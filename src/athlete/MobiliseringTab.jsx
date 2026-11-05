@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 // Mobilitets-fanen (opvarmning + daglig mobilitet) — udskilt fra
 // AthleteView.jsx (ordre 232 · commit 2) som sin egen lazy-loadede chunk,
 // samme LazyBoundary-mønster som Dashboard.jsx's fire faner (130/163/228).
@@ -676,7 +677,7 @@ export default function MobiliseringTab({
               <div style={{ display: 'flex', gap: '0.6rem' }}>
                 <button style={{ ...s.btnGhost, flex: 1, padding: '0.75rem' }} onClick={() => setWarmupPhase('focus')}>← Tilbage</button>
                 <button style={{ ...s.btnPrimary, flex: 2, padding: '0.75rem', fontSize: '0.62rem' }} onClick={startGuide}>
-                  Start opvarmning ({(WARMUP_BASE[baseKey]?.length || 0) + warmupProblems.size} øvelser)
+                  Start opvarmning ({(WARMUP_BASE[baseKey]?.length || 0) + warmupProblems.size} {antalOrd((WARMUP_BASE[baseKey]?.length || 0) + warmupProblems.size, 'øvelse', 'øvelser')})
                 </button>
               </div>
             </>
@@ -800,7 +801,7 @@ export default function MobiliseringTab({
               <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: '#6cba6c', marginBottom: '1rem' }}>✓</div>
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Opvarmning færdig.</h2>
               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>
-                {warmupExercises.length} øvelser gennemført
+                {warmupExercises.length} {antalOrd(warmupExercises.length, 'øvelse', 'øvelser')} gennemført
               </div>
               <MobilityHelped enabled={mobilitetHjalp} athleteId={athleteId} date={mobilityDate} exercises={warmupExercises.map((slot, i) => slot.options?.[warmupChoice[i] ?? 0]).filter(Boolean)} />
               <button style={{ ...s.btnPrimary, width: '100%', padding: '0.85rem', marginBottom: '0.75rem' }} onClick={() => { resetWarmup(); setMobilityMode(null); setTab('hjem') }}>Til dagens pas →</button>
@@ -847,7 +848,7 @@ export default function MobiliseringTab({
             return (
               <>
                 <div style={{ marginBottom: '1.25rem' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Din session · {mobilitySlots.length} øvelser · ~{estMin} min</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.5rem' }}>Din session · {mobilitySlots.length} {antalOrd(mobilitySlots.length, 'øvelse', 'øvelser')} · ~{estMin} min</div>
                   <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Din session</h1>
                   <div style={{ fontSize: '0.82rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.6 }}>Skift øvelser, fjern dem du ikke vil have, eller tilføj flere. Start når du er klar.</div>
                   {mobilityIntake.soreAreas?.length > 0 && readinessLog?.sore_zones?.length > 0 && (
@@ -923,7 +924,7 @@ export default function MobiliseringTab({
               <div style={{ textAlign: 'center', paddingTop: '3rem' }}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', color: '#6cba6c', marginBottom: '1rem' }}>✓</div>
                 <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.5rem' }}>Mobilitet færdig.</h2>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>{mobilitySlots.length} øvelser gennemført</div>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#4a4844', letterSpacing: '0.08em', marginBottom: '2rem' }}>{mobilitySlots.length} {antalOrd(mobilitySlots.length, 'øvelse', 'øvelser')} gennemført</div>
                 <MobilityHelped enabled={mobilitetHjalp} athleteId={athleteId} date={mobilityDate} exercises={mobilitySlots.map(exForSlot).filter(Boolean)} />
                 <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
                   <button style={{ ...s.btnGhost, padding: '0.75rem 1.25rem' }} onClick={rebuildSuggestion}>Byg en ny</button>

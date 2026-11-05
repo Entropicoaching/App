@@ -123,7 +123,7 @@ test('RPE DOM: only rated weeks and lifts, accessible disclosure and program sho
   assert.equal(view.querySelectorAll('ol').length, 2)
   assert.equal(view.querySelectorAll('li').length, 2)
   assert.match(view.textContent, /RPE 8,5/)
-  assert.match(view.textContent, /1 svar af 1 registrerede sæt/)
+  assert.match(view.textContent, /1 svar af 1 registreret sæt/)
   assert.doesNotMatch(view.textContent, /Ingen RPE-data|0 svar/)
   assert.match(view.textContent, /dokumenterede egne RPE-svar/)
   assert.equal(view.querySelectorAll('[data-analysis-destination]').length, 0)

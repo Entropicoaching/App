@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { proteinDistribution } from './proteinDistribution.mjs'
 
 const grams = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
@@ -24,7 +25,7 @@ export function mountProteinDistribution(host, options = {}) {
   } else if (model.status === 'empty') {
     section.append(el('p', 'Ingen måltider registreret i dag.'))
   } else {
-    section.append(el('p', `${model.mealCount} registrerede måltider. Dagen kan være ufuldstændig.`))
+    section.append(el('p', `${model.mealCount} ${antalOrd(model.mealCount, 'registreret måltid', 'registrerede måltider')}. Dagen kan være ufuldstændig.`))
     const list = el('ul')
     for (const meal of model.meals) {
       const item = el('li')
@@ -36,7 +37,7 @@ export function mountProteinDistribution(host, options = {}) {
     section.append(el('p', model.knownProtein === null
       ? 'Proteinmængden kan ikke vises samlet.'
       : `${model.unknownCount ? 'Kendt' : 'Registreret'} protein: ${grams(model.knownProtein)} g.`))
-    if (model.unknownCount) section.append(el('p', `${model.unknownCount} måltider mangler en kendt proteinmængde.`))
+    if (model.unknownCount) section.append(el('p', `${model.unknownCount} ${antalOrd(model.unknownCount, 'måltid', 'måltider')} mangler en kendt proteinmængde.`))
   }
   host.append(section)
   return () => { if (section.parentNode) section.parentNode.removeChild(section) }

@@ -1,8 +1,9 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { buildAthleteOverview } from './overview.mjs'
 
 const number = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1, minimumFractionDigits: 1 })
-const value = (v, unit) => v === null ? 'Ukendt' : `${number.format(v)} ${unit}`
+const value = (v, unit) => v === null ? 'Ukendt' : `${number.format(v)} ${unit === 'timer' ? antalOrd(v, 'time', 'timer') : unit}`
 const coverage = (count, unit = 'dage') => `${count}/7 ${unit}`
 const summaryStyle = { minHeight: 44, padding: '12px 0', cursor: 'pointer' }
 const detail = (key, title, children, open = false) => h('details', { key, open },
@@ -25,7 +26,7 @@ function weekView(week, latest, wellbeingOnly) {
       !wellbeingOnly && h('div', null,
       h('h3', null, 'Træning'),
       h('p', null, week.training.observedDays
-        ? `${week.training.sets} registrerede sæt · ${value(week.training.tonnage, 'kg × gentagelser')} · ${coverage(week.training.observedDays, 'registrerede dage')}`
+        ? `${week.training.sets} ${antalOrd(week.training.sets, 'registreret sæt', 'registrerede sæt')} · ${value(week.training.tonnage, 'kg × gentagelser')} · ${coverage(week.training.observedDays, 'registrerede dage')}`
         : 'Ingen registreringer i perioden · 0/7 dage'),
       h('p', null, 'Kun registrerede sæt. Dage uden log er ukendte. Pas og hviledage er ikke bekræftet her.'),
       detail('training', 'Vis træningsgrundlag', [

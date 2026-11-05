@@ -43,8 +43,8 @@ export async function checkLoader(loaderName, domName) {
     for (const specifier of ['node:fs', 'unapproved-package', './notApproved.mjs', './analyseAtlet1', '../athlete/analyseAtlet1.mjs', './analyseAtlet1.mjs?probe'])
       await assert.rejects(views[0].analysisProbe(specifier), /Forbidden|Closed/)
   })
-  test(loaderName + ': helper admits exactly its four real dependencies', async () => {
-    for (const name of ['rel1101.mjs', 'calendarDate.js', 'inputValues.js', 'exerciseProgress.js']) assert.ok(await helper.analysisProbe('../' + name))
+  test(loaderName + ': helper admits its four original dependencies and the pure count helper', async () => {
+    for (const name of ['rel1101.mjs', 'calendarDate.js', 'inputValues.js', 'exerciseProgress.js', 'entropi2/antalOrd.mjs']) assert.ok(await helper.analysisProbe('../' + name))
     for (const specifier of ['node:fs', 'react', './calendarDate.js', '../calendarDate', '../athlete/../calendarDate.js', '../calendarDate.js?probe', '../rekorder.js'])
       await assert.rejects(helper.analysisProbe(specifier), /Forbidden analysis dependency/)
   })

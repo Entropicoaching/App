@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { positive, displayNumber } from './model.mjs'
 
 // Use the validated existing week receipt and latest weighing only.
@@ -14,5 +15,5 @@ export function energySuggestion(model = {}, week = null, basis = null) {
   const kcal = intake === null ? null : Math.round(intake)
   if (!Number.isSafeInteger(kcal) || kcal < 1 || kcal > 2147483647)
     return { kcal: null, text: 'Et gyldigt gennemsnitligt energiindtag er nødvendigt for at vise et forslag.' }
-  return { kcal, text: `Typisk indtag: ${kcal.toLocaleString('da-DK')} kcal på ${week.days} loggede dage. Seneste vejning: ${displayNumber(weight)} kg. Indtaget kan bruges som udgangspunkt for energimålet; tilpas det til atleten.` }
+  return { kcal, text: `Typisk indtag: ${kcal.toLocaleString('da-DK')} kcal på ${week.days} ${antalOrd(week.days, 'logget dag', 'loggede dage')}. Seneste vejning: ${displayNumber(weight)} kg. Indtaget kan bruges som udgangspunkt for energimålet; tilpas det til atleten.` }
 }

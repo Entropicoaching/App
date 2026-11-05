@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { createElement as h, useState } from 'react'
 import { CoachMobilitySummary } from './CoachMobility.jsx'
 import { coachCatalog, readCoachChoices } from './coachMobility.mjs'
@@ -34,7 +35,7 @@ export default function MobilitetFokus({ mobilitetCoach = false, coachNotes, mob
       h('div', { role: 'group', 'aria-label': 'Hovedøvelse', style: { display: 'grid', gap: 8 } }, ...FOCUS_LIFTS.map(name => choose(name, () => { setCoachActive(false); setLift(name); setNeed(FOCUS_NEEDS[name][0]); setStep(0); setDone(false) }, lift === name))),
       h('h2', { style: { fontSize: '1rem' } }, '2. Hvad vil du arbejde med?'),
       h('div', { role: 'group', 'aria-label': 'Dit behov', style: { display: 'grid', gap: 8 } }, ...FOCUS_NEEDS[lift].map(name => choose(name, () => { setCoachActive(false); setNeed(name) }, need === name))),
-      h('h2', { style: { fontSize: '1.15rem' } }, `${plan.exercises.length} øvelser til ${lift.toLowerCase()}`),
+      h('h2', { style: { fontSize: '1.15rem' } }, `${plan.exercises.length} ${antalOrd(plan.exercises.length, 'øvelse', 'øvelser')} til ${lift.toLowerCase()}`),
       h('ol', { style: { paddingLeft: 24 } }, ...plan.exercises.map(item => h('li', { key: item.id, style: { padding: '8px 0' } }, h('strong', null, item.name), h('div', { style: { color: '#d1c9b8' } }, `${item.label} · ${item.source}`)))),
       plan.notes.length ? h('aside', { 'aria-label': 'Besked fra din coach', style: { borderLeft: '3px solid #e0ae5c', paddingLeft: 12, overflowWrap: 'anywhere' } }, h('h2', { style: { fontSize: '1rem' } }, 'Fra din coach'), ...plan.notes.map(note => h('p', { key: note }, note))) : null,
       h('p', null, 'Arbejd roligt og inden for en behagelig bevægelse. Stop, hvis det gør ondt.'),

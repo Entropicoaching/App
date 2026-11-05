@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { weeklyReportModel, hasWeeklyReportData } from './weeklyReportModel.mjs'
 
@@ -13,11 +14,11 @@ export default function WeeklyReport({ today, ...props }) {
         h('h3', null, athlete.name),
         t.start && h('p', null, `Programuge fra ${t.start}`),
         t.completed !== null ? h('p', null, t.planned !== null
-          ? `Pas logget: ${t.completed} af ${t.planned} planlagte` : `Pas logget: ${t.completed}`) :
+          ? `Pas logget: ${t.completed} af ${t.planned} ${antalOrd(t.planned, 'planlagt', 'planlagte')}` : `Pas logget: ${t.completed}`) :
           t.planned !== null && h('p', null, `Pas planlagt: ${t.planned}`),
         t.rpe !== null && h('p', null,
           `Seneste pas · RPE-snit: ${t.rpe.toFixed(1).replace('.', ',')} (${t.rpeCount} sæt med RPE)`),
         n && h('p', null, `Kostdage logget: ${n.logged}/7`),
         n && n.reached !== null && h('p', null,
-          `Proteinmål nået: ${n.reached} af ${n.logged} loggede dage`)))))
+          `Proteinmål nået: ${n.reached} af ${n.logged} ${antalOrd(n.logged, 'logget dag', 'loggede dage')}`)))))
 }

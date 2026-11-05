@@ -23,7 +23,7 @@ test('review: overflowing estimate cannot hide another valid best set', () => {
 test('review: actual note provenance is accepted and stale proof is excluded', () => {
   const row = set(1, 110, { rpe_actual: 7.5 })
   row.note = rpeNote(null, row, true)
-  assert.match(share([row]), /RPE: 7,5 \(1 atletregistreringer\)/)
+  assert.match(share([row]), /RPE: 7,5 \(1 atletregistrering\)/)
   assert.doesNotMatch(share([{ ...row, rpe_actual: 8 }]), /RPE:/)
 })
 

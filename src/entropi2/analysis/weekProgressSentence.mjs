@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { calendarDay } from '../../calendarDate.js'
 import { adaptPublicContract, uniqueLogs } from './publicContract.mjs'
 
@@ -59,5 +60,5 @@ export function weekProgressSentence(props = {}, now) {
     if (complete) closed++
   }
   if (!confirmed) return null
-  return `Denne uge: ${closed} afslutte${closed === 1 ? 't' : 'de'} pas og ${confirmed} bekræfte${confirmed === 1 ? 't sæt' : 'de sæt'}.`
+  return `Denne uge: ${closed} ${antalOrd(closed, 'afsluttet pas', 'afsluttede pas')} og ${confirmed} ${antalOrd(confirmed, 'bekræftet sæt', 'bekræftede sæt')}.`
 }

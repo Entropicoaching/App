@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { addCalendarDays } from '../../../calendarDate.js'
 import { isDay } from '../visning/trackingContract.mjs'
 import { buildAthleteSignalList } from '../signaler/athleteSignals.mjs'
@@ -37,7 +38,7 @@ function section(id, title, from, to, minimum, rows, value, rule, formula, obser
     dataBasis: { from, to, sampleCount: count, minimumSampleCount: minimum,
       sufficient: ready, summary: ready ? summary : count !== null && count >= minimum
         ? 'For lidt data: delvinduer eller beregningsgrundlag opfylder ikke reglen'
-        : `For lidt data: ${count === null ? 'ukendt antal' : count} af mindst ${minimum} dage`,
+        : `For lidt data: ${count === null ? 'ukendt antal' : count} af mindst ${minimum} ${antalOrd(minimum, 'dag', 'dage')}`,
       rule, formula, observations: observations || [] } }
 }
 

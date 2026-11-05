@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { calendarDay, calendarDaysBetween } from '../calendarDate.js'
 
 // Presentation only. Explicit prop, with no storage or URL activation.
@@ -10,7 +11,7 @@ export function staevneHome({ enabled = DEFAULT_STAEVNE_HOME, athlete, currentWe
   const days = today ? calendarDaysBetween(today, date) : null
   if (days === null || days < 0) return null
   const block = typeof currentWeek?.block_name === 'string' ? currentWeek.block_name.trim() : ''
-  return { days, countdown: days === 0 ? 'Stævne i dag' : `${days} ${days === 1 ? 'dag' : 'dage'} til stævne`,
+  return { days, countdown: days === 0 ? 'Stævne i dag' : `${days} ${antalOrd(days, 'dag', 'dage')} til stævne`,
     focus: block ? `Ugens fokus: ${block}` : null }
 }
 

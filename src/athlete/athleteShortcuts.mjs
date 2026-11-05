@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { messageText } from '../entropi2/conversation/conversationModel.mjs'
 // APP-FORENKL3. Extra entry points only. No persistence or data writes.
 export const DEFAULT_FORENKLINGER = false
@@ -48,8 +49,8 @@ export function renderAthleteShortcuts(h, {
         : !sharedVideoLoading && !sharedVideoError ? h('p', null, 'Ingen beskeder eller videofeedback endnu.') : null,
       sharedVideoLoading ? h('p', { role: 'status' }, 'Henter videofeedback…') : null,
       sharedVideoError ? h('p', { role: 'status' }, sharedVideoError) : null,
-      button('message', `Beskeder${unreadMessage > 0 ? ` (${unreadMessage} ulæste)` : ''}`, () => contact('besked')),
-      button('technique', `Teknik og videofeedback${unreadVideo > 0 ? ` (${unreadVideo} ulæste)` : ''}`, () => contact('teknik')),
+      button('message', `Beskeder${unreadMessage > 0 ? ` (${unreadMessage} ${antalOrd(unreadMessage, 'ulæst', 'ulæste')})` : ''}`, () => contact('besked')),
+      button('technique', `Teknik og videofeedback${unreadVideo > 0 ? ` (${unreadVideo} ${antalOrd(unreadVideo, 'ulæst', 'ulæste')})` : ''}`, () => contact('teknik')),
       role === 'athlete' && athlete?.id ? button('film', 'Film et sæt', startVideo) : null),
     group('progress', 'Dagsform og fremgang',
       button('readiness', 'Meld dagsform', openReadiness),

@@ -25,7 +25,7 @@ test('synthetic actual view: dates, missing values, pas context and advice', () 
   data.qualityRows = [0, 1, 2, 3].map(i => quality(i)); data.exerciseLogs = [set(0)]
   const tree = render({ enabled: true, snapshot: data, weeks: 6 })
   for (const text of ['0 timer · 4/7 dage', '4 af 5 · 4/7 dage', 'Ukendt',
-    '1 dage med både søvntimer og RPE', 'ikke en samlet pasvurdering', 'kg e1RM', 'pre-workout']) {
+    '1 dag med både søvntimer og RPE', 'ikke en samlet pasvurdering', 'kg e1RM', 'pre-workout']) {
     assert.ok(tree.textContent.includes(text), text)
   }
   assert.equal(tree.querySelectorAll('details').length, 3)

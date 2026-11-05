@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { messageText } from '../entropi2/conversation/conversationModel.mjs'
 import { renderStaevneHome } from './staevneHome.mjs'
 import MobilityBeforeSession from './mobilityBeforeSession.mjs'
@@ -350,7 +351,7 @@ function HjemTab({
                             {!isNext && !done && wdLabel && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770', flexShrink: 0 }}>{wdLabel}</span>}
                           </span>
                           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', flexShrink: 0, marginLeft: '0.75rem' }}>
-                            {(sess.exercises || []).length} øvelser →
+                            {(sess.exercises || []).length} {antalOrd((sess.exercises || []).length, 'øvelse', 'øvelser')} →
                           </span>
                         </button>
                       )}) })()}
@@ -526,13 +527,13 @@ function HjemTab({
                     <div style={s.card}>
                       <div style={s.cardLabel}>Det din coach ser</div>
                       <div style={{ fontSize: '0.82rem', color: '#b8b4a8', lineHeight: 1.55 }}>
-                        {coachSummary.logsCount} {coachSummary.logsCount === 1 ? 'parathedslog' : 'parathedslogs'} i din seneste historik
-                        {coachSummary.avgSleep != null ? `, gns. søvn ${String(coachSummary.avgSleep).replace('.', ',')} timer` : ''}
+                        {coachSummary.logsCount} {antalOrd(coachSummary.logsCount, 'parathedslog', 'parathedslogs')} i din seneste historik
+                        {coachSummary.avgSleep != null ? `, gns. søvn ${String(coachSummary.avgSleep).replace('.', ',')} ${antalOrd(coachSummary.avgSleep, 'time', 'timer')}` : ''}
                         {coachSummary.topZone ? `, oftest øm: ${coachSummary.topZone[0]}` : ''}.
                       </div>
                       {coachSummary.lowStreak >= 3 && (
                         <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: '#c8923a' }}>
-                          Din coach ser at parathed har været under 50 i {coachSummary.lowStreak} dage i træk.
+                          Din coach ser at parathed har været under 50 i {coachSummary.lowStreak} {antalOrd(coachSummary.lowStreak, 'dag', 'dage')} i træk.
                         </div>
                       )}
                     </div>

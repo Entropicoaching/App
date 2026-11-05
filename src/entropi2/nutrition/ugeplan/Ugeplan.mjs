@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h, useMemo, useReducer } from 'react'
 import { createWeekPlan } from './model.mjs'
 
@@ -47,7 +48,7 @@ export function UgeplanView(props = {}) {
       h('p', null, 'Hver planlagt portion tælles med. Kun ingredienser fra dine egne skabeloner.'),
       shopping.error ? h('p', { role: 'alert' }, shopping.error) : h('div', null,
         shopping.missingMeals.length + shopping.unavailableCount > 0 && h('p', { role: 'status' },
-          `Listen er ufuldstændig: ${shopping.missingMeals.length + shopping.unavailableCount} måltider mangler ingredienser eller skabelon.`),
+          `Listen er ufuldstændig: ${shopping.missingMeals.length + shopping.unavailableCount} ${antalOrd(shopping.missingMeals.length + shopping.unavailableCount, 'måltid', 'måltider')} mangler ingredienser eller skabelon.`),
         h('ul', null, ...shopping.items.map((item, index) => h('li', { key: index },
           `${item.name}: ${number(item.quantity)} ${item.unit}`))))))
 }

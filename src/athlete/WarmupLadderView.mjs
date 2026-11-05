@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { createElement as h, useState, useEffect } from 'react'
 import { sessionLadder } from '../opvarmStige.mjs'
 import { WARMUP_BASE } from './mobilityCatalog.mjs'
@@ -61,7 +62,7 @@ function Ladder({ plan }) {
     h('p', null, 'Valgfri pause mellem trinnene'),
     h('button', { type: 'button', style: button, onClick: () => start(60) }, 'Start 60 sekunders pause'),
     h('button', { type: 'button', style: button, onClick: () => { setDeadline(null); setSeconds(0) } }, 'Stop timer'),
-    h('p', { role: 'timer', 'aria-label': 'Tid tilbage' }, `${seconds} sekunder`))
+    h('p', { role: 'timer', 'aria-label': 'Tid tilbage' }, `${seconds} ${antalOrd(seconds, 'sekund', 'sekunder')}`))
 }
 export default function OpvarmStige({ enabled = false, exercises, scope }) {
   if (enabled !== true) return null

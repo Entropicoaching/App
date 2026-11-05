@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h, useRef, useState } from 'react'
 import { energySuggestion } from './energySuggestion.mjs'
 import { nutritionBasis, nutritionWeek, nutritionGoalWeek } from './nutritionWeek.mjs'
@@ -85,7 +86,7 @@ function EnabledKostMaal(props) {
     (model.bodyweight !== null || model.latest) && h('dl', null,
       model.bodyweight !== null && value('Kropsvægt i profilen', `${displayNumber(model.bodyweight)} kg`),
       model.latest && value('Seneste vejning', `${displayNumber(model.latest.weight)} kg · ${model.latest.date}`),
-      model.average !== null && value('Ugegennemsnit · seneste 7 dage', `${displayNumber(model.average)} kg · ${model.days} vejedage`),
+      model.average !== null && value('Ugegennemsnit · seneste 7 dage', `${displayNumber(model.average)} kg · ${model.days} ${antalOrd(model.days, 'vejedag', 'vejedage')}`),
       model.trend !== null && value('Trend · mod de foregående 7 dage',
         Math.abs(model.trend) < 0.05 ? 'Stabil vægt · 0 kg' : `${model.trend > 0 ? '+' : ''}${displayNumber(model.trend)} kg`)),
     weightReady && model.day && !model.latest && h('p', null, 'Ingen vejninger endnu.'),

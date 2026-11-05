@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h, useState } from 'react'
 import AthleteCard from './atletkort/AthleteCard.mjs'
 import WeekEvaluation from './evaluering/WeekEvaluationView.mjs'
@@ -49,7 +50,7 @@ export default function CoachAthleteWorkspace({ data, athlete, onOpen }) {
           h('strong', null, signal.strength === 'vigtig' ? 'Kræver opmærksomhed' : signal.strength === 'obs' ? 'Opmærksomhed' : 'Information'),
           h('p', null, signal.reasons.join(' · ')),
           ...signal.dataBasis.map((basis, index) => h('p', { key: index },
-            `${basis.from} – ${basis.to}: ${basis.summary} (${basis.sampleCount} registreringer)`)))))))),
+            `${basis.from} – ${basis.to}: ${basis.summary} (${basis.sampleCount} ${antalOrd(basis.sampleCount, 'registrering', 'registreringer')})`)))))))),
     data.plan && fold('Planlægningsgrundlag', h(PlanGrundlagView, { enabled: true, snapshot: data.plan, today: data.facts.today })),
     hasReportValues(data.report, athlete.id) && createCoachMessageDraft(data.report, athlete.id) && fold('Beskedudkast fra ugerapport',
       h(CoachMessageDraft, { key: data.key, report: data.report, athleteId: athlete.id })))

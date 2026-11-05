@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { parseInputNumber, finiteAdd } from '../inputValues.js'
 
 // Stævnedag-fanen (sæt-loggeren til åbnere/attempts på stævnedagen) —
@@ -126,7 +127,7 @@ export default function StaevnedagTab({
                 {compDate && daysLeft > 0 ? (
                   <>
                     <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
-                      {daysLeft} dage<br />til stævne.
+                      {daysLeft} {antalOrd(daysLeft, 'dag', 'dage')}<br />til stævne.
                     </h1>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.08em', marginTop: '0.6rem' }}>
                       {new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}

@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { BASIS_DOMAINS } from '../kvalitet/weeklyDataBasis.mjs'
 import { buildCoachTeamOverview } from './overview.mjs'
@@ -17,7 +18,7 @@ function coverage(week) {
     h('ul', { style: { paddingLeft: 20 } }, ...BASIS_DOMAINS.map(domain => {
       const d = week.domains[domain]
       return h('li', { key: domain }, h('strong', null, `${labels[domain]}: `),
-        d.state === 'ready' ? `${d.recordedDays}/${week.elapsedDays} dage registreret; ${d.valueDays} med værdigrundlag.`
+        d.state === 'ready' ? `${d.recordedDays}/${week.elapsedDays} ${antalOrd(week.elapsedDays, 'dag', 'dage')} registreret; ${d.valueDays} med værdigrundlag.`
           : `${sourceMessages[d.state]}. Dækning ukendt.`)
     })))
 }
@@ -36,7 +37,7 @@ export default function CoachTeam(options = {}) {
   if (model.state === 'empty') return h('section', { style, 'aria-label': 'Holdoverblik' },
     heading, h('p', { role: 'status' }, 'Ingen atleter på coachens hold.'))
   return h('section', { style, 'aria-label': 'Holdoverblik' }, heading,
-    h('p', null, `${model.athletes.length} atleter · opgjort til og med ${model.asOf}.`),
+    h('p', null, `${model.athletes.length} ${antalOrd(model.athletes.length, 'atlet', 'atleter')} · opgjort til og med ${model.asOf}.`),
     h('p', null, 'Flest flag først, dernæst ukendt flagantal og til sidst ingen flag. Ved lighed: ukendt dækning, så flest dage uden værdigrundlag over fire uger.'),
     h('ol', { style: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12, paddingLeft: 24 } },
       ...model.athletes.map(athlete => h('li', { key: athlete.athleteId, style: { minWidth: 0 } },
@@ -68,7 +69,7 @@ export function CoachTeamRegistrations(options = {}) {
           style: { border: '1px solid #66756e', borderRadius: 12, padding: 12, minWidth: 0 } },
           h('h3', null, athlete.name),
           athlete.signalCount > 0 && h('p', null,
-            `${athlete.signalCount} registreringssignal${athlete.signalCount === 1 ? '' : 'er'}`),
+            `${athlete.signalCount} ${antalOrd(athlete.signalCount, 'registreringssignal', 'registreringssignaler')}`),
           athlete.trainingDays !== null && h('p', null,
             `Træningslog ${model.trainingFrom} – ${model.asOf}: ${athlete.trainingDays}/28 dage registreret.`),
           athlete.nutritionDays !== null && h('p', null,

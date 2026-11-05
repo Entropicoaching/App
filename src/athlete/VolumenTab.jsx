@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 // Volumen-fanen (atletens egen volumen pr. muskelgruppe) — ordre 259.
 // Stå på skuldre af src/dashboard/VolumenKort.jsx (coachens kort, ordre
 // 177/185/210): samme regnestykke (src/volume/beregn.js), samme
@@ -83,7 +84,7 @@ function LegacyVolumenTab({ volumeLogs, volumeLoading }) {
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>Henter…</div>
         ) : ingenDataOverhovedet ? (
           <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
-            Du har ikke gennemført sæt de seneste {ANTAL_UGER_TREND} uger endnu. Når du logger, vises din træningsmængde her.
+            Du har ikke gennemført sæt de seneste {ANTAL_UGER_TREND} {antalOrd(ANTAL_UGER_TREND, 'uge', 'uger')} endnu. Når du logger, vises din træningsmængde her.
           </div>
         ) : (
           <>
@@ -92,7 +93,7 @@ function LegacyVolumenTab({ volumeLogs, volumeLoading }) {
                 Denne uge
               </button>
               <button onClick={() => setVisning('trend')} style={visning === 'trend' ? s.btnPrimary : s.btnGhost}>
-                Seneste {ANTAL_UGER_TREND} uger
+                Seneste {ANTAL_UGER_TREND} {antalOrd(ANTAL_UGER_TREND, 'uge', 'uger')}
               </button>
             </div>
 
@@ -128,7 +129,7 @@ function LegacyVolumenTab({ volumeLogs, volumeLoading }) {
               <>
                 {grupperTrend.length === 0 ? (
                   <div style={{ fontSize: '0.8rem', color: '#4a4844', fontStyle: 'italic' }}>
-                    Ingen sæt gennemført de seneste {ANTAL_UGER_TREND} uger endnu.
+                    Ingen sæt gennemført de seneste {ANTAL_UGER_TREND} {antalOrd(ANTAL_UGER_TREND, 'uge', 'uger')} endnu.
                   </div>
                 ) : (
                   <>

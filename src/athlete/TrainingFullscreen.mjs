@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { createElement as h, useState, useEffect, useRef, useId } from 'react'
 import { findDagensPas, nextSetInSession, sessionSetTotal, sessionLoggedCount } from '../nextSet.js'
 import { fixedRepsEntry } from '../fixedRepsEntry.js'
@@ -98,7 +99,7 @@ export default function TrainingFullscreen(props) {
       h('main', { style: { overflowY: 'auto', minHeight: 0, flex: 1, overflowWrap: 'anywhere' } },
         next ? h('div', { key },
           h('h2', null, ex.name), h('p', null, `Sæt ${next.setNumber} af ${next.totalSets}`),
-          h('p', null, `Plan: ${present(ex.reps)} gentagelser. Intensitet: ${present(ex.intensity)}`),
+          h('p', null, `Plan: ${present(ex.reps)} ${antalOrd(ex.reps, 'gentagelse', 'gentagelser')}. Intensitet: ${present(ex.intensity)}`),
           ex.note && h('p', { style: { whiteSpace: 'pre-wrap' } }, 'Coachkommentar: ', ex.note),
           h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 } },
             ...[['weight', 'Vægt i kg', weight, 'decimal'], ['reps', 'Gentagelser', reps, 'numeric'], ['rpe', 'RPE', input.rpe ?? '', 'decimal']].map(([name, text, value, inputMode]) =>
@@ -108,7 +109,7 @@ export default function TrainingFullscreen(props) {
           h('button', { type: 'button', style: { ...button, width: '100%' }, disabled: approval.current.pending.has(key),
             onClick: approve }, 'Godkendt'),
           h('p', { role: 'timer', 'aria-label': 'Pause mellem sæt' },
-            `Pause: ${remainingTrainingRest(restPause) > 0 ? seconds : 0} sekunder`),
+            `Pause: ${remainingTrainingRest(restPause) > 0 ? `${seconds} ${antalOrd(seconds, 'sekund', 'sekunder')}` : '0 sekunder'}`),
           h('p', null, 'Næste sæt vises, når dette sæt er godkendt.'))
           : h('h2', { role: 'status' }, sessionSetTotal(session) > 0 ? 'Passet er færdigt.' : 'Intet pas i dag.'),
         error && h('p', { role: 'alert' }, error),

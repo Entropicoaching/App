@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h, useId } from 'react'
 import { createWeeklyLetter } from './weeklyLetterModel.mjs'
 
@@ -32,7 +33,7 @@ export default function WeeklyLetter(options = {}) {
       h('p', null, m.training ? `Bekræftede planlagte pas: ${m.training.completed}/${m.training.planned}. Ekstra pas: ${m.training.extra}.` : 'Ugens pas: ukendt grundlag.'),
       !m.context.some(c => c.id === 'nutrition') && h('p', null, m.nutritionDays === null ? 'Ugens kost: ukendt grundlag.' : `Komplette kostdage med dateret proteinmål: ${m.nutritionDays}/7. Øvrige dage er ukendte.`),
       b ? h('section', { 'aria-label': 'Grundlag for fokus' },
-        h('h3', null, b.title), h('p', null, `${b.from} – ${b.to} · ${b.sampleCount} observationer · minimum ${b.minimumSampleCount}.`),
+        h('h3', null, b.title), h('p', null, `${b.from} – ${b.to} · ${b.sampleCount} ${antalOrd(b.sampleCount, 'observation', 'observationer')} · minimum ${b.minimumSampleCount}.`),
         h('p', null, `Beregnet værdi: ${new Intl.NumberFormat('da-DK', { maximumFractionDigits: 2 }).format(b.value)}.`),
         h('p', null, `Regel: ${b.rule}.`), h('p', null, `Beregning: ${b.formula}.`))
         : h('p', null, 'Intet flag er valgt som fokus. Det er ikke en vurdering af atletens helbred.'),

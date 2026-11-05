@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { kostMaalModel } from './model.mjs'
@@ -65,7 +66,7 @@ export function nutritionWeek(props = {}, basis = nutritionBasis(props)) {
   if (!Number.isFinite(kcal) || !Number.isFinite(protein)) return null
   const whole = value => Math.round(value).toLocaleString('da-DK')
   return { days: days.size, kcal, protein,
-    text: `Seneste 7 dage: gns. ${whole(kcal)} kcal / ${whole(protein)} g protein (${days.size} loggede dage)` }
+    text: `Seneste 7 dage: gns. ${whole(kcal)} kcal / ${whole(protein)} g protein (${days.size} ${antalOrd(days.size, 'logget dag', 'loggede dage')})` }
 }
 
 // Compare logged daily totals with the current saved goals, not historical goals
@@ -82,7 +83,7 @@ export function nutritionGoalWeek(props = {}, basis = nutritionBasis(props)) {
   if (kcal === null && protein === null) return null
   const goals = [['energi', kcal], ['protein', protein]].filter(([, count]) => count !== null)
     .map(([label, count]) => `${label} ${count} af 7 dage`).join(' · ')
-  const logged = days.size === 1 ? '1 logget dag' : `${days.size} loggede dage`
+  const logged = `${days.size} ${antalOrd(days.size, 'logget dag', 'loggede dage')}`
   return { days: days.size, kcal, protein,
     text: `Seneste 7 dage med nuværende mål: ${goals} (${logged}).` }
 }

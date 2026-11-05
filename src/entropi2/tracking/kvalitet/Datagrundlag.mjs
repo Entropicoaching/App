@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { BASIS_DOMAINS, weeklyDataBasis } from './weeklyDataBasis.mjs'
 
@@ -23,12 +24,12 @@ export default function Datagrundlag(props = {}) {
       ...model.weeks.map(week => h('section', { key: week.weekStart,
         'aria-label': `Uge ${week.weekStart}`, style: { minWidth: 0, padding: 12, border: '1px solid currentColor', borderRadius: 12 } },
       h('h3', null, `${week.weekStart} – ${week.weekEnd}`),
-      week.partial && h('p', null, `Igangværende uge: ${week.elapsedDays} dage til og med ${week.through}. Dagens registreringer kan fortsat ændres.`),
+      week.partial && h('p', null, `Igangværende uge: ${week.elapsedDays} ${antalOrd(week.elapsedDays, 'dag', 'dage')} til og med ${week.through}. Dagens registreringer kan fortsat ændres.`),
       h('ul', { style: listStyle }, ...BASIS_DOMAINS.map(domain => {
         const basis = week.domains[domain]
         return h('li', { key: domain }, h('strong', null, `${labels[domain]}: `),
           basis.state !== 'ready' ? `${states[basis.state]} Dækning er ukendt.`
-            : `${basis.recordedDays}/${week.elapsedDays} dage registreret; ${basis.valueDays} med værdigrundlag.`)
+            : `${basis.recordedDays}/${week.elapsedDays} ${antalOrd(week.elapsedDays, 'dag', 'dage')} registreret; ${basis.valueDays} med værdigrundlag.`)
       })),
       h('details', null,
         h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Se manglende dage og værdigrundlag'),

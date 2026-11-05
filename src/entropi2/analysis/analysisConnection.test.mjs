@@ -53,10 +53,10 @@ test('actual connected leaf imports display normalized four-week data', () => {
     nutritionDays: ready([row({ goalMet: true })]), weights: ready([row({ kg: 80 })]) }
   const dom = renderTree(Analysis(props({ mineData })))
   assert.match(dom.textContent, /08.10.2026 til 04.11.2026/)
-  assert.match(dom.textContent, /1 registrerede, gennemførte pas/)
+  assert.match(dom.textContent, /1 registreret, gennemført pas/)
   assert.doesNotMatch(dom.textContent, /Rekorder i perioden/)
-  assert.match(dom.textContent, /1 af 1 kostdage/)
-  assert.match(dom.textContent, /1 dage med registreret kropsvægt/)
+  assert.match(dom.textContent, /1 af 1 kostdag/)
+  assert.match(dom.textContent, /1 dag med registreret kropsvægt/)
 })
 
 test('legacy bridge uses real logs; absent 28-day session coverage and meal goals stay unknown', () => {
@@ -68,7 +68,7 @@ test('legacy bridge uses real logs; absent 28-day session coverage and meal goal
   assert.equal(m.nutrition.loggedDays, 1); assert.equal(m.nutrition.assessedDays, 0)
   assert.equal(m.weight.weeks[3].kg, 80.5)
   const text = renderTree(Analysis(p)).textContent
-  assert.match(text, /Loggede kostdage1 registrerede dage af 28/)
+  assert.match(text, /Loggede kostdage1 registreret dag af 28/)
   assert.doesNotMatch(text, /Ingen kostdage med et kendt mål|ukendt målstatus/)
 })
 

@@ -40,6 +40,6 @@ test('synthetic actual view: stale/invalid data remain explicit', () => {
   const data = fixture(); data.readinessRows = [7, 8, 9, 10].map(i => readiness(i))
   data.readinessRows[0].sleep_hours = Infinity; data.exerciseLogs[0].weight = null
   const tree = render({ enabled: true, snapshot: data })
-  for (const text of ['For lidt data', '3/7 dage', 'sidste to dage', 'ugyldige dagsformmålinger', 'usikre sætrækker', 'Ukendt belastning']) assert.ok(tree.textContent.includes(text), text)
+  for (const text of ['For lidt data', '3/7 dage', 'sidste to dage', '1 ugyldig dagsformmåling tæller som ukendt', '1 usikker sætrække', 'Ukendt belastning']) assert.ok(tree.textContent.includes(text), text)
   assert.doesNotMatch(tree.textContent, /Forsigtig restitutionsstatus/)
 })

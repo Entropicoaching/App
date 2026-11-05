@@ -77,7 +77,7 @@ test('actual copied reader -> analysis: failure retains host cache but hides met
   retry.resolve({ data: [row({ weight: 83, logged_at: '2026-11-05' })], error: null })
   await pending
   assert.equal(f.props.weightStatus.state, 'ready')
-  assert.match(f.text(), /83 kg|1 dage med registreret kropsvægt/)
+  assert.match(f.text(), /83 kg|1 dag med registreret kropsvægt/)
   assert.match(f.text(), /seneste vejning 05.11.2026/)
   assert.doesNotMatch(f.text(), /kunne ikke hentes|Hent igen/)
   assert.equal(f.calls.length, 2)

@@ -19,6 +19,9 @@ for (const [path, source] of Object.entries(fixture.sources)) {
 for (const name of ['FremgangTab.jsx', 'EnkelFremgangTab.jsx', 'fremgangFokus.mjs', 'analyseAtlet1.mjs']) {
   writeFileSync(new URL('final/src/athlete/' + name, layout), readFileSync(new URL('./' + name, import.meta.url)))
 }
+const countHelper = new URL('final/src/entropi2/antalOrd.mjs', layout)
+mkdirSync(new URL('./', countHelper), { recursive: true })
+writeFileSync(countHelper, readFileSync(new URL('../entropi2/antalOrd.mjs', import.meta.url)))
 const dom = new URL('./analyseAtlet1Dom.mjs', import.meta.url).href
 registerHooks({
   resolve(specifier, context, next) {

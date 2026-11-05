@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { developmentModel, developmentNumber as number, developmentDate as date } from './developmentModel.mjs'
 
@@ -57,7 +58,7 @@ export default function DevelopmentView(props = {}) {
           h('summary', { style: summaryStyle }, 'Se udviklingen over 26 uger'),
           h('figure', { 'aria-label': `${lift.lift}: e1RM over 26 uger`, style: { margin: '12px 0' } },
             h('figcaption', null, 'Bedste e1RM pr. uge · kg · skala pr. løft'),
-            h('div', { role: 'img', 'aria-label': `${lift.lift}: ${lift.observed} uger med data. Uger uden data har ingen søjle.`,
+            h('div', { role: 'img', 'aria-label': `${lift.lift}: ${lift.observed} ${antalOrd(lift.observed, 'uge', 'uger')} med data. Uger uden data har ingen søjle.`,
               style: { display: 'grid', gridTemplateColumns: 'repeat(26, minmax(0, 1fr))', gap: 2, height: 72, alignItems: 'end', marginTop: 8 } },
               ...lift.points.map(point => h('span', { key: point.start, 'aria-hidden': 'true',
                 ...(point.value === null ? {} : { 'data-history-bar': true }),
@@ -100,13 +101,13 @@ export default function DevelopmentView(props = {}) {
         h('tbody', null, ...observedWeeks.map(w => h('tr', { key: w.start },
           h('th', { scope: 'row', style: { textAlign: 'left', padding: 4, fontWeight: 400 } }, date(w.start)),
           h('td', { style: { padding: 4 } }, w.tonnage === null ? 'Volumen kan ikke beregnes' : `${number(w.tonnage)} kg × reps · ${w.sets} sæt`),
-          hasIntensity && h('td', { style: { padding: 4 } }, w.highShare === null ? '—' : `${number(w.highShare)} % af ${w.classified} målte sæt`,
-            w.unknown > 0 && ` · ${w.unknown} ukendte`)))))),
+          hasIntensity && h('td', { style: { padding: 4 } }, w.highShare === null ? '—' : `${number(w.highShare)} % af ${w.classified} ${antalOrd(w.classified, 'målt sæt', 'målte sæt')}`,
+            w.unknown > 0 && ` · ${w.unknown} ${antalOrd(w.unknown, 'ukendt', 'ukendte')}`)))))),
     model.forecast && h('section', { 'aria-label': 'Prognose til næste stævne' },
       h('h3', null, 'Frem mod næste stævne'),
       text(`Planlagt stævne: ${date(model.forecast.meetDate)}.`),
       ...forecastLifts.map(lift => h('p', { key: lift.lift },
-        `${lift.lift}: skøn ${number(lift.estimate)} kg e1RM · modelmargin ${number(lift.lower)}–${number(lift.upper)} kg (${lift.weeks} uger med data, ${date(lift.firstDay)}–${date(lift.lastDay)}).`)),
+        `${lift.lift}: skøn ${number(lift.estimate)} kg e1RM · modelmargin ${number(lift.lower)}–${number(lift.upper)} kg (${lift.weeks} ${antalOrd(lift.weeks, 'uge', 'uger')} med data, ${date(lift.firstDay)}–${date(lift.lastDay)}).`)),
       h('details', null, h('summary', { style: summaryStyle }, 'Sådan læses prognosen'),
         text('Prognosen kræver mindst 8 uger med tunge sæt over mindst 56 dage inden for 12 uger. Nyeste sæt højst 14 dage gammelt; stævnet højst 8 uger fra seneste sæt. Kun løft med tilstrækkeligt grundlag vises. Modelmarginen er ikke et statistisk konfidensinterval. Tal med coachen om skønnet.'))),
     model.meetMessage && model.meetMessage.includes('ugyldig') && text(model.meetMessage),

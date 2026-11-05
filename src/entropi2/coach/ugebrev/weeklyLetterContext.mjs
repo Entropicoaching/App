@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { calendarDay } from '../../../calendarDate.js'
 import { buildNutritionReport } from '../../kostplan/rapport/nutritionReport.mjs'
 
@@ -54,7 +55,7 @@ function nutritionContext(data) {
     return { id: 'nutrition', title: 'Kost i forhold til plan', from: report.from, to: report.date,
       source: 'kostplan/rapport: måltidslog og dateret planhistorik',
       sampleCount: report.week.loggedDays, elapsedDays: report.week.elapsedDays, metrics,
-      text: `Du har logget måltider på ${report.week.loggedDays}/${report.week.elapsedDays} dage (${report.from} – ${report.date}): ${metrics.map(m => m.text).join('; ')}. Loggen viser ikke nødvendigvis hele dit indtag, og dage uden log er ukendte.` }
+      text: `Du har logget måltider på ${report.week.loggedDays}/${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} (${report.from} – ${report.date}): ${metrics.map(m => m.text).join('; ')}. Loggen viser ikke nødvendigvis hele dit indtag, og dage uden log er ukendte.` }
   } catch {
     // Failed/invalid supplied reads are errors, not authoritatively empty reads.
     throw Error('Kostgrundlaget kunne ikke bruges')
@@ -71,7 +72,7 @@ export function weeklyLetterContext(data, evaluation) {
       minimumSampleCount: 4, value, source: 'atletens egne søvnregistreringer',
       text: value === null
         ? `Du har registreret søvn på ${count}/7 dage (${from} – ${asOf}); det er for lidt til et ugesnit.`
-        : `Din registrerede søvn var i gennemsnit ${number(value)} timer på ${count}/7 dage (${from} – ${asOf}). Dage uden registrering er ukendte.` })
+        : `Din registrerede søvn var i gennemsnit ${number(value)} ${antalOrd(value, 'time', 'timer')} på ${count}/7 dage (${from} – ${asOf}). Dage uden registrering er ukendte.` })
   }
   const recovery = recoveryContext(data, from, asOf), nutrition = nutritionContext(data)
   if (recovery) contexts.push(recovery)

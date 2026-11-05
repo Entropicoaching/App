@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { addCalendarDays, calendarDay, calendarDaysBetween } from '../../calendarDate.js'
 import { parseInputNumber } from '../../inputValues.js'
 import { rpeOrigin } from '../../rpeEvidence.mjs'
@@ -110,7 +111,7 @@ export function weeklyShareSummary(props = {}, now) {
     measured.length > 0 && Number.isFinite(tonnage)
       ? `Tonnage: ${format(tonnage)} kg${measured.length < rows.filter(r => !r.skipped).length ? ' (kun gyldige sæt)' : ''}.` : null,
     best.length && !props.fremgangError ? `Bedste sæt: ${best.join('; ')}.` : null,
-    rpes.length ? `Gennemsnitlig RPE: ${format(meanRpe)} (${rpes.length} atletregistreringer).` : null,
+    rpes.length ? `Gennemsnitlig RPE: ${format(meanRpe)} (${rpes.length} ${antalOrd(rpes.length, 'atletregistrering', 'atletregistreringer')}).` : null,
     meals > 0 ? `Kostdage logget: ${meals} af 7.` : null,
   ].filter(Boolean)
   if (!lines.length) return ''

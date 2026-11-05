@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { weeklyIntensity } from './intensityModel.mjs'
 
@@ -17,7 +18,7 @@ export default function IntensityView(props = {}) {
     ...model.weeks.filter(week => week.classified > 0).map(week => h('section', { key: week.start,
       'aria-label': `${date(week.start)} til ${date(week.end)}` },
     h('h3', null, `${date(week.start)} til ${date(week.end)}`),
-    h('p', null, `${week.classified} af ${week.total} registrerede sæt fordelt. ${week.unknown} sæt uden gyldig måling eller e1RM-reference.`),
+    h('p', null, `${week.classified} af ${week.total} ${antalOrd(week.total, 'registreret sæt', 'registrerede sæt')} fordelt. ${week.unknown} sæt uden gyldig måling eller e1RM-reference.`),
     week.total === 0 ? h('p', null, 'Ingen registrerede sæt i ugen.')
       : h('ul', { style: { paddingLeft: 20 } }, ...week.zones.map(zone =>
         h('li', { key: zone.key }, `${zone.label}: ${zone.count} sæt (${zone.share === null ? 'andel ukendt' : percent.format(zone.share)}).`))))),

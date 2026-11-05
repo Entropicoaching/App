@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { mineDataModel, mineDataVisibility } from './mineDataModel.mjs'
 
@@ -27,22 +28,22 @@ export default function MineData(props = {}) {
     text(`Seneste 4 uger · ${date(model.start)} til ${date(model.end)} (begge dage med).`),
     visible.error && h('p', { role: 'alert', style: styles.text }, 'Dine registreringer kunne ikke hentes. Prøv at åbne analyse igen.'),
     visible.sessions && card('sessions', props.sessionsLabel ?? (props.sessionsNote ? 'Pas i den viste programuge' : 'Pas gennemført'),
-      text(`${sessions.completed} registrerede, gennemførte pas.`),
+      text(`${sessions.completed} ${antalOrd(sessions.completed, 'registreret, gennemført pas', 'registrerede, gennemførte pas')}.`),
       text('Kun færdigregistrerede pas tæller med. Delvise og oversprungne pas er udeladt.')),
     visible.records && card('records', 'Rekorder i perioden',
       h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } }, ...lifts.map(lift =>
         h('li', { key: lift.exerciseId }, `${lift.exercise}: ${number.format(lift.weightKg)} kg × ${lift.reps} · ${date(lift.date)}`))),
-      records.lifts.length > 3 ? text(`Viser 3 af ${records.lifts.length} øvelser.`) : null,
+      records.lifts.length > 3 ? text(`Viser 3 af ${records.lifts.length} ${antalOrd(records.lifts.length, 'øvelse', 'øvelser')}.`) : null,
       text('Bedste registrerede sæt pr. øvelse i de 4 uger: højeste vægt, derefter flest gentagelser. Det er ikke en livstidsrekord.')),
-    visible.nutrition && card('nutrition', 'Loggede kostdage', text(`${nutrition.loggedDays} registrerede dage af 28.`),
+    visible.nutrition && card('nutrition', 'Loggede kostdage', text(`${nutrition.loggedDays} ${antalOrd(nutrition.loggedDays, 'registreret dag', 'registrerede dage')} af 28.`),
       text('Dage med en kostlog er ikke nødvendigvis hele kostdage.')),
     visible.nutrition && nutrition.assessedDays > 0 && card('nutrition-goals', 'Kostdage mod mål',
-      text(`${nutrition.goalDays} af ${nutrition.assessedDays} kostdage med vurderbart mål nåede dagens mål.`),
+      text(`${nutrition.goalDays} af ${nutrition.assessedDays} ${antalOrd(nutrition.assessedDays, 'kostdag', 'kostdage')} med vurderbart mål nåede dagens mål.`),
       text('Kun registrerede dage med kendt målstatus indgår i sammenligningen.')),
     visible.weight && card('weight', 'Kropsvægt',
-      text(`${weight.recordedDays} dage med registreret kropsvægt.`),
+      text(`${weight.recordedDays} ${antalOrd(weight.recordedDays, 'dag', 'dage')} med registreret kropsvægt.`),
       h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } }, ...weight.weeks.filter(week => week.kg !== null).map(week =>
-        h('li', { key: week.start }, `${date(week.start)}–${date(week.end)}: ${number.format(week.kg)} kg (${week.count} dage)`))),
+        h('li', { key: week.start }, `${date(week.start)}–${date(week.end)}: ${number.format(week.kg)} kg (${week.count} ${antalOrd(week.count, 'dag', 'dage')})`))),
       weight.deltaKg !== null && text(`Forskel mellem gennemsnit for perioderne fra ${date(weight.from)} og ${date(weight.to)}: ${number.format(Math.abs(weight.deltaKg) < 0.05 ? 0 : weight.deltaKg)} kg.`),
       text('Gennemsnit i perioder på 7 dage. Manglende målinger udfyldes ikke. Ændringen beskriver registreringerne.')))
 }

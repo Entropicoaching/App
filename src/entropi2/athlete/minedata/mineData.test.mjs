@@ -103,8 +103,8 @@ test('view displays real projections, Danish units, coverage and neutral weight 
     records: ready([row({ id: 'r', exerciseId: 's', exercise: 'Squat', weightKg: 102.5, reps: 5 })]),
     nutritionDays: ready([row({ goalMet: true })]), weights: ready([row({ date: '2026-10-07', kg: 80 }), row({ kg: 79 })]) }))
   const s = content(v)
-  for (const pattern of [/1 registrerede, gennemførte pas/, /102,5 kg × 5/, /1 af 1 kostdage/,
-    /1 registrerede dage af 28/, /-1 kg/, /ikke en livstidsrekord/]) assert.match(s, pattern)
+  for (const pattern of [/1 registreret, gennemført pas/, /102,5 kg × 5/, /1 af 1 kostdag/,
+    /1 registreret dag af 28/, /-1 kg/, /ikke en livstidsrekord/]) assert.match(s, pattern)
 })
 test('untrusted exercise labels remain text; records list capped at three', () => {
   const records = ready(Array.from({ length: 4 }, (_, i) => row({ id: `r${i}`, exerciseId: `e${i}`,

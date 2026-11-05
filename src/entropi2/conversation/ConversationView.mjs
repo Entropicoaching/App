@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { feedbackText, videoLabel, conversationDate, messageText } from './conversationModel.mjs'
 import { weeklyConversationSummary } from './uge/weeklyConversationSummary.mjs'
 import { conversationWeek } from './conversationWeek.mjs'
@@ -175,7 +176,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
           analyses: state.thread.filter(item => item.kind === 'video').map(item => item.value),
         })
         week.hidden = false
-        weekLine.textContent = `Denne uge · ${counts.totalMessages} beskeder · ${counts.unansweredMessages} ubesvarede · ${counts.videoFeedback} video-feedback`
+        weekLine.textContent = `Denne uge · ${counts.totalMessages} ${antalOrd(counts.totalMessages, 'besked', 'beskeder')} · ${counts.unansweredMessages} ${antalOrd(counts.unansweredMessages, 'ubesvaret', 'ubesvarede')} · ${counts.videoFeedback} video-feedback`
         weekDetails.hidden = counts.totalMessages === 0 && counts.videoFeedback === 0
         if (!weekDetails.hidden)
           weekCounts.textContent = `${counts.athleteMessages} fra atleten · ${counts.coachMessages} fra coachen. Ubesvarede er atletbeskeder uden en senere coachbesked i ugen. Video-feedback tælles efter delingstidspunktet.`
@@ -225,7 +226,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     const ordered = [...state.thread.filter(isUnread), ...state.thread.filter(item => !isUnread(item))]
     firstUnread = null
     jump.hidden = unread === 0; jump.disabled = unread === 0
-    jump.textContent = `${unread} ulæste · Spring til første ulæste`
+    jump.textContent = `${unread} ${antalOrd(unread, 'ulæst', 'ulæste')} · Spring til første ulæste`
     // A read acknowledgement can reorder the list. Restore only the toggle
     // that owns focus at this update, never steal focus back after an async read.
     const focusedKey = Array.from(list.children).find(li => li.children[0] === doc.activeElement)?.dataset.key

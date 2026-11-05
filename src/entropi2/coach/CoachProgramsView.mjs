@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { hasUndatedPlannedWeek } from './coachModel.mjs'
@@ -29,7 +30,7 @@ export default function CoachProgramsView({ context, openProfile }) {
             (entry.lastWeek !== null ? ` · Programuge ${entry.lastWeek}` : '')),
       !undated && entry.weeksLeft !== null && h('span', { style: { display: 'block' } },
         entry.daysLeft < 0 ? 'Programmet er udløbet' :
-          `${number.format(entry.weeksLeft)} uge${entry.weeksLeft === 1 ? '' : 'r'} tilbage` +
+          `${number.format(entry.weeksLeft)} ${antalOrd(entry.weeksLeft, 'uge', 'uger')} tilbage` +
             (entry.urgency === 'red' ? ' · Under 1 uge' : entry.urgency === 'yellow' ? ' · Under 2 uger' : '')),
       entry.nextCompetition && h('span', { style: { display: 'block' } }, `Næste stævne: ${date(entry.nextCompetition)}`)))
   }))

@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { meetPrognose } from './prognoseModel.mjs'
 
@@ -28,7 +29,7 @@ export default function PrognoseView(props = {}) {
       : h('p', null, lift.message),
     lift.status === 'ready' && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Datagrundlag'),
-      h('p', null, `${lift.weeks} uger med tunge sæt fra ${date(lift.firstDay)} til ${date(lift.lastDay)}. Bedste e1RM pr. kalenderuge.`)))),
+      h('p', null, `${lift.weeks} ${antalOrd(lift.weeks, 'uge', 'uger')} med tunge sæt fra ${date(lift.firstDay)} til ${date(lift.lastDay)}. Bedste e1RM pr. kalenderuge.`)))),
   h('details', null, h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Metode og begrænsninger'),
     h('p', null, 'e1RM er et beregnet enrepetitionsmaksimum efter Epley: vægt × (1 + gentagelser / 30). Kun bekræftede tunge sæt med 1–8 gentagelser i kendte programblokke fra de seneste 12 uger. Varianter, deload, taper og aflastning er udeladt.'),
     h('p', null, 'En ret linje gennem ugemaksima fremskrives til datoen. Mindst 8 uger med data og mindst 8 ugers dataspænd; seneste sæt højst 14 dage gammelt. Højst 8 uger fra seneste sæt til stævne.'),

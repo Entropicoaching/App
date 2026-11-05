@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 // Opt-in local model. No global storage access and no screen integration.
 export const MOBILITY_DONE_PREFIX = 'entropi2:mobility:done:v1:'
 export const MOBILITY_DONE_LIMIT = 400
@@ -88,5 +89,5 @@ export function mobilityDoneWeek({ enabled = false, athleteId, storage, screenDa
   })
   const completed = days.reduce((sum, date) => sum + date.count, 0)
   return { weekStart: dates[0], weekEnd: dates[6], days, completed, target: weeklyTarget,
-    label: `${completed} af ${weeklyTarget} rutiner denne uge`, error: history.error }
+    label: `${completed} af ${weeklyTarget} ${antalOrd(weeklyTarget, 'rutine', 'rutiner')} denne uge`, error: history.error }
 }

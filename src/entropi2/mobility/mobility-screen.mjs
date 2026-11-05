@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { mobilityModel } from './mobility-model.mjs'
 import { markMobilityDone, mobilityDoneWeek } from './mobilityDone.mjs'
 
@@ -78,7 +79,7 @@ export function mountMobility(root, options = {}) {
       const reason = model.selected.date && model.selected.date !== model.screenDate
         ? model.recommendation.reason.replace(/^Dagens /, 'Næste pas med ') : model.recommendation.reason
       element('p', reason, before)
-      element('p', `${model.routine.length} øvelser · Følg øvelsernes dosering.`, before)
+      element('p', `${model.routine.length} ${antalOrd(model.routine.length, 'øvelse', 'øvelser')} · Følg øvelsernes dosering.`, before)
       if (model.selected.date) element('p', danishDate(model.selected.date), before)
       if (done) element('p', 'Rutine gennemført i dag · Gemt på denne enhed.', before).setAttribute('role', 'status')
       model.routine.forEach(ex => exercise(ex, before))
@@ -98,13 +99,13 @@ export function mountMobility(root, options = {}) {
       element('p', 'Ugeoversigten kunne ikke læses på denne enhed.', overview).setAttribute('role', 'alert')
       if (week.error !== 'invalid-input') action('Hent igen', () => reload('week'), overview)
     } else {
-      element('p', `${week.completed} ${week.completed === 1 ? 'rutine' : 'rutiner'} gennemført på denne enhed`, overview).setAttribute('role', 'status')
+      element('p', `${week.completed} ${antalOrd(week.completed, 'rutine', 'rutiner')} gennemført på denne enhed`, overview).setAttribute('role', 'status')
       const days = element('ul', undefined, overview)
       Object.assign(days.style, { display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '0', listStyle: 'none' })
       const labels = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn']
       week.days.forEach((day, i) => {
         const item = element('li', `${labels[i]} ${day.done ? '✓' : '–'}`, days)
-        item.setAttribute('aria-label', `${labels[i]} ${danishDate(day.day)}: ${day.count} ${day.count === 1 ? 'rutine' : 'rutiner'} gennemført på denne enhed`)
+        item.setAttribute('aria-label', `${labels[i]} ${danishDate(day.day)}: ${day.count} ${antalOrd(day.count, 'rutine', 'rutiner')} gennemført på denne enhed`)
       })
     }
     // Marc 3. nov. (keep it simple): hjemmeoevelser vises kun, naar der er nogen; ingen teknisk lagringstekst.

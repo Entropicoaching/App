@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 
@@ -54,7 +55,7 @@ export function coachNutritionLines(props, day, athletes, rosterReady) {
     const proteinReachedDays = proteinTarget > 0
       ? [...days.values()].filter(d => d.protein + 1e-9 >= proteinTarget).length : null
     const proteinProgress = proteinReachedDays !== null
-      ? ` · Protein nået ${proteinReachedDays} af ${days.size} dage` : ''
+      ? ` · Protein nået ${proteinReachedDays} af ${days.size} ${antalOrd(days.size, 'dag', 'dage')}` : ''
     result.set(athlete.id, { from: source.from, through: day, days: days.size, kcal, protein,
       kcalTarget: kcalTarget > 0 ? kcalTarget : null,
       proteinTarget: proteinTarget > 0 ? proteinTarget : null, proteinReachedDays,

@@ -14,7 +14,7 @@ test('review: frozen report is deterministic, bounded and copies no identity or 
   assert.deepEqual(first, createCoachMessageDraft(report, 'review-id'))
   assert.match(first.text, /4 pas logget mod 2 planlagte/)
   assert.match(first.text, /RPE\) 6,3/)
-  assert.match(first.text, /3 af de 7 loggede dage/)
+  assert.match(first.text, /3 af 7 loggede dage/)
   assert.doesNotMatch(first.text, /<|review-id|gennemført|anbefal|øge|sænke/)
   assert.ok(first.text.length < 750)
 })
@@ -26,7 +26,7 @@ test('review: every seven-day combination uses logged days as the protein denomi
         nutrition: { logged, reached, proteinGoal: 90 } }] }, 'review-id')
       assert.match(result.text, new RegExp(`kost på ${logged} af de seneste 7 dage`))
       assert.equal(result.text.includes('Proteinmålet'), logged > 0 && reached <= logged)
-      if (logged > 0 && reached <= logged) assert.ok(result.text.includes(`${reached} af de ${logged} loggede dage`))
+      if (logged > 0 && reached <= logged) assert.ok(result.text.includes(`${reached} af ${logged} ${logged === 1 ? 'logget dag' : 'loggede dage'}`))
     }
   }
 })

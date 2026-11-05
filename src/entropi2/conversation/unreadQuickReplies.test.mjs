@@ -219,7 +219,7 @@ test('failed read acknowledgement retains unread count and can be retried on exp
   await f.controller.refresh(); f.failSeen(true)
   const list = find(f.el, 'ol')[0]
   await list.children[0].children[0].event('click')
-  assert.equal(button(f.el, '1 ulæste · Spring til første ulæste').hidden, false)
+  assert.equal(button(f.el, '1 ulæst · Spring til første ulæste').hidden, false)
   assert.equal(list.children[0].children[1].hidden, false)
   assert.equal(f.controller.snapshot().thread[0].unreadCoach, true)
   f.failSeen(false); await list.children[0].children[0].event('click')

@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { blokslutModel, formatBlokslutNumber as number } from './blokslutModel.mjs'
 
@@ -30,6 +31,6 @@ export default function BlokslutView(props = {}) {
           : w.sets === 0 ? 'Ingen bekræftede sæt.' : `${number(w.tonnage)} kg løftet · ${number(w.sets)} sæt.`}`))),
       h('p', null, 'e1RM er et beregnet enrepetitionsmaksimum, ikke en testet rekord. Bedste tunge sæt i første og seneste blokuge sammenlignes kun i samme rep-område. Varianter, lette sæt, deload og taper indgår ikke i styrketallene.'),
       ...m.lifts.filter(row => row.delta !== null).map(row => h('p', { key: row.lift },
-        `${row.lift}: startsæt ${date(row.baseline.date)}, seneste sæt ${date(row.current.date)} · ${row.baseline.zone} gentagelser.`)),
+        `${row.lift}: startsæt ${date(row.baseline.date)}, seneste sæt ${date(row.current.date)} · ${row.baseline.zone} ${antalOrd(row.baseline.zone, 'gentagelse', 'gentagelser')}.`)),
       h('p', null, 'Volumen er summen af registrerede kg × gentagelser for alle øvelser, også lette sæt og deload. Uger tælles fra blokkens start. Et pas er gennemført, når alle planlagte sæt er bekræftet med gyldige målinger; oversprungne sæt tæller ikke som gennemført. Manglende logning beviser ikke manglende træning. Programmet ændres ikke.')))
 }

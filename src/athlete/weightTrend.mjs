@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { dataEnoughEnabled, weightWindows, dataMessage } from '../dataEnough.mjs'
 // Grupper efter antal registreringer, ikke kalenderuger. Input er datosorteret.
 export function weightTrendText(sorted, today = new Date().toLocaleDateString('en-CA')) {
@@ -5,7 +6,7 @@ export function weightTrendText(sorted, today = new Date().toLocaleDateString('e
     const w = weightWindows(sorted, today)
     if (!w.ready) return dataMessage('D46')
     const period = rs => [...new Set(rs.map(r => r.logged_at.slice(0, 10)))].sort()
-    return `Observeret forskel: ${w.diff.toFixed(1)} kg. ${period(w.prior).join(', ')} (${w.prior.length} vejninger) mod ${period(w.recent).join(', ')} (${w.recent.length} vejninger).`
+    return `Observeret forskel: ${w.diff.toFixed(1)} kg. ${period(w.prior).join(', ')} (${w.prior.length} ${antalOrd(w.prior.length, 'vejning', 'vejninger')}) mod ${period(w.recent).join(', ')} (${w.recent.length} ${antalOrd(w.recent.length, 'vejning', 'vejninger')}).`
   }
   const split = Math.max(0, sorted.length - 7)
   const recent = sorted.slice(split)
@@ -17,6 +18,6 @@ export function weightTrendText(sorted, today = new Date().toLocaleDateString('e
   const change = Math.abs(diff) < 0.3 ? '= stabil'
     : diff > 0 ? `↑ +${diff.toFixed(1)} kg` : `↓ ${Math.abs(diff).toFixed(1)} kg`
   const date = day => day.split('-').reverse().join('.')
-  const period = rows => `${date(rows[0].logged_at)} til ${date(rows[rows.length - 1].logged_at)} (${rows.length} ${rows.length === 1 ? 'vejning' : 'vejninger'})`
+  const period = rows => `${date(rows[0].logged_at)} til ${date(rows[rows.length - 1].logged_at)} (${rows.length} ${antalOrd(rows.length, 'vejning', 'vejninger')})`
   return `${change}. Gennemsnit for ${period(recent)} sammenlignet med ${period(prior)}.`
 }

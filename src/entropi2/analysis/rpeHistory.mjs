@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { calendarDay, addCalendarDays, calendarDaysBetween } from '../../calendarDate.js'
 import { mainLiftName } from '../../exerciseSetView.js'
 import { explicitRpe } from '../../dataEnough.mjs'
@@ -80,7 +81,7 @@ export function rpeHistory(props = {}, now = new Date()) {
         const value = rated.length ? rated.reduce((sum, r) => sum + r.rpe, 0) / rated.length : null
         return { ...week, value, count: rated.length, excluded: sets.length - rated.length,
           text: unavailable || (value === null ? 'Ingen RPE-data' : `RPE ${format.format(value)}`),
-          coverage: unavailable ? 'Datagrundlag ikke klar.' : `${rated.length} svar af ${sets.length} registrerede sæt. ${sets.length - rated.length} uden gyldigt eget RPE-svar.` }
+          coverage: unavailable ? 'Datagrundlag ikke klar.' : `${rated.length} svar af ${sets.length} ${antalOrd(sets.length, 'registreret sæt', 'registrerede sæt')}. ${sets.length - rated.length} uden gyldigt eget RPE-svar.` }
       }),
     })),
   }

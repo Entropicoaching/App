@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 // ORDRE 268 — "atleten kan se om ugen blev som planlagt". Stå på skuldre af
 // src/dashboard/VolumenKort.jsx + VolumenGrafForloeb.jsx (ordre 210, coachens
 // "planlagt mod gennemført"-visning og -beregning) og src/athlete/VolumenTab.jsx
@@ -144,7 +145,7 @@ function ForloebVisning({ uger, ugerUdenDato }) {
       </div>
       {ugerUdenDato > 0 && (
         <div style={{ fontSize: '0.6rem', color: '#e0a555', marginTop: '0.6rem' }}>
-          {ugerUdenDato} uger har ingen dato og er ikke med i søjlerne ovenfor
+          {ugerUdenDato} {antalOrd(ugerUdenDato, 'uge', 'uger')} har ingen dato og er ikke med i søjlerne ovenfor
         </div>
       )}
     </>

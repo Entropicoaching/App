@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { markerAt, seconds } from './model.mjs'
 
 const buttonStyle = { minHeight: 44, padding: '10px 14px', borderRadius: 8, border: '1px solid #77746b', background: '#25251f', color: '#edeae2', font: 'inherit', cursor: 'pointer' }
@@ -30,7 +31,7 @@ export function renderUpload(h, { state: s, controller: c, renderPreview, onChoo
     s.step === 1 && h('div', null, h('p', null, 'Giv coachen sammenhængen fra dit træningspas.'),
       h('label', null, 'Løft og sæt', h('select', { style: inputStyle, value: s.choice?.key || '', disabled: locked,
         onChange: e => c.choose(e.target.value) }, h('option', { value: '' }, 'Vælg dit sæt'),
-      ...s.options.map(o => h('option', { key: o.key, value: o.key }, `${o.exercise_name} · sæt ${o.set_number} · ${o.load_kg ?? '—'} kg · ${o.reps ?? '—'} gentagelser`)))),
+      ...s.options.map(o => h('option', { key: o.key, value: o.key }, `${o.exercise_name} · sæt ${o.set_number} · ${o.load_kg ?? '—'} kg · ${o.reps ?? '—'} ${antalOrd(o.reps ?? '—', 'gentagelse', 'gentagelser')}`)))),
       !s.options.length && h('p', { role: 'status' }, 'Der er ingen sæt at vælge i dette pas.')),
     s.step === 2 && h('div', null,
       h('p', null, 'Coachen ser præcis det, der betyder noget.'),

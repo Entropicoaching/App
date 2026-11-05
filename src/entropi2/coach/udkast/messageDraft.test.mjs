@@ -25,7 +25,7 @@ test('actual week evaluation produces a short editable, factual Danish suggestio
   const p = props(), before = structuredClone(p), result = draft(p)
   assert.equal(result.requiresCoachReview, true)
   for (const s of ['1 pas logget mod 3 planlagte', 'mindst ét sæt', 'RPE) 8,5',
-    '1 af de seneste 7 dage', 'nået på 1 af de 1 loggede dage', 'Hvordan har ugen føltes']) assert.ok(result.text.includes(s), s)
+    '1 af de seneste 7 dage', 'nået på 1 af 1 logget dag', 'Hvordan har ugen føltes']) assert.ok(result.text.includes(s), s)
   assert.ok(result.text.length < 750)
   assert.deepEqual(p, before)
   assert.deepEqual(draft(p), result)

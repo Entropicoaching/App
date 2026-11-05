@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h, useEffect, useState } from 'react'
 import SleepOverview from './SleepOverview.mjs'
 import { buildSleepOverview } from './sleepModel.mjs'
@@ -15,7 +16,7 @@ export function CoachSleepContent({ snapshot, weeks = 8, onWeeks, onRetry } = {}
     h('label', { style: { display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' } },
       'Periode', h('select', { value: weeks, style: { minHeight: 44 },
         onChange: event => onWeeks(Number(event.target.value)) },
-      ...[4, 6, 8].map(value => h('option', { key: value, value }, `${value} uger`)))),
+      ...[4, 6, 8].map(value => h('option', { key: value, value }, `${value} ${antalOrd(value, 'uge', 'uger')}`)))),
     h('p', null, 'Afsluttede dage i dansk tid. Selvregistrerede søvntimer; ingen årsagspåstande.'),
     h(SleepOverview, { enabled: true, snapshot: data, weeks, hoursOnly: true, onRetry }))
 }

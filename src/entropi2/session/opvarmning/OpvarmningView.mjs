@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { warmupSets } from './warmupSets.mjs'
 
 const kg = value => String(value).replace('.', ',')
@@ -23,7 +24,7 @@ export function createOpvarmning(document, props = {}) {
   section.append(el('p', `Forslag frem mod første arbejdssæt på ${kg(props.firstWorkSet.weight)} kg. Vægte afrundet til 2,5 kg.`))
   const list = el('ol')
   for (const set of sets) {
-    list.append(el('li', `${kg(set.weight)} kg × ${set.reps} ${set.reps === 1 ? 'gentagelse' : 'gentagelser'} (${set.percent} % af arbejdsvægten)`))
+    list.append(el('li', `${kg(set.weight)} kg × ${set.reps} ${antalOrd(set.reps, 'gentagelse', 'gentagelser')} (${set.percent} % af arbejdsvægten)`))
   }
   section.append(list, el('p', 'Tilpas til dit udstyr og aftalen med din coach. Opvarmningssæt registreres ikke som arbejdssæt.'))
   return section

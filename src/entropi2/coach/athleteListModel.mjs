@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 const DAY_MS = 86400000
 
 export const MISSING_LOG_DAYS = 3
@@ -21,17 +22,17 @@ function signal(athlete, today) {
   }
   const lastLog = dayNumber(athlete.lastLogDay)
   if (lastLog !== null && today - lastLog >= MISSING_LOG_DAYS) return {
-    priority: 1, kind: 'missing-log', reason: `Ingen log i ${today - lastLog} dage`,
+    priority: 1, kind: 'missing-log', reason: `Ingen log i ${today - lastLog} ${antalOrd(today - lastLog, 'dag', 'dage')}`,
   }
   const unread = athlete.unreadMessages
   if (Number.isSafeInteger(unread) && unread > 0) return {
-    priority: 2, kind: 'unread', reason: `${unread} ulæst${unread === 1 ? '' : 'e'} besked${unread === 1 ? '' : 'er'}`,
+    priority: 2, kind: 'unread', reason: `${unread} ${antalOrd(unread, 'ulæst besked', 'ulæste beskeder')}`,
   }
   const end = dayNumber(athlete.programEndDay)
   if (end !== null && end - today <= PROGRAM_END_SOON_DAYS) return {
     priority: 3, kind: 'program-end', reason: end < today ? 'Programmet er udløbet'
       : end === today ? 'Programmet slutter i dag'
-        : `Programmet slutter om ${end - today} dag${end - today === 1 ? '' : 'e'}`,
+        : `Programmet slutter om ${end - today} ${antalOrd(end - today, 'dag', 'dage')}`,
   }
   return { priority: 4, kind: 'none', reason: 'Intet bekræftet opfølgningssignal' }
 }

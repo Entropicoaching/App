@@ -1,3 +1,4 @@
+import { antalOrd } from '../entropi2/antalOrd.mjs'
 import OpvarmStige from './WarmupLadderView.mjs'
 import { upcomingProgramWeek, programDayPreview } from './programNaesteUge.mjs'
 import IntensityExplanation from './IntensityExplanation.jsx'
@@ -447,7 +448,7 @@ export default function ProgramTab({
                       <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.5rem', ...(programAppearanceOn ? programLayout.block : {}) }}>
                         {weeksToComp != null && weeksToComp > 0 && (
                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.7rem', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
-                            🏆 {weeksToComp} uger til stævne
+                            🏆 {weeksToComp} {antalOrd(weeksToComp, 'uge', 'uger')} til stævne
                           </div>
                         )}
                         {weeksToComp != null && weeksToComp <= 0 && (
@@ -784,7 +785,7 @@ export default function ProgramTab({
                                 )}
                               </div>
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: programAppearanceOn ? programColors.muted : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.06em', ...(programAppearanceOn ? programLayout.label : {}) }}>
-                                {exerciseViewGroups(session.exercises).length} {exerciseViewGroups(session.exercises).length === 1 ? 'øvelse' : 'øvelser'} · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
+                                {exerciseViewGroups(session.exercises).length} {antalOrd(exerciseViewGroups(session.exercises).length, 'øvelse', 'øvelser')} · {loggedSets}/{totalSets} sæt logget{sessionLogs.filter(l => l.skipped).length > 0 ? ` · ${sessionLogs.filter(l => l.skipped).length} skippet` : ''}
                               </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>

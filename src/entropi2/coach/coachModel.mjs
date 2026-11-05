@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { messageText } from '../conversation/conversationModel.mjs'
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
@@ -83,7 +84,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
         title: athlete.name, detail: messageText(last), count: n,
         createdAt: data.noteSignalEnabled === true ? pending.oldestAt : last.created_at }
       candidates.push({ key: item.key, athlete, rank: 0, item,
-        reason: `${n} ulæst${n === 1 ? '' : 'e'} ${track === 'teknik' ? 'teknikbesked' : 'besked'}${n === 1 ? '' : 'er'}` })
+        reason: `${n} ${antalOrd(n, 'ulæst', 'ulæste')} ${track === 'teknik' ? antalOrd(n, 'teknikbesked', 'teknikbeskeder') : antalOrd(n, 'besked', 'beskeder')}` })
     }
     if (videos.usable) for (const video of videos.rows) {
       if (video.athlete_id !== athlete.id || !video.id || video.status !== 'draft') continue
@@ -101,7 +102,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
       const uncertain = hasUndatedPlannedWeek(plans[athlete.id])
       if (!uncertain && entry?.daysLeft !== null && entry?.daysLeft < 7) candidates.push({
         key: `program-${athlete.id}`, athlete, rank: 1, tab: 'program',
-        reason: entry.daysLeft < 0 ? 'Programmet er udløbet' : `Programmet slutter om ${entry.daysLeft} dage` })
+        reason: entry.daysLeft < 0 ? 'Programmet er udløbet' : `Programmet slutter om ${entry.daysLeft} ${antalOrd(entry.daysLeft, 'dag', 'dage')}` })
       if (logs.complete && T !== null) {
         const rows = logs.rows.filter(r => r.athlete_id === athlete.id && r.skipped !== true)
         const valid = rows.every(r => loggedDay(r.logged_at) && loggedDay(r.logged_at) <= day)
@@ -155,7 +156,7 @@ export function coachAthleteSummaries(data, nutrition, inbox) {
   const { day, athletes, logs, messages } = data
   const relative = date => {
     const days = ordinal(day) - ordinal(date)
-    return days === 0 ? 'i dag' : days === 1 ? 'i går' : `for ${days} dage siden`
+    return days === 0 ? 'i dag' : days === 1 ? 'i går' : `for ${days} ${antalOrd(days, 'dag', 'dage')} siden`
   }
   const rows = athletes.map(athlete => {
     const activity = []
@@ -175,7 +176,7 @@ export function coachAthleteSummaries(data, nutrition, inbox) {
     const unread = inbox.filter(row => row.athlete.id === athlete.id && row.item.kind === 'message')
       .reduce((sum, row) => sum + row.item.count, 0)
     const parts = [last && `${last.kind} ${relative(last.day)}`, nutrition.get(athlete.id)?.text,
-      unread > 0 && `${unread} ulæst${unread === 1 ? '' : 'e'} besked${unread === 1 ? '' : 'er'}`].filter(Boolean)
+      unread > 0 && `${unread} ${antalOrd(unread, 'ulæst besked', 'ulæste beskeder')}`].filter(Boolean)
     return { athlete, text: parts.join(' · '), lastDay: last?.day, unread,
       hasNews: unread > 0 || last?.day === day }
   })

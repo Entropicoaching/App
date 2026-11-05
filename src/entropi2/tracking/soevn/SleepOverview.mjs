@@ -1,9 +1,10 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { buildSleepOverview } from './sleepModel.mjs'
 import { SLEEP_ADVICE, SLEEP_SOURCE } from './sleepAdvice.mjs'
 
 const number = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 })
-const value = (v, unit) => v === null ? 'Ukendt' : `${number.format(v)} ${unit}`
+const value = (v, unit) => v === null ? 'Ukendt' : `${number.format(v)} ${unit === 'timer' ? antalOrd(v, 'time', 'timer') : unit}`
 const date = d => `${d.slice(8, 10)}.${d.slice(5, 7)}`
 const range = (from, to) => `${date(from)}–${date(to)}`
 const weekly = (metric, unit) => metric.average !== null
@@ -47,17 +48,17 @@ export default function SleepOverview(props = {}) {
       h('p', null, `4 uger · ${model.from}–${model.to}. Gennemsnit kræver mindst 4/7 dage. Huller er ukendte.`),
       h('ul', null, [...model.weeks].reverse().map(week => h('li', { key: week.from },
         `${range(week.from, week.to)}: ${week.hours.average === null ? 'For lidt data'
-          : `${format.format(week.hours.average)} timer`} · ${week.hours.count}/7 dage`))),
+          : `${format.format(week.hours.average)} ${antalOrd(week.hours.average, 'time', 'timer')}`} · ${week.hours.count}/7 dage`))),
       detail('days', 'Se daglige søvntimer', h('ul', null, [...model.days].reverse().map(day =>
         h('li', { key: day.date }, h('time', { dateTime: day.date }, day.date), ': ',
-          day.hours === null ? 'Ukendt' : `${format.format(day.hours)} timer`)))))
+          day.hours === null ? 'Ukendt' : `${format.format(day.hours)} ${antalOrd(day.hours, 'time', 'timer')}`)))))
   }
   return section(
-    h('p', null, `${model.weeks.length} uger · ${model.from}–${model.to}`),
+    h('p', null, `${model.weeks.length} ${antalOrd(model.weeks.length, 'uge', 'uger')} · ${model.from}–${model.to}`),
     model.status === 'empty' && h('p', { role: 'status' }, model.invalidMeasurements
       ? 'Ingen gyldige søvnmålinger i perioden.' : 'Ingen søvnregistreringer i perioden endnu.'),
     model.invalidMeasurements > 0 && h('p', { role: 'status' },
-      `${model.invalidMeasurements} registreringer havde ugyldige søvnmålinger og vises som ukendte.`),
+      `${model.invalidMeasurements} ${antalOrd(model.invalidMeasurements, 'registrering havde ugyldige søvnmålinger og vises som ukendt', 'registreringer havde ugyldige søvnmålinger og vises som ukendte')}.`),
     h('p', null, 'Ugegennemsnit kræver mindst 4 registrerede dage for hver måling. Huller tæller ikke som nul.'),
     h('ol', { className: 'e2-sleep-weeks' }, [...model.weeks].reverse().map((week, index) =>
       h('li', { key: week.from, className: 'e2-sleep-week' },
@@ -72,10 +73,10 @@ export default function SleepOverview(props = {}) {
           h('div', null, hoursOnly ? `Søvn: ${value(d.hours, 'timer')}` : `Søvn: ${value(d.hours, 'timer')} · Kvalitet: ${value(d.quality, 'af 5')}`)))))),
     !hoursOnly && detail('training', 'Søvn og dine pas', h('div', null,
       h('p', null, 'Registreringer på samme dato i dansk tid. Søvnens og passets indbyrdes tidspunkt er ikke bekræftet. Det viser ikke, at søvn er årsagen til et resultat; program, belastning og andre forhold kan også spille ind.'),
-      h('p', null, `${model.pairedRpeDays} dage med både søvntimer og RPE · ${model.pairedPerformanceDays} dage med både søvntimer og præstationsestimat.`),
+      h('p', null, `${model.pairedRpeDays} ${antalOrd(model.pairedRpeDays, 'dag', 'dage')} med både søvntimer og RPE · ${model.pairedPerformanceDays} ${antalOrd(model.pairedPerformanceDays, 'dag', 'dage')} med både søvntimer og præstationsestimat.`),
       h('p', null, 'RPE er gennemsnittet af dine egne svar på registrerede sæt i hvert pas, ikke en samlet pasvurdering. Dækningen vises som besvarede sæt ud af registrerede sæt.'),
       h('p', null, 'Præstation vises som højeste estimerede 1RM (Epley) pr. hovedløft i passet, fra tunge sæt med 1–8 gentagelser. Det er et estimat, ikke en test af dit maksimum. Varianter, lette sæt og deload indgår ikke.'),
-      model.excludedSets > 0 && h('p', null, `${model.excludedSets} sætrækker er udeladt, fx foreløbige, dubletter med konflikt eller uden sikker pasidentitet.`),
+      model.excludedSets > 0 && h('p', null, `${model.excludedSets} ${antalOrd(model.excludedSets, 'sætrække', 'sætrækker')} er udeladt, fx foreløbige, dubletter med konflikt eller uden sikker pasidentitet.`),
       model.sessions.length ? h('ul', { className: 'e2-sleep-sessions' }, model.sessions.map((s, index) =>
         h('li', { key: index, className: 'e2-sleep-session' },
           h('time', { dateTime: s.date }, s.date), ` · Pas ${index + 1}`,

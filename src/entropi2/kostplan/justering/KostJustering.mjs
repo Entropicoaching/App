@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 
 const control = { minHeight: 44, minWidth: 44, font: 'inherit', whiteSpace: 'normal', maxWidth: '100%' }
@@ -38,7 +39,7 @@ export default function KostJustering(props = {}) {
   s.nextEligibleOn && h('p', null, `Næste vurdering tidligst ${s.nextEligibleOn}. Nyt datagrundlag kræves.`),
   h('details', null,
     h('summary', { style: { ...control, paddingBlock: 12, cursor: 'pointer' } }, 'Se datagrundlag og grænser'),
-    h('p', null, `Periode: ${e.from} til ${e.through}. Vægt: ${e.trend.count} gyldige dage; ${e.trend.rejected} frasorteret.`),
+    h('p', null, `Periode: ${e.from} til ${e.through}. Vægt: ${e.trend.count} ${antalOrd(e.trend.count, 'gyldig dag', 'gyldige dage')}; ${e.trend.rejected} frasorteret.`),
     h('p', null, `Observeret trend: ${trend(e.observedWeeklyPct)}. Mål: ${trend(e.targetWeeklyPct)}.`),
     h('p', null, `Komplette kostdage: ${e.diet.completeDays}; ${e.diet.rejected} frasorteret. Faktisk gennemsnit: ${number(e.diet.meanKcal)} kcal/dag.`),
     h('p', null, `Træningsvolumen: ${e.trainingKnown ? volume[e.training.volume] : 'ukendt'}. Intensitet: ${e.trainingKnown ? intensity[e.training.intensity] : 'ukendt'}.`),

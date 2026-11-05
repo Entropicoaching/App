@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { mountExistingTracker } from './trackerAdapter.mjs'
 
@@ -24,7 +25,7 @@ export function KostplanAtletView(props = {}) {
   h('time', { dateTime: s.date }, new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(s.date + 'T00:00:00Z'))),
   h('section', { 'aria-label': 'Dagens status' },
     h('h2', null, 'Dagens status'),
-    h('p', null, `${s.eatenCount} af ${s.meals.length} måltider spist`),
+    h('p', null, `${s.eatenCount} af ${s.meals.length} ${antalOrd(s.meals.length, 'måltid', 'måltider')} spist`),
     h('p', { 'aria-live': 'polite' }, `Tilbage i dag: ${s.remaining.kcal === null ? 'kcal ukendt' : `${number(s.remaining.kcal)} kcal`} · ${s.remaining.protein === null ? 'protein ukendt' : `${number(s.remaining.protein)} g protein`}`),
     h('details', null,
     h('summary', { style: { ...control, paddingBlock: 12, cursor: 'pointer' } }, 'Registreret og mål'),

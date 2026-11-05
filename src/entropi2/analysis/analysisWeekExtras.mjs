@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { adaptPublicContract } from './publicContract.mjs'
 import { weekProgressSentence } from './weekProgressSentence.mjs'
 import { weeklyLoad } from './weeklyLoad.mjs'
@@ -30,7 +31,7 @@ export function analysisWeekExtras(props, now) {
   return {
     progress: weekProgressSentence(props, now),
     load: ratio == null ? null
-      : `Registreret belastning: ${format(load.weeks[3].tonnage)} kg tonnage denne uge, ${format(ratio)} gange gennemsnittet af de tre foregående uger. Denne uge kan være ufuldstændig.`,
+      : `Registreret belastning: ${format(load.weeks[3].tonnage)} kg tonnage denne uge, ${format(ratio)} ${antalOrd(ratio, 'gang', 'gange')} gennemsnittet af de tre foregående uger. Denne uge kan være ufuldstændig.`,
     share: weeklyShareSummary(props, now),
   }
 }

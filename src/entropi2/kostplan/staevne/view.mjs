@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { buildCompetitionPlan } from './model.mjs'
 
 const number = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 3 }).format(value)
@@ -16,20 +17,20 @@ export function renderCompetitionPlan(h, props = {}) {
   if (!plan.basis) return shell(h('p', { role: ['invalid', 'review'].includes(plan.phase) ? 'alert' : 'status' }, plan.reason))
   const { basis: b } = plan
   return shell(
-    h('p', null, `Coachkladde · ${b.competitionDate} · vejning ${b.weighInHours} timer før`),
+    h('p', null, `Coachkladde · ${b.competitionDate} · vejning ${b.weighInHours} ${antalOrd(b.weighInHours, 'time', 'timer')} før`),
     h('p', null, `${number(b.weightKg)} kg nu · vægtklasse ${number(b.weightClassKg)} kg`),
     h('p', { role: plan.phase === 'review' ? 'alert' : 'status' }, plan.reason),
-    h('p', null, `Gradvis reduktion: højst 1 % pr. uge. Beregnet periode: ${b.windowStart} til ${b.weighInDate} (${b.windowDays} dage).`),
+    h('p', null, `Gradvis reduktion: højst 1 % pr. uge. Beregnet periode: ${b.windowStart} til ${b.weighInDate} (${b.windowDays} ${antalOrd(b.windowDays, 'dag', 'dage')}).`),
     b.startsLater && h('p', null, 'Perioden starter senere. Hent en ny aktuel kropsvægt og vurder planen igen ved start.'),
     h('p', null, 'Planen er ikke aktiveret og ændrer intet hos atleten.'),
     h('ol', { 'aria-label': 'Ugemål' }, ...plan.weeks.map((week, index) =>
       h('li', { key: week.through, style: { marginBlock: 12 } },
-        `Uge ${index + 1}: ${week.from} til ${week.through} · ${number(week.targetKg)} kg som pejlemærke${week.days < 7 ? ` (${week.days} dage)` : ''}.`))),
+        `Uge ${index + 1}: ${week.from} til ${week.through} · ${number(week.targetKg)} kg som pejlemærke${week.days < 7 ? ` (${week.days} ${antalOrd(week.days, 'dag', 'dage')})` : ''}.`))),
     plan.acute.status !== 'not-needed' && h('p', null, b.weighInHours === 2
       ? 'Ingen akut vandreduktion ved 2 timers vejning.'
       : `Restforskel: ${number(plan.acute.remainingKg)} kg. Vurderingsloft ved 24 timer: ${number(plan.acute.assessmentLimitKg)} kg (højst 1 %). Dette er ikke et vandtabsmål eller en tilladelse.`),
     h('details', null, h('summary', { style: summaryStyle }, 'Efter vejning'),
-      h('p', null, `${plan.recovery.windowHours} timer frem mod stævnet.`),
+      h('p', null, `${plan.recovery.windowHours} ${antalOrd(plan.recovery.windowHours, 'time', 'timer')} frem mod stævnet.`),
       h('ul', null, ...plan.recovery.steps.map((step, i) => h('li', { key: i }, step))),
       h('p', null, plan.recovery.warning)),
     h('details', null, h('summary', { style: summaryStyle }, 'Sikkerhedsgrænser og kilder'),

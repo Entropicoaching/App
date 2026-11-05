@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { estimatedOneRepMax, erDeloadBlok } from '../../exerciseProgress.js'
 import { calendarDaysBetween } from '../../calendarDate.js'
 import { heavyPointEvidence } from '../../dataEvidence.mjs'
@@ -49,13 +50,13 @@ export function analysisModel(props = {}, now = new Date()) {
     if (status) {
       const last = status.points.at(-1)
       answers[0].value = `${kg(last.e1rm)} kg e1RM`
-      answers[0].message = `${status.lift}, ${status.zone} gentagelser. Seneste dagsbedste den ${last.dag}, fra ${kg(last.weight)} kg × ${last.reps}. Beregnet enrepetitionsmaksimum, ikke samlet form eller parathed.`
+      answers[0].message = `${status.lift}, ${status.zone} ${antalOrd(status.zone, 'gentagelse', 'gentagelser')}. Seneste dagsbedste den ${last.dag}, fra ${kg(last.weight)} kg × ${last.reps}. Beregnet enrepetitionsmaksimum, ikke samlet form eller parathed.`
     }
     const good = series.find(s => s.points.at(-1).e1rm > s.points[0].e1rm)
     if (good) {
       const first = good.points[0], last = good.points.at(-1)
       answers[1].value = `+${kg(last.e1rm - first.e1rm)} kg e1RM`
-      answers[1].message = `${good.lift}, ${good.zone} gentagelser: forskel mellem dagsbedste den ${first.dag} og ${last.dag}. Registreringerne viser en stigning; årsagen kan ikke udledes.`
+      answers[1].message = `${good.lift}, ${good.zone} ${antalOrd(good.zone, 'gentagelse', 'gentagelser')}: forskel mellem dagsbedste den ${first.dag} og ${last.dag}. Registreringerne viser en stigning; årsagen kan ikke udledes.`
     } else if (series.length) answers[1].message = 'De sammenlignelige registreringer viser ingen stigning fra første til seneste dagsbedste. Fortsæt med at logge vægt og gentagelser i samme øvelse og rep-område. Det siger ikke noget om din indsats eller årsagen.'
   }
   if (contract.activeWeek && contract.exercises.length) {

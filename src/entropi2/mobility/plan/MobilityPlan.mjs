@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { mobilityPlan } from './mobility-plan.mjs'
 
@@ -15,7 +16,7 @@ export default function MobilityPlan(props = {}) {
     ? h('p', { role: model.kind === 'error' ? 'alert' : 'status' }, model.message)
     : h('div', null,
       h('p', null, `${model.lifts.join(' · ')} · Ca. ${model.totalSeconds / 60} min`),
-      h('p', null, `${model.rounds} ${model.rounds === 1 ? 'runde' : 'runder'}. Følg doseringen. Tiderne er skøn med ca. 1 min samlet til skift.`),
+      h('p', null, `${model.rounds} ${antalOrd(model.rounds, 'runde', 'runder')}. Følg doseringen. Tiderne er skøn med ca. 1 min samlet til skift.`),
       h('p', null, 'Valgfrit før træningen. Stop ved smerte. Fortsæt derefter med dine sædvanlige opvarmningssæt.'),
       h('ol', { style: { paddingInlineStart: 24, margin: 0 } }, ...model.steps.map(step =>
         h('li', { key: step.id, style: { marginBlock: 16 } },

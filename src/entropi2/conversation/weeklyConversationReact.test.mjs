@@ -72,7 +72,7 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
   try {
     await act(async () => { root.render(createElement(Conversation, { enabled: true, createController, controllerRef: ref })) })
     assert.equal(ref.current, controller)
-    assert.match(host.textContent, /Denne uge · 1 beskeder · 1 ubesvarede · 0 video-feedback/)
+    assert.match(host.textContent, /Denne uge · 1 besked · 1 ubesvaret · 0 video-feedback/)
     const details = find(host, 'details')[0]
     assert.equal(details.open, false); assert.equal(details.hidden, false)
     assert.equal(details.children[0].tagName, 'SUMMARY')

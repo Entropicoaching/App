@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { evaluateCoachWeek } from '../../tracking/coachuge/evaluate.mjs'
 import { weeklyLetterContext } from './weeklyLetterContext.mjs'
 
@@ -52,7 +53,7 @@ export function createWeeklyLetter(options = {}) {
   ]
   const nutritionPraiseDays = context.some(c => c.id === 'nutrition') ? 0 : nutritionDays
   const trainingPraise = training?.completed > 0
-    ? `Godt arbejde med de ${training.completed} af ${training.planned} planlagte pas, der er bekræftet gennemført i denne uge.`
+    ? `Godt arbejde med ${training.completed} af ${training.planned} ${antalOrd(training.planned, 'planlagt pas', 'planlagte pas')}, der er bekræftet gennemført i denne uge.`
     : nutritionPraiseDays > 0 ? `Tak for dine komplette kostregistreringer på ${nutritionPraiseDays} af ugens 7 dage.`
       : dailyCount > 0 ? 'Tak for dine registreringer om, hvordan du har det.'
         : 'Tak fordi du tager dig tid til at samle op på ugen sammen med mig.'

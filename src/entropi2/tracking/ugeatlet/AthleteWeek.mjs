@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { buildAthleteWeek } from './athleteWeekModel.mjs'
 
@@ -8,13 +9,13 @@ const metric = (key, title, value, basis) => h('div', { key, style: { padding: '
   h('dt', { style: { fontWeight: 600 } }, title),
   h('dd', { style: { margin: '4px 0 0' } }, value,
     h('p', { style: basisStyle }, 'Datagrundlag: ', basis)))
-const mean = (data, unit) => data.average !== null ? `${f(data.average)} ${unit}` : 'For lidt data'
+const mean = (data, unit) => data.average !== null ? `${f(data.average)} ${unit === 'timer' ? antalOrd(data.average, 'time', 'timer') : unit}` : 'For lidt data'
 const coverage = data => `${data.count}/7 dage · mindst 4 dage for gennemsnit`
 const list = (key, rows, describe) => h('ul', { key, style: { paddingInlineStart: 20 } },
   rows.map((row, index) => h('li', { key: `${row.day}-${index}` },
     h('time', { dateTime: row.day }, row.day), ': ', describe(row))))
 const nutritionValue = (data, unit) => data.percent === null ? 'Kan ikke sammenlignes med mål'
-  : `${f(data.average)} ${unit}/dag · mål ${f(data.targetAverage)} ${unit}/dag (${f(data.percent)} %)`
+  : `${f(data.average)} ${unit === 'timer' ? antalOrd(data.average, 'time', 'timer') : unit}/dag · mål ${f(data.targetAverage)} ${unit}/dag (${f(data.percent)} %)`
 
 /** No hooks, fetch, storage, clock or wiring. OFF does not inspect the snapshot. */
 export default function AthleteWeek(props = {}) {
@@ -51,10 +52,10 @@ export default function AthleteWeek(props = {}) {
     model.status === 'empty' && h('p', { role: 'status' }, 'Ingen registreringer i perioden endnu.'),
     h('dl', { style: { margin: 0 } },
       metric('sessions', 'Pas gennemført', `${sessions.completed} pas`,
-        `${sessions.completedPlanned} af ${sessions.planned} planlagte · ${sessions.extraCompleted} ekstra gennemført. Kun bekræftede pas.`),
+        `${sessions.completedPlanned} af ${sessions.planned} ${antalOrd(sessions.planned, 'planlagt', 'planlagte')} · ${sessions.extraCompleted} ekstra gennemført. Kun bekræftede pas.`),
       metric('set', 'Bedste sæt', best.value
         ? `${best.label}: ${f(best.value.kg)} kg × ${best.value.reps}` : 'Intet kvalificeret sæt',
-      best.label ? `${best.count} bekræftede arbejdssæt med 1–10 gentagelser · ét løft og én variant`
+      best.label ? `${best.count} ${antalOrd(best.count, 'bekræftet arbejdssæt', 'bekræftede arbejdssæt')} med 1–10 gentagelser · ét løft og én variant`
         : 'Intet løft valgt til sammenligning'),
       metric('sleep', 'Søvn i gennemsnit', mean(model.sleep, 'timer'), coverage(model.sleep)),
       metric('energy', 'Dagsform i gennemsnit', mean(model.energy, 'af 5'),
@@ -73,7 +74,7 @@ export default function AthleteWeek(props = {}) {
       h('h3', null, 'Bedste sæt'),
       h('p', null, 'Kun det valgte løft og samme variant i kg. Højeste estimerede 1RM = kg × (1 + gentagelser/30). Opvarmning, oversprungne og afventende sæt indgår ikke. Ved lighed vælges højeste vægt, derefter tidligste dato og sæt-id.'),
       best.value && list('best', [best.value], row => `${f(row.kg)} kg × ${row.reps} · estimeret 1RM ${f(row.estimate)} kg`),
-      h('h3', null, 'Søvn'), model.sleep.count ? list('sleep', model.sleep.observations, row => `${f(row.value)} timer`)
+      h('h3', null, 'Søvn'), model.sleep.count ? list('sleep', model.sleep.observations, row => `${f(row.value)} ${antalOrd(row.value, 'time', 'timer')}`)
         : h('p', null, 'Ingen registreret søvn.'),
       h('h3', null, 'Dagsform'), model.energy.count ? list('energy', model.energy.observations, row => `${f(row.value)} af 5`)
         : h('p', null, 'Ingen registreret energi.'),

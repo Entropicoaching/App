@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { buildBlockOverview } from './blockOverviewModel.mjs'
 
@@ -20,7 +21,7 @@ export default function BlockOverview(options = {}) {
         key: row.id, 'aria-current': row.current ? 'step' : undefined,
         style: { marginBottom: 12, lineHeight: 1.6 } },
       `Uge ${row.blockWeek} (programuge ${row.weekNumber})${row.current ? ' · Aktuel uge' : ''}: `,
-      `${row.plannedSets} planlagte sæt`)))) : null,
+      `${row.plannedSets} ${antalOrd(row.plannedSets, 'planlagt sæt', 'planlagte sæt')}`)))) : null,
       model.next ? h('div', null, h('h3', { style: { fontSize: '1rem' } }, 'Næste test eller deload'),
       h('p', null, model.next
         ? `${model.next.kinds.map(kind => kind === 'test' ? 'Test' : 'Deload').join(' og ')} i programuge ${model.next.weekNumber}${model.next.start ? ` · fra ${model.next.start}` : ''}`

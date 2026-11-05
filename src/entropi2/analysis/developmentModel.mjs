@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { calendarDay, addCalendarDays, calendarDaysBetween } from '../../calendarDate.js'
 import { parseInputNumber } from '../../inputValues.js'
 import { mainLiftName } from '../../exerciseSetView.js'
@@ -98,7 +99,7 @@ export function developmentModel(props = {}, now) {
       : `${lift}: for lidt data til at beskrive en udvikling. Log tunge sæt i samme rep-område i mindst 4 uger over mindst 21 dage.`
     return { lift, zone, points, delta, message, observed: observed.length,
       stale: !!last && calendarDaysBetween(last.day, today) > 14,
-      evidence: first ? `${observed.length} uger med data · ${zone} gentagelser · ${developmentDate(first.day)}–${developmentDate(last.day)}. Bedste e1RM pr. uge; ændringen beskriver registreringerne, ikke årsagen.` : null }
+      evidence: first ? `${observed.length} ${antalOrd(observed.length, 'uge', 'uger')} med data · ${zone} ${antalOrd(zone, 'gentagelse', 'gentagelser')} · ${developmentDate(first.day)}–${developmentDate(last.day)}. Bedste e1RM pr. uge; ændringen beskriver registreringerne, ikke årsagen.` : null }
   })
   const weeks = weekly.weeks.map((w, i) => {
     const matching = calendarRows.filter(r => r.day >= w.start && r.day <= w.end)
@@ -111,7 +112,7 @@ export function developmentModel(props = {}, now) {
   })
   const insights = []
   const strength = lifts.filter(l => l.delta !== null && !l.stale).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))[0]
-  if (strength) insights.push({ text: `Du har ${strength.observed} uger med sammenlignelige tunge sæt i ${strength.lift}.`, evidence: strength.evidence })
+  if (strength) insights.push({ text: `Du har ${strength.observed} ${antalOrd(strength.observed, 'uge', 'uger')} med sammenlignelige tunge sæt i ${strength.lift}.`, evidence: strength.evidence })
   // Tracking's native four-week load model, ending on the last complete Sunday.
   const completed = load(rows, addCalendarDays(weeks.at(-1).start, -1)).weeks
   if (completed.every(w => w.sets > 0 && w.tonnage > 0)) {

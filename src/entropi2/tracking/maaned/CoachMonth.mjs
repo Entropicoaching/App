@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { buildMonthReport } from './monthReportModel.mjs'
 
@@ -35,13 +36,13 @@ export default function CoachMonth(options = {}) {
       `${lift.name}: ${lift.values.map(number).join(' → ')} kg e1RM`))),
     h('h3', null, 'Gennemførte pas'),
     h('ul', null, ...model.weeks.map((w, i) => h('li', { key: w.from },
-      `Uge ${i + 1} (${w.from} – ${w.to}): ${w.sessions.completed} gennemførte · ${w.sessions.completedPlanned}/${w.sessions.planned} planlagte · ${w.sessions.extra} ekstra`))),
+      `Uge ${i + 1} (${w.from} – ${w.to}): ${w.sessions.completed} ${antalOrd(w.sessions.completed, 'gennemført', 'gennemførte')} · ${w.sessions.completedPlanned}/${w.sessions.planned} ${antalOrd(w.sessions.planned, 'planlagt', 'planlagte')} · ${w.sessions.extra} ekstra`))),
     h('details', null, h('summary', { style: summary }, 'Volumen og intensitet'),
       h('p', null, values(model.weeks, w => w.training.tonnage, ' kg × reps')),
       h('p', null, values(model.weeks, w => w.training.sets, ' registrerede sæt')),
       h('p', null, 'Volumen er registreret tonnage, ikke planlagt volumen. Tomme perioder er ukendte.'),
       ...model.weeks.map((w, i) => h('section', { key: w.from }, h('h4', null, `Uge ${i + 1}`),
-        h('p', null, `${w.intensity.classified} klassificerede sæt · ${w.intensity.unknown} sæt med ukendt intensitet`),
+        h('p', null, `${w.intensity.classified} ${antalOrd(w.intensity.classified, 'klassificeret sæt', 'klassificerede sæt')} · ${w.intensity.unknown} sæt med ukendt intensitet`),
         h('ul', null, ...w.intensity.zones.map(z => h('li', { key: z.key },
           `${z.label}: ${z.count} sæt · ${w.intensity.classified ? number(z.count / w.intensity.classified * 100) + ' %' : 'Ukendt andel'}`))))),
       h('p', null, 'Intensitet: vægt i procent af en uafhængig e1RM-reference for samme løft og variant. Andele gælder kun klassificerede sæt.')),

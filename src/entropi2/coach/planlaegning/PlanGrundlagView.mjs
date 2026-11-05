@@ -1,3 +1,4 @@
+import { antalOrd } from '../../antalOrd.mjs'
 import { createElement as h } from 'react'
 import { planGrundlag, formatBasis as f } from './planGrundlag.mjs'
 
@@ -16,14 +17,14 @@ export default function PlanGrundlagView(props) {
   return h('section', { 'aria-label': 'Planlægningsgrundlag', 'data-coach-planlaegning': true,
     style: { color: 'inherit', lineHeight: 1.6, maxWidth: '100%', minWidth: 0 } },
   h('h2', null, 'Grundlag for næste blok'),
-  h('p', null, `${period({ start: model.block.start_date, end: model.block.end_date })} · ${model.block.weekCount} uger`),
+  h('p', null, `${period({ start: model.block.start_date, end: model.block.end_date })} · ${model.block.weekCount} ${antalOrd(model.block.weekCount, 'uge', 'uger')}`),
   h('p', null, model.message),
   h('section', { style: card, 'aria-label': 'Neutrale observationer' },
     h('h3', null, 'Observationer'),
     model.observations.length ? h('ul', null, ...model.observations.map(o => h('li', { key: o }, o)))
       : h('p', null, 'Der er ikke tilstrækkelige registreringer til sammenligninger.')),
   h('section', { style: card, 'aria-label': 'Gennemførelsesgrad' }, h('h3', null, 'Registreret gennemførelse'),
-    h('p', null, model.planReady ? `${f(c.planned)} planlagte sæt.` : 'Planen er ikke fuldt dokumenteret.'),
+    h('p', null, model.planReady ? `${f(c.planned)} ${antalOrd(c.planned, 'planlagt sæt', 'planlagte sæt')}.` : 'Planen er ikke fuldt dokumenteret.'),
     h('p', null, model.logsReady ? `${f(c.confirmed)} gennemført · ${f(c.skipped)} sprunget over · ${f(c.percent)}${c.percent === null ? '' : ' %'}.`
       : 'Loggrundlaget mangler eller er ikke entydigt.'),
     h('p', null, 'Andel gennemførte sæt af alle planlagte sæt. Oversprungne sæt tæller særskilt. Manglende registrering er ikke dokumentation for fravær.')),
@@ -44,7 +45,7 @@ export default function PlanGrundlagView(props) {
   h('section', { style: card, 'aria-label': 'Kropsvægtstrend' }, h('h3', null, 'Kropsvægt'),
     model.weight.state === 'unknown' ? h('p', null, 'Vægtgrundlaget mangler eller er ikke entydigt.')
       : h('ul', null, ...model.weight.points.map(p => h('li', { key: p.start },
-        `${p.start}: ${kg(p.value)} · ${p.days} vejedage`))),
+        `${p.start}: ${kg(p.value)} · ${p.days} ${antalOrd(p.days, 'vejedag', 'vejedage')}`))),
     h('p', null, model.weight.delta === null ? 'Sammenligning kræver mindst tre vejedage i både første og sidste blokuge.'
       : `Forskel mellem ugegennemsnit: ${kg(model.weight.delta)}.`)),
   h('section', { style: card, 'aria-label': 'Smerte- og stopnoter' }, h('h3', null, 'Smerte- og stopnoter'),

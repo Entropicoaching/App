@@ -1,3 +1,4 @@
+import { antalOrd } from '../antalOrd.mjs'
 import { nextSetInSession } from '../../nextSet.js'
 import { createMobilityPlan } from '../mobility/plan/mobilityPlanDom.mjs'
 import { mobilityPlan } from '../mobility/plan/mobility-plan.mjs'
@@ -150,7 +151,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     // A rerender transfers the display subscriber and disposes the previous interval.
     stopTimer?.(); lastPause = p.restPause
     // Marc 3. nov.: one rest display only. When the rest timer shows, the planned pause line hides.
-    stopTimer = watchRest(lastPause, n => { timer.textContent = n > 0 ? `Pause: ${n} sekunder` : ''; timer.hidden = !(n > 0) || !rest.node.hidden }, clock)
+    stopTimer = watchRest(lastPause, n => { timer.textContent = n > 0 ? `Pause: ${n} ${antalOrd(n, 'sekund', 'sekunder')}` : ''; timer.hidden = !(n > 0) || !rest.node.hidden }, clock)
     if (s.next && !summary) {
       const n = s.next, ex = n.exercise, key = s.key
       body.append(el('p', `Sæt ${n.setNumber} af ${n.totalSets}`, { class: 'muted' }))
@@ -168,7 +169,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       }
       const plan = el('section', null, { class: 'card plan-card', 'aria-label': 'Planlagt belastning' })
       if (!given(ex.reps)) plan.append(el('p', 'Gentagelser mangler i planen. Bed din coach rette øvelsen.', { role: 'alert' }))
-      const prescription = [given(ex.reps) ? `${ex.reps} gentagelser` : null,
+      const prescription = [given(ex.reps) ? `${ex.reps} ${antalOrd(ex.reps, 'gentagelse', 'gentagelser')}` : null,
         given(ex.recommended_weight) ? `${ex.recommended_weight} kg` : null].filter(Boolean)
       if (prescription.length) plan.append(el('p', prescription.join(' · '), { class: 'plan' }))
       if (given(ex.intensity)) plan.append(el('p', `Intensitet: ${ex.intensity}`))

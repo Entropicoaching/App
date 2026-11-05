@@ -58,6 +58,6 @@ test('24h review labels the assessment ceiling explicitly as no permission', () 
 })
 
 test('partial weeks and a future start are clear', () => {
-  assert.match(text(render({ competitionDate: '2026-11-10', weightClassKg: 79.5 })), /\(1 dage\)/)
+  assert.match(text(render({ competitionDate: '2026-11-10', weightClassKg: 79.5 })), /\(1 dag\)/)
   assert.match(text(render({ competitionDate: '2027-01-01' })), /Hent en ny aktuel kropsvægt/)
 })

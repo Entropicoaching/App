@@ -10,6 +10,9 @@ const stubs = JSON.parse(readFileSync(new URL('hjemoevStubs.json', root), 'utf8'
 export function install() {
   return registerHooks({
     resolve(specifier, context, next) {
+      if (specifier === '../entropi2/antalOrd.mjs' && ['HjemTab.jsx', 'MobiliseringTab.jsx']
+        .some(name => context.parentURL === new URL(name, root).href))
+        return { url: new URL('../entropi2/antalOrd.mjs', root).href, shortCircuit: true }
       if (!allowed.has(context.parentURL)) return next(specifier, context)
       if (specifier === 'react' || specifier === runtime) return { url: runtime, shortCircuit: true }
       const target = new URL(specifier, context.parentURL).href
