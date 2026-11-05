@@ -51,3 +51,52 @@ test('R3: explicit OFF leaves the actual host legacy route intact for own and ot
     assert.ok(named(tree, 'HjemTab'))
   }
 })
+
+const text = tree => nodes(tree).flatMap(node => (node.props?.children ?? []).filter(value => typeof value === 'string')).join(' ')
+const shortcuts = tree => nodes(tree).filter(node => node.type === 'nav' && node.props['aria-label'] === 'Genveje')
+
+test('MIN TRÆNING: explicit presentation signal follows host ownership through HomeSession', () => {
+  const own = homeFor(ownAthlete)
+  assert.equal(own.wrapper.props.coachOwnTraining, true)
+  assert.equal(own.home.props.coachOwnTraining, true)
+  assert.equal(shortcuts(own.tree).length, 0)
+  assert.doesNotMatch(text(own.tree), /Resten af din dag/)
+  for (const [athlete, extra] of [
+    [otherAthlete, {}], [{ ...ownAthlete, user_id: null }, {}],
+    [ownAthlete, { coachAthleteId: otherAthlete.id }],
+    [ownAthlete, { session: { user: { id: '' } } }],
+    [ownAthlete, { role: 'athlete', coachAthleteId: null, onExitPreview: undefined }],
+  ]) {
+    const view = homeFor(athlete, extra)
+    assert.equal(view.wrapper.props.coachOwnTraining, false)
+    assert.equal(shortcuts(view.tree).length, 1)
+    assert.match(text(view.tree), /Resten af din dag/)
+  }
+})
+
+test('MIN TRÆNING: only boolean true hides shortcuts; contextual actions keep their routes and callbacks', () => {
+  const { home } = homeFor(ownAthlete)
+  for (const coachOwnTraining of [undefined, false, 'true', 1, null]) {
+    const tree = home.type({ ...home.props, coachOwnTraining, now: new Date('2026-11-04T12:00:00Z') })
+    assert.equal(shortcuts(tree).length, 1)
+    assert.match(text(tree), /Analyse Kost Mobilitet Din coach/)
+  }
+  const calls = []
+  const tree = home.type({ ...home.props, now: new Date('2026-11-04T12:00:00Z'),
+    setTab: route => calls.push(route), onStartSession: (...args) => calls.push(args),
+    onFilmSet: () => calls.push('film'), messages: [{ sender_role: 'coach', content: 'Syntetisk besked' }],
+    nutritionToday: { date: '2026-11-04', kcal: 400, kcalTarget: 2400 },
+  })
+  const click = label => {
+    const button = nodes(tree).find(node => node.type === 'button' && label.test(text(node)))
+    assert.ok(button, String(label)); assert.equal(button.props.disabled, false); button.props.onClick()
+  }
+  click(/^Start (dagens|næste) pas$/)
+  click(/^Se mit program$/)
+  click(/^Film et sæt/)
+  click(/^Kost i dag:/)
+  click(/^Se besked og video$/)
+  assert.deepEqual(calls, [['synthetic-session', 'synthetic-week'], 'program', 'film', 'kost', 'beskeder'])
+  assert.ok(named(tree, 'QuickLogs'))
+  assert.equal(shortcuts(tree).length, 0)
+})

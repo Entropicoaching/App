@@ -746,11 +746,12 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     ? (() => { const d = new Date(athlete.vacation_until + 'T12:00:00'); return `${d.getDate()}. ${months[d.getMonth()]}` })()
     : null
 
+  const e2CoachNavigation = e2 && role === 'coach' && !!onExitPreview
   const backBtn = onExitPreview && (
     <button
       onClick={onExitPreview}
-      style={{ background: 'rgba(200,146,58,0.12)', color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(200,146,58,0.35)', padding: '0.35rem 0.85rem', cursor: 'pointer' }}
-    >← Coach view</button>
+      style={{ background: 'rgba(200,146,58,0.12)', color: '#c8923a', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', border: '1px solid rgba(200,146,58,0.35)', padding: '0.35rem 0.85rem', cursor: 'pointer', ...(e2CoachNavigation ? { minHeight: 44, fontSize: 14, letterSpacing: 0, textTransform: 'none' } : {}) }}
+    >{e2CoachNavigation ? 'Til coachportalen' : '← Coach view'}</button>
   )
 
   if (loading) return (
@@ -808,6 +809,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   return (
     <div {...(forenklinger === true ? { 'data-app-375': 'athlete' } : {})} {...(e2Atlet ? { 'data-entropi2-athlete': '' } : {})} style={s.wrap}>
       <Ramme
+        coachOwnTraining={e2EgenCoach} coachNavigation={e2CoachNavigation}
         videoSetEnabled={videoSetEnabled}
         videoSetReady={videoSetReady && !!selectedVideoSet}
         videoSetPicker={{ options: videoOptions, choice: videoSetChoice, onChange: setVideoSetChoice,
@@ -817,7 +819,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
           onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
           setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
         }}
-        {...(e2ProfileAllowed ? { backBtn: <span>{backBtn}<ProfileMenu enabled={true} summaryRef={profileMenuRef} onOpen={() => {
+        {...(e2ProfileAllowed ? { backBtn: <span style={e2EgenCoach ? { display: 'inline-flex', alignItems: 'center', flexWrap: 'wrap', gap: 8 } : undefined}>{backBtn}<ProfileMenu enabled={true} summaryRef={profileMenuRef} onOpen={() => {
           setAccountMenuOpen(false); setProfileOwner(`${session.user.id}:${athlete.id}`)
         }} /></span> } : {})}
       />
@@ -840,7 +842,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         style={e2ProfileOpen ? { ...s.page, display: 'none' } : e2ReadOnly ? { ...s.page, border: 0, margin: 0, minWidth: 0 } : s.page}>
 
         {e2Home && (
-          <HomeSession key={athlete.id} enabled={true} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
+          <HomeSession key={athlete.id} enabled={true} coachOwnTraining={e2EgenCoach} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
             setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}
             exerciseLogsError={exerciseLogsError} exerciseLogsLoading={exerciseLogsLoading} onRetryExerciseLogs={onRetryExerciseLogs}
             programError={programError} offlineSnapshotAt={offlineSnapshotAt} logInputs={logInputs} setLogInputs={setLogInputs}

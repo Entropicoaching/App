@@ -60,7 +60,7 @@ test('one Mig action opens the owned profile, closes Konto and returns focus via
     assert.equal(named(render(AthleteView, props), 'ProfilePage'), undefined)
     assert.equal(fixture.calls.some(call => call.name === 'database.from' || call.name === 'database.rpc'), false)
     if (role === 'coach') assert.ok(nodes(named(tree, 'Ramme').props.backBtn)
-      .some(node => node.type === 'button' && node.props.children.includes('← Coach view')))
+      .some(node => node.type === 'button' && node.props.children.includes('Til coachportalen')))
   }
 })
 

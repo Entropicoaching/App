@@ -61,6 +61,37 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // E2-COACH-MINTRAENING2: invert only the exact ON presentation delta.
+  {
+    const current = "  const e2CoachNavigation = e2 && role === 'coach' && !!onExitPreview\n  const backBtn = onExitPreview && (".replace(/\r?\n/g, '\r\n')
+    const previous = "  const backBtn = onExitPreview && (".replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(current).length - 1, 1, 'one exact MIN TRÆNING presentation delta')
+    candidate = candidate.replace(current, previous)
+  }
+  {
+    const current = "padding: '0.35rem 0.85rem', cursor: 'pointer', ...(e2CoachNavigation ? { minHeight: 44, fontSize: 14, letterSpacing: 0, textTransform: 'none' } : {}) }}\n    >{e2CoachNavigation ? 'Til coachportalen' : '← Coach view'}</button>".replace(/\r?\n/g, '\r\n')
+    const previous = "padding: '0.35rem 0.85rem', cursor: 'pointer' }}\n    >← Coach view</button>".replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(current).length - 1, 1, 'one exact MIN TRÆNING presentation delta')
+    candidate = candidate.replace(current, previous)
+  }
+  {
+    const current = "      <Ramme\n        coachOwnTraining={e2EgenCoach} coachNavigation={e2CoachNavigation}\n".replace(/\r?\n/g, '\r\n')
+    const previous = "      <Ramme\n".replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(current).length - 1, 1, 'one exact MIN TRÆNING presentation delta')
+    candidate = candidate.replace(current, previous)
+  }
+  {
+    const current = "backBtn: <span style={e2EgenCoach ? { display: 'inline-flex', alignItems: 'center', flexWrap: 'wrap', gap: 8 } : undefined}>{backBtn}<ProfileMenu".replace(/\r?\n/g, '\r\n')
+    const previous = "backBtn: <span>{backBtn}<ProfileMenu".replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(current).length - 1, 1, 'one exact MIN TRÆNING presentation delta')
+    candidate = candidate.replace(current, previous)
+  }
+  {
+    const current = "<HomeSession key={athlete.id} enabled={true} coachOwnTraining={e2EgenCoach} athlete={athlete}".replace(/\r?\n/g, '\r\n')
+    const previous = "<HomeSession key={athlete.id} enabled={true} athlete={athlete}".replace(/\r?\n/g, '\r\n')
+    assert.equal(candidate.split(current).length - 1, 1, 'one exact MIN TRÆNING presentation delta')
+    candidate = candidate.replace(current, previous)
+  }
   // E2-VIS-RAMME2: invert only the opt-in marker before the historic OFF guards.
   const frameMarkerDelta = "        {...(e2Atlet ? { 'data-entropi2-page': '' } : {})}\r\n"
   assert.equal(candidate.split(frameMarkerDelta).length, 2, 'Exact E2 page marker delta')

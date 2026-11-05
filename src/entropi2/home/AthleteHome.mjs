@@ -224,8 +224,9 @@ export default function AthleteHome(props) {
         h('p', { style: s.text }, coachText.rest)),
       coach?.created_at && typeof formatMsgTime === 'function' && h('p', { style: s.text }, formatMsgTime(coach.created_at)),
       link('beskeder', 'Se besked og video')),
-    h('h2', { style: s.heading }, 'Resten af din dag'),
-    h('nav', { style: s.links, 'aria-label': 'Genveje' },
+    // Presentation only: the host passes its existing confirmed coach ownership decision.
+    props.coachOwnTraining !== true && h('h2', { style: s.heading }, 'Resten af din dag'),
+    props.coachOwnTraining !== true && h('nav', { style: s.links, 'aria-label': 'Genveje' },
       link('fremgang', 'Analyse'), link('kost', 'Kost'), link('mobilisering', 'Mobilitet'), link('beskeder', 'Din coach')),
     hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
       h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),

@@ -1,4 +1,7 @@
 import test from 'node:test'
+import { registerHooks } from 'node:module'
+import { readFileSync } from 'node:fs'
+import { jsx } from './prog3Jsx.mjs'
 import assert from 'node:assert/strict'
 import { loadViews, seed, begin, render, named, nodes, fixture, session, ownAthlete, otherAthlete, runEffects, week } from './coachOwnTrainingFixture.mjs'
 import { athleteConversationScope, createConversationAdapters } from '../entropi2/conversation/conversationAdapters.mjs'
@@ -35,7 +38,7 @@ test('own coach profile reaches E2 Home, logging, analysis, nutrition, conversat
   home.props.onFilmSet()
   assert.equal(named(render(AthleteView, props()), 'Ramme').props.athleteVideoCoachOpen, true)
   const back = named(mount(), 'Ramme').props.backBtn
-  assert.ok(nodes(back).some(node => node.type === 'button' && node.props.children.includes('← Coach view')))
+  assert.ok(nodes(back).some(node => node.type === 'button' && node.props.children.includes('Til coachportalen')))
   assert.ok(named(back, 'ProfileMenu'))
   for (const [requestedTab, name] of [['fremgang', 'Entropi2Analysis'], ['kost', 'Entropi2Kost'], ['beskeder', 'ConversationEntry'], ['mobilisering', 'Entropi2Mobility']]) {
     const tree = mount(ownAthlete, { requestedTab })
@@ -179,3 +182,79 @@ test('own coach conversation retains per-message acknowledgement; preview scope 
   assert.deepEqual(Object.keys(writes[0].patch), ['read_at'])
   assert.equal(athleteConversationScope({ ...entry, athlete: otherAthlete, coachAthleteId: otherAthlete.id }).enabled, false)
 })
+
+test('MIN TRÆNING: return keeps the callback, 44 px target, 14 px text and scoped OFF label', () => {
+  for (const athlete of [ownAthlete, otherAthlete]) for (const entropi2 of [true, false]) {
+    let exits = 0
+    const ramme = named(mount(athlete, {}, { entropi2, onExitPreview: () => exits++ }), 'Ramme')
+    const button = nodes(ramme.props.backBtn).find(node => node.type === 'button')
+    assert.ok(button)
+    assert.equal(ramme.props.coachOwnTraining, entropi2 && athlete === ownAthlete)
+    assert.equal(ramme.props.coachNavigation, entropi2)
+    assert.equal(button.props.children.includes(entropi2 ? 'Til coachportalen' : '← Coach view'), true)
+    assert.equal(button.props.style.fontSize, entropi2 ? 14 : '0.56rem')
+    assert.equal(button.props.style.minHeight, entropi2 ? 44 : undefined)
+    assert.equal(exits, 0)
+    button.props.onClick()
+    assert.equal(exits, 1)
+  }
+})
+
+test('MIN TRÆNING: actual frame wraps return/profile/date and bottom navigation retains every removed shortcut', async () => {
+  const files = new Set(['Ramme.jsx', 'BundNav.jsx', 'NavItems.jsx'].map(name => new URL(name, import.meta.url).href))
+  const rammeURL = new URL('Ramme.jsx', import.meta.url).href
+  const bundURL = new URL('BundNav.jsx', import.meta.url).href
+  const forbidden = 'data:text/javascript,' + encodeURIComponent('export const signOutHard = () => { throw Error("Forbidden service") }; export const countOfflineSets = () => 0; export const ATHLETE_VIDEOCOACH_URL = "synthetic-video";')
+  const hooks = registerHooks({
+    resolve(specifier, context, next) {
+      if (context.parentURL === rammeURL) {
+        if (['../supabase', '../offlineSetQueue', './videoCoachBro'].includes(specifier)) return { url: forbidden, shortCircuit: true }
+        if (specifier === '../athleteShared') return next('../athleteShared.js', context)
+      }
+      if (context.parentURL === bundURL && specifier === './NavItems') return next('./NavItems.jsx', context)
+      return next(specifier, context)
+    },
+    load(url, context, next) {
+      if (!files.has(url)) return next(url, context)
+      return { format: 'module', shortCircuit: true, source:
+        `import { createElement as __create, Fragment as __fragment } from './coachOwnTrainingFixture.mjs';
+        const __h = (type, props, key, ...children) => __create(type ?? __fragment, props, ...children);
+        ${jsx(readFileSync(new URL(url), 'utf8'))}` }
+    },
+  })
+  try {
+    const { default: Ramme } = await import('./Ramme.jsx')
+    const { default: BundNav } = await import('./BundNav.jsx')
+    const { s: base } = await import('../athleteShared.js')
+    for (const athlete of [ownAthlete, otherAthlete]) for (const entropi2 of [true, false]) {
+      const props = named(mount(athlete, {}, { entropi2 }), 'Ramme').props
+      const frame = Ramme(props)
+      const topbar = nodes(frame).find(node => node.props.style?.position === 'sticky')
+      assert.ok(topbar)
+      assert.equal(textOf(frame).includes('Min træning'), entropi2 && athlete === ownAthlete)
+      if (entropi2) {
+        assert.equal(topbar.props.style.height, 'auto')
+        assert.equal(topbar.props.style.minHeight, 52)
+        assert.equal(topbar.props.style.flexWrap, 'wrap')
+        assert.equal(topbar.props.style.boxSizing, 'border-box')
+        assert.ok(nodes(frame).some(node => node.props.style?.maxWidth === '100%' && node.props.style.flexWrap === 'wrap'))
+      } else assert.deepEqual(topbar.props.style, base.topbar)
+    }
+    const routes = []
+    const nav = BundNav({ athlete: ownAthlete, hasMeetPlan: false, setTab: route => routes.push(route),
+      sharedVideoAnalyses: [], tab: 'hjem', unreadMsgCount: 0 })
+    const current = nodes(nav).find(node => Object.hasOwn(node.props, 'data-entropi2-bundnav'))
+    const details = { open: true, querySelector: () => ({ focus() {} }) }
+    for (const route of ['fremgang', 'kost', 'mobilisering', 'beskeder']) {
+      const button = nodes(current).find(node => node.type === 'button' && node.props.key === route)
+      assert.ok(button, route)
+      button.props.onClick({ currentTarget: { closest: () => details } })
+    }
+    assert.deepEqual(routes, ['fremgang', 'kost', 'mobilisering', 'beskeder'])
+    assert.equal(details.open, false, 'Mobility remains in the existing More menu')
+  } finally { hooks.deregister() }
+})
+
+function textOf(tree) {
+  return nodes(tree).flatMap(node => (node.props?.children ?? []).filter(value => typeof value === 'string')).join(' ')
+}

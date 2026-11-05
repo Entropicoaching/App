@@ -17,6 +17,7 @@ function logOutQuestion(unsent) {
 }
 
 function Ramme({
+  coachOwnTraining = false, coachNavigation = false,
   videoSetEnabled = false, videoSetReady = false, videoSetPicker,
   accountMenuOpen, askConfirm, athleteId, athleteVideoCoachFrameRef, athleteVideoCoachInstant, athleteVideoCoachOpen, backBtn, confirmDialog, handleRecheckRole,
   onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
@@ -96,9 +97,11 @@ function Ramme({
         </div>
       )}
       {/* Topbar */}
-      <div style={s.topbar}>
-        <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
+      <div style={coachNavigation === true ? { ...s.topbar, height: 'auto', minHeight: 52, boxSizing: 'border-box', padding: '4px 16px', flexWrap: 'wrap', gap: 8 } : s.topbar}>
+        <div style={s.logo}>Entropi<span style={{ color: '#c8923a' }}>.</span>
+          {coachOwnTraining === true && <span style={{ display: 'block', fontFamily: 'sans-serif', fontSize: 12, lineHeight: 1.4, letterSpacing: 0, textTransform: 'none', color: '#b8b4a8' }}>Min træning</span>}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative', ...(coachNavigation === true ? { flexWrap: 'wrap', gap: 8, minWidth: 0, maxWidth: '100%' } : {}) }}>
           {backBtn}
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#a8a498' }}>{today()}</div>
           {/* BUG (ORDRE 20): denne konto-menu fandtes slet ikke før — en atlet
