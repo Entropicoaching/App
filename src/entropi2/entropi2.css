@@ -42,3 +42,35 @@ section[aria-label="Beskeder og video"] :is(h1, h2, h3),
     scroll-behavior: auto !important;
   }
 }
+
+/* E2-VIS-RAMME2: the embedded page owns the horizontal gutter.
+   Keep the host and each screen's existing widths, margins and vertical space.
+   Important overrides only the existing inline horizontal padding. */
+[data-entropi2-athlete] [data-entropi2-page] {
+  min-width: 0;
+  padding-inline: 20px !important;
+  overflow-wrap: anywhere;
+}
+
+[data-entropi2-athlete] [data-entropi2-page] :is([data-entropi2-home], [data-entropi2-analysis], [data-e2-mobility], section[aria-label="Beskeder og video"]) {
+  padding-inline: 0 !important;
+}
+
+/* Embedded nutrition keeps its standalone shell outside this athlete scope. */
+[data-entropi2-athlete] [data-entropi2-page] [data-entropi2-kost] .e2-nutrition {
+  box-sizing: border-box;
+  border-inline: 0 !important;
+}
+
+[data-entropi2-athlete] [data-entropi2-page] [data-entropi2-kost] .e2-nutrition main {
+  padding-inline: 0;
+}
+
+/* Profile is outside PageContent and retains its own width and vertical space. */
+[data-entropi2-athlete] [data-entropi2-profile] {
+  padding-inline: 20px !important;
+}
+
+[data-entropi2-athlete] :is([data-entropi2-home], [data-entropi2-kost], [data-entropi2-profile]) {
+  text-align: left;
+}

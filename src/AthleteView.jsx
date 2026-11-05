@@ -835,6 +835,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
       {/* Page content */}
       {e2ReadOnly && <p role="status" style={s.page}>Forhåndsvisning · du kan ikke gemme som denne atlet. Brug fanerne nederst for at se resten.</p>}
       <PageContent {...(forenklinger === true ? { 'data-app-375-page': '' } : {})}
+        {...(e2Atlet ? { 'data-entropi2-page': '' } : {})}
         {...(e2ReadOnly ? { disabled: true, 'aria-label': 'Atletvisning uden skrivninger' } : {})}
         style={e2ProfileOpen ? { ...s.page, display: 'none' } : e2ReadOnly ? { ...s.page, border: 0, margin: 0, minWidth: 0 } : s.page}>
 

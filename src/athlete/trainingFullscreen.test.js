@@ -61,6 +61,10 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // E2-VIS-RAMME2: invert only the opt-in marker before the historic OFF guards.
+  const frameMarkerDelta = "        {...(e2Atlet ? { 'data-entropi2-page': '' } : {})}\r\n"
+  assert.equal(candidate.split(frameMarkerDelta).length, 2, 'Exact E2 page marker delta')
+  candidate = candidate.replace(frameMarkerDelta, '')
   // E2-FEJL-HJEM1: invert the exact opt-in program-read plumbing. Keep the
   // existing OFF SHA guards below unchanged.
   for (const addition of [
