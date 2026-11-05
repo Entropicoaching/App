@@ -46,9 +46,29 @@ const programLayout = {
 function programBlockElement(options, appearanceOn) {
   const block = renderProgramBlockOverview(createElement, options)
   if (!appearanceOn) return block
+  // Move historical navigation into its own closed fold. Keep the existing
+  // renderer's rows (including volume/date/status) and original week indices.
+  const previous = options.allWeeks.slice(0, options.activeWeekIdx)
+  const history = new Map(previous.map(week => [String(week.id), null]))
+  const split = (node, path = 'block') => {
+    if (Array.isArray(node)) return node.map((child, index) => split(child, `${path}-${index}`))
+    if (!node || typeof node !== 'object' || !node.props) return node
+    const key = String(node.key ?? node.props.key)
+    if (node.type === 'li' && history.has(key)) { history.set(key, node); return null }
+    return createElement(node.type, { ...node.props, key: node.key ?? node.props.key ?? path }, split(node.props.children, path))
+  }
+  const content = split(block.props.children)
+  const earlier = !options.programError && previous.length > 0 && createElement('details', { 'data-program-history': true },
+    createElement('summary', { style: { cursor: 'pointer', minHeight: 44, padding: '0.75rem 0' } }, 'Vis tidligere uger'),
+    createElement('ul', { style: { listStyle: 'none', padding: 0, display: 'grid', gap: 8 } },
+      previous.map((week, index) => history.get(String(week.id)) || createElement('li', { key: week.id },
+        createElement('button', { type: 'button', onClick: () => options.goToWeek(index),
+          'aria-pressed': index === options.viewingWeekIdx,
+          style: { ...s.btnGhost, minHeight: 44, width: '100%', whiteSpace: 'normal', textAlign: 'left' } },
+        `Uge ${week.week_number}${week.block_name ? ` · ${week.block_name}` : ''}`)))))
   // Mark and style the renderer's root; accessible copy can change independently.
   return createElement(block.type, { ...block.props, 'data-program-block-overview': true,
-    style: { ...block.props.style, ...programLayout.block } }, block.props.children)
+    style: { ...block.props.style, ...programLayout.block } }, content, earlier)
 }
 
 // Keep unlike prescriptions as coach-written text, never average RPE and percent.
@@ -96,6 +116,27 @@ function programSessionCompletion(session, logs) {
     }
   }
   return count ? (skipped ? 'closed' : 'done') : null
+}
+
+// The existing program reader supplies logs; unknown plans/logs never suggest a pass.
+function nextProgramSession(weeks, activeIndex, currentLogs, upcomingLogs) {
+  for (let index = activeIndex; index < weeks.length; index++) {
+    const week = weeks[index]
+    const logs = index === activeIndex ? currentLogs : upcomingLogs
+    if (!week?.id || !Array.isArray(logs) || !Array.isArray(week.sessions) || week.readEvidence?.complete === false) return null
+    for (const session of week.sessions) {
+      if (!session?.id || !Array.isArray(session.exercises)) return null
+      if (!session.exercises.length) continue
+      if (session.exercises.some(ex => !ex?.id || !(typeof ex.sets === 'number' || (typeof ex.sets === 'string' && ex.sets.trim())) || !Number.isSafeInteger(Number(ex.sets)) || Number(ex.sets) < 0)) return null
+      if (!session.exercises.some(ex => Number(ex.sets) > 0)) continue
+      // A skipped pass is closed, as in the existing logger, rather than suggested again.
+      if (!programSessionCompletion(session, logs)) return { index, weekId: week.id, sessionId: session.id, title: session.title }
+    }
+  }
+  return null
+}
+function programWeekStorageKey(athleteId) {
+  return typeof athleteId === 'string' && athleteId ? `entropi2:athlete:${encodeURIComponent(athleteId)}:program:last-week` : null
 }
 
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
@@ -275,13 +316,13 @@ export default function ProgramTab({
             if (!blockOverviewOn || !athlete?.id || !block.length) return
             let cancelled = false
             setBlockStatus(null)
-            Promise.resolve().then(() => fetchProgramBlockLogs(athlete.id, block.map(row => row.week)))
+            Promise.resolve().then(() => fetchProgramBlockLogs(athlete.id, entropi2 === true ? allWeeks.slice(activeWeekIdx) : block.map(row => row.week)))
               .then(logs => { if (!cancelled) setBlockStatus({ weeks: allWeeks, athleteId: athlete.id, activeWeekIdx, logs }) })
               .catch(() => { if (!cancelled) setBlockStatus(null) })
             return () => { cancelled = true }
             // The reader is recreated by the parent; data changes trigger a fresh status read.
             // eslint-disable-next-line react-hooks/exhaustive-deps
-          }, [blockOverviewOn, allWeeks, activeWeekIdx, athlete?.id, exerciseLogs, pastLogs])
+          }, [blockOverviewOn, entropi2, allWeeks, activeWeekIdx, athlete?.id, exerciseLogs, pastLogs])
           const viewedWeek = allWeeks[viewingWeekIdx] || null
           const viewedRange = viewedWeek ? fmtWeekRange(weekStartDate(allWeeks, viewedWeek.week_number)) : null
           const isCurrentWeek = viewingWeekIdx === activeWeekIdx
@@ -295,12 +336,53 @@ export default function ProgramTab({
             viewedWeek ? weekStartDate(allWeeks, viewedWeek.week_number) : null, isFutureWeek,
           )
 
-                    const goToWeek = (gi) => {
-                      setViewingWeekIdx(gi)
-                      setProgOpenSession(null)
-                      if (gi < activeWeekIdx) fetchPastLogs(allWeeks[gi], athlete.id)
-                      else setPastLogs([])
-                    }
+          const storageKey = programAppearanceOn ? programWeekStorageKey(athlete?.id) : null
+          const [restoredKey, setRestoredKey] = useState(null)
+          const [pendingJump, setPendingJump] = useState(null)
+          const knownUpcomingLogs = blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks
+            && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null
+          const nextSession = programAppearanceOn && !programError
+            ? nextProgramSession(allWeeks, activeWeekIdx, exerciseLogs, knownUpcomingLogs) : null
+          const goToWeek = (gi) => {
+            if (!allWeeks[gi]) return
+            setViewingWeekIdx(gi)
+            setProgOpenSession(null)
+            if (gi < activeWeekIdx) fetchPastLogs(allWeeks[gi], athlete.id)
+            else setPastLogs(programAppearanceOn && gi > activeWeekIdx && Array.isArray(knownUpcomingLogs) ? knownUpcomingLogs : [])
+            if (storageKey) {
+              try { globalThis.localStorage?.setItem(storageKey, JSON.stringify(allWeeks[gi].id)) } catch { /* navigation still works without storage */ }
+            }
+          }
+          useEffect(() => {
+            if (!storageKey || restoredKey === storageKey || !allWeeks.length || programError) return
+            let id
+            try { id = JSON.parse(globalThis.localStorage?.getItem(storageKey) ?? 'null') }
+            catch { setRestoredKey(storageKey); return }
+            if (typeof id !== 'string') { setRestoredKey(storageKey); return }
+            const index = allWeeks.findIndex(week => week.id === id)
+            // The parent may still hold the prior athlete's weeks during a switch.
+            // Retry a saved identity when the new program arrives; never save a fallback.
+            if (index < 0) return
+            setRestoredKey(storageKey)
+            if (index === viewingWeekIdx) return
+            setViewingWeekIdx(index)
+            setProgOpenSession(null)
+            if (index < activeWeekIdx) fetchPastLogs(allWeeks[index], athlete.id)
+            else setPastLogs([])
+            // Restore only once per athlete; refreshes must not undo a deliberate navigation.
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+          }, [storageKey, restoredKey, allWeeks, programError])
+          useEffect(() => {
+            if (!programAppearanceOn || !pendingJump) return
+            if (pendingJump.athleteId !== athlete?.id || programError) { setPendingJump(null); return }
+            if (viewedWeek?.id !== pendingJump.weekId || progOpenSession !== pendingJump.sessionId) return
+            const target = sessionRefs?.current?.[pendingJump.sessionId]
+            if (target) {
+              target.scrollIntoView?.({ block: 'start', behavior: 'instant' })
+              target.focus?.({ preventScroll: true })
+            }
+            setPendingJump(null)
+          }, [programAppearanceOn, pendingJump, athlete?.id, programError, viewedWeek?.id, progOpenSession, sessionRefs])
 
           const blokOversigt = allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
@@ -479,6 +561,13 @@ export default function ProgramTab({
                 </>
               ) : (
                 <>
+                  {nextSession && <button type="button" data-program-next=""
+                    style={{ ...s.btnPrimary, minHeight: 48, width: '100%', marginBottom: 16, whiteSpace: 'normal', overflowWrap: 'anywhere' }}
+                    onClick={() => {
+                      goToWeek(nextSession.index)
+                      setProgOpenSession(nextSession.sessionId)
+                      setPendingJump({ ...nextSession, athleteId: athlete?.id })
+                    }}>Næste pas · {nextSession.title || 'Åbn pas'}</button>}
                   {blockOverviewOn && programBlockElement({
                     allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate, programError,
                     onRetry: () => fetchProgram(athlete.id),
@@ -524,6 +613,7 @@ export default function ProgramTab({
                           disabled={viewingWeekIdx === 0}
                           onClick={() => {
                             const ni = viewingWeekIdx - 1
+                            if (programAppearanceOn) { goToWeek(ni); return }
                             setViewingWeekIdx(ni)
                             setProgOpenSession(null)
                             fetchPastLogs(allWeeks[ni], athlete.id)
@@ -544,6 +634,7 @@ export default function ProgramTab({
                           disabled={viewingWeekIdx >= allWeeks.length - 1}
                           onClick={() => {
                             const ni = viewingWeekIdx + 1
+                            if (programAppearanceOn) { goToWeek(ni); return }
                             setViewingWeekIdx(ni)
                             setProgOpenSession(null)
                             if (ni < activeWeekIdx) {
@@ -559,6 +650,7 @@ export default function ProgramTab({
                           <button
                             style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
                             onClick={() => {
+                              if (programAppearanceOn) { goToWeek(activeWeekIdx); return }
                               setViewingWeekIdx(activeWeekIdx)
                               setProgOpenSession(null)
                               setPastLogs([])
@@ -613,6 +705,7 @@ export default function ProgramTab({
                     return (
                       <div
                         key={session.id}
+                        {...(programAppearanceOn ? { tabIndex: -1 } : {})}
                         ref={el => { sessionRefs.current[session.id] = el }}
                         style={{ marginBottom: programAppearanceOn ? '1.25rem' : '0.75rem', scrollMarginTop: '64px', ...(programAppearanceOn ? { minWidth: 0, overflowWrap: 'anywhere' } : {}) }}
                       >

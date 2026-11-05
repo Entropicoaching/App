@@ -52,9 +52,12 @@ test('review: actual shared default enables top summary, active block wins over 
   const fold = nodes(block, n => n.type === 'details')[0]
   assert.equal(fold.props.open, undefined)
   assert.equal(nodes(block, n => n.type === 'h2').length, 1)
-  const visible = block.props.children.filter(n => n !== fold).map(text).join(' ')
+  const visible = block.props.children.filter(n => n.type !== 'details').map(text).join(' ')
   assert.doesNotMatch(visible, /planlagte sæt|Hviledage|Logstatus/)
-  const previous = nodes(fold, n => n.type === 'button')[0]
+  const history = nodes(block, n => n.props['data-program-history'])[0]
+  assert.equal(history.props.open, undefined)
+  assert.match(text(history), /Vis tidligere uger/)
+  const previous = nodes(history, n => n.type === 'button')[0]
   previous.props.onClick()
   assert.deepEqual(calls, [['week', 0], ['session', null], ['past', 'a', 'review-fixture']])
 })
@@ -91,7 +94,8 @@ test('review: incomplete nested relations cannot fabricate zero sets, rest days 
   for (const sessions of [undefined, [null], [{}], [{ exercises: [null] }]]) {
     const { props } = fixture()
     props.allWeeks[0].sessions = sessions
-    const row = nodes(summary(render(props)), n => n.type === 'button')[0]
+    const history = nodes(summary(render(props)), n => n.props['data-program-history'])[0]
+    const row = nodes(history, n => n.type === 'button')[0]
     assert.match(text(row), /Planlagt volumen ukendt/)
     assert.match(text(row), /Logstatus ikke tilgængelig/)
     assert.match(text(row), /Hviledage ikke fastlagt/)
@@ -124,7 +128,7 @@ test('round two: coach information and block navigation remain visible with eith
     assert.match(visible, /Syntetisk ugenote/)
     assert.match(visible, /Fra din coach.*Syntetisk coachbeskrivelse/)
     assert.doesNotMatch(text(tree), /aktiv uge .* af/)
-    assert.equal(nodes(tree, n => n.type === 'details').length, 1)
+    assert.equal(nodes(tree, n => n.type === 'details').length, 2)
     // Old circular week buttons must not duplicate the detailed weekly list.
     assert.equal(nodes(tree, n => n.type === 'button' && n.props.style?.borderRadius === '50%').length, 0)
     assert.equal(nodes(tree, n => n.type === 'button' && /‹|›/.test(text(n))).length > 0, true)
@@ -140,8 +144,9 @@ test('round two: week zero and repeated numbers retain distinct navigation targe
   assert.match(text(tree), /Uge 3 af 4/)
   const buttons = nodes(tree, n => n.type === 'button')
   assert.equal(buttons.length, 4)
-  assert.equal(buttons[2].props['aria-current'], 'step')
-  buttons[1].props.onClick()
+  assert.equal(buttons[0].props['aria-current'], 'step')
+  const history = nodes(tree, n => n.props['data-program-history'])[0]
+  nodes(history, n => n.type === 'button')[1].props.onClick()
   assert.deepEqual(calls, [['week', 1], ['session', null], ['past', 'usable-1', 'review-fixture']])
 })
 test('round two: only an upcoming marker in this block produces the milestone heading', () => {
