@@ -28,7 +28,8 @@ import { s } from '../athleteShared.js'
 import { SMERTE_LINJE } from '../saetSmerte.js'
 
 // The inline input styles reset outline; keep this override inside the program namespace.
-const programFocusCss = `[data-program-accessible] :is(input, textarea, select, button):focus-visible {
+const programFocusCss = `[data-program-accessible] :is(input, textarea, select, button):focus-visible,
+[data-program-week-navigation] button:focus-visible {
   outline: 3px solid #c8923a !important;
   outline-offset: 3px;
 }`
@@ -39,6 +40,8 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 const programColors = { surface: '#1c1c18', text: '#edeae2', muted: '#c4c0b5',
   accent: '#c8923a', done: '#b9d5a0', border: '#777267' }
 const programLayout = {
+  weekText: { fontSize: '1rem', lineHeight: 1.5, letterSpacing: 'normal',
+    textTransform: 'none', whiteSpace: 'normal', overflowWrap: 'anywhere' },
   block: { padding: 16, borderRadius: 12, background: programColors.surface,
     borderInlineStart: `4px solid ${programColors.accent}`, boxSizing: 'border-box' },
   week: { padding: 16, borderRadius: 12, background: programColors.surface,
@@ -434,17 +437,18 @@ export default function ProgramTab({
                       // G9: kun 17px høj med nul vandret padding — samme mønster/metode som F13-F16
                       // (ordre 68): minHeight + boxSizing, bredden på tekstknappen bevares.
                       minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center',
+                      ...(programAppearanceOn ? { ...programLayout.weekText, overflow: 'visible', textOverflow: 'clip' } : {}),
                     }
 
                     return (
-                      <div style={{ marginBottom: '1.5rem', ...(programAppearanceOn ? programLayout.block : {}) }}>
+                      <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.5rem', ...(programAppearanceOn ? programLayout.block : {}) }}>
                         {weeksToComp != null && weeksToComp > 0 && (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.7rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#c8923a', letterSpacing: '0.1em', marginBottom: '0.7rem', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
                             🏆 {weeksToComp} uger til stævne
                           </div>
                         )}
                         {weeksToComp != null && weeksToComp <= 0 && (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.7rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.7rem', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
                             🏆 Stævne passeret
                           </div>
                         )}
@@ -465,12 +469,12 @@ export default function ProgramTab({
                         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem', ...(programAppearanceOn ? { flexWrap: 'wrap' } : {}) }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
                             <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: color, flexShrink: 0 }} />
-                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', ...(programAppearanceOn ? { whiteSpace: 'normal', overflowWrap: 'anywhere', lineHeight: 1.5 } : {}) }}>
                               {phase.name || 'Ingen blok'}
                             </span>
                           </div>
                           {dateRange && (
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: programAppearanceOn ? programColors.muted : '#7a7770', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{dateRange}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: programAppearanceOn ? programColors.muted : '#7a7770', letterSpacing: '0.04em', whiteSpace: 'nowrap', ...(programAppearanceOn ? programLayout.weekText : {}) }}>{dateRange}</span>
                           )}
                         </div>
 
@@ -509,7 +513,7 @@ export default function ProgramTab({
                         </div>}
 
                         {/* Caption */}
-                        <div style={{ marginTop: '0.9rem', textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                        <div style={{ marginTop: '0.9rem', textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
                           {/* Brug det faktiske week_number, så caption og blok-overskrift
                               aldrig modsiger hinanden (fx uge 0 der før stod som "uge 1 af 1"). */}
                           {viewingWeekIdx === activeWeekIdx
@@ -614,12 +618,12 @@ export default function ProgramTab({
                   {!ugeFoerst && blokOversigt}
 
                   {/* Week header — navigation only shown when multiple weeks exist */}
-                  <div style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? programLayout.week : {}) }}>
+                  <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? programLayout.week : {}) }}>
                     {allWeeks.length > 1 ? (
                       <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 } : {}) }}>
                         <button
-                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
+                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx === 0 ? 0.25 : 1, ...(programAppearanceOn ? { ...programLayout.weekText, minHeight: 44 } : {}) }}
                           disabled={viewingWeekIdx === 0}
                           onClick={() => {
                             const ni = viewingWeekIdx - 1
@@ -630,7 +634,7 @@ export default function ProgramTab({
                           }}
                         >← Forrige uge</button>
                         <div style={{ textAlign: 'center', flex: 1, padding: '0 0.5rem', ...(programAppearanceOn ? { gridColumn: '1 / -1', gridRow: 1, minWidth: 0 } : {}) }}>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
                             Uge {viewedWeek.week_number}{viewedRange ? ` · ${viewedRange}` : ''}
                             {isFutureWeek && <span style={{ color: (programAppearanceOn ? programColors.muted : '#4a4844'), marginLeft: '0.5em' }}>· planlagt</span>}
                             {!isCurrentWeek && !isFutureWeek && <span style={{ color: (programAppearanceOn ? programColors.muted : '#4a4844'), marginLeft: '0.5em' }}>· historisk</span>}
@@ -640,7 +644,7 @@ export default function ProgramTab({
                           )}
                         </div>
                         <button
-                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx >= allWeeks.length - 1 ? 0.25 : 1, ...(programAppearanceOn ? { minHeight: 44, whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}) }}
+                          style={{ ...programTapTarget, ...programGhost, fontSize: '0.58rem', padding: '0.4rem 0.75rem', opacity: viewingWeekIdx >= allWeeks.length - 1 ? 0.25 : 1, ...(programAppearanceOn ? { ...programLayout.weekText, minHeight: 44 } : {}) }}
                           disabled={viewingWeekIdx >= allWeeks.length - 1}
                           onClick={() => {
                             const ni = viewingWeekIdx + 1
@@ -658,7 +662,7 @@ export default function ProgramTab({
                       {!isCurrentWeek && (
                         <div style={{ textAlign: 'center', marginTop: '0.6rem' }}>
                           <button
-                            style={{ ...programTapTarget, ...programGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)' }}
+                            style={{ ...programTapTarget, ...programGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)', ...(programAppearanceOn ? programLayout.weekText : {}) }}
                             onClick={() => {
                               if (programAppearanceOn) { goToWeek(activeWeekIdx); return }
                               setViewingWeekIdx(activeWeekIdx)
@@ -671,7 +675,7 @@ export default function ProgramTab({
                       </>
                     ) : (
                       <div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
                           Uge {viewedWeek.week_number}
                         </div>
                         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
