@@ -2,10 +2,13 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createElement, act, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { registerHooks } from 'node:module'
 import Conversation from './Conversation.mjs'
+import ConversationEntry from './ConversationEntry.mjs'
 import { createConversation } from './conversationController.mjs'
 import { createWeeklyLetter } from '../coach/ugebrev/weeklyLetterModel.mjs'
 import { letterFixture, emptyFixture } from '../coach/ugebrev/letterFixture.mjs'
+import { calendarDay, addCalendarDays } from '../../calendarDate.js'
 
 // Minimal host document for React's real renderer and the actual imperative view.
 // No module hooks, fake React, network, browser, timers or layout assertions.
@@ -73,7 +76,7 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
     const details = find(host, 'details')[0]
     assert.equal(details.open, false); assert.equal(details.hidden, false)
     assert.equal(details.children[0].tagName, 'SUMMARY')
-    const letterButton = find(host, 'button').find(b => b.textContent === 'Lav udkast om søvn')
+    const letterButton = find(host, 'button').find(b => b.textContent === 'Lav udkast til ugebrev')
     const input = find(host, 'textarea')[0]
     assert.equal(letterButton.disabled, false)
     await act(async () => { await letterButton.events.get('click')() })
@@ -83,7 +86,7 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
     await act(async () => { controller.draft('') })
     letterData = emptyFixture()
     await act(async () => { await letterButton.events.get('click')() })
-    assert.match(host.textContent, /Ingen kendte søvnregistreringer/)
+    assert.match(host.textContent, /Ingen kendte registreringer af søvn/)
     assert.equal(input.value, '')
     letterData = { state: 'error' }
     await act(async () => { await letterButton.events.get('click')() })
@@ -197,6 +200,79 @@ test('real React athlete: one-tap answer, set with note, empty, read/send error,
     assert.equal(await controllers.at(-1).shareSet('set', 'note'), false)
     assert.equal(writes.length, count)
   } finally {
+    await act(async () => { root.unmount() })
+    if (oldWindow === undefined) delete globalThis.window; else globalThis.window = oldWindow
+    if (oldAct === undefined) delete globalThis.IS_REACT_ACT_ENVIRONMENT; else globalThis.IS_REACT_ACT_ENVIRONMENT = oldAct
+  }
+})
+
+test('real React entry: coach import error and local retry, athlete isolation and strict OFF', async () => {
+  const oldWindow = globalThis.window, oldAct = globalThis.IS_REACT_ACT_ENVIRONMENT
+  const doc = { nodeType: 9, addEventListener() {}, removeEventListener() {},
+    createElement: tag => new Element(tag, doc), activeElement: null }
+  const win = { document: doc, HTMLElement: Element, HTMLIFrameElement: class {} }
+  doc.defaultView = win; doc.documentElement = doc.createElement('html'); doc.body = doc.createElement('body')
+  globalThis.window = win; globalThis.IS_REACT_ACT_ENVIRONMENT = true
+  const host = doc.createElement('div'), root = createRoot(host), ref = { current: null }
+  const reads = [], writes = [], today = calendarDay(new Date())
+  const rows = Array.from({ length: 4 }, (_, i) => ({ id: `synthetic-${i}`, athlete_id: 'synthetic-athlete',
+    logged_date: addCalendarDays(today, -i), energy: 1, stress: 5, soreness_level: 5 }))
+  const entry = { enabled: true, session: { user: { id: 'synthetic-owner' } },
+    selectedAthlete: { id: 'synthetic-athlete' }, athletes: [{ id: 'synthetic-athlete' }],
+    athlete: { id: 'synthetic-athlete', user_id: 'synthetic-owner' }, storage: () => null,
+    inboxDatabase: {
+      from(table) {
+        reads.push(table)
+        const query = Object.fromEntries(['select', 'eq', 'gte', 'lte', 'order'].map(key => [key, () => query]))
+        query.range = async () => ({ data: table === 'readiness_logs' ? rows : [] })
+        for (const key of ['insert', 'update', 'upsert']) query[key] = () => { writes.push(key); assert.fail('Unexpected write') }
+        return query
+      },
+      rpc: async () => ({ data: [] }),
+    } }
+  let failImport = true, attempts = 0
+  const entryURL = new URL('./ConversationEntry.mjs', import.meta.url).href
+  // Real React and the actual reader remain untouched; only fail the import boundary once.
+  const hooks = registerHooks({ resolve(specifier, context, next) {
+    if (context.parentURL === entryURL && specifier === '../coach/ugebrev/readWeeklyLetter.mjs') {
+      attempts++
+      if (failImport) throw Error('Synthetic chunk failure')
+    }
+    return next(specifier, context)
+  } })
+  const render = (role, enabled = true, getEntry = () => entry) => act(async () => {
+    root.render(createElement(StrictMode, null,
+      createElement(ConversationEntry, { role, enabled, getEntry, controllerRef: ref })))
+  })
+  try {
+    await render('coach')
+    assert.equal(attempts, 0); assert.equal(reads.includes('readiness_logs'), false)
+    const letter = find(host, 'button').find(b => b.textContent === 'Lav udkast til ugebrev')
+    assert.ok(letter); assert.equal(letter.disabled, false)
+    await act(async () => { await letter.events.get('click')() })
+    assert.equal(attempts, 1); assert.equal(reads.includes('readiness_logs'), false)
+    assert.equal(letter.textContent, 'Prøv ugebrev igen'); assert.equal(letter.disabled, false)
+    assert.ok(find(host, 'p').some(p => p.attributes.role === 'alert' && /Udkastet kunne ikke dannes/.test(p.textContent)))
+    assert.equal(find(host, 'textarea')[0].disabled, false)
+    failImport = false
+    await act(async () => {
+      const operation = letter.events.get('click')()
+      assert.equal(letter.textContent, 'Henter ugebrev …'); assert.equal(letter.disabled, true)
+      assert.match(host.textContent, /Henter ugebrev og ugens grundlag/)
+      await operation
+    })
+    assert.equal(attempts, 2)
+    assert.match(find(host, 'textarea')[0].value, /energi|ømhed|belastning/)
+    assert.deepEqual(writes, [])
+    await render('athlete')
+    assert.equal(ref.current.weeklyLetter, undefined)
+    assert.equal(find(host, 'button').some(b => /udkast|ugebrev/.test(b.textContent)), false)
+    assert.equal(reads.filter(table => table === 'readiness_logs').length, 1)
+    await render('coach', false, () => assert.fail('OFF getEntry'))
+    assert.equal(host.children.length, 0); assert.equal(ref.current, null)
+    assert.equal(attempts, 2); assert.deepEqual(writes, [])
+  } finally {
+    hooks.deregister()
     await act(async () => { root.unmount() })
     if (oldWindow === undefined) delete globalThis.window; else globalThis.window = oldWindow
     if (oldAct === undefined) delete globalThis.IS_REACT_ACT_ENVIRONMENT; else globalThis.IS_REACT_ACT_ENVIRONMENT = oldAct

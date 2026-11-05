@@ -48,13 +48,14 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   list.setAttribute('role', 'list')
   Object.assign(list.style, { textAlign: 'left', paddingInlineStart: '0', listStyle: 'none' })
   const input = node('textarea'); input.value = ''; input.maxLength = 10000
-  let latestState, letterBusy = false
+  let latestState, letterBusy = false, letterRetry = false
   const letterStatus = node('p'); letterStatus.setAttribute('role', 'status')
-  const letter = button('Lav udkast om søvn', async () => {
+  const letter = button('Lav udkast til ugebrev', async () => {
     if (disposed || letter.disabled || !latestState || latestState.draft.trim()) return
     const athleteId = latestState.athleteId
     letterBusy = true; letter.disabled = true
-    letterStatus.setAttribute('role', 'status'); letterStatus.textContent = 'Henter ugens grundlag …'
+    letter.textContent = 'Henter ugebrev …'
+    letterStatus.setAttribute('role', 'status'); letterStatus.textContent = 'Henter ugebrev og ugens grundlag …'
     try {
       const model = await controller.weeklyLetter()
       if (disposed) return
@@ -66,15 +67,17 @@ export function mountConversation(root, controller, { enabled = false, now = () 
         letterStatus.textContent = 'Din tekst er bevaret. Tøm beskedfeltet, før du laver et nyt udkast.'
       } else if (model.state === 'ready') {
         if (controller.draft(model.text) === false) throw Error('Beskedfeltet er låst.')
-        letterStatus.textContent = `${model.from} – ${model.asOf}. Udkastet bygger kun på registreret søvn. Øvrige data er ukendte. Redigér teksten, og tryk selv Send.`
+        letterStatus.textContent = `${model.from} – ${model.asOf}. Udkastet bygger kun på registreret søvn, energi, stress og ømhed. Øvrige data er ukendte. Redigér teksten, og tryk selv Send.`
         input.focus?.()
       } else if (model.state === 'empty') {
-        letterStatus.textContent = 'Der er endnu ikke et sikkert grundlag for et ugebrev. Ingen kendte søvnregistreringer i de seneste 7 dage.'
+        letterStatus.textContent = 'Der er endnu ikke et sikkert grundlag for et ugebrev. Ingen kendte registreringer af søvn, energi, stress eller ømhed i de seneste 7 dage.'
       } else throw Error('Udkastet kunne ikke dannes.')
+      letterRetry = false
     } catch {
       if (!disposed) {
+        letterRetry = true
         letterStatus.setAttribute('role', 'alert')
-        letterStatus.textContent = 'Udkastet kunne ikke dannes. Din tekst er bevaret. Opdatér samtalen og prøv igen.'
+        letterStatus.textContent = 'Udkastet kunne ikke dannes. Din tekst er bevaret. Prøv ugebrev igen.'
       }
     } finally {
       letterBusy = false
@@ -84,6 +87,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   const letterTools = node('div')
   letterTools.append(letter, letterStatus)
   const updateLetter = state => {
+    letter.textContent = letterBusy ? 'Henter ugebrev …' : letterRetry ? 'Prøv ugebrev igen' : 'Lav udkast til ugebrev'
     letter.disabled = Boolean(letterBusy || state.busy || state.loading || !state.loaded || state.error
       || state.operation?.status === 'error' || state.draft.trim())
     letter.title = state.draft.trim() ? 'Tøm beskedfeltet først. Din tekst bliver ikke overskrevet.' : ''

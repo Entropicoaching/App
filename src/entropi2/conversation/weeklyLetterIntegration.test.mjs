@@ -43,7 +43,7 @@ function fixture(role = 'coach') {
 
 test('actual model + reader + controller + view: coach button above existing field, editable, manual send only', async () => {
   const f = fixture(); await f.controller.refresh()
-  const b = button(f.root, 'Lav udkast om søvn'), input = find(f.root, 'textarea')[0]
+  const b = button(f.root, 'Lav udkast til ugebrev'), input = find(f.root, 'textarea')[0]
   const compose = find(f.root, 'section')[0]
   assert.equal(compose.children[0].children[0], b); assert.equal(compose.children[1], input)
   assert.equal(b.type, 'button'); assert.equal(b.style.minHeight, '44px')
@@ -61,8 +61,8 @@ test('actual model + reader + controller + view: coach button above existing fie
 test('empty and error preserve the editable field with honest status and no writes', async () => {
   for (const kind of ['empty', 'fail']) {
     const f = fixture(); f[kind](); await f.controller.refresh()
-    await button(f.root, 'Lav udkast om søvn').click()
-    assert.match(f.root.textContent, kind === 'empty' ? /Ingen kendte søvnregistreringer/ : /Udkastet kunne ikke dannes/)
+    await button(f.root, 'Lav udkast til ugebrev').click()
+    assert.match(f.root.textContent, kind === 'empty' ? /Ingen kendte registreringer af søvn/ : /Udkastet kunne ikke dannes/)
     if (kind === 'fail') assert.ok(find(f.root, 'p').some(p => p.attributes.role === 'alert'))
     assert.equal(f.controller.snapshot().draft, ''); assert.deepEqual(f.writes, []); f.cleanup()
   }
@@ -72,7 +72,7 @@ test('draft typed during pending read survives; changed scope and disposal canno
   for (const action of ['edit', 'scope', 'dispose']) {
     const f = fixture(); await f.controller.refresh()
     let resolve; f.pending(new Promise(r => { resolve = r }))
-    const b = button(f.root, 'Lav udkast om søvn'), operation = b.click()
+    const b = button(f.root, 'Lav udkast til ugebrev'), operation = b.click()
     assert.equal(b.disabled, true)
     if (action === 'edit') f.controller.draft('Min syntetiske tekst')
     if (action === 'scope') f.scope({ athleteId: 'other' })
@@ -87,7 +87,7 @@ test('draft typed during pending read survives; changed scope and disposal canno
 
 test('athlete has no attached ugebrev tools; strict OFF has no reads', async () => {
   const f = fixture('athlete'); await f.controller.refresh()
-  assert.equal(button(f.root, 'Lav udkast om søvn'), undefined); f.cleanup()
+  assert.equal(button(f.root, 'Lav udkast til ugebrev'), undefined); f.cleanup()
   const poison = new Proxy({}, { get() { assert.fail('OFF access') } })
   mountConversation(poison, poison, { enabled: false })()
   assert.equal(calendarDay('2026-11-04T23:01:00Z'), '2026-11-05')

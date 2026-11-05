@@ -1,6 +1,5 @@
 import { createElement as h, useMemo, useRef, useState } from 'react'
 import Conversation from './Conversation.mjs'
-import { readWeeklyLetter } from '../coach/ugebrev/readWeeklyLetter.mjs'
 import { createConversation } from './conversationController.mjs'
 import { createConversationAdapters, athleteConversationScope, coachConversationScope, athleteUploadEntry } from './conversationAdapters.mjs'
 
@@ -24,9 +23,23 @@ export function createEntryFactory({ enabled = false, role, getEntry, openFeedba
         openFeedback(row)
       } })
     const controller = createConversation({ enabled, adapters, storage: () => getEntry().storage() })
-    if (enabled === true && role === 'coach') controller.weeklyLetter = () => readWeeklyLetter({
-      enabled: true, getScope: adapters.scope, database: entry.inboxDatabase,
-    })
+    if (enabled === true && role === 'coach') {
+      const current = () => {
+        if (!controller.snapshot().available) throw Error('Samtalen er ikke længere tilgængelig.')
+      }
+      controller.weeklyLetter = async () => {
+        current()
+        // Load only on the coach's explicit request. Do not retain a rejected
+        // promise: the local retry must make a fresh import attempt.
+        const { readWeeklyLetter } = await import('../coach/ugebrev/readWeeklyLetter.mjs')
+        current()
+        const model = await readWeeklyLetter({
+          enabled: true, getScope: adapters.scope, database: entry.inboxDatabase,
+        })
+        current()
+        return model
+      }
+    }
     return controller
   }
 }
