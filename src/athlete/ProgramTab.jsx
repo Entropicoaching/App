@@ -27,6 +27,12 @@ import CountdownRing from './CountdownRing.jsx'
 import { s } from '../athleteShared.js'
 import { SMERTE_LINJE } from '../saetSmerte.js'
 
+// The inline input styles reset outline; keep this override inside the program namespace.
+const programFocusCss = `[data-program-accessible] :is(input, textarea, select, button):focus-visible {
+  outline: 3px solid #c8923a !important;
+  outline-offset: 3px;
+}`
+
 const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 
 // Round-one Entropi 2 palette, applied to the mounted athlete program only.
@@ -181,7 +187,7 @@ function parseDuration(...parts) {
 // adfærd som mobilitetens timer (CountdownRing + start/pause/fortsæt/gentag), men
 // med sin EGEN state så flere kan stå på siden uden at kollidere med hinanden
 // eller med den delte mobilitets-timer.
-function ExerciseTimer({ duration, label }) {
+function ExerciseTimer({ duration, label, accessible = false, context }) {
   // G5: 'remaining' er sekunder tilbage NÅR ikke aktiv (frosset ved
   // pause/klar/gentag). Mens aktiv driver 'liveSeconds' visningen, opdateret
   // af effekten nedenfor ud fra tidsstempler i startRef — aldrig ved at
@@ -220,13 +226,13 @@ function ExerciseTimer({ duration, label }) {
       </div>
       {label && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', letterSpacing: '0.08em', marginBottom: '0.6rem' }}>{label}</div>}
       {!done ? (
-        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => {
+        <button {...(accessible ? { type: 'button', 'aria-label': `${active ? 'Pause' : seconds > 0 && seconds < duration ? 'Fortsæt' : 'Start timer'} · ${context}` } : {})} style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => {
           if (active) { setRemaining(seconds); setActive(false) } else setActive(true)
         }}>
           {active ? '⏸ Pause' : (seconds > 0 && seconds < duration) ? '▶ Fortsæt' : '▶ Start timer'}
         </button>
       ) : (
-        <button style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setRemaining(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
+        <button {...(accessible ? { type: 'button', 'aria-label': `Gentag timer · ${context}` } : {})} style={{ ...s.btnGhost, padding: '0.5rem 1.25rem' }} onClick={() => { setRemaining(duration); setDone(false); setActive(false) }}>↺ Gentag</button>
       )}
     </div>
   )
@@ -329,6 +335,7 @@ export default function ProgramTab({
           const isFutureWeek = viewingWeekIdx > activeWeekIdx
           const logsForView = isCurrentWeek ? exerciseLogs : pastLogs
           const programAppearanceOn = entropi2 === true
+          const a11y = attributes => programAppearanceOn ? attributes : {}
           const intensity = programAppearanceOn && !programError ? programWeekIntensity(viewedWeek) : null
           const programToday = programAppearanceOn ? new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Copenhagen' }) : null
           const viewedStart = programAppearanceOn && viewedWeek ? weekStartDate(allWeeks, viewedWeek.week_number) : null
@@ -686,7 +693,9 @@ export default function ProgramTab({
 
                   {hviledageListe === true && <RestDays restMobility={restMobility} week={viewedWeek} weekStart={weekStartDate(allWeeks, viewedWeek.week_number)} />}
 
-                  {(viewedWeek.sessions || []).filter(session => hviledageListe !== true || !isRestSession(viewedWeek, session)).map(session => {
+                  {(viewedWeek.sessions || []).filter(session => hviledageListe !== true || !isRestSession(viewedWeek, session)).map((session, sessionIdx) => {
+                    const sessionContext = `${session.title || 'Træningspas'} · pas ${sessionIdx + 1}, uge ${viewedWeek.week_number}`
+                    const panelId = `program-session-${encodeURIComponent(viewedWeek.id)}-${encodeURIComponent(session.id)}`
                     const isOpen = progOpenSession === session.id
                     const preview = upcomingPreview ? programDayPreview(session.exercises) : null
                     const sessionExIds = (session.exercises || []).map(e => e.id)
@@ -705,18 +714,25 @@ export default function ProgramTab({
                     return (
                       <div
                         key={session.id}
-                        {...(programAppearanceOn ? { tabIndex: -1 } : {})}
+                        {...a11y({ tabIndex: -1, 'data-program-accessible': true })}
                         ref={el => { sessionRefs.current[session.id] = el }}
                         style={{ marginBottom: programAppearanceOn ? '1.25rem' : '0.75rem', scrollMarginTop: '64px', ...(programAppearanceOn ? { minWidth: 0, overflowWrap: 'anywhere' } : {}) }}
                       >
                         <div
-                          style={{ ...s.card, marginBottom: 0, cursor: 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent', ...(programAppearanceOn ? { border: `1px solid ${sessionAccent}`, borderInlineStart: `4px solid ${sessionAccent}`, borderRadius: isOpen ? '12px 12px 0 0' : 12, padding: 16, background: isToday ? '#292216' : programColors.surface } : {}) }}
-                          onClick={() => openSession(isOpen ? null : session.id)}
+                          style={{ ...s.card, marginBottom: 0, cursor: programAppearanceOn ? 'default' : 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent', ...(programAppearanceOn ? { border: `1px solid ${sessionAccent}`, borderInlineStart: `4px solid ${sessionAccent}`, borderRadius: isOpen ? '12px 12px 0 0' : 12, padding: 16, background: isToday ? '#292216' : programColors.surface } : {}) }}
+                          {...(!programAppearanceOn ? { onClick: () => openSession(isOpen ? null : session.id) } : {})}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { flexWrap: 'wrap', gap: 16 } : {}) }}>
                             <div {...(programAppearanceOn ? { style: { minWidth: 0, flex: '1 1 180px' } } : {})}>
                               <div style={{ ...s.cardLabel, marginBottom: '0.3rem', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                                {programAppearanceOn ? <h2 style={{ margin: 0, font: 'inherit', fontSize: '1.1rem', color: programColors.text, letterSpacing: 'normal', textTransform: 'none' }}>{session.title}</h2> : session.title}
+                                {programAppearanceOn ? <h2 style={{ margin: 0, width: '100%', font: 'inherit', fontSize: '1.1rem', color: programColors.text, letterSpacing: 'normal', textTransform: 'none' }}>
+                                  <button type="button" aria-expanded={isOpen} aria-controls={isOpen ? panelId : undefined}
+                                    aria-label={sessionContext}
+                                    onClick={() => openSession(isOpen ? null : session.id)}
+                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, width: '100%', minHeight: 44, padding: 0, border: 'none', background: 'transparent', color: 'inherit', font: 'inherit', textAlign: 'left', cursor: 'pointer', overflowWrap: 'anywhere' }}>
+                                    {session.title || 'Træningspas'} <span aria-hidden="true" style={{ fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
+                                  </button>
+                                </h2> : session.title}
                                 {isToday && <span style={programLayout.badge}>I dag</span>}
                                 {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.35rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
@@ -737,16 +753,18 @@ export default function ProgramTab({
                                   <button
                                     style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#7a7770', borderColor: 'rgba(237,234,226,0.18)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
                                     disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
+                                    {...a11y({ type: 'button', 'aria-label': `Spring resten over · ${sessionContext}` })}
                                     onClick={e => { e.stopPropagation(); askConfirm('Spring de resterende sæt over? De markeres som ikke gennemført, så træningen lukkes.', () => skipRemainingSets(session)) }}
                                   >{pendingSessionAction === `${session.id}:skip` ? '...' : 'Spring resten over'}</button>
                                   <button
                                     style={{ ...s.btnGhost, fontSize: '0.62rem', padding: '0.35rem 0.7rem', color: '#c8923a', borderColor: 'rgba(200,146,58,0.35)', opacity: pendingSessionAction?.startsWith(`${session.id}:`) ? 0.6 : 1 }}
                                     disabled={pendingSessionAction?.startsWith(`${session.id}:`)}
+                                    {...a11y({ type: 'button', 'aria-label': `Auto-udfyld · ${sessionContext}` })}
                                     onClick={e => { e.stopPropagation(); askConfirm('Udfyld manglende sæt med sidst loggede vægt og reps? Brug kun hvis du faktisk lavede sættene.', () => autoCompleteSession(session)) }}
                                   >{pendingSessionAction === `${session.id}:autofill` ? '...' : 'Auto-udfyld'}</button>
                                 </>
                               )}
-                              <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
+                              {!programAppearanceOn && <span style={{ color: '#4a4844', fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>}
                             </div>
                           </div>
                         </div>
@@ -765,11 +783,12 @@ export default function ProgramTab({
                         )}
 
                         {isOpen && (
-                          <div style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem', ...(programAppearanceOn ? { borderColor: programColors.border, borderRadius: '0 0 12px 12px', minWidth: 0 } : {}) }}>
+                          <div {...a11y({ id: panelId })} style={{ background: '#181816', border: '1px solid rgba(237,234,226,0.07)', borderTop: 'none', padding: '1rem', ...(programAppearanceOn ? { borderColor: programColors.border, borderRadius: '0 0 12px 12px', minWidth: 0 } : {}) }}>
 
 
                             {!readOnly && opvarmStige === true && isCurrentWeek && !upcomingPreview && createElement(OpvarmStige, { enabled: true, exercises: session.exercises, scope: `${athlete?.id}|${viewedWeek.id}|${session.id}` })}
                             {exerciseViewRows(session.exercises).map(({ ex, name, label, startsGroup, endsGroup, showPrescription }, exIdx) => {
+                              const exerciseContext = `${sessionContext}, ${name || 'Øvelse'}, øvelse ${exIdx + 1}`
                               const isLast = exIdx === session.exercises.length - 1
                               return (
                                 <div key={ex.id} style={{ marginBottom: isLast ? 0 : '1.25rem', paddingBottom: isLast || !endsGroup ? 0 : '1.25rem', borderBottom: isLast || !endsGroup ? 'none' : '1px solid rgba(237,234,226,0.06)' }}>
@@ -785,10 +804,12 @@ export default function ProgramTab({
                                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', letterSpacing: '0.06em' }}>Er du sikker?</span>
                                             <button
                                               style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: '#e05555', borderColor: 'rgba(224,85,85,0.3)' }}
+                                              {...a11y({ type: 'button', 'aria-label': `Ja, spring øvelsen over · ${exerciseContext}` })}
                                               onClick={() => { skipExercise(ex); setSkipConfirmEx(null) }}
                                             >Ja</button>
                                             <button
                                               style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem' }}
+                                              {...a11y({ type: 'button', 'aria-label': `Annuller spring over · ${exerciseContext}` })}
                                               onClick={() => setSkipConfirmEx(null)}
                                             >Annuller</button>
                                           </div>
@@ -796,6 +817,7 @@ export default function ProgramTab({
                                         return (
                                           <button
                                             style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', flexShrink: 0, color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                            {...a11y({ type: 'button', 'aria-label': `Spring ${label.toLowerCase()} over · ${exerciseContext}` })}
                                             onClick={() => setSkipConfirmEx(ex.id)}
                                           >Spring {label.toLowerCase()} over</button>
                                         )
@@ -877,6 +899,7 @@ export default function ProgramTab({
                                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Opvarmningssæt</span>
                                             {isEditingWeight ? (
                                               <input
+                                                {...a11y({ 'aria-label': `Arbejdsvægt til opvarmning · ${exerciseContext}` })}
                                                 autoFocus
                                                 type="number"
                                                 defaultValue={w}
@@ -929,6 +952,7 @@ export default function ProgramTab({
                                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: done ? '#4a4844' : '#c8923a', minWidth: '28px' }}>{ws.pct}</span>
                                                   {isEditingSet ? (
                                                     <input
+                                                      {...a11y({ 'aria-label': `Opvarmningsvægt, sæt ${i + 1} · ${exerciseContext}` })}
                                                       autoFocus
                                                       type="number"
                                                       defaultValue={ws.weight}
@@ -948,6 +972,7 @@ export default function ProgramTab({
                                                   )}
                                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#7a7770' }}>× {ws.reps}</span>
                                                   <button
+                                                    {...a11y({ type: 'button', 'aria-label': `Spring opvarmningssæt ${i + 1} over · ${exerciseContext}` })}
                                                     title="Spring dette opvarmningssæt over"
                                                     onClick={e => { e.stopPropagation(); korrigerSæt(i, { skipped: true }) }}
                                                     style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.6rem', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box' }}
@@ -965,7 +990,7 @@ export default function ProgramTab({
                                   {!readOnly && isCurrentWeek && (() => {
                                     const dur = parseDuration(ex.reps, ex.intensity)
                                     if (!dur) return null
-                                    return <ExerciseTimer key={`tmr_${ex.id}`} duration={dur.seconds} label={dur.text} />
+                                    return <ExerciseTimer key={`tmr_${ex.id}`} duration={dur.seconds} label={dur.text} {...a11y({ accessible: true, context: exerciseContext })} />
                                   })()}
 
                                   {Array.from({ length: ex.sets || 0 }, (_, i) => i + 1).map(setNum => {
@@ -991,6 +1016,7 @@ export default function ProgramTab({
                                       )
                                     }
 
+                                    const setContext = `${exerciseContext}, ${label.toLowerCase()} ${setNum}`
                                     const input = logInputs[key] || { weight: '', note: '', rpe: '', reps: '' }
                                     const plannedRpe = parsePlannedRpe(ex.intensity)
                                     // Numeric, range and free prescriptions log actual reps per set.
@@ -1008,6 +1034,7 @@ export default function ProgramTab({
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
                                         <button
                                           style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: '#7a7770' }}
+                                          {...a11y({ type: 'button', 'aria-label': `Fortryd spring over · ${setContext}` })}
                                           onClick={() => unskipSet(ex.id, setNum)}
                                         >Fortryd</button>
                                       </div>
@@ -1020,7 +1047,7 @@ export default function ProgramTab({
                                             {label} {setNum}
                                           </div>
                                           <input
-                                            aria-label={`Vægt, sæt ${setNum}`}
+                                            aria-label={programAppearanceOn ? `Vægt · ${setContext}` : `Vægt, sæt ${setNum}`}
                                             style={{ ...s.fieldInput, width: '80px', minWidth: '80px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
                                             type="text" inputMode="decimal" placeholder="kg" value={input.weight}
                                             onChange={e => {
@@ -1037,7 +1064,7 @@ export default function ProgramTab({
                                             <>
                                               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.88rem', color: '#c8923a' }}>×</span>
                                               <input
-                                                aria-label={`Reps, sæt ${setNum}`}
+                                                aria-label={programAppearanceOn ? `Reps · ${setContext}` : `Reps, sæt ${setNum}`}
                                                 style={{ ...s.fieldInput, width: '52px', minWidth: '52px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.3rem', fontSize: '1.1rem', textAlign: 'center' }}
                                                 type="text" inputMode="numeric" placeholder="reps" value={repsValue}
                                                 onChange={e => {
@@ -1056,16 +1083,19 @@ export default function ProgramTab({
                                               inden for anbefalet tommelfinger-trykflade, også med svedige hænder. */}
                                           <button
                                             style={{ ...s.btnPrimary, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 1rem', fontSize: '0.65rem', background: logged ? '#6cba6c' : '#c8923a' }}
+                                            {...a11y({ type: 'button', 'aria-label': `${logged ? 'Gemt ✓, opdatér sæt' : 'Log sæt'} · ${setContext}` })}
                                             onClick={() => logSet(ex.id, setNum, ex.sets, repsToLog, plannedRpe)}
-                                          >{logged ? '✓' : 'Log'}</button>
+                                          >{logged ? (programAppearanceOn ? 'Gemt ✓' : '✓') : 'Log'}</button>
                                           <button
                                             style={{ ...s.btnGhost, minHeight: '44px', boxSizing: 'border-box', padding: '0.65rem 0.75rem', fontSize: '0.55rem', color: '#4a4844', borderColor: 'rgba(237,234,226,0.08)' }}
+                                            {...a11y({ type: 'button', 'aria-label': `Spring over · ${setContext}` })}
                                             onClick={() => skipSet(ex.id, setNum, plannedRpe)}
                                           >Spring over</button>
                                         </div>
                                         <div style={{ paddingLeft: 'calc(80px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                           <div style={{ position: 'relative' }}>
                                             <button
+                                              {...a11y({ type: 'button', 'aria-label': `Vælg RPE ${input.rpe || (plannedRpe != null ? plannedRpe : '–')} · ${setContext}`, 'aria-expanded': openRpePicker === key })}
                                               onClick={() => setOpenRpePicker(openRpePicker === key ? null : key)}
                                               style={{
                                                 background: input.rpe ? 'rgba(200,146,58,0.15)' : 'rgba(237,234,226,0.04)',
@@ -1104,6 +1134,7 @@ export default function ProgramTab({
                                                   return (
                                                     <button
                                                       key={v}
+                                                      {...a11y({ type: 'button', 'aria-label': `RPE ${v} · ${setContext}`, 'aria-pressed': isSelected })}
                                                       data-selected={isSelected ? 'true' : 'false'}
                                                       onClick={() => {
                                                         setLogInputs(p => chooseRpeInput(p, key, v))
@@ -1123,25 +1154,27 @@ export default function ProgramTab({
                                                         textAlign: 'left',
                                                         letterSpacing: '0.04em',
                                                       }}
-                                                    >{v}</button>
+                                                    >{programAppearanceOn && isSelected ? `${v} ✓` : v}</button>
                                                   )
                                                 })}
                                               </div>
                                             )}
                                           </div>
                                           <button
+                                            {...a11y({ type: 'button', 'aria-label': `Hvad er RPE? · ${setContext}` })}
                                             onClick={() => setShowRpeGuide(true)}
                                             title="Hvad er RPE? Din egen vurdering af, hvor hårdt et sæt føltes. Det er subjektivt og afhænger af dig og dagsformen, så to personer kan give samme sæt forskellige tal. Tallet svarer til gentagelser i reserve: 10 betyder ingen tilbage, 9 én, 8 to, og så videre. Vurderingen kan ramme ved siden af, og i gennemsnit har man omkring én gentagelse mere tilbage, end man tror. Den bliver mere præcis, jo tættere på grænsen sættet er. Kilderne er uenige om erfaring: én finder, at øvede vurderer bedre, andre finder ingen forskel. Er du ny, så øv dig i at notere tallet, men lad det ikke stå alene."
                                             style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.75rem', padding: '0.3rem 0.2rem', lineHeight: 1, flexShrink: 0 }}
                                           >ℹ</button>
                                           <input
                                             style={{ ...s.fieldInput, flex: 1, fontSize: '0.75rem', padding: '0.3rem 0.6rem', color: '#7a7770', fontStyle: 'italic' }}
+                                            {...a11y({ 'aria-label': `Note · ${setContext}` })}
                                             type="text" placeholder="Tilføj note..." value={input.note}
                                             onChange={e => setLogInputs(p => ({ ...p, [key]: { ...p[key], note: e.target.value } }))}
                                           />
                                         </div>
-                                        {setConfirm[key] && (
-                                          <div style={{
+                                        {(programAppearanceOn || setConfirm[key]) && (
+                                          <div {...a11y({ role: 'status', 'aria-atomic': true })} style={{
                                             paddingLeft: 'calc(80px + 0.5rem)',
                                             fontFamily: "'IBM Plex Mono', monospace",
                                             fontSize: '0.52rem',
@@ -1151,7 +1184,8 @@ export default function ProgramTab({
                                             opacity: setConfirm[key] === 'fading' ? 0 : 1,
                                             transition: 'opacity 0.3s ease',
                                           }}>
-                                            {setConfirm[key] === 'error' ? 'Ikke gemt. Prøv igen' : 'Gemt ✓'}
+                                            {programAppearanceOn && setConfirm[key] ? `${setContext}: ` : null}
+                                            {setConfirm[key] ? (setConfirm[key] === 'error' ? 'Ikke gemt. Prøv igen' : 'Gemt ✓') : null}
                                           </div>
                                         )}
                                       </div>
@@ -1163,6 +1197,11 @@ export default function ProgramTab({
                             {(session.exercises || []).length === 0 && (
                               <div style={{ fontSize: '0.85rem', color: '#4a4844', fontStyle: 'italic' }}>Ingen øvelser i denne træning endnu.</div>
                             )}
+                            {programAppearanceOn && !readOnly && isDone && isCurrentWeek && !!session.athlete_rating && (
+                              <div role="status" style={{ color: programColors.done, marginTop: '1rem' }}>
+                                Træningsfeedback gemt · {sessionContext}: {session.athlete_rating} af 5
+                              </div>
+                            )}
                             {!readOnly && isDone && isCurrentWeek && !session.athlete_rating && !dismissedFeedback.has(session.id) && (
                               <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.15)' }}>
                                 <div style={{ ...s.cardLabel, marginBottom: '0.75rem' }}>Træningsfeedback</div>
@@ -1173,25 +1212,28 @@ export default function ProgramTab({
                                       const fi = feedbackInputs[session.id] || {}
                                       return (
                                         <button key={n}
+                                          {...a11y({ type: 'button', 'aria-label': `Vurder træningen ${n} af 5 · ${sessionContext}`, 'aria-pressed': fi.rating === n })}
                                           onClick={() => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), rating: n } }))}
                                           // G13: 40×40px, lige under 44px — samme metode som F13-F16 (ordre 68).
                                           style={{ width: '44px', height: '44px', boxSizing: 'border-box', border: fi.rating === n ? '2px solid #c8923a' : '1px solid rgba(237,234,226,0.13)', background: fi.rating === n ? 'rgba(200,146,58,0.15)' : 'transparent', color: fi.rating === n ? '#c8923a' : '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', cursor: 'pointer' }}
-                                        >{n}</button>
+                                        >{programAppearanceOn && fi.rating === n ? `${n} ✓` : n}</button>
                                       )
                                     })}
                                   </div>
                                 </div>
                                 <textarea
                                   style={{ ...s.fieldInput, minHeight: '60px', resize: 'vertical', fontSize: '0.82rem', lineHeight: 1.6, boxSizing: 'border-box' }}
+                                  {...a11y({ 'aria-label': `Kommentar til træningsfeedback · ${sessionContext}` })}
                                   placeholder="Tilføj en kommentar..."
                                   maxLength={200}
                                   value={(feedbackInputs[session.id] || {}).comment || ''}
                                   onChange={e => setFeedbackInputs(p => ({ ...p, [session.id]: { ...(p[session.id] || {}), comment: e.target.value } }))}
                                 />
                                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
-                                  <button style={s.btnGhost} onClick={() => setDismissedFeedback(p => new Set([...p, session.id]))}>Spring over</button>
+                                  <button {...a11y({ type: 'button', 'aria-label': `Spring træningsfeedback over · ${sessionContext}` })} style={s.btnGhost} onClick={() => setDismissedFeedback(p => new Set([...p, session.id]))}>Spring over</button>
                                   <button
                                     style={{ ...s.btnPrimary, opacity: !(feedbackInputs[session.id]?.rating) || pendingSessionAction === `${session.id}:feedback` ? 0.4 : 1 }}
+                                    {...a11y({ type: 'button', 'aria-label': `Gem feedback · ${sessionContext}` })}
                                     onClick={() => saveFeedback(session.id)}
                                     disabled={!feedbackInputs[session.id]?.rating || pendingSessionAction === `${session.id}:feedback`}
                                   >{pendingSessionAction === `${session.id}:feedback` ? 'Gemmer...' : 'Gem feedback'}</button>
@@ -1220,6 +1262,7 @@ export default function ProgramTab({
                   )}
                 </>
               )}
+              {programAppearanceOn && <style>{programFocusCss}</style>}
             </>
           )
 }

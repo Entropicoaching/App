@@ -28,7 +28,7 @@ test('real React SSR renders mounted accents, today and the open set logger with
   assert.match(html, /border-inline-start:4px solid #c8923a/)
   assert.match(html, /Ugens intensitet · plan/)
   assert.match(html, />I dag<|>I dag<\/span>/)
-  assert.match(html, /<h2[^>]*>Pas A<\/h2>/)
+  assert.match(html, /<h2[^>]*><button type="button" aria-expanded="true" aria-controls="program-session-[^"]+"[^>]*>Pas A <span aria-hidden="true"[^>]*>▲<\/span><\/button><\/h2>/)
   assert.match(html, /<h3[^>]*data-exercise-heading="Squat"/)
   const button = html.indexOf('>Log</button>')
   assert.ok(button > 0)

@@ -18,7 +18,7 @@ test('React: next action leads; historical weeks occur once in a closed fold; lo
   assert.doesNotMatch(history, /\bopen(?:=|\s|>)/)
   assert.match(history, /Vis tidligere uger/)
   assert.doesNotMatch(history, /<input|Vægt, sæt/)
-  assert.match(html, /aria-label="Vægt, sæt 1"/)
+  assert.match(html, /aria-label="Vægt · Pas 1-0 · pas 1, uge 1, Squat, øvelse 1, sæt 1"/)
   assert.equal((html.match(/<strong>Uge 0/g) || []).length, 1)
   assert.match(html, /background:#1c1c18/)
 })

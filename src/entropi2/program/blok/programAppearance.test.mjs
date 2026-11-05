@@ -20,7 +20,9 @@ function fixture(extra = {}) {
 }
 const render = props => mount(Program, props).render()
 const intensity = tree => nodes(tree, n => Object.hasOwn(n.props, 'data-program-intensity'))[0]
-const card = tree => nodes(tree, n => typeof n.props.onClick === 'function' && text(n).startsWith('Pas A'))[0]
+// The decorated card and its native disclosure are separate elements.
+const card = tree => nodes(tree, n => n.type === 'div' && n.props.style?.borderInlineStart && text(n).startsWith('Pas A'))[0]
+const opener = tree => nodes(card(tree), n => n.type === 'button' && n.props['aria-expanded'] !== undefined)[0]
 const logs = (skipped = false) => [1, 2].map(set_number => ({ exercise_id: 'exercise-fixture', set_number, skipped }))
 
 test('mounted default has block and week accents, deduplicated plan targets and honest missing data', () => {
@@ -96,7 +98,7 @@ test('existing session opener and set logging stay outside every details fold wi
   assert.ok(found.every(row => row.folds.length === 0))
   found[0].node.props.onClick()
   assert.deepEqual(calls, [['exercise-fixture', 1, 2, '5', 8]])
-  card(tree).props.onClick()
+  opener(tree).props.onClick()
   assert.deepEqual(calls.at(-1), null)
   const legacy = render({ ...props, entropi2: false })
   assert.equal(nodes(tree, n => n.type === 'details').length, nodes(legacy, n => n.type === 'details').length + 1)

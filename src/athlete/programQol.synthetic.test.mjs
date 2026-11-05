@@ -72,7 +72,7 @@ test('historical navigation is closed, unique across blocks, and never contains 
   assert.match(text(fold), /^Vis tidligere uger/)
   assert.equal(nodes(tree, n => n.type === 'button' && /^Uge 0/.test(text(n))).length, 1)
   assert.equal(nodes(fold, n => n.type === 'input').length, 0)
-  assert.ok(nodes(tree, n => n.type === 'input' && n.props['aria-label'] === 'Vægt, sæt 1').length)
+  assert.ok(nodes(tree, n => n.type === 'input' && n.props['aria-label'] === 'Vægt · Pas 1-0 · pas 1, uge 1, Squat, øvelse 1, sæt 1').length)
 })
 
 test('navigation writes only the athlete key; restore handles remount, changed indices and athlete switches', async t => {
@@ -110,7 +110,7 @@ test('jump opens current or upcoming pass, then scrolls and focuses after its we
   assert.equal(a.props.viewingWeekIdx, 1)
   assert.equal(a.props.progOpenSession, 'session-1-0')
   assert.deepEqual(effects, ['scroll', 'focus'])
-  assert.ok(nodes(tree, n => n.type === 'input' && n.props['aria-label'] === 'Vægt, sæt 1').length)
+  assert.ok(nodes(tree, n => n.type === 'input' && n.props['aria-label'] === 'Vægt · Pas 1-0 · pas 1, uge 1, Squat, øvelse 1, sæt 1').length)
   a.update({ exerciseLogs: [0, 1].map(day => ({ exercise_id: `ex-1-${day}`, set_number: 1 })) })
   a.render(); await flushEffects(); tree = a.render()
   assert.match(text(next(tree)), /Pas 2-0/)

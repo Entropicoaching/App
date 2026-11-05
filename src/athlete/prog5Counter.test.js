@@ -38,7 +38,7 @@ test('counter: actual logging, skipping and RPE picker retain original arguments
   const skip=nodes(tree,n=>n.type==='button' && text(n)==='Spring over')[0]
   assert.ok(skip);skip.props.onClick()
   assert.deepEqual(calls,[['log','a',1,1,'5',8],['skip','a',1,8]])
-  const picker=nodes(tree,n=>n.type==='button' && text(n)==='RPE 8' && !n.props['aria-label'])[0]
+  const picker=nodes(tree,n=>n.type==='button' && text(n)==='RPE 8' && n.props['aria-label']?.startsWith('Vælg RPE 8 · '))[0]
   picker.props.onClick();tree=view.render()
   nodes(tree,n=>n.type==='button'&&text(n)==='9')[0].props.onClick()
   assert.equal(p.logInputs.a_1.rpe,'9');assert.equal(p.openRpePicker,null)
