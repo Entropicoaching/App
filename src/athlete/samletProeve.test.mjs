@@ -12,8 +12,6 @@ test('the test loader imports the actual local stylesheet without executing CSS'
 })
 
 const modes = ['athlete', 'preview', 'own']
-// Only these source-confirmed defects are TODOs. Other pages and states stay hard gates.
-const analysisTextTodo = 'F5: src/entropi2/analysis/DevelopmentView.mjs:68, src/entropi2/athlete/minedata/MineData.mjs:42 and src/entropi2/analysis/intensitet/IntensityView.mjs:22 render "ukendt", forbidden by this order.'
 const pageMarkers = {
   hjem: /data-entropi2-home-session/, program: /Testpas/,
   fremgang: /data-entropi2-analysis/, kost: /data-entropi2-kost/,
@@ -22,10 +20,7 @@ const pageMarkers = {
 }
 
 for (const mode of modes) for (const tab of tabs) for (const state of ['ready', 'empty', 'loading', 'error']) {
-  // Once F6 stops the crash, empty analysis reaches the existing F5 text defect.
-  // F6 itself is a separate hard gate below and is never covered by this TODO.
-  const todo = tab === 'fremgang' && ['ready', 'empty'].includes(state) ? analysisTextTodo : undefined
-  test(`samlet SSR: ${mode}/${tab}/${state}`, { todo }, async () => {
+  test(`samlet SSR: ${mode}/${tab}/${state}`, async () => {
     const html = await renderScenario(scenario(mode, tab, state))
     const tree = assertCleanMarkup(html)
     if (state === 'loading' || state === 'error') {
@@ -77,9 +72,9 @@ for (const mode of modes) for (const tab of ['hjem', 'program']) {
 }
 
 for (const mode of modes) {
-  test(`source loading within the page: ${mode}/analysis`, { todo: analysisTextTodo }, async () => {
+  test(`source loading within the page: ${mode}/analysis`, async () => {
     const analysis = await renderScenario(scenario(mode, 'fremgang', 'ready', { fremgangLoading: true, fremgangLogs: null }))
-    assert.match(analysis, /Henter intensitetsdata/)
+    assert.match(analysis, /Henter din udvikling/)
     assertCleanMarkup(analysis)
   })
   test(`source loading within the page: ${mode}/volume`, async () => {
