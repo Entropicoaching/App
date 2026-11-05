@@ -1,12 +1,17 @@
 import { createElement as h, useEffect, useRef, useState } from 'react'
 import AthleteHome from './AthleteHome.mjs'
 import { mountHomeSession } from './homeSessionBridge.mjs'
+import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
 
 // Functional opt-in entry, entirely within the home namespace.
 export default function HomeSession(props) {
   const root = useRef(null), latest = useRef(props), bridge = useRef(null)
   const [loading, setLoading] = useState(false)
   latest.current = props
+  useEffect(() => {
+    if (props.enabled !== true) return
+    return subscribeSessionRecordCelebrations(() => latest.current)
+  }, [props.enabled])
   useEffect(() => {
     if (props.enabled !== true) return
     let active = true

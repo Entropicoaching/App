@@ -851,6 +851,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
             {...(e2ReadOnly ? { onLogSet: undefined, setLogInputs: undefined, storage: coachPreviewStorage } : {})}
             pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}
+            rekordFejring={rekordFejring} rekordGrundlagFoer={rekordGrundlagFoer} setRekordFejring={setRekordFejring} fejredeRef={fejredeRef}
             {...(!e2ReadOnly ? {
               readinessLog, readinessInput, setReadinessInput,
               saveReadiness, savingReadiness, readinessError,

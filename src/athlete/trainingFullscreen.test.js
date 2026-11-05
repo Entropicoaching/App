@@ -61,6 +61,11 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
   let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  // E2-PAS-REKORD-KOBL1: invert exactly the receipt inputs inside HomeSession;
+  // retain the historic OFF source hashes and every previous delta guard.
+  const recordDelta = '            rekordFejring={rekordFejring} rekordGrundlagFoer={rekordGrundlagFoer} setRekordFejring={setRekordFejring} fejredeRef={fejredeRef}\r\n'
+  assert.equal(candidate.split(recordDelta).length, 2, 'Exact session record receipt delta')
+  candidate = candidate.replace(recordDelta, '')
   // E2-COACH-MINTRAENING2: invert only the exact ON presentation delta.
   {
     const current = "  const e2CoachNavigation = e2 && role === 'coach' && !!onExitPreview\n  const backBtn = onExitPreview && (".replace(/\r?\n/g, '\r\n')

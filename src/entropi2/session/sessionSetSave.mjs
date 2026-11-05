@@ -8,6 +8,12 @@ export function sessionStorage() {
 }
 const rowId = result => result?.data?.id || result?.data?.[0]?.id
 const refused = error => /^(PGRST|22|23|28|42|P0)/.test(String(error?.code || '')) || /jwt/i.test(String(error?.message || ''))
+const confirmedListeners = new Set()
+// The session host can reuse a confirmed row without another history read.
+export function subscribeSessionSetConfirmed(listener) {
+  confirmedListeners.add(listener)
+  return () => confirmedListeners.delete(listener)
+}
 
 // send uses the existing serialised exercise_logs writer, not a second client.
 // Its client id and original approval time survive reloads and lost replies.
@@ -36,7 +42,12 @@ export async function saveSessionSet({ athleteId, exerciseId, setNumber, payload
     if (result?.error || !id) return false
     clearOfflineSetIfSame(athleteId, key, entry, storage)
     // No optimistic row or saved signal: the server's row id is required.
-    confirm({ id, athlete_id: athleteId, exercise_id: exerciseId, set_number: setNumber, ...payload, _optimistic: false })
+    const row = { id, athlete_id: athleteId, exercise_id: exerciseId, set_number: setNumber, ...payload, _optimistic: false }
+    confirm(row)
+    for (const listener of confirmedListeners) {
+      // A presentation failure must never turn a confirmed save into an error.
+      try { listener(row) } catch { /* The saved row remains the source of truth. */ }
+    }
     notify()
     return true
   }
