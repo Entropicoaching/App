@@ -1,8 +1,19 @@
-# Stævnekost: frakoblet coachkladde
+# Stævnekost: beregning i coachens Stævne-fane
 
-Kun nye filer i denne mappe. Ingen registrering, route, import fra appens samling,
-database, fetch, implicit klokke eller lagring. Entropi 2 OFF og atletvisningen er
-uændrede. Der sendes eller aktiveres ingen plan.
+`StaevneTab.jsx` kobler `CoachWeightPlan.mjs` ind som den lukkede fold
+»Vægt og vejning« under prognosen. Kun Entropi 2 ON, coachvisning og en gyldig
+`athletes.competition_date` samt `athletes.weight_class` viser beregneren.
+Ingen ny tabel, databasekald, fetch eller lagring. Entropi 2 OFF og atletvisningen
+er uændrede. Der sendes eller aktiveres ingen plan.
+
+Coachen indtaster en aktuel kropsvægt, vælger eksplicit 2/24 timers vejning og
+bekræfter voksen atlet samt den krævede faglige vurdering. Intet er forudvalgt.
+Den udaterede profilvægt bruges ikke som aktuel vejning. Indtastningerne gælder
+kun denne beregning og nulstilles ved faneskift, OFF, atlet-, stævnetype-, dato-
+eller vægtklasseskift. Dato og klasse kan kun ændres via profilens eksisterende
+flow. `coachPlanInput.mjs` validerer produktionsgrundlaget og oversætter de
+midlertidige input til modellens strikte kontrakt. Komponenten leverer dagens
+lokale kalenderdato; modellen har fortsat ingen implicit klokke.
 
 `buildCompetitionPlan({enabled, input})` fra `model.mjs` er en ren funktion.
 Kun `enabled === true` læser input. OFF giver `{phase: 'off'}`. Aktivt kald uden
@@ -56,15 +67,20 @@ Akutte faresignaler og opfordringen »Tal med din coach« er angivet.
 `StaevneCoach.mjs` er den rigtige React-komponent, uden hooks eller effekter.
 Props: `{enabled, role: 'coach', input}`. Den bygger selv modellen på ny; den tager
 ikke imod et caller-fremstillet resultat. OFF eller anden/ukendt rolle giver
-`null`, før input læses. Rolleflaget styrer kun visning; en fremtidig integration
-skal håndhæve autorisation særskilt. Visningen har ingen handlinger eller writes.
+`null`, før input læses. Rolleflaget styrer kun visning; integrationen ligger i
+den eksisterende coachportal. Visningen har ingen handlinger eller writes.
 Ugemål og status er synlige; genopfyldning og sikkerhed/kilder er foldet i native
 `details`. Den er flydende i bredden med 44 px summary-mål. Browserlayout er
 ikke verificeret i denne hermetiske opgave.
 
-Appens eksisterende `npm test` finder alle tre `.test.mjs`-filer i mappen.
+Appens eksisterende `npm test` finder alle `.test.mjs`-filer i mappen.
 `model.test.mjs` og `view.test.mjs` er hermetiske og importerer de faktiske
 moduler. Element-fixturen er kun en strukturel test og tæller ikke som React.
 `StaevneCoach.react.test.mjs` kræver rigtig `react` og `react-dom/server` uden
-skip eller loader. Kør alle tre filer med `node --test --test-concurrency=1`.
+skip eller React-loader. `CoachWeightPlan.react.test.mjs` prøver også den faktiske
+JSX-fane med rigtig React og kun syntetiske backend/style/flag-kanter.
+`coachPlanInput.test.mjs` prøver den faktiske adapter og model.
+`CoachWeightPlan.synthetic.test.mjs` er supplerende hooksimulering af faktisk
+komponentkode; den erstatter ikke React-prøver eller browserlayout.
+Kør alle mappeprøver med `node --test --test-concurrency=1`.
 Fuld suite/build udføres af Dhurva i appens normale dependency-miljø.
