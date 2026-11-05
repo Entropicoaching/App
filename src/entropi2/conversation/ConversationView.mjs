@@ -44,7 +44,9 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   const title = node('h1', 'Samtale'), status = node('p'), list = node('ol'), compose = node('section')
   status.setAttribute('role', 'status'); compose.setAttribute('aria-label', 'Skriv en besked')
   status.style.marginBottom = '12px'
-  Object.assign(list.style, { textAlign: 'left', paddingInlineStart: '32px', listStylePosition: 'outside' })
+  // Keep list semantics without spending the message width on timeline numbers.
+  list.setAttribute('role', 'list')
+  Object.assign(list.style, { textAlign: 'left', paddingInlineStart: '0', listStyle: 'none' })
   const input = node('textarea'); input.value = ''; input.maxLength = 10000
   let latestState, letterBusy = false
   const letterStatus = node('p'); letterStatus.setAttribute('role', 'status')
@@ -243,7 +245,10 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       })
       if (item.key === focusedKey) focusedToggle = toggle
       if (isUnread(item) && !firstUnread) firstUnread = toggle
-      toggle.style.textAlign = 'left'
+      // Metadata remains a full-width, keyboard-focusable 44px opening target.
+      Object.assign(toggle.style, { textAlign: 'left', width: '100%', minWidth: '0',
+        border: '0', borderRadius: '0', padding: '8px 0', background: 'transparent',
+        color: '#b6b2a8', fontSize: '0.875rem', lineHeight: '1.5', whiteSpace: 'normal', cursor: 'pointer' })
       toggle.setAttribute('aria-expanded', String(expanded.has(item.key)))
       const content = node('div', item.kind === 'video' ? feedbackText(row) : row.content)
       content.hidden = !expanded.has(item.key)

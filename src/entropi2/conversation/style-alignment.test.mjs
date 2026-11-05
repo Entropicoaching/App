@@ -39,11 +39,12 @@ function fixture(role = 'coach') {
   return { root, calls, state, update: () => update(state), dispose }
 }
 
-test('both conversation roles override centering and keep ordered timeline markers in one gutter', () => {
+test('both conversation roles override centering and keep list semantics without a number gutter', () => {
   for (const role of ['coach', 'athlete']) {
     const f = fixture(role), list = nodes(f.root, 'ol')[0]
     assert.equal(f.root.style.textAlign, 'left')
-    assert.deepEqual(list.style, { textAlign: 'left', paddingInlineStart: '32px', listStylePosition: 'outside' })
+    assert.equal(list.attributes.role, 'list')
+    assert.deepEqual(list.style, { textAlign: 'left', paddingInlineStart: '0', listStyle: 'none' })
     assert.equal(list.children.length, 13)
     for (const li of list.children) {
       assert.equal(li.tagName, 'li')

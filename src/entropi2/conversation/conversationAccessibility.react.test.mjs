@@ -15,6 +15,11 @@ test('React F2/F7: StrictMode mount, reduced-motion jump, acknowledgement focus 
   try {
     await act(async () => root.render(createElement(StrictMode, null,
       createElement(Conversation, { enabled: true, createController: f.createController, controllerRef: ref }))))
+    const list = find(f.host, 'ol')[0], sender = row(f.host, 'message:one').children[0]
+    assert.equal(list.attributes.role, 'list')
+    assert.equal(list.style.paddingInlineStart, '0'); assert.equal(list.style.listStyle, 'none')
+    assert.equal(sender.style.background, 'transparent'); assert.equal(sender.style.border, '0')
+    assert.equal(sender.style.width, '100%'); assert.equal(sender.style.minHeight, '44px')
     const jump = find(f.host, 'button').find(n => n.textContent.includes('Spring til første ulæste'))
     await act(async () => { await jump.click() })
     assert.equal(f.doc.scrolled.options.behavior, 'instant')
