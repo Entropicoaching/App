@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { register } from 'node:module'
 import { createHost, descendants, memoryStorage, textContent } from '../checkin/syntheticReact.mjs'
-import { draftKey, loadDraft } from '../checkin/weeklyDraft.mjs'
+import { draftKey, emptyDraft, loadDraft, saveDraft } from '../checkin/weeklyDraft.mjs'
 register('../checkin/syntheticReactLoader.mjs', import.meta.url)
 register('./homeCheckInSyntheticLoader.mjs', import.meta.url)
 const { default: HomeCheckIn } = await import('./HomeCheckIn.mjs')
@@ -24,10 +24,12 @@ test('actual copied components open, edit, close and retain a namespace-only loc
   assert.equal(descendants(host.tree).filter(n => n.type === 'h2').length, 0)
   assert.equal(find(host, n => n.type === 'section').props['aria-label'], 'Ugentligt check-in')
   find(host, n => n.props.name === 'comment').props.onChange({ target: { value: 'Syntetisk uge' } });host.render()
+  assert.ok(storage.calls.every(([op]) => op === 'get'))
+  find(host, n => n.type === 'form').props.onSubmit({ preventDefault() {} });host.render()
   toggle(host, false)
   assert.equal(find(host, n => n.type === 'summary').props['data-home-reminder'], undefined)
   assert.equal(loadDraft(draftKey(props.athleteId, '2026-11-02'), storage).draft.comment, 'Syntetisk uge')
-  assert.ok(storage.calls.every(([, key]) => key === draftKey(props.athleteId, '2026-11-02')))
+  assert.ok(storage.calls.filter(([op]) => op !== 'get').every(([, key]) => key === draftKey(props.athleteId, '2026-11-02')))
   assert.equal(storage.data.get('unrelated-key'), 'preserved')
   host.render({ ...host.props, athleteId: 'synthetic-b' })
   assert.equal(find(host, n => n.props.name === 'comment').props.value, '')
@@ -49,4 +51,23 @@ test('storage failure stays honest and form retains unsaved text while open', ()
   host.render({ ...host.props, storage: memoryStorage() })
   assert.equal(find(host, n => n.props.name === 'comment').props.value, '')
   host.render({ ...host.props, onHoliday: true });assert.equal(host.tree, null)
+})
+
+test('closing historical suggestions does not save or dismiss the reminder; confirmation does', () => {
+  const storage = memoryStorage()
+  const currentKey = draftKey(props.athleteId, '2026-11-02')
+  saveDraft(draftKey(props.athleteId, '2026-10-26'), { ...emptyDraft(), pain: '0' }, storage)
+  storage.calls.length = 0
+  const host = createHost(HomeCheckIn, { ...props, storage })
+  toggle(host, true)
+  assert.equal(find(host, n => n.props.name === 'pain').props.value, '0')
+  toggle(host, false)
+  assert.equal(find(host, n => n.type === 'summary').props['data-home-reminder'], '')
+  assert.equal(storage.data.has(currentKey), false)
+  assert.ok(storage.calls.every(([operation]) => operation === 'get'))
+  toggle(host, true)
+  find(host, n => n.type === 'form').props.onSubmit({ preventDefault() {} });host.render()
+  toggle(host, false)
+  assert.equal(find(host, n => n.type === 'summary').props['data-home-reminder'], undefined)
+  assert.deepEqual(storage.calls.filter(([operation]) => operation !== 'get'), [['set', currentKey]])
 })

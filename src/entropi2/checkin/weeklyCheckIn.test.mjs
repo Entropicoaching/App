@@ -126,18 +126,19 @@ test('getter, read, quota and removal errors are contained; no fallback to unrel
   }
 })
 
-test('actual form edits all five fields, autosaves and reloads; explicit save prevents navigation', () => {
+test('actual form edits all five fields without writing; explicit save persists and prevents navigation', () => {
   const host = setup()
   assert.ok(host.props.storage.calls.every(([op]) => op === 'get'))
   assert.deepEqual(['sleep', 'energy', 'stress', 'pain', 'comment'].map(name => control(host, name).props.value), ['', '', '', '', ''])
   const values = { sleep: '8.5', energy: '4', stress: '2', pain: '0', comment: 'Syntetisk uge <b>rolig</b>' }
   for (const [name, value] of Object.entries(values)) change(host, name, value)
-  assert.match(textContent(host.tree), /Kladde gemt/)
+  assert.match(textContent(host.tree), /ikke gemt/)
+  assert.ok(host.props.storage.calls.every(([op]) => op === 'get'))
   submit(host)
   const again = setup({ storage: host.props.storage })
   for (const [name, value] of Object.entries(values)) assert.equal(control(again, name).props.value, value)
   assert.equal(control(again, 'comment').props.dangerouslySetInnerHTML, undefined)
-  assert.ok(host.props.storage.calls.every(([, usedKey]) => usedKey === key))
+  assert.ok(host.props.storage.calls.filter(([op]) => op !== 'get').every(([, usedKey]) => usedKey === key))
 })
 
 test('failed persistence retains typed values and retry succeeds; invalid values do not overwrite last good draft', () => {
@@ -146,6 +147,8 @@ test('failed persistence retains typed values and retry succeeds; invalid values
   store.setItem = () => { throw Error('synthetic quota') }
   const host = setup({ storage: store })
   change(host, 'comment', 'Syntetisk kommentar')
+  assert.ok(store.calls.every(([op]) => op === 'get'))
+  submit(host)
   assert.equal(control(host, 'comment').props.value, 'Syntetisk kommentar')
   assert.match(textContent(host.tree), /kun her/)
   store.setItem = realSet
@@ -155,6 +158,8 @@ test('failed persistence retains typed values and retry succeeds; invalid values
   assert.match(textContent(host.tree), /ikke gemt/)
   assert.equal(loadDraft(key, store).draft.sleep, '')
   change(host, 'sleep', '7.5')
+  assert.equal(loadDraft(key, store).draft.sleep, '')
+  submit(host)
   assert.equal(loadDraft(key, store).draft.sleep, '7.5')
 })
 

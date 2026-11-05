@@ -52,6 +52,8 @@ test('R2: real Home children keep one reminder, editable draft and namespace-onl
   assert.equal(textContent(checkin().children[0]), 'Ugentligt check-in')
   find(view, node => node.props.name === 'comment').props.onChange({ target: { value: 'Syntetisk ugekommentar' } })
   view.render()
+  assert.ok(storage.calls.every(([op]) => op === 'get'))
+  find(view, node => node.type === 'form').props.onSubmit({ preventDefault() {} }); view.render()
   checkin().props.onToggle({ currentTarget: { open: false } }); view.render()
   assert.equal(reminders().length, 0)
   assert.equal(loadDraft(draftKey(athlete.id, '2026-11-02'), storage).draft.comment, 'Syntetisk ugekommentar')
