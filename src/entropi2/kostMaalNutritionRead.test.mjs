@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { registerHooks } from 'node:module'
 import { readFileSync } from 'node:fs'
 import { mount, nodes, text, memoryStorage } from './kostplan/coach/portal.fixture.mjs'
+import { nutritionDatabase } from './coachNutritionPagination.fixture.mjs'
 import { input, coach, athleteId } from './kostplan/rapport/reportFixture.mjs'
 
 const root = new URL('./', import.meta.url).href
@@ -18,26 +19,14 @@ const { default: PortalPlan, PortalNutritionReport } = await import('./kostplan/
 hooks.deregister()
 
 async function fixture() {
-  const calls = [], data = input()
+  const data = input()
   const readContext = { coachId: coach.id, day: data.date, athleteIds: [athleteId, 'synthetic-other'] }
-  const client = { from(table) {
-    const call = [table]; calls.push(call)
-    const chain = Object.fromEntries(['select', 'in', 'gte', 'lte', 'order'].map(method => [method, (...args) => {
-      call.push([method, ...args]); return chain
-    }]))
-    chain.limit = limit => {
-      call.push(['limit', limit])
-      const columns = call.find(entry => Array.isArray(entry) && entry[0] === 'select')[1].split(',').map(key => key.trim())
-      const stored = table === 'meal_logs'
-        ? [...data.mealLogs, { ...data.mealLogs[0], id: 'other-meal', athlete_id: 'synthetic-other' }]
-        : [{ id: athleteId, kcal_target: 2000, protein_target: 150 }]
-      return Promise.resolve({ error: null, data: stored.map(row =>
-        Object.fromEntries(columns.map(key => [key, row[key]]))) })
-    }
-    return chain
-  } }
+  const db = nutritionDatabase([...data.mealLogs,
+    { ...data.mealLogs[0], id: 'other-meal', athlete_id: 'synthetic-other' }],
+    { goals: [{ id: athleteId, kcal_target: 2000, protein_target: 150 }] })
+  const client = db.client
   const coachNutrition = await readCoachNutrition(client, readContext)
-  return { calls, props: { enabled: true, athlete: { id: athleteId }, today: data.date,
+  return { calls: db.calls, props: { enabled: true, athlete: { id: athleteId }, today: data.date,
     session: { user: { id: coach.id } }, loading: false, loadError: false, readContext, coachNutrition,
     weightStatus: { athleteId, state: 'ready', rows: [...data.weightLogs].reverse() } } }
 }
@@ -52,7 +41,7 @@ test('existing coach read reaches the portal with only selected athlete rows and
   assert.equal(receipt.complete, true)
   assert.equal(receipt.mealLogs.length, 2)
   receipt.mealLogs.forEach((row, i) => {
-    assert.equal(row, props.coachNutrition.rows[i])
+    assert.equal(row, props.coachNutrition.rows.find(stored => stored.id === row.id))
     assert.equal(row.carb, input().mealLogs[i].carb)
     assert.equal(row.fat, input().mealLogs[i].fat)
   })
@@ -60,8 +49,8 @@ test('existing coach read reaches the portal with only selected athlete rows and
   const portal = CoachKostMaal(props).props.children.find(child => child.type === PortalPlan)
   assert.deepEqual(portal.props.nutritionRead, receipt)
   assert.equal(PortalPlan(portal.props).props.nutritionRead, portal.props.nutritionRead)
-  assert.deepEqual(calls.map(call => call[0]), ['meal_logs', 'athletes'])
-  assert.equal(calls[0][1][1], 'id, athlete_id, date, meal, kcal, protein, carb, fat')
+  assert.deepEqual(calls.map(call => call.table), ['meal_logs', 'meal_logs', 'athletes', 'athletes'])
+  assert.equal(calls[0].columns.join(', '), 'id, athlete_id, date, meal, kcal, protein, carb, fat')
   assert.deepEqual(props, before)
 })
 

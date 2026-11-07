@@ -4,6 +4,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readCoachNutrition, COACH_NUTRITION_CAP, startCoachNutritionRead,
   selectCoachNutrition } from './coachNutritionRead.mjs'
+import { nutritionDatabase as database } from './coachNutritionPagination.fixture.mjs'
 import { kostMaalNutritionRead } from './kostMaalKobling.mjs'
 import { startActiveReport } from './kostplan/coach/activeReport.mjs'
 import { fixture, athleteId, date, flush } from './kostplan/atlet/daySession.fixture.mjs'
@@ -13,38 +14,6 @@ const otherId = 'synthetic-other-athlete'
 const context = () => Object.freeze({ coachId, day: date, athleteIds: Object.freeze([athleteId, otherId]) })
 const meal = (patch = {}) => Object.freeze({ id: 'synthetic-meal', athlete_id: athleteId,
   date, meal: 'Synthetic meal', kcal: 500, protein: 40, carb: 50, fat: 15, ...patch })
-
-function database(rows, options = {}) {
-  const calls = [], goals = options.goals ?? Object.freeze([
-    Object.freeze({ id: athleteId, kcal_target: 2400, protein_target: 160 }),
-    Object.freeze({ id: otherId, kcal_target: 2000, protein_target: 120 }),
-  ])
-  const client = { from(table) {
-    assert.ok(['meal_logs', 'athletes'].includes(table))
-    const call = { table, filters: [] }; calls.push(call)
-    const q = {
-      select(columns) { call.columns = columns.split(',').map(key => key.trim()); return q },
-      in(key, values) { call.filters.push([key, 'in', [...values]]); return q },
-      gte(key, value) { call.filters.push([key, 'gte', value]); return q },
-      lte(key, value) { call.filters.push([key, 'lte', value]); return q },
-      order(key) { call.order = key; return q },
-      async limit(cap) {
-        call.cap = cap
-        await options.before?.()
-        if (options.throwTable === table) throw Error('Synthetic transport failure')
-        if (options.errorTable === table) return { error: { code: '42501' }, data: null }
-        if (options.malformedTable === table) return { error: null, data: null }
-        const selected = (table === 'meal_logs' ? rows : goals).filter(row => call.filters.every(([key, op, value]) =>
-          op === 'in' ? value.includes(row[key]) : op === 'gte' ? row[key] >= value : row[key] <= value))
-          .sort((a, b) => String(a[call.order]).localeCompare(String(b[call.order])))
-          .slice(0, cap).map(row => Object.fromEntries(call.columns.map(key => [key, row[key]])))
-        return { error: null, data: selected }
-      },
-    }
-    return q
-  } }
-  return { client, calls, goals }
-}
 
 function hostProps(readContext, batch) {
   return { enabled: true, athlete: Object.freeze({ id: athleteId }), today: date,
@@ -78,13 +47,16 @@ test('selected macro columns reach the scoped report through the actual host and
   const before = structuredClone(rows), readContext = context(), db = database(rows)
   const batch = await readCoachNutrition(db.client, readContext)
   assert.equal(batch.state, 'ready'); assert.equal(batch.complete, true)
-  assert.deepEqual(db.calls, [
-    { table: 'meal_logs', columns: ['id', 'athlete_id', 'date', 'meal', 'kcal', 'protein', 'carb', 'fat'],
-      filters: [['athlete_id', 'in', [athleteId, otherId]], ['date', 'gte', '2026-10-30'], ['date', 'lte', date]],
-      order: 'date', cap: COACH_NUTRITION_CAP },
-    { table: 'athletes', columns: ['id', 'kcal_target', 'protein_target'],
-      filters: [['id', 'in', [athleteId, otherId]]], order: 'id', cap: COACH_NUTRITION_CAP },
+  assert.deepEqual(db.calls.map(call => [call.table, call.orders, call.range]), [
+    ['meal_logs', [['date', true], ['id', true]], [0, 999]],
+    ['meal_logs', [['date', true], ['id', true]], [3, 1002]],
+    ['athletes', [['id', true]], [0, 999]],
+    ['athletes', [['id', true]], [2, 1001]],
   ])
+  for (const call of db.calls) assert.deepEqual(call.filters, call.table === 'meal_logs'
+    ? [['athlete_id', 'in', [athleteId, otherId]], ['date', 'gte', '2026-10-30'], ['date', 'lte', date]]
+    : [['id', 'in', [athleteId, otherId]]])
+  assert.equal(db.calls[0].columns.join(', '), 'id, athlete_id, date, meal, kcal, protein, carb, fat')
   const snapshot = structuredClone(batch)
   const { receipt, report } = await reportFrom(hostProps(readContext, batch))
   assert.deepEqual(receipt.mealLogs.map(row => row.id), ['7', 'second'])
@@ -104,7 +76,7 @@ test('selected macro columns reach the scoped report through the actual host and
   assert.equal(report.days[0].percentages.carb, null)
   assert.equal(report.days[6].targets.carb, 60)
   assert.equal(report.week.metrics.carb.target, null)
-  assert.equal(db.calls.length, 2)
+  assert.equal(db.calls.length, 4)
   assert.deepEqual(rows, before); assert.deepEqual(batch, snapshot)
 })
 
@@ -159,24 +131,21 @@ test('owner, athlete, day, unfinished weight and incomplete receipt guards survi
     { coachNutrition: { ...batch, complete: false } },
   ]) assert.equal(kostMaalNutritionRead({ ...props, ...change }), undefined)
   assert.equal(selectCoachNutrition({ context: readContext, batch }, true, { ...readContext }), undefined)
-  assert.equal(db.calls.length, 2)
+  assert.equal(db.calls.length, 4)
 })
 
-test('both table caps remain incomplete; an under-cap read remains complete with the same two queries', async () => {
-  for (const table of ['meal_logs', 'athletes']) for (const count of [COACH_NUTRITION_CAP - 1, COACH_NUTRITION_CAP]) {
-    const ids = Array.from({ length: count }, (_, i) => `synthetic-cap-${i}`)
+test('both tables exhaust below, at and above the former cap without truncation', async () => {
+  for (const table of ['meal_logs', 'athletes']) for (const count of [999, 1000, 1001]) {
+    const ids = Array.from({ length: count }, (_, i) => `synthetic-cap-${String(i).padStart(5, '0')}`)
     const readContext = { coachId, day: date, athleteIds: table === 'athletes' ? ids : [athleteId] }
-    const db = database(table === 'meal_logs' ? ids.map(id => meal({ id })) : [meal()],
+    const db = database(table === 'meal_logs' ? ids.map(id => meal({ id })) : [],
       table === 'athletes' ? { goals: ids.map(id => ({ id })) } : {})
     const batch = await readCoachNutrition(db.client, readContext)
-    assert.equal(batch.state, count === COACH_NUTRITION_CAP ? 'partial' : 'ready')
-    assert.equal(batch.complete, count < COACH_NUTRITION_CAP)
-    if (!batch.complete) {
-      assert.equal(Object.hasOwn(batch, 'rows'), false)
-      assert.equal(kostMaalNutritionRead(hostProps(readContext, batch)), undefined)
-    }
-    assert.equal(db.calls.length, 2)
-    assert.ok(db.calls.every(call => call.cap === COACH_NUTRITION_CAP))
+    assert.equal(batch.state, 'ready'); assert.equal(batch.complete, true)
+    assert.equal((table === 'meal_logs' ? batch.rows : batch.targets).length, count)
+    const pages = db.calls.filter(call => call.table === table)
+    assert.equal(pages.at(-1).range[0], count)
+    assert.ok(pages.every(call => call.range[1] - call.range[0] + 1 === COACH_NUTRITION_CAP))
   }
 })
 

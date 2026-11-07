@@ -22,7 +22,7 @@ let mountSequence = 0
 
 // Mount inside an assembly-owned host; load nutrition.css separately. No global DOM.
 // The caller disposes/remounts on athlete/date change. No shared entry is changed.
-export function mountNutrition(host, controller, { onCoach, onNavigate, clock = () => new Date(), mountWeekPlan = mountUgeplan, ...weightProps } = {}) {
+export function mountNutrition(host, controller, { onCoach, onNavigate, clock = () => new Date(), mountWeekPlan = mountUgeplan, clipboard, ...weightProps } = {}) {
   if (!controller) return () => {} // default OFF: do not even touch the host.
   const doc = host.ownerDocument
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
@@ -518,7 +518,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const openPlan = () => {
         if (destroyed || currentPlanFold !== plan || !plan.open || planMounted) return
         planMounted = true
-        disposePlan = mountWeekPlan(planHost, planInputs)
+        disposePlan = mountWeekPlan(planHost, { ...planInputs, clipboard })
       }
       plan.addEventListener('toggle', openPlan)
       if (openDetails.includes('week-plan')) { plan.open = true; openPlan() }

@@ -3,10 +3,12 @@
 import './testLoader.mjs'
 import test, { mock } from 'node:test'
 import assert from 'node:assert/strict'
+import { setImmediate as flush } from 'node:timers/promises'
 import { state } from './synthetic.mjs'
 import { entropi2CalendarRead, entropi2ReadContext } from '../entropi2/coachReadContext.mjs'
 import { coachHomeModel } from '../entropi2/coach/coachModel.mjs'
-import { readCoachNutrition, selectCoachNutrition } from '../entropi2/coachNutritionRead.mjs'
+import { readCoachNutrition, selectCoachNutrition, startCoachNutritionRead } from '../entropi2/coachNutritionRead.mjs'
+import { nutritionDatabase } from '../entropi2/coachNutritionPagination.fixture.mjs'
 import { activityDay } from './coachInactive.mjs'
 const { lavLaesninger } = await import('./laesninger.js')
 
@@ -155,14 +157,13 @@ test('R5 F1: en ny læsning midt i en afsluttet giver ingen kontekst, før den s
 })
 
 // Fletning med kostkoblingen: kostlinjen læses og vises kun med læsningens egen kontekst.
-function nutritionClient(rows) {
-  return { from: table => {
-    const answer = table === 'meal_logs' ? { data: rows, error: null }
-      : { data: [{ id: a.id, kcal_target: 2400, protein_target: 150 }], error: null }
-    const q = { select: () => q, in: () => q, gte: () => q, lte: () => q, order: () => q, limit: () => q,
-      then: (resolve, reject) => Promise.resolve(answer).then(resolve, reject) }
-    return q
-  } }
+function nutritionClient(rows, options = {}) {
+  // Same synthetic Supabase boundary as the accepted pagination tests: filters
+  // and stable ordering precede inclusive ranges, including the empty last page.
+  const { client, calls } = nutritionDatabase(rows, {
+    goals: [{ id: a.id, kcal_target: 2400, protein_target: 150 }], ...options,
+  })
+  return { ...client, calls }
 }
 
 test('R4 kost: kostlinjen følger læsningens kontekst og forsvinder ved genstempling efter midnat', async () => {
@@ -182,4 +183,101 @@ test('R4 kost: kostlinjen følger læsningens kontekst og forsvinder ved genstem
   assert.equal(coachHomeModel(props(later), afterMidnight).nutrition.size, 0)
   // Uden kontekst (fx under en ny læsning) gives intet kostsvar videre.
   assert.equal(selectCoachNutrition({ context, batch: coachNutrition }, true, contextFor(captured, [a, b], { coachMorningData: { messages: { state: 'loading' } } })), undefined)
+})
+
+test('R2 kostfixture: filtre og stabil dato/id-sortering anvendes før inklusiv range og tom slutside', async () => {
+  const row = (id, date, athlete_id = a.id) => ({ id, date, athlete_id, meal: 'Syntetisk', kcal: 500, protein: 40 })
+  const client = nutritionClient([
+    row(5, '2026-11-02'), row(3, '2026-10-28'), row(1, '2026-11-02'),
+    row(6, '2026-11-02', b.id), row(7, '2026-10-27'), row(8, '2026-11-03'),
+  ], { goals: [{ id: b.id }, { id: a.id, kcal_target: 2400 }] })
+  const query = () => client.from('meal_logs').select('id, date').in('athlete_id', [a.id])
+    .gte('date', '2026-10-28').lte('date', '2026-11-02').order('date').order('id')
+  assert.deepEqual((await query().range(0, 1)).data, [{ id: 3, date: '2026-10-28' }, { id: 1, date: '2026-11-02' }])
+  assert.deepEqual((await query().range(2, 2)).data, [{ id: 5, date: '2026-11-02' }])
+  assert.deepEqual((await query().range(3, 1002)).data, [])
+  assert.deepEqual((await query().limit(1)).data, [{ id: 3, date: '2026-10-28' }])
+  const targets = () => client.from('athletes').select('id, kcal_target').in('id', [a.id]).order('id')
+  assert.deepEqual((await targets().range(0, 0)).data, [{ id: a.id, kcal_target: 2400 }])
+  assert.deepEqual((await targets().range(1, 1000)).data, [])
+})
+
+test('R2 kostfixture: faktisk læser fortsætter efter korte sider og afslutter begge tabeller med tom range', async () => {
+  const context = { coachId: session.user.id, athleteIds: [a.id], day: '2026-11-02' }
+  const rows = [5, 1, 4, 2, 3].map(id => ({ id, athlete_id: a.id, date: context.day, meal: 'Syntetisk' }))
+  const client = nutritionClient([...rows,
+    { ...rows[0], id: 6, athlete_id: b.id }, { ...rows[0], id: 7, date: '2026-10-26' },
+    { ...rows[0], id: 8, date: '2026-11-03' },
+  ], { serverCap: 2, goals: [{ id: b.id }, { id: a.id, kcal_target: 2400, protein_target: 150 }] })
+  const batch = await readCoachNutrition(client, context)
+  assert.equal(batch.state, 'ready'); assert.equal(batch.complete, true)
+  assert.deepEqual(batch.rows.map(row => row.id), ['1', '2', '3', '4', '5'])
+  assert.deepEqual(batch.targets, [{ athlete_id: a.id, kcal_target: 2400, protein_target: 150 }])
+  const meals = client.calls.filter(call => call.table === 'meal_logs')
+  assert.deepEqual(meals.map(call => call.range), [[0, 999], [2, 1001], [4, 1003], [5, 1004]])
+  for (const call of meals) {
+    assert.deepEqual(call.filters, [['athlete_id', 'in', [a.id]], ['date', 'gte', '2026-10-27'], ['date', 'lte', context.day]])
+    assert.deepEqual(call.orders, [['date', true], ['id', true]])
+  }
+  const targets = client.calls.filter(call => call.table === 'athletes')
+  assert.deepEqual(targets.map(call => call.range), [[0, 999], [1, 1000]])
+  for (const call of targets) {
+    assert.deepEqual(call.filters, [['id', 'in', [a.id]]])
+    assert.deepEqual(call.orders, [['id', true]])
+  }
+})
+
+test('R2 kostfixture: sent terminalt svar får ikke en ny kalenderkontekst eller kontekst under læsning', async () => {
+  const { handlers, captured } = reader()
+  state.responses.push({ data: weekRows })
+  await at(evening, () => handlers.fetchCalendarWeeks([a.id, b.id]))
+  const context = contextFor(captured, [a, b])
+  const rows = ['2026-10-28', '2026-10-30', '2026-11-01', '2026-11-02']
+    .map((date, id) => ({ id: id + 1, athlete_id: a.id, date, meal: 'Syntetisk', kcal: 2000, protein: 120 }))
+  let release, entered
+  const held = new Promise(resolve => { release = resolve }), waiting = new Promise(resolve => { entered = resolve })
+  const client = nutritionClient(rows, { serverCap: 2, before: call => {
+    if (call.table === 'meal_logs' && call.range[0] === 4) { entered(); return held }
+  } })
+  const values = [], stop = startCoachNutritionRead({ enabled: true, client, readContext: context }, value => values.push(value))
+  try {
+    await waiting
+    assert.equal(values.length, 0)
+    state.responses.push({ data: weekRows })
+    const pending = at(afterMidnight, () => handlers.fetchCalendarWeeks([b.id, a.id]))
+    assert.equal(contextFor(captured, [b, a]), undefined)
+    await pending
+    const fresh = contextFor(captured, [b, a])
+    assert.notEqual(fresh, context); assert.equal(fresh.day, '2026-11-03')
+    release()
+    await flush()
+    assert.equal(values.length, 1); assert.equal(values[0].batch.complete, true)
+    assert.equal(values[0].context, context); assert.equal(values[0].batch.day, '2026-11-02')
+    assert.equal(selectCoachNutrition(values[0], true, fresh), undefined)
+    assert.equal(selectCoachNutrition(values[0], true, undefined), undefined)
+    const batch = selectCoachNutrition(values[0], true, context)
+    assert.equal(batch, values[0].batch)
+    const props = { session, athletes: [a, b], readContext: context, coachNutrition: batch,
+      calendarWeeks: captured.calendar, coachActionsStatus: captured.status, loading: false, loadError: false }
+    assert.equal(coachHomeModel(props, evening).nutrition.size, 1)
+    assert.equal(coachHomeModel(props, afterMidnight).nutrition.size, 0)
+  } finally { stop(); release() }
+})
+
+test('R2 kostfixture: annullering på næste side standser senere sider, mål og aflevering', async () => {
+  const context = { coachId: session.user.id, athleteIds: [a.id], day: '2026-11-02' }
+  const rows = [1, 2, 3].map(id => ({ id, athlete_id: a.id, date: context.day, meal: 'Syntetisk' }))
+  let release, entered
+  const held = new Promise(resolve => { release = resolve }), waiting = new Promise(resolve => { entered = resolve })
+  const client = nutritionClient(rows, { serverCap: 2, before: call => {
+    if (call.table === 'meal_logs' && call.range[0] === 2) { entered(); return held }
+  } })
+  const values = [], stop = startCoachNutritionRead({ enabled: true, client, readContext: context }, value => values.push(value))
+  try {
+    await waiting
+    stop(); release()
+    await flush()
+    assert.deepEqual(values, [])
+    assert.deepEqual(client.calls.map(call => [call.table, call.range[0]]), [['meal_logs', 0], ['meal_logs', 2]])
+  } finally { stop(); release() }
 })

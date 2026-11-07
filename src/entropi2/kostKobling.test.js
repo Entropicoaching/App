@@ -28,7 +28,23 @@ function fakeClient(answers = {}) {
         if (key === 'then') {
           const answer = answers[table] ?? { data: [], error: null }
           if (answer instanceof Error) return (_ok, fail) => Promise.reject(answer).then(_ok, fail)
-          return (ok, fail) => Promise.resolve(typeof answer === 'function' ? answer(call) : answer).then(ok, fail)
+          return (ok, fail) => Promise.resolve(typeof answer === 'function' ? answer(call) : answer).then(result => {
+            if (!Array.isArray(result?.data)) return result
+            let data = [...result.data]
+            for (const [op, field, value] of call.ops) {
+              if (op === 'in') data = data.filter(row => value.includes(row[field]))
+              if (op === 'gte') data = data.filter(row => row[field] >= value)
+              if (op === 'lte') data = data.filter(row => row[field] <= value)
+            }
+            const orders = call.ops.filter(([op]) => op === 'order').map(([,field]) => field)
+            data.sort((a,b) => {
+              for (const field of orders) { if (a[field] < b[field]) return -1; if (a[field] > b[field]) return 1 }
+              return 0
+            })
+            const range = call.ops.find(([op]) => op === 'range')
+            if (range) data = data.slice(range[1], range[2] + 1)
+            return { ...result, data }
+          }).then(ok, fail)
         }
         return (...args) => { call.ops.push([key, ...args]); return chain }
       } })
@@ -188,7 +204,7 @@ test('COACH: læsningen er atlet-scopet til kontekstens id-mængde og de seneste
   assert.deepEqual(meal.ops.find(op => op[0] === 'in'), ['in', 'athlete_id', ['syn-a', 'syn-b']])
   assert.deepEqual(meal.ops.find(op => op[0] === 'gte'), ['gte', 'date', '2026-10-27'])
   assert.deepEqual(meal.ops.find(op => op[0] === 'lte'), ['lte', 'date', day])
-  assert.deepEqual(meal.ops.find(op => op[0] === 'limit'), ['limit', COACH_NUTRITION_CAP])
+  assert.deepEqual(meal.ops.find(op => op[0] === 'range'), ['range', 0, COACH_NUTRITION_CAP - 1])
   const target = client.calls.find(c => c.table === 'athletes')
   assert.deepEqual(target.ops.find(op => op[0] === 'in'), ['in', 'id', ['syn-a', 'syn-b']])
   assert.equal(client.calls.some(c => c.ops.some(([op]) => ['insert', 'update', 'upsert', 'delete', 'rpc'].includes(op))), false)
@@ -244,8 +260,8 @@ test('COACH: fejl, afkortning og manglende mål giver ingen linje', async () => 
     'meal-fejl': { ...answers(), meal_logs: { data: null, error: new Error('syn') } },
     'mål-fejl': { ...answers(), athletes: { data: null, error: new Error('syn') } },
     'kast': { ...answers(), meal_logs: new Error('syn') },
-    'cap': { ...answers(), meal_logs: { data: Array.from({ length: COACH_NUTRITION_CAP }, (_, i) =>
-      ({ ...meals[i % 4], id: `syn-${i}` })), error: null } },
+    'duplicate': { ...answers(), meal_logs: { data: Array.from({ length: COACH_NUTRITION_CAP }, (_, i) =>
+      ({ ...meals[i % 4], id: 'syn-repeated' })), error: null } },
   }
   for (const [name, answer] of Object.entries(cases)) {
     const batch = await readCoachNutrition(fakeClient(answer), readContext)
@@ -262,11 +278,11 @@ const lastMeals = id => ['2026-10-27', '2026-10-28', '2026-10-30', day].map((dat
 const manyProps = (ids, batch) => ({ ...coachProps({ coachId: 'syn-coach', day, athleteIds: ids }, batch),
   athletes: ids.map(id => ({ id, name: id })) })
 
-test("COACH R2: 1001 scope-id'er med fejlfrit, afkortet målsvar giver ingen linje", async () => {
+test("COACH: 1001 scope ids with an overlapping target response cannot become complete", async () => {
   const ids = manyIds(COACH_NUTRITION_CAP + 1), last = ids[ids.length - 1]
-  // Serveren afkorter uden fejl til de første 1000 målrækker; den sidste atlet mangler.
+  // An incorrect server repeats the first page instead of honoring range; never complete.
   const client = fakeClient({ meal_logs: { data: lastMeals(last), error: null },
-    athletes: { data: ids.slice(0, COACH_NUTRITION_CAP).map(id => ({ id, kcal_target: 2400, protein_target: 150 })), error: null } })
+    athletes: call => { const range = call.ops.find(([op]) => op === 'range'); range[1] = 0; range[2] = COACH_NUTRITION_CAP - 1; return { data: ids.slice(0, COACH_NUTRITION_CAP).map(id => ({ id, kcal_target: 2400, protein_target: 150 })), error: null } } })
   const batch = await readCoachNutrition(client, { coachId: 'syn-coach', day, athleteIds: ids })
   assert.equal(batch.complete, false)
   assert.equal(batch.state, 'partial')
@@ -278,10 +294,10 @@ test('COACH R2: målhentningen har samme cap som måltiderne, og fejl eller kast
   const client = fakeClient(answers())
   await readCoachNutrition(client, context())
   const target = client.calls.find(c => c.table === 'athletes')
-  assert.deepEqual(target.ops.find(op => op[0] === 'limit'), ['limit', COACH_NUTRITION_CAP])
+  assert.deepEqual(target.ops.find(op => op[0] === 'range'), ['range', 0, COACH_NUTRITION_CAP - 1])
   const readContext = context()
   for (const [name, athletesAnswer] of [['mål-kast', new Error('syn')], ['mål-uden-array', { data: { id: 'syn-a' }, error: null }],
-    ['mål-cap', { data: manyIds(COACH_NUTRITION_CAP).map(id => ({ id, kcal_target: 1, protein_target: 1 })), error: null }]]) {
+    ['mål-overlap', { data: Array.from({ length: COACH_NUTRITION_CAP }, () => ({ id: 'syn-a', kcal_target: 1, protein_target: 1 })), error: null }]]) {
     const batch = await readCoachNutrition(fakeClient({ ...answers(), athletes: athletesAnswer }), readContext)
     assert.equal(batch.complete, false, name)
     assert.notEqual(batch.state, 'ready', name)

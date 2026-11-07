@@ -6,6 +6,7 @@ import { createElement as h, act } from 'react'
 import { createRoot } from 'react-dom/client'
 import PortalPlan from './PortalPlan.mjs'
 import CoachKostMaal from '../../kostMaalKobling.mjs'
+import { nutritionDatabase } from '../../coachNutritionPagination.fixture.mjs'
 import { readCoachNutrition } from '../../coachNutritionRead.mjs'
 import { sessionReactDocument } from '../../session/sessionQuickSetReactDom.mjs'
 import { historyFixture, athleteId, coachId, uuid } from '../dailyReference.fixture.mjs'
@@ -27,8 +28,7 @@ async function withRoot(run) {
 
 test('R4 Nov1/Nov5: actual coach read -> host receipt -> mounted PortalPlan keeps consumption and shows unknown reference', async()=>{
   const f=historyFixture();f.plan(1,date);f.version(10,uuid(1),date,1,500);f.approve(10,uuid(1),date+'T12:00:00.000001Z')
-  const calls=[]
-  const client={from(table){calls.push(table);let columns;const q={select(s){columns=s;return q},in(){return q},gte(){return q},lte(){return q},order(){return q},limit(){return q},then(resolve){return Promise.resolve({data:table==='meal_logs'?[Object.fromEntries(columns.split(',').map(s=>s.trim()).map(k=>[k,log[k]]))]:[],error:null}).then(resolve)}};return q}}
+  const db=nutritionDatabase([log],{goals:[]}),client=db.client
   const context={coachId,day:date,athleteIds:[athleteId]}
   const batch=await readCoachNutrition(client,context)
   const hostElement=CoachKostMaal({...props(f),nutritionRead:undefined,coachNutrition:batch,readContext:context,
@@ -46,7 +46,7 @@ test('R4 Nov1/Nov5: actual coach read -> host receipt -> mounted PortalPlan keep
     assert.equal(host.querySelectorAll('time').length,7)
     assert.ok(host.querySelectorAll('details').every(n=>!n.open))
   })
-  assert.deepEqual(calls,['meal_logs','athletes']);assert.equal(f.writes().length,0)
+  assert.deepEqual(db.calls.map(call=>call.table),['meal_logs','meal_logs','athletes']);assert.equal(f.writes().length,0)
 })
 
 test('real mounted report retries partial history while preserving actuals; error cannot become empty history', async()=>{

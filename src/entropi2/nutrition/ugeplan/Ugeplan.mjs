@@ -1,6 +1,6 @@
 import { ingredientKey } from '../indkoeb/ingredients.mjs'
-import { antalOrd } from '../../antalOrd.mjs'
-import { createElement as h, useMemo, useReducer } from 'react'
+import { formatShoppingSnapshot, shoppingIncompleteWarning } from '../indkoeb/export.mjs'
+import { createElement as h, useLayoutEffect, useMemo, useReducer, useState } from 'react'
 import { createWeekPlan } from './model.mjs'
 
 const number = value => new Intl.NumberFormat('da-DK', { maximumSignificantDigits: 12 }).format(value)
@@ -8,6 +8,61 @@ const buttonStyle = { minHeight: 44, maxWidth: '100%', whiteSpace: 'normal' }
 
 function metricText(value, target, unit) {
   return `${number(value)} ${unit}${target === null ? '' : ` / ${number(target)} ${unit}`}`
+}
+
+// Memoize an immutable API; only effects and events change its private state.
+// The scope includes model identity even when two owners export identical text.
+function createExportLifetime(scope) {
+  let active = false, pending = false
+  return Object.freeze({
+    scope: Object.freeze(scope),
+    activate() {
+      active = true
+      return () => { active = false }
+    },
+    begin() {
+      if (!active || pending) return false
+      pending = true
+      return true
+    },
+    isActive() { return active },
+    finish() { pending = false },
+  })
+}
+
+function ShoppingExport({ snapshot, context, clipboard }) {
+  const text = formatShoppingSnapshot(snapshot)
+  const lifetime = useMemo(() => createExportLifetime({ context, text, clipboard }), [context, text, clipboard])
+  const [result, setResult] = useState(null)
+  useLayoutEffect(() => lifetime.activate(), [lifetime])
+  const status = result?.lifetime === lifetime ? result.status : ''
+  const copy = async () => {
+    if (!lifetime.begin()) return
+    setResult({ lifetime, status: 'pending' })
+    try {
+      // Resolve the browser adapter only inside this explicit user action.
+      // An injected null deliberately represents an unavailable clipboard.
+      const adapter = lifetime.scope.clipboard === undefined ? globalThis.navigator?.clipboard : lifetime.scope.clipboard
+      if (typeof adapter?.writeText !== 'function') throw new Error('Clipboard unavailable')
+      await adapter.writeText(lifetime.scope.text)
+      if (lifetime.isActive()) setResult({ lifetime, status: 'copied' })
+    } catch {
+      if (lifetime.isActive()) setResult({ lifetime, status: 'failed' })
+    } finally {
+      lifetime.finish()
+    }
+    // A write already requested by the user cannot be undone by unmounting.
+    // Cleanup only invalidates callbacks and acknowledgement in the old view.
+  }
+  return h('div', null,
+    h('button', { type: 'button', style: buttonStyle, onClick: copy, disabled: status === 'pending' }, 'Kopiér indkøbsliste'),
+    status === 'pending' && h('p', { role: 'status' }, 'Kopierer…'),
+    status === 'copied' && h('p', { role: 'status' }, 'Kopieret.'),
+    status === 'failed' && h('div', null,
+      h('p', { role: 'alert' }, 'Kopiering kunne ikke bekræftes. Prøv igen, eller markér og kopiér teksten nedenfor.'),
+      h('label', null, 'Indkøbsliste til manuel kopiering',
+        h('textarea', { readOnly: true, value: text, rows: 8,
+          style: { width: '100%', boxSizing: 'border-box' } }))))
 }
 
 // Controlled real React view, also usable by another assembly/controller.
@@ -54,9 +109,10 @@ export function UgeplanView(props = {}) {
     (hasEntries || shopping.error) && h('details', null,
       h('summary', { style: buttonStyle }, `Ugens indkøbsliste${shopping.missingMeals.length + shopping.unavailableCount > 0 ? ' · ufuldstændig' : ''}`),
       h('p', null, 'Hver forekomst og dens portioner tælles med. Kun g/kg samles; rå/kogt, ml/g og styk holdes adskilt. Beholdning fratrækkes kun efter din bekræftelse og forbruges ikke ved læsning.'),
+      h(ShoppingExport, { snapshot, context: props.exportContext, clipboard: props.clipboard }),
       shopping.error ? h('p', { role: 'alert' }, shopping.error) : h('div', null,
         shopping.missingMeals.length + shopping.unavailableCount > 0 && h('p', { role: 'status' },
-          `Listen er ufuldstændig: ${shopping.missingMeals.length + shopping.unavailableCount} ${antalOrd(shopping.missingMeals.length + shopping.unavailableCount, 'måltid', 'måltider')} mangler ingredienser eller skabelon.`),
+          shoppingIncompleteWarning(shopping)),
         h('ul', null, ...shopping.items.map(item => h('li', { key: ingredientKey(item) },
           h('p', null, `${item.name}: ${number(item.quantity)} ${item.unit} (samlet behov). `,
             `Bekræftet beholdning: ${item.confirmedStock === null ? 'ikke angivet' : `${number(item.confirmedStock)} ${item.unit}`}. `,
@@ -73,14 +129,14 @@ export function UgeplanView(props = {}) {
 
 }
 
-function UgeplanSession({ athleteId, date, templates, targets, storage, embedded }) {
+function UgeplanSession({ athleteId, date, templates, targets, storage, embedded, clipboard }) {
   const [, refresh] = useReducer(value => value + 1, 0)
   const [attempt, retry] = useReducer(value => value + 1, 0)
   const model = useMemo(() => {
     try { return createWeekPlan({ enabled: true, athleteId, date, templates, targets, storage }) }
     catch { return null }
   }, [athleteId, date, templates, targets, storage, attempt])
-  return h(UgeplanView, { enabled: true, embedded, snapshot: model?.snapshot(), onRetry: retry,
+  return h(UgeplanView, { enabled: true, embedded, clipboard, exportContext: model, snapshot: model?.snapshot(), onRetry: retry,
     onSetPortions: (day, slot, value) => { model.setPortions(day, slot, value); refresh() },
     onConfirmStock: (key, value) => { model.confirmStock(key, value); refresh() },
     onAdd: (day, id) => { model.add(day, id); refresh() },
