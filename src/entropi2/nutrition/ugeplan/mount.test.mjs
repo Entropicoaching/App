@@ -16,7 +16,11 @@ test('lazy island: import failure is visible and retryable; success and cleanup 
   let attempts = 0, disposed = 0
   const cleanup = mountUgeplan(host, props, { load: async () => {
     if (++attempts === 1) throw Error('synthetic chunk failure')
-    return { mountUgeplanReact(child, inputs) { seen.push([child, inputs]); child.textContent = 'renderer sentinel'; return () => disposed++ } }
+    return { mountUgeplanReact(child, inputs) {
+      seen.push([child, inputs])
+      const owned = child.ownerDocument.createElement('div'); owned.textContent = 'renderer sentinel'; child.append(owned)
+      return () => { disposed++; owned.remove() }
+    } }
   } })
   assert.match(host.textContent, /Åbner ugeplan/)
   await flush()

@@ -5,6 +5,7 @@ import { createWeekPlan } from './model.mjs'
 
 const number = value => new Intl.NumberFormat('da-DK', { maximumSignificantDigits: 12 }).format(value)
 const buttonStyle = { minHeight: 44, maxWidth: '100%', whiteSpace: 'normal' }
+const alwaysCurrent = () => true
 
 function metricText(value, target, unit) {
   return `${number(value)} ${unit}${target === null ? '' : ` / ${number(target)} ${unit}`}`
@@ -12,8 +13,9 @@ function metricText(value, target, unit) {
 
 // Memoize an immutable API; only effects and events change its private state.
 // The scope includes model identity even when two owners export identical text.
-function createExportLifetime(scope) {
+function createExportLifetime(scope, isCurrent = alwaysCurrent) {
   let active = false, pending = false
+  const isActive = () => active && isCurrent()
   return Object.freeze({
     scope: Object.freeze(scope),
     activate() {
@@ -21,18 +23,18 @@ function createExportLifetime(scope) {
       return () => { active = false }
     },
     begin() {
-      if (!active || pending) return false
+      if (!isActive() || pending) return false
       pending = true
       return true
     },
-    isActive() { return active },
+    isActive,
     finish() { pending = false },
   })
 }
 
-function ShoppingExport({ snapshot, context, clipboard }) {
+function ShoppingExport({ snapshot, context, clipboard, isCurrent }) {
   const text = formatShoppingSnapshot(snapshot)
-  const lifetime = useMemo(() => createExportLifetime({ context, text, clipboard }), [context, text, clipboard])
+  const lifetime = useMemo(() => createExportLifetime({ context, text, clipboard }, isCurrent), [context, text, clipboard, isCurrent])
   const [result, setResult] = useState(null)
   useLayoutEffect(() => lifetime.activate(), [lifetime])
   const status = result?.lifetime === lifetime ? result.status : ''
@@ -109,7 +111,7 @@ export function UgeplanView(props = {}) {
     (hasEntries || shopping.error) && h('details', null,
       h('summary', { style: buttonStyle }, `Ugens indkøbsliste${shopping.missingMeals.length + shopping.unavailableCount > 0 ? ' · ufuldstændig' : ''}`),
       h('p', null, 'Hver forekomst og dens portioner tælles med. Kun g/kg samles; rå/kogt, ml/g og styk holdes adskilt. Beholdning fratrækkes kun efter din bekræftelse og forbruges ikke ved læsning.'),
-      h(ShoppingExport, { snapshot, context: props.exportContext, clipboard: props.clipboard }),
+      h(ShoppingExport, { snapshot, context: props.exportContext, clipboard: props.clipboard, isCurrent: props.isCurrent }),
       shopping.error ? h('p', { role: 'alert' }, shopping.error) : h('div', null,
         shopping.missingMeals.length + shopping.unavailableCount > 0 && h('p', { role: 'status' },
           shoppingIncompleteWarning(shopping)),
@@ -129,18 +131,23 @@ export function UgeplanView(props = {}) {
 
 }
 
-function UgeplanSession({ athleteId, date, templates, targets, storage, embedded, clipboard }) {
+function UgeplanSession({ athleteId, date, templates, targets, storage, embedded, clipboard, isCurrent }) {
   const [, refresh] = useReducer(value => value + 1, 0)
   const [attempt, retry] = useReducer(value => value + 1, 0)
   const model = useMemo(() => {
     try { return createWeekPlan({ enabled: true, athleteId, date, templates, targets, storage }) }
     catch { return null }
   }, [athleteId, date, templates, targets, storage, attempt])
-  return h(UgeplanView, { enabled: true, embedded, clipboard, exportContext: model, snapshot: model?.snapshot(), onRetry: retry,
-    onSetPortions: (day, slot, value) => { model.setPortions(day, slot, value); refresh() },
-    onConfirmStock: (key, value) => { model.confirmStock(key, value); refresh() },
-    onAdd: (day, id) => { model.add(day, id); refresh() },
-    onRemove: (day, slot) => { model.remove(day, slot); refresh() } })
+  // Also retire callbacks on model/owner/day changes in a directly mounted view.
+  // The imperative island revokes isCurrent synchronously, before React cleanup.
+  const lifetime = useMemo(() => createExportLifetime({ model }, isCurrent), [model, isCurrent])
+  useLayoutEffect(() => lifetime.activate(), [lifetime])
+  return h(UgeplanView, { enabled: true, embedded, clipboard, exportContext: model, isCurrent: lifetime.isActive,
+    snapshot: model?.snapshot(), onRetry: () => { if (lifetime.isActive()) retry() },
+    onSetPortions: (day, slot, value) => { if (lifetime.isActive()) { model.setPortions(day, slot, value); refresh() } },
+    onConfirmStock: (key, value) => { if (lifetime.isActive()) { model.confirmStock(key, value); refresh() } },
+    onAdd: (day, id) => { if (lifetime.isActive()) { model.add(day, id); refresh() } },
+    onRemove: (day, slot) => { if (lifetime.isActive()) { model.remove(day, slot); refresh() } } })
 }
 
 // The nutrition screen supplies current-athlete inputs behind its strict gate.
@@ -149,6 +156,7 @@ export function Ugeplan(props = {}) {
   if (props.enabled !== true) return null
   if (props.templateError) return h('div', null,
     h('p', { role: 'alert' }, 'Ugeplanen kunne ikke åbnes. Egne skabeloner kunne ikke læses.'),
-    props.onRetry && h('button', { type: 'button', style: buttonStyle, onClick: props.onRetry }, 'Hent skabeloner igen'))
+    props.onRetry && h('button', { type: 'button', style: buttonStyle,
+      onClick: props.isCurrent ? () => { if (props.isCurrent()) props.onRetry() } : props.onRetry }, 'Hent skabeloner igen'))
   return h(UgeplanSession, props)
 }
