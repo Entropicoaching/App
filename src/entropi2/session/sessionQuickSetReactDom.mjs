@@ -9,6 +9,50 @@ export function sessionReactDocument() {
       super(tag.toUpperCase(), doc)
       this.nodeType = 1; this.nodeName = this.tagName
       this.namespaceURI = 'http://www.w3.org/1999/xhtml'
+      if (this.tagName === 'SELECT') {
+        // A live options collection, including options nested in optgroups.
+        // ReactDOM reads option.value and changes option.selected on updates.
+        const list = () => Array.from(this.querySelectorAll('option'))
+        const collection = new Proxy({}, { get: (_target, key) => {
+          if (key === 'length') return list().length
+          if (key === Symbol.iterator) return () => list()[Symbol.iterator]()
+          if (key === 'item') return index => list()[index] ?? null
+          if (key === 'namedItem') return name => list().find(n => n.id === name || n.getAttribute('name') === name) ?? null
+          if (typeof key === 'string' && /^(0|[1-9][0-9]*)$/.test(key)) return list()[Number(key)]
+          return undefined
+        } })
+        Object.defineProperties(this, {
+          options: { configurable: true, get: () => collection },
+          selectedIndex: { configurable: true, get: () => {
+            const index = list().findIndex(n => n._selected)
+            return index >= 0 ? index : this._noSelection ? -1 : list().length ? 0 : -1
+          }, set: index => {
+            const nodes = list()
+            nodes.forEach((n, i) => { n._selected = i === Number(index) })
+            this._noSelection = !nodes.some(n => n._selected)
+          } },
+          value: { configurable: true, get: () => list()[this.selectedIndex]?.value ?? '',
+            set: value => { this.selectedIndex = list().findIndex(n => n.value === String(value)) } },
+        })
+      }
+      if (this.tagName === 'OPTION') {
+        const select = () => { let n = this.parentElement; while (n && n.tagName !== 'SELECT') n = n.parentElement; return n }
+        Object.defineProperties(this, {
+          value: { configurable: true, get: () => this.getAttribute('value') ?? this.textContent.trim().replace(/\s+/g, ' '),
+            set: value => { this.setAttribute('value', value) } },
+          selected: { configurable: true, get: () => {
+            const parent = select()
+            return parent ? parent.options[parent.selectedIndex] === this : !!this._selected
+          }, set: value => {
+            const parent = select()
+            if (value && parent && !parent.multiple) for (const n of parent.options) n._selected = false
+            this._selected = !!value
+            if (parent) parent._noSelection = !Array.from(parent.options).some(n => n._selected)
+          } },
+          defaultSelected: { configurable: true, get: () => this.getAttribute('selected') !== null,
+            set: value => { if (value) this.setAttribute('selected', ''); else this.removeAttribute('selected') } },
+        })
+      }
     }
     get childNodes() { return this.children }
     get firstChild() { return this.children[0] ?? null }

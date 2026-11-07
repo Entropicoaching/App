@@ -50,6 +50,11 @@ export function coachPlanView(h, snapshot, actions) {
   !(s.localDraftOnly && s.publishedVersion === s.version) && h('p', null, s.localDraftOnly ? s.canPublish || s.activationError ? 'Lokal kladde' : 'Lokal kladde · ikke delt med atleten' : active ? 'Atleten har en aktiv dagsplan. Dine rettelser bliver først synlige efter ny aktivering.'
     : s.history.state === 'ready' ? 'Ingen aktiv dagsplan for denne dato. Atleten kan bruge kcal-trackeren.'
       : 'Status for atletens aktive dagsplan er endnu ikke tilgængelig.'),
+  h('label', { style: { display: 'grid', gap: '0.25rem' } }, 'Planens råd (valgfrit)',
+    h('textarea', { name: 'portionGuidance', style: control, rows: 5, maxLength: 4000,
+      value: s.portionGuidance ?? '', disabled: locked,
+      onChange: event => actions.setAdvice(event.currentTarget.value) })),
+  h('p', null, 'Coachens tekst om fx væske, vitaminer, mineraler og måltidstiming. Gemmes med denne dato og aktiveres kun ved dit eksplicitte valg. Højst 4000 tegn.'),
   h('form', { onSubmit: event => { event.preventDefault(); if (!s.localDraftOnly || s.meals.length) actions.generate() } },
     h('fieldset', { disabled: locked, style: { minWidth: 0, margin: 0, padding: '0.75rem' } },
       h('legend', null, 'Dagens mål'),
@@ -91,6 +96,7 @@ export function coachPlanView(h, snapshot, actions) {
     h('dl', null, ...context.flatMap(([key, title]) => [
       h('dt', { key: `${key}-title` }, title), h('dd', { key }, s.context[key]),
     ]))),
+  s.manualImport && h('p', { role: 'status' }, 'Manuel måltidskladde · gram er indlæst præcist. Gennemgå måltider og beregnede summer før gemning. Generér forslag erstatter kladden med tre automatiske måltider. Generér ny dagsplan skalerer gram efter energi.'),
   s.error && h('p', { role: 'alert' }, s.error),
   s.activationError && h('p', { role: 'alert' }, s.activationError),
   s.proposal?.warnings.map((warning, index) => h('p', { key: index, role: 'status' }, warning)),
@@ -120,7 +126,7 @@ export function coachPlanView(h, snapshot, actions) {
     s.proteinDistribution && h('small', {
       'aria-label': `Proteinfordeling i ${meal.name}: ${s.proteinDistribution.meals[mi].belowThreshold === null ? 'ukendt' : s.proteinDistribution.meals[mi].belowThreshold ? 'under pejlemærke' : 'pejlemærke nået'}. Pejlemærke ${format(s.proteinDistribution.thresholdG)} g ud fra profilvægten.`,
     }, `Proteinfordeling: ${s.proteinDistribution.meals[mi].belowThreshold === null ? 'ukendt' : s.proteinDistribution.meals[mi].belowThreshold ? 'under pejlemærke' : 'pejlemærke nået'}`),
-    !s.gramGenerator && recipeChoice(h, { foods: s.foods, name: `recipe-${mi}`, mealName: meal.name, disabled: busy,
+    !s.manualImport && !s.gramGenerator && recipeChoice(h, { foods: s.foods, name: `recipe-${mi}`, mealName: meal.name, disabled: busy,
       scaled: true, onChoose: recipeId => actions.chooseRecipe(mi, recipeId) }),
     ...meal.items.map((item, ii) => h('div', { key: ii, style: { ...grid, marginBottom: '0.75rem' } },
       h('label', null, `Fødevare ${ii + 1} i ${meal.name}`, h('select', {
@@ -132,7 +138,7 @@ export function coachPlanView(h, snapshot, actions) {
       s.gramGenerator && suggestionReason(item.food.id, item.food.nutrition?.prioritetBegrundelse)
         && h('small', { style: { gridColumn: '1 / -1' } },
           suggestionReason(item.food.id, item.food.nutrition.prioritetBegrundelse)))),
-    s.gramGenerator && h('details', null,
+    !s.manualImport && s.gramGenerator && h('details', null,
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, `Portionsgrænser i ${meal.name}`),
       h('p', null, 'Grænser bruges ved næste generering. Vælg min./maks. i trin på 5 g fra 5 til 1.000 g.'),
       ...meal.items.map((item, ii) => h('div', { key: ii, style: grid },

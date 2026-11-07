@@ -20,6 +20,8 @@ export function useEffect(effect, deps) {
     state.effects[i] = { deps, cleanup: effect() }
   })
 }
+// Synthetic commit-effect scheduling only; actual React gates use ReactDOM.
+export const useLayoutEffect = useEffect
 export const useSyncExternalStore = (_subscribe, snapshot, serverSnapshot) => {
   if (serverSnapshot !== snapshot) throw Error('Mismatched server snapshot')
   return snapshot()

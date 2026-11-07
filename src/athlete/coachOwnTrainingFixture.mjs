@@ -5,6 +5,10 @@ import { registerHooks } from 'node:module'
 import { jsx } from './prog3Jsx.mjs'
 
 const root = new URL('../', import.meta.url)
+// Imported by URL so the shallow host's React resolver cannot replace this hook.
+// Consumers that render store subscribers must use React's real dispatcher,
+// snapshot reads, subscription and cleanup rather than a synthetic ready state.
+export const { useSyncExternalStore, useLayoutEffect } = await import(new URL('../node_modules/react/index.js', root))
 const self = import.meta.url
 const viewURL = new URL('AthleteView.jsx', root).href
 const appURL = new URL('App.jsx', root).href

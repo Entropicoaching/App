@@ -11,6 +11,13 @@ import { tableNames } from '../coach/activation.fixture.mjs'
 
 async function withRoot(f, run) {
   const doc = sessionReactDocument(), host = doc.createElement('div')
+  // Native select.options is required by ReactDOM for the new date picker.
+  const make = doc.createElement
+  doc.createElement = tag => {
+    const node = make(tag)
+    if (tag === 'select') Object.defineProperty(node, 'options', { get: () => node.querySelectorAll('option') })
+    return node
+  }
   doc.body.append(host)
   const globals = { window: doc.defaultView, IS_REACT_ACT_ENVIRONMENT: true, localStorage: f.storage }
   const originals = new Map(Object.keys(globals).map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]))

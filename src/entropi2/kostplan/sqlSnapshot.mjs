@@ -1,4 +1,5 @@
 import { createPlanFoodSnapshot, createPlanSnapshot } from './planSnapshot.mjs'
+import { portionGuidance } from './coach/model.mjs'
 import { NUTRIENTS } from './foedevarer/catalog.mjs'
 
 const fields = ['id', 'name', 'preparation', 'basisGrams', 'nutrientsPer100g', 'source']
@@ -26,11 +27,13 @@ export function supportedFoodSnapshot(input) {
 // Use exactly the same canonical shape for writes and approved-content checks.
 // Version-level SQL fields are intentionally handled by createPlanSnapshot.
 export function supportedPlanSnapshot(input) {
-  return createPlanSnapshot({ ...input, meals: input.meals.map(meal => {
+  const advice = portionGuidance(input.portion_guidance)
+  const snapshot = createPlanSnapshot({ ...input, meals: input.meals.map(meal => {
     if (!only(meal, ['name', 'portions'])) invalid()
     return { ...meal, portions: meal.portions.map(portion => {
       if (!only(portion, ['grams', 'food'])) invalid()
       return { grams: portion.grams, food: supportedFoodSnapshot(portion.food) }
     }) }
   }) })
+  return Object.freeze({ ...snapshot, ...(advice === undefined ? {} : { portion_guidance: advice }) })
 }

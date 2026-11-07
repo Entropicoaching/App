@@ -24,6 +24,14 @@ export function day(value) {
   const time = Date.parse(`${value}T00:00:00Z`)
   return Number.isFinite(time) && new Date(time).toISOString().slice(0, 10) === value
 }
+// Optional coach-authored plain text; empty legacy values mean absent.
+// Preserve nonempty text verbatim, including HTML-like text, without interpreting it.
+export function portionGuidance(value) {
+  if (value === undefined || value === null) return undefined
+  if (typeof value !== 'string' || value.length > 4000) throw new TypeError('Planens råd må højst være 4000 tegn.')
+  return value.trim() ? value : undefined
+}
+export const planDate = value => day(value) && value >= '1900-01-07' && value <= '9999-12-24'
 export function number(value, max = 100000) {
   if (typeof value === 'string') {
     if (!/^\d+(?:[.,]\d+)?$/.test(value.trim())) return null
@@ -131,6 +139,8 @@ export function normalizePlan(raw, athleteId) {
   if (raw?.namespace !== NAMESPACE || raw.athleteId !== athleteId || !identifier(raw.id)
     || !identifier(raw.revision) || !day(raw.date) || !['draft', 'active', 'archived'].includes(raw.status)
     || !Object.hasOwn(GOALS, raw.goal) || !INTENSITIES.includes(raw.intensity)) return null
+  let advice
+  try { advice = portionGuidance(raw.portionGuidance) } catch { return null }
   const goal = macros(raw.targets)
   if (!goal || goal.kcal <= 0 || !totals(raw.meals)) return null
   if (raw.meals.some(meal => meal.items.some(item =>
@@ -139,6 +149,7 @@ export function normalizePlan(raw, athleteId) {
       || item.minGrams > item.maxGrams)))) return null
   return { namespace: NAMESPACE, athleteId, id: raw.id, revision: raw.revision,
     date: raw.date, status: raw.status, goal: raw.goal, intensity: raw.intensity, targets: goal,
+    ...(advice === undefined ? {} : { portionGuidance: advice }),
     meals: raw.meals.map(meal => ({ id: meal.id, name: meal.name.trim(),
       items: meal.items.map(item => ({ grams: number(item.grams),
         ...(item.minGrams === undefined ? {} : { minGrams: item.minGrams, maxGrams: item.maxGrams }), food: {

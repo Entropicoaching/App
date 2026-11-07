@@ -35,7 +35,7 @@ export function mealValues(foods) {
   return Object.fromEntries(metrics.map(key => [key, roundNutrition(totals[key])]))
 }
 
-function readPlan(value, athleteId, date) {
+export function readAthletePlan(value, athleteId, date) {
   if (value === null) return null
   if (!value || value.athlete_id !== athleteId || value.date !== date || typeof value.active !== 'boolean') fail()
   if (!value.active) return null
@@ -58,12 +58,15 @@ function readPlan(value, athleteId, date) {
     // Approved portion content may be a known zero; it is not a personal goal.
     return [key, valueForKey]
   }))
-  return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals, targets }
+  const portionGuidance = value.portionGuidance ?? null
+  if (portionGuidance !== null && (typeof portionGuidance !== 'string'
+    || !portionGuidance.trim() || Array.from(portionGuidance).length > 4000)) fail()
+  return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals, targets, portionGuidance }
 }
 
 function readDay(value, athleteId, date) {
   if (!value || !Object.hasOwn(value, 'plan')) fail()
-  const plan = readPlan(value.plan, athleteId, date)
+  const plan = readAthletePlan(value.plan, athleteId, date)
   if (!plan) return { plan: null, logs: [], eaten: [], blockedMeals: [] }
   if (!Array.isArray(value.logs) || !Array.isArray(value.eaten)) fail()
   const logs = value.logs.map(row => {
@@ -128,6 +131,7 @@ export function createAthleteDay(options = {}) {
     cached = freeze({ athleteId, date, phase, message, pending: !!pending,
       mode: data ? plan ? 'plan' : 'tracker' : null, meals, totals,
       planId: plan?.id ?? null, planRevision: plan?.revision ?? null,
+      portionGuidance: plan?.portionGuidance ?? null,
       targets: { ...(plan?.targets || {}) }, remaining, loggedCount: data?.logs.length || 0,
       eatenCount: meals.filter(meal => meal.eaten).length,
       canRelease: typeof releaseMeal === 'function',

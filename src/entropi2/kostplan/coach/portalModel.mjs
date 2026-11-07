@@ -26,6 +26,7 @@ export function openPortalPlan(options = {}) {
       const savedCalculation = stored.calculation
       if (savedCalculation !== undefined && !validProfileCalculation(savedCalculation, date))
         throw Error('Invalid calculation')
+      if (stored.manualImport !== undefined && typeof stored.manualImport !== 'boolean') throw Error('Invalid manual draft')
       if (stored.activationPending !== undefined && typeof stored.activationPending !== 'boolean') throw Error('Invalid activation reservation')
       if (!Number.isSafeInteger(stored.sequence) || stored.sequence < 1 || stored.schema !== SCHEMA || stored.coachId !== coachId || stored.date !== date
         || !plan || plan.date !== date || plan.status !== 'draft'
@@ -33,13 +34,13 @@ export function openPortalPlan(options = {}) {
         || !Number.isSafeInteger(stored.clientVersion) || stored.clientVersion < 0
         || JSON.stringify(targets(stored.form ?? {}, savedCalculation)) !== JSON.stringify(plan.targets)) throw Error('Invalid draft')
       restoreDraft = { plan, form: stored.form, clientVersion: stored.clientVersion, calculation: savedCalculation,
-        activationPending: stored.activationPending === true }
+        activationPending: stored.activationPending === true, manualImport: stored.manualImport === true }
     }
   } catch {
     loadError = 'Den lokale kladde kunne ikke læses. Genåbn kostfanen, når enhedens lagring er tilgængelig.'
   }
   let controller
-  controller = createCoachPlan({ enabled: true, localDraftOnly: true, gramGenerator: calculation !== undefined,
+  controller = createCoachPlan({ enabled: true, coachId, localDraftOnly: true, gramGenerator: calculation !== undefined,
     athlete: { id: athlete.id, bodyweight: athlete.bodyweight }, date,
     goal: athlete.goal, catalog: FOODS, template: options.template ?? restoreDraft?.plan.meals.map(meal => ({
       id: meal.id, name: meal.name, items: meal.items.map(item => ({ foodId: item.food.id, grams: item.grams,
@@ -70,7 +71,7 @@ export function openPortalPlan(options = {}) {
       const sequence = previous + 1, revision = `device-${sequence}`
       const plan = { ...request.plan, id: planId, revision, status: 'draft' }
       const payload = JSON.stringify({ schema: SCHEMA, coachId, date, sequence,
-        clientVersion: request.clientVersion, plan, form: controller.snapshot().form, calculation })
+        clientVersion: request.clientVersion, ...(controller.snapshot().manualImport ? { manualImport: true } : {}), plan, form: controller.snapshot().form, calculation })
       if (payload.length > 250000) throw Error('Oversized draft')
       store.setItem(key, payload)
       if (store.getItem(key) !== payload) throw Error('Unconfirmed local write')

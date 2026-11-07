@@ -1,10 +1,11 @@
 import { antalOrd } from '../../antalOrd.mjs'
 import * as React from 'react'
 import PlanActivation from './activation.mjs'
+import MealDraftImport from './MealDraftImport.mjs'
 import { openPortalPlan } from './portalModel.mjs'
 import { coachPlanView, recipeChoice } from './view.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
-import { identifier, day, number, catalogFoods } from './model.mjs'
+import { identifier, day, planDate, number, catalogFoods } from './model.mjs'
 import { recipeItems, portalNutritionReport } from './connections.mjs'
 import { nutritionReportView } from '../rapport/reportView.mjs'
 import KostJustering from '../justering/KostJustering.mjs'
@@ -63,15 +64,17 @@ function ScopedKostJustering({ options, proposal }) {
 function ScopedPortalPlan(props) {
   const [opened, setOpened] = React.useState(false)
   const [refresh, setRefresh] = React.useState(0)
+  const [date, setDate] = React.useState(props.date)
   return h('div', null,
+    date !== props.date && h('p', null, `Koststatus og registrering nedenfor gælder ${props.date}, ikke den valgte plandato.`),
     h(ActiveReport, { ...props, enabled: true, refresh }),
     h('details', { className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
     onToggle: event => { if (event.currentTarget.open) setOpened(true) } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
     h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
-    opened && h(PlanEditor, { ...props, onActivated: () => setRefresh(value => value + 1),
-      key: JSON.stringify([props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
-        profileCalculation(props.athlete, props.date)]) })))
+    opened && h(PlanEditor, { ...props, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
+      key: JSON.stringify([date, props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
+        profileCalculation(props.athlete, date)]) })))
 }
 
 export function PortalNutritionReport(props = {}) {
@@ -108,21 +111,44 @@ function PlanEditor(props) {
     const next = openPortalPlan({ enabled: true, ...props, template })
     // Preserve explicit target edits made in the existing coach view.
     for (const [field, value] of Object.entries(snapshot.form)) next.controller.set(field, value)
+    next.controller.setAdvice(snapshot.portionGuidance)
     if (!next.controller.generate()) { setError(next.controller.snapshot().error); return }
     setError(''); setOpened(next)
   }
+  // Read live state in the handler: an event captured before save/reservation
+  // must not switch the scope while that operation is in flight.
+  const current = React.useRef(true)
+  const liveController = React.useRef(opened.controller)
+  React.useLayoutEffect(() => {
+    current.current = true; liveController.current = opened.controller
+    return () => { current.current = false }
+  }, [opened.controller])
   return h('div', null,
+    h('label', { style: { display: 'grid', gap: '0.25rem' } }, 'Plandato',
+      h('input', { name: 'plan-date', type: 'date', style: control, value: props.date,
+        min: '1900-01-07', max: '9999-12-24', disabled: Boolean(snapshot.busy || snapshot.activationPending),
+        onChange: event => {
+          const live = liveController.current.snapshot(), value = event.currentTarget.value
+          if (current.current && !live.busy && !live.activationPending && planDate(value)) props.onDate(value)
+        } })),
+    h('p', { role: 'status' }, `Kladden og aktiveringen gælder ${props.date}. Gem hver dato og aktivér den særskilt. Datoændring åbner datoens senest gemte kladde; ugemte rettelser følger ikke med.`),
+    props.date > props.today && h('p', { 'data-future-plan': true },
+      'Fremtidig plandag: grundlaget nedenfor er den aktuelt kendte profil, herunder eventuelt oplyst træningsbelastning. Det bekræfter ikke fremtidens træning, dagsform eller indtag. Fremtidigt indtag er ukendt; dagens kostregistrering er ikke evidens for denne dato. Ingen nye tal anbefales automatisk ved datovalg.'),
     h(PlanActivation, { controller: opened.controller, athleteId: props.athlete.id, date: props.date,
       client: props.client, loadClient: props.loadClient }),
     opened.loadError && h('p', { role: 'alert' }, opened.loadError),
     planContextView(h, { athlete: props.athlete, date: props.date, snapshot, notes,
       onNote: (key, value) => setNotes(old => ({ ...old, [key]: value.slice(0, 600) })) }),
-    coachPlanView(h, snapshot, { ...opened.controller, activate: async () => {
+    coachPlanView(h, snapshot, { ...opened.controller,
+      generate: () => opened.controller.generate(snapshot.manualImport && gramGenerator
+        ? meals.map((name, i) => ({ id: `meal-${i}`, name, items: [] })) : undefined),
+      activate: async () => {
       const previous = opened.controller.snapshot().publishedVersion
       const activated = await opened.controller.activate()
       if (activated && opened.controller.snapshot().publishedVersion !== previous) props.onActivated()
       return activated
     } }),
+    h(MealDraftImport, { controller: opened.controller, snapshot, coachId: props.coachId }),
     !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
       h('p', null, gramGenerator

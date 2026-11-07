@@ -94,7 +94,7 @@ test('entry actual effects: missing/no plan keeps tracker and forwarded weight r
     t.after(screen.unmount); screen.render(); await flush()
     const tree = screen.render()
     assert.doesNotMatch(text(tree), /Dagens kostplan|Plan fra din coach/)
-    assert.equal(nodes(tree).filter(n => n.type === 'details' || n.type === 'summary').length, 0)
+    assert.equal(nodes(tree).filter(n => n.type === 'details' || n.type === 'summary').length, 2)
     assert.ok(find(screen.host, 'h2', 'Log hurtigt'))
     screen.render({ retryWeight: () => calls.push('latest') })
     const weight = screen.host.querySelectorAll('section').find(n => n.textContent.startsWith('Din vægt'))
@@ -117,7 +117,7 @@ test('entry actual effects: approved plan, one tap, stable tracker host, no dupl
   assert.doesNotMatch(text(tree), /Plan fra din coach/)
   const trackerHost = screen.host
   const details = nodes(tree).find(n => n.type === 'details' && n.props.children?.[0]?.type === 'summary' && text(n.props.children[0]) === 'Kostlog og vejning')
-  assert.equal(details.props.open, undefined)
+  assert.equal(details.props.open, true)
   assert.equal(details.props.children[1].props.ref.current, trackerHost)
   await nodes(tree).find(n => n.type === 'button' && n.props['aria-label'] === 'Frokost <syntetisk>: Spist som planlagt').props.onClick()
   await flush(); tree = screen.render()
@@ -163,14 +163,15 @@ test('entry actual effects: uncertain insert refreshes the real tracker and neve
 })
 
 
-test('entry fallback: first-load plan/probe errors add neither an alert nor an empty fold above the tracker', async t => {
+test('entry fallback: first-load plan/probe errors expose a retry above the usable tracker', async t => {
   for (const options of [{ error: '42501' }, { error: 'XX000' }, { before() { throw Error('synthetic offline') } }]) {
     const f = fixture(options), screen = mount(f); t.after(screen.unmount)
     screen.render(); await flush()
     const tree = screen.render()
     assert.equal(screen.controller.snapshot().phase, 'load-error')
-    assert.doesNotMatch(text(tree), /Dagens kost kunne ikke hentes|Hent dagen igen|Kostlog og vejning/)
-    assert.equal(nodes(tree).filter(n => n.type === 'details' || n.type === 'summary' || n.props.role === 'alert').length, 0)
+    assert.match(text(tree), /Kostplanen kunne ikke hentes.*Hent kostplan igen/)
+    assert.doesNotMatch(text(tree), /Du har ingen aktiv kostplan/)
+    assert.equal(nodes(tree).filter(n => n.props.role === 'alert').length, 1)
     assert.ok(find(screen.host, 'h2', 'Log hurtigt'))
     assert.equal(f.rows.length, 0); assert.equal(f.plan.writes().length, 0); assert.deepEqual(f.writes, [])
   }
@@ -190,7 +191,7 @@ test('entry fallback: offline first entry recovers after reopening with the same
   assert.equal(f.rows.length, 0); assert.equal(f.plan.writes().length, 0); assert.deepEqual(f.writes, [])
 })
 
-test('entry fallback: known-plan failure stays retryable; removing the plan moves its working tracker directly into the page', async t => {
+test('entry fallback: known-plan failure stays retryable; removing the plan preserves its working tracker host', async t => {
   const options = {}, f = fixture(options); f.approve()
   const screen = mount(f); t.after(screen.unmount)
   screen.render(); await flush(); screen.render()
@@ -198,19 +199,18 @@ test('entry fallback: known-plan failure stays retryable; removing the plan move
   options.error = 'XX000'
   await controller.load()
   let tree = screen.render()
-  assert.match(text(tree), /Dagens kost kunne ikke hentes.*Hent dagen igen/)
+  assert.match(text(tree), /Kostplanen kunne ikke hentes.*Hent kostplan igen/)
   assert.equal(screen.host, plannedHost)
   assert.equal(nodes(tree).filter(n => n.props.role === 'alert').length, 1)
   delete options.error
-  await nodes(tree).find(n => n.type === 'button' && text(n) === 'Hent dagen igen').props.onClick()
+  await nodes(tree).find(n => n.type === 'button' && text(n) === 'Hent kostplan igen').props.onClick()
   assert.match(text(screen.render()), /Dagens kostplan/)
   f.plan.data.kostplan_v1_plans.length = 0
   await controller.load(); tree = screen.render(); await flush()
   assert.equal(screen.controller, controller)
-  assert.notEqual(screen.host, plannedHost)
-  assert.equal(plannedHost.textContent, '')
+  assert.equal(screen.host, plannedHost)
   assert.ok(find(screen.host, 'h2', 'Log hurtigt'))
-  assert.equal(nodes(tree).filter(n => n.type === 'details' || n.type === 'summary').length, 0)
+  assert.equal(nodes(tree).filter(n => n.type === 'details' || n.type === 'summary').length, 2)
   assert.equal(f.rows.length, 0); assert.equal(f.plan.writes().length, 0); assert.deepEqual(f.writes, [])
 })
 
@@ -225,8 +225,7 @@ test('entry lifecycle: a late plan preserves the same imperative tracker and unf
   const input = direct.querySelectorAll('input').find(n => n.getAttribute('data-focus') === 'field-Måltid')
   assert.ok(input); input.value = 'Syntetisk kladde'; await input.fire('input')
   release(); await flush(); screen.render()
-  assert.notEqual(screen.host, direct)
-  assert.equal(direct.textContent, '')
+  assert.equal(screen.host, direct)
   assert.equal(screen.host.children[0], content)
   assert.equal(screen.controller, controller)
   assert.equal(screen.host.querySelectorAll('input').find(n => n.getAttribute('data-focus') === 'field-Måltid').value, 'Syntetisk kladde')

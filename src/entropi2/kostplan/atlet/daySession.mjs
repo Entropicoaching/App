@@ -2,8 +2,8 @@ import { nutritionContracts } from '../../nutrition/contracts.mjs'
 import { createPlanAdapter } from '../planAdapter.mjs'
 import { createTrackedAthleteDay } from './trackerAdapter.mjs'
 
-// One athlete/day owner. The plan adapter caches only schema availability; plan
-// data and the existing meal log are read for this exact scope on every load.
+// One athlete/day owner. Every load confirms availability as well as plan data;
+// an unavailable read must never become a confirmed empty day.
 export function createKostDaySession(options = {}) {
   if (options.enabled !== true) return null
   const { athleteId, date, client, storage, currentDay, onDiaryChanged } = options
@@ -35,7 +35,22 @@ export function createKostDaySession(options = {}) {
     finally { if (!disposed) onDiaryChanged?.() }
   } }
   const controller = createTrackedAthleteDay({ enabled: true, athleteId, date, storage, currentDay,
-    contracts: planContracts, loadPlan: () => createPlanAdapter({ enabled: true, athleteId, date, client }).loadActive() })
+    contracts: planContracts, loadPlan: async () => {
+      // loadActive caches schema probes by client identity and returns null for
+      // missing tables. Give each read its own facade and reject failed probes,
+      // so only a completed active-plan query can confirm an empty day. These
+      // two single-column limit(0) probes are the existing adapter's contract.
+      const readClient = { from: table => ({ select(columns, ...args) {
+        const query = client.from(table).select(columns, ...args)
+        if (!['id', 'version_id'].includes(columns)) return query
+        return { async limit(count) {
+          const result = await query.limit(count)
+          if (result?.error) throw Error('Kostplanen er ikke tilgængelig.')
+          return result
+        } }
+      } }) }
+      return createPlanAdapter({ enabled: true, athleteId, date, client: readClient }).loadActive()
+    } })
   // A read-only channel owned by this exact client/athlete/day session. Never
   // persist or share it across owners, and never issue another plan query for
   // the tracker. The authenticated client remains the access-control boundary.
@@ -47,7 +62,7 @@ export function createKostDaySession(options = {}) {
     if (s.mode === 'plan') approved = { planId: s.planId, revision: s.planRevision,
       targets: Object.freeze({ ...s.targets }) }
     else if (!['loading', 'load-error'].includes(s.phase)) approved = null
-    // Like the day frame, retain the last confirmed version while refreshing;
+    // Retain the last confirmed target reference while refreshing;
     // its status is explicit. A successful no-plan read clears it immediately.
     reference = Object.freeze({ owner, athleteId, date, source: approved ? 'approved-plan' : 'profile',
       state: s.phase === 'loading' || s.phase === 'load-error' ? s.phase : 'ready', ...approved })

@@ -8,11 +8,18 @@ import Entropi2Kost from '../../Entropi2Kost.mjs'
 import { sessionReactDocument } from '../../session/sessionQuickSetReactDom.mjs'
 import { fixture, athleteId, date, flush } from './daySession.fixture.mjs'
 
-test('real ReactDOM: tracker stays usable across direct/plan parents; session, weight callbacks and cleanup survive', async () => {
+test('real ReactDOM: tracker host stays identical across loading/plan states; session, weight callbacks and cleanup survive', async () => {
   let release
   const gate = new Promise(resolve => { release = resolve })
   const f = fixture({ before: () => gate }); f.approve()
   const doc = sessionReactDocument(), host = doc.createElement('div'), calls = []
+  // Native select.options is required by ReactDOM for the new date picker.
+  const make = doc.createElement
+  doc.createElement = tag => {
+    const node = make(tag)
+    if (tag === 'select') Object.defineProperty(node, 'options', { get: () => node.querySelectorAll('option') })
+    return node
+  }
   doc.body.append(host)
   const replacements = { window: doc.defaultView, IS_REACT_ACT_ENVIRONMENT: true, localStorage: f.storage }
   const originals = new Map(Object.keys(replacements).map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]))
@@ -31,14 +38,13 @@ test('real ReactDOM: tracker stays usable across direct/plan parents; session, w
     assert.ok(direct)
     assert.match(direct.textContent, /Log hurtigt/)
     assert.doesNotMatch(host.textContent, /Dagens kostplan|Dagens kost kunne ikke hentes/)
-    assert.equal(direct.parentElement.tagName, 'DIV')
+    assert.equal(direct.parentElement.tagName, 'DETAILS')
     const content = direct.firstChild
     const draft = direct.querySelector('[data-focus="field-Måltid"]')
     assert.ok(draft); draft.value = 'Syntetisk kladde'; draft.dispatch('input', { target: draft })
     await act(async () => { release(); await flush() })
     const folded = tracker()
-    assert.notEqual(folded, direct)
-    assert.equal(direct.textContent, '')
+    assert.equal(folded, direct)
     assert.equal(folded.parentElement.tagName, 'DETAILS')
     assert.equal(folded.firstChild, content)
     assert.equal(folded.querySelector('[data-focus="field-Måltid"]').value, 'Syntetisk kladde')

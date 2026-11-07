@@ -1,6 +1,6 @@
 import { createPlanSnapshot, summarizePlanSnapshot } from './planSnapshot.mjs'
 import { supportedFoodSnapshot, supportedPlanSnapshot } from './sqlSnapshot.mjs'
-import { catalogFoods, day, identifier, totals } from './coach/model.mjs'
+import { catalogFoods, day, identifier, totals, portionGuidance } from './coach/model.mjs'
 
 const tables = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
@@ -10,6 +10,50 @@ const missing = error => ['42P01', 'PGRST205'].includes(error?.code)
 // Cache capabilities only: athlete/date plan data is always read again. Coach
 // checks and every activation remain uncached. No storage or session/auth reads.
 const athleteAvailability = new WeakMap()
+
+// The mounted day owner deliberately creates a fresh read facade on each load.
+// Share only simultaneous schema probes across that facade and shopping, before
+// client.from creates a transport. Completed probes (including failures) expire;
+// the existing adapter cache and freshAvailability/coach checks keep their rules.
+const capabilityClients = new WeakMap()
+export function sharePlanCapabilityProbes(client) {
+  if (typeof client?.from !== 'function') return client
+  if (capabilityClients.has(client)) return capabilityClients.get(client)
+  const pending = new Map()
+  const defer = (open, methods) => {
+    let query
+    return new Proxy({}, { get(_, key) {
+      if (Object.hasOwn(methods, key)) return methods[key]
+      query ??= open()
+      const value = query[key]
+      return typeof value === 'function' ? value.bind(query) : value
+    } })
+  }
+  const from = table => defer(() => client.from(table), {
+    select(columns, ...args) {
+      const open = () => client.from(table).select(columns, ...args)
+      const index = tables.indexOf(table)
+      if (index < 0 || args.length || columns !== (index === 2 ? 'version_id' : 'id')) return open()
+      return defer(open, { limit(count) {
+        if (count !== 0) return open().limit(count)
+        if (!pending.has(table)) {
+          const probe = Promise.resolve().then(() => open().limit(0))
+          pending.set(table, probe)
+          const clear = () => { if (pending.get(table) === probe) pending.delete(table) }
+          void probe.then(clear, clear)
+        }
+        return pending.get(table)
+      } })
+    },
+  })
+  const shared = new Proxy({}, { get(_, key) {
+    if (key === 'from') return from
+    const value = Reflect.get(client, key, client)
+    return typeof value === 'function' ? value.bind(client) : value
+  } })
+  capabilityClients.set(client, shared); capabilityClients.set(shared, shared)
+  return shared
+}
 const basis = Object.fromEntries(['weight_trend', 'training_volume', 'training_intensity', 'food_log', 'readiness', 'competition_date'].map(key => [key, null]))
 const canonical = value => JSON.stringify(value && typeof value === 'object'
   ? Array.isArray(value) ? value.map(item => JSON.parse(canonical(item)))
@@ -138,6 +182,7 @@ export function activationSnapshot(plan) {
   if (!identifier(plan?.athleteId) || !day(plan.date) || !totals(plan.meals)) fail()
   return supportedPlanSnapshot({ goal: plan.goal === 'maintain' ? 'vedligehold' : plan.goal,
     intensity: plan.intensity / 100,
+    portion_guidance: portionGuidance(plan.portionGuidance),
     meals: plan.meals.map(meal => ({ name: meal.name, portions: meal.items.map(item => ({
       grams: Number(String(item.grams).replace(',', '.')),
       // Validate the retained raw snapshot before catalogue normalization can
@@ -215,15 +260,18 @@ export function createPlanAdapter(options = {}) {
       pending = null
       return { ok: true, athleteId, date, planId: operation.planId, versionId: operation.versionId }
     },
-    async loadActive() {
-      if (!athleteAvailability.has(client)) {
+    async loadActive({ freshAvailability = false, requireAvailable = false } = {}) {
+      if (freshAvailability || !athleteAvailability.has(client)) {
         const probe = available().catch(error => {
           if (athleteAvailability.get(client) === probe) athleteAvailability.delete(client)
           throw error
         })
         athleteAvailability.set(client, probe)
       }
-      if (!await athleteAvailability.get(client)) return null
+      if (!await athleteAvailability.get(client)) {
+        if (requireAvailable) throw Object.assign(Error('Kostplanens tabeller er ikke tilgængelige.'), { code: 'KOSTPLAN_UNAVAILABLE' })
+        return null
+      }
       const readPlans = () => client.from(tables[0]).select('id,athlete_id,valid_from,status')
         .eq('athlete_id', athleteId).eq('status', 'godkendt').lte('valid_from', date).limit(501)
       const unique = (items, key) => { if (new Set(items.map(item => item[key])).size !== items.length) fail() }
@@ -231,7 +279,7 @@ export function createPlanAdapter(options = {}) {
       unique(plans, 'id')
       if (plans.some(p => p.athlete_id !== athleteId || p.status !== 'godkendt' || !day(p.valid_from) || p.valid_from > date || !uuid(p.id))) fail()
       if (!plans.length) return null
-      const versions = rows(await client.from(tables[1]).select('id,plan_id,version_no,effective_from,goal,intensity,meals')
+      const versions = rows(await client.from(tables[1]).select('id,plan_id,version_no,effective_from,goal,intensity,meals,portion_guidance')
         .in('plan_id', plans.map(p => p.id)).lte('effective_from', date).limit(501))
       unique(versions, 'id')
       unique(versions.map(v => ({ key: `${v.plan_id}:${v.version_no}` })), 'key')
@@ -259,9 +307,13 @@ export function createPlanAdapter(options = {}) {
       if (approved.length > 1 && approved[0].v.effective_from === approved[1].v.effective_from
         && approved[0].time.stamp === approved[1].time.stamp) fail()
       const { v } = approved[0], snapshot = createPlanSnapshot(v)
+      // Forward only the selected immutable version's exact bounded plain text.
+      const portionGuidance = v.portion_guidance ?? null
+      if (portionGuidance !== null && (typeof portionGuidance !== 'string'
+        || !portionGuidance.trim() || Array.from(portionGuidance).length > 4000)) fail()
       if (!snapshot.meals.length) fail()
       const summary = summarizePlanSnapshot(snapshot)
-      return { id: v.plan_id, revision: v.id, athlete_id: athleteId, date, active: true,
+      return { id: v.plan_id, revision: v.id, athlete_id: athleteId, date, active: true, portionGuidance,
         targets: Object.fromEntries([['kcal', 'energyKcal'], ['protein', 'proteinG'], ['carb', 'carbohydrateG'], ['fat', 'fatG']]
           .map(([key, nutrient]) => [key, summary.nutrients[nutrient].value])),
         meals: snapshot.meals.map((meal, mi) => ({ id: `${v.id}:meal:${mi}`, name: meal.name,

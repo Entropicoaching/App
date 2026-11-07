@@ -1,0 +1,69 @@
+import { createElement as h, useLayoutEffect, useMemo, useState } from 'react'
+import { createApprovedShopping } from './approvedShoppingController.mjs'
+import { upcomingDates } from './upcomingPlanModel.mjs'
+import { grossLabel, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
+
+const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal' }
+const currentDayMatches = scope => {
+  try { return !scope.currentDay || scope.currentDay() === scope.today } catch { return false }
+}
+
+export default function ApprovedPlanShopping(props) {
+  if (props.enabled !== true || props.readOnly === true) return null
+  return h(ShoppingSession, props)
+}
+
+function ShoppingSession({ athleteId, today, client, currentDay, clipboard }) {
+  const scope = useMemo(() => ({ athleteId, today, client, currentDay }), [athleteId, today, client, currentDay])
+  const [record, setRecord] = useState(null)
+  useLayoutEffect(() => {
+    let active = true, controller
+    try {
+      controller = createApprovedShopping({ enabled: true, athleteId, today, client,
+        isCurrent: () => active && currentDayMatches(scope) })
+    } catch { setRecord({ scope, controller: null }); return undefined }
+    const update = () => setRecord({ scope, controller, snapshot: controller.snapshot() })
+    const unsubscribe = controller.subscribe(update)
+    update(); void controller.load()
+    return () => { active = false; unsubscribe(); controller.dispose() }
+  }, [scope, athleteId, today, client])
+  const matches = record?.scope === scope && currentDayMatches(scope)
+  const controller = matches ? record.controller : null, s = controller ? record.snapshot : null
+  const dates = upcomingDates(today)
+  return h('section', { 'aria-label': 'Indkøb fra kostplanen', style: { padding: 16, maxWidth: '42rem', overflowWrap: 'anywhere' } },
+    h('h2', null, 'Indkøb fra kostplanen'),
+    h('p', null, grossLabel),
+    h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer. Listen gemmes ikke.'),
+    h('fieldset', null, h('legend', null, 'Dage til indkøb'),
+      ...dates.map(date => h('label', { key: date, style: { display: 'block', minHeight: 44 } },
+        h('input', { type: 'checkbox', 'aria-label': `Indkøb ${date}`, checked: s?.dates.includes(date) ?? false,
+          disabled: !controller,
+          onChange: event => {
+            const before = controller?.snapshot().dates ?? []
+            const selected = event.currentTarget.checked ? [...new Set([...before, date])] : before.filter(d => d !== date)
+            void controller?.choose(selected)
+          } }), date))),
+    !s && h('p', { role: 'status' }, 'Indkøbsgrundlaget er ikke tilgængeligt for den aktuelle atlet og dag.'),
+    s && h('div', { 'aria-live': 'polite', 'data-shopping-complete': String(s.complete) },
+      h('p', null, `Valgte datoer: ${s.dates.join(', ') || 'ingen'}.`),
+      s.phase === 'loading' && h('p', { role: 'status' }, 'Henter godkendte planer… Listen er ufuldstændig.'),
+      s.phase === 'empty-selection' && h('p', null, 'Vælg mindst én dag.'),
+      s.affected.length > 0 && h('div', { role: s.phase === 'loading' ? 'status' : 'alert' },
+        h('p', null, 'Listen er ufuldstændig. Berørte datoer:'),
+        h('ul', null, ...s.affected.map(d => h('li', { key: d.date }, `${d.date}: ${d.reason}.`)))),
+      h('button', { type: 'button', style: control, onClick: () => controller.load() }, 'Hent indkøbsgrundlag igen'),
+      s.complete && h('div', null,
+        h('p', null, 'Alle valgte datoer er læst fra godkendte versioner. Listen angiver grambehov, ikke dokumenteret næringsdækning.'),
+        ...s.result.days.map(d => h('p', { key: d.date },
+          `${d.date}: version ${d.versionNumber} (${d.versionId}), gældende fra ${d.effectiveFrom}. Måltider: ${d.mealNames.join(', ')}.`)),
+        h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map(item => h('li', { key: item.key }, shoppingItemText(item)))),
+        h('button', { type: 'button', style: control, disabled: s.copyPending, onClick: () => controller.copy(clipboard, s.result) }, 'Kopiér indkøbsliste'),
+        s.copyStatus === 'pending' && h('p', { role: 'status' }, 'Kopierer…'),
+        s.copyStatus === 'copied' && h('p', { role: 'status' }, 'Kopieret.'),
+        s.copyStatus === 'failed' && h('div', null,
+          h('p', { role: 'alert' }, 'Kopiering kunne ikke bekræftes. Prøv igen, eller markér og kopiér teksten nedenfor.'),
+          h('label', null, 'Indkøbsliste til manuel kopiering',
+            h('textarea', { readOnly: true, value: s.copyText, rows: 8, maxLength: maxShoppingText,
+              onFocus: event => event.currentTarget.select?.(),
+              style: { width: '100%', maxHeight: '16rem', boxSizing: 'border-box' } }))))))
+}

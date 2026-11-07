@@ -88,14 +88,15 @@ test('accessible controls have labels, touch sizes, responsive wrapping and pend
   const pending = new Promise(r => { resolve = r })
   const f = fixture({ saveDraft: () => pending }); generate(f)
   for (const label of nodes(f.render(), node => node.type === 'label')) {
-    assert.equal(nodes(label, node => ['input', 'select'].includes(node.type)).length, 1)
+    assert.equal(nodes(label, node => ['input', 'select', 'textarea'].includes(node.type)).length, 1)
     assert.ok(text(label).trim())
   }
-  for (const node of nodes(f.render(), node => ['input', 'select', 'button', 'summary'].includes(node.type)))
+  for (const node of nodes(f.render(), node => ['input', 'select', 'textarea', 'button', 'summary'].includes(node.type)))
     assert.ok(node.props.style.minHeight >= 44)
   const saving = button(f.render(), 'Gem som kladde').props.onClick()
   assert.match(text(f.render()), /Gemmer kladde/)
   assert.equal(f.render().props['aria-busy'], true)
+  assert.equal(nodes(f.render(), node => node.type === 'textarea')[0].props.disabled, true)
   assert.equal(button(f.render(), 'Gem som kladde').props.disabled, true)
   assert.equal(nodes(f.render(), node => node.type === 'fieldset').every(node => node.props.disabled), true)
   resolve(false); await saving

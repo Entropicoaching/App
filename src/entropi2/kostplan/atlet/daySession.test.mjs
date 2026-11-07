@@ -12,27 +12,27 @@ test('day assembly: strict OFF does not inspect dependencies', () => {
     get client() { throw Error('OFF') }, get storage() { throw Error('OFF') } }), null)
 })
 
-test('day assembly: every missing table/code keeps tracker mode, one session probe, no writes', async () => {
+test('day assembly: every missing table/code is a read error, freshly probed per load, no writes', async () => {
   for (const missing of tableNames) for (const missingCode of ['42P01', 'PGRST205']) {
     const f = fixture({ missing, missingCode })
     for (const scope of [{}, {}, { date: '2026-11-06' }, { athleteId: 'synthetic-other' }]) {
       const s = open(f, scope)
-      try { assert.equal(await s.controller.load(), true); assert.equal(s.controller.snapshot().mode, 'tracker') }
+      try { assert.equal(await s.controller.load(), false); assert.equal(s.controller.snapshot().phase, 'load-error'); assert.equal(s.controller.snapshot().mode, null) }
       finally { s.dispose() }
     }
-    assert.equal(f.plan.calls.length, tableNames.indexOf(missing) + 1)
+    assert.equal(f.plan.calls.length, 4 * (tableNames.indexOf(missing) + 1))
     assert.ok(f.plan.calls.every(c => c.limit === 0))
     assert.deepEqual(f.calls, []); assert.deepEqual(f.writes, []); assert.equal(f.plan.writes().length, 0)
   }
 })
 
-test('day assembly: no approved plan is tracker; a later activation is read without another schema probe', async t => {
+test('day assembly: no approved plan is tracker; a later activation is read with fresh schema probes', async t => {
   const f = fixture(), s = open(f); t.after(s.dispose)
   await s.controller.load(); assert.equal(s.controller.snapshot().mode, 'tracker')
   f.approve(); await s.controller.load()
   assert.equal(s.controller.snapshot().mode, 'plan')
   assert.deepEqual(s.controller.snapshot().remaining, { kcal: 500, protein: 50, carb: 60, fat: 10 })
-  assert.equal(f.plan.calls.filter(c => c.limit === 0).length, 3)
+  assert.equal(f.plan.calls.filter(c => c.limit === 0).length, 6)
   assert.equal(f.plan.writes().length, 0); assert.deepEqual(f.writes, []); assert.equal(f.rows.length, 0)
 })
 

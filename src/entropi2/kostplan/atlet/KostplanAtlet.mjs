@@ -11,6 +11,14 @@ const macros = values => values ? `${number(values.kcal)} kcal · ${number(value
   : 'Næringsdata mangler eller gram er ugyldige.'
 const button = (text, onClick, disabled = false, props = {}) => h('button', { type: 'button', style: control, onClick, disabled, ...props }, text)
 
+// React renders coach text literally, including angle brackets and line breaks.
+export function PlanAdvice({ text }) {
+  return h('section', { 'aria-label': 'Planens råd', style: { marginTop: 24 } },
+    h('h2', null, 'Planens råd'),
+    h('p', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } },
+      text ?? 'Coachen har ikke tilføjet råd til denne planversion.'))
+}
+
 // Pure controlled React view: the same handlers are exercised in the synthetic
 // interaction tests; the normal app test runner also discovers real React tests.
 export function KostplanAtletView(props = {}) {
@@ -63,7 +71,8 @@ export function KostplanAtletView(props = {}) {
           disabled: s.pending || s.phase === 'uncertain' || meal.blocked,
           'aria-label': `${meal.name}: ${food.name} (g)`, style: { ...control, width: '100%', boxSizing: 'border-box' },
           onChange: event => onGrams?.(meal.id, food.id, event.currentTarget.value) }))),
-      !meal.values && h('p', { role: 'alert' }, 'Angiv gyldige gram og kendte næringsdata før du markerer måltidet som spist.'))))))
+      !meal.values && h('p', { role: 'alert' }, 'Angiv gyldige gram og kendte næringsdata før du markerer måltidet som spist.'))))),
+  h(PlanAdvice, { text: s.portionGuidance }))
 }
 
 function ExistingTracker({ athleteId, date, options }) {

@@ -23,34 +23,38 @@ test('real React: SSR is read-free and OFF stays empty; old sibling never duplic
   assert.equal(renderToStaticMarkup(h(ActivePlan, { enabled: true, athleteId, date, client })), '')
 })
 
-test('real React: missing/empty plan renders tracker directly without any disclosure', async t => {
+test('real React: missing/empty plan renders distinct status and an open diary', async t => {
   for (const config of [{ missing: true }, {}]) {
     const f = fixture(config), s = open(f); t.after(s.dispose); await s.controller.load()
     const html = render(s.controller)
-    assert.doesNotMatch(html, /<details|<summary|role="alert"/)
+    assert.match(html, /<details open=""/)
+    assert.match(html, config.missing ? /Kostplanen kunne ikke hentes/ : /Du har ingen aktiv kostplan/)
+    assert.doesNotMatch(html, config.missing ? /Du har ingen aktiv kostplan/ : /role="alert"/)
     assert.match(html, /data-existing-tracker/); assert.doesNotMatch(html, /Dagens kostplan|Spist som planlagt/)
     assert.equal(f.rows.length, 0); assert.deepEqual(f.writes, [])
   }
 })
 
-test('real React: an unknown optional plan failing its first read adds no alert or fold', async t => {
+test('real React: a failed first read exposes retry and never claims an empty plan', async t => {
   for (const config of [{ error: '42501' }, { before() { throw Error('synthetic offline') } }]) {
     const f = fixture(config), s = open(f); t.after(s.dispose)
     assert.equal(await s.controller.load(), false)
     const html = render(s.controller)
     assert.match(html, /data-existing-tracker/)
-    assert.doesNotMatch(html, /<details|<summary|role="alert"|Dagens kost kunne ikke hentes|Hent dagen igen/)
+    assert.match(html, /role="alert".*Kostplanen kunne ikke hentes/)
+    assert.match(html, /Hent kostplan igen/)
+    assert.doesNotMatch(html, /Du har ingen aktiv kostplan/)
     assert.equal(f.rows.length, 0); assert.deepEqual(f.writes, []); assert.equal(f.plan.writes().length, 0)
   }
 })
 
-test('real React: active day uses actual adapter/contracts and one-tap handler, escaped food and collapsed tracker', async t => {
+test('real React: active day uses actual adapter/contracts and one-tap handler, escaped food and an open tracker', async t => {
   const f = fixture(); f.approve(); const s = open(f); t.after(s.dispose); await s.controller.load()
   let html = render(s.controller)
   assert.equal((html.match(/Dagens kostplan<\/h1>/g) || []).length, 1)
   assert.match(html, /Frokost &lt;syntetisk&gt;/)
   assert.match(html, /Tilbage i dag: 500 kcal · 50 g protein/)
-  assert.match(html, /<details><summary[^>]*>Kostlog og vejning/)
+  assert.match(html, /<details open=""><summary[^>]*>Kostlog og vejning/)
   assert.doesNotMatch(html, /Plan fra din coach/)
   const tree = KostplanAtletView({ enabled: true, snapshot: s.controller.snapshot(), onEaten: s.controller.markEaten })
   await nodes(tree).find(n => n.type === 'button' && n.props['aria-label'] === 'Frokost <syntetisk>: Spist som planlagt').props.onClick()

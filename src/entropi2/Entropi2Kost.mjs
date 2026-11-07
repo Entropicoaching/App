@@ -1,9 +1,11 @@
 import { createElement, useEffect, useRef, useState } from 'react'
+import { sharePlanCapabilityProbes } from './kostplan/planAdapter.mjs'
 import { mountNutritionScreen } from './nutrition/index.mjs'
 import { loadEntropi2Styles } from './styles.mjs'
 import { mountExistingTracker } from './kostplan/atlet/trackerAdapter.mjs'
 import { createKostDaySession } from './kostplan/atlet/daySession.mjs'
 import KostDayFrame from './kostplan/atlet/KostDayFrame.mjs'
+import ApprovedPlanShopping from './kostplan/atlet/ApprovedPlanShopping.mjs'
 
 // Montering af kostskærmen med de aktuelle vægtprops. Navigation går altid til den nyeste handler.
 export function mountKost(host, { athlete, date, client, foods, storage, contracts }, latest, weight = {}) {
@@ -38,12 +40,23 @@ export function KostTrackerHost({ session, screen, weight }) {
   useEffect(() => {
     forwardKostWeight(screen.current, { weightLogs, weightInput, onWeightInput, logWeight, savingWeight, weightStatus, retryWeight })
   }, [weightLogs, weightInput, onWeightInput, logWeight, savingWeight, weightStatus, retryWeight])
-  return createElement('div', { ref: root, 'data-entropi2-kost': '' })
+  return createElement('div', { ref: root, 'data-entropi2-kost': '' },
+    !session && createElement('p', { role: 'status', style: { padding: 16 } },
+      'Henter kostlog og vejning… Her kan du logge dagens mad og vejning og arbejde videre med din lokale Ugeplan.'))
+}
+
+// Independent read-only shopping state; the normal tracker remains mounted.
+function KostShoppingFrame(props) {
+  return createElement('div', null,
+    createElement(KostDayFrame, props),
+    createElement(ApprovedPlanShopping, { enabled: true, athleteId: props.athleteId,
+      today: props.date, client: props.client, currentDay: props.currentDay }))
 }
 
 // React-ramme om én atlet/dag. Vægtopdateringer erstatter ikke dagssessionen.
 export default function Entropi2Kost({ enabled = false, athlete, date, client, foods, onNavigate, onCoach,
   weightLogs, weightInput, onWeightInput, logWeight, savingWeight, weightStatus, retryWeight, currentDay, onDayChanged }) {
+  const planClient = enabled === true && athlete?.id ? sharePlanCapabilityProbes(client) : client
   const screen = useRef(null)
   const [session, setSession] = useState(null)
   const latest = useRef({ onNavigate, onCoach, currentDay, onDayChanged })
@@ -52,8 +65,11 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
   useEffect(() => { if (enabled === true) loadEntropi2Styles() }, [enabled])
   useEffect(() => {
     if (enabled !== true || !athlete?.id) return undefined
+    // Resolve from this effect's client owner. The memoized boundary is also
+    // used by render/shopping, while the tracker keeps the original client.
+    const planClient = sharePlanCapabilityProbes(client)
     const storage = typeof localStorage === 'undefined' ? undefined : localStorage
-    const day = createKostDaySession({ enabled: true, athleteId: athlete.id, date, client, storage,
+    const day = createKostDaySession({ enabled: true, athleteId: athlete.id, date, client: planClient, storage,
       onDiaryChanged: () => screen.current?.refresh?.(),
       currentDay: () => (typeof latest.current.currentDay === 'function' ? latest.current.currentDay() : date) })
     let trackerHost, cleanup
@@ -70,7 +86,7 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
     void day.controller.load()
     return () => { day.dispose(); if (screen.current === cleanup) screen.current = null; cleanup?.() }
   }, [enabled, athlete?.id, athlete?.kcal_target, athlete?.protein_target, date, client, foods])
-  const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === client ? session : null
-  return enabled === true && athlete?.id ? createElement(KostDayFrame, { controller: current?.controller,
+  const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
+  return enabled === true && athlete?.id ? createElement(KostShoppingFrame, { controller: current?.controller, athleteId: athlete.id, date, client: planClient, currentDay,
     tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
 }
