@@ -1,4 +1,5 @@
 import { createPlanSnapshot, summarizePlanSnapshot } from './planSnapshot.mjs'
+import { supportedFoodSnapshot, supportedPlanSnapshot } from './sqlSnapshot.mjs'
 import { catalogFoods, day, identifier, totals } from './coach/model.mjs'
 
 const tables = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
@@ -117,12 +118,31 @@ async function readDailyReferences(client, athleteId, date, options = {}) {
 
 // Pure projection to the existing immutable SQL snapshot contract. No invented
 // calculation evidence: this flow is an explicit manual coach activation.
+function activationFood(food) {
+  if (food.per100g && Object.keys(food.per100g).some(key => !['kcal', 'protein', 'carb', 'fat'].includes(key))) fail()
+  if (food.nutrition != null) {
+    if (Object.keys(food).some(key => !['id', 'name', 'per100g', 'nutrition'].includes(key))) fail()
+    return supportedFoodSnapshot(food.nutrition)
+  }
+  if (food.nutrientsPer100g != null) {
+    // per100g is the coach model's known macro envelope, not snapshot content.
+    const snapshot = { ...food }
+    delete snapshot.per100g
+    return supportedFoodSnapshot(snapshot)
+  }
+  if (Object.keys(food).some(key => !['id', 'name', 'per100g', 'kcal100', 'protein100', 'carb100', 'fat100'].includes(key))) fail()
+  return supportedFoodSnapshot(catalogFoods([food])?.[0]?.nutrition)
+}
+
 export function activationSnapshot(plan) {
   if (!identifier(plan?.athleteId) || !day(plan.date) || !totals(plan.meals)) fail()
-  return createPlanSnapshot({ goal: plan.goal === 'maintain' ? 'vedligehold' : plan.goal,
+  return supportedPlanSnapshot({ goal: plan.goal === 'maintain' ? 'vedligehold' : plan.goal,
     intensity: plan.intensity / 100,
     meals: plan.meals.map(meal => ({ name: meal.name, portions: meal.items.map(item => ({
-      grams: Number(String(item.grams).replace(',', '.')), food: catalogFoods([item.food])?.[0]?.nutrition,
+      grams: Number(String(item.grams).replace(',', '.')),
+      // Validate the retained raw snapshot before catalogue normalization can
+      // drop unknown keys. Legacy macro-only coach foods keep their old bridge.
+      food: activationFood(item.food),
     })) })) })
 }
 

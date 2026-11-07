@@ -21,7 +21,7 @@ test('real React renders coach targets followed by a collapsed cost-plan section
   const first = PortalPlan(props), second = PortalPlan({ ...props, today: '2026-11-05' })
   assert.notEqual(first.key, second.key)
 })
-test('real React cost-plan handlers generate, edit grams and persist a draft for both buttons', async () => {
+test('real React cost-plan handlers generate, edit grams and persist a draft through explicit local saving', async () => {
   const storage = memoryStorage()
   const { controller } = openPortalPlan({ enabled: true, coachId: props.session.user.id,
     athlete: props.athlete, date: props.today, storage: () => storage,
@@ -31,12 +31,11 @@ test('real React cost-plan handlers generate, edit grams and persist a draft for
   const tree = () => walk(coachPlanView(h, controller.snapshot(), controller))
   tree().find(n => n.props.name === 'grams-0-0').props.onChange({ currentTarget: { value: '123,5' } })
   assert.equal(tree().some(n => n.type === 'button' && n.props.children === 'Aktivér for atleten'), false)
-  for (const label of ['Gem som kladde', 'Markér lokal kladde som klar']) {
-    const button = tree().find(n => n.type === 'button' && n.props.children === label)
-    assert.equal(button.props.disabled, false); await button.props.onClick()
-    const html = renderToStaticMarkup(coachPlanView(h, controller.snapshot(), controller))
-    assert.ok(html.includes(DRAFT_MESSAGE)); assert.match(html, /&lt;synthetic&gt;/)
-    assert.doesNotMatch(html, /Planen er aktiveret/)
-  }
+  assert.equal(tree().some(n => n.type === 'button' && n.props.children === 'Markér lokal kladde som klar'), false)
+  const button = tree().find(n => n.type === 'button' && n.props.children === 'Gem som kladde')
+  assert.equal(button.props.disabled, false); await button.props.onClick()
+  const html = renderToStaticMarkup(coachPlanView(h, controller.snapshot(), controller))
+  assert.ok(html.includes(DRAFT_MESSAGE)); assert.match(html, /&lt;synthetic&gt;/)
+  assert.doesNotMatch(html, /Planen er aktiveret/)
   assert.equal(JSON.parse([...storage.data.values()][0]).plan.status, 'draft')
 })

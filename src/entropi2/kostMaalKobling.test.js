@@ -82,10 +82,23 @@ test('KOST-AKTIVER1: missing tables never enable activation in the actual import
       // Assert BEFORE cleanup: cleanup itself disables publishing and can mask a regression.
       assert.ok(f.calls.some(call => call.table === missing))
       assert.equal(controller.snapshot().canPublish, false)
-      assert.equal(controller.snapshot().activationError, null)
-      assert.doesNotMatch(text(coachPlanView(h, controller.snapshot(), controller)), /Aktivér for atleten/)
+      assert.equal(controller.snapshot().activationState, 'unavailable')
+      assert.match(controller.snapshot().activationError, /tabeller mangler.*lokale kladde er bevaret/)
+      const unavailable = text(coachPlanView(h, controller.snapshot(), controller))
+      assert.match(unavailable, /Aktivering er ikke tilgængelig/)
+      assert.doesNotMatch(unavailable, /Aktivér for atleten|bekræftede aktive plan/)
       assert.equal(await controller.save(), true)
-      assert.equal(await controller.activate(), true) // Local draft operation only.
+      const savedBytes = [...storage.data.entries()]
+      const saved = controller.snapshot().saved
+      const meals = controller.snapshot().meals
+      // Unavailable activation is denied; it is never reported as a successful
+      // activation or silently substituted with another local save.
+      assert.equal(await controller.activate(), false)
+      assert.equal(controller.snapshot().publishedVersion, null)
+      assert.equal(controller.snapshot().activationPending, false)
+      assert.deepEqual(controller.snapshot().saved, saved)
+      assert.deepEqual(controller.snapshot().meals, meals)
+      assert.deepEqual([...storage.data.entries()], savedBytes)
       assert.match(controller.snapshot().message, /Lokal kladde gemt/)
       assert.equal(f.writes().length, 0)
     } finally { stop() }

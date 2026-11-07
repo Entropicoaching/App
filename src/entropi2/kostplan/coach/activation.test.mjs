@@ -45,9 +45,9 @@ test('each missing namespace table hides activation and keeps local draft operat
   for (const missing of tableNames) for (const missingCode of ['42P01', 'PGRST205']) {
     const f = syntheticTables({ missing, missingCode }), c = editor().controller
     const cleanup = startPlanActivation({ controller: c, ...scope, client: f.client }); await flush()
-    assert.equal(c.snapshot().canPublish, false); assert.equal(c.snapshot().activationError, null)
+    assert.equal(c.snapshot().canPublish, false); assert.match(c.snapshot().activationError, /tabeller mangler/)
     assert.doesNotMatch(text(view(c)), /Aktivér for atleten/)
-    assert.equal(await c.save(), true); assert.equal(await c.activate(), true)
+    assert.equal(await c.save(), true); assert.equal(await c.activate(), false)
     assert.match(c.snapshot().message, /Lokal kladde gemt/)
     assert.equal(await adapterOf(f).loadActive(), null)
     await assert.rejects(adapterOf(f).activate(planOf(c)))

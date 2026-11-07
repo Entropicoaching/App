@@ -26,7 +26,7 @@ export function recipeChoice(h, { foods, name, mealName, disabled, onChoose, sca
 // factory to exercise this exact view and its event handlers without a browser.
 export function coachPlanView(h, snapshot, actions) {
   if (!snapshot) return null
-  const s = snapshot, busy = Boolean(s.busy)
+  const s = snapshot, busy = Boolean(s.busy), locked = busy || s.activationPending
   const context = Object.entries(CONTEXT_LABELS).filter(([key]) =>
     typeof s.context[key] === 'string' && s.context[key].trim())
   const active = s.history.plans.find(plan => plan.date === s.date && plan.status === 'active')
@@ -38,11 +38,20 @@ export function coachPlanView(h, snapshot, actions) {
   h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
   h(s.localDraftOnly ? 'h3' : 'h2', null, s.localDraftOnly ? 'Dagsplan' : 'Kostplan'),
   h('p', null, `${s.athleteName} · ${s.date}`),
+  s.localDraftOnly && h('p', { role: 'status', 'aria-live': 'polite' },
+    s.activationState === 'checking' ? 'Kontrollerer atletens aktive plan…'
+    : s.activationState === 'error' ? 'Atletens aktive plan er ukendt, fordi kontrollen fejlede.'
+    : s.activationState === 'unavailable' ? 'Aktivering er ikke tilgængelig. Kladden er kun lokal.'
+    : s.publishedVersion === s.version ? 'Den gemte kladde svarer til atletens bekræftede aktive plan.'
+    : s.activePlan ? 'Atleten har en aktiv plan. Denne kladde er ikke bekræftet som den aktive version.'
+    : 'Ingen aktiv plan blev fundet for atleten og datoen.'),
+  s.localDraftOnly && s.activationPending && h('p', { role: 'alert' },
+    'En aktivering er uafklaret. Rettelser er låst, indtil status er bekræftet. Kontrollér aktivering igen før en eventuel genprøvning.'),
   !(s.localDraftOnly && s.publishedVersion === s.version) && h('p', null, s.localDraftOnly ? s.canPublish || s.activationError ? 'Lokal kladde' : 'Lokal kladde · ikke delt med atleten' : active ? 'Atleten har en aktiv dagsplan. Dine rettelser bliver først synlige efter ny aktivering.'
     : s.history.state === 'ready' ? 'Ingen aktiv dagsplan for denne dato. Atleten kan bruge kcal-trackeren.'
       : 'Status for atletens aktive dagsplan er endnu ikke tilgængelig.'),
   h('form', { onSubmit: event => { event.preventDefault(); if (!s.localDraftOnly || s.meals.length) actions.generate() } },
-    h('fieldset', { disabled: busy, style: { minWidth: 0, margin: 0, padding: '0.75rem' } },
+    h('fieldset', { disabled: locked, style: { minWidth: 0, margin: 0, padding: '0.75rem' } },
       h('legend', null, 'Dagens mål'),
       h('div', { style: grid },
         h('label', null, 'Mål', h('select', { name: 'goal', style: control, value: s.form.goal,
@@ -105,7 +114,7 @@ export function coachPlanView(h, snapshot, actions) {
       : h('p', { role: 'status' }, s.gramGenerator
         ? 'Mål eller portionsgrænser er ændret. Generér et nyt forslag før gemning.'
         : 'Målene er ændret. Generér en ny dagsplan før gemning.'),
-    ...s.meals.map((meal, mi) => h('fieldset', { key: meal.id, disabled: busy,
+    ...s.meals.map((meal, mi) => h('fieldset', { key: meal.id, disabled: locked,
       style: { minWidth: 0, margin: '1rem 0', padding: '0.75rem' } },
     h('legend', null, meal.name),
     s.proteinDistribution && h('small', {
@@ -136,12 +145,12 @@ export function coachPlanView(h, snapshot, actions) {
       h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om proteinfordelingen'),
       h('p', null, `Markeringen bruger profilvægten ${format(s.proteinDistribution.weightKg)} kg og 0,3 g/kg pr. måltid som planlægningspejlemærke. Det er hverken et individuelt minimum eller et loft. Dagens proteinmål ændres ikke; ingen fødevarer tilføjes automatisk.`)),
     h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '0.75rem' } },
-      h('button', { type: 'button', style: button, disabled: busy || !s.canSaveAdapter || !s.planTargets || !s.totals
+      h('button', { type: 'button', style: button, disabled: locked || !s.canSaveAdapter || !s.planTargets || !s.totals
         || s.saved?.status === 'active' && !s.dirty, onClick: () => actions.save() }, 'Gem som kladde'),
-      h('button', { type: 'button', style: button, disabled: s.localDraftOnly ? busy || !s.canSaveAdapter || !s.planTargets || !s.totals
+      (!s.localDraftOnly || s.canPublish) && h('button', { type: 'button', style: button, disabled: s.localDraftOnly ? busy || !s.canSaveAdapter || !s.planTargets || !s.totals
         || s.canPublish && (!s.saved || s.dirty || s.publishedVersion === s.version)
         : busy || !s.canActivateAdapter || !s.saved || s.saved.status !== 'draft' || s.dirty || !s.planTargets || !s.totals,
-        onClick: () => actions.activate() }, s.localDraftOnly && !s.canPublish ? 'Markér lokal kladde som klar' : 'Aktivér for atleten')),
+        onClick: () => actions.activate() }, 'Aktivér for atleten')),
     !s.canSaveAdapter && h('p', null, 'Gemning er ikke tilgængelig. Kladden er kun på skærmen.'),
     !s.localDraftOnly && !s.canActivateAdapter && h('p', null, 'Aktivering er ikke tilgængelig.')),
   !s.localDraftOnly && h('details', null,

@@ -95,7 +95,7 @@ test('manual plan retains gram entry, preparation guidance and the same save con
     change(tree, `template-food-${mi}-0`, FOODS[0].id); change(tree, `template-grams-${mi}-0`, '100')
   }
   generate(screen.render(), false); tree = screen.render()
-  assert.ok(button(tree, 'Gem som kladde')); assert.ok(button(tree, 'Markér lokal kladde som klar'))
+  assert.ok(button(tree, 'Gem som kladde')); assert.equal(button(tree, 'Markér lokal kladde som klar'), undefined)
   assert.match(shown(tree), /Gennemgå fødevarer og portioner før gemning/)
   assert.equal(storage.calls.filter(call => call[0] === 'set').length, 0)
   screen.unmount()

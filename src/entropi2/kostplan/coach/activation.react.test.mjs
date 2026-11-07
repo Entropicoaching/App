@@ -53,7 +53,7 @@ test('real React missing-table check preserves local UI; SSR and OFF do not acce
     try {
       await flush()
       assert.equal(c.snapshot().canPublish, false)
-      assert.equal(c.snapshot().activationError, null)
+      assert.match(c.snapshot().activationError, /tabeller mangler/)
       assert.doesNotMatch(renderToStaticMarkup(coachPlanView(h, c.snapshot(), c)), /Aktivér for atleten/)
       assert.equal(f.writes().length, 0)
     } finally { stop() }

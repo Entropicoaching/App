@@ -2,6 +2,7 @@ import { NAMESPACE, CONTEXT_LABELS, GOALS, INTENSITIES, identifier, day, number,
   catalogFoods, targets, nutritionProposal, totals, generateMeals, historyReceipt, normalizePlan } from './model.mjs'
 import { recipeItems, proteinDistribution } from './connections.mjs'
 import { generateCoachGrams, gramFeedback } from './gramPlan.mjs'
+import { activationSnapshot } from '../planAdapter.mjs'
 
 // All side effects are explicit coach actions through the two supplied functions.
 // The adapter owns authorization, atomic activation and optimistic concurrency.
@@ -40,14 +41,18 @@ export function createCoachPlan(options = {}) {
   if (restoredPlan) form = copy(restored.form)
   let state = { localDraftOnly, gramGenerator, generation: null, athleteId, athleteName, date, foods, form, context, history, meals: [], planTargets: null,
     version: 0, saved: null, busy: null, error: null, message: null,
-    canPublish: false, publishedVersion: null, activationError: null,
+    canPublish: false, publishedVersion: null, activationError: null, activationState: 'checking', activePlan: null,
+    activationPending: options.restoreActivationPending === true,
     calculated: calculation !== undefined,
     canSaveAdapter: typeof saveDraft === 'function', canActivateAdapter: typeof activatePlan === 'function' }
   let activationAdapter = null
+  let pendingAdapter = null
+  let checkSequence = 0
   let draftBase = null
   if (restoredPlan) {
     draftBase = { planId: restoredPlan.id, revision: restoredPlan.revision }
-    const current = JSON.stringify(targets(form, calculation)) === JSON.stringify(restoredPlan.targets)
+    const current = options.restoreBasisCurrent !== false
+      && JSON.stringify(targets(form, calculation)) === JSON.stringify(restoredPlan.targets)
     state = { ...state, form, meals: restoredPlan.meals, planTargets: current ? restoredPlan.targets : null,
       version: restored.clientVersion, saved: { ...draftBase, status: 'draft', clientVersion: restored.clientVersion },
       message: current ? 'Lokal kladde indlæst.' : 'Lokal kladde indlæst. Beregningsgrundlaget er ændret; generér igen før gemning.' }
@@ -65,7 +70,7 @@ export function createCoachPlan(options = {}) {
   }
   publish({})
   const edit = patch => {
-    if (state.busy) return false
+    if (state.busy || state.activationPending) return false
     // Editing an activated plan starts a new draft; it never updates that plan.
     if (state.saved?.status === 'active') draftBase = null
     publish({ generation: null, ...patch, version: state.version + 1, error: null, message: null })
@@ -77,6 +82,26 @@ export function createCoachPlan(options = {}) {
     return receipt?.ok === true && receipt.namespace === NAMESPACE && receipt.athleteId === athleteId
       && receipt.date === date && receipt.clientVersion === request.clientVersion && receipt.status === status
       && identifier(receipt.planId) && identifier(receipt.revision)
+  }
+  const activationPlan = () => ({ athleteId, date, goal: state.form.goal, intensity: state.form.intensity, meals: copy(state.meals) })
+  // A reopened reservation reconciles its original payload, even when current
+  // profile targets are invalid. This never authorizes activation on a new basis.
+  const restoredPendingPlan = state.activationPending && restoredPlan ? freeze(copy({ athleteId, date,
+    goal: restoredPlan.goal, intensity: restoredPlan.intensity, meals: restoredPlan.meals })) : null
+  const matchesActive = result => {
+    const plan = state.activationPending && restoredPendingPlan ? restoredPendingPlan : validCurrent() && activationPlan()
+    return Boolean(plan && result?.active?.active === true && result.active.athlete_id === athleteId
+      && result.active.date === date && identifier(result.active.id) && identifier(result.active.revision)
+      && result.effectiveFrom === date && result.fingerprint === JSON.stringify(activationSnapshot(plan)))
+  }
+  const clearPending = async () => {
+    pendingAdapter?.confirmed?.()
+    pendingAdapter = null
+    // A failed local update cannot negate server confirmation. A stale marker
+    // remains fail-closed on reopen until another successful server read.
+    if (state.activationPending) {
+      try { await options.markActivationPending?.(false) } catch { /* keep the stored reservation */ }
+    }
   }
   const controller = Object.freeze({
     snapshot: () => snapshot,
@@ -139,7 +164,7 @@ export function createCoachPlan(options = {}) {
       return edit({ meals })
     },
     async save() {
-      if (state.busy) return false
+      if (state.busy || state.activationPending) return false
       if (!validCurrent()) { publish({ error: 'Generér en dagsplan med de aktuelle mål, og ret ugyldige gram før gemning.' }); return false }
       if (typeof saveDraft !== 'function') { publish({ error: 'Gemning er ikke tilgængelig. Kladden er kun på skærmen.' }); return false }
       if (state.saved?.status === 'active' && state.saved.clientVersion === state.version) return false
@@ -168,25 +193,85 @@ export function createCoachPlan(options = {}) {
     },
     setActivationAdapter(adapter, error = null) {
       if (!localDraftOnly) return false
+      if (adapter && (typeof adapter.activate !== 'function' || typeof adapter.check !== 'function')) {
+        adapter = null
+        error = 'Aktivering kunne ikke kontrolleres. Der mangler en bekræftet læseadapter.'
+      }
       activationAdapter = adapter
-      publish({ canPublish: typeof adapter?.activate === 'function', activationError: error })
+      checkSequence++
+      publish({ canPublish: false,
+        publishedVersion: null, activePlan: null, activationState: error ? 'error' : 'checking', activationError: error })
       return true
+    },
+    async checkActivation() {
+      const adapter = activationAdapter, sequence = ++checkSequence
+      if (!localDraftOnly || typeof adapter?.check !== 'function' || state.busy) return false
+      publish({ activationState: 'checking', activationError: null, canPublish: false, publishedVersion: null, activePlan: null })
+      try {
+        const result = await adapter.check()
+        if (sequence !== checkSequence || adapter !== activationAdapter) return false
+        const version = state.version, matched = matchesActive(result), currentMatched = matched && Boolean(validCurrent())
+        if (matched) await clearPending()
+        if (sequence !== checkSequence || adapter !== activationAdapter) return false
+        publish({ activationState: result.state, activePlan: result.active,
+          canPublish: result.state === 'ready' && (!state.activationPending || matched || pendingAdapter === adapter),
+          publishedVersion: currentMatched && state.version === version ? version : null, activationPending: matched ? false : state.activationPending,
+          error: matched ? null : state.error,
+          message: matched ? currentMatched ? 'Den gemte kladde svarer allerede til atletens aktive plan.'
+            : 'Den oprindelige aktivering er bekræftet. Beregningsgrundlaget er ændret; generér igen og gennemgå planen før gemning og ny aktivering.' : state.message,
+          activationError: result.state === 'unavailable' ? 'Aktivering er ikke tilgængelig: kostplanens tabeller mangler. Den lokale kladde er bevaret.' : null })
+        return result.state === 'ready'
+      } catch {
+        if (sequence === checkSequence && adapter === activationAdapter) publish({ activationState: 'error', canPublish: false,
+          activationError: 'Aktivering kunne ikke kontrolleres. Den lokale kladde virker stadig. Prøv kontrollen igen.' })
+        return false
+      }
     },
     async activate() {
       if (localDraftOnly && activationAdapter) {
-        if (state.busy || !state.saved || state.saved.clientVersion !== state.version
+        if (!state.canPublish || state.busy || !state.saved || state.saved.clientVersion !== state.version
           || state.publishedVersion === state.version || !validCurrent()) return false
         const version = state.version
-        const plan = { athleteId, date, goal: state.form.goal, intensity: state.form.intensity, meals: copy(state.meals) }
+        const plan = activationPlan(), adapter = activationAdapter
+        ++checkSequence
         publish({ busy: 'activate', error: null, message: null })
         try {
-          const receipt = await activationAdapter.activate(plan)
+          if (typeof adapter.check === 'function') {
+            const result = await adapter.check()
+            if (adapter !== activationAdapter) throw Error('Activation scope changed')
+            if (matchesActive(result)) {
+              await clearPending()
+              publish({ busy: null, activationPending: false, activePlan: result.active, activationState: 'ready',
+                publishedVersion: version, message: 'Den gemte kladde svarer allerede til atletens aktive plan.' })
+              return false
+            }
+            if (result.state !== 'ready') {
+              publish({ busy: null, canPublish: false, activationState: 'unavailable',
+                activationError: 'Aktivering er ikke tilgængelig: kostplanens tabeller mangler. Den lokale kladde er bevaret.' })
+              return false
+            }
+          }
+          if (state.activationPending && pendingAdapter !== adapter) throw Error('Unresolved activation from another session')
+          // Reserve the saved local draft before any remote write. On reopen,
+          // this marker only blocks writes; it never proves approval.
+          await options.markActivationPending?.(true)
+          if (adapter !== activationAdapter) throw Error('Activation scope changed')
+          pendingAdapter = adapter
+          publish({ activationPending: true })
+          const receipt = await adapter.activate(plan)
           if (receipt?.ok !== true || receipt.athleteId !== athleteId || receipt.date !== date
             || !identifier(receipt.planId) || !identifier(receipt.versionId)) throw Error('Invalid activation')
-          publish({ busy: null, publishedVersion: version, message: 'Planen er aktiveret for atleten.' })
+          if (adapter !== activationAdapter) throw Error('Activation scope changed')
+          await clearPending()
+          publish({ busy: null, activationPending: false, publishedVersion: version,
+            activePlan: { id: receipt.planId, revision: receipt.versionId, athlete_id: athleteId, date, active: true },
+            message: 'Planen er aktiveret for atleten.' })
           return true
         } catch {
-          publish({ busy: null, error: 'Aktivering blev ikke bekræftet. Den lokale kladde er bevaret. Genprøv samme plan før du ændrer den.' })
+          publish({ busy: null, canPublish: false, activationState: 'error',
+            activationError: 'Aktivering kunne ikke kontrolleres. Kontrollér aktivering igen før en eventuel genprøvning.', error: state.activationPending
+            ? 'Aktivering blev ikke bekræftet. Kontrollér status igen. Kun samme uafklarede handling kan genprøves; genåbning giver ikke tilladelse til en ny aktivering.'
+            : 'Aktivering kunne ikke bekræftes. Den lokale kladde er bevaret. Kontrollér aktivering igen.' })
           return false
         }
       }

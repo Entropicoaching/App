@@ -63,7 +63,7 @@ test('actual production host receipt plus active namespace plan shows trailing s
   screen.unmount()
 })
 
-test('no table/plan preserves actuals and unknown references; no recent meal still hides without reads', async () => {
+test('no table/plan preserves actuals and unknown references; nonempty irrelevant meals still hide without reads; empty logs expose capability', async () => {
   for (const missing of [true, ...tableNames]) for (const missingCode of ['42P01', 'PGRST205']) {
     const f = syntheticTables({ missing, missingCode }), screen = mount(ActiveReport, props(f), { effects: true })
     screen.render(); await settle(); assert.match(text(screen.render()), /Historisk planreference ukendt/)
@@ -71,7 +71,7 @@ test('no table/plan preserves actuals and unknown references; no recent meal sti
   }
   const f = syntheticTables(), screen = mount(ActiveReport, props(f), { effects: true })
   screen.render(); await settle(); assert.match(text(screen.render()), /Historisk planreference ukendt/); screen.unmount()
-  for (const read of [undefined, receipt({ mealLogs: [] }), receipt({ mealLogs: [meal(scope.date, 'receipt',
+  for (const read of [undefined, receipt({ mealLogs: [meal(scope.date, 'receipt',
     { athlete_id: scope.athleteId, meal: '  [appData2-day-v1][]' })] }),
     receipt({ mealLogs: [meal('2026-10-29', 'old', { athlete_id: scope.athleteId })] })]) {
     const count = f.calls.length
@@ -180,5 +180,5 @@ test('effect cleanup during a pending database read suppresses its completion', 
     receipt: receipt(), client: f.client }, result => results.push(result)), []); return h('p', null, 'synthetic') }
   const screen = mount(Pending, {}, { effects: true }); screen.render(); await flush()
   screen.unmount(); release(); await settle(); assert.deepEqual(results, [])
-  assert.equal(activeReportView(h, { state: 'ready', report: null }), null)
+  assert.match(text(activeReportView(h, { state: 'ready', report: null })), /Ingen aktiv kostplan/)
 })

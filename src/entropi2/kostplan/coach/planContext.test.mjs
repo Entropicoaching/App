@@ -94,3 +94,23 @@ test('corrupt stored training metadata fails closed without weakening local draf
     assert.equal(storage.data.get(key), JSON.stringify(saved))
   }
 })
+// Combined contract repro: the original R2 reservation and current profile guard.
+test('COMPOSITION BLOCKER: pending activation cannot suppress changed-basis draft invalidation at identical floors', async () => {
+  const storage = memoryStorage(), patch = { bodyweight: 80, goal: 'cut', training: { volume: 'high', intensity: 'moderate' } }
+  const first = open(storage, patch).controller
+  first.set('maintenanceKcal', '1600'); first.set('intensity', 15)
+  assert.equal(first.generate(meals), true); assert.equal(await first.save(), true)
+  // Reproduce a persisted original R2 reservation, without inventing approval.
+  const key = draftKey(coachId, athlete.id, date), saved = JSON.parse(storage.data.get(key))
+  saved.activationPending = true; storage.data.set(key, JSON.stringify(saved))
+  const prior = storage.data.get(key)
+  const next = open(storage, { ...patch, training: { volume: 'high', intensity: 'high' } }).controller
+  assert.equal(next.snapshot().activationPending, true)
+  assert.deepEqual(next.snapshot().suggestion, first.snapshot().planTargets)
+  assert.deepEqual(next.snapshot().meals, first.snapshot().meals)
+  assert.equal(next.editGrams(0, 0, 222), false)
+  assert.equal(await next.save(), false)
+  assert.equal(storage.data.get(key), prior)
+  // Existing accepted profile contract, also required while retry is reserved.
+  assert.equal(next.snapshot().planTargets, null)
+})

@@ -26,12 +26,14 @@ export function openPortalPlan(options = {}) {
       const savedCalculation = stored.calculation
       if (savedCalculation !== undefined && !validProfileCalculation(savedCalculation, date))
         throw Error('Invalid calculation')
+      if (stored.activationPending !== undefined && typeof stored.activationPending !== 'boolean') throw Error('Invalid activation reservation')
       if (!Number.isSafeInteger(stored.sequence) || stored.sequence < 1 || stored.schema !== SCHEMA || stored.coachId !== coachId || stored.date !== date
         || !plan || plan.date !== date || plan.status !== 'draft'
         || stored.form?.goal !== plan.goal || stored.form?.intensity !== plan.intensity
         || !Number.isSafeInteger(stored.clientVersion) || stored.clientVersion < 0
         || JSON.stringify(targets(stored.form ?? {}, savedCalculation)) !== JSON.stringify(plan.targets)) throw Error('Invalid draft')
-      restoreDraft = { plan, form: stored.form, clientVersion: stored.clientVersion, calculation: savedCalculation }
+      restoreDraft = { plan, form: stored.form, clientVersion: stored.clientVersion, calculation: savedCalculation,
+        activationPending: stored.activationPending === true }
     }
   } catch {
     loadError = 'Den lokale kladde kunne ikke læses. Genåbn kostfanen, når enhedens lagring er tilgængelig.'
@@ -42,7 +44,19 @@ export function openPortalPlan(options = {}) {
     goal: athlete.goal, catalog: FOODS, template: options.template ?? restoreDraft?.plan.meals.map(meal => ({
       id: meal.id, name: meal.name, items: meal.items.map(item => ({ foodId: item.food.id, grams: item.grams,
         minGrams: item.minGrams, maxGrams: item.maxGrams })),
-    })) ?? [], restoreDraft,
+    })) ?? [], restoreDraft, restoreActivationPending: restoreDraft?.activationPending,
+    // Presentation validity is independent of the immutable reserved operation.
+    restoreBasisCurrent: !restoreDraft || JSON.stringify(restoreDraft.calculation) === JSON.stringify(calculation),
+    markActivationPending: pending => {
+      if (loadError || expected === null) throw Error('No saved draft')
+      const store = storage()
+      if (store.getItem(key) !== expected) throw Error('Draft changed in another tab')
+      const payload = JSON.stringify({ ...JSON.parse(expected), activationPending: pending })
+      if (payload.length > 250000) throw Error('Oversized draft')
+      store.setItem(key, payload)
+      if (store.getItem(key) !== payload) throw Error('Unconfirmed local reservation')
+      expected = payload
+    },
     // Blank maintenance uses the calculation's disclosed weight estimate only
     // for a known adult profile. No kcal-target inversion or invented history.
     basis: { athleteId: athlete.id, date, protein: number(athlete.protein_target) ?? '', calculation },
@@ -65,9 +79,5 @@ export function openPortalPlan(options = {}) {
         planId, revision, clientVersion: request.clientVersion, status: 'draft' }
     },
   })
-  // A changed explicit basis requires review even when model floors happen to
-  // give identical targets. Reuse the existing edit/regeneration guard.
-  if (restoreDraft && JSON.stringify(restoreDraft.calculation) !== JSON.stringify(calculation))
-    controller.set('goal', controller.snapshot().form.goal)
   return { controller, loadError, restored: Boolean(restoreDraft) }
 }
