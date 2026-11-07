@@ -91,7 +91,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, coachSelfContext, onPreviewAthlete: previewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false, entropi2 }) {
+export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, coachSelfContext, chooseOwnTraining = false, onRetrySelfTrainingVerification, onPreviewAthlete: previewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false, entropi2 }) {
   const analyseMissingData = analyseMissingDataEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const analyseConclusionMessage = analyseConclusionMessageEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const programOverview = programOverblik === true || programOverblikEnabled(typeof window === 'undefined' ? '' : window.location.search)
@@ -191,11 +191,12 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const [lastBackup, setLastBackup] = useState(null) // synces via profiles.last_backup_at
 
   // Program state
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(entropi2 !== false && chooseOwnTraining)
   // "Min profil"-genvej: hvilken atlet er coachen selv (gemt i localStorage).
-  const selfNavigationEnabled = entropi2 !== false && !!coachSelfContext
-  const [myAthleteId, setMyAthleteId] = useState(() => selfNavigationEnabled ? readCoachSelfAthleteId(session) : localStorage.getItem('entropi_my_athlete_id'))
-  const [pickingMine, setPickingMine] = useState(false)
+  const selfNavigationEnabled = entropi2 !== false && (!!coachSelfContext || typeof onRetrySelfTrainingVerification === 'function')
+  const [myAthleteId, setMyAthleteId] = useState(() => selfNavigationEnabled ? readCoachSelfAthleteId(session) : (() => { try { return localStorage.getItem('entropi_my_athlete_id') } catch { return null } })())
+  const [pickingMine, setPickingMine] = useState(selfNavigationEnabled && chooseOwnTraining)
+  const [selfNavigationError, setSelfNavigationError] = useState(null)
   const selfNavigationRef = useRef({ active: true, ownerId: session?.user?.id })
   useEffect(() => {
     selfNavigationRef.current = { active: true, ownerId: session?.user?.id }
@@ -209,9 +210,11 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   } : previewAthlete
   function onSelectOwnAthlete(athleteId) {
     if (!selfNavigationEnabled || !previewAthlete || !currentSelfNavigation()) return
+    if (!coachSelfContext) { setSelfNavigationError('Din coachadgang er endnu ikke bekræftet. Prøv igen.'); return }
     const athlete = athletes.find(row => row.id === athleteId)
     const request = requestCoachSelfTraining({ session, athlete, explicit: true })
-    if (!request) return
+    if (!request) { setSelfNavigationError('Eget profilvalg kunne ikke bekræftes eller huskes. Vælg en aktuel profil tilknyttet din coachkonto og tillad lokal lagring.'); return }
+    setSelfNavigationError(null)
     setMyAthleteId(athleteId)
     previewAthlete?.(athleteId, 'hjem', request)
   }
@@ -258,8 +261,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const [trainingSignalUpdatingKey, setTrainingSignalUpdatingKey] = useState(null)
   const [videoReviewRequest, setVideoReviewRequest] = useState(null)
   const videoReviewOpenedRef = useRef(null)
-  const [menuSheetOpen, setMenuSheetOpen] = useState(false)
-  const [sheetPreviewPick, setSheetPreviewPick] = useState(false)
+  const [menuSheetOpen, setMenuSheetOpen] = useState(selfNavigationEnabled && chooseOwnTraining && isMobile)
+  const [sheetPreviewPick, setSheetPreviewPick] = useState(selfNavigationEnabled && chooseOwnTraining && isMobile)
   const [sidebarMoreOpen, setSidebarMoreOpen] = useState(false)
   const [addingExercise, setAddingExercise] = useState(null)
   const [editingWeek, setEditingWeek] = useState(null)
@@ -337,7 +340,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   const [meetResults, setMeetResults] = useState([])
   const [meetResultForm, setMeetResultForm] = useState(null) // null = lukket
 
-  const [previewPickerOpen, setPreviewPickerOpen] = useState(false)
+  const [previewPickerOpen, setPreviewPickerOpen] = useState(selfNavigationEnabled && chooseOwnTraining && !isMobile)
   const [exerciseLibrary, setExerciseLibrary] = useState([])
   const [exerciseSearchOpen, setExerciseSearchOpen] = useState(false)
   const [editingLibraryEx, setEditingLibraryEx] = useState(null)
@@ -461,7 +464,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   }))
 
   const {
-    goToMyProfile, openProfile, openPlanReview, startEdit, openCoachPriorityItem,
+    goToMyProfile: originalGoToMyProfile, openProfile, openPlanReview, startEdit, openCoachPriorityItem,
   } = lavNavigation({
     analyseTabFactory, athletes, calendarWeeks, isMobile, listScrollYRef, messageThreadAthleteRef,
     myAthleteId, onPreviewAthlete, setActiveTab, setAddingExercise, setAddingSession, setAddingWeek,
@@ -472,6 +475,24 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     setSelectedAthlete, setSheetPreviewPick, setShowBlockPlanner, setSidebarOpen, setVideoAnalysisReview, setVideoAnalysisReviewError,
     setVideoLiftFilter, setVideoReviewRequest, setView, setWeekDraft, setWeeks, viewRef,
   })
+  function openOwnPicker() {
+    setPickingMine(true)
+    if (isMobile) { setSheetPreviewPick(true); setMenuSheetOpen(true) }
+    else { setPreviewPickerOpen(true); setSidebarOpen(true) }
+  }
+  const goToMyProfile = selfNavigationEnabled ? () => {
+    if (!currentSelfNavigation()) return
+    if (!coachSelfContext) { setSelfNavigationError('Din coachadgang er endnu ikke bekræftet. Prøv igen.'); return }
+    setSelfNavigationError(null)
+    const savedId = readCoachSelfAthleteId(session)
+    const athlete = athletes.find(row => row.id === savedId && row.coach_id === session?.user?.id)
+    if (athlete) {
+      const request = requestCoachSelfTraining({ session, athlete })
+      if (request) { previewAthlete?.(athlete.id, 'hjem', request); return }
+    }
+    openOwnPicker()
+  } : originalGoToMyProfile
+
 
   const {
     handleCoachBriefingSeen, handleAutomationAlert, handleTrainingSignal, markMessagesRead, sendCoachMessage, togglePin,
@@ -691,6 +712,14 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
       }} />
       {programCopyEnabled === true && <WeekDeletionNotice entries={pendingWeekDeletes} onUndo={id => weekDeletionQueue.undo(id)} />}
+      {selfNavigationEnabled && selfNavigationError && <div role="status" style={{ padding: '1rem', color: '#edeae2', background: '#141410' }}>
+        <p>{selfNavigationError}</p>
+        <button type="button" onClick={() => {
+          if (!currentSelfNavigation()) return
+          if (!coachSelfContext) onRetrySelfTrainingVerification?.()
+          else { setSelfNavigationError(null); openOwnPicker() }
+        }}>Prøv egen træning igen</button>
+      </div>}
       <Sidebar {...(selfNavigationEnabled ? { onSelectOwnAthlete } : {})} {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
         athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
         exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,

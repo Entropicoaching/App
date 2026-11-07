@@ -100,6 +100,7 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
   const [coachSelfTraining, setCoachSelfTraining] = useState(null)
   const [previewOwnerId, setPreviewOwnerId] = useState(null)
   const [previewMode, setPreviewMode] = useState(false)
+  const [chooseOwnTraining, setChooseOwnTraining] = useState(false)
   const activeUserRef = useRef(null)
   const authGenerationRef = useRef(0)
   const selfContextRef = useRef(null)
@@ -261,7 +262,7 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
         trainingAccessRef.current?.dispose()
         selfContextRef.current?.dispose()
         setVerifiedRoleOwner(null)
-        setPreviewMode(false); setCoachAthleteId(null); setCoachSelfTraining(null); setPreviewOwnerId(null)
+        setPreviewMode(false); setCoachAthleteId(null); setCoachSelfTraining(null); setPreviewOwnerId(null); setChooseOwnTraining(false)
       }
       activeUserRef.current = session?.user?.id || null
       if (!session || (previousUserId && previousUserId !== session.user.id)) {
@@ -321,10 +322,20 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
   let viewEl
   if (role === 'coach') {
     viewEl = previewMode && previewOwnerId === session.user.id
-      ? <LazyBoundary factory={athleteViewFactory} key={`coach:${session.user.id}:${coachAthleteId}:${coachSelfTraining ? 'self' : 'preview'}`} label="Atletvisning" loading={loaderScreen}
+      ? <>
+          <div role="region" aria-label="Egen træning" style={{ padding: '0.75rem', background: '#141410', color: '#edeae2' }}>
+            <p>Vælg eller ret din egen træningsprofil her. Andre profiler vises som forhåndsvisning.</p>
+            <button type="button" onClick={() => {
+              if (activeUserRef.current !== session.user.id || selfContextRef.current !== selfContext || !trainingAccess.isActive()) return
+              trainingAccess.dispose(); selfContext.close(); setCoachSelfTraining(null)
+              setCoachAthleteId(null); setPreviewMode(false); setChooseOwnTraining(true)
+            }}>Vælg min egen træning</button>
+          </div>
+          <LazyBoundary factory={athleteViewFactory} key={`coach:${session.user.id}:${coachAthleteId}:${coachSelfTraining ? 'self' : 'preview'}`} label="Atletvisning" loading={loaderScreen}
           componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, coachSelfTraining, trainingAccess, onExitPreview: () => { trainingAccess.dispose(); selfContext.close(); setPreviewMode(false); setCoachAthleteId(null); setCoachSelfTraining(null) } , opvarmStige, programIntensityHelp: programIntensityHelp === true, previewInitialTab, hjemoevKompakt}} />
+        </>
       : <LazyBoundary factory={dashboardFactory} key={`coach:${session.user.id}`} label="Dashboard" loading={loaderScreen}
-          componentProps={{ ...rel3.coach, session, ...(verifiedRoleOwner === session.user.id ? { coachSelfContext: selfContext } : {}), mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem', request = null) => { trainingAccess.dispose(); setCoachSelfTraining(selfContext.open(request, session)); setPreviewOwnerId(session.user.id); setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
+          componentProps={{ ...rel3.coach, session, chooseOwnTraining, onRetrySelfTrainingVerification: () => resolveRef.current?.(session.user.id, session.user.email, { hadGuess: true }), ...(verifiedRoleOwner === session.user.id ? { coachSelfContext: selfContext } : {}), mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem', request = null) => { trainingAccess.dispose(); setChooseOwnTraining(false); setCoachSelfTraining(selfContext.open(request, session)); setPreviewOwnerId(session.user.id); setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
     // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
     // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'

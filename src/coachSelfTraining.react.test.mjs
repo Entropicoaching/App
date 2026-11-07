@@ -245,6 +245,11 @@ test('unconfirmed cached coach role cannot mint self mode; late role lookup cann
   fixture.pauseRole = new Promise(resolve => { releaseRole = resolve })
   fixture.snapshots['App.jsx'] = { session, role: 'coach', loading: false }
   await f.app(); await f.dashboard(); await f.click(f.button('Min træning'))
+  // Pending own-training now stays on Dashboard. Keep the original preview safety
+  // assertions by entering the ordinary preview deliberately before verification.
+  assert.match(f.host.textContent, /coachadgang.*bekræftet/)
+  await f.click(f.button('Se som atlet'))
+  await f.click(f.host.querySelectorAll('div').find(node => node.textContent === dual.name))
   assert.equal(fixture.captured.Atletvisning.coachSelfTraining, null)
   await f.showAthlete()
   assert.equal(fixture.captured.HomeSession.onLogSet, undefined)
