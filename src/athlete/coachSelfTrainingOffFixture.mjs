@@ -1,6 +1,8 @@
 // Exact self-training hotfix delta only. The historic OFF inversions and hashes stay intact.
 import assert from 'node:assert/strict'
 export const coachSelfSourceDeltas = [
+  // Invert the E2-only skip bridge exactly; the historic OFF hash stays unchanged.
+  ["            readOnly={e2ReadOnly} pendingSessionAction={pendingSessionAction}\n            {...(!e2ReadOnly ? { onSkipSet: skipSet, onSkipExercise: skipExercise, onUnskipSet: unskipSet } : {})}\n", ""],
   [
     "import { readInitialAnalysisWeight } from './entropi2/analysis/analysisWeight.mjs'\nimport { isCoachSelfTraining, guardTrainingActions, createTrainingLifetime } from './coachSelfTraining.mjs'\n\n",
     "import { readInitialAnalysisWeight } from './entropi2/analysis/analysisWeight.mjs'\n\n"

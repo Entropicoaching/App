@@ -94,6 +94,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     announcement.textContent = summary ? `${summary.done} af ${summary.total} sæt klaret`
       : [`${s.done} af ${s.total} sæt bekræftet`, messages[s.phase]].filter(Boolean).join('. ')
     errorStatus.textContent = s.error
+    if (s.skip.message) announcement.textContent += `. ${s.skip.message}`
     // Marc 3. nov.: opsummeringskortet viser selv antallet; statuslinjen bliver kun for skaermlaesere.
     announcement.setAttribute('data-summary', summary ? '1' : '0')
     const focused = doc.activeElement, fieldName = focused?.getAttribute('data-field')
@@ -131,6 +132,22 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       body.append(warm)
     }
     body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
+    const skipped = s.logs.filter(row => row.skipped && s.session.exercises.some(ex =>
+      ex.id === row.exercise_id && row.set_number > 0 && row.set_number <= ex.sets))
+    if (skipped.length) {
+      const status = el('section', null, { class: 'card', 'aria-label': 'Sprunget over', 'data-session-skips': '' })
+      for (const row of skipped) {
+        const ex = s.session.exercises.find(ex => ex.id === row.exercise_id), key = `${ex.id}_${row.set_number}`
+        status.append(el('p', `${ex.name} · Sæt ${row.set_number}: Sprunget over`))
+        if (p.readOnly !== true && typeof p.onUnskipSet === 'function') {
+          const undo = el('button', `Fortryd spring over: ${ex.name}, sæt ${row.set_number}`, { type: 'button' })
+          undo.disabled = s.skip.busy || !!p.pendingSessionAction || !!p.exerciseLogsLoading || !!p.exerciseLogsError
+          undo.addEventListener('click', action(() => controller.unskipSet(key, s.selection.stamp)))
+          status.append(undo)
+        }
+      }
+      body.append(status)
+    }
     const receipt = sessionRecordReceipt(p, s)
     if (receipt) body.append(el('p', receipt.text, { role: 'status', 'data-rekord-fejring': receipt.key, class: 'record-receipt' }))
     if (summary) {
@@ -208,7 +225,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       if (help) plan.append(help)
       if (p.readOnly !== true) {
         const form = el('form', null, { class: 'card registration-card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
-        const busy = !['idle', 'error'].includes(s.phase)
+        const busy = s.skip.busy || !['idle', 'error'].includes(s.phase)
         // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
         // "−2,5 [vægt] +2,5", "−1 [reps] +1", and the RPE buttons directly under the RPE field.
         const set = action((name, value) => controller.edit(key, name, value, s.selection.stamp))
@@ -282,6 +299,26 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         form.append(createSetNote(doc, { value: s.note, disabled: busy,
           onChange: action(value => controller.editNote(key, value, s.selection.stamp)) }), approve)
         body.append(form)
+        if (typeof p.onSkipSet === 'function' || typeof p.onSkipExercise === 'function') {
+          const skip = el('section', null, { class: 'card', 'aria-label': 'Spring over', 'data-session-skip-actions': '' })
+          const add = (label, enabled, run) => {
+            const button = el('button', label, { type: 'button' })
+            button.disabled = !enabled
+            button.addEventListener('click', action(run)); skip.append(button)
+          }
+          if (typeof p.onSkipSet === 'function') add('Spring sættet over', s.skip.canSet,
+            () => controller.skipSet(key, s.selection.stamp))
+          if (typeof p.onSkipExercise === 'function') {
+            if (s.skip.confirm) {
+              skip.append(el('p', `Spring de ${s.skip.count} resterende sæt i ${ex.name} over? Allerede registrerede sæt bevares.`))
+              add('Ja, spring resten af øvelsen over', s.skip.canExercise,
+                () => controller.skipExercise(key, s.selection.stamp))
+              add('Annuller spring over', true, () => controller.cancelSkip())
+            } else add('Spring øvelsen over', s.skip.canExercise, () => controller.requestSkip(key, s.selection.stamp))
+          }
+          if (s.skip.message) skip.append(el('p', s.skip.message, { role: 'status' }))
+          body.append(skip)
+        }
       }
     }
     if (!summary) {

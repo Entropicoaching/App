@@ -868,6 +868,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             programLoading={homeProgramLoading} onRetryProgram={() => retryHomeProgram(() => fetchProgram(athlete.id),
               { setProgramError, setProgramLoading: setHomeProgramLoading })}
             onLogSet={logDagensPasSet} parsePlannedRpe={parsePlannedRpe} setConfirm={setConfirm}
+            readOnly={e2ReadOnly} pendingSessionAction={pendingSessionAction}
+            {...(!e2ReadOnly ? { onSkipSet: skipSet, onSkipExercise: skipExercise, onUnskipSet: unskipSet } : {})}
             {...(e2ReadOnly ? { onLogSet: undefined, setLogInputs: undefined, storage: coachPreviewStorage } : {})}
             pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}
             rekordFejring={rekordFejring} rekordGrundlagFoer={rekordGrundlagFoer} setRekordFejring={setRekordFejring} fejredeRef={fejredeRef}

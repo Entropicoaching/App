@@ -68,7 +68,7 @@ export function warmup(n, input) {
 export function createSessionController(latest, changed = () => {}) {
   let selection = null, open = false, finished = false, error = '', dead = false, lifetime = 0
   const writes = new Map(), notes = new Map(), edits = new Map()
-  let feelingScope = null, feelingDraft = {}
+  let feelingScope = null, feelingDraft = {}, skipConfirm = null, skipWrite = null
   function confirmed(p) {
     return (p.exerciseLogs || []).filter(l => !l._optimistic &&
       !queued(p, `${l.exercise_id}_${l.set_number}`) && !parked(p, `${l.exercise_id}_${l.set_number}`) &&
@@ -91,6 +91,74 @@ export function createSessionController(latest, changed = () => {}) {
     if (entry?.phase === 'error' || (entry && p.setConfirm?.[key] === 'error')) return 'error'
     return entry ? 'waiting' : 'idle'
   }
+  // Void handlers confirm nothing. Only current host rows/queue own the result.
+  function skipBusy(p) {
+    if (!skipWrite || skipWrite.stamp !== programStamp(p)) return false
+    if (skipWrite.phase === 'saving') return true
+    if (skipWrite.phase === 'error') return false
+    if (p.exerciseLogsLoading || p.exerciseLogsError) return true
+    const matched = skipWrite.keys.every(key => skipWrite.undo
+      ? !rowFor(p, key) && !queued(p, key) && !parked(p, key)
+      : rowFor(p, key)?.skipped === true && status(p, key) === 'saved')
+    if (!matched) return true
+    // Confirmation belongs to this operation, not to all future rows on its keys.
+    skipWrite = null
+    return false
+  }
+  function skipAllowed(p, s) {
+    return p.readOnly !== true && !p.onHoliday && !p.programLoading &&
+      !p.exerciseLogsLoading && !p.exerciseLogsError && !p.pendingSessionAction &&
+      s.open && !s.summary && !!s.next && !skipBusy(p) &&
+      !rowFor(p, s.key) && ['idle', 'error'].includes(s.phase) &&
+      ![...writes.values()].some(w => w.phase === 'saving')
+  }
+  function remaining(p, ex) {
+    return Array.from({ length: ex.sets || 0 }, (_, i) => `${ex.id}_${i + 1}`).filter(key => !rowFor(p, key))
+  }
+  function exerciseReady(p, s) {
+    // A queued delete without a row is still occupied. The existing host must
+    // not include that slot in its remaining-set selection.
+    return remaining(p, s.next.exercise).every(key => ['idle', 'error'].includes(status(p, key)))
+  }
+  const confirmation = (p, s) => JSON.stringify([s.selection?.stamp, s.key, s.next ? remaining(p, s.next.exercise) : []])
+  async function writeSkip(expected, stamp, kind) {
+    const p = latest(), s = state(), undo = kind === 'undo'
+    const ex = undo ? s.session?.exercises.find(ex =>
+      Array.from({ length: ex.sets || 0 }, (_, i) => `${ex.id}_${i + 1}`).includes(expected)) : s.next?.exercise
+    const row = rowFor(p, expected)
+    if (dead || !s.open || stamp !== s.selection?.stamp || !ex || p.readOnly === true ||
+        p.onHoliday || p.programLoading || p.exerciseLogsLoading || p.exerciseLogsError ||
+        p.pendingSessionAction || skipBusy(p) || [...writes.values()].some(w => w.phase === 'saving')) return false
+    if (undo ? !row?.skipped || status(p, expected) !== 'saved'
+      : !skipAllowed(p, s) || expected !== s.key || (kind === 'exercise' &&
+        (skipConfirm !== confirmation(p, s) || !exerciseReady(p, s)))) return false
+    const callback = undo ? p.onUnskipSet : kind === 'exercise' ? p.onSkipExercise : p.onSkipSet
+    if (typeof callback !== 'function' || (!undo && typeof p.parsePlannedRpe !== 'function')) return false
+    const keys = undo || kind === 'set' ? [expected] : remaining(p, ex)
+    const write = { stamp, keys, undo, phase: 'saving' }, startedIn = lifetime
+    skipWrite = write; skipConfirm = null; error = ''; changed()
+    const valid = () => !dead && lifetime === startedIn && resolve(latest()) &&
+      state().open && state().selection?.stamp === stamp && latest().readOnly !== true &&
+      !latest().onHoliday && !latest().programLoading && !latest().exerciseLogsLoading &&
+      !latest().exerciseLogsError && !latest().pendingSessionAction &&
+      (undo || (!state().summary && state().key === expected)) &&
+      (kind !== 'exercise' || JSON.stringify(remaining(latest(), ex)) === JSON.stringify(keys)) &&
+      keys.every(key => undo ? rowFor(latest(), key)?.skipped && status(latest(), key) === 'saved'
+        : !rowFor(latest(), key) && ['idle', 'error'].includes(status(latest(), key)))
+    try {
+      const planned = undo || kind === 'exercise' ? null : p.parsePlannedRpe(ex.intensity)
+      if (!valid()) { if (skipWrite === write) skipWrite = null; if (!dead) changed(); return false }
+      const current = latest()
+      const result = await (undo ? current.onUnskipSet(ex.id, row.set_number)
+        : kind === 'exercise' ? current.onSkipExercise(ex)
+          : current.onSkipSet(ex.id, s.next.setNumber, planned))
+      write.phase = result === false ? 'error' : 'settled'
+    } catch { write.phase = 'error' }
+    if (dead || lifetime !== startedIn || !resolve(latest()) || skipWrite !== write) return false
+    if (write.phase === 'error') error = 'Handlingen kunne ikke bekræftes. Kontrollér sættene og prøv igen.'
+    changed()
+    return !skipBusy(latest()) && write.phase !== 'error'
+  }
   function state() {
     const p = latest(), session = resolve(p), logs = confirmed(p)
     const day = !dead && programStamp(p) ? findDagensPas(p.allWeeks, p.currentWeek, logs) : null
@@ -105,7 +173,17 @@ export function createSessionController(latest, changed = () => {}) {
       logs.some(row => !row.skipped && session.exercises.some(ex =>
         ex.id === row.exercise_id && row.set_number > 0 && row.set_number <= ex.sets))
     const scope = canFeel ? JSON.stringify([selection.stamp, session.id]) : null
-    return { open: open && !!session, selection, session, next, key, phase, error,
+    const skipBlocked = skipBusy(p)
+    const base = { open: open && !!session, summary: !!session && (finished || (!next && sessionSetTotal(session) > 0)), next, key, phase }
+    const skip = { busy: skipBlocked, confirm: skipConfirm === confirmation(p, { selection, key, next }),
+      canSet: skipAllowed(p, base) && typeof p.onSkipSet === 'function',
+      canExercise: skipAllowed(p, base) && typeof p.onSkipExercise === 'function' && exerciseReady(p, base),
+      count: next ? remaining(p, next.exercise).length : 0,
+      message: skipBlocked ? skipWrite.phase === 'saving' ? 'Behandler spring over. Vent på svar.'
+        : skipWrite.keys.some(k => parked(p, k)) ? 'Spring over kunne ikke synkroniseres. Kontakt din coach.'
+        : skipWrite.keys.some(k => queued(p, k)) ? 'Spring over venter på net. Ikke bekræftet gemt.'
+        : 'Afventer bekræftelse af spring over. Kontrollér sættene før du fortsætter.' : '' }
+    return { open: open && !!session, selection, session, next, key, phase, error, skip,
       feeling: scope ? { scope, draft: scope === feelingScope ? { ...feelingDraft } : {} } : null,
       summary: !!session && (finished || (!next && sessionSetTotal(session) > 0)),
       canStart: !!session || !!day?.next, day, input, approveLabel: quickSetLabel(input, suggestion),
@@ -115,10 +193,10 @@ export function createSessionController(latest, changed = () => {}) {
   return {
     state,
     // Terminal revocation precedes view teardown; retained methods cannot reopen it.
-    dispose() { dead = true; lifetime++; selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {} },
+    dispose() { dead = true; lifetime++; selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {}; skipConfirm = null; skipWrite = null },
     refresh() {
       if (dead) return
-      if (selection && !resolve(latest())) { lifetime++; selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {} }
+      if (selection && !resolve(latest())) { lifetime++; selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {}; skipConfirm = null; skipWrite = null }
       changed()
     },
     start() {
@@ -131,7 +209,16 @@ export function createSessionController(latest, changed = () => {}) {
       selection = { stamp, weekId: p.currentWeek.id, sessionId: session.id }
       open = true; error = ''; changed(); return true
     },
-    close() { if (dead) return; open = false; changed() },
+    close() { if (dead) return; open = false; skipConfirm = null; changed() },
+    requestSkip(expected, stamp) {
+      const s = state()
+      if (!s.skip.canExercise || expected !== s.key || stamp !== s.selection?.stamp) return false
+      skipConfirm = confirmation(latest(), s); changed(); return true
+    },
+    cancelSkip() { if (dead) return; skipConfirm = null; changed() },
+    skipSet: (expected, stamp) => writeSkip(expected, stamp, 'set'),
+    skipExercise: (expected, stamp) => writeSkip(expected, stamp, 'exercise'),
+    unskipSet: (expected, stamp) => writeSkip(expected, stamp, 'undo'),
     finish() {
       if (!state().open) return false
       if (!finished) { finished = true; error = ''; changed() }
@@ -143,7 +230,7 @@ export function createSessionController(latest, changed = () => {}) {
     },
     edit(expected, name, value, stamp) {
       const p = latest(), s = state()
-      if (p.readOnly === true || !s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
+      if (p.readOnly === true || skipBusy(p) || !s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['weight', 'reps', 'rpe'].includes(name) || !['idle', 'error'].includes(s.phase)) return
       const id = `${stamp}:${expected}`
       if (!edits.has(id)) edits.set(id, new Set())
       edits.get(id).add(name)
@@ -159,13 +246,13 @@ export function createSessionController(latest, changed = () => {}) {
     },
     editNote(expected, value, stamp) {
       const s = state()
-      if (latest().readOnly === true || !s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
+      if (latest().readOnly === true || skipBusy(latest()) || !s.open || s.summary || stamp !== selection.stamp || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
       notes.set(`${stamp}:${expected}`, noteValue(value))
       return true
     },
     async approve(expected, values, stamp) {
       const p = latest(), s = state()
-      if (p.readOnly === true || !s.open || s.summary || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
+      if (p.readOnly === true || skipBusy(p) || !s.open || s.summary || stamp !== selection.stamp || !s.next || s.key !== expected || !['idle', 'error'].includes(s.phase)) return false
       const input = sessionInput(notes.has(`${stamp}:${expected}`) ? withSetNote(values, s.note) : values)
       if (!input) { error = 'Skriv vægt og hele gentagelser over 0. RPE er valgfri fra 0 til 10.'; changed(); return false }
       if (typeof p.onLogSet !== 'function' || typeof p.parsePlannedRpe !== 'function') {
