@@ -170,3 +170,120 @@ test('OFF reads no data and rendering frozen snapshots performs no mutation or c
   const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x) } }
   freeze(p); view(p); assert.equal(JSON.stringify(p), before)
 })
+
+test('four-week outlook works without a meet and keeps rising, flat and falling directions', () => {
+  for (const slope of [-1, 0, 1]) {
+    const p = props({ athlete: { id: 'synthetic-a' }, fremgangLogs: Array.from({ length: 26 },
+      (_, i) => row(i, { weight: 150 + slope * i })) })
+    const result = model(p, now)
+    assert.equal(result.forecast, null)
+    assert.equal(result.outlook.targetDate, '2026-12-02')
+    const [lift] = result.outlook.lifts
+    assert.equal(lift.lift, 'Squat')
+    // May 13 -> Dec 2 = 29 weeks; Epley for three reps is weight * 1.1.
+    assert.ok(Math.abs(lift.estimate - (150 + slope * 29) * 1.1) < 1e-9)
+    assert.ok(lift.lower < lift.estimate && lift.upper > lift.estimate)
+    for (const competition_date of ['2026-11-18', '2026-02-30', '2026-10-01'])
+      assert.deepEqual(model({ ...p, athlete: { ...p.athlete, competition_date } }, now).outlook, result.outlook)
+  }
+})
+
+test('four-week outlook requires the forecast evidence gate, beyond the historical comparison gate', () => {
+  const enough = props({ fremgangLogs: props().fremgangLogs.slice(-9) }) // 9 weeks, 56 days
+  assert.equal(model(enough, now).outlook.lifts.length, 1)
+  const eightSpanning56 = enough.fremgangLogs.filter((_, i) => i !== 4)
+  assert.equal(model({ ...enough, fremgangLogs: eightSpanning56 }, now).outlook.lifts[0].weeks, 8)
+  for (const logs of [enough.fremgangLogs.slice(1), enough.fremgangLogs.slice(-4),
+    enough.fremgangLogs.filter((_, i) => i % 2 === 0)]) {
+    const result = model(props({ fremgangLogs: logs }), now)
+    assert.notEqual(result.lifts[0].delta, null) // history can still describe measured change
+    assert.deepEqual(result.outlook.lifts, [])
+    assert.equal(view(props({ fremgangLogs: logs })).querySelectorAll('[data-development-outlook]').length, 0)
+  }
+  assert.equal(model(enough, '2026-11-18').outlook.lifts.length, 1) // newest set is 14 days old
+  assert.deepEqual(model(enough, '2026-11-19').outlook.lifts, [])
+})
+
+test('four-week outlook keeps all main lifts separate and ignores lift variants and deload', () => {
+  const names = ['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft']
+  const logs = names.flatMap((name, n) => Array.from({ length: 9 }, (_, i) => row(i + 17, {
+    exercise_id: `outlook-${n}-${i}`, weight: 100 + n * 25 + i,
+    exercises: { name, sessions: { weeks: { block_name: 'Styrke' } } },
+  })))
+  const result = model(props({ fremgangLogs: logs }), now)
+  assert.deepEqual(result.outlook.lifts.map(l => l.lift), names)
+  result.outlook.lifts.forEach((lift, n) => assert.ok(Math.abs(lift.estimate - (112 + n * 25) * 1.1) < 1e-9))
+  assert.deepEqual(model(props({ fremgangLogs: logs.toReversed() }), now).outlook, result.outlook)
+  for (const [name, block_name] of [['Pause squat', 'Styrke'], ['Squat', 'Deload'], ['Squat', 'Taper']]) {
+    const p = props({ fremgangLogs: props().fremgangLogs.map(r => ({ ...r,
+      exercises: { name, sessions: { weeks: { block_name } } } })) })
+    assert.deepEqual(model(p, now).outlook.lifts, [])
+  }
+})
+
+test('four-week outlook cannot be rescued by unconfirmed, foreign or conflicting observations', () => {
+  const logs = props().fremgangLogs.slice(-9)
+  for (const change of [{ pending: true }, { _optimistic: true }, { skipped: true },
+    { athlete_id: 'synthetic-other' }, { logged_at: '2026-02-30' }, { logged_at: '2026-11-05' },
+    { weight: 0 }, { reps_completed: 12 }]) {
+    const invalid = logs.map((r, i) => i === 0 ? { ...r, ...change } : r)
+    assert.deepEqual(model(props({ fremgangLogs: invalid }), now).outlook.lifts, [], JSON.stringify(change))
+  }
+  const saved = logs[0]
+  for (const retry of [{ ...saved, weight: 999 }, { ...saved, pending: true }])
+    for (const ordered of [[...logs, retry], [retry, ...logs]])
+      assert.deepEqual(model(props({ fremgangLogs: ordered }), now).outlook.lifts, [])
+  assert.deepEqual(model(props({ fremgangLogs: [...logs, ...logs] }), now).outlook,
+    model(props({ fremgangLogs: logs }), now).outlook)
+})
+
+test('four-week outlook follows current-week edits and undo without changing the input', () => {
+  const p = props({ fremgangLogs: props().fremgangLogs.slice(-9),
+    currentWeek: { start_date: '2026-11-02', block_name: 'Styrke',
+      sessions: [{ exercises: [{ id: 'synthetic-25', name: 'Squat' }] }] }, exerciseLogs: [] })
+  const before = structuredClone(p)
+  assert.deepEqual(model(p, now).outlook.lifts, [])
+  const local = { exercise_id: 'synthetic-25', set_number: 1, logged_at: '2026-11-04', weight: 125, reps_completed: 3 }
+  assert.equal(model({ ...p, exerciseLogs: [local] }, now).outlook.lifts.length, 1)
+  assert.deepEqual(model({ ...p, exerciseLogs: [local, { ...local, pending: true }] }, now).outlook.lifts, [])
+  assert.deepEqual(p, before)
+})
+
+test('four-week outlook rejects unstable or extreme trends and retained data after failed reads', () => {
+  for (const weights of [i => i % 2 ? 400 : 10, i => 10 + i * 10, () => 1e308]) {
+    const p = props({ fremgangLogs: props().fremgangLogs.slice(-9).map((r, i) => ({ ...r, weight: weights(i) })) })
+    assert.deepEqual(model(p, now).outlook.lifts, [])
+    assert.equal(view(p).querySelectorAll('[data-development-outlook]').length, 0)
+  }
+  for (const extra of [{ fremgangError: true }, { exerciseLogsError: true }, { fremgangLoading: true },
+    { exerciseLogsLoading: true }, { fremgangLogs: undefined }]) {
+    const p = props(extra)
+    assert.equal(model(p, now).outlook, null)
+    assert.equal(view(p).querySelectorAll('[data-development-outlook]').length, 0)
+  }
+  assert.deepEqual(model(props({ fremgangLogs: [] }), now).outlook.lifts, [])
+})
+
+test('four-week outlook shows one cautious sentence per lift with its evidence in the existing closed fold', () => {
+  const dom = view(props({ athlete: { id: 'synthetic-a' } }))
+  const sentences = dom.querySelectorAll('[data-development-outlook]')
+  assert.equal(sentences.length, 1)
+  assert.match(sentences[0].textContent, /omkring 141,9 kg e1RM om 4 uger \(02.12.2026\)/)
+  assert.match(sentences[0].textContent, /usikkert og ingen garanti/)
+  assert.doesNotMatch(sentences[0].textContent, /blokkens slutning/)
+  const evidence = dom.querySelectorAll('details').find(d => d.getAttribute('aria-label') === 'Squat: datagrundlag')
+  assert.equal(evidence.getAttribute('open'), null)
+  assert.match(evidence.textContent, /13 uger med tunge sæt, 12.08.2026–04.11.2026/)
+  assert.match(evidence.textContent, /Modelmargin: .* kg e1RM; ikke et statistisk konfidensinterval/)
+  assert.match(evidence.textContent, /mindst 8 uger med data over mindst 56 dage/)
+  assert.equal(evidence.querySelectorAll('[data-development-outlook]').length, 0)
+  assert.ok(dom.querySelectorAll('details').every(d => d.querySelectorAll('[data-development-outlook]').length === 0))
+})
+
+test('a meet on the outlook date retains its plan without repeating the same numerical forecast', () => {
+  const dom = view(props({ athlete: { id: 'synthetic-a', competition_date: '2026-12-02' } }))
+  assert.equal(dom.querySelectorAll('[data-development-outlook]').length, 1)
+  assert.match(dom.textContent, /Planlagt stævne: 02.12.2026/)
+  assert.match(dom.textContent, /Skøn og datagrundlag for denne dato står ved løftene ovenfor/)
+  assert.doesNotMatch(dom.textContent, /Squat: skøn|Sådan læses prognosen/)
+})

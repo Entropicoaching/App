@@ -55,7 +55,8 @@ function readPlan(value, athleteId, date) {
   if (!unique(meals)) fail()
   const targets = Object.fromEntries(metrics.map(key => {
     const valueForKey = parseInputNumber(value.targets?.[key])
-    return [key, valueForKey > 0 ? valueForKey : null]
+    // Approved portion content may be a known zero; it is not a personal goal.
+    return [key, valueForKey]
   }))
   return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals, targets }
 }
@@ -126,6 +127,7 @@ export function createAthleteDay(options = {}) {
       plan?.targets[key] > 0 && totals[key] !== null ? Math.max(0, plan.targets[key] - totals[key]) : null]))
     cached = freeze({ athleteId, date, phase, message, pending: !!pending,
       mode: data ? plan ? 'plan' : 'tracker' : null, meals, totals,
+      planId: plan?.id ?? null, planRevision: plan?.revision ?? null,
       targets: { ...(plan?.targets || {}) }, remaining, loggedCount: data?.logs.length || 0,
       eatenCount: meals.filter(meal => meal.eaten).length,
       canRelease: typeof releaseMeal === 'function',

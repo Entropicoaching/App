@@ -10,6 +10,8 @@ import { nutritionReportView } from '../rapport/reportView.mjs'
 import KostJustering from '../justering/KostJustering.mjs'
 import { portalAdjustment, choosePortalAdjustment } from './adjustment.mjs'
 import { control, button, primaryButton, formCss } from './formStyles.mjs'
+import { profileCalculation } from './gramPlan.mjs'
+import { planContextView } from './planContextView.mjs'
 import { activeReportScope, startActiveReport, activeReportView } from './activeReport.mjs'
 
 const h = React.createElement
@@ -68,7 +70,8 @@ function ScopedPortalPlan(props) {
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
     h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
     opened && h(PlanEditor, { ...props, onActivated: () => setRefresh(value => value + 1),
-      key: JSON.stringify([props.athlete.age, props.athlete.bodyweight, props.athlete.goal]) })))
+      key: JSON.stringify([props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
+        profileCalculation(props.athlete, props.date)]) })))
 }
 
 export function PortalNutritionReport(props = {}) {
@@ -85,6 +88,7 @@ function PlanEditor(props) {
   const [opened, setOpened] = React.useState(() => openPortalPlan({ enabled: true, ...props }))
   const [rows, setRows] = React.useState(() => meals.map(() => [{ foodId: '', grams: '' }]))
   const [error, setError] = React.useState('')
+  const [notes, setNotes] = React.useState({ preferences: '', allergies: '', budget: '' })
   const snapshot = React.useSyncExternalStore(opened.controller.subscribe, opened.controller.snapshot, opened.controller.snapshot)
   const gramGenerator = snapshot.gramGenerator
   const change = (mi, ii, key, value) => setRows(old => old.map((meal, m) => m !== mi ? meal
@@ -111,6 +115,8 @@ function PlanEditor(props) {
     h(PlanActivation, { controller: opened.controller, athleteId: props.athlete.id, date: props.date,
       client: props.client, loadClient: props.loadClient }),
     opened.loadError && h('p', { role: 'alert' }, opened.loadError),
+    planContextView(h, { athlete: props.athlete, date: props.date, snapshot, notes,
+      onNote: (key, value) => setNotes(old => ({ ...old, [key]: value.slice(0, 600) })) }),
     coachPlanView(h, snapshot, { ...opened.controller, activate: async () => {
       const previous = opened.controller.snapshot().publishedVersion
       const activated = await opened.controller.activate()

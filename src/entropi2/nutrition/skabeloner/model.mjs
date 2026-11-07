@@ -1,3 +1,4 @@
+import { readIngredients } from '../indkoeb/ingredients.mjs'
 import { mealTemplateItems } from '../../../athlete/kostSkabeloner.mjs'
 import { calendarTime } from '../../../athlete/kostNumbers.mjs'
 import { isDayReceipt } from '../../../mealEvidence.mjs'
@@ -28,17 +29,21 @@ export function recurringMeals(rows, { athleteId, date } = {}) {
     if (row?.athlete_id !== athleteId || !validId(row.id) || row.id.startsWith('local:')) continue
     const time = calendarTime(row.date), meal = cleanMeal(row)
     if (time === null || time < start || time > end || !meal) continue
-    const entry = { key: keyOf(meal), date: row.date, meal }
+    let ingredients
+    try { ingredients = readIngredients(row.ingredients) } catch { ingredients = undefined }
+    const entry = { key: keyOf(meal), date: row.date, meal, ingredients }
     const previous = occurrences.get(row.id)
-    if (previous && (previous.key !== entry.key || previous.date !== entry.date)) conflicts.add(row.id)
+    if (previous && (previous.key !== entry.key || previous.date !== entry.date
+      || JSON.stringify(previous.ingredients) !== JSON.stringify(entry.ingredients))) conflicts.add(row.id)
     else occurrences.set(row.id, entry)
   }
   const groups = new Map()
   for (const [id, entry] of occurrences) {
     if (conflicts.has(id)) continue
     const group = groups.get(entry.key) || {
-      id: entry.key, name: entry.meal.meal.slice(0, 80), meal: entry.meal, count: 0, lastDate: entry.date,
+      id: entry.key, name: entry.meal.meal.slice(0, 80), meal: entry.meal, ingredients: entry.ingredients, count: 0, lastDate: entry.date,
     }
+    if (JSON.stringify(group.ingredients) !== JSON.stringify(entry.ingredients)) group.ingredients = undefined
     group.count++
     if (entry.date > group.lastDate) group.lastDate = entry.date
     groups.set(entry.key, group)
@@ -54,7 +59,7 @@ export function createMealTemplates({ enabled = false, athleteId, date, rows = [
   if (!validId(athleteId) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
   const storageKey = 'entropi2:nutrition:skabeloner:v1:' + encodeURIComponent(athleteId)
   const candidates = recurringMeals(rows, { athleteId, date })
-  let templates = [], error = ''
+  let templates = [], error = '', readFailed = false
   try {
     if (typeof storage?.getItem !== 'function') throw new Error()
     const raw = storage.getItem(storageKey)
@@ -67,12 +72,14 @@ export function createMealTemplates({ enabled = false, athleteId, date, rows = [
         const meal = cleanMeal(item?.meal), name = nameOf(item?.name)
         if (!meal || !name || item.id !== keyOf(meal) || ids.has(item.id)) throw new Error()
         ids.add(item.id)
-        return { id: item.id, name, meal }
+        const ingredients = readIngredients(item.ingredients)
+        return { id: item.id, name, meal, ...(ingredients === undefined ? {} : { ingredients }) }
       })
     }
-  } catch { templates = []; error = 'Skabeloner kunne ikke læses.' }
+  } catch { templates = []; readFailed = true; error = 'Skabeloner kunne ikke læses.' }
 
   function commit(next) {
+    if (readFailed) return false
     try {
       if (typeof storage?.setItem !== 'function') throw new Error()
       const raw = JSON.stringify({ version: 1, templates: next })
@@ -94,8 +101,15 @@ export function createMealTemplates({ enabled = false, athleteId, date, rows = [
       if (templates.some(item => item.id === id)) return true
       const candidate = candidates.find(item => item.id === id)
       if (!candidate || templates.length >= 100) return false
-      const { name, meal } = candidate
-      return commit([...templates, { id, name, meal: clone(meal) }])
+      const { name, meal, ingredients } = candidate
+      return commit([...templates, { id, name, meal: clone(meal), ...(ingredients === undefined ? {} : { ingredients: clone(ingredients) }) }])
+    },
+    setIngredients(id, value) {
+      if (!templates.some(item => item.id === id)) return false
+      let ingredients
+      try { ingredients = readIngredients(value) }
+      catch { error = 'Ingredienser blev ikke gemt. Tjek navn, positiv mængde, enhed og kilde.'; return false }
+      return commit(templates.map(item => item.id === id ? { ...item, ingredients } : item))
     },
     rename(id, value) {
       const name = nameOf(value)

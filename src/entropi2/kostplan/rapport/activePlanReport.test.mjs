@@ -11,14 +11,14 @@ const plan = () => ({ id: 'synthetic-plan', revision: 'synthetic-version', athle
 const input = patch => ({ enabled: true, athleteId, date, activePlan: plan(),
   mealLogs: [meal('2026-10-30', 'first'), meal(date, 'last', { kcal: 2500, protein: null, carb: undefined, fat: undefined })], ...patch })
 
-test('active-plan report uses seven calendar days across month/week boundaries and only logged-day targets', () => {
+test('current-plan compatibility report keeps seven-day actuals but never invents historical targets', () => {
   const report = build(input())
   assert.deepEqual([report.from, report.through, report.date], ['2026-10-30', date, date])
   assert.deepEqual(report.days.map(d => d.date), ['2026-10-30', '2026-10-31', '2026-11-01',
     '2026-11-02', '2026-11-03', '2026-11-04', date])
-  assert.equal(report.comparison, 'active-plan'); assert.equal(report.planRevision, 'synthetic-version')
-  assert.ok(report.days.every(d => !d.future && d.planId === 'synthetic-plan'))
-  assert.deepEqual(report.week.metrics.kcal, { actual: 3500, target: 4000, percent: 87.5 })
+  assert.equal(report.comparison, 'daily-approved-plan'); assert.equal(report.referenceState, 'unavailable')
+  assert.ok(report.days.every(d => !d.future && d.planId === null && d.planState === 'unknown'))
+  assert.deepEqual(report.week.metrics.kcal, { actual: 3500, target: null, percent: null })
   assert.deepEqual([report.week.loggedDays, report.week.missingDays], [2, 5])
   assert.equal(report.week.metrics.protein.actual, null)
   assert.equal(report.week.metrics.carb.actual, null); assert.equal(report.week.metrics.fat.actual, null)
@@ -27,8 +27,8 @@ test('active-plan report uses seven calendar days across month/week boundaries a
 
 test('active report presentation names its reference honestly, keeps days folded and avoids duplicate weight', () => {
   const tree = expand(nutritionReportView(createElement, { enabled: true, report: build(input()) }))
-  assert.match(text(tree), /Seneste 7 dage|Periodens kost|Den aktive plans dagsmål er reference/)
-  assert.match(text(tree), /Tidligere planmål er ikke med/)
+  assert.match(text(tree), /Seneste 7 dage|Periodens kost|bekræftede godkendte planportioner/)
+  assert.match(text(tree), /Historisk planreference kunne ikke bekræftes/)
   assert.match(text(tree), /Ukendt registreret/)
   assert.doesNotMatch(text(tree), /Ugens kost|dage med entydig aktiveret plan|Vægttrend/)
   assert.ok(nodes(tree).filter(n => n.type === 'details').every(n => !n.props.open))
@@ -40,7 +40,7 @@ test('zero intake is known, unknown targets never create percentages, and no ext
   const report = build({ ...input({ activePlan, mealLogs: [meal(date, 'zero', { kcal: 0, protein: 0, carb: 0, fat: 0 })] }),
     get plans() { throw Error('No invented history') }, get weightLogs() { throw Error('No duplicate weights') } })
   assert.equal(report.week.metrics.kcal.actual, 0); assert.equal(report.week.metrics.kcal.percent, null)
-  assert.equal(report.week.metrics.protein.target, null); assert.equal(report.week.metrics.carb.percent, 0)
+  assert.equal(report.week.metrics.protein.target, null); assert.equal(report.week.metrics.carb.percent, null)
 })
 
 test('OFF and absent active plan hide; malformed, stale and foreign active plans fail closed', () => {
@@ -52,7 +52,7 @@ test('OFF and absent active plan hide; malformed, stale and foreign active plans
     assert.throws(() => build(input({ activePlan: { ...plan(), ...patch } })), /Ugyldig aktiv plan/)
   }
   assert.throws(() => build(input({ date: '2026-02-30', activePlan: { ...plan(), date: '2026-02-30' } })), /gyldig rapportdato/)
-  assert.throws(() => build(input({ date: '1900-01-01', activePlan: { ...plan(), date: '1900-01-01' } })), /datointervallet/)
+  assert.throws(() => build(input({ date: '1900-01-01', activePlan: { ...plan(), date: '1900-01-01' } })), /gyldig rapportdato/)
 })
 
 test('foreign/outside/future meals and whitespace-prefixed day receipts cannot change actual totals', () => {

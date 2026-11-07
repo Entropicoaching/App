@@ -24,6 +24,7 @@ export function KostplanAtletView(props = {}) {
   return h('section', { 'aria-label': 'Dagens kostplan', 'aria-busy': s.pending,
     style: { maxWidth: '42rem', width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', padding: 16 } },
   h('h1', null, 'Dagens kostplan'),
+  h('p', null, 'Aktiv plans indhold · godkendte portioner. Profilens mål ændres ikke.'),
   h('time', { dateTime: s.date }, new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(s.date + 'T00:00:00Z'))),
   h('section', { 'aria-label': 'Dagens status' },
     h('h2', null, 'Dagens status'),

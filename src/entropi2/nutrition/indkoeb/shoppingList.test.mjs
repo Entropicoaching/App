@@ -7,15 +7,15 @@ const ingredient = (name = 'Havre', quantity = 50, unit = 'g') => ({ name, quant
 const meal = (id, ingredients = [ingredient()]) => ({ id, meal: `Ret ${id}`, ingredients })
 const freeze = value => { Object.freeze(value); for (const child of Object.values(value)) if (child && typeof child === 'object') freeze(child); return value }
 
-test('selected own meals sum matching names/units, retain incompatible units and do not mutate inputs', () => {
+test('selected own meals sum matching names/units, normalize g/kg and retain incompatible units and do not mutate inputs', () => {
   const meals = freeze([meal('a', [ingredient(' Havre ', '0,1', ' G '), ingredient('Mælk', 2, 'dl')]),
     meal('b', [ingredient('HAVRE', .2), ingredient('Havre', 1, 'kg')]), meal('unselected')])
   const selected = freeze(['a', 'b', 'a'])
   const result = buildShoppingList(meals, selected)
   assert.equal(result.selectedCount, 2)
-  assert.equal(result.items.length, 3)
-  assert.ok(Math.abs(result.items[0].quantity - .3) < 1e-12)
-  assert.deepEqual(result.items.slice(1), [{ name: 'Mælk', quantity: 2, unit: 'dl' }, { name: 'Havre', quantity: 1, unit: 'kg' }])
+  assert.equal(result.items.length, 2)
+  assert.ok(Math.abs(result.items[0].quantity - 1000.3) < 1e-12)
+  assert.deepEqual(result.items.slice(1), [{ name: 'Mælk', quantity: 2, unit: 'dl' }])
   result.items[0].name = 'changed'
   assert.equal(meals[0].ingredients[0].name, ' Havre ')
 })

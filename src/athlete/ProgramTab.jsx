@@ -41,6 +41,15 @@ const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 // Round-one Entropi 2 palette, applied to the mounted athlete program only.
 const programColors = { surface: '#1c1c18', text: '#edeae2', muted: '#c4c0b5',
   accent: '#c8923a', done: '#b9d5a0', border: '#777267' }
+// Semantic tones: labels carry the meaning; colour never grades effort or progress.
+const programTones = {
+  plan: { color: '#b5cbed', background: '#202b3b' },
+  today: { color: '#edc17b', background: '#302719' },
+  done: { color: '#b9d5a0', background: '#243020' },
+  skipped: { color: '#d7bce7', background: '#302437' },
+  intensity: { color: '#d3c5f0', background: '#2b2538' },
+}
+// Shared card geometry also serves neutral empty/error states. Apply plan tones at content call sites.
 const programLayout = {
   label: { fontSize: 14, lineHeight: 1.5, letterSpacing: 'normal', textTransform: 'none',
     whiteSpace: 'normal', overflowWrap: 'anywhere' },
@@ -67,8 +76,15 @@ function programBlockElement(options, appearanceOn) {
     if (Array.isArray(node)) return node.map((child, index) => split(child, `${path}-${index}`))
     if (!node || typeof node !== 'object' || !node.props) return node
     const key = String(node.key ?? node.props.key)
-    if (node.type === 'li' && history.has(key)) { history.set(key, node); return null }
-    return createElement(node.type, { ...node.props, key: node.key ?? node.props.key ?? path }, split(node.props.children, path))
+    const weekButton = node.type === 'button' && Object.hasOwn(node.props, 'aria-pressed')
+    const tone = node.props['aria-current'] === 'step' ? programTones.today : programTones.plan
+    const row = createElement(node.type, { ...node.props, key: node.key ?? node.props.key ?? path,
+      ...(weekButton ? { 'data-program-week-tone': node.props['aria-current'] === 'step' ? 'current' : 'plan',
+        style: { ...node.props.style, ...tone,
+          border: `1px solid ${node.props['aria-pressed'] ? programColors.accent : tone.color}` } } : {}),
+    }, split(node.props.children, path))
+    if (node.type === 'li' && history.has(key)) { history.set(key, row); return null }
+    return row
   }
   const content = split(block.props.children)
   const earlier = !options.programError && previous.length > 0 && createElement('details', { 'data-program-history': true },
@@ -641,7 +657,7 @@ export default function ProgramTab({
                   {!ugeFoerst && blokOversigt}
 
                   {/* Week header — navigation only shown when multiple weeks exist */}
-                  <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? programLayout.week : {}) }}>
+                  <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? { ...programLayout.week, background: programTones.plan.background } : {}) }}>
                     {allWeeks.length > 1 ? (
                       <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 } : {}) }}>
@@ -711,7 +727,7 @@ export default function ProgramTab({
                         <h2 style={{ margin: '0 0 8px', fontSize: '0.95rem', fontWeight: 500, color: programColors.text }}>Ugens intensitet · plan</h2>
                         {programError || intensity.unavailable ? 'Intensiteten er ikke tilgængelig.' : intensity.targets.length ? (
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                            {intensity.targets.map(target => <span key={target} style={programLayout.badge}>{target}</span>)}
+                            {intensity.targets.map(target => <span key={target} style={{ ...programLayout.badge, ...programTones.intensity }}>{target}</span>)}
                           </div>
                         ) : 'Ikke angivet i planen.'}
                         {!programError && intensity.missing && intensity.targets.length > 0 && <p style={{ margin: '8px 0 0' }}>Ikke angivet for alle øvelser.</p>}
@@ -739,7 +755,9 @@ export default function ProgramTab({
                       && programTodaySession(viewedWeek, session, viewedStart, programToday)
                     const completion = programAppearanceOn && !programError && viewedWeek.readEvidence?.complete !== false
                       ? programSessionCompletion(session, sessionLogs) : null
-                    const sessionAccent = completion === 'done' ? programColors.done : isToday || isOpen ? programColors.accent : programColors.border
+                    const sessionTone = completion === 'done' ? programTones.done : completion === 'closed' ? programTones.skipped
+                      : isToday ? programTones.today : programTones.plan
+                    const sessionAccent = isOpen ? programColors.accent : sessionTone.color
                     const sessionActions = !readOnly && !upcomingPreview && !isDone && totalSets > 0 && (
                       <>
                         <button
@@ -760,12 +778,13 @@ export default function ProgramTab({
                     return (
                       <div
                         key={session.id}
-                        {...a11y({ tabIndex: -1, 'data-program-accessible': true })}
+                        {...a11y({ tabIndex: -1, 'data-program-accessible': true,
+                          'data-program-session-tone': completion === 'done' ? 'done' : completion === 'closed' ? 'skipped' : isToday ? 'today' : 'plan' })}
                         ref={el => { sessionRefs.current[session.id] = el }}
                         style={{ marginBottom: programAppearanceOn ? '1.25rem' : '0.75rem', scrollMarginTop: '64px', ...(programAppearanceOn ? { minWidth: 0, overflowWrap: 'anywhere' } : {}) }}
                       >
                         <div
-                          style={{ ...s.card, marginBottom: 0, cursor: programAppearanceOn ? 'default' : 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent', ...(programAppearanceOn ? { border: `1px solid ${sessionAccent}`, borderInlineStart: `4px solid ${sessionAccent}`, borderRadius: isOpen ? '12px 12px 0 0' : 12, padding: 16, background: isToday ? '#292216' : programColors.surface } : {}) }}
+                          style={{ ...s.card, marginBottom: 0, cursor: programAppearanceOn ? 'default' : 'pointer', borderLeft: isDone ? '3px solid #6cba6c' : isOpen ? '3px solid #c8923a' : '3px solid transparent', ...(programAppearanceOn ? { border: `1px solid ${sessionAccent}`, borderInlineStart: `4px solid ${sessionAccent}`, borderRadius: isOpen ? '12px 12px 0 0' : 12, padding: 16, background: sessionTone.background } : {}) }}
                           {...(!programAppearanceOn ? { onClick: () => openSession(isOpen ? null : session.id) } : {})}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { flexWrap: 'wrap', gap: 16 } : {}) }}>
@@ -779,7 +798,7 @@ export default function ProgramTab({
                                     {session.title || 'Træningspas'} <span aria-hidden="true" style={{ fontSize: '0.65rem' }}>{isOpen ? '▲' : '▼'}</span>
                                   </button>
                                 </h2> : session.title}
-                                {isToday && <span style={programLayout.badge}>I dag</span>}
+                                {isToday && <span style={{ ...programLayout.badge, ...programTones.today }}>I dag</span>}
                                 {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.04em', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.1rem 0.35rem', ...(programAppearanceOn ? programLayout.label : {}) }}>{WEEKDAYS_LONG[session.weekday]}</span>
                                 )}
@@ -790,7 +809,7 @@ export default function ProgramTab({
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                               {programAppearanceOn ? (
-                                completion && <span style={{ ...programLayout.badge, color: completion === 'done' ? programColors.done : programColors.muted }}>
+                                completion && <span style={{ ...programLayout.badge, ...sessionTone }}>
                                   {completion === 'done' ? 'Gennemført ✓' : 'Afsluttet · sæt sprunget over'}
                                 </span>
                               ) : isDone && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#6cba6c', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Færdig ✓</span>}
@@ -895,7 +914,7 @@ export default function ProgramTab({
                                         })}
                                       </>
                                     )}
-                                    {showPrescription && <div data-exercise-prescription style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem' }}>
+                                    {showPrescription && <div data-exercise-prescription style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1rem', ...(programAppearanceOn ? { ...programTones.intensity, padding: '4px 8px', borderRadius: 6, overflowWrap: 'anywhere', textTransform: 'none', letterSpacing: 'normal', lineHeight: 1.6 } : {}) }}>
                                       {programIntensityHelp === true ? <>
                                         {[ex.sets && `${ex.sets} sæt`, ex.reps && `× ${ex.reps}`].filter(Boolean).join(' · ')}
                                         {ex.intensity && <>{(ex.sets || ex.reps) ? ' · ' : ''}<IntensityExplanation key={ex.intensity} intensity={ex.intensity} /></>}
@@ -1044,7 +1063,7 @@ export default function ProgramTab({
                                         <div key={setNum} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
                                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
                                           {logged?.skipped ? (
-                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: (programAppearanceOn ? programColors.muted : '#4a4844') }}>✕ Sprunget over</span>
+                                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: (programAppearanceOn ? programTones.skipped.color : '#4a4844') }}>✕ Sprunget over</span>
                                           ) : logged ? (
                                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'baseline' }}>
                                               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{logged.weight}kg × {logged.reps_completed}</span>
@@ -1072,8 +1091,8 @@ export default function ProgramTab({
                                     if (logged?.skipped) return (
                                       <div key={setNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), textTransform: 'uppercase', letterSpacing: '0.06em', minWidth: '80px', flexShrink: 0, whiteSpace: 'nowrap' }}>{label} {setNum}</div>
-                                        <span style={{ color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontSize: '1rem' }}>✕</span>
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
+                                        <span style={{ color: (programAppearanceOn ? programTones.skipped.color : '#4a4844'), fontSize: '1rem' }}>✕</span>
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: (programAppearanceOn ? programTones.skipped.color : '#4a4844'), textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sprunget over</span>
                                         <button
                                           style={{ ...programTapTarget, ...programGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}
                                           {...a11y({ type: 'button', 'aria-label': `Fortryd spring over · ${setContext}` })}

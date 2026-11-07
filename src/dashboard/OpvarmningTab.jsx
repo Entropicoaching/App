@@ -2,29 +2,58 @@
 // Profilfanen Opvarmning: atlet-specifik og standard opvarmning.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
 import { s } from '../dashboardShared'
+import { warmupCatalogueFor, warmupCatalogueDraft } from './warmupSelection.mjs'
 
 export default function OpvarmningTab({
   a, deleteWarmupTemplate, editingWarmup, saveWarmupTemplate, saving, setEditingWarmup,
   setWarmupDraftSteps, setWarmupNewStep, warmupDraftSteps, warmupNewStep, warmupTemplates,
 }) {
               const CATEGORIES = ['Squat', 'Bænkpres', 'Dødløft']
-              const athleteId = a.id
+              const athleteId = a?.id ?? null
 
               function getTemplate(category, forAthleteId) {
                 return warmupTemplates.find(t => t.exercise_category === category && t.athlete_id === forAthleteId)
               }
 
               function startEdit(category, forAthleteId) {
+                if (editingWarmup || saving) return
                 const tpl = getTemplate(category, forAthleteId)
                 setEditingWarmup({ category, athleteId: forAthleteId })
                 setWarmupDraftSteps(tpl ? [...tpl.steps] : [])
                 setWarmupNewStep('')
               }
 
+              function catalogue(category, forAthleteId) {
+                return (
+                  <details style={{ margin: '0.75rem 0', color: '#b8b4a8' }} aria-label={`Katalog: ${category}`}>
+                    <summary style={{ cursor: 'pointer' }}>Vælg fra katalog</summary>
+                    <p>Vælg selv dagtype. Forslaget bliver en redigerbar kladde og gemmes først med Gem.</p>
+                    {editingWarmup && <p>Afslut eller annuller den åbne kladde, før du vælger en anden skabelon.</p>}
+                    {warmupCatalogueFor(category).map(template => (
+                      <details key={template.id} style={{ margin: '0.75rem 0' }}>
+                        <summary style={{ cursor: 'pointer' }}>{template.title} · Dagtype: {template.day_type}</summary>
+                        <p>{template.rationale}</p>
+                        <ol>{template.steps.map((step, i) => <li key={i}>{step}</li>)}</ol>
+                        <button type="button" style={s.btnEdit} disabled={!!editingWarmup || saving}
+                          aria-label={`Brug ${template.title} som kladde`}
+                          onClick={() => {
+                            if (editingWarmup || saving) return
+                            const draft = warmupCatalogueDraft(template.id, category, forAthleteId)
+                            if (!draft) return
+                            setEditingWarmup({ category: draft.category, athleteId: draft.athleteId })
+                            setWarmupDraftSteps(draft.steps)
+                            setWarmupNewStep('')
+                          }}>Brug som kladde</button>
+                      </details>
+                    ))}
+                  </details>
+                )
+              }
+
               return (
                 <div>
-                  <div style={{ ...s.card, marginBottom: '0.5rem' }}>
-                    <div style={s.cardLabel}>Atlet-specifik opvarmning — {a.name.split(' ')[0]}</div>
+                  {a?.id != null && <div style={{ ...s.card, marginBottom: '0.5rem' }}>
+                    <div style={s.cardLabel}>Atlet-specifik opvarmning — {a.name?.split(' ')[0] || 'Valgt atlet'}</div>
                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', letterSpacing: '0.06em', marginBottom: '1.25rem' }}>
                       Tilsidesætter standard. Vises til atleten når de åbner en session med det pågældende løft.
                     </div>
@@ -41,7 +70,7 @@ export default function OpvarmningTab({
                                 <button style={s.btnDanger} onClick={() => deleteWarmupTemplate(tpl.id)}>Slet</button>
                               )}
                               {!isEditing && (
-                                <button style={s.btnEdit} onClick={() => startEdit(category, athleteId)}>
+                                <button style={s.btnEdit} disabled={!!editingWarmup || saving} onClick={() => startEdit(category, athleteId)}>
                                   {tpl ? 'Rediger' : 'Opret'}
                                 </button>
                               )}
@@ -51,7 +80,7 @@ export default function OpvarmningTab({
                           {!isEditing && !tpl && stdTpl && (
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
                               <div style={{ fontFamily: "'IBM Plex Mono', monospace', monospace", fontSize: '0.52rem', color: '#4a4844', fontStyle: 'italic' }}>Bruger standard ({stdTpl.steps.length} trin)</div>
-                              <button style={s.btnEdit} onClick={() => { setEditingWarmup({ category, athleteId }); setWarmupDraftSteps([...stdTpl.steps]); setWarmupNewStep('') }}>Tilpas til atlet</button>
+                              <button style={s.btnEdit} disabled={!!editingWarmup || saving} onClick={() => { if (editingWarmup || saving) return; setEditingWarmup({ category, athleteId }); setWarmupDraftSteps([...stdTpl.steps]); setWarmupNewStep('') }}>Tilpas til atlet</button>
                             </div>
                           )}
                           {!isEditing && !tpl && !stdTpl && (
@@ -64,6 +93,8 @@ export default function OpvarmningTab({
                               ))}
                             </ol>
                           )}
+
+                          {catalogue(category, athleteId)}
 
                           {isEditing && (
                             <div>
@@ -105,7 +136,7 @@ export default function OpvarmningTab({
                         </div>
                       )
                     })}
-                  </div>
+                  </div>}
 
                   <div style={s.card}>
                     <div style={s.cardLabel}>Standard opvarmning — alle atleter</div>
@@ -124,7 +155,7 @@ export default function OpvarmningTab({
                                 <button style={s.btnDanger} onClick={() => deleteWarmupTemplate(stdTpl.id)}>Slet</button>
                               )}
                               {!isEditing && (
-                                <button style={s.btnEdit} onClick={() => { setEditingWarmup({ category, athleteId: null }); setWarmupDraftSteps(stdTpl ? [...stdTpl.steps] : []); setWarmupNewStep('') }}>
+                                <button style={s.btnEdit} disabled={!!editingWarmup || saving} onClick={() => startEdit(category, null)}>
                                   {stdTpl ? 'Rediger' : 'Opret'}
                                 </button>
                               )}
@@ -140,6 +171,8 @@ export default function OpvarmningTab({
                               ))}
                             </ol>
                           )}
+                          {catalogue(category, null)}
+
                           {isEditing && (
                             <div>
                               <ol style={{ margin: '0 0 0.75rem', paddingLeft: '1.2rem' }}>

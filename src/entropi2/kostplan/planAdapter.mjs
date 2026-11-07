@@ -19,6 +19,102 @@ const rows = result => {
   return result.data
 }
 
+// Coach-only history on the existing RLS-scoped namespace. Four bounded reads,
+// no paging or inferred empty history. Exact counts detect server page truncation.
+const historySchema = 'entropi2-kostplan:daily-reference/v1'
+const nutrientKeys = [['kcal', 'energyKcal'], ['protein', 'proteinG'], ['carb', 'carbohydrateG'], ['fat', 'fatG']]
+const unknownTargets = () => Object.fromEntries(nutrientKeys.map(([key]) => [key, null]))
+const historyError = reason => { throw Object.assign(Error('Planhistorikken kunne ikke bekræftes.'), { reason }) }
+const localApprovalDay = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit',
+})
+// Postgres timestamptz preserves microseconds. Date.parse alone would turn two
+// distinct same-millisecond corrections into a tie. UUIDs are not time ordering.
+function approvalTime(value) {
+  const match = typeof value === 'string' && value.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}:\d{2})$/)
+  if (!match || !day(match[1])) historyError('invalid-history')
+  const ms = Date.parse(`${match[1]}T${match[2]}${match[4]}`)
+  if (!Number.isFinite(ms) || !/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(match[2])) historyError('invalid-history')
+  const stamp = BigInt(ms) * 1000n + BigInt((match[3] ?? '').padEnd(6, '0'))
+  const parts = Object.fromEntries(localApprovalDay.formatToParts(new Date(ms)).map(p => [p.type, p.value]))
+  return { stamp, on: `${parts.year}-${parts.month}-${parts.day}` }
+}
+
+async function readDailyReferences(client, athleteId, date, options = {}) {
+  if (!identifier(options.coachId) || date < '1900-01-07' || date > '9999-12-24') fail()
+  const from = new Date(Date.parse(`${date}T00:00:00Z`) - 6 * 86400000).toISOString().slice(0, 10)
+  const base = { schema: historySchema, athleteId, date, from, through: date }
+  const dates = Array.from({ length: 7 }, (_, i) => new Date(Date.parse(`${from}T00:00:00Z`) + i * 86400000).toISOString().slice(0, 10))
+  const unknown = (date, reason, state = 'unknown') => ({ date, state, reason, planId: null, versionId: null, targets: unknownTargets() })
+  const checkCurrent = () => { if (options.isCurrent?.() === false) historyError('cancelled') }
+  const complete = result => {
+    checkCurrent()
+    if (missing(result?.error)) historyError('tables-unavailable')
+    if (!result || result.error || !Array.isArray(result.data)) historyError('read-error')
+    if (!Number.isSafeInteger(result.count) || result.count !== result.data.length || result.count >= 501) historyError('incomplete-read')
+    return result.data
+  }
+  const unique = (items, key) => { if (new Set(items.map(v => v[key])).size !== items.length) historyError('invalid-history') }
+  const readPlans = () => client.from(tables[0]).select('id,athlete_id,valid_from,status', { count: 'exact' })
+    .eq('athlete_id', athleteId).lte('valid_from', date).limit(501)
+  try {
+    checkCurrent()
+    const plans = complete(await readPlans())
+    unique(plans, 'id')
+    if (plans.some(p => !uuid(p.id) || p.athlete_id !== athleteId || !day(p.valid_from)
+      || p.valid_from > date || !['forslag', 'godkendt', 'arkiveret'].includes(p.status))) historyError('invalid-history')
+    if (!plans.length) return { ...base, state: 'ready', reason: null, days: dates.map(d => unknown(d, 'no-approved-version')) }
+    const versions = complete(await client.from(tables[1])
+      .select('id,plan_id,version_no,effective_from,goal,intensity,meals', { count: 'exact' })
+      .in('plan_id', plans.map(p => p.id)).limit(501))
+    unique(versions, 'id')
+    if (versions.some(v => !uuid(v.id) || !plans.some(p => p.id === v.plan_id && day(v.effective_from) && v.effective_from >= p.valid_from)
+      || !Number.isSafeInteger(v.version_no) || v.version_no < 1)) historyError('invalid-history')
+    unique(versions.map(v => ({ key: `${v.plan_id}:${v.version_no}` })), 'key')
+    // SQL primary key is version_id: there is no approvals.id column.
+    const approvals = complete(await client.from(tables[2])
+      .select('version_id,plan_id,athlete_id,approved_at,approval_kind', { count: 'exact' })
+      .in('plan_id', plans.map(p => p.id)).eq('athlete_id', athleteId).limit(501))
+    unique(approvals, 'version_id')
+    const approved = approvals.map(a => {
+      const v = versions.find(v => v.id === a.version_id && v.plan_id === a.plan_id)
+      const p = plans.find(p => p.id === a.plan_id)
+      if (!v || !p || a.athlete_id !== athleteId || !['coach', 'automatic'].includes(a.approval_kind)
+        || p.status === 'forslag') historyError('invalid-history')
+      const time = approvalTime(a.approved_at)
+      const snapshot = createPlanSnapshot(v)
+      if (!snapshot.meals.length) historyError('invalid-history')
+      const summary = summarizePlanSnapshot(snapshot)
+      const targets = Object.fromEntries(nutrientKeys.map(([key, nutrient]) => [key, summary.nutrients[nutrient].value]))
+      return { p, v, time, targets }
+    })
+    if (plans.some(p => p.status === 'godkendt' && !approved.some(a => a.p.id === p.id))) historyError('incomplete-history')
+    // Mutable archive status has no historical timestamp. Recheck parents once
+    // after reading the append-only rows; never publish a crossed archive read.
+    const confirmed = complete(await readPlans())
+    const sorted = list => [...list].sort((a, b) => a.id.localeCompare(b.id))
+    if (canonical(sorted(plans)) !== canonical(sorted(confirmed))) historyError('changed-during-read')
+    const days = dates.map(d => {
+      const candidates = approved.filter(a => a.v.effective_from <= d && a.time.on <= d)
+      candidates.sort((a, b) => b.v.effective_from.localeCompare(a.v.effective_from)
+        || (a.time.stamp < b.time.stamp ? 1 : a.time.stamp > b.time.stamp ? -1 : 0)
+        || (a.p.id === b.p.id ? b.v.version_no - a.v.version_no : 0))
+      if (!candidates.length) return unknown(d, 'no-approved-version')
+      const first = candidates[0]
+      if (candidates.some(a => a.p.id !== first.p.id && a.v.effective_from === first.v.effective_from
+        && a.time.stamp === first.time.stamp)) return unknown(d, 'approval-order-conflict', 'conflict')
+      // An archived candidate cannot be dated or safely removed to revive an
+      // older plan. Its affected days stay unknown until a later reference wins.
+      if (first.p.status === 'arkiveret') return unknown(d, 'archive-date-unavailable')
+      return { date: d, state: 'approved', reason: null, planId: first.p.id, versionId: first.v.id, targets: first.targets }
+    })
+    return { ...base, state: 'ready', reason: null, days }
+  } catch (error) {
+    return { ...base, state: 'unavailable', reason: error?.reason ?? 'read-error',
+      days: dates.map(d => unknown(d, error?.reason ?? 'read-error')) }
+  }
+}
+
 // Pure projection to the existing immutable SQL snapshot contract. No invented
 // calculation evidence: this flow is an explicit manual coach activation.
 export function activationSnapshot(plan) {
@@ -38,8 +134,8 @@ export function createPlanAdapter(options = {}) {
   if (!identifier(athleteId) || !day(date) || typeof client?.from !== 'function') fail()
   let pending = null
   async function available() {
-    for (const table of tables) {
-      const result = await client.from(table).select('id').limit(0)
+    for (const [index, table] of tables.entries()) {
+      const result = await client.from(table).select(index === 2 ? 'version_id' : 'id').limit(0)
       if (missing(result?.error)) return false
       rows(result)
     }
@@ -68,6 +164,7 @@ export function createPlanAdapter(options = {}) {
   }
   return Object.freeze({
     available,
+    loadDailyReferences: options => readDailyReferences(client, athleteId, date, options),
     async activate(plan) {
       if (plan?.athleteId !== athleteId || plan.date !== date) fail()
       const snapshot = activationSnapshot(plan)
@@ -107,25 +204,40 @@ export function createPlanAdapter(options = {}) {
         athleteAvailability.set(client, probe)
       }
       if (!await athleteAvailability.get(client)) return null
-      const plans = rows(await client.from(tables[0]).select('id,athlete_id,valid_from,status')
-        .eq('athlete_id', athleteId).eq('status', 'godkendt').lte('valid_from', date).limit(501))
+      const readPlans = () => client.from(tables[0]).select('id,athlete_id,valid_from,status')
+        .eq('athlete_id', athleteId).eq('status', 'godkendt').lte('valid_from', date).limit(501)
+      const unique = (items, key) => { if (new Set(items.map(item => item[key])).size !== items.length) fail() }
+      const plans = rows(await readPlans())
+      unique(plans, 'id')
       if (plans.some(p => p.athlete_id !== athleteId || p.status !== 'godkendt' || !day(p.valid_from) || p.valid_from > date || !uuid(p.id))) fail()
       if (!plans.length) return null
-      const versions = rows(await client.from(tables[1]).select('*').in('plan_id', plans.map(p => p.id))
-        .lte('effective_from', date).limit(501))
-      if (versions.some(v => !plans.some(p => p.id === v.plan_id) || !uuid(v.id) || !day(v.effective_from) || v.effective_from > date
+      const versions = rows(await client.from(tables[1]).select('id,plan_id,version_no,effective_from,goal,intensity,meals')
+        .in('plan_id', plans.map(p => p.id)).lte('effective_from', date).limit(501))
+      unique(versions, 'id')
+      unique(versions.map(v => ({ key: `${v.plan_id}:${v.version_no}` })), 'key')
+      if (versions.some(v => !plans.some(p => p.id === v.plan_id && v.effective_from >= p.valid_from)
+        || !uuid(v.id) || !day(v.effective_from) || v.effective_from > date
         || !Number.isSafeInteger(v.version_no) || v.version_no < 1)) fail()
       if (!versions.length) return null
-      const approvals = rows(await client.from(tables[2]).select('id,version_id,plan_id,athlete_id,approved_at')
+      // The existing approval ledger is keyed by version_id, with no id column.
+      const approvals = rows(await client.from(tables[2]).select('version_id,plan_id,athlete_id,approved_at,approval_kind')
         .in('version_id', versions.map(v => v.id)).eq('athlete_id', athleteId).limit(501))
-      if (approvals.some(a => a.athlete_id !== athleteId || !uuid(a.id) || !Number.isFinite(Date.parse(a.approved_at))
+      unique(approvals, 'version_id')
+      if (approvals.some(a => a.athlete_id !== athleteId || !['coach', 'automatic'].includes(a.approval_kind)
         || !versions.some(v => v.id === a.version_id && v.plan_id === a.plan_id))) fail()
-      const approved = versions.flatMap(v => approvals.filter(a => a.version_id === v.id).map(a => ({ v, a })))
-      // A future approval must not hide today's plan. Same-day coach corrections
-      // are resolved by the server approval time, also across replacement plans.
+      const approved = approvals.map(a => ({ v: versions.find(v => v.id === a.version_id), time: approvalTime(a.approved_at) }))
+        .filter(a => a.time.on <= date)
+      // Do not publish a plan whose mutable parent changed during the read.
+      const confirmed = rows(await readPlans())
+      const sorted = list => [...list].sort((a, b) => a.id.localeCompare(b.id))
+      if (canonical(sorted(plans)) !== canonical(sorted(confirmed))) fail()
+      // Resolve corrections by actual server time, including microseconds.
+      // Equal effective dates and times are ambiguous; UUID/row order is no clock.
       approved.sort((x, y) => y.v.effective_from.localeCompare(x.v.effective_from)
-        || Date.parse(y.a.approved_at) - Date.parse(x.a.approved_at) || y.a.id.localeCompare(x.a.id))
+        || (x.time.stamp < y.time.stamp ? 1 : x.time.stamp > y.time.stamp ? -1 : 0))
       if (!approved.length) return null
+      if (approved.length > 1 && approved[0].v.effective_from === approved[1].v.effective_from
+        && approved[0].time.stamp === approved[1].time.stamp) fail()
       const { v } = approved[0], snapshot = createPlanSnapshot(v)
       if (!snapshot.meals.length) fail()
       const summary = summarizePlanSnapshot(snapshot)

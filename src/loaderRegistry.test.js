@@ -10,7 +10,14 @@ import { syntheticModules } from './registrySyntheticFs.mjs'
 import { snapshotFiles } from './registryTestFiles.mjs'
 if (!vm.SourceTextModule) {
   test('registry synthetic ESM checks in isolated VM-capable process', () => {
-    const result = spawnSync(process.execPath, ['--experimental-vm-modules', fileURLToPath(import.meta.url)], { encoding: 'utf8' })
+    // The full inventory emits about 1.1 MB of serialized test protocol under
+    // node --test. Allow growth beyond the 1 MiB default, with a fixed 16 MiB cap.
+    const result = spawnSync(process.execPath, ['--test-concurrency=1', '--experimental-vm-modules', fileURLToPath(import.meta.url)], {
+      encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,
+    })
+    if (result.error) {
+      throw new Error(`Registry VM child ${result.error.code}: ${result.error.message}\n${result.stdout ?? ''}${result.stderr ?? ''}`, { cause: result.error })
+    }
     assert.equal(result.status, 0, result.stdout + result.stderr)
   })
 } else {

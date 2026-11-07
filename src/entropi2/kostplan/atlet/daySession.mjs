@@ -36,9 +36,35 @@ export function createKostDaySession(options = {}) {
   } }
   const controller = createTrackedAthleteDay({ enabled: true, athleteId, date, storage, currentDay,
     contracts: planContracts, loadPlan: () => createPlanAdapter({ enabled: true, athleteId, date, client }).loadActive() })
-  const unsubscribe = controller.subscribe(refresh)
+  // A read-only channel owned by this exact client/athlete/day session. Never
+  // persist or share it across owners, and never issue another plan query for
+  // the tracker. The authenticated client remains the access-control boundary.
+  const owner = Object.freeze({}), targetListeners = new Set()
+  let approved = null
+  let reference = Object.freeze({ owner, athleteId, date, source: 'profile', state: 'idle' })
+  const publishTargets = () => {
+    const s = controller.snapshot()
+    if (s.mode === 'plan') approved = { planId: s.planId, revision: s.planRevision,
+      targets: Object.freeze({ ...s.targets }) }
+    else if (!['loading', 'load-error'].includes(s.phase)) approved = null
+    // Like the day frame, retain the last confirmed version while refreshing;
+    // its status is explicit. A successful no-plan read clears it immediately.
+    reference = Object.freeze({ owner, athleteId, date, source: approved ? 'approved-plan' : 'profile',
+      state: s.phase === 'loading' || s.phase === 'load-error' ? s.phase : 'ready', ...approved })
+    for (const fn of targetListeners) fn()
+  }
+  contracts.dayTargets = Object.freeze({ owner, athleteId, date,
+    snapshot: () => reference,
+    subscribe(fn) { if (disposed) return () => {}; targetListeners.add(fn); return () => targetListeners.delete(fn) },
+  })
+  const unsubscribe = controller.subscribe(() => { publishTargets(); refresh() })
   return {
     athleteId, date, client, contracts, controller,
-    dispose() { disposed = true; unsubscribe(); controller.dispose() },
+    dispose() {
+      disposed = true; unsubscribe(); controller.dispose(); approved = null
+      reference = Object.freeze({ owner, athleteId, date, source: 'profile', state: 'disposed' })
+      for (const fn of targetListeners) fn()
+      targetListeners.clear()
+    },
   }
 }

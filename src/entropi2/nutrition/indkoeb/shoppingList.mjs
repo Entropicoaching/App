@@ -1,7 +1,4 @@
-const text = value => typeof value === 'string'
-  ? value.normalize('NFC').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().replace(/\s+/g, ' ')
-  : ''
-const key = value => text(value).toLocaleLowerCase('da-DK')
+import { readIngredients, massIngredient, ingredientKey, quantityNumber, ingredientText as text } from './ingredients.mjs'
 
 // ownMeals must be supplied from the current user's own local collection.
 // No ingredients are inferred from meal names or macro totals.
@@ -23,20 +20,14 @@ export function buildShoppingList(ownMeals, selectedIds) {
       missingMeals.push({ id, meal: text(meal.meal) || 'Eget måltid' })
       continue
     }
-    for (const ingredient of meal.ingredients) {
-      const name = text(ingredient?.name), unit = key(ingredient?.unit)
-      const raw = ingredient?.quantity
-      const quantity = typeof raw === 'number' ? raw
-        : typeof raw === 'string' && /^\d+(?:[.,]\d+)?$/.test(raw.trim()) ? Number(raw.trim().replace(',', '.')) : NaN
-      if (!name || !unit || !Number.isFinite(quantity) || quantity <= 0) {
-        throw new TypeError('Ingredienser skal have navn, positiv mængde og enhed')
-      }
-      // Tuple encoding avoids delimiter collisions. Different units stay separate.
-      const identity = JSON.stringify([key(name), unit])
+    const portions = meal.portions === undefined ? 1 : quantityNumber(meal.portions)
+    if (!Number.isFinite(portions) || portions <= 0 || portions > 1000) throw new TypeError('Ugyldigt portionsantal')
+    for (const ingredient of readIngredients(meal.ingredients)) {
+      const normalized = massIngredient(ingredient), identity = ingredientKey(normalized)
       const previous = items.get(identity)
-      const total = (previous?.quantity || 0) + quantity
+      const total = (previous?.quantity || 0) + normalized.quantity * portions
       if (!Number.isFinite(total)) throw new TypeError('Den samlede mængde er for stor')
-      items.set(identity, { name: previous?.name || name, unit, quantity: total })
+      items.set(identity, { ...normalized, name: previous?.name || normalized.name, quantity: total })
     }
   }
   return { items: [...items.values()], missingMeals, selectedCount: ids.length }

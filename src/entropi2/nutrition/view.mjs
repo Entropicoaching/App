@@ -1,3 +1,4 @@
+import { templateIngredientEditor } from './skabeloner/editor.mjs'
 import { antalOrd } from '../antalOrd.mjs'
 import { mountUgeplan } from './ugeplan/mount.mjs'
 import { unitsForFood, mealKey } from './controller.mjs'
@@ -10,6 +11,7 @@ import { mealProtein, eveningProtein } from './dailyProtein.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { calendarDay } from '../../calendarDate.js'
+import { manualFields, manualDraftErrors } from './manualDraft.mjs'
 // Shared presentation text for diary and weight reads; no read/write ownership here.
 const readText = {
   retry: 'Hent igen', pending: 'Henter…',
@@ -25,6 +27,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   const doc = host.ownerDocument
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
   let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
+  let manualAttempted = false, manualOpen = false
   amount = String(controller.foodAmount(0))
   let weightPending = false, weightReadPending = false, weightError = ''
   let planHost, planKey, currentPlanFold, disposePlan = () => {}, planMounted = false
@@ -32,6 +35,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     disposePlan(); disposePlan = () => {}; planHost = undefined; planKey = undefined
     currentPlanFold = undefined; planMounted = false
   }
+  const ingredientDrafts = new Map()
   let editing = null, removing = null, ownMealName = ''
   const intent = () => 'nutrition-' + (++sequence)
   const node = (tag, cls, text) => {
@@ -89,6 +93,10 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     const selectionRange = active && typeof active.selectionStart === 'number'
       ? [active.selectionStart, active.selectionEnd, active.selectionDirection] : null
     const openDetails = [...host.querySelectorAll('details')].filter(n => n.open).map(n => n.getAttribute('data-focus'))
+    const manualFold = [...host.querySelectorAll('details')].find(n => n.getAttribute('data-focus') === 'log-form')
+    // A diary refresh temporarily removes the form. Keep its disclosure state
+    // with this mount's raw draft, never in storage or another athlete/day.
+    if (manualFold) manualOpen = manualFold.open
     const app = node('div', 'e2-nutrition')
     const skip = append(app, 'a', 'skip', 'Gå til indhold')
     skip.setAttribute('data-focus', 'skip')
@@ -141,6 +149,18 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         const b = button(templates, 'Log skabelon: ' + item.name, () => controller.logTemplate(item.id, intent()), s.pending)
         b.setAttribute('data-focus', 'template-log-' + i)
       }
+      for (const [index, item] of (templateState?.templates || []).entries()) {
+        if (!ingredientDrafts.has(item.id)) ingredientDrafts.set(item.id, { ingredients: structuredClone(item.ingredients || []) })
+        templates.append(templateIngredientEditor(doc, item, ingredientDrafts.get(item.id), {
+          disabled: s.pending, focusKey: `template-ingredients-${index}`,
+          onSave: ingredients => {
+            const draft = ingredientDrafts.get(item.id)
+            ingredientDrafts.delete(item.id)
+            if (!controller.setTemplateIngredients(item.id, ingredients)) ingredientDrafts.set(item.id, draft)
+            draw()
+          },
+        }))
+      }
       if (templateState?.suggestions.length) {
         const suggestions = append(templates, 'details', 'space')
         suggestions.setAttribute('data-focus', 'template-suggestions')
@@ -152,18 +172,51 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       }
       if (templateState?.error) { const p = append(fast, 'p', 'space', templateState.error); p.setAttribute('role', 'alert') }
       const details = append(fast, 'details', 'space'); details.setAttribute('data-focus', 'log-form')
+      details.open = manualOpen
       append(details, 'summary', '', 'Notér et måltid').setAttribute('data-focus', 'log-form-summary')
       const inner = append(details, 'div')
       const form = append(inner, 'form', 'stack')
-      field(form, 'Måltid', manual.meal || '', v => { manual.meal = v })
-      for (const [k, l] of [['kcal', 'Energi (kcal)'], ['protein', 'Protein (g)'], ['carb', 'Kulhydrat (g)'], ['fat', 'Fedt (g)']]) {
-        field(form, l, manual[k] ?? '', v => { manual[k] = v })
+      // Own all validation so native required-field blocking cannot hide the
+      // other missing nutrients. Updating feedback does not replace inputs.
+      form.noValidate = true
+      const inputs = new Map()
+      const feedback = node('p', 'small')
+      const feedbackId = contentId + '-manual-feedback'
+      feedback.setAttribute('id', feedbackId)
+      feedback.setAttribute('data-focus', 'manual-feedback')
+      feedback.setAttribute('role', 'status'); feedback.setAttribute('aria-live', 'polite')
+      const validate = () => {
+        const errors = manualDraftErrors(manual)
+        const missing = errors.filter(e => e.missing).map(e => e.label)
+        const invalid = errors.filter(e => !e.missing).map(e => e.label)
+        feedback.textContent = [missing.length ? 'Mangler: ' + missing.join(', ') + '.' : '',
+          invalid.length ? 'Angiv gyldige værdier: ' + invalid.join(', ') + '.' : ''].filter(Boolean).join(' ')
+        for (const [k, input] of inputs) {
+          const error = errors.some(e => e.key === k)
+          input.setAttribute('aria-invalid', String(manualAttempted && error))
+          input.setAttribute('aria-describedby', error ? feedbackId : '')
+        }
+        return errors
+      }
+      for (const [k, label] of manualFields) {
+        const input = field(form, label, manual[k] ?? '', v => {
+          if (destroyed || controller.snapshot().pending || !inHost(form)) return
+          manual[k] = v; validate()
+        })
+        input.disabled = s.pending
+        if (k === 'meal') input.inputMode = 'text'
+        inputs.set(k, input)
       }
       append(form, 'p', 'small muted', 'Angiv kendte værdier. Brug 0 kun når værdien er kendt som nul.')
+      form.append(feedback); validate()
       const save = button(form, s.pending ? 'Gemmer…' : 'Gem måltid', () => {}, s.pending); save.className += ' cta-primary'; save.type = 'submit'; save.setAttribute('data-focus', 'save')
       form.addEventListener('submit', async e => {
         e.preventDefault()
-        if (await action({ ...manual })) { manual = {}; draw() }
+        if (destroyed || controller.snapshot().pending || !inHost(form)) return
+        manualAttempted = true
+        const errors = validate()
+        if (errors.length) { inputs.get(errors[0].key).focus(); return }
+        if (await action({ ...manual }) && !destroyed) { manual = {}; manualAttempted = false; draw() }
       })
       if (s.foods.length) {
         const foodForm = append(inner, 'form', 'stack space')
@@ -199,7 +252,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         add.setAttribute('data-focus', 'log-portion')
         foodForm.addEventListener('submit', e => { e.preventDefault(); return controller.logFood(Number(selection), amount, Number(unit), intent()) })
       }
-      if (availableTemplates.length || templateState?.suggestions.length) fast.append(templates)
+      if (templateState?.templates.length || templateState?.suggestions.length) fast.append(templates)
     }
     const weightStatus = weightProps.weightStatus
     const weightReady = weightStatus?.athleteId === s.athleteId && weightStatus.state === 'ready'
@@ -272,9 +325,16 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     append(intro, 'p', 'muted', 'Brug dine mål uden at logge. Dagbogen er valgfri.')
     const hero = append(main, 'section', 'card hero'); hero.setAttribute('data-kost-del', 'maal')
     append(hero, 'h2', '', isToday ? 'Dagens mål' : 'Mål for den valgte dag')
+    const planReference = s.targetReference?.source === 'approved-plan'
+    append(hero, 'p', 'muted', planReference ? 'Aktiv plans indhold · godkendte portioner.' : 'Profilens mål · ingen aktiv planreference.')
+    if (['idle', 'loading'].includes(s.targetReference?.state)) append(hero, 'p', 'small muted', 'Dagsplanen hentes. Målgrundlaget opdateres, når læsningen er bekræftet.')
+    if (['load-error', 'unavailable', 'disposed'].includes(s.targetReference?.state)) append(hero, 'p', 'small muted',
+      planReference ? 'Planen kunne ikke genlæses. Senest bekræftede indhold vises.' : 'Planreferencen er ikke tilgængelig. Profilens mål vises, hvis de er angivet.')
     const advice = startAdvice(s.targets)
-    if (advice.kcal) append(hero, 'p', 'space', `Energi: ${displayNumber(advice.kcal)} kcal`)
-    if (advice.protein) append(hero, 'p', 'space', `Protein: ${displayNumber(advice.protein)} g`)
+    // Display approved content including zero; advice/progress still require a positive goal.
+    const content = planReference ? s.targets : advice
+    if (Number.isFinite(content.kcal)) append(hero, 'p', 'space', `Energi: ${displayNumber(content.kcal)} kcal`)
+    if (Number.isFinite(content.protein)) append(hero, 'p', 'space', `Protein: ${displayNumber(content.protein)} g`)
     if (advice.tips.length) {
       const help = append(hero, 'details', 'space'); help.setAttribute('data-focus', 'general-meal-help')
       append(help, 'summary', '', 'Generel hjælp til måltider').setAttribute('data-focus', 'general-meal-help-summary')
@@ -282,7 +342,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const tips = append(help, 'ul', 'list')
       advice.tips.forEach(tip => append(tips, 'li', '', tip))
     }
-    if ((!advice.kcal || !advice.protein) && typeof onCoach !== 'function') append(hero, 'p', 'muted space', 'Aftal dine kostmål med din coach.')
+    if ((!Number.isFinite(content.kcal) || !Number.isFinite(content.protein)) && typeof onCoach !== 'function') append(hero, 'p', 'muted space', 'Aftal dine kostmål med din coach.')
     if (typeof onCoach === 'function') button(hero, 'Tal med din coach', onCoach).setAttribute('data-focus', 'coach')
     // Keep feedback outside the fold, including failures from meal actions.
     const diary = node('details', 'card')
@@ -406,7 +466,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           append(goals, 'p', 'muted space', `${label}: ${displayNumber(s.totals[key])} ${unitName}`)
           if (target && s.totals && s.logs.length) {
             const progress = append(goals, 'progress'); progress.max = target; progress.value = Math.min(target, s.totals[key])
-            progress.setAttribute('aria-label', label + ', registreret i forhold til aftalt mål')
+            progress.setAttribute('aria-label', label + (planReference ? ', registreret i forhold til aktiv plans indhold' : ', registreret i forhold til aftalt mål'))
           }
         }
       }
@@ -439,8 +499,8 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       const weekly = append(main, 'section', 'card')
       if (s.historyRows.length) {
         append(weekly, 'h2', '', 'Din uge')
-        append(weekly, 'p', 'muted space', weekText(s.historyRows, s.targets, s.date, { compact: true }))
-        const weeks = weeklyTrend(s.historyRows, s.targets, s.date)
+        append(weekly, 'p', 'muted space', weekText(s.historyRows, s.profileTargets || s.targets, s.date, { compact: true }))
+        const weeks = weeklyTrend(s.historyRows, s.profileTargets || s.targets, s.date)
         if (weeks.length) append(weekly, 'p', 'small muted space',
           'Loggede dage pr. kalenderuge: ' + weeks.map(week => week.loggedDays).join(' → ')
           + ' · ældste først, denne uge indtil nu.')
@@ -466,7 +526,8 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       hb.setAttribute('aria-expanded', String(s.history)); hb.setAttribute('data-focus', 'history')
       if (s.history) {
         const section = append(main, 'section', 'card'); append(section, 'h2', '', 'Historik · seneste 30 dage')
-        const days = historyDays(s.historyRows, s.targets)
+        append(section, 'p', 'small muted', 'Sammenligning bruger profilens nuværende mål, ikke historiske planmål.')
+        const days = historyDays(s.historyRows, s.profileTargets || s.targets)
         const dateFormat = new Intl.DateTimeFormat('da-DK', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
         if (!days.length) append(section, 'p', 'muted', 'Ingen registreringer i perioden.')
         for (const day of days) {

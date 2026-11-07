@@ -26,7 +26,7 @@ export async function readCoachNutrition(client, context) {
   let meals, goals
   try {
     [meals, goals] = await Promise.all([
-      client.from('meal_logs').select('id, athlete_id, date, meal, kcal, protein')
+      client.from('meal_logs').select('id, athlete_id, date, meal, kcal, protein, carb, fat')
         .in('athlete_id', athleteIds).gte('date', base.from).lte('date', base.through)
         .order('date').limit(COACH_NUTRITION_CAP),
       client.from('athletes').select('id, kcal_target, protein_target').in('id', athleteIds)

@@ -10,6 +10,7 @@ import CoachProgramsView from './CoachProgramsView.mjs'
 import { CoachTeamRegistrations } from '../tracking/hold/CoachTeam.mjs'
 import { coachTeamModel } from './coachTeamModel.mjs'
 import { coachHomeModel, openCoachRow, selectCoachTab } from './coachModel.mjs'
+import CoachRadar, { coachRadarEnabled } from './radar/CoachRadar.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
   background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
@@ -104,6 +105,7 @@ export function CoachView(input = {}) {
       !inbox && rows.length > 3 && h('details', { 'data-coach-fold': 'opgaver', style: fold },
         h('summary', { style: foldSummary }, arrow, `Vis resten (${rows.length - 3})`),
         h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.slice(3).map((row, index) => rowButton(row, index + 3))))),
+    !inbox && coachRadarEnabled(props.coachRadarEnabled) && h(CoachRadar, { enabled: true, source: props, context: model }),
     team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
       h(CoachTeamRegistrations, { enabled: true, model: team })),

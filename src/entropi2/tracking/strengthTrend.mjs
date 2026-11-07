@@ -3,8 +3,27 @@ import { exerciseSetView } from '../../exerciseSetView.js'
 import { erHovedloeft } from '../../exerciseNames.js'
 import { isMainLift } from '../../warmup.js'
 import { calendarDay, addCalendarDays } from '../../calendarDate.js'
+import { uniqueSets } from '../analysis/weeklyLoad.mjs'
 
 const MAIN = ['Squat', 'Bænkpres', 'Dødløft', 'Sumo dødløft']
+
+// Strength accepts flat aliases and uses qualification metadata that load does
+// not read. Compare those effective values before any date/lift filtering.
+// The shared resolver still owns ID, position and timestamp identity semantics.
+export function uniqueStrengthSets(logs) {
+  const normalized = logs.map(log => log && typeof log === 'object' && !Array.isArray(log)
+    // Project only fields read by strength and the shared identity resolver.
+    // Enumerating a source row would also read unrelated/private getters.
+    ? { id: log.id, exercise_id: log.exercise_id, set_number: log.set_number,
+      logged_at: log.logged_at, weight: log.weight,
+      reps_completed: log.reps_completed ?? log.reps,
+      skipped: log.skipped, _optimistic: log._optimistic,
+      rpe_actual: log.rpe_actual, rpe: log.rpe, rpe_source: log.rpe_source, note: log.note,
+      exercises: log.exercises, name: log.exercises?.name ?? log.name } : log)
+  return uniqueSets(normalized, log => [log.exercises?.name ?? log.name,
+    log.exercises?.sessions?.weeks?.block_name])
+}
+
 const monday = day => {
   const weekday = (new Date(`${day}T00:00:00Z`).getUTCDay() + 6) % 7
   return addCalendarDays(day, -weekday)
@@ -51,8 +70,10 @@ export function buildStrengthTrend(logs, { today } = {}) {
     const view = exerciseSetView(name)
     return [view.key, { key: view.key, name: view.name, best: new Map() }]
   }))
-  for (const log of logs) {
-    if (!log || typeof log !== 'object' || log.skipped || erDeloadLog(log)) continue
+  // Resolve identities over the whole snapshot before date/lift filtering, so
+  // conflicting copies cannot establish a weekly top even across different dates.
+  for (const log of uniqueStrengthSets(logs)) {
+    if (log.skipped || log._optimistic || erDeloadLog(log)) continue
     const name = log.exercises?.name ?? log.name
     if (typeof name !== 'string' || !erHovedloeft(name) || !isMainLift(name)) continue
     const reps = log.reps_completed ?? log.reps

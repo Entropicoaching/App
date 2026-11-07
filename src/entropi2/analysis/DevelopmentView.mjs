@@ -29,7 +29,8 @@ export default function DevelopmentView(props = {}) {
   const observedWeeks = model.weeks.filter(w => w.sets > 0)
   const hasVolume = observedWeeks.some(week => week.tonnage !== null)
   const lifts = model.lifts.filter(lift => lift.observed > 0)
-  const forecastLifts = model.forecast?.lifts.filter(lift => lift.status === 'ready') ?? []
+  const sharesOutlook = model.forecast?.meetDate === model.outlook.targetDate && model.outlook.lifts.length > 0
+  const forecastLifts = sharesOutlook ? [] : model.forecast?.lifts.filter(lift => lift.status === 'ready') ?? []
   const hasIntensity = model.weeks.some(w => w.classified > 0)
   if (!observedWeeks.length) return h('section', { 'data-development': true, style: card, 'aria-label': 'Din udvikling' },
     heading, text('Din udvikling kommer frem, når du logger vægt og gentagelser i programmet.'))
@@ -42,6 +43,7 @@ export default function DevelopmentView(props = {}) {
     ...lifts.map(lift => {
       const max = Math.max(1, ...lift.points.map(p => p.value ?? 0))
       const latest = lift.points.filter(p => p.value !== null).at(-1)
+      const outlook = model.outlook.lifts.find(item => item.lift === lift.lift)
       return h('section', { key: lift.lift, 'aria-label': `${lift.lift}, udvikling` },
         h('h3', null, lift.lift),
         latest && h('div', { 'data-development-latest': true, style: { margin: '12px 0', minWidth: 0 } },
@@ -53,6 +55,8 @@ export default function DevelopmentView(props = {}) {
             'Registreret ', h('time', { dateTime: latest.day }, date(latest.day)), '.')),
         lift.delta !== null && h('p', { 'data-history-summary': true,
           style: { fontSize: 16, fontWeight: 600, lineHeight: 1.6, color: '#d8b16b' } }, lift.message),
+        outlook && h('p', { 'data-development-outlook': lift.lift, style: { lineHeight: 1.6 } },
+          `Fortsætter udviklingen i dine registrerede sæt, er skønnet omkring ${number(outlook.estimate)} kg e1RM om 4 uger (${date(model.outlook.targetDate)}). Det er usikkert og ingen garanti for et resultat.`),
         lift.stale && text('Det seneste sammenlignelige sæt er mere end 14 dage gammelt.'),
         h('details', { 'data-development-chart': lift.lift, 'aria-label': `${lift.lift}: udvikling over 26 uger` },
           h('summary', { style: summaryStyle }, 'Se udviklingen over 26 uger'),
@@ -71,7 +75,9 @@ export default function DevelopmentView(props = {}) {
             ...lift.points.filter(p => p.value !== null).map(p => h('li', { key: p.start, 'data-history-value': true }, `${date(p.day)}: ${number(p.value)} kg e1RM`)))),
         h('details', { 'aria-label': `${lift.lift}: datagrundlag` },
           h('summary', { style: summaryStyle }, 'Datagrundlag'),
-          lift.evidence && text(lift.evidence)))
+          lift.evidence && text(lift.evidence),
+          outlook && text(`Skønnet om 4 uger bygger på ${outlook.weeks} ${antalOrd(outlook.weeks, 'uge', 'uger')} med tunge sæt, ${date(outlook.firstDay)}–${date(outlook.lastDay)}, inden for de seneste 12 uger. Modelmargin: ${number(outlook.lower)}–${number(outlook.upper)} kg e1RM; ikke et statistisk konfidensinterval.`),
+          outlook && text('Fremskrivningen kræver mindst 8 uger med data over mindst 56 dage og et seneste tungt sæt højst 14 dage gammelt. Ustabile eller ekstreme forløb giver intet skøn. Tal med coachen om retningen.')))
     }),
     blockNames.length > 0 && h('section', { 'aria-label': 'Observerede blokke' },
       h('h3', null, 'Blokke på tidslinjen'),
@@ -108,9 +114,10 @@ export default function DevelopmentView(props = {}) {
     model.forecast && h('section', { 'aria-label': 'Prognose til næste stævne' },
       h('h3', null, 'Frem mod næste stævne'),
       text(`Planlagt stævne: ${date(model.forecast.meetDate)}.`),
+      sharesOutlook && text('Skøn og datagrundlag for denne dato står ved løftene ovenfor.'),
       ...forecastLifts.map(lift => h('p', { key: lift.lift },
         `${lift.lift}: skøn ${number(lift.estimate)} kg e1RM · modelmargin ${number(lift.lower)}–${number(lift.upper)} kg (${lift.weeks} ${antalOrd(lift.weeks, 'uge', 'uger')} med data, ${date(lift.firstDay)}–${date(lift.lastDay)}).`)),
-      h('details', null, h('summary', { style: summaryStyle }, 'Sådan læses prognosen'),
+      !sharesOutlook && h('details', null, h('summary', { style: summaryStyle }, 'Sådan læses prognosen'),
         text('Prognosen kræver mindst 8 uger med tunge sæt over mindst 56 dage inden for 12 uger. Nyeste sæt højst 14 dage gammelt; stævnet højst 8 uger fra seneste sæt. Kun løft med tilstrækkeligt grundlag vises. Modelmarginen er ikke et statistisk konfidensinterval. Tal med coachen om skønnet.'))),
     model.meetMessage && model.meetMessage.includes('ugyldig') && text(model.meetMessage),
     h('details', null, h('summary', { style: summaryStyle }, 'Sådan læses din udvikling'),

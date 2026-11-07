@@ -1,5 +1,5 @@
 import { load } from '../load.mjs'
-import { buildStrengthTrend } from '../strengthTrend.mjs'
+import { buildStrengthTrend, uniqueStrengthSets } from '../strengthTrend.mjs'
 import { nutritionTrend } from '../nutritionTrend.mjs'
 import { weightTrend } from '../weightTrend.mjs'
 import { uniqueSets } from '../../analysis/weeklyLoad.mjs'
@@ -62,11 +62,13 @@ export function buildAthleteOverview(input = {}, { enabled = false } = {}) {
     daily.set(row.logged_date, Object.fromEntries(fields.map(field => [field.key, observation(row, field)])))
   }
   // A final snapshot excludes optimistic and conflicting set copies for BOTH models.
-  const logs = uniqueSets(exerciseLogs).filter(row => !row._optimistic
+  const inWindow = row => !row._optimistic
     && typeof row.logged_at === 'string' && calendarDay(row.logged_at) >= from
-    && calendarDay(row.logged_at) <= endDate)
+    && calendarDay(row.logged_at) <= endDate
+  const logs = uniqueSets(exerciseLogs).filter(inWindow)
   const training = load(logs, endDate)
-  const strength = buildStrengthTrend(logs, { today: endDate })
+  // Generic load deduplication must not erase strength qualification conflicts.
+  const strength = buildStrengthTrend(uniqueStrengthSets(exerciseLogs).filter(inWindow), { today: endDate })
   if (!training || !strength) return { status: 'error' }
   const weights = weightTrend(weightRows, athleteId, endDate)
   const weeks = Array.from({ length: 4 }, (_, index) => {

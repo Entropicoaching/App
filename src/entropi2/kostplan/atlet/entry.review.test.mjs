@@ -16,19 +16,20 @@ function review(extra = {}) {
       goal: 'vedligehold', intensity: 0, meals: [{ name: 'Review måltid', portions: [{ grams: 100,
         food: { id: 'review-food', name: 'Review fødevare', source: { citation: 'review', verification: 'synthetic' },
           nutrientsPer100g: { energyKcal: 400, proteinG: 20, carbohydrateG: 40, fatG: 10 } } }] }] }],
-    kostplan_v1_approvals: [{ id: '41000000-0000-4000-8000-000000000003', plan_id: planId, version_id: versionId,
-      athlete_id: athleteId, approved_at: date + 'T12:00:00Z' }],
+    kostplan_v1_approvals: [{ plan_id: planId, version_id: versionId,
+      athlete_id: athleteId, approved_at: date + 'T12:00:00Z', approval_kind: 'coach' }],
   }
   const client = { from(table) {
     assert.ok(table === 'meal_logs' || Object.hasOwn(answers, table))
     const call = { table, filters: [], limit: null, insert: null }; calls.push(call)
     const q = {
-      select() { return q }, order() { return q },
+      select(columns) { call.columns = columns; return q }, order() { return q },
       eq(key, value) { call.filters.push([key, value]); return q },
       lte() { return q }, gte() { return q }, in() { return q }, limit(n) { call.limit = n; return q },
       insert(row) { assert.equal(table, 'meal_logs'); call.insert = structuredClone(row); return q },
       then(resolve, reject) {
         return Promise.resolve().then(() => {
+          if (table === 'kostplan_v1_approvals' && call.columns.split(',').includes('id')) return { data: null, error: { code: '42703' } }
           if (call.insert) { rows.push({ ...call.insert, id: 'review-new' }); return { data: [{ id: 'review-new' }], error: null } }
           return { data: structuredClone(call.limit === 0 ? [] : table === 'meal_logs' ? rows : answers[table]), error: null }
         }).then(resolve, reject)

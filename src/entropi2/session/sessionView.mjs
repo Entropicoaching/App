@@ -21,6 +21,7 @@ import { sessionGroupsForDisplay } from './supersaet/supersetModel.mjs'
 import { mountSupersetView } from './supersaet/supersetView.mjs'
 import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps, historyElement } from './historik/exerciseHistoryDom.mjs'
 import { sessionRecordReceipt } from './sessionRecordReceipt.mjs'
+import { createExerciseHelp, closeExerciseHelp } from './exerciseHelpView.mjs'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const given = v => v != null && String(v).trim() !== ''
@@ -35,7 +36,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   const rest = createRestTimer(doc, clock)
   let cleanBlocks = [], plateBar = 20
   const clearBlocks = () => { cleanBlocks.forEach(fn => fn()); cleanBlocks = [] }
-  let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, stepIdentity, announcement, errorStatus, dead = false
+  let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, stepIdentity, announcement, errorStatus, dead = false, renderVersion = 0
   const el = (tag, text, attrs = {}) => {
     const node = doc.createElement(tag)
     if (text != null) node.textContent = String(text)
@@ -48,7 +49,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   root.append(style, trigger, empty)
   const controller = createSessionController(latest, render)
   trigger.addEventListener('click', start)
-  function start() { controller.start() }
+  function start() { if (!dead) controller.start() }
   function tearDown() {
     clearBlocks()
     stopTimer?.(); stopTimer = null; lastPause = undefined
@@ -57,7 +58,12 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   }
   function render() {
     if (dead) return
+    const version = ++renderVersion
     const p = latest(), s = controller.state()
+    // A replaced rendering cannot submit old values or finish a replacement context.
+    const active = () => !dead && version === renderVersion && controller.state().open &&
+      controller.state().selection?.stamp === s.selection?.stamp
+    const action = run => (...args) => active() ? run(...args) : false
     rest.update(s, p)
     root.hidden = p.enabled !== true
     trigger.disabled = !s.canStart
@@ -75,8 +81,12 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       announcement = el('p', '', { role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', 'data-announce': '' })
       errorStatus = el('p', '', { role: 'alert', 'aria-atomic': 'true' })
       frame.append(handle, close, rest.node, announcement, body, errorStatus); dialog.append(frame); root.append(dialog)
-      unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => controller.close(),
-        dismissLayer: () => closeExerciseHistory(body, doc.activeElement) })
+      unbind = bindDialog({ dialog, handle, close, trigger, document: doc, dismiss: () => { if (!dead) controller.close() },
+        dismissLayer: () => {
+          const help = body.querySelector('[data-exercise-help]')
+          if (help?.open && help.contains(doc.activeElement)) return closeExerciseHelp(body)
+          return closeExerciseHistory(body, doc.activeElement) || closeExerciseHelp(body)
+        } })
     }
     const nextStep = JSON.stringify([s.selection.stamp, s.key, s.summary]), stepChanged = nextStep !== stepIdentity
     stepIdentity = nextStep
@@ -92,6 +102,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const hadBodyFocus = body.contains(focused)
     const detailFocus = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
     const approveFocus = focused?.getAttribute('class') === 'approve'
+    const helpDismissFocus = focused?.getAttribute('data-help-dismiss') != null
     const stepFocus = focused?.getAttribute('data-step')
     const oldBar = body.querySelector('[data-e2-plader]')?.querySelector('select')
     if (oldBar) plateBar = Number(oldBar.value)
@@ -158,7 +169,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       body.append(card)
       if (s.next) {
         const resume = el('button', 'Fortsæt passet', { type: 'button' })
-        resume.addEventListener('click', () => controller.resume()); body.append(resume)
+        resume.addEventListener('click', action(() => controller.resume())); body.append(resume)
       }
     }
     const timer = el('p', '', { role: 'timer', 'aria-label': 'Pause mellem sæt', 'aria-live': 'off' })
@@ -193,17 +204,19 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       cleanBlocks.push(() => tempo.dispose())
       showHistory(plan, ex, 'exercise-history-current')
       if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
+      const help = createExerciseHelp(doc, ex.name)
+      if (help) plan.append(help)
       if (p.readOnly !== true) {
         const form = el('form', null, { class: 'card registration-card', 'aria-label': 'Registrer sæt' }), fields = el('div', null, { class: 'fields' }), inputs = {}
         const busy = !['idle', 'error'].includes(s.phase)
         // Marc 3. nov.: same one-tap controls as the old Dagens pas, placed right at their field:
         // "−2,5 [vægt] +2,5", "−1 [reps] +1", and the RPE buttons directly under the RPE field.
-        const set = (name, value) => controller.edit(key, name, value, s.selection.stamp)
+        const set = action((name, value) => controller.edit(key, name, value, s.selection.stamp))
         // Read the live value at tap time, so repeated taps add up even before a rerender.
         const now = name => controller.state().input?.[name] ?? inputs[name].value
         const tap = (text, label, run, cls = 'step', id = label) => {
           const b = el('button', text, { type: 'button', class: cls, 'aria-label': label, 'data-step': id })
-          b.disabled = busy; b.addEventListener('click', run); return b
+          b.disabled = busy; b.addEventListener('click', action(run)); return b
         }
         const stepButtons = {
           weight: [['−2,5', '2,5 kg mindre', v => stepWeight(v, -2.5), 'weight-down'], ['+2,5', '2,5 kg mere', v => stepWeight(v, 2.5), 'weight-up']],
@@ -212,7 +225,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         for (const [name, label, mode] of [['weight', 'Vægt i kg', 'decimal'], ['reps', 'Gentagelser', 'numeric'], ['rpe', 'Oplevet RPE (valgfri)', 'decimal']]) {
           const lab = el('label', label), input = el('input', null, { type: 'text', inputmode: mode, 'data-field': name })
           input.value = String(s.input[name]); input.disabled = busy
-          input.addEventListener('input', () => controller.edit(key, name, input.value, s.selection.stamp))
+          input.addEventListener('input', action(() => controller.edit(key, name, input.value, s.selection.stamp)))
           inputs[name] = input
           if (stepButtons[name]) {
             // The input stays directly inside its own label; the buttons sit on either side of it.
@@ -263,16 +276,17 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         approve.disabled = busy
         form.addEventListener('submit', e => {
           e.preventDefault()
+          if (!active()) return false
           return controller.approve(key, { ...s.input, ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, v.value])) }, s.selection.stamp)
         })
         form.append(createSetNote(doc, { value: s.note, disabled: busy,
-          onChange: value => controller.editNote(key, value, s.selection.stamp) }), approve)
+          onChange: action(value => controller.editNote(key, value, s.selection.stamp)) }), approve)
         body.append(form)
       }
     }
     if (!summary) {
       const finish = el('button', 'Afslut pas', { type: 'button' })
-      finish.addEventListener('click', () => controller.finish()); body.append(finish)
+      finish.addEventListener('click', action(() => controller.finish())); body.append(finish)
     }
     const history = el('details', null, { class: 'card', 'data-detail': 'history' })
     history.append(el('summary', 'Hele passet og klarede sæt'))
@@ -306,11 +320,16 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     else if (replacement && !replacement.disabled) {
       replacement.focus(); if (position[0] != null && typeof replacement.setSelectionRange === 'function') replacement.setSelectionRange(...position)
     } else if (stepAvailable(stepReplacement)) stepReplacement.focus()
+    else if (helpDismissFocus && stepAvailable(body.querySelector('[data-help-dismiss]'))) body.querySelector('[data-help-dismiss]').focus()
     else if (detailFocus) body.querySelector(`[data-detail="${detailFocus}"] summary`)?.focus()
     else if (approveFocus && !body.querySelector('.approve')?.disabled) body.querySelector('.approve')?.focus()
     else if (hadBodyFocus) body.querySelector('[data-heading]')?.focus()
   }
   render()
-  return { update: () => controller.refresh(), controller,
-    dispose() { dead = true; rest.dispose(); tearDown(); trigger.removeEventListener('click', start); root.replaceChildren(); root.classList.remove('e2-session') } }
+  return { update: () => { if (!dead) controller.refresh() }, controller,
+    dispose() {
+      if (dead) return
+      dead = true; renderVersion++; controller.dispose()
+      rest.dispose(); tearDown(); trigger.removeEventListener('click', start); root.replaceChildren(); root.classList.remove('e2-session')
+    } }
 }

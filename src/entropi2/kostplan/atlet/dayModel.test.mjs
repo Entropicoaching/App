@@ -150,12 +150,13 @@ test('foreign, malformed, duplicate or mismatched data fails closed without trac
   }
 })
 
-test('missing targets and unknown intake remain unknown; unrelated dates are excluded', async () => {
+test('known-zero content is retained while missing targets and intake stay unknown; unrelated dates are excluded', async () => {
   const value = source(); value.plan.targets = { kcal: 0, protein: -1 }
   value.logs.push({ id: 'old', athlete_id: athleteId, date: '2026-11-03', meal: 'Old', kcal: 900 },
     { id: 'now', athlete_id: athleteId, date, meal: 'Unknown', kcal: '', protein: 0, carb: 1, fat: 0 })
   const f = setup({ value }); await f.model.load()
-  assert.deepEqual(f.model.snapshot().targets, { kcal: null, protein: null, carb: null, fat: null })
+  assert.deepEqual(f.model.snapshot().targets, { kcal: 0, protein: null, carb: null, fat: null })
+  assert.deepEqual(f.model.snapshot().remaining, { kcal: null, protein: null, carb: null, fat: null })
   assert.equal(f.model.snapshot().totals.kcal, null); assert.equal(f.model.snapshot().totals.protein, 0)
   await f.model.markEaten('snack'); assert.equal(f.model.snapshot().totals.kcal, null)
 })

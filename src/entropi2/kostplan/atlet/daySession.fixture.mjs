@@ -51,7 +51,7 @@ export function fixture(options = {}) {
     ] })
     plan.data[tableNames[0]].push({ id: id(1), athlete_id: athleteId, valid_from: date, status: 'godkendt' })
     plan.data[tableNames[1]].push({ id: id(2), plan_id: id(1), effective_from: date, version_no: 1, ...snapshot })
-    plan.data[tableNames[2]].push({ id: id(3), athlete_id: athleteId, plan_id: id(1), version_id: id(2), approved_at: date + 'T12:00:00Z' })
+    plan.data[tableNames[2]].push({ athlete_id: athleteId, plan_id: id(1), version_id: id(2), approved_at: date + 'T12:00:00Z', approval_kind: 'coach' })
   }
   return { client, plan, rows, calls, storage, writes, values, approve }
 }

@@ -1,0 +1,5 @@
+# Keep the catalogue encoding tests stable in fresh Windows checkouts.
+/src/entropi2/session/opvarmning/warmupTemplates.mjs text eol=lf
+/src/entropi2/session/opvarmning/warmupTemplates.test.mjs text eol=lf
+/src/entropi2/mobility/mobility-routines.mjs text eol=lf
+/src/entropi2/mobility/mobility-routines.test.mjs text eol=lf

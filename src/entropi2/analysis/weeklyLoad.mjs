@@ -6,7 +6,8 @@ const timestamp = /^\d{4}-\d{2}-\d{2}(?:$|T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\
 
 // Persisted IDs take precedence; without IDs, use a set position or timestamp.
 // Conflicting copies are excluded rather than picking an input-order winner.
-export function uniqueSets(rows) {
+// Consumers may extend conflict comparison without changing the shared identity.
+export function uniqueSets(rows, additionalSignature = () => []) {
   const groups = new Map()
   rows.forEach((row, index) => {
     if (!row || typeof row !== 'object' || Array.isArray(row)) return
@@ -17,7 +18,7 @@ export function uniqueSets(rows) {
           : JSON.stringify(['row', index])
     const signature = JSON.stringify([row.exercise_id, row.set_number, row.logged_at,
       row.weight, row.reps_completed, row.skipped ?? false, row._optimistic ?? false,
-      row.rpe_actual, row.rpe, row.rpe_source, row.note])
+      row.rpe_actual, row.rpe, row.rpe_source, row.note, ...additionalSignature(row)])
     const group = groups.get(key) ?? new Map()
     group.set(signature, row)
     groups.set(key, group)

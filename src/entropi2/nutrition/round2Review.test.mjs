@@ -32,7 +32,7 @@ for (const source of ['favorite', 'recent']) test('round2: accepting template re
   await find(f.host, 'button', 'Gem skabelon: ' + m.meal).fire('click')
   const b = find(find(f.host, 'h2', heading).parentElement, 'button', label)
   assert.ok(b)
-  assert.equal(templates(f.host), undefined)
+  assert.match(templates(f.host).textContent, /Ingredienser mangler/)
   assert.equal(find(f.host, 'button', 'Log skabelon: ' + m.meal), undefined)
   assert.equal(f.host.querySelectorAll('button').filter(n => n.textContent === label).length, 1)
   await b.fire('click')
@@ -46,17 +46,17 @@ test('round2: template matching a folded favorite retains one reachable log acti
   await find(f.host, 'button', 'Gem skabelon: ' + favorites[5].meal).fire('click')
   const more = find(f.host, 'summary', 'Flere måltider').parentElement
   assert.equal(more.open, false)
-  assert.equal(templates(f.host), undefined)
+  assert.match(templates(f.host).textContent, /Ingredienser mangler/)
   assert.equal(find(f.host, 'button', 'Log skabelon: ' + favorites[5].meal), undefined)
   more.open = true
   await find(more, 'button', 'Log ' + favorites[5].meal).fire('click')
   assert.deepEqual(f.saves, [{ ...favorites[5], athlete_id: id, date }])
 })
 
-test('round2: yesterday-only saved templates leave no empty fold', async t => {
+test('round2: yesterday-only saved templates retain ingredient editor without duplicate log', async t => {
   const m = meal(2), f = await fixture(t, { rows: recurring(m, '2026-11-03') })
   await find(f.host, 'button', 'Gem skabelon: ' + m.meal).fire('click')
-  assert.equal(templates(f.host), undefined)
+  assert.match(templates(f.host).textContent, /Ingredienser mangler/)
   assert.ok(find(f.host, 'button', 'Log igen: ' + m.meal))
   assert.doesNotMatch(f.host.textContent, /Ingen skabeloner endnu|Indkøb/)
 })

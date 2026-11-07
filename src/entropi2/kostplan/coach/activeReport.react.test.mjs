@@ -32,7 +32,7 @@ test('real React renders the actual approved adapter plan against seven-day prod
   assert.match(html, /Plan og registreret kost|Periodens kost|Seneste 7 dage/)
   assert.match(html, /3.500 kcal registreret/)
   assert.match(html, /2 af 7 dage med kostlog/)
-  assert.match(html, /Den aktive plans dagsmål er reference/)
+  assert.match(html, /bekræftede godkendte planportioner/)
   assert.match(html, /Ukendt registreret/)
   assert.equal((html.match(/<time /g) ?? []).length, 7)
   assert.doesNotMatch(html, /<details[^>]* open|Vægttrend|NaN|Infinity|undefined|dage med entydig aktiveret plan/)
@@ -53,14 +53,19 @@ test('real React host and portal mount the optional report independently of open
   }
 })
 
-test('real React absent plan/table stays empty; actual read errors expose a retry button without stale totals', async () => {
+test('real React absent plan/table preserves actuals with unknown references; failed history exposes retry', async () => {
   for (const f of [syntheticTables(), syntheticTables({ missing: true })]) {
     const result = await read({ enabled: true, ...scope, receipt: receipt(), client: f.client })
-    assert.equal(renderToStaticMarkup(activeReportView(h, result)), '')
+    const html = renderToStaticMarkup(activeReportView(h, result))
+    assert.match(html, /3.500 kcal registreret/)
+    assert.match(html, /Historisk planreference ukendt/)
+    assert.doesNotMatch(html, /% af planindhold/)
   }
   const f = syntheticTables({ error: '42501' })
   const result = await read({ enabled: true, ...scope, receipt: receipt(), client: f.client })
   const html = renderToStaticMarkup(activeReportView(h, result, () => {}))
   assert.match(html, /role="alert"/); assert.match(html, /<button type="button"/)
-  assert.doesNotMatch(html, /3.500|Plan og registreret kost/)
+  assert.match(html, /3.500 kcal registreret|Plan og registreret kost/)
+  assert.match(html, /Historisk planreference kunne ikke bekræftes/)
+  assert.doesNotMatch(html, /% af planindhold/)
 })

@@ -66,7 +66,7 @@ export function warmup(n, input) {
 }
 
 export function createSessionController(latest, changed = () => {}) {
-  let selection = null, open = false, finished = false, error = ''
+  let selection = null, open = false, finished = false, error = '', dead = false, lifetime = 0
   const writes = new Map(), notes = new Map(), edits = new Map()
   let feelingScope = null, feelingDraft = {}
   function confirmed(p) {
@@ -76,7 +76,7 @@ export function createSessionController(latest, changed = () => {}) {
       writes.get(`${programStamp(p)}:${l.exercise_id}_${l.set_number}`)?.phase !== 'saving')
   }
   function resolve(p) {
-    if (!selection || selection.stamp !== programStamp(p)) return null
+    if (dead || !selection || selection.stamp !== programStamp(p)) return null
     return p.allWeeks.find(w => w.id === selection.weekId)?.sessions?.find(s => s.id === selection.sessionId) || null
   }
   function status(p, key) {
@@ -93,7 +93,7 @@ export function createSessionController(latest, changed = () => {}) {
   }
   function state() {
     const p = latest(), session = resolve(p), logs = confirmed(p)
-    const day = programStamp(p) ? findDagensPas(p.allWeeks, p.currentWeek, logs) : null
+    const day = !dead && programStamp(p) ? findDagensPas(p.allWeeks, p.currentWeek, logs) : null
     const next = session ? nextSetInSession(session, logs) : null
     const key = setKey(next), phase = key ? status(p, key) : 'idle'
     const suggestion = setSuggestion(p, next, logs)
@@ -114,19 +114,24 @@ export function createSessionController(latest, changed = () => {}) {
   }
   return {
     state,
+    // Terminal revocation precedes view teardown; retained methods cannot reopen it.
+    dispose() { dead = true; lifetime++; selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {} },
     refresh() {
-      if (selection && !resolve(latest())) { selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {} }
+      if (dead) return
+      if (selection && !resolve(latest())) { lifetime++; selection = null; open = false; finished = false; error = ''; feelingScope = null; feelingDraft = {} }
       changed()
     },
     start() {
+      if (dead) return false
       const p = latest(), stamp = programStamp(p)
       if (!stamp) return false
       const session = resolve(p) || findDagensPas(p.allWeeks, p.currentWeek, confirmed(p))?.session
       if (!session || sessionSetTotal(session) === 0) return false
+      if (selection?.stamp !== stamp) lifetime++
       selection = { stamp, weekId: p.currentWeek.id, sessionId: session.id }
       open = true; error = ''; changed(); return true
     },
-    close() { open = false; changed() },
+    close() { if (dead) return; open = false; changed() },
     finish() {
       if (!state().open) return false
       if (!finished) { finished = true; error = ''; changed() }
@@ -166,25 +171,32 @@ export function createSessionController(latest, changed = () => {}) {
       if (typeof p.onLogSet !== 'function' || typeof p.parsePlannedRpe !== 'function') {
         error = 'Registrering er ikke tilgængelig.'; changed(); return false
       }
-      const id = `${selection.stamp}:${s.key}`
+      const id = `${selection.stamp}:${s.key}`, startedIn = lifetime
       const write = { key: s.key, phase: 'saving' }
       writes.set(id, write); error = ''; changed()
       // Re-read after notifications as well: no retained exercise or callback crosses a plan change.
       const current = latest(), valid = state()
       if (current.readOnly === true || !valid.open || valid.summary || valid.selection.stamp !== stamp || !valid.next || valid.key !== expected || !resolve(current)) {
-        writes.delete(id); changed(); return false
+        writes.delete(id); if (!dead) changed(); return false
       }
+      let storageFailed = false
       try {
-        const n = valid.next
+        const n = valid.next, plannedRpe = current.parsePlannedRpe(n.exercise.intensity)
+        // A supplied parser may synchronously invalidate/dispose this view too.
+        const ready = state()
+        if (dead || lifetime !== startedIn || latest().readOnly === true || !ready.open || ready.summary || ready.key !== expected || ready.selection.stamp !== stamp) { writes.delete(id); if (!dead) changed(); return false }
         const result = await current.onLogSet(n.exercise, n.setNumber, n.totalSets,
-          Number(input.reps), current.parsePlannedRpe(n.exercise.intensity), input, { preserveMissingRpe: true, sessionOnly: true })
+          Number(input.reps), plannedRpe, input, { preserveMissingRpe: true, sessionOnly: true })
         // The pinned callback resolves undefined on both success and handled error.
         // Never infer success from resolution, an optimistic row, or setConfirm=saved.
         write.phase = ['saved', 'queued', 'parked', 'error'].includes(result?.phase) ? result.phase : result === false ? 'error' : 'settled'
-        if (result?.storageFailed) error = 'Sættet kunne ikke gemmes lokalt. Behold passet åbent og prøv igen, når der er net.'
+        storageFailed = result?.storageFailed
       } catch {
         write.phase = 'error'
       }
+      // The host still owns an already-started write; only its stale UI response is revoked.
+      if (dead || lifetime !== startedIn || !resolve(latest())) return false
+      if (storageFailed) error = 'Sættet kunne ikke gemmes lokalt. Behold passet åbent og prøv igen, når der er net.'
       changed()
       return programStamp(latest()) === stamp && status(latest(), expected) === 'saved'
     },

@@ -56,7 +56,7 @@ export function developmentSnapshot(props, now) {
 }
 
 export function developmentModel(props = {}, now) {
-  const empty = (state, message) => ({ state, message, lifts: [], weeks: [], insights: [], forecast: null })
+  const empty = (state, message) => ({ state, message, lifts: [], weeks: [], insights: [], forecast: null, outlook: null })
   const today = now instanceof Date || (typeof now === 'string' && stamp.test(now)) ? calendarDay(now) : null
   if (!today) return empty('error', 'Datoen er ugyldig. Din udvikling kan ikke vises.')
   if (props.fremgangError || props.exerciseLogsError) return empty('error', 'Din udvikling kunne ikke hentes. Prøv at åbne analyse igen.')
@@ -130,7 +130,14 @@ export function developmentModel(props = {}, now) {
   // Filter this athlete overview only; shared coach/forecast models retain
   // their existing contract and eligibility rules.
   const forecast = projection ? { ...projection, lifts: projection.lifts.filter(lift => trainedLifts.has(lift.lift)) } : null
-  return { state: 'ready', today, start, lifts, weeks, insights: insights.slice(0, 3), forecast,
+  // A fixed four-week outlook also works without a competition or full block
+  // plan. Reuse the forecast's evidence, freshness and uncertainty gates; the
+  // already confirmed snapshot retains current-week edits and undo.
+  const targetDate = addCalendarDays(today, 28)
+  const direction = meetPrognose({ now, meetDate: targetDate, fremgangLogs: rows })
+  const outlook = { targetDate, lifts: direction.lifts.filter(lift =>
+    trainedLifts.has(lift.lift) && lift.status === 'ready') }
+  return { state: 'ready', today, start, lifts, weeks, insights: insights.slice(0, 3), forecast, outlook,
     meetMessage: !planned || (meetDate && meetDate < today) ? 'Intet kommende stævne er planlagt.'
       : !meetDate ? 'Den planlagte stævnedato er ugyldig. Prognosen kan ikke vises.' : null }
 }

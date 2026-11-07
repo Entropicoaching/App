@@ -27,10 +27,12 @@ async function fixture() {
     }]))
     chain.limit = limit => {
       call.push(['limit', limit])
-      return Promise.resolve({ error: null, data: table === 'meal_logs'
-        ? [...data.mealLogs.map(({ carb, fat, ...row }) => row),
-          { ...data.mealLogs[0], id: 'other-meal', athlete_id: 'synthetic-other' }]
-        : [{ id: athleteId, kcal_target: 2000, protein_target: 150 }] })
+      const columns = call.find(entry => Array.isArray(entry) && entry[0] === 'select')[1].split(',').map(key => key.trim())
+      const stored = table === 'meal_logs'
+        ? [...data.mealLogs, { ...data.mealLogs[0], id: 'other-meal', athlete_id: 'synthetic-other' }]
+        : [{ id: athleteId, kcal_target: 2000, protein_target: 150 }]
+      return Promise.resolve({ error: null, data: stored.map(row =>
+        Object.fromEntries(columns.map(key => [key, row[key]]))) })
     }
     return chain
   } }
@@ -51,15 +53,15 @@ test('existing coach read reaches the portal with only selected athlete rows and
   assert.equal(receipt.mealLogs.length, 2)
   receipt.mealLogs.forEach((row, i) => {
     assert.equal(row, props.coachNutrition.rows[i])
-    assert.equal(Object.hasOwn(row, 'carb'), false)
-    assert.equal(Object.hasOwn(row, 'fat'), false)
+    assert.equal(row.carb, input().mealLogs[i].carb)
+    assert.equal(row.fat, input().mealLogs[i].fat)
   })
   assert.deepEqual(receipt.weightLogs, [...props.weightStatus.rows].reverse())
   const portal = CoachKostMaal(props).props.children.find(child => child.type === PortalPlan)
   assert.deepEqual(portal.props.nutritionRead, receipt)
   assert.equal(PortalPlan(portal.props).props.nutritionRead, portal.props.nutritionRead)
   assert.deepEqual(calls.map(call => call[0]), ['meal_logs', 'athletes'])
-  assert.equal(calls[0][1][1], 'id, athlete_id, date, meal, kcal, protein')
+  assert.equal(calls[0][1][1], 'id, athlete_id, date, meal, kcal, protein, carb, fat')
   assert.deepEqual(props, before)
 })
 

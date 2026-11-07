@@ -7,9 +7,12 @@ export function coachCalendarDays(athletes = []) {
   for (const athlete of athletes) {
     const date = athlete?.competition_date
     if (!athlete?.id || calendarTime(date) === null) continue
-    if (!days.has(date)) days.set(date, [])
-    days.get(date).push(athlete)
+    if (!days.has(date)) days.set(date, new Map())
+    // First row wins for this ID/date, including conflicting display fields.
+    // Map insertion order preserves the caller's athlete order within each day.
+    const entries = days.get(date)
+    if (!entries.has(athlete.id)) entries.set(athlete.id, athlete)
   }
   return [...days].sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, athletes]) => ({ date, athletes }))
+    .map(([date, athletes]) => ({ date, athletes: [...athletes.values()] }))
 }

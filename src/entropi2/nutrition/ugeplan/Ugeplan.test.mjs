@@ -84,13 +84,13 @@ test('read/write, setup and ingredient failures render explicit alerts; unreadab
 test('missing ingredient warning, deleted template warning and strict OFF', () => {
   const { model } = setup({ templates: [{ ...template, ingredients: undefined }] })
   model.add(0, template.id)
-  assert.doesNotMatch(html(model), /Listen er ufuldstændig|Ugens indkøbsliste/)
+  assert.match(html(model), /Listen er ufuldstændig: 1/)
   const deleted = setup()
   deleted.model.add(0, template.id)
   const missing = createWeekPlan({ ...deleted.props, templates: [] })
   assert.match(html(missing), /Skabelon findes ikke længere/)
-  assert.doesNotMatch(html(missing), /Listen er ufuldstændig|Ugens indkøbsliste|Ukendt|mål mangler/)
-  assert.equal(nodes(UgeplanView({ enabled: true, snapshot: missing.snapshot() })).filter(n => n.type === 'button').length, 1)
+  assert.match(html(missing), /Listen er ufuldstændig: 1/)
+  assert.equal(nodes(UgeplanView({ enabled: true, snapshot: missing.snapshot() })).filter(n => n.props['data-focus']?.startsWith('week-plan-remove')).length, 1)
   for (const enabled of [undefined, false, null, 1, 'true']) {
     const props = { enabled, get storage() { throw Error('OFF read') },
       get snapshot() { throw Error('OFF snapshot read') } }
@@ -116,16 +116,16 @@ function screenInputs(t, { raw, storageError = false, writeError = false } = {})
   return { controller, template, data, writes, backend }
 }
 
-test('real React screen inputs show saved days and targets, no empty ingredient list, and no repeated Ugeplan heading', t => {
+test('real React screen inputs show saved days and targets, incomplete ingredient warning, and no repeated Ugeplan heading', t => {
   const f = screenInputs(t), props = f.controller.weekPlanInputs(), model = createWeekPlan(props)
   model.add(0, f.template.id); model.add(6, f.template.id)
   const markup = renderToStaticMarkup(h(Ugeplan, props))
   assert.match(markup, /Min &lt;ret&gt;/)
   assert.match(markup, /400 kcal \/ 2.000 kcal/)
   assert.match(markup, /25 g protein \/ 120 g protein/)
-  assert.equal((markup.match(/Ugens indkøbsliste/g) || []).length, 0)
+  assert.equal((markup.match(/Ugens indkøbsliste/g) || []).length, 1)
   assert.doesNotMatch(markup, /<h2>Ugeplan/)
-  assert.doesNotMatch(markup, /Listen er ufuldstændig|Ingen ingredienser at vise/)
+  assert.match(markup, /Listen er ufuldstændig: 2/)
   assert.doesNotMatch(markup, /Indkøb fra dine favoritter/)
   assert.equal(f.writes.every(key => key.startsWith('entropi2:nutrition:ugeplan:v1:')), true)
   assert.deepEqual(f.backend, [])
@@ -205,7 +205,7 @@ test('real React removed template remains removable and replaceable without read
   const render = () => UgeplanView({ enabled: true, snapshot: restored.snapshot(),
     onRemove: (day, slot) => restored.remove(day, slot), onAdd: (day, id) => restored.add(day, id) })
   assert.match(renderToStaticMarkup(render()), /Skabelon findes ikke længere/)
-  assert.doesNotMatch(renderToStaticMarkup(render()), /Ukendt|mål mangler|Ugens indkøbsliste/)
+  assert.match(renderToStaticMarkup(render()), /Listen er ufuldstændig: 1/)
   assert.deepEqual(writes, [])
   nodes(render()).find(n => n.type === 'button').props.onClick()
   nodes(render()).find(n => n.type === 'select').props.onChange({ currentTarget: { value: replacement.id } })

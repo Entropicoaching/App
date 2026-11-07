@@ -56,19 +56,21 @@ test('actual production host receipt plus active namespace plan shows trailing s
   assert.match(text(tree), /3.500 kcal registreret|Ukendt registreret/)
   assert.doesNotMatch(text(tree), /Vælg måltider|Vægttrend|Ugens kost/)
   assert.ok(nodes(tree).filter(n => n.type === 'details').every(n => !n.props.open))
-  assert.ok(text(tree).includes((2 * active.targets.kcal).toLocaleString('da-DK', { maximumFractionDigits: 1 }) + ' kcal plan for loggede dage'))
+  assert.equal(active.active, true)
+  assert.match(text(tree), /Historisk planreference ukendt|1 af 7 dage med bekræftet planreference/)
+  assert.doesNotMatch(text(tree).split('Se dage og planportioner')[0], /% af planindhold/)
   assert.equal(f.writes().length, count); assert.deepEqual(read, before)
   screen.unmount()
 })
 
-test('no table, no approved plan or no real recent meal renders nothing and never writes', async () => {
+test('no table/plan preserves actuals and unknown references; no recent meal still hides without reads', async () => {
   for (const missing of [true, ...tableNames]) for (const missingCode of ['42P01', 'PGRST205']) {
     const f = syntheticTables({ missing, missingCode }), screen = mount(ActiveReport, props(f), { effects: true })
-    screen.render(); await settle(); assert.equal(screen.render(), null)
+    screen.render(); await settle(); assert.match(text(screen.render()), /Historisk planreference ukendt/)
     assert.equal(f.writes().length, 0); screen.unmount()
   }
   const f = syntheticTables(), screen = mount(ActiveReport, props(f), { effects: true })
-  screen.render(); await settle(); assert.equal(screen.render(), null); screen.unmount()
+  screen.render(); await settle(); assert.match(text(screen.render()), /Historisk planreference ukendt/); screen.unmount()
   for (const read of [undefined, receipt({ mealLogs: [] }), receipt({ mealLogs: [meal(scope.date, 'receipt',
     { athlete_id: scope.athleteId, meal: '  [appData2-day-v1][]' })] }),
     receipt({ mealLogs: [meal('2026-10-29', 'old', { athlete_id: scope.athleteId })] })]) {
@@ -96,8 +98,9 @@ test('permission/transport errors are visible and retry loads the same scope wit
   const client = { from: table => f.client.from(table) }
   const screen = mount(ActiveReport, { ...props(f), client }, { effects: true })
   f.options.error = '42501'; screen.render(); await settle()
-  let tree = screen.render(); assert.match(text(tree), /Kostrapporten kunne ikke hentes/)
-  assert.doesNotMatch(text(tree), /3.500|Plan og registreret kost/)
+  let tree = screen.render(); assert.match(text(tree), /Historisk planreference kunne ikke bekræftes/)
+  assert.match(text(tree), /3.500 kcal registreret/)
+  assert.doesNotMatch(text(tree), /% af planindhold/)
   delete f.options.error
   nodes(tree).find(n => n.type === 'button').props.onClick()
   assert.equal(screen.render(), null); await settle(); tree = screen.render()
@@ -110,12 +113,12 @@ test('schema disappearance and transport rejection are rechecked without convert
   const run = () => new Promise(resolve => startActiveReport({ enabled: true, ...scope,
     receipt: receipt(), client: f.client }, resolve))
   f.options.missing = tableNames[1]
-  assert.deepEqual((await run()).report, null)
+  assert.equal((await run()).report.referenceState, 'unavailable')
   delete f.options.missing
   f.options.before = () => { throw Error('Synthetic transport failure') }
-  assert.equal((await run()).state, 'error')
+  assert.equal((await run()).report.referenceState, 'unavailable')
   delete f.options.before
-  assert.equal((await run()).report.comparison, 'active-plan')
+  assert.equal((await run()).report.comparison, 'daily-approved-plan')
 })
 
 test('late results are cancelled and receipt/athlete/date/coach/client changes hide old evidence synchronously', async () => {
@@ -145,7 +148,7 @@ test('successful activation refreshes report in the same open portal; draft gene
   const screen = mount(PortalPlan, props(f), { effects: true })
   try {
     screen.render(); await settle(); let tree = screen.render()
-    assert.doesNotMatch(text(tree), /Periodens kost/)
+    assert.match(text(tree), /0 af 7 dage med bekræftet planreference/)
     open(tree); screen.render(); await settle(); tree = screen.render()
     const change = (name, value) => nodes(tree).find(n => n.props.name === name).props.onChange({ currentTarget: { value } })
     change('maintenanceKcal', '2400'); change('fat', '70')
@@ -154,12 +157,13 @@ test('successful activation refreshes report in the same open portal; draft gene
     const generate = nodes(tree).find(n => n.type === 'button' && text(n) === 'Brug måltider og generér dagsplan')
     nodes(tree).find(n => n.type === 'form' && nodes(n).includes(generate)).props.onSubmit({ preventDefault() {} })
     screen.render(); await settle(); tree = screen.render()
-    assert.doesNotMatch(text(tree), /Periodens kost/)
+    assert.match(text(tree), /0 af 7 dage med bekræftet planreference/)
     await nodes(tree).find(n => n.type === 'button' && text(n) === 'Gem som kladde').props.onClick()
     tree = screen.render()
     assert.equal(await nodes(tree).find(n => n.type === 'button' && text(n) === 'Aktivér for atleten').props.onClick(), true)
     screen.render(); await settle(); tree = screen.render()
-    assert.match(text(tree), /Periodens kost|Planen er aktiveret for atleten/)
+    assert.match(text(tree), /1 af 7 dage med bekræftet planreference/)
+    assert.match(text(tree), /Planen er aktiveret for atleten/)
     assert.equal(nodes(tree).filter(n => n.type === 'h2' && text(n) === 'Plan og registreret kost').length, 1)
     assert.deepEqual(f.writes().map(c => c.table), tableNames)
   } finally {

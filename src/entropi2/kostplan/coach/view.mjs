@@ -60,7 +60,7 @@ export function coachPlanView(h, snapshot, actions) {
   h('details', null,
     h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, 'Om forslaget'),
     h('p', null, s.gramGenerator
-        ? 'Målene beregnes fra profilens alder, kropsvægt og dit valgte mål. Tom vedligehold bruger modellens foreløbige vægtestimat. Træningsbelastning, dagsform og historik er ikke koblet ind; modellen bruger en hviledag som standard. Gennemgå portionerne før lokal gemning.'
+        ? 'Målene beregnes fra profilens alder, kropsvægt og dit valgte mål. Tom vedligehold bruger modellens foreløbige vægtestimat. Kun eksplicit oplyst træningsbelastning bruges. Uden dette input bruger modellen en hviledag som standard; det er ikke bekræftet træningsdata. Dagsform og historik er ikke koblet ind. Gennemgå portionerne før lokal gemning.'
         : s.calculated
         ? 'Forslaget bruger atletens beregningsgrundlag. Træning, dagsform og modellens gulve kan ændre procentmålet. Coachen skal gennemgå og aktivere planen.'
         : 'Bulk lægger den valgte procent til, cut trækker den fra. Vedligehold bruger 0 %. Kulhydrat udfylder resten af energimålet.'),

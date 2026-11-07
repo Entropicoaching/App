@@ -71,9 +71,8 @@ export function buildNutritionReport(options = {}) {
   return nutritionReport(options)
 }
 
-// The adapter exposes today's approved plan, not historical activation dates.
-// Compare its targets as a current reference across the trailing seven days;
-// never manufacture a plan.mjs lifecycle or claim those targets applied then.
+// Compatibility entry point: a current plan cannot supply historical targets.
+// Callers without the bounded daily read get explicit unknown references.
 export function buildActivePlanNutritionReport(options = {}) {
   if (options.enabled !== true) return null
   const { activePlan: plan, athleteId, date } = options
@@ -83,29 +82,57 @@ export function buildActivePlanNutritionReport(options = {}) {
     || !plan.targets || !metrics.every(key => plan.targets[key] === null
       || typeof plan.targets[key] === 'number' && Number.isFinite(plan.targets[key]) && plan.targets[key] >= 0))
     fail('Ugyldig aktiv plan')
-  return nutritionReport({ athleteId, date, mealLogs: options.mealLogs, weightLogs: [] }, plan)
+  return buildDailyPlanNutritionReport({ enabled: true, athleteId, date, mealLogs: options.mealLogs,
+    dailyReferences: options.dailyReferences })
 }
 
-function nutritionReport(options, activePlan = null) {
+// Mounted coach report: consumption survives absent/incomplete history. Every
+// target comes from the matching scoped day; no profile/current-plan fallback.
+export function buildDailyPlanNutritionReport(options = {}) {
+  if (options.enabled !== true) return null
+  const { athleteId, date } = options
+  if (!id(athleteId) || !validDay(date) || date < '1900-01-07' || date > '9999-12-24') fail('Atlet og gyldig rapportdato kræves')
+  const from = iso(calendarTime(date) - 6 * DAY)
+  const refs = options.dailyReferences ?? { schema: 'entropi2-kostplan:daily-reference/v1', athleteId, date, from, through: date,
+    state: 'unavailable', reason: 'history-not-supplied', days: Array.from({ length: 7 }, (_, i) => ({
+      date: iso(calendarTime(from) + i * DAY), state: 'unknown', reason: 'history-not-supplied',
+      planId: null, versionId: null, targets: values(null),
+    })) }
+  if (refs.schema !== 'entropi2-kostplan:daily-reference/v1' || refs.athleteId !== athleteId || refs.date !== date
+    || refs.from !== from || refs.through !== date || !['ready', 'unavailable'].includes(refs.state)
+    || !Array.isArray(refs.days) || refs.days.length !== 7) fail('Ugyldig daglig planreference')
+  refs.days.forEach((r, i) => {
+    if (r.date !== iso(calendarTime(from) + i * DAY) || !['approved', 'unknown', 'conflict'].includes(r.state)
+      || !r.targets || !metrics.every(key => r.targets[key] === null || typeof r.targets[key] === 'number'
+        && Number.isFinite(r.targets[key]) && r.targets[key] >= 0)
+      || (r.state === 'approved' ? refs.state !== 'ready' || !id(r.planId) || !id(r.versionId)
+        : r.planId !== null || r.versionId !== null || metrics.some(key => r.targets[key] !== null))) fail('Ugyldig daglig planreference')
+  })
+  return nutritionReport({ athleteId, date, mealLogs: options.mealLogs, weightLogs: [] }, refs)
+}
+
+function nutritionReport(options, dailyReferences = null) {
   const { athleteId, date, plans, mealLogs, weightLogs } = options
   if (!id(athleteId) || !validDay(date) || date > '9999-12-24') fail('Atlet og gyldig rapportdato kræves')
-  if (![...(activePlan ? [] : [plans]), mealLogs, weightLogs].every(Array.isArray)) fail('Rapporten kræver færdighentede lister')
+  if (![...(dailyReferences ? [] : [plans]), mealLogs, weightLogs].every(Array.isArray)) fail('Rapporten kræver færdighentede lister')
   const end = calendarTime(date)
-  const start = end - (activePlan ? 6 : (new Date(end).getUTCDay() + 6) % 7) * DAY
+  const start = end - (dailyReferences ? 6 : (new Date(end).getUTCDay() + 6) % 7) * DAY
   const from = iso(start), through = iso(start + 6 * DAY)
   if (!validDay(from) || !validDay(through)) fail('Ugen ligger uden for datointervallet')
-  const history = activePlan ? [{ id: activePlan.id, from, until: null, targets: activePlan.targets }]
-    : planHistory(plans, athleteId)
+  const history = dailyReferences ? [] : planHistory(plans, athleteId)
   const grouped = dailyLogs(mealLogs, athleteId, from, date)
   const days = Array.from({ length: 7 }, (_, offset) => {
     const day = iso(start + offset * DAY)
     const future = day > date
     const matches = future ? [] : history.filter(plan => plan.from <= day && (plan.until === null || day < plan.until))
-    const planState = future ? 'future' : matches.length > 1 ? 'conflict' : matches.length ? 'active' : 'none'
-    const targets = planState === 'active' ? { ...matches[0].targets } : values(null)
+    const reference = dailyReferences?.days[offset]
+    const planState = reference ? reference.state === 'approved' ? 'active' : reference.state
+      : future ? 'future' : matches.length > 1 ? 'conflict' : matches.length ? 'active' : 'none'
+    const targets = reference ? { ...reference.targets } : planState === 'active' ? { ...matches[0].targets } : values(null)
     const logs = grouped.get(day) || []
     const totals = Object.fromEntries(metrics.map(key => [key, sum(logs.map(row => row[key]))]))
-    return { date: day, future, planState, planId: planState === 'active' ? matches[0].id : null,
+    return { date: day, future, planState, planId: reference ? reference.planId : planState === 'active' ? matches[0].id : null,
+      ...(reference ? { planRevision: reference.versionId, referenceReason: reference.reason } : {}),
       targets, totals, percentages: Object.fromEntries(metrics.map(key => [key, percentage(totals[key], targets[key])])),
       mealCount: logs.length, logState: future ? 'future' : !logs.length ? 'missing'
         : metrics.some(key => totals[key] === null) ? 'unknown' : 'logged' }
@@ -125,12 +152,14 @@ function nutritionReport(options, activePlan = null) {
     .map(row => ({ date: row.date, kg: row.weight }))
   const previous = recentWeights.filter(row => row.date < iso(end - 6 * DAY))
   return { namespace, athleteId, date, from, through, days,
-    ...(activePlan ? { comparison: 'active-plan', planRevision: activePlan.revision } : {}),
+    ...(dailyReferences ? { comparison: 'daily-approved-plan', referenceState: dailyReferences.state,
+      referenceReason: dailyReferences.reason } : {}),
     week: { elapsedDays: elapsed.length, loggedDays: logged.length,
       missingDays: elapsed.length - logged.length,
       unknownDays: logged.filter(day => day.logState === 'unknown').length,
       plannedDays: elapsed.filter(day => day.planState === 'active').length,
-      conflictDays: elapsed.filter(day => day.planState === 'conflict').length, metrics: weekMetrics },
+      conflictDays: elapsed.filter(day => day.planState === 'conflict').length,
+      ...(dailyReferences ? { unknownReferenceDays: elapsed.filter(day => day.planState !== 'active').length } : {}), metrics: weekMetrics },
     weight: { from: iso(end - 6 * DAY), through: date,
       average: trend.average, days: trend.days, daily,
       previousFrom: iso(end - 13 * DAY), previousThrough: iso(end - 7 * DAY),

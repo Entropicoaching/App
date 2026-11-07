@@ -32,7 +32,27 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   if (!validId(athlete?.id) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
   const id = athlete.id
   const yesterdayDate = new Date(calendarTime(date) - 86400000).toISOString().slice(0, 10)
-  const targets = { kcal: parseInputNumber(athlete.kcal_target), protein: parseInputNumber(athlete.protein_target) }
+  const profileTargets = { kcal: parseInputNumber(athlete.kcal_target), protein: parseInputNumber(athlete.protein_target) }
+  const dayTargets = contracts?.dayTargets
+  const dailyReference = () => {
+    const fallback = state => ({ targets: { ...profileTargets }, targetReference: { source: 'profile', state } })
+    if (!dayTargets) return fallback('ready')
+    try {
+      const value = dayTargets.snapshot()
+      if (!dayTargets.owner || typeof dayTargets.owner !== 'object'
+        || dayTargets.athleteId !== id || dayTargets.date !== date
+        || value?.owner !== dayTargets.owner || value.athleteId !== id || value.date !== date) return fallback('unavailable')
+      if (value.source !== 'approved-plan') return fallback(value.state)
+      if (!validId(value.planId) || !validId(value.revision)) return fallback('unavailable')
+      // Unknown plan nutrients stay unknown; never fill individual gaps with
+      // unrelated profile goals. This is the approved portion sum, not an estimate.
+      return { targets: Object.fromEntries(['kcal', 'protein'].map(key => {
+        const number = parseInputNumber(value.targets?.[key])
+        return [key, number]
+      })), targetReference: { source: 'approved-plan', state: value.state,
+        planId: value.planId, revision: value.revision } }
+    } catch { return fallback('unavailable') }
+  }
   const storageKey = 'entropi2:nutrition:favorites:v1:' + encodeURIComponent(id)
   let rows = [], favorites = [], phase = 'idle', message = '', disposed = false, loadToken = 0
   let pending = null, history = false, favoriteError = '', committed = new Set()
@@ -112,7 +132,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       const state = templates.snapshot()
       return { enabled: true, embedded: true, athleteId: id, date, templates: state.templates,
         templateError: state.error === 'Skabeloner kunne ikke læses.' ? state.error : '',
-        targets: { ...targets }, storage, onRetry: () => api.load() }
+        targets: { ...profileTargets }, storage, onRetry: () => api.load() }
     },
     snapshot() {
       const todayRows = today()
@@ -127,7 +147,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         mealTemplates: templates.snapshot(),
         ownMeals: favorites.map(meal => ({ ...meal, id: mealKey(meal) })),
         loaded: phase !== 'idle' && phase !== 'loading' && phase !== 'load-error',
-        totals: finite ? totals : null, targets: { ...targets }, invalid: !finite,
+        totals: finite ? totals : null, ...dailyReference(), profileTargets: { ...profileTargets }, invalid: !finite,
         logs: todayRows.map(r => ({ ...r })),
         selectedParts: todayRows.flatMap((r, i) => selectedParts.has(r) ? [i] : []),
         removableIds: todayRows.filter(mutable).filter(() => typeof contracts?.remove === 'function').map(r => r.id),
@@ -172,6 +192,10 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         if (disposed || token !== loadToken) return false
         phase = 'load-error'; message = 'Kostloggen kunne ikke hentes. Prøv igen.'; emit(); return false
       }
+    },
+    setTemplateIngredients(templateId, ingredients) {
+      if (disposed || pending) return false
+      const ok = templates.setIngredients(templateId, ingredients); emit(); return ok
     },
     acceptTemplate(templateId) {
       if (disposed || pending) return false
@@ -279,8 +303,9 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     },
     update(rowId, meal, intent) { return mutate('update', rowId, meal, intent) },
     remove(rowId, intent, confirmed = false) { return mutate('remove', rowId, null, intent, confirmed) },
-    dispose() { clearUndo(); disposed = true; loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
+    dispose() { clearUndo(); disposed = true; unsubscribeTargets?.(); loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
   }
+  const unsubscribeTargets = dayTargets?.subscribe?.(emit)
   return api
 }
 

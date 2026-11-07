@@ -85,3 +85,39 @@ test('real React folds three complete lift graphs while dated estimates and old-
   assert.equal((outsideCharts.match(/data-history-summary=/g) ?? []).length, 3)
   assert.doesNotMatch(outsideCharts, /data-history-value=/)
 })
+
+test('real React shows a cautious four-week outlook without a meet, with folded evidence per main lift', () => {
+  const names = ['Squat', 'Bænkpres', 'Dødløft']
+  const logs = names.flatMap((name, lift) => props().fremgangLogs.map(row => ({ ...row,
+    exercise_id: `${lift}-${row.exercise_id}`, exercises: { ...row.exercises, name } })))
+  const rendered = html({ athlete: { id: 'synthetic-a' }, fremgangLogs: logs })
+  const primary = rendered.slice(0, rendered.indexOf('data-analysis-secondary'))
+  const evidence = [...primary.matchAll(/<details aria-label="([^"]+): datagrundlag"[^>]*>[\s\S]*?<\/details>/g)]
+  assert.deepEqual(evidence.map(match => match[1]), names)
+  for (const [fold] of evidence) {
+    assert.doesNotMatch(fold.slice(0, fold.indexOf('>')), /\bopen=/)
+    assert.match(fold, /13 uger med tunge sæt, 12.08.2026–04.11.2026/)
+    assert.match(fold, /Modelmargin: .*ikke et statistisk konfidensinterval/)
+  }
+  const unfolded = primary.replace(/<details\b[\s\S]*?<\/details>/g, '')
+  assert.equal((unfolded.match(/data-development-outlook=/g) ?? []).length, 3)
+  assert.equal((unfolded.match(/omkring 141,9 kg e1RM om 4 uger \(02.12.2026\)/g) ?? []).length, 3)
+  assert.equal((unfolded.match(/usikkert og ingen garanti/g) ?? []).length, 3)
+  assert.doesNotMatch(primary, /Frem mod næste stævne|blokkens slutning/)
+})
+
+test('real React omits the four-week outlook for sparse, stale, failed and OFF histories', () => {
+  for (const extra of [{ fremgangLogs: props().fremgangLogs.slice(-8) },
+    { now: '2026-11-19' }, { fremgangError: true }, { fremgangLoading: true },
+    { exerciseLogsError: true }, { exerciseLogsLoading: true }, { fremgangLogs: undefined },
+    { fremgangLogs: [] }, { entropi2: false }])
+    assert.doesNotMatch(html(extra), /data-development-outlook|Skønnet om 4 uger/)
+})
+
+test('real React avoids duplicate estimates when the meet and outlook share a date', () => {
+  const rendered = html({ athlete: { id: 'synthetic-a', competition_date: '2026-12-02' } })
+  assert.match(rendered, /data-development-outlook="Squat"/)
+  assert.match(rendered, /Planlagt stævne: 02.12.2026/)
+  assert.match(rendered, /Skøn og datagrundlag for denne dato står ved løftene ovenfor/)
+  assert.doesNotMatch(rendered, /Squat: skøn|Sådan læses prognosen/)
+})

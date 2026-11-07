@@ -46,7 +46,7 @@ test('repeated portions sum across days through actual shopping module, remove o
   let state = plan.snapshot()
   assert.deepEqual(state.days[0].totals, { kcal: 800, protein: 50 })
   assert.deepEqual(state.days[6].totals, { kcal: 400, protein: 25 })
-  assert.deepEqual(state.shopping.items, [{ name: 'Havre', quantity: 150, unit: 'g' }])
+  assert.deepEqual(state.shopping.items, [{ name: 'Havre', quantity: 150, unit: 'g', confirmedStock: null, netPurchase: 150 }])
   assert.equal(state.shopping.selectedCount, 3)
   assert.equal(plan.remove(0, 0), true)
   state = plan.snapshot()

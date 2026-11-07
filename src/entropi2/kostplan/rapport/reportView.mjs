@@ -12,15 +12,15 @@ export function nutritionReportView(h, props = {}) {
   const card = { border: '1px solid currentColor', borderRadius: 12, padding: 16, minWidth: 0 }
   const grid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 17rem), 1fr))', gap: 16 }
 
-  function MacroList({ entries, weekly = false }) {
+  function MacroList({ entries, weekly = false, daily = false }) {
     return h('dl', { style: { margin: 0 } }, ...labels.map(([key, label, unit]) => {
       const { actual, target, percent } = entries[key]
       return h('div', { key, style: { marginBlock: 12 } },
         h('dt', { style: { fontWeight: 600 } }, label),
         h('dd', { style: { margin: 0 } },
           `${actual === null ? 'Ukendt' : `${number(actual)} ${unit}`} registreret`,
-          ' · ', target === null ? 'Mål mangler' : `${number(target)} ${unit} plan${weekly ? ' for loggede dage' : ''}`,
-          ' · ', percent === null ? 'Procent kan ikke beregnes' : `${number(percent)} % af mål`))
+          ' · ', target === null ? daily ? 'Historisk planindhold ukendt' : 'Mål mangler' : `${number(target)} ${unit} plan${weekly ? ' for loggede dage' : ''}`,
+          ' · ', percent === null ? 'Procent kan ikke beregnes' : `${number(percent)} % af ${daily ? 'planindhold' : 'mål'}`))
     }))
   }
 
@@ -40,24 +40,28 @@ export function nutritionReportView(h, props = {}) {
         h('ul', null, ...weight.daily.map(row => h('li', { key: row.date }, `${dateLabel(row.date)}: ${number(row.kg)} kg`)))))
   }
 
-  function Day({ day }) {
+  function Day({ day, daily }) {
     const entries = Object.fromEntries(labels.map(([key]) => [key, {
       actual: day.totals[key], target: day.targets[key], percent: day.percentages[key],
     }]))
     return h('section', { 'aria-label': dateLabel(day.date), style: { ...card, marginTop: 12 } },
       h('h4', null, h('time', { dateTime: day.date }, dateLabel(day.date))),
       day.future ? h('p', null, 'Kommende dag · ikke med i opgørelsen.') : h('div', null,
+        daily && day.planState === 'unknown' && h('p', null, day.referenceReason === 'archive-date-unavailable'
+          ? 'Historisk planreference ukendt · arkiveringsdato mangler.' : 'Historisk planreference ukendt · ingen bekræftet reference for dagen.'),
         day.planState === 'none' && h('p', null, 'Ingen aktiveret plan for dagen.'),
-        day.planState === 'conflict' && h('p', { role: 'alert' }, 'Flere planer er aktiveret for dagen. Mål kan ikke sammenlignes.'),
+        day.planState === 'conflict' && h('p', { role: 'alert' }, daily
+          ? 'Godkendelsernes rækkefølge er uklar. Planindhold kan ikke sammenlignes.'
+          : 'Flere planer er aktiveret for dagen. Mål kan ikke sammenlignes.'),
         day.logState === 'missing' ? h('div', null,
           h('p', null, 'Ingen kostlog · dagens indtag er ukendt.'),
           day.planState === 'active' && h('dl', null, ...labels.map(([key, label, unit]) => h('div', { key },
             h('dt', null, label), h('dd', { style: { margin: 0 } }, day.targets[key] === null
-              ? 'Mål mangler' : `${number(day.targets[key])} ${unit} plan`)))))
+              ? daily ? 'Planindhold ukendt' : 'Mål mangler' : `${number(day.targets[key])} ${unit} plan`)))))
           : h('div', null,
             h('p', null, `${day.mealCount} ${antalOrd(day.mealCount, 'registreret måltid', 'registrerede måltider')}.`),
             day.logState === 'unknown' && h('p', { role: 'alert' }, 'Nogle næringsdata mangler. Ukendte tal vises ikke som nul.'),
-            h(MacroList, { entries }))))
+            h(MacroList, { entries, daily }))))
   }
 
   /** Presentational only; caller owns loading, access checks and retry. */
@@ -71,27 +75,34 @@ export function nutritionReportView(h, props = {}) {
         style: { minHeight: 44, minWidth: 44 } }, 'Hent rapporten igen'))
     const report = props.report
     if (!report) return h('p', { role: 'alert' }, 'Kostrapporten er ikke tilsluttet.')
-    const active = report.comparison === 'active-plan'
+    const daily = report.comparison === 'daily-approved-plan'
+    const active = daily || report.comparison === 'active-plan'
     return h('section', { 'data-entropi2-kostrapport': true, 'aria-label': 'Kostrapport for én atlet',
       style: { maxWidth: '64rem', width: '100%', minWidth: 0, boxSizing: 'border-box', padding: 16, overflowWrap: 'anywhere' } },
       h('h2', null, 'Plan og registreret kost'),
       h('p', null, `${active ? 'Seneste 7 dage' : 'Uge'}: ${range(report.from, report.through)}`),
       h('p', null, `Opgjort til og med ${dateLabel(report.date)}.`),
-      active && h('p', null, 'Den aktive plans dagsmål er reference for perioden. Tidligere planmål er ikke med i sammenligningen.'),
+      active && h('p', null, 'Hver dag sammenholdes med dens bekræftede godkendte planportioner. Planindhold er ikke et fysiologisk mål eller behov.'),
+      daily && report.referenceState === 'unavailable' && h('div', null,
+        h('p', { role: 'alert' }, 'Historisk planreference kunne ikke bekræftes. Registreret kost vises stadig; sammenligninger er ukendte.'),
+        typeof onRetry === 'function' && h('button', { type: 'button', onClick: onRetry, style: { minHeight: 44 } }, 'Hent planhistorik igen')),
       h('div', { style: grid },
         h('section', { 'aria-label': active ? 'Periodens kost' : 'Ugens kost', style: card },
           h('h3', null, active ? 'Periodens kost' : 'Ugens kost'),
           h('p', null, `${report.week.loggedDays} af ${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} med kostlog · ${report.week.missingDays} uden log.`),
+          daily && h('p', null, `${report.week.plannedDays} af ${report.week.elapsedDays} dage med bekræftet planreference · ${report.week.unknownReferenceDays} med ukendt reference.`),
           !active && h('p', null, `${report.week.plannedDays} af ${report.week.elapsedDays} ${antalOrd(report.week.elapsedDays, 'dag', 'dage')} med entydig aktiveret plan.`),
-          report.week.conflictDays > 0 && h('p', { role: 'alert' }, 'Planhistorikken overlapper. Berørte mål kan ikke sammenlignes.'),
+          report.week.conflictDays > 0 && h('p', { role: 'alert' }, daily
+            ? 'Godkendelsernes rækkefølge er uklar. Berørt planindhold kan ikke sammenlignes.'
+            : 'Planhistorikken overlapper. Berørte mål kan ikke sammenlignes.'),
           report.week.unknownDays > 0 && h('p', { role: 'alert' }, 'Nogle loggede dage har ukendte næringsdata.'),
           report.week.loggedDays === 0 ? h('p', null, 'Der er ingen kostlog i perioden. Indtaget er ukendt.')
-            : h(MacroList, { entries: report.week.metrics, weekly: true }),
+            : h(MacroList, { entries: report.week.metrics, weekly: true, daily }),
           h('p', null, active
-            ? 'Periodens tal og procenter gælder kun loggede dage sammenholdt med den aktive plans dagsmål. Kostloggen fortæller ikke, om hele dagens indtag er registreret.'
+            ? 'Periodens tal og procenter gælder kun loggede dage og deres bekræftede planportioner. Mangler en dags reference, er periodens sammenligning ukendt. Kostloggen fortæller ikke, om hele dagens indtag er registreret.'
             : 'Ugens tal og procenter gælder kun loggede dage og deres planmål. Kostloggen fortæller ikke, om hele dagens indtag er registreret.')),
         !active && h(Weight, { weight: report.weight })),
       h('details', { style: { marginTop: 16 } },
-        h('summary', { style: { minHeight: 44, cursor: 'pointer', paddingBlock: 12 } }, 'Se dage og planmål'),
-        ...report.days.map(day => h(Day, { key: day.date, day }))))
+        h('summary', { style: { minHeight: 44, cursor: 'pointer', paddingBlock: 12 } }, daily ? 'Se dage og planportioner' : 'Se dage og planmål'),
+        ...report.days.map(day => h(Day, { key: day.date, day, daily }))))
 }

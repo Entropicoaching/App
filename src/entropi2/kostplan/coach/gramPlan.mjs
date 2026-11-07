@@ -5,14 +5,33 @@ import { GOALS, day, number, catalogFoods } from './model.mjs'
 const keys = ['kcal', 'protein', 'carb', 'fat']
 const foods = catalogFoods(FOODS)
 
+// Only explicitly supplied categories from calculateNutrition's existing contract.
+// Missing/partial/invalid input stays unknown; never manufacture a rest day.
+export function profileTraining(training) {
+  return training && ['rest', 'light', 'moderate', 'high'].includes(training.volume)
+    && ['light', 'moderate', 'high'].includes(training.intensity)
+    && (training.volume !== 'rest' || training.intensity === 'light')
+    ? { volume: training.volume, intensity: training.intensity } : null
+}
+
+// Backwards-compatible local calculation metadata, not a new backend field.
+export function validProfileCalculation(value, date) {
+  return value && value.date === date && value.adult === true && value.profileEstimate === true
+    && typeof value.weightKg === 'number' && number(value.weightKg, 350) >= 25
+    && Object.keys(value).every(key => ['date', 'adult', 'weightKg', 'profileEstimate', 'training'].includes(key))
+    && (value.training === undefined || value.training !== null && profileTraining(value.training) !== null
+      && Object.keys(value.training).every(key => ['volume', 'intensity'].includes(key)))
+}
+
 // These fields already belong to the selected production profile. A kcal target
 // is never treated as maintenance, and unknown age is never treated as adult.
 export function profileCalculation(athlete, date) {
   const age = number(athlete?.age, 120), weightKg = number(athlete?.bodyweight, 350)
+  const training = profileTraining(athlete?.training)
   return day(date) && date >= '1900-01-01' && date <= '9999-12-24'
     && Number.isInteger(age) && age >= 18 && weightKg >= 25
     && Object.hasOwn(GOALS, athlete?.goal)
-    ? { date, adult: true, weightKg, profileEstimate: true } : null
+    ? { date, adult: true, weightKg, profileEstimate: true, ...(training ? { training } : {}) } : null
 }
 
 // Only the catalogue used by the actual generator may supply nutrient values.

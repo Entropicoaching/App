@@ -26,7 +26,8 @@ function validSession(session) {
     new Set(session.exercises.map(e => e.id)).size === session.exercises.length
 }
 
-export function homeModel({ allWeeks = [], currentWeek, exerciseLogs, now = new Date(), onHoliday = false, programError = false, programLoading = false, offlineSnapshotAt, athlete } = {}) {
+export function homeModel({ allWeeks = [], currentWeek, exerciseLogs, now = new Date(), onHoliday = false, programError = false, programLoading = false, offlineSnapshotAt, athlete,
+  pendingSyncKeys = [], parkedSets = [] } = {}) {
   const today = calendarDay(now)
   const unavailable = kind => ({ kind, today, target: null })
   if (programLoading) return unavailable('loading')
@@ -46,7 +47,13 @@ export function homeModel({ allWeeks = [], currentWeek, exerciseLogs, now = new 
   })
   if (dated.length > 1) return unavailable('missing')
   const active = dated[0] || originalActive
-  const logs = exerciseLogs.filter(l => !l._optimistic && (l.athlete_id == null || l.athlete_id === athlete?.id))
+  // Match weekSessions: queued/parked positions are not confirmed or skipped yet.
+  // Use the existing exerciseId_setNumber key and the parked slot's exact fields.
+  const pending = new Set(Array.isArray(pendingSyncKeys) ? pendingSyncKeys : [])
+  const parked = Array.isArray(parkedSets) ? parkedSets : []
+  const logs = exerciseLogs.filter(l => !l._optimistic && (l.athlete_id == null || l.athlete_id === athlete?.id) &&
+    !pending.has(`${l.exercise_id}_${l.set_number}`) &&
+    !parked.some(s => s?.exerciseId === l.exercise_id && s.setNumber === l.set_number))
   // The public calendar selector returns a presentation projection, without IDs.
   // A second read-only projection tags titles, which never affect its ranking.
   // This recovers the chosen original object even when titles/dates are identical.

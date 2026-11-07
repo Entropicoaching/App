@@ -1,7 +1,7 @@
 import { createCoachPlan } from './controller.mjs'
 import { NAMESPACE, identifier, day, normalizePlan, targets, number } from './model.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
-import { profileCalculation } from './gramPlan.mjs'
+import { profileCalculation, validProfileCalculation } from './gramPlan.mjs'
 
 export const DRAFT_MESSAGE = 'Lokal kladde gemt.'
 const SCHEMA = 'entropi2:kostplan:coach:device-draft:v1'
@@ -24,10 +24,7 @@ export function openPortalPlan(options = {}) {
       const stored = JSON.parse(expected)
       const plan = normalizePlan(stored.plan, athlete.id)
       const savedCalculation = stored.calculation
-      if (savedCalculation !== undefined && (!savedCalculation || savedCalculation.date !== date
-        || savedCalculation.adult !== true || savedCalculation.profileEstimate !== true
-        || typeof savedCalculation.weightKg !== 'number' || !(number(savedCalculation.weightKg, 350) >= 25)
-        || Object.keys(savedCalculation).some(key => !['date', 'adult', 'weightKg', 'profileEstimate'].includes(key))))
+      if (savedCalculation !== undefined && !validProfileCalculation(savedCalculation, date))
         throw Error('Invalid calculation')
       if (!Number.isSafeInteger(stored.sequence) || stored.sequence < 1 || stored.schema !== SCHEMA || stored.coachId !== coachId || stored.date !== date
         || !plan || plan.date !== date || plan.status !== 'draft'
@@ -68,5 +65,9 @@ export function openPortalPlan(options = {}) {
         planId, revision, clientVersion: request.clientVersion, status: 'draft' }
     },
   })
+  // A changed explicit basis requires review even when model floors happen to
+  // give identical targets. Reuse the existing edit/regeneration guard.
+  if (restoreDraft && JSON.stringify(restoreDraft.calculation) !== JSON.stringify(calculation))
+    controller.set('goal', controller.snapshot().form.goal)
   return { controller, loadError, restored: Boolean(restoreDraft) }
 }
