@@ -59,8 +59,24 @@ export function createMealTemplates({ enabled = false, athleteId, date, rows = [
   if (!validId(athleteId) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
   const storageKey = 'entropi2:nutrition:skabeloner:v1:' + encodeURIComponent(athleteId)
   const candidates = recurringMeals(rows, { athleteId, date })
+  // Resolve only a single persisted row from this loaded diary. Even identical
+  // duplicate IDs are ambiguous; an invalid/foreign copy must not hide a conflict.
+  const identities = new Map()
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (validId(row?.id)) identities.set(row.id, identities.has(row.id) ? null : row)
+  }
+  const diary = new Map()
+  for (const [id, row] of identities) {
+    if (!row || id.startsWith('local:') || row.athlete_id !== athleteId || row.date !== date) continue
+    const meal = cleanMeal(row)
+    if (!meal) continue
+    let ingredients
+    try { ingredients = readIngredients(row.ingredients) } catch { continue }
+    diary.set(id, clone({ id: keyOf(meal), name: meal.meal.slice(0, 80), meal,
+      ...(ingredients === undefined ? {} : { ingredients }) }))
+  }
   let templates = [], error = '', readFailed = false
-  try {
+  function readStored() {
     if (typeof storage?.getItem !== 'function') throw new Error()
     const raw = storage.getItem(storageKey)
     if (raw != null) {
@@ -68,7 +84,7 @@ export function createMealTemplates({ enabled = false, athleteId, date, rows = [
       const data = JSON.parse(raw)
       if (data?.version !== 1 || !Array.isArray(data.templates) || data.templates.length > 100) throw new Error()
       const ids = new Set()
-      templates = data.templates.map(item => {
+      return data.templates.map(item => {
         const meal = cleanMeal(item?.meal), name = nameOf(item?.name)
         if (!meal || !name || item.id !== keyOf(meal) || ids.has(item.id)) throw new Error()
         ids.add(item.id)
@@ -76,7 +92,10 @@ export function createMealTemplates({ enabled = false, athleteId, date, rows = [
         return { id: item.id, name, meal, ...(ingredients === undefined ? {} : { ingredients }) }
       })
     }
-  } catch { templates = []; readFailed = true; error = 'Skabeloner kunne ikke læses.' }
+    return []
+  }
+  try { templates = readStored() }
+  catch { templates = []; readFailed = true; error = 'Skabeloner kunne ikke læses.' }
 
   function commit(next) {
     if (readFailed) return false
@@ -94,7 +113,20 @@ export function createMealTemplates({ enabled = false, athleteId, date, rows = [
   return {
     snapshot() {
       const saved = new Set(templates.map(item => item.id))
-      return clone({ athleteId, date, templates, suggestions: candidates.filter(item => !saved.has(item.id)), error })
+      return clone({ athleteId, date, templates, suggestions: candidates.filter(item => !saved.has(item.id)),
+        diaryIds: [...diary.keys()], error })
+    },
+    // Explicit local action, independent of recurring suggestions. Re-read on
+    // every click so a current duplicate retains its user name and ingredients.
+    // A failed read never authorizes replacing unknown stored data; retry here.
+    saveFromDiary(rowId) {
+      const candidate = diary.get(rowId)
+      if (!candidate) return false
+      try { templates = readStored(); readFailed = false; error = '' }
+      catch { readFailed = true; error = 'Skabeloner kunne ikke læses.'; return false }
+      if (templates.some(item => item.id === candidate.id)) return 'duplicate'
+      if (templates.length >= 100) { error = 'Der er plads til højst 100 skabeloner.'; return false }
+      return commit([...templates, clone(candidate)]) ? 'stored' : false
     },
     // One action accepts a suggestion; double taps are idempotent.
     accept(id) {

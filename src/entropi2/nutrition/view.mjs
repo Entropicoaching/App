@@ -12,6 +12,7 @@ import { isDayReceipt } from '../../mealEvidence.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { calendarDay } from '../../calendarDate.js'
 import { manualFields, manualDraftErrors } from './manualDraft.mjs'
+import { foodChoices, foodIdentity } from './foodSearch.mjs'
 // Shared presentation text for diary and weight reads; no read/write ownership here.
 const readText = {
   retry: 'Hent igen', pending: 'Henter…',
@@ -26,7 +27,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
   if (!controller) return () => {} // default OFF: do not even touch the host.
   const doc = host.ownerDocument
   const contentId = 'e2-nutrition-content-' + (++mountSequence)
-  let sequence = 0, destroyed = false, manual = {}, selection = '0', amount = '100', unit = '0'
+  let sequence = 0, destroyed = false, manual = {}, selection = null, amount = '100', unit = '0', foodQuery = ''
   let manualAttempted = false, manualOpen = false
   amount = String(controller.foodAmount(0))
   let weightPending = false, weightReadPending = false, weightError = ''
@@ -220,37 +221,89 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
       })
       if (s.foods.length) {
         const foodForm = append(inner, 'form', 'stack space')
+        if (selection === null) selection = foodIdentity(s.foods[0])
+        const choices = foodChoices(s.foods, foodQuery, selection)
+        // Retained controls must never mutate a newer render or athlete/day.
+        const livePortion = () => {
+          if (destroyed || ![...host.querySelectorAll('form')].includes(foodForm)) return false
+          const current = controller.snapshot()
+          return current.loaded && !current.pending && current.athleteId === s.athleteId && current.date === s.date
+        }
+        const searchLabel = append(foodForm, 'label', '', 'Søg i fødevarer')
+        const search = append(searchLabel, 'input')
+        search.type = 'search'; search.value = foodQuery; search.disabled = s.pending
+        search.setAttribute('data-focus', 'food-search')
+        search.setAttribute('aria-controls', contentId + '-foods')
+        search.setAttribute('aria-describedby', contentId + '-food-search-status')
+        search.addEventListener('input', e => {
+          if (!livePortion()) return
+          foodQuery = e.target.value; draw()
+        })
+        button(foodForm, 'Ryd søgning', () => {
+          if (!livePortion()) return
+          foodQuery = ''; draw(); focusControl('food-search')
+        }, s.pending || !foodQuery).setAttribute('data-focus', 'clear-food-search')
+        append(foodForm, 'p', 'small muted', 'Søg i det kendte fødevarekatalog. Vælg en fødevare, og log selv din portion.')
+        const status = append(foodForm, 'p', 'small muted', choices.matches.length
+          ? choices.matches.length + ' fødevarer matcher søgningen.' + (choices.pinned ? ' Dit valgte produkt vises også.' : '')
+          : 'Ingen fødevarer matcher søgningen. Ryd søgningen eller søg igen for at logge.')
+        status.setAttribute('id', contentId + '-food-search-status')
+        status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite')
         const foodLabel = append(foodForm, 'label', '', 'Fødevare')
-        const select = append(foodLabel, 'select'); select.value = selection
+        const select = append(foodLabel, 'select')
+        select.setAttribute('id', contentId + '-foods'); select.disabled = s.pending
         select.setAttribute('data-focus', 'food-choice')
-        s.foods.forEach((f, i) => { const opt = append(select, 'option', '', f.name); opt.value = String(i) })
-        select.value = selection
-        select.addEventListener('change', e => { selection = e.target.value; unit = '0'; amount = String(controller.foodAmount(Number(selection))); draw() })
-        const food = s.foods[Number(selection)]
-        field(foodForm, 'Mængde', amount, v => { amount = v })
+        if (choices.selectedIndex < 0) {
+          const opt = append(select, 'option', '', 'Vælg en fødevare igen'); opt.value = ''; opt.disabled = true
+          append(foodForm, 'p', 'small muted', 'Det valgte produkt er ændret eller ikke entydigt i kataloget. Vælg en fødevare igen.')
+        }
+        choices.indices.forEach(i => {
+          const opt = append(select, 'option', '', s.foods[i].name + (choices.pinned && i === choices.selectedIndex ? ' (valgt · uden for søgningen)' : ''))
+          opt.value = String(i)
+        })
+        select.value = choices.selectedIndex < 0 ? '' : String(choices.selectedIndex)
+        select.addEventListener('change', e => {
+          if (!livePortion() || !choices.indices.some(i => String(i) === e.target.value)) return
+          const index = Number(e.target.value), chosen = s.foods[index]
+          if (foodIdentity(chosen) === selection && choices.selectedIndex >= 0) return
+          const identity = foodIdentity(chosen)
+          const current = foodChoices(controller.snapshot().foods, foodQuery, identity)
+          if (current.selectedIndex < 0) return
+          selection = identity; unit = '0'; amount = String(controller.foodAmount(current.selectedIndex)); draw()
+        })
+        const food = s.foods[choices.selectedIndex]
+        const blocked = s.pending || choices.selectedIndex < 0 || !choices.matches.length
+        field(foodForm, 'Mængde', amount, v => { if (livePortion() && !blocked) amount = v }).disabled = blocked
         const unitLabel = append(foodForm, 'label', '', 'Enhed'), unitSelect = append(unitLabel, 'select')
+        unitSelect.disabled = blocked
         unitSelect.setAttribute('data-focus', 'unit-choice')
         unitsForFood(food).forEach((u, i) => { const opt = append(unitSelect, 'option', '', u.label); opt.value = String(i) })
-        unitSelect.value = unit; unitSelect.addEventListener('change', e => { unit = e.target.value; draw() })
+        unitSelect.value = unit; unitSelect.addEventListener('change', e => { if (livePortion() && !blocked) { unit = e.target.value; draw() } })
         const steps = append(foodForm, 'div', 'gram-steps')
         steps.setAttribute('role', 'group'); steps.setAttribute('aria-label', 'Justér mængde i gram')
         for (const step of [10, 50, 100]) for (const delta of [-step, step]) {
           const b = button(steps, (delta > 0 ? '+' : '−') + step + ' g', () => {
-            if (destroyed || controller.snapshot().pending) return
+            if (!livePortion() || blocked) return
             const n = parseInputNumber(amount), u = unitsForFood(food)[Number(unit)]
             if (!(n > 0) || !u) return
             const grams = Math.max(1, Math.round((n * u.grams + delta) * 1000) / 1000)
             if (!Number.isFinite(grams)) return
             amount = String(grams); unit = '0'; draw()
-          }, s.pending)
+          }, blocked)
           b.setAttribute('data-focus', 'gram-step-' + delta)
           b.setAttribute('aria-label', (delta > 0 ? 'Tilføj ' : 'Træk ') + step + ' gram' + (delta < 0 ? ' fra' : ''))
         }
         append(foodForm, 'p', 'small muted', 'Gramknapperne justerer mængden. Log portion gemmer måltidet.')
         if (s.portionError) { const p = append(foodForm, 'p', 'small', s.portionError); p.setAttribute('role', 'alert') }
-        const add = button(foodForm, 'Log portion', () => {}, s.pending); add.className += ' cta-primary'; add.type = 'submit'
+        const add = button(foodForm, 'Log portion', () => {}, blocked); add.className += ' cta-primary'; add.type = 'submit'
         add.setAttribute('data-focus', 'log-portion')
-        foodForm.addEventListener('submit', e => { e.preventDefault(); return controller.logFood(Number(selection), amount, Number(unit), intent()) })
+        foodForm.addEventListener('submit', e => {
+          e.preventDefault()
+          if (!livePortion() || blocked) return
+          const current = foodChoices(controller.snapshot().foods, foodQuery, selection)
+          if (current.selectedIndex < 0 || !current.matches.length) return
+          return controller.logFood(current.selectedIndex, amount, Number(unit), intent())
+        })
       }
       if (templateState?.templates.length || templateState?.suggestions.length) fast.append(templates)
     }
@@ -386,6 +439,18 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         const validRow = typeof row.meal === 'string' && row.meal.trim()
           && ['kcal', 'protein', 'carb', 'fat'].every(key => parseInputNumber(row[key]) !== null)
         append(li, 'small', '', validRow ? `${displayNumber(parseInputNumber(row.kcal))} kcal · ${displayNumber(parseInputNumber(row.protein))} g protein` : 'Kontrollér næringsværdierne for dette måltid.')
+        if (s.mealTemplates?.diaryIds.includes(row.id)) {
+          const saveTemplate = button(li, 'Gem som skabelon: ' + label, () => {
+            if (destroyed || !inHost(saveTemplate)) return
+            controller.saveMealAsTemplate(row.id)
+          }, s.pending)
+          saveTemplate.setAttribute('data-focus', 'save-template-' + row.id)
+          if (s.templateSave?.rowId === row.id) {
+            const feedback = append(li, 'p', 'small space', s.templateSave.message)
+            feedback.setAttribute('role', s.templateSave.status === 'error' ? 'alert' : 'status')
+            feedback.setAttribute('aria-live', 'polite')
+          }
+        }
         if (s.editableIds?.includes(row.id)) {
           const edit = button(li, 'Ret måltid: ' + label, () => {
             if (destroyed || controller.snapshot().pending) return

@@ -66,6 +66,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   const selectedParts = new Set()
   const refreshTemplates = () => createMealTemplates({ enabled: true, athleteId: id, date, rows, storage })
   let templates = refreshTemplates()
+  let templateSave = null
   const today = () => rows.filter(r => r?.date === date && !receipt(r))
   try {
     const raw = storage?.getItem(storageKey)
@@ -145,6 +146,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         portionError: portions?.error() || '',
         undo: undo && now() < undo.expiresAt ? { ...undo } : null,
         mealTemplates: templates.snapshot(),
+        templateSave: templateSave && { ...templateSave },
         ownMeals: favorites.map(meal => ({ ...meal, id: mealKey(meal) })),
         loaded: phase !== 'idle' && phase !== 'loading' && phase !== 'load-error',
         totals: finite ? totals : null, ...dailyReference(), profileTargets: { ...profileTargets }, invalid: !finite,
@@ -179,7 +181,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     async load() {
       if (disposed || pending) return false
       const token = ++loadToken
-      phase = 'loading'; message = ''; emit()
+      phase = 'loading'; message = ''; templateSave = null; emit()
       try {
         const result = await contracts.load(id, date)
         if (disposed || token !== loadToken) return false
@@ -196,6 +198,22 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     setTemplateIngredients(templateId, ingredients) {
       if (disposed || pending) return false
       const ok = templates.setIngredients(templateId, ingredients); emit(); return ok
+    },
+    saveMealAsTemplate(rowId) {
+      if (disposed || pending || !validId(rowId) || !['ready', 'saved', 'save-error'].includes(phase)) return false
+      const row = rows.find(r => r.id === rowId)
+      let result = false
+      // Never accept caller-supplied meal values or a stale day/ambiguous ID.
+      try {
+        if (mutable(row) && cleanMeal(row) && (typeof currentDay !== 'function' || currentDay() === date)) {
+          result = templates.saveFromDiary(rowId)
+        }
+      } catch { /* An unavailable source must never be reported as saved. */ }
+      templateSave = { rowId, status: result || 'error', message: result === 'stored'
+        ? 'Gemt i Skabeloner. Tilføj kendte ingredienser dér til indkøbslisten.'
+        : result === 'duplicate' ? 'Findes allerede i Skabeloner. Navn og ingredienser er bevaret.'
+          : (templates.snapshot().error || 'Skabelonen blev ikke gemt. Hent dagbogen igen og prøv igen.') }
+      emit(); return result !== false
     },
     acceptTemplate(templateId) {
       if (disposed || pending) return false
