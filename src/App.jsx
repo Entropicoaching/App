@@ -3,7 +3,7 @@ import { hviledageListeEnabled } from './hviledageListe.mjs'
 import { rel1030Mobility } from './rel1030.mjs'
 import { release3TestFlags } from './release3TestFlags.mjs'
 import { fridayTestEnabled } from './e2eTestFlags.mjs'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { supabase, withRetry, isPasswordRecoveryUrl } from './supabase.js'
 import Auth from './Auth.jsx'
 import SetNewPassword from './SetNewPassword.jsx'
@@ -13,6 +13,7 @@ import LazyBoundary from './LazyBoundary.jsx'
 import { readCachedRole, writeCachedRole } from './roleCache.js'
 import { offlineAthleteSession, seemsOffline } from './offlineSession.js'
 import { hjemoevKompaktEnabled } from './rel1030.mjs'
+import { createCoachSelfContext, createTrainingLifetime } from './coachSelfTraining.mjs'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
 // omvendt). Halverer det første bundt der skal hentes på mobil. Indlæses via
@@ -95,8 +96,31 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
   const [role, setRole] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  const [verifiedRoleOwner, setVerifiedRoleOwner] = useState(null)
+  const [coachSelfTraining, setCoachSelfTraining] = useState(null)
+  const [previewOwnerId, setPreviewOwnerId] = useState(null)
   const [previewMode, setPreviewMode] = useState(false)
+  const activeUserRef = useRef(null)
+  const authGenerationRef = useRef(0)
+  const selfContextRef = useRef(null)
   const [coachAthleteId, setCoachAthleteId] = useState(null)
+  // The App owns this write lease for every athlete path, including equal-user.
+  // Auth/navigation callbacks revoke it before React can commit the next view.
+  const trainingAccess = useMemo(() => createTrainingLifetime({ ownerId: session?.user?.id, role, previewMode, coachAthleteId }),
+    [session?.user?.id, role, previewMode, coachAthleteId])
+  const trainingAccessRef = useRef(null)
+  useEffect(() => {
+    trainingAccess.activate()
+    trainingAccessRef.current = trainingAccess
+    return () => trainingAccess.dispose()
+  }, [trainingAccess])
+  const selfContext = useMemo(() => createCoachSelfContext(session?.user?.id, role, verifiedRoleOwner),
+    [session?.user?.id, role, verifiedRoleOwner])
+  useEffect(() => {
+    selfContext.activate()
+    selfContextRef.current = selfContext
+    return () => selfContext.dispose()
+  }, [selfContext])
   const [previewInitialTab, setPreviewInitialTab] = useState('hjem')
   // Sand fra åbning til atleten har sat en ny adgangskode via "glemt adgangskode"-
   // linket. Initieres synkront fra URL'en (se isPasswordRecoveryUrl), så vi aldrig
@@ -135,6 +159,7 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
     // hvor "Prøv igen"-skærmen er den eneste ærlige mulighed).
     async function resolveRole(userId, email, { hadGuess = false } = {}) {
       if (resolvingFor.current === userId) return
+      const authGeneration = authGenerationRef.current
       resolvingFor.current = userId
       try {
         if (!hadGuess) setLoadError(false)
@@ -143,7 +168,7 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
         const { data, error } = await withRetry(() =>
           supabase.from('profiles').select('role').eq('id', userId).maybeSingle()
         )
-        if (cancelled) return
+        if (cancelled || activeUserRef.current !== userId || authGenerationRef.current !== authGeneration) return
         if (error) {
           // Reel fejl efter retries: vis retry frem for at gætte rollen forkert —
           // MEDMINDRE et cachet gæt allerede viser en fungerende visning; den
@@ -152,6 +177,7 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
           return
         }
         if (data) {
+          setVerifiedRoleOwner(userId)
           resolvedFor.current = userId
           writeCachedRole(userId, data.role || 'athlete')
           setRole(data.role || 'athlete')
@@ -166,13 +192,14 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
         const { data: after } = await withRetry(() =>
           supabase.from('profiles').select('role').eq('id', userId).maybeSingle()
         )
-        if (cancelled) return
+        if (cancelled || activeUserRef.current !== userId || authGenerationRef.current !== authGeneration) return
+        setVerifiedRoleOwner(userId)
         resolvedFor.current = userId
         writeCachedRole(userId, after?.role || 'athlete')
         setRole(after?.role || 'athlete')
         setLoading(false)
       } finally {
-        if (resolvingFor.current === userId) resolvingFor.current = null
+        if (resolvingFor.current === userId && authGenerationRef.current === authGeneration) resolvingFor.current = null
       }
     }
     resolveRef.current = resolveRole
@@ -204,10 +231,12 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
     const onForbindelse = (e) => { if (e.detail?.offline && !gotSessionRef.current) showOfflineAthlete() }
     window.addEventListener('entropi:forbindelse', onForbindelse)
 
+    const initialAuthGeneration = authGenerationRef.current
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (cancelled) return
+      if (cancelled || initialAuthGeneration !== authGenerationRef.current) return
       if (!session && showOfflineAthlete()) return
       if (session) gotSessionRef.current = true
+      activeUserRef.current = session?.user?.id || null
       setSession(session)
       if (session) {
         // Vis det cachede gæt MED DET SAMME (ingen ventetid på netværket) —
@@ -225,7 +254,16 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
       // storage) er ikke et log ud. Et rigtigt log ud rydder storage først.
       if (!session && _event !== 'SIGNED_OUT' && showOfflineAthlete()) return
       if (session) gotSessionRef.current = true
-      const previousUserId = resolvedFor.current
+      const previousUserId = activeUserRef.current
+      if (!session || previousUserId !== session.user.id) {
+        authGenerationRef.current++
+        resolvedFor.current = null; resolvingFor.current = null
+        trainingAccessRef.current?.dispose()
+        selfContextRef.current?.dispose()
+        setVerifiedRoleOwner(null)
+        setPreviewMode(false); setCoachAthleteId(null); setCoachSelfTraining(null); setPreviewOwnerId(null)
+      }
+      activeUserRef.current = session?.user?.id || null
       if (!session || (previousUserId && previousUserId !== session.user.id)) {
         purgeVideoCoachDraftQueues()
       }
@@ -282,11 +320,11 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
 
   let viewEl
   if (role === 'coach') {
-    viewEl = previewMode
-      ? <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-          componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, onExitPreview: () => { setPreviewMode(false); setCoachAthleteId(null) } , opvarmStige, programIntensityHelp: programIntensityHelp === true, previewInitialTab, hjemoevKompakt}} />
-      : <LazyBoundary factory={dashboardFactory} label="Dashboard" loading={loaderScreen}
-          componentProps={{ ...rel3.coach, session, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem') => { setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
+    viewEl = previewMode && previewOwnerId === session.user.id
+      ? <LazyBoundary factory={athleteViewFactory} key={`coach:${session.user.id}:${coachAthleteId}:${coachSelfTraining ? 'self' : 'preview'}`} label="Atletvisning" loading={loaderScreen}
+          componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, coachSelfTraining, trainingAccess, onExitPreview: () => { trainingAccess.dispose(); selfContext.close(); setPreviewMode(false); setCoachAthleteId(null); setCoachSelfTraining(null) } , opvarmStige, programIntensityHelp: programIntensityHelp === true, previewInitialTab, hjemoevKompakt}} />
+      : <LazyBoundary factory={dashboardFactory} key={`coach:${session.user.id}`} label="Dashboard" loading={loaderScreen}
+          componentProps={{ ...rel3.coach, session, ...(verifiedRoleOwner === session.user.id ? { coachSelfContext: selfContext } : {}), mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokFremgang: blokFremgang === true, coachPlanCopyEnabled: fridayTest, onPreviewAthlete: (athleteId, initialTab = 'hjem', request = null) => { trainingAccess.dispose(); setCoachSelfTraining(selfContext.open(request, session)); setPreviewOwnerId(session.user.id); setPreviewInitialTab(initialTab); setCoachAthleteId(athleteId || null); setPreviewMode(true) } }} />
   } else {
     // Coach-rolle hentes fra profiles.role og caches pr. bruger-id (se
     // resolveRole/resolvedFor ovenfor) — ændres rollen server-side til 'coach'
@@ -295,8 +333,8 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
     // login/logout) hvor det kan tjekkes igen med det samme: den kalder den
     // samme resolveRole, som ved et 'coach'-svar automatisk skifter denne
     // gren over til Dashboard via almindelig React-genrendering.
-    viewEl = <LazyBoundary factory={athleteViewFactory} label="Atletvisning" loading={loaderScreen}
-      componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) , opvarmStige, programIntensityHelp: programIntensityHelp === true, hjemoevKompakt}} />
+    viewEl = <LazyBoundary factory={athleteViewFactory} key={`athlete:${session.user.id}`} label="Atletvisning" loading={loaderScreen}
+      componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, trainingAccess, onRecheckRole: () => resolveRef.current?.(session.user.id, session.user.email) , opvarmStige, programIntensityHelp: programIntensityHelp === true, hjemoevKompakt}} />
   }
   return <ErrorBoundary>{viewEl}</ErrorBoundary>
 }

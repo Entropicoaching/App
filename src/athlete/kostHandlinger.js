@@ -6,7 +6,7 @@ import { dataAllowed, dataMessage } from '../dataEnough.mjs'
 // — flyttet uaendret ud af AthleteView.jsx (ordre 373) som en fabrik:
 // AthleteView kalder den i hvert render med sin egen tilstand, og faar de
 // samme funktioner og tal tilbage (samme closures som foer). Ingen egen tilstand.
-import { supabase } from '../supabase.js'
+import { supabase as database } from '../supabase.js'
 import { runGuardedWrite } from '../athleteWriteGuard.js'
 import { runGuardedRead } from '../athleteReadGuard.js'
 import { shiftDate, unitsForFood } from '../athleteShared.js'
@@ -20,7 +20,9 @@ export function lavKostHandlinger({
   setEditingLogId, setFrequentFoods, setHistoricalMealLogs, setLogs, setMealTemplates, setSearchQuery, setSearchResults, setSelectedFood,
   setShowCreateFood, setShowSaveTemplate, setShowTemplates, setTemplateNameInput, setUndoPending, setUndoToast, setUnitIdx, shareFood,
   showFlash, templateNameInput, undoPending, undoTimerRef, undoToast, unitIdx, weightLogs,
+  guardWrite = client => client,
 }) {
+  const supabase = guardWrite(database)
   async function fetchLogs(athleteId, date = kostDate) {
     if (dataEnoughEnabled()) setHistoricalMealLogs([])
     const { data, ok } = await runGuardedRead(

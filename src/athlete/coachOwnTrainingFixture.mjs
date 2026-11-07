@@ -66,7 +66,7 @@ export const database = { from: spy('database.from'), rpc: spy('database.rpc') }
 
 export async function loadViews({ realReact = false } = {}) {
   if (realReact) real = await import('react')
-  const actual = new Set(['./athlete/kostValg.mjs', './athlete/enkelPrototype.mjs', './entropi2/athleteEntry.mjs',
+  const actual = new Set(['./coachSelfTraining.mjs', './athlete/kostValg.mjs', './athlete/enkelPrototype.mjs', './entropi2/athleteEntry.mjs',
     './entropi2/home/homeProgramRead.mjs',
     './entropi2/profile/ProfilePage.mjs', './entropi2/conversation/Conversation.mjs', './entropi2/conversation/conversationController.mjs', './entropi2/Entropi2Kost.mjs',
     './opvarmStige.mjs', './hviledageListe.mjs', './rel1030.mjs', './release3TestFlags.mjs', './e2eTestFlags.mjs'])

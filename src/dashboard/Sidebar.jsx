@@ -9,7 +9,7 @@ import { signOutHard } from '../supabase.js'
 export default function Sidebar({ coachRyd = false, programOverblik = false,
   athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
   exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
-  openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId,
+  openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId, onSelectOwnAthlete,
   setPickingMine, setPreviewPickerOpen, setSelectedAthlete, setSidebarMoreOpen, setSidebarOpen, setView,
   sidebarMoreOpen, sidebarOpen, todayData, unreadCounts, view,
 }) {
@@ -28,7 +28,7 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
                 <NavItem
                   {...(coachRyd ? { type: 'button' } : {})}
                   key={a.id}
-                  onClick={() => { setPreviewPickerOpen(false); if (pickingMine) { localStorage.setItem('entropi_my_athlete_id', a.id); setMyAthleteId(a.id); setPickingMine(false) } onPreviewAthlete(a.id) }}
+                  onClick={() => { setPreviewPickerOpen(false); if (pickingMine && onSelectOwnAthlete) { setPickingMine(false); onSelectOwnAthlete(a.id); return } if (pickingMine) { localStorage.setItem('entropi_my_athlete_id', a.id); setMyAthleteId(a.id); setPickingMine(false) } onPreviewAthlete(a.id) }}
                   style={{ padding: '0.4rem 0.5rem', fontSize: '0.8rem', color: '#b8b4a8', cursor: 'pointer', borderRadius: '1px' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(237,234,226,0.06)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}

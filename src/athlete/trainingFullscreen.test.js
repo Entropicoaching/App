@@ -1,3 +1,4 @@
+import { invertCoachSelfTraining, invertTrainingSetWrites } from './coachSelfTrainingOffFixture.mjs'
 import './trainingFullscreenRegister.mjs'
 import { createHash } from 'node:crypto'
 import test from 'node:test'
@@ -60,7 +61,7 @@ test('rel1101 accepts only boolean true or one exact query value; default OFF', 
 test('OFF integration reconstructs exact base; only current Hjem entry changes', () => {
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
-  let candidate = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r?\n/g, '\r\n')
+  let candidate = invertCoachSelfTraining(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8'))
   // E2-PAS-REKORD-KOBL1: invert exactly the receipt inputs inside HomeSession;
   // retain the historic OFF source hashes and every previous delta guard.
   const recordDelta = '            rekordFejring={rekordFejring} rekordGrundlagFoer={rekordGrundlagFoer} setRekordFejring={setRekordFejring} fejredeRef={fejredeRef}\r\n'
@@ -431,7 +432,7 @@ test('OFF integration reconstructs exact base; only current Hjem entry changes',
   candidate = candidate.replace(entry, '').replace("import TrainingFullscreen from './athlete/TrainingFullscreen.mjs'\r\nimport { rel1101Enabled } from './rel1101.mjs'\r\n", '')
     .replace('hjemoevKompakt = false, rel1101 = false})', 'hjemoevKompakt = false})')
   assert.equal(createHash('sha256').update(candidate).digest('hex'), base)
-  let handler = readFileSync(new URL('./saetSkrivning.js', import.meta.url), 'utf8').replace(/\r?\n/g, '\n')
+  let handler = invertTrainingSetWrites(readFileSync(new URL('./saetSkrivning.js', import.meta.url), 'utf8'))
   // Remove only E2's explicitly delimited additions, retaining the original SHA.
   for (const label of ['save adapter', 'replay adapter']) {
     const block = new RegExp(`^ *// E2-OFFLINE-SAET1: ${label} begin\\n[\\s\\S]*?^ *// E2-OFFLINE-SAET1: ${label} end\\n(?:\\n)?`, 'gm')

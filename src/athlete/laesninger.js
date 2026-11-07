@@ -13,7 +13,7 @@ import { parseInputNumber, optionalInput } from '../inputValues.js'
 // samme moenster som kostHandlinger.js.
 import { smerteNoter } from '../coachFremgang.js'
 import { smerteStopFor, historikSomLogs } from '../saetSmerte.js'
-import { supabase, withRetry, queueWrite } from '../supabase.js'
+import { supabase as database, withRetry, queueWrite } from '../supabase.js'
 import { mergeAthleteSetInputs } from '../athleteTrainingInputs.js'
 import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athleteOnboardingGuide.js'
 import { runGuardedRead } from '../athleteReadGuard.js'
@@ -46,7 +46,12 @@ export function lavLaesninger({
   setSharedVideoLoading, setTab, setViewingWeekIdx, setVolumeLoading, setVolumeLogs, setVolumeError = () => {}, setWarmupTemplates, setWeeklyTonnage,
   setOfflineSnapshotAt, setUgensLogsHentet,
   setExerciseLogsStatus, exerciseLogsReadRef,
+  guardWrite = client => client,
+  guardSession = client => client,
+  isSessionCurrent = () => true,
 }) {
+  const supabase = guardSession(database) ?? database
+  const trainingDatabase = guardWrite(database)
   // ORDRE 397 (docs/OFFLINE-PAS.md): kun atletens egen visning, aldrig
   // coachens forhåndsvisning.
   const ownView = () => !coachAthleteId && !!session?.user?.id
@@ -112,6 +117,7 @@ export function lavLaesninger({
       ({ data, error } = await withRetry(() =>
         supabase.from('athletes').select('*').eq('user_id', session.user.id).maybeSingle()
       ))
+      if (isSessionCurrent() === false) return
       if (!error && !data) {
         const claim = await withRetry(() => supabase.rpc('claim_athlete_profile_v3'))
         if (claim.error || !isUuid(claim.data)) {
@@ -130,6 +136,7 @@ export function lavLaesninger({
         }
       }
     }
+    if (isSessionCurrent() === false) return
     // Reel fejl: vis fejl/retry-skærmen i stedet for misvisende "ikke tilknyttet".
     // (Bliver i loading-tilstanden, som renderer loadError-grenen med "Prøv igen".)
     // ORDRE 397: medmindre et øjebliksbillede af Dagens pas kan vises.
@@ -483,7 +490,7 @@ export function lavLaesninger({
       sore_zones: readinessInput.soreZones?.length > 0 ? readinessInput.soreZones : null,
       readiness_score: score,
     }
-    const { error } = await supabase.from('readiness_logs').insert(payload)
+    const { error } = await trainingDatabase.from('readiness_logs').insert(payload)
     setSavingReadiness(false)
     if (error) {
       // Atleten skal ikke se en rå Supabase-fejlbesked — detaljen går til

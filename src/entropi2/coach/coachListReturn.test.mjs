@@ -55,16 +55,17 @@ fakes['./entropi2/coachEntry.mjs'] = { ...fakes['./entropi2/coachEntry.mjs'],
 const sharedKey = Symbol.for('coach-list-return.dashboard')
 globalThis[sharedKey] = { fakes, h: runtime.h }
 const prefix = 'coach-list-return://closed/'
-const pure = new Set(['./analyseMissingFlag.mjs', './dashboard/ProgramOverblikView.mjs', './programOverblik.mjs', './indbakke2.mjs'])
-registerHooks({
-  resolve(specifier, context, next) {
+const pure = new Set(['./coachSelfTraining.mjs', './analyseMissingFlag.mjs', './dashboard/ProgramOverblikView.mjs', './programOverblik.mjs', './indbakke2.mjs'])
+function resolveDashboardImport(specifier, context, next) {
     if (context.parentURL === url) {
       if (pure.has(specifier)) return next(new URL(specifier, url).href, context)
       assert.ok(Object.hasOwn(fakes, specifier), 'closed Dashboard dependency: ' + specifier)
       return { url: prefix + encodeURIComponent(specifier), shortCircuit: true }
     }
     return next(specifier, context)
-  },
+}
+registerHooks({
+  resolve: resolveDashboardImport,
   load(target, context, next) {
     const shared = "globalThis[Symbol.for('coach-list-return.dashboard')]"
     if (target === url) return { format: 'module', shortCircuit: true,
@@ -187,4 +188,19 @@ test('Dashboard preserves the inbox portion through task 17 profile return and r
     if (previous.window === undefined) delete globalThis.window; else globalThis.window = previous.window
     if (previous.storage === undefined) delete globalThis.localStorage; else globalThis.localStorage = previous.storage
   }
+})
+
+test('closed Dashboard seam admits only the exact self helper import', () => {
+  const seen = [], next = (...args) => { seen.push(args); return { url: args[0] } }
+  const context = { parentURL: url }
+  assert.equal(resolveDashboardImport('./coachSelfTraining.mjs', context, next).url,
+    new URL('./coachSelfTraining.mjs', url).href)
+  for (const name of ['./unknown.mjs', './coachSelfTraining', './COACHSELFTRAINING.mjs',
+    './nested/../coachSelfTraining.mjs', './coachSelfTraining.mjs?x', './coachSelfTraining.mjs#x',
+    '../coachSelfTraining.mjs', 'node:fs', 'https://invalid.test/helper.mjs']) {
+    assert.throws(() => resolveDashboardImport(name, context, next), /closed Dashboard dependency/)
+  }
+  assert.equal(seen.length, 1, 'no unknown import reaches the module loader')
+  assert.equal(resolveDashboardImport('./coachSelfTraining.mjs', { parentURL: 'unrelated://host' }, next).url,
+    './coachSelfTraining.mjs', 'other importers are delegated without a new allowance')
 })

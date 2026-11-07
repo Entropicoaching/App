@@ -63,6 +63,7 @@ import { lavProfilTal } from './dashboard/profilTal.js'
 import { useDashboardEffekter } from './dashboard/useDashboardEffekter.js'
 import { useCoachPrioritet } from './dashboard/useCoachPrioritet.js'
 import { entropi2Enabled, loadEntropi2Styles, CoachScreen, ConversationEntry, useEntropi2ReadContext, entropi2CalendarRead, entropi2ReadGate, entropi2MessageSummary, entropi2VideoQueueError, useEntropi2CoachNutrition, CoachKostMaal, useEntropi2KostVaegt, useEntropi2Dag, COACH_NOTE_SIGNAL_ENABLED } from './entropi2/coachEntry.mjs'
+import { readCoachSelfAthleteId, requestCoachSelfTraining } from './coachSelfTraining.mjs'
 
 
 
@@ -90,7 +91,7 @@ const programTabFactory = () => import('./dashboard/ProgramTab.jsx')
 // LazyBoundary-mønster som de tre fane-factories ovenfor.
 const volumenKortFactory = () => import('./dashboard/VolumenKort.jsx')
 
-export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, onPreviewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false, entropi2 }) {
+export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, coachCalendarEvents = false, mobilitetHjalp = false, session, coachSelfContext, onPreviewAthlete: previewAthlete, programCopyEnabled = DEFAULT_PROGRAM_COPY, coachPlanCopyEnabled = false, blokFremgang = false, coachFourWeeksEnabled = COACH_FOUR_WEEKS_ENABLED, coachTemplateMessages = COACH_TEMPLATE_MESSAGES_ENABLED, videoReviewTemplates = DEFAULT_VIDEO_REVIEW_TEMPLATES, programOverblik = false, entropi2 }) {
   const analyseMissingData = analyseMissingDataEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const analyseConclusionMessage = analyseConclusionMessageEnabled(typeof window === 'undefined' ? '' : window.location.search)
   const programOverview = programOverblik === true || programOverblikEnabled(typeof window === 'undefined' ? '' : window.location.search)
@@ -192,8 +193,29 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   // Program state
   const [sidebarOpen, setSidebarOpen] = useState(false)
   // "Min profil"-genvej: hvilken atlet er coachen selv (gemt i localStorage).
-  const [myAthleteId, setMyAthleteId] = useState(() => localStorage.getItem('entropi_my_athlete_id') || null)
+  const selfNavigationEnabled = entropi2 !== false && !!coachSelfContext
+  const [myAthleteId, setMyAthleteId] = useState(() => selfNavigationEnabled ? readCoachSelfAthleteId(session) : localStorage.getItem('entropi_my_athlete_id'))
   const [pickingMine, setPickingMine] = useState(false)
+  const selfNavigationRef = useRef({ active: true, ownerId: session?.user?.id })
+  useEffect(() => {
+    selfNavigationRef.current = { active: true, ownerId: session?.user?.id }
+    return () => { selfNavigationRef.current.active = false }
+  }, [session?.user?.id])
+  const currentSelfNavigation = () => selfNavigationRef.current.active && selfNavigationRef.current.ownerId === session?.user?.id
+  const onPreviewAthlete = selfNavigationEnabled && previewAthlete ? (athleteId, initialTab = 'hjem') => {
+    if (!currentSelfNavigation()) return
+    const athlete = athletes.find(row => row.id === athleteId)
+    previewAthlete?.(athleteId, initialTab, requestCoachSelfTraining({ session, athlete }))
+  } : previewAthlete
+  function onSelectOwnAthlete(athleteId) {
+    if (!selfNavigationEnabled || !previewAthlete || !currentSelfNavigation()) return
+    const athlete = athletes.find(row => row.id === athleteId)
+    const request = requestCoachSelfTraining({ session, athlete, explicit: true })
+    if (!request) return
+    setMyAthleteId(athleteId)
+    previewAthlete?.(athleteId, 'hjem', request)
+  }
+
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
 
   const [fourWeekReads, setFourWeekReads] = useState({})
@@ -669,7 +691,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         confirmDialog, flash, isMobile, setConfirmDialog, videoCoachFrameRef, videoCoachOpen,
       }} />
       {programCopyEnabled === true && <WeekDeletionNotice entries={pendingWeekDeletes} onUndo={id => weekDeletionQueue.undo(id)} />}
-      <Sidebar {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
+      <Sidebar {...(selfNavigationEnabled ? { onSelectOwnAthlete } : {})} {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
         athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
         exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
         openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId,
@@ -682,7 +704,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         <div style={s.topbar}>
           <FridayChecklistEntry enabled={checklistEnabled} open={() => { setSelectedAthlete(null); setView('friday-checklist') }} />
           <div style={{ ...s.topbarTitle, flex: 1 }}>{view === 'friday-checklist' && checklistEnabled ? 'Fredagens tjekliste' : view === 'library' ? 'Øvelsesbibliotek' : view === 'calendar' ? (programOverview ? 'Programoverblik' : 'Kalender') : view === 'inbox' ? (coachRyd ? 'Arbejdsindbakke' : 'Coach Briefing') : view === 'list' ? (isMobile ? 'Entropi Coach' : 'Atleter') : a?.name}</div>
-          {onPreviewAthlete && !isMobile && (
+          {previewAthlete && !isMobile && (
             <button
               onClick={goToMyProfile}
               title="Min træning — hop til din egen profil (tast M)"
@@ -691,7 +713,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
           )}
         </div>
 
-        <MobilNav {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
+        <MobilNav {...(selfNavigationEnabled ? { onSelectOwnAthlete } : {})} {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
           athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
           goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
           selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,

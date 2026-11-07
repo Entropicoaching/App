@@ -8,7 +8,7 @@ import { signOutHard } from '../supabase.js'
 function CleanMobilNav({ coachRyd = false, programOverblik = false,
   athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
   goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
-  selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
+  selectedAthlete, setMenuSheetOpen, setMyAthleteId, onSelectOwnAthlete, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
   setShowAddModal, setSidebarOpen, setView, sheetPreviewPick, view,
 }) {
   return (
@@ -83,6 +83,7 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
                       <button type="button" key={a2.id}
                         onClick={() => {
                           setMenuSheetOpen(false); setSheetPreviewPick(false)
+                          if (pickingMine && onSelectOwnAthlete) { setPickingMine(false); onSelectOwnAthlete(a2.id); return }
                           if (pickingMine) { localStorage.setItem('entropi_my_athlete_id', a2.id); setMyAthleteId(a2.id); setPickingMine(false) }
                           onPreviewAthlete && onPreviewAthlete(a2.id)
                         }}
@@ -143,7 +144,7 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
 function LegacyMobilNav({ coachRyd = false, programOverblik = false,
   athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
   goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
-  selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
+  selectedAthlete, setMenuSheetOpen, setMyAthleteId, onSelectOwnAthlete, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
   setShowAddModal, setSidebarOpen, setView, sheetPreviewPick, view,
 }) {
   return (
@@ -218,6 +219,7 @@ function LegacyMobilNav({ coachRyd = false, programOverblik = false,
                       <div key={a2.id}
                         onClick={() => {
                           setMenuSheetOpen(false); setSheetPreviewPick(false)
+                          if (pickingMine && onSelectOwnAthlete) { setPickingMine(false); onSelectOwnAthlete(a2.id); return }
                           if (pickingMine) { localStorage.setItem('entropi_my_athlete_id', a2.id); setMyAthleteId(a2.id); setPickingMine(false) }
                           onPreviewAthlete && onPreviewAthlete(a2.id)
                         }}

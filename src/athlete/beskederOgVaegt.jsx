@@ -9,7 +9,7 @@ import { openVideoFeedbackFollowUp } from './videoFeedbackFollowUp.mjs'
 // coachens delte videofeedback som kort (renderSharedFeedbackCards, bruges paa
 // forsiden og i Beskeder) — flyttet uaendret ud af AthleteView.jsx (ordre 373)
 // som en fabrik, samme moenster som kostHandlinger.js.
-import { supabase } from '../supabase'
+import { supabase as database } from '../supabase'
 import { runGuardedWrite } from '../athleteWriteGuard'
 import { runGuardedRead } from '../athleteReadGuard'
 import { recordSilentFail } from '../athleteSilentFailLog'
@@ -25,7 +25,9 @@ export function lavBeskederOgVaegt({
   athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
   setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
   weightLogs, setMsgTrack, setTab, setWeightStatus, weightReadRef,
+  guardWrite = client => client,
 }) {
+  const supabase = guardWrite(database)
   async function fetchWeightLogs(athleteId) {
     // The ref belongs to AthleteView, so overlapping reads across renders share one sequence.
     // Without the optional E2 status capability, the legacy read/error contract is unchanged.

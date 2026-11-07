@@ -15,7 +15,7 @@ export function lavNavigation({
   setSelectedAthlete, setSheetPreviewPick, setShowBlockPlanner, setSidebarOpen, setVideoAnalysisReview, setVideoAnalysisReviewError,
   setVideoLiftFilter, setVideoReviewRequest, setView, setWeekDraft, setWeeks, viewRef,
 }) {
-  // Hop direkte ind i coachens egen atlet-profil (preview) for hurtig logging.
+  // Hop direkte ind i coachens valgte egen atlet-profil; Dashboard validerer selvvalget.
   // Første gang (eller hvis den gemte ikke findes): åbn picker i "vælg din egen"-mode.
   function goToMyProfile() {
     if (!onPreviewAthlete) return

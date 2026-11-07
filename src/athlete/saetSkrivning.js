@@ -7,7 +7,7 @@ import { parseInputNumber, inputInteger, optionalInput } from '../inputValues.js
 // Dagens pas' log/fortryd/ret, offline-koeen, spring over, session-feedback og
 // udfyld/spring resten over — flyttet uaendret ud af AthleteView.jsx (ordre 373)
 // som en fabrik, samme moenster som kostHandlinger.js.
-import { supabase, queueWrite } from '../supabase.js'
+import { supabase as database, queueWrite } from '../supabase.js'
 import { nextAthleteSetInput } from '../athleteTrainingInputs.js'
 import { runGuardedWrite } from '../athleteWriteGuard.js'
 import { recordSilentFail } from '../athleteSilentFailLog.js'
@@ -55,7 +55,9 @@ export function lavSaetSkrivning({
   logInputs, setAllWeeks, setExerciseLogs, setLastLoggedSet, setLogInputs, setPendingSessionAction, setPendingSyncCount, setPrToast,
   setPrToastFading, setRestPause, setSetConfirm, setWriteRef, showFlash, viewingWeekIdx,
   rekordGrundlagFoer, setRekordFejring, fejredeRef,
+  guardWrite = client => client,
 }) {
+  const supabase = guardWrite(database)
   // ORDRE 439 · blok 1: er sættet en ny rekord? Regnes mod alle ANDRE sæt:
   // tidligere uger (rekordGrundlagFoer, fra Fremgangs historik) + ugens sæt
   // uden dette. Kendes historikken ikke (endnu ikke hentet, intet

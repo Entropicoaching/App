@@ -54,6 +54,7 @@ import { createConversation } from './entropi2/conversation/conversationControll
 import { mountKost } from './entropi2/Entropi2Kost.mjs'
 import ActivePlan from './entropi2/kostplan/atlet/ActivePlan.mjs'
 import { readInitialAnalysisWeight } from './entropi2/analysis/analysisWeight.mjs'
+import { isCoachSelfTraining, guardTrainingActions, createTrainingLifetime } from './coachSelfTraining.mjs'
 
 // Indlæses via LazyBoundary (ordre 232 · commit 2), samme mønster som Dashboard.jsx's fire faner.
 const mobiliseringFactory = () => import('./athlete/MobiliseringTab.jsx')
@@ -141,7 +142,7 @@ function coachPreviewConversation({ athlete, ownerId, messages, analyses }) {
   } })
 }
 
-export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false, rel1101 = false, entropi2}) {
+export default function AthleteView({ opvarmStige = false, hviledageListe = false, programNaesteUge = false, videoSetSelection = VIDEO_SET_SELECTION_ENABLED, mobilitetCoach = false, mobilitetHjemme = false, mobilitetOpfoelgning = false, mobilitetHjalp = false, session, onExitPreview, role, coachAthleteId, coachSelfTraining, trainingAccess, onRecheckRole, enkelPrototype = false, forenklinger = false, programUgeFoerst = false, programBlokOversigt = false, fremgangFokus = false, naesteTraening = false, personalRecords = false, repRecords = false, staevnedagFokus = false, staevneHjem = false, fremgangLinjer = false, mobilitetFoerPas = false, hviledagMobilitet = false, mobilitetFokus = false, kostPerAtlet, kostValg, blokStyrke = false, blokFremgang = false, vaerdF6 = false, ugeLogget = false , previewInitialTab = 'hjem', programIntensityHelp = false, hjemoevKompakt = false, rel1101 = false, entropi2}) {
   const indbakke2 = indbakke2Enabled(typeof window === 'undefined' ? '' : window.location.search)
   const [requestedTab, setLegacyTab] = useState(() => role === 'coach' && coachAthleteId && ['hjem', 'program', 'mobilisering', 'fremgang'].includes(previewInitialTab) ? previewInitialTab : 'hjem')
   const [enkelRoute, setEnkelRoute] = useState('traening')
@@ -162,7 +163,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   // 'coach', skifter App.jsx denne gren ud med Dashboard FØR onRecheckRole's
   // promise resolver — komponentet er da allerede væk.
   const mountedRef = useRef(true)
-  useEffect(() => () => { mountedRef.current = false }, [])
+  useEffect(() => { mountedRef.current = true; return () => { mountedRef.current = false } }, [])
   async function handleRecheckRole() {
     setRecheckingRole(true); setRecheckMsg('')
     await onRecheckRole?.()
@@ -171,15 +172,29 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     setRecheckMsg('Din konto er registreret som atlet — ingen coach-adgang fundet.')
   }
   const [athlete, setAthlete] = useState(null)
-  // MIN TRÆNING and Se som atlet share coachAthleteId; only the loaded user's profile is writable.
-  const e2EgenCoach = e2 && role === 'coach' && !!athlete?.id &&
-    typeof session?.user?.id === 'string' && !!session.user.id && athlete.user_id === session.user.id &&
-    (!coachAthleteId || coachAthleteId === athlete.id)
+  const ownCoach = role === 'coach' && !!athlete?.id &&
+    typeof session?.user?.id === 'string' && !!session.user.id &&
+    (!coachAthleteId || coachAthleteId === athlete.id) &&
+    (athlete.user_id === session.user.id || isCoachSelfTraining(coachSelfTraining, { session, role, athlete, coachAthleteId }))
+  const e2EgenCoach = e2 && ownCoach
   const e2ReadOnly = e2 && !!athlete?.id && !e2EgenCoach &&
     (role === 'coach' || role === 'athlete' && (!!coachAthleteId || !!onExitPreview))
   const visKost = kostSynlig(athlete, kostPerAtlet, kostValg)
   const tab = kostDestination(requestedTab, visKost)
   const route = enkelRoute === 'kost' && !visKost ? 'traening' : enkelRoute
+  const trainingLifetime = useMemo(() => createTrainingLifetime({ ownerId: session?.user?.id, role, coachAthleteId, coachSelfTraining, trainingAccess, athlete }),
+    [session?.user?.id, role, coachAthleteId, coachSelfTraining, trainingAccess, athlete])
+  const trainingCurrentRef = useRef(null)
+  // eslint-disable-next-line react-hooks/refs -- event-time identity fence, updated before callbacks can run
+  trainingCurrentRef.current = trainingLifetime
+  useEffect(() => { trainingLifetime.activate(); return () => trainingLifetime.dispose() }, [trainingLifetime])
+  const canUseTrainingSession = () => trainingLifetime.isActive() && trainingCurrentRef.current === trainingLifetime && mountedRef.current &&
+    (trainingAccess === undefined || trainingAccess?.isActive?.() === true)
+  const canWriteTraining = () => canUseTrainingSession() && !!athlete?.id && !!session?.user?.id && (role === 'coach'
+      ? ownCoach && (athlete.user_id === session.user.id || isCoachSelfTraining(coachSelfTraining, { session, role, athlete, coachAthleteId }))
+      : role === 'athlete' && !coachAthleteId && !onExitPreview && athlete.user_id === session.user.id)
+  const guardWrite = client => trainingLifetime.guardClient(client, canWriteTraining)
+  const guardSession = client => trainingLifetime.guardSessionClient(client, canUseTrainingSession)
   // ORDRE 263 · commit 2: den automatiske pause mellem sæt (null = ingen
   // aktiv pause). Se restPause.js.
   const [restPause, setRestPause] = useState(null)
@@ -439,12 +454,13 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     inboxDatabase,
     fetchWeightLogs, logWeight, fetchAthleteMessages, markTrackRead, sendAthleteMessage, formatMsgTime, renderSharedFeedbackCards,
     sendUgeLinje,
-  } = lavBeskederOgVaegt({
+  } = guardTrainingActions(lavBeskederOgVaegt({
     athlete, messageInput, msgTrack, onReadError, openSharedVideoId, setMessageInput, setMessages, setOpenSharedVideoId,
     setSavingWeight, setSharedVideoAnalyses, setUnreadMsgCount, setWeightInput, setWeightLogs, sharedVideoAnalyses, showFlash, weightInput,
     weightLogs, setMsgTrack, setTab,
     ...(e2 ? { setWeightStatus, weightReadRef } : {}),
-  })
+    guardWrite,
+  }), canWriteTraining, ["logWeight", "markTrackRead", "sendAthleteMessage", "sendUgeLinje"])
 
   // Keep nutrition mounted across renders while retry reads the latest athlete and reader.
   const retryWeightRef = useRef(null)
@@ -460,19 +476,20 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     undoDelete, parseLoggedGrams, startEditLog, saveEditLog, totKcal, totProtein, totCarb, totFat,
     kcalPct, proteinPct, pKcal, cKcal, fKcal, macroTotal, circ, pLen,
     cLen, fLen, tdeeEstimate,
-  } = lavKostHandlinger({
+  } = guardTrainingActions(lavKostHandlinger({
     amount, athlete, createFood, customFoods, editGrams, editMacros, historicalMealLogs, kostDate,
     logs, onReadError, selectedFood, setAmount, setCreateFood, setCustomFoods, setEditGrams, setEditMacros,
     setEditingLogId, setFrequentFoods, setHistoricalMealLogs, setLogs, setMealTemplates, setSearchQuery, setSearchResults, setSelectedFood,
     setShowCreateFood, setShowSaveTemplate, setShowTemplates, setTemplateNameInput, setUndoPending, setUndoToast, setUnitIdx, shareFood,
     showFlash, templateNameInput, undoPending, undoTimerRef, undoToast, unitIdx, weightLogs,
-  })
+    guardWrite,
+  }), canWriteTraining, ["confirmCompleteDay", "quickLogFood", "copyYesterday", "saveTemplate", "logTemplate", "deleteTemplate", "addFromSearch", "quickAddSearchFood", "saveCustomFood", "deleteLog", "undoDelete", "saveEditLog"])
 
   const {
     fetchAthlete, fetchSharedVideoAnalyses, fetchMeetPlan, fetchVolumeLogs, fetchFremgangLogs, fetchRekordRaekker, fetchForloebLogs, fetchMeetResults, suggestNextWeight: suggestNextWeightRaa,
     saveReadiness, fetchProgram, openSession, openReadiness: legacyOpenReadiness, completeOnboardingGuide, advanceOnboardingGuide, restartOnboardingGuide, fetchPastLogs,
     fetchExerciseLogs, fetchProgramBlockLogs,
-  } = lavLaesninger({
+  } = guardTrainingActions(lavLaesninger({
     indbakke2,
     athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
     fetchLogs, fetchMealTemplates, fetchWeightLogs: fetchInitialWeightLogs, guideStep, mountedRef, onReadError, readinessCardRef, readinessInput,
@@ -486,7 +503,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     ...(e2 ? homeProgramReadSetters({ onReadError, setProgramError, setProgramLoading: setHomeProgramLoading,
       setAllWeeks, setCurrentWeek, setOfflineSnapshotAt }) : {}),
     ...(e2 ? { setExerciseLogsStatus, exerciseLogsReadRef } : {}),
-  })
+    guardWrite, guardSession, isSessionCurrent: canUseTrainingSession,
+  }), canWriteTraining, ["saveReadiness", "completeOnboardingGuide", "advanceOnboardingGuide"])
   // Read the latest athlete/week without replacing the open session or its draft.
   const retryExerciseLogsRef = useRef(null)
   retryExerciseLogsRef.current = () => e2 && mountedRef.current && athlete?.id && currentWeek
@@ -498,12 +516,13 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
   const {
     logSet, logDagensPasSet, flushOfflineSets, undoLoggedSet, updateLoggedSet, skipSet, skipExercise, unskipSet,
     saveFeedback, autoCompleteSession, skipRemainingSets,
-  } = lavSaetSkrivning({
+  } = guardTrainingActions(lavSaetSkrivning({
     allWeeks, athlete, currentWeek, exerciseLogs, feedbackInputs, fetchExerciseLogs, fetchPastLogs, lastLogByExerciseName,
     logInputs, setAllWeeks, setExerciseLogs, setLastLoggedSet, setLogInputs, setPendingSessionAction, setPendingSyncCount, setPrToast,
     setPrToastFading, setRestPause, setSetConfirm, setWriteRef, showFlash, viewingWeekIdx,
     rekordGrundlagFoer, setRekordFejring, fejredeRef,
-  })
+    guardWrite,
+  }), canWriteTraining, ["logSet", "logDagensPasSet", "flushOfflineSets", "undoLoggedSet", "updateLoggedSet", "skipSet", "skipExercise", "unskipSet", "saveFeedback", "autoCompleteSession", "skipRemainingSets"])
   // ORDRE 406 (O1 i docs/kritik-403): lytterne nedenfor registreres én gang pr.
   // atlet, men flushOfflineSets er en ny lukning i hvert render. Kaldte de den
   // fra første render, var currentWeek null, og afsendelsen sluttede med at
