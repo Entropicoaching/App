@@ -1,7 +1,9 @@
 import { namespace } from './dayModel.mjs'
 import { foodKey } from './approvedShoppingModel.mjs'
 
-export const purchaseNamespace = `${namespace}:purchases:v1`
+// v2 uses exact ingredient references. v1 records are deliberately neither read
+// nor rewritten: existing local marks reset once, on opening this new namespace.
+export const purchaseNamespace = `${namespace}:purchases:v2`
 export const maxPurchaseBytes = 32768, maxPurchaseItems = 256
 const bytes = text => new TextEncoder().encode(text).length
 const id = value => typeof value === 'string' && value.trim().length > 0 && value.length <= 200
@@ -19,7 +21,8 @@ function validScope(raw, athleteId) {
     && JSON.stringify(s[2]) === JSON.stringify([...s[2]].sort())
     && list(s[3], 4, d => Array.isArray(d) && d.length === 6 && day(d[0]) && id(d[1]) && id(d[2])
       && Number.isSafeInteger(d[3]) && d[3] > 0 && day(d[4])
-      && list(d[5], 30, meal => list(meal, 100, p => Array.isArray(p) && p.length === 2 && text(p[0]) && grams(p[1]))))
+      && list(d[5], 30, meal => list(meal, 100, p => Array.isArray(p) && p.length === 2
+        && (text(p[0]) || (Number.isInteger(p[0]) && p[0] >= 0 && p[0] < s[4]?.length)) && grams(p[1]))))
     && JSON.stringify(s[3].map(d => d[0])) === JSON.stringify(s[2])
     && list(s[4], maxPurchaseItems, i => Array.isArray(i) && i.length === 3 && text(i[0]) && grams(i[1]) && text(i[2]))
     && new Set(s[4].map(i => i[0])).size === s[4].length
@@ -30,10 +33,19 @@ function validScope(raw, athleteId) {
 // Indices refer to the exact ordered ingredient identities in this scope.
 export function purchaseScope({ athleteId, today, result, evidence }) {
   if (!id(athleteId) || result?.complete !== true) throw TypeError('Unconfirmed shopping evidence')
+  // The ordered gross items already contain each full foodKey exactly once.
+  // Numeric references preserve its id/preparation/citation/verification without
+  // repeating provenance in every portion. JSON types distinguish a reference
+  // from a literal identity; retain an unmatched identity verbatim rather than
+  // allowing inconsistent evidence to alias an existing ingredient's marks.
+  const ingredients = new Map(result.items.map((item, index) => [item.key, index]))
   return JSON.stringify([athleteId, today, [...result.dates].sort(),
     [...evidence].sort((a, b) => a.date.localeCompare(b.date)).map(day => [day.date, day.planId,
       day.versionId, day.versionNumber, day.effectiveFrom,
-      day.meals.map(meal => meal.portions.map(p => [foodKey(p.food), String(p.grams)]))]),
+      day.meals.map(meal => meal.portions.map(p => {
+        const identity = foodKey(p.food)
+        return [ingredients.get(identity) ?? identity, String(p.grams)]
+      }))]),
     result.items.map(item => [item.key, item.grams, item.preparation])])
 }
 
