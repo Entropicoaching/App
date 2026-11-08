@@ -10,6 +10,8 @@ const labels = { ironMg: 'Jern', calciumMg: 'Calcium', magnesiumMg: 'Magnesium',
   sodiumMg: 'Natrium', vitaminDUg: 'D-vitamin', vitaminB12Ug: 'B12', folateUg: 'Folat' }
 const complete = { Jern: '3,51 mg', Calcium: '176 mg', Magnesium: '52,7 mg', Zink: '1,76 mg', Kalium: '352 mg',
   Natrium: '87,9 mg', 'D-vitamin': '0 µg', B12: '0,879 µg', Folat: '35,2 µg' }
+const unknown = 'Ukendt – mangler data'
+const unknownRows = Object.fromEntries(Object.keys(complete).map(label => [label, unknown]))
 const click = async (host, label) => {
   const node = button(host, label); assert.ok(node, label)
   await act(async () => { await propsOf(node).onClick(); await tick() })
@@ -29,10 +31,10 @@ for (const kind of ['complete', 'zero', 'partial', 'missing']) test('actual moun
     assert.match(fold.textContent, /Planlagte fødevarer i den godkendte planversion/)
     assert.match(fold.textContent, /ikke spist indtag eller dokumenteret dækning/)
     assert.match(fold.textContent, /Rettede gram og spist-markeringer ændrer ikke/)
-    const expected = kind === 'missing' ? {} : kind === 'partial' ? Object.fromEntries(Object.entries(complete).filter(([key]) => key !== 'Jern'))
+    const expected = kind === 'missing' ? unknownRows : kind === 'partial' ? { ...complete, Jern: unknown }
       : kind === 'zero' ? Object.fromEntries(Object.keys(complete).map(key => [key, '0 ' + (['D-vitamin', 'B12', 'Folat'].includes(key) ? 'µg' : 'mg')])) : complete
     assert.deepEqual(nutrientRows(scope), expected)
-    assert.match(fold.textContent, kind === 'missing' ? /Ingen mineral- eller vitaminsummer/ : kind === 'partial' ? /Viser 8 af 9 stoffer/ : /Viser 9 af 9 stoffer/)
+    assert.match(fold.textContent, kind === 'missing' ? /Ingen mineral- eller vitaminsummer/ : kind === 'partial' ? /Kendte summer for 8 af 9 stoffer/ : /Kendte summer for 9 af 9 stoffer/)
     assert.doesNotMatch(fold.textContent, /RDA|%|tilskud|dosis/)
     assert.match(scope.textContent, /Væske og timing.*<b>Coachens ord<\/b>/s)
     assert.equal(all(scope, 'b').length, 0)
@@ -60,11 +62,11 @@ test('actual mounted Today and Future: each single unknown nutrient suppresses i
       f.plan.data[tableNames[1]][index] = freeze(v)
     }
     await ui.choose(date); await click(ui.host, 'Hent kostplan igen')
-    assert.equal(nutrientRows(ui.today())[labels[key]], undefined, key)
-    assert.equal(Object.keys(nutrientRows(ui.today())).length, 8)
+    assert.equal(nutrientRows(ui.today())[labels[key]], unknown, key)
+    assert.deepEqual(nutrientRows(ui.today()), { ...complete, [labels[key]]: unknown })
     await ui.choose('2026-11-06')
-    assert.equal(nutrientRows(ui.future())[labels[key]], undefined, key)
-    assert.equal(Object.keys(nutrientRows(ui.future())).length, 8)
+    assert.equal(nutrientRows(ui.future())[labels[key]], unknown, key)
+    assert.deepEqual(nutrientRows(ui.future()), { ...complete, [labels[key]]: unknown })
   }
   assert.deepEqual(sideEffects(f), { plan: 0, storage: 0, diary: 0, rows: 0 })
 })
@@ -108,7 +110,8 @@ for (const changed of ['date', 'athlete', 'client', 'OFF', 'missing-athlete']) t
   if (changed === 'missing-athlete') ui.props.athlete = null
   holding = false; await ui.render()
   await act(async () => { release(); await tick() })
-  assert.equal(ui.today() ? Object.keys(nutrientRows(ui.today())).length : 0, 0)
+  if (ui.today()) assert.deepEqual(nutrientRows(ui.today()), unknownRows)
+  else assert.equal(nutrientFold(ui.host), undefined)
   if (['OFF', 'missing-athlete'].includes(changed)) assert.equal(ui.host.textContent, '')
   assert.deepEqual(sideEffects(f), { plan: 0, storage: 0, diary: 0, rows: 0 })
 })
@@ -141,7 +144,7 @@ for (const changed of ['date', 'athlete', 'client']) test('actual Future owner r
   await act(async () => { release(); await pending; await tick() })
   assert.equal(dom.host.textContent, confirmed)
   if (changed === 'athlete') assert.equal(nutrientFold(dom.host), undefined)
-  else assert.deepEqual(nutrientRows(dom.host), {})
+  else assert.deepEqual(nutrientRows(dom.host), unknownRows)
   assert.deepEqual(sideEffects(f), { plan: 0, storage: 0, diary: 0, rows: 0 })
 })
 

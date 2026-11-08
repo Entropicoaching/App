@@ -47,7 +47,25 @@ test('synthetic view: grams, full macros, status and collapsed editor; no duplic
   assert.match(text(nutrients), /Tallene viser ikke spist indtag eller dokumenteret dækning af dit behov/)
   assert.match(text(nutrients), /Rettede gram og spist-markeringer ændrer ikke disse plantal/)
   assert.match(text(nutrients), /Der mangler næringsdata i denne planversion\. Ingen mineral- eller vitaminsummer kan vises for hele den planlagte dag\. Ukendt er ikke nul\./)
-  assert.equal(nodes(nutrients).filter(n => n.type === 'dl').length, 0, 'Unknown data has no invented sums')
+  const nutrientLists = nodes(nutrients).filter(n => n.type === 'dl')
+  assert.equal(nutrientLists.length, 1, 'One disclosure list for all nine unknown nutrients')
+  const nutrientPairs = [nutrientLists[0].props.children].flat(Infinity)
+  assert.deepEqual(nutrientPairs.map(n => [n.type, text(n).trim()]), [
+    ['dt', 'Jern'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'Calcium'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'Magnesium'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'Zink'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'Kalium'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'Natrium'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'D-vitamin'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'B12'], ['dd', 'Ukendt – mangler data'],
+    ['dt', 'Folat'], ['dd', 'Ukendt – mangler data'],
+  ], 'Every supported nutrient has exactly one explicit unknown value, never an invented sum or unit value')
+  assert.deepEqual(nodes(nutrients).filter(n => n.type === 'dt' || n.type === 'dd'), nutrientPairs,
+    'No duplicate, missing or unpaired nutrient labels or values outside the list')
+  assert.doesNotMatch(nutrientPairs.filter(n => n.type === 'dd').map(text).join(' '), /\d|mg|µg|ug/,
+    'Unknown data has no numeric totals or guessed units')
+  assert.doesNotMatch(text(nutrients), /%|\bRDA\b/, 'Unknown data makes no requirement coverage claim')
   assert.equal(nodes(tree).filter(n => n.type === 'tracker').length, 0, 'No duplicate legacy tracker')
   assert.equal(nodes(tree).filter(n => n.type === 'h1' && text(n) === 'Dagens kostplan').length, 1)
   const events = []

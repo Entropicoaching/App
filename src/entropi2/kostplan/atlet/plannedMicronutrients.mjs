@@ -23,16 +23,22 @@ export function plannedMicronutrients(meals) {
 }
 
 export function plannedMicronutrientsView(h, values = []) {
+  const known = new Map(values.map(value => [value.nutrient, value]))
+  const knownCount = nutrients.filter(nutrient => known.has(nutrient)).length
   return h('details', null,
     h('summary', { style: { minHeight: 44, paddingBlock: 12, cursor: 'pointer', font: 'inherit' } }, 'Mineraler og vitaminer'),
     h('p', null, 'Planlagte fødevarer i den godkendte planversion. Tallene viser ikke spist indtag eller dokumenteret dækning af dit behov. Rettede gram og spist-markeringer ændrer ikke disse plantal.'),
-    values.length ? h('div', null,
-      h('p', null, `Viser ${values.length} af ${nutrients.length} stoffer. En sum vises kun, når alle planlagte fødevarer har data for stoffet. Øvrige stoffer har manglende data; ukendt er ikke nul.`),
+    h('div', null,
+      knownCount ? h('p', null, `Kendte summer for ${knownCount} af ${nutrients.length} stoffer. En sum vises kun, når alle planlagte fødevarer har data for stoffet. Øvrige stoffer har manglende data; ukendt er ikke nul.`)
+        : h('p', null, 'Der mangler næringsdata i denne planversion. Ingen mineral- eller vitaminsummer kan vises for hele den planlagte dag. Ukendt er ikke nul.'),
       h('dl', { style: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '0.5rem' } },
-        ...values.flatMap(({ nutrient, label, unit, value }) => [
-          h('dt', { key: `${nutrient}-label` }, label),
-          h('dd', { key: nutrient, style: { margin: 0 } },
-            `${value.toLocaleString('da-DK', { maximumSignificantDigits: 3 })} ${unit}`),
-        ])))
-      : h('p', null, 'Der mangler næringsdata i denne planversion. Ingen mineral- eller vitaminsummer kan vises for hele den planlagte dag. Ukendt er ikke nul.'))
+        ...nutrients.flatMap(nutrient => {
+          const evidence = known.get(nutrient)
+          return [
+            h('dt', { key: `${nutrient}-label` }, NUTRIENTS[nutrient].label),
+            h('dd', { key: nutrient, style: { margin: 0 } }, evidence
+              ? `${evidence.value.toLocaleString('da-DK', { maximumSignificantDigits: 3 })} ${evidence.unit}`
+              : 'Ukendt – mangler data'),
+          ]
+        }))))
 }
