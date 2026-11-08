@@ -1,5 +1,33 @@
 // Exact self-training hotfix delta only. The historic OFF inversions and hashes stay intact.
 import assert from 'node:assert/strict'
+// Exact initial-presentation feature only, before the unchanged historic inversions.
+export const previewInitialSourceDeltas = [
+  [
+    "  }, [props.enabled, props.athlete, props.date, props.client, props.foods, props.weightLogs, props.weightStatus, props.retryWeight])\n  return props.enabled === true ? createElement('div', { ref: root, 'data-entropi2-kost': '' },\n    createElement('p', { role: 'status' }, 'Henter kostloggen… Her kan du se kost og vejning for den valgte dag. Registrering sker fra atletens egen visning.')) : null\n}\n",
+    "  }, [props.enabled, props.athlete, props.date, props.client, props.foods, props.weightLogs, props.weightStatus, props.retryWeight])\n  return props.enabled === true ? createElement('div', { ref: root, 'data-entropi2-kost': '' }) : null\n}\n"
+  ],
+  [
+    "\n  if ((!onboardingDone || guideOpen) && !coachAthleteId && !e2ReadOnly) {\n    return (\n",
+    "\n  if ((!onboardingDone || guideOpen) && !coachAthleteId) {\n    return (\n"
+  ],
+  [
+    "            <p>Senest hentede beskeder og delte videoer. Læst-kvitteringer er slået fra i forhåndsvisningen.</p>\n            <Conversation key={athlete.id} enabled={true} readOnly={true} createController={e2PreviewConversation}\n              initial={{ athleteId: athlete.id, messages, analyses: sharedVideoAnalyses }} />\n          </section>\n",
+    "            <p>Senest hentede beskeder og delte videoer. Læst-kvitteringer er slået fra i forhåndsvisningen.</p>\n            <Conversation key={athlete.id} enabled={true} createController={e2PreviewConversation} />\n          </section>\n"
+  ],
+  [
+    "            enabled: true, session, athlete, coachAthleteId: e2EgenCoach ? null : coachAthleteId, inboxDatabase,\n            messages, sharedVideoAnalyses,\n            setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setOpenSharedVideoId, renderSharedFeedbackCards,\n",
+    "            enabled: true, session, athlete, coachAthleteId: e2EgenCoach ? null : coachAthleteId, inboxDatabase,\n            setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setOpenSharedVideoId, renderSharedFeedbackCards,\n"
+  ]
+]
+export function invertPreviewInitialPresentation(source) {
+  let restored = source.replace(/\r\n/g, '\n')
+  for (const [added, previous] of previewInitialSourceDeltas) {
+    assert.equal(restored.split(added).length, 2, 'Exact coach self-training / preview initial-presentation source delta: ' + added.slice(0, 90))
+    restored = restored.replace(added, previous)
+  }
+  return restored
+}
+
 export const coachSelfSourceDeltas = [
   // Invert the E2-only skip bridge exactly; the historic OFF hash stays unchanged.
   ["            readOnly={e2ReadOnly} pendingSessionAction={pendingSessionAction}\n            {...(!e2ReadOnly ? { onSkipSet: skipSet, onSkipExercise: skipExercise, onUnskipSet: unskipSet } : {})}\n", ""],
@@ -57,7 +85,7 @@ export const coachSelfSourceDeltas = [
   ]
 ]
 export function invertCoachSelfTraining(source) {
-  let restored = source.replace(/\r\n/g, '\n')
+  let restored = invertPreviewInitialPresentation(source)
   for (const [added, previous] of coachSelfSourceDeltas) {
     assert.equal(restored.split(added).length, 2, 'Exact coach self-training source delta: ' + added.slice(0, 90))
     restored = restored.replace(added, previous)

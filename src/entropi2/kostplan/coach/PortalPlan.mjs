@@ -2,6 +2,7 @@ import { antalOrd } from '../../antalOrd.mjs'
 import * as React from 'react'
 import PlanActivation from './activation.mjs'
 import MealDraftImport from './MealDraftImport.mjs'
+import PlanDayOverview from './PlanDayOverview.mjs'
 import { openPortalPlan } from './portalModel.mjs'
 import { coachPlanView, recipeChoice } from './view.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
@@ -70,6 +71,7 @@ function ScopedPortalPlan(props) {
   // A retained launch callback cannot replace an already opened session.
   const chosen = React.useRef(false)
   const current = React.useRef(true)
+  const disclosure = React.useRef(null)
   const [refresh, setRefresh] = React.useState(0)
   const [date, setDate] = React.useState(props.date)
   // The disclosure needs no effect before interaction. A host ref retires launch
@@ -77,12 +79,21 @@ function ScopedPortalPlan(props) {
   return React.createElement('div', { ref: node => { current.current = node !== null } },
     date !== props.date && h('p', null, `Koststatus og registrering nedenfor gælder ${props.date}, ikke den valgte plandato.`),
     h(ActiveReport, { ...props, enabled: true, refresh }),
+    opened && React.createElement(PlanDayOverview, { enabled: true, coachId: props.coachId, athleteId: props.athlete.id,
+      today: props.date, selectedDate: date, onContinue: () => {
+        if (!current.current) return
+        chosen.current = true
+        // Only this explicit action opens the existing native host. Ordinary
+        // manual sessions remain uncontrolled, with their editor kept mounted.
+        disclosure.current?.setAttribute('open', '')
+        setExpanded(true); setOpened(true)
+      } }),
     !opened && React.createElement('button', { type: 'button', style: button, onClick: () => {
       if (!current.current || chosen.current) return
       chosen.current = true
       setReferenceRequested(true); setExpanded(true); setOpened(true)
     } }, 'Åbn kostplan med Frida-fødevarer'),
-    React.createElement('details', { open: referenceRequested ? expanded : undefined, className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
+    React.createElement('details', { ref: disclosure, open: referenceRequested ? expanded : undefined, className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
     onToggle: event => {
       if (!current.current) return
       const open = event.currentTarget.open

@@ -7,6 +7,42 @@ export const DRAFT_MESSAGE = 'Lokal kladde gemt.'
 const SCHEMA = 'entropi2:kostplan:coach:device-draft:v1'
 export const draftKey = (coachId, athleteId, date) => `${SCHEMA}:${[coachId, athleteId, date].map(encodeURIComponent).join(':')}`
 
+// Shared strict parser: inspection and restoration must accept identical payloads.
+function parsePortalDraft(raw, { coachId, athleteId, date }) {
+  if (raw.length > 250000) throw Error('Oversized draft')
+  const stored = JSON.parse(raw)
+  const plan = normalizePlan(stored.plan, athleteId)
+  const savedCalculation = stored.calculation
+  if (savedCalculation !== undefined && !validProfileCalculation(savedCalculation, date))
+    throw Error('Invalid calculation')
+  if (stored.manualImport !== undefined && typeof stored.manualImport !== 'boolean') throw Error('Invalid manual draft')
+  if (stored.activationPending !== undefined && typeof stored.activationPending !== 'boolean') throw Error('Invalid activation reservation')
+  if (!Number.isSafeInteger(stored.sequence) || stored.sequence < 1 || stored.schema !== SCHEMA || stored.coachId !== coachId || stored.date !== date
+    || !plan || plan.date !== date || plan.status !== 'draft'
+    || stored.form?.goal !== plan.goal || stored.form?.intensity !== plan.intensity
+    || !Number.isSafeInteger(stored.clientVersion) || stored.clientVersion < 0
+    || JSON.stringify(targets(stored.form ?? {}, savedCalculation)) !== JSON.stringify(plan.targets)) throw Error('Invalid draft')
+  return { plan, form: stored.form, clientVersion: stored.clientVersion, calculation: savedCalculation,
+    activationPending: stored.activationPending === true, manualImport: stored.manualImport === true }
+}
+
+// Read only one existing scoped key. No controller, catalogue load or writes.
+// Expose display facts only; a local reservation is never evidence of activation.
+export function inspectPortalDraft(options = {}) {
+  if (options.enabled !== true) return null
+  const { coachId, athleteId, date } = options
+  if (!identifier(coachId) || !identifier(athleteId) || !day(date)) return null
+  try {
+    const raw = (options.storage ?? (() => globalThis.localStorage))().getItem(draftKey(coachId, athleteId, date))
+    if (raw === null) return { state: 'missing' }
+    const draft = parsePortalDraft(raw, { coachId, athleteId, date })
+    return { state: draft.activationPending ? 'pending' : 'present', mealCount: draft.plan.meals.length,
+      mealNames: draft.plan.meals.map(meal => meal.name) }
+  } catch {
+    return { state: 'unreadable' }
+  }
+}
+
 // No client or table adapter. The only write is one namespaced localStorage key,
 // after an explicit coach action. The existing session is an isolation key, not auth.
 export function openPortalPlan(options = {}) {
@@ -20,21 +56,7 @@ export function openPortalPlan(options = {}) {
   try {
     expected = storage().getItem(key)
     if (expected !== null) {
-      if (expected.length > 250000) throw Error('Oversized draft')
-      const stored = JSON.parse(expected)
-      const plan = normalizePlan(stored.plan, athlete.id)
-      const savedCalculation = stored.calculation
-      if (savedCalculation !== undefined && !validProfileCalculation(savedCalculation, date))
-        throw Error('Invalid calculation')
-      if (stored.manualImport !== undefined && typeof stored.manualImport !== 'boolean') throw Error('Invalid manual draft')
-      if (stored.activationPending !== undefined && typeof stored.activationPending !== 'boolean') throw Error('Invalid activation reservation')
-      if (!Number.isSafeInteger(stored.sequence) || stored.sequence < 1 || stored.schema !== SCHEMA || stored.coachId !== coachId || stored.date !== date
-        || !plan || plan.date !== date || plan.status !== 'draft'
-        || stored.form?.goal !== plan.goal || stored.form?.intensity !== plan.intensity
-        || !Number.isSafeInteger(stored.clientVersion) || stored.clientVersion < 0
-        || JSON.stringify(targets(stored.form ?? {}, savedCalculation)) !== JSON.stringify(plan.targets)) throw Error('Invalid draft')
-      restoreDraft = { plan, form: stored.form, clientVersion: stored.clientVersion, calculation: savedCalculation,
-        activationPending: stored.activationPending === true, manualImport: stored.manualImport === true }
+      restoreDraft = parsePortalDraft(expected, { coachId, athleteId: athlete.id, date })
     }
   } catch {
     loadError = 'Den lokale kladde kunne ikke læses. Genåbn kostfanen, når enhedens lagring er tilgængelig.'

@@ -127,7 +127,8 @@ function PreviewKost(props) {
     if (props.enabled !== true || !root.current || !props.athlete?.id) return undefined
     return mountKost(root.current, { ...props, storage: coachPreviewStorage }, latest, { weightLogs: props.weightLogs, weightStatus: props.weightStatus, retryWeight: props.retryWeight })
   }, [props.enabled, props.athlete, props.date, props.client, props.foods, props.weightLogs, props.weightStatus, props.retryWeight])
-  return props.enabled === true ? createElement('div', { ref: root, 'data-entropi2-kost': '' }) : null
+  return props.enabled === true ? createElement('div', { ref: root, 'data-entropi2-kost': '' },
+    createElement('p', { role: 'status' }, 'Henter kostloggen… Her kan du se kost og vejning for den valgte dag. Registrering sker fra atletens egen visning.')) : null
 }
 
 // Same Entropi 2 conversation renderer, using the already fetched preview snapshots.
@@ -792,7 +793,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     <KostCompact {...{ athlete, kcalPct, proteinPct, setTab, totKcal, totProtein }} />
   )
 
-  if ((!onboardingDone || guideOpen) && !coachAthleteId) {
+  if ((!onboardingDone || guideOpen) && !coachAthleteId && !e2ReadOnly) {
     return (
       <OnboardingGuide
         {...{
@@ -1025,12 +1026,14 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {e2Atlet && e2ReadOnly && tab === 'beskeder' && (
           <section aria-label="Samlet samtale">
             <p>Senest hentede beskeder og delte videoer. Læst-kvitteringer er slået fra i forhåndsvisningen.</p>
-            <Conversation key={athlete.id} enabled={true} createController={e2PreviewConversation} />
+            <Conversation key={athlete.id} enabled={true} readOnly={true} createController={e2PreviewConversation}
+              initial={{ athleteId: athlete.id, messages, analyses: sharedVideoAnalyses }} />
           </section>
         )}
         {e2Atlet && !e2ReadOnly && tab === 'beskeder' && (
           <ConversationEntry enabled={true} role="athlete" controllerRef={e2ConversationRef} getEntry={() => ({
             enabled: true, session, athlete, coachAthleteId: e2EgenCoach ? null : coachAthleteId, inboxDatabase,
+            messages, sharedVideoAnalyses,
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setOpenSharedVideoId, renderSharedFeedbackCards,
             storage: () => localStorage,
           })} />

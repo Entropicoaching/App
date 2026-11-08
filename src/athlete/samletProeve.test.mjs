@@ -95,9 +95,7 @@ test('host-imported presentation modules remain actual source modules', () => {
 
 // Known requirements remain executable TODOs; no blanket catch, skip or automatic
 // conversion of arbitrary assertion failures to TODO is allowed.
-test('TODO F1: SSR Kost contains real content, including empty-data guidance', {
-  todo: 'F1: src/entropi2/Entropi2Kost.mjs:35-47 and src/AthleteView.jsx:119-126 mount content only in useEffect; SSR emits an empty div.',
-}, async () => {
+test('F1: SSR Kost contains real content, including empty-data guidance', async () => {
   for (const mode of modes) for (const state of ['ready', 'empty']) {
     const tree = assertCleanMarkup(await renderScenario(scenario(mode, 'kost', state)))
     const kost = elements(tree).find(node => /\bdata-entropi2-kost=/.test(node.attributes ?? ''))
@@ -105,9 +103,7 @@ test('TODO F1: SSR Kost contains real content, including empty-data guidance', {
   }
 })
 
-test('TODO F2: SSR Beskeder includes the fetched conversation or honest empty state', {
-  todo: 'F2: src/entropi2/conversation/Conversation.mjs:7-15 mounts content only in useEffect; SSR emits an empty section.',
-}, async () => {
+test('F2: SSR Beskeder includes the fetched conversation or honest empty state', async () => {
   for (const mode of modes) for (const state of ['ready', 'empty']) {
     const tree = assertCleanMarkup(await renderScenario(scenario(mode, 'beskeder', state)))
     const conversation = elements(tree).find(node => /aria-label="Beskeder og video"/.test(node.attributes ?? ''))
@@ -119,9 +115,7 @@ test('TODO F2: SSR Beskeder includes the fetched conversation or honest empty st
 // Home and the preview Profile fallback still expose disabled write controls.
 // Keep these requirements executable until their own presentation is addressed.
 for (const tab of ['hjem', 'profil']) {
-  test(`TODO F3: preview/${tab} has no write buttons, including disabled buttons`, {
-    todo: 'F3: Home and the preview Profile fallback still render visible write buttons.',
-  }, async () => {
+  test(`F3: preview/${tab} has no write buttons, including disabled buttons`, async () => {
     for (const state of ['ready', 'empty']) {
       const html = await renderScenario(scenario('preview', tab, state))
       assertNoWriteButtons(html)

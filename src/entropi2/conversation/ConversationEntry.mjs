@@ -1,5 +1,6 @@
 import { createElement as h, useMemo, useRef, useState } from 'react'
 import Conversation from './Conversation.mjs'
+import { validId } from './conversationModel.mjs'
 import { createConversation } from './conversationController.mjs'
 import { createConversationAdapters, athleteConversationScope, coachConversationScope, athleteUploadEntry } from './conversationAdapters.mjs'
 
@@ -53,8 +54,13 @@ export default function ConversationEntry({ enabled = false, role, getEntry, con
   const factory = useMemo(() => createEntryFactory({ enabled, role, getEntry: () => live.current(),
     openFeedback: setFeedback }), [enabled, role, athleteId, ownerId])
   if (enabled !== true) return null
+  // Presentation uses only the current host's fetched rows, under its existing scope.
+  const scope = role === 'athlete' ? athleteConversationScope(entry) : coachConversationScope(entry)
+  const scoped = scope.enabled === true && validId(athleteId) && !!ownerId &&
+    (role === 'athlete' ? scope.athleteUserId === ownerId : role === 'coach' && scope.athletes.some(row => row.id === athleteId))
+  const initial = scoped ? { athleteId, messages: entry.messages, analyses: entry.sharedVideoAnalyses } : undefined
   return h('section', { 'aria-label': 'Samlet samtale' },
-    h(Conversation, { key: `${role}:${ownerId}:${athleteId}`, enabled, createController: factory, controllerRef }),
+    h(Conversation, { key: `${role}:${ownerId}:${athleteId}`, enabled, createController: factory, controllerRef, initial }),
     role === 'athlete' && feedback?.athlete_id === athleteId && entry.athlete?.user_id === ownerId
       && entry.renderSharedFeedbackCards?.([feedback], { expanded: true }))
 }

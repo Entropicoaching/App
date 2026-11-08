@@ -176,7 +176,7 @@ export default function AthleteHome(props) {
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
     h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (name ? `Godt arbejde i dag, ${name}` : 'Godt arbejde i dag')
       : target ? (name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?') : (name ? `Dit overblik, ${name}` : 'Dit overblik')),
-    h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
+    !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
       canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading },
@@ -212,9 +212,9 @@ export default function AthleteHome(props) {
     h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow,
       trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
     // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
-    h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
+    !props.sessionReadOnly && h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
       disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
-    h(HomeCheckIn, { enabled, athleteId: athlete?.id, now, onHoliday: props.onHoliday, storage: props.storage }),
+    !props.sessionReadOnly && h(HomeCheckIn, { enabled, athleteId: athlete?.id, now, onHoliday: props.onHoliday, storage: props.storage }),
     week?.plan && h('details', { style: s.card, 'data-home-week-plan': '' },
       h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 44 } }, 'Se ugens plan'),
       h(WeekPlan, week.plan)),
