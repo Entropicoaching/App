@@ -3,6 +3,7 @@ import * as React from 'react'
 import { mountExistingTracker } from './trackerAdapter.mjs'
 import { plannedMicronutrientsView } from './plannedMicronutrients.mjs'
 import MealFoodData from './MealFoodData.mjs'
+import MealDayOverview from './MealDayOverview.mjs'
 
 const { createElement: h, useEffect, useRef, useState, useSyncExternalStore } = React
 
@@ -52,6 +53,9 @@ export function KostplanAtletView(props = {}) {
     h('summary', { style: { ...control, paddingBlock: 12, cursor: 'pointer' } }, 'Kontrollér kostloggen'),
     props.tracker || h('p', { role: 'alert' }, 'Åbn den eksisterende kcal-tracker for at kontrollere måltidet.')),
   !s.meals.length && h('p', null, 'Der er ingen måltider i dagens aktive plan. Tal med din coach.'),
+  s.mode === 'plan' && s.planId && s.planRevision && h(MealDayOverview, {
+    key: JSON.stringify([s.athleteId, s.date, s.planId, s.planRevision]),
+    meals: s.meals, uncertain: s.phase === 'uncertain' }),
   ...s.meals.map(meal => h('section', { key: meal.id, 'aria-label': meal.name,
     style: { border: '1px solid currentColor', borderRadius: 12, padding: 16, marginTop: 16 } },
     h('h2', null, meal.name),

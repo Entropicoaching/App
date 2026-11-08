@@ -3,6 +3,7 @@ import { createUpcomingPlan } from './upcomingPlanModel.mjs'
 import { PlanAdvice } from './KostplanAtlet.mjs'
 import { plannedMicronutrientsView } from './plannedMicronutrients.mjs'
 import MealFoodData from './MealFoodData.mjs'
+import MealDayOverview from './MealDayOverview.mjs'
 
 function Preview({ controller }) {
   const s = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot)
@@ -18,6 +19,9 @@ function Preview({ controller }) {
     !['idle', 'loading'].includes(s.phase) && h('button', { type: 'button', onClick: controller.load,
       style: { minHeight: 44, font: 'inherit' } }, 'Hent planen igen'),
     s.plan && h('div', null,
+      s.phase === 'ready' && h(MealDayOverview, {
+        key: JSON.stringify([s.athleteId, s.date, s.plan.id, s.plan.revision]),
+        meals: s.plan.meals, readOnly: true }),
       ...s.plan.meals.map(meal => h('section', { key: meal.id, 'aria-label': meal.name,
         style: { border: '1px solid currentColor', borderRadius: 12, padding: 16, marginTop: 16 } },
         h('h2', null, meal.name),

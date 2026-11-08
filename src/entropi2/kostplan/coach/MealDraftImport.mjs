@@ -3,6 +3,7 @@ import { MEAL_DRAFT_MAX_LENGTH } from './mealDraft.mjs'
 import { button, control, primaryButton } from './formStyles.mjs'
 import { emptyMealForm, addFormMeal, addFormLine, loadMealForm, serializeMealForm, lineCount } from './mealDraftForm.mjs'
 import { searchFoods } from './foodSearch.mjs'
+import SelectedFoodEvidence from './SelectedFoodEvidence.mjs'
 
 const fieldset = { minWidth: 0, marginBottom: 12 }
 const rowStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 12rem), 1fr))', gap: 12 }
@@ -146,7 +147,9 @@ function MealFormSession({ controller, snapshot, coachId }) {
             React.createElement('label', { style: { ...ingredientLabel, flexBasis: '8rem' } }, `Gram af fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('input', { type: 'text', inputMode: 'decimal', style: control,
               name: `draft-grams-${mi}-${ii}`, value: item.grams, onChange: e => changeLine(meal.id, item.key, 'grams', e.currentTarget.value) })),
             React.createElement('button', { type: 'button', style: ingredientAction, onClick: () => update({ ...draft, meals: draft.meals.map(m => m.id !== meal.id ? m : { ...m,
-              items: m.items.filter(i => i.key !== item.key) }) }) }, `Fjern fødevare ${ii + 1} fra måltid ${mi + 1}`)))
+              items: m.items.filter(i => i.key !== item.key) }) }) }, `Fjern fødevare ${ii + 1} fra måltid ${mi + 1}`),
+            item.foodId && React.createElement(SelectedFoodEvidence, { key: item.foodId, foods: snapshot.foods, foodId: item.foodId,
+              ingredientNumber: ii + 1, mealNumber: mi + 1 })))
           }),
           React.createElement('button', { type: 'button', style: button, disabled: meal.items.length >= 30 || count >= 100,
             onClick: () => update(addFormLine(draft, meal.id)) }, `Tilføj fødevare til måltid ${mi + 1}`),
