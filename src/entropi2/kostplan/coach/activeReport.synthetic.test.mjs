@@ -50,7 +50,22 @@ test('actual production host receipt plus active namespace plan shows trailing s
   assert.equal(portal.props.nutritionRead.planHistory, 'unavailable')
   const count = f.writes().length
   const screen = mount(PortalPlan, { ...portal.props, client: f.client }, { effects: true })
-  assert.equal(text(screen.render()).trim(), 'Kostplan'); await settle()
+  {
+    // Source4: exact closed entry contract, before either catalogue is chosen.
+    const closedEntry = screen.render()
+    assert.equal(text(closedEntry).trim(), 'Åbn kostplan med Frida-fødevarer Kostplan')
+    const choices = nodes(closedEntry).filter(n => ['button', 'summary'].includes(n.type))
+    assert.deepEqual(choices.map(n => [n.type, text(n)]), [
+      ['button', 'Åbn kostplan med Frida-fødevarer'], ['summary', 'Kostplan'],
+    ])
+    assert.equal(choices[0].props.type, 'button')
+    assert.equal(choices[0].props.disabled ?? false, false)
+    assert.equal(choices[0].props.hidden ?? false, false)
+    assert.equal(typeof choices[0].props.onClick, 'function')
+    assert.ok(choices.every(n => n.props.style.minHeight >= 44))
+    assert.equal(nodes(closedEntry).filter(n => ['form', 'input', 'select', 'textarea'].includes(n.type)).length, 0)
+    assert.ok(nodes(closedEntry).filter(n => n.type === 'details').every(n => !n.props.open))
+  }; await settle()
   const tree = screen.render()
   assert.match(text(tree), /Plan og registreret kost|Seneste 7 dage|2 af 7 dage med kostlog/)
   assert.match(text(tree), /3.500 kcal registreret|Ukendt registreret/)

@@ -62,7 +62,22 @@ async function mounted(run, initial = props) {
 }
 
 test('mounted editor separates current coach goal, actual suggestion and portion sum; unknown load stays unknown', () => mounted(async t => {
-  assert.equal(t.host.textContent, 'Kostplan'); assert.equal(t.storage.calls.length, 0)
+  {
+    // Source4: exact mounted closed entry contract, before either choice.
+    assert.equal(t.host.textContent, 'Åbn kostplan med Frida-fødevarerKostplan')
+    const choices = elements(t.host).filter(n => ['BUTTON', 'SUMMARY'].includes(n.tagName))
+    assert.deepEqual(choices.map(n => [n.tagName, n.textContent]), [
+      ['BUTTON', 'Åbn kostplan med Frida-fødevarer'], ['SUMMARY', 'Kostplan'],
+    ])
+    assert.equal(reactProps(choices[0]).type, 'button')
+    assert.equal(reactProps(choices[0]).disabled ?? false, false)
+    assert.equal(reactProps(choices[0]).hidden ?? false, false)
+    assert.equal(typeof reactProps(choices[0]).onClick, 'function')
+    assert.ok(choices.every(n => reactProps(n).style.minHeight >= 44))
+    assert.equal(elements(t.host).filter(n => ['FORM', 'INPUT', 'SELECT', 'TEXTAREA'].includes(n.tagName)).length, 0)
+    assert.ok(elements(t.host).filter(n => n.tagName === 'DETAILS').every(n => !reactProps(n).open))
+    assert.equal(t.f.writes().length, 0)
+  }; assert.equal(t.storage.calls.length, 0)
   await t.open()
   const context = () => elements(t.host).find(n => n.getAttribute('aria-label') === 'Mål og plangrundlag')
   assert.ok(context()); assert.match(context().textContent, /Aktuelt coachmål fra profilenVedligehold · 3.200 kcal · 180 g protein/)

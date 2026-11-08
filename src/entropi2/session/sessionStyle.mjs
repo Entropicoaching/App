@@ -39,6 +39,17 @@ export const sessionStyle = `
 .e2-session .approve {width:100%;min-height:52px;background:#c8923a;color:#141410;font-weight:600;margin-top:20px}
 .e2-session .record-receipt {border-left:2px solid #c8923a;padding:8px 12px;margin:12px 0;overflow-wrap:anywhere}
 .e2-session .muted {color:#b8b4a8}
+.e2-session .session-overview {min-width:0;max-width:100%;box-sizing:border-box;border:1px solid #77776b;border-radius:12px;padding:8px 12px;margin:12px 0;overflow-wrap:anywhere}
+.e2-session .session-overview summary {min-height:44px;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}
+.e2-session .session-overview h2 {font-size:20px;margin:12px 0}
+.e2-session .overview-exercises {padding-left:24px;margin:12px 0}
+.e2-session .overview-exercises > li {min-width:0;padding:8px 0;border-top:1px solid #414139}
+.e2-session .overview-exercises p {margin:6px 0;font-size:14px}
+.e2-session .overview-progress {color:#b8b4a8}
+.e2-session .overview-dosage {display:block;font-size:14px;color:#b8b4a8}
+.e2-session .overview-sets {padding-left:20px;font-size:14px}
+.e2-session .session-overview [aria-current="step"],.e2-session .overview-sets [data-overview-current] {border-left:3px solid #c8923a;padding-left:8px;font-weight:600}
+.e2-session .session-overview button {min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
 .e2-session .plan {font-size:22px;line-height:1.4;overflow-wrap:anywhere}
 .e2-session summary {cursor:pointer;padding:8px 0}
 .e2-session [role=alert] {border-left:3px solid #c8923a;padding-left:12px}

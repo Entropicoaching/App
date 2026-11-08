@@ -45,7 +45,22 @@ test('opened manual and bounded templates style every field and add/remove/gener
       Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage })
       const screen = mount(PortalPlan, { ...props, athlete })
       let tree = screen.render()
-      assert.equal(text(tree).trim(), 'Kostplan')
+      {
+        // Source4: exact closed entry contract, before either catalogue is chosen.
+        const closedEntry = tree
+        assert.equal(text(closedEntry).trim(), 'Åbn kostplan med Frida-fødevarer Kostplan')
+        const choices = nodes(closedEntry).filter(n => ['button', 'summary'].includes(n.type))
+        assert.deepEqual(choices.map(n => [n.type, text(n)]), [
+          ['button', 'Åbn kostplan med Frida-fødevarer'], ['summary', 'Kostplan'],
+        ])
+        assert.equal(choices[0].props.type, 'button')
+        assert.equal(choices[0].props.disabled ?? false, false)
+        assert.equal(choices[0].props.hidden ?? false, false)
+        assert.equal(typeof choices[0].props.onClick, 'function')
+        assert.ok(choices.every(n => n.props.style.minHeight >= 44))
+        assert.equal(nodes(closedEntry).filter(n => ['form', 'input', 'select', 'textarea'].includes(n.type)).length, 0)
+        assert.ok(nodes(closedEntry).filter(n => n.type === 'details').every(n => !n.props.open))
+      }
       assert.equal(storage.calls.length, 0)
       nodes(tree).find(node => node.type === 'details').props.onToggle({ currentTarget: { open: true } }); tree = screen.render()
       checkFields(tree)

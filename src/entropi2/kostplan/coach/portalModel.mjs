@@ -42,7 +42,7 @@ export function openPortalPlan(options = {}) {
   let controller
   controller = createCoachPlan({ enabled: true, coachId, localDraftOnly: true, gramGenerator: calculation !== undefined,
     athlete: { id: athlete.id, bodyweight: athlete.bodyweight }, date,
-    goal: athlete.goal, catalog: FOODS, template: options.template ?? restoreDraft?.plan.meals.map(meal => ({
+    goal: athlete.goal, catalog: options.catalog ?? FOODS, template: options.template ?? restoreDraft?.plan.meals.map(meal => ({
       id: meal.id, name: meal.name, items: meal.items.map(item => ({ foodId: item.food.id, grams: item.grams,
         minGrams: item.minGrams, maxGrams: item.maxGrams })),
     })) ?? [], restoreDraft, restoreActivationPending: restoreDraft?.activationPending,

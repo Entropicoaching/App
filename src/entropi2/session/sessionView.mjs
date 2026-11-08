@@ -2,7 +2,7 @@ import { antalOrd } from '../antalOrd.mjs'
 import { nextSetInSession } from '../../nextSet.js'
 import { createMobilityPlan } from '../mobility/plan/mobilityPlanDom.mjs'
 import { mobilityPlan } from '../mobility/plan/mobility-plan.mjs'
-import { createSessionController } from './sessionModel.mjs'
+import { createSessionController, programStamp } from './sessionModel.mjs'
 import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
 import { lastSetLine } from './sessionHistory.mjs'
@@ -22,6 +22,8 @@ import { mountSupersetView } from './supersaet/supersetView.mjs'
 import { mountExerciseHistory, closeExerciseHistory, sessionHistoryProps, historyElement } from './historik/exerciseHistoryDom.mjs'
 import { sessionRecordReceipt } from './sessionRecordReceipt.mjs'
 import { createExerciseHelp, closeExerciseHelp } from './exerciseHelpView.mjs'
+import { createSessionOverview } from './sessionOverview.mjs'
+import { calendarDay } from '../../calendarDate.js'
 
 const present = v => v == null || v === '' ? 'Ikke angivet' : String(v)
 const given = v => v != null && String(v).trim() !== ''
@@ -37,6 +39,9 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   let cleanBlocks = [], plateBar = 20
   const clearBlocks = () => { cleanBlocks.forEach(fn => fn()); cleanBlocks = [] }
   let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, stepIdentity, announcement, errorStatus, dead = false, renderVersion = 0
+  let overviewIdentity
+  const overviewScope = (p, s) => JSON.stringify([programStamp(p), s.selection?.sessionId,
+    calendarDay(new Date(clock.Date.now())), p.readOnly === true])
   const el = (tag, text, attrs = {}) => {
     const node = doc.createElement(tag)
     if (text != null) node.textContent = String(text)
@@ -55,11 +60,14 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     stopTimer?.(); stopTimer = null; lastPause = undefined
     unbind?.(); unbind = null
     dialog?.remove(); dialog = null; stepIdentity = undefined
+    overviewIdentity = undefined
   }
   function render() {
     if (dead) return
     const version = ++renderVersion
     const p = latest(), s = controller.state()
+    const overviewStamp = overviewScope(p, s), sameOverview = overviewStamp === overviewIdentity
+    overviewIdentity = overviewStamp
     // A replaced rendering cannot submit old values or finish a replacement context.
     const active = () => !dead && version === renderVersion && controller.state().open &&
       controller.state().selection?.stamp === s.selection?.stamp
@@ -101,10 +109,12 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const position = fieldName ? [focused.selectionStart, focused.selectionEnd] : null
     const detailsOpen = [...body.querySelectorAll('details')].filter(n => n.open).map(n => n.getAttribute('data-detail'))
     const hadBodyFocus = body.contains(focused)
-    const detailFocus = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
+    const focusedDetail = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
+    const detailFocus = !sameOverview && (focusedDetail === 'overview' || focusedDetail?.startsWith('overview-')) ? null : focusedDetail
     const approveFocus = focused?.getAttribute('class') === 'approve'
     const helpDismissFocus = focused?.getAttribute('data-help-dismiss') != null
     const stepFocus = focused?.getAttribute('data-step')
+    const overviewFocus = sameOverview ? focused?.getAttribute('data-overview-focus') : null
     const oldBar = body.querySelector('[data-e2-plader]')?.querySelector('select')
     if (oldBar) plateBar = Number(oldBar.value)
     clearBlocks()
@@ -132,6 +142,13 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       body.append(warm)
     }
     body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
+    if (!summary) body.append(createSessionOverview(doc, { p, s, now: clock.Date.now(),
+      active: () => active() && overviewStamp === overviewScope(latest(), controller.state()),
+      returnToLog: () => {
+        const input = body.querySelector('[data-field="weight"]')
+        if (input && !input.disabled) input.focus()
+        else body.querySelector('[data-heading]')?.focus()
+      } }))
     const skipped = s.logs.filter(row => row.skipped && s.session.exercises.some(ex =>
       ex.id === row.exercise_id && row.set_number > 0 && row.set_number <= ex.sets))
     if (skipped.length) {
@@ -340,7 +357,9 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     body.append(history)
     for (const node of body.querySelectorAll('details')) {
       const detail = node.getAttribute('data-detail')
-      node.open = (detail === 'rpe' && given(s.input.rpe)) || (!stepChanged && detailsOpen.includes(detail))
+      const overview = detail === 'overview' || detail?.startsWith('overview-')
+      node.open = (detail === 'rpe' && given(s.input.rpe)) ||
+        ((overview ? sameOverview : !stepChanged) && detailsOpen.includes(detail))
     }
     const replacement = fieldName ? body.querySelector(`[data-field="${fieldName}"]`) : null
     const stepReplacement = stepFocus ? body.querySelector(`[data-step="${stepFocus}"]`) : null
@@ -353,7 +372,9 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       }
       return true
     }
-    if (stepChanged) body.querySelector('[data-heading]')?.focus()
+    const overviewReplacement = overviewFocus ? body.querySelector(`[data-overview-focus="${overviewFocus}"]`) : null
+    if (stepAvailable(overviewReplacement)) overviewReplacement.focus()
+    else if (stepChanged) body.querySelector('[data-heading]')?.focus()
     else if (replacement && !replacement.disabled) {
       replacement.focus(); if (position[0] != null && typeof replacement.setSelectionRange === 'function') replacement.setSelectionRange(...position)
     } else if (stepAvailable(stepReplacement)) stepReplacement.focus()

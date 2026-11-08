@@ -40,7 +40,22 @@ async function withStorage(run) {
 
 test('actual portal selects explicit bounds, generates, shows deviation, edits and saves only a local draft', () => withStorage(async storage => {
   const screen = mount(PortalPlan, props)
-  let tree = screen.render(); assert.equal(text(tree).trim(), 'Kostplan'); assert.equal(storage.calls.length, 0)
+  let tree = screen.render(); {
+    // Source4: exact closed entry contract, before either catalogue is chosen.
+    const closedEntry = tree
+    assert.equal(text(closedEntry).trim(), 'Åbn kostplan med Frida-fødevarer Kostplan')
+    const choices = nodes(closedEntry).filter(n => ['button', 'summary'].includes(n.type))
+    assert.deepEqual(choices.map(n => [n.type, text(n)]), [
+      ['button', 'Åbn kostplan med Frida-fødevarer'], ['summary', 'Kostplan'],
+    ])
+    assert.equal(choices[0].props.type, 'button')
+    assert.equal(choices[0].props.disabled ?? false, false)
+    assert.equal(choices[0].props.hidden ?? false, false)
+    assert.equal(typeof choices[0].props.onClick, 'function')
+    assert.ok(choices.every(n => n.props.style.minHeight >= 44))
+    assert.equal(nodes(closedEntry).filter(n => ['form', 'input', 'select', 'textarea'].includes(n.type)).length, 0)
+    assert.ok(nodes(closedEntry).filter(n => n.type === 'details').every(n => !n.props.open))
+  }; assert.equal(storage.calls.length, 0)
   open(tree); tree = screen.render()
   assert.ok(button(tree, 'Generér forslag')); assert.equal(named(tree, 'fat'), undefined)
   assert.equal(named(tree, 'template-minGrams-0-0').props.value, '')
@@ -87,7 +102,22 @@ test('same-scope profile changes immediately reset calculated UI; missing data n
   assert.equal(storage.data.size, 0)
   for (const changes of [{ today: '2026-11-06' }, { athlete: { ...props.athlete, id: 'synthetic-b' } },
     { session: { user: { id: 'synthetic-coach-b' } } }]) {
-    assert.equal(text(screen.render({ ...props, ...changes })).trim(), 'Kostplan')
+    {
+      // Source4: exact closed entry contract, before either catalogue is chosen.
+      const closedEntry = screen.render({ ...props, ...changes })
+      assert.equal(text(closedEntry).trim(), 'Åbn kostplan med Frida-fødevarer Kostplan')
+      const choices = nodes(closedEntry).filter(n => ['button', 'summary'].includes(n.type))
+      assert.deepEqual(choices.map(n => [n.type, text(n)]), [
+        ['button', 'Åbn kostplan med Frida-fødevarer'], ['summary', 'Kostplan'],
+      ])
+      assert.equal(choices[0].props.type, 'button')
+      assert.equal(choices[0].props.disabled ?? false, false)
+      assert.equal(choices[0].props.hidden ?? false, false)
+      assert.equal(typeof choices[0].props.onClick, 'function')
+      assert.ok(choices.every(n => n.props.style.minHeight >= 44))
+      assert.equal(nodes(closedEntry).filter(n => ['form', 'input', 'select', 'textarea'].includes(n.type)).length, 0)
+      assert.ok(nodes(closedEntry).filter(n => n.type === 'details').every(n => !n.props.open))
+    }
   }
 }))
 

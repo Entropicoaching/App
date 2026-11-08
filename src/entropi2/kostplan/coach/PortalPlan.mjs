@@ -5,6 +5,7 @@ import MealDraftImport from './MealDraftImport.mjs'
 import { openPortalPlan } from './portalModel.mjs'
 import { coachPlanView, recipeChoice } from './view.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
+import { loadCoachFoods } from '../foedevarer/frida55Loader.mjs'
 import { identifier, day, planDate, number, catalogFoods } from './model.mjs'
 import { recipeItems, portalNutritionReport } from './connections.mjs'
 import { nutritionReportView } from '../rapport/reportView.mjs'
@@ -27,7 +28,7 @@ export default function PortalPlan(props = {}) {
   if (!identifier(athlete?.id) || !identifier(session?.user?.id) || !day(today)) return null
   return h(ScopedPortalPlan, { key: JSON.stringify([session.user.id, athlete.id, today]),
     coachId: session.user.id, athlete, date: today, nutritionRead: props.nutritionRead,
-    client: props.client, loadClient: props.loadClient })
+    client: props.client, loadClient: props.loadClient, loadReferenceFoods: props.loadReferenceFoods })
 }
 
 // Mounted directly in Kost & mål, independently of opening the meal editor.
@@ -63,16 +64,35 @@ function ScopedKostJustering({ options, proposal }) {
 
 function ScopedPortalPlan(props) {
   const [opened, setOpened] = React.useState(false)
+  const [expanded, setExpanded] = React.useState(false)
+  const [referenceRequested, setReferenceRequested] = React.useState(false)
+  // The catalogue choice is made before any editor/controller is constructed.
+  // A retained launch callback cannot replace an already opened session.
+  const chosen = React.useRef(false)
+  const current = React.useRef(true)
   const [refresh, setRefresh] = React.useState(0)
   const [date, setDate] = React.useState(props.date)
-  return h('div', null,
+  // The disclosure needs no effect before interaction. A host ref retires launch
+  // callbacks synchronously at detachment, including StrictMode ref replays.
+  return React.createElement('div', { ref: node => { current.current = node !== null } },
     date !== props.date && h('p', null, `Koststatus og registrering nedenfor gælder ${props.date}, ikke den valgte plandato.`),
     h(ActiveReport, { ...props, enabled: true, refresh }),
-    h('details', { className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
-    onToggle: event => { if (event.currentTarget.open) setOpened(true) } },
+    !opened && React.createElement('button', { type: 'button', style: button, onClick: () => {
+      if (!current.current || chosen.current) return
+      chosen.current = true
+      setReferenceRequested(true); setExpanded(true); setOpened(true)
+    } }, 'Åbn kostplan med Frida-fødevarer'),
+    React.createElement('details', { open: referenceRequested ? expanded : undefined, className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
+    onToggle: event => {
+      if (!current.current) return
+      const open = event.currentTarget.open
+      if (open) chosen.current = true
+      setExpanded(open)
+      if (open) setOpened(true)
+    } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
     h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
-    opened && h(PlanEditor, { ...props, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
+    opened && h(referenceRequested ? ReferencePlanEditor : PlanEditor, { ...props, active: expanded, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
       key: JSON.stringify([date, props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
         profileCalculation(props.athlete, date)]) })))
 }
@@ -85,6 +105,43 @@ export function PortalNutritionReport(props = {}) {
   return h('details', null,
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostrapport'),
     nutritionReportView(h, { enabled: true, ...report }))
+}
+
+// Resolve the catalogue before constructing the one editor/controller session.
+// In particular, arrival must never replace a controller with typed fields or a
+// reserved activation. Closing retires pending work; a ready editor is retained.
+function ReferencePlanEditor(props) {
+  const [reference, setReference] = React.useState(null)
+  const [attempt, setAttempt] = React.useState(0)
+  const load = props.loadReferenceFoods ?? loadCoachFoods
+  // Loading is the absence of a result for this request, not an effect update.
+  // A close/reopen, retry or loader change retires the previous error as well.
+  const request = React.useMemo(() => ({ active: props.active, load, attempt }), [props.active, load, attempt])
+  const failed = reference?.request === request && reference?.state === 'error'
+  React.useLayoutEffect(() => {
+    if (!request.active || reference?.catalog) return
+    let current = true
+    Promise.resolve().then(() => {
+      if (!current) return null
+      return request.load()
+    }).then(catalog => {
+      if (!current) return
+      if (!Array.isArray(catalog) || catalog.length !== FOODS.length + 40
+        || !catalogFoods(catalog) || !FOODS.every((food, i) => food === catalog[i])) throw Error('Invalid reference catalogue')
+      setReference({ state: 'ready', catalog })
+    }).catch(() => {
+      if (!current) return
+      setReference({ state: 'error', request })
+    })
+    return () => { current = false }
+  }, [request, reference?.catalog])
+  return h('div', null,
+    !reference?.catalog && !failed && h('p', { role: 'status' }, 'Indlæser referencefødevarer til måltidseditoren…'),
+    failed && h('p', { role: 'alert' },
+      'Referencefødevarer er ikke tilgængelige. Din gemte kladde er bevaret.',
+      !reference.catalog && h('button', { type: 'button', style: button, disabled: !props.active,
+        onClick: () => setAttempt(value => value + 1) }, 'Prøv referencefødevarer igen')),
+    reference?.catalog && h(PlanEditor, { ...props, catalog: reference.catalog, referenceReady: reference.state === 'ready' }))
 }
 
 function PlanEditor(props) {
@@ -148,6 +205,10 @@ function PlanEditor(props) {
       if (activated && opened.controller.snapshot().publishedVersion !== previous) props.onActivated()
       return activated
     } }),
+    props.referenceReady && h('p', { 'data-frida-reference': true },
+      'I måltidsformularen kan du vælge 40 generiske referencefødevarer fra ',
+      h('a', { href: 'https://doi.org/10.11583/DTU.29500682.v8', target: '_blank', rel: 'noreferrer' }, 'DTU Frida5.5'),
+      ' (CC BY 4.0). Gennemsnitsværdier pr. 100 g spiselig del i den navngivne tilstand; nogle er anslået eller beregnet. Ikke præcist mærkevareindhold. Manglende værdier er ukendte. Gramgeneratoren bruger det oprindelige katalog.'),
     h(MealDraftImport, { controller: opened.controller, snapshot, coachId: props.coachId }),
     !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
