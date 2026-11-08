@@ -28,7 +28,65 @@ test('synthetic view: grams, full macros, status and collapsed editor; no duplic
   for (const expected of ['200 g', '100 g', '50 g', '420 kcal', '37 g protein', '58 g kulhydrat',
     '3 g fedt', '0 af 2 måltider spist', '2.200 kcal']) assert.ok(s.includes(expected), expected)
   assert.ok(!s.includes('Legacy tracker'))
-  assert.equal(nodes(tree).filter(n => n.type === 'details').length, 3)
+  // The approved nutrient disclosure extends the three original disclosures.
+  // Name and scope each one so a missing editor cannot be masked by another fold.
+  const disclosures = nodes(tree).filter(n => n.type === 'details')
+  assert.deepEqual(disclosures.map(fold => {
+    const summaries = [fold.props.children].flat(Infinity).filter(n => n?.type === 'summary')
+    assert.equal(summaries.length, 1, 'One direct native summary per disclosure')
+    assert.equal(nodes(fold).filter(n => n.type === 'summary').length, 1, 'No nested duplicate summary')
+    assert.equal([fold.props.children].flat(Infinity)[0], summaries[0], 'Summary is first')
+    assert.ok(fold.props.open === undefined || fold.props.open === false, 'Initially collapsed')
+    return text(summaries[0]).trim()
+  }), ['Registreret og mål', 'Ret gram: Frokost <test>', 'Ret gram: Mellemmåltid', 'Mineraler og vitaminer'])
+  const [totals, lunch, snack, nutrients] = disclosures
+  assert.ok(nodes(tree).some(n => n.type === 'section' && n.props['aria-label'] === 'Dagens status' && nodes(n).includes(totals)))
+  assert.equal(totals.props.onToggle, undefined, 'Totals use native disclosure state')
+  assert.equal(nutrients.props.onToggle, undefined, 'Nutrients use native disclosure state')
+  assert.match(text(nutrients), /Planlagte fødevarer i den godkendte planversion/)
+  assert.match(text(nutrients), /Tallene viser ikke spist indtag eller dokumenteret dækning af dit behov/)
+  assert.match(text(nutrients), /Rettede gram og spist-markeringer ændrer ikke disse plantal/)
+  assert.match(text(nutrients), /Der mangler næringsdata i denne planversion\. Ingen mineral- eller vitaminsummer kan vises for hele den planlagte dag\. Ukendt er ikke nul\./)
+  assert.equal(nodes(nutrients).filter(n => n.type === 'dl').length, 0, 'Unknown data has no invented sums')
+  assert.equal(nodes(tree).filter(n => n.type === 'tracker').length, 0, 'No duplicate legacy tracker')
+  assert.equal(nodes(tree).filter(n => n.type === 'h1' && text(n) === 'Dagens kostplan').length, 1)
+  const events = []
+  const contractTree = view(model, {
+    onEdit: (...args) => events.push(['edit', ...args]),
+    onGrams: (...args) => events.push(['grams', ...args]),
+    onEaten: (...args) => events.push(['eaten', ...args]),
+  })
+  for (const [fold, name, id, foodIds, labels] of [
+    [lunch, 'Frokost <test>', 'lunch', ['rice', 'chicken', 'veg'], ['Ris', 'Kylling', 'Grøntsager']],
+    [snack, 'Mellemmåltid', 'snack', ['apple'], ['Æble']],
+  ]) {
+    const meal = nodes(tree).filter(n => n.type === 'section' && n.props['aria-label'] === name)
+    assert.equal(meal.length, 1, 'One original meal section: ' + name)
+    assert.ok(nodes(meal[0]).includes(fold), 'Editor belongs to ' + name)
+    assert.equal(fold.props.open, false, 'Controlled editor starts closed: ' + name)
+    assert.equal(typeof fold.props.onToggle, 'function', 'Editor toggle: ' + name)
+    const inputs = nodes(fold).filter(n => n.type === 'input')
+    assert.deepEqual(inputs.map(n => n.props['aria-label']), labels.map(label => `${name}: ${label} (g)`))
+    assert.ok(inputs.every(n => n.props.type === 'text' && n.props.inputMode === 'decimal' &&
+      n.props.disabled === false && typeof n.props.onChange === 'function'))
+    const contractMeal = nodes(contractTree).find(n => n.type === 'section' && n.props['aria-label'] === name)
+    const editor = nodes(contractMeal).find(n => n.type === 'details')
+    editor.props.onToggle({ currentTarget: { open: false } })
+    assert.deepEqual(events, [], 'Unchanged native state does not toggle model')
+    editor.props.onToggle({ currentTarget: { open: true } })
+    assert.deepEqual(events.splice(0), [['edit', id]], 'Toggle routes exact meal ID')
+    nodes(editor).filter(n => n.type === 'input').forEach((input, index) => {
+      input.props.onChange({ currentTarget: { value: '125,5' } })
+      assert.deepEqual(events.splice(0), [['grams', id, foodIds[index], '125,5']], 'Decimal edit routes exact meal/food IDs')
+    })
+    const saves = nodes(contractMeal).filter(n => n.type === 'button')
+    assert.equal(saves.length, 1, 'One completion control per meal')
+    assert.equal(text(saves[0]), 'Spist som planlagt')
+    assert.equal(saves[0].props['aria-label'], `${name}: Spist som planlagt`)
+    assert.equal(saves[0].props.type, 'button'); assert.equal(saves[0].props.disabled, false)
+    saves[0].props.onClick()
+    assert.deepEqual(events.splice(0), [['eaten', id]], 'Completion routes exact meal ID')
+  }
   assert.ok(nodes(tree).filter(n => n.type === 'details' && n.props.onToggle).every(n => n.props.open === false))
   assert.ok(nodes(tree).filter(n => ['button', 'summary', 'input'].includes(n.type)).every(n => n.props.style.minHeight >= 44))
 })

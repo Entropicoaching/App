@@ -1,5 +1,6 @@
 import { createPlanSnapshot, summarizePlanSnapshot } from './planSnapshot.mjs'
 import { supportedFoodSnapshot, supportedPlanSnapshot } from './sqlSnapshot.mjs'
+import { retainedNutrition } from './atlet/plannedMicronutrients.mjs'
 import { catalogFoods, day, identifier, totals, portionGuidance } from './coach/model.mjs'
 
 const tables = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
@@ -319,6 +320,7 @@ export function createPlanAdapter(options = {}) {
         meals: snapshot.meals.map((meal, mi) => ({ id: `${v.id}:meal:${mi}`, name: meal.name,
           foods: meal.portions.map((portion, fi) => ({ id: `${v.id}:meal:${mi}:food:${fi}`,
             name: portion.food.name, grams: portion.grams,
+            ...retainedNutrition(v.meals[mi].portions[fi].food),
             ...Object.fromEntries([['kcal100', 'energyKcal'], ['protein100', 'proteinG'], ['carb100', 'carbohydrateG'], ['fat100', 'fatG']]
               .map(([key, nutrient]) => [key, portion.food.nutrientsPer100g[nutrient]])) })) })) }
     },

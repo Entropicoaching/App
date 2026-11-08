@@ -1,6 +1,7 @@
 import { antalOrd } from '../../antalOrd.mjs'
 import * as React from 'react'
 import { mountExistingTracker } from './trackerAdapter.mjs'
+import { plannedMicronutrientsView } from './plannedMicronutrients.mjs'
 
 const { createElement: h, useEffect, useRef, useState, useSyncExternalStore } = React
 
@@ -72,6 +73,7 @@ export function KostplanAtletView(props = {}) {
           'aria-label': `${meal.name}: ${food.name} (g)`, style: { ...control, width: '100%', boxSizing: 'border-box' },
           onChange: event => onGrams?.(meal.id, food.id, event.currentTarget.value) }))),
       !meal.values && h('p', { role: 'alert' }, 'Angiv gyldige gram og kendte næringsdata før du markerer måltidet som spist.'))))),
+  plannedMicronutrientsView(h, s.plannedMicronutrients),
   h(PlanAdvice, { text: s.portionGuidance }))
 }
 

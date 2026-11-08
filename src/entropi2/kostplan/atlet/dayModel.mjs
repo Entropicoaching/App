@@ -1,5 +1,6 @@
 import { calendarTime, parseInputNumber, roundNutrition } from '../../../athlete/kostNumbers.mjs'
 import { isDayReceipt } from '../../../mealEvidence.mjs'
+import { retainedNutrition, plannedMicronutrients } from './plannedMicronutrients.mjs'
 
 export const namespace = 'entropi2:kostplan:atlet:v1'
 export const metrics = ['kcal', 'protein', 'carb', 'fat']
@@ -46,8 +47,13 @@ export function readAthletePlan(value, athleteId, date) {
     const foods = meal.foods.map(food => {
       const grams = parseInputNumber(food?.grams)
       if (!id(food?.id) || !name(food.name) || grams === null || grams <= 0) fail()
-      return { id: food.id, name: food.name.trim(), grams,
-        ...Object.fromEntries(metrics.map(key => [key + '100', parseInputNumber(food[key + '100'])])) }
+      const macros = Object.fromEntries(metrics.map(key => [key + '100', parseInputNumber(food[key + '100'])]))
+      const retained = retainedNutrition(food.nutrition)
+      // Optional evidence must describe this same projected food, not another line.
+      const nutrition = retained.nutrition
+      const matches = nutrition && nutrition.name.trim() === food.name.trim()
+        && ['energyKcal', 'proteinG', 'carbohydrateG', 'fatG'].every((key, i) => nutrition.nutrientsPer100g[key] === macros[metrics[i] + '100'])
+      return { id: food.id, name: food.name.trim(), grams, ...macros, ...(matches ? retained : {}) }
     })
     if (!unique(foods)) fail()
     return { id: meal.id, name: meal.name.trim(), foods }
@@ -61,7 +67,9 @@ export function readAthletePlan(value, athleteId, date) {
   const portionGuidance = value.portionGuidance ?? null
   if (portionGuidance !== null && (typeof portionGuidance !== 'string'
     || !portionGuidance.trim() || Array.from(portionGuidance).length > 4000)) fail()
-  return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals, targets, portionGuidance }
+  const planned = plannedMicronutrients(meals)
+  return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals, targets, portionGuidance,
+    ...(planned.length ? { plannedMicronutrients: planned } : {}) }
 }
 
 function readDay(value, athleteId, date) {
@@ -132,6 +140,7 @@ export function createAthleteDay(options = {}) {
       mode: data ? plan ? 'plan' : 'tracker' : null, meals, totals,
       planId: plan?.id ?? null, planRevision: plan?.revision ?? null,
       portionGuidance: plan?.portionGuidance ?? null,
+      ...(plan?.plannedMicronutrients ? { plannedMicronutrients: plan.plannedMicronutrients } : {}),
       targets: { ...(plan?.targets || {}) }, remaining, loggedCount: data?.logs.length || 0,
       eatenCount: meals.filter(meal => meal.eaten).length,
       canRelease: typeof releaseMeal === 'function',

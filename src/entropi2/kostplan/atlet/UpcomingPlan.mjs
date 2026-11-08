@@ -1,6 +1,7 @@
 import { createElement as h, useEffect, useState, useSyncExternalStore } from 'react'
 import { createUpcomingPlan } from './upcomingPlanModel.mjs'
 import { PlanAdvice } from './KostplanAtlet.mjs'
+import { plannedMicronutrientsView } from './plannedMicronutrients.mjs'
 
 function Preview({ controller }) {
   const s = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot)
@@ -21,6 +22,7 @@ function Preview({ controller }) {
         h('h2', null, meal.name),
         h('ul', null, ...meal.foods.map(food => h('li', { key: food.id },
           `${food.name} · ${new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(food.grams)} g`))))),
+      plannedMicronutrientsView(h, s.plan.plannedMicronutrients),
       h(PlanAdvice, { text: s.plan.portionGuidance })))
 }
 

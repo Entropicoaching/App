@@ -13,27 +13,27 @@ export default function ApprovedPlanShopping(props) {
   return h(ShoppingSession, props)
 }
 
-function ShoppingSession({ athleteId, today, client, currentDay, clipboard }) {
-  const scope = useMemo(() => ({ athleteId, today, client, currentDay }), [athleteId, today, client, currentDay])
+function ShoppingSession({ athleteId, today, client, currentDay, clipboard, storage }) {
+  const scope = useMemo(() => ({ athleteId, today, client, currentDay, storage }), [athleteId, today, client, currentDay, storage])
   const [record, setRecord] = useState(null)
   useLayoutEffect(() => {
     let active = true, controller
     try {
-      controller = createApprovedShopping({ enabled: true, athleteId, today, client,
+      controller = createApprovedShopping({ enabled: true, athleteId, today, client, storage,
         isCurrent: () => active && currentDayMatches(scope) })
     } catch { setRecord({ scope, controller: null }); return undefined }
     const update = () => setRecord({ scope, controller, snapshot: controller.snapshot() })
     const unsubscribe = controller.subscribe(update)
     update(); void controller.load()
     return () => { active = false; unsubscribe(); controller.dispose() }
-  }, [scope, athleteId, today, client])
+  }, [scope, athleteId, today, client, storage])
   const matches = record?.scope === scope && currentDayMatches(scope)
   const controller = matches ? record.controller : null, s = controller ? record.snapshot : null
   const dates = upcomingDates(today)
   return h('section', { 'aria-label': 'Indkøb fra kostplanen', style: { padding: 16, maxWidth: '42rem', overflowWrap: 'anywhere' } },
     h('h2', null, 'Indkøb fra kostplanen'),
     h('p', null, grossLabel),
-    h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer. Listen gemmes ikke.'),
+    h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer.'),
     h('fieldset', null, h('legend', null, 'Dage til indkøb'),
       ...dates.map(date => h('label', { key: date, style: { display: 'block', minHeight: 44 } },
         h('input', { type: 'checkbox', 'aria-label': `Indkøb ${date}`, checked: s?.dates.includes(date) ?? false,
@@ -56,7 +56,19 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard }) {
         h('p', null, 'Alle valgte datoer er læst fra godkendte versioner. Listen angiver grambehov, ikke dokumenteret næringsdækning.'),
         ...s.result.days.map(d => h('p', { key: d.date },
           `${d.date}: version ${d.versionNumber} (${d.versionId}), gældende fra ${d.effectiveFrom}. Måltider: ${d.mealNames.join(', ')}.`)),
-        h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map(item => h('li', { key: item.key }, shoppingItemText(item)))),
+        h('p', null, 'Købt-markeringer er kun lokale i denne browser på denne enhed. De registrerer ikke spist mad, bekræfter ikke lager, reducerer ikke grambehov og synkroniseres ikke til coachen.'),
+        h('p', { role: 'status' }, s.purchases.persistent
+          ? 'Markeringer gemmes lokalt ved ændring. Kopiering medtager altid hele bruttolisten.'
+          : 'Lokal lagring er ikke tilgængelig eller kunne ikke bekræftes. Markeringer gælder kun i denne åbne visning. Kopiering medtager altid hele bruttolisten.'),
+        h('p', { role: 'status' }, `Mangler at købe: ${s.result.items.length - s.purchases.bought.length} af ${s.result.items.length} varer.`),
+        h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map((item, index) => {
+          const checked = s.purchases.bought.includes(index)
+          return h('li', { key: item.key, style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBlock: 8 } },
+            h('button', { type: 'button', role: 'checkbox', 'aria-checked': checked,
+              'aria-label': `Købt: ${shoppingItemText(item)}`, style: { ...control, minWidth: 44 },
+              onClick: () => controller.markBought(index, !checked, s.result) }, checked ? '☑ Købt' : '☐ Ikke købt'),
+            h('span', null, shoppingItemText(item)))
+        })),
         h('button', { type: 'button', style: control, disabled: s.copyPending, onClick: () => controller.copy(clipboard, s.result) }, 'Kopiér indkøbsliste'),
         s.copyStatus === 'pending' && h('p', { role: 'status' }, 'Kopierer…'),
         s.copyStatus === 'copied' && h('p', { role: 'status' }, 'Kopieret.'),

@@ -1,13 +1,14 @@
 import { createPlanAdapter } from '../planAdapter.mjs'
 import { shoppingDates, shoppingVersion, sumApprovedShopping, formatApprovedShopping, freezeShopping } from './approvedShoppingModel.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
+import { openPurchaseMarkers, purchaseScope } from './purchaseMarkers.mjs'
 
 const current = () => true
 const reasons = { empty: 'Ingen godkendt plan', unavailable: 'Kostplanens tabeller er ikke tilgængelige',
   error: 'Læsning eller portionsgrundlag kunne ikke bekræftes', pending: 'Afventer læsning' }
 
-// Read-only per mounted client/athlete/today. No diary, coach, local templates,
-// storage, writes, auth/session or mutable catalogue enters this controller.
+// Read-only transport per mounted client/athlete/today. Purchase markers use
+// only their own local boundary, never diary, coach, auth/session or plan writes.
 export function createApprovedShopping(options = {}) {
   if (options.enabled !== true || options.readOnly === true) return null
   const { client, athleteId, today, isCurrent = current } = options
@@ -15,14 +16,15 @@ export function createApprovedShopping(options = {}) {
   // Validate the adapter's existing owner/client contract without any I/O.
   createPlanAdapter({ enabled: true, client, athleteId, date: today })
   let disposed = false, token = 0, attempted = false, pendingCopy = false
+  let markers = null
   const listeners = new Set()
-  let state = freezeShopping({ phase: 'idle', dates, complete: false, result: null, affected: [], copyPending: false, copyStatus: '', copyText: '' })
+  let state = freezeShopping({ phase: 'idle', dates, complete: false, result: null, affected: [], copyPending: false, copyStatus: '', copyText: '', purchases: null })
   const alive = () => { try { return !disposed && isCurrent() === true } catch { return false } }
   const publish = changes => {
     state = freezeShopping({ ...state, copyPending: pendingCopy, ...changes })
     for (const fn of listeners) fn()
   }
-  const reset = (phase, affected = []) => publish({ phase, dates, affected, complete: false, result: null, copyStatus: '', copyText: '' })
+  const reset = (phase, affected = []) => publish({ phase, dates, affected, complete: false, result: null, copyStatus: '', copyText: '', purchases: null })
   const api = {
     snapshot: () => state,
     subscribe(fn) { if (!alive()) return () => {}; listeners.add(fn); return () => listeners.delete(fn) },
@@ -69,10 +71,19 @@ export function createApprovedShopping(options = {}) {
       if (affected.length) { reset('incomplete', affected); return false }
       try {
         const result = sumApprovedShopping(today, selected, evidence)
-        publish({ phase: 'ready', complete: true, result, affected: [], copyStatus: '', copyText: '' }); return true
+        // A refresh with identical evidence retains session-only marks even if
+        // storage failed. Nothing is restored or exposed before approval checks.
+        const markerOptions = { athleteId, today, result, evidence, storage: options.storage }
+        if (!markers || markers.scope !== purchaseScope(markerOptions)) markers = openPurchaseMarkers(markerOptions)
+        publish({ phase: 'ready', complete: true, result, affected: [], copyStatus: '', copyText: '', purchases: markers.snapshot() }); return true
       } catch {
         reset('incomplete', selected.map(date => ({ date, reason: reasons.error }))); return false
       }
+    },
+    markBought(index, checked, expectedEvidence = state.result) {
+      if (!alive() || !state.complete || expectedEvidence !== state.result || !markers) return false
+      if (!markers.set(index, checked)) return false
+      publish({ purchases: markers.snapshot() }); return true
     },
     async copy(clipboard, expectedEvidence = state.result) {
       if (!alive() || pendingCopy || state.complete !== true || expectedEvidence !== state.result) return false
