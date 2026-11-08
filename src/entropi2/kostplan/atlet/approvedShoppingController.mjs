@@ -1,3 +1,4 @@
+import { formatCompactShopping } from './compactShoppingText.mjs'
 import { createPlanAdapter } from '../planAdapter.mjs'
 import { shoppingDates, shoppingVersion, sumApprovedShopping, formatApprovedShopping, freezeShopping } from './approvedShoppingModel.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
@@ -18,13 +19,13 @@ export function createApprovedShopping(options = {}) {
   let disposed = false, token = 0, attempted = false, pendingCopy = false
   let markers = null
   const listeners = new Set()
-  let state = freezeShopping({ phase: 'idle', dates, complete: false, result: null, affected: [], copyPending: false, copyStatus: '', copyText: '', purchases: null })
+  let state = freezeShopping({ phase: 'idle', dates, complete: false, result: null, affected: [], copyPending: false, copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: null })
   const alive = () => { try { return !disposed && isCurrent() === true } catch { return false } }
   const publish = changes => {
     state = freezeShopping({ ...state, copyPending: pendingCopy, ...changes })
     for (const fn of listeners) fn()
   }
-  const reset = (phase, affected = []) => publish({ phase, dates, affected, complete: false, result: null, copyStatus: '', copyText: '', purchases: null })
+  const reset = (phase, affected = []) => publish({ phase, dates, affected, complete: false, result: null, copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: null })
   const api = {
     snapshot: () => state,
     subscribe(fn) { if (!alive()) return () => {}; listeners.add(fn); return () => listeners.delete(fn) },
@@ -75,7 +76,7 @@ export function createApprovedShopping(options = {}) {
         // storage failed. Nothing is restored or exposed before approval checks.
         const markerOptions = { athleteId, today, result, evidence, storage: options.storage }
         if (!markers || markers.scope !== purchaseScope(markerOptions)) markers = openPurchaseMarkers(markerOptions)
-        publish({ phase: 'ready', complete: true, result, affected: [], copyStatus: '', copyText: '', purchases: markers.snapshot() }); return true
+        publish({ phase: 'ready', complete: true, result, affected: [], copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: markers.snapshot() }); return true
       } catch {
         reset('incomplete', selected.map(date => ({ date, reason: reasons.error }))); return false
       }
@@ -89,7 +90,7 @@ export function createApprovedShopping(options = {}) {
       if (!alive() || pendingCopy || state.complete !== true || expectedEvidence !== state.result) return false
       const evidence = state.result, attempt = token, text = formatApprovedShopping(evidence)
       const stillCurrent = () => alive() && token === attempt && state.result === evidence && state.complete
-      pendingCopy = true; publish({ copyStatus: 'pending', copyText: '' })
+      pendingCopy = true; publish({ copyStatus: 'pending', copyText: '', compactCopyStatus: '', compactCopyText: '' })
       try {
         // The browser boundary is resolved only in this explicit user event.
         // Injected null means unavailable; no OS clipboard is used by tests.
@@ -100,6 +101,31 @@ export function createApprovedShopping(options = {}) {
         publish({ copyStatus: 'copied', copyText: '' }); return true
       } catch {
         if (stillCurrent()) publish({ copyStatus: 'failed', copyText: text })
+        return false
+      } finally { pendingCopy = false; if (alive()) publish({ copyPending: false }) }
+    },
+    async copyCompact(clipboard, expectedEvidence = state.result) {
+      if (!alive() || pendingCopy || state.complete !== true || expectedEvidence !== state.result) return false
+      const evidence = state.result, attempt = token
+      let text
+      try { text = formatCompactShopping(evidence) } catch { return false }
+      const stillCurrent = () => alive() && token === attempt && state.result === evidence && state.complete
+      pendingCopy = true
+      publish({ compactCopyStatus: 'pending', compactCopyText: '', copyStatus: '', copyText: '' })
+      try {
+        // Resolve and invoke only within this explicit action. A getter or
+        // subscriber may revoke the scope synchronously, so recheck before I/O.
+        const adapter = clipboard === undefined ? globalThis.navigator?.clipboard : clipboard
+        const write = adapter?.writeText
+        if (typeof write !== 'function' || !stillCurrent()) throw Error('Clipboard unavailable')
+        const response = await write.call(adapter, text)
+        if (!stillCurrent()) return false
+        // Clipboard.writeText resolves void. Explicit non-void/unknown outcomes
+        // from an injected boundary cannot truthfully confirm that contract.
+        if (response !== undefined) throw Error('Clipboard result unknown')
+        publish({ compactCopyStatus: 'copied', compactCopyText: '' }); return true
+      } catch {
+        if (stillCurrent()) publish({ compactCopyStatus: 'failed', compactCopyText: text })
         return false
       } finally { pendingCopy = false; if (alive()) publish({ copyPending: false }) }
     },
