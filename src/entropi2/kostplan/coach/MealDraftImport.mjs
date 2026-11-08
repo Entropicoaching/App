@@ -6,6 +6,15 @@ import { searchFoods } from './foodSearch.mjs'
 
 const fieldset = { minWidth: 0, marginBottom: 12 }
 const rowStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 12rem), 1fr))', gap: 12 }
+// Ingredient rows use two sections so search feedback cannot stretch actions or
+// compete with food/grams for narrow grid columns. Flex wraps in DOM order at
+// the available container width, including inside the coach portal's columns.
+const ingredientRow = { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0,
+  gap: 8, marginTop: 12, padding: 12, border: control.border, borderRadius: 8 }
+const ingredientFields = { display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 12, minWidth: 0 }
+const ingredientLabel = { flex: '1 1 16rem', minWidth: 0, maxWidth: '100%', overflowWrap: 'anywhere' }
+const ingredientAction = { ...button, alignSelf: 'flex-end', flex: '0 1 auto', minWidth: 44,
+  padding: '8px 12px', fontSize: '0.875rem', lineHeight: 1.25, letterSpacing: 'normal', textTransform: 'none' }
 
 export default function MealDraftImport({ controller, snapshot, coachId }) {
   const scope = JSON.stringify([coachId, snapshot?.athleteId, snapshot?.date])
@@ -115,27 +124,29 @@ function MealFormSession({ controller, snapshot, coachId }) {
             const key = JSON.stringify([meal.id, item.key]), query = searches[key] ?? ''
             const result = searchFoods(snapshot.foods, query, item.foodId)
             const id = `${searchId}-${mi}-${ii}`, feedbackId = `${id}-results`
-            return React.createElement('div', { key: item.key, style: { ...rowStyle, marginTop: 12 } },
-            React.createElement('div', null,
-              React.createElement('label', null, `Søg fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('input', {
+            return React.createElement('div', { key: item.key, role: 'group', 'aria-label': `Fødevare ${ii + 1} i måltid ${mi + 1}`, style: ingredientRow },
+            React.createElement('div', { style: { minWidth: 0 } },
+              React.createElement('div', { style: ingredientFields },
+              React.createElement('label', { style: ingredientLabel }, `Søg fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('input', {
                 type: 'search', style: control, name: `draft-search-${mi}-${ii}`, value: query, maxLength: 200,
                 'aria-controls': id, 'aria-describedby': feedbackId,
                 onChange: e => changeSearch(key, () => e.currentTarget.value) })),
-              React.createElement('button', { type: 'button', style: button, disabled: locked || !query,
-                onClick: () => changeSearch(key, () => '') }, `Ryd søgning for fødevare ${ii + 1} i måltid ${mi + 1}`),
-              React.createElement('p', { id: feedbackId, role: 'status', 'aria-live': 'polite' }, result.searching
+              React.createElement('button', { type: 'button', style: ingredientAction, disabled: locked || !query,
+                onClick: () => changeSearch(key, () => '') }, `Ryd søgning for fødevare ${ii + 1} i måltid ${mi + 1}`)),
+              React.createElement('p', { id: feedbackId, role: 'status', 'aria-live': 'polite', style: { margin: '8px 0 0', overflowWrap: 'anywhere' } }, result.searching
                 ? `${result.matches ? `${result.matches} match.` : 'Ingen fødevarer matcher søgningen.'} Dit valgte fødevarevalg bevares i listen.`
                 : `Alle ${snapshot.foods.length} fødevarer vises. Søg i navn og tilberedning.`)),
-            React.createElement('label', null, `Fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('select', { id, style: control, name: `draft-food-${mi}-${ii}`, value: item.foodId,
+            React.createElement('div', { style: ingredientFields },
+            React.createElement('label', { style: { ...ingredientLabel, flexGrow: 2 } }, `Fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('select', { id, style: control, name: `draft-food-${mi}-${ii}`, value: item.foodId,
               'aria-describedby': feedbackId,
               onChange: e => changeLine(meal.id, item.key, 'foodId', e.currentTarget.value) },
               React.createElement('option', { value: '' }, 'Vælg fødevare'),
               item.foodId && !snapshot.foods.some(f => f.id === item.foodId) && React.createElement('option', { value: item.foodId }, 'Ukendt fødevare – vælg igen'),
               ...result.foods.map(food => React.createElement('option', { key: food.id, value: food.id }, `${food.name} · ${food.nutrition.preparation}`)))),
-            React.createElement('label', null, `Gram af fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('input', { type: 'text', inputMode: 'decimal', style: control,
+            React.createElement('label', { style: { ...ingredientLabel, flexBasis: '8rem' } }, `Gram af fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('input', { type: 'text', inputMode: 'decimal', style: control,
               name: `draft-grams-${mi}-${ii}`, value: item.grams, onChange: e => changeLine(meal.id, item.key, 'grams', e.currentTarget.value) })),
-            React.createElement('button', { type: 'button', style: button, onClick: () => update({ ...draft, meals: draft.meals.map(m => m.id !== meal.id ? m : { ...m,
-              items: m.items.filter(i => i.key !== item.key) }) }) }, `Fjern fødevare ${ii + 1} fra måltid ${mi + 1}`))
+            React.createElement('button', { type: 'button', style: ingredientAction, onClick: () => update({ ...draft, meals: draft.meals.map(m => m.id !== meal.id ? m : { ...m,
+              items: m.items.filter(i => i.key !== item.key) }) }) }, `Fjern fødevare ${ii + 1} fra måltid ${mi + 1}`)))
           }),
           React.createElement('button', { type: 'button', style: button, disabled: meal.items.length >= 30 || count >= 100,
             onClick: () => update(addFormLine(draft, meal.id)) }, `Tilføj fødevare til måltid ${mi + 1}`),
