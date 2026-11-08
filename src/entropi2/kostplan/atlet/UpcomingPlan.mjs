@@ -2,6 +2,7 @@ import { createElement as h, useEffect, useState, useSyncExternalStore } from 'r
 import { createUpcomingPlan } from './upcomingPlanModel.mjs'
 import { PlanAdvice } from './KostplanAtlet.mjs'
 import { plannedMicronutrientsView } from './plannedMicronutrients.mjs'
+import MealFoodData from './MealFoodData.mjs'
 
 function Preview({ controller }) {
   const s = useSyncExternalStore(controller.subscribe, controller.snapshot, controller.snapshot)
@@ -21,7 +22,8 @@ function Preview({ controller }) {
         style: { border: '1px solid currentColor', borderRadius: 12, padding: 16, marginTop: 16 } },
         h('h2', null, meal.name),
         h('ul', null, ...meal.foods.map(food => h('li', { key: food.id },
-          `${food.name} · ${new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(food.grams)} g`))))),
+          `${food.name} · ${new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(food.grams)} g`))),
+        h(MealFoodData, { key: JSON.stringify([s.athleteId, s.date, s.plan.id, s.plan.revision, meal.id]), meal }))),
       plannedMicronutrientsView(h, s.plan.plannedMicronutrients),
       h(PlanAdvice, { text: s.plan.portionGuidance })))
 }

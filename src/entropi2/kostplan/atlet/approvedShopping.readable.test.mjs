@@ -103,9 +103,9 @@ test('27 actual StrictMode groceries: readable native disclosures, full evidence
     assert.equal(all(summary, 'button, input, a, summary').length, 0, 'no nested controls')
     assert.equal(all(toggle, 'details, summary, button, input').length, 0)
     assert.equal(details.contains(toggle), false)
-    assert.equal(propsOf(toggle)['aria-label'], `Købt: ${shoppingItemText(item)}`)
+    assert.equal(propsOf(toggle)['aria-label'], `Købt: ${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g. Tilberedning: ${item.preparation}. Vare ${i + 1} af ${gross.items.length}.`)
     assert.equal(propsOf(toggle)['aria-checked'], false)
-    assert.ok(summary.getAttribute('aria-label').includes(shoppingItemText(item)), 'unambiguous full accessible identity')
+    assert.equal(summary.getAttribute('aria-label'), `Kilde og varegrundlag: ${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g. Tilberedning: ${item.preparation}. Vare ${i + 1} af ${gross.items.length}.`)
     assert.match(summary.textContent, /Kilde og varegrundlag/)
     for (const n of [summary, toggle]) {
       const p = propsOf(n); assert.equal(p.style.minHeight, 44); assert.equal(p.tabIndex, undefined)

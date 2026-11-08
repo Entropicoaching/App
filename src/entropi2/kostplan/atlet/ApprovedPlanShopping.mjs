@@ -65,14 +65,16 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
         h('p', { role: 'status' }, `Mangler at købe: ${s.result.items.length - s.purchases.bought.length} af ${s.result.items.length} varer.`),
         h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map((item, index) => {
           const checked = s.purchases.bought.includes(index)
+          // Use the visible row, with its position to distinguish identical human labels.
+          const itemLabel = `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g. Tilberedning: ${item.preparation}. Vare ${index + 1} af ${s.result.items.length}.`
           return h('li', { key: item.key, style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBlock: 8 } },
             h('button', { type: 'button', role: 'checkbox', 'aria-checked': checked,
-              'aria-label': `Købt: ${shoppingItemText(item)}`, style: { ...control, minWidth: 44 },
+              'aria-label': `Købt: ${itemLabel}`, style: { ...control, minWidth: 44 },
               onClick: () => controller.markBought(index, !checked, s.result) }, checked ? '☑ Købt' : '☐ Ikke købt'),
             h('div', { style: { flex: '1 1 16rem', minWidth: 0, maxWidth: '100%' } },
               h('span', null, `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g. Tilberedning: ${item.preparation}.`),
               h('details', null,
-                h('summary', { 'aria-label': `Kilde og varegrundlag: ${shoppingItemText(item)}`,
+                h('summary', { 'aria-label': `Kilde og varegrundlag: ${itemLabel}`,
                   style: { ...control, cursor: 'pointer' } }, 'Kilde og varegrundlag'),
                 h('p', null, shoppingItemText(item)))))
         })),

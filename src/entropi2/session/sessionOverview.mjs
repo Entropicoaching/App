@@ -28,7 +28,8 @@ export function createSessionOverview(doc, { p, s, now, active, returnToLog }) {
   }
   const overview = el('details', null, { class: 'session-overview', 'data-detail': 'overview', 'data-session-overview': '' })
   const title = s.session.title || 'Dagens pas'
-  overview.append(el('summary', `Overblik over passet · ${title}`, { 'data-overview-focus': 'overview' }),
+  const overviewSummary = el('summary', `Overblik over passet · ${title}`, { 'data-overview-focus': 'overview' })
+  overview.append(overviewSummary,
     el('h2', title), el('p', s.next ? `Nu: ${s.next.exercise.name} · Sæt ${s.next.setNumber} af ${s.next.totalSets}`
       : 'Alle planlagte sæt er behandlet.', { class: 'overview-position' }))
   const counts = { completed: 0, skipped: 0, remaining: 0, unconfirmed: 0 }
@@ -93,8 +94,10 @@ export function createSessionOverview(doc, { p, s, now, active, returnToLog }) {
       (exerciseCounts.unconfirmed ? ` · ${exerciseCounts.unconfirmed} ikke bekræftet` : ''), { class: 'overview-progress' })
     fold.append(slots); li.append(fold, progress); list.append(li)
   }
-  overview.append(el('p', `${counts.completed} registreret · ${counts.skipped} sprunget over · ${counts.remaining} tilbage` +
-    (counts.unconfirmed ? ` · ${counts.unconfirmed} ikke bekræftet` : '') + (incomplete ? ' · Planen er ufuldstændig' : ''), { 'data-overview-counts': '' }), list)
+  const countText = `${counts.completed} registreret · ${counts.skipped} sprunget over · ${counts.remaining} tilbage` +
+    (counts.unconfirmed ? ` · ${counts.unconfirmed} ikke bekræftet` : '') + (incomplete ? ' · Planen er ufuldstændig' : '')
+  overviewSummary.append(el('span', countText, { class: 'overview-dosage' }))
+  overview.append(el('p', countText, { 'data-overview-counts': '' }), list)
   const back = el('button', 'Tilbage til dit sæt', { type: 'button', 'data-overview-focus': 'return' })
   back.addEventListener('click', () => {
     if (!active()) return

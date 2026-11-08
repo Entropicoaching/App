@@ -2,6 +2,7 @@ import { antalOrd } from '../../antalOrd.mjs'
 import * as React from 'react'
 import { mountExistingTracker } from './trackerAdapter.mjs'
 import { plannedMicronutrientsView } from './plannedMicronutrients.mjs'
+import MealFoodData from './MealFoodData.mjs'
 
 const { createElement: h, useEffect, useRef, useState, useSyncExternalStore } = React
 
@@ -55,6 +56,7 @@ export function KostplanAtletView(props = {}) {
     style: { border: '1px solid currentColor', borderRadius: 12, padding: 16, marginTop: 16 } },
     h('h2', null, meal.name),
     h('ul', null, ...meal.foods.map(food => h('li', { key: food.id }, `${food.name} · ${typeof food.grams === 'number' ? number(food.grams) : food.grams} g`))),
+    h(MealFoodData, { key: JSON.stringify([s.athleteId, s.date, s.planId, s.planRevision, meal.id]), meal }),
     h('p', null, macros(meal.values)),
     meal.eaten ? h('p', { role: 'status' }, 'Spist') : h('div', null,
       meal.blocked && h('div', null,
