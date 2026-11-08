@@ -24,92 +24,102 @@ const expectedMeals = meals => meals.map(m => ({ name: m.name, portions: m.items
   food: Object.fromEntries(Object.entries(i.food.nutrition).filter(([key]) => !['prioritet', 'prioritetBegrundelse'].includes(key))),
 })) }))
 
-test('mounted actual generator -> explicit draft save -> adapter -> original SQL: exact approved snapshot and repeated metadata-only reopen', { timeout: 60000 }, async () => withDatabase(async f => {
-  const storage = memoryStorage(), catalogue = structuredClone(FOODS)
-  let draft, approved
-  await mounted(f.client, storage, async ui => {
-    await ui.open()
-    assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
-    await ui.submit()
-    assert.match(ui.host.textContent, /Gennemgå fødevarer og portioner før gemning/)
-    assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
-    await ui.click('Gem som kladde')
-    await ui.wait(() => storage.data.size === 1)
-    draft = JSON.parse(storage.data.get(draftKey(coachId, athleteId, date)))
-    assert.equal(draft.plan.status, 'draft')
-    const foods = draft.plan.meals.flatMap(m => m.items.map(i => i.food.nutrition))
-    assert.ok(foods.some(food => food.prioritet && food.prioritetBegrundelse))
-    assert.ok(foods.some(food => Object.values(food.nutrientsPer100g).includes(0)))
-    assert.ok(foods.every(food => food.source.citation && food.source.verification && food.basisGrams === 100))
-    await ui.wait(() => ui.host.querySelectorAll('button').some(n => n.textContent === 'Aktivér for atleten' && n.getAttribute('disabled') === null))
-    await ui.click('Aktivér for atleten')
-    await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
-    assert.deepEqual(await counts(f.db), [1, 1, 1])
-    approved = (await f.db.query('select * from public.kostplan_v1_versions')).rows[0]
-    assert.deepEqual(approved.meals, expectedMeals(draft.plan.meals))
-    assert.equal(approved.goal, draft.plan.goal === 'maintain' ? 'vedligehold' : draft.plan.goal)
-    assert.equal(Number(approved.intensity), draft.plan.intensity / 100)
-    assert.doesNotMatch(ui.host.textContent, /kcal registreret/)
-  })
-  const baselineWrites = writes(f).length
-  for (let i = 0; i < 3; i++) {
-    const row = JSON.parse(storage.data.get(draftKey(coachId, athleteId, date)))
-    for (const meal of row.plan.meals) for (const item of meal.items) if (item.food.nutrition.prioritet) {
-      item.food.nutrition.prioritet = 'god'; item.food.nutrition.prioritetBegrundelse = `Synthetic editorial revision ${i}`
-    }
-    storage.data.set(draftKey(coachId, athleteId, date), JSON.stringify(row))
-    const bytes = [...storage.data]
-    await mounted(f.client, storage, async ui => {
-      await ui.open(); await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
-      assert.ok(!ui.host.querySelectorAll('button').some(n => n.textContent === 'Aktivér for atleten' && n.getAttribute('disabled') === null))
-      assert.equal(writes(f).length, baselineWrites)
+test('mounted actual generator -> explicit draft save -> adapter -> original SQL: exact approved snapshot and repeated metadata-only reopen', { timeout: 60000 }, async t => {
+  // Approvals belong to this historical scenario, before PGlite starts.
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
+  try {
+    await withDatabase(async f => {
+      const storage = memoryStorage(), catalogue = structuredClone(FOODS)
+      let draft, approved
+      await mounted(f.client, storage, async ui => {
+        await ui.open()
+        assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
+        await ui.submit()
+        assert.match(ui.host.textContent, /Gennemgå fødevarer og portioner før gemning/)
+        assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
+        await ui.click('Gem som kladde')
+        await ui.wait(() => storage.data.size === 1)
+        draft = JSON.parse(storage.data.get(draftKey(coachId, athleteId, date)))
+        assert.equal(draft.plan.status, 'draft')
+        const foods = draft.plan.meals.flatMap(m => m.items.map(i => i.food.nutrition))
+        assert.ok(foods.some(food => food.prioritet && food.prioritetBegrundelse))
+        assert.ok(foods.some(food => Object.values(food.nutrientsPer100g).includes(0)))
+        assert.ok(foods.every(food => food.source.citation && food.source.verification && food.basisGrams === 100))
+        await ui.wait(() => ui.host.querySelectorAll('button').some(n => n.textContent === 'Aktivér for atleten' && n.getAttribute('disabled') === null))
+        await ui.click('Aktivér for atleten')
+        await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
+        assert.deepEqual(await counts(f.db), [1, 1, 1])
+        approved = (await f.db.query('select * from public.kostplan_v1_versions')).rows[0]
+        assert.deepEqual(approved.meals, expectedMeals(draft.plan.meals))
+        assert.equal(approved.goal, draft.plan.goal === 'maintain' ? 'vedligehold' : draft.plan.goal)
+        assert.equal(Number(approved.intensity), draft.plan.intensity / 100)
+        assert.doesNotMatch(ui.host.textContent, /kcal registreret/)
+      })
+      const baselineWrites = writes(f).length
+      for (let i = 0; i < 3; i++) {
+        const row = JSON.parse(storage.data.get(draftKey(coachId, athleteId, date)))
+        for (const meal of row.plan.meals) for (const item of meal.items) if (item.food.nutrition.prioritet) {
+          item.food.nutrition.prioritet = 'god'; item.food.nutrition.prioritetBegrundelse = `Synthetic editorial revision ${i}`
+        }
+        storage.data.set(draftKey(coachId, athleteId, date), JSON.stringify(row))
+        const bytes = [...storage.data]
+        await mounted(f.client, storage, async ui => {
+          await ui.open(); await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
+          assert.ok(!ui.host.querySelectorAll('button').some(n => n.textContent === 'Aktivér for atleten' && n.getAttribute('disabled') === null))
+          assert.equal(writes(f).length, baselineWrites)
+        })
+        assert.deepEqual([...storage.data], bytes)
+        assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions')).rows[0], approved)
+      }
+      assert.deepEqual(FOODS, catalogue)
+      assert.deepEqual(await counts(f.db), [1, 1, 1])
+      await f.login(owner)
+      const active = await createPlanAdapter({ enabled: true, client: f.client, athleteId, date }).loadActive()
+      assert.equal(active.revision, approved.id)
+      assert.deepEqual(active.meals.map(m => m.foods.map(i => i.grams)), draft.plan.meals.map(m => m.items.map(i => i.grams)))
+      await f.login(stranger)
+      assert.equal(await createPlanAdapter({ enabled: true, client: f.client, athleteId, date }).loadActive(), null)
     })
-    assert.deepEqual([...storage.data], bytes)
-    assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions')).rows[0], approved)
-  }
-  assert.deepEqual(FOODS, catalogue)
-  assert.deepEqual(await counts(f.db), [1, 1, 1])
-  await f.login(owner)
-  const active = await createPlanAdapter({ enabled: true, client: f.client, athleteId, date }).loadActive()
-  assert.equal(active.revision, approved.id)
-  assert.deepEqual(active.meals.map(m => m.foods.map(i => i.grams)), draft.plan.meals.map(m => m.items.map(i => i.grams)))
-  await f.login(stranger)
-  assert.equal(await createPlanAdapter({ enabled: true, client: f.client, athleteId, date }).loadActive(), null)
-}))
+  } finally { t.mock.timers.reset() }
+})
 
-test('original SQL lost replies: immutable retry retains IDs and exact payload, approval loss reconciles after reopen', { timeout: 60000 }, async () => {
-  for (const lost of names) await withDatabase(async f => {
-    const storage = memoryStorage(), { c, plan } = await generated(storage)
-    // Direct writer uses exactly the same generated payload as the UI bridge.
-    const adapter = createPlanAdapter({ enabled: true, client: f.client, ...scope })
-    await assert.rejects(adapter.activate(plan))
-    const attempted = structuredClone(writes(f))
-    const changed = structuredClone(plan); changed.meals[0].items[0].grams += 5
-    await assert.rejects(adapter.activate(changed), /uafklarede/)
-    assert.equal(writes(f).length, attempted.length)
-    const metadata = structuredClone(plan)
-    for (const m of metadata.meals) for (const i of m.items) if (i.food.nutrition.prioritet)
-      i.food.nutrition.prioritetBegrundelse = 'Synthetic pending metadata only'
-    const result = await adapter.activate(metadata)
-    assert.equal(result.ok, true)
-    assert.deepEqual(await counts(f.db), [1, 1, 1])
-    assert.equal(result.planId, attempted.find(c => c.table === names[0]).payload.id)
-    assert.equal(result.versionId, writes(f).find(c => c.table === names[1]).payload.id)
-    const row = (await f.db.query('select * from public.kostplan_v1_versions')).rows[0]
-    assert.deepEqual(row.meals, expectedMeals(plan.meals))
-    assert.deepEqual(row.meals, writes(f).find(c => c.table === names[1]).payload.meals)
-    const count = writes(f).length
-    const reopened = openPortalPlan({ enabled: true, ...scope, athlete: profile, storage: () => storage }).controller
-    const stop = startPlanActivation({ controller: reopened, client: f.client, ...scope })
-    try {
-      for (let n = 0; n < 500 && reopened.snapshot().activationState !== 'ready'; n++) await new Promise(resolve => setImmediate(resolve))
-      assert.equal(reopened.snapshot().activationState, 'ready')
-      assert.equal(reopened.snapshot().publishedVersion, reopened.snapshot().version)
-      assert.equal(await reopened.activate(), false)
-      assert.equal(writes(f).length, count)
-      assert.deepEqual(c.snapshot().meals, plan.meals)
-    } finally { stop() }
-  }, { lost })
+test('original SQL lost replies: immutable retry retains IDs and exact payload, approval loss reconciles after reopen', { timeout: 60000 }, async t => {
+  // Approvals belong to this historical scenario, before PGlite starts.
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
+  try {
+    for (const lost of names) await withDatabase(async f => {
+      const storage = memoryStorage(), { c, plan } = await generated(storage)
+      // Direct writer uses exactly the same generated payload as the UI bridge.
+      const adapter = createPlanAdapter({ enabled: true, client: f.client, ...scope })
+      await assert.rejects(adapter.activate(plan))
+      const attempted = structuredClone(writes(f))
+      const changed = structuredClone(plan); changed.meals[0].items[0].grams += 5
+      await assert.rejects(adapter.activate(changed), /uafklarede/)
+      assert.equal(writes(f).length, attempted.length)
+      const metadata = structuredClone(plan)
+      for (const m of metadata.meals) for (const i of m.items) if (i.food.nutrition.prioritet)
+        i.food.nutrition.prioritetBegrundelse = 'Synthetic pending metadata only'
+      const result = await adapter.activate(metadata)
+      assert.equal(result.ok, true)
+      assert.deepEqual(await counts(f.db), [1, 1, 1])
+      assert.equal(result.planId, attempted.find(c => c.table === names[0]).payload.id)
+      assert.equal(result.versionId, writes(f).find(c => c.table === names[1]).payload.id)
+      const row = (await f.db.query('select * from public.kostplan_v1_versions')).rows[0]
+      assert.deepEqual(row.meals, expectedMeals(plan.meals))
+      assert.deepEqual(row.meals, writes(f).find(c => c.table === names[1]).payload.meals)
+      const count = writes(f).length
+      const reopened = openPortalPlan({ enabled: true, ...scope, athlete: profile, storage: () => storage }).controller
+      const stop = startPlanActivation({ controller: reopened, client: f.client, ...scope })
+      try {
+        for (let n = 0; n < 500 && reopened.snapshot().activationState !== 'ready'; n++) await new Promise(resolve => setImmediate(resolve))
+        assert.equal(reopened.snapshot().activationState, 'ready')
+        assert.equal(reopened.snapshot().publishedVersion, reopened.snapshot().version)
+        assert.equal(await reopened.activate(), false)
+        assert.equal(writes(f).length, count)
+        assert.deepEqual(c.snapshot().meals, plan.meals)
+      } finally { stop() }
+    }, { lost })
+  } finally { t.mock.timers.reset() }
 })
 
 test('SQL contract stays strict: unsupported metadata/fields and malformed nutrients reject; owner/day/stale scopes stay isolated', { timeout: 60000 }, async () => withDatabase(async f => {
@@ -137,43 +147,47 @@ test('SQL contract stays strict: unsupported metadata/fields and malformed nutri
   assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions')).rows[0], version)
 }))
 
-test('generated controller with original SQL keeps reservation on lost replies, locks edits, and reconciles committed approval on reopen', { timeout: 60000 }, async () => {
-  for (const lost of names) await withDatabase(async f => {
-    const storage = memoryStorage(), { c, plan } = await generated(storage)
-    const connect = async controller => {
-      const stop = startPlanActivation({ controller, client: f.client, ...scope })
-      for (let n = 0; n < 500 && controller.snapshot().activationState !== 'ready'; n++) await new Promise(resolve => setImmediate(resolve))
-      assert.equal(controller.snapshot().activationState, 'ready')
-      return stop
-    }
-    let stop = await connect(c)
-    try {
-      assert.equal(await c.activate(), false)
-      assert.equal(c.snapshot().activationPending, true)
-      const bytes = [...storage.data], count = writes(f).length
-      assert.equal(c.editGrams(0, 0, 222), false)
-      assert.equal(c.generate(), false); assert.equal(await c.save(), false)
-      assert.deepEqual([...storage.data], bytes)
-      stop()
-      const reopened = openPortalPlan({ enabled: true, ...scope, athlete: profile, storage: () => storage }).controller
-      const stopReopened = await connect(reopened)
+test('generated controller with original SQL keeps reservation on lost replies, locks edits, and reconciles committed approval on reopen', { timeout: 60000 }, async t => {
+  // Approvals belong to this historical scenario, before PGlite starts.
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
+  try {
+    for (const lost of names) await withDatabase(async f => {
+      const storage = memoryStorage(), { c, plan } = await generated(storage)
+      const connect = async controller => {
+        const stop = startPlanActivation({ controller, client: f.client, ...scope })
+        for (let n = 0; n < 500 && controller.snapshot().activationState !== 'ready'; n++) await new Promise(resolve => setImmediate(resolve))
+        assert.equal(controller.snapshot().activationState, 'ready')
+        return stop
+      }
+      let stop = await connect(c)
       try {
-        if (lost === names[2]) {
-          assert.equal(reopened.snapshot().activationPending, false)
-          assert.equal(reopened.snapshot().publishedVersion, reopened.snapshot().version)
-        } else {
-          assert.equal(reopened.snapshot().activationPending, true)
-          assert.equal(await reopened.save(), false)
-          assert.deepEqual([...storage.data], bytes)
-        }
-        assert.equal(await reopened.activate(), false)
-        assert.equal(writes(f).length, count)
-      } finally { stopReopened() }
-      stop = await connect(c)
-      if (lost !== names[2]) assert.equal(await c.activate(), true)
-      else assert.equal(c.snapshot().publishedVersion, c.snapshot().version)
-      assert.deepEqual(await counts(f.db), [1, 1, 1])
-      assert.deepEqual((await f.db.query('select meals from public.kostplan_v1_versions')).rows[0].meals, expectedMeals(plan.meals))
-    } finally { stop() }
-  }, { lost })
+        assert.equal(await c.activate(), false)
+        assert.equal(c.snapshot().activationPending, true)
+        const bytes = [...storage.data], count = writes(f).length
+        assert.equal(c.editGrams(0, 0, 222), false)
+        assert.equal(c.generate(), false); assert.equal(await c.save(), false)
+        assert.deepEqual([...storage.data], bytes)
+        stop()
+        const reopened = openPortalPlan({ enabled: true, ...scope, athlete: profile, storage: () => storage }).controller
+        const stopReopened = await connect(reopened)
+        try {
+          if (lost === names[2]) {
+            assert.equal(reopened.snapshot().activationPending, false)
+            assert.equal(reopened.snapshot().publishedVersion, reopened.snapshot().version)
+          } else {
+            assert.equal(reopened.snapshot().activationPending, true)
+            assert.equal(await reopened.save(), false)
+            assert.deepEqual([...storage.data], bytes)
+          }
+          assert.equal(await reopened.activate(), false)
+          assert.equal(writes(f).length, count)
+        } finally { stopReopened() }
+        stop = await connect(c)
+        if (lost !== names[2]) assert.equal(await c.activate(), true)
+        else assert.equal(c.snapshot().publishedVersion, c.snapshot().version)
+        assert.deepEqual(await counts(f.db), [1, 1, 1])
+        assert.deepEqual((await f.db.query('select meals from public.kostplan_v1_versions')).rows[0].meals, expectedMeals(plan.meals))
+      } finally { stop() }
+    }, { lost })
+  } finally { t.mock.timers.reset() }
 })

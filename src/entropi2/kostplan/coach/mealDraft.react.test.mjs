@@ -37,59 +37,65 @@ if (!vm.SourceTextModule) {
   assert.equal(c.snapshot().activationState, 'ready'); return stop
  }
 
- test('actual mounted six-meal import -> exact preview -> normal save -> original SQL approval; unchanged reopen/import/save adds no approval', { timeout: 60000 }, async () => withDatabase(async f => {
-  const storage = memoryStorage(), originalProfile = structuredClone(profile)
-  let stored, version
-  await mountMealPortal(storage, { ...props, client: f.client }, async ui => {
-   assert.equal(storage.data.size, 0); assert.ok(!input(ui))
-   await ui.open()
-   const baseline = ui.host.querySelectorAll('form').find(n => n.textContent.includes('Vælg måltider til forslaget'))
-   assert.deepEqual(baseline.querySelectorAll('legend').map(n => n.textContent), ['Morgenmad', 'Frokost', 'Aftensmad'])
-   await ui.input('meal-draft-json', JSON.stringify(draft()))
-   assert.ok(!ui.host.querySelectorAll('input').some(n => (n.name ?? n.getAttribute('name')) === 'grams-5-0'))
-   assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
-   await ui.submit('Manuel måltidskladde')
-   assert.match(ui.host.textContent, /Manuel måltidskladde · gram er indlæst præcist/)
-   for (const [mi, meal] of draft().meals.entries()) {
-    assert.ok(ui.host.querySelectorAll('legend').some(n => n.textContent === meal.name))
-    const grams = ui.host.querySelectorAll('input').find(n => (n.name ?? n.getAttribute('name')) === `grams-${mi}-0`)
-    assert.equal(Number(grams.value), meal.items[0].grams)
-   }
-   assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
-   await ui.click('Gem som kladde')
-   stored = JSON.parse(storage.data.get(key)); assert.equal(stored.manualImport, true)
-   assert.deepEqual(stored.plan.meals.map(m => ({ id: m.id, name: m.name, items: m.items.map(i => ({ foodId: i.food.id, grams: i.grams })) })), draft().meals)
-   const c = open(storage); assert.deepEqual(c.snapshot().totals, totals(stored.plan.meals))
-   assert.equal(writes(f).length, 0)
-   await ui.wait(() => !!ui.find('button', 'Aktivér for atleten') && ui.find('button', 'Aktivér for atleten').getAttribute('disabled') === null)
-   await ui.click('Aktivér for atleten')
-   await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
-   assert.deepEqual(await counts(f), [1, 1, 1])
-   version = (await f.db.query('select * from public.kostplan_v1_versions')).rows[0]
-   assert.deepEqual(version.meals, sqlMeals(stored.plan.meals))
-   assert.deepEqual(writes(f).map(c => c.table), names)
-  })
-  const before = writes(f).length
-  await mountMealPortal(storage, { ...props, client: f.client }, async ui => {
-   await ui.open(); await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
-   await load(ui); await ui.click('Gem som kladde')
-   const row = JSON.parse(storage.data.get(key))
-   assert.equal(row.clientVersion, stored.clientVersion)
-   assert.deepEqual(row.plan.meals, stored.plan.meals)
-   assert.notEqual(ui.find('button', 'Aktivér for atleten').getAttribute('disabled'), null)
-   assert.equal(writes(f).length, before)
-   const changed = draft(); changed.meals[0].items[0].grams += 0.25
-   await load(ui, changed)
-   assert.equal(writes(f).length, before)
-   assert.notEqual(ui.find('button', 'Aktivér for atleten').getAttribute('disabled'), null)
-   await ui.click('Gem som kladde')
-   assert.equal(ui.find('button', 'Aktivér for atleten').getAttribute('disabled'), null)
-   await ui.click('Aktivér for atleten'); await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
-   assert.deepEqual(await counts(f), [2, 2, 2])
-  })
-  assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions where id=$1', [version.id])).rows[0], version)
-  assert.deepEqual(profile, originalProfile)
- }))
+ test('actual mounted six-meal import -> exact preview -> normal save -> original SQL approval; unchanged reopen/import/save adds no approval', { timeout: 60000 }, async t => {
+   // Approvals belong to this historical scenario, before PGlite starts.
+   t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
+   try {
+     await withDatabase(async f => {
+      const storage = memoryStorage(), originalProfile = structuredClone(profile)
+      let stored, version
+      await mountMealPortal(storage, { ...props, client: f.client }, async ui => {
+       assert.equal(storage.data.size, 0); assert.ok(!input(ui))
+       await ui.open()
+       const baseline = ui.host.querySelectorAll('form').find(n => n.textContent.includes('Vælg måltider til forslaget'))
+       assert.deepEqual(baseline.querySelectorAll('legend').map(n => n.textContent), ['Morgenmad', 'Frokost', 'Aftensmad'])
+       await ui.input('meal-draft-json', JSON.stringify(draft()))
+       assert.ok(!ui.host.querySelectorAll('input').some(n => (n.name ?? n.getAttribute('name')) === 'grams-5-0'))
+       assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
+       await ui.submit('Manuel måltidskladde')
+       assert.match(ui.host.textContent, /Manuel måltidskladde · gram er indlæst præcist/)
+       for (const [mi, meal] of draft().meals.entries()) {
+        assert.ok(ui.host.querySelectorAll('legend').some(n => n.textContent === meal.name))
+        const grams = ui.host.querySelectorAll('input').find(n => (n.name ?? n.getAttribute('name')) === `grams-${mi}-0`)
+        assert.equal(Number(grams.value), meal.items[0].grams)
+       }
+       assert.equal(storage.data.size, 0); assert.equal(writes(f).length, 0)
+       await ui.click('Gem som kladde')
+       stored = JSON.parse(storage.data.get(key)); assert.equal(stored.manualImport, true)
+       assert.deepEqual(stored.plan.meals.map(m => ({ id: m.id, name: m.name, items: m.items.map(i => ({ foodId: i.food.id, grams: i.grams })) })), draft().meals)
+       const c = open(storage); assert.deepEqual(c.snapshot().totals, totals(stored.plan.meals))
+       assert.equal(writes(f).length, 0)
+       await ui.wait(() => !!ui.find('button', 'Aktivér for atleten') && ui.find('button', 'Aktivér for atleten').getAttribute('disabled') === null)
+       await ui.click('Aktivér for atleten')
+       await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
+       assert.deepEqual(await counts(f), [1, 1, 1])
+       version = (await f.db.query('select * from public.kostplan_v1_versions')).rows[0]
+       assert.deepEqual(version.meals, sqlMeals(stored.plan.meals))
+       assert.deepEqual(writes(f).map(c => c.table), names)
+      })
+      const before = writes(f).length
+      await mountMealPortal(storage, { ...props, client: f.client }, async ui => {
+       await ui.open(); await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
+       await load(ui); await ui.click('Gem som kladde')
+       const row = JSON.parse(storage.data.get(key))
+       assert.equal(row.clientVersion, stored.clientVersion)
+       assert.deepEqual(row.plan.meals, stored.plan.meals)
+       assert.notEqual(ui.find('button', 'Aktivér for atleten').getAttribute('disabled'), null)
+       assert.equal(writes(f).length, before)
+       const changed = draft(); changed.meals[0].items[0].grams += 0.25
+       await load(ui, changed)
+       assert.equal(writes(f).length, before)
+       assert.notEqual(ui.find('button', 'Aktivér for atleten').getAttribute('disabled'), null)
+       await ui.click('Gem som kladde')
+       assert.equal(ui.find('button', 'Aktivér for atleten').getAttribute('disabled'), null)
+       await ui.click('Aktivér for atleten'); await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
+       assert.deepEqual(await counts(f), [2, 2, 2])
+      })
+      assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions where id=$1', [version.id])).rows[0], version)
+      assert.deepEqual(profile, originalProfile)
+     })
+   } finally { t.mock.timers.reset() }
+ })
 
  test('actual mounted invalid/polluted input retains text, error and preview; stale version/scope/OFF/disposal callbacks do nothing', async () => {
   const storage = memoryStorage(), client = { from() { throw Error('Synthetic unavailable') } }
@@ -160,35 +166,39 @@ if (!vm.SourceTextModule) {
   })
  }))
 
- test('lost SQL replies preserve pending imported draft, original operation IDs and payload; only original retry/reconciliation succeeds', { timeout: 90000 }, async () => {
-  for (const lost of names) await withDatabase(async f => {
-   const storage = memoryStorage(), c = open(storage)
-   assert.equal(c.importMealDraft(JSON.stringify(draft()), 0), true); assert.equal(await c.save(), true)
-   let stop = await connect(c, f.client)
+ test('lost SQL replies preserve pending imported draft, original operation IDs and payload; only original retry/reconciliation succeeds', { timeout: 90000 }, async t => {
+   // Approvals belong to this historical scenario, before PGlite starts.
+   t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
    try {
-    assert.equal(await c.activate(), false); assert.equal(c.snapshot().activationPending, true)
-    const bytes = storage.data.get(key), meals = c.snapshot().meals, calls = clone(writes(f))
-    const changed = draft(); changed.meals[0].items[0].grams += 1
-    assert.equal(c.importMealDraft(JSON.stringify(changed), c.snapshot().version), false)
-    assert.equal(c.generate(), false); assert.equal(await c.save(), false)
-    assert.deepEqual(c.snapshot().meals, meals); assert.equal(storage.data.get(key), bytes)
-    stop()
-    const reopened = open(storage), cleanup = await connect(reopened, f.client)
-    try {
-     if (lost !== names[2]) {
-      assert.equal(reopened.snapshot().activationPending, true)
-      assert.equal(reopened.importMealDraft(JSON.stringify(changed), reopened.snapshot().version), false)
-      assert.equal(await reopened.activate(), false); assert.equal(storage.data.get(key), bytes)
-     } else assert.equal(reopened.snapshot().publishedVersion, reopened.snapshot().version)
-     assert.equal(writes(f).length, calls.length)
-    } finally { cleanup() }
-    stop = await connect(c, f.client)
-    if (lost !== names[2]) assert.equal(await c.activate(), true)
-    assert.deepEqual(await counts(f), [1, 1, 1])
-    assert.equal(writes(f).find(c => c.table === names[0]).payload.id, calls[0].payload.id)
-    assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions')).rows[0].meals, sqlMeals(meals))
-   } finally { stop() }
-  }, { lost })
+    for (const lost of names) await withDatabase(async f => {
+     const storage = memoryStorage(), c = open(storage)
+     assert.equal(c.importMealDraft(JSON.stringify(draft()), 0), true); assert.equal(await c.save(), true)
+     let stop = await connect(c, f.client)
+     try {
+      assert.equal(await c.activate(), false); assert.equal(c.snapshot().activationPending, true)
+      const bytes = storage.data.get(key), meals = c.snapshot().meals, calls = clone(writes(f))
+      const changed = draft(); changed.meals[0].items[0].grams += 1
+      assert.equal(c.importMealDraft(JSON.stringify(changed), c.snapshot().version), false)
+      assert.equal(c.generate(), false); assert.equal(await c.save(), false)
+      assert.deepEqual(c.snapshot().meals, meals); assert.equal(storage.data.get(key), bytes)
+      stop()
+      const reopened = open(storage), cleanup = await connect(reopened, f.client)
+      try {
+       if (lost !== names[2]) {
+        assert.equal(reopened.snapshot().activationPending, true)
+        assert.equal(reopened.importMealDraft(JSON.stringify(changed), reopened.snapshot().version), false)
+        assert.equal(await reopened.activate(), false); assert.equal(storage.data.get(key), bytes)
+       } else assert.equal(reopened.snapshot().publishedVersion, reopened.snapshot().version)
+       assert.equal(writes(f).length, calls.length)
+      } finally { cleanup() }
+      stop = await connect(c, f.client)
+      if (lost !== names[2]) assert.equal(await c.activate(), true)
+      assert.deepEqual(await counts(f), [1, 1, 1])
+      assert.equal(writes(f).find(c => c.table === names[0]).payload.id, calls[0].payload.id)
+      assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions')).rows[0].meals, sqlMeals(meals))
+     } finally { stop() }
+    }, { lost })
+   } finally { t.mock.timers.reset() }
  })
 
  test('mounted explicit automatic recommendation stays separate and available after manual preview', async () => {

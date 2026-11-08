@@ -17,19 +17,26 @@ const plan = () => ({ athleteId: 'review-athlete', date: '2026-11-07', goal: 'ma
     prioritet: 'basis', prioritetBegrundelse: 'Review editorial metadata',
   })])[0] }] }] })
 
-test('review: exact original SQL accepts known zero and unknown micro separately, with no priority or source loss', { timeout: 60000 }, async () => withDatabase(async f => {
-  const input = { ...plan(), athleteId: scope.athleteId, date: scope.date }
-  const expectedFood = structuredClone(input.meals[0].items[0].food.nutrition)
-  delete expectedFood.prioritet; delete expectedFood.prioritetBegrundelse
-  const adapter = createPlanAdapter({ enabled: true, client: f.client, ...scope })
-  await adapter.activate(input)
-  const stored = (await f.db.query('select meals from public.kostplan_v1_versions')).rows[0].meals
-  assert.deepEqual(stored, [{ name: 'Review meal', portions: [{ grams: 12.5, food: expectedFood }] }])
-  assert.equal(stored[0].portions[0].food.nutrientsPer100g.calciumMg, 0)
-  assert.equal(stored[0].portions[0].food.nutrientsPer100g.ironMg, null)
-  assert.deepEqual((await adapter.loadActive()).targets, { kcal: 0, protein: 0, carb: 0, fat: 0 })
-  assert.equal(f.calls.filter(c => c.payload && c.table === names[2]).length, 1)
-}))
+test('review: exact original SQL accepts known zero and unknown micro separately, with no priority or source loss', { timeout: 60000 }, async t => {
+  // This historical SQL case needs its approval to exist on scope.date.
+  // PGlite's real clock_timestamp() reads Date.now(); mock only this test's Date.
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
+  try {
+    await withDatabase(async f => {
+      const input = { ...plan(), athleteId: scope.athleteId, date: scope.date }
+      const expectedFood = structuredClone(input.meals[0].items[0].food.nutrition)
+      delete expectedFood.prioritet; delete expectedFood.prioritetBegrundelse
+      const adapter = createPlanAdapter({ enabled: true, client: f.client, ...scope })
+      await adapter.activate(input)
+      const stored = (await f.db.query('select meals from public.kostplan_v1_versions')).rows[0].meals
+      assert.deepEqual(stored, [{ name: 'Review meal', portions: [{ grams: 12.5, food: expectedFood }] }])
+      assert.equal(stored[0].portions[0].food.nutrientsPer100g.calciumMg, 0)
+      assert.equal(stored[0].portions[0].food.nutrientsPer100g.ironMg, null)
+      assert.deepEqual((await adapter.loadActive()).targets, { kcal: 0, protein: 0, carb: 0, fat: 0 })
+      assert.equal(f.calls.filter(c => c.payload && c.table === names[2]).length, 1)
+    })
+  } finally { t.mock.timers.reset() }
+})
 
 test('review: equality ignores only valid editorial pair; supported identity/provenance/nutrients/portions/settings remain significant', async () => {
   const input = plan(), f = syntheticTables(), adapter = createPlanAdapter({ enabled: true, ...input, client: f.client })

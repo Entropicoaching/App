@@ -46,7 +46,12 @@ if (!vm.SourceTextModule) {
    result.kcal+=n.energyKcal*i.grams/100;result.protein+=n.proteinG*i.grams/100;result.carb+=n.carbohydrateG*i.grams/100;result.fat+=n.fatG*i.grams/100
   }return result
  }
- test('StrictMode actual PortalPlan: six named meals, 18 comma quantities, exact snapshot -> explicit save -> original adapter/SQL approval; repeat/reopen no extra approval',{timeout:60000},async()=>withDatabase(async f=>{
+ test('StrictMode actual PortalPlan: six named meals, 18 comma quantities, exact snapshot -> explicit save -> original adapter/SQL approval; repeat/reopen no extra approval',{timeout:60000},async t=>{
+  // SQL approval time belongs to this historical scenario. The mounted React
+  // consumer keeps its isolated realm; only the host database clock is mocked.
+  // TestContext restores Date automatically, including callback/fixture failure.
+  t.mock.timers.enable({apis:['Date'],now:Date.parse(`${scope.date}T12:00:00Z`)})
+  return withDatabase(async f=>{
   const storage=memoryStorage(),data=menu(),original=structuredClone(profile)
   let immutable,stored
   await mountFormPortal(storage,p(f.client),async ui=>{
@@ -89,7 +94,8 @@ if (!vm.SourceTextModule) {
   assert.deepEqual((await f.db.query('select * from public.kostplan_v1_versions where id=$1',[immutable.id])).rows[0],immutable)
   assert.equal(Number((await f.db.query('select count(*) n from public.meal_logs')).rows[0].n),0)
   assert.deepEqual(profile,original)
- }))
+ })
+ })
  test('mounted raw errors preserve every field and original plan; add/remove uses stable IDs and duplicate names stay valid',async()=>{
   const storage=memoryStorage()
   await mountFormPortal(storage,p(unavailable),async ui=>{
