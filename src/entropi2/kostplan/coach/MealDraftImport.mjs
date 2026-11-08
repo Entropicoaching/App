@@ -2,6 +2,7 @@ import * as React from 'react'
 import { MEAL_DRAFT_MAX_LENGTH } from './mealDraft.mjs'
 import { button, control, primaryButton } from './formStyles.mjs'
 import { emptyMealForm, addFormMeal, addFormLine, loadMealForm, serializeMealForm, lineCount } from './mealDraftForm.mjs'
+import { searchFoods } from './foodSearch.mjs'
 
 const fieldset = { minWidth: 0, marginBottom: 12 }
 const rowStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 12rem), 1fr))', gap: 12 }
@@ -27,6 +28,9 @@ function MealFormSession({ controller, snapshot, coachId }) {
   const [status, setStatus] = React.useState('Formularkladde: endnu ikke anvendt.')
   const [appliedVersion, setAppliedVersion] = React.useState(null)
   const [replace, setReplace] = React.useState(false)
+  const [searches, setSearches] = React.useState({})
+  const currentSearches = React.useRef(searches)
+  const searchId = React.useId()
   const currentDraft = React.useRef(draft)
   const currentSource = React.useRef('')
   const active = React.useRef(false)
@@ -48,12 +52,25 @@ function MealFormSession({ controller, snapshot, coachId }) {
   }
   const update = next => {
     if (!live() || currentDraft.current !== draft) return
+    // Stable meal/line keys keep filters attached when rows move. Retire removed
+    // entries, so repeated add/remove cannot accumulate an unbounded query map.
+    const keys = new Set(next.meals.flatMap(m => m.items.map(i => JSON.stringify([m.id, i.key]))))
+    const retained = Object.fromEntries(Object.entries(currentSearches.current).filter(([key]) => keys.has(key)))
+    currentSearches.current = retained; setSearches(retained)
     currentDraft.current = next; setDraft(next); setReplace(false); setAppliedVersion(null)
     setStatus('Formularkladde ændret · ikke anvendt. Planens måltider er bevaret.')
   }
   const changeMeal = (id, key, value) => update({ ...draft, meals: draft.meals.map(m => m.id !== id ? m : { ...m, [key]: value }) })
   const changeLine = (id, key, field, value) => update({ ...draft, meals: draft.meals.map(m => m.id !== id ? m : { ...m,
     items: m.items.map(item => item.key !== key ? item : { ...item, [field]: value }) }) })
+  const changeSearch = (key, read) => {
+    if (!live() || currentDraft.current !== draft || currentSearches.current !== searches) return
+    const next = { ...searches }
+    const value = read().slice(0, 200)
+    if (value) next[key] = value
+    else delete next[key]
+    currentSearches.current = next; setSearches(next)
+  }
   const apply = event => {
     event.preventDefault()
     const now = live()
@@ -94,16 +111,32 @@ function MealFormSession({ controller, snapshot, coachId }) {
               onChange: e => changeMeal(meal.id, 'name', e.currentTarget.value) })),
             React.createElement('label', null, `Tidspunkt for måltid ${mi + 1} (valgfrit, fx 07:30)`, React.createElement('input', { type: 'text', style: control, name: `draft-time-${mi}`, value: meal.time,
               onChange: e => changeMeal(meal.id, 'time', e.currentTarget.value) }))),
-          ...meal.items.map((item, ii) => React.createElement('div', { key: item.key, style: { ...rowStyle, marginTop: 12 } },
-            React.createElement('label', null, `Fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('select', { style: control, name: `draft-food-${mi}-${ii}`, value: item.foodId,
+          ...meal.items.map((item, ii) => {
+            const key = JSON.stringify([meal.id, item.key]), query = searches[key] ?? ''
+            const result = searchFoods(snapshot.foods, query, item.foodId)
+            const id = `${searchId}-${mi}-${ii}`, feedbackId = `${id}-results`
+            return React.createElement('div', { key: item.key, style: { ...rowStyle, marginTop: 12 } },
+            React.createElement('div', null,
+              React.createElement('label', null, `Søg fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('input', {
+                type: 'search', style: control, name: `draft-search-${mi}-${ii}`, value: query, maxLength: 200,
+                'aria-controls': id, 'aria-describedby': feedbackId,
+                onChange: e => changeSearch(key, () => e.currentTarget.value) })),
+              React.createElement('button', { type: 'button', style: button, disabled: locked || !query,
+                onClick: () => changeSearch(key, () => '') }, `Ryd søgning for fødevare ${ii + 1} i måltid ${mi + 1}`),
+              React.createElement('p', { id: feedbackId, role: 'status', 'aria-live': 'polite' }, result.searching
+                ? `${result.matches ? `${result.matches} match.` : 'Ingen fødevarer matcher søgningen.'} Dit valgte fødevarevalg bevares i listen.`
+                : `Alle ${snapshot.foods.length} fødevarer vises. Søg i navn og tilberedning.`)),
+            React.createElement('label', null, `Fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('select', { id, style: control, name: `draft-food-${mi}-${ii}`, value: item.foodId,
+              'aria-describedby': feedbackId,
               onChange: e => changeLine(meal.id, item.key, 'foodId', e.currentTarget.value) },
               React.createElement('option', { value: '' }, 'Vælg fødevare'),
               item.foodId && !snapshot.foods.some(f => f.id === item.foodId) && React.createElement('option', { value: item.foodId }, 'Ukendt fødevare – vælg igen'),
-              ...snapshot.foods.map(food => React.createElement('option', { key: food.id, value: food.id }, `${food.name} · ${food.nutrition.preparation}`)))),
+              ...result.foods.map(food => React.createElement('option', { key: food.id, value: food.id }, `${food.name} · ${food.nutrition.preparation}`)))),
             React.createElement('label', null, `Gram af fødevare ${ii + 1} i måltid ${mi + 1}`, React.createElement('input', { type: 'text', inputMode: 'decimal', style: control,
               name: `draft-grams-${mi}-${ii}`, value: item.grams, onChange: e => changeLine(meal.id, item.key, 'grams', e.currentTarget.value) })),
             React.createElement('button', { type: 'button', style: button, onClick: () => update({ ...draft, meals: draft.meals.map(m => m.id !== meal.id ? m : { ...m,
-              items: m.items.filter(i => i.key !== item.key) }) }) }, `Fjern fødevare ${ii + 1} fra måltid ${mi + 1}`))),
+              items: m.items.filter(i => i.key !== item.key) }) }) }, `Fjern fødevare ${ii + 1} fra måltid ${mi + 1}`))
+          }),
           React.createElement('button', { type: 'button', style: button, disabled: meal.items.length >= 30 || count >= 100,
             onClick: () => update(addFormLine(draft, meal.id)) }, `Tilføj fødevare til måltid ${mi + 1}`),
           React.createElement('button', { type: 'button', style: button, disabled: draft.meals.length <= 1,

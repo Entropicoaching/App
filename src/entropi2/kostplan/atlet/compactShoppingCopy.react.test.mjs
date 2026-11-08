@@ -245,24 +245,60 @@ test('actual athlete route short copy and bought marks preserve typed intake dra
   const manual = byKey(r.host, 'field-Måltid'); assert.ok(manual)
   manual.value = 'Kortliste-kladden æøå'; manual.dispatch('input', { target: manual }); await act(async () => { await tick() })
   const tracker = all(r.host, '[data-entropi2-kost]')[0], before = JSON.stringify(r.f.data)
+  r.day.values.set('synthetic:existing-profile', 'unchanged profile')
+  r.day.values.set('synthetic:existing-intake', 'unchanged intake')
   const writes = [...r.day.writes], storage = [...r.day.values], logs = r.day.calls.length
-  await r.click(fullLabel); const full = r.copies.at(-1)
+  const purchaseNamespace = 'entropi2:kostplan:atlet:v1:purchases:v2'
+  const purchaseKey = `${purchaseNamespace}:${encodeURIComponent(athleteId)}`
+  const reader = make(r.f, { storage: () => r.day.storage }); t.after(reader.dispose)
+  assert.equal(await reader.load(), true)
+  const persistent = reader.snapshot().purchases.persistent
+  assert.deepEqual(reader.snapshot().purchases.bought, [])
+  assert.deepEqual([...r.day.values], storage); assert.deepEqual(r.day.writes, writes)
+  const copyWithoutWrites = async label => {
+    const beforeWrites = [...r.day.writes], beforeStorage = [...r.day.values]
+    await r.click(label)
+    assert.deepEqual(r.day.writes, beforeWrites, `${label}: no storage writes`)
+    assert.deepEqual([...r.day.values], beforeStorage, `${label}: no storage changes`)
+  }
+  await copyWithoutWrites(fullLabel); const full = r.copies.at(-1)
   const datePicker = all(r.host, 'select').find(n => n.getAttribute('aria-label') === 'Vælg plandato')
   await act(async () => { propsOf(datePicker).onChange({ currentTarget: { value: dates[1] } }); await tick() })
   const preview = all(r.host, 'section').find(n => n.getAttribute('aria-label') === 'Kommende kostplan')
   assert.ok(preview); const previewBytes = preview.textContent
   assert.equal(tracker.parentElement.parentElement.getAttribute('hidden'), '')
-  await r.click(shortLabel); assert.match(r.copies.at(-1), /^Kort indkøbsliste/)
+  await copyWithoutWrites(shortLabel); assert.match(r.copies.at(-1), /^Kort indkøbsliste/)
   assert.equal(preview.textContent, previewBytes)
   assert.equal(tracker.parentElement.parentElement.getAttribute('hidden'), '')
   await act(async () => { propsOf(datePicker).onChange({ currentTarget: { value: today } }); await tick() })
   assert.equal(r.day.calls.length, logs)
+  assert.deepEqual(r.day.writes, writes); assert.deepEqual([...r.day.values], storage)
   await act(async () => { propsOf(marks(r.host)[0]).onClick(); await tick() })
-  await r.click(shortLabel); await r.click(fullLabel); assert.equal(r.copies.at(-1), full)
+  assert.equal(propsOf(marks(r.host)[0])['aria-checked'], true)
+  // The old oversized scope is honestly session-only; a persistent scope must
+  // write exactly its own v2 key, only during the explicit bought action.
+  assert.deepEqual(r.day.writes, [...writes, ...(persistent ? [purchaseKey] : [])])
+  const afterBoughtWrites = [...r.day.writes], afterBoughtStorage = [...r.day.values]
+  if (persistent) {
+    const raw = r.day.storage.getItem(purchaseKey), record = JSON.parse(raw)
+    assert.deepEqual(Object.keys(record).sort(), ['bought', 'namespace', 'scope'])
+    assert.equal(record.namespace, purchaseNamespace); assert.equal(typeof record.scope, 'string')
+    assert.deepEqual(record.bought, [0])
+    assert.deepEqual([...r.day.values], [...storage, [purchaseKey, raw]])
+    // A fresh controller must actually read back the persisted bought bit.
+    const reopened = make(r.f, { storage: () => r.day.storage }); t.after(reopened.dispose)
+    assert.equal(await reopened.load(), true)
+    assert.deepEqual(reopened.snapshot().purchases, { bought: [0], persistent: true })
+  } else {
+    assert.equal(r.day.storage.getItem(purchaseKey), null)
+    assert.deepEqual([...r.day.values], storage)
+  }
+  await copyWithoutWrites(shortLabel); await copyWithoutWrites(fullLabel); assert.equal(r.copies.at(-1), full)
   assert.ok(all(r.host, '[data-entropi2-kost]')[0] === tracker)
   assert.ok(byKey(r.host, 'field-Måltid') === manual); assert.equal(manual.value, 'Kortliste-kladden æøå')
   assert.equal(tracker.parentElement.parentElement.getAttribute('hidden'), null)
-  assert.deepEqual(r.day.writes, writes); assert.equal(r.day.rows.length, 0); assert.equal(r.day.plan.writes().length, 0)
+  assert.deepEqual(r.day.writes, afterBoughtWrites); assert.deepEqual([...r.day.values], afterBoughtStorage)
+  assert.equal(r.day.rows.length, 0); assert.equal(r.day.plan.writes().length, 0)
   // Only the existing purchase namespace may change on the explicit bought action.
   for (const [key, value] of storage) assert.equal(r.day.values.get(key), value)
   assert.equal(JSON.stringify(r.f.data), before)

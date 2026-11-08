@@ -1,5 +1,6 @@
 // Synthetic hook/element fixture only. Does not claim React reconciliation or DOM QA.
 let owner
+let nextSyntheticId = 0
 export const createElement = (type, config, ...children) => {
   const { key, ...props } = config ?? {}
   return { type, key, props: { ...props, children: children.flat(Infinity).filter(n => n != null && n !== false) } }
@@ -10,6 +11,8 @@ export function useState(initial) {
   return [state.values[i], value => { state.values[i] = typeof value === 'function' ? value(state.values[i]) : value }]
 }
 export const useRef = initial => useState(() => ({ current: initial }))[0]
+// Synthetic IDs share the mounted hook slot; never recycle IDs across roots/remounts.
+export const useId = () => useState(() => `:synthetic-${++nextSyntheticId}:`)[0]
 // Opt-in lifecycle simulation only; this remains a synthetic hook fixture.
 export function useEffect(effect, deps) {
   if (!owner?.runEffects) return
