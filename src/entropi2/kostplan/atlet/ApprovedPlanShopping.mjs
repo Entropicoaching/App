@@ -1,7 +1,7 @@
 import { createElement as h, useLayoutEffect, useMemo, useState } from 'react'
 import { createApprovedShopping } from './approvedShoppingController.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
-import { grossLabel, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
+import { grossLabel, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
 
 const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal' }
 const currentDayMatches = scope => {
@@ -30,7 +30,7 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
   const matches = record?.scope === scope && currentDayMatches(scope)
   const controller = matches ? record.controller : null, s = controller ? record.snapshot : null
   const dates = upcomingDates(today)
-  return h('section', { 'aria-label': 'Indkøb fra kostplanen', style: { padding: 16, maxWidth: '42rem', overflowWrap: 'anywhere' } },
+  return h('section', { 'aria-label': 'Indkøb fra kostplanen', style: { padding: 16, width: '100%', maxWidth: '42rem', boxSizing: 'border-box', overflowWrap: 'anywhere' } },
     h('h2', null, 'Indkøb fra kostplanen'),
     h('p', null, grossLabel),
     h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer.'),
@@ -54,8 +54,10 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
       h('button', { type: 'button', style: control, onClick: () => controller.load() }, 'Hent indkøbsgrundlag igen'),
       s.complete && h('div', null,
         h('p', null, 'Alle valgte datoer er læst fra godkendte versioner. Listen angiver grambehov, ikke dokumenteret næringsdækning.'),
-        ...s.result.days.map(d => h('p', { key: d.date },
-          `${d.date}: version ${d.versionNumber} (${d.versionId}), gældende fra ${d.effectiveFrom}. Måltider: ${d.mealNames.join(', ')}.`)),
+        h('details', null,
+          h('summary', { style: { ...control, cursor: 'pointer' } }, 'Dage, versioner og måltider'),
+          ...s.result.days.map(d => h('p', { key: d.date },
+            `${d.date}: version ${d.versionNumber} (${d.versionId}), gældende fra ${d.effectiveFrom}. Måltider: ${d.mealNames.join(', ')}.`))),
         h('p', null, 'Købt-markeringer er kun lokale i denne browser på denne enhed. De registrerer ikke spist mad, bekræfter ikke lager, reducerer ikke grambehov og synkroniseres ikke til coachen.'),
         h('p', { role: 'status' }, s.purchases.persistent
           ? 'Markeringer gemmes lokalt ved ændring. Kopiering medtager altid hele bruttolisten.'
@@ -67,7 +69,12 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
             h('button', { type: 'button', role: 'checkbox', 'aria-checked': checked,
               'aria-label': `Købt: ${shoppingItemText(item)}`, style: { ...control, minWidth: 44 },
               onClick: () => controller.markBought(index, !checked, s.result) }, checked ? '☑ Købt' : '☐ Ikke købt'),
-            h('span', null, shoppingItemText(item)))
+            h('div', { style: { flex: '1 1 16rem', minWidth: 0, maxWidth: '100%' } },
+              h('span', null, `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g. Tilberedning: ${item.preparation}.`),
+              h('details', null,
+                h('summary', { 'aria-label': `Kilde og varegrundlag: ${shoppingItemText(item)}`,
+                  style: { ...control, cursor: 'pointer' } }, 'Kilde og varegrundlag'),
+                h('p', null, shoppingItemText(item)))))
         })),
         h('button', { type: 'button', style: control, disabled: s.copyPending, onClick: () => controller.copy(clipboard, s.result) }, 'Kopiér indkøbsliste'),
         s.copyStatus === 'pending' && h('p', { role: 'status' }, 'Kopierer…'),
