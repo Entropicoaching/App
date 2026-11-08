@@ -43,7 +43,7 @@ function decode(raw, athleteId, date) {
 export function createWaterDayLog({ enabled, athleteId, date, storage, currentDay, isCurrent = () => true } = {}) {
   const key = waterDayKey(athleteId, date)
   if (enabled !== true || !key) return null
-  let disposed = false, entries = [], status = 'ready', raw = null, writable = true, device
+  let disposed = false, entries = [], status = 'ready', raw = null, writable = true, device, pendingUpdate = null
   const current = () => {
     try { return !disposed && isCurrent() === true && calendarDay() === date
       && (currentDay === undefined || (typeof currentDay === 'function' && currentDay() === date)) } catch { return false }
@@ -59,24 +59,48 @@ export function createWaterDayLog({ enabled, athleteId, date, storage, currentDa
   }
   const snapshot = () => Object.freeze({ entries: Object.freeze([...entries]), status,
     totalMl: entries.reduce((sum, entry) => sum + entry.ml, 0) })
-  const persist = next => {
+  const persist = (next, editEntry = null) => {
     if (!current()) return false
-    entries = next
+    // Add/remove keep their legacy local fallback. An edit succeeds only after
+    // readback; failed edits retain the exact original entries and draft owner.
+    if (editEntry && !writable) return false
+    let before
+    if (editEntry) {
+      try {
+        before = device.getItem(key)
+        if (!current()) return false
+        // Retry only the original record or our exact prior attempted bytes,
+        // bound to this entry AND transaction snapshot; never a loose id match.
+        if (before !== raw && !(pendingUpdate?.entries === entries && pendingUpdate.entry === editEntry
+          && before === pendingUpdate.value)) { status = 'conflict'; return false }
+      } catch { status = 'unconfirmed'; return false }
+    }
+    if (!editEntry) entries = next
     status = 'unconfirmed'
     if (!writable) return true
-    const value = JSON.stringify({ schema, athleteId, date, entries })
-    if (value.length > waterLimits.text) { writable = false; return true }
+    const value = JSON.stringify({ schema, athleteId, date, entries: next })
+    if (value.length > waterLimits.text) {
+      if (!editEntry) writable = false
+      return !editEntry
+    }
     try {
-      const before = device.getItem(key)
+      if (!editEntry) before = device.getItem(key)
       if (!current()) return false
-      if (before !== raw) { writable = false; return true }
+      if (!editEntry && before !== raw) { writable = false; return true }
+      if (editEntry) pendingUpdate = { entries, entry: editEntry, value }
       device.setItem(key, value)
       if (!current()) return false
       const after = device.getItem(key)
       if (!current()) return false
-      if (after !== value) { writable = false; return true }
-      raw = value; status = 'saved'
-    } catch { writable = false }
+      if (after !== value) {
+        if (!editEntry) writable = false
+        return !editEntry
+      }
+      entries = next; raw = value; status = 'saved'; pendingUpdate = null
+    } catch {
+      if (!editEntry) writable = false
+      return !editEntry
+    }
     return true
   }
   return Object.freeze({
@@ -93,6 +117,12 @@ export function createWaterDayLog({ enabled, athleteId, date, storage, currentDa
     remove(id) {
       if (!current() || !entries.some(entry => entry.id === id)) return false
       return persist(entries.filter(entry => entry.id !== id))
+    },
+    update(entry, value) {
+      if (!current() || !entries.includes(entry)) return false
+      const ml = waterQuantity(value)
+      if (ml === null) return false
+      return persist(entries.map(item => item === entry ? Object.freeze({ ...item, ml }) : item), entry)
     },
     dispose() { disposed = true },
   })
