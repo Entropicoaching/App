@@ -59,6 +59,7 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
   const planClient = enabled === true && athlete?.id ? sharePlanCapabilityProbes(client) : client
   const screen = useRef(null)
   const [session, setSession] = useState(null)
+  const [checkin, setCheckin] = useState(null)
   const latest = useRef({ onNavigate, onCoach, currentDay, onDayChanged })
   const weight = { weightLogs, weightInput, onWeightInput, logWeight, savingWeight, weightStatus, retryWeight }
   useEffect(() => { latest.current = { onNavigate, onCoach, currentDay, onDayChanged } })
@@ -84,14 +85,16 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
         cleanup = mountKost(target, { athlete, date, client, foods, storage, contracts: day.contracts }, latest, currentWeight)
         trackerHost = target
         screen.current = cleanup
+        if (active && cleanup?.checkin) setCheckin({ athleteId: athlete.id, date, tracker: cleanup.checkin })
       }
       container.append(trackerHost)
       return () => { if (trackerHost.parentElement === container) trackerHost.remove() }
     } })
     void day.controller.load()
-    return () => { active = false; day.dispose(); if (screen.current === cleanup) screen.current = null; cleanup?.() }
+    return () => { active = false; setCheckin(null); day.dispose(); if (screen.current === cleanup) screen.current = null; cleanup?.() }
   }, [enabled, athlete?.id, athlete?.kcal_target, athlete?.protein_target, date, client, foods])
   const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
   return enabled === true && athlete?.id ? createElement(KostShoppingFrame, { controller: current?.controller, athleteId: athlete.id, date, client: planClient, currentDay,
-    foodEntry: current?.foodEntry, tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
+    foodEntry: current?.foodEntry,
+    checkin: checkin?.athleteId === athlete?.id && checkin?.date === date && current ? checkin.tracker : null, tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
 }

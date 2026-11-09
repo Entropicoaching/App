@@ -2,6 +2,7 @@ import { createElement as h, useLayoutEffect, useMemo, useState } from 'react'
 import { createApprovedShopping } from './approvedShoppingController.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
 import { grossLabel, preparationSuffix, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
+import { printShoppingList } from '../../nutrition/indkoeb/print.mjs'
 
 const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
 const currentDayMatches = scope => {
@@ -79,6 +80,11 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
                   style: { ...control, cursor: 'pointer' } }, 'Kilde og varegrundlag'),
                 h('p', null, shoppingItemText(item)))))
         })),
+        h('button', { type: 'button', style: control, onClick: () => printShoppingList({ title: 'Indkøb fra kostplanen',
+          subtitle: `Dage: ${s.dates.join(', ')}. Gram i den angivne tilberedning.`,
+          items: s.result.items.filter((_, index) => !s.purchases.bought.includes(index))
+            .map(item => ({ name: item.names[0], text: `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}` })) }) },
+        'Print indkøbsliste'),
         h('button', { type: 'button', style: s.copyPending ? { ...control, opacity: 0.6 } : control, disabled: s.copyPending, onClick: () => controller.copy(clipboard, s.result) }, 'Kopiér indkøbsliste'),
         h('button', { type: 'button', style: s.copyPending ? { ...control, opacity: 0.6 } : control, disabled: s.copyPending,
           onClick: () => controller.copyCompact(clipboard, s.result) }, 'Kopiér kort indkøbsliste'),

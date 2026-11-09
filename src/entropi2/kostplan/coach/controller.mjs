@@ -1,6 +1,6 @@
 import { NAMESPACE, CONTEXT_LABELS, GOALS, INTENSITIES, identifier, day, number, copy, freeze,
   catalogFoods, targets, nutritionProposal, totals, generateMeals, historyReceipt, normalizePlan, portionGuidance } from './model.mjs'
-import { recipeItems, proteinDistribution } from './connections.mjs'
+import { recipeItems, recipeProblems, proteinDistribution } from './connections.mjs'
 import { generateCoachGrams, gramFeedback } from './gramPlan.mjs'
 import { parseMealDraft } from './mealDraft.mjs'
 import { activationSnapshot } from '../planAdapter.mjs'
@@ -181,7 +181,10 @@ export function createCoachPlan(options = {}) {
       const kcal = totals([state.meals[mealIndex]])?.kcal
       const items = recipeItems(recipeId, foods, kcal ?? 0)
       if (!items) {
-        publish({ error: 'Måltidet kunne ikke erstattes. Kontrollér opskrift, fødevarer og gram.' }); return false
+        const problems = recipeProblems(recipeId, foods, kcal ?? 0)
+        publish({ error: problems.length
+          ? `Opskriften giver ikke et realistisk måltid ved måltidets energi: ${problems[0]} Vælg en anden opskrift, eller fordel energien på flere måltider.`
+          : 'Måltidet kunne ikke erstattes. Kontrollér opskrift, fødevarer og gram.' }); return false
       }
       const meals = copy(state.meals)
       meals[mealIndex].items = items.map(item => ({ grams: item.grams, food: copy(foods.find(food => food.id === item.foodId)) }))

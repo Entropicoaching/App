@@ -1,5 +1,6 @@
 import { ingredientKey } from '../indkoeb/ingredients.mjs'
 import { formatShoppingSnapshot, shoppingIncompleteWarning } from '../indkoeb/export.mjs'
+import { printShoppingList } from '../indkoeb/print.mjs'
 import { createElement as h, useLayoutEffect, useMemo, useReducer, useState } from 'react'
 import { createWeekPlan } from './model.mjs'
 
@@ -56,7 +57,18 @@ function ShoppingExport({ snapshot, context, clipboard, isCurrent }) {
     // A write already requested by the user cannot be undone by unmounting.
     // Cleanup only invalidates callbacks and acknowledgement in the old view.
   }
+  const print = () => {
+    if (!lifetime.isActive()) return
+    const { shopping, week } = snapshot
+    const ok = !shopping.error && printShoppingList({ title: 'Ugens indkøbsliste',
+      subtitle: [`Ugen fra ${week}.`, shoppingIncompleteWarning(shopping)].filter(Boolean).join(' '),
+      items: shopping.items.filter(item => item.netPurchase > 0)
+        .map(item => ({ name: item.name, text: `${item.name}: ${number(item.netPurchase)} ${item.unit}` })) })
+    setResult({ lifetime, status: ok ? 'printed' : 'print-failed' })
+  }
   return h('div', null,
+    h('button', { type: 'button', style: buttonStyle, onClick: print }, 'Print indkøbsliste'),
+    status === 'print-failed' && h('p', { role: 'alert' }, 'Listen kunne ikke åbnes til print. Brug Kopiér indkøbsliste i stedet.'),
     h('button', { type: 'button', style: buttonStyle, onClick: copy, disabled: status === 'pending' }, 'Kopiér indkøbsliste'),
     status === 'pending' && h('p', { role: 'status' }, 'Kopierer…'),
     status === 'copied' && h('p', { role: 'status' }, 'Kopieret.'),

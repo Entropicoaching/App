@@ -1,6 +1,7 @@
 import * as React from 'react'
 const { useLayoutEffect, useMemo, useRef, useState } = React
 import { createWaterDayLog, waterLimits, waterQuantity } from './waterDayLogModel.mjs'
+import WaterGoal from './WaterGoal.mjs'
 
 const control = { minHeight: 44, minWidth: 44, font: 'inherit', maxWidth: '100%', boxSizing: 'border-box' }
 const time = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen', hour: '2-digit', minute: '2-digit' })
@@ -47,7 +48,11 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
     return changed
   }
   const editing = edit?.scope === scope && edit.controller === controller ? edit : null
-  return React.createElement('details', { style: { padding: 16, overflowWrap: 'anywhere' } },
+  // U1: the goal and the filling glass stay visible; the detailed log folds below.
+  return React.createElement('div', null,
+    s && React.createElement(WaterGoal, { athleteId, storage, totalMl: s.totalMl,
+      canAdd: s.entries.length < waterLimits.entries, add: value => update(() => controller.add(value)) }),
+    React.createElement('details', { style: { padding: 16, overflowWrap: 'anywhere' } },
     React.createElement('summary', { style: { ...control, cursor: 'pointer', padding: 12 } }, 'Væske i dag'),
     React.createElement('p', null, 'Registrér kun vand, du har drukket. Portionerne er mængdevalg.'),
     React.createElement('p', null, 'Kun lokal lagring på denne enhed. Deles ikke med din coach.'),
@@ -110,5 +115,5 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
         : s.status === 'ready' ? 'Ændringer gemmes kun på denne enhed, når du tilføjer, retter eller fjerner en registrering.'
           : s.status === 'unreadable' ? 'Lokal lagring kunne ikke læses sikkert. Nye ændringer vises kun her, indtil visningen lukkes; tidligere data overskrives ikke.'
             : 'Lagringen kunne ikke bekræftes. Listen vises kun her, indtil visningen lukkes; genåbning kan vise andre registreringer.')),
-    error && React.createElement('p', { role: 'alert' }, error))
+    error && React.createElement('p', { role: 'alert' }, error)))
 }

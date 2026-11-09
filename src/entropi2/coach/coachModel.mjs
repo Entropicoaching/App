@@ -3,7 +3,7 @@ import { messageText } from '../conversation/conversationModel.mjs'
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { coachAthleteList } from './athleteListModel.mjs'
-import { coachNutritionLines } from './coachNutrition.mjs'
+import { coachNutritionLines, kostvaneTal } from './coachNutrition.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
 const own = (o, k) => Object.prototype.hasOwnProperty.call(o || {}, k)
@@ -128,7 +128,8 @@ export function coachHomeModel(props = {}, today = new Date()) {
   const nutritionState = !nutritionSource ? 'loading' : nutritionSource.state === 'ready' ? 'ready'
     : nutritionSource.state === 'partial' ? 'partial' : nutritionSource.state === 'error' ? 'error' : 'loading'
   const summaries = coachAthleteSummaries(data, nutrition, inbox)
-  return { ...data, actions, inbox, complete, nutrition, nutritionState, summaries,
+  const kostvane = kostvaneTal(props, day, athletes, data.rosterReady)
+  return { ...data, actions, inbox, complete, nutrition, nutritionState, summaries, kostvane,
     nutritionReload: typeof nutritionSource?.reload === 'function' ? nutritionSource.reload : null,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
 }

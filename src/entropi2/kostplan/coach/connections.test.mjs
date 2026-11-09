@@ -51,7 +51,12 @@ test('actual controller replaces one meal without persistence, preserves kcal an
   assert.equal(after.version, before.version + 1); assert.equal(after.dirty, true)
   assert.equal(calls.length, 1); assert.equal(await c.activate(), false)
   await c.save(); assert.equal(await c.activate(), true)
-  assert.equal(c.chooseRecipe(0, 'skyr-aeble'), true)
+  // U1 realism: a snack scaled to a ~800 kcal meal (375 g apple) is rejected with the reason.
+  const unchanged = c.snapshot().meals
+  assert.equal(c.chooseRecipe(0, 'skyr-aeble'), false)
+  assert.match(c.snapshot().error, /ikke et realistisk måltid.*Æble 375 g er uden for en normal portion/)
+  assert.deepEqual(c.snapshot().meals, unchanged)
+  assert.equal(c.chooseRecipe(0, 'kylling-ris'), true)
   await c.save()
   assert.equal(calls.at(-1).request.planId, null) // edits of active plans start a new draft
 })

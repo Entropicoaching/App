@@ -3,6 +3,7 @@ import { catalogFoods, totals, number, day, identifier } from './model.mjs'
 import { planProteinDistribution } from '../protein/model.mjs'
 import { buildNutritionReport } from '../rapport/nutritionReport.mjs'
 import { isDayReceipt } from '../../../mealEvidence.mjs'
+import { tjekMaaltid } from '../realisme.mjs'
 
 // Recipes resolve the existing catalogue, never nutrient values supplied by UI.
 // An injected catalogue must agree with those foods before offering a recipe.
@@ -21,8 +22,20 @@ export function recipeItems(recipeId, foods, kcal) {
   try {
     const selected = kcal === undefined ? recipe : scaleRecipe(recipe, { nutrient: 'energyKcal', value: kcal })
     const items = recipePortions(selected).map(({ food, grams }) => ({ foodId: food.id, grams }))
-    return items.every(item => number(item.grams, 10000) > 0) ? items : null
+    // U1: a scaled recipe must still be a realistic meal before anyone sees it.
+    return items.every(item => number(item.grams, 10000) > 0) && tjekMaaltid({ items }).ok ? items : null
   } catch { return null }
+}
+
+// The concrete realism problems for a scaled recipe, for the coach's message.
+export function recipeProblems(recipeId, foods, kcal) {
+  const recipe = recipeChoices(foods).find(entry => entry.id === recipeId)
+  if (!recipe || kcal === undefined) return []
+  try {
+    const items = recipePortions(scaleRecipe(recipe, { nutrient: 'energyKcal', value: kcal }))
+      .map(({ food, grams }) => ({ foodId: food.id, grams }))
+    return tjekMaaltid({ items }).problemer
+  } catch { return [] }
 }
 
 // Weight is the selected athlete's explicit profile weight. Missing/invalid

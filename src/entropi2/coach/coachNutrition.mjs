@@ -9,8 +9,8 @@ const ids = values => Array.isArray(values) && values.every(id) && new Set(value
 
 // A completed read receipt belongs to its captured owner, roster and Danish day.
 // No I/O; incomplete, stale or misrouted batches are deliberately silent.
-export function coachNutritionLines(props, day, athletes, rosterReady) {
-  const result = new Map(), source = props.coachNutrition, context = props.readContext
+function readySource(props, day, rosterReady) {
+  const source = props.coachNutrition, context = props.readContext
   if (!rosterReady || !civilDay(day) || !id(props.session?.user?.id) ||
     context?.coachId !== props.session.user.id || context.day !== day || !ids(context.athleteIds) ||
     source?.coachId !== context.coachId || source.day !== day ||
@@ -18,7 +18,34 @@ export function coachNutritionLines(props, day, athletes, rosterReady) {
     !context.athleteIds.every(a => source.athleteIds.includes(a)) ||
     source.state !== 'ready' || source.complete !== true ||
     !civilDay(source.from) || source.through !== day || ordinal(source.from) !== ordinal(day) - 6 ||
-    !Array.isArray(source.rows) || !Array.isArray(source.targets)) return result
+    !Array.isArray(source.rows) || !Array.isArray(source.targets)) return null
+  return source
+}
+
+// U1 success measure: how many athletes logged a meal on at least 4 of the
+// last 7 days. Same completed receipt as the lines below; null when unknown.
+export const KOSTDAGE_MAAL = 4
+export function kostvaneTal(props, day, athletes, rosterReady) {
+  const source = readySource(props, day, rosterReady)
+  if (!source || !Array.isArray(athletes)) return null
+  const allowed = new Set(source.athleteIds), days = new Map()
+  for (const row of source.rows) {
+    if (!allowed.has(row?.athlete_id) || !civilDay(row.date) || row.date < source.from || row.date > day) return null
+    if (typeof row.meal !== 'string' || !row.meal.trim() || row.meal.trimStart().startsWith('[appData2-day-v1]')) continue
+    if (!days.has(row.athlete_id)) days.set(row.athlete_id, new Set())
+    days.get(row.athlete_id).add(row.date)
+  }
+  const count = athlete => days.get(athlete.id)?.size ?? 0
+  const roster = athletes.filter(athlete => allowed.has(athlete.id))
+  return { aktive: roster.length, maal: KOSTDAGE_MAAL,
+    medMaal: roster.filter(a => count(a) >= KOSTDAGE_MAAL).length,
+    lidt: roster.filter(a => count(a) > 0 && count(a) < KOSTDAGE_MAAL).length,
+    ingen: roster.filter(a => count(a) === 0).length }
+}
+
+export function coachNutritionLines(props, day, athletes, rosterReady) {
+  const result = new Map(), source = readySource(props, day, rosterReady)
+  if (!source) return result
 
   const allowed = new Set(source.athleteIds), totals = new Map(), targets = new Map(), seen = new Set()
   for (const row of source.rows) {

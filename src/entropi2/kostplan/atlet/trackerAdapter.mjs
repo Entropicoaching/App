@@ -26,7 +26,16 @@ export function mountExistingTracker(host, options = {}) {
       })
     }
     const unsubscribe = controller.subscribe(refresh)
-    const cleanup = () => { alive = false; unsubscribe(); unmount() }
+    // U1 check-in card: a cached snapshot for useSyncExternalStore and the
+    // tracker's own log action. Registered before any React subscriber.
+    let cached = null
+    const uncache = controller.subscribe(() => { cached = null })
+    const cleanup = () => { alive = false; unsubscribe(); uncache(); unmount() }
+    cleanup.checkin = Object.freeze({
+      subscribe: fn => controller.subscribe(fn),
+      snapshot: () => { if (!alive) return null; cached ??= controller.snapshot(); return cached },
+      log: (meal, intent) => alive ? controller.log(meal, intent) : Promise.resolve(false),
+    })
     cleanup.updateWeight = unmount.updateWeight
     cleanup.openFoodLog = outer => alive && unmount.openFoodLog(outer)
     // A plan insert (including a lost response) must be visible when the athlete

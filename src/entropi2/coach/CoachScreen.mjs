@@ -140,8 +140,12 @@ export function CoachView(input = {}) {
         ? 'Kostdata kunne ikke hentes. Overblikket viser ikke kost lige nu.'
         : 'Kostdata er ufuldstændige. Overblikket viser ikke kost lige nu.'),
       model.nutritionReload && h('button', { type: 'button', style: button, onClick: model.nutritionReload }, 'Hent kost igen')),
-    !inbox && model.nutritionState === 'ready' && model.nutrition.size > 0 && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
-      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Kost (${model.nutrition.size})`)),
+    !inbox && model.nutritionState === 'ready' && (model.nutrition.size > 0 || model.kostvane?.aktive > 0) && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
+      h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading },
+        model.kostvane ? `Kost · ${model.kostvane.medMaal} af ${model.kostvane.aktive} logger 4+ dage` : `Kost (${model.nutrition.size})`)),
+      model.kostvane && h('p', { 'data-coach-kostvane': '' },
+        `De seneste 7 dage har ${model.kostvane.medMaal} af ${model.kostvane.aktive} atleter logget mad mindst ${model.kostvane.maal} dage. `
+        + `${model.kostvane.lidt} har logget 1 til ${model.kostvane.maal - 1} dage, og ${model.kostvane.ingen} har ikke logget.`),
       h('ul', { style: { listStyle: 'none', padding: 0 } },
         ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,
           style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },

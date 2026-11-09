@@ -2,6 +2,7 @@ import * as React from 'react'
 import { KostplanAtletView } from './KostplanAtlet.mjs'
 import UpcomingPlan from './UpcomingPlan.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
+import KostvaneCheckin from './KostvaneCheckin.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
 import { calendarDay } from '../../../calendarDate.js'
 
@@ -32,7 +33,7 @@ function FoodLogEntry({ entry, gateRef, trackerFold }) {
     unavailable && React.createElement('p', { role: 'status' }, 'Kostloggen er ikke klar til at åbne. Prøv igen, når den er tilgængelig.'))
 }
 
-export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry }) {
+export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin }) {
   const [selection, setSelection] = useState(null)
   const dates = upcomingDates(date)
   const selected = selection && selection.athleteId === athleteId && selection.today === date && selection.client === client
@@ -68,7 +69,10 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
       React.createElement('select', { value: selected, 'aria-label': 'Vælg plandato', style: { ...control, display: 'block', marginTop: 8, maxWidth: '100%' },
         onChange: selectDate }, ...dates.map((day, index) => React.createElement('option', { key: day, value: day },
         `${index === 0 ? 'I dag' : index === 1 ? 'I morgen' : 'Om ' + index + ' dage'} · ${new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(day + 'T00:00:00Z'))}`)))),
-    ...(foodDayAvailable ? [React.createElement(FoodLogEntry, { key: 'food-entry', entry: foodEntry, gateRef: foodGate, trackerFold })] : []),
+    // U1: today's habit card sits right above the "Log mad" entry; the full diary stays below.
+    ...(foodDayAvailable ? [
+      ...(checkin ? [React.createElement(KostvaneCheckin, { key: 'kostvane', tracker: checkin, athleteId, date })] : []),
+      React.createElement(FoodLogEntry, { key: 'food-entry', entry: foodEntry, gateRef: foodGate, trackerFold })] : []),
     preview && React.createElement(UpcomingPlan, { athleteId, today: date, date: selected, client }),
     // This subtree keeps its identity while browsing. No load, date change or
     // disposal reaches today's diary, drafts, receipts or nested week planner.
