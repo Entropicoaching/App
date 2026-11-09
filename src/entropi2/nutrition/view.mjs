@@ -707,5 +707,27 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     if (destroyed) return
     weightProps = { ...weightProps, ...props }; draw()
   }
+  // UI-only entry into this mount's existing form. No redraw, load, opt-in or
+  // draft mutation. The optional outer fold must contain this exact host.
+  cleanup.openFoodLog = outer => {
+    const s = controller.snapshot()
+    if (destroyed || !s.loaded || !s.fridaLog?.writable || s.pending
+      || !['ready', 'saved', 'save-error'].includes(s.phase)
+      || weightPending || weightProps.savingWeight === true || !fridaVisible()) return false
+    const controls = [...host.querySelectorAll('[data-focus]')]
+    const main = controls.find(n => n.getAttribute('data-focus') === 'main')
+    if (main?.getAttribute('id') !== contentId || main.parentElement?.parentElement !== host) return false
+    const fold = controls.find(n => n.getAttribute('data-focus') === 'log-form')
+    const target = controls.find(n => n.getAttribute('data-focus') === 'food-search')
+      || controls.find(n => n.getAttribute('data-focus') === 'field-Måltid')
+    if (!fold || !target || !fold.contains(target) || target.disabled) return false
+    if (outer && (outer.tagName.toLowerCase() !== 'details' || !outer.contains(host))) return false
+    if (outer) outer.open = true
+    fold.open = true
+    manualOpen = true
+    if (!canFocus(target)) return false
+    target.focus()
+    return true
+  }
   return cleanup
 }

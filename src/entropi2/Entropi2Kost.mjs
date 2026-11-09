@@ -72,8 +72,13 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
     const day = createKostDaySession({ enabled: true, athleteId: athlete.id, date, client: planClient, storage,
       onDiaryChanged: () => screen.current?.refresh?.(),
       currentDay: () => (typeof latest.current.currentDay === 'function' ? latest.current.currentDay() : date) })
-    let trackerHost, cleanup
-    setSession({ ...day, attachTracker(container, currentWeight) {
+    let trackerHost, cleanup, active = true
+    // Capture this exact session and cleanup, never a later screen owner.
+    const foodEntry = { openFoodLog(outer) {
+      if (!active || !cleanup || screen.current !== cleanup || !trackerHost?.isConnected) return false
+      return cleanup.openFoodLog?.(outer) === true
+    } }
+    setSession({ ...day, foodEntry, attachTracker(container, currentWeight) {
       if (!trackerHost) {
         const target = container.ownerDocument.createElement('div')
         cleanup = mountKost(target, { athlete, date, client, foods, storage, contracts: day.contracts }, latest, currentWeight)
@@ -84,9 +89,9 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
       return () => { if (trackerHost.parentElement === container) trackerHost.remove() }
     } })
     void day.controller.load()
-    return () => { day.dispose(); if (screen.current === cleanup) screen.current = null; cleanup?.() }
+    return () => { active = false; day.dispose(); if (screen.current === cleanup) screen.current = null; cleanup?.() }
   }, [enabled, athlete?.id, athlete?.kcal_target, athlete?.protein_target, date, client, foods])
   const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
   return enabled === true && athlete?.id ? createElement(KostShoppingFrame, { controller: current?.controller, athleteId: athlete.id, date, client: planClient, currentDay,
-    tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
+    foodEntry: current?.foodEntry, tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
 }

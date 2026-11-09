@@ -28,6 +28,7 @@ export function mountExistingTracker(host, options = {}) {
     const unsubscribe = controller.subscribe(refresh)
     const cleanup = () => { alive = false; unsubscribe(); unmount() }
     cleanup.updateWeight = unmount.updateWeight
+    cleanup.openFoodLog = outer => alive && unmount.openFoodLog(outer)
     // A plan insert (including a lost response) must be visible when the athlete
     // opens the existing log. Wait for an in-flight tracker mutation to finish.
     cleanup.refresh = () => { requested = true; refresh() }
