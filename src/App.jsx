@@ -13,7 +13,7 @@ import LazyBoundary from './LazyBoundary.jsx'
 import { readCachedRole, writeCachedRole } from './roleCache.js'
 import { offlineAthleteSession, seemsOffline } from './offlineSession.js'
 import { hjemoevKompaktEnabled } from './rel1030.mjs'
-import { createCoachSelfContext, createTrainingLifetime } from './coachSelfTraining.mjs'
+import { createCoachSelfContext, createTrainingLifetime, requestCoachSelfTraining } from './coachSelfTraining.mjs'
 
 // Lazy-load de to store views, så atleter ikke downloader coach-dashboardet (og
 // omvendt). Halverer det første bundt der skal hentes på mobil. Indlæses via
@@ -101,6 +101,7 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
   const [previewOwnerId, setPreviewOwnerId] = useState(null)
   const [previewMode, setPreviewMode] = useState(false)
   const [chooseOwnTraining, setChooseOwnTraining] = useState(false)
+  const [claimOwnError, setClaimOwnError] = useState(null)
   const activeUserRef = useRef(null)
   const authGenerationRef = useRef(0)
   const selfContextRef = useRef(null)
@@ -319,6 +320,18 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
 
   if (!session) return <Auth />
 
+  // Coachen bekræfter i forhåndsvisningen, at profilen er hans egen: samme eksplicitte valg som vælgeren.
+  async function claimOwnTraining(athleteId) {
+    const fail = () => setClaimOwnError('Din egen profil kunne ikke bekræftes. Tjek at du er logget ind som coach, og prøv igen.')
+    if (activeUserRef.current !== session.user.id || selfContextRef.current !== selfContext) return fail()
+    const { data: athlete } = await supabase.from('athletes').select('id, coach_id').eq('id', athleteId).maybeSingle()
+    if (activeUserRef.current !== session.user.id || selfContextRef.current !== selfContext) return fail()
+    const request = requestCoachSelfTraining({ session, athlete, explicit: true })
+    const entry = request && selfContext.open(request, session)
+    if (!entry) return fail()
+    setClaimOwnError(null); setChooseOwnTraining(false); setCoachSelfTraining(entry); setPreviewInitialTab('hjem'); setCoachAthleteId(athleteId)
+  }
+
   let viewEl
   if (role === 'coach') {
     viewEl = previewMode && previewOwnerId === session.user.id
@@ -330,6 +343,8 @@ function App({ opvarmStige = false, hviledageListe = false, programNaesteUge = f
               trainingAccess.dispose(); selfContext.close(); setCoachSelfTraining(null)
               setCoachAthleteId(null); setPreviewMode(false); setChooseOwnTraining(true)
             }}>Vælg min egen træning</button>
+            {!coachSelfTraining && coachAthleteId && <button type="button" onClick={() => claimOwnTraining(coachAthleteId)}>Det er min egen profil · log min træning</button>}
+            {claimOwnError && <p role="alert">{claimOwnError}</p>}
           </div>
           <LazyBoundary factory={athleteViewFactory} key={`coach:${session.user.id}:${coachAthleteId}:${coachSelfTraining ? 'self' : 'preview'}`} label="Atletvisning" loading={loaderScreen}
           componentProps={{ ...rel3.athlete, hviledageListe, ugeLogget: ugeLogget === true, programNaesteUge: programNaesteUge === true, session, role, mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, mobilitetHjalp: mobilitetHjalp === true, blokStyrke: blokStyrke === true, blokFremgang: blokFremgang === true, forenklinger: forenklinger === true, mobilitetFokus: mobilitetFokus === true || fridayTest, fremgangFokus: fremgangFokus === true || rel3.athlete.fremgangFokus === true, programBlokOversigt: programBlokOversigt === true, mobilitetFoerPas: mobilitetFoerPas === true, coachAthleteId, coachSelfTraining, trainingAccess, onExitPreview: () => { trainingAccess.dispose(); selfContext.close(); setPreviewMode(false); setCoachAthleteId(null); setCoachSelfTraining(null) } , opvarmStige, programIntensityHelp: programIntensityHelp === true, previewInitialTab, hjemoevKompakt}} />

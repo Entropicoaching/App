@@ -59,3 +59,16 @@ test('delayed verified role on fresh device enables deliberate chooser and actua
 test('ordinary same-coach preview remains read-only until explicit own selection',async t=>{
  const f=await setup(t);await f.click(f.button('Se som atlet'));await f.click([...f.host.querySelectorAll('button'),...f.host.querySelectorAll('div')].find(n=>n.textContent===foreign.name));assert.match(f.host.textContent,/Forhåndsvisning/);assert.equal(f.button('Start dagens pas')||f.button('Start næste pas'),undefined);assert.equal(f.values.has('entropi_coach_self_training_v1'),false)
 })
+// Marc 9. nov.: coachen åbner sin egen profil via "Se som atlet" og skal kunne logge derfra.
+test('own profile opened as preview offers a direct claim and actual write',async t=>{
+ const f=await setup(t);await f.click(f.button('Se som atlet'));await f.click(f.choose());assert.match(f.host.textContent,/Forhåndsvisning/)
+ assert.equal(f.values.has('entropi_coach_self_training_v1'),false,'No binding before the explicit claim')
+ await f.click(f.button('Det er min egen profil · log min træning'))
+ assert.equal(JSON.parse(f.values.get('entropi_coach_self_training_v1')).athleteId,dual.id)
+ assert.doesNotMatch(f.host.textContent,/Forhåndsvisning · du kan ikke gemme/);await log(f)
+})
+test('claim is refused without verified coach role and stays read-only',async t=>{
+ let release;const pauseRole=new Promise(r=>release=r);const f=await setup(t,{cached:true,pauseRole});await f.click(f.button('Se som atlet'));await f.click(f.choose())
+ await f.click(f.button('Det er min egen profil · log min træning'));assert.match(f.host.textContent,/kunne ikke bekræftes/);assert.equal(f.button('Start dagens pas')||f.button('Start næste pas'),undefined)
+ assert.equal(fixture.calls.filter(c=>c.table==='exercise_logs'&&c.op==='insert').length,0);await act(async()=>{release();await tick()})
+})

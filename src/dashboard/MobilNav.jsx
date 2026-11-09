@@ -77,7 +77,7 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
               <div style={{ width: 36, height: 4, background: 'rgba(237,234,226,0.2)', borderRadius: 2, margin: '0 auto 0.8rem' }} />
               {sheetPreviewPick ? (
                 <>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>Se som atlet</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Se som atlet'}</div>
                   <div style={{ maxHeight: '40vh', overflowY: 'auto' }}>
                     {athletes.map(a2 => (
                       <button type="button" key={a2.id}
@@ -213,7 +213,7 @@ function LegacyMobilNav({ coachRyd = false, programOverblik = false,
               <div style={{ width: 36, height: 4, background: 'rgba(237,234,226,0.2)', borderRadius: 2, margin: '0 auto 0.8rem' }} />
               {sheetPreviewPick ? (
                 <>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>Se som atlet</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Se som atlet'}</div>
                   <div style={{ maxHeight: '40vh', overflowY: 'auto' }}>
                     {athletes.map(a2 => (
                       <div key={a2.id}
