@@ -157,7 +157,8 @@ test('actual Future reload replaces version nutrients and clears evidence for em
   f.plan.data[tableNames[2]].push({ ...f.plan.data[tableNames[2]][0], version_id: v.id, approved_at: date + 'T12:00:01Z' })
   await click(ui.future(), 'Hent planen igen'); assert.equal(nutrientRows(ui.future()).Jern, '0 mg')
   for (const kind of ['unavailable', 'read-error', 'empty']) {
-    if (kind === 'unavailable') f.plan.options.missing = true
+    // A partial schema stays 'unavailable'; a missing plans table is an empty day.
+    if (kind === 'unavailable') f.plan.options.missing = tableNames[1]
     if (kind === 'read-error') { f.plan.options.missing = false; f.plan.options.error = '42501' }
     if (kind === 'empty') { f.plan.options.error = null; f.plan.data[tableNames[2]].length = 0 }
     await click(ui.future(), 'Hent planen igen')
