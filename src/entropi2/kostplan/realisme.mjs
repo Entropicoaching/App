@@ -123,7 +123,7 @@ export function tjekMaaltid({ items, declared } = {}) {
       const floor = key === 'kcal' ? MAKRO_TOLERANCE.kcal : MAKRO_TOLERANCE.gram
       const limit = Math.max(beregnet[key] * MAKRO_TOLERANCE.procent / 100, floor)
       if (!Number.isFinite(value) || Math.abs(value - beregnet[key]) > limit)
-        problemer.push(`Oplyst ${key === 'kcal' ? 'energi' : key} (${Number.isFinite(value) ? fmt(value) : 'ugyldig'}) afviger mere end ${MAKRO_TOLERANCE.procent} % fra fødevaretabellens ${fmt(beregnet[key])}.`)
+        problemer.push(`Oplyst ${{ kcal: 'energi', protein: 'protein', carb: 'kulhydrat', fat: 'fedt' }[key]} (${Number.isFinite(value) ? fmt(value) : 'ugyldig'}) afviger mere end ${MAKRO_TOLERANCE.procent} % fra fødevaretabellens ${fmt(beregnet[key])}.`)
     }
   }
   return { ok: problemer.length === 0, problemer, beregnet }

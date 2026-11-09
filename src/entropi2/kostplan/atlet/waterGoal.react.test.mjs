@@ -48,7 +48,8 @@ test('glasset fyldes op mod målet, og over målet står "Mål nået", ikke en l
   assert.match(goal().textContent, /500 af 2\.000 ml/)
   await click('+ 500 ml'); await click('+ 500 ml'); await click('+ 500 ml'); await click('+ 250 ml')
   assert.equal(fill(), 100)
-  assert.match(goal().textContent, /Mål nået: 2\.250 af 2\.000 ml/)
+  assert.match(goal().textContent, /Mål nået \(2\.000 ml\)\./)
+  assert.doesNotMatch(goal().textContent, /2\.250/)
   assert.doesNotMatch(goal().textContent, /tilbage/)
   // Den detaljerede log er uændret og ser de samme poster.
   const log = all(dom.host, 'details').find(n => all(n, 'summary')[0]?.textContent === 'Væske i dag')

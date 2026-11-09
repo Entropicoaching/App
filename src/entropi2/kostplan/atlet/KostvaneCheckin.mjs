@@ -59,8 +59,10 @@ export default function KostvaneCheckin({ tracker, athleteId, date, storage }) {
         onClick: repeatYesterday }, copy?.running ? `Logger ${copy.saved + 1} af ${copy.total}…`
         : `Jeg spiste som i går (${v.yesterday.length} ${v.yesterday.length === 1 ? 'måltid' : 'måltider'})`),
       h('p', { style: { margin: '8px 0 0' } }, v.yesterday.length ? 'Eller log det, du har spist, med Log mad lige herunder.' : 'Log det, du har spist, med Log mad lige herunder. Et måltid er nok til at tælle dagen med.'),
-      copy && !copy.running && copy.saved < copy.total && h('p', { role: 'alert' },
-        `${copy.saved} af ${copy.total} måltider blev gemt. Tryk igen, eller log resten i kostloggen nedenfor.`)),
+),
+    // Shown in every step: a partial copy leaves the day with some meals logged.
+    copy && !copy.running && copy.saved < copy.total && h('p', { role: 'alert' },
+      `${copy.saved} af ${copy.total} måltider fra i går blev gemt. Log resten med Log mad herunder.`),
     v.mealsToday > 0 && h('div', null,
       h('p', { style: { margin: '4px 0' } }, `${v.mealsToday} ${v.mealsToday === 1 ? 'måltid' : 'måltider'} logget i dag.`),
       h('p', { 'data-kostvane-feedback': '', style: { margin: '4px 0', fontWeight: 600 } }, v.feedback),

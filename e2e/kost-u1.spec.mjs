@@ -40,7 +40,7 @@ export async function runKostU1(page, outDir = OUT_DIR) {
   if (fill !== '25') throw new Error(`Glasset viser ${fill} %, forventede 25 %`)
   await goal.screenshot({ path: join(outDir, 'kost-u1-02-vaeskemaal.png') })
   for (let i = 0; i < 3; i++) await goal.getByRole('button', { name: 'Drukket 500 ml vand' }).click()
-  await goal.getByText('Mål nået: 2.000 af 2.000 ml.').waitFor({ timeout: 5000 })
+  await goal.getByText('Mål nået (2.000 ml).').waitFor({ timeout: 5000 })
   await goal.screenshot({ path: join(outDir, 'kost-u1-03-maal-naaet.png') })
 
   // Log et måltid gennem den almindelige "Log mad", så dagen tæller.

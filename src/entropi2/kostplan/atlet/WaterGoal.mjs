@@ -50,7 +50,7 @@ export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd }) 
       h('p', null, `Du har drukket ${ml(p.total)} ml. Sæt et dagligt mål, så fyldes glasset op.`),
       h('p', null, 'Aftal tallet med din coach. Når kostbilaget er klar, står anbefalingen her.')),
     goal && h('p', { role: 'status', 'aria-live': 'polite', style: { fontSize: '1.15em', margin: '4px 0' } },
-      p.reached ? `Mål nået: ${ml(p.total)} af ${ml(goal)} ml.` : `${ml(p.total)} af ${ml(goal)} ml. ${ml(p.missing)} ml tilbage.`),
+      p.reached ? `Mål nået (${ml(goal)} ml).` : `${ml(p.total)} af ${ml(goal)} ml. ${ml(p.missing)} ml tilbage.`),
     (!goal || editing) && form,
     message && h('p', { role: 'alert' }, message),
     h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 } },
