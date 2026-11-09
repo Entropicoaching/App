@@ -41,8 +41,9 @@ if (!vm.SourceTextModule) {
   return stop
  }
  test('three selected future dates: advice then exact six-meal import, advice edit, save/reopen, exactly three SQL approvals and athlete readonly previews', { timeout: 90000 }, async () => withDatabase(async f => {
+  const { today: date, dates: days } = f.calendar
   const storage = memoryStorage(), expected = new Map()
-  await mountMealPortal(storage, { ...props, client: f.client }, async ui => {
+  await mountMealPortal(storage, { ...props, today: date, client: f.client }, async ui => {
    await ui.open()
    for (const [i, day] of days.entries()) {
     await change(ui, 'plan-date', day)
@@ -111,8 +112,9 @@ if (!vm.SourceTextModule) {
 
  test('selected date/import/advice callbacks are frozen through uncertain activation and original SQL reconciliation, for each lost table response', { timeout: 90000 }, async () => {
   for (const lost of names) await withDatabase(async f => {
+   const { today: date, dates: days } = f.calendar
    const storage = memoryStorage(), day = days[0]
-   await mountMealPortal(storage, { ...props, client: f.client }, async ui => {
+   await mountMealPortal(storage, { ...props, today: date, client: f.client }, async ui => {
     await ui.open(); await change(ui, 'plan-date', day); await change(ui, 'portionGuidance', advice(day)); await load(ui, draft(day)); await ui.click('Gem som kladde'); await ready(ui)
     const changeDate = ui.handler(named(ui, 'plan-date'), 'onChange'), changeAdvice = ui.handler(named(ui, 'portionGuidance'), 'onChange')
     const submit = ui.handler(ui.host.querySelectorAll('form').find(n => n.textContent.includes('Manuel måltidskladde')), 'onSubmit')
@@ -139,8 +141,9 @@ if (!vm.SourceTextModule) {
  })
 
  test('strict importer rejects malformed/advice fields; old date/athlete/import callbacks cannot change a new editor', { timeout: 60000 }, async () => withDatabase(async f => {
+  const { today: date, dates: days } = f.calendar
   const storage = memoryStorage()
-  await mountMealPortal(storage, { ...props, client: f.client }, async ui => {
+  await mountMealPortal(storage, { ...props, today: date, client: f.client }, async ui => {
    await ui.open(); await change(ui, 'plan-date', days[0]); await change(ui, 'portionGuidance', advice(days[0])); await load(ui, draft(days[0]))
    const before = named(ui, 'grams-0-0').value
    for (const raw of ['{', JSON.stringify({ ...draft(days[0]), advice: 'rejected' }), JSON.stringify({ ...draft(days[0]), portion_guidance: 'rejected' }), JSON.stringify({ ...draft(days[0]), date: days[1] })]) {
@@ -151,7 +154,7 @@ if (!vm.SourceTextModule) {
    const dateChange = ui.handler(named(ui, 'plan-date'), 'onChange')
    await change(ui, 'plan-date', days[1]); await act(async () => { submit({ preventDefault() {} }); dateChange({ currentTarget: { value: days[2] } }) })
    assert.equal(named(ui, 'plan-date').value, days[1]); assert.equal(named(ui, 'grams-0-0'), undefined)
-   await ui.render({ ...props, athlete: { ...profile, id: scope.coachId }, client: f.client }); await ui.open()
+   await ui.render({ ...props, today: date, athlete: { ...profile, id: scope.coachId }, client: f.client }); await ui.open()
    await act(async () => submit({ preventDefault() {} }))
    assert.equal(named(ui, 'grams-0-0'), undefined); assert.equal(storage.data.size, 0); assert.equal(reads(f), 0)
   })

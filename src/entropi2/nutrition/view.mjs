@@ -1,7 +1,7 @@
 import { templateIngredientEditor } from './skabeloner/editor.mjs'
 import { antalOrd } from '../antalOrd.mjs'
 import { mountUgeplan } from './ugeplan/mount.mjs'
-import { unitsForFood, mealKey } from './controller.mjs'
+import { unitsForFood, mealKey, foodPortion } from './controller.mjs'
 import { startAdvice, weightSummary, displayNumber, remainingToday } from './startModel.mjs'
 import { historyDays } from './historyDays.mjs'
 import { weekText } from './weekText.mjs'
@@ -78,6 +78,25 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     const fallback = controls.find(n => n.getAttribute('data-focus') === 'diary-summary')
     if (canFocus(target)) target.focus()
     else if (canFocus(fallback)) fallback.focus()
+  }
+  // The tracker stays mounted while the frame previews a future day. Check
+  // ancestors at click AND promise completion, including the preview fieldset.
+  const fridaVisible = () => {
+    if (destroyed || host.isConnected === false) return false
+    const date = controller.snapshot().date
+    let checkedDate = false
+    for (let n = host; n; n = n.parentElement) {
+      if (n.hidden || n.inert || n.getAttribute?.('hidden') != null
+        || n.getAttribute?.('inert') != null || n.disabled || n.readOnly
+        || n.getAttribute?.('aria-disabled') === 'true' || n.style?.display === 'none') return false
+      // Native select.value changes before React commits the hidden subtree.
+      if (!checkedDate && n !== doc.body) {
+        const dates = [...(n.querySelectorAll?.('select') || [])].filter(el => el.getAttribute('aria-label') === 'Vælg plandato')
+        if (dates.some(el => el.value !== date)) return false
+        if (dates.length) checkedDate = true
+      }
+    }
+    return date === calendarDay(clock())
   }
   const draw = () => {
     if (destroyed) return
@@ -219,6 +238,24 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         if (errors.length) { inputs.get(errors[0].key).focus(); return }
         if (await action({ ...manual }) && !destroyed) { manual = {}; manualAttempted = false; draw() }
       })
+      if (isToday && s.fridaLog?.writable) {
+        const group = append(inner, 'div', 'stack space')
+        if (s.fridaLog.status !== 'enabled') {
+          const enable = button(group, s.fridaLog.status === 'loading' ? 'Henter Frida-fødevarer…'
+            : s.fridaLog.status === 'error' ? 'Prøv Frida-fødevarer igen' : 'Brug Frida-fødevarer i loggen', () => {
+            if (!inHost(enable) || !fridaVisible() || controller.snapshot().pending) return
+            void controller.enableFridaFoods(fridaVisible)
+          }, s.pending || s.fridaLog.status === 'loading')
+          enable.setAttribute('data-focus', 'enable-frida-log')
+        }
+        if (s.fridaLog.message) {
+          const status = append(group, 'p', 'small muted', s.fridaLog.message)
+          status.setAttribute('data-focus', 'frida-log-status')
+          status.setAttribute('role', s.fridaLog.status === 'error' ? 'alert' : 'status')
+          status.setAttribute('aria-live', 'polite')
+        }
+        append(group, 'p', 'small muted', 'Frida-referenceværdier beregner kcal og makroer. Kostloggen gemmer makroer; valget registrerer ikke indtag af mikronæringsstoffer eller dokumenteret behovsdækning.')
+      }
       if (s.foods.length) {
         const foodForm = append(inner, 'form', 'stack space')
         if (selection === null) selection = foodIdentity(s.foods[0])
@@ -227,6 +264,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
         const livePortion = () => {
           if (destroyed || ![...host.querySelectorAll('form')].includes(foodForm)) return false
           const current = controller.snapshot()
+          if (current.fridaLog?.status !== 'off' && !fridaVisible()) return false
           return current.loaded && !current.pending && current.athleteId === s.athleteId && current.date === s.date
         }
         const searchLabel = append(foodForm, 'label', '', 'Søg i fødevarer')
@@ -258,7 +296,9 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           append(foodForm, 'p', 'small muted', 'Det valgte produkt er ændret eller ikke entydigt i kataloget. Vælg en fødevare igen.')
         }
         choices.indices.forEach(i => {
-          const opt = append(select, 'option', '', s.foods[i].name + (choices.pinned && i === choices.selectedIndex ? ' (valgt · uden for søgningen)' : ''))
+          const reference = controller.foodReference?.(i)
+          const label = s.foods[i].name + (reference ? ' · Frida-reference (' + reference.id + ')' : '')
+          const opt = append(select, 'option', '', label + (choices.pinned && i === choices.selectedIndex ? ' (valgt · uden for søgningen)' : ''))
           opt.value = String(i)
         })
         select.value = choices.selectedIndex < 0 ? '' : String(choices.selectedIndex)
@@ -272,8 +312,28 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           selection = identity; unit = '0'; amount = String(controller.foodAmount(current.selectedIndex)); draw()
         })
         const food = s.foods[choices.selectedIndex]
+        const reference = controller.foodReference?.(choices.selectedIndex)
+        let preview
+        const showPortion = () => {
+          if (!preview) return
+          const value = foodPortion(food, amount, Number(unit))
+          preview.textContent = value
+            ? `${value.kcal} kcal · ${value.protein} g protein · ${value.carb} g kulhydrat · ${value.fat} g fedt`
+            : 'Angiv en gyldig mængde med kendte makroværdier.'
+        }
+        if (reference) {
+          const source = append(foodForm, 'details', 'small space')
+          source.setAttribute('data-focus', 'frida-source-' + reference.id)
+          append(source, 'summary', '', 'Kilde til valgt Frida-fødevare').setAttribute('data-focus', 'frida-source-summary')
+          for (const text of [reference.id, reference.name, reference.preparation, reference.citation, reference.verification,
+            'Pr. 100 g spiselig del i den navngivne tilstand. Referencegennemsnit, ikke eksakt mærkevare eller individuel måling. Ingen omregning til rå indkøbsvægt.'])
+            append(source, 'p', 'small muted', text)
+          preview = append(foodForm, 'p', 'small')
+          preview.setAttribute('data-focus', 'frida-portion-values'); preview.setAttribute('role', 'status')
+          showPortion()
+        }
         const blocked = s.pending || choices.selectedIndex < 0 || !choices.matches.length
-        field(foodForm, 'Mængde', amount, v => { if (livePortion() && !blocked) amount = v }).disabled = blocked
+        field(foodForm, 'Mængde', amount, v => { if (livePortion() && !blocked) { amount = v; showPortion() } }).disabled = blocked
         const unitLabel = append(foodForm, 'label', '', 'Enhed'), unitSelect = append(unitLabel, 'select')
         unitSelect.disabled = blocked
         unitSelect.setAttribute('data-focus', 'unit-choice')

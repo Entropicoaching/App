@@ -9,6 +9,7 @@ import { PGlite } from '@electric-sql/pglite'
 import CoachKostMaal from '../../kostMaalKobling.mjs'
 import { sessionReactDocument } from '../../session/sessionQuickSetReactDom.mjs'
 import { uuid } from '../dailyReference.fixture.mjs'
+import { sqlCalendarFixture } from '../../../testCalendar.fixture.mjs'
 export const date = '2026-11-07', coachId = uuid(80001), athleteId = uuid(80002), owner = uuid(80003), stranger = uuid(80004)
 export const profile = { id: athleteId, age: 33, bodyweight: 80, goal: 'cut', training: { volume: 'high', intensity: 'moderate' } }
 export const names = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
@@ -77,11 +78,13 @@ export async function withDatabase(body, options = {}) {
       }
       return q
     } }
-    await body({ db, login, client, calls })
+    const calendar = await sqlCalendarFixture(db)
+    await body({ db, login, client, calls, calendar })
   } finally { await db.close() }
 }
 
 export async function mounted(client, storage, body, props = {}) {
+  const today = props.today ?? date
   const document = sessionReactDocument(), host = document.createElement('div')
   document.body.append(host)
   const make = document.createElement
@@ -108,9 +111,9 @@ export async function mounted(client, storage, body, props = {}) {
   }
   try {
     await act(async () => {
-      root.render(h(CoachKostMaal, { enabled: true, athlete: profile, today: date,
+      root.render(h(CoachKostMaal, { enabled: true, athlete: profile, today,
         session: { user: { id: coachId } }, weightStatus: { athleteId, state: 'ready', rows: [] },
-        nutritionRead: { ...scope, state: 'ready', complete: true, mealLogs: [], weightLogs: [] }, ...props }))
+        nutritionRead: { ...scope, date: today, state: 'ready', complete: true, mealLogs: [], weightLogs: [] }, ...props }))
       await settle()
     })
     await body({ host, wait, submit: async () => {

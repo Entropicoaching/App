@@ -87,10 +87,10 @@ import { sessionReactDocument } from '../../session/sessionQuickSetReactDom.mjs'
 import { createPlanAdapter } from '../planAdapter.mjs'
 import { createKostDaySession } from '../atlet/daySession.mjs'
 import { storedSnapshot, uuid } from '../dailyReference.fixture.mjs'
+import { sqlCalendarFixture } from '../../../testCalendar.fixture.mjs'
 
 const sql = readFileSync(new URL('../../../../supabase/sql/udkast/20261104211000_kostplan_v1_DRAFT.sql', import.meta.url), 'utf8')
 const [sqlAthlete, sqlOwner, sqlCoach, sqlStranger] = [9101, 9102, 9103, 9104].map(uuid)
-const sqlDate = '2026-11-05'
 const sqlProfile = { id: sqlAthlete, age: 26, bodyweight: 80, goal: 'cut', protein_target: 175,
   training: { volume: 'high', intensity: 'moderate' } }
 const sqlMeals = ['Morgenmad', 'Frokost', 'Aftensmad'].map((name, i) => ({ id: `meal-${i}`, name, items: [] }))
@@ -115,6 +115,7 @@ async function actualSql(run) {
       identity = who
     }
     await login(sqlCoach)
+    const calendar = await sqlCalendarFixture(db)
     const client = { from(table) {
       assert.ok([...tableNames, 'meal_logs'].includes(table)); const filters = [], args = [], call = { table, identity }; calls.push(call)
       let columns = '*', limit = 501, payload = null, exact = false, order = ''
@@ -133,11 +134,7 @@ async function actualSql(run) {
               const keys = Object.keys(payload).map(column), values = Object.values(payload).map(v => typeof v === 'object' && v !== null ? JSON.stringify(v) : v)
               const inserted = await db.query(`with inserted as (insert into public.${table}(${keys.join(',')}) values(${keys.map((_,i) => '$'+(i+1)).join(',')}) returning *) select row_to_json(inserted) value from inserted`, values)
               if (table === tableNames[2]) {
-                // Fixture admin pins server-generated time; no fabricated approval id.
-                const who = identity
-                await db.exec('reset role')
-                await db.query("update public.kostplan_v1_approvals set approved_at=$1,week_start='2026-11-02' where version_id=$2", [sqlDate + 'T10:00:00.000001Z', payload.version_id])
-                await login(who)
+                // Keep the original trigger's real timestamp AND derived week.
                 if (options.loseApproval) { options.loseApproval = false; return { data: null, error: { code: 'SYNTHETIC_LOST_RESPONSE' } } }
               }
               return { data: inserted.rows.map(r => r.value), error: null }
@@ -150,21 +147,22 @@ async function actualSql(run) {
         })().then(ok, bad) },
       }; return q
     } }
-    await run({ db, login, client, calls, options, writes: () => calls.filter(c => c.payload) })
+    await run({ db, login, client, calls, options, calendar, writes: () => calls.filter(c => c.payload) })
   } finally { await db.close() }
 }
 
-function sqlEditor(storage, profile = sqlProfile) {
-  return openPortalPlan({ enabled: true, coachId: sqlCoach, athlete: profile, date: sqlDate,
+function sqlEditor(storage, date) {
+  return openPortalPlan({ enabled: true, coachId: sqlCoach, athlete: sqlProfile, date,
     template: sqlMeals, storage: () => storage }).controller
 }
-async function sqlSaved(storage) {
-  const c = sqlEditor(storage)
+async function sqlSaved(storage, date) {
+  const c = sqlEditor(storage, date)
   c.set('maintenanceKcal', '1600'); c.set('intensity', 15)
   assert.equal(c.generate(sqlMeals), true); assert.equal(await c.save(), true)
   return c
 }
 async function mountedSql(f, storage, profile, run, mealLogs = []) {
+  const sqlDate = f.calendar.today
   const doc = sessionReactDocument(), host = doc.createElement('div'); doc.body.append(host)
   const create = doc.createElement
   doc.createElement = tag => {
@@ -216,7 +214,7 @@ async function mountedSql(f, storage, profile, run, mealLogs = []) {
 
 test('COMPOSITION actual SQL/mounted host: current generated draft activates through the original SQL', { timeout: 60000 }, async () => actualSql(async f => {
   const storage = memoryStorage()
-  const controller = await sqlSaved(storage)
+  const controller = await sqlSaved(storage, f.calendar.today)
   const expected = controller.snapshot().meals.map(meal => ({ name: meal.name,
     portions: meal.items.map(item => ({ grams: item.grams, food: Object.fromEntries(
       Object.entries(item.food.nutrition).filter(([key]) => !['prioritet', 'prioritetBegrundelse'].includes(key))) })) }))
@@ -240,6 +238,7 @@ test('COMPOSITION actual SQL/mounted host: current generated draft activates thr
 }))
 
 test('COMBINED actual SQL: original version_id ledger, historical eligibility, approved0 and separate athlete login stay honest', { timeout: 60000 }, async () => actualSql(async f => {
+  const sqlDate = f.calendar.today
   const zero = structuredClone(storedSnapshot(137, 0)); zero.meals[0].portions[0].food.nutrientsPer100g.fatG = 0
   const parent = uuid(9191), version = uuid(9192)
   const basis = Object.fromEntries(['weight_trend', 'training_volume', 'training_intensity', 'food_log', 'readiness', 'competition_date'].map(k => [k, null]))
@@ -247,9 +246,7 @@ test('COMBINED actual SQL: original version_id ledger, historical eligibility, a
   await f.db.query(`insert into public.kostplan_v1_versions(id,plan_id,version_no,effective_from,basis_as_of,calculation_basis,rationale,goal,intensity,meals)
     values($1,$2,1,$3,$3,$4,'Synthetic zero','vedligehold',0.1,$5)`, [version, parent, sqlDate, JSON.stringify(basis), JSON.stringify(zero.meals)])
   await f.db.query("insert into public.kostplan_v1_approvals(version_id,approval_kind) values($1,'coach')", [version])
-  await f.db.exec('reset role')
-  await f.db.query("update public.kostplan_v1_approvals set approved_at=$1 where version_id=$2", [sqlDate + 'T11:00:00.000001Z', version])
-  await f.login(sqlCoach)
+  // Six earlier days stay unknown; only today's real approval is eligible.
   const refs = await createPlanAdapter({ enabled: true, client: f.client, athleteId: sqlAthlete, date: sqlDate }).loadDailyReferences({ coachId: sqlCoach })
   assert.equal(refs.state, 'ready'); assert.deepEqual(refs.days.map(d => d.targets.kcal), [null, null, null, null, null, null, 137])
   await f.login(sqlOwner)

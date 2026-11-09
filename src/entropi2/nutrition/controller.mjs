@@ -4,6 +4,7 @@ import { parseInputNumber, calendarTime, nutritionValues } from '../../athlete/k
 import { mealTemplateItems } from '../../athlete/kostSkabeloner.mjs'
 import { unitsForFood } from '../../athleteShared.js'
 import { isDayReceipt } from '../../mealEvidence.mjs'
+import { calendarDay } from '../../calendarDate.js'
 
 const metrics = ['kcal', 'protein', 'carb', 'fat']
 const receipt = isDayReceipt
@@ -27,6 +28,7 @@ const validId = id => typeof id === 'string' && id.trim().length > 0
 // Entropi 2: currentDay (valgfri) giver den aktuelle kalenderdag, når skærmen følger dags dato. Et måltid
 // får da dagen i det øjeblik, det gemmes, og onDayChanged får besked, når den ikke længere er date.
 export function createNutritionController({ enabled = false, athlete, date, contracts, storage, foods = [], currentDay, onDayChanged,
+  loadFridaFoods = () => import('./fridaLogFoods.mjs').then(module => module.fridaLogFoods()),
   now = () => Date.now(), schedule = setTimeout, cancel = clearTimeout } = {}) {
   if (enabled !== true) return null
   if (!validId(athlete?.id) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
@@ -56,7 +58,22 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   const storageKey = 'entropi2:nutrition:favorites:v1:' + encodeURIComponent(id)
   let rows = [], favorites = [], phase = 'idle', message = '', disposed = false, loadToken = 0
   let pending = null, history = false, favoriteError = '', committed = new Set()
-  const portions = foods.length ? createPortionMemory(storage, id) : null
+  let portions = foods.length ? createPortionMemory(storage, id) : null
+  let fridaStatus = 'off', fridaMessage = '', fridaGate = null, fridaToken = 0
+  const references = new Map()
+  let writeVersion = 0
+  const fridaContext = () => {
+    try {
+      if (disposed || (typeof currentDay === 'function' ? currentDay() : calendarDay(new Date(now()))) !== date) return false
+      if (!dayTargets) return true
+      const state = dayTargets.snapshot()
+      return !!dayTargets.owner && state?.owner === dayTargets.owner && dayTargets.athleteId === id
+        && dayTargets.date === date && state.athleteId === id && state.date === date && state.state !== 'disposed'
+    } catch { return false }
+  }
+  const fridaAllowed = () => {
+    try { return fridaContext() && fridaGate?.() === true } catch { return false }
+  }
   let undo = null, undoTimer = null
   const clearUndo = () => {
     if (undoTimer !== null) cancel(undoTimer)
@@ -95,7 +112,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     const value = kind === 'update' ? cleanMeal(meal) : null
     if (kind === 'update' && !value) { message = 'Udfyld måltid og gyldige næringsværdier.'; emit(); return false }
     const payload = { id: row.id, athlete_id: id, date, ...(value || {}) }
-    pending = intent; phase = 'saving'; message = kind === 'remove' ? 'Fjerner måltid…' : 'Gemmer ændring…'; emit()
+    writeVersion++; pending = intent; phase = 'saving'; message = kind === 'remove' ? 'Fjerner måltid…' : 'Gemmer ændring…'; emit()
     try {
       if (await contracts[kind](payload) !== true) throw new Error()
       committed.add(intent)
@@ -144,6 +161,8 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       const list = recent().filter(meal => !favoriteKeys.has(mealKey(meal)))
       return { athleteId: id, date, phase, message, history, pending: !!pending, favoriteError,
         portionError: portions?.error() || '',
+        fridaLog: { status: fridaStatus, message: fridaMessage, writable: fridaContext()
+          && (typeof contracts?.save === 'function' || typeof contracts?.saveWithIdentity === 'function') },
         undo: undo && now() < undo.expiresAt ? { ...undo } : null,
         mealTemplates: templates.snapshot(),
         templateSave: templateSave && { ...templateSave },
@@ -162,12 +181,69 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         favoriteKeys: favorites.map(mealKey), foods: foods.map(f => ({ ...f })),
       }
     },
+    // The mounted view supplies a live visibility/read-only capability, never a client.
+    // Loading is local and read-only; a rejected completion needs another explicit click.
+    async enableFridaFoods(canUse) {
+      if (!fridaContext() || pending || !['ready', 'saved', 'save-error'].includes(phase)
+        || !['off', 'error'].includes(fridaStatus) || typeof canUse !== 'function'
+        || !(typeof contracts?.save === 'function' || typeof contracts?.saveWithIdentity === 'function')) return false
+      fridaGate = canUse
+      if (!fridaAllowed()) return false
+      const token = ++fridaToken, version = writeVersion
+      fridaStatus = 'loading'; fridaMessage = 'Henter Frida-fødevarer…'; emit()
+      try {
+        const added = await loadFridaFoods()
+        if (disposed || token !== fridaToken) return false
+        if (!fridaAllowed() || pending || version !== writeVersion || !['ready', 'saved', 'save-error'].includes(phase))
+          throw Error('Konteksten er ændret')
+        // Validate the complete append before replacing the catalogue. Never mutate
+        // supplied foods, borrow an existing ID, or expose a partially loaded list.
+        if (!Array.isArray(added) || added.length !== 40) throw Error('Forkert katalog')
+        const ids = new Set()
+        for (const food of foods) {
+          if (food.id == null) continue
+          if (ids.has(food.id)) throw Error('Tvetydigt id')
+          ids.add(food.id)
+        }
+        const next = added.map(food => {
+          if (!/^frida55:[1-9][0-9]*$/.test(food?.id) || ids.has(food.id)
+            || ![food.name, food.preparation, food.source?.citation, food.source?.verification]
+              .every(value => typeof value === 'string' && value.trim())
+            || !food.source.citation.includes('FoodID=' + food.id.slice(8) + ';')
+            || metrics.some(k => food[k + '100'] !== null &&
+              !(typeof food[k + '100'] === 'number' && Number.isFinite(food[k + '100']) && food[k + '100'] >= 0)))
+            throw Error('Ugyldig reference')
+          ids.add(food.id)
+          return Object.freeze({ id: food.id, name: food.name, preparation: food.preparation,
+            ...Object.fromEntries(metrics.map(k => [k + '100', food[k + '100']])),
+            source: Object.freeze({ citation: food.source.citation, verification: food.source.verification }) })
+        })
+        foods = [...foods, ...next]
+        for (const food of next) references.set(food.id, food)
+        if (!portions) portions = createPortionMemory(storage, id)
+        fridaStatus = 'enabled'; fridaMessage = 'Frida-fødevarer er tilføjet til denne dags log.'; emit(); return true
+      } catch {
+        if (!disposed && token === fridaToken) {
+          fridaStatus = 'error'
+          fridaMessage = 'Frida-fødevarer blev ikke tilføjet. Åbn dagens skrivbare kostlog og prøv igen.'
+          emit()
+        }
+        return false
+      }
+    },
+    foodReference(index) {
+      const food = foods[index]
+      return !disposed && food && references.get(food.id) === food
+        ? { id: food.id, name: food.name, preparation: food.preparation, ...food.source } : null
+    },
     foodAmount(index) {
       return !disposed && foods[index] ? portions?.get(foods[index]) ?? 100 : 100
     },
     async logFood(index, amount, unitIndex, intent) {
       if (disposed || !Number.isInteger(index)) return false
-      const food = foods[index], value = foodPortion(food, amount, unitIndex)
+      const food = foods[index]
+      if (food && references.get(food.id) === food && (!fridaAllowed() || pending)) return false
+      const value = foodPortion(food, amount, unitIndex)
       if (!value) return api.log(null, intent)
       const grams = parseInputNumber(amount) * unitsForFood(food)[unitIndex].grams
       const ok = await api.log(value, intent)
@@ -272,7 +348,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       const day = typeof currentDay === 'function' ? currentDay() : date
       if (calendarTime(day) === null) { message = 'Datoen kunne ikke bestemmes. Prøv igen.'; emit(); return false }
       const payload = { athlete_id: id, date: day, ...value }
-      pending = intent; phase = 'saving'; message = 'Gemmer måltid…'; emit()
+      writeVersion++; pending = intent; phase = 'saving'; message = 'Gemmer måltid…'; emit()
       try {
         // The production adapter returns the identity from this exact insert.
         // Legacy boolean fixtures retain their existing unambiguous read-back path.
@@ -321,7 +397,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     },
     update(rowId, meal, intent) { return mutate('update', rowId, meal, intent) },
     remove(rowId, intent, confirmed = false) { return mutate('remove', rowId, null, intent, confirmed) },
-    dispose() { clearUndo(); disposed = true; unsubscribeTargets?.(); loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
+    dispose() { clearUndo(); disposed = true; fridaToken++; fridaGate = null; references.clear(); unsubscribeTargets?.(); loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
   }
   const unsubscribeTargets = dayTargets?.subscribe?.(emit)
   return api

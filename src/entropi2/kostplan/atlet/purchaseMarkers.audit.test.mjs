@@ -10,7 +10,8 @@ import { all, propsOf, button, tick, hostFixture } from '../../nutrition/diaryTe
 
 test('same-engine audit: exact original SQL/RLS + mounted decimal items, local reopen and all-item copy; zero database mutations', { timeout: 60000 },
   async () => withDatabase(async f => {
-    const today = '2026-11-07', plan = '10000000-0000-4000-8000-000000009001', version = '10000000-0000-4000-8000-000000009002'
+    const { today, dates } = f.calendar
+    const plan = '10000000-0000-4000-8000-000000009001', version = '10000000-0000-4000-8000-000000009002'
     const ingredient = { id: 'audit:grain', name: '<script>neverExecute()</script>', preparation: 'rå', basisGrams: 100,
       nutrientsPer100g: { energyKcal: null, proteinG: 0, carbohydrateG: null, fatG: 0 },
       source: { citation: 'audit-local', verification: 'synthetic' } }
@@ -20,7 +21,7 @@ test('same-engine audit: exact original SQL/RLS + mounted decimal items, local r
     await f.db.exec('reset role')
     await f.db.query('insert into public.kostplan_v1_plans(id,athlete_id,valid_from) values($1,$2,$3)', [plan, athleteId, today])
     await f.db.query(`insert into public.kostplan_v1_versions(id,plan_id,version_no,effective_from,basis_as_of,calculation_basis,rationale,goal,intensity,meals)
-      values($1,$2,1,'2026-11-08',$3,$4,'Syntetisk audit','vedligehold',0,$5)`, [version, plan, today, JSON.stringify(basis), JSON.stringify(meals)])
+      values($1,$2,1,$3,$4,$5,'Syntetisk audit','vedligehold',0,$6)`, [version, plan, dates[0], today, JSON.stringify(basis), JSON.stringify(meals)])
     await f.db.query("insert into public.kostplan_v1_approvals(version_id,approval_kind) values($1,'coach')", [version])
     await f.login(owner)
     const before = (await f.db.query('select row_to_json(v) value from public.kostplan_v1_versions v')).rows
@@ -45,7 +46,7 @@ test('same-engine audit: exact original SQL/RLS + mounted decimal items, local r
       assert.match(dom.host.textContent, /Mangler at købe: 1 af 2/)
       await act(async () => { await propsOf(button(dom.host, 'Kopiér indkøbsliste')).onClick(); await tick() })
       assert.match(copies[0], /0,9 g/); assert.match(copies[0], /3,375 g/)
-      for (const date of ['2026-11-08', '2026-11-09', '2026-11-10']) assert.ok(copies[0].includes(date))
+      for (const date of dates) assert.ok(copies[0].includes(date))
       await act(async () => { root.unmount(); alive = false; await tick() })
       root = createRoot(dom.host); alive = true; await render()
       assert.equal(propsOf(marked()[0])['aria-checked'], true)

@@ -3,6 +3,7 @@ import { MICRONUTRIENTS, NUTRIENTS } from '../foedevarer/index.mjs'
 import { supportedFoodSnapshot } from '../sqlSnapshot.mjs'
 
 const nutrients = Object.values(MICRONUTRIENTS).map(({ nutrient }) => nutrient)
+const macros = ['energyKcal', 'proteinG', 'carbohydrateG', 'fatG']
 const control = { minHeight: 44, paddingBlock: 12, cursor: 'pointer', font: 'inherit', boxSizing: 'border-box' }
 const number = value => value.toLocaleString('da-DK', { maximumSignificantDigits: 3 })
 
@@ -36,6 +37,13 @@ export default function SelectedFoodEvidence({ foods, foodId, ingredientNumber, 
           h('dd', { key, style: { margin: 0 } }, value === null || value === undefined
             ? 'Ukendt – mangler data' : `${number(value)} ${NUTRIENTS[key].unit}`)]
       })),
+    h('section', { style: { minWidth: 0, maxWidth: '100%', overflowWrap: 'anywhere' } },
+      h('h4', null, 'Energi og makroer pr. 100 g'),
+      h('ul', { style: { paddingInlineStart: '1.25rem' } }, ...macros.map(key => {
+        const value = nutrition?.nutrientsPer100g[key]
+        return h('li', { key }, `${NUTRIENTS[key].label}: ${value === null || value === undefined
+          ? 'Ukendt – mangler data' : `${number(value)} ${NUTRIENTS[key].unit}`}`)
+      }))),
     nutrition && h('dl', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } },
       h('dt', null, 'Kildehenvisning'), h('dd', { style: { margin: 0 } }, nutrition.source.citation),
       h('dt', null, 'Fødevare-id i grundlaget'), h('dd', { style: { margin: 0 } }, nutrition.id),

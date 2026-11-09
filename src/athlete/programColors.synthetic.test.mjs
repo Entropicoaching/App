@@ -73,7 +73,10 @@ test('colours: today, completed and skipped passes have distinct surfaces and ex
   assert.equal(planned.props.children[0].props.style.background, '#202b3b')
 })
 
-test('colours: unknown evidence, wrong set numbers and empty plans never turn green or lilac', () => {
+test('colours: unknown evidence, wrong set numbers and empty plans never turn green or lilac', t => {
+  // This scenario expects PLAN: the displayed Monday pass is still tomorrow.
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-08T12:00:00Z') })
+  try {
   for (const extra of [{ programError: true, exerciseLogs: [log(false)] },
     { programError: true, exerciseLogs: [log(true)] },
     { exerciseLogs: [{ ...log(false), set_number: 2 }] },
@@ -90,6 +93,7 @@ test('colours: unknown evidence, wrong set numbers and empty plans never turn gr
     assert.equal(passes(tree)[0].props['data-program-session-tone'], 'plan')
     assert.doesNotMatch(text(firstCard(tree)), /Gennemført ✓/)
   }
+  } finally { t.mock.timers.reset() }
 })
 
 test('colours: mixed completed/skipped sets stay lilac with the original undo handler', () => {

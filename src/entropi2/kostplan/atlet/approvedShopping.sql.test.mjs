@@ -6,10 +6,11 @@ import Entropi2Kost from '../../Entropi2Kost.mjs'
 import { withDatabase, athleteId, owner, stranger, names } from '../coach/generatorSql.fixture.mjs'
 import { all, propsOf, button, tick, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
 import { createApprovedShopping } from './approvedShoppingController.mjs'
-import { snapshot, today, dates, uuid, mealNames } from './approvedShopping.fixture.mjs'
+import { snapshot, uuid, mealNames } from './approvedShopping.fixture.mjs'
 
 const basis = Object.fromEntries(['weight_trend', 'training_volume', 'training_intensity', 'food_log', 'readiness', 'competition_date'].map(k => [k, null]))
 async function seed(f, repeated = false) {
+  const { today, dates } = f.calendar
   await f.db.exec('reset role')
   await f.db.query('insert into public.kostplan_v1_plans(id,athlete_id,valid_from) values($1,$2,$3)', [uuid(81000), athleteId, today])
   for (const i of repeated ? [0, 2] : [0, 1, 2]) {
@@ -24,6 +25,7 @@ async function seed(f, repeated = false) {
 
 test('original SQL/PGlite RLS + mounted actual StrictMode athlete route: three approved dates, six named meals, independent arithmetic and readonly copy', { timeout: 60000 },
   async () => withDatabase(async f => {
+    const { today, dates } = f.calendar
     await seed(f)
     const before = (await f.db.query('select row_to_json(v) value from public.kostplan_v1_versions v order by version_no')).rows
     const c = createApprovedShopping({ enabled: true, client: f.client, athleteId, today })
@@ -69,6 +71,7 @@ test('original SQL/PGlite RLS + mounted actual StrictMode athlete route: three a
 
 test('original SQL effective version repeated on two selected days counts twice; stranger cannot shop; invalid gram/unit rows rejected', { timeout: 60000 },
   async () => withDatabase(async f => {
+    const { today, dates } = f.calendar
     await seed(f, true)
     const c = createApprovedShopping({ enabled: true, athleteId, today, client: f.client })
     try {

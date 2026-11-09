@@ -1,12 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { act } from 'react'
-import { withDatabase, mounted, date, coachId, athleteId, names } from './generatorSql.fixture.mjs'
+import { withDatabase, mounted, coachId, athleteId, names } from './generatorSql.fixture.mjs'
 import { memoryStorage } from './portal.fixture.mjs'
 import { draftKey } from './portalModel.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
 
-const nextDay = n => new Date(Date.parse(`${date}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10)
+const mount = (f, storage, body, props = {}) => mounted(f.client, storage, body, { today: f.calendar.today, ...props })
 const props = n => {
   const key = Object.keys(n ?? {}).find(k => k.startsWith('__reactProps$'))
   assert.ok(key, 'Actual committed React input'); return n[key]
@@ -20,8 +20,9 @@ function controls(ui) {
 const ready = ui => ui.wait(() => ui.host.querySelectorAll('button').some(n => n.textContent === 'Aktivér for atleten' && props(n).disabled === false))
 
 test('actual mounted coach controls prepare, save and explicitly approve three future days through original SQL', { timeout: 60000 }, async () => withDatabase(async f => {
+  const date = f.calendar.today, nextDay = f.calendar.day
   const storage = memoryStorage(), days = [1, 2, 3].map(nextDay), advices = days.map((d, i) => `Coachens råd ${i}: væske, vitaminer, mineraler og timing <b>som tekst</b> ${d}`)
-  await mounted(f.client, storage, async ui => {
+  await mount(f, storage, async ui => {
     await ui.open(); const t = controls(ui)
     assert.equal(t.named('plan-date').value, date)
     for (let i = 0; i < 3; i++) {
@@ -57,7 +58,7 @@ test('actual mounted coach controls prepare, save and explicitly approve three f
     await t.change('portionGuidance', advices[0]); assert.equal(f.calls.filter(c => c.payload).length, count)
     assert.equal(props(ui.host.querySelectorAll('button').find(n => n.textContent === 'Aktivér for atleten')).disabled, true)
   })
-  await mounted(f.client, storage, async ui => {
+  await mount(f, storage, async ui => {
     await ui.open(); const t = controls(ui); assert.equal(t.named('plan-date').value, date)
     await t.change('plan-date', days[1]); await ui.wait(() => ui.host.textContent.includes('bekræftede aktive plan'))
     assert.equal(t.named('portionGuidance').value, advices[1])
@@ -73,8 +74,9 @@ test('actual mounted coach controls prepare, save and explicitly approve three f
 }))
 
 test('mounted date control rejects malformed/boundary dates and stale callbacks during save and after date remount', { timeout: 60000 }, async () => withDatabase(async f => {
+  const date = f.calendar.today, nextDay = f.calendar.day
   const storage = memoryStorage()
-  await mounted(f.client, storage, async ui => {
+  await mount(f, storage, async ui => {
     await ui.open(); const t = controls(ui)
     assert.equal(props(t.named('portionGuidance')).maxLength, 4000)
     await t.change('portionGuidance', 'x'.repeat(4001)); assert.equal(t.named('portionGuidance').value, '')
@@ -102,7 +104,8 @@ test('mounted date control rejects malformed/boundary dates and stale callbacks 
 }))
 
 test('actual mounted future approval loss locks date and advice until original SQL confirmation', { timeout: 60000 }, async () => withDatabase(async f => {
-  await mounted(f.client, memoryStorage(), async ui => {
+  const nextDay = f.calendar.day
+  await mount(f, memoryStorage(), async ui => {
     await ui.open(); const t = controls(ui)
     await t.change('plan-date', nextDay(1)); await ui.submit(); await t.change('portionGuidance', 'Immutable future advice')
     await ui.click('Gem som kladde'); await ready(ui)
@@ -121,8 +124,9 @@ test('actual mounted future approval loss locks date and advice until original S
 
 
 test('actual manual gram workflow keeps authored advice through controller replacement and stale-date save guard', {timeout:60000}, async()=>withDatabase(async f=>{
+ const nextDay=f.calendar.day
  const storage=memoryStorage()
- await mounted(f.client,storage,async ui=>{
+ await mount(f,storage,async ui=>{
   await ui.open();const t=controls(ui)
   await t.change('plan-date',nextDay(1));await t.change('maintenanceKcal','2400');await t.change('fat','70')
   await t.change('portionGuidance','Manuelle gram og coachråd <b>tekst</b>')

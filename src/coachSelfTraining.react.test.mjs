@@ -10,6 +10,8 @@ test.after(dispose)
 const settle = () => new Promise(resolve => setImmediate(resolve))
 const writes = table => fixture.calls.filter(c => c.op !== 'select' && (!table || c.table === table))
 async function setup(t, { mobile = false, legacy = dual.id, athlete = dual, strict = false, clean = false } = {}) {
+  // Keep these auth/write cases in the synthetic week's Wednesday.
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-04T12:00:00Z') })
   const doc = sessionReactDocument(), host = doc.createElement('div'), appHost = doc.createElement('div')
   const createElement = doc.createElement
   doc.createElement = tag => {
@@ -41,8 +43,11 @@ async function setup(t, { mobile = false, legacy = dual.id, athlete = dual, stri
   fixture.cleanNav = clean; fixture.pendingSession = null; fixture.lazyMounts = []
   const root = createRoot(host), appRoot = createRoot(appHost)
   t.after(async () => {
-    await act(async () => { root.unmount(); appRoot.unmount() })
-    for (const [key, descriptor] of originals) { if (descriptor) Object.defineProperty(globalThis, key, descriptor); else delete globalThis[key] }
+    try { await act(async () => { root.unmount(); appRoot.unmount() }) }
+    finally {
+      for (const [key, descriptor] of originals) { if (descriptor) Object.defineProperty(globalThis, key, descriptor); else delete globalThis[key] }
+      t.mock.timers.reset()
+    }
   })
   const render = async (Component, props, key) => act(async () => {
     root.render(strict ? h(StrictMode, null, h(Component, { ...props, key })) : h(Component, { ...props, key })); await settle()

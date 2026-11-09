@@ -9,19 +9,19 @@ import { createRoot } from 'react-dom/client'
 import Entropi2Kost from '../../Entropi2Kost.mjs'
 import { all, propsOf, hostFixture, tick } from '../../nutrition/diaryTemplate.fixture.mjs'
 
-const today = '2026-11-07'
 const basis = Object.fromEntries(['weight_trend','training_volume','training_intensity','food_log','readiness','competition_date'].map(k=>[k,null]))
 test('original SQL + athlete RLS: three immutable future versions retain exact advice and never write during preview', {timeout:60000}, async()=>withDatabase(async f=>{
+ const { today, dates } = f.calendar
  // Synthetic deterministic seed. Original constraints/triggers remain enabled.
  await f.db.exec('reset role')
  await f.db.query('insert into public.kostplan_v1_plans(id,athlete_id,valid_from) values($1,$2,$3)',[uuid(901),athleteId,today])
  const versions=[]
  for(let i=0;i<3;i++){
-  const date=`2026-11-${8+i<10?'0':''}${8+i}`, advice=`  Syntetisk timing ${i}\nVæske <script>literal</script>\r\nVitamin og mineralnotat ${i}  `
+  const date=dates[i], advice=`  Syntetisk timing ${i}\nVæske <script>literal</script>\r\nVitamin og mineralnotat ${i}  `
   const snapshot=storedSnapshot(100+i*20,10+i)
   await f.db.query(`insert into public.kostplan_v1_versions(id,plan_id,version_no,effective_from,basis_as_of,calculation_basis,rationale,goal,intensity,meals,portion_guidance)
    values($1,$2,$3,$4,$5,$6,'Synthetic fixture',$7,$8,$9,$10)`,[uuid(910+i),uuid(901),i+1,date,today,JSON.stringify(basis),snapshot.goal,snapshot.intensity,JSON.stringify(snapshot.meals),advice])
-  await f.db.query(`insert into public.kostplan_v1_approvals(version_id,approval_kind,approved_at) values($1,'coach',$2)`,[uuid(910+i),today+'T10:00:00Z'])
+  await f.db.query(`insert into public.kostplan_v1_approvals(version_id,approval_kind,approved_at) values($1,'coach',$2)`,[uuid(910+i),f.calendar.approvedAt])
   versions.push({date,advice,id:uuid(910+i)})
  }
  const before=(await f.db.query('select row_to_json(v) value from public.kostplan_v1_versions v order by version_no')).rows
