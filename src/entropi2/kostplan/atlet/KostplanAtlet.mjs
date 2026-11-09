@@ -7,17 +7,20 @@ import MealDayOverview from './MealDayOverview.mjs'
 
 const { createElement: h, useEffect, useRef, useState, useSyncExternalStore } = React
 
-const control = { minHeight: 44, minWidth: 44, maxWidth: '100%', whiteSpace: 'normal', font: 'inherit' }
+const control = { minHeight: 44, minWidth: 44, maxWidth: '100%', whiteSpace: 'normal', font: 'inherit',
+  background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
 const number = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
 const metricLabels = [['kcal', 'Energi', 'kcal'], ['protein', 'Protein', 'g'], ['carb', 'Kulhydrat', 'g'], ['fat', 'Fedt', 'g']]
 const macros = values => values ? `${number(values.kcal)} kcal · ${number(values.protein)} g protein · ${number(values.carb)} g kulhydrat · ${number(values.fat)} g fedt`
   : 'Næringsdata mangler eller gram er ugyldige.'
-const button = (text, onClick, disabled = false, props = {}) => h('button', { type: 'button', style: control, onClick, disabled, ...props }, text)
+// The app's global headings are dark; this view sits on the dark athlete page.
+const heading = { color: '#edeae2' }
+const button = (text, onClick, disabled = false, props = {}) => h('button', { type: 'button', style: disabled ? { ...control, opacity: 0.6 } : control, onClick, disabled, ...props }, text)
 
 // React renders coach text literally, including angle brackets and line breaks.
 export function PlanAdvice({ text }) {
   return h('section', { 'aria-label': 'Planens råd', style: { marginTop: 24 } },
-    h('h2', null, 'Planens råd'),
+    h('h2', { style: heading }, 'Planens råd'),
     h('p', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } },
       text ?? 'Coachen har ikke tilføjet råd til denne planversion.'))
 }
@@ -34,11 +37,11 @@ export function KostplanAtletView(props = {}) {
   if (s.mode === 'tracker') return props.tracker || h('p', { role: 'alert' }, 'Kcal-trackeren er ikke tilsluttet.')
   return h('section', { 'aria-label': 'Dagens kostplan', 'aria-busy': s.pending,
     style: { maxWidth: '42rem', width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', padding: 16 } },
-  h('h1', null, 'Dagens kostplan'),
+  h('h1', { style: heading }, 'Dagens kostplan'),
   h('p', null, 'Aktiv plans indhold · godkendte portioner. Profilens mål ændres ikke.'),
   h('time', { dateTime: s.date }, new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(s.date + 'T00:00:00Z'))),
   h('section', { 'aria-label': 'Dagens status' },
-    h('h2', null, 'Dagens status'),
+    h('h2', { style: heading }, 'Dagens status'),
     h('p', null, `${s.eatenCount} af ${s.meals.length} ${antalOrd(s.meals.length, 'måltid', 'måltider')} spist`),
     h('p', { 'aria-live': 'polite' }, `Tilbage i dag: ${s.remaining.kcal === null ? 'kcal ukendt' : `${number(s.remaining.kcal)} kcal`} · ${s.remaining.protein === null ? 'protein ukendt' : `${number(s.remaining.protein)} g protein`}`),
     h('details', null,
@@ -58,7 +61,7 @@ export function KostplanAtletView(props = {}) {
     meals: s.meals, uncertain: s.phase === 'uncertain' }),
   ...s.meals.map(meal => h('section', { key: meal.id, 'aria-label': meal.name,
     style: { border: '1px solid currentColor', borderRadius: 12, padding: 16, marginTop: 16 } },
-    h('h2', null, meal.name),
+    h('h2', { style: heading }, meal.name),
     h('ul', null, ...meal.foods.map(food => h('li', { key: food.id }, `${food.name} · ${typeof food.grams === 'number' ? number(food.grams) : food.grams} g`))),
     h(MealFoodData, { key: JSON.stringify([s.athleteId, s.date, s.planId, s.planRevision, meal.id]), meal }),
     h('p', null, macros(meal.values)),

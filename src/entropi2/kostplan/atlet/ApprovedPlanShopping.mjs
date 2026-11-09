@@ -79,8 +79,8 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
                   style: { ...control, cursor: 'pointer' } }, 'Kilde og varegrundlag'),
                 h('p', null, shoppingItemText(item)))))
         })),
-        h('button', { type: 'button', style: control, disabled: s.copyPending, onClick: () => controller.copy(clipboard, s.result) }, 'Kopiér indkøbsliste'),
-        h('button', { type: 'button', style: control, disabled: s.copyPending,
+        h('button', { type: 'button', style: s.copyPending ? { ...control, opacity: 0.6 } : control, disabled: s.copyPending, onClick: () => controller.copy(clipboard, s.result) }, 'Kopiér indkøbsliste'),
+        h('button', { type: 'button', style: s.copyPending ? { ...control, opacity: 0.6 } : control, disabled: s.copyPending,
           onClick: () => controller.copyCompact(clipboard, s.result) }, 'Kopiér kort indkøbsliste'),
         h('p', null, 'Den korte liste indeholder datoer, varer, gram og tilberedning. Kopiér indkøbsliste ovenfor medtager også alle kilder og godkendte versioner.'),
         s.compactCopyStatus === 'pending' && h('p', { role: 'status' }, 'Kopierer kort indkøbsliste…'),
