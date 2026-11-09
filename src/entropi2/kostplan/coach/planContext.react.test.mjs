@@ -64,10 +64,10 @@ async function mounted(run, initial = props) {
 test('mounted editor separates current coach goal, actual suggestion and portion sum; unknown load stays unknown', () => mounted(async t => {
   {
     // Source4: exact mounted closed entry contract, before either choice.
-    assert.equal(t.host.textContent, 'Åbn kostplan med Frida-fødevarerKostplan')
+    assert.equal(t.host.textContent, 'Åbn kostplan med Frida-fødevarerÅbn kostplan med 120 Frida-fødevarerVælg 120 Frida-referencefødevarer til denne editor, eller brug den almindelige Kostplan. Det valgte katalog bevares, mens editoren er åben.Kostplan')
     const choices = elements(t.host).filter(n => ['BUTTON', 'SUMMARY'].includes(n.tagName))
     assert.deepEqual(choices.map(n => [n.tagName, n.textContent]), [
-      ['BUTTON', 'Åbn kostplan med Frida-fødevarer'], ['SUMMARY', 'Kostplan'],
+      ['BUTTON', 'Åbn kostplan med Frida-fødevarer'], ['BUTTON', 'Åbn kostplan med 120 Frida-fødevarer'], ['SUMMARY', 'Kostplan'],
     ])
     assert.equal(reactProps(choices[0]).type, 'button')
     assert.equal(reactProps(choices[0]).disabled ?? false, false)

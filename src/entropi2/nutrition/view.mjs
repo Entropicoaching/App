@@ -254,6 +254,27 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           status.setAttribute('role', s.fridaLog.status === 'error' ? 'alert' : 'status')
           status.setAttribute('aria-live', 'polite')
         }
+        if (s.fridaLog.status === 'enabled' && s.extendedFridaLog) {
+          const extra = s.extendedFridaLog
+          if (extra.status !== 'enabled') {
+            // Capability belongs to this mounted root, even if the same host is reused.
+            const canExtend = () => fridaVisible() && [...host.querySelectorAll('[data-focus]')]
+              .some(n => n.getAttribute('data-focus') === 'main' && n.getAttribute('id') === contentId)
+            const enable = button(group, extra.status === 'loading' ? 'Henter 80 flere Frida-fødevarer…'
+              : extra.status === 'error' ? 'Prøv 80 flere Frida-fødevarer igen' : 'Tilføj 80 flere Frida-fødevarer', () => {
+              if (!inHost(enable) || !canExtend() || controller.snapshot().pending) return
+              void controller.enableExtendedFridaFoods(canExtend)
+            }, s.pending || extra.status === 'loading')
+            enable.style.minHeight = '44px'
+            enable.setAttribute('data-focus', 'enable-extended-frida-log')
+          }
+          if (extra.message) {
+            const status = append(group, 'p', 'small muted', extra.message)
+            status.setAttribute('data-focus', 'extended-frida-log-status')
+            status.setAttribute('role', extra.status === 'error' ? 'alert' : 'status')
+            status.setAttribute('aria-live', 'polite')
+          }
+        }
         append(group, 'p', 'small muted', 'Frida-referenceværdier beregner kcal og makroer. Kostloggen gemmer makroer; valget registrerer ikke indtag af mikronæringsstoffer eller dokumenteret behovsdækning.')
       }
       if (s.foods.length) {
@@ -328,6 +349,11 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           for (const text of [reference.id, reference.name, reference.preparation, reference.citation, reference.verification,
             'Pr. 100 g spiselig del i den navngivne tilstand. Referencegennemsnit, ikke eksakt mærkevare eller individuel måling. Ingen omregning til rå indkøbsvægt.'])
             append(source, 'p', 'small muted', text)
+          if (s.extendedFridaLog?.status === 'enabled' && choices.selectedIndex >= s.foods.length - 80) {
+            const per100 = append(source, 'p', 'small',
+              `Pr. 100 g: ${food.kcal100} kcal · ${food.protein100} g protein · ${food.carb100} g kulhydrat · ${food.fat100} g fedt`)
+            per100.setAttribute('data-focus', 'extended-frida-per100')
+          }
           preview = append(foodForm, 'p', 'small')
           preview.setAttribute('data-focus', 'frida-portion-values'); preview.setAttribute('role', 'status')
           showPortion()

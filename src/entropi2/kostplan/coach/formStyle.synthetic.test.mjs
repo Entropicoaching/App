@@ -48,10 +48,10 @@ test('opened manual and bounded templates style every field and add/remove/gener
       {
         // Source4: exact closed entry contract, before either catalogue is chosen.
         const closedEntry = tree
-        assert.equal(text(closedEntry).trim(), 'Åbn kostplan med Frida-fødevarer Kostplan')
+        assert.equal(text(closedEntry).trim(), 'Åbn kostplan med Frida-fødevarer Åbn kostplan med 120 Frida-fødevarer Vælg 120 Frida-referencefødevarer til denne editor, eller brug den almindelige Kostplan. Det valgte katalog bevares, mens editoren er åben. Kostplan')
         const choices = nodes(closedEntry).filter(n => ['button', 'summary'].includes(n.type))
         assert.deepEqual(choices.map(n => [n.type, text(n)]), [
-          ['button', 'Åbn kostplan med Frida-fødevarer'], ['summary', 'Kostplan'],
+          ['button', 'Åbn kostplan med Frida-fødevarer'], ['button', 'Åbn kostplan med 120 Frida-fødevarer'], ['summary', 'Kostplan'],
         ])
         assert.equal(choices[0].props.type, 'button')
         assert.equal(choices[0].props.disabled ?? false, false)

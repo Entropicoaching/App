@@ -29,6 +29,7 @@ const validId = id => typeof id === 'string' && id.trim().length > 0
 // får da dagen i det øjeblik, det gemmes, og onDayChanged får besked, når den ikke længere er date.
 export function createNutritionController({ enabled = false, athlete, date, contracts, storage, foods = [], currentDay, onDayChanged,
   loadFridaFoods = () => import('./fridaLogFoods.mjs').then(module => module.fridaLogFoods()),
+  loadExtendedFridaFoods = () => import('./fridaLogFoods.mjs').then(module => module.extendedFridaLogFoods()),
   now = () => Date.now(), schedule = setTimeout, cancel = clearTimeout } = {}) {
   if (enabled !== true) return null
   if (!validId(athlete?.id) || calendarTime(date) === null) throw new TypeError('Atlet og dato kræves')
@@ -60,6 +61,11 @@ export function createNutritionController({ enabled = false, athlete, date, cont
   let pending = null, history = false, favoriteError = '', committed = new Set()
   let portions = foods.length ? createPortionMemory(storage, id) : null
   let fridaStatus = 'off', fridaMessage = '', fridaGate = null, fridaToken = 0
+  let extendedStatus = 'off', extendedMessage = '', extendedGate = null, extendedToken = 0
+  const extendedIds = new Set()
+  const extendedAllowed = () => {
+    try { return fridaAllowed() && extendedGate?.() === true } catch { return false }
+  }
   const references = new Map()
   let writeVersion = 0
   const fridaContext = () => {
@@ -163,6 +169,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         portionError: portions?.error() || '',
         fridaLog: { status: fridaStatus, message: fridaMessage, writable: fridaContext()
           && (typeof contracts?.save === 'function' || typeof contracts?.saveWithIdentity === 'function') },
+        extendedFridaLog: { status: extendedStatus, message: extendedMessage },
         undo: undo && now() < undo.expiresAt ? { ...undo } : null,
         mealTemplates: templates.snapshot(),
         templateSave: templateSave && { ...templateSave },
@@ -231,6 +238,49 @@ export function createNutritionController({ enabled = false, athlete, date, cont
         return false
       }
     },
+    async enableExtendedFridaFoods(canUse) {
+      if (fridaStatus !== 'enabled' || !fridaAllowed() || pending
+        || !['ready', 'saved', 'save-error'].includes(phase) || !['off', 'error'].includes(extendedStatus)
+        || typeof canUse !== 'function') return false
+      extendedGate = canUse
+      if (!extendedAllowed()) return false
+      const token = ++extendedToken, version = writeVersion
+      extendedStatus = 'loading'; extendedMessage = 'Henter 80 flere Frida-fødevarer…'; emit()
+      try {
+        const added = await loadExtendedFridaFoods()
+        if (disposed || token !== extendedToken) return false
+        if (!extendedAllowed() || pending || version !== writeVersion
+          || !['ready', 'saved', 'save-error'].includes(phase)) throw Error('Konteksten er ændret')
+        if (!Array.isArray(added) || added.length !== 80) throw Error('Forkert katalog')
+        const ids = new Set()
+        for (const food of foods) {
+          if (food.id == null) continue
+          if (ids.has(food.id)) throw Error('Tvetydigt id')
+          ids.add(food.id)
+        }
+        // Validate the whole bounded batch before changing any catalogue state.
+        for (const food of added) {
+          if (!/^frida55:[1-9][0-9]*$/.test(food?.id) || ids.has(food.id)
+            || ![food.name, food.preparation, food.source?.citation, food.source?.verification]
+              .every(value => typeof value === 'string' && value.trim())
+            || !food.source.citation.includes('FoodID=' + food.id.slice(8) + ';')
+            || metrics.some(k => typeof food[k + '100'] !== 'number'
+              || !Number.isFinite(food[k + '100']) || food[k + '100'] < 0)) throw Error('Ugyldig reference')
+          ids.add(food.id)
+        }
+        const next = added.map(food => Object.freeze({ ...food, source: Object.freeze({ ...food.source }) }))
+        foods = [...foods, ...next]
+        for (const food of next) { references.set(food.id, food); extendedIds.add(food.id) }
+        extendedStatus = 'enabled'; extendedMessage = '80 flere Frida-fødevarer er tilføjet til denne dags log.'; emit(); return true
+      } catch {
+        if (!disposed && token === extendedToken) {
+          extendedStatus = 'error'
+          extendedMessage = 'De 80 ekstra Frida-fødevarer blev ikke tilføjet. Åbn dagens skrivbare kostlog og prøv igen.'
+          emit()
+        }
+        return false
+      }
+    },
     foodReference(index) {
       const food = foods[index]
       return !disposed && food && references.get(food.id) === food
@@ -242,6 +292,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     async logFood(index, amount, unitIndex, intent) {
       if (disposed || !Number.isInteger(index)) return false
       const food = foods[index]
+      if (food && extendedIds.has(food.id) && !extendedAllowed()) return false
       if (food && references.get(food.id) === food && (!fridaAllowed() || pending)) return false
       const value = foodPortion(food, amount, unitIndex)
       if (!value) return api.log(null, intent)
@@ -397,7 +448,7 @@ export function createNutritionController({ enabled = false, athlete, date, cont
     },
     update(rowId, meal, intent) { return mutate('update', rowId, meal, intent) },
     remove(rowId, intent, confirmed = false) { return mutate('remove', rowId, null, intent, confirmed) },
-    dispose() { clearUndo(); disposed = true; fridaToken++; fridaGate = null; references.clear(); unsubscribeTargets?.(); loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
+    dispose() { clearUndo(); disposed = true; extendedToken++; extendedGate = null; extendedIds.clear(); fridaToken++; fridaGate = null; references.clear(); unsubscribeTargets?.(); loadToken++; listeners.clear(); rows = []; favorites = []; committed.clear(); selectedParts.clear() },
   }
   const unsubscribeTargets = dayTargets?.subscribe?.(emit)
   return api

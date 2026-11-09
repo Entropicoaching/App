@@ -7,6 +7,7 @@ import { openPortalPlan } from './portalModel.mjs'
 import { coachPlanView, recipeChoice } from './view.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
 import { loadCoachFoods } from '../foedevarer/frida55Loader.mjs'
+import { loadExtendedCoachFoods, checkedExtendedCoachFoods } from '../foedevarer/frida55ExtendedLoader.mjs'
 import { identifier, day, planDate, number, catalogFoods } from './model.mjs'
 import { recipeItems, portalNutritionReport } from './connections.mjs'
 import { nutritionReportView } from '../rapport/reportView.mjs'
@@ -29,7 +30,8 @@ export default function PortalPlan(props = {}) {
   if (!identifier(athlete?.id) || !identifier(session?.user?.id) || !day(today)) return null
   return h(ScopedPortalPlan, { key: JSON.stringify([session.user.id, athlete.id, today]),
     coachId: session.user.id, athlete, date: today, nutritionRead: props.nutritionRead,
-    client: props.client, loadClient: props.loadClient, loadReferenceFoods: props.loadReferenceFoods })
+    client: props.client, loadClient: props.loadClient, loadReferenceFoods: props.loadReferenceFoods,
+    loadExtendedReferenceFoods: props.loadExtendedReferenceFoods })
 }
 
 // Mounted directly in Kost & mål, independently of opening the meal editor.
@@ -67,6 +69,7 @@ function ScopedPortalPlan(props) {
   const [opened, setOpened] = React.useState(false)
   const [expanded, setExpanded] = React.useState(false)
   const [referenceRequested, setReferenceRequested] = React.useState(false)
+  const [extendedRequested, setExtendedRequested] = React.useState(false)
   // The catalogue choice is made before any editor/controller is constructed.
   // A retained launch callback cannot replace an already opened session.
   const chosen = React.useRef(false)
@@ -93,6 +96,12 @@ function ScopedPortalPlan(props) {
       chosen.current = true
       setReferenceRequested(true); setExpanded(true); setOpened(true)
     } }, 'Åbn kostplan med Frida-fødevarer'),
+    !opened && React.createElement('button', { type: 'button', style: button, onClick: () => {
+      if (!current.current || chosen.current) return
+      chosen.current = true
+      setExtendedRequested(true); setReferenceRequested(true); setExpanded(true); setOpened(true)
+    } }, 'Åbn kostplan med 120 Frida-fødevarer'),
+    !opened && h('p', null, 'Vælg 120 Frida-referencefødevarer til denne editor, eller brug den almindelige Kostplan. Det valgte katalog bevares, mens editoren er åben.'),
     React.createElement('details', { ref: disclosure, open: referenceRequested ? expanded : undefined, className: 'e2-portal-plan', style: { marginTop: 16, textAlign: 'left', overflowWrap: 'anywhere' },
     onToggle: event => {
       if (!current.current) return
@@ -103,7 +112,7 @@ function ScopedPortalPlan(props) {
     } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
     h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
-    opened && h(referenceRequested ? ReferencePlanEditor : PlanEditor, { ...props, active: expanded, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
+    opened && h(extendedRequested ? ExtendedReferencePlanEditor : referenceRequested ? ReferencePlanEditor : PlanEditor, { ...props, active: expanded, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
       key: JSON.stringify([date, props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
         profileCalculation(props.athlete, date)]) })))
 }
@@ -153,6 +162,34 @@ function ReferencePlanEditor(props) {
       !reference.catalog && h('button', { type: 'button', style: button, disabled: !props.active,
         onClick: () => setAttempt(value => value + 1) }, 'Prøv referencefødevarer igen')),
     reference?.catalog && h(PlanEditor, { ...props, catalog: reference.catalog, referenceReady: reference.state === 'ready' }))
+}
+
+function ExtendedReferencePlanEditor(props) {
+  const [reference, setReference] = React.useState(null)
+  const [attempt, setAttempt] = React.useState(0)
+  const load = props.loadExtendedReferenceFoods ?? loadExtendedCoachFoods
+  const request = React.useMemo(() => ({ active: props.active, load, attempt, client: props.client, loadClient: props.loadClient }),
+    [props.active, load, attempt, props.client, props.loadClient])
+  const failed = reference?.request === request && reference?.state === 'error'
+  React.useLayoutEffect(() => {
+    if (!request.active || reference?.catalog) return
+    let current = true
+    Promise.resolve().then(() => current ? request.load() : null).then(async catalog => {
+      if (!current) return
+      const checked = await checkedExtendedCoachFoods(catalog)
+      if (current) setReference({ state: 'ready', catalog: checked })
+    }).catch(() => {
+      if (current) setReference({ state: 'error', request })
+    })
+    return () => { current = false }
+  }, [request, reference?.catalog])
+  return h('div', null,
+    h('p', { 'data-frida-extended-reference': true }, 'Denne editor bruger kun 120 Frida-referencefødevarer. Almindelige opskrifter kan mangle i dette udvalg. Gennemsnitsværdier pr. 100 g i navngiven tilstand, herunder anslåede/beregnede/lånte værdier; ikke eksakt mærkevare eller individuel måling.'),
+    !reference?.catalog && !failed && h('p', { role: 'status' }, 'Indlæser 120 Frida-fødevarer…'),
+    failed && h('p', { role: 'alert' }, 'De 120 Frida-fødevarer kunne ikke indlæses. Ingen editor er erstattet.',
+      h('button', { type: 'button', style: button, disabled: !props.active,
+        onClick: () => setAttempt(value => value + 1) }, 'Prøv 120 Frida-fødevarer igen')),
+    reference?.catalog && h(PlanEditor, { ...props, catalog: reference.catalog, extendedReferenceReady: true }))
 }
 
 function PlanEditor(props) {
@@ -221,7 +258,7 @@ function PlanEditor(props) {
       h('a', { href: 'https://doi.org/10.11583/DTU.29500682.v8', target: '_blank', rel: 'noreferrer' }, 'DTU Frida5.5'),
       ' (CC BY 4.0). Gennemsnitsværdier pr. 100 g spiselig del i den navngivne tilstand; nogle er anslået eller beregnet. Ikke præcist mærkevareindhold. Manglende værdier er ukendte. Gramgeneratoren bruger det oprindelige katalog.'),
     h(MealDraftImport, { controller: opened.controller, snapshot, coachId: props.coachId }),
-    !snapshot.meals.length && h('form', { onSubmit: start },
+    !props.extendedReferenceReady && !snapshot.meals.length && h('form', { onSubmit: start },
       h('h3', null, 'Vælg måltider til forslaget'),
       h('p', null, gramGenerator
         ? 'Vælg fødevarer og portionsgrænser, eller lad måltider stå tomme for forslag.'
