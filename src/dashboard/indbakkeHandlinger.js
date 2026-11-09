@@ -8,6 +8,7 @@ import { coachBriefingPointKey, coachBriefingSeenErrorMessage } from '../coachBr
 import { supabase } from '../supabase'
 import { RESOLVE_AUTOMATION_ALERT_RPC, automationAlertResolveErrorMessage } from '../automationAlerts'
 import { trainingSignalFingerprint } from '../coachInboxState'
+import { sendOnce } from '../sendOnce.mjs'
 
 export function lavIndbakkeHandlinger({
   athletes, coachMsgTrack, fetchLatestMessages, fetchMessages, messageInput, messageThreadAthleteRef,
@@ -102,12 +103,17 @@ export function lavIndbakkeHandlinger({
     await fetchLatestMessages(athletes.map(athlete => athlete.id))
   }
 
+  // U2: sendingMessage er React-state og når ikke at skifte mellem to tryk i samme
+  // øjeblik; sendOnce holder afsendelsen til én pr. atlet og spor.
   async function sendCoachMessage(options) {
-    const confirmed = options?.confirmed === true
     const content = messageInput.trim()
     if (!content || !selectedAthlete || sendingMessage) return
     const athleteId = selectedAthlete.id
+    return sendOnce(`coach:${athleteId}:${coachMsgTrack}`, () => sendCoachMessageOnce(options, content, athleteId))
+  }
 
+  async function sendCoachMessageOnce(options, content, athleteId) {
+    const confirmed = options?.confirmed === true
     setSendingMessage(true)
     setMessageSendError(null)
     try {

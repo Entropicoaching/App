@@ -3,7 +3,10 @@
 // rækken kan testes hermetisk mod insert-policyens betingelser.
 
 export const VIDEOCOACH_UPLOAD_BUCKET = 'videocoach-uploads'
-export const VIDEOCOACH_UPLOAD_MAX_BYTES = 500 * 1024 * 1024
+// U2: bucketen tillader 500 MB, men Supabase-planens grænse pr. fil er 50 MB
+// (app-planen 9. nov., afsnit 2). Grænsen tjekkes her, før overførslen starter,
+// så en lang video aldrig fejler først efter hele overførslen.
+export const VIDEOCOACH_UPLOAD_MAX_BYTES = 50 * 1024 * 1024
 
 // Sti-udledningen bruger KUN mime-typen, aldrig filnavnet — se ORDRE-Vaidya.md.
 export const VIDEOCOACH_UPLOAD_EXT_BY_MIME = {
@@ -84,7 +87,7 @@ export function validateVideoUploadRequest({
   if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(variation || '')) return 'Ugyldig variation'
   if (!videoUploadMimeAllowed(mimeType)) return 'Videoformatet understøttes ikke'
   if (!finiteInRange(fileSize, Number.MIN_VALUE, Number.MAX_VALUE) || fileSize == null) return 'Videofilen er tom eller ugyldig'
-  if (Number(fileSize) > VIDEOCOACH_UPLOAD_MAX_BYTES) return 'Videoen er større end 500 MB'
+  if (Number(fileSize) > VIDEOCOACH_UPLOAD_MAX_BYTES) return 'Videoen er større end 50 MB. Optag et kortere klip eller i lavere kvalitet (fx 1080p), og send igen.'
   if (!finiteInRange(loadKg, 0, 1000)) return 'Belastningen er uden for det tilladte interval'
   if (!finiteInRange(rpe, 0, 10)) return 'RPE er uden for det tilladte interval'
   if (athleteNote != null && (typeof athleteNote !== 'string' || athleteNote.length > 1000))

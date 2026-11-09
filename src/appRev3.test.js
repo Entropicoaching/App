@@ -94,8 +94,8 @@ test('F6: upload afviser ikke numeriske stoerrelser og maalinger', () => {
    assert.equal(typeof upload({...uploadRequest(),[field]:value}),'string')
  }
  assert.equal(upload({...uploadRequest(),loadKg:null,rpe:null}),null)
- assert.equal(upload({...uploadRequest(),fileSize:500*1024*1024}),null)
- assert.equal(typeof upload({...uploadRequest(),fileSize:500*1024*1024+1}),'string')
+ assert.equal(upload({...uploadRequest(),fileSize:50*1024*1024}),null)
+ assert.equal(typeof upload({...uploadRequest(),fileSize:50*1024*1024+1}),'string')
 })
 test('F7: nedarvede objektfelter er ikke videoformater', () => {
  const r=uploadRequest()

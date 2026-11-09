@@ -133,9 +133,15 @@ export function markUploadInflight(athleteId, requestId, storage = globalThis.lo
   } catch { /* fuld/utilgængelig storage må aldrig vælte selve uploaden */ }
 }
 
-export function clearUploadInflight(athleteId, storage = globalThis.localStorage) {
+// requestId: ryd kun markøren, hvis den tilhører netop denne anmodning, så et
+// hurtigt afslag på en anden anmodning ikke skjuler en igangværende upload.
+export function clearUploadInflight(athleteId, storage = globalThis.localStorage, requestId) {
   try {
     if (!storage || !athleteId) return
+    if (requestId !== undefined) {
+      const saved = safeInflight(JSON.parse(storage.getItem(uploadInflightKey(athleteId)) || 'null'))
+      if (saved && saved.requestId !== requestId) return
+    }
     storage.removeItem(uploadInflightKey(athleteId))
   } catch { /* se ovenfor */ }
 }

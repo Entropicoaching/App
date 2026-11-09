@@ -230,13 +230,14 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     const isUnread = item => Boolean(state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach)
     const question = state.role === 'athlete' && state.loaded && !state.loading && !state.error
       && typeof controller.answerQuestion === 'function' ? athleteQuestion(state.thread) : null
-    // Stable partition: preserve the original timeline inside each group.
-    const ordered = [...state.thread.filter(isUnread), ...state.thread.filter(item => !isUnread(item))]
+    // U2: tråden står altid efter tidspunkt, så et svar står under det, det svarer
+    // på, og en læsning aldrig flytter en besked. Ulæste markeres og nås med springknappen.
+    const ordered = state.thread
     firstUnread = null
     jump.hidden = unread === 0; jump.disabled = unread === 0
     jump.textContent = `${unread} ${antalOrd(unread, 'ulæst', 'ulæste')} · Spring til første ulæste`
-    // A read acknowledgement can reorder the list. Restore only the toggle
-    // that owns focus at this update, never steal focus back after an async read.
+    // The list is rebuilt on every update. Restore only the toggle that owns
+    // focus at this update, never steal focus back after an async read.
     const focusedKey = Array.from(list.children).find(li => li.children[0] === doc.activeElement)?.dataset.key
     let focusedToggle = null
     list.replaceChildren(...ordered.map(item => {

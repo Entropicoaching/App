@@ -61,17 +61,20 @@ test('R8: OFF til ON på samme instans starter kalenderen, opdateringen og dagst
   try {
     d.render(props(false, log))
     assert.deepEqual(log, [['off', 'refresh']])
-    assert.deepEqual(b.live().map(t => t.ms), [5 * 60 * 1000])
+    // U2: indbakkens interval er 60 s (før 5 min).
+    assert.deepEqual(b.live().map(t => t.ms), [60 * 1000])
     // Almindelig ny gengivelse uden flagskift: intet startes igen.
     d.render(props(false, log))
     assert.equal(log.length, 1)
     d.render(props(true, log))
     assert.deepEqual(log.slice(1), [['on', 'calendar', ['syn-a']], ['on', 'progress', ['syn-a']], ['on', 'refresh']])
-    // Kun ON-tilstandens timere lever; det femminutters callback kalder ON-læseren.
-    assert.deepEqual(b.live().map(t => t.ms).sort((x, y) => x - y), [60 * 1000, 5 * 60 * 1000])
-    b.live().find(t => t.ms === 5 * 60 * 1000).fn()
+    // Kun ON-tilstandens timere lever; indbakkens callback (registreret før dagstimeren) kalder ON-læseren.
+    assert.deepEqual(b.live().map(t => t.ms), [60 * 1000, 60 * 1000])
+    b.live()[0].fn()
     assert.deepEqual(log.at(-1), ['on', 'refresh'])
-    assert.equal(b.listeners.filter(l => !l.removed).length, 2)
+    // U2: samtalens ulæst-lytter er én ekstra, uafhængig af flaget.
+    assert.equal(b.listeners.filter(l => !l.removed && l.type !== 'entropi2:samtale-ulaest').length, 2)
+    assert.equal(b.listeners.filter(l => !l.removed && l.type === 'entropi2:samtale-ulaest').length, 1)
   } finally { d.unmount(); b.restore() }
 })
 
@@ -85,7 +88,7 @@ test('R8: ON til OFF på samme instans rydder dagstimeren og bruger OFF-læseren
     d.render(props(false, log))
     // Kalendereffekten køres igen, men med OFF-betingelserne læses kalenderen ikke i inbox.
     assert.deepEqual(log, [['off', 'refresh']])
-    assert.deepEqual(b.live().map(t => t.ms), [5 * 60 * 1000])
+    assert.deepEqual(b.live().map(t => t.ms), [60 * 1000])
     b.live()[0].fn()
     assert.deepEqual(log.at(-1), ['off', 'refresh'])
     d.unmount()

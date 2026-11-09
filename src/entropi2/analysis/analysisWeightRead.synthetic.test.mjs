@@ -21,6 +21,7 @@ const hooks = registerHooks({
     if (context.parentURL === target) {
       if (specifier === '../athleteReadGuard') return { url: new URL('../../athleteReadGuard.js', import.meta.url).href, shortCircuit: true }
       if (specifier === './kostNumbers.mjs') return next(specifier, context)
+      if (specifier === '../sendOnce.mjs') return next(specifier, context)
       return { url: unrelated, shortCircuit: true }
     }
     return next(specifier, context)

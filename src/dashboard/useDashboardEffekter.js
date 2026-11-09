@@ -150,7 +150,8 @@ export function useDashboardEffekter({
     refreshCoachInbox()
     window.addEventListener('focus', refreshWhenVisible)
     document.addEventListener('visibilitychange', refreshWhenVisible)
-    const intervalId = window.setInterval(refreshWhenVisible, 5 * 60 * 1000)
+    // U2: hvert minut i stedet for hvert 5., så en ny video eller besked ses hurtigt.
+    const intervalId = window.setInterval(refreshWhenVisible, 60 * 1000)
     // Entropi 2: coachskærmen afviser gårsdagens læsninger; ved dansk dagsskifte fornyes de straks.
     let dayTimer = null
     if (entropi2 === true) {
@@ -169,4 +170,17 @@ export function useDashboardEffekter({
     // Entropi 2: et flagskift installerer timere og lyttere igen med læseren fra den aktuelle flagtilstand.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, loading, loadError, e2Effects])
+
+  // U2: læser coachen et svar i samtalen, eller kommer der et nyt, hentes forside,
+  // kø og ulæst-tal igen. Anden hentning sikrer, at en hentning, der allerede var
+  // i gang før læsningen, ikke efterlader det gamle tal.
+  useEffect(() => {
+    const onUnread = event => {
+      if (event.detail?.role !== 'coach') return
+      const again = () => refreshCoachInbox()
+      Promise.resolve(refreshCoachInbox()).then(again, again)
+    }
+    window.addEventListener('entropi2:samtale-ulaest', onUnread)
+    return () => window.removeEventListener('entropi2:samtale-ulaest', onUnread)
+  })
 }

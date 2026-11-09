@@ -5,6 +5,7 @@
   "src/athlete/videoSetSelection.mjs": "videoSetSelection.mjs",
   "src/dashboard/indbakkeHandlinger.js": "indbakkeHandlinger.js",
   "src/messageTime.js": "messageTime.js",
+  "src/sendOnce.mjs": "sendOnce.mjs",
   "src/calendarDate.js": "calendarDate.js",
   "src/athlete/kostNumbers.mjs": "kostNumbers.mjs",
   "src/coachBriefingSeen.js": "coachBriefingSeen.js",

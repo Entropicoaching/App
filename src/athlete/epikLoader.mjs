@@ -19,6 +19,7 @@ export function install() {
         if (specifier === './videoFeedbackFollowUp.mjs') return { url: new URL('videoFeedbackFollowUp.mjs', root).href, shortCircuit: true }
         if (specifier === './VideoFeedbackPlayback.jsx') return { url: wrapper, shortCircuit: true }
         if (specifier === './videoFeedbackPlayback.mjs') return { url: model, shortCircuit: true }
+        if (specifier === '../sendOnce.mjs') return { url: new URL('../sendOnce.mjs', root).href, shortCircuit: true }
         return { url: stub, shortCircuit: true }
       }
       return next(specifier, context)

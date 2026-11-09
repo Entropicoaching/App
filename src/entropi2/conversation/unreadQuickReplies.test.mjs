@@ -79,7 +79,9 @@ function fixture(role = 'coach', storage = store()) {
     setScope: next => { scope = { ...scope, ...next } }, failSend: value => { fail = value }, failSeen: value => { seenFailure = value } }
 }
 
-for (const role of ['coach', 'athlete']) test(`${role}: stable unread grouping, jump only navigates, expansion alone marks read`, async () => {
+// U2: the thread stays chronological; reading never moves an item. Unread items
+// are marked and reached with the jump button.
+for (const role of ['coach', 'athlete']) test(`${role}: chronological thread, jump only navigates, expansion alone marks read`, async () => {
   const f = fixture(role), incoming = role === 'coach' ? 'athlete' : 'coach'
   f.rows.push(...[
     { id: 'read', sender_role: incoming, read_at: '2026-11-01T12:00:00Z', read_by_coach: true },
@@ -89,10 +91,11 @@ for (const role of ['coach', 'athlete']) test(`${role}: stable unread grouping, 
     created_at: '2026-11-05T12:00:00Z' })
   await f.controller.refresh()
   const list = find(f.el, 'ol')[0]
-  assert.deepEqual(list.children.map(n => n.dataset.key), ['message:one', 'message:two', 'video:video', 'message:read', 'message:own'])
+  const chronological = ['message:read', 'message:one', 'message:own', 'message:two', 'video:video']
+  assert.deepEqual(list.children.map(n => n.dataset.key), chronological)
   assert.deepEqual(f.calls, [])
   const jump = button(f.el, '3 ulæste · Spring til første ulæste')
-  const target = list.children[0].children[0]
+  const target = list.children[1].children[0]
   await jump.event('click')
   assert.equal(f.el.ownerDocument.focused, target)
   assert.equal(f.el.ownerDocument.scrolled.node, target)
@@ -101,12 +104,12 @@ for (const role of ['coach', 'athlete']) test(`${role}: stable unread grouping, 
   await target.event('click')
   assert.deepEqual(f.calls, [['seen', 'message:one']])
   assert.equal(button(f.el, '2 ulæste · Spring til første ulæste').hidden, false)
-  assert.deepEqual(list.children.map(n => n.dataset.key), ['message:two', 'video:video', 'message:read', 'message:one', 'message:own'])
+  assert.deepEqual(list.children.map(n => n.dataset.key), chronological)
   await button(f.el, '2 ulæste · Spring til første ulæste').event('click')
-  assert.equal(f.el.ownerDocument.focused, list.children[0].children[0])
+  assert.equal(f.el.ownerDocument.focused, list.children[3].children[0])
   assert.equal(f.calls.length, 1)
-  await list.children[0].children[0].event('click')
-  await list.children[0].children[0].event('click')
+  await list.children[3].children[0].event('click')
+  await list.children[4].children[0].event('click')
   assert.equal(button(f.el, '0 ulæste · Spring til første ulæste').hidden, true)
   assert.equal(f.calls.length, 3)
   f.cleanup(); await jump.event('click'); assert.equal(f.el.children.length, 0)

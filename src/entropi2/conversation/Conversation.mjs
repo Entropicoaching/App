@@ -1,10 +1,16 @@
 import { createElement, useEffect, useRef, useState } from 'react'
 import { mountConversation } from './ConversationView.mjs'
+import { startLiveRefresh } from './liveRefresh.mjs'
+import { unreadSummary, sameUnread } from './unreadHost.mjs'
 import { InitialConversation } from '../../athlete/previewInitialPresentation.mjs'
 // Each effect owns its controller, including React StrictMode's cleanup/replay.
 // Assembly supplies a memoized factory scoped to role + owner + athlete.
-export default function Conversation({ enabled = false, createController, controllerRef, initial, readOnly = false }) {
+// onUnread: U2, the host's tab dot and per-athlete counts follow the conversation.
+// live: test seam for document, window and timers; production uses the globals.
+export default function Conversation({ enabled = false, createController, controllerRef, initial, readOnly = false, onUnread, live }) {
   const ref = useRef(null)
+  const unreadRef = useRef(onUnread); unreadRef.current = onUnread
+  const liveRef = useRef(live); liveRef.current = live
   const [view, setView] = useState(null)
   useEffect(() => {
     if (enabled !== true || !createController || !ref.current) return
@@ -13,9 +19,23 @@ export default function Conversation({ enabled = false, createController, contro
     // Preview renders the same confirmed thread without a composer or read receipts.
     // Normal mode retains the original imperative renderer and its draft lifecycle.
     const cleanup = readOnly ? null : mountConversation(ref.current, controller, { enabled: true })
-    const unsubscribe = controller.subscribe(snapshot => setView({ factory: createController, readOnly, snapshot }))
+    let reported = null
+    const unsubscribe = controller.subscribe(snapshot => {
+      setView({ factory: createController, readOnly, snapshot })
+      if (readOnly) return
+      const summary = unreadSummary(snapshot)
+      if (summary && !sameUnread(summary, reported)) {
+        const previous = reported
+        reported = summary
+        unreadRef.current?.(summary, previous)
+      }
+    })
     void controller.refresh()
+    // U2: new replies appear without reopening: on return from background, on
+    // reconnect and every 30 s while visible, quietly and one load at a time.
+    const stopLive = readOnly ? null : startLiveRefresh(() => controller.refresh({ quiet: true }), liveRef.current)
     return () => {
+      stopLive?.()
       unsubscribe()
       cleanup?.()
       if (readOnly) controller.dispose()

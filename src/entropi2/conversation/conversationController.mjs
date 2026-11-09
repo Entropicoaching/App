@@ -3,9 +3,12 @@ import { createQuickReplyUsage } from './quickReplyUsage.mjs'
 import { createOwnQuickReplies } from './ownQuickReplies.mjs'
 import { threadFor, timestampContent } from './conversationModel.mjs'
 
+const LOAD_ERROR = 'Samtalen kunne ikke hentes sikkert. Opdatér og prøv igen.'
+
 export function createConversation({ enabled = false, adapters, storage, uuid = () => globalThis.crypto.randomUUID() }) {
   let active = true, generation = 0, busy = false, loading = false, error = '', draft = '', operation = null
-  let messages = [], analyses = [], submissions = new Map(), loaded = false
+  // writes tæller bekræftede skrivninger (afsendelse, læst), så en ældre baggrundshentning ikke overskriver dem.
+  let messages = [], analyses = [], submissions = new Map(), loaded = false, writes = 0
   const usage = createQuickReplyUsage(storage)
   const ownReplies = createOwnQuickReplies(storage)
   const listeners = new Set()
@@ -17,28 +20,49 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
       throw Error('Åbn samtalen igen for den valgte atlet.')
     return s
   }
+  const delivered = () => !!operation && messages.some(row => row.id === operation.row.id)
   const snapshot = () => {
     let available = false
     try { guard(); available = true } catch { /* Never expose a previous scope's records or draft. */ }
+    // U2: står beskeden allerede i tråden, vises den ikke også som "Sender…".
+    const shown = operation && !(operation.status === 'pending' && delivered()) ? operation : null
     return { available, loaded: available && loaded, loading: available && loading, busy: available && busy,
       error: available ? error : enabled === true ? 'Samtalen er ikke længere tilgængelig.' : '',
       draft: available ? draft : '', role: initial?.role, athleteId: initial?.athleteId,
       thread: available ? threadFor(initial?.athleteId, messages, [...submissions.values(), ...analyses]) : [],
-      operation: available && operation ? { ...operation, row: { ...operation.row } } : null }
+      operation: available && shown ? { ...shown, row: { ...shown.row } } : null }
   }
   const emit = () => { if (active) for (const fn of listeners) fn(snapshot()) }
-  async function refresh() {
+  // U2: en afsendelse med ukendt udfald afgøres af næste hentning. Står rækken
+  // i tråden, er beskeden sendt; den vises én gang, og "Prøv igen" sender intet nyt.
+  function settle() {
+    if (operation?.status !== 'error' || !delivered()) return
+    operation.status = 'sent'
+    if (draft === operation.draft) draft = ''
+    error = ''
+  }
+  // quiet: baggrundshentning (fokus, interval). Den viser ikke "Henter…", afbryder
+  // aldrig en synlig hentning eller en afsendelse, og en netfejl skjuler ikke tråden.
+  async function refresh({ quiet = false } = {}) {
     if (enabled !== true || !active) return false
-    const token = ++generation
+    if (quiet === true && (loading || busy)) return false
+    const token = ++generation, version = writes
     try {
-      guard(); loading = true; error = ''; emit()
+      guard()
+      if (quiet !== true) { loading = true; error = ''; emit() }
       const data = await adapters.load()
       guard()
       if (token !== generation) return false
+      // En læsning eller afsendelse landede imens; det ældre svar må ikke overskrive den.
+      if (quiet === true && version !== writes) return false
       messages = data.messages; analyses = data.analyses; loaded = true
+      if (quiet === true && error === LOAD_ERROR) error = ''
+      settle()
       return true
-    } catch { if (active && token === generation) error = 'Samtalen kunne ikke hentes sikkert. Opdatér og prøv igen.'; return false }
-    finally { if (active && token === generation) { loading = false; emit() } }
+    } catch {
+      if (active && token === generation && !(quiet === true && loaded)) error = LOAD_ERROR
+      return false
+    } finally { if (active && token === generation) { if (quiet !== true) loading = false; emit() } }
   }
   async function transmit() {
     if (busy || !operation || operation.status === 'sent') return false
@@ -47,6 +71,7 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
       const saved = await adapters.send(operation.row)
       guard()
       messages = [...messages.filter(row => row.id !== saved.id), saved]
+      writes++
       operation.status = 'sent'
       if (draft === operation.draft) draft = ''
       // A failed refresh is a read error, never a failed send.
@@ -113,6 +138,7 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
         if (!item || !(initial.role === 'athlete' ? item.unreadAthlete : item.unreadCoach)) return true
         const saved = await adapters.seen(item)
         guard()
+        writes++
         if (item.kind === 'message') messages = messages.map(row => row.id === saved.id ? saved : row)
         else analyses = analyses.map(row => row.id === saved.id ? saved : row)
         return true

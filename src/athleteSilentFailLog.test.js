@@ -138,3 +138,13 @@ test('summarizeSilentFailsForCoach: ældre end 7 dage og ukendte koder tælles i
   ]
   assert.equal(summarizeSilentFailsForCoach(rows, now), null)
 })
+
+test('G16 — en anden anmodning, der fejler hurtigt, rydder ikke markøren for den igangværende upload', () => {
+  const storage = fakeStorage()
+  markUploadInflight('athlete-1', 'req-1', storage)
+  clearUploadInflight('athlete-1', storage, 'req-2')
+  assert.equal(takeStaleUploadInflight('athlete-1', storage).requestId, 'req-1')
+  markUploadInflight('athlete-1', 'req-1', storage)
+  clearUploadInflight('athlete-1', storage, 'req-1')
+  assert.equal(takeStaleUploadInflight('athlete-1', storage), null)
+})

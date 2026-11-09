@@ -11,7 +11,8 @@ async function mounted(options) {
   return { ...f, controller, dispose }
 }
 
-for (const kind of ['message', 'video']) test(`F2: ${kind} acknowledgement keeps attached focus on the same key after unread reorder`, async () => {
+// U2: the list is rebuilt on acknowledgement but stays chronological; the item keeps its place.
+for (const kind of ['message', 'video']) test(`F2: ${kind} acknowledgement keeps attached focus on the same key after the list is rebuilt`, async () => {
   const f = await mounted({ kind }), key = `${kind}:one`
   try {
     const old = row(f.host, key).children[0]; old.focus()
@@ -24,7 +25,7 @@ for (const kind of ['message', 'video']) test(`F2: ${kind} acknowledgement keeps
     assert.equal(current.children[1].hidden, false)
     assert.deepEqual(f.doc.focusOptions, { preventScroll: true })
     assert.deepEqual(f.calls, [key])
-    assert.notEqual(find(f.host, 'li')[0].dataset.key, key)
+    assert.equal(find(f.host, 'li')[0].dataset.key, key)
   } finally { f.dispose() }
 })
 

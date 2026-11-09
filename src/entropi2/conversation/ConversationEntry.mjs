@@ -1,6 +1,7 @@
 import { createElement as h, useMemo, useRef, useState } from 'react'
 import Conversation from './Conversation.mjs'
 import { validId } from './conversationModel.mjs'
+import { shareUnread } from './unreadHost.mjs'
 import { createConversation } from './conversationController.mjs'
 import { createConversationAdapters, athleteConversationScope, coachConversationScope, athleteUploadEntry } from './conversationAdapters.mjs'
 
@@ -60,7 +61,8 @@ export default function ConversationEntry({ enabled = false, role, getEntry, con
     (role === 'athlete' ? scope.athleteUserId === ownerId : role === 'coach' && scope.athletes.some(row => row.id === athleteId))
   const initial = scoped ? { athleteId, messages: entry.messages, analyses: entry.sharedVideoAnalyses } : undefined
   return h('section', { 'aria-label': 'Samlet samtale' },
-    h(Conversation, { key: `${role}:${ownerId}:${athleteId}`, enabled, createController: factory, controllerRef, initial }),
+    h(Conversation, { key: `${role}:${ownerId}:${athleteId}`, enabled, createController: factory, controllerRef, initial,
+      onUnread: (summary, previous) => shareUnread(live.current(), summary, previous) }),
     role === 'athlete' && feedback?.athlete_id === athleteId && entry.athlete?.user_id === ownerId
       && entry.renderSharedFeedbackCards?.([feedback], { expanded: true }))
 }

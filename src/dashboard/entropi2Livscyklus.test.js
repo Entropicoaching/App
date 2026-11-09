@@ -64,7 +64,8 @@ test('R7: ved dansk dagsskifte fornyer coachskærmen sine læsninger straks; OFF
     const on = render({ view: 'inbox', entropi2: true })
     const cleanup = on.refresh.fn()
     assert.equal(on.calls.refresh, 1)
-    const day = b.timers.find(t => t.ms === 60 * 1000)
+    // U2: indbakkens interval er også 60 s; dagstimeren registreres sidst.
+    const day = b.timers.findLast(t => t.ms === 60 * 1000)
     assert.ok(day, 'dagstimeren findes')
     day.fn()
     assert.equal(on.calls.refresh, 1, 'samme dag: ingen ekstra opdatering')
@@ -79,7 +80,7 @@ test('R7: ved dansk dagsskifte fornyer coachskærmen sine læsninger straks; OFF
     b.timers.length = 0
     const off = render({ view: 'inbox' })
     off.refresh.fn()()
-    assert.deepEqual(b.timers.map(t => t.ms), [5 * 60 * 1000])
+    assert.deepEqual(b.timers.map(t => t.ms), [60 * 1000])
   } finally { mock.timers.reset(); b.restore() }
 })
 

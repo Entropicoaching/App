@@ -18,6 +18,7 @@ import { VIDEOCOACH_LIFT_LABELS as ATHLETE_VIDEO_LIFTS, videoCoachVariationLabel
 import { s, today } from '../athleteShared'
 import { athleteVideoPathPreview } from './videoCoachBro'
 import { logFrontendError } from './ugeHjaelp'
+import { sendOnce } from '../sendOnce.mjs'
 import { ugeBesked } from './dinUge'
 import { parseInputNumber } from './kostNumbers.mjs'
 
@@ -131,10 +132,11 @@ export function lavBeskederOgVaegt({
     const content = messageInput.trim()
     // Ryd IKKE feltet før skrivningen er bekræftet — ellers ser en fejlet
     // afsendelse ud som en succes, og beskeden er væk uden mulighed for at prøve igen.
-    const ok = await runGuardedWrite(
+    // U2: et dobbelttryk eller to Enter giver ikke to beskeder.
+    const ok = await sendOnce(`${athlete.id}:${msgTrack}`, () => runGuardedWrite(
       () => supabase.from('messages').insert({ athlete_id: athlete.id, sender_role: 'athlete', content, category: msgTrack }),
       () => showFlash('Beskeden blev ikke sendt. Tjek din forbindelse og prøv igen.', 'error'),
-    )
+    ))
     if (!ok) return
     setMessageInput('')
     fetchAthleteMessages(athlete.id)
@@ -145,10 +147,10 @@ export function lavBeskederOgVaegt({
   async function sendUgeLinje(ugeNr, tekst) {
     const content = ugeBesked(ugeNr, tekst)
     if (!content || !athlete) return false
-    const ok = await runGuardedWrite(
+    const ok = await sendOnce(`${athlete.id}:uge:${ugeNr}`, () => runGuardedWrite(
       () => supabase.from('messages').insert({ athlete_id: athlete.id, sender_role: 'athlete', content, category: 'besked' }),
       () => showFlash('Beskeden blev ikke sendt. Tjek din forbindelse og prøv igen.', 'error'),
-    )
+    ))
     if (ok) fetchAthleteMessages(athlete.id)
     return ok
   }

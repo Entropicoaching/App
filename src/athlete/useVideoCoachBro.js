@@ -108,7 +108,7 @@ export function useVideoCoachBro({
         // ethvert bekræftet udfald (succes, fejl, annullering) - marker-oprydning
         // sker derfor her, ét sted, i stedet for ved hvert enkelt return nedenfor.
         const reply = result => {
-          if (currentAthlete?.id) clearUploadInflight(currentAthlete.id)
+          if (currentAthlete?.id) clearUploadInflight(currentAthlete.id, undefined, message.requestId)
           try { event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:upload-result`,
             requestId: message.requestId, ...result }, event.origin); return true }
           catch { return false }

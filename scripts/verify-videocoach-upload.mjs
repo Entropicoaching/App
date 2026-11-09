@@ -46,7 +46,7 @@ assert.match(validateVideoUploadRequest({ ...validRequest, lift: 'ohp' }), /løf
 assert.match(validateVideoUploadRequest({ ...validRequest, variation: 'Konkurrence Squat' }), /variation/i)
 assert.match(validateVideoUploadRequest({ ...validRequest, mimeType: 'video/avi' }), /format/i)
 assert.match(validateVideoUploadRequest({ ...validRequest, fileSize: 0 }), /tom/i)
-assert.match(validateVideoUploadRequest({ ...validRequest, fileSize: VIDEOCOACH_UPLOAD_MAX_BYTES + 1 }), /500 MB/i)
+assert.match(validateVideoUploadRequest({ ...validRequest, fileSize: VIDEOCOACH_UPLOAD_MAX_BYTES + 1 }), /50 MB/i)
 assert.equal(validateVideoUploadRequest({ ...validRequest, fileSize: VIDEOCOACH_UPLOAD_MAX_BYTES }), null)
 assert.match(validateVideoUploadRequest({ ...validRequest, loadKg: 1001 }), /belastning/i)
 assert.match(validateVideoUploadRequest({ ...validRequest, rpe: 11 }), /rpe/i)

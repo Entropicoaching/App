@@ -3,6 +3,7 @@ import { checkAthleteSyntax } from './selectionHarness.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
+import { withoutU2 } from './u2AthleteViewLine.mjs'
 import { act, createElement as h, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -298,7 +299,7 @@ test('family error counterexamples: original nutrition reader rejects foreign/ma
 })
 
 test('family inversion: each new feature hunk is exact and unrelated legacy mutations remain detectable', () => {
-  const source = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
+  const source = withoutU2(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')).replace(/\r\n/g, '\n')
   const hash = value => createHash('sha256').update(value.replace(/\r\n/g, '\n')).digest('hex')
   const publicBase = '0c03822be85862e06dcef14a9d664f4e50ccb86f34d6bb8f25a9d7ba4191c612'
   assert.equal(hash(invertPreviewInitialPresentation(source)), publicBase)

@@ -37,7 +37,8 @@ test('React F2/F7: StrictMode mount, reduced-motion jump, acknowledgement focus 
     await act(async () => { await f.doc.activeElement.click() })
     assert.equal(f.doc.activeElement, row(f.host, 'message:one').children[0])
     assert.equal(row(f.host, 'message:one').children[1].hidden, false)
-    assert.equal(find(f.host, 'li')[0].dataset.key, 'message:two')
+    // U2: chronological; reading does not move the message.
+    assert.equal(find(f.host, 'li')[0].dataset.key, 'message:one')
     assert.deepEqual(f.calls, ['message:one'])
     await act(async () => root.render(createElement(Conversation, { enabled: false,
       createController: () => assert.fail('OFF controller access'), controllerRef: ref })))

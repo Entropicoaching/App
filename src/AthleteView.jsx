@@ -1036,6 +1036,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             messages, sharedVideoAnalyses,
             setAthleteVideoCoachInstant, setAthleteVideoCoachOpen, setOpenSharedVideoId, renderSharedFeedbackCards,
             storage: () => localStorage,
+            setUnreadMsgCount, setSharedVideoAnalyses,
           })} />
         )}
         {!e2Atlet && tab === 'beskeder' && (
