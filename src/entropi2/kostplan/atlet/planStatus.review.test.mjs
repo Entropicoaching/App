@@ -54,9 +54,10 @@ test('independent oracle: a shared adapter negative cache cannot block explicit 
   const f = independent(); t.after(f.s.dispose)
   const old = createPlanAdapter({ enabled: true, athleteId: f.athleteId, date: f.date, client: f.client })
   assert.equal(await old.loadActive(), null, 'prime the original adapter negative capability cache')
-  assert.equal(await f.s.controller.load(), false)
-  assert.match(f.html(), /Kostplanen kunne ikke hentes/)
-  assert.doesNotMatch(f.html(), /Du har ingen aktiv kostplan/)
+  // A missing plans table (before the migration) is an honest empty day.
+  assert.equal(await f.s.controller.load(), true)
+  assert.match(f.html(), /Du har ingen aktiv kostplan/)
+  assert.doesNotMatch(f.html(), /Kostplanen kunne ikke hentes/)
   const queries = f.calls.length
   f.state.missing = false
   assert.equal(await f.s.controller.load(), true)

@@ -84,7 +84,8 @@ test('original SQL effective version repeated on two selected days counts twice;
     const denied = createApprovedShopping({ enabled: true, athleteId, today, client: f.client })
     try {
       assert.equal(await denied.load(), false); assert.equal(denied.snapshot().complete, false)
-      assert.deepEqual(denied.snapshot().affected.map(d => d.date), dates)
+      // RLS hides every plan from a stranger: an honest no-plan state, nothing leaks.
+      assert.equal(denied.snapshot().phase, 'no-plan'); assert.deepEqual(denied.snapshot().affected, [])
       assert.equal(denied.snapshot().result, null)
     } finally { denied.dispose() }
     assert.equal(f.calls.filter(call => call.payload).length, 0)

@@ -28,8 +28,9 @@ test('real React: missing/empty plan renders distinct status and an open diary',
     const f = fixture(config), s = open(f); t.after(s.dispose); await s.controller.load()
     const html = render(s.controller)
     assert.match(html, /<details open=""/)
-    assert.match(html, config.missing ? /Kostplanen kunne ikke hentes/ : /Du har ingen aktiv kostplan/)
-    assert.doesNotMatch(html, config.missing ? /Du har ingen aktiv kostplan/ : /role="alert"/)
+    // Before the migration (no plans table) the day is an honest tracker day too.
+    assert.match(html, /Du har ingen aktiv kostplan/)
+    assert.doesNotMatch(html, /role="alert"/)
     assert.match(html, /data-existing-tracker/); assert.doesNotMatch(html, /Dagens kostplan|Spist som planlagt/)
     assert.equal(f.rows.length, 0); assert.deepEqual(f.writes, [])
   }

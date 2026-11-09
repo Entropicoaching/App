@@ -1,7 +1,7 @@
 import { createElement as h, useLayoutEffect, useMemo, useState } from 'react'
 import { createApprovedShopping } from './approvedShoppingController.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
-import { grossLabel, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
+import { grossLabel, preparationSuffix, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
 
 const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal' }
 const currentDayMatches = scope => {
@@ -48,6 +48,7 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
       h('p', null, `Valgte datoer: ${s.dates.join(', ') || 'ingen'}.`),
       s.phase === 'loading' && h('p', { role: 'status' }, 'Henter godkendte planer… Listen er ufuldstændig.'),
       s.phase === 'empty-selection' && h('p', null, 'Vælg mindst én dag.'),
+      s.phase === 'no-plan' && h('p', { role: 'status' }, 'Der er ingen aktiv kostplan fra din coach for de valgte dage endnu. Indkøbslisten laves ud fra planen, når din coach har aktiveret den.'),
       s.affected.length > 0 && h('div', { role: s.phase === 'loading' ? 'status' : 'alert' },
         h('p', null, 'Listen er ufuldstændig. Berørte datoer:'),
         h('ul', null, ...s.affected.map(d => h('li', { key: d.date }, `${d.date}: ${d.reason}.`)))),
@@ -66,13 +67,13 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
         h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map((item, index) => {
           const checked = s.purchases.bought.includes(index)
           // Use the visible row, with its position to distinguish identical human labels.
-          const itemLabel = `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g. Tilberedning: ${item.preparation}. Vare ${index + 1} af ${s.result.items.length}.`
+          const itemLabel = `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)} Vare ${index + 1} af ${s.result.items.length}.`
           return h('li', { key: item.key, style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBlock: 8 } },
             h('button', { type: 'button', role: 'checkbox', 'aria-checked': checked,
               'aria-label': `Købt: ${itemLabel}`, style: { ...control, minWidth: 44 },
               onClick: () => controller.markBought(index, !checked, s.result) }, checked ? '☑ Købt' : '☐ Ikke købt'),
             h('div', { style: { flex: '1 1 16rem', minWidth: 0, maxWidth: '100%' } },
-              h('span', null, `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g. Tilberedning: ${item.preparation}.`),
+              h('span', null, `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}`),
               h('details', null,
                 h('summary', { 'aria-label': `Kilde og varegrundlag: ${itemLabel}`,
                   style: { ...control, cursor: 'pointer' } }, 'Kilde og varegrundlag'),

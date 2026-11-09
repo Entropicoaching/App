@@ -69,6 +69,11 @@ export function createApprovedShopping(options = {}) {
         }
       }
       if (!alive() || token !== attempt) return false
+      // No plan on any selected day (also before the migration) is an honest
+      // empty state, not an incomplete list. Read errors stay incomplete.
+      if (affected.length && !evidence.length && affected.every(a => [reasons.empty, reasons.unavailable].includes(a.reason))) {
+        reset('no-plan'); return false
+      }
       if (affected.length) { reset('incomplete', affected); return false }
       try {
         const result = sumApprovedShopping(today, selected, evidence)

@@ -40,11 +40,15 @@ export function createKostDaySession(options = {}) {
       // missing tables. Give each read its own facade and reject failed probes,
       // so only a completed active-plan query can confirm an empty day. These
       // two single-column limit(0) probes are the existing adapter's contract.
+      // Before the kostplan migration the first table does not exist at all:
+      // that is a confirmed "no plan yet", so the adapter may return null.
+      // A missing later table (a partial schema) remains a read error.
       const readClient = { from: table => ({ select(columns, ...args) {
         const query = client.from(table).select(columns, ...args)
         if (!['id', 'version_id'].includes(columns)) return query
         return { async limit(count) {
           const result = await query.limit(count)
+          if (table === 'kostplan_v1_plans' && ['42P01', 'PGRST205'].includes(result?.error?.code)) return result
           if (result?.error) throw Error('Kostplanen er ikke tilgængelig.')
           return result
         } }

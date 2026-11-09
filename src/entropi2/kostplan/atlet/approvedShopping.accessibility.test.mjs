@@ -7,7 +7,7 @@ import { act, createElement as h, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import ApprovedPlanShopping from './ApprovedPlanShopping.mjs'
 import { createApprovedShopping } from './approvedShoppingController.mjs'
-import { shoppingItemText, formatApprovedShopping } from './approvedShoppingModel.mjs'
+import { preparationSuffix, shoppingItemText, formatApprovedShopping } from './approvedShoppingModel.mjs'
 import { formatCompactShopping } from './compactShoppingText.mjs'
 import { purchaseNamespace, purchaseScope } from './purchaseMarkers.mjs'
 import { createPlanSnapshot } from '../planSnapshot.mjs'
@@ -80,7 +80,7 @@ function contract(r) {
   for (const [i, item] of result.items.entries()) {
     const row = rows.children[i], visible = all(row, 'span')[0].textContent
     const details = all(row, 'details')[0], summary = all(details, 'summary')[0], checkbox = controls[i]
-    assert.equal(visible, `${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g. Tilberedning: ${item.preparation}.`)
+    assert.equal(visible, `${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g.${preparationSuffix(item.preparation)}`)
     const tail = `${visible} Vare ${i + 1} af ${controls.length}.`
     assert.equal(checkbox.getAttribute('aria-label'), 'Købt: ' + tail)
     assert.equal(summary.getAttribute('aria-label'), 'Kilde og varegrundlag: ' + tail)

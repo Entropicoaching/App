@@ -88,7 +88,9 @@ for (const kind of ['missing', 'unavailable', 'error', 'foreign', 'wrong-version
       return { data: kind === 'truncated' ? [] : rows.map(v => ({ ...v, id: uuid(99999) })), error: null }
     }
     assert.equal(await c.load(), false); assert.equal(c.snapshot().complete, false); assert.equal(c.snapshot().result, null)
-    assert.ok(c.snapshot().affected.some(d => d.date === dates[0]))
+    // No plan readable on any day (before the migration) is an honest empty state.
+    if (kind === 'unavailable') { assert.equal(c.snapshot().phase, 'no-plan'); assert.deepEqual(c.snapshot().affected, []) }
+    else assert.ok(c.snapshot().affected.some(d => d.date === dates[0]))
     assert.throws(() => formatApprovedShopping(c.snapshot().result))
     let writes = 0; assert.equal(await c.copy({ writeText() { writes++ } }), false); assert.equal(writes, 0)
     for (const name of tableNames) f.data[name] = saved[name] // transport closes over this same data object

@@ -12,8 +12,22 @@ test('day assembly: strict OFF does not inspect dependencies', () => {
     get client() { throw Error('OFF') }, get storage() { throw Error('OFF') } }), null)
 })
 
-test('day assembly: every missing table/code is a read error, freshly probed per load, no writes', async () => {
-  for (const missing of tableNames) for (const missingCode of ['42P01', 'PGRST205']) {
+test('day assembly: before the migration (no plans table) is an honest tracker day, no writes', async () => {
+  for (const missingCode of ['42P01', 'PGRST205']) {
+    const f = fixture({ missing: tableNames[0], missingCode })
+    for (const scope of [{}, {}, { date: '2026-11-06' }, { athleteId: 'synthetic-other' }]) {
+      const s = open(f, scope)
+      try { assert.equal(await s.controller.load(), true); assert.equal(s.controller.snapshot().phase, 'ready'); assert.equal(s.controller.snapshot().mode, 'tracker') }
+      finally { s.dispose() }
+    }
+    assert.equal(f.plan.calls.length, 4)
+    assert.ok(f.plan.calls.every(c => c.limit === 0))
+    assert.deepEqual(f.calls, []); assert.deepEqual(f.writes, []); assert.equal(f.plan.writes().length, 0)
+  }
+})
+
+test('day assembly: a partial schema (later table missing) is a read error, freshly probed per load, no writes', async () => {
+  for (const missing of tableNames.slice(1)) for (const missingCode of ['42P01', 'PGRST205']) {
     const f = fixture({ missing, missingCode })
     for (const scope of [{}, {}, { date: '2026-11-06' }, { athleteId: 'synthetic-other' }]) {
       const s = open(f, scope)

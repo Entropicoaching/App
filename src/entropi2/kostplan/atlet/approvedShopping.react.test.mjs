@@ -143,7 +143,7 @@ test('late version response after owner/client/day switch and overlapping date r
   await act(async () => { g.resolve(); await pending; await tick() })
   assert.match(list(r.host).textContent, /Linser: 375 g/)
   r.props.athleteId = 'synthetic-second'; await r.render()
-  assert.equal(list(r.host), undefined); assert.match(section(r.host).textContent, /Ingen godkendt plan/)
+  assert.equal(list(r.host), undefined); assert.match(section(r.host).textContent, /ingen aktiv kostplan fra din coach/)
 })
 
 test('today included explicitly, all deselected, invalid dates, current day revocation and OFF do no writes', async t => {
@@ -186,7 +186,7 @@ for (const kind of ['missing-plan', 'capability'])
     await r.click('Hent indkøbsgrundlag igen')
     assert.equal(list(r.host), undefined); assert.equal(button(section(r.host), 'Kopiér indkøbsliste'), undefined)
     assert.match(section(r.host).textContent, /2026-11-08/)
-    assert.match(section(r.host).textContent, kind === 'capability' ? /tabeller er ikke tilgængelige/ : /Ingen godkendt plan/)
+    assert.match(section(r.host).textContent, kind === 'capability' ? /ingen aktiv kostplan fra din coach/ : /Ingen godkendt plan/)
     r.f.data[tableNames[1]] = saved; r.f.options.missing = false
     await r.click('Hent indkøbsgrundlag igen'); assert.match(list(r.host).textContent, /Linser: 450 g/)
   })

@@ -47,8 +47,9 @@ async function mounted(t, options, strict = true) {
 
 for (const strict of [false, true]) test(`mounted status, StrictMode=${strict}: unavailable -> loading -> empty -> approved -> error preserves all tracker drafts and nested week`, { timeout: 5000 }, async t => {
   const options = { missing: true }, f = await mounted(t, options, strict)
-  assert.match(status(f.host).textContent, /kunne ikke hentes/)
-  assert.doesNotMatch(status(f.host).textContent, /Du har ingen aktiv/)
+  // Before the migration (no plans table): honest empty state, never an error.
+  assert.match(status(f.host).textContent, /Du har ingen aktiv kostplan/)
+  assert.doesNotMatch(status(f.host).textContent, /kunne ikke hentes/)
   const tracker = f.host.querySelector('[data-entropi2-kost]'), content = tracker.firstChild
   assert.equal(tracker.parentElement.tagName, 'DETAILS')
   // Populate the actual manual, search, ingredient and nested React consumers.
@@ -134,8 +135,9 @@ test('actual day session: permission/transport/data failures remain errors; expl
     options.logError = false; assert.equal(await s.controller.load(), true)
     assert.equal(s.controller.snapshot().mode, 'plan')
     options.missing = true
-    assert.equal(await s.controller.load(), false, 'formerly available schema is not cached as available')
-    assert.equal(s.controller.snapshot().phase, 'load-error')
+    // Fresh probe: a removed plans table shows no plan, never the cached plan.
+    assert.equal(await s.controller.load(), true, 'formerly available schema is not cached as available')
+    assert.equal(s.controller.snapshot().mode, 'tracker')
     assert.equal(f.rows.length, 0); assert.equal(f.plan.writes().length, 0); assert.deepEqual(f.writes, [])
   }
 })

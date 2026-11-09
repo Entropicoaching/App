@@ -85,8 +85,12 @@ export function sumApprovedShopping(today, selected, evidence) {
   return result
 }
 
+// The catalogue's placeholder preparation is not information for a person.
+export const preparationSuffix = preparation => ['unspecified', 'as-named; otherwise unspecified'].includes(preparation)
+  ? '' : ` Tilberedning: ${preparation}.`
+
 export function shoppingItemText(item) {
-  return `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g. Tilberedning: ${item.preparation}. `
+  return `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)} `
     + `Fødevare-id: ${item.foodId}. Kilde: ${item.source.citation} (${item.source.verification}).`
 }
 
