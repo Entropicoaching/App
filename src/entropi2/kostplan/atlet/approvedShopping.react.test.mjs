@@ -177,6 +177,17 @@ for (const changed of ['athleteId', 'client', 'today'])
     assert.equal(r.f.writes().length, 0)
   })
 
+test('actual before-migration state (no plans table) is an honest no-plan text, no list, and retry recovers', async t => {
+  const r = await mounted(t)
+  r.f.options.missing = tableNames[0]
+  await r.click('Hent indkøbsgrundlag igen')
+  assert.equal(list(r.host), undefined); assert.equal(button(section(r.host), 'Kopiér indkøbsliste'), undefined)
+  assert.match(section(r.host).textContent, /ingen aktiv kostplan fra din coach for de valgte dage/)
+  assert.doesNotMatch(section(r.host).textContent, /ufuldstændig|tabeller/)
+  r.f.options.missing = false
+  await r.click('Hent indkøbsgrundlag igen'); assert.match(list(r.host).textContent, /Linser: 450 g/)
+})
+
 for (const kind of ['missing-plan', 'capability'])
   test('actual ' + kind + ' state names dates, offers no partial list, and explicit retry recovers', async t => {
     const r = await mounted(t)
@@ -186,7 +197,7 @@ for (const kind of ['missing-plan', 'capability'])
     await r.click('Hent indkøbsgrundlag igen')
     assert.equal(list(r.host), undefined); assert.equal(button(section(r.host), 'Kopiér indkøbsliste'), undefined)
     assert.match(section(r.host).textContent, /2026-11-08/)
-    assert.match(section(r.host).textContent, kind === 'capability' ? /ingen aktiv kostplan fra din coach/ : /Ingen godkendt plan/)
+    assert.match(section(r.host).textContent, kind === 'capability' ? /2026-11-08: Kostplanens tabeller er ikke tilgængelige/ : /Ingen godkendt plan/)
     r.f.data[tableNames[1]] = saved; r.f.options.missing = false
     await r.click('Hent indkøbsgrundlag igen'); assert.match(list(r.host).textContent, /Linser: 450 g/)
   })

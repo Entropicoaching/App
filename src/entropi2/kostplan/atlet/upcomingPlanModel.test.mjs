@@ -62,6 +62,15 @@ test('empty, missing tables and transient read errors stay distinct; same retry 
    assert.equal(await c.load(),true);assert.equal(c.snapshot().phase,'ready');assert.ok(f.calls.length>count);assert.equal(f.writes().length,0)
   }finally{c.dispose()}
  }
+ // Before the migration the plans table itself is missing: honestly no plan.
+ for(const code of ['42P01','PGRST205']){
+  const f=seeded({missing:tableNames[0],missingCode:code}),c=open(f)
+  try{
+   assert.equal(await c.load(),true);assert.equal(c.snapshot().phase,'empty');assert.equal(c.snapshot().plan,null)
+   f.options.missing=false
+   assert.equal(await c.load(),true);assert.equal(c.snapshot().phase,'ready');assert.equal(f.writes().length,0)
+  }finally{c.dispose()}
+ }
  const f=seeded({error:'42501'}), c=open(f)
  try{await c.load();assert.equal(c.snapshot().phase,'read-error'); f.options.error=null;await c.load();assert.equal(c.snapshot().phase,'ready')}finally{c.dispose()}
 })

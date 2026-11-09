@@ -3,7 +3,7 @@ import { createApprovedShopping } from './approvedShoppingController.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
 import { grossLabel, preparationSuffix, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
 
-const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal' }
+const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
 const currentDayMatches = scope => {
   try { return !scope.currentDay || scope.currentDay() === scope.today } catch { return false }
 }
@@ -30,8 +30,8 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
   const matches = record?.scope === scope && currentDayMatches(scope)
   const controller = matches ? record.controller : null, s = controller ? record.snapshot : null
   const dates = upcomingDates(today)
-  return h('section', { 'aria-label': 'Indkøb fra kostplanen', style: { padding: 16, width: '100%', maxWidth: '42rem', boxSizing: 'border-box', overflowWrap: 'anywhere' } },
-    h('h2', null, 'Indkøb fra kostplanen'),
+  return h('section', { 'aria-label': 'Indkøb fra kostplanen', style: { padding: 16, width: '100%', maxWidth: '42rem', boxSizing: 'border-box', overflowWrap: 'anywhere', textAlign: 'left' } },
+    h('h2', { style: { color: '#edeae2' } }, 'Indkøb fra kostplanen'),
     h('p', null, grossLabel),
     h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer.'),
     h('fieldset', null, h('legend', null, 'Dage til indkøb'),

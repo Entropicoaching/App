@@ -65,13 +65,14 @@ export function createApprovedShopping(options = {}) {
           evidence.push(version)
         } catch (error) {
           if (!alive() || token !== attempt) return false
-          affected.push({ date, reason: error?.code === 'KOSTPLAN_UNAVAILABLE' ? reasons.unavailable : reasons.error })
+          affected.push({ date, reason: error?.code !== 'KOSTPLAN_UNAVAILABLE' ? reasons.error
+            : error.table === 'kostplan_v1_plans' ? reasons.empty : reasons.unavailable })
         }
       }
       if (!alive() || token !== attempt) return false
       // No plan on any selected day (also before the migration) is an honest
-      // empty state, not an incomplete list. Read errors stay incomplete.
-      if (affected.length && !evidence.length && affected.every(a => [reasons.empty, reasons.unavailable].includes(a.reason))) {
+      // empty state. A partial schema and read errors stay incomplete.
+      if (affected.length && !evidence.length && affected.every(a => a.reason === reasons.empty)) {
         reset('no-plan'); return false
       }
       if (affected.length) { reset('incomplete', affected); return false }

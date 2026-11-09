@@ -43,6 +43,8 @@ export function createUpcomingPlan(options = {}) {
         publish(plan ? 'ready' : 'empty', plan); return true
       } catch (error) {
         if (disposed || token !== attempt) return false
+        // Before the migration (no plans table) there is honestly no plan.
+        if (error?.code === 'KOSTPLAN_UNAVAILABLE' && error.table === 'kostplan_v1_plans') { publish('empty'); return true }
         publish(error?.code === 'KOSTPLAN_UNAVAILABLE' ? 'unavailable' : 'read-error'); return false
       }
     },

@@ -11,6 +11,8 @@ const missing = error => ['42P01', 'PGRST205'].includes(error?.code)
 // Cache capabilities only: athlete/date plan data is always read again. Coach
 // checks and every activation remain uncached. No storage or session/auth reads.
 const athleteAvailability = new WeakMap()
+// The first missing table of the latest probe per client (only for messages).
+const missingTable = new WeakMap()
 
 // The mounted day owner deliberately creates a fresh read facade on each load.
 // Share only simultaneous schema probes across that facade and shopping, before
@@ -202,9 +204,10 @@ export function createPlanAdapter(options = {}) {
   async function available() {
     for (const [index, table] of tables.entries()) {
       const result = await client.from(table).select(index === 2 ? 'version_id' : 'id').limit(0)
-      if (missing(result?.error)) return false
+      if (missing(result?.error)) { missingTable.set(client, table); return false }
       rows(result)
     }
+    missingTable.delete(client)
     return true
   }
   const requireTables = async () => { if (!await available()) throw Error('Kostplanens tabeller er ikke tilgængelige.') }
@@ -270,7 +273,7 @@ export function createPlanAdapter(options = {}) {
         athleteAvailability.set(client, probe)
       }
       if (!await athleteAvailability.get(client)) {
-        if (requireAvailable) throw Object.assign(Error('Kostplanens tabeller er ikke tilgængelige.'), { code: 'KOSTPLAN_UNAVAILABLE' })
+        if (requireAvailable) throw Object.assign(Error('Kostplanens tabeller er ikke tilgængelige.'), { code: 'KOSTPLAN_UNAVAILABLE', table: missingTable.get(client) ?? null })
         return null
       }
       const readPlans = () => client.from(tables[0]).select('id,athlete_id,valid_from,status')
