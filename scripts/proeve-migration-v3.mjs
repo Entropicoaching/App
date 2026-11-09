@@ -30,7 +30,10 @@ const filer = readdirSync(migDir).filter(f => f.endsWith('.sql')).sort()
 for (const f of filer) {
   if (f === V2 || f === V3) continue
   try { await db.exec(les(join(migDir, f))); ud(`- ${f}: koert`) }
-  catch (e) { ud(`- ${f}: kunne ikke koeres uden prod-tabeller (${String(e.message).split('\n')[0]})`) }
+  catch (e) {
+    ud(`- ${f}: kunne ikke koeres uden prod-tabeller (${String(e.message).split('\n')[0]})`)
+    await db.exec('ROLLBACK')
+  }
 }
 
 // 2. syntetiske data
