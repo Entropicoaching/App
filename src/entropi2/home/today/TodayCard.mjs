@@ -2,6 +2,8 @@ import * as React from 'react'
 import { homeStyles as s } from '../homeStyles.mjs'
 import { formatKg, stepKg, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
 import { readTodayMeals, copyYesterdayMeals, readLastWeights } from './todayRead.mjs'
+import { u6Enabled } from '../../u6/flag.mjs'
+import { planWeightLines, planWeightText, planFirstSetPrefill } from '../../u6/planWeight.mjs'
 
 // Hooks hentes via navnerummet, som i U3's kort: lukkede prøveharnesser kan erstatte 'react'
 // for forsiden. Kortet skriver kun gennem værtens eksisterende logWeight og saveReadiness:
@@ -52,13 +54,17 @@ export default function TodayCard(props) {
   }, [trainingToday, athleteId, readLast])
   // Første sæt uden coachens vægt får sidste pas' vægt i udkastet, så det kan godkendes med ét tryk,
   // når atleten starter passet. Kun tomme felter udfyldes; intet gemmes.
+  // U6: med coachens plan står planvægten i første sæt; uden plan gælder sidste pas som i U5.
   const exercises = props.u5Training?.exercises
+  const planOn = u6Enabled('planWeight', props.u6PlanWeight)
   React.useEffect(() => {
     const p = latest.current
-    if (!trainingToday || !lastByName || typeof p.setLogInputs !== 'function') return
-    if (!Object.keys(firstSetPrefill(exercises, lastByName, p.logInputs)).length) return
-    p.setLogInputs(current => ({ ...current, ...firstSetPrefill(exercises, lastByName, current) }))
-  }, [trainingToday, lastByName, exercises])
+    if (!trainingToday || typeof p.setLogInputs !== 'function') return
+    const fill = current => ({ ...(planOn ? planFirstSetPrefill(exercises, current) : {}),
+      ...(lastByName ? firstSetPrefill(exercises, lastByName, current) : {}) })
+    if (!Object.keys(fill(p.logInputs)).length) return
+    p.setLogInputs(current => ({ ...current, ...fill(current) }))
+  }, [trainingToday, lastByName, exercises, planOn])
   // Gem først, når værten har udkastet; ellers ville en gammel logWeight/saveReadiness gemme et tomt felt.
   React.useEffect(() => {
     if (!pending || sent.current === pending) return
@@ -145,9 +151,16 @@ export default function TodayCard(props) {
         h('p', { style: hint }, 'Fire korte svar. Næste gang er det ét tryk.')))
 
   // Start bliver i "Dit næste pas" lige under kortet; her står kun status, så handlingen ikke findes to gange.
+  const lines = planOn && trainingToday ? planWeightLines(exercises, lastByName) : []
+  const planned = lines.some(line => line.source === 'plan')
   const trainingRow = () => h('div', { key: 'training', style: row, 'data-u5-training': '' },
     h('p', { style: label }, `Træning · ${training.logged ?? 0} af ${training.total ?? 0} sæt`),
-    h('p', { style: { ...hint, margin: 0 } }, 'Start dagens pas lige herunder. Første sæt står klar til ét tryk.'))
+    lines.length > 0 && h('ul', { 'data-u6-plan-weight': '', style: { ...hint, margin: '0 0 6px', paddingLeft: 18 } },
+      ...lines.slice(0, 4).map(line => h('li', { key: line.id, 'data-u6-source': line.source }, planWeightText(line))),
+      lines.length > 4 && h('li', { key: 'flere' }, `${lines.length - 4} øvelser mere i passet`)),
+    h('p', { style: { ...hint, margin: 0 } }, planned
+      ? 'Coachens vægt står i første sæt. Ret den, hvis dagen siger noget andet.'
+      : 'Start dagens pas lige herunder. Første sæt står klar til ét tryk.'))
   const repeatYesterday = async () => {
     if (copy?.running || !mealData?.yesterday.length) return
     const list = mealData.yesterday
