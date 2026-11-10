@@ -19,16 +19,34 @@ export function plannedWeight(exercise) {
   return weight != null && weight > 0 ? round(weight) : null
 }
 
+// U7 del 2 (kontrollens bemærkning til U6): hedder topsæt og backoff det samme, må "(+2,5)"
+// ikke regnes mod backoff. Med topSet regnes forskellen mod dagens tungeste sæt af navnet
+// sidste gang (top fra readLastWeights), og kun den tungeste planlagte række af navnet i dag
+// får en forskel; en backoff-række med samme navn står uden tal i parentes.
+function topSetOnly(exercises) {
+  const heaviest = new Map()
+  for (const ex of exercises) {
+    const plan = plannedWeight(ex)
+    if (!ex?.id || !key(ex.name) || plan == null) continue
+    const best = heaviest.get(key(ex.name))
+    if (!best || plan > best.plan) heaviest.set(key(ex.name), { id: ex.id, plan })
+  }
+  return ex => heaviest.get(key(ex.name))?.id === ex.id
+}
+
 // Én linje pr. øvelse i dagens pas: coachens plan med forskellen mod sidst, ellers sidste pas.
-export function planWeightLines(exercises, lastByName) {
+export function planWeightLines(exercises, lastByName, { topSet = false } = {}) {
   if (!Array.isArray(exercises)) return []
   const lines = []
+  const isTop = topSet ? topSetOnly(exercises) : () => true
   for (const ex of exercises) {
     if (!ex?.id || !key(ex.name)) continue
-    const lastWeight = parseInputNumber(lastByName?.[key(ex.name)]?.weight)
+    const previous = lastByName?.[key(ex.name)]
+    const lastWeight = parseInputNumber(topSet && previous?.top != null ? previous.top : previous?.weight)
     const last = lastWeight != null && lastWeight > 0 ? round(lastWeight) : null
     const plan = plannedWeight(ex)
-    if (plan != null) lines.push({ id: ex.id, name: ex.name.trim(), weight: plan, source: 'plan', delta: last == null ? null : round(plan - last) })
+    if (plan != null) lines.push({ id: ex.id, name: ex.name.trim(), weight: plan, source: 'plan',
+      delta: last == null || !isTop(ex) ? null : round(plan - last) })
     else if (last != null) lines.push({ id: ex.id, name: ex.name.trim(), weight: last, source: 'last', delta: null })
   }
   return lines

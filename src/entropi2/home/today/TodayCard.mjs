@@ -4,6 +4,7 @@ import { formatKg, stepKg, latestWeight, weightDone, readinessDone, readinessSug
 import { readTodayMeals, copyYesterdayMeals, readLastWeights } from './todayRead.mjs'
 import { u6Enabled } from '../../u6/flag.mjs'
 import { planWeightLines, planWeightText, planFirstSetPrefill } from '../../u6/planWeight.mjs'
+import { u7Enabled } from '../../u7/flag.mjs'
 
 // Hooks hentes via navnerummet, som i U3's kort: lukkede prøveharnesser kan erstatte 'react'
 // for forsiden. Kortet skriver kun gennem værtens eksisterende logWeight og saveReadiness:
@@ -151,7 +152,7 @@ export default function TodayCard(props) {
         h('p', { style: hint }, 'Fire korte svar. Næste gang er det ét tryk.')))
 
   // Start bliver i "Dit næste pas" lige under kortet; her står kun status, så handlingen ikke findes to gange.
-  const lines = planOn && trainingToday ? planWeightLines(exercises, lastByName) : []
+  const lines = planOn && trainingToday ? planWeightLines(exercises, lastByName, { topSet: u7Enabled('topSet', props.u7TopSet) }) : []
   const planned = lines.some(line => line.source === 'plan')
   const trainingRow = () => h('div', { key: 'training', style: row, 'data-u5-training': '' },
     h('p', { style: label }, `Træning · ${training.logged ?? 0} af ${training.total ?? 0} sæt`),

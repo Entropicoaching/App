@@ -41,11 +41,15 @@ export async function readLastWeights({ athleteId, client } = {}) {
     const result = await database.from('exercise_logs').select('weight, reps_completed, logged_at, skipped, exercises(name)')
       .eq('athlete_id', athleteId).order('logged_at', { ascending: false }).limit(500)
     if (result?.error || !Array.isArray(result?.data)) return null
-    const map = {}
+    const map = {}, days = {}
     for (const log of result.data) {
       const name = log?.exercises?.name
-      if (typeof name === 'string' && !log.skipped && !map[name.trim().toLowerCase()] && log.weight > 0)
-        map[name.trim().toLowerCase()] = { weight: log.weight, reps_completed: log.reps_completed }
+      if (typeof name !== 'string' || log.skipped || !(log.weight > 0)) continue
+      const k = name.trim().toLowerCase(), day = typeof log.logged_at === 'string' ? calendarDay(log.logged_at) : null
+      if (!map[k]) { map[k] = { weight: log.weight, reps_completed: log.reps_completed, top: log.weight }; days[k] = day }
+      // U7: top er det tungeste sæt af navnet samme dag som det seneste, så et backoff
+      // med samme navn ikke bliver "sidst" for topsættet. Bruges kun bag U7-flaget.
+      else if (day && day === days[k] && Number(log.weight) > Number(map[k].top)) map[k].top = log.weight
     }
     return map
   } catch { return null }
