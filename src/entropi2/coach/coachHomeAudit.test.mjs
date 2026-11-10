@@ -78,6 +78,8 @@ test('home audit: refresh in progress disables the error retry and never reports
 
 test('home audit: only confirmed empty reads permit an all-clear conclusion', () => {
   const p = productionFixture(); p.coachActionsStatus.activity.rows = []; p.calendarWeeks[athleteId] = []
+  // U3: fixturens kost ligger under 80 % af proteinmålet og giver nu en grund. Her prøves kun læsningerne.
+  for (const row of p.coachNutrition.rows) row.protein = 100
   assert.match(text(attention(p)), /Ingen atleter kræver dit blik lige nu/)
   p.coachActionsStatus.activity.state = 'partial'
   assert.doesNotMatch(text(attention(p)), /Ingen atleter kræver/)

@@ -32,14 +32,14 @@ export function BlocksTable({ model }) {
     ['Vægt', block => value(block, b => b.weight === null ? null : `${formatNumber(b.weight, 1)} kg`)],
     ['Readiness', block => value(block, b => b.readiness === null ? null : formatNumber(Math.round(b.readiness)))],
   ]
-  return h('div', { 'data-u3-blocks': true, style: { overflowX: 'auto', maxWidth: '100%' } },
+  return h('div', { 'data-u3-blocks': true, style: { overflowX: 'auto', maxWidth: '100%', textAlign: 'left' } },
     h('table', { style: { borderCollapse: 'collapse', fontSize: '0.9rem', minWidth: '100%' } },
       h('thead', null, h('tr', null, h('th', { style: head, scope: 'col' }, ''),
         ...blocks.map((b, i) => h('th', { key: i, scope: 'col', style: { ...cell, fontWeight: 600 } }, b.current ? 'Nu' : b.name)))),
       h('tbody', null, ...rows.map(([label, render]) => h('tr', { key: label },
         h('th', { scope: 'row', style: head }, label),
         ...blocks.map((b, i) => h('td', { key: i, style: cell }, render(b))))))),
-    h('p', { style: { lineHeight: 1.6, opacity: 0.8 } },
+    h('p', { style: { lineHeight: 1.6, opacity: 0.8, textAlign: 'left' } },
       `${blocks.map(b => `${b.current ? 'Nu' : b.name}: ${b.light ? 'let blok, ' : ''}${b.completedWeeks} ${b.completedWeeks === 1 ? 'afsluttet uge' : 'afsluttede uger'}`).join(' · ')}. e1RM er bedste tunge sæt i blokken. Vægt er snittet af blokkens sidste 7 dage.`))
 }
 
@@ -71,7 +71,8 @@ export default function BlocksView({ client, athleteId, now, source = 'coach', f
   return h('details', { ...foldProps, 'data-u3-blocks-fold': source,
     onToggle: event => { if (event.target === event.currentTarget) setOpen(event.currentTarget.open) } },
     h('summary', { style: summaryStyle ?? { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Blok for blok'),
-    open && (!model ? h('p', { role: 'status' }, 'Henter blokke…')
+    h('p', { style: { lineHeight: 1.6, opacity: 0.8, textAlign: 'left' } }, 'Bedste e1RM, pas, sæt, vægt og readiness for de seneste op til 4 programblokke.'),
+    open && (!model ? h('p', { role: 'status', style: { textAlign: 'left' } }, 'Henter blokke…')
       : model.status === 'unknown' ? h('p', { role: 'status' }, 'Blokkene kunne ikke hentes.')
         : h(BlocksTable, { model })))
 }

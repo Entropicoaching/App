@@ -106,7 +106,7 @@ test('loft på exercise_logs skjuler kun G3, loft på meal_logs kun G1 og G2', a
 test('"Holdet samlet" er en lukket fold under Holdoverblik, kun med flaget, og læser ikke før den åbnes', () => {
   const client = fakeU3Client({})
   const p = { ...productionFixture(), today: coachDay, notesClient: client }
-  assert.doesNotMatch(render(h(CoachView, p)), /Holdet samlet/)
+  assert.doesNotMatch(render(h(CoachView, { ...p, u3Data: false })), /Holdet samlet/)
   const html = render(h(CoachView, { ...p, u3Data: true }))
   assert.match(html, /data-coach-fold="hold"[\s\S]*data-coach-fold="holdet-samlet"[\s\S]*Holdet samlet/)
   assert.doesNotMatch(html, /data-coach-fold="holdet-samlet"[^>]*open/)

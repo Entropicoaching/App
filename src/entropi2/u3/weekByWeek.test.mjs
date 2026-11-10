@@ -47,7 +47,7 @@ test('der er ingen pile og ingen årsagstekst, og coachen ser "mod nuværende m�
 test('arbejdsrummet viser ingen af de to folde uden klient eller med u3 falsk, og der sker ingen L3-læsning', () => {
   const client = fakeU3Client({})
   const p = { ...productionFixture(), today: coachDay, athletesOpen: true }
-  for (const extra of [{}, { notesClient: client }, { u3Data: true }, { notesClient: client, u3Data: false }]) {
+  for (const extra of [{ u3Data: false }, { notesClient: client, u3Data: false }, { u3Data: true }, {}]) {
     const html = render(h(CoachView, { ...p, ...extra }))
     assert.doesNotMatch(html, /Uge for uge|Blok for blok/)
   }

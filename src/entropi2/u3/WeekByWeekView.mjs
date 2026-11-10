@@ -8,7 +8,7 @@ const head = { ...cell, position: 'sticky', left: 0, background: '#1c1c18', text
 
 export function WeekByWeekTable({ model }) {
   if (!model) return null
-  return h('div', { 'data-u3-week-by-week': true },
+  return h('div', { 'data-u3-week-by-week': true, style: { textAlign: 'left' } },
     h('div', { style: { overflowX: 'auto', maxWidth: '100%' } },
       h('table', { style: { borderCollapse: 'collapse', fontSize: '0.9rem', minWidth: '100%' } },
         h('thead', null, h('tr', null, h('th', { style: head, scope: 'col' }, ''),
@@ -17,7 +17,7 @@ export function WeekByWeekTable({ model }) {
           h('th', { scope: 'row', style: head }, label),
           ...values.map((v, i) => h('td', { key: i, style: cell }, v))))))),
     ...model.couplings.map((text, i) => h('p', { key: i, 'data-u3-coach-coupling': true, style: { lineHeight: 1.6 } }, text)),
-    h('p', { style: { lineHeight: 1.6, opacity: 0.8 } }, model.note))
+    h('p', { style: { lineHeight: 1.6, opacity: 0.8, textAlign: 'left' } }, model.note))
 }
 
 // Fold i coachens arbejdsrum. L3 med kost læses først, når folden åbnes.
@@ -36,6 +36,7 @@ export default function WeekByWeekView({ client, athlete, now, foldProps = {}, s
   return h('details', { ...foldProps, 'data-u3-week-by-week-fold': true,
     onToggle: event => { if (event.target === event.currentTarget) setOpen(event.currentTarget.open) } },
     h('summary', { style: summaryStyle ?? { minHeight: 48, cursor: 'pointer' } }, 'Uge for uge'),
+    h('p', { style: { lineHeight: 1.6, opacity: 0.8, textAlign: 'left' } }, 'Kost, belastning, e1RM og vægt side om side for de seneste 4 afsluttede uger.'),
     open && (data?.failed ? h('p', { role: 'status' }, 'Ugerne kunne ikke hentes.')
       : model ? h(WeekByWeekTable, { model }) : h('p', { role: 'status' }, 'Henter uger…')))
 }

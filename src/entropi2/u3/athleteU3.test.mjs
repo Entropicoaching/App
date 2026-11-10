@@ -67,10 +67,10 @@ const analysisProps = extra => ({ entropi2: true, now, athlete: ATHLETE, current
 
 test('med flaget slukket er Analysis uændret, og der sker ingen L4-læsning', () => {
   const client = fakeU3Client(tables())
-  const before = renderAnalysis(analysisProps()).textContent
-  const after = renderAnalysis(analysisProps({ u3Client: client })).textContent
+  const before = renderAnalysis(analysisProps({ u3Data: false })).textContent
+  const after = renderAnalysis(analysisProps({ u3Client: client, u3Data: false })).textContent
   assert.equal(after, before)
-  assert.equal(render(h(Analysis, analysisProps({ u3Client: client }))), render(h(Analysis, analysisProps())))
+  assert.equal(render(h(Analysis, analysisProps({ u3Client: client, u3Data: false }))), render(h(Analysis, analysisProps({ u3Data: false }))))
   assert.equal(client.calls.length, 0)
   // Med flaget tændt monteres ugekortet øverst, lige under overskriften.
   const on = render(h(Analysis, analysisProps({ u3Client: client, u3Data: true })))

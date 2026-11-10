@@ -124,7 +124,7 @@ export function CoachView(input = {}) {
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
       h(CoachTeamRegistrations, { enabled: true, model: team })),
     // U3 afsnit 3: "Holdet samlet" uden navne. Læser først, når folden åbnes.
-    team && u3DataEnabled(props.u3Data) && props.notesClient && model.rosterReady && h(TeamPatternsView, {
+    !inbox && u3DataEnabled(props.u3Data) && props.notesClient && model.rosterReady && h(TeamPatternsView, {
       client: props.notesClient, day: model.day, athletes: teamAthletes(model.athletes, model.day),
       targets: new Map(model.athletes.map(a => [a.id, props.coachNutrition?.targets?.find?.(t => t?.athlete_id === a.id)?.protein_target ?? a.protein_target])),
       foldProps: { 'aria-label': 'Holdet samlet', 'data-coach-fold': 'holdet-samlet', style: fold },

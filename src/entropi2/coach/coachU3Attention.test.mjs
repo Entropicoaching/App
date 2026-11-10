@@ -19,7 +19,7 @@ function fixture({ notes = [], readiness = [], voices = null, protein = 120, u3 
   // Tre programuger frem, så "Programmet slutter" ikke blander sig i prøverne.
   const future = ['2026-11-02', '2026-11-09', '2026-11-16'].map((start_date, i) => ({ start_date, week_number: 45 + i, session_count: 1, exercise_count: 1 }))
   p.calendarWeeks[athleteId] = [...(voices ?? []), ...future.filter(f => !voices?.some(v => v.start_date === f.start_date))]
-  if (u3) p.u3Data = true
+  p.u3Data = u3
   p.u3Attention = { day, ids: [athleteId], complete, readiness: complete ? readiness : null, notes: complete ? notes : null }
   return p
 }

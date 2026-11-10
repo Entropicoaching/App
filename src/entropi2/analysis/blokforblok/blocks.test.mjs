@@ -87,7 +87,7 @@ test('L3 læser sider af 1000 og gør logs ukendte over 5000 rækker', async () 
   assert.equal(model.blocks.every(b => Object.values(b.lifts).every(v => v === null)), true)
 })
 
-const coachProps = extra => ({ ...productionFixture(), today: coachDay, athletesOpen: true, ...extra })
+const coachProps = extra => ({ ...productionFixture(), today: coachDay, athletesOpen: true, u3Data: false, ...extra })
 test('arbejdsrummet viser ikke folden uden klient eller med u3 falsk, og der sker ingen L3-læsning', () => {
   const client = fakeU3Client({})
   assert.doesNotMatch(render(h(CoachView, coachProps())), /Blok for blok/)
@@ -101,7 +101,7 @@ test('arbejdsrummet viser ikke folden uden klient eller med u3 falsk, og der ske
 test('Fremgang har blok for blok nederst, kun med flaget og en klient', () => {
   const props = { entropi2: true, now, athlete: { id: 'atlet-a' }, currentWeek: { start_date: '2026-11-16', sessions: [] }, exerciseLogs: [], fremgangLogs: [] }
   const client = fakeU3Client({})
-  assert.doesNotMatch(render(h(Analysis, { ...props, u3Client: client })), /Blok for blok/)
+  assert.doesNotMatch(render(h(Analysis, { ...props, u3Client: client, u3Data: false })), /Blok for blok/)
   const html = render(h(Analysis, { ...props, u3Client: client, u3Data: true }))
   assert.match(html, /data-u3-blocks-fold="athlete"[\s\S]*Om datagrundlaget/)
   assert.equal(client.calls.length, 0)
