@@ -24,13 +24,14 @@ export function useDayRow({ enabled, client, athleteId, date, storage }) {
     return () => { active = false }
   }, [key, client, athleteId, date, storage])
   const current = state.key === key ? state : { status: key ? 'loading' : 'off', row: null }
-  const save = React.useCallback(async patch => {
+  // Ingen useCallback: lukkede prøveværter giver kun useState, useEffect og useRef.
+  const save = async patch => {
     if (!key) return 'off'
     const result = await saveDaily({ client, athleteId, date, patch })
     if (result === 'saved' && latest.current === key)
       setState(s => s.key === key ? { ...s, status: 'ready', row: { ...(s.row ?? { athlete_id: athleteId, logged_date: date }), ...patch } } : s)
     return result
-  }, [key, client, athleteId, date])
+  }
   return { status: current.status, row: current.row, save }
 }
 
@@ -48,11 +49,11 @@ export function useWaterTarget({ enabled, client, athleteId, date }) {
     return () => { active = false }
   }, [key, client, athleteId, date])
   const current = state.key === key ? state : { status: key ? 'loading' : 'off', goal: null }
-  const save = React.useCallback(async ml => {
+  const save = async ml => {
     if (!key || current.status !== 'ready') return current.status
     const result = await appendTarget({ client, athleteId, day: date, fields: { water_ml: ml } })
     if (result === 'saved') setState(s => s.key === key ? { ...s, goal: ml } : s)
     return result
-  }, [key, client, athleteId, date, current.status])
+  }
   return { status: current.status, goal: current.goal, save }
 }
