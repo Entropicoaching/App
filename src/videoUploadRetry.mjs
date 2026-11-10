@@ -1,6 +1,19 @@
-export function videoUploadRetryEnabled() {
-  try { return globalThis.localStorage?.getItem('vc_upload_retry_v1') === '1' }
-  catch { return false }
+// U4: ét flag for uploadmodulet med "Prøv igen" (VC-UPLOAD2). Appen bærer det til
+// videosiden som uploadRetry=1 i iframens adresse. vc_upload_retry_v1 = '1' tænder og
+// '0' slukker på én enhed; ellers gælder standardværdien.
+export const DEFAULT_VC_UPLOAD_RETRY = false
+
+export function videoUploadRetryEnabled(storage = () => globalThis.localStorage) {
+  let value = null
+  try { value = storage()?.getItem('vc_upload_retry_v1') ?? null }
+  catch { value = null }
+  if (value === '1') return true
+  if (value === '0') return false
+  return DEFAULT_VC_UPLOAD_RETRY === true
+}
+
+export function withUploadRetryFlag(url, enabled = videoUploadRetryEnabled()) {
+  return enabled === true ? url + (url.includes('?') ? '&' : '?') + 'uploadRetry=1' : url
 }
 
 // No automatic retries and no alternate transport. Normalize thrown network

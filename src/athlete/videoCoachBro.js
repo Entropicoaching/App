@@ -4,10 +4,11 @@ import { withDataEnoughFlag } from '../dataEnough.mjs'
 // iframen, fetchAthlete (isUuid) og feedback-kortene (athleteVideoPathPreview).
 import { validateVideoCoachPayloadBounds } from '../videoCoachSubmission.js'
 import { VIDEOCOACH_BUILD_ID } from '../videoCoachVersion.js'
+import { withUploadRetryFlag } from '../videoUploadRetry.mjs'
 
 const ATHLETE_VIDEOCOACH_PREFIX = 'entropi:videocoach:v3'
 const ATHLETE_VIDEOCOACH_QUEUE_CHANGED = 'entropi:videocoach:queue-changed'
-const ATHLETE_VIDEOCOACH_URL = withDataEnoughFlag(`videocoach.html?mode=athlete&bridge=athlete-v1&v=${VIDEOCOACH_BUILD_ID}`)
+const ATHLETE_VIDEOCOACH_URL = withUploadRetryFlag(withDataEnoughFlag(`videocoach.html?mode=athlete&bridge=athlete-v1&v=${VIDEOCOACH_BUILD_ID}`))
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const ATHLETE_VIDEOCOACH_COLUMNS = new Set([
   'client_analysis_id', 'athlete_id', 'athlete_name', 'source_mode', 'status',

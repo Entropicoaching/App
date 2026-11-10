@@ -1,11 +1,18 @@
 // VC-UPLOAD2. Storage upload() cannot resume partial bytes. Retry is manual.
-export function uploadRetryEnabled(storage = () => globalThis.localStorage) {
-  try { return storage()?.getItem('vc_upload_retry_v1') === '1' }
+// U4: appen bærer flaget (DEFAULT_VC_UPLOAD_RETRY i src/videoUploadRetry.mjs) hertil som
+// uploadRetry=1 i adressen. vc_upload_retry_v1 = '1' tænder og '0' slukker på én enhed.
+export function uploadRetryEnabled(storage = () => globalThis.localStorage, search = globalThis.location?.search) {
+  let value = null
+  try { value = storage()?.getItem('vc_upload_retry_v1') ?? null }
+  catch { value = null }
+  if (value === '1') return true
+  if (value === '0') return false
+  try { return new URLSearchParams(search || '').get('uploadRetry') === '1' }
   catch { return false }
 }
 
-export function mountUploadRetry(document, retry, storage) {
-  if (!uploadRetryEnabled(storage)) return null
+export function mountUploadRetry(document, retry, storage, search) {
+  if (!uploadRetryEnabled(storage, search)) return null
   const panel = document.createElement('div')
   panel.id = 'vcUploadRetryStatus'
   panel.hidden = true
