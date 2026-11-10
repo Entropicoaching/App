@@ -1,12 +1,14 @@
 import * as React from 'react'
-const { useLayoutEffect, useMemo, useRef, useState } = React
+const { useEffect, useLayoutEffect, useMemo, useRef, useState } = React
 import { createWaterDayLog, waterLimits, waterQuantity } from './waterDayLogModel.mjs'
 import WaterGoal from './WaterGoal.mjs'
+import { useDayRow, useWaterTarget } from '../../u7/useDayRow.mjs'
+import { u7Enabled } from '../../u7/flag.mjs'
 
 const control = { minHeight: 44, minWidth: 44, font: 'inherit', maxWidth: '100%', boxSizing: 'border-box' }
 const time = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen', hour: '2-digit', minute: '2-digit' })
 
-export default function WaterDayLog({ enabled = false, athleteId, date, client, currentDay, storage, gateRef }) {
+export default function WaterDayLog({ enabled = false, athleteId, date, client, currentDay, storage, gateRef, u7DayData }) {
   const scope = useMemo(() => ({ enabled, athleteId, date, client, currentDay, storage, gateRef }),
     [enabled, athleteId, date, client, currentDay, storage, gateRef])
   const live = useRef(null)
@@ -15,6 +17,12 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
   const [error, setError] = useState('')
   const [edit, setEdit] = useState(null)
   const pendingEdit = useRef(null)
+  // U7: med tabellerne gemmes dagens total og væskemålet også i databasen; uden dem som i U6.
+  const u7 = enabled === true && u7Enabled('dayData', u7DayData)
+  const day = useDayRow({ enabled: u7, client, athleteId, date, storage })
+  const target = useWaterTarget({ enabled: u7, client, athleteId, date })
+  const shared = day.status === 'ready'
+  const seeded = useRef(null)
   useLayoutEffect(() => {
     let active = true
     live.current = scope
@@ -35,11 +43,21 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
   }, [scope, enabled, athleteId, date, client, storage, currentDay, gateRef])
   const matches = enabled === true && record?.scope === scope
   const controller = matches ? record.controller : null, s = matches ? record.snapshot : null
+  // Ny telefon: er dagen tom her, men har databasen vand for i dag, lægges tallet ind én gang.
+  const serverMl = shared ? day.row?.water_ml : null
+  useEffect(() => {
+    if (!(serverMl > 0) || !controller?.isCurrent() || seeded.current === scope) return
+    const snap = controller.snapshot()
+    if (snap.status !== 'ready' || snap.entries.length) return
+    seeded.current = scope
+    if (controller.add(String(Math.min(serverMl, waterLimits.ml)))) setRecord({ scope, controller, snapshot: controller.snapshot() })
+  }, [serverMl, controller, scope])
   if (enabled !== true) return null
   const update = action => {
     if (live.current !== scope || !controller?.isCurrent()) return false
     const changed = action(), snapshot = controller.snapshot()
     setRecord({ scope, controller, snapshot })
+    if (changed && shared) day.save({ water_ml: snapshot.totalMl })
     setError(changed ? '' : snapshot.status === 'conflict'
       ? 'Registreringen er ændret eller fjernet i den lokale lagring. Rettelsen er ikke gemt. Genåbn visningen for at læse den aktuelle log.'
       : snapshot.status === 'unconfirmed'
@@ -51,11 +69,12 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
   // U1: the goal and the filling glass stay visible; the detailed log folds below.
   return React.createElement('div', null,
     s && React.createElement(WaterGoal, { athleteId, storage, totalMl: s.totalMl,
+      ...(target.status === 'ready' ? { serverGoal: target.goal, onGoalSaved: target.save } : {}),
       canAdd: s.entries.length < waterLimits.entries, add: value => update(() => controller.add(value)) }),
     React.createElement('details', { style: { padding: 16, overflowWrap: 'anywhere' } },
     React.createElement('summary', { style: { ...control, cursor: 'pointer', padding: 12 } }, 'Væske i dag'),
     React.createElement('p', null, 'Registrér kun vand, du har drukket. Portionerne er mængdevalg.'),
-    React.createElement('p', null, 'Kun lokal lagring på denne enhed. Deles ikke med din coach.'),
+    React.createElement('p', null, shared ? 'Gemmes på denne enhed og i din profil, så din coach kan se dagens total.' : 'Kun lokal lagring på denne enhed. Deles ikke med din coach.'),
     !s && React.createElement('p', { role: 'status' }, 'Væskeloggen er kun tilgængelig for den aktuelle atlet og i dag.'),
     s && React.createElement('div', null,
       React.createElement('p', { role: 'status', 'aria-live': 'polite' }, s.entries.length ? `Registreret vand i dag: ${s.totalMl} ml.` : 'Intet vand registreret i dag.'),
@@ -111,7 +130,7 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
                 if (live.current !== scope || !controller?.isCurrent() || pendingEdit.current !== editing) return
                 pendingEdit.current = null; setEdit(null); setError('')
               } }, 'Annuller'))))),
-      React.createElement('p', { role: 'status' }, s.status === 'saved' ? 'Gemt på denne enhed. Deles ikke med din coach.'
+      React.createElement('p', { role: 'status' }, s.status === 'saved' ? (shared ? 'Gemt. Din coach kan se dagens total.' : 'Gemt på denne enhed. Deles ikke med din coach.')
         : s.status === 'ready' ? 'Ændringer gemmes kun på denne enhed, når du tilføjer, retter eller fjerner en registrering.'
           : s.status === 'unreadable' ? 'Lokal lagring kunne ikke læses sikkert. Nye ændringer vises kun her, indtil visningen lukkes; tidligere data overskrives ikke.'
             : 'Lagringen kunne ikke bekræftes. Listen vises kun her, indtil visningen lukkes; genåbning kan vise andre registreringer.')),

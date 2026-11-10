@@ -17,6 +17,8 @@ import { readHomeRecordHistory } from './homeRecordRead.mjs'
 import { formatHistoryKg } from '../analysis/fourWeekHistory.mjs'
 import TodayCard from './today/TodayCard.mjs'
 import { u5TodayEnabled } from './today/flag.mjs'
+import DayFeeling from '../u7/DayFeeling.mjs'
+import { u7Enabled } from '../u7/flag.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -185,6 +187,9 @@ export default function AthleteHome(props) {
     u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData,
       u5Training: model.kind === 'today' || model.kind === 'done' ? { kind: model.kind, logged: model.logged, total: model.total,
         exercises: target?.session.exercises } : null }),
+    // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
+    u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && athlete?.id && model.today && h(DayFeeling, {
+      key: `u7:${athlete.id}:${model.today}`, athleteId: athlete.id, today: model.today, client: props.u5Client, storage: props.storage }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading },
       !(programLoading || programError) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'

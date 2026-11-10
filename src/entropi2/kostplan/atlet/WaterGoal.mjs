@@ -2,7 +2,7 @@ import * as React from 'react'
 import { readWaterGoal, saveWaterGoal, waterGoalLimits, waterGoalValue, waterProgress } from './waterGoalModel.mjs'
 
 const h = React.createElement
-const { useMemo, useState } = React
+const { useEffect, useMemo, useState } = React
 const control = { minHeight: 44, minWidth: 44, font: 'inherit', maxWidth: '100%', boxSizing: 'border-box', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
 const ml = value => new Intl.NumberFormat('da-DK').format(Math.round(value))
 
@@ -18,7 +18,7 @@ export function WaterGlass({ fraction, reached }) {
 }
 
 // Væskemål øverst i væskekortet. add(ml) er væskeloggens egen tilføjelse.
-export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd }) {
+export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd, serverGoal, onGoalSaved }) {
   const device = useMemo(() => {
     try { return storage === undefined ? globalThis.localStorage : storage } catch { return null }
   }, [storage])
@@ -26,6 +26,11 @@ export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd }) 
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState('')
   const [message, setMessage] = useState('')
+  // U7: med tabellen er målet i databasen det gældende; telefonen får en kopi til brug uden net.
+  useEffect(() => {
+    if (serverGoal == null) return
+    setGoal(current => current === serverGoal ? current : (saveWaterGoal(device, athleteId, String(serverGoal)), serverGoal))
+  }, [serverGoal, device, athleteId])
   const p = waterProgress(totalMl, goal)
   const save = event => {
     event.preventDefault()
@@ -33,6 +38,7 @@ export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd }) 
     const saved = saveWaterGoal(device, athleteId, draft)
     if (saved === null) { setMessage('Målet kunne ikke gemmes på denne enhed. Prøv igen.'); return }
     setGoal(saved); setEditing(false); setDraft(''); setMessage('')
+    onGoalSaved?.(saved)
   }
   const form = h('form', { onSubmit: save, style: { display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'end' } },
     h('label', { style: { display: 'block' } }, 'Dagens væskemål (ml)',

@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { kostvane, readDone, saveDone, KOSTDAGE_MAAL } from './kostvaneModel.mjs'
+import { useDayRow } from '../../u7/useDayRow.mjs'
+import { u7Enabled } from '../../u7/flag.mjs'
 
 const h = React.createElement
-const { useState, useSyncExternalStore } = React
+const { useEffect, useState, useSyncExternalStore } = React
 const card = { margin: 16, padding: 16, borderRadius: 12, background: '#24241f', border: '1px solid #414139', color: '#edeae2' }
 const primary = { minHeight: 48, width: '100%', font: 'inherit', fontWeight: 600, background: '#edeae2', color: '#16160f', border: 0, borderRadius: 10, padding: '10px 14px', marginTop: 8 }
 const none = Object.freeze({ loaded: false })
@@ -26,11 +28,18 @@ function Dots({ dage }) {
 
 // Dagens kostvane: tre korte trin. Bruger kostloggens egen controller (log, snapshot),
 // så måltiderne gemmes i de samme logs som i dag. "Færdig for i dag" er kun lokal.
-export default function KostvaneCheckin({ tracker, athleteId, date, storage }) {
+export default function KostvaneCheckin({ tracker, athleteId, date, storage, client, u7DayData }) {
   const s = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || (() => none), tracker?.snapshot || (() => none))
   const device = storage === undefined ? (typeof localStorage === 'undefined' ? null : localStorage) : storage
   const [done, setDone] = useState(() => knownDone(device, athleteId, date))
   const [copy, setCopy] = useState(null)
+  // U7: med tabellen følger "færdig for i dag" med til en ny telefon og ses af coachen.
+  const day = useDayRow({ enabled: u7Enabled('dayData', u7DayData), client, athleteId, date, storage: device })
+  const serverDone = day.status === 'ready' && day.row?.kost_done_at != null
+  useEffect(() => {
+    if (!serverDone || done) return
+    saveDone(device, athleteId, date); doneCache.set(athleteId + '|' + date, true); setDone(true)
+  }, [serverDone, done, device, athleteId, date])
   const v = kostvane(s?.athleteId === athleteId && s?.date === date ? s : none, done)
   const repeatYesterday = async () => {
     if (!tracker || copy?.running) return
@@ -45,7 +54,10 @@ export default function KostvaneCheckin({ tracker, athleteId, date, storage }) {
     setCopy({ running: false, saved, total: meals.length })
   }
   // A failed local save still checks the day in for this open view.
-  const finish = () => { saveDone(device, athleteId, date); doneCache.set(athleteId + '|' + date, true); setDone(true) }
+  const finish = () => {
+    saveDone(device, athleteId, date); doneCache.set(athleteId + '|' + date, true); setDone(true)
+    if (day.status === 'ready') day.save({ kost_done_at: new Date().toISOString() })
+  }
   if (v.phase !== 'ready') return h('section', { 'aria-label': 'Dagens kostvane', style: card },
     h('h2', { style: { margin: 0, color: '#edeae2' } }, 'Dagens kostvane'), h('p', { role: 'status' }, 'Henter din kostlog…'))
   const stepText = ['Log dagens mad', 'Tjek dagens tal', 'Færdig for i dag']
