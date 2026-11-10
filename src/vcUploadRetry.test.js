@@ -26,7 +26,7 @@ test('DOM: explicit retry retains file, shows full-restart fallback, never auto 
   assert.equal(text.attrs.role, 'status')
   assert.equal(text.attrs['aria-live'], 'polite')
   await assert.rejects(send(), /offline/)
-  assert.match(text.textContent, /starter forfra/)
+  assert.match(text.textContent, /Ikke sendt/)
   assert.equal(retry.hidden, false)
   assert.equal(calls, 1)
   await retry.onclick()

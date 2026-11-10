@@ -105,3 +105,25 @@ test('U4 2: en fil under grænsen sendes stadig', async () => {
     assert.equal(h.f.rows.length, 1)
   } finally { h.f.restore() }
 })
+
+test('U4 3: afbrudt forbindelse giver "Ikke sendt" og én Prøv igen; nyt forsøg sender', async () => {
+  let attempts = 0
+  const h = await htmlSend({ upload: async () => { if (++attempts === 1) throw TypeError('Failed to fetch'); return {} } })
+  try {
+    await h.send()
+    const [text, retry] = h.panel.children
+    assert.match(text.textContent, /^Ikke sendt\. Videoen er stadig valgt/)
+    assert.doesNotMatch(text.textContent, /uploadklienten|delvis fil/)
+    assert.equal(retry.hidden, false)
+    assert.equal(retry.textContent, 'Prøv igen')
+    assert.equal(h.saveBtn.hidden, true)
+    assert.match(h.said.at(-1), /^Ikke sendt\. /)
+    assert.equal(h.state.value, 'ready')
+    await retry.onclick()
+    assert.equal(attempts, 2)
+    assert.equal(h.state.value, 'sent')
+    assert.equal(h.saveBtn.hidden, false)
+    assert.equal(h.f.rows.length, 1)
+    assert.equal(retry.hidden, true)
+  } finally { h.f.restore() }
+})

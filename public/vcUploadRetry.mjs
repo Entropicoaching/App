@@ -63,7 +63,7 @@ export function mountUploadRetry(document, retry, storage, search) {
         return result
       }, error => {
         if (error?.vcAborted) show('Annulleret. Videoen er stadig valgt.')
-        else show('Videoen blev ikke sendt. Videoen er stadig valgt. Prøv igen. Overførslen starter forfra, da uploadklienten ikke kan genoptage en delvis fil. Behold denne skærm åben.', true)
+        else show('Ikke sendt. Videoen er stadig valgt, så du skal ikke vælge den igen. Tryk Prøv igen, og hold skærmen åben, til den er sendt.', true)
         throw error
       }).finally(() => { active = null })
       return active
