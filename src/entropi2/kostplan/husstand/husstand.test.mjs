@@ -48,6 +48,16 @@ test('hver dag rammer energi inden for 5 %, protein inden for -5/+10 % og fedtgu
   }
 })
 
+test('samme ret: den største portion har aldrig mindre kød, mejeri eller grønt end den mindste', () => {
+  for (const dag of PLAN) for (const slot of SLOTS) {
+    const a = dag.personer.a.maaltider[slot], b = dag.personer.b.maaltider[slot]
+    const r = HUSSTAND_OPSKRIFTER.find(x => x.id === a.recipeId)
+    for (const [n, item] of a.items.entries()) if (item.foodId !== r.flex && item.foodId !== r.fedtflex) {
+      assert.ok(item.grams >= b.items[n].grams, `${dag.dato} ${slot} ${item.name}`)
+    }
+  }
+})
+
 test('protein fordeles på mindst 4 måltider med mindst 0,25 g/kg-niveau (20 g) hver', () => {
   for (const dag of PLAN) for (const p of Object.values(dag.personer)) {
     const med = SLOTS.filter(slot => p.maaltider[slot].totals.protein >= 20)
