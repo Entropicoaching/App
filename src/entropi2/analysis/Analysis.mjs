@@ -19,6 +19,8 @@ import { buildAthleteOverview } from '../tracking/atlet/overview.mjs'
 import { readinessSections } from '../tracking/atlet/readinessSections.mjs'
 import { analysisWeightProps, latestAnalysisWeightDate } from './analysisWeight.mjs'
 import WeightReadStatus from './WeightReadStatus.mjs'
+import { u3DataEnabled } from '../u3/flag.mjs'
+import AthleteWeekCard from '../u3/AthleteWeekCard.mjs'
 
 const explanationSummaryStyle = { minHeight: 44, paddingTop: 12, paddingBottom: 12,
   boxSizing: 'border-box', cursor: 'pointer', opacity: 0.8 }
@@ -62,10 +64,14 @@ export default function Analysis(props = {}) {
   const showMore = extras.progress || (!strengthUnavailable && extras.load) || extras.share || showRpe ||
     visibleRecords || volumeWeeks.length > 0 || visibleAnswers.length > 0
   const showSecondary = showReport || showMineData || showIntensity || showMore
+  // U3: kun med flaget og en klient fra AthleteView. Ellers er Fremgang uændret.
+  const u3 = u3DataEnabled(props.u3Data) && !!props.u3Client && props.athlete?.id != null
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
+  ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs,
+    fremgangLogs: props.fremgangLogs, strengthUnavailable })] : []),
   h(DevelopmentView, { ...props, now }),
   ...(hasWeightStatus ? [h(WeightReadStatus, { state: mineProps.weights.state,
     latestDate: latestAnalysisWeightDate(mineProps.weights, mineProps.athleteId, mineModel.end, mineModel.start),

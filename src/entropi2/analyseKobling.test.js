@@ -51,6 +51,7 @@ test('ANALYSE: AthleteView viser analysen øverst i fremgang-fanen kun med e2Atl
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
             historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}
             weightStatus={weightStatus} retryWeight={retryWeight}
+            u3Client={inboxDatabase}
             trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} readOnly={e2ReadOnly} />
         )}
         {tab === 'fremgang' && (

@@ -3,8 +3,9 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { withoutU2 } from './u2AthleteViewLine.mjs'
+import { withoutU3 } from './u3AthleteViewLine.mjs'
 import { invertCoachSelfTraining, coachSelfSourceDeltas, invertTrainingSetWrites, coachSelfSetDeltas } from './coachSelfTrainingOffFixture.mjs'
-const source = withoutU2(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')).replace(/\r\n/g, '\n')
+const source = withoutU3(withoutU2(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8'))).replace(/\r\n/g, '\n')
 const hash = value => createHash('sha256').update(value.replace(/\r\n/g, '\n')).digest('hex')
 const baselineHash = "6c2deb31ac020fc1ad02e3866e7eeeb74a8bad52b97e44c3b646049df03b9cb8"
 test('OFF fixture restores the exact pinned production AthleteView, in LF and CRLF', () => {

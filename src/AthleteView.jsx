@@ -978,6 +978,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             fremgangLogs={fremgangLogs} fremgangLoading={fremgangLoading} setTab={setTab}
             historicalMealLogs={historicalMealLogs} weightLogs={weightLogs}
             weightStatus={weightStatus} retryWeight={retryWeight}
+            u3Client={inboxDatabase}
             trackingSnapshot={trackingSnapshot} onRetryTracking={onRetryTracking} readOnly={e2ReadOnly} />
         )}
         {tab === 'fremgang' && (
