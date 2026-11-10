@@ -139,7 +139,8 @@ test('U5 3/4: dagens pas: første sæt uden coachvægt får sidste pas i udkaste
   const tables = { exercise_logs: [{ athlete_id: A, weight: 140, reps_completed: 5, logged_at: '2026-11-03T10:00:00Z', skipped: false, exercises: { name: 'Squat' } }] }
   let inputs = { 'ex-bench_1': { weight: '' } }
   const exercises = [{ id: 'ex-squat', name: 'Squat', reps: '5', recommended_weight: null }, { id: 'ex-bench', name: 'Bænkpres', reps: '5', recommended_weight: 100 }]
-  const m = await mount(h(TodayCard, { athlete: { id: A }, today, visKost: false, u5Client: fakeClient(tables, []),
+  // U6 lægger coachens vægt i første sæt (u6PlanWeight); her prøves U5 alene.
+  const m = await mount(h(TodayCard, { athlete: { id: A }, today, visKost: false, u5Client: fakeClient(tables, []), u6PlanWeight: false,
     u5Training: { kind: 'today', logged: 0, total: 6, exercises }, logInputs: inputs,
     setLogInputs: f => { inputs = f(inputs) } }))
   try {

@@ -50,6 +50,7 @@ test('U6 3/5: læsningen er én atlet, fire uger tilbage, med loft', async () =>
   const client = { from(name) { const q = { select(c) { calls.push(['select', name, c]); return q }, eq(k, v) { calls.push(['eq', k, v]); return q },
     gte(k, v) { calls.push(['gte', k, v]); return q }, order() { return q }, limit(n) { calls.push(['limit', n]); return Promise.resolve({ data: [], error: null }) } }; return q } }
   assert.deepEqual(await readHeavyWeekLogs({ client, athleteId: A, day }), [])
+  assert.match(calls.find(c => c[0] === 'select')[2], /^id, /)
   assert.deepEqual(calls.filter(c => c[0] !== 'select'), [['eq', 'athlete_id', A], ['gte', 'logged_at', '2026-10-05T00:00:00Z'], ['limit', HEAVY_WEEK_CAP + 1]])
   const full = { from() { const q = { select: () => q, eq: () => q, gte: () => q, order: () => q, limit: () => Promise.resolve({ data: Array(HEAVY_WEEK_CAP + 1).fill({}), error: null }) }; return q } }
   assert.equal(await readHeavyWeekLogs({ client: full, athleteId: A, day }), null)

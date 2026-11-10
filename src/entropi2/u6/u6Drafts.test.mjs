@@ -45,6 +45,10 @@ test('U6 2/5: program, manglende log og beskeder', () => {
   assert.match(attentionDraft({ row: { key: `logs-${athleteId}`, athlete, reason: 'Ingen log i afsluttet programuge 44; årsagen er ukendt' } }).text,
     /ikke se nogen log fra uge 44/)
   assert.equal(attentionDraft({ row: { key: 'message-x', athlete, item: { kind: 'message' }, reason: '2 ulæste beskeder' } }), null)
+  // Står en besked øverst, bruges atletens næste datagrund.
+  const attention = { readiness: falling, notes: [] }
+  assert.match(attentionDraft({ row: { key: 'message-x', athlete, item: { kind: 'message' }, reason: '2 ulæste beskeder' }, attention, day }).text,
+    /readiness de sidste 3 dage ligger på 55/)
   // Uden de data, rækken bygger på, intet udkast.
   assert.equal(attentionDraft({ row: { key: 'u3-readiness-x', athlete, u3: 'readiness' }, attention: null, day }), null)
 })

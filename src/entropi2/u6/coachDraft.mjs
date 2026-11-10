@@ -5,7 +5,8 @@ import { shortDate } from '../u3/format.mjs'
 // Udkastet bygger kun på det, rækken selv bygger på (readiness_logs, exercise_logs.note,
 // weeks.session_voices, programkalenderen og kostlinjen), som findes i produktion i dag.
 // Smertenoter citeres aldrig. Intet sendes: coachen trykker "Skriv", retter og sender selv.
-// Rækker med ulæste beskeder eller en video uden feedback får intet udkast; der svarer coachen i tråden.
+// Står en ulæst besked eller en video øverst, bygges udkastet på atletens næste datagrund
+// (smerte, readiness, check-in); findes ingen, får rækken intet udkast, og coachen svarer i tråden.
 
 const firstName = name => typeof name === 'string' && name.trim() ? name.trim().split(/\s+/)[0] : ''
 const whole = value => String(Math.round(value))
@@ -43,9 +44,10 @@ function u3Text(kind, attention, weeks, day, athlete) {
 
 // row er en række fra coachHomeModel.actions. attention er L1 for netop denne atlet (attentionFor), eller null.
 export function attentionDraft({ row, attention = null, weeks = null, day } = {}) {
-  if (!row?.athlete?.id || row.item) return null
+  if (!row?.athlete?.id) return null
   let body = null
-  if (row.u3) body = u3Text(row.u3, attention, weeks, day, row.athlete)
+  if (row.item) body = ['pain', 'readiness', 'checkin'].map(kind => u3Text(kind, attention, weeks, day, row.athlete)).find(Boolean) ?? null
+  else if (row.u3) body = u3Text(row.u3, attention, weeks, day, row.athlete)
   else if (typeof row.key === 'string' && row.key.startsWith('program-')) {
     const left = /slutter om (\d+) dag/.exec(row.reason ?? '')
     body = left ? `Dit program slutter om ${left[1]} ${left[1] === '1' ? 'dag' : 'dage'}. ` : row.reason === 'Programmet er udløbet' ? 'Dit program er kørt til ende. ' : null
