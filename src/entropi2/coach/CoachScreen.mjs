@@ -15,6 +15,8 @@ import { u3DataEnabled } from '../u3/flag.mjs'
 import { useCoachAttention } from './useCoachAttention.mjs'
 import { alsoLine, ATTENTION_UNAVAILABLE } from './coachAttention.mjs'
 import { adaptCoachState } from './coachModel.mjs'
+import TeamPatternsView from './TeamPatternsView.mjs'
+import { teamAthletes } from './teamPatterns.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
   background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
@@ -121,6 +123,12 @@ export function CoachView(input = {}) {
     team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
       h(CoachTeamRegistrations, { enabled: true, model: team })),
+    // U3 afsnit 3: "Holdet samlet" uden navne. Læser først, når folden åbnes.
+    team && u3DataEnabled(props.u3Data) && props.notesClient && model.rosterReady && h(TeamPatternsView, {
+      client: props.notesClient, day: model.day, athletes: teamAthletes(model.athletes, model.day),
+      targets: new Map(model.athletes.map(a => [a.id, props.coachNutrition?.targets?.find?.(t => t?.athlete_id === a.id)?.protein_target ?? a.protein_target])),
+      foldProps: { 'aria-label': 'Holdet samlet', 'data-coach-fold': 'holdet-samlet', style: fold },
+      summary: h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdet samlet')) }),
     !inbox && model.summaries.length > 0 && h('details', { 'aria-label': 'Atletoverblik', 'data-coach-fold': 'atleter', style: fold,
       open: athletesOpen, onToggle: event => {
         if (event.target !== event.currentTarget) return
