@@ -40,6 +40,11 @@ export default function KostvaneCheckin({ tracker, athleteId, date, storage, cli
     if (!serverDone || done) return
     saveDone(device, athleteId, date); doneCache.set(athleteId + '|' + date, true); setDone(true)
   }, [serverDone, done, device, athleteId, date])
+  // Trykket før tabellen svarede, eller fejlede gemningen: læg "færdig" op, når rækken er læst.
+  const dayReady = day.status === 'ready'
+  useEffect(() => {
+    if (dayReady && done && !serverDone) day.save({ kost_done_at: new Date().toISOString() })
+  }, [dayReady, done, serverDone])
   const v = kostvane(s?.athleteId === athleteId && s?.date === date ? s : none, done)
   const repeatYesterday = async () => {
     if (!tracker || copy?.running) return
@@ -56,7 +61,6 @@ export default function KostvaneCheckin({ tracker, athleteId, date, storage, cli
   // A failed local save still checks the day in for this open view.
   const finish = () => {
     saveDone(device, athleteId, date); doneCache.set(athleteId + '|' + date, true); setDone(true)
-    if (day.status === 'ready') day.save({ kost_done_at: new Date().toISOString() })
   }
   if (v.phase !== 'ready') return h('section', { 'aria-label': 'Dagens kostvane', style: card },
     h('h2', { style: { margin: 0, color: '#edeae2' } }, 'Dagens kostvane'), h('p', { role: 'status' }, 'Henter din kostlog…'))

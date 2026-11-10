@@ -12,7 +12,8 @@ export const DAILY_DAYS = 7
 
 const dayOf = value => typeof value === 'string' ? calendarDay(value.slice(0, 10)) : null
 const within = (rows, day, days) => {
-  const from = addCalendarDays(day, -days)
+  // days dage tilbage fra i dag, i dag medregnet: 7 betyder i dag og de 6 dage før.
+  const from = addCalendarDays(day, -(days - 1))
   return (Array.isArray(rows) ? rows : []).filter(r => { const d = dayOf(r?.logged_date); return d && d >= from && d <= day })
 }
 const painValue = r => Number.isInteger(r?.pain) && r.pain >= 0 && r.pain <= 10 ? r.pain : null
@@ -26,7 +27,7 @@ export async function readCoachDaily(client, ids, day) {
   if (await tableState(client, DAILY) !== 'ready') return null
   try {
     const result = await client.from(DAILY).select('athlete_id, logged_date, sleep_quality, pain, pain_location')
-      .in('athlete_id', ids).gte('logged_date', addCalendarDays(day, -DAILY_DAYS)).order('logged_date').limit(DAILY_CAP + 1)
+      .in('athlete_id', ids).gte('logged_date', addCalendarDays(day, -(DAILY_DAYS - 1))).order('logged_date').limit(DAILY_CAP + 1)
     if (result?.error || !Array.isArray(result?.data) || result.data.length > DAILY_CAP) return null
     return result.data
   } catch { return null }
@@ -46,7 +47,7 @@ export function painFromDaily(rows, today) {
 export function sleepFromDaily(rows, today) {
   const day = calendarDay(today)
   if (!day) return null
-  const values = within(rows, day, 2).map(sleepValue).filter(v => v !== null)
+  const values = within(rows, day, 3).map(sleepValue).filter(v => v !== null)
   if (values.length < 2) return null
   const mean = values.reduce((n, v) => n + v, 0) / values.length
   return mean <= SLEEP_ATTENTION ? { mean, days: values.length, reason: `Søvn ${formatNumber(mean, 1)}/5 i snit de sidste 3 dage` } : null

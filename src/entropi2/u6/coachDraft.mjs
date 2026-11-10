@@ -22,7 +22,8 @@ function u3Text(kind, attention, weeks, day, athlete) {
   }
   if (kind === 'pain') {
     const scored = Array.isArray(attention?.daily) && painFromDaily(attention.daily, day)
-    if (scored) return `Du har meldt smerte ${scored.pain}/10${scored.location ? ` i ${scored.location}` : ''} ${shortDate(scored.date)}. ` +
+    const when = scored && shortDate(scored.date)
+    if (scored) return `Du har meldt smerte ${scored.pain}/10${scored.location ? ` i ${scored.location}` : ''} ${when}${when.endsWith('.') ? '' : '.'} ` +
       'Hvordan har det udviklet sig? Skriv gerne, ved hvilke øvelser det mærkes, så justerer jeg.'
     const note = attention && painFromNotes(attention.notes, day)
     if (note) return `Jeg så, at du nævnte smerte i din log ${shortDate(note.date)}. Hvordan har det udviklet sig? ` +

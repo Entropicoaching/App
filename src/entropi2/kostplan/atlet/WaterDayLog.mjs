@@ -50,7 +50,14 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
     const snap = controller.snapshot()
     if (snap.status !== 'ready' || snap.entries.length) return
     seeded.current = scope
-    if (controller.add(String(Math.min(serverMl, waterLimits.ml)))) setRecord({ scope, controller, snapshot: controller.snapshot() })
+    // Over 10.000 ml lægges tallet ind i flere poster, så totalen ikke bliver mindre end databasens.
+    let rest = serverMl, added = false
+    while (rest > 0 && controller.snapshot().entries.length < waterLimits.entries) {
+      const ml = Math.min(rest, waterLimits.ml)
+      if (!controller.add(String(ml))) break
+      added = true; rest -= ml
+    }
+    if (added) setRecord({ scope, controller, snapshot: controller.snapshot() })
   }, [serverMl, controller, scope])
   if (enabled !== true) return null
   const update = action => {
@@ -74,7 +81,7 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
     React.createElement('details', { style: { padding: 16, overflowWrap: 'anywhere' } },
     React.createElement('summary', { style: { ...control, cursor: 'pointer', padding: 12 } }, 'Væske i dag'),
     React.createElement('p', null, 'Registrér kun vand, du har drukket. Portionerne er mængdevalg.'),
-    React.createElement('p', null, shared ? 'Gemmes på denne enhed og i din profil, så din coach kan se dagens total.' : 'Kun lokal lagring på denne enhed. Deles ikke med din coach.'),
+    React.createElement('p', null, shared ? 'Gemmes på denne enhed og i din profil, så dagens vand følger med til en ny telefon.' : 'Kun lokal lagring på denne enhed. Deles ikke med din coach.'),
     !s && React.createElement('p', { role: 'status' }, 'Væskeloggen er kun tilgængelig for den aktuelle atlet og i dag.'),
     s && React.createElement('div', null,
       React.createElement('p', { role: 'status', 'aria-live': 'polite' }, s.entries.length ? `Registreret vand i dag: ${s.totalMl} ml.` : 'Intet vand registreret i dag.'),
@@ -130,7 +137,7 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
                 if (live.current !== scope || !controller?.isCurrent() || pendingEdit.current !== editing) return
                 pendingEdit.current = null; setEdit(null); setError('')
               } }, 'Annuller'))))),
-      React.createElement('p', { role: 'status' }, s.status === 'saved' ? (shared ? 'Gemt. Din coach kan se dagens total.' : 'Gemt på denne enhed. Deles ikke med din coach.')
+      React.createElement('p', { role: 'status' }, s.status === 'saved' ? (shared ? 'Gemt på denne enhed og i din profil.' : 'Gemt på denne enhed. Deles ikke med din coach.')
         : s.status === 'ready' ? 'Ændringer gemmes kun på denne enhed, når du tilføjer, retter eller fjerner en registrering.'
           : s.status === 'unreadable' ? 'Lokal lagring kunne ikke læses sikkert. Nye ændringer vises kun her, indtil visningen lukkes; tidligere data overskrives ikke.'
             : 'Lagringen kunne ikke bekræftes. Listen vises kun her, indtil visningen lukkes; genåbning kan vise andre registreringer.')),

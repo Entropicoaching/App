@@ -155,7 +155,7 @@ test('U7 3/5: med tabellerne følger vand og væskemål med til en ny telefon og
   const m = await mount(React.createElement(WaterDayLog, { enabled: true, athleteId: A, date: today, client: f.client, u7DayData: true }), storage)
   try {
     assert.match(m.text(), /1\.500 af 3\.200 ml/)
-    assert.match(m.text(), /din coach kan se dagens total/)
+    assert.match(m.text(), /følger med til en ny telefon/)
     assert.equal(JSON.parse(storage.getItem(`entropi2:water-goal:v1:${enc}`)).ml, 3200)
     const plus = [...m.dom.host.querySelectorAll('button')].find(b => b.textContent === '+ 250 ml')
     await m.click(plus)
