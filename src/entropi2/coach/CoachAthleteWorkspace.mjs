@@ -7,6 +7,7 @@ import BelastningOgTrend from '../tracking/visning/BelastningOgTrend.mjs'
 import { hasReportValues } from './coachTrackingModel.mjs'
 import { createCoachMessageDraft } from './udkast/messageDraft.mjs'
 import BlocksView from '../analysis/blokforblok/BlocksView.mjs'
+import WeekByWeekView from '../u3/WeekByWeekView.mjs'
 
 const action = { minHeight: 48, padding: 12, font: 'inherit', color: 'inherit',
   background: '#1c1c18', border: '1px solid #77776b', borderRadius: 8, cursor: 'pointer' }
@@ -57,6 +58,8 @@ export default function CoachAthleteWorkspace({ data, athlete, onOpen, client, u
             `${basis.from} – ${basis.to}: ${basis.summary} (${basis.sampleCount} ${antalOrd(basis.sampleCount, 'registrering', 'registreringer')})`)))))))),
     u3 === true && client && h(BlocksView, { client, athleteId: athlete.id, source: 'coach',
       foldProps: { 'data-coach-athlete-fold': 'Blok for blok', style: foldStyle }, summaryStyle: foldSummary }),
+    u3 === true && client && h(WeekByWeekView, { client, athlete,
+      foldProps: { 'data-coach-athlete-fold': 'Uge for uge', style: foldStyle }, summaryStyle: foldSummary }),
     data.plan && fold('Planlægningsgrundlag', h(PlanGrundlagView, { enabled: true, snapshot: data.plan, today: data.facts.today })),
     hasReportValues(data.report, athlete.id) && createCoachMessageDraft(data.report, athlete.id) && fold('Beskedudkast fra ugerapport',
       h(CoachMessageDraft, { key: data.key, report: data.report, athleteId: athlete.id })))
