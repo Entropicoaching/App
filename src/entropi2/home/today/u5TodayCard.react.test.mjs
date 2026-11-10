@@ -73,7 +73,7 @@ test('U5 2/4: dagsform gemmes på ét energitryk efter 5 sekunders fortryd, rest
     await tap(m.host, '3')
     await act(async () => new Promise(r => setTimeout(r, 40)))
     await act(async () => new Promise(r => setTimeout(r, 0)))
-    assert.deepEqual(writes, [['readiness_logs', { sleep: '', energy: '3', motivation: '4', stress: '2', soreness: '3' }]])
+    assert.deepEqual(writes, [['readiness_logs', { sleep: '', energy: '3', motivation: '4', stress: '2', soreness: '3', soreZones: [] }]])
     assert.match(m.text(), /Klaret: dagsform ✓/)
   } finally { await m.done() }
 })
@@ -87,10 +87,10 @@ test('U5 2/4: uden historik skrives vægten, og dagsform åbner den fulde formul
 })
 
 test('U5 2/4: forsiden viser kortet øverst kun med flaget, aldrig i forhåndsvisning', gate, () => {
+  // Fra U5 4/4 er standarden tændt; slukket kræver en eksplicit false.
   const props = { enabled: true, athlete: { id: A, name: 'Syntetisk Atlet' }, now: new Date('2026-11-10T12:00:00Z'), storage: null,
     weightLogs: [], readinessLog: null, setReadinessInput() {}, setWeightInput() {}, saveReadiness() {}, logWeight() {},
     readHomeReadiness: async () => ({ status: 'loading' }) }
-  assert.doesNotMatch(render(h(Home, props)), /data-u5-today/)
   assert.doesNotMatch(render(h(Home, { ...props, u5Today: false })), /data-u5-today/)
   const on = render(h(Home, { ...props, u5Today: true }))
   assert.match(on, /data-u5-today/)
@@ -149,4 +149,21 @@ test('U5 3/4: dagens pas: første sæt uden coachvægt får sidste pas i udkaste
     assert.equal(elements(m.host).filter(n => n.tagName === 'BUTTON').length, 0)
     assert.deepEqual(inputs, { 'ex-bench_1': { weight: '' }, 'ex-squat_1': { weight: '140', reps: '5' } })
   } finally { await m.done() }
+})
+
+test('U5 4/4: flaget er tændt; kortet står øverst, Start og Log i dag findes én gang', gate, async () => {
+  const { DEFAULT_U5_TODAY } = await import('./flag.mjs')
+  assert.equal(DEFAULT_U5_TODAY, true)
+  const week = { id: 'u5-uge', athlete_id: A, start_date: '2026-11-09', week_number: 2,
+    sessions: [{ id: 'u5-pas', weekday: 1, title: 'Syntetisk pas', exercises: [{ id: 'u5-ex', name: 'Squat', sets: 2, reps: '5' }] }] }
+  const html = render(h(Home, { enabled: true, athlete: { id: A, name: 'Syntetisk Atlet' }, now: new Date('2026-11-10T12:00:00Z'),
+    storage: null, allWeeks: [week], currentWeek: week, exerciseLogs: [], onStartSession() {}, setLogInputs() {}, onLogSet() {},
+    weightLogs: [], readinessLog: null, setReadinessInput() {}, setWeightInput() {}, saveReadiness() {}, logWeight() {},
+    readHomeReadiness: async () => ({ status: 'loading' }) }))
+  assert.equal((html.match(/>Start (dagens|næste) pas</g) ?? []).length, 1)
+  const card = html.slice(html.indexOf('data-u5-today'), html.indexOf('aria-label="Dit næste pas"'))
+  assert.ok(card.length > 0)
+  assert.match(card, /Træning · 0 af 2 sæt/)
+  assert.equal((html.match(/data-home-quick-logs=/g) ?? []).length, 1)
+  assert.ok(html.indexOf('data-home-quick-logs') > html.indexOf('aria-label="Dit næste pas"'))
 })

@@ -32,7 +32,7 @@ function show(t, extra = {}) {
     readinessInput: { sleep: '', energy: null, motivation: null, stress: null, soreness: null, soreZones: [] },
     readinessLog: null, weightInput: '', weightLogs: [], quickClock: time.clock,
     storage: null, readHomeReadiness: async () => ready([row('2026-11-03')]),
-    saveReadiness() { calls.push('readiness') }, logWeight() { calls.push('weight'); props.weightInput = '' }, ...extra }
+    saveReadiness() { calls.push('readiness') }, logWeight() { calls.push('weight'); props.weightInput = '' }, u5Today: false, ...extra }
   props.setReadinessInput = value => { props.readinessInput = typeof value === 'function' ? value(props.readinessInput) : value }
   props.setWeightInput = value => { props.weightInput = value }
   const view = createHost(Home, props)

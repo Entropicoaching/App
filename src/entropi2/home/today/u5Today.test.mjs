@@ -7,9 +7,8 @@ import { formatKg, stepKg, latestWeight, weightDone, readinessSuggestion, readin
 const A = 'atlet-syntetisk'
 const today = '2026-11-10'
 
-test('U5 1/4: flaget er slukket, og en eksplicit værdi vinder', () => {
-  assert.equal(DEFAULT_U5_TODAY, false)
-  assert.equal(u5TodayEnabled(undefined), false)
+test('U5 1/4: en eksplicit værdi vinder over standardværdien', () => {
+  assert.equal(u5TodayEnabled(undefined), DEFAULT_U5_TODAY)
   assert.equal(u5TodayEnabled(true), true)
   assert.equal(u5TodayEnabled(false), false)
   assert.equal(u5TodayEnabled('true'), false)
@@ -36,6 +35,10 @@ test('U5 1/4: dagsform bruger seneste række de sidste 7 dage, aldrig søvn og a
   assert.deepEqual(readinessSuggestion({ athleteId: A, today, trackingData }),
     { from: '2026-11-08', motivation: '4', stress: '1', soreness: '2' })
   assert.equal(readinessSuggestion({ athleteId: A, today, trackingData, readinessInput: { energy: '3' } }), null)
+  // Værtens forudfyldning fra seneste række (ordre 267) er ikke atletens udkast; en rettelse er.
+  const prefill = { sleep: '8', energy: 4, motivation: 4, stress: 1, soreness: 2, soreZones: [] }
+  assert.equal(readinessSuggestion({ athleteId: A, today, trackingData, readinessInput: prefill })?.motivation, '4')
+  assert.equal(readinessSuggestion({ athleteId: A, today, trackingData, readinessInput: { ...prefill, energy: '2' } }), null)
   assert.equal(readinessSuggestion({ athleteId: A, today, trackingData: { ...trackingData, readinessRows: [{ ...rows[0], logged_date: '2026-11-01' }] } }), null)
   assert.equal(readinessSuggestion({ athleteId: A, today, trackingData: { status: 'loading' } }), null)
   const logged = { athlete_id: A, logged_date: today, energy: 3 }

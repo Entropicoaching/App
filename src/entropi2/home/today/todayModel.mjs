@@ -43,18 +43,25 @@ export function readinessDone({ readinessLog, trackingData, athleteId, today }) 
     trackingData.readinessRows.some(row => own(row, athleteId) && row.logged_date === today)
 }
 
+// Værten (useParathedUdkast, ordre 267) forudfylder udkastet med seneste række. Det er
+// ikke atletens eget udkast; alt andet, der ikke er tomt, er.
+const sameNumber = (a, b) => optionalInput(a) ? b == null : parseInputNumber(a) === parseInputNumber(b)
+const hostPrefill = (input, row) => sameNumber(input?.sleep, row.sleep_hours) &&
+  ['energy', 'motivation', 'stress'].every(key => sameNumber(input?.[key], row[key])) && sameNumber(input?.soreness, row.soreness_level)
+
 // Dagsform på ét tryk: energi er dagens svar; motivation, stress og ømhed kommer fra
 // den seneste række de sidste 7 dage (ikke kun i går). Søvn kopieres aldrig.
-// Et påbegyndt udkast overskrives aldrig.
+// Et udkast, atleten selv har rettet i, overskrives aldrig.
 export function readinessSuggestion({ athleteId, today, trackingData, readinessLog, readinessInput }) {
   if (!athleteId || !validDay(today) || trackingData?.status !== 'ready' || trackingData.complete !== true ||
       trackingData.athleteId !== athleteId || trackingData.today !== today || !Array.isArray(trackingData.readinessRows)) return null
   if (readinessDone({ readinessLog, trackingData, athleteId, today })) return null
-  if (['sleep', 'energy', 'motivation', 'stress', 'soreness'].some(key => !optionalInput(readinessInput?.[key]))) return null
   const from = addCalendarDays(today, -7)
   const rows = trackingData.readinessRows.filter(row => own(row, athleteId) && validDay(row.logged_date) &&
     row.logged_date < today && row.logged_date >= from).sort((a, b) => a.logged_date < b.logged_date ? 1 : -1)
   if (!rows.length) return null
+  const empty = ['sleep', 'energy', 'motivation', 'stress', 'soreness'].every(key => optionalInput(readinessInput?.[key]))
+  if (!empty && !hostPrefill(readinessInput, rows[0])) return null
   const scores = Object.fromEntries(['motivation', 'stress', 'soreness_level'].map(key => [key, parseInputNumber(rows[0][key])]))
   if (Object.values(scores).some(value => !Number.isInteger(value) || value < 1 || value > 5)) return null
   return { from: rows[0].logged_date, motivation: String(scores.motivation), stress: String(scores.stress),

@@ -111,7 +111,7 @@ export default function TodayCard(props) {
     readinessLog: props.readinessLog, readinessInput: props.readinessInput })
   const pick = energy => {
     if (busy || grace || !suggestion || !canReadiness) return
-    const input = { sleep: '', energy: String(energy), motivation: suggestion.motivation, stress: suggestion.stress, soreness: suggestion.soreness }
+    const input = { sleep: '', energy: String(energy), motivation: suggestion.motivation, stress: suggestion.stress, soreness: suggestion.soreness, soreZones: [] }
     setGrace({ energy })
     clearTimeout(timer.current)
     timer.current = setTimeout(() => {
@@ -139,7 +139,7 @@ export default function TodayCard(props) {
         ...[1, 2, 3, 4, 5].map(value => h('button', { key: value, type: 'button', disabled: busy,
           'aria-label': `Energi ${value}`, style: { ...s.secondary, marginTop: 0, minWidth: 0, padding: 0, minHeight: 48 },
           onClick: () => pick(value) }, String(value)))),
-      h('p', { style: hint }, `1 lav, 5 høj. Resten som ${shortDate(suggestion.from)}.`))
+      h('p', { style: hint }, `1 lav, 5 høj. Resten som ${shortDate(suggestion.from)}`))
       : h('div', null,
         h('button', { type: 'button', style: primary, disabled: busy, onClick: openFull }, 'Udfyld dagsform'),
         h('p', { style: hint }, 'Fire korte svar. Næste gang er det ét tryk.')))
