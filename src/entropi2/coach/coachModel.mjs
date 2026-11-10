@@ -4,6 +4,9 @@ import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { coachAthleteList } from './athleteListModel.mjs'
 import { coachNutritionLines, kostvaneTal } from './coachNutrition.mjs'
+import { u3DataEnabled } from '../u3/flag.mjs'
+import { attentionCandidates } from './coachAttention.mjs'
+import { attentionFor } from './coachAttentionRead.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
 const own = (o, k) => Object.prototype.hasOwnProperty.call(o || {}, k)
@@ -73,6 +76,13 @@ export function coachHomeModel(props = {}, today = new Date()) {
   const actions = [], inbox = [], videoKeys = new Set()
   const { day, athletes, plans, messages, videos, logs } = data
   const T = day ? ordinal(day) : null
+  // U3 (afsnit 2): nye grunde kun med flaget. L1 skal være komplet for netop
+  // denne dag og alle synlige atleter; ellers vises smerte, readiness og check-in ikke.
+  const u3 = u3DataEnabled(props.u3Data)
+  const source = u3 ? props.u3Attention : null
+  const attentionState = !u3 ? null : !source || source.day !== day || !athletes.every(a => source.ids?.includes(a.id)) ? 'loading'
+    : source.complete === true ? 'ready' : 'unavailable'
+  const u3Nutrition = u3 ? coachNutritionLines(props, day, athletes, data.rosterReady) : null
   for (const athlete of athletes) {
     const candidates = []
     if (messages.usable) for (const track of ['besked', 'teknik']) {
@@ -117,6 +127,10 @@ export function coachHomeModel(props = {}, today = new Date()) {
           reason: `Ingen log i afsluttet programuge ${finished.week_number ?? '?'}; årsagen er ukendt` })
       }
     }
+    if (u3) candidates.push(...attentionCandidates({ athlete, day,
+      attention: attentionState === 'ready' ? attentionFor(source, athlete.id, day) : null,
+      weeks: data.calendarReady ? plans[athlete.id] : null,
+      nutritionSource: props.coachNutrition, nutritionReady: u3Nutrition.has(athlete.id) }))
     candidates.sort(order)
     if (candidates.length) actions.push({ ...candidates[0], reasons: candidates.map(c => c.reason) })
   }
@@ -129,7 +143,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
     : nutritionSource.state === 'partial' ? 'partial' : nutritionSource.state === 'error' ? 'error' : 'loading'
   const summaries = coachAthleteSummaries(data, nutrition, inbox)
   const kostvane = kostvaneTal(props, day, athletes, data.rosterReady)
-  return { ...data, actions, inbox, complete, nutrition, nutritionState, summaries, kostvane,
+  return { ...data, actions, inbox, complete, nutrition, nutritionState, summaries, kostvane, ...(u3 ? { u3: { attentionState } } : {}),
     nutritionReload: typeof nutritionSource?.reload === 'function' ? nutritionSource.reload : null,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
 }

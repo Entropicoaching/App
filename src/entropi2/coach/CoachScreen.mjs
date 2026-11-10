@@ -11,6 +11,10 @@ import { CoachTeamRegistrations } from '../tracking/hold/CoachTeam.mjs'
 import { coachTeamModel } from './coachTeamModel.mjs'
 import { coachHomeModel, openCoachRow, selectCoachTab } from './coachModel.mjs'
 import CoachRadar, { coachRadarEnabled } from './radar/CoachRadar.mjs'
+import { u3DataEnabled } from '../u3/flag.mjs'
+import { useCoachAttention } from './useCoachAttention.mjs'
+import { alsoLine, ATTENTION_UNAVAILABLE } from './coachAttention.mjs'
+import { adaptCoachState } from './coachModel.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
   background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
@@ -34,7 +38,13 @@ function ClockedCoach(props) {
     const timer = setInterval(() => setNow(new Date()), 30000)
     return () => clearInterval(timer)
   }, [])
+  // U3: L1 for de atleter, forsiden allerede har i sin roster. Gør intet uden flaget.
+  const u3 = u3DataEnabled(props.u3Data) && props.tab !== 'inbox'
+  const roster = u3 ? adaptCoachState(props, props.today ?? now) : null
+  const attention = useCoachAttention({ enabled: u3 && roster.rosterReady && roster.athletes.length > 0,
+    client: props.notesClient, athleteIds: roster ? roster.athletes.map(a => a.id) : [], day: roster?.day })
   return h(CoachView, { ...props, today: props.today ?? now,
+    ...(u3 && props.u3Attention === undefined ? { u3Attention: attention } : {}),
     athleteQuery: props.athleteQuery ?? athleteQuery,
     onAthleteQueryChange: props.onAthleteQueryChange ?? setAthleteQuery,
     athletesOpen: props.athletesOpen ?? athletesOpen,
@@ -61,7 +71,8 @@ export function CoachView(input = {}) {
       ...(index === 0 && !inbox ? { borderColor: '#c8923a' } : {}) },
     onClick: available ? () => openCoachRow(row, props, inbox ? 'inbox' : 'list') : undefined },
     h('span', { style: { ...s.avatar, display: 'inline-flex', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
-    h('strong', null, row.athlete.name), h('span', { style: { display: 'block', marginTop: 8 } }, row.reason)))
+    h('strong', null, row.athlete.name), h('span', { style: { display: 'block', marginTop: 8 } }, row.reason),
+    model.u3 && !inbox && alsoLine(row.reasons) && h('span', { 'data-coach-also': true, style: { display: 'block', marginTop: 4, color: '#b9b4a8' } }, alsoLine(row.reasons))))
   const rows = inbox ? model.inbox : model.actions
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
   const query = athleteQuery.trim().toLocaleLowerCase('da')
@@ -102,6 +113,7 @@ export function CoachView(input = {}) {
           h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.'),
       inbox && firstRows.length < rows.length && h('button', { type: 'button', style: button,
         disabled: typeof onShowMoreInbox !== 'function', onClick: onShowMoreInbox }, 'Vis 10 flere'),
+      !inbox && model.u3?.attentionState === 'unavailable' && h('p', { role: 'status', 'data-u3-attention-unavailable': true }, ATTENTION_UNAVAILABLE),
       !inbox && rows.length > 3 && h('details', { 'data-coach-fold': 'opgaver', style: fold },
         h('summary', { style: foldSummary }, arrow, `Vis resten (${rows.length - 3})`),
         h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.slice(3).map((row, index) => rowButton(row, index + 3))))),
