@@ -1,5 +1,6 @@
 import { painFromNotes, painFromVoices, soreness, readinessDrop, checkinStopped } from '../coach/coachAttention.mjs'
-import { shortDate } from '../u3/format.mjs'
+import { formatNumber, shortDate } from '../u3/format.mjs'
+import { painFromDaily, sleepFromDaily } from '../u7/coachData.mjs'
 
 // U6 del 2: ét konkret udkast pr. række under "Kræver dit blik". Rene funktioner.
 // Udkastet bygger kun på det, rækken selv bygger på (readiness_logs, exercise_logs.note,
@@ -20,6 +21,9 @@ function u3Text(kind, attention, weeks, day, athlete) {
       'Hvordan har du det? Er det søvn, travlhed eller kroppen, så vi kan tage højde for det i træningen?'
   }
   if (kind === 'pain') {
+    const scored = Array.isArray(attention?.daily) && painFromDaily(attention.daily, day)
+    if (scored) return `Du har meldt smerte ${scored.pain}/10${scored.location ? ` i ${scored.location}` : ''} ${shortDate(scored.date)}. ` +
+      'Hvordan har det udviklet sig? Skriv gerne, ved hvilke øvelser det mærkes, så justerer jeg.'
     const note = attention && painFromNotes(attention.notes, day)
     if (note) return `Jeg så, at du nævnte smerte i din log ${shortDate(note.date)}. Hvordan har det udviklet sig? ` +
       'Skriv gerne, hvor det sidder, og ved hvilke øvelser det mærkes, så justerer jeg.'
@@ -30,6 +34,12 @@ function u3Text(kind, attention, weeks, day, athlete) {
     if (sore) return `Du har meldt ømhed på 4 eller mere ${sore.days} af de sidste 7 dage. Hvor sidder det, ` +
       'og bliver det bedre eller værre i løbet af passet?'
     return null
+  }
+  if (kind === 'sleep') {
+    const found = Array.isArray(attention?.daily) && sleepFromDaily(attention.daily, day)
+    if (!found) return null
+    return `Din søvn har ligget på ${formatNumber(found.mean, 1)} ud af 5 i snit de sidste 3 dage. Hvordan sover du? ` +
+      'Skal vi tage lidt af i træningen, til det bliver bedre?'
   }
   if (kind === 'checkin') {
     const found = attention && checkinStopped(attention.readiness, day, athlete)
@@ -46,7 +56,7 @@ function u3Text(kind, attention, weeks, day, athlete) {
 export function attentionDraft({ row, attention = null, weeks = null, day } = {}) {
   if (!row?.athlete?.id) return null
   let body = null
-  if (row.item) body = ['pain', 'readiness', 'checkin'].map(kind => u3Text(kind, attention, weeks, day, row.athlete)).find(Boolean) ?? null
+  if (row.item) body = ['pain', 'readiness', 'sleep', 'checkin'].map(kind => u3Text(kind, attention, weeks, day, row.athlete)).find(Boolean) ?? null
   else if (row.u3) body = u3Text(row.u3, attention, weeks, day, row.athlete)
   else if (typeof row.key === 'string' && row.key.startsWith('program-')) {
     const left = /slutter om (\d+) dag/.exec(row.reason ?? '')

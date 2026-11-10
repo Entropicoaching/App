@@ -1,4 +1,6 @@
 import { addCalendarDays, calendarDay } from '../../calendarDate.js'
+import { u7Enabled } from '../u7/flag.mjs'
+import { readCoachDaily } from '../u7/coachData.mjs'
 
 // L1 (U3-planen afsnit 2): readiness og noter for coachens synlige atleter.
 // R2: der hentes loft plus 1. Rammer en af de to dele loftet eller fejler den,
@@ -15,20 +17,23 @@ async function capped(build, cap) {
   }
 }
 
-export async function readCoachAttention(client, athleteIds, today) {
+// U7: med flaget læses også søvn og smerte fra tracking_daily_v1. Mangler tabellen, er daily null,
+// og L1 er komplet som før; dagsdata gør aldrig resten ufuldstændigt.
+export async function readCoachAttention(client, athleteIds, today, { daily = u7Enabled('coachData') } = {}) {
   const day = calendarDay(today)
   const ids = Array.isArray(athleteIds) ? [...new Set(athleteIds.filter(id => typeof id === 'string' && id))].sort() : []
-  const base = { day, ids, complete: false, readiness: null, notes: null }
+  const base = { day, ids, complete: false, readiness: null, notes: null, daily: null }
   if (!client || typeof client.from !== 'function' || !day) return base
   if (!ids.length) return { ...base, complete: true, readiness: [], notes: [] }
-  const [readiness, notes] = await Promise.all([
+  const [readiness, notes, dayRows] = await Promise.all([
     capped(() => client.from('readiness_logs').select('athlete_id, logged_date, readiness_score, soreness_level')
       .in('athlete_id', ids).gte('logged_date', addCalendarDays(day, -35)).order('logged_date'), L1_CAPS.readiness),
     // Danske dage: hent fra dagen før, så tidszonen aldrig taber en note. Modellen filtrerer på dansk dato.
     capped(() => client.from('exercise_logs').select('athlete_id, logged_at, note')
       .in('athlete_id', ids).not('note', 'is', null).gte('logged_at', `${addCalendarDays(day, -15)}T00:00:00Z`).order('logged_at'), L1_CAPS.notes),
+    daily ? readCoachDaily(client, ids, day).catch(() => null) : null,
   ])
-  return { ...base, complete: readiness !== null && notes !== null, readiness, notes }
+  return { ...base, complete: readiness !== null && notes !== null, readiness, notes, daily: Array.isArray(dayRows) ? dayRows : null }
 }
 
 // Rækkerne for én atlet, eller null når L1 ikke er komplet for netop dette sæt atleter og denne dag.
@@ -37,6 +42,7 @@ export function attentionFor(result, athleteId, day) {
   return {
     readiness: result.readiness.filter(r => r?.athlete_id === athleteId),
     notes: result.notes.filter(r => r?.athlete_id === athleteId),
+    daily: Array.isArray(result.daily) ? result.daily.filter(r => r?.athlete_id === athleteId) : null,
   }
 }
 

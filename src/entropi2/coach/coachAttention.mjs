@@ -3,6 +3,7 @@ import { mentionsPain } from '../../coachBriefingRules.js'
 import { nutritionTrend } from '../tracking/nutritionTrend.mjs'
 import { onVacation } from '../u3/couplings.mjs'
 import { mondayOf, shortDate } from '../u3/format.mjs'
+import { painFromDaily, sleepFromDaily } from '../u7/coachData.mjs'
 
 // U3-planen afsnit 2: nye grunde under "Kræver dit blik". Rene funktioner uden
 // læsninger. Tekst fra noter og kommentarer citeres aldrig; kun en fast tekst og
@@ -105,8 +106,11 @@ export function attentionCandidates({ athlete, day, attention, weeks, nutritionS
   const out = []
   const add = (kind, rank, found) => found && out.push({ key: `u3-${kind}-${athlete.id}`, athlete, rank, tab: 'hub', reason: found.reason, u3: kind })
   if (attention) {
-    add('pain', RANK.pain, painFromNotes(attention.notes, day) ?? painFromVoices(weeks, day) ?? soreness(attention.readiness, day))
+    // U7: smerte som tal fra tracking_daily_v1 går forud for smerteord; daily findes kun med tabellen.
+    const daily = Array.isArray(attention.daily) ? attention.daily : null
+    add('pain', RANK.pain, (daily && painFromDaily(daily, day)) ?? painFromNotes(attention.notes, day) ?? painFromVoices(weeks, day) ?? soreness(attention.readiness, day))
     add('readiness', RANK.readinessDrop, readinessDrop(attention.readiness, day))
+    if (daily) add('sleep', RANK.readinessDrop, sleepFromDaily(daily, day))
     add('checkin', RANK.checkinStopped, checkinStopped(attention.readiness, day, athlete))
   }
   if (nutritionReady) add('protein', RANK.lowProtein, lowProtein(nutritionSource, athlete.id, day))

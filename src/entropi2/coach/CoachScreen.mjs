@@ -22,6 +22,9 @@ import { u6Enabled } from '../u6/flag.mjs'
 import { attentionDraft } from '../u6/coachDraft.mjs'
 import { offerCoachDraft } from '../u6/draftHandoff.mjs'
 import HeavyWeekLine from '../u6/HeavyWeekLine.mjs'
+import { u7Enabled } from '../u7/flag.mjs'
+import { dayNumbersLine } from '../u7/coachData.mjs'
+import { WeekTargetLine, useTargetSync } from '../u7/CoachWeekTarget.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
   background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
@@ -50,6 +53,9 @@ function ClockedCoach(props) {
   const roster = u3 ? adaptCoachState(props, props.today ?? now) : null
   const attention = useCoachAttention({ enabled: u3 && roster.rosterReady && roster.athletes.length > 0,
     client: props.notesClient, athleteIds: roster ? roster.athletes.map(a => a.id) : [], day: roster?.day })
+  // U7: coachens nuværende kostmål dateres, når tabellen findes. Gør intet uden flaget eller tabellen.
+  useTargetSync({ enabled: u7Enabled('coachData', props.u7CoachData) && props.tab !== 'inbox', client: props.notesClient,
+    targets: props.coachNutrition?.state === 'ready' ? props.coachNutrition.targets : null, day: props.coachNutrition?.day })
   return h(CoachView, { ...props, today: props.today ?? now,
     ...(u3 && props.u3Attention === undefined ? { u3Attention: attention } : {}),
     athleteQuery: props.athleteQuery ?? athleteQuery,
@@ -79,6 +85,9 @@ export function CoachView(input = {}) {
     weeks: model.calendarReady ? model.plans?.[row.athlete.id] : null, day: model.day }) : null
   // U6 del 3: forslag i tunge uger under rækken, når readiness falder og belastningen stiger.
   const heavyWeek = !inbox && u6Enabled('heavyWeek', props.u6HeavyWeek)
+  // U7 del 4: søvn og smerte som tal på rækken og ugens kost mod det mål, der gjaldt. Kun med data.
+  const coachData = !inbox && u7Enabled('coachData', props.u7CoachData)
+  const dayLine = row => coachData ? dayNumbersLine(rowAttention(row)?.daily, model.day) : null
   const draftBlock = row => {
     const draft = draftFor(row)
     return draft && h('div', { 'data-u6-draft': row.athlete.id, style: { margin: '0 0 12px', paddingInline: 4 } },
@@ -94,9 +103,12 @@ export function CoachView(input = {}) {
     onClick: available ? () => openCoachRow(row, props, inbox ? 'inbox' : 'list') : undefined },
     h('span', { style: { ...s.avatar, display: 'inline-flex', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
     h('strong', null, row.athlete.name), h('span', { style: { display: 'block', marginTop: 8 } }, row.reason),
-    model.u3 && !inbox && alsoLine(row.reasons) && h('span', { 'data-coach-also': true, style: { display: 'block', marginTop: 4, color: '#b9b4a8' } }, alsoLine(row.reasons))),
+    model.u3 && !inbox && alsoLine(row.reasons) && h('span', { 'data-coach-also': true, style: { display: 'block', marginTop: 4, color: '#b9b4a8' } }, alsoLine(row.reasons)),
+    dayLine(row) && h('span', { 'data-u7-day': row.athlete.id, style: { display: 'block', marginTop: 4, color: '#edeae2' } }, dayLine(row))),
     heavyWeek && rowAttention(row) && h(HeavyWeekLine, { key: `u6-heavy:${row.athlete.id}:${model.day}`, client: props.notesClient,
       athleteId: row.athlete.id, day: model.day, readiness: rowAttention(row).readiness, read: props.u6ReadHeavyWeek }),
+    coachData && h(WeekTargetLine, { key: `u7-week:${row.athlete.id}:${model.day}`, client: props.notesClient,
+      athleteId: row.athlete.id, day: model.day, read: props.u7ReadWeekNutrition }),
     draftBlock(row))
   const rows = inbox ? model.inbox : model.actions
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
