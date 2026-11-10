@@ -129,8 +129,8 @@
   {
     "name": "vc_upload_retry_v1",
     "module": "src/videoUploadRetry.mjs",
-    "default": false,
-    "activation": "localStorage vc_upload_retry_v1 = string 1",
+    "default": true,
+    "activation": "U4: DEFAULT_VC_UPLOAD_RETRY true; localStorage vc_upload_retry_v1 = string 0 slukker paa en enhed",
     "probe": null
   },
   {

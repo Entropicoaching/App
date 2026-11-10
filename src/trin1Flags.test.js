@@ -51,7 +51,8 @@ test('actual URL and storage readers remain OFF without intervention', async () 
     ['videoMarkerReplies.mjs', 'markerRepliesEnabled'], ['dashboard/videoReviewLayout.mjs', 'readVideoReviewFlag'],
     ['athlete/contactLatest.mjs', 'contactLatestEnabled'],
   ]) assert.equal((await import(new URL(path, import.meta.url)))[name](emptyStorage, ''), false)
-  assert.equal((await import('./videoUploadRetry.mjs')).videoUploadRetryEnabled(), false)
+  // U4 (ordre 68) har tændt uploadmodulet med "Prøv igen" for alle.
+  assert.equal((await import('./videoUploadRetry.mjs')).videoUploadRetryEnabled(), true)
   assert.equal((await import('./e2eTestFlags.mjs')).fridayTestEnabled('production', window.location.href), false)
   assert.deepEqual((await import('./release3TestFlags.mjs')).release3TestFlags('production', window.location.href), { athlete: {}, coach: {} })
 })

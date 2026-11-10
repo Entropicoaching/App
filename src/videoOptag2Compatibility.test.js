@@ -15,7 +15,8 @@ test('OFF returned storage error and success retain Blob, MIME, row and reply co
 // K-ENTROPI-UDGIVELSE1 fund 3 (deliberate change): the base rejected without any reply,
 // leaving the athlete without a terminal answer. OFF now replies once with the error.
 test('OFF thrown storage error gives one terminal error reply and cleanup',async()=>{
- const f=await bridge();try{f.upload=async()=>{throw Error('base thrown')};await f.send();assert.equal(f.replies.length,1);assert.equal(f.replies[0].ok,false);assert.equal(f.replies[0].error,'Video kunne ikke uploades: base thrown');assert.equal(f.rows.length,0);assert.equal(f.aborts.size,0);}finally{f.restore();}
+ // U4 har tændt uploadmodulet; vc_upload_retry_v1 = '0' holder denne prøve på den slukkede vej.
+ const f=await bridge({storage:{getItem:key=>key==='vc_upload_retry_v1'?'0':null}});try{f.upload=async()=>{throw Error('base thrown')};await f.send();assert.equal(f.replies.length,1);assert.equal(f.replies[0].ok,false);assert.equal(f.replies[0].error,'Video kunne ikke uploades: base thrown');assert.equal(f.rows.length,0);assert.equal(f.aborts.size,0);}finally{f.restore();}
 });
 
 test('ON selection change during compression prevents transport',async()=>{

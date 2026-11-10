@@ -31,10 +31,10 @@ test('U4 1: videosiden læser adressen; enheden kan slukke eller tænde', () => 
 })
 
 // Den rigtige Send-handling fra videosiden, kørt i vm med appens rigtige bro (uploadRetryFakes).
-async function htmlSend({ upload = async () => ({}), file, storage = store('1'), search } = {}) {
+async function htmlSend({ upload = async () => ({}), file, storage = store('1'), search, enabled = true } = {}) {
   const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
   const section = (start, end) => html.slice(html.indexOf(start), html.indexOf(end, html.indexOf(start)))
-  const f = await bridge({ upload })
+  const f = await bridge({ upload, enabled })
   const d = dom()
   const inputs = { liftSel: { value: 'squat' }, variationSel: { value: 'competition' }, loadInput: { value: '' }, athleteNoteInput: { value: '' }, athleteStatus: {} }
   d.document.getElementById = id => inputs[id]
@@ -125,5 +125,57 @@ test('U4 3: afbrudt forbindelse giver "Ikke sendt" og én Prøv igen; nyt forsø
     assert.equal(h.saveBtn.hidden, false)
     assert.equal(h.f.rows.length, 1)
     assert.equal(retry.hidden, true)
+  } finally { h.f.restore() }
+})
+
+test('U4 4: flaget er tændt; iframens adresse tænder panelet uden enhedsindstilling', async () => {
+  assert.equal(app.DEFAULT_VC_UPLOAD_RETRY, true)
+  assert.equal(app.videoUploadRetryEnabled(store(null)), true)
+  const { ATHLETE_VIDEOCOACH_URL } = await import('./athlete/videoCoachBro.js')
+  const search = '?' + ATHLETE_VIDEOCOACH_URL.split('?')[1]
+  assert.equal(new URLSearchParams(search).get('uploadRetry'), '1')
+  assert.equal(ui.uploadRetryEnabled(store(null), search), true)
+})
+
+test('U4 4: afbrudt fetch efter at filen nåede frem; Prøv igen giver én video og én række', async () => {
+  // Syntetisk lager: filen gemmes, men svaret går tabt (afbrudt fetch). Næste forsøg på samme sti
+  // får "already exists" som det rigtige lager med upsert:false, og rækken gemmes én gang.
+  const objects = new Map(), saved = new Map()
+  let attempts = 0
+  const { ATHLETE_VIDEOCOACH_URL } = await import('./athlete/videoCoachBro.js')
+  const h = await htmlSend({ enabled: null, storage: store(null), search: '?' + ATHLETE_VIDEOCOACH_URL.split('?')[1],
+    upload: async (signal, path, file) => {
+      attempts++
+      if (objects.has(path)) return { data: null, error: { statusCode: '409', message: 'The resource already exists' } }
+      objects.set(path, file)
+      if (attempts === 1) throw TypeError('Failed to fetch')
+      return { data: { path } }
+    } })
+  h.f.save = async row => {
+    const duplicate = saved.has(row.client_analysis_id)
+    if (!duplicate) saved.set(row.client_analysis_id, row)
+    return { data: { id: 'synthetic-row', client_analysis_id: row.client_analysis_id }, duplicate }
+  }
+  try {
+    await h.send()
+    const [text, retry] = h.panel.children
+    assert.match(text.textContent, /^Ikke sendt/)
+    assert.equal(retry.hidden, false)
+    assert.equal(h.f.replies[0].ok, false)
+    assert.match(h.f.replies[0].error, /Forbindelsen blev afbrudt/)
+    assert.equal(saved.size, 0)
+    await retry.onclick()
+    assert.equal(attempts, 2)
+    assert.equal(h.f.uploads[0].path, h.f.uploads[1].path)
+    assert.equal(h.f.uploads[1].options.upsert, false)
+    assert.equal(objects.size, 1)
+    assert.equal(saved.size, 1)
+    assert.equal(h.state.value, 'sent')
+    assert.match(text.textContent, /Video modtaget/)
+    // Et tredje tryk er ikke muligt: knappen er skjult, og Send giver samme klient-id.
+    assert.equal(retry.hidden, true)
+    await h.send()
+    assert.equal(objects.size, 1)
+    assert.equal(saved.size, 1)
   } finally { h.f.restore() }
 })

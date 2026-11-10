@@ -21,7 +21,7 @@ export function dom() {
 // backend, real storage, real timers, React runtime, or browser is needed.
 export async function bridge({ enabled = true, upload = async () => ({}), save = async () => ({ data: { id: 'synthetic' } }) } = {}) {
   const f = { effects: [], replies: [], uploads: [], rows: [], markers: [], listeners: {},
-    storage: { getItem: () => enabled ? '1' : null } }
+    storage: { getItem: () => enabled === true ? '1' : enabled === false ? '0' : null } }
   const stub = `
     const f = globalThis.__vcUploadTest;
     export const useEffect = effect => f.effects.push(effect);

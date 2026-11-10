@@ -1,7 +1,7 @@
 // U4: ét flag for uploadmodulet med "Prøv igen" (VC-UPLOAD2). Appen bærer det til
 // videosiden som uploadRetry=1 i iframens adresse. vc_upload_retry_v1 = '1' tænder og
 // '0' slukker på én enhed; ellers gælder standardværdien.
-export const DEFAULT_VC_UPLOAD_RETRY = false
+export const DEFAULT_VC_UPLOAD_RETRY = true
 
 export function videoUploadRetryEnabled(storage = () => globalThis.localStorage) {
   let value = null
