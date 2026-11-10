@@ -7173,6 +7173,13 @@ async function vcAthleteUploadAndGo() {
   const variation = vcV3Variation(liftDisplay, document.getElementById('variationSel').value);
   const file = vcAthletePendingFile;
   if (!file) { say('Vælg en video først, så kan du sende den'); return; }
+  // U4 · 2: med uploadmodulet afvises en for stor fil her, før "Sender" og før filen
+  // forlader videosiden (samme grænse og tekst som appen, se vcUploadRetry.mjs).
+  if (vcUploadRetry && vcUploadRetry.refuseTooLarge(file)) {
+    if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
+    say(vcUploadRetry.tooLargeText);
+    return;
+  }
   if (!vcAthleteClientAnalysisId) vcAthleteClientAnalysisId = vcV3Uuid();
   // ORDRE 57 · commit 3: tre valgfrie felter i samme trin som løft/variation -
   // ingen af dem påkrævet. Bruges kun af standardvejen (sheetet er tomt, hvis

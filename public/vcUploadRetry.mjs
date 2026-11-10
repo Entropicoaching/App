@@ -11,6 +11,10 @@ export function uploadRetryEnabled(storage = () => globalThis.localStorage, sear
   catch { return false }
 }
 
+// U4: samme grænse og tekst som appens validateVideoUploadRequest (src/videoCoachUpload.js).
+export const VC_UPLOAD_MAX_BYTES = 50 * 1024 * 1024
+export const VC_UPLOAD_TOO_LARGE = 'Videoen er større end 50 MB. Optag et kortere klip eller i lavere kvalitet (fx 1080p), og send igen.'
+
 export function mountUploadRetry(document, retry, storage, search) {
   if (!uploadRetryEnabled(storage, search)) return null
   const panel = document.createElement('div')
@@ -44,6 +48,13 @@ export function mountUploadRetry(document, retry, storage, search) {
   }
   return {
     reset() { if (!active) panel.hidden = true },
+    tooLargeText: VC_UPLOAD_TOO_LARGE,
+    // En for stor fil afvises før overførslen. Intet "Prøv igen": samme fil fejler igen.
+    refuseTooLarge(file) {
+      if (active || !(file?.size > VC_UPLOAD_MAX_BYTES)) return false
+      show(VC_UPLOAD_TOO_LARGE)
+      return true
+    },
     run(send) {
       if (active) return active
       show('Sender video. Bliv på skærmen, til den er sendt.')
