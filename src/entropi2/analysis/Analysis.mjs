@@ -21,6 +21,7 @@ import { analysisWeightProps, latestAnalysisWeightDate } from './analysisWeight.
 import WeightReadStatus from './WeightReadStatus.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import AthleteWeekCard from '../u3/AthleteWeekCard.mjs'
+import BlocksView from './blokforblok/BlocksView.mjs'
 
 const explanationSummaryStyle = { minHeight: 44, paddingTop: 12, paddingBottom: 12,
   boxSizing: 'border-box', cursor: 'pointer', opacity: 0.8 }
@@ -132,6 +133,8 @@ export default function Analysis(props = {}) {
   (props.readOnly !== true || a.destination === 'program') && typeof setTab === 'function' && h('button', { type: 'button', 'data-analysis-destination': a.destination,
     style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
     onClick: () => setTab(a.destination) }, a.action)))),
+  ...(u3 ? [h(BlocksView, { client: props.u3Client, athleteId: props.athlete.id, now, source: 'athlete',
+    foldProps: { style: { marginBottom: 16 } } })] : []),
   h('details', { 'data-analysis-help': true },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Om datagrundlaget'),
     h('p', { style: { lineHeight: 1.6 } }, analysisDataHelp)),

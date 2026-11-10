@@ -6,12 +6,14 @@ import PlanGrundlagView from './planlaegning/PlanGrundlagView.mjs'
 import BelastningOgTrend from '../tracking/visning/BelastningOgTrend.mjs'
 import { hasReportValues } from './coachTrackingModel.mjs'
 import { createCoachMessageDraft } from './udkast/messageDraft.mjs'
+import BlocksView from '../analysis/blokforblok/BlocksView.mjs'
 
 const action = { minHeight: 48, padding: 12, font: 'inherit', color: 'inherit',
   background: '#1c1c18', border: '1px solid #77776b', borderRadius: 8, cursor: 'pointer' }
-const fold = (label, child) => h('details', { 'data-coach-athlete-fold': label,
-  style: { marginBlock: 12, borderTop: '1px solid #59564c', paddingTop: 8 } },
-  h('summary', { style: { minHeight: 48, cursor: 'pointer', paddingBlock: 8 } }, label), child)
+const foldStyle = { marginBlock: 12, borderTop: '1px solid #59564c', paddingTop: 8 }
+const foldSummary = { minHeight: 48, cursor: 'pointer', paddingBlock: 8 }
+const fold = (label, child) => h('details', { 'data-coach-athlete-fold': label, style: foldStyle },
+  h('summary', { style: foldSummary }, label), child)
 
 // Mounted only in the enabled, authorized roster. Drafts live in local state;
 // identity/day/owner keys discard them on context changes. There is no send action.
@@ -36,7 +38,9 @@ export function CoachMessageDraftView({ suggestion, draft, setDraft }) {
       h('button', { type: 'button', style: action, onClick: () => setDraft(null) }, 'Luk udkast')))
 }
 
-export default function CoachAthleteWorkspace({ data, athlete, onOpen }) {
+// U3: client og u3 kommer fra CoachScreen. Uden klient eller med u3 falsk monteres
+// U3-foldene ikke, og intet læses.
+export default function CoachAthleteWorkspace({ data, athlete, onOpen, client, u3 }) {
   if (!data) return null
   return h('div', { 'data-coach-athlete-workspace': athlete.id, style: { minWidth: 0, marginBlock: 16 } },
     h(AthleteCard, { enabled: true, facts: data.facts, compact: data.compact, onOpen }),
@@ -51,6 +55,8 @@ export default function CoachAthleteWorkspace({ data, athlete, onOpen }) {
           h('p', null, signal.reasons.join(' · ')),
           ...signal.dataBasis.map((basis, index) => h('p', { key: index },
             `${basis.from} – ${basis.to}: ${basis.summary} (${basis.sampleCount} ${antalOrd(basis.sampleCount, 'registrering', 'registreringer')})`)))))))),
+    u3 === true && client && h(BlocksView, { client, athleteId: athlete.id, source: 'coach',
+      foldProps: { 'data-coach-athlete-fold': 'Blok for blok', style: foldStyle }, summaryStyle: foldSummary }),
     data.plan && fold('Planlægningsgrundlag', h(PlanGrundlagView, { enabled: true, snapshot: data.plan, today: data.facts.today })),
     hasReportValues(data.report, athlete.id) && createCoachMessageDraft(data.report, athlete.id) && fold('Beskedudkast fra ugerapport',
       h(CoachMessageDraft, { key: data.key, report: data.report, athleteId: athlete.id })))

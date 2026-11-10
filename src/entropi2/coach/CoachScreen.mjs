@@ -139,6 +139,7 @@ export function CoachView(input = {}) {
         ...summaries.map(row => h('li', { key: row.athlete.id },
           h(CoachAthleteWorkspace, { key: `${props.readContext?.coachId}:${row.athlete.id}:${model.day}`,
             athlete: row.athlete, data: coachAthleteWorkspace(props, model, row.athlete, report),
+            client: props.notesClient, u3: u3DataEnabled(props.u3Data),
             onOpen: typeof props.openProfile === 'function'
               ? () => props.openProfile(row.athlete, 'hub', 'list') : undefined }))))),
     !inbox && report.ready && report.rows.some(hasWeeklyReportData) && h('details', {
