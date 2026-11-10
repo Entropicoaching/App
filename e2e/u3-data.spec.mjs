@@ -83,6 +83,45 @@ async function noSideScroll(page, width) {
   if (scroll > width + 1) throw new Error(`Vandret scroll på ${width} px: ${scroll}px`)
 }
 
+// U3b: intet U3-element må være bredere end skærmen eller gemt bag en fast
+// bundmenu. Et element er frit, når siden kan rulle det helt op over menuen.
+const U3_SELECTOR = '[data-u3-week-card],[data-development],[data-u3-blocks-fold],[data-u3-blocks],[data-coach-fold="holdet-samlet"],[data-u3-team],[data-u3-week-by-week-fold],[data-u3-week-by-week],[data-u3-focus],[data-u3-chart]'
+async function freeOfNav(page, width) {
+  const problems = await page.evaluate(({ selector, width }) => {
+    const vh = window.innerHeight
+    const navs = [...document.querySelectorAll('body *')].filter(el => {
+      const st = getComputedStyle(el), r = el.getBoundingClientRect()
+      return (st.position === 'fixed' || st.position === 'sticky') && r.height > 0 && r.height < vh / 3 && r.bottom >= vh - 2 && r.top > vh / 2
+    })
+    const navTop = Math.min(vh, ...navs.map(n => n.getBoundingClientRect().top))
+    const cover = vh - navTop
+    const docH = document.documentElement.scrollHeight
+    const out = []
+    for (const el of document.querySelectorAll(selector)) {
+      const r = el.getBoundingClientRect()
+      if (!r.width || !el.checkVisibility({ visibilityProperty: true })) continue
+      if (r.right > width + 1 || r.left < -1) out.push(`${el.tagName} ${[...el.attributes].map(a => a.name).join(' ')} går ud over kanten (${Math.round(r.left)}..${Math.round(r.right)})`)
+      if (r.bottom + window.scrollY > docH - cover + 1) out.push(`${el.tagName} ${[...el.attributes].map(a => a.name).join(' ')} kan ikke rulles op over bundmenuen`)
+    }
+    // Den sidste tekst på siden skal også kunne ses over menuen.
+    window.scrollTo(0, docH)
+    const last = [...document.querySelectorAll('main *, #root *')].filter(el => el.childElementCount === 0 && el.textContent.trim() && el.getBoundingClientRect().height > 0 && el.checkVisibility({ visibilityProperty: true }) && !navs.some(n => n.contains(el))).at(-1)
+    if (last && last.getBoundingClientRect().bottom > navTop + 1) out.push(`Sidste tekst "${last.textContent.trim().slice(0, 40)}" ligger bag bundmenuen`)
+    window.scrollTo(0, 0)
+    return { out, cover: Math.round(cover), navs: navs.length }
+  }, { selector: U3_SELECTOR, width })
+  if (problems.out.length) throw new Error(`Layout på ${width} px: ${problems.out.join('; ')}`)
+  return problems
+}
+
+// Skærmbillede af et element i viewporten, så den faste bundmenu står hvor den står for brugeren.
+async function viewShot(page, locator, path) {
+  await locator.scrollIntoViewIfNeeded()
+  await locator.evaluate(el => { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -72) })
+  await page.waitForTimeout(150)
+  await page.screenshot({ path })
+}
+
 async function athleteRich(page, vp, outDir) {
   const shot = name => page.screenshot({ path: join(outDir, `u3-atlet-${vp.name}-${name}.png`), fullPage: true })
   await login(page, ATHLETE_USER)
@@ -91,20 +130,28 @@ async function athleteRich(page, vp, outDir) {
   await card.waitFor({ state: 'visible', timeout: 20000 })
   const lines = await page.locator('[data-u3-line]').evaluateAll(els => els.map(e => e.dataset.u3Line))
   for (const key of ['training', 'nutrition', 'weight', 'readiness']) if (!lines.includes(key)) throw new Error(`Ugekortet mangler ${key}: ${lines}`)
-  await page.locator('[data-u3-strength]').waitFor({ state: 'visible' })
+  if (await page.locator('[data-u3-strength]').count()) throw new Error('Ugekortet har stadig sin egen e1RM-sektion')
+  await page.locator('[data-u3-focus]').first().waitFor({ state: 'visible' })
+  await page.locator('[data-u3-trend]').first().waitFor({ state: 'visible', timeout: 20000 })
+  const e1rmPlaces = await page.locator('[data-u3-week-card]').getByText('e1RM').count()
+  if (e1rmPlaces) throw new Error('e1RM står både i ugekortet og i Din udvikling')
   const coupling = await page.locator('[data-u3-coupling]').textContent()
   if (!/sammenhæng, ikke et bevis/.test(coupling) || /fordi/.test(coupling)) throw new Error('Koblingssætningen mangler: ' + coupling)
   await noSideScroll(page, vp.width)
   await card.screenshot({ path: join(outDir, `u3-atlet-${vp.name}-01-min-uge-kort.png`) })
   await shot('01-min-uge')
+  await viewShot(page, page.locator('[data-development]'), join(outDir, `u3-atlet-${vp.name}-03-din-udvikling.png`))
   const fold = page.locator('[data-u3-blocks-fold="athlete"]')
   await fold.locator('summary').click()
-  await page.locator('[data-u3-blocks] table').waitFor({ state: 'visible', timeout: 20000 })
+  await page.locator('[data-u3-blocks] [data-u3-chart="bars"]').first().waitFor({ state: 'visible', timeout: 20000 })
   const headers = await page.locator('[data-u3-blocks] thead th').allTextContents()
   if (!headers.includes('Nu') || !headers.includes('Styrke 2')) throw new Error(`Blok for blok mangler blokke: ${headers}`)
   await noSideScroll(page, vp.width)
+  const layout = await freeOfNav(page, vp.width)
   await fold.screenshot({ path: join(outDir, `u3-atlet-${vp.name}-02-blok-for-blok.png`) })
-  return { lines, headers, coupling }
+  await viewShot(page, fold, join(outDir, `u3-atlet-${vp.name}-04-blok-for-blok-skaerm.png`))
+  await shot('05-hele-fremgang')
+  return { lines, headers, coupling, layout }
 }
 
 async function coachRich(page, vp, outDir) {
@@ -121,20 +168,24 @@ async function coachRich(page, vp, outDir) {
   await team.getByText('logger kost', { exact: false }).waitFor({ state: 'visible', timeout: 20000 })
   const teamText = await team.textContent()
   if (/Atlet [B-F]|Testatlet/.test(teamText)) throw new Error('Navn i "Holdet samlet"')
+  await team.locator('[data-u3-team]').waitFor({ state: 'visible' })
   await team.screenshot({ path: join(outDir, `u3-coach-${vp.name}-02-holdet-samlet.png`) })
   await page.locator('[data-coach-fold="atleter"] > summary').click()
   const ws = page.locator(`[data-coach-athlete-workspace="${ATHLETE_ID}"]`)
   await ws.waitFor({ state: 'visible' })
   await ws.locator('[data-u3-blocks-fold] > summary').click()
-  await ws.locator('[data-u3-blocks] table').waitFor({ state: 'visible', timeout: 20000 })
+  await ws.locator('[data-u3-blocks] [data-u3-chart="bars"]').first().waitFor({ state: 'visible', timeout: 20000 })
   await ws.locator('[data-u3-week-by-week-fold] > summary').click()
-  await ws.locator('[data-u3-week-by-week] table').waitFor({ state: 'visible', timeout: 20000 })
+  await ws.locator('[data-u3-week-metric]').first().waitFor({ state: 'visible', timeout: 20000 })
   const k3 = await ws.locator('[data-u3-week-by-week]').textContent()
   if (!/mod nuværende mål/.test(k3) || /[↑↓]/.test(k3)) throw new Error('Uge for uge: forkert tekst')
   await noSideScroll(page, vp.width)
+  const layout = await freeOfNav(page, vp.width)
   await ws.screenshot({ path: join(outDir, `u3-coach-${vp.name}-03-arbejdsrum.png`) })
+  await viewShot(page, ws.locator('[data-u3-week-by-week-fold]'), join(outDir, `u3-coach-${vp.name}-05-uge-for-uge-skaerm.png`))
+  await viewShot(page, team, join(outDir, `u3-coach-${vp.name}-06-holdet-samlet-skaerm.png`))
   await shot('04-hele-forsiden')
-  return { teamText: teamText.slice(0, 200) }
+  return { teamText: teamText.slice(0, 200), layout }
 }
 
 async function athleteThin(page, vp, outDir) {

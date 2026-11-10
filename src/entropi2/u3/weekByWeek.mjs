@@ -40,32 +40,38 @@ export function weekByWeek({ data, athlete, today, now = new Date() } = {}) {
   const load = logs ? weeklyLoad(logs, addCalendarDays(weeks.at(-1).end, 0), { weeks: WEEKS }) : null
   const strength = logs ? buildStrengthTrend(logs, { today: day }) : null
   const cell = value => value ?? DOT
-  const rows = [
-    ['Kostdage', nutrition.map(n => n && n.days > 0 ? `${n.days}/7` : DOT)],
-    ['Protein g', nutrition.map(n => cell(n && finite(n.usableProteinAverage) ? formatNumber(Math.round(n.usableProteinAverage)) : null))],
-    ['kcal', nutrition.map(n => cell(n && finite(n.usableKcalAverage) ? formatNumber(Math.round(n.usableKcalAverage)) : null))],
-    ['Tonnage t', weeks.map((_, i) => {
+  const fmt = (value, digits = 0) => finite(value) ? formatNumber(digits ? value : Math.round(value), digits) : null
+  // U3b: tallene holdes som tal til graferne; tabellen formaterer de samme tal.
+  const series = [
+    { key: 'kostdage', label: 'Kostdage', values: nutrition.map(n => n && n.days > 0 ? n.days : null), unit: '/7', target: 7 },
+    { key: 'protein', label: 'Protein g', values: nutrition.map(n => n && finite(n.usableProteinAverage) ? n.usableProteinAverage : null),
+      target: finite(Number(proteinTarget)) && Number(proteinTarget) > 0 ? Number(proteinTarget) : null },
+    { key: 'kcal', label: 'kcal', values: nutrition.map(n => n && finite(n.usableKcalAverage) ? n.usableKcalAverage : null),
+      target: finite(Number(kcalTarget)) && Number(kcalTarget) > 0 ? Number(kcalTarget) : null },
+    { key: 'tonnage', label: 'Tonnage t', digits: 1, values: weeks.map((_, i) => {
       const w = load?.weeks?.[i]
-      return cell(w && w.sets > 0 && finite(w.tonnage) ? formatNumber(w.tonnage / 1000, 1) : null)
-    })],
+      return w && w.sets > 0 && finite(w.tonnage) ? w.tonnage / 1000 : null
+    }) },
     ...MAIN.map(lift => {
-      const series = strength?.lifts?.find(l => l.key === lift.key)
+      const trend = strength?.lifts?.find(l => l.key === lift.key)
       const values = weeks.map(w => {
-        const v = series?.weeks?.find(x => x.weekStart === w.start && !x.provisional)?.e1rm
-        return finite(v) ? formatNumber(Math.round(v)) : null
+        const v = trend?.weeks?.find(x => x.weekStart === w.start && !x.provisional)?.e1rm
+        return finite(v) ? v : null
       })
-      return values.some(v => v !== null) ? [`${lift.name} e1RM`, values.map(cell)] : null
+      return values.some(v => v !== null) ? { key: lift.key, label: `${lift.name} e1RM`, lift: lift.name, values, relative: true } : null
     }).filter(Boolean),
-    ['Vægt kg', weeks.map(w => {
+    { key: 'vaegt', label: 'Vægt kg', digits: 1, relative: true, values: weeks.map(w => {
       const avg = weights ? weightTrend(weights, athlete.id, w.end).average : null
-      return cell(finite(avg) ? formatNumber(avg, 1) : null)
-    })],
-    ['Readiness', weeks.map(w => {
-      if (!readiness) return DOT
+      return finite(avg) ? avg : null
+    }) },
+    { key: 'readiness', label: 'Readiness', relative: true, values: weeks.map(w => {
+      if (!readiness) return null
       const byDay = new Map(readiness.filter(r => r?.logged_date >= w.start && r.logged_date <= w.end && finite(r.readiness_score)).map(r => [r.logged_date, r.readiness_score]))
-      return byDay.size >= 4 ? formatNumber(Math.round([...byDay.values()].reduce((n, v) => n + v, 0) / byDay.size)) : DOT
-    })],
+      return byDay.size >= 4 ? [...byDay.values()].reduce((n, v) => n + v, 0) / byDay.size : null
+    }) },
   ]
+  const rows = series.map(row => [row.label, row.values.map(v => row.key === 'kostdage'
+    ? (v === null ? DOT : `${v}/7`) : cell(fmt(v, row.digits ?? 0)))])
   // K1 og K2 for coachen: tal og antal dage, kun når minimum er nået.
   const couplings = []
   if (meals && logs && ready(data.weeks)) {
@@ -78,7 +84,34 @@ export function weekByWeek({ data, athlete, today, now = new Date() } = {}) {
   const goals = [finite(Number(proteinTarget)) && Number(proteinTarget) > 0 ? `${formatNumber(Number(proteinTarget))} g protein` : null,
     finite(Number(kcalTarget)) && Number(kcalTarget) > 0 ? `${formatNumber(Number(kcalTarget))} kcal` : null].filter(Boolean)
   return {
-    weeks, rows, couplings,
-    note: `Kost tæller dage med mindst 60 % af kcal-målet eller en bekræftet dag. Sammenlignes mod nuværende mål${goals.length ? `: ${goals.join(' og ')}` : ''}; der findes ingen historik for mål. "${DOT}" betyder, at tallet ikke kan regnes ud fra ugens data.`,
+    weeks, rows, series, couplings, focus: coachWeekFocus(series, weeks),
+    note: `Stiplet linje: mod nuværende mål${goals.length ? `: ${goals.join(' og ')}` : ''}. Grå streg: ingen data.`,
   }
+}
+
+// U3b: ét fokuspunkt til coachen ud fra den seneste afsluttede uge. Rækkefølge:
+// kostlogning, protein, e1RM der står stille over 4 uger, readiness der dykker.
+export function coachWeekFocus(series, weeks) {
+  const get = key => series.find(s => s.key === key)
+  const last = list => list?.values?.at(-1) ?? null
+  const label = weeks.at(-1)?.label ?? 'sidste uge'
+  const days = last(get('kostdage'))
+  if (days !== null && days < 4) return { key: 'kostdage', value: `${days}/7 kostdage`,
+    text: `i ${label}. Spørg ind til, hvad der gør det svært at logge.` }
+  const protein = get('protein'), p = last(protein)
+  if (finite(p) && finite(protein.target) && p < 0.9 * protein.target) return { key: 'protein',
+    value: `${formatNumber(Math.round(p))} g protein`, text: `mod målet på ${formatNumber(protein.target)} g i ${label}. Giv en konkret proteinkilde til hverdagen.` }
+  const stalled = series.filter(s => s.lift).find(s => {
+    const v = s.values.filter(finite)
+    return s.values.every(finite) && v.at(-1) <= v[0]
+  })
+  if (stalled) return { key: 'e1rm', value: `${stalled.lift} står stille`, text: 'over 4 uger. Se på belastning og variation i næste blok.' }
+  const ready = get('readiness')?.values ?? []
+  const earlier = ready.slice(0, -1).filter(finite)
+  if (finite(ready.at(-1)) && earlier.length >= 2) {
+    const avg = earlier.reduce((n, v) => n + v, 0) / earlier.length
+    if (ready.at(-1) <= avg - 5) return { key: 'readiness', value: `Readiness ${formatNumber(Math.round(ready.at(-1)))}`,
+      text: `i ${label} mod ${formatNumber(Math.round(avg))} ugerne før. Tjek søvn og belastning.` }
+  }
+  return { key: 'steady', value: null, text: 'Ugerne følger planen. Intet kræver en ændring lige nu.' }
 }

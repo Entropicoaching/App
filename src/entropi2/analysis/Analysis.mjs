@@ -21,6 +21,8 @@ import { analysisWeightProps, latestAnalysisWeightDate } from './analysisWeight.
 import WeightReadStatus from './WeightReadStatus.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import AthleteWeekCard from '../u3/AthleteWeekCard.mjs'
+import { strengthLines } from '../u3/athleteWeekModel.mjs'
+import { calendarDay } from '../../calendarDate.js'
 import BlocksView from './blokforblok/BlocksView.mjs'
 
 const explanationSummaryStyle = { minHeight: 44, paddingTop: 12, paddingBottom: 12,
@@ -71,9 +73,9 @@ export default function Analysis(props = {}) {
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
-  ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs,
-    fremgangLogs: props.fremgangLogs, strengthUnavailable })] : []),
-  h(DevelopmentView, { ...props, now }),
+  ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs })] : []),
+  // U3b: retningen pr. hovedløft står i "Din udvikling", så e1RM kun vises ét sted.
+  h(DevelopmentView, { ...props, now, ...(u3 && !strengthUnavailable ? { u3Trends: strengthLines(props.fremgangLogs, calendarDay(now)) } : {}) }),
   ...(hasWeightStatus ? [h(WeightReadStatus, { state: mineProps.weights.state,
     latestDate: latestAnalysisWeightDate(mineProps.weights, mineProps.athleteId, mineModel.end, mineModel.start),
     retry: props.retryWeight })] : []),

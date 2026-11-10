@@ -1,5 +1,6 @@
 import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h } from 'react'
+import { Sparkline } from '../u3/charts.mjs'
 import { developmentModel, developmentNumber as number, developmentDate as date } from './developmentModel.mjs'
 
 const text = value => h('p', { style: { lineHeight: 1.6 } }, value)
@@ -34,6 +35,9 @@ export default function DevelopmentView(props = {}) {
   const hasIntensity = model.weeks.some(w => w.classified > 0)
   if (!observedWeeks.length) return h('section', { 'data-development': true, style: card, 'aria-label': 'Din udvikling' },
     heading, text('Din udvikling kommer frem, når du logger vægt og gentagelser i programmet.'))
+  // U3b: retning pr. hovedløft fra U3 (står stille, falder, kg pr. uge). Kun med U3-flaget.
+  const trends = Array.isArray(props.u3Trends) ? props.u3Trends : []
+  const trendOf = lift => trends.find(t => t.label === lift.lift) ?? null
   const blockNames = [...new Set(model.weeks.flatMap(w => w.blocks))].sort()
   const blockColor = name => palette[blockNames.indexOf(name) % palette.length]
   return h('section', { 'data-development': true, 'data-analysis-history': true, 'aria-label': 'Din udvikling', style: card },
@@ -48,9 +52,13 @@ export default function DevelopmentView(props = {}) {
         h('h3', null, lift.lift),
         latest && h('div', { 'data-development-latest': true, style: { margin: '12px 0', minWidth: 0 } },
           h('p', { style: { margin: 0, fontSize: 14, color: '#c1beb5' } }, 'Seneste e1RM · skøn'),
-          h('p', { style: { margin: '4px 0', lineHeight: 1.2, overflowWrap: 'anywhere' } },
-            h('strong', { style: { fontSize: 32, fontWeight: 700, color: '#edeae2' } }, number(latest.value)),
-            h('span', { style: { fontSize: 16, color: '#c1beb5' } }, ' kg')),
+          h('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px 16px' } },
+            h('p', { style: { margin: '4px 0', lineHeight: 1.2, overflowWrap: 'anywhere' } },
+              h('strong', { style: { fontSize: 32, fontWeight: 700, color: '#edeae2' } }, number(latest.value)),
+              h('span', { style: { fontSize: 16, color: '#c1beb5' } }, ' kg')),
+            trendOf(lift) && h(Sparkline, { values: lift.points.map(p => p.value).slice(lift.points.findIndex(p => p.value !== null)), label: `${lift.lift}: e1RM pr. uge` })),
+          trendOf(lift) && h('p', { 'data-u3-trend': lift.lift, style: { margin: '0 0 4px', fontSize: 15, fontWeight: 600,
+            color: trendOf(lift).plateau === true || trendOf(lift).drop === true ? '#da9d8e' : '#d8b16b' } }, trendOf(lift).tail),
           h('p', { style: { margin: 0, fontSize: 13, lineHeight: 1.5, color: '#c1beb5' } },
             'Registreret ', h('time', { dateTime: latest.day }, date(latest.day)), '.')),
         lift.delta !== null && h('p', { 'data-history-summary': true,
