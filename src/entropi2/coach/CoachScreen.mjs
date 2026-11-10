@@ -21,6 +21,7 @@ import { attentionFor } from './coachAttentionRead.mjs'
 import { u6Enabled } from '../u6/flag.mjs'
 import { attentionDraft } from '../u6/coachDraft.mjs'
 import { offerCoachDraft } from '../u6/draftHandoff.mjs'
+import HeavyWeekLine from '../u6/HeavyWeekLine.mjs'
 
 const button = { minHeight: 52, padding: 16, font: 'inherit', color: '#edeae2',
   background: '#1c1c18', borderWidth: 1, borderStyle: 'solid', borderColor: '#59564c', borderRadius: 12,
@@ -76,6 +77,8 @@ export function CoachView(input = {}) {
   const rowAttention = row => model.u3?.attentionState === 'ready' ? attentionFor(props.u3Attention, row.athlete.id, model.day) : null
   const draftFor = row => drafts ? attentionDraft({ row, attention: rowAttention(row),
     weeks: model.calendarReady ? model.plans?.[row.athlete.id] : null, day: model.day }) : null
+  // U6 del 3: forslag i tunge uger under rækken, når readiness falder og belastningen stiger.
+  const heavyWeek = !inbox && u6Enabled('heavyWeek', props.u6HeavyWeek)
   const draftBlock = row => {
     const draft = draftFor(row)
     return draft && h('div', { 'data-u6-draft': row.athlete.id, style: { margin: '0 0 12px', paddingInline: 4 } },
@@ -92,6 +95,8 @@ export function CoachView(input = {}) {
     h('span', { style: { ...s.avatar, display: 'inline-flex', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
     h('strong', null, row.athlete.name), h('span', { style: { display: 'block', marginTop: 8 } }, row.reason),
     model.u3 && !inbox && alsoLine(row.reasons) && h('span', { 'data-coach-also': true, style: { display: 'block', marginTop: 4, color: '#b9b4a8' } }, alsoLine(row.reasons))),
+    heavyWeek && rowAttention(row) && h(HeavyWeekLine, { key: `u6-heavy:${row.athlete.id}:${model.day}`, client: props.notesClient,
+      athleteId: row.athlete.id, day: model.day, readiness: rowAttention(row).readiness, read: props.u6ReadHeavyWeek }),
     draftBlock(row))
   const rows = inbox ? model.inbox : model.actions
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
