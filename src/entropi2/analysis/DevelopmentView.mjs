@@ -42,8 +42,10 @@ export default function DevelopmentView(props = {}) {
   const blockColor = name => palette[blockNames.indexOf(name) % palette.length]
   return h('section', { 'data-development': true, 'data-analysis-history': true, 'aria-label': 'Din udvikling', style: card },
     heading,
-    text(`26 uger · ${date(model.start)}–${date(model.today)}. Denne uge er ufuldstændig.`),
-    lifts.length > 0 && text('Se udviklingen i dit beregnede maksimum (e1RM). Det er et skøn ud fra dine sæt, ikke en testet rekord.'),
+    // U3b: med U3-tendenser er forklaringen én kort linje; kurven siger resten.
+    ...(trends.length ? [h('p', { style: { lineHeight: 1.5, fontSize: 14, color: '#c1beb5' } }, 'e1RM er et skøn ud fra dine tunge sæt, 26 uger.')] : [
+      text(`26 uger · ${date(model.start)}–${date(model.today)}. Denne uge er ufuldstændig.`),
+      lifts.length > 0 && text('Se udviklingen i dit beregnede maksimum (e1RM). Det er et skøn ud fra dine sæt, ikke en testet rekord.')]),
     ...lifts.map(lift => {
       const max = Math.max(1, ...lift.points.map(p => p.value ?? 0))
       const latest = lift.points.filter(p => p.value !== null).at(-1)

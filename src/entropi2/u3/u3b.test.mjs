@@ -64,6 +64,9 @@ test('"Din udvikling" får kurve og retning pr. løft kun med U3-tendenser', () 
   const withTrend = render(h(DevelopmentView, { ...props, u3Trends: [{ label: 'Squat', tail: 'står stille', plateau: true, drop: false }] }))
   assert.match(withTrend, /data-u3-trend="Squat"[^>]*>står stille</)
   assert.match(withTrend, /data-u3-chart="line"/)
+  // Forklaringen er én kort linje med U3-tendenser og uændret uden.
+  assert.match(plain, /ikke en testet rekord/)
+  assert.doesNotMatch(withTrend, /ikke en testet rekord|Denne uge er ufuldstændig/)
 })
 
 test('coachens fokus i "Uge for uge" følger kost, protein, e1RM og readiness', () => {

@@ -34,10 +34,10 @@ export function WeekByWeekTable({ model }) {
       // Mængder som søjler fra 0, niveauer (e1RM, vægt, readiness) som kurve.
       h(row.relative ? Sparkline : Bars, { values: row.values, target: row.target, good: goodFor(row),
         label: `${row.label} for ${model.weeks.map(w => w.label).join(', ')}` }) ?? h('span', { style: small }, row.relative ? 'for få uger' : 'ingen data'))),
-    ...model.couplings.map((text, i) => h('p', { key: i, 'data-u3-coach-coupling': true, style: { ...small, fontSize: 14, lineHeight: 1.5 } }, text)),
-    h('p', { style: { ...small, lineHeight: 1.5 } }, model.note),
     h('details', { 'data-u3-week-numbers': true },
       h('summary', { style: { minHeight: 44, cursor: 'pointer', display: 'flex', alignItems: 'center' } }, 'Se tallene'),
+      ...model.couplings.map((text, i) => h('p', { key: i, 'data-u3-coach-coupling': true, style: { ...small, fontSize: 14, lineHeight: 1.5 } }, text)),
+      h('p', { style: { ...small, lineHeight: 1.5 } }, model.note),
       h('div', { style: { overflowX: 'auto', maxWidth: '100%' } },
         h('table', { style: { borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: '100%' } },
           h('thead', null, h('tr', null, h('th', { style: head, scope: 'col' }, ''),
