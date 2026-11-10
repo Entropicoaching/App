@@ -4,6 +4,8 @@ import { validId } from './conversationModel.mjs'
 import { shareUnread } from './unreadHost.mjs'
 import { createConversation } from './conversationController.mjs'
 import { createConversationAdapters, athleteConversationScope, coachConversationScope, athleteUploadEntry } from './conversationAdapters.mjs'
+import { u6Enabled } from '../u6/flag.mjs'
+import { applyCoachDraft } from '../u6/draftHandoff.mjs'
 
 // All names below are existing App/AthleteView/Dashboard capabilities.
 // getEntry must read current render state, not capture a previous athlete/session.
@@ -25,6 +27,8 @@ export function createEntryFactory({ enabled = false, role, getEntry, openFeedba
         openFeedback(row)
       } })
     const controller = createConversation({ enabled, adapters, storage: () => getEntry().storage() })
+    // U6: et udkast fra "Skriv" på forsiden lægges i feltet, når tråden er hentet. Intet sendes.
+    if (enabled === true && role === 'coach' && u6Enabled('drafts')) applyCoachDraft(controller, entry.selectedAthlete?.id)
     if (enabled === true && role === 'coach') {
       const current = () => {
         if (!controller.snapshot().available) throw Error('Samtalen er ikke længere tilgængelig.')
