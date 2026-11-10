@@ -8,6 +8,7 @@
 //     altid rigtig; det er det der gør at appen kan åbne uden net (før kom
 //     HTML'en, men bundtet kunne ikke hentes). Supabase-kald (andet domæne),
 //     version.json og alt andet røres ikke.
+//  4) U8 (ordre 78): push-notifikationer og klik på dem, nederst i filen.
 const APP_SHELL_CACHE = 'entropi-app-shell-v1';
 const ASSET_CACHE = 'entropi-assets-v1';
 // Nok til flere deploys' chunks; ældste smides ud først.
@@ -89,4 +90,44 @@ self.addEventListener('fetch', e => {
   }
 
   // Alt andet: rør det ikke (normal netværksadfærd).
+});
+
+// U8 (ordre 78): push fra edge-funktionen u8-push. Kommer kun, når atleten selv har slået
+// påmindelser til (push-kortet bag DEFAULT_U8_PUSH); ellers fyrer disse aldrig.
+// Beskeden er {title, body, url, tag}. Klik åbner den rigtige side i appen.
+const pushText = (value, max) => typeof value === 'string' ? value.trim().slice(0, max) : '';
+// Kun egne sider: en sti der starter med én skråstreg. Alt andet åbner forsiden.
+const pushUrl = value => typeof value === 'string' && /^\/(?![/\\])[^\s]*$/.test(value) ? value : '/';
+
+self.addEventListener('push', e => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; } catch { data = {}; }
+  if (!data || typeof data !== 'object') data = {};
+  const title = pushText(data.title, 80) || 'Entropi';
+  e.waitUntil(self.registration.showNotification(title, {
+    body: pushText(data.body, 200),
+    tag: pushText(data.tag, 60) || 'entropi',
+    icon: '/icon.svg?v=8',
+    data: { url: pushUrl(data.url) },
+  }));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = pushUrl(e.notification.data && e.notification.data.url);
+  e.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    // Et åbent appvindue genbruges; VideoCoach-siden forlades aldrig midt i en upload.
+    const own = windows.find(c => {
+      try { const u = new URL(c.url); return u.origin === self.location.origin && !u.pathname.endsWith('.html'); }
+      catch { return false; }
+    });
+    if (own) {
+      try {
+        const focused = await own.focus();
+        if (await (focused || own).navigate(url)) return;
+      } catch { /* åbn et nyt vindue nedenfor */ }
+    }
+    await self.clients.openWindow(url);
+  })());
 });

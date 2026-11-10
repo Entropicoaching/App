@@ -19,6 +19,8 @@ import TodayCard from './today/TodayCard.mjs'
 import { u5TodayEnabled } from './today/flag.mjs'
 import DayFeeling from '../u7/DayFeeling.mjs'
 import { u7Enabled } from '../u7/flag.mjs'
+import PushCard from '../u8/PushCard.mjs'
+import { u8Enabled } from '../u8/flag.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -190,6 +192,9 @@ export default function AthleteHome(props) {
     // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
     u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && athlete?.id && model.today && h(DayFeeling, {
       key: `u7:${athlete.id}:${model.today}`, athleteId: athlete.id, today: model.today, client: props.u5Client, storage: props.storage }),
+    // U8: påmindelse og coachsvar som push, kun når pakke D og nøglen findes. Ellers som i U7.
+    u8Enabled('push', props.u8Push) && !props.sessionReadOnly && athlete?.id && h(PushCard, {
+      key: `u8:${athlete.id}`, athleteId: athlete.id, client: props.u5Client, storage: props.storage, setTab: props.setTab }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading },
       !(programLoading || programError) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'
