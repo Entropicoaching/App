@@ -97,3 +97,56 @@ test('U5 2/4: forsiden viser kortet øverst kun med flaget, aldrig i forhåndsvi
   assert.ok(on.indexOf('data-u5-today') < on.indexOf('aria-label="Dit næste pas"'))
   assert.doesNotMatch(render(h(Home, { ...props, u5Today: true, sessionReadOnly: true })), /data-u5-today/)
 })
+
+// Syntetisk klient med samme kædeform som Supabase; registrerer skrivninger.
+function fakeClient(tables, writes) {
+  return { from(name) {
+    const q = { filters: [], select() { return q }, eq(k, v) { q.filters.push(r => r[k] === v); return q },
+      gte(k, v) { q.filters.push(r => r[k] >= v); return q }, lte(k, v) { q.filters.push(r => r[k] <= v); return q },
+      order() { return q }, limit() { return q },
+      insert(row) { writes.push([name, row]); (tables[name] ||= []).push(row); return Promise.resolve({ error: null, data: [row] }) },
+      then(ok, fail) { return Promise.resolve({ error: null, data: (tables[name] || []).filter(r => q.filters.every(f => f(r))) }).then(ok, fail) } }
+    return q
+  } }
+}
+
+test('U5 3/4: mad logges på ét tryk som i går gennem meal_logs', gate, async () => {
+  const writes = [], tables = { meal_logs: [
+    { athlete_id: A, date: '2026-11-09', meal: 'Havregrød', kcal: 400, protein: 20, carb: 60, fat: 8 },
+    { athlete_id: A, date: '2026-11-09', meal: 'Kylling og ris', kcal: 650, protein: 45, carb: 70, fat: 15 }] }
+  const m = await mount(h(TodayCard, { athlete: { id: A }, today, u5Client: fakeClient(tables, writes), setTab() {} }))
+  try {
+    await act(async () => new Promise(r => setTimeout(r, 0)))
+    assert.match(m.text(), /Mangler i dag: mad/)
+    await tap(m.host, 'Jeg spiste som i går (2 måltider)')
+    await act(async () => new Promise(r => setTimeout(r, 20)))
+    assert.deepEqual(writes.map(([t, r]) => [t, r.date, r.meal]), [['meal_logs', today, 'Havregrød'], ['meal_logs', today, 'Kylling og ris']])
+    assert.match(m.text(), /Alt er logget i dag/)
+  } finally { await m.done() }
+})
+
+test('U5 3/4: uden måltider i går fører Log mad til Kost; skjult kost viser ingen madrække', gate, async () => {
+  const tabs = [], m = await mount(h(TodayCard, { athlete: { id: A }, today, u5Client: fakeClient({}, []), setTab: t => tabs.push(t) }))
+  try {
+    await act(async () => new Promise(r => setTimeout(r, 0)))
+    await tap(m.host, 'Log mad')
+    assert.deepEqual(tabs, ['kost'])
+  } finally { await m.done() }
+  assert.equal(render(h(TodayCard, { athlete: { id: A }, today, visKost: false, u5ReadMeals: () => assert.fail('ingen læsning') })), '')
+})
+
+test('U5 3/4: dagens pas: første sæt uden coachvægt får sidste pas i udkastet, uden ekstra Start-knap', gate, async () => {
+  const tables = { exercise_logs: [{ athlete_id: A, weight: 140, reps_completed: 5, logged_at: '2026-11-03T10:00:00Z', skipped: false, exercises: { name: 'Squat' } }] }
+  let inputs = { 'ex-bench_1': { weight: '' } }
+  const exercises = [{ id: 'ex-squat', name: 'Squat', reps: '5', recommended_weight: null }, { id: 'ex-bench', name: 'Bænkpres', reps: '5', recommended_weight: 100 }]
+  const m = await mount(h(TodayCard, { athlete: { id: A }, today, visKost: false, u5Client: fakeClient(tables, []),
+    u5Training: { kind: 'today', logged: 0, total: 6, exercises }, logInputs: inputs,
+    setLogInputs: f => { inputs = f(inputs) } }))
+  try {
+    await act(async () => new Promise(r => setTimeout(r, 0)))
+    assert.match(m.text(), /Træning · 0 af 6 sæt/)
+    assert.doesNotMatch(m.text(), /Start dagens pas</)
+    assert.equal(elements(m.host).filter(n => n.tagName === 'BUTTON').length, 0)
+    assert.deepEqual(inputs, { 'ex-bench_1': { weight: '' }, 'ex-squat_1': { weight: '140', reps: '5' } })
+  } finally { await m.done() }
+})

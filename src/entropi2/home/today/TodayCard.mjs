@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { homeStyles as s } from '../homeStyles.mjs'
-import { formatKg, stepKg, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems } from './todayModel.mjs'
+import { formatKg, stepKg, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
+import { readTodayMeals, copyYesterdayMeals, readLastWeights } from './todayRead.mjs'
 
 // Hooks hentes via navnerummet, som i U3's kort: lukkede prøveharnesser kan erstatte 'react'
 // for forsiden. Kortet skriver kun gennem værtens eksisterende logWeight og saveReadiness:
@@ -27,7 +28,37 @@ export default function TodayCard(props) {
   const sent = React.useRef(null)
   const latest = React.useRef(props)
   latest.current = props
+  const [meals, setMeals] = React.useState(null)
+  const [copy, setCopy] = React.useState(null)
+  const [lastByName, setLastByName] = React.useState(null)
   React.useEffect(() => () => clearTimeout(timer.current), [])
+  const showMeals = !props.sessionReadOnly && !!athleteId && !!today && props.visKost !== false
+  const readMeals = props.u5ReadMeals ?? readTodayMeals
+  React.useEffect(() => {
+    if (!showMeals) return
+    let active = true
+    Promise.resolve(readMeals({ athleteId, today, client: latest.current.u5Client }))
+      .then(data => { if (active) setMeals({ data, athleteId, day: today }) }, () => { if (active) setMeals({ status: 'error' }) })
+    return () => { active = false }
+  }, [showMeals, athleteId, today, readMeals])
+  const trainingToday = props.u5Training?.kind === 'today' && !props.sessionReadOnly && !!athleteId
+  const readLast = props.u5ReadLastWeights ?? readLastWeights
+  React.useEffect(() => {
+    if (!trainingToday) return
+    let active = true
+    Promise.resolve(readLast({ athleteId, client: latest.current.u5Client }))
+      .then(map => { if (active) setLastByName(map ?? {}) }, () => { if (active) setLastByName({}) })
+    return () => { active = false }
+  }, [trainingToday, athleteId, readLast])
+  // Første sæt uden coachens vægt får sidste pas' vægt i udkastet, så det kan godkendes med ét tryk,
+  // når atleten starter passet. Kun tomme felter udfyldes; intet gemmes.
+  const exercises = props.u5Training?.exercises
+  React.useEffect(() => {
+    const p = latest.current
+    if (!trainingToday || !lastByName || typeof p.setLogInputs !== 'function') return
+    if (!Object.keys(firstSetPrefill(exercises, lastByName, p.logInputs)).length) return
+    p.setLogInputs(current => ({ ...current, ...firstSetPrefill(exercises, lastByName, current) }))
+  }, [trainingToday, lastByName, exercises])
   // Gem først, når værten har udkastet; ellers ville en gammel logWeight/saveReadiness gemme et tomt felt.
   React.useEffect(() => {
     if (!pending || sent.current === pending) return
@@ -45,7 +76,11 @@ export default function TodayCard(props) {
   const canReadiness = typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function'
   const wDone = weightDone(props.weightLogs, athleteId, today)
   const rDone = readinessDone({ readinessLog: props.readinessLog, trackingData: props.trackingData, athleteId, today })
-  const model = todayItems({ weight: canWeight ? { done: wDone } : null, readiness: canReadiness ? { done: rDone } : null })
+  const mealData = meals?.athleteId === athleteId && meals?.day === today && meals.data?.status === 'ready'
+    ? { ...meals.data, today: meals.data.today + (copy?.saved ?? 0) } : null
+  const training = props.u5Training
+  const model = todayItems({ weight: canWeight ? { done: wDone } : null, readiness: canReadiness ? { done: rDone } : null,
+    training: training ? { ...training, today: true } : null, meal: showMeals ? mealData : null })
   if (!model.headline) return null
   const busy = Boolean(pending || props.savingWeight || props.savingReadiness)
 
@@ -88,10 +123,10 @@ export default function TodayCard(props) {
     }, props.u5GraceMs ?? GRACE_MS)
   }
   const undo = () => { clearTimeout(timer.current); setGrace(null) }
+  // Uden historik: åbn den fulde Dagsform i "Log i dag" under pas-kortet.
   const openFull = () => {
-    const doc = typeof document === 'undefined' ? null : document
-    const button = doc?.querySelector?.('[data-home-quick-logs] button')
-    button?.scrollIntoView?.({ block: 'center' }); button?.click?.()
+    const button = typeof document === 'undefined' ? null : document.querySelector?.('[data-home-quick-logs] button')
+    button?.click?.(); button?.scrollIntoView?.({ block: 'center' })
   }
   const readinessRow = () => h('div', { key: 'readiness', style: row, 'data-u5-readiness': '' },
     h('p', { style: label }, 'Dagsform · energi i dag'),
@@ -109,7 +144,30 @@ export default function TodayCard(props) {
         h('button', { type: 'button', style: primary, disabled: busy, onClick: openFull }, 'Udfyld dagsform'),
         h('p', { style: hint }, 'Fire korte svar. Næste gang er det ét tryk.')))
 
-  const rows = { weight: weightRow, readiness: readinessRow }
+  // Start bliver i "Dit næste pas" lige under kortet; her står kun status, så handlingen ikke findes to gange.
+  const trainingRow = () => h('div', { key: 'training', style: row, 'data-u5-training': '' },
+    h('p', { style: label }, `Træning · ${training.logged ?? 0} af ${training.total ?? 0} sæt`),
+    h('p', { style: { ...hint, margin: 0 } }, 'Start dagens pas lige herunder. Første sæt står klar til ét tryk.'))
+  const repeatYesterday = async () => {
+    if (copy?.running || !mealData?.yesterday.length) return
+    const list = mealData.yesterday
+    setCopy({ running: true, saved: 0, total: list.length })
+    const result = await copyYesterdayMeals({ athleteId, today, meals: list, client: latest.current.u5Client })
+    setCopy({ running: false, ...result })
+  }
+  const go = route => () => latest.current.setTab?.(route)
+  const mealRow = () => h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
+    h('p', { style: label }, 'Mad'),
+    mealData.yesterday.length
+      ? h('button', { type: 'button', style: primary, disabled: copy?.running, onClick: repeatYesterday },
+        copy?.running ? `Logger ${copy.saved + 1} af ${copy.total}…`
+          : `Jeg spiste som i går (${mealData.yesterday.length} ${mealData.yesterday.length === 1 ? 'måltid' : 'måltider'})`)
+      : h('button', { type: 'button', style: primary, disabled: typeof props.setTab !== 'function', onClick: go('kost') }, 'Log mad'),
+    copy && !copy.running && copy.saved < copy.total
+      ? h('p', { role: 'alert', style: hint }, `${copy.saved} af ${copy.total} måltider blev gemt. Log resten under Kost.`)
+      : h('p', { style: hint }, mealData.yesterday.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.'))
+
+  const rows = { weight: weightRow, readiness: readinessRow, training: trainingRow, meal: mealRow }
   return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'I dag', 'data-u5-today': '' },
     h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
     h('h2', { style: { ...s.heading, fontSize: 22, margin: '6px 0 0' } }, model.headline),
