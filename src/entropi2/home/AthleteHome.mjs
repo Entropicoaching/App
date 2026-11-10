@@ -15,6 +15,8 @@ import { buildAthleteWeek } from '../tracking/ugeatlet/athleteWeekModel.mjs'
 import { homeRecordSnapshot } from './homeRecord.mjs'
 import { readHomeRecordHistory } from './homeRecordRead.mjs'
 import { formatHistoryKg } from '../analysis/fourWeekHistory.mjs'
+import TodayCard from './today/TodayCard.mjs'
+import { u5TodayEnabled } from './today/flag.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -179,6 +181,8 @@ export default function AthleteHome(props) {
     !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
       canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost }),
+    // U5: "I dag" øverst med det, der mangler, og let logning. Bag sit eget flag.
+    u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData }),
     h('section', { style: s.card, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading },
       !(programLoading || programError) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'
