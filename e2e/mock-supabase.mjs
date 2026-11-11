@@ -456,6 +456,15 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
         .sort((a, b) => String(b.analyzed_at || '').localeCompare(String(a.analyzed_at || '')))
       return shared.slice(offset, offset + limit)
     },
+    // U9: atletens egen afsendte video i tråden, samme felter som produktionens funktion
+    // (supabase/migrations/20260815123142_videocoach_athlete_draft_idempotency.sql).
+    get_my_video_analysis_submission_identity_v3: (args, ctx) => {
+      const athlete = db.athletes?.find(a => a.user_id === ctx.userId)
+      if (!athlete) return []
+      return (db.video_analyses || []).filter(v => v.client_analysis_id === args?.p_client_analysis_id
+        && v.athlete_id === athlete.id && v.source_mode === 'athlete_submission').slice(0, 1)
+        .map(v => ({ id: v.id, client_analysis_id: v.client_analysis_id, athlete_id: v.athlete_id, status: v.status, created_at: v.created_at }))
+    },
     entropi_training_signals_v1: () => [],
     // ORDRE 301: spejler supabase/sql/resolve-automation-alert-v1.sql (true
     // hvis raekken blev markeret nu, false hvis den ikke findes/var loest).
@@ -479,6 +488,10 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
     const ctx = { userId: tokensToUser.get(jwt) }
     const handler = rpcHandlers[name]
     const data = handler ? handler(args, ctx) : []
+    // .single() beder om ét objekt; som PostgREST giver nul eller flere rækker 406.
+    if ((req.headers['accept'] || '') === 'application/vnd.pgrst.object+json' && Array.isArray(data)) {
+      return data.length === 1 ? sendJson(res, 200, data[0]) : sendJson(res, 406, { code: 'PGRST116', message: 'JSON object requested, multiple (or no) rows returned' })
+    }
     return sendJson(res, 200, data)
   }
 
