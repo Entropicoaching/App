@@ -27,7 +27,7 @@ export default function PlanGrundlagView(props) {
     h('p', null, model.planReady ? `${f(c.planned)} ${antalOrd(c.planned, 'planlagt sæt', 'planlagte sæt')}.` : 'Planen er ikke fuldt dokumenteret.'),
     h('p', null, model.logsReady ? `${f(c.confirmed)} gennemført · ${f(c.skipped)} sprunget over · ${f(c.percent)}${c.percent === null ? '' : ' %'}.`
       : 'Loggrundlaget mangler eller er ikke entydigt.'),
-    h('p', null, 'Andel gennemførte sæt af alle planlagte sæt. Oversprungne sæt tæller særskilt. Manglende registrering er ikke dokumentation for fravær.')),
+    h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Andel gennemførte sæt af alle planlagte sæt. Oversprungne sæt tæller særskilt. Manglende registrering er ikke dokumentation for fravær.'))),
   ...model.lifts.map(lift => h('details', { key: lift.lift, style: card, open: lift.lift === 'Squat' },
     h('summary', { style: { minHeight: 44, cursor: 'pointer', paddingBlock: 8 } }, lift.lift),
     h('div', { style: { overflowX: 'auto', maxWidth: '100%' }, tabIndex: 0, role: 'region', 'aria-label': `${lift.lift}: ugetabel` },
@@ -41,7 +41,7 @@ export default function PlanGrundlagView(props) {
           h('td', { style: cell }, p.rpe === null ? 'Data mangler' : `${f(p.rpe)} (${f(p.rated)} af ${f(p.sets)} sæt)`)))))),
     h('p', null, lift.comparison ? `e1RM: ${f(lift.comparison.percent)} % fra første til sidste blokuge (${lift.comparison.zone} reps).`
       : 'Ingen e1RM-sammenligning i samme rep-område mellem første og sidste blokuge.'))),
-  h('p', null, 'Volumen er gennemførte hovedløftssæt og tonnage, inklusive lette sæt. e1RM bruger Epley fra tunge sæt med 1–8 reps; deload, taper og aflastning er udeladt. Varianter indgår ikke. RPE er gennemsnit af dokumenterede egne svar; manglende svar er udeladt.'),
+  h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Volumen er gennemførte hovedløftssæt og tonnage, inklusive lette sæt. e1RM bruger Epley fra tunge sæt med 1–8 reps; deload, taper og aflastning er udeladt. Varianter indgår ikke. RPE er gennemsnit af dokumenterede egne svar; manglende svar er udeladt.')),
   h('section', { style: card, 'aria-label': 'Kropsvægtstrend' }, h('h3', null, 'Kropsvægt'),
     model.weight.state === 'unknown' ? h('p', null, 'Vægtgrundlaget mangler eller er ikke entydigt.')
       : h('ul', null, ...model.weight.points.map(p => h('li', { key: p.start },
@@ -49,7 +49,7 @@ export default function PlanGrundlagView(props) {
     h('p', null, model.weight.delta === null ? 'Sammenligning kræver mindst tre vejedage i både første og sidste blokuge.'
       : `Forskel mellem ugegennemsnit: ${kg(model.weight.delta)}.`)),
   h('section', { style: card, 'aria-label': 'Smerte- og stopnoter' }, h('h3', null, 'Smerte- og stopnoter'),
-    h('p', null, 'Markeringerne finder omtale i noterne; de er ikke en vurdering af symptomer.'),
+    h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Markeringerne finder omtale i noterne; de er ikke en vurdering af symptomer.')),
     !model.logsReady ? h('p', null, 'Notegrundlaget er ikke klar.') : model.notes.length === 0
       ? h('p', null, 'Ingen noter i det komplette loggrundlag.')
       : h('ul', null, ...model.notes.map(n => h('li', { key: n.key, style: { marginBottom: 12, overflowWrap: 'anywhere' } },

@@ -52,7 +52,7 @@ export function CoachRadarView(input = {}) {
   return h('section', { 'aria-label': 'Coachens radar', 'data-coach-radar': true,
     style: { border: '1px solid #c8923a', borderRadius: 16, padding: 16, marginBlock: 20, minWidth: 0 } },
     h('h2', { style: { marginTop: 0 } }, 'Hvem har brug for dig i dag?'),
-    h('p', null, 'Atleter med signaler, du kan følge op på. Flest point står først.'),
+    h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Atleter med signaler, du kan følge op på. Flest point står først.')),
     (loading || model.state === 'loading') ? h('p', { role: 'status' }, 'Henter radarens data…') :
       model.state === 'unavailable' ? h('p', { role: 'status' }, 'Opdater overblikket for at se radaren.') :
         model.state === 'partial' && h('p', { role: 'status' }, 'Nogle data mangler. Kun kendte signaler tæller med.'),

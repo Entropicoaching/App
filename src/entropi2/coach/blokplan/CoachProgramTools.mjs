@@ -26,7 +26,7 @@ export function BlockToolContent({ result, today, edits, onChange, onSave, messa
   const model = suggestBlock(result.snapshot, today, { edits })
   return h('div', null, h(BlockPlanView, { enabled: true, embedded: true, snapshot: result.snapshot, today, edits, onChange }),
     model.state !== 'unknown' && h('button', { type: 'button', style: control, disabled: model.state !== 'ready', onClick: onSave }, 'Gem blokudkast lokalt'),
-    h('p', null, 'Gem opbevarer et lokalt coachudkast i denne browser. Det opretter ingen uger eller pas hos atleten.'),
+    h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Gem opbevarer et lokalt coachudkast i denne browser. Det opretter ingen uger eller pas hos atleten.')),
     message && h('p', { role: 'status' }, message))
 }
 

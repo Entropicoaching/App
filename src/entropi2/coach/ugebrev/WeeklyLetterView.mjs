@@ -38,5 +38,5 @@ export default function WeeklyLetter(options = {}) {
         h('p', null, `Regel: ${b.rule}.`), h('p', null, `Beregning: ${b.formula}.`))
         : h('p', null, 'Intet flag er valgt som fokus. Det er ikke en vurdering af atletens helbred.'),
       m.otherFlags > 0 && h('p', null, `${m.otherFlags} øvrige flag skal gennemgås i ugeevalueringen.`),
-      h('p', null, 'Grundlaget er atletens egne registreringer. Coachen vælger og redigerer beskeden.')))
+      h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Grundlaget er atletens egne registreringer. Coachen vælger og redigerer beskeden.'))))
 }

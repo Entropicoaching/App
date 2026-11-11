@@ -16,8 +16,10 @@ test('OFF touches no input getters or callbacks', () => {
 
 test('enabled view uses four folded native sections and a flexible mobile layout', () => {
   const tree = View({ enabled: true, input: syntheticWeek() }), all = nodes(tree)
-  const sections = all.filter(n => n.type === 'details')
+  // U9: forklaringerne har hver sin lukkede fold "Forklaring"; de fire sektioner er uændrede.
+  const sections = all.filter(n => n.type === 'details' && !Object.hasOwn(n.props, 'data-u9-forklaring'))
   assert.equal(sections.length, 4)
+  assert.equal(all.filter(n => n.type === 'details' && Object.hasOwn(n.props, 'data-u9-forklaring')).every(n => !n.props.open), true)
   assert.equal(sections.every(n => !n.props.open), true)
   assert.equal(all.filter(n => n.type === 'summary').every(n => n.props.style.minHeight >= 44), true)
   assert.equal(tree.props.style.width, '100%'); assert.equal(tree.props.style.minWidth, 0)

@@ -32,18 +32,18 @@ export default function WeekEvaluation(props = {}) {
       line('Sæt', `${format(t.sets)} bekræftet af ${format(t.plannedSets)} planlagt · ${format(t.skipped)} sprunget over`),
       line('Gennemsnitlig RPE', `${format(t.rpe)} · ${format(t.rpeCount)} ${antalOrd(t.rpeCount, 'atletregistrering', 'atletregistreringer')}`),
       ...t.lifts.map(lift => line(`Top-e1RM · ${lift.lift}`, metric(lift.value, 'kg'))),
-      h('p', null, 'Et pas tæller som gennemført, når alle planlagte sæt er logget eller sprunget over. RPE er gennemsnit pr. bekræftet sæt med eget svar. e1RM bruger sammenlignelige tunge hovedløft; lette sæt og deload er udeladt.'))),
+      h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Et pas tæller som gennemført, når alle planlagte sæt er logget eller sprunget over. RPE er gennemsnit pr. bekræftet sæt med eget svar. e1RM bruger sammenlignelige tunge hovedløft; lette sæt og deload er udeladt.')))),
     section('Kost', status(n.state), n.state !== 'unknown' && h('div', null,
       line('Loggede dage', `${format(n.days)} af 7`),
       line('Gennemsnitlig kcal', `${metric(n.kcal, 'kcal')} · Aktuelt mål: ${metric(n.kcalTarget, 'kcal')}`),
       line('Gennemsnitligt protein', `${metric(n.protein, 'g')} · Aktuelt mål: ${metric(n.proteinTarget, 'g')}`),
-      h('p', null, 'Gennemsnit pr. logget dag. En logget dag kan være ufuldstændig. Tidligere mål kan have været anderledes.'))),
+      h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Gennemsnit pr. logget dag. En logget dag kan være ufuldstændig. Tidligere mål kan have været anderledes.')))),
     section('Kropsvægt', status(w.state), w.state !== 'unknown' && h('div', null,
       line('Ugegennemsnit', metric(w.average, 'kg')),
       line('Dage med vejning', format(w.days)),
       line('Ugen før', `${metric(w.previous, 'kg')} · ${format(w.previousDays)} ${antalOrd(w.previousDays, 'dag', 'dage')}`),
       line('Ændring fra ugen før', w.delta === null ? 'data mangler' : `${w.delta > 0 ? '+' : ''}${format(w.delta)} kg`),
-      h('p', null, 'Gennemsnit af dagsgennemsnit; hver dag vejer lige meget. En ændring kræver vejninger i begge uger.'))),
+      h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Gennemsnit af dagsgennemsnit; hver dag vejer lige meget. En ændring kræver vejninger i begge uger.')))),
     section('Noter og beskeder',
       line('Pasnoter', notes.trainingState === 'ready' ? 'Indlæst' : notes.trainingState === 'partial' ? 'Ufuldstændige data' : 'Data mangler'),
       line('Beskeder', notes.messageState === 'ready' ? 'Indlæst' : notes.messageState === 'partial' ? 'Ufuldstændige data' : 'Data mangler'),
@@ -54,6 +54,6 @@ export default function WeekEvaluation(props = {}) {
           entry.day && h('time', { dateTime: entry.day }, ` · ${date(entry.day)}`)),
         entry.marks.length > 0 && h('strong', null, entry.marks.join(' · ')),
         h('p', { style: { whiteSpace: 'pre-wrap' } }, entry.text))),
-      h('p', null, 'Smerte og stop markeres ud fra ordene i noterne og beskederne. Coachen vurderer betydningen.')))
+      h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Smerte og stop markeres ud fra ordene i noterne og beskederne. Coachen vurderer betydningen.'))))
 }
 

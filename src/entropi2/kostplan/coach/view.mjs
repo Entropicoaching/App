@@ -54,7 +54,7 @@ export function coachPlanView(h, snapshot, actions) {
     h('textarea', { name: 'portionGuidance', style: control, rows: 5, maxLength: 4000,
       value: s.portionGuidance ?? '', disabled: locked,
       onChange: event => actions.setAdvice(event.currentTarget.value) })),
-  h('p', null, 'Coachens tekst om fx væske, vitaminer, mineraler og måltidstiming. Gemmes med denne dato og aktiveres kun ved dit eksplicitte valg. Højst 4000 tegn.'),
+  h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Coachens tekst om fx væske, vitaminer, mineraler og måltidstiming. Gemmes med denne dato og aktiveres kun ved dit eksplicitte valg. Højst 4000 tegn.')),
   h('form', { onSubmit: event => { event.preventDefault(); if (!s.localDraftOnly || s.meals.length) actions.generate() } },
     h('fieldset', { disabled: locked, style: { minWidth: 0, margin: 0, padding: '0.75rem' } },
       h('legend', null, 'Dagens mål'),
