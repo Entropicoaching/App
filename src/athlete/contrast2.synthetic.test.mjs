@@ -57,7 +57,7 @@ test('F6: open logger has accessible RPE help, RPE choices, skip and undo contro
   const calls = []
   const tree = render({ progOpenSession: 'session-1-0', openRpePicker: 'ex-1-0_1',
     setShowRpeGuide: value => calls.push(['guide', value]) })
-  for (const label of ['ℹ', '5.5', '10', 'Spring sæt over', 'Auto-udfyld', 'Spring over']) {
+  for (const label of ['ℹ', '5,5', '10', 'Spring sæt over', 'Auto-udfyld', 'Spring over']) {
     const button = find(tree, label)
     assert.ok(button, label)
     assert.ok(parseFloat(button.props.style.minHeight) >= 44, label)

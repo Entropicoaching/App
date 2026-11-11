@@ -235,7 +235,7 @@ export default function LogTab({
                                       {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
                                       {set.rpe_actual != null && (
                                         <span style={{ color: rpeColor, marginLeft: '0.3rem' }}>
-                                          RPE {set.rpe_actual}{set.rpe_planned != null ? `/${set.rpe_planned}` : ''}
+                                          RPE {komma(set.rpe_actual)}{set.rpe_planned != null ? `/${komma(set.rpe_planned)}` : ''}
                                         </span>
                                       )}
                                       {set.note && <span style={{ color: isMobile ? '#9a968c' : '#4a4844', marginLeft: '0.3rem', fontStyle: 'italic' }}>{set.note}</span>}
@@ -311,7 +311,7 @@ export default function LogTab({
                                           <span style={{ color: '#4a4844' }}>S{set.n} </span>
                                           <span style={{ color: '#c8923a' }}>{komma(set.weight)}kg</span>
                                           {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
-                                          {set.rpe_actual != null && <span style={{ color: '#7a7770', marginLeft: '0.3rem' }}>RPE {set.rpe_actual}{set.rpe_planned != null ? `/${set.rpe_planned}` : ''}</span>}
+                                          {set.rpe_actual != null && <span style={{ color: '#7a7770', marginLeft: '0.3rem' }}>RPE {komma(set.rpe_actual)}{set.rpe_planned != null ? `/${komma(set.rpe_planned)}` : ''}</span>}
                                         </div>
                                       ))}
                                     </div>

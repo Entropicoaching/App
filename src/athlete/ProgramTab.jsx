@@ -1159,7 +1159,7 @@ export default function ProgramTab({
                                         <div style={{ paddingLeft: 'calc(80px + 0.5rem)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                           <div style={{ position: 'relative' }}>
                                             <button
-                                              {...a11y({ type: 'button', 'aria-label': `Vælg RPE ${input.rpe || (plannedRpe != null ? plannedRpe : '–')} · ${setContext}`, 'aria-expanded': openRpePicker === key })}
+                                              {...a11y({ type: 'button', 'aria-label': `Vælg RPE ${komma(input.rpe || (plannedRpe != null ? plannedRpe : '–'))} · ${setContext}`, 'aria-expanded': openRpePicker === key })}
                                               onClick={() => setOpenRpePicker(openRpePicker === key ? null : key)}
                                               style={{ ...programTapTarget,
                                                 background: input.rpe ? 'rgba(200,146,58,0.15)' : 'rgba(237,234,226,0.04)',
@@ -1174,7 +1174,7 @@ export default function ProgramTab({
                                                 cursor: 'pointer',
                                                 whiteSpace: 'nowrap',
                                               }}
-                                            >RPE {input.rpe || (plannedRpe != null ? plannedRpe : '–')}</button>
+                                            >RPE {komma(input.rpe || (plannedRpe != null ? plannedRpe : '–'))}</button>
                                             {openRpePicker === key && (
                                               <div
                                                 ref={node => { if (node) { const sel = node.querySelector('[data-selected="true"]'); if (sel) sel.scrollIntoView({ block: 'nearest', behavior: 'instant' }) } }}
@@ -1198,7 +1198,7 @@ export default function ProgramTab({
                                                   return (
                                                     <button
                                                       key={v}
-                                                      {...a11y({ type: 'button', 'aria-label': `RPE ${v} · ${setContext}`, 'aria-pressed': isSelected })}
+                                                      {...a11y({ type: 'button', 'aria-label': `RPE ${komma(v)} · ${setContext}`, 'aria-pressed': isSelected })}
                                                       data-selected={isSelected ? 'true' : 'false'}
                                                       onClick={() => {
                                                         setLogInputs(p => chooseRpeInput(p, key, v))
@@ -1218,7 +1218,7 @@ export default function ProgramTab({
                                                         textAlign: 'left',
                                                         letterSpacing: '0.04em',
                                                       }}
-                                                    >{programAppearanceOn && isSelected ? `${v} ✓` : v}</button>
+                                                    >{programAppearanceOn && isSelected ? `${komma(v)} ✓` : komma(v)}</button>
                                                   )
                                                 })}
                                               </div>

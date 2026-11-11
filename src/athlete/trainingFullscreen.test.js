@@ -514,7 +514,7 @@ test('actual imported handler progresses across exercises; close/reopen keeps co
   assert.equal(f.runtime.nodes(n => n.type === 'dialog').length, 0)
   f.click('Åbn dagens pas')
   assert.match(f.runtime.text(), /Passet er færdigt/)
-  assert.match(f.runtime.text(), /Squat, sæt 1: 40 kg, 5 gent\., RPE 7.5/)
+  assert.match(f.runtime.text(), /Squat, sæt 1: 40 kg, 5 gent\., RPE 7,5/)
   assert.equal(f.props.exerciseLogs.length, 3)
   assert.equal(f.runtime.nodes(n => n.children.includes('Godkendt')).length, 0)
 })

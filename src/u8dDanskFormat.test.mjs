@@ -114,13 +114,18 @@ test('u8d: rå vægte foran kg står med komma på atlet- og coachskærme', () =
   // K1: rester fra den separate kontrol (offline-kø, næste sæt, RPE ved logget sæt og videoanalyser).
   skal['athlete/DagensPasCard.jsx'].push('${komma(p.payload?.weight ?? 0)} kg', '` @ ${komma(nextSetWeight)} kg`')
   skal['athlete/ProgramTab.jsx'].push('RPE {komma(logged.rpe_actual)}')
+  // K2: RPE-knappen, RPE-vælgerens tal og deres aria-tekst.
+  skal['athlete/DagensPasCard.jsx'].push(">RPE {komma(input.rpe || plannedRpe || '–')} ▾</button>", 'aria-label={`RPE ${komma(v)}`}')
+  skal['athlete/ProgramTab.jsx'].push(">RPE {komma(input.rpe || (plannedRpe != null ? plannedRpe : '–'))}</button>",
+    "'aria-label': `RPE ${komma(v)} · ${setContext}`", "`Vælg RPE ${komma(input.rpe || (plannedRpe != null ? plannedRpe : '–'))} · ${setContext}`", '`${komma(v)} ✓` : komma(v)}')
+  skal['dashboard/LogTab.jsx'].push('RPE {komma(set.rpe_actual)}{set.rpe_planned != null ? `/${komma(set.rpe_planned)}`')
   for (const fil of ['dashboard/AnalyseTab.jsx', 'dashboard/VideoReviewModal.jsx', 'athlete/athleteAnalysisBefore.jsx',
     'athlete/beskederOgVaegt.jsx', 'athlete/contactBaseFactory.jsx']) skal[fil].push('RPE ${komma(analysis.rpe)}')
   for (const [fil, stykker] of Object.entries(skal)) {
     const tekst = src(fil)
     for (const stykke of stykker) assert.ok(tekst.includes(stykke), `${fil}: ${stykke}`)
     assert.doesNotMatch(tekst, /[{$]\{?(?:[a-z]+\.)?(?:weight|load_kg|recommended_weight)\}\s?kg/i, fil)
-    assert.doesNotMatch(tekst, /RPE \$?\{(?:analysis\.rpe|logged\.rpe_actual|log\.rpe_actual)\}/, fil)
+    assert.doesNotMatch(tekst, /RPE \$?\{(?:analysis\.rpe|logged\.rpe_actual|log\.rpe_actual|set\.rpe_actual|v)\}/, fil)
   }
 })
 

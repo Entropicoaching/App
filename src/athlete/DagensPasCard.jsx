@@ -560,7 +560,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             aria-expanded={rpeOpenFor === key}
             onClick={() => setRpeOpenFor(rpeOpenFor === key ? null : key)}
             style={st.ekstraKnap(!!input.rpe)}
-          >RPE {input.rpe || plannedRpe || '–'} ▾</button>
+          >RPE {komma(input.rpe || plannedRpe || '–')} ▾</button>
           <button
             type="button"
             aria-label={`Note, sæt ${setNumber}`}
@@ -577,7 +577,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
                 <button
                   key={v}
                   type="button"
-                  aria-label={`RPE ${v}`}
+                  aria-label={`RPE ${komma(v)}`}
                   aria-pressed={valgt}
                   onClick={() => {
                     setLogInputs(p => chooseRpeInput(p, key, v, input))

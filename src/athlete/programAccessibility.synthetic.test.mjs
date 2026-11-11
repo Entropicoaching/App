@@ -78,12 +78,12 @@ test('F5: RPE picker states and chosen values remain truthful and preserve the e
   assert.equal(choices.length, 10)
   assert.equal(choices.filter(n => n.props['aria-pressed']).length, 1)
   assert.equal(text(choices.find(n => n.props['aria-pressed'])), '7 ✓')
-  named(tree, `RPE 8.5 · ${setName(1, 1)}`).props.onClick()
+  named(tree, `RPE 8,5 · ${setName(1, 1)}`).props.onClick()
   assert.equal(inputs[key].rpe, '8.5')
   assert.match(inputs[key].note, /Bevar note/)
   assert.deepEqual(calls, [null])
   tree = view.render({ ...props, logInputs: inputs, openRpePicker: null })
-  assert.equal(named(tree, `Vælg RPE 8.5 · ${setName(1, 1)}`).props['aria-expanded'], false)
+  assert.equal(named(tree, `Vælg RPE 8,5 · ${setName(1, 1)}`).props['aria-expanded'], false)
 })
 
 test('F5: saved, failed and undone sets expose context without inventing a successful save', () => {
