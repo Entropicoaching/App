@@ -879,6 +879,7 @@
   #vcContinueStep { color:#141410; border-color:var(--accent); background:var(--accent); }
   #vcLiftSlot { display:flex; align-items:center; min-width:0; }
   #vcLiftSlot:empty { display:none; }
+  #vcLiftSlot select[data-mangler="true"] { outline:2px solid #d8b16b; outline-offset:2px; }
   #vcLiftSetup { display:none !important; }
   #vcLiftSlot select { width:124px; min-height:36px; padding:6px 9px; border-radius:8px;
     text-transform:none; font-size:10px; background:var(--vc-surface-2); }
@@ -1373,6 +1374,7 @@ let vcTiming = { videoLoadedAt:null, setupClicks:0, trackingStartedAt:null };
 // ({cmPerPx, skeletonProportions} eller null). Sat af vcSyncPriorSetup().
 let vcPriorSetup = null;
 const cleanOverlayState = { phases:true, history:true, metrics:true };
+let syncAthleteLiftGate = null;    // U9: øvelsesporten i starttrinnet, se syncAthleteStartGate
 let setAthleteState = null;         // Athlete v2: ét roligt, guidet flow
 let setAthleteSubmitOpen = null;    // Athlete v3: sendearket må kun åbne i sidste trin
 // ORDRE 262 · commit 2: sat i ATHLETE-opsætningen (samme tværscope-mønster
@@ -6711,6 +6713,7 @@ allBtn.onclick = async () => {
   if (ATHLETE && !vcV3Lift(document.getElementById('liftSel').value)) {
     setAthleteState('ready', 'Vælg squat, bænkpres eller dødløft først.');
     say('Vælg løft først — så ved analysen hvilke faser den skal vise');
+    syncAthleteLiftGate?.();
     document.getElementById('vcAthleteLift')?.focus();
     return;
   }
@@ -9204,6 +9207,7 @@ document.getElementById('liftSel').addEventListener('change', e => {
   const athleteLift = document.getElementById('vcAthleteLift');
   if (athleteLift && athleteLift.value !== e.target.value)
     athleteLift.value = e.target.value;
+  if (ATHLETE) syncAthleteLiftGate?.();
   analysisSession = null;
   const path = latestCleanPath();
   const changedLiftFamily = path?.analysis?.lift &&
@@ -10438,20 +10442,36 @@ if (ATHLETE) {
     const whole = Math.floor(value);
     return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}.${Math.floor((value % 1) * 10)}`;
   };
+  // U9 (Marc 11. nov.): sporingen kræver en øvelse (den finder faserne ud fra den). Grunden stod
+  // i statuskortet, som er skjult i starttrinnet, så Marc opdagede den først tredje gang. Nu står den
+  // ved tidslinjen, så snart videoen er åben, og Stangbane-knappen hedder "Vælg øvelse først".
+  const athleteNeedsLift = () => ATHLETE && !vcV3Lift(document.getElementById('liftSel')?.value || '');
   const resetAthleteStartGuide = () => {
     const hasStart = manualTrackingBounds.start != null &&
       Number.isFinite(manualTrackingBounds.start);
     athleteMarkStartBtn.dataset.set = String(hasStart);
     athleteMarkStartBtn.textContent = hasStart ? 'Start sat ✓' : 'Sæt start her';
-    athleteStartGuideText.textContent = hasStart
-      ? `Start ${athleteTime(manualTrackingBounds.start)} · tryk Stangbane`
-      : 'Spol til lige før løftet starter';
+    athleteStartGuideText.textContent = athleteNeedsLift()
+      ? 'Vælg øvelse øverst først. Sporingen bruger øvelsen til at finde faserne.'
+      : hasStart
+        ? `Start ${athleteTime(manualTrackingBounds.start)} · tryk Stangbane`
+        : 'Spol til lige før løftet starter';
   };
   const syncAthleteStartGate = () => {
     const state = document.body.dataset.athleteState || '';
+    const needsLift = state === 'ready' && athleteNeedsLift();
     const needsStart = state === 'ready' && !Number.isFinite(manualTrackingBounds.start);
-    if (state === 'ready') allBtn.dataset.label = needsStart ? 'Sæt start først' : 'Stangbane';
-    allBtn.disabled = state === 'target' || needsStart;
+    if (state === 'ready') allBtn.dataset.label = needsLift ? 'Vælg øvelse først' : needsStart ? 'Sæt start først' : 'Stangbane';
+    allBtn.disabled = state === 'target' || needsLift || needsStart;
+    const liftSel = document.getElementById('liftSel');
+    if (liftSel) liftSel.dataset.mangler = String(needsLift);
+    const shown = document.getElementById?.('vcAthleteLift');
+    if (shown) shown.dataset.mangler = String(needsLift);
+  };
+  syncAthleteLiftGate = () => {
+    if ((document.body.dataset.athleteState || '') !== 'ready') return;
+    resetAthleteStartGuide();
+    syncAthleteStartGate();
   };
   athleteMarkStartBtn.onclick = () => {
     if (!video.src || tracking || analyzing) return;
@@ -10468,6 +10488,7 @@ if (ATHLETE) {
     athleteMarkStartBtn.dataset.set = 'true';
     athleteMarkStartBtn.textContent = 'Start sat ✓';
     athleteStartGuideText.textContent = `Start ${athleteTime(trimStart)} · tryk Stangbane`;
+    resetAthleteStartGuide();
     syncAthleteStartGate();
   };
 
