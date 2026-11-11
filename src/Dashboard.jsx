@@ -921,7 +921,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               <CoachKostMaal enabled={true} athlete={a} weightStatus={e2KostVaegt} today={calendarDay()} {...{
                 editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
                 session, loading, loadError,
-              }} coachNutrition={e2CoachNutrition} readContext={e2ReadContext} />
+              }} weekClient={supabase} coachNutrition={e2CoachNutrition} readContext={e2ReadContext} />
             )}
             {!e2 && activeTab === 'kost' && (
               <KostTab {...{
