@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { addCalendarDays } from '../../calendarDate.js'
-import { painFromDaily, sleepFromDaily, dayNumbersLine, weekTargetLine, syncCoachTargets } from './coachData.mjs'
+import { painFromDaily, sleepFromDaily, dayNumbersLine, weekTargetLine, readWeekNutrition, syncCoachTargets } from './coachData.mjs'
 import { attentionCandidates } from '../coach/coachAttention.mjs'
 import { readCoachAttention, attentionFor } from '../coach/coachAttentionRead.mjs'
 import { attentionDraft } from '../u6/coachDraft.mjs'
@@ -56,24 +56,37 @@ test('U7 4/5: læsningen henter dagsdata med tabellen; uden tabellen er L1 kompl
   assert.ok(!flagOff.calls.some(c => c.table === 'tracking_daily_v1'))
 })
 
-const targets = [
-  { athlete_id: A, effective_from: d(-9), kcal: 2800, protein_g: 180, water_ml: null, created_at: '1' },
-  { athlete_id: A, effective_from: d(-1), kcal: null, protein_g: 200, water_ml: null, created_at: '2' },
-]
 const meal = (date, kcal, protein) => ({ date, meal: 'Syntetisk måltid', kcal, protein })
 
-test('U7 4/5: ugens kost sammenlignes med det mål, der gjaldt hver dag', () => {
+test('U7 4/5: ugens kost sammenlignes med athletes-målet, som Uge for uge og Min uge bruger', () => {
+  const goal = { kcal_target: 2800, protein_target: 180 }
   const meals = [meal(d(-9), 2600, 170), meal(d(-8), 3000, 190), meal(d(-4), 1000, 50), meal(d(-4), 1000, 50),
     { date: d(-3), meal: '[appData2-day-v1] bekræftet', kcal: 9999, protein: 999 }]
-  assert.deepEqual(weekTargetLine({ targets, meals, athleteId: A, day }),
-    { period: 'sidste uge', text: 'Kost sidste uge: protein 153 g mod mål 180 g, 2.533 kcal mod 2.800 i snit pr. logget dag (3 af 7 dage, mål fra 2. nov.)' })
-  // Ingen loggede dage sidste uge: denne uge, hvor proteinmålet skiftede i går.
+  assert.deepEqual(weekTargetLine({ goal, meals, day }),
+    { period: 'sidste uge', text: 'Kost sidste uge: protein 153 g mod mål 180 g, 2.533 kcal mod 2.800 i snit pr. logget dag (3 af 7 dage)' })
+  // Ingen loggede dage sidste uge: denne uge.
   const now = [meal(d(-2), 2700, 175), meal(d(-1), 2900, 205)]
-  assert.equal(weekTargetLine({ targets, meals: now, athleteId: A, day }).text,
-    'Kost denne uge: protein 190 g mod mål 190 g, 2.800 kcal mod 2.800 i snit pr. logget dag (2 af 7 dage, målet blev ændret i ugen)')
-  // Intet dateret mål for ugen: intet vises.
-  assert.equal(weekTargetLine({ targets: [], meals, athleteId: A, day }), null)
-  assert.equal(weekTargetLine({ targets, meals: [], athleteId: A, day }), null)
+  assert.equal(weekTargetLine({ goal, meals: now, day }).text,
+    'Kost denne uge: protein 190 g mod mål 180 g, 2.800 kcal mod 2.800 i snit pr. logget dag (2 af 7 dage)')
+  assert.equal(weekTargetLine({ goal: { kcal_target: null, protein_target: '180' }, meals: now, day }).text,
+    'Kost denne uge: protein 190 g mod mål 180 g i snit pr. logget dag (2 af 7 dage)')
+  // Intet mål på atleten: intet vises.
+  assert.equal(weekTargetLine({ goal: { kcal_target: null, protein_target: '' }, meals, day }), null)
+  assert.equal(weekTargetLine({ goal, meals: [], day }), null)
+})
+
+test('U7 4/5 (u8c): forsiden viser samme proteinmål som Uge for uge, også når et ældre dateret mål findes', async () => {
+  const f = fakeBackend({ tables: {
+    athletes: [{ id: A, kcal_target: 2800, protein_target: 180 }],
+    nutrition_targets_v1: [{ athlete_id: A, effective_from: d(-9), kcal: 2800, protein_g: 170, water_ml: null, created_at: '1' }],
+    meal_logs: [{ athlete_id: A, ...meal(d(-9), 2600, 170) }, { athlete_id: A, ...meal(d(-8), 3000, 146) }] } })
+  const data = await readWeekNutrition({ client: f.client, athleteId: A, day })
+  const line = weekTargetLine({ ...data, day })
+  assert.match(line.text, /^Kost sidste uge: protein 158 g mod mål 180 g, 2\.800 kcal mod 2\.800 /)
+  assert.doesNotMatch(line.text, /170 g/)
+  // Uden U7-tabellen vises intet, som før.
+  const none = fakeBackend({ tables: { athletes: [{ id: A, kcal_target: 2800, protein_target: 180 }] }, missing: ['nutrition_targets_v1'] })
+  assert.equal(await readWeekNutrition({ client: none.client, athleteId: A, day }), null)
 })
 
 test('U7 4/5: coachens mål på athletes dateres én gang pr. ændring; uden tabellen sker intet', async () => {

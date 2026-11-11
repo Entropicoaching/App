@@ -28,7 +28,7 @@ test('U6 1/5: første sæt får planvægten; atletens eget felt bevares', () => 
     { id: 'ex-bench', name: 'Bænkpres', reps: '4-6', recommended_weight: 100 },
     { id: 'ex-row', name: 'Roning', reps: '10', recommended_weight: null }]
   assert.deepEqual(planFirstSetPrefill(exercises, { 'ex-bench_1': { weight: '97,5' } }),
-    { 'ex-squat_1': { weight: '142.5', reps: '5' } })
+    { 'ex-squat_1': { weight: '142,5', reps: '5' } }, 'u8c: dansk komma i feltet')
   assert.deepEqual(planFirstSetPrefill(exercises, {})['ex-bench_1'], { weight: '100', reps: '' })
 })
 
@@ -73,7 +73,7 @@ test('U6 1/5: I dag-kortet viser "Squat 142,5 kg (+2,5)" og lægger planvægten 
     assert.match(m.text(), /Squat 142,5 kg \(\+2,5\)/)
     assert.match(m.text(), /Bænkpres 92,5 kg som sidst/)
     assert.match(m.text(), /Coachens vægt står i første sæt/)
-    assert.deepEqual(inputs, { 'ex-squat_1': { weight: '142.5', reps: '5' }, 'ex-bench_1': { weight: '92.5', reps: '5' } })
+    assert.deepEqual(inputs, { 'ex-squat_1': { weight: '142,5', reps: '5' }, 'ex-bench_1': { weight: '92,5', reps: '5' } })
   } finally { await m.done() }
 })
 

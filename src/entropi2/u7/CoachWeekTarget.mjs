@@ -14,7 +14,7 @@ export function WeekTargetLine({ client, athleteId, day, read = readWeekNutritio
     return () => { active = false }
   }, [client, athleteId, day, read])
   if (data?.athleteId !== athleteId || data.day !== day || !data.result) return null
-  const line = weekTargetLine({ ...data.result, athleteId, day })
+  const line = weekTargetLine({ ...data.result, day })
   return line && h('p', { 'data-u7-week-target': athleteId, style: { margin: '0 0 12px', paddingInline: 4, color: '#b9b4a8' } }, line.text)
 }
 

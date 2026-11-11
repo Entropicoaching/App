@@ -169,8 +169,8 @@ function videoCoachMeasurementSummary(video) {
 
 function videoCoachMeasurementText(summary) {
   const parts = [`${summary.repsCount} rep${summary.repsCount === 1 ? '' : 's'}`]
-  if (summary.driftCm != null) parts.push(`Ø ${summary.driftCm.toFixed(1)} cm sidelæns`)
-  if (summary.avgTimeS != null) parts.push(`Ø ${summary.avgTimeS.toFixed(1)}s/rep`)
+  if (summary.driftCm != null) parts.push(`Ø ${summary.driftCm.toFixed(1).replace('.', ',')} cm sidelæns`)
+  if (summary.avgTimeS != null) parts.push(`Ø ${summary.avgTimeS.toFixed(1).replace('.', ',')}s/rep`)
   return parts.join(' · ')
 }
 

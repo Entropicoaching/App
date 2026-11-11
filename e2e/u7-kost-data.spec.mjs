@@ -162,7 +162,7 @@ async function coach(page, vp, outDir, mode, mock) {
     const day = await page.locator(`[data-u7-day="${ATHLETE_ID}"]`).textContent()
     const week = await page.locator(`[data-u7-week-target="${ATHLETE_ID}"]`).textContent()
     if (!/^Søvn 1,5\/5 \(2 dage\) · Smerte 6\/10 \(venstre knæ\)/.test(day)) throw new Error('Tal-linjen er forkert: ' + day)
-    if (!/^Kost sidste uge: protein 158 g mod mål 170 g, 2\.733 kcal mod 2\.800 i snit pr\. logget dag \(3 af 7 dage, mål fra /.test(week)) throw new Error('Ugens kostmål er forkert: ' + week)
+    if (!/^Kost sidste uge: protein 158 g mod mål 180 g, 2\.733 kcal mod 2\.800 i snit pr\. logget dag \(3 af 7 dage\)$/.test(week)) throw new Error('Ugens kostmål er forkert: ' + week)
     const dated = await waitFor(() => mock.table('nutrition_targets_v1').some(r => r.effective_from === danishToday() && r.protein_g === 180))
     if (!dated) throw new Error('Coachens nuværende mål blev ikke dateret: ' + JSON.stringify(mock.table('nutrition_targets_v1')))
     await edges(page, vp.width, '[data-u7-day], [data-u7-week-target]')

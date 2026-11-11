@@ -34,7 +34,8 @@ test('U6 2/5: readiness-rækken får et udkast med tallene bag', () => {
 
 test('U6 2/5: smerte citerer aldrig noten, kun datoen', () => {
   const draft = draftOf(fixture({ notes: [{ athlete_id: athleteId, logged_at: '2026-10-29T17:00:00Z', note: NOTE }] }))
-  assert.match(draft.text, /nævnte smerte i din log 29\. okt\./)
+  assert.match(draft.text, /nævnte smerte i din log 29\. okt\. Hvordan/)
+  assert.doesNotMatch(draft.text, /\.\./, 'u8c: ingen dobbelt punktum efter datoen')
   assert.doesNotMatch(draft.text, /knæet/)
 })
 

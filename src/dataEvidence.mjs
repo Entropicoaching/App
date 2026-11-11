@@ -31,7 +31,7 @@ export function rpeSignalDescription(e) {
   const own = e.rows.filter(r => !r.skipped && explicitRpe(r) && Number.isFinite(r.rpe_planned) &&
     dayNumber(r.logged_at) !== null && t - dayNumber(r.logged_at) >= 0 && t - dayNumber(r.logged_at) <= 21)
   const drift = own.reduce((n, r) => n + r.rpe_actual - r.rpe_planned, 0) / own.length
-  return `Observeret RPE-afvigelse ${drift.toFixed(2)} fra planen i ${own.length} egne svar på ${new Set(own.map(r => r.session_id)).size} pas. Coachen vurderer sammenhængen.`
+  return `Observeret RPE-afvigelse ${drift.toFixed(2).replace('.', ',')} fra planen i ${own.length} egne svar på ${new Set(own.map(r => r.session_id)).size} pas. Coachen vurderer sammenhængen.`
 }
 export function rpeTrendEvidence(logs) {
   const groups = new Map()

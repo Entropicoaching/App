@@ -1,6 +1,6 @@
 import { parseInputNumber } from '../../inputValues.js'
 import { fixedRepsEntry } from '../../fixedRepsEntry.js'
-import { formatKg } from '../home/today/todayModel.mjs'
+import { formatKg, inputKg } from '../home/today/todayModel.mjs'
 
 // U6 del 1: næste uges vægt i sættet. Rene beregninger, ingen læsninger og ingen skrivninger.
 // Kilde: når coachen godkender udkastet fra draft-next-week og gemmer ugen, skriver
@@ -71,7 +71,7 @@ export function planFirstSetPrefill(exercises, logInputs = {}) {
     const id = `${ex?.id}_1`
     if (!ex?.id || plan == null || given(logInputs?.[id]?.weight)) continue
     const reps = given(logInputs?.[id]?.reps) ? logInputs[id].reps : fixedRepsEntry(ex.reps) ?? ''
-    out[id] = { ...(logInputs?.[id] || {}), weight: String(plan), reps }
+    out[id] = { ...(logInputs?.[id] || {}), weight: inputKg(plan), reps }
   }
   return out
 }

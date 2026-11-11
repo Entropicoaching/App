@@ -207,6 +207,6 @@ function weeklyRule(current, context) {
   const deltaKcal = proposedKcal - current.kcal
   if (deltaKcal === 0) return hold(error < 0 ? 'Energigulvet forhindrer yderligere reduktion.' : 'Kontraktens øvre energigrænse forhindrer yderligere forøgelse.')
   return { action: 'adjust', deltaKcal, proposedKcal,
-    reason: `Vægttrend ${evidence.observedWeeklyPct.toFixed(2)} %/uge mod mål ${targetWeeklyPct} %/uge. Trin højst 150 kcal og 5 %; energigulv respekteres.`,
+    reason: `Vægttrend ${evidence.observedWeeklyPct.toFixed(2).replace('.', ',')} %/uge mod mål ${String(targetWeeklyPct).replace('.', ',')} %/uge. Trin højst 150 kcal og 5 %; energigulv respekteres.`,
     evidence, evaluatedOn: date, nextEligibleOn: iso(end + 7 * DAY), requiresCoachActivation: true }
 }

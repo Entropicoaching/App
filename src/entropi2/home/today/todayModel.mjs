@@ -15,6 +15,9 @@ export function formatKg(value) {
   return n == null ? '' : (Math.round(n * 10) / 10).toFixed(1).replace(/\.0$/, '').replace('.', ',')
 }
 
+// Vægt til et inputfelt: dansk komma og alle decimaler (87,5 og 11,25).
+export const inputKg = value => String(value).replace('.', ',')
+
 // ±0,1 kg uden flydende kommatal-støj.
 export function stepKg(value, delta) {
   const n = parseInputNumber(value)
@@ -92,7 +95,7 @@ export function firstSetPrefill(exercises, lastByName, logInputs = {}) {
     const weight = parseInputNumber(last?.weight)
     if (weight == null || weight < 0) continue
     const reps = fixedRepsEntry(ex.reps) ?? (Number.isInteger(last.reps_completed) && last.reps_completed > 0 ? String(last.reps_completed) : '')
-    out[key] = { ...(logInputs?.[key] || {}), weight: String(weight), reps: given(logInputs?.[key]?.reps) ? logInputs[key].reps : reps }
+    out[key] = { ...(logInputs?.[key] || {}), weight: inputKg(weight), reps: given(logInputs?.[key]?.reps) ? logInputs[key].reps : reps }
   }
   return out
 }

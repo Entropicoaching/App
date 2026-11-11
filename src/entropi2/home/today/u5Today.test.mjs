@@ -68,6 +68,10 @@ test('U5 1/4: første sæt uden coachvægt får sidste pas, coachvægt og udfyld
     ro: { weight: 60, reps_completed: 10 } }
   assert.deepEqual(firstSetPrefill(exercises, last, { e4_1: { weight: '62,5' } }), {
     e1_1: { weight: '140', reps: '5' }, e2_1: { weight: '90', reps: '9' } })
+  // u8c: sidste pas med decimal står med dansk komma i feltet.
+  assert.deepEqual(firstSetPrefill([{ id: 'e5', name: 'Squat', reps: '5' }], { squat: { weight: 87.5, reps_completed: 5 } }),
+    { e5_1: { weight: '87,5', reps: '5' } })
+  assert.equal(firstSetPrefill([{ id: 'e6', name: 'Curl', reps: '5' }], { curl: { weight: '11.25', reps_completed: 5 } }).e6_1.weight, '11,25')
 })
 
 test('U5 1/4: overskriften siger hvad der mangler, i fast rækkefølge', () => {

@@ -3,7 +3,7 @@ import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { formatNumber, mondayOf, shortDate } from '../u3/format.mjs'
 import { DAILY, TARGETS, tableState, readTargets, targetOn, appendTarget } from './dayData.mjs'
 
-// U7 del 4: coachen ser søvn og smerte som tal og ugens kost mod det mål, der gjaldt den uge.
+// U7 del 4: coachen ser søvn og smerte som tal og ugens kost mod atletens mål.
 // Rene funktioner plus to læsninger. Kun når data findes; ellers vises intet (som U6).
 export const PAIN_ATTENTION = 4
 export const SLEEP_ATTENTION = 2
@@ -66,25 +66,30 @@ export function dayNumbersLine(rows, today) {
   return parts.length ? `${parts.join(' · ')} · sidste 7 dage` : null
 }
 
-// ===== Ugens kost mod det mål, der gjaldt =====
+// ===== Ugens kost mod atletens mål =====
+// u8c: målet er athletes.protein_target/kcal_target, samme kilde som "Uge for uge" og "Min uge"
+// (FLAADE-PLAN mål 1: én kilde til kostmål). Linjen vises stadig kun, når U7-tabellen findes.
 const MEAL_CAP = 400
 export async function readWeekNutrition({ client, athleteId, day }) {
   const from = addCalendarDays(mondayOf(day), -7)
-  const targets = await readTargets({ client, athleteIds: [athleteId] })
-  if (targets.state !== 'ready') return null
+  if (await tableState(client, TARGETS) !== 'ready') return null
   try {
+    const athlete = await client.from('athletes').select('kcal_target, protein_target').eq('id', athleteId).limit(1)
+    if (athlete?.error || !Array.isArray(athlete?.data) || !athlete.data[0]) return null
     const result = await client.from('meal_logs').select('date, meal, kcal, protein').eq('athlete_id', athleteId)
       .gte('date', from).lte('date', day).limit(MEAL_CAP + 1)
     if (result?.error || !Array.isArray(result?.data) || result.data.length > MEAL_CAP) return null
-    return { targets: targets.rows, meals: result.data }
+    return { goal: athlete.data[0], meals: result.data }
   } catch { return null }
 }
 
-// Forrige hele uge, hvis den har både dateret mål og loggede dage; ellers ugen indtil nu.
-// Hver dag sammenlignes med det mål, der gjaldt netop den dag.
-export function weekTargetLine({ targets, meals, athleteId, day }) {
+// Forrige hele uge, hvis den har loggede dage; ellers ugen indtil nu.
+export function weekTargetLine({ goal, meals, day }) {
   const today = calendarDay(day)
-  if (!today || !Array.isArray(targets) || !Array.isArray(meals)) return null
+  if (!today || !Array.isArray(meals)) return null
+  const goalOf = value => { const n = parseInputNumber(value); return n !== null && n > 0 ? n : null }
+  const proteinGoal = goalOf(goal?.protein_target), kcalGoal = goalOf(goal?.kcal_target)
+  if (proteinGoal === null && kcalGoal === null) return null
   const totals = new Map()
   for (const row of meals) {
     const d = calendarDay(row?.date)
@@ -96,23 +101,13 @@ export function weekTargetLine({ targets, meals, athleteId, day }) {
   }
   const monday = mondayOf(today)
   for (const [start, end, label] of [[addCalendarDays(monday, -7), addCalendarDays(monday, -1), 'sidste uge'], [monday, today, 'denne uge']]) {
-    const days = [...totals.keys()].filter(d => d >= start && d <= end).sort()
-    const covered = days.filter(d => targetOn(targets, athleteId, d, 'protein_g') || targetOn(targets, athleteId, d, 'kcal'))
-    if (!covered.length) continue
-    const avg = (field, goalField) => {
-      const hit = covered.filter(d => targetOn(targets, athleteId, d, goalField))
-      if (!hit.length) return null
-      const goals = hit.map(d => targetOn(targets, athleteId, d, goalField).value)
-      return { actual: hit.reduce((n, d) => n + totals.get(d)[field], 0) / hit.length, goal: goals.reduce((n, v) => n + v, 0) / goals.length,
-        changed: new Set(goals).size > 1, from: targetOn(targets, athleteId, hit.at(-1), goalField).from }
-    }
-    const protein = avg('protein', 'protein_g'), kcal = avg('kcal', 'kcal')
+    const days = [...totals.keys()].filter(d => d >= start && d <= end)
+    if (!days.length) continue
+    const avg = field => days.reduce((n, d) => n + totals.get(d)[field], 0) / days.length
     const parts = []
-    if (protein) parts.push(`protein ${formatNumber(protein.actual)} g mod mål ${formatNumber(protein.goal)} g`)
-    if (kcal) parts.push(`${formatNumber(kcal.actual)} kcal mod ${formatNumber(kcal.goal)}`)
-    const since = protein?.from ?? kcal?.from
-    const note = protein?.changed || kcal?.changed ? 'målet blev ændret i ugen' : `mål fra ${shortDate(since)}`
-    return { period: label, text: `Kost ${label}: ${parts.join(', ')} i snit pr. logget dag (${covered.length} af 7 dage, ${note})` }
+    if (proteinGoal !== null) parts.push(`protein ${formatNumber(avg('protein'))} g mod mål ${formatNumber(proteinGoal)} g`)
+    if (kcalGoal !== null) parts.push(`${formatNumber(avg('kcal'))} kcal mod ${formatNumber(kcalGoal)}`)
+    return { period: label, text: `Kost ${label}: ${parts.join(', ')} i snit pr. logget dag (${days.length} af 7 dage)` }
   }
   return null
 }
