@@ -124,7 +124,9 @@ alter table public.meal_logs enable row level security;
 -- Q1: tabelrettighederne, som de står live.
 revoke all on public.athletes, public.profiles from anon, authenticated;
 grant select, insert, update, delete, maintain on public.athletes to anon, authenticated;
-grant select, insert, delete, truncate, references, trigger, maintain on public.profiles to anon, authenticated;
+grant select, insert, truncate, references, trigger, maintain on public.profiles to anon, authenticated;
+grant update (name, email, last_seen, last_backup_at) on public.profiles to authenticated;
+-- Ikke med: det unikke indeks athletes_coach_email_identity_v3_uidx (dets WHERE kendes ikke ordret).
 
 -- Q4: reglerne, ordret.
 create policy athletes_delete on public.athletes for delete using (coach_id = (select auth.uid()));
@@ -203,3 +205,5 @@ begin
   return v_athlete_id;
 end
 $function$;
+revoke execute on function public.claim_athlete_profile_v3() from public, anon;
+grant execute on function public.claim_athlete_profile_v3() to authenticated, service_role;

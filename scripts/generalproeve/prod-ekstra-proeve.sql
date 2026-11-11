@@ -1,6 +1,6 @@
 -- Generalprøve (ordre 80): tre live-tabeller, som edge-funktionen u8-push læser, men som ikke er
 -- med i katalogudtrækket. Kolonnerne er dem, appen selv bruger (weight_logs.logged_at er dagen som
--- tekst, readiness_logs.logged_date, messages.sender_role/read_at). Ikke fra katalog; kun til at
+-- dato, readiness_logs.logged_date, messages.sender_role/read_at). Ikke fra katalog; kun til at
 -- prøve funktionens læsninger med service_role. Kun struktur.
 create table public.weight_logs (
   id uuid primary key default gen_random_uuid(),

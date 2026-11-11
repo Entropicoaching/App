@@ -4,8 +4,8 @@
 // GET/HEAD/POST/PATCH/DELETE på /rest/v1/<tabel>, select med kolonnenavne, filtrene eq, neq, gt,
 // gte, lt, lte, in og is, order, limit, offset, Prefer return/count/resolution og on_conflict.
 // Som PostgREST: hver forespørgsel er én transaktion med rollen fra tokenet (anon, authenticated
-// eller service_role) og request.jwt.claims sat; INSERT/UPDATE/DELETE har altid RETURNING, så
-// SELECT-reglerne gælder også for skrivninger; upsert sætter alle sendte kolonner; en tabel, der
+// eller service_role) og request.jwt.claims sat; INSERT/UPDATE/DELETE har RETURNING 1 som
+// PostgREST; upsert sætter alle sendte kolonner; en tabel, der
 // ikke findes, giver 404 PGRST205. Kun syntetiske data; intet net ud af maskinen.
 import { createServer } from 'node:http'
 

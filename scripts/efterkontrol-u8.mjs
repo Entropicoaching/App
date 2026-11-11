@@ -14,7 +14,8 @@
 //   5. RLS mellem atleter: KUN med en syntetisk testatlet i miljøet
 //      (EFTERKONTROL_ATLET_EMAIL og EFTERKONTROL_ATLET_KODE). Ellers springes punktet over, og det står i
 //      udskriften. Med testatleten læses kun rækker, der IKKE er atletens egne; svaret skal være tomt.
-//      Ærlig grænse: login registrerer en session i Supabase Auth (ingen appdata skrives).
+//      Ærlig grænse: login og logud registreres i Supabase Auth (ingen appdata skrives). Et grønt
+//      RLS-punkt på en tabel, hvor ingen andre atleter har rækker endnu, beviser intet.
 // Supabase-adressen og den offentlige anon-nøgle læses fra den udrullede app (de står i dens kode);
 // intet gemmes, og ingen hemmelig nøgle bruges. Exitkode 0 = alt grønt, 1 = noget er rødt.
 const args = process.argv.slice(2)
@@ -64,7 +65,8 @@ async function supabaseFrom(files) {
     for (const m of text.matchAll(/=\s*[`"'](https?:\/\/[^`"'\s]+)[`"']\s*,\s*[\w$]+\s*=\s*[`"']([^`"'\s]{10,})[`"']/g))
       candidates.push({ url: m[1].replace(/\/+$/, ''), key: m[2] })
   }
-  for (const candidate of candidates) {
+  // Kun Supabase-værter eller maskinen selv: anon-nøglen sendes ikke til fremmede værter.
+  for (const candidate of candidates.filter(c => /^https:\/\/[a-z0-9]+\.supabase\.co$|^http:\/\/(127\.0\.0\.1|localhost):\d+$/.test(c.url))) {
     try {
       const answer = await fetch(`${candidate.url}/rest/v1/`, { headers: { apikey: candidate.key }, signal: AbortSignal.timeout(5000) })
       if (answer.status < 500) return candidate
@@ -136,16 +138,18 @@ async function main() {
   const notMine = `athlete_id=neq.${encodeURIComponent(ids[0])}`
   for (const table of [...(TABLES.includes('u7') ? U7 : []), 'kostplan_v1_plans']) {
     const r = await rows(`${table}?select=athlete_id&${notMine}&limit=5`)
-    report(r.status === 200 && Array.isArray(r.body) && r.body.length === 0, `RLS: testatleten ser ingen andres rækker i ${table}`, `HTTP ${r.status}, ${Array.isArray(r.body) ? r.body.length : '?'} rækker`)
+    report(r.status === 200 && Array.isArray(r.body) && r.body.length === 0, `RLS: testatleten ser ingen andres rækker i ${table}`, `HTTP ${r.status}, ${Array.isArray(r.body) ? r.body.length : '?'} rækker (beviser kun noget, når andre atleter har rækker i tabellen)`)
   }
   if (TABLES.includes('u8')) for (const table of ['push_subscriptions_v1', 'push_preferences_v1']) {
     const r = await rows(`${table}?select=user_id&user_id=neq.${encodeURIComponent(uid)}&limit=5`)
-    report(r.status === 200 && Array.isArray(r.body) && r.body.length === 0, `RLS: testatleten ser ingen andres rækker i ${table}`, `HTTP ${r.status}, ${Array.isArray(r.body) ? r.body.length : '?'} rækker`)
+    report(r.status === 200 && Array.isArray(r.body) && r.body.length === 0, `RLS: testatleten ser ingen andres rækker i ${table}`, `HTTP ${r.status}, ${Array.isArray(r.body) ? r.body.length : '?'} rækker (beviser kun noget, når andre atleter har rækker i tabellen)`)
   }
   if (TABLES.includes('u8')) {
     const r = await rows('push_log_v1?select=id&limit=1')
     report(r.status === 401 || r.status === 403, 'RLS: afsendelsesloggen er lukket for atleter', `HTTP ${r.status}`)
   }
+  // Log ud igen, så testatletens session ikke bliver liggende.
+  await get(`${supa.url}/auth/v1/logout`, { method: 'POST', headers: { apikey: supa.key, Authorization: `Bearer ${token}` } }).catch(() => {})
 }
 
 main().catch(err => report(false, 'Efterkontrollen stoppede', String(err?.message ?? err).slice(0, 200)))
