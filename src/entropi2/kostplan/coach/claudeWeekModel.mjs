@@ -22,7 +22,7 @@ const sendtDag = value => { const ms = Date.parse(value); return Number.isFinite
 const positiv = value => typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null
 
 // Ren model: rækkerne fra de tre tabeller bliver til 7 dage, status og en låsegrund.
-export function weekModel({ plans = [], versions = [], approvals = [], athlete, today }) {
+export function weekModel({ plans = [], versions = [], approvals = [], athlete, today, start: fixedStart }) {
   if (!identifier(athlete?.id) || !day(today)) fail()
   const targets = { kcal: positiv(Number(athlete.kcal_target)), protein: positiv(Number(athlete.protein_target)) }
   const perPlan = plans.filter(p => p.athlete_id === athlete.id && uuid(p.id) && day(p.valid_from)).map(p => {
@@ -35,15 +35,18 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
       sentOn: latestApproval ? sendtDag(latestApproval.approved_at) : null }
   }).filter(Boolean)
   if (!perPlan.length) return { state: 'empty', targets }
-  // Ugen starter ved det tidligste usendte forslag. Er alt sendt, vises den nyeste sammenhængende
-  // uge (højst 7 dage tilbage fra sidste plandag), så en ældre enkeltdagsplan ikke flytter ugen.
-  const unsent = perPlan.filter(x => !x.sent)
+  // Ugen starter ved et usendt forslag fra i dag eller senere; et startpunkt med 7 dage i træk vinder,
+  // så en løs usendt plan (fx en opgivet aktivering) ikke flytter Claudes uge. Er intet at sende, vises
+  // den nyeste sammenhængende uge (højst 7 dage tilbage fra sidste plandag).
   const planDays = new Set(perPlan.map(x => x.plan.valid_from))
-  let start = unsent.map(x => x.plan.valid_from).sort()[0]
-  if (!start) {
+  const unsent = [...new Set(perPlan.filter(x => !x.sent && x.plan.valid_from >= today).map(x => x.plan.valid_from))].sort()
+  let start = day(fixedStart) ? fixedStart
+    : unsent.find(d => Array.from({ length: 7 }, (_, i) => plusDage(d, i)).every(x => planDays.has(x))) ?? unsent[0]
+  if (!start && perPlan.every(x => x.sent)) {
     start = [...planDays].sort().at(-1)
     for (let i = 0; i < 6 && planDays.has(plusDage(start, -1)); i++) start = plusDage(start, -1)
   }
+  start ??= perPlan.filter(x => !x.sent).map(x => x.plan.valid_from).sort()[0]
   const dates = Array.from({ length: 7 }, (_, i) => plusDage(start, i))
   const days = dates.map(date => {
     // Én plan pr. dato. Står der flere, vinder et usendt forslag, ellers den nyest sendte.
@@ -51,16 +54,16 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
       .sort((a, b) => Number(a.sent) - Number(b.sent) || String(b.sentOn).localeCompare(String(a.sentOn)))
     const chosen = candidates[0]
     if (!chosen) return { date, label: dagNavn(date), state: 'mangler', meals: [], mealCount: 0, kcal: null, protein: null }
-    let meals = [], summary = null
+    let meals = [], summary = null, unreadable = false
     try {
       const snapshot = createPlanSnapshot(chosen.latest)
       meals = snapshot.meals.map(meal => ({ name: meal.name,
         portions: meal.portions.map(p => ({ name: p.food.name, grams: p.grams })) }))
       if (meals.length) summary = summarizePlanSnapshot(snapshot).nutrients
-    } catch { meals = []; summary = null }
+    } catch { meals = []; summary = null; unreadable = true }
     return { date, label: dagNavn(date), planId: chosen.plan.id, versionId: chosen.latest.id,
       versionNo: chosen.latest.version_no, rationale: chosen.latest.rationale ?? null,
-      state: chosen.sent ? 'sendt' : chosen.everSent ? 'aendret' : 'udkast', sentOn: chosen.sentOn,
+      state: unreadable ? 'ulaeselig' : chosen.sent ? 'sendt' : chosen.everSent ? 'aendret' : 'udkast', sentOn: chosen.sentOn,
       meals, mealCount: meals.length,
       kcal: summary?.energyKcal?.value ?? null, protein: summary?.proteinG?.value ?? null }
   })
@@ -83,6 +86,8 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
 export function lockReason(days, targets) {
   const missing = days.find(d => d.state === 'mangler')
   if (missing) return `${missing.label} mangler en plan.`
+  const unreadable = days.find(d => d.state === 'ulaeselig')
+  if (unreadable) return `${unreadable.label} kan ikke læses.`
   const empty = days.find(d => d.mealCount === 0)
   if (empty) return `${empty.label} har 0 måltider.`
   if (targets.kcal === null || targets.protein === null) return 'Atleten mangler et kostmål.'
@@ -104,13 +109,14 @@ async function readRows(client, athleteId, today) {
   return { plans, versions, approvals }
 }
 
-export async function readClaudeWeek({ client, athlete, today }) {
+export async function readClaudeWeek({ client, athlete, today, start }) {
   if (typeof client?.from !== 'function' || !identifier(athlete?.id) || !day(today)) fail()
-  return weekModel({ ...await readRows(client, athlete.id, today), athlete, today })
+  return weekModel({ ...await readRows(client, athlete.id, today), athlete, today, start })
 }
 
 // "Send uge": én godkendelse pr. dag med seneste version. Ugen læses igen først, så
-// en ændret version aldrig godkendes blindt; bagefter kontrolleres, at alle 7 er sendt.
+// en ændret version aldrig godkendes blindt. Bagefter kontrolleres netop de viste 7 dage; en næste
+// uge fra Claude, der allerede ligger klar, returneres som next.
 export async function sendClaudeWeek({ client, athlete, today, shown }) {
   const fresh = await readClaudeWeek({ client, athlete, today })
   if (fresh.state !== 'ready' || shown?.state !== 'ready' || fresh.start !== shown.start
@@ -121,7 +127,8 @@ export async function sendClaudeWeek({ client, athlete, today, shown }) {
     // 23505: godkendelsen findes allerede (fx et tidligere svar, der gik tabt). Den tæller.
     if (result?.error && result.error.code !== '23505') throw Error('Ugen kunne ikke sendes. Prøv igen.')
   }
-  const after = await readClaudeWeek({ client, athlete, today })
-  if (after.status !== 'sendt' || after.start !== fresh.start) throw Error('Ugen blev ikke bekræftet som sendt. Prøv igen.')
-  return after
+  const sent = await readClaudeWeek({ client, athlete, today, start: fresh.start })
+  if (sent.status !== 'sendt' || sent.days.some((d, i) => d.versionId !== fresh.days[i].versionId))
+    throw Error('Ugen blev ikke bekræftet som sendt. Prøv igen.')
+  return { sent, next: await readClaudeWeek({ client, athlete, today }) }
 }

@@ -16,7 +16,7 @@ export function statusText(week) {
   return 'Udkast fra Claude'
 }
 
-export function claudeWeekView(week, { onSend, sending = false, error = '' } = {}) {
+export function claudeWeekView(week, { onSend, onReload, sending = false, error = '' } = {}) {
   if (week.state === 'empty') return h('section', { 'data-claude-week': 'empty', style: { textAlign: 'left' } },
     h('h3', null, 'Forslag fra Claude'), h('p', null, 'Intet forslag endnu.'))
   const { kcal, protein } = week.targets
@@ -33,12 +33,13 @@ export function claudeWeekView(week, { onSend, sending = false, error = '' } = {
           h('span', { 'aria-label': d.ok ? 'inden for målet' : 'advarsel' }, d.ok ? '✓' : '⚠')),
         d.mealCount ? h('ul', { style: { paddingLeft: 18, margin: '0 0 10px' } }, ...d.meals.map((meal, i) => h('li', { key: i },
           h('strong', null, meal.name), ': ', meal.portions.map(p => `${p.name} ${tal(p.grams)} g`).join(', '))))
-          : h('p', null, d.state === 'mangler' ? 'Ingen plan.' : '0 måltider.'))))),
+          : h('p', null, d.state === 'mangler' ? 'Ingen plan.' : d.state === 'ulaeselig' ? 'Kan ikke læses.' : '0 måltider.'))))),
     week.status !== 'sendt' && h('div', { style: { marginTop: 12 } },
       week.lock && h('p', { 'data-lock': true, style: { margin: '0 0 8px' } }, week.lock),
       h('button', { type: 'button', style: { ...primaryButton, width: '100%' }, disabled: Boolean(week.lock) || sending,
         onClick: onSend }, sending ? 'Sender…' : 'Send uge til atleten')),
-    error && h('p', { role: 'alert' }, error))
+    error && h('p', { role: 'alert' }, error, onReload && ' ',
+      onReload && h('button', { type: 'button', style: button, onClick: onReload }, 'Hent ugen igen')))
 }
 
 // Monteres kun med en eksplicit klient fra værten (coachens egen session).
@@ -57,12 +58,12 @@ export default function ClaudeWeek({ client, athlete, today }) {
     state.error ? h('p', { role: 'alert' }, state.error, ' ',
       h('button', { type: 'button', style: button, onClick: () => setAttempt(n => n + 1) }, 'Prøv igen'))
       : h('p', { role: 'status' }, 'Henter ugen…'))
-  return claudeWeekView(state.week, { sending: state.sending, error: state.error, onSend: async () => {
+  return claudeWeekView(state.week, { sending: state.sending, error: state.error, onReload: () => setAttempt(n => n + 1), onSend: async () => {
     if (state.sending || state.week.lock) return
     setState(s => ({ ...s, sending: true, error: '' }))
     try {
-      const week = await sendClaudeWeek({ client, athlete, today, shown: state.week })
-      setState({ week, error: '', sending: false })
+      const { sent } = await sendClaudeWeek({ client, athlete, today, shown: state.week })
+      setState({ week: sent, error: '', sending: false })
     } catch (error) {
       setState(s => ({ ...s, sending: false, error: error?.message || 'Ugen kunne ikke sendes. Prøv igen.' }))
     }

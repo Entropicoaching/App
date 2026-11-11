@@ -75,7 +75,7 @@ test('Send uge giver 7 godkendelser, planerne bliver godkendt, og atleten ser da
   try {
     const shown = await readClaudeWeek({ client: s.coach, athlete, today })
     assert.equal(await s.count('kostplan_v1_approvals'), 0)
-    const sent = await sendClaudeWeek({ client: s.coach, athlete, today, shown })
+    const { sent } = await sendClaudeWeek({ client: s.coach, athlete, today, shown })
     assert.equal(await s.count('kostplan_v1_approvals'), 7)
     const { rows } = await s.db.query(`select status, count(*)::int n from public.kostplan_v1_plans group by status`)
     assert.deepEqual(rows, [{ status: 'godkendt', n: 7 }])
@@ -165,6 +165,40 @@ test('en ældre sendt plan før ugen flytter ikke ugen: efter Send uge vises den
   const efter = weekModel({ plans, versions, athlete, today: '2026-11-15',
     approvals: [approved('2026-11-09T08:00:00Z')(gammel), ...uge.versions.map(approved('2026-11-15T09:00:00Z'))] })
   assert.equal(efter.start, '2026-11-16'); assert.equal(efter.status, 'sendt'); assert.equal(efter.sentOn, '2026-11-15')
+})
+
+// Kontrolfund 1: en løs usendt plan før ugen (fx en opgivet aktivering) må ikke flytte ugens start.
+test('en løs usendt plan før eller i ugen flytter ikke Claudes 7-dages uge', () => {
+  const uge = syntetiskUge(() => fuldDag)
+  const loes = date => ({ id: `00000000-0000-4000-8000-0000000003${date.slice(-2)}`, athlete_id: athlete.id, valid_from: date, status: 'forslag' })
+  for (const [date, today] of [['2026-11-12', '2026-11-15'], ['2026-11-13', '2026-11-11']]) {
+    const plan = loes(date)
+    const v = { ...version(plan.id, 0, fuldDag), id: `00000000-0000-4000-8000-0000000004${date.slice(-2)}`, effective_from: date }
+    const week = weekModel({ plans: [plan, ...uge.plans], versions: [v, ...uge.versions], athlete, today })
+    assert.equal(week.start, '2026-11-16', date); assert.equal(week.lock, null, date)
+  }
+})
+
+// Kontrolfund 2: efter Send uge kontrolleres netop de 7 viste versioner, også når en ny uge venter bagefter.
+test('Send uge bekræfter de 7 versioner, selv om en næste uge fra Claude allerede ligger klar', { timeout: 60000 }, async () => {
+  const s = await scene()
+  try {
+    const naeste = { ...ugeplan(), days: ugeplan().days.map((d, i) => ({ ...d, date: plusDage(today, 7 + i) })) }
+    await s.db.exec((await skrivForslag(naeste)).sql)
+    const shown = await readClaudeWeek({ client: s.coach, athlete, today })
+    assert.equal(shown.start, today)
+    const result = await sendClaudeWeek({ client: s.coach, athlete, today, shown })
+    assert.equal(await s.count('kostplan_v1_approvals'), 7)
+    assert.equal(result.sent.status, 'sendt'); assert.equal(result.sent.start, today)
+    assert.equal(result.next.start, plusDage(today, 7)); assert.equal(result.next.status, 'udkast')
+  } finally { await s.close() }
+})
+
+test('en plan, der ikke kan læses, låser med sin egen grund og ikke som 0 måltider', () => {
+  const week = weekModel({ ...syntetiskUge(n => n === 1 ? [{ name: 'Ødelagt', portions: [{ grams: -5, food: fodevare }] }] : fuldDag),
+    athlete, today: '2026-11-15' })
+  assert.equal(week.days[1].state, 'ulaeselig')
+  assert.match(week.lock, /kan ikke læses/)
 })
 
 test('coachens kostplan viser forslaget først og byg-fra-bunden bag "Ret"', () => {
