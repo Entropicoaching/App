@@ -74,32 +74,27 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
   }
   const editing = edit?.scope === scope && edit.controller === controller ? edit : null
   // U1: the goal and the filling glass stay visible; the detailed log folds below.
+  // U9 (Marc 11. nov.): folden gentog glassets tal og knapper. Nu én lukket linje til andre mængder og rettelser.
   return React.createElement('div', null,
     s && React.createElement(WaterGoal, { athleteId, storage, totalMl: s.totalMl,
       ...(target.status === 'ready' ? { serverGoal: target.goal, onGoalSaved: target.save } : {}),
       canAdd: s.entries.length < waterLimits.entries, add: value => update(() => controller.add(value)) }),
     React.createElement('details', { style: { padding: 16, overflowWrap: 'anywhere' } },
-    React.createElement('summary', { style: { ...control, cursor: 'pointer', padding: 12 } }, 'Væske i dag'),
-    React.createElement('p', null, 'Registrér kun vand, du har drukket. Portionerne er mængdevalg.'),
+    React.createElement('summary', { style: { ...control, cursor: 'pointer', padding: 12 } }, 'Ret dagens vand'),
     React.createElement('p', null, shared ? 'Gemmes på denne enhed og i din profil, så dagens vand følger med til en ny telefon.' : 'Kun lokal lagring på denne enhed. Deles ikke med din coach.'),
     !s && React.createElement('p', { role: 'status' }, 'Væskeloggen er kun tilgængelig for den aktuelle atlet og i dag.'),
     s && React.createElement('div', null,
-      React.createElement('p', { role: 'status', 'aria-live': 'polite' }, s.entries.length ? `Registreret vand i dag: ${s.totalMl} ml.` : 'Intet vand registreret i dag.'),
       React.createElement('label', null, 'Drukket vand (ml)',
         React.createElement('input', { type: 'number', inputMode: 'numeric', min: 1, max: waterLimits.ml, step: 1,
           'aria-label': 'Drukket vand i milliliter', style: control, value: quantity,
           onChange: event => { if (live.current === scope) { setQuantity(event.currentTarget.value); setError('') } } })),
       React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 8, marginBlock: 8 } },
-        ...[250, 500].map(ml => React.createElement('button', { key: ml, type: 'button', style: control,
-          'aria-label': `Vælg portion på ${ml} ml vand`,
-          onClick: () => { if (live.current === scope) { setQuantity(String(ml)); setError('') } } }, `${ml} ml portion`)),
         React.createElement('button', { type: 'button', style: control, disabled: waterQuantity(quantity) === null || s.entries.length >= waterLimits.entries,
           onClick: () => update(() => {
             const added = controller.add(quantity)
             if (added) setQuantity('')
             return added
           }) }, 'Tilføj drukket vand')),
-      React.createElement('p', null, `Registrér hele ml fra 1 til ${waterLimits.ml} pr. post, højst ${waterLimits.entries} poster pr. dag (tekniske grænser).`),
       s.entries.length > 0 && React.createElement('ul', { 'aria-label': 'Registreringer af drukket vand' },
         ...s.entries.map(entry => React.createElement('li', { key: entry.id },
           React.createElement('span', null, `${entry.ml} ml · ${time.format(new Date(entry.at))}`),
@@ -138,7 +133,7 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
                 pendingEdit.current = null; setEdit(null); setError('')
               } }, 'Annuller'))))),
       React.createElement('p', { role: 'status' }, s.status === 'saved' ? (shared ? 'Gemt på denne enhed og i din profil.' : 'Gemt på denne enhed. Deles ikke med din coach.')
-        : s.status === 'ready' ? 'Ændringer gemmes kun på denne enhed, når du tilføjer, retter eller fjerner en registrering.'
+        : s.status === 'ready' ? null
           : s.status === 'unreadable' ? 'Lokal lagring kunne ikke læses sikkert. Nye ændringer vises kun her, indtil visningen lukkes; tidligere data overskrives ikke.'
             : 'Lagringen kunne ikke bekræftes. Listen vises kun her, indtil visningen lukkes; genåbning kan vise andre registreringer.')),
     error && React.createElement('p', { role: 'alert' }, error)))

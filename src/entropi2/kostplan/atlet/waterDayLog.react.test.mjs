@@ -12,7 +12,7 @@ import { fixture, athleteId, date } from './daySession.fixture.mjs'
 import { all, byKey, propsOf, tick, button, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
 
 const key = waterDayKey(athleteId, date)
-const water = host => all(host, 'details').find(n => all(n, 'summary')[0]?.textContent === 'Væske i dag')
+const water = host => all(host, 'details').find(n => all(n, 'summary')[0]?.textContent === 'Ret dagens vand')
 const entry = (ml = 250, id = 1) => ({ id, ml, at: date + 'T11:00:00.000Z' })
 const raw = (entries = [entry()], extra = {}) => JSON.stringify({ schema: 'entropi2-water-day/v1', athleteId, date, entries, ...extra })
 const clock = t => t.mock.timers.enable({ apis: ['Date'], now: new Date(date + 'T12:00:00+01:00') })
@@ -53,16 +53,17 @@ async function mount(t, { route = true, setup, storage } = {}) {
 test('normal StrictMode Kost: collapsed water, explicit portions/add/remove, exact storage and reload without writes', async t => {
   const r = await mount(t), foreign = [...r.f.values], calls = r.f.calls.length
   const fold = water(r.host); assert.ok(fold); assert.equal(propsOf(fold).open, undefined)
-  assert.match(fold.textContent, /Intet vand registreret/)
+  // U9: totalen står kun ved glasset (Dit væskemål), ikke igen i folden.
+  assert.match(r.host.textContent, /Du har drukket 0 ml/)
   assert.match(fold.textContent, /Deles ikke med din coach/)
   assert.doesNotMatch(fold.textContent, /kcal|elektrolyt|behov|mål på|liter/i)
   assert.equal(r.f.writes.length, 0)
-  await r.click('250 ml portion'); assert.equal(r.f.writes.length, 0)
+  await r.quantity('250'); assert.equal(r.f.writes.length, 0)
   assert.equal(propsOf(all(water(r.host), 'input')[0]).value, '250')
   await r.click('Tilføj drukket vand'); assert.equal(r.f.writes.length, 1)
-  await r.click('500 ml portion'); assert.equal(r.f.writes.length, 1)
+  await r.quantity('500'); assert.equal(r.f.writes.length, 1)
   await r.click('Tilføj drukket vand')
-  assert.match(water(r.host).textContent, /750 ml/)
+  assert.match(r.host.textContent, /drukket 750 ml/)
   assert.match(water(r.host).textContent, /250 ml · 12.00|250 ml · 12:00/)
   assert.match(water(r.host).textContent, /Gemt på denne enhed/)
   assert.deepEqual(r.f.writes, [key, key]); assert.equal(r.f.calls.length, calls)
@@ -77,15 +78,15 @@ test('normal StrictMode Kost: collapsed water, explicit portions/add/remove, exa
   await r.choose('2026-11-06'); assert.equal(water(r.host), undefined)
   await r.choose(date)
   assert.equal(r.f.values.get(key), bytes); assert.equal(r.f.writes.length, count)
-  assert.match(water(r.host).textContent, /750 ml/)
+  assert.match(r.host.textContent, /drukket 750 ml/)
   r.props.enabled = false; await r.render()
   r.props.enabled = true; await r.render()
-  assert.match(water(r.host).textContent, /750 ml/)
+  assert.match(r.host.textContent, /drukket 750 ml/)
   assert.equal(r.f.values.get(key), bytes); assert.equal(r.f.writes.length, count)
   await r.click('Fjern registrering')
   assert.deepEqual(JSON.parse(r.f.values.get(key)).entries.map(e => e.ml), [500])
   await r.click('Fjern registrering')
-  assert.match(water(r.host).textContent, /Intet vand registreret/)
+  assert.match(r.host.textContent, /Du har drukket 0 ml/)
   assert.deepEqual(JSON.parse(r.f.values.get(key)).entries, [])
 })
 
@@ -220,7 +221,7 @@ test('SSR is storage-free, OFF absent; opening/reopening valid record performs n
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw Error('SSR must not read') } })
   try {
     assert.equal(renderToStaticMarkup(h(WaterDayLog, { enabled: false, athleteId, date })), '')
-    assert.match(renderToStaticMarkup(h(WaterDayLog, { enabled: true, athleteId, date })), /Væske i dag/)
+    assert.match(renderToStaticMarkup(h(WaterDayLog, { enabled: true, athleteId, date })), /Ret dagens vand/)
   } finally { Object.defineProperty(globalThis, 'localStorage', original) }
 })
 

@@ -43,7 +43,7 @@ test('U7 kontrol: vand over 10.000 ml fra databasen lægges ind uden at blive mi
   dom.globals({ localStorage: memoryStorage() })
   try {
     await act(async () => { root.render(React.createElement(WaterDayLog, { enabled: true, athleteId: A, date: today, client: f.client, u7DayData: true })); for (let i = 0; i < 8; i++) await tick() })
-    assert.match(dom.host.textContent, /Registreret vand i dag: 12500 ml/)
+    assert.match(dom.host.textContent, /drukket 12\.500 ml/) // U9: totalen står ved glasset
     assert.doesNotMatch(dom.host.textContent, /coach kan se dagens total/)
     assert.equal(f.db.tracking_daily_v1[0].water_ml, 12500)
   } finally {

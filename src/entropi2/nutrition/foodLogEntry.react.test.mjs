@@ -280,8 +280,9 @@ test('normal route: throwing day provider blocks entry without replacing the wat
   r.props.currentDay = () => { if (throwing) throw Error('Synthetic entry day unavailable'); return date }
   await r.show()
   enter(host, manualKeys[0], 'Bevar kladde ved dagfejl'); enter(host, 'field-Mængde', '27,5')
-  const water = [...host.querySelectorAll('details')].find(n => n.children[0]?.textContent === 'Væske i dag')
-  await r.press([...water.querySelectorAll('button')].find(n => n.textContent === '500 ml portion'))
+  const water = [...host.querySelectorAll('details')].find(n => n.children[0]?.textContent === 'Ret dagens vand')
+  // U9: portionsknapperne i folden er fjernet (glasset har + 250 / + 500). Det syntetiske dokument kan ikke skrive i
+  // Reacts styrede felt, så vandfeltet prøves her kun for, at det bliver stående og ikke erstattes.
   const waterInput = [...water.querySelectorAll('input')].find(n => n.getAttribute('aria-label') === 'Drukket vand i milliliter')
   const retained = buttons(host)[0], fold = outer(host), manual = key(host, 'log-form')
   const search = key(host, 'food-search'), saved = draft(host), forms = [...host.querySelectorAll('form')]
@@ -292,12 +293,12 @@ test('normal route: throwing day provider blocks entry without replacing the wat
   await r.press(retained) // Provider failure is also checked before any rerender.
   assert.equal(manual.open, false); assert.equal(fold.open, false); assert.equal(doc.activeElement, foreign)
   await r.show()
-  assert.equal(buttons(host).length, 0); assert.match(host.textContent, /Væske i dag/)
+  assert.equal(buttons(host).length, 0); assert.match(host.textContent, /Ret dagens vand/)
   await r.press(retained)
   assert.equal(manual.open, false); assert.equal(fold.open, false); assert.equal(doc.activeElement, foreign)
   assert.equal(key(host, 'log-form'), manual); assert.equal(key(host, 'food-search'), search)
   assert.deepEqual([...host.querySelectorAll('form')], forms); assert.deepEqual(draft(host), saved)
-  assert.equal(waterInput.value, '500'); assert.equal(waterInput.isConnected, true)
+  assert.equal(waterInput.value, ''); assert.equal(waterInput.isConnected, true)
   assert.deepEqual(r.count(), before)
   throwing = false; await r.show()
   assert.equal(buttons(host).length, 1); assert.notEqual(buttons(host)[0], retained)
@@ -305,6 +306,6 @@ test('normal route: throwing day provider blocks entry without replacing the wat
   await r.press()
   assert.equal(manual.open, true); assert.equal(fold.open, true); assert.equal(doc.activeElement, search)
   assert.equal(key(host, 'log-form'), manual); assert.deepEqual(draft(host), saved)
-  assert.equal(waterInput.value, '500'); assert.equal(waterInput.isConnected, true)
+  assert.equal(waterInput.value, ''); assert.equal(waterInput.isConnected, true)
   assert.deepEqual(r.count(), before)
 })

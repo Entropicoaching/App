@@ -52,6 +52,7 @@ test('glasset fyldes op mod målet, og over målet står "Mål nået", ikke en l
   assert.doesNotMatch(goal().textContent, /2\.250/)
   assert.doesNotMatch(goal().textContent, /tilbage/)
   // Den detaljerede log er uændret og ser de samme poster.
-  const log = all(dom.host, 'details').find(n => all(n, 'summary')[0]?.textContent === 'Væske i dag')
-  assert.match(log.textContent, /Registreret vand i dag: 2250 ml/)
+  const log = all(dom.host, 'details').find(n => all(n, 'summary')[0]?.textContent === 'Ret dagens vand')
+  // U9: folden gentager ikke totalen; den viser posterne til ret og fjern.
+  assert.equal(all(log, 'li').length, 5)
 })
