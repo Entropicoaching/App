@@ -122,7 +122,7 @@ export function CoachView(input = {}) {
     onClick: available ? () => openCoachRow(row, props, inbox ? 'inbox' : 'list') : undefined },
     h('span', { style: { ...s.avatar, display: 'inline-flex', flex: 'none', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
     h('span', { 'data-u11-linje': '', style: { ...oneLine, flex: 1 } },
-      h('strong', null, row.athlete.name), h('span', { style: { color: '#d9d4c8' } }, ` · ${row.reason}`))),
+      h('strong', null, row.athlete.name), h('span', { style: { color: '#d9d4c8' } }, ' · ', row.reason))),
     !inbox && rowDetails(row))
   const rows = inbox ? model.inbox : model.actions
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
