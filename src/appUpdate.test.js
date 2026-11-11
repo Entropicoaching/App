@@ -1,5 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import process from 'node:process'
 import { shouldReloadOnControllerChange, nudgeServiceWorker } from './appUpdate.js'
 
 // ORDRE 167 · commit 2 — Login (og strukturelt hele appens skal) genindlæste
