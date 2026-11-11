@@ -13,7 +13,8 @@ export function mountPlateCalculator(root, { weight = '', barWeightKg = 20 } = {
   }
   const section = el('section', null, { 'aria-label': 'Skiveberegner', 'data-e2-plader': '' })
   const input = el('input', null, { type: 'text', inputmode: 'decimal', autocomplete: 'off' })
-  input.value = String(weight)
+  // u8c: vægten fra passet vises med dansk komma; weightNumber læser begge.
+  input.value = String(weight).replace(/(\d)\.(\d)/, '$1,$2')
   const weightLabel = el('label', 'Ønsket samlet vægt i kg ')
   weightLabel.append(input)
   const barLabel = el('label', 'Stangvægt ')

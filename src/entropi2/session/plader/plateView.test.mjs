@@ -51,3 +51,11 @@ test('independent mounts own only their subtree, labels and cleanup', () => {
   assert.equal(root.children[0], sibling)
   assert.equal(root.children.length, 1)
 })
+
+test('u8c: vægten fra passet står med dansk komma i skiveberegneren og regnes ens', () => {
+  const { root } = syntheticDom()
+  const cleanup = mountPlateCalculator(root, { weight: '87.5' })
+  assert.equal(root.querySelector('input').value, '87,5')
+  assert.match(root.querySelector('section').textContent, /87,5 kg/)
+  cleanup()
+})
