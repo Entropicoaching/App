@@ -154,6 +154,19 @@ test('ingen forslag giver én kort linje, og en ny version efter sending viser "
   assert.match(renderToStaticMarkup(claudeWeekView(week)), /Ændret efter sending/)
 })
 
+test('en ældre sendt plan før ugen flytter ikke ugen: efter Send uge vises den sendte uge som sendt', () => {
+  const uge = syntetiskUge(() => fuldDag)
+  const gammelPlan = { id: '00000000-0000-4000-8000-000000000200', athlete_id: athlete.id, valid_from: '2026-11-09', status: 'godkendt' }
+  const gammel = { ...version(gammelPlan.id, 0, fuldDag), id: '00000000-0000-4000-8000-000000000201', effective_from: '2026-11-09' }
+  const approved = at => v => ({ version_id: v.id, plan_id: v.plan_id, athlete_id: athlete.id, approved_at: at, approval_kind: 'coach' })
+  const plans = [gammelPlan, ...uge.plans], versions = [gammel, ...uge.versions]
+  const foer = weekModel({ plans, versions, approvals: [approved('2026-11-09T08:00:00Z')(gammel)], athlete, today: '2026-11-15' })
+  assert.equal(foer.start, '2026-11-16'); assert.equal(foer.status, 'udkast')
+  const efter = weekModel({ plans, versions, athlete, today: '2026-11-15',
+    approvals: [approved('2026-11-09T08:00:00Z')(gammel), ...uge.versions.map(approved('2026-11-15T09:00:00Z'))] })
+  assert.equal(efter.start, '2026-11-16'); assert.equal(efter.status, 'sendt'); assert.equal(efter.sentOn, '2026-11-15')
+})
+
 test('coachens kostplan viser forslaget først og byg-fra-bunden bag "Ret"', () => {
   const props = { enabled: true, athlete, today: '2026-11-16', session: { user: { id: PEOPLE.coach.id } } }
   const med = renderToStaticMarkup(h(PortalPlan, { ...props, weekClient: { from: () => { throw Error('ingen læsning ved server-render') } } }))

@@ -35,9 +35,15 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
       sentOn: latestApproval ? sendtDag(latestApproval.approved_at) : null }
   }).filter(Boolean)
   if (!perPlan.length) return { state: 'empty', targets }
-  // Ugen starter ved det tidligste usendte forslag; er alt sendt, vises den tidligste uge.
+  // Ugen starter ved det tidligste usendte forslag. Er alt sendt, vises den nyeste sammenhængende
+  // uge (højst 7 dage tilbage fra sidste plandag), så en ældre enkeltdagsplan ikke flytter ugen.
   const unsent = perPlan.filter(x => !x.sent)
-  const start = (unsent.length ? unsent : perPlan).map(x => x.plan.valid_from).sort()[0]
+  const planDays = new Set(perPlan.map(x => x.plan.valid_from))
+  let start = unsent.map(x => x.plan.valid_from).sort()[0]
+  if (!start) {
+    start = [...planDays].sort().at(-1)
+    for (let i = 0; i < 6 && planDays.has(plusDage(start, -1)); i++) start = plusDage(start, -1)
+  }
   const dates = Array.from({ length: 7 }, (_, i) => plusDage(start, i))
   const days = dates.map(date => {
     // Én plan pr. dato. Står der flere, vinder et usendt forslag, ellers den nyest sendte.
@@ -64,7 +70,8 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
     d.deviation = procent.includes(null) ? null : Math.max(...procent)
     d.ok = d.state !== 'mangler' && d.mealCount > 0 && d.deviation !== null && d.deviation <= MAKS_AFVIGELSE_PROCENT
   }
-  const status = days.every(d => d.state === 'sendt') ? 'sendt'
+  // En sendt uge kan være kortere end 7 dage (fx en ældre enkeltdagsplan); tomme dage tæller ikke imod.
+  const status = days.every(d => d.state === 'sendt' || d.state === 'mangler') && days.some(d => d.state === 'sendt') ? 'sendt'
     : days.some(d => d.state === 'aendret') || days.some(d => d.state === 'sendt') ? 'aendret' : 'udkast'
   const sentOn = status === 'sendt' ? days.map(d => d.sentOn).sort().at(-1) : null
   const rationale = days.find(d => d.rationale)?.rationale ?? null
