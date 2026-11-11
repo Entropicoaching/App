@@ -38,4 +38,17 @@ fedtgulv og fordeling over dagen) gives af kalderen.
   bruges som tzatziki og dressing, og hytteost (100 til 50 g) som pålæg.
 - Smør, mel, tomatpuré, sesam, salsa og cremefraiche tæller som tilbehør.
 
+## Uge 3 og 4 (ordre 96)
+
+- `AFTENSMAD_VINTER` i `opskrifter.mjs`: 14 nye vinterretter fra 10 køkkener
+  (dansk, nordisk, ungarsk, marokkansk, koreansk, spansk, fransk, italiensk,
+  indisk og amerikansk). Ingen gentager en ret fra de første 14 dage.
+- `lavMenuUge34(start)` i `menu.mjs`: 14 dage fra mandagen i uge 3. Samme
+  regler som de første 14 dage, og morgenmad og mellemmåltider fortsætter
+  rotationen. `lavMenu14` giver præcis samme menu som før.
+- Realismeprøven har fået 10 almindelige vintervarer: hvidkål, porre, blomkål,
+  rosenkål, grønkål, søde kartofler, rødkål (glas), kikærter, hakket
+  svinekød og rejer. Hamburgerryg regnes som mager svinekam, oksekød i tern
+  som oksefilet og burgerboller som franskbrød.
+
 Prøver: `husstand.test.mjs` (syntetiske løftere).

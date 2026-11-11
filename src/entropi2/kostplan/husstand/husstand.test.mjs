@@ -2,10 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { tjekMaaltid, DANSKE_DAGLIGVARER } from '../realisme.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
-import { MORGENMAD, FROKOST, FOER_TRAENING, AFTENSNACK, AFTENSMAD, HUSSTAND_OPSKRIFTER } from './opskrifter.mjs'
+import { MORGENMAD, FROKOST, FOER_TRAENING, AFTENSNACK, AFTENSMAD, AFTENSMAD_VINTER, HUSSTAND_OPSKRIFTER } from './opskrifter.mjs'
 import { bygPlan, gentagneAftensmaaltider, SLOTS, portion } from './plan.mjs'
 import { bygIndkoeb, PAKNINGER, vareNoegle } from './indkoeb.mjs'
-import { lavMenu14, AFTEN_14 } from './menu.mjs'
+import { lavMenu14, lavMenuUge34, AFTEN_14, AFTEN_UGE34 } from './menu.mjs'
 import { STYRKE_ANBEFALINGER, drikkeForslag } from './anbefalinger.mjs'
 import { proteinForslag } from '../anbefalinger.mjs'
 
@@ -102,4 +102,54 @@ test('anbefalingerne har kilde ved hvert tal og passer i appens format', () => {
   assert.equal(drikkeForslag({ koen: 'mand', traeningstimer: 1.5 }).ml, 2800)
   assert.equal(drikkeForslag({ koen: 'kvinde' }).ml, 1600)
   assert.equal(drikkeForslag({}), null)
+})
+
+// Uge 3 og 4 (ordre 96): fortsætter efter de første 14 dage med nye vinterretter.
+const MENU34 = lavMenuUge34(new Date(Date.UTC(2030, 0, 21)))
+const PLAN34 = bygPlan(MENU34, [STOR, LILLE])
+
+test('uge 3 og 4: 14 nye aftensretter, ingen fra uge 1 og 2, og fortsat rotation', () => {
+  assert.equal(AFTENSMAD_VINTER.length, 14)
+  assert.deepEqual(new Set(AFTEN_UGE34), new Set(AFTENSMAD_VINTER.map(r => r.id)))
+  for (const id of AFTEN_UGE34) assert.ok(!AFTEN_14.includes(id), id)
+  assert.deepEqual(gentagneAftensmaaltider([...MENU, ...MENU34]), [])
+  assert.ok(new Set(AFTENSMAD_VINTER.map(r => r.koekken)).size >= 8)
+  assert.deepEqual(MENU34.map(d => d.nr), Array.from({ length: 14 }, (_, i) => i + 15))
+  assert.deepEqual(MENU34.map(d => d.uge), [3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4])
+  for (const dag of MENU34) {
+    if (!['Lørdag', 'Søndag'].includes(dag.ugedag)) assert.ok(AFTENSMAD_VINTER.find(r => r.id === dag.menu.aftensmad).minutter <= 30, dag.menu.aftensmad)
+    if (dag.rester) assert.equal(dag.menu.frokost, MENU34[dag.nr - 16].menu.aftensmad)
+  }
+  for (const r of AFTENSMAD_VINTER) assert.ok(r.holdbarDage >= 2, r.id)
+  // Uge 1 og 2 er uændrede af omlægningen.
+  assert.equal(MENU[13].menu.aftensmad, 'hh-torsk-rodfrugter')
+  assert.equal(MENU[1].menu.frokost, 'hh-bolognese')
+})
+
+test('uge 3 og 4: alle portioner består realismeprøven, dagsmålene og den samme rets rækkefølge', () => {
+  for (const dag of PLAN34) for (const [id, p] of Object.entries(dag.personer)) {
+    assert.ok(p.ok, `${dag.dato} ${id} ${JSON.stringify(p.afvigelse)} fedt ${p.total.fat}`)
+    for (const slot of SLOTS) {
+      const m = p.maaltider[slot]
+      assert.deepEqual(tjekMaaltid({ items: m.items, declared: m.totals }).problemer, [], `${dag.dato} ${slot} ${m.recipeId}`)
+    }
+  }
+  for (const dag of PLAN34) for (const slot of SLOTS) {
+    const a = dag.personer.a.maaltider[slot], b = dag.personer.b.maaltider[slot]
+    const r = HUSSTAND_OPSKRIFTER.find(x => x.id === a.recipeId)
+    for (const [n, item] of a.items.entries()) if (item.foodId !== r.flex && item.foodId !== r.fedtflex) assert.ok(item.grams >= b.items[n].grams, `${dag.dato} ${slot} ${item.name}`)
+  }
+})
+
+test('uge 3 og 4: indkøbslisten dækker hver gram og har afdeling til hver vare', () => {
+  for (const uge of [3, 4]) {
+    const dage = PLAN34.filter(d => d.uge === uge)
+    assert.equal(dage.length, 7)
+    const liste = bygIndkoeb(dage)
+    for (const dag of dage) for (const p of Object.values(dag.personer)) for (const slot of SLOTS) for (const item of p.maaltider[slot].items) {
+      const row = liste.find(r => r.key === vareNoegle(item))
+      assert.ok(row && row.afdeling !== 'Øvrige', vareNoegle(item))
+    }
+    for (const row of liste) assert.ok(row.daekketGram + 1e-6 >= row.behovGram, row.key)
+  }
 })

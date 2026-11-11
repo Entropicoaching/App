@@ -93,6 +93,17 @@ const VARER = [
   ['Gulerod', 'Frugt og grønt', 30, 250],
   ['Champignon', 'Frugt og grønt', 30, 200],
   ['Rødbede kogte', 'Frugt og grønt', 30, 200],
+  // Uge 3 og 4 (ordre 96): almindelige vintervarer i Netto og Dagli'Brugsen.
+  ['Hvidkål', 'Frugt og grønt', 30, 250],
+  ['Porre', 'Frugt og grønt', 30, 200],
+  ['Blomkål', 'Frugt og grønt', 50, 300],
+  ['Rosenkål', 'Frost', 50, 250],
+  ['Grønkål', 'Frost', 50, 250],
+  ['Søde kartofler', 'Frugt og grønt', 100, 500],
+  ['Rødkål', 'Kolonial', 30, 150],
+  ['Kikærter kogte', 'Kolonial', 50, 250],
+  ['Hakket svinekød', 'Kød og fisk', 75, 300],
+  ['Rejer', 'Frost', 30, 250],
 ]
 
 // Tilbehør tæller ikke som selve retten: olie, sovs og sødt pålæg alene er ikke et måltid.

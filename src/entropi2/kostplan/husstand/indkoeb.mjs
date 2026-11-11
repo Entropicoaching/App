@@ -78,6 +78,24 @@ export const PAKNINGER = Object.freeze({
   'Olivenolie': { tekst: 'Olivenolie 500 ml', g: 460, basis: true },
   'Rapsolie': { tekst: 'Rapsolie 1 l', g: 920, basis: true },
   'Hvedemel': { tekst: 'Hvedemel 1 kg', g: 1000, basis: true },
+  // Uge 3 og 4 (ordre 96).
+  'Hakket svinekød': { tekst: 'Hakket svinekød 500 g', g: 500 },
+  'hamburgerryg': { tekst: 'Hamburgerryg ca. 600 g', g: 600, afdeling: 'Kød og fisk' },
+  'svinekamsteaks': { tekst: 'Svinekamsteaks uden ben 500 g', g: 500, afdeling: 'Kød og fisk' },
+  'oksekød i tern': { tekst: 'Oksekød i tern (gullasch) 500 g', g: 500, afdeling: 'Kød og fisk' },
+  'rejer frost': { tekst: 'Rejer pillede frost 250 g', g: 250, afdeling: 'Frost' },
+  'kikærter dåse': { tekst: 'Kikærter, dåse 400 g (ca. 240 g afdryppet)', g: 240, afdeling: 'Kolonial' },
+  'Linser kogte': { tekst: 'Linser kogte, dåse eller pose (ca. 250 g afdryppet)', g: 250 },
+  'risottoris': { tekst: 'Risottoris 1 kg (tør)', g: 1000, faktor: 1 / 2.8, afdeling: 'Kolonial' },
+  'burgerboller': { tekst: 'Burgerboller 4 stk (ca. 300 g)', g: 300, afdeling: 'Brød' },
+  'Dressing let': { tekst: 'Let dressing eller burgerdressing 250 ml', g: 250 },
+  'Rødkål': { tekst: 'Rødkål, glas 580 g', g: 580 },
+  'rosenkål frost': { tekst: 'Rosenkål frost 450 g', g: 450, afdeling: 'Frost' },
+  'grønkål frost': { tekst: 'Grønlangkål hakket frost 450 g', g: 450, afdeling: 'Frost' },
+  'Hvidkål': { tekst: 'Spidskål eller hvidkål (ca. 600 g pr. stk)', stk: 600 },
+  'Porre': { tekst: 'Porrer (ca. 200 g spiselig pr. stk)', stk: 200 },
+  'Blomkål': { tekst: 'Blomkål (ca. 500 g buketter pr. stk)', stk: 500 },
+  'Søde kartofler': { tekst: 'Søde kartofler 1 kg', g: 1000, faktor: 1.1 },
 })
 
 const byId = new Map(FOODS.map(food => [food.id, food]))
