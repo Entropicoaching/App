@@ -51,8 +51,10 @@ const VARER = [
   ['Olivenolie', 'Kolonial', 3, 30],
   ['Rapsolie', 'Kolonial', 3, 30],
   ['Mandler', 'Kolonial', 10, 50],
+  ['Græskarkerner', 'Kolonial', 10, 40],
   ['Valnødder', 'Kolonial', 10, 50],
   ['Banan', 'Frugt og grønt', 80, 250],
+  ['Appelsin', 'Frugt og grønt', 80, 250],
   ['Æble', 'Frugt og grønt', 80, 250],
   ['Pære', 'Frugt og grønt', 80, 250],
   ['Blåbær', 'Frugt og grønt', 50, 250],
@@ -104,6 +106,8 @@ const VARER = [
   ['Kikærter kogte', 'Kolonial', 50, 250],
   ['Hakket svinekød', 'Kød og fisk', 75, 300],
   ['Rejer', 'Frost', 30, 250],
+  // Ordre 109: hullerne i mikronæringen (D-vitamin, jern, fed fisk).
+  ['Laks røget', 'Køl', 30, 120],
 ]
 
 // Tilbehør tæller ikke som selve retten: olie, sovs og sødt pålæg alene er ikke et måltid.

@@ -96,6 +96,10 @@ export const PAKNINGER = Object.freeze({
   'Porre': { tekst: 'Porrer (ca. 200 g spiselig pr. stk)', stk: 200 },
   'Blomkål': { tekst: 'Blomkål (ca. 500 g buketter pr. stk)', stk: 500 },
   'Søde kartofler': { tekst: 'Søde kartofler 1 kg', g: 1000, faktor: 1.1 },
+  // Ordre 109.
+  'Græskarkerner': { tekst: 'Græskarkerner 200 g', g: 200 },
+  'Appelsin': { tekst: 'Appelsiner (ca. 150 g spiselig pr. stk)', stk: 150 },
+  'Laks røget': { tekst: 'Koldrøget laks 100 g', g: 100 },
 })
 
 const byId = new Map(FOODS.map(food => [food.id, food]))

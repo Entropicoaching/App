@@ -153,3 +153,17 @@ test('uge 3 og 4: indkøbslisten dækker hver gram og har afdeling til hver vare
     for (const row of liste) assert.ok(row.daekketGram + 1e-6 >= row.behovGram, row.key)
   }
 })
+
+// Ordre 109: hullerne i mikronæringen. Mindst cirka 200 g fed fisk om ugen til begge
+// (kostrådene), og jernrige kerner i stedet for mandler.
+test('hver uge har mindst 180 g fed fisk pr. person (syntetisk lille løfter), og kernerne er græskarkerner', () => {
+  const FED_FISK = new Set(['Laks fersk', 'Laks røget', 'Makrel i tomat'])
+  const dage = bygPlan([...lavMenu14(new Date(Date.UTC(2030, 0, 7))), ...lavMenuUge34(new Date(Date.UTC(2030, 0, 21)))], [STOR, LILLE])
+  for (const uge of [1, 2, 3, 4]) for (const id of ['a', 'b']) {
+    const gram = dage.filter(d => d.uge === uge).flatMap(d => SLOTS.flatMap(s => d.personer[id].maaltider[s].items))
+      .filter(item => FED_FISK.has(item.name)).reduce((sum, item) => sum + item.grams, 0)
+    assert.ok(gram >= 180, `uge ${uge} ${id}: ${gram} g`)
+  }
+  assert.ok(!HUSSTAND_OPSKRIFTER.some(r => r.ingredients.some(i => byId.get(i.foodId).name === 'Mandler')))
+  assert.ok(HUSSTAND_OPSKRIFTER.some(r => r.ingredients.some(i => byId.get(i.foodId).name === 'Græskarkerner')))
+})

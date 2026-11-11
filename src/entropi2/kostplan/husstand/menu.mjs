@@ -5,9 +5,9 @@
 export const UGEDAGE = Object.freeze(['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'])
 const MAANEDER = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
 
-const MORGEN = ['hh-havregroed-skyr', 'hh-aeg-rugbroed-skinke', 'hh-skyr-muesli-banan']
+const MORGEN = ['hh-havregroed-skyr', 'hh-aeg-rugbroed-roeget-laks', 'hh-skyr-muesli-banan']
 const FOER = ['hh-proteinmaelk-banan', 'hh-kakaomaelk-rugbroed', 'hh-skyr-honning-havre', 'hh-franskbroed-syltetoej-kvark']
-const SNACK = ['hh-kvark-blaabaer-mandler', 'hh-skyr-muesli-hindbaer', 'hh-hytteost-knaekbroed', 'hh-graesk-yoghurt-valnoed']
+const SNACK = ['hh-kvark-blaabaer-graeskarkerner', 'hh-skyr-muesli-hindbaer', 'hh-hytteost-knaekbroed', 'hh-graesk-yoghurt-valnoed']
 
 export const AFTEN_14 = Object.freeze([
   'hh-bolognese', 'hh-thai-karry-kylling', 'hh-hakkeboef', 'hh-shawarma-bowl', 'hh-fajitas-okse', 'hh-ovnlaks', 'hh-chili-con-carne',
@@ -23,11 +23,11 @@ const FROKOST_UGE = [
 // Lørdag og søndag har de retter, der tager længere tid.
 export const AFTEN_UGE34 = Object.freeze([
   'hh-kyllingetagine', 'hh-bulgogi', 'hh-boller-i-karry', 'hh-laks-linser', 'hh-tunpasta', 'hh-burger-soede-kartofler', 'hh-gullasch',
-  'hh-kalkunkeema', 'hh-fiskegryde', 'hh-svinekam-roedkaal', 'hh-risotto-kylling', 'hh-arroz-con-pollo', 'hh-biksemad', 'hh-groenlangkaal',
+  'hh-oksekeema', 'hh-fiskegryde', 'hh-svinekam-roedkaal', 'hh-risotto-kylling', 'hh-arroz-con-pollo', 'hh-biksemad', 'hh-groenlangkaal',
 ])
 const FROKOST_UGE34 = [
   ['hh-rugbroed-tun-aeg', null, 'hh-wrap-kylling-hummus', null, 'hh-pastasalat-kylling', null, 'hh-rugbroed-makrel-aeg'],
-  ['hh-rugbroed-makrel-aeg', null, 'hh-pastasalat-kylling', null, 'hh-wrap-kylling-hummus', null, 'hh-rugbroed-tun-aeg'],
+  ['hh-rugbroed-makrel-aeg', null, 'hh-pastasalat-kylling', null, 'hh-wrap-kylling-hummus', null, 'hh-rugbroed-makrel-aeg'],
 ]
 
 // To uger fra start (en mandag). foerste er planens dagnummer minus 1, så
