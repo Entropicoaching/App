@@ -16,5 +16,5 @@ test('U7 5/5: alle tre dele er tændt, og et eksplicit false slukker hver del', 
 test('U7 5/5: UDGIVELSE_TRIN er uændret, og migrationen ligger kun som udkast', () => {
   assert.equal(UDGIVELSE_TRIN, 0)
   const migrations = new URL('../../../supabase/migrations/', import.meta.url)
-  assert.throws(() => readFileSync(new URL('20261111000000_u7_kost_som_data_A_C_DRAFT.sql', migrations)), { code: 'ENOENT' })
+  assert.throws(() => readFileSync(new URL('20261111000000_u7_kost_som_data_B_C_DRAFT.sql', migrations)), { code: 'ENOENT' })
 })

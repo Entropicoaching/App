@@ -7,3 +7,7 @@
 /src/entropi2/kostplan/foedevarer/frida55Extended.mjs text eol=lf
 /src/entropi2/kostplan/foedevarer/frida55Extended.provenance-01.json text eol=lf
 /src/entropi2/kostplan/foedevarer/frida55Extended.provenance-02.json text eol=lf
+# Generalprøve (ordre 80): live-migrationen og Supabases auth.uid() byte for byte, med mellemrum.
+/scripts/generalproeve/** text eol=lf
+/scripts/generalproeve/live/*.sql -whitespace
+/scripts/generalproeve/prod-skema-20261108.sql -whitespace

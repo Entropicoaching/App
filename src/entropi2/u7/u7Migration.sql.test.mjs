@@ -1,4 +1,5 @@
-// U7 del 1: migrationspakken A til C og tilbagerulningen, kørt mod en tom PGlite i hukommelsen.
+// U7 del 1: migrationspakken B og C og tilbagerulningen, kørt mod en PGlite i hukommelsen, hvor
+// kostplanen (A) allerede findes, som den har gjort live siden 8. nov. (rettet i ordre 80).
 // Kun syntetiske id'er; ingen nøgler, intet net. Springer aldrig over: mangler PGlite, fejler prøven.
 import test from 'node:test'
 import assert from 'node:assert/strict'
@@ -6,25 +7,28 @@ import { readFileSync } from 'node:fs'
 
 const directory = new URL('../../../supabase/sql/udkast/', import.meta.url)
 const read = name => readFileSync(new URL(name, directory), 'utf8').replace(/\r\n/g, '\n')
-const up = read('20261111000000_u7_kost_som_data_A_C_DRAFT.sql')
-const down = read('20261111000000_u7_kost_som_data_A_C_DRAFT_ROLLBACK.sql')
+const up = read('20261111000000_u7_kost_som_data_B_C_DRAFT.sql')
+const down = read('20261111000000_u7_kost_som_data_B_C_DRAFT_ROLLBACK.sql')
+const kostplan = read('20261104211000_kostplan_v1_DRAFT.sql')
 const inner = sql => sql.slice(sql.indexOf('begin;\n') + 7, sql.lastIndexOf('commit;')).replace(/^\n+|\n+$/g, '')
 const ids = Array.from({ length: 12 }, (_, i) => `20000000-0000-4000-8000-${String(i + 1).padStart(12, '0')}`)
 const [owner, otherOwner, coach, otherCoach, a1, a2, a3, a4] = ids
-const NEW_TABLES = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals', 'tracking_daily_v1', 'nutrition_targets_v1']
+const NEW_TABLES = ['tracking_daily_v1', 'nutrition_targets_v1']
+const KOSTPLAN_TABLES = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
 const reject = (promise, code) => assert.rejects(promise, { code })
 
-test('U7 SQL: A er ordret kostplan-udkastet, ingen menstruation, ingen cascade, filerne ligger i udkast', () => {
-  assert.ok(up.includes(inner(read('20261104211000_kostplan_v1_DRAFT.sql'))))
-  assert.ok(down.includes(inner(read('20261104211000_kostplan_v1_DRAFT_ROLLBACK.sql'))))
+test('U7 SQL: kostplanen (A) er live og hverken oprettes eller fjernes, ingen menstruation, ingen cascade', () => {
+  const code = sql => sql.replace(/--[^\n]*/g, '')
+  assert.doesNotMatch(code(up), /kostplan/i)
+  assert.doesNotMatch(code(down), /kostplan/i)
+  assert.ok(inner(kostplan).length > 1000)
   assert.doesNotMatch(up + down, /(create|drop) (table|policy|function|trigger)[^\n]*(cycle|menstru)/i)
   assert.doesNotMatch(down.replace(/--[^\n]*/g, ''), /\bcascade\b/i)
   assert.equal((up.match(/^begin;$/gm) || []).length, 1)
   assert.equal((down.match(/^begin;$/gm) || []).length, 1)
-  // Tilbagerulningen er omvendt: C før B før A.
+  // Tilbagerulningen er omvendt: C før B.
   const at = name => down.indexOf(`drop table public.${name};`)
-  assert.ok(at('nutrition_targets_v1') < at('tracking_daily_v1'))
-  assert.ok(at('tracking_daily_v1') < at('kostplan_v1_approvals'))
+  assert.ok(at('nutrition_targets_v1') > 0 && at('nutrition_targets_v1') < at('tracking_daily_v1'))
 })
 
 test('U7 SQL mod PGlite: RLS, grænser, første mål, op/ned/op', { timeout: 120000 }, async t => {
@@ -64,6 +68,8 @@ test('U7 SQL mod PGlite: RLS, grænser, første mål, op/ned/op', { timeout: 120
       await query(`insert into public.athletes values
         ($1,$2,$3,2800,180), ($4,$5,$6,null,null), ($7,null,$3,0,99999), ($8,null,null,2500,150)`,
       [a1, owner, coach, a2, otherOwner, otherCoach, a3, a4])
+      // Kostplanen findes allerede, som i produktionen.
+      await db.exec(kostplan)
       const before = await catalog()
       if (migrate) await db.exec(up)
       await run({ db, query, as, count, catalog, before })
@@ -133,7 +139,7 @@ test('U7 SQL mod PGlite: RLS, grænser, første mål, op/ned/op', { timeout: 120
     await reject(query('select * from public.nutrition_targets_v1'), '42501')
   }))
 
-  await t.test('kostplanen (A) virker som i sit eget udkast: coach laver forslag, atlet ser intet før godkendelse', () => fixture(async ({ query, as, count }) => {
+  await t.test('kostplanen (A), som allerede er live, virker uændret: coach laver forslag, atlet ser intet før godkendelse', () => fixture(async ({ query, as, count }) => {
     await as(coach)
     await query("insert into public.kostplan_v1_plans(id,athlete_id,valid_from) values ($1,$2,'2026-11-02')", [ids[10], a1])
     await as(owner)
@@ -141,14 +147,15 @@ test('U7 SQL mod PGlite: RLS, grænser, første mål, op/ned/op', { timeout: 120
   }))
 
   await t.test('ned fjerner alt nyt og efterlader athletes som før; op igen virker', () => fixture(async ({ db, query, catalog, before }) => {
+    const fns = async () => (await query("select proname from pg_proc where pronamespace='public'::regnamespace order by 1")).rows
+    const kostplanFns = await fns()
     await db.exec(down)
     assert.deepEqual(await catalog(), before)
-    const fns = (await query("select proname from pg_proc where pronamespace='public'::regnamespace")).rows
-    assert.deepEqual(fns, [])
+    assert.deepEqual(await fns(), kostplanFns)
     assert.equal(Number((await query('select count(*) n from public.athletes')).rows[0].n), 4)
     await db.exec(up)
     const names = (await query("select relname from pg_class where relkind='r' and relnamespace='public'::regnamespace order by 1")).rows.map(r => r.relname)
-    assert.deepEqual(names, ['athletes', ...NEW_TABLES].sort())
+    assert.deepEqual(names, ['athletes', ...KOSTPLAN_TABLES, ...NEW_TABLES].sort())
   }))
 
   await t.test('en fejl midt i ned ruller hele ned tilbage (én transaktion, ingen cascade)', () => fixture(async ({ db, query }) => {
@@ -156,6 +163,6 @@ test('U7 SQL mod PGlite: RLS, grænser, første mål, op/ned/op', { timeout: 120
     await assert.rejects(db.exec(down))
     await db.exec('rollback')
     const names = (await query("select relname from pg_class where relkind='r' and relnamespace='public'::regnamespace order by 1")).rows.map(r => r.relname)
-    assert.deepEqual(names, ['athletes', ...NEW_TABLES].sort())
+    assert.deepEqual(names, ['athletes', ...KOSTPLAN_TABLES, ...NEW_TABLES].sort())
   }))
 })
