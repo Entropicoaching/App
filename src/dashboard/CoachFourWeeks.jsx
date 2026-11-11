@@ -1,9 +1,11 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { createElement as h } from 'react'
 import { buildFourWeeks } from './coachFourWeeks.mjs'
 
 const box = { border: '1px solid #4a4844', padding: '1rem', borderRadius: '8px', minWidth: 0 }
 const label = { weeks: 'Plan', logs: 'Træningslog', videos: 'Videoer' }
-const signed = n => n > 0 ? `+${n}` : String(n)
+const signed = n => n > 0 ? `+${komma(n)}` : komma(n)
 
 export default function CoachFourWeeks({ athlete, reads = {}, today, onOpenVideo, onOpenAwaitingVideo, videoOpening, videoError }) {
   const model = buildFourWeeks({ athleteId: athlete.id, reads, today })
@@ -31,7 +33,7 @@ export default function CoachFourWeeks({ athlete, reads = {}, today, onOpenVideo
             ...(plan.sessions || []).map(session => h('div', { key: session.id }, session.title || 'Pas',
               h('ul', null, ...(session.exercises || []).map(ex => h('li', { key: ex.id }, `${ex.name || 'Øvelse'}: ${ex.sets ?? '?'} sæt, ${ex.reps ?? '?'} gentagelser, ${ex.intensity || 'ingen planlagt intensitet'}`))))))),
           h('ul', null, ...week.logs.map((log, index) => h('li', { key: log.id || index },
-            `${log.day} ${log.exercises?.name || 'Øvelse'}, sæt ${log.set_number ?? '?'}: ${log.skipped ? 'sprunget over' : `${log.weight ?? '?'} kg x ${log.reps_completed ?? '?'}`}. RPE-afvigelse ${log.delta === null ? 'ukendt' : signed(log.delta)}.`))),
+            `${log.day} ${log.exercises?.name || 'Øvelse'}, sæt ${log.set_number ?? '?'}: ${log.skipped ? 'sprunget over' : `${komma(log.weight ?? '?')} kg x ${log.reps_completed ?? '?'}`}. RPE-afvigelse ${log.delta === null ? 'ukendt' : signed(log.delta)}.`))),
         ),
         h('h4', null, 'Noter'),
         week.notes.length ? h('ul', null, ...week.notes.map((note, i) => h('li', { key: i, style: { overflowWrap: 'anywhere', whiteSpace: 'pre-wrap' } }, `${note.source}: ${note.text}`))) : h('p', null, 'Ingen noter i de hentede data'),

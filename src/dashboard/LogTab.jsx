@@ -60,7 +60,7 @@ export default function LogTab({
                   const ps = bestHeavySetPerDay(athleteLogs.filter(l => exerciseSetView(l.exercises?.name).key === exerciseSetView(exName).key && danskDag(l.logged_at) <= currentDate))
                   if (!dataAllowed('D22', { rows: ps.map(p => heavyPointEvidence(p, exerciseSetView(exName).name)) })) return { text: dataMessage('D22'), color: '#7a7770' }
                   const last = ps.at(-1), prev = ps.at(-2)
-                  return { text: `Observeret e1RM-forskel ${prev.dag} til ${last.dag}: ${last.e1rm - prev.e1rm} kg`, color: '#b8b4a8' }
+                  return { text: `Observeret e1RM-forskel ${prev.dag} til ${last.dag}: ${komma(Math.round((last.e1rm - prev.e1rm) * 10) / 10)} kg`, color: '#b8b4a8' }
                 }
                 const history = (trendIndex[exerciseSetView(exName).key] || []).filter(e => e.date <= currentDate)
                 if (history.length < 2) return null
@@ -288,8 +288,8 @@ export default function LogTab({
                                 let delta = null
                                 if (older && row.e1rm > 0 && older.e1rm > 0) {
                                   const d = Math.round((row.e1rm - older.e1rm) * 10) / 10
-                                  delta = d > 0.4 ? { text: `↑ +${d}kg e1RM`, color: '#6cba6c' }
-                                    : d < -0.4 ? { text: `↓ ${Math.abs(d)}kg e1RM`, color: '#e05555' }
+                                  delta = d > 0.4 ? { text: `↑ +${komma(d)}kg e1RM`, color: '#6cba6c' }
+                                    : d < -0.4 ? { text: `↓ ${komma(Math.abs(d))}kg e1RM`, color: '#e05555' }
                                     : { text: '= samme', color: '#7a7770' }
                                 }
                                 return (
@@ -300,7 +300,7 @@ export default function LogTab({
                                         {row.weekNum != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {row.weekNum}</span>}
                                       </div>
                                       <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
-                                        {row.e1rm > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#b8b4a8' }}>e1RM {row.e1rm}kg</span>}
+                                        {row.e1rm > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#b8b4a8' }}>e1RM {komma(row.e1rm)}kg</span>}
                                         {delta && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: delta.color, letterSpacing: '0.06em' }}>{delta.text}</span>}
                                       </div>
                                     </div>

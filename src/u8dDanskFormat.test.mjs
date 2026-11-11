@@ -36,7 +36,7 @@ const LOKALE = {
   'athlete/videoSetSelection.mjs': ['komma'], 'athlete/athleteAnalysisBefore.jsx': ['komma'],
   'athlete/beskederOgVaegt.jsx': ['komma'], 'athlete/contactBaseFactory.jsx': ['komma'],
   'athlete/videoFeedbackPlayback.mjs': ['decimaler'], 'dashboard/AnalyseTab.jsx': ['komma', 'decimaler'],
-  'dashboard/VideoReviewModal.jsx': ['komma'], 'dashboard/LogTab.jsx': ['komma'], 'dashboard/ProgramTab.jsx': ['komma'],
+  'dashboard/VideoReviewModal.jsx': ['komma'], 'dashboard/CoachFourWeeks.jsx': ['komma'], 'dashboard/LogTab.jsx': ['komma'], 'dashboard/ProgramTab.jsx': ['komma'],
   'dashboard/StaevneTab.jsx': ['komma'], 'dashboard/profileWeekSummary.mjs': ['komma'],
   'dashboard/analyseSamlet.mjs': ['komma'], 'dashboard/coachVideoHjaelp.js': ['komma'],
   'dashboard/analyseSammenlign.mjs': ['decimaler'], 'videoMarkerReplies.mjs': ['decimaler'],
@@ -118,6 +118,9 @@ test('u8d: rå vægte foran kg står med komma på atlet- og coachskærme', () =
   skal['athlete/DagensPasCard.jsx'].push(">RPE {komma(input.rpe || plannedRpe || '–')} ▾</button>", 'aria-label={`RPE ${komma(v)}`}')
   skal['athlete/ProgramTab.jsx'].push(">RPE {komma(input.rpe || (plannedRpe != null ? plannedRpe : '–'))}</button>",
     "'aria-label': `RPE ${komma(v)} · ${setContext}`", "`Vælg RPE ${komma(input.rpe || (plannedRpe != null ? plannedRpe : '–'))} · ${setContext}`", '`${komma(v)} ✓` : komma(v)}')
+  // K3: e1RM i coachens log og vægt og RPE-afvigelse i 4-ugers oversigten.
+  skal['dashboard/LogTab.jsx'].push('${komma(Math.round((last.e1rm - prev.e1rm) * 10) / 10)} kg`', '`↑ +${komma(d)}kg e1RM`', '`↓ ${komma(Math.abs(d))}kg e1RM`', 'e1RM {komma(row.e1rm)}kg')
+  skal['dashboard/CoachFourWeeks.jsx'] = ['const signed = n => n > 0 ? `+${komma(n)}` : komma(n)', "`${komma(log.weight ?? '?')} kg x"]
   skal['dashboard/LogTab.jsx'].push('RPE {komma(set.rpe_actual)}{set.rpe_planned != null ? `/${komma(set.rpe_planned)}`')
   for (const fil of ['dashboard/AnalyseTab.jsx', 'dashboard/VideoReviewModal.jsx', 'athlete/athleteAnalysisBefore.jsx',
     'athlete/beskederOgVaegt.jsx', 'athlete/contactBaseFactory.jsx']) skal[fil].push('RPE ${komma(analysis.rpe)}')
