@@ -3,6 +3,7 @@
 // pr. dag. Databasen sætter selv planen til godkendt; atleten ser kun godkendte versioner.
 // Kostmålet er athletes.kcal_target/protein_target. Planens total vises mod det, aldrig som nyt mål.
 import { createPlanSnapshot, summarizePlanSnapshot } from '../planSnapshot.mjs'
+import { medMikronaering } from '../ugeMikronaering.mjs'
 import { day, identifier } from './model.mjs'
 
 const PLANS = 'kostplan_v1_plans', VERSIONS = 'kostplan_v1_versions', APPROVALS = 'kostplan_v1_approvals'
@@ -121,7 +122,9 @@ async function readRows(client, athleteId, today) {
 
 export async function readClaudeWeek({ client, athlete, today, start }) {
   if (typeof client?.from !== 'function' || !identifier(athlete?.id) || !day(today)) fail()
-  return weekModel({ ...await readRows(client, athlete.id, today), athlete, today, start })
+  const rows = await readRows(client, athlete.id, today)
+  // U10d: mikronæring fra de samme versioner, som ugen viser.
+  return medMikronaering(weekModel({ ...rows, athlete, today, start }), rows.versions, athlete)
 }
 
 // "Send uge": én godkendelse pr. dag med seneste version. Ugen læses igen først, så
