@@ -79,10 +79,14 @@ export function mountMobility(root, options = {}) {
       const reason = model.selected.date && model.selected.date !== model.screenDate
         ? model.recommendation.reason.replace(/^Dagens /, 'Næste pas med ') : model.recommendation.reason
       element('p', reason, before)
-      element('p', `${model.routine.length} ${antalOrd(model.routine.length, 'øvelse', 'øvelser')} · Følg øvelsernes dosering.`, before)
+      element('p', `${model.routine.length} ${antalOrd(model.routine.length, 'øvelse', 'øvelser')}`, before)
       if (model.selected.date) element('p', danishDate(model.selected.date), before)
       if (done) element('p', 'Rutine gennemført i dag · Gemt på denne enhed.', before).setAttribute('role', 'status')
-      model.routine.forEach(ex => exercise(ex, before))
+      // U9 (Marc 11. nov.): ingen tekstvæg før start. Kun navnene; forklaringen står ét sted, i vejledningen.
+      const names = element('div', undefined, before)
+      Object.assign(names.style, { margin: '16px 0', borderTop: '1px solid #2c2c26' })
+      model.routine.forEach((ex, i) => Object.assign(element('p', `${i + 1}   ${ex.name}`, names).style, {
+        margin: '0', padding: '12px 0', borderBottom: '1px solid #2c2c26', whiteSpace: 'pre', color: '#edeae2' }))
       // Entropi 2: et pas fra en tidligere dag startes aldrig; adapteren beregner dagen igen.
       const start = () => {
         if (!currentDay()) return
@@ -133,15 +137,40 @@ export function mountMobility(root, options = {}) {
       problem.exercises.forEach(ex => exercise(ex, details))
     }
   }
+  // U9 (Marc 11. nov.): rolig, "elitær" vejledning med ét fokus pr. skærm og tydelig fremdrift.
+  // Tiden regnes fra Start og opdateres ved hvert skridt og hvert timertik; ingen ekstra timer.
+  let startedAt = null
+  const minutes = () => {
+    const sek = Math.max(0, Math.floor((clock.now() - startedAt) / 1000))
+    return `Tid ${Math.floor(sek / 60)}:${String(sek % 60).padStart(2, '0')}`
+  }
   function run(step) {
     clear()
     element('style', styles)
-    const ex = model.routine[step]
-    const heading = element('h2', `${step + 1} af ${model.routine.length}: ${ex.name}`)
+    if (step === 0 || startedAt === null) startedAt = clock.now()
+    const ex = model.routine[step], total = model.routine.length
+    const eyebrow = { fontFamily: "'IBM Plex Mono', Consolas, monospace", fontSize: '12px', letterSpacing: '0.12em',
+      textTransform: 'uppercase', color: '#a8a496' }
+    const progress = element('p', minutes())
+    Object.assign(progress.style, { ...eyebrow, margin: '0 0 10px', textAlign: 'right' })
+    const bar = element('div')
+    bar.setAttribute('role', 'progressbar'); bar.setAttribute('aria-label', 'Fremdrift i rutinen')
+    bar.setAttribute('aria-valuemin', '1'); bar.setAttribute('aria-valuemax', String(total)); bar.setAttribute('aria-valuenow', String(step + 1))
+    Object.assign(bar.style, { height: '3px', background: '#2c2c26', borderRadius: '2px', marginBottom: '36px' })
+    Object.assign(element('div', undefined, bar).style, { height: '3px', borderRadius: '2px', background: '#d8b16b',
+      width: `${Math.round(((step + 1) / total) * 100)}%` })
+    // Overskriften bærer placeringen, så fokus på den også siger "Øvelse 2 af 6".
+    const heading = element('h2')
+    Object.assign(element('span', `Øvelse ${step + 1} af ${total}`, heading).style, { ...eyebrow, display: 'block', marginBottom: '10px' })
+    Object.assign(element('span', ex.name, heading).style, { display: 'block' })
+    Object.assign(heading.style, { fontFamily: "'Playfair Display', Georgia, serif", fontWeight: '400', fontSize: '32px',
+      lineHeight: '1.15', margin: '0 0 12px', color: '#edeae2' })
     heading.setAttribute('tabindex', '-1')
     heading.focus?.()
-    exercise(ex, root)
+    Object.assign(element('p', ex.label).style, { fontSize: '18px', color: '#d8b16b', margin: '0 0 20px' })
+    Object.assign(element('p', ex.desc).style, { fontSize: '16px', lineHeight: '1.6', color: '#b8b4a8', margin: '0 0 28px', maxWidth: '34em' })
     const status = element('p', 'Følg doseringen ovenfor.')
+    Object.assign(status.style, { fontFamily: "'IBM Plex Mono', Consolas, monospace", fontSize: '20px', color: '#edeae2', margin: '0 0 20px' })
     status.setAttribute('role', 'timer')
     status.setAttribute('aria-label', 'Doseringstimer')
     status.setAttribute('aria-live', 'off')
@@ -161,6 +190,7 @@ export function mountMobility(root, options = {}) {
           if (disposed || generation !== token) return
           const remaining = Math.max(0, Math.ceil((deadline - clock.now()) / 1000))
           status.textContent = `Side ${side + 1} af ${sides}: ${remaining} sek`
+          progress.textContent = minutes()
           if (remaining === 0) {
             clearTimer(); side++
             status.textContent = side < sides ? 'Skift side og start timeren igen.' : 'Doseringen er færdig.'
