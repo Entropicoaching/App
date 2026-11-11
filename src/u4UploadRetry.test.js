@@ -112,12 +112,12 @@ test('U4 3: afbrudt forbindelse giver "Ikke sendt" og én Prøv igen; nyt forsø
   try {
     await h.send()
     const [text, retry] = h.panel.children
-    assert.match(text.textContent, /^Ikke sendt\. Videoen er stadig valgt/)
+    assert.match(text.textContent, /^Ikke sendt · Prøv igen\. Videoen er stadig valgt/)
     assert.doesNotMatch(text.textContent, /uploadklienten|delvis fil/)
     assert.equal(retry.hidden, false)
     assert.equal(retry.textContent, 'Prøv igen')
     assert.equal(h.saveBtn.hidden, true)
-    assert.match(h.said.at(-1), /^Ikke sendt\. /)
+    assert.match(h.said.at(-1), /^Ikke sendt · Prøv igen\. /)
     assert.equal(h.state.value, 'ready')
     await retry.onclick()
     assert.equal(attempts, 2)
@@ -171,7 +171,7 @@ test('U4 4: afbrudt fetch efter at filen nåede frem; Prøv igen giver én video
     assert.equal(objects.size, 1)
     assert.equal(saved.size, 1)
     assert.equal(h.state.value, 'sent')
-    assert.match(text.textContent, /Video modtaget/)
+    assert.match(text.textContent, /Sendt til Marc ✓ kl. /)
     // Et tredje tryk er ikke muligt: knappen er skjult, og Send giver samme klient-id.
     assert.equal(retry.hidden, true)
     await h.send()

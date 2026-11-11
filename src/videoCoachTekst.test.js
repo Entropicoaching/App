@@ -65,9 +65,11 @@ test('uploadtekster i videocoach.html fortæller hvad der sker og hvad næste sk
     'Videoen sendes først, når du selv trykker Send video til coach.',
     'Din coach sporer og gennemgår videoen bagefter. Svaret kommer i Beskeder under Teknik &amp; løft.',
     'Sender video (${mb} MB). Bliv på skærmen, til den er sendt.',
-    'Video modtaget ✓ Din coach gennemgår den. Feedbacken kommer i Beskeder under Teknik & løft.',
+    // U9 (Marc 11. nov.): kvitteringen står i statuskortet med klokkeslæt; fejl hedder "Ikke sendt · Prøv igen".
+    "sent: ['Sendt til Marc ✓'",
+    'Din coach gennemgår den. Feedbacken kommer i Beskeder under Teknik & løft.',
     'Annulleret. Intet er sendt, og videoen er stadig valgt.',
-    'Den er stadig valgt, så tryk Prøv at sende igen.',
+    'Ikke sendt · Prøv igen. ${error.message}. Videoen er stadig valgt.',
     'Gemt på telefonen. Den sendes af sig selv, når du har forbindelse igen.',
     'Start finder stangbanen og sender videoen. Vis mig nu giver dig et hurtigt kig, og videoen sendes bagefter.',
     'Din video ligger klar til din coach. Feedbacken finder du i Beskeder under Teknik & løft.',

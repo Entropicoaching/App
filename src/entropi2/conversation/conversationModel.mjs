@@ -31,8 +31,16 @@ export function threadFor(athleteId, messages = [], analyses = []) {
         : item.value.sender_role === 'athlete' && !item.value.read_by_coach,
     }))
 }
+// U9 (Marc 11. nov.): samme kvittering i tråden som på videosiden, med klokkeslæt; atletens note under.
+const receiptClock = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen', hour: '2-digit', minute: '2-digit' })
 export function feedbackText(row) {
-  if (row.status !== 'shared') return row.session_context?.athlete_note || 'Video sendt til coach. Afventer feedback.'
+  if (row.status !== 'shared') {
+    const sent = conversationDate(row.created_at)
+    const receipt = `Sendt til Marc ✓${sent ? ` kl. ${receiptClock.format(sent).replace(':', '.')}` : ''} · afventer feedback`
+    const note = row.session_context?.athlete_note
+    return typeof note === 'string' && note.trim() ? `${receipt}
+${note}` : receipt
+  }
   const feedback = row.athlete_feedback || {}
   return ['works', 'focus', 'next_set'].flatMap(key => (Array.isArray(feedback[key]) ? feedback[key] : [])
     .filter(item => typeof item?.text === 'string').map(item => item.text)).join('\n') || 'Videofeedback uden tekst.'

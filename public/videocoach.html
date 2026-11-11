@@ -7203,17 +7203,14 @@ async function vcAthleteUploadAndGo() {
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
     if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Send til coach'; }
-    if (setAthleteState) setAthleteState('sent');
+    // U9 (Marc 11. nov.): han savnede en bekræftelse. ORDRE 422s ene kvittering er nu statuskortet
+    // "Sendt til Marc ✓" med klokkeslæt, og det bliver stående (før skjult, og banneret forsvandt efter 8 s).
+    const kl = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen', hour: '2-digit', minute: '2-digit' }).format(new Date()).replace(':', '.');
+    if (setAthleteState) setAthleteState('sent', `kl. ${kl}. Din coach gennemgår den. Feedbacken kommer i Beskeder under Teknik & løft.`);
     if (setAthleteSubmitOpen) setAthleteSubmitOpen(false);
-    // ORDRE 422 (I5): kun én kvittering efter Send. Statuskortet "Sendt til
-    // din coach" stod oven i banneret, og ingen af dem kunne læses. Kortet
-    // skjules her (kun på denne vej; trackerens egne veje er uændrede), og
-    // banneret står som læselig kvittering i 8 s (før 5 s), eller til næste besked.
     const athleteStatusEl = document.getElementById('athleteStatus');
-    if (athleteStatusEl) athleteStatusEl.hidden = true;
-    say('Video modtaget ✓ Din coach gennemgår den. Feedbacken kommer i Beskeder under Teknik & løft.');
-    banner.dataset.kvittering = String(Date.now() + 8000);
-    setTimeout(() => say(''), 8100);
+    if (athleteStatusEl) athleteStatusEl.hidden = false;
+    say('');
   } catch (error) {
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
@@ -7227,10 +7224,10 @@ async function vcAthleteUploadAndGo() {
     // U4 · 3: med uploadmodulet er panelets "Prøv igen" den eneste knap til et nyt forsøg.
     if (vcUploadRetry && !error.vcAborted) {
       if (saveBtn) saveBtn.hidden = true;
-      say(`Ikke sendt. ${error.message}`);
+      say(`Ikke sendt · Prøv igen. ${error.message}`);
       return;
     }
-    say(error.vcAborted ? 'Annulleret. Intet er sendt, og videoen er stadig valgt.' : `Videoen blev ikke sendt: ${error.message}. Den er stadig valgt, så tryk Prøv at sende igen.`);
+    say(error.vcAborted ? 'Annulleret. Intet er sendt, og videoen er stadig valgt.' : `Ikke sendt · Prøv igen. ${error.message}. Videoen er stadig valgt.`);
   }
 }
 
@@ -10508,7 +10505,7 @@ if (ATHLETE) {
           : 'Vi finder stangbanen og sender derefter videoen til din coach. Bliv på denne skærm, til der står Sendt.',
         'Annullér', 'ready'],
       done: ['Stangbanen er klar', 'Se banen og faserne i Bane. Tallene er et skøn ud fra videoen.', 'Ny bane', 'done'],
-      sent: ['Sendt til din coach', 'Din video ligger klar til din coach. Feedbacken finder du i Beskeder under Teknik & løft.', 'Ny bane', 'done'],
+      sent: ['Sendt til Marc ✓', 'Din video ligger klar til din coach. Feedbacken finder du i Beskeder under Teknik & løft.', 'Ny bane', 'done'],
       error: ['Prøv igen', 'Vi mistede skiven. Tryk på et tydeligt punkt tæt på midten af skiven, og prøv igen.', 'Prøv igen', 'ready']
     };
     const info = states[state];

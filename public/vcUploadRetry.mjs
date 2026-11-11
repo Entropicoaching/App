@@ -59,11 +59,13 @@ export function mountUploadRetry(document, retry, storage, search) {
       if (active) return active
       show('Sender video. Bliv på skærmen, til den er sendt.')
       active = Promise.resolve().then(send).then(result => {
-        show('Video modtaget. Din coach gennemgår den.')
+        // U9 (Marc 11. nov.): tydelig kvittering med klokkeslæt.
+        const kl = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen', hour: '2-digit', minute: '2-digit' }).format(new Date()).replace(':', '.')
+        show(`Sendt til Marc ✓ kl. ${kl}. Feedbacken kommer i Beskeder.`)
         return result
       }, error => {
         if (error?.vcAborted) show('Annulleret. Videoen er stadig valgt.')
-        else show('Ikke sendt. Videoen er stadig valgt, så du skal ikke vælge den igen. Tryk Prøv igen, og hold skærmen åben, til den er sendt.', true)
+        else show('Ikke sendt · Prøv igen. Videoen er stadig valgt, så du skal ikke vælge den igen. Hold skærmen åben, til den er sendt.', true)
         throw error
       }).finally(() => { active = null })
       return active

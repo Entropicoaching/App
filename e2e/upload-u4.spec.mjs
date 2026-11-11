@@ -100,7 +100,7 @@ export async function runAtletAfbrudt(page, mock, width, outDir = OUT_DIR) {
   // Prøv igen: sendt én gang, én fil og én række.
   await retry.click()
   // Efter vellykket afsendelse lukker sendearket; kvitteringen står i panelet og i banneret.
-  await panel.getByText(/Video modtaget/).waitFor({ state: 'attached', timeout: 30000 })
+  await panel.getByText(/Sendt til Marc ✓/).waitFor({ state: 'attached', timeout: 30000 })
   await frame.locator('#athleteSubmitSheet').waitFor({ state: 'hidden', timeout: 10000 })
   const rows = ownRows(mock).slice(rowsBefore), keys = (await ownKeys()).filter(key => !keysBefore.includes(key))
   if (rows.length !== 1) throw new Error(`Forventede 1 ny række, fandt ${rows.length}`)

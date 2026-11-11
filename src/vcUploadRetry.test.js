@@ -32,7 +32,7 @@ test('DOM: explicit retry retains file, shows full-restart fallback, never auto 
   await retry.onclick()
   assert.equal(calls, 2)
   assert.equal(seen, file)
-  assert.match(text.textContent, /Video modtaget/)
+  assert.match(text.textContent, /Sendt til Marc ✓ kl. /)
   assert.equal(retry.hidden, true)
   status.reset()
   assert.equal(panel.hidden, true)
@@ -111,7 +111,7 @@ test('actual HTML Send handler, request bridge and DOM retry survive a synthetic
     assert.equal(f.uploads[0].file, f.uploads[1].file)
     assert.equal(f.uploads[0].path, f.uploads[1].path)
     assert.equal(f.rows.length, 1)
-    assert.match(text.textContent, /Video modtaget/)
+    assert.match(text.textContent, /Sendt til Marc ✓ kl. /)
   } finally { f.restore() }
 })
 
