@@ -1781,7 +1781,7 @@ function loadFile(file, remoteUrl = null) {
   if (!file && !remoteUrl) return;
   if (curUrl) URL.revokeObjectURL(curUrl);   // frigiv forrige video (mobil-RAM)
   if (file) {
-    if (vcUploadRetry) vcUploadRetry.reset();
+    if (vcUploadRetry) { vcUploadRetry.reset(); if (saveBtn) saveBtn.hidden = false; }
     vcAthletePendingFile = file;
     vcAthleteClientAnalysisId = null;   // ny video = nyt klient-id ved upload
     if (typeof vcV3PendingCompletion !== 'undefined') vcV3PendingCompletion = null;
@@ -7173,6 +7173,13 @@ async function vcAthleteUploadAndGo() {
   const variation = vcV3Variation(liftDisplay, document.getElementById('variationSel').value);
   const file = vcAthletePendingFile;
   if (!file) { say('Vælg en video først, så kan du sende den'); return; }
+  // U4 · 2: med uploadmodulet afvises en for stor fil her, før "Sender" og før filen
+  // forlader videosiden (samme grænse og tekst som appen, se vcUploadRetry.mjs).
+  if (vcUploadRetry && vcUploadRetry.refuseTooLarge(file)) {
+    if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
+    say(vcUploadRetry.tooLargeText);
+    return;
+  }
   if (!vcAthleteClientAnalysisId) vcAthleteClientAnalysisId = vcV3Uuid();
   // ORDRE 57 · commit 3: tre valgfrie felter i samme trin som løft/variation -
   // ingen af dem påkrævet. Bruges kun af standardvejen (sheetet er tomt, hvis
@@ -7182,7 +7189,7 @@ async function vcAthleteUploadAndGo() {
   const mb = (file.size / (1024 * 1024)).toFixed(1);
   const requestId = vcV3Uuid();
   vcAthleteUploadRequestId = requestId;
-  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = `Sender (${mb} MB) ...`; }
+  if (saveBtn) { saveBtn.hidden = false; saveBtn.disabled = true; saveBtn.textContent = `Sender (${mb} MB) ...`; }
   if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = false;
   say(`Sender video (${mb} MB). Bliv på skærmen, til den er sendt.`);
   try {
@@ -7217,6 +7224,12 @@ async function vcAthleteUploadAndGo() {
     // Filen forbliver valgt (vcAthletePendingFile rører vi ikke) - hun kan
     // trykke Send igen uden at åbne videoen på ny, se RAPPORT.md.
     if (setAthleteSubmitOpen) setAthleteSubmitOpen(true);
+    // U4 · 3: med uploadmodulet er panelets "Prøv igen" den eneste knap til et nyt forsøg.
+    if (vcUploadRetry && !error.vcAborted) {
+      if (saveBtn) saveBtn.hidden = true;
+      say(`Ikke sendt. ${error.message}`);
+      return;
+    }
     say(error.vcAborted ? 'Annulleret. Intet er sendt, og videoen er stadig valgt.' : `Videoen blev ikke sendt: ${error.message}. Den er stadig valgt, så tryk Prøv at sende igen.`);
   }
 }
