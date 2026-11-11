@@ -106,12 +106,14 @@ export default function PushCard({ athleteId, client, storage, setTab, env: give
   const text = (...lines) => lines.map((line, i) => h('p', { key: i, style: { ...s.text, margin: '6px 0 0' } }, line))
   const later_ = h('button', { type: 'button', style: s.secondary, onClick: notNow }, 'Ikke nu')
 
-  if (state === 'on') return h('details', { style: { ...s.card, padding: 16 }, 'data-u8-push': 'on' },
-    h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } },
-      `Påmindelse kl. ${danishTime(shortTime(setup.prefs?.remind_at) ?? DEFAULT_TIME)}, hvis noget mangler. Skift`),
-    text('Du får også besked, når din coach har svaret.'), picker,
-    h('button', { type: 'button', style: s.primary, disabled: busy, onClick: store }, 'Gem tidspunkt'),
-    h('button', { type: 'button', style: s.secondary, disabled: busy, onClick: turnOff }, 'Slå påmindelser fra'), status)
+  // Slået til: én linje, der kan foldes ud. Beskeden står uden for, så den ses, også når linjen er foldet.
+  if (state === 'on') return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'Påmindelser', 'data-u8-push': 'on' },
+    h('details', null,
+      h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } },
+        `Påmindelse kl. ${danishTime(shortTime(setup.prefs?.remind_at) ?? DEFAULT_TIME)}, hvis noget mangler. Skift`),
+      text('Du får også besked, når din coach har svaret.'), picker,
+      h('button', { type: 'button', style: s.primary, disabled: busy, onClick: store }, 'Gem tidspunkt'),
+      h('button', { type: 'button', style: s.secondary, disabled: busy, onClick: turnOff }, 'Slå påmindelser fra')), status)
 
   const body = state === 'ios' ? [
     ...text('På iPhone virker påmindelser kun, når Entropi ligger på hjemmeskærmen.',
@@ -119,8 +121,8 @@ export default function PushCard({ athleteId, client, storage, setTab, env: give
     : state === 'denied' ? [...text('Påmindelser er slået fra for Entropi i telefonens indstillinger. Slå dem til der, hvis du vil have dem.'), !later && later_]
       : [...text('Mangler du vægt, dagsform eller mad, minder vi dig om det på dit tidspunkt. Du får også besked, når din coach har svaret.'),
         picker, h('button', { type: 'button', style: s.primary, disabled: busy, onClick: turnOn }, 'Slå påmindelser til'), !later && later_]
-  if (later) return h('details', { style: { ...s.card, padding: 16 }, 'data-u8-push': state },
-    h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Påmindelser på telefonen'), ...body, status)
+  if (later) return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'Påmindelser', 'data-u8-push': state },
+    h('details', null, h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Påmindelser på telefonen'), ...body), status)
   return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'Påmindelser', 'data-u8-push': state },
     h('p', { style: { ...s.eyebrow, margin: 0 } }, 'Påmindelse på telefonen'), ...body, status)
 }

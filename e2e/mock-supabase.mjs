@@ -66,6 +66,10 @@ const HIDDEN_TABLES = new Set(
 // postgrest-js's "404 + tomt body" tolkes som success (se dens
 // processResponse) — en fejlstatus uden for det carve-out er nødvendig for
 // at HEAD-opslaget rent faktisk rapporterer en fejl.
+// U8 (ordre 78): push-tabellerne har RLS "kun egen række" og user_id = auth.uid() som standard.
+// Mocken efterligner netop det for disse to tabeller; alle andre tabeller er uændrede.
+const OWN_ROW_TABLES = new Set(['push_subscriptions_v1', 'push_preferences_v1'])
+
 function sendTabelFindesIkke(res, table) {
   sendJson(res, 400, { code: '42P01', message: `relation "public.${table}" does not exist`, details: null, hint: null })
 }
@@ -339,6 +343,12 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
     if (HIDDEN_TABLES.has(table)) return sendTabelFindesIkke(res, table)
     const rows = ensure(table)
     const selectStr = url.searchParams.get('select')
+    let ownUser = null
+    if (OWN_ROW_TABLES.has(table)) {
+      ownUser = tokensToUser.get((req.headers['authorization'] || '').replace(/^Bearer\s+/i, ''))
+      if (!ownUser) return sendJson(res, 401, { code: '42501', message: `permission denied for table ${table}` })
+      url.searchParams.append('user_id', `eq.${ownUser}`)
+    }
 
     // HEAD (ordre 209 · commit 3): kun brugt til "findes tabellen"-opslag i
     // dag (rettelser.js). Ingen body — kun status + Content-Range, som
@@ -379,8 +389,10 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
       }
       const created = []
       for (const item of incoming) {
+        if (ownUser) item.user_id = ownUser
         if (onConflict) {
-          const existing = rows.find(r => r[onConflict] === item[onConflict])
+          const existing = ownUser ? rows.find(r => onConflict.split(',').every(c => r[c] === item[c]))
+            : rows.find(r => r[onConflict] === item[onConflict])
           if (existing) {
             if (ignoreDuplicates) { created.push(existing); continue }
             Object.assign(existing, item)
@@ -597,6 +609,13 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
       if (url.pathname.startsWith('/rest/v1/rpc/')) return await handleRpc(req, res, url)
       if (url.pathname.startsWith('/rest/v1/')) return await handleRest(req, res, url)
       if (url.pathname.startsWith('/storage/v1/object')) return await handleStorage(req, res, url)
+      // U8 (ordre 78): edge-funktionen u8-push. Kun med E2E_U8_PUBLIC_KEY (en syntetisk nøgle, som
+      // spec'en laver); ellers 404 som en funktion, der ikke er deployet.
+      if (url.pathname === '/functions/v1/u8-push' && req.method === 'POST' && process.env.E2E_U8_PUBLIC_KEY) {
+        const body = await readJson(req) || {}
+        if (body.action === 'public-key') return sendJson(res, 200, { publicKey: process.env.E2E_U8_PUBLIC_KEY })
+        return sendJson(res, 401, { error: 'Ikke tilladt' })
+      }
       sendJson(res, 404, { error: 'not-found', path: url.pathname })
     } catch (err) {
       sendJson(res, 500, { error: String(err?.message || err) })

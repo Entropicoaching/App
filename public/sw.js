@@ -100,7 +100,7 @@ const pushText = (value, max) => typeof value === 'string' ? value.trim().slice(
 const pushUrl = value => typeof value === 'string' && /^\/(?![/\\])[^\s]*$/.test(value) ? value : '/';
 
 self.addEventListener('push', e => {
-  let data = {};
+  let data;
   try { data = e.data ? e.data.json() : {}; } catch { data = {}; }
   if (!data || typeof data !== 'object') data = {};
   const title = pushText(data.title, 80) || 'Entropi';

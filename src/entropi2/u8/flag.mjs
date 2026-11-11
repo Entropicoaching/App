@@ -2,8 +2,8 @@
 // ellers gælder standardværdien. Rollback er den ene linje pr. del.
 // push: kortet på forsiden og service workerens visning. send: edge-funktionen u8-push.
 // Uden nøgle eller tabel viser appen det samme som U7, og funktionen sender intet.
-export const DEFAULT_U8_PUSH = false
-export const DEFAULT_U8_SEND = false
+export const DEFAULT_U8_PUSH = true
+export const DEFAULT_U8_SEND = true
 
 const defaults = () => ({ push: DEFAULT_U8_PUSH, send: DEFAULT_U8_SEND })
 export function u8Enabled(part, value) {

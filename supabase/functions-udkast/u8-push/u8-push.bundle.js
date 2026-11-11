@@ -1,8 +1,8 @@
 // u8-push samlet til én fil (U8, ordre 78). UDKAST, ikke deployet. Ret ikke her:
 // ret kilden i supabase/functions-udkast/u8-push/ og kør node scripts/u8-push-bundle.mjs.
 var defaults = () => ({
-	push: false,
-	send: false
+	push: true,
+	send: true
 });
 function u8Enabled(part, value) {
 	if (value === void 0) return defaults()[part] === true;
