@@ -27,7 +27,7 @@ test('actual Home strips timed metadata and retains the message navigation witho
     const routes = [], writes = []
     const storage = { getItem: () => null, setItem: (...args) => writes.push(args), removeItem: (...args) => writes.push(args) }
     const view = createHost(Home, { enabled: true, athlete: { id: 'synthetic-athlete' }, messages: [message],
-      now: new Date('2026-11-03T12:00:00Z'), storage, setTab: route => routes.push(route), u5Today: false, u7DayData: false })
+      now: new Date('2026-11-03T12:00:00Z'), storage, setTab: route => routes.push(route), u5Today: false, u7DayData: false, u8Push: false })
     t.after(() => view.unmount())
     assert.match(textContent(view.tree), /Video ved 0 s\r\nEn note med <tekst>\./)
     assert.doesNotMatch(textContent(view.tree), /Video-id:|synthetic-video/)

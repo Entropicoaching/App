@@ -47,13 +47,14 @@ export function subscriptionRow(subscription, userAgent = '') {
   return { endpoint, p256dh, auth, user_agent: String(userAgent || '').slice(0, 300) || null }
 }
 
-// Kortets tilstand ud fra opsætningen og telefonen.
-export function pushCardState({ setup, support, endpoint, permission }) {
+// Kortets tilstand ud fra opsætningen og telefonen. mine: denne bruger var den sidste, der slog
+// påmindelser til på telefonen. Ellers går beskederne til en anden, og kortet viser "slå til".
+export function pushCardState({ setup, support, endpoint, permission, mine }) {
   if (setup?.status !== 'ready') return 'hidden'
   if (support === 'ios-home-screen') return 'ios'
   if (support === 'denied') return 'denied'
   if (support !== 'ok') return 'hidden'
-  const on = permission === 'granted' && typeof endpoint === 'string' && setup.endpoints.includes(endpoint) &&
+  const on = mine === true && permission === 'granted' && typeof endpoint === 'string' && setup.endpoints.includes(endpoint) &&
     setup.prefs?.reminders_on !== false
   return on ? 'on' : 'off'
 }

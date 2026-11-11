@@ -46,15 +46,37 @@ export async function runSend({ db, now, send }) {
     .map(p => [p.user_id, p]))
   const athletes = await db(`athletes?select=id,user_id&user_id=in.${list(users)}`)
   const athletesOf = user => athletes.filter(a => a.user_id === user).map(a => a.id)
-  const outbox = []
+  const claim = rows => db('push_log_v1?on_conflict=user_id,kind,ref', { method: 'POST', body: rows,
+    prefer: 'resolution=ignore-duplicates,return=representation' })
+  const unclaim = (user, kind, refs) => db(`push_log_v1?user_id=eq.${encodeURIComponent(user)}&kind=eq.${kind}&ref=in.${list(refs)}`, { method: 'DELETE' })
+  // Sender til brugerens telefoner. Nåede beskeden ingen telefon, og var der en fejl (ikke kun
+  // afmeldte telefoner), fjernes markeringen igen, så næste kørsel prøver igen.
+  async function deliver(user, message, ttl, release) {
+    let delivered = 0, failed = 0
+    for (const subscription of subscriptions.filter(s => s.user_id === user)) {
+      try {
+        const answer = await send(subscription, JSON.stringify(message), ttl)
+        if (answer.status >= 200 && answer.status < 300) { delivered++; result.sent++ }
+        else if (answer.gone) {
+          await db(`push_subscriptions_v1?user_id=eq.${encodeURIComponent(user)}&endpoint=eq.${encodeURIComponent(subscription.endpoint)}`, { method: 'DELETE' })
+          result.removed++
+        } else { failed++; result.failed++ }
+      } catch { failed++; result.failed++ }
+    }
+    if (!delivered && failed) await release().catch(() => {})
+    return delivered
+  }
 
   // Påmindelser: kun brugere med en atletprofil, påmindelser slået til og tidspunktet nået.
+  // De sendes færdigt, før coachsvarene hentes, så en fejl der ikke koster dagens påmindelse.
   const due = users.filter(u => prefs.get(u)?.reminders_on === true && reminderDue(prefs.get(u).remind_at, minute) && athletesOf(u).length)
   if (due.length) {
     const ids = due.flatMap(athletesOf)
     const weights = await db(`weight_logs?select=athlete_id&athlete_id=in.${list(ids)}&logged_at=eq.${day}`)
     const readiness = await db(`readiness_logs?select=athlete_id&athlete_id=in.${list(ids)}&logged_date=eq.${day}`)
     const meals = await db(`meal_logs?select=athlete_id,date,meal&athlete_id=in.${list(ids)}&date=gte.${addCalendarDays(day, -7)}&date=lte.${day}&limit=5000`)
+    // Påmindelsen gælder kun i dag: den må ikke nå en telefon efter midnat.
+    const untilMidnight = Math.max(60, (1440 - minute) * 60)
     for (const user of due) {
       const mine = athletesOf(user)
       const message = reminderMessage({ today: day, minute,
@@ -62,11 +84,9 @@ export async function runSend({ db, now, send }) {
         mealDays: mealDaysOf(meals.filter(r => mine.includes(r.athlete_id))) })
       if (!message) continue
       // Rækken skrives før afsendelsen: to samtidige kørsler kan ikke begge sende.
-      const claimed = await db('push_log_v1?on_conflict=user_id,kind,ref', { method: 'POST',
-        body: [{ user_id: user, kind: 'reminder', ref: day }], prefer: 'resolution=ignore-duplicates,return=representation' })
-      if (!claimed?.length) continue
+      if (!(await claim([{ user_id: user, kind: 'reminder', ref: day }]))?.length) continue
       result.reminders++
-      outbox.push({ user, message })
+      await deliver(user, message, untilMidnight, () => unclaim(user, 'reminder', [day]))
     }
   }
 
@@ -84,24 +104,10 @@ export async function runSend({ db, now, send }) {
       byUser.set(user, [...(byUser.get(user) ?? []), m])
     }
     for (const [user, mine] of byUser) {
-      const claimed = await db('push_log_v1?on_conflict=user_id,kind,ref', { method: 'POST',
-        body: mine.map(m => ({ user_id: user, kind: 'reply', ref: String(m.id) })), prefer: 'resolution=ignore-duplicates,return=representation' })
+      const claimed = await claim(mine.map(m => ({ user_id: user, kind: 'reply', ref: String(m.id) })))
       if (!claimed?.length) continue
       result.replies++
-      outbox.push({ user, message: replyMessage(claimed.length) })
-    }
-  }
-
-  for (const { user, message } of outbox) {
-    for (const subscription of subscriptions.filter(s => s.user_id === user)) {
-      try {
-        const answer = await send(subscription, JSON.stringify(message))
-        if (answer.status >= 200 && answer.status < 300) result.sent++
-        else if (answer.gone) {
-          await db(`push_subscriptions_v1?user_id=eq.${encodeURIComponent(user)}&endpoint=eq.${encodeURIComponent(subscription.endpoint)}`, { method: 'DELETE' })
-          result.removed++
-        } else result.failed++
-      } catch { result.failed++ }
+      await deliver(user, replyMessage(claimed.length), 86400, () => unclaim(user, 'reply', claimed.map(r => r.ref)))
     }
   }
   return result
@@ -125,7 +131,7 @@ export function createHandler({ env, fetch: http = fetch, now = () => new Date()
       const vapid = await importVapid({ publicKey, privateKey, crypto })
       const at = now()
       const db = rest({ url: env('SUPABASE_URL'), key: env('SUPABASE_SERVICE_ROLE_KEY'), http })
-      const send = (subscription, payload) => sendPush({ subscription, payload, vapid, subject, fetch: http, crypto,
+      const send = (subscription, payload, ttl) => sendPush({ subscription, payload, vapid, subject, fetch: http, crypto, ttl,
         nowSeconds: Math.floor(at.getTime() / 1000) })
       return json(await runSend({ db, now: at, send }))
     } catch (error) {

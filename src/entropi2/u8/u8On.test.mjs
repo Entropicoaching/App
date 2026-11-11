@@ -47,7 +47,7 @@ test('U8 4/4: bekræftelsen efter tilmelding ses uden at folde linjen ud', { ski
     functions: { invoke: async () => ({ data: { publicKey: key }, error: null }) },
     from: table => {
       const b = { select: () => b, limit: () => b, eq: () => b,
-        upsert: row => { db[table].push(row); return b }, delete: () => b,
+        upsert: row => { db[table].push(row); return b }, insert: row => { db[table].push(row); return b }, delete: () => b,
         then: (resolve, reject) => Promise.resolve({ data: db[table].map(r => ({ ...r })), error: null }).then(resolve, reject) }
       return b
     },

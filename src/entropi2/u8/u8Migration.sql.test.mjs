@@ -48,12 +48,14 @@ test('U8 SQL mod PGlite: kun egen række, grænser, log kun for service_role, op
     try {
       await db.exec(`create role authenticated nologin; create role anon nologin; create role service_role nologin bypassrls;
         create schema auth;
+        create table auth.users(id uuid primary key);
         create function auth.uid() returns uuid language sql stable as
           $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
         grant usage on schema public, auth to authenticated, anon, service_role;
         grant execute on function auth.uid() to authenticated, anon, service_role;
         alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
         alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;`)
+      await query(`insert into auth.users select unnest($1::uuid[])`, [ids])
       if (migrate) await db.exec(up)
       await run({ db, query, as, tables })
     } finally { await db.close() }

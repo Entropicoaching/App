@@ -6,8 +6,18 @@ import { DEFAULT_TIME, keyBytes, sameKey, subscriptionRow, validPublicKey, valid
 const SUBSCRIPTIONS = 'push_subscriptions_v1'
 const PREFERENCES = 'push_preferences_v1'
 
+// "missing" huskes pr. klient, så forsiden ikke spørger igen hver gang den vises (som U7's tableState).
+const knownMissing = new WeakSet()
+
 export async function readPushSetup({ client } = {}) {
   if (!client || typeof client.from !== 'function') return { status: 'error' }
+  if (knownMissing.has(client)) return { status: 'missing' }
+  const result = await readSetup(client)
+  if (result.status === 'missing') knownMissing.add(client)
+  return result
+}
+
+async function readSetup(client) {
   try {
     const prefs = await client.from(PREFERENCES).select('remind_at, reminders_on, replies_on').limit(1)
     if (prefs?.error) return { status: tableMissing(prefs.error) ? 'missing' : 'error' }
@@ -40,7 +50,11 @@ export async function enablePush({ client, registration, notification, publicKey
     subscription ??= await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) })
     const row = subscriptionRow(subscription, userAgent)
     if (!row) return 'error'
-    const saved = await client.from(SUBSCRIPTIONS).upsert(row, { onConflict: 'user_id,endpoint' })
+    // Slet og indsæt i stedet for upsert: rækken får et nyt created_at, og edge-funktionen sender
+    // kun til den nyeste tilmelding af en telefon. Så vinder den, der sidst slog til (delt telefon).
+    const old = await client.from(SUBSCRIPTIONS).delete().eq('endpoint', row.endpoint)
+    if (old?.error) return 'error'
+    const saved = await client.from(SUBSCRIPTIONS).insert(row)
     if (saved?.error) return 'error'
     const prefs = await client.from(PREFERENCES).upsert({ remind_at: time, reminders_on: true, replies_on: true }, { onConflict: 'user_id' })
     if (prefs?.error) return 'error'

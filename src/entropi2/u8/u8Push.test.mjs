@@ -69,9 +69,11 @@ test('U8 2/4: kortets tilstand; uden opsætning er der intet kort', () => {
   assert.equal(pushCardState({ setup: ready, support: 'denied' }), 'denied')
   assert.equal(pushCardState({ setup: ready, support: 'ok', endpoint: SUB.endpoint, permission: 'granted' }), 'off')
   const on = { ...ready, endpoints: [SUB.endpoint], prefs: { remind_at: '07:00:00', reminders_on: true } }
-  assert.equal(pushCardState({ setup: on, support: 'ok', endpoint: SUB.endpoint, permission: 'granted' }), 'on')
-  assert.equal(pushCardState({ setup: on, support: 'ok', endpoint: SUB.endpoint, permission: 'default' }), 'off')
-  assert.equal(pushCardState({ setup: on, support: 'ok', endpoint: 'https://andet.test/1', permission: 'granted' }), 'off')
+  assert.equal(pushCardState({ setup: on, support: 'ok', endpoint: SUB.endpoint, permission: 'granted', mine: true }), 'on')
+  // En anden bruger slog sidst til på telefonen: beskederne går til den anden.
+  assert.equal(pushCardState({ setup: on, support: 'ok', endpoint: SUB.endpoint, permission: 'granted', mine: false }), 'off')
+  assert.equal(pushCardState({ setup: on, support: 'ok', endpoint: SUB.endpoint, permission: 'default', mine: true }), 'off')
+  assert.equal(pushCardState({ setup: on, support: 'ok', endpoint: 'https://andet.test/1', permission: 'granted', mine: true }), 'off')
 })
 
 // Syntetisk klient: kun det, U8 bruger (select, limit, upsert, delete().eq, functions.invoke).
@@ -91,6 +93,7 @@ function fakeClient({ missing = [], key = PUBLIC_KEY, functionError = false, fai
         if (missing.includes(table)) return { data: null, error: { code: 'PGRST205', message: `Could not find the table 'public.${table}'` } }
         if (failOn === `${q.op}:${table}`) return { data: null, error: { code: '42501', message: 'nej' } }
         const rows = db[table]
+        if (q.op === 'insert') { rows.push({ ...q.payload }); return { data: null, error: null } }
         if (q.op === 'upsert') {
           const key = table === 'push_subscriptions_v1' ? 'endpoint' : null
           const hit = key ? rows.find(r => r[key] === q.payload[key]) : rows[0]
@@ -106,7 +109,7 @@ function fakeClient({ missing = [], key = PUBLIC_KEY, functionError = false, fai
       }
       const b = { select: () => b, limit: () => b, eq: (c, v) => (q.filters.push([c, v]), b),
         upsert: (payload, options) => (q.op = 'upsert', q.payload = payload, q.options = options, b),
-        delete: () => (q.op = 'delete', b), then: (resolve, reject) => run().then(resolve, reject) }
+        delete: () => (q.op = 'delete', b), insert: payload => (q.op = 'insert', q.payload = payload, b), then: (resolve, reject) => run().then(resolve, reject) }
       return b
     },
   }
@@ -145,7 +148,9 @@ test('U8 2/4: ét tryk slår til: tilladelse, abonnement med nøglen, egen rækk
   assert.deepEqual(phone.log, ['ask', ['subscribe', true, 65]])
   assert.deepEqual(f.db.push_subscriptions_v1, [{ endpoint: SUB.endpoint, p256dh: SUB.keys.p256dh, auth: SUB.keys.auth, user_agent: 'syntetisk' }])
   assert.deepEqual(f.db.push_preferences_v1, [{ remind_at: '07:30', reminders_on: true, replies_on: true }])
-  assert.deepEqual(f.calls.filter(c => c[0] === 'upsert').map(c => c[2]), ['user_id,endpoint', 'user_id'])
+  // Slet og indsæt, så tilmeldingen bliver den nyeste for telefonen; tidspunktet er en upsert.
+  assert.deepEqual(f.calls.filter(c => c[0] !== 'select').map(c => c.slice(0, 2)),
+    [['delete', 'push_subscriptions_v1'], ['insert', 'push_subscriptions_v1'], ['upsert', 'push_preferences_v1']])
   // Igen: samme række, ingen ny afmelding.
   assert.equal(await enablePush({ client: f.client, ...phone, notification: { permission: 'granted' }, publicKey: PUBLIC_KEY }), 'on')
   assert.equal(f.db.push_subscriptions_v1.length, 1)
@@ -161,7 +166,7 @@ test('U8 2/4: nej til tilladelse gemmer intet; gammel nøgle erstattes; forkert 
   old.existing({ applicationServerKey: new Uint8Array(65).buffer })
   assert.equal(await enablePush({ client: f.client, ...old, publicKey: PUBLIC_KEY }), 'on')
   assert.deepEqual(old.log, ['unsubscribe', ['subscribe', true, 65]])
-  const failing = fakeClient({ failOn: 'upsert:push_subscriptions_v1' })
+  const failing = fakeClient({ failOn: 'insert:push_subscriptions_v1' })
   assert.equal(await enablePush({ client: failing.client, ...fakePhone({ permission: 'granted' }), publicKey: PUBLIC_KEY }), 'error')
   assert.deepEqual(failing.db.push_preferences_v1, [])
 })
@@ -239,7 +244,7 @@ test('U8 2/4: klik genbruger appvinduet, men aldrig VideoCoach-siden; ellers et 
   assert.deepEqual([video.navigated, video.opened], [[], ['/']])
 })
 
-test('U8 2/4: flaget er slukket, indtil sidste commit tænder det', () => {
+test('U8 2/4: et eksplicit true og false på push-flaget vinder over standarden', () => {
   assert.equal(u8Enabled('push', true), true)
   assert.equal(u8Enabled('push', false), false)
 })

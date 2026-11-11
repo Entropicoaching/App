@@ -30,7 +30,7 @@ const week = { id: 'synthetic-week', athlete_id: athlete.id, start_date: '2026-1
     exercises: [{ id: 'synthetic-exercise', name: 'Syntetisk løft', sets: 1 }] }] }
 const props = extra => ({ enabled: true, athlete, now, currentWeek: week, allWeeks: [week],
   // U5's I dag-kort har egne prøver; denne harness prøver forsiden uden kortet.
-  exerciseLogs: [], storage: memoryStorage(), onStartSession() {}, u5Today: false, u7DayData: false, ...extra })
+  exerciseLogs: [], storage: memoryStorage(), onStartSession() {}, u5Today: false, u7DayData: false, u8Push: false, ...extra })
 const nodes = view => descendants(view.tree)
 const find = (view, predicate) => nodes(view).find(predicate)
 const show = (t, extra) => {

@@ -197,8 +197,10 @@ test('U8 3/4: kl. 19.02 får U1 påmindelsen og U2 coachsvaret, krypteret og sig
   for (const p of Object.values(byEndpoint)) {
     verifyVapid(p.headers.Authorization, p.endpoint, Math.floor(AT.getTime() / 1000))
     assert.equal(p.headers['Content-Encoding'], 'aes128gcm')
-    assert.equal(p.headers.TTL, '86400')
   }
+  // Påmindelsen lever kun til midnat (kl. 19.02 er der 4 t 58 min tilbage); et svar lever et døgn.
+  assert.equal(byEndpoint['https://push.example.test/u1'].headers.TTL, String((24 * 60 - (19 * 60 + 2)) * 60))
+  assert.equal(byEndpoint['https://push.example.test/u2'].headers.TTL, '86400')
   // Den afmeldte telefon (410) er slettet; logrækkerne er skrevet før afsendelsen.
   assert.deepEqual(w.db.push_subscriptions_v1.map(s => s.endpoint), ['https://push.example.test/u1', 'https://push.example.test/u2', 'https://push.example.test/u2'])
   assert.deepEqual(w.db.push_log_v1.map(r => [r.user_id, r.kind, r.ref]), [[U1, 'reminder', '2026-11-11'], [U2, 'reply', 'm1']])
@@ -240,7 +242,7 @@ test('U8 3/4: den samlede fil svarer til kilden og kører alene som i Supabase',
   assert.deepEqual(await (await call(handler, { action: 'public-key' })).json(), { publicKey: u8Enabled('send') ? secrets.VAPID_PUBLIC_KEY : null })
 })
 
-test('U8 3/4: afsendelsens flag er slukket, indtil sidste commit tænder det', () => {
+test('U8 3/4: et eksplicit true og false på afsendelsens flag vinder over standarden', () => {
   assert.equal(u8Enabled('send', true), true)
   assert.equal(u8Enabled('send', false), false)
 })

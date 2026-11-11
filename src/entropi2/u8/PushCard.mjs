@@ -11,6 +11,8 @@ const appClient = async () => (await import('../../supabase.js')).supabase
 const hint = { ...s.text, fontSize: 14, margin: '6px 0 0' }
 const field = { ...s.secondary, marginTop: 6, boxSizing: 'border-box', padding: '0 12px', background: '#171814' }
 const LATER = 'entropi-u8-push-senere:'
+// Hvem slog sidst påmindelser til på denne telefon (én telefon kan have flere brugere).
+const OWNER = 'entropi-u8-push-ejer'
 
 export function browserEnv() {
   if (typeof window === 'undefined' || typeof navigator === 'undefined') return {}
@@ -26,8 +28,12 @@ const registrationOf = env => env.registration ? Promise.resolve(env.registratio
 
 const readLater = (storage, id) => { try { return storage?.getItem(LATER + id) === '1' } catch { return false } }
 const writeLater = (storage, id) => { try { storage?.setItem(LATER + id, '1') } catch { /* kun denne visning */ } }
+const readOwner = storage => { try { return storage?.getItem(OWNER) ?? null } catch { return null } }
+const writeOwner = (storage, id) => { try { if (id) storage?.setItem(OWNER, id); else storage?.removeItem(OWNER) } catch { /* kun denne visning */ } }
 
-export default function PushCard({ athleteId, client, storage, setTab, env: given }) {
+export default function PushCard({ athleteId, client, storage: givenStorage, setTab, env: given }) {
+  // Værten giver ikke altid storage med; telefonens eget localStorage bruges så.
+  const storage = givenStorage ?? (typeof localStorage === 'undefined' ? null : localStorage)
   const env = React.useRef(null)
   env.current ??= given ?? browserEnv()
   const support = pushSupport(env.current)
@@ -38,6 +44,7 @@ export default function PushCard({ athleteId, client, storage, setTab, env: give
   const [busy, setBusy] = React.useState(false)
   const [message, setMessage] = React.useState('')
   const [later, setLater] = React.useState(() => readLater(storage, athleteId))
+  const [owner, setOwner] = React.useState(() => readOwner(storage))
   // Klik på en notifikation åbner appen med ?u8=beskeder; siden åbnes én gang, og adressen ryddes.
   React.useEffect(() => {
     const { location, history } = env.current
@@ -66,7 +73,7 @@ export default function PushCard({ athleteId, client, storage, setTab, env: give
     return () => { active = false }
   }, [resolved, support])
 
-  const state = pushCardState({ setup, support, endpoint, permission: env.current.notification?.permission })
+  const state = pushCardState({ setup, support, endpoint, permission: env.current.notification?.permission, mine: owner === athleteId })
   if (state === 'hidden') return null
   const chosen = time ?? shortTime(setup.prefs?.remind_at) ?? DEFAULT_TIME
   const run = async work => {
@@ -83,6 +90,8 @@ export default function PushCard({ athleteId, client, storage, setTab, env: give
       setSetup(current => ({ ...current, endpoints: [...current.endpoints, sub?.endpoint],
         prefs: { ...(current.prefs ?? {}), remind_at: chosen, reminders_on: true, replies_on: true } }))
       setEndpoint(sub?.endpoint ?? null)
+      writeOwner(storage, athleteId)
+      setOwner(athleteId)
       setMessage(`Påmindelser er slået til. Du hører fra os kl. ${danishTime(chosen)}, hvis noget mangler.`)
     } else setMessage(result === 'denied'
       ? 'Telefonen sagde nej til påmindelser. Du kan slå dem til for Entropi i telefonens indstillinger.'
@@ -95,7 +104,7 @@ export default function PushCard({ athleteId, client, storage, setTab, env: give
   })
   const turnOff = () => run(async () => {
     const result = await disablePush({ client: resolved, registration: await registrationOf(env.current) })
-    if (result === 'off') { setEndpoint(null); setTime(null) }
+    if (result === 'off') { setEndpoint(null); setTime(null); writeOwner(storage, null); setOwner(null) }
     setMessage(result === 'off' ? 'Påmindelser er slået fra på denne telefon.' : 'Det lykkedes ikke. Prøv igen.')
   })
   const notNow = () => { writeLater(storage, athleteId); setLater(true); setMessage('') }

@@ -441,13 +441,40 @@ async function runSend({ db, now, send }) {
 	const prefs = new Map((await db(`push_preferences_v1?select=user_id,remind_at,reminders_on,replies_on&user_id=in.${list(users)}`)).map((p) => [p.user_id, p]));
 	const athletes = await db(`athletes?select=id,user_id&user_id=in.${list(users)}`);
 	const athletesOf = (user) => athletes.filter((a) => a.user_id === user).map((a) => a.id);
-	const outbox = [];
+	const claim = (rows) => db("push_log_v1?on_conflict=user_id,kind,ref", {
+		method: "POST",
+		body: rows,
+		prefer: "resolution=ignore-duplicates,return=representation"
+	});
+	const unclaim = (user, kind, refs) => db(`push_log_v1?user_id=eq.${encodeURIComponent(user)}&kind=eq.${kind}&ref=in.${list(refs)}`, { method: "DELETE" });
+	async function deliver(user, message, ttl, release) {
+		let delivered = 0, failed = 0;
+		for (const subscription of subscriptions.filter((s) => s.user_id === user)) try {
+			const answer = await send(subscription, JSON.stringify(message), ttl);
+			if (answer.status >= 200 && answer.status < 300) {
+				delivered++;
+				result.sent++;
+			} else if (answer.gone) {
+				await db(`push_subscriptions_v1?user_id=eq.${encodeURIComponent(user)}&endpoint=eq.${encodeURIComponent(subscription.endpoint)}`, { method: "DELETE" });
+				result.removed++;
+			} else {
+				failed++;
+				result.failed++;
+			}
+		} catch {
+			failed++;
+			result.failed++;
+		}
+		if (!delivered && failed) await release().catch(() => {});
+		return delivered;
+	}
 	const due = users.filter((u) => prefs.get(u)?.reminders_on === true && reminderDue(prefs.get(u).remind_at, minute) && athletesOf(u).length);
 	if (due.length) {
 		const ids = due.flatMap(athletesOf);
 		const weights = await db(`weight_logs?select=athlete_id&athlete_id=in.${list(ids)}&logged_at=eq.${day}`);
 		const readiness = await db(`readiness_logs?select=athlete_id&athlete_id=in.${list(ids)}&logged_date=eq.${day}`);
 		const meals = await db(`meal_logs?select=athlete_id,date,meal&athlete_id=in.${list(ids)}&date=gte.${addCalendarDays(day, -7)}&date=lte.${day}&limit=5000`);
+		const untilMidnight = Math.max(60, (1440 - minute) * 60);
 		for (const user of due) {
 			const mine = athletesOf(user);
 			const message = reminderMessage({
@@ -458,20 +485,13 @@ async function runSend({ db, now, send }) {
 				mealDays: mealDaysOf(meals.filter((r) => mine.includes(r.athlete_id)))
 			});
 			if (!message) continue;
-			if (!(await db("push_log_v1?on_conflict=user_id,kind,ref", {
-				method: "POST",
-				body: [{
-					user_id: user,
-					kind: "reminder",
-					ref: day
-				}],
-				prefer: "resolution=ignore-duplicates,return=representation"
-			}))?.length) continue;
+			if (!(await claim([{
+				user_id: user,
+				kind: "reminder",
+				ref: day
+			}]))?.length) continue;
 			result.reminders++;
-			outbox.push({
-				user,
-				message
-			});
+			await deliver(user, message, untilMidnight, () => unclaim(user, "reminder", [day]));
 		}
 	}
 	const messages = await db(`messages?select=id,athlete_id,created_at&sender_role=eq.coach&read_at=is.null&created_at=gte.${(/* @__PURE__ */ new Date(now.getTime() - REPLY_WINDOW_MS)).toISOString()}&order=created_at.asc&limit=500`);
@@ -486,32 +506,15 @@ async function runSend({ db, now, send }) {
 			byUser.set(user, [...byUser.get(user) ?? [], m]);
 		}
 		for (const [user, mine] of byUser) {
-			const claimed = await db("push_log_v1?on_conflict=user_id,kind,ref", {
-				method: "POST",
-				body: mine.map((m) => ({
-					user_id: user,
-					kind: "reply",
-					ref: String(m.id)
-				})),
-				prefer: "resolution=ignore-duplicates,return=representation"
-			});
+			const claimed = await claim(mine.map((m) => ({
+				user_id: user,
+				kind: "reply",
+				ref: String(m.id)
+			})));
 			if (!claimed?.length) continue;
 			result.replies++;
-			outbox.push({
-				user,
-				message: replyMessage(claimed.length)
-			});
+			await deliver(user, replyMessage(claimed.length), 86400, () => unclaim(user, "reply", claimed.map((r) => r.ref)));
 		}
-	}
-	for (const { user, message } of outbox) for (const subscription of subscriptions.filter((s) => s.user_id === user)) try {
-		const answer = await send(subscription, JSON.stringify(message));
-		if (answer.status >= 200 && answer.status < 300) result.sent++;
-		else if (answer.gone) {
-			await db(`push_subscriptions_v1?user_id=eq.${encodeURIComponent(user)}&endpoint=eq.${encodeURIComponent(subscription.endpoint)}`, { method: "DELETE" });
-			result.removed++;
-		} else result.failed++;
-	} catch {
-		result.failed++;
 	}
 	return result;
 }
@@ -544,13 +547,14 @@ function createHandler({ env, fetch: http = fetch, now = () => /* @__PURE__ */ n
 				key: env("SUPABASE_SERVICE_ROLE_KEY"),
 				http
 			});
-			const send = (subscription, payload) => sendPush({
+			const send = (subscription, payload, ttl) => sendPush({
 				subscription,
 				payload,
 				vapid,
 				subject,
 				fetch: http,
 				crypto,
+				ttl,
 				nowSeconds: Math.floor(at.getTime() / 1e3)
 			});
 			return json(await runSend({

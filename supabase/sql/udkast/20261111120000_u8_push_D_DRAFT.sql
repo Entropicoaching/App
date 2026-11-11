@@ -1,6 +1,7 @@
 -- UDKAST U8 (ordre 78): migrationspakke D, push. Køres kun efter Marcs ja.
 -- Ligger i supabase/sql/udkast/, ikke i supabase/migrations/, så den deployes aldrig af sig selv.
--- Forudsætninger: auth.uid(), rollerne authenticated, anon og service_role (Supabase-standard).
+-- Forudsætninger: auth.uid(), auth.users og rollerne authenticated, anon og service_role (Supabase-standard).
+-- Slettes en bruger i auth.users, forsvinder brugerens rækker her også (on delete cascade).
 -- Ingen eksisterende tabel, policy, grant eller række ændres eller læses.
 -- Tre nye tabeller:
 --   push_subscriptions_v1  telefonens push-adresse (endpoint og to offentlige nøgler fra browseren).
@@ -18,7 +19,7 @@ begin;
 -- (user_id, endpoint), og edge-funktionen sender kun til den nyeste række pr. endpoint.
 create table public.push_subscriptions_v1 (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null default auth.uid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   endpoint text not null check (endpoint ~ '^https://[^[:space:]]+$' and length(endpoint) <= 1000),
   p256dh text not null check (p256dh ~ '^[A-Za-z0-9_-]{86,88}={0,2}$'),
   auth text not null check (auth ~ '^[A-Za-z0-9_-]{21,24}={0,2}$'),
@@ -30,6 +31,7 @@ alter table public.push_subscriptions_v1 enable row level security;
 alter table public.push_subscriptions_v1 force row level security;
 revoke all on table public.push_subscriptions_v1 from public, anon, authenticated;
 grant select, delete on table public.push_subscriptions_v1 to authenticated;
+grant select, insert, update, delete on table public.push_subscriptions_v1 to service_role;
 grant insert (endpoint, p256dh, auth, user_agent) on public.push_subscriptions_v1 to authenticated;
 grant update (endpoint, p256dh, auth, user_agent) on public.push_subscriptions_v1 to authenticated;
 create policy push_subscriptions_v1_read on public.push_subscriptions_v1 for select to authenticated
@@ -44,7 +46,7 @@ create policy push_subscriptions_v1_delete on public.push_subscriptions_v1 for d
 -- ===== D2. Påmindelsestidspunkt =====
 -- Ét tidspunkt pr. bruger i dansk tid, hvert kvarter mellem 06:00 og 22:00.
 create table public.push_preferences_v1 (
-  user_id uuid primary key default auth.uid(),
+  user_id uuid primary key default auth.uid() references auth.users(id) on delete cascade,
   remind_at time not null default '19:00',
   reminders_on boolean not null default true,
   replies_on boolean not null default true,
@@ -56,6 +58,7 @@ alter table public.push_preferences_v1 enable row level security;
 alter table public.push_preferences_v1 force row level security;
 revoke all on table public.push_preferences_v1 from public, anon, authenticated;
 grant select, delete on table public.push_preferences_v1 to authenticated;
+grant select, insert, update, delete on table public.push_preferences_v1 to service_role;
 grant insert (remind_at, reminders_on, replies_on) on public.push_preferences_v1 to authenticated;
 grant update (remind_at, reminders_on, replies_on) on public.push_preferences_v1 to authenticated;
 create policy push_preferences_v1_read on public.push_preferences_v1 for select to authenticated
@@ -69,10 +72,11 @@ create policy push_preferences_v1_delete on public.push_preferences_v1 for delet
 
 -- ===== D3. Afsendelseslog =====
 -- Kun edge-funktionen (service_role). Rækken skrives FØR afsendelsen; den unikke nøgle gør, at
--- to samtidige kørsler aldrig sender den samme påmindelse eller det samme svar to gange.
+-- to samtidige kørsler aldrig sender den samme påmindelse eller det samme svar to gange. Nåede
+-- beskeden ingen telefon på grund af en fejl, sletter funktionen rækken igen, så næste kørsel prøver.
 create table public.push_log_v1 (
   id bigint generated always as identity primary key,
-  user_id uuid not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   kind text not null check (kind in ('reminder', 'reply')),
   ref text not null check (length(ref) between 1 and 100),
   sent_at timestamptz not null default now(),
@@ -81,5 +85,6 @@ create table public.push_log_v1 (
 alter table public.push_log_v1 enable row level security;
 alter table public.push_log_v1 force row level security;
 revoke all on table public.push_log_v1 from public, anon, authenticated;
+grant select, insert, delete on table public.push_log_v1 to service_role;
 
 commit;
