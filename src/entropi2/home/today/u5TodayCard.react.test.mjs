@@ -62,6 +62,16 @@ test('U5 2/4: vægt gemmes på ét tryk med seneste vægt, ±0,1 justerer', gate
   } finally { await m.done() }
 })
 
+test('Kropsvægt: feltet er forudfyldt med seneste vægt, kan skrives i, og ±0,1 findes stadig', gate, () => {
+  const html = render(h(hostFor([])))
+  assert.match(html, /inputMode="decimal"|inputmode="decimal"/i)
+  assert.match(html, /aria-label="Vægt i kg"[^>]*value="82,5"|value="82,5"[^>]*aria-label="Vægt i kg"/)
+  assert.match(html, /Gem 82,5 kg/)
+  assert.match(html, /−0,1/)
+  assert.match(html, /\+0,1/)
+  assert.doesNotMatch(html, /role="alert"[^>]*>Skriv din vægt/)
+})
+
 test('U5 2/4: dagsform gemmes på ét energitryk efter 5 sekunders fortryd, resten fra seneste række', gate, async () => {
   const writes = [], m = await mount(h(hostFor(writes)))
   try {

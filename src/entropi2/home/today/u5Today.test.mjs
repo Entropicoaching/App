@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { DEFAULT_U5_TODAY, u5TodayEnabled } from './flag.mjs'
-import { formatKg, stepKg, latestWeight, weightDone, readinessSuggestion, readinessDone, mealsModel,
+import { formatKg, stepKg, parseKgText, latestWeight, weightDone, readinessSuggestion, readinessDone, mealsModel,
   firstSetPrefill, todayItems } from './todayModel.mjs'
 
 const A = 'atlet-syntetisk'
@@ -84,4 +84,16 @@ test('U5 1/4: overskriften siger hvad der mangler, i fast rækkefølge', () => {
   assert.equal(none.headline, 'Alt er logget i dag')
   assert.deepEqual(none.items.map(i => i.key), ['weight', 'readiness', 'meal'])
   assert.equal(todayItems({ meal: { status: 'error' } }).headline, null)
+})
+
+test('Kropsvægt: skrevet vægt tager komma og punktum, rundes til én decimal og kræver 30 til 250 kg', () => {
+  assert.deepEqual(parseKgText('82,5'), { kg: 82.5, empty: false })
+  assert.deepEqual(parseKgText(' 82.5 '), { kg: 82.5, empty: false })
+  assert.deepEqual(parseKgText('90'), { kg: 90, empty: false })
+  assert.deepEqual(parseKgText('104,25'), { kg: 104.3, empty: false })
+  assert.deepEqual(parseKgText(',5'), { kg: null, empty: false })
+  for (const empty of ['', '   ', null, undefined]) assert.deepEqual(parseKgText(empty), { kg: null, empty: true })
+  for (const bad of ['29,9', '250,1', '0', '1e2', '-80', 'abc', '8 2', '82,5kg', '80,,5']) assert.equal(parseKgText(bad).kg, null, bad)
+  assert.equal(parseKgText('30').kg, 30)
+  assert.equal(parseKgText('250').kg, 250)
 })

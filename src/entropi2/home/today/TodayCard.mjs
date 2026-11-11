@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { homeStyles as s } from '../homeStyles.mjs'
-import { formatKg, stepKg, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
+import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
 import { readTodayMeals, copyYesterdayMeals, readLastWeights } from './todayRead.mjs'
 import { u6Enabled } from '../../u6/flag.mjs'
 import { planWeightLines, planWeightText, planFirstSetPrefill } from '../../u6/planWeight.mjs'
@@ -23,8 +23,7 @@ const primary = { ...s.primary, marginTop: 0, minHeight: 48 }
 export default function TodayCard(props) {
   const { athlete, today } = props
   const athleteId = athlete?.id
-  const [kg, setKg] = React.useState(null)
-  const [typed, setTyped] = React.useState('')
+  const [typed, setTyped] = React.useState(null)
   const [pending, setPending] = React.useState(null)
   const [grace, setGrace] = React.useState(null)
   const timer = React.useRef(null)
@@ -92,27 +91,36 @@ export default function TodayCard(props) {
   const busy = Boolean(pending || props.savingWeight || props.savingReadiness)
 
   const last = latestWeight(props.weightLogs, athleteId, today)
-  const shown = kg ?? last
-  const saveWeight = value => {
-    const text = formatKg(value)
+  // Feltet er forudfyldt med seneste vægt; atleten kan skrive over det, eller justere med ±0,1.
+  const fieldText = typed ?? (last != null ? formatKg(last) : '')
+  const parsed = parseKgText(fieldText)
+  const badWeight = typed != null && !parsed.kg
+  const saveWeight = () => {
+    const text = formatKg(parsed.kg)
     if (!text || busy || !canWeight) return
     latest.current.setWeightInput(text)
     setPending({ kind: 'weight', value: text })
   }
-  const weightRow = () => h('div', { key: 'weight', style: row, 'data-u5-weight': '' },
+  const nudge = delta => {
+    const next = stepKg(parsed.kg ?? last, delta)
+    if (next != null) setTyped(formatKg(next))
+  }
+  const weightRow = () => h('form', { key: 'weight', style: row, 'data-u5-weight': '',
+    onSubmit: event => { event.preventDefault(); saveWeight() } },
     h('p', { style: label }, 'Vægt'),
-    shown != null ? h('div', { style: { display: 'grid', gridTemplateColumns: '56px minmax(0, 1fr) 56px', gap: 8 } },
-      h('button', { type: 'button', style: step, 'aria-label': '0,1 kg mindre', disabled: busy, onClick: () => setKg(stepKg(shown, -0.1) ?? shown) }, '−0,1'),
-      h('button', { type: 'button', style: primary, disabled: busy, onClick: () => saveWeight(shown) },
-        pending?.kind === 'weight' ? 'Gemmer…' : `Gem ${formatKg(shown)} kg`),
-      h('button', { type: 'button', style: step, 'aria-label': '0,1 kg mere', disabled: busy, onClick: () => setKg(stepKg(shown, 0.1) ?? shown) }, '+0,1'))
-      : h('form', { style: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 8 },
-        onSubmit: event => { event.preventDefault(); saveWeight(typed) } },
-      h('input', { type: 'text', inputMode: 'decimal', 'aria-label': 'Vægt i kg', placeholder: 'kg', value: typed, disabled: busy,
-        style: { ...s.secondary, marginTop: 0, boxSizing: 'border-box', padding: 12, background: '#171814' },
+    h('div', { style: { display: 'grid', gridTemplateColumns: '56px minmax(0, 1fr) 56px', gap: 8 } },
+      h('button', { type: 'button', style: step, 'aria-label': '0,1 kg mindre', disabled: busy, onClick: () => nudge(-0.1) }, '−0,1'),
+      h('input', { type: 'text', inputMode: 'decimal', 'aria-label': 'Vægt i kg', placeholder: 'kg', value: fieldText, disabled: busy,
+        'aria-invalid': badWeight ? 'true' : undefined,
+        style: { ...s.secondary, marginTop: 0, boxSizing: 'border-box', padding: 12, background: '#171814', textAlign: 'center', minWidth: 0 },
         onChange: event => setTyped(event.target.value) }),
-      h('button', { type: 'submit', style: primary, disabled: busy }, 'Gem vægt')),
-    shown != null && h('p', { style: hint }, kg != null && kg !== last ? `Sidst ${formatKg(last)} kg` : 'Samme som sidst. Ret med ±0,1.'))
+      h('button', { type: 'button', style: step, 'aria-label': '0,1 kg mere', disabled: busy, onClick: () => nudge(0.1) }, '+0,1')),
+    h('button', { type: 'button', style: { ...primary, marginTop: 8 }, disabled: busy || !parsed.kg, onClick: saveWeight },
+      pending?.kind === 'weight' ? 'Gemmer…' : parsed.kg ? `Gem ${formatKg(parsed.kg)} kg` : 'Gem vægt'),
+    badWeight
+      ? h('p', { role: 'alert', style: hint }, `Skriv din vægt i kg mellem ${KG_MIN} og ${KG_MAX}, fx 82,5.`)
+      : last != null && typed == null ? h('p', { style: hint }, 'Samme som sidst. Skriv en ny vægt, eller ret med ±0,1.')
+        : last != null ? h('p', { style: hint }, `Sidst ${formatKg(last)} kg`) : null)
 
   const suggestion = readinessSuggestion({ athleteId, today, trackingData: props.trackingData,
     readinessLog: props.readinessLog, readinessInput: props.readinessInput })

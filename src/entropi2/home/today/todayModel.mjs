@@ -26,6 +26,19 @@ export function stepKg(value, delta) {
   return next > 0 ? next : null
 }
 
+// Skrevet vægt: dansk komma eller punktum, én decimal, 30 til 250 kg. Tom eller ugyldig tekst giver kg: null;
+// empty skelner mellem et tomt felt og et forkert tal, så fejlteksten kun vises ved det sidste.
+export const KG_MIN = 30
+export const KG_MAX = 250
+export function parseKgText(value) {
+  const text = typeof value === 'number' ? String(value) : typeof value === 'string' ? value.trim() : ''
+  if (!text) return { kg: null, empty: true }
+  if (!/^(?:\d+(?:[.,]\d*)?|[.,]\d+)$/.test(text)) return { kg: null, empty: false }
+  const n = parseInputNumber(text)
+  const kg = n == null ? null : Math.round(n * 10) / 10
+  return kg != null && kg >= KG_MIN && kg <= KG_MAX ? { kg, empty: false } : { kg: null, empty: false }
+}
+
 // Seneste vægt før i dag; forslaget til ét tryk.
 export function latestWeight(weightLogs, athleteId, today) {
   if (!Array.isArray(weightLogs) || !athleteId || !validDay(today)) return null
