@@ -25,32 +25,43 @@ const positiv = value => typeof value === 'number' && Number.isFinite(value) && 
 export function weekModel({ plans = [], versions = [], approvals = [], athlete, today, start: fixedStart }) {
   if (!identifier(athlete?.id) || !day(today)) fail()
   const targets = { kcal: positiv(Number(athlete.kcal_target)), protein: positiv(Number(athlete.protein_target)) }
-  const perPlan = plans.filter(p => p.athlete_id === athlete.id && uuid(p.id) && day(p.valid_from)).map(p => {
+  // Arkiverede planer kan ikke godkendes og indgår ikke.
+  const perPlan = plans.filter(p => p.athlete_id === athlete.id && uuid(p.id) && day(p.valid_from) && p.status !== 'arkiveret').map(p => {
     const own = versions.filter(v => v.plan_id === p.id).sort((a, b) => b.version_no - a.version_no)
     const latest = own[0]
     if (!latest) return null
     const ownApprovals = approvals.filter(a => a.plan_id === p.id && own.some(v => v.id === a.version_id))
     const latestApproval = ownApprovals.find(a => a.version_id === latest.id)
-    return { plan: p, latest, sent: Boolean(latestApproval), everSent: ownApprovals.length > 0,
+    // Et forslag fra Claude genkendes på sin første version: samme begrundelse og grundlagsdato for hele ugen.
+    const first = own.at(-1)
+    return { plan: p, latest, batch: JSON.stringify([first.rationale ?? null, first.basis_as_of ?? null]),
+      sent: Boolean(latestApproval), everSent: ownApprovals.length > 0,
       sentOn: latestApproval ? sendtDag(latestApproval.approved_at) : null }
   }).filter(Boolean)
-  if (!perPlan.length) return { state: 'empty', targets }
-  // Ugen starter ved et usendt forslag fra i dag eller senere; et startpunkt med 7 dage i træk vinder,
-  // så en løs usendt plan (fx en opgivet aktivering) ikke flytter Claudes uge. Er intet at sende, vises
-  // den nyeste sammenhængende uge (højst 7 dage tilbage fra sidste plandag).
-  const planDays = new Set(perPlan.map(x => x.plan.valid_from))
-  const unsent = [...new Set(perPlan.filter(x => !x.sent && x.plan.valid_from >= today).map(x => x.plan.valid_from))].sort()
-  let start = day(fixedStart) ? fixedStart
-    : unsent.find(d => Array.from({ length: 7 }, (_, i) => plusDage(d, i)).every(x => planDays.has(x))) ?? unsent[0]
-  if (!start && perPlan.every(x => x.sent)) {
-    start = [...planDays].sort().at(-1)
-    for (let i = 0; i < 6 && planDays.has(plusDage(start, -1)); i++) start = plusDage(start, -1)
+  // Ugerne er 7 dage i træk fra samme forslag. Enkeltdagsplaner (fx en manuel aktivering) er ingen uge.
+  const weeks = []
+  for (const batch of new Set(perPlan.map(x => x.batch))) {
+    const dates = [...new Set(perPlan.filter(x => x.batch === batch).map(x => x.plan.valid_from))].sort()
+    for (let i = 0; i < dates.length; i++) {
+      if (i && dates[i - 1] === plusDage(dates[i], -1)) continue
+      let n = 1
+      while (dates.includes(plusDage(dates[i], n))) n++
+      for (let k = 0; k + 7 <= n; k += 7) weeks.push({ batch, start: plusDage(dates[i], k) })
+    }
   }
-  start ??= perPlan.filter(x => !x.sent).map(x => x.plan.valid_from).sort()[0]
+  const inWeek = (w, date) => perPlan.filter(x => x.batch === w.batch && x.plan.valid_from === date)
+  const weekDates = w => Array.from({ length: 7 }, (_, i) => plusDage(w.start, i))
+  const unsentWeek = w => weekDates(w).some(d => inWeek(w, d).some(x => !x.sent))
+  weeks.sort((a, b) => a.start.localeCompare(b.start))
+  // Den tidligste uge med noget at sende, som ikke er helt forbi; ellers den nyeste sendte uge.
+  const chosenWeek = day(fixedStart) ? weeks.find(w => w.start === fixedStart)
+    : weeks.find(w => unsentWeek(w) && plusDage(w.start, 6) >= today) ?? weeks.filter(w => !unsentWeek(w)).at(-1)
+  if (!chosenWeek) return { state: 'empty', targets }
+  const start = chosenWeek.start
   const dates = Array.from({ length: 7 }, (_, i) => plusDage(start, i))
   const days = dates.map(date => {
-    // Én plan pr. dato. Står der flere, vinder et usendt forslag, ellers den nyest sendte.
-    const candidates = perPlan.filter(x => x.plan.valid_from === date)
+    // Én plan pr. dato i ugen. Står der flere, vinder et usendt forslag, ellers den nyest sendte.
+    const candidates = inWeek(chosenWeek, date)
       .sort((a, b) => Number(a.sent) - Number(b.sent) || String(b.sentOn).localeCompare(String(a.sentOn)))
     const chosen = candidates[0]
     if (!chosen) return { date, label: dagNavn(date), state: 'mangler', meals: [], mealCount: 0, kcal: null, protein: null }
@@ -63,7 +74,7 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
     } catch { meals = []; summary = null; unreadable = true }
     return { date, label: dagNavn(date), planId: chosen.plan.id, versionId: chosen.latest.id,
       versionNo: chosen.latest.version_no, rationale: chosen.latest.rationale ?? null,
-      state: unreadable ? 'ulaeselig' : chosen.sent ? 'sendt' : chosen.everSent ? 'aendret' : 'udkast', sentOn: chosen.sentOn,
+      state: chosen.sent ? 'sendt' : unreadable ? 'ulaeselig' : chosen.everSent ? 'aendret' : 'udkast', sentOn: chosen.sentOn, unreadable,
       meals, mealCount: meals.length,
       kcal: summary?.energyKcal?.value ?? null, protein: summary?.proteinG?.value ?? null }
   })
@@ -73,9 +84,8 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
     d.deviation = procent.includes(null) ? null : Math.max(...procent)
     d.ok = d.state !== 'mangler' && d.mealCount > 0 && d.deviation !== null && d.deviation <= MAKS_AFVIGELSE_PROCENT
   }
-  // En sendt uge kan være kortere end 7 dage (fx en ældre enkeltdagsplan); tomme dage tæller ikke imod.
-  const status = days.every(d => d.state === 'sendt' || d.state === 'mangler') && days.some(d => d.state === 'sendt') ? 'sendt'
-    : days.some(d => d.state === 'aendret') || days.some(d => d.state === 'sendt') ? 'aendret' : 'udkast'
+  // Delvist sendt (fx en afbrudt sending) er stadig et udkast; ændret efter sending kræver en nyere version.
+  const status = days.every(d => d.state === 'sendt') ? 'sendt' : days.some(d => d.state === 'aendret') ? 'aendret' : 'udkast'
   const sentOn = status === 'sendt' ? days.map(d => d.sentOn).sort().at(-1) : null
   const rationale = days.find(d => d.rationale)?.rationale ?? null
   return { state: 'ready', status, sentOn, start, end: dates[6], days, targets, rationale,
@@ -103,7 +113,7 @@ async function readRows(client, athleteId, today) {
   if (!plans.length) return { plans, versions: [], approvals: [] }
   const ids = plans.map(p => p.id)
   const versions = rows(await client.from(VERSIONS)
-    .select('id,plan_id,version_no,effective_from,rationale,goal,intensity,meals').in('plan_id', ids).limit(501))
+    .select('id,plan_id,version_no,effective_from,basis_as_of,rationale,goal,intensity,meals').in('plan_id', ids).limit(501))
   const approvals = rows(await client.from(APPROVALS)
     .select('version_id,plan_id,athlete_id,approved_at,approval_kind').in('plan_id', ids).eq('athlete_id', athleteId).limit(501))
   return { plans, versions, approvals }
@@ -115,8 +125,7 @@ export async function readClaudeWeek({ client, athlete, today, start }) {
 }
 
 // "Send uge": én godkendelse pr. dag med seneste version. Ugen læses igen først, så
-// en ændret version aldrig godkendes blindt. Bagefter kontrolleres netop de viste 7 dage; en næste
-// uge fra Claude, der allerede ligger klar, returneres som next.
+// en ændret version aldrig godkendes blindt. Bagefter kontrolleres netop de viste 7 dage.
 export async function sendClaudeWeek({ client, athlete, today, shown }) {
   const fresh = await readClaudeWeek({ client, athlete, today })
   if (fresh.state !== 'ready' || shown?.state !== 'ready' || fresh.start !== shown.start
@@ -130,5 +139,5 @@ export async function sendClaudeWeek({ client, athlete, today, shown }) {
   const sent = await readClaudeWeek({ client, athlete, today, start: fresh.start })
   if (sent.status !== 'sendt' || sent.days.some((d, i) => d.versionId !== fresh.days[i].versionId))
     throw Error('Ugen blev ikke bekræftet som sendt. Prøv igen.')
-  return { sent, next: await readClaudeWeek({ client, athlete, today }) }
+  return { sent }
 }

@@ -171,9 +171,10 @@ test('en ældre sendt plan før ugen flytter ikke ugen: efter Send uge vises den
 test('en løs usendt plan før eller i ugen flytter ikke Claudes 7-dages uge', () => {
   const uge = syntetiskUge(() => fuldDag)
   const loes = date => ({ id: `00000000-0000-4000-8000-0000000003${date.slice(-2)}`, athlete_id: athlete.id, valid_from: date, status: 'forslag' })
-  for (const [date, today] of [['2026-11-12', '2026-11-15'], ['2026-11-13', '2026-11-11']]) {
+  for (const [date, today] of [['2026-11-12', '2026-11-15'], ['2026-11-13', '2026-11-11'], ['2026-11-15', '2026-11-11']]) {
     const plan = loes(date)
-    const v = { ...version(plan.id, 0, fuldDag), id: `00000000-0000-4000-8000-0000000004${date.slice(-2)}`, effective_from: date }
+    const v = { ...version(plan.id, 0, fuldDag), id: `00000000-0000-4000-8000-0000000004${date.slice(-2)}`, effective_from: date,
+      rationale: 'Coachen har gennemgået og aktiveret den lokale dagsplan.' }
     const week = weekModel({ plans: [plan, ...uge.plans], versions: [v, ...uge.versions], athlete, today })
     assert.equal(week.start, '2026-11-16', date); assert.equal(week.lock, null, date)
   }
@@ -190,8 +191,45 @@ test('Send uge bekræfter de 7 versioner, selv om en næste uge fra Claude aller
     const result = await sendClaudeWeek({ client: s.coach, athlete, today, shown })
     assert.equal(await s.count('kostplan_v1_approvals'), 7)
     assert.equal(result.sent.status, 'sendt'); assert.equal(result.sent.start, today)
-    assert.equal(result.next.start, plusDage(today, 7)); assert.equal(result.next.status, 'udkast')
+    const naesteVist = await readClaudeWeek({ client: s.coach, athlete, today })
+    assert.equal(naesteVist.start, plusDage(today, 7)); assert.equal(naesteVist.status, 'udkast')
   } finally { await s.close() }
+})
+
+// Kontrol runde 2: A, C, E og F.
+test('en uge, hvis første dag er passeret, kan stadig vises og sendes', () => {
+  const week = weekModel({ ...syntetiskUge(() => fuldDag), athlete, today: '2026-11-18' })
+  assert.equal(week.start, '2026-11-16'); assert.equal(week.status, 'udkast'); assert.equal(week.lock, null)
+})
+
+test('arkiverede planer og enkeltdagsplaner tæller ikke som Claudes uge', () => {
+  const uge = syntetiskUge(() => fuldDag)
+  const arkiv = { id: '00000000-0000-4000-8000-000000000500', athlete_id: athlete.id, valid_from: '2026-11-15', status: 'arkiveret' }
+  const v = { ...version(arkiv.id, 0, fuldDag), id: '00000000-0000-4000-8000-000000000501', effective_from: '2026-11-15' }
+  const week = weekModel({ plans: [arkiv, ...uge.plans], versions: [v, ...uge.versions], athlete, today: '2026-11-11' })
+  assert.equal(week.start, '2026-11-16')
+  const kunEnDag = weekModel({ plans: [uge.plans[0]], versions: [uge.versions[0]], athlete, today: '2026-11-11' })
+  assert.equal(kunEnDag.state, 'empty')
+})
+
+test('en afbrudt sending kan gøres færdig: 4 dage sendt, Send uge sender de sidste 3', { timeout: 60000 }, async () => {
+  const s = await scene()
+  try {
+    const shown = await readClaudeWeek({ client: s.coach, athlete, today })
+    for (const d of shown.days.slice(0, 4))
+      assert.equal((await s.coach.from('kostplan_v1_approvals').insert({ version_id: d.versionId, approval_kind: 'coach' }).select('version_id')).error, null)
+    const halv = await readClaudeWeek({ client: s.coach, athlete, today })
+    assert.equal(halv.start, today); assert.equal(halv.lock, null); assert.equal(halv.status, 'udkast')
+    const { sent } = await sendClaudeWeek({ client: s.coach, athlete, today, shown: halv })
+    assert.equal(sent.status, 'sendt'); assert.equal(await s.count('kostplan_v1_approvals'), 7)
+  } finally { await s.close() }
+})
+
+test('en sendt dag, der ikke kan læses, gør ikke ugen usendt', () => {
+  const uge = syntetiskUge(n => n === 2 ? [{ name: 'Ødelagt', portions: [{ grams: -5, food: fodevare }] }] : fuldDag)
+  const approvals = uge.versions.map(v => ({ version_id: v.id, plan_id: v.plan_id, athlete_id: athlete.id,
+    approved_at: '2026-11-15T09:00:00.000000+00:00', approval_kind: 'coach' }))
+  assert.equal(weekModel({ ...uge, approvals, athlete, today: '2026-11-15' }).status, 'sendt')
 })
 
 test('en plan, der ikke kan læses, låser med sin egen grund og ikke som 0 måltider', () => {

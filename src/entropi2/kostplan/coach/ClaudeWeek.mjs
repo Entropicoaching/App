@@ -33,7 +33,7 @@ export function claudeWeekView(week, { onSend, onReload, sending = false, error 
           h('span', { 'aria-label': d.ok ? 'inden for målet' : 'advarsel' }, d.ok ? '✓' : '⚠')),
         d.mealCount ? h('ul', { style: { paddingLeft: 18, margin: '0 0 10px' } }, ...d.meals.map((meal, i) => h('li', { key: i },
           h('strong', null, meal.name), ': ', meal.portions.map(p => `${p.name} ${tal(p.grams)} g`).join(', '))))
-          : h('p', null, d.state === 'mangler' ? 'Ingen plan.' : d.state === 'ulaeselig' ? 'Kan ikke læses.' : '0 måltider.'))))),
+          : h('p', null, d.state === 'mangler' ? 'Ingen plan.' : d.unreadable ? 'Kan ikke læses.' : '0 måltider.'))))),
     week.status !== 'sendt' && h('div', { style: { marginTop: 12 } },
       week.lock && h('p', { 'data-lock': true, style: { margin: '0 0 8px' } }, week.lock),
       h('button', { type: 'button', style: { ...primaryButton, width: '100%' }, disabled: Boolean(week.lock) || sending,
