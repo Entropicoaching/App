@@ -22,3 +22,15 @@ test('u8c: vægtgrafens akser på hjemmesiden står med dansk komma', () => {
     assert.ok(!/\.\.\.ws\)\.toFixed\(1\)\}<\/text>/.test(source), file)
   }
 })
+
+test('u8c: coachens planvægt vises med dansk komma overalt i passet', async () => {
+  const { planKg } = await import('./planKg.mjs')
+  assert.equal(planKg(87.5), '87,5')
+  assert.equal(planKg('142.5'), '142,5')
+  assert.equal(planKg(80), '80')
+  assert.equal(planKg('~85'), '~85')
+  for (const file of ['entropi2/session/sessionView.mjs', 'entropi2/session/sessionOverview.mjs', 'athlete/DagensPasCard.jsx', 'athlete/blokRoedTraad.mjs']) {
+    const source = readFileSync(new URL(file, import.meta.url), 'utf8')
+    assert.ok(!/\{ex\.recommended_weight\} kg/.test(source), file)
+  }
+})

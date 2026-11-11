@@ -1,3 +1,4 @@
+import { planKg } from '../../planKg.mjs'
 import { sessionPrescription } from './sessionPrescription.mjs'
 import { parsePlannedRest, parseTempo } from './tempo/tempoParser.mjs'
 import { sessionGroupsForDisplay } from './supersaet/supersetModel.mjs'
@@ -51,7 +52,7 @@ export function createSessionOverview(doc, { p, s, now, active, returnToLog }) {
       { class: 'overview-dosage' }))
     fold.append(summary)
     if (group) fold.append(el('p', group.label))
-    if (given(ex.recommended_weight)) fold.append(el('p', `Planlagt vægt: ${ex.recommended_weight} kg`))
+    if (given(ex.recommended_weight)) fold.append(el('p', `Planlagt vægt: ${planKg(ex.recommended_weight)} kg`))
     if (given(ex.intensity)) fold.append(el('p', `Intensitet: ${ex.intensity}`))
     const prescription = sessionPrescription(ex), rest = parsePlannedRest(prescription.restSeconds), tempo = parseTempo(prescription.tempo)
     if (rest.status === 'valid') fold.append(el('p', `Pause: ${rest.label}`))

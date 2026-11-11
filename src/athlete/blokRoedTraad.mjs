@@ -1,3 +1,4 @@
+import { planKg } from '../planKg.mjs'
 // APP-PROG1: pure read model. No dates, logs, storage or inferred prescriptions.
 const text = value => typeof value === 'string' && value.trim() ? value : null
 const nameKey = value => text(value)?.trim().toLocaleLowerCase('da-DK') ?? null
@@ -10,7 +11,7 @@ export function prescription(ex) {
   return [
     present(ex.sets) ? `${ex.sets} sæt` : 'Sæt ikke angivet',
     present(ex.reps) ? `${ex.reps} reps` : 'Reps ikke angivet',
-    present(ex.recommended_weight) ? `${ex.recommended_weight} kg` : 'Vægt ikke angivet',
+    present(ex.recommended_weight) ? `${planKg(ex.recommended_weight)} kg` : 'Vægt ikke angivet',
     text(ex.intensity) ?? 'Intensitet ikke angivet',
   ].join(' · ')
 }

@@ -1,3 +1,4 @@
+import { planKg } from '../../planKg.mjs'
 import { antalOrd } from '../antalOrd.mjs'
 import { nextSetInSession } from '../../nextSet.js'
 import { createMobilityPlan } from '../mobility/plan/mobilityPlanDom.mjs'
@@ -230,7 +231,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       const plan = el('section', null, { class: 'card plan-card', 'aria-label': 'Planlagt belastning' })
       if (!given(ex.reps)) plan.append(el('p', 'Gentagelser mangler i planen. Bed din coach rette øvelsen.', { role: 'alert' }))
       const prescription = [given(ex.reps) ? `${ex.reps} ${antalOrd(ex.reps, 'gentagelse', 'gentagelser')}` : null,
-        given(ex.recommended_weight) ? `${ex.recommended_weight} kg` : null].filter(Boolean)
+        given(ex.recommended_weight) ? `${planKg(ex.recommended_weight)} kg` : null].filter(Boolean)
       if (prescription.length) plan.append(el('p', prescription.join(' · '), { class: 'plan' }))
       if (given(ex.intensity)) plan.append(el('p', `Intensitet: ${ex.intensity}`))
       body.append(plan)

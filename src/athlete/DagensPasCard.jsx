@@ -1,3 +1,4 @@
+import { planKg } from '../planKg.mjs'
 import { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
 import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
 import { vaerdTekst, ventendeSaetTekst } from './vaerdTekst.mjs'
@@ -328,7 +329,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const raadCelle = ex.recommended_weight != null ? (
     <div style={st.infoCelle}>
       <div style={st.infoEtiket}>{vaerdTekst.coach}</div>
-      <div style={st.infoVaerdiAccent}>{ex.recommended_weight} kg</div>
+      <div style={st.infoVaerdiAccent}>{planKg(ex.recommended_weight)} kg</div>
     </div>
   ) : suggestion?.stop ? (
     <div data-testid="smerte-stop" style={{ ...st.infoCelle, ...st.infoTekst }}>{SMERTE_LINJE}</div>
