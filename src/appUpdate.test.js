@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { shouldReloadOnControllerChange } from './appUpdate.js'
+import { shouldReloadOnControllerChange, nudgeServiceWorker } from './appUpdate.js'
 
 // ORDRE 167 · commit 2 — Login (og strukturelt hele appens skal) genindlæste
 // sig selv midt i den ALLERFØRSTE sideindlæsning: self.clients.claim() i
@@ -22,4 +22,20 @@ test('et genload allerede i gang (refreshing=true) udløser ikke et andet, selv 
 
 test('en ny bruger med et genload "i gang" (umuligt i praksis, men skal stadig være falsk) udløser ikke', () => {
   assert.equal(shouldReloadOnControllerChange(false, true), false)
+})
+
+// Generalprøven (ordre 80): mens en ny service worker installeres, afviser reg.update() med
+// InvalidStateError. Den afvisning må ikke slippe ud som en ufanget browserfejl.
+test('en afvist reg.update() fanges, og getRegistration-fejl fanges også', async () => {
+  const loose = []
+  const onRejection = reason => loose.push(reason)
+  process.on('unhandledRejection', onRejection)
+  try {
+    const invalid = Object.assign(new Error('The object is in an invalid state.'), { name: 'InvalidStateError' })
+    await nudgeServiceWorker({ getRegistration: async () => ({ update: () => Promise.reject(invalid) }) })
+    await nudgeServiceWorker({ getRegistration: () => Promise.reject(invalid) })
+    await nudgeServiceWorker(undefined)
+    await new Promise(resolve => setTimeout(resolve, 20))
+    assert.deepEqual(loose, [])
+  } finally { process.off('unhandledRejection', onRejection) }
 })

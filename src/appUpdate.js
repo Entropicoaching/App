@@ -17,13 +17,19 @@ export function shouldReloadOnControllerChange(hadController, alreadyRefreshing)
   return hadController && !alreadyRefreshing
 }
 
+// Generalprøven (ordre 80): reg.update() afviser med InvalidStateError, mens en worker installeres.
+// Afvisningen blev ikke fanget og gav en browserfejl ved hver opdatering. Nu fanges den.
+export async function nudgeServiceWorker(container) {
+  try {
+    const reg = await container?.getRegistration()
+    await reg?.update()
+  } catch { /* sw endnu ikke klar, ignorér */ }
+}
+
 async function checkForUpdate() {
   if (!CURRENT_BUILD_ID || document.visibilityState !== 'visible') return
   // Skub også service-workeren til at tjekke efter en ny version af sig selv.
-  try {
-    const reg = await navigator.serviceWorker?.getRegistration()
-    reg?.update()
-  } catch { /* sw endnu ikke klar — ignorér */ }
+  nudgeServiceWorker(navigator.serviceWorker)
   let latest
   try {
     const res = await fetch(`/version.json?ts=${Date.now()}`, { cache: 'no-store' })
