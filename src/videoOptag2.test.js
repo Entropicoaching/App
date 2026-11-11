@@ -35,7 +35,7 @@ test('15s cap, countdown only last 5s, recorder bitrate and one automatic stop',
   assert.ok(f.trackStops > 0);
   await f.metadata(15); await finishEncoding(f, 15, 15);
   assert.equal(f.ready.length, 1); assert.ok(f.api.accepts(f.ready[0]));
-  assert.ok(f.nodes.some(n => n.textContent?.includes('2.0 MB')));
+  assert.ok(f.nodes.some(n => n.textContent?.includes('2,0 MB')));
   f.advance(5000); assert.equal(f.stops, 2); // one capture and one encode stop
   f.api.dispose(); assert.equal(f.jobs.size, 0);
 });
@@ -54,7 +54,7 @@ test('short selected file is encoded before ready; original never accepted', asy
   await finishEncoding(f, 10); await task;
   assert.equal(f.ready.length, 1); assert.notEqual(f.ready[0], original);
   assert.equal(f.api.accepts(f.ready[0]), true);
-  assert.ok(f.nodes.some(n => n.textContent?.includes('1.3 MB')));
+  assert.ok(f.nodes.some(n => n.textContent?.includes('1,3 MB')));
   f.api.dispose();
 });
 

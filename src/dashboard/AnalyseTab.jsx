@@ -1,3 +1,6 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
+const decimaler = (value, digits = 1) => value.toFixed(digits).replace('.', ',')
 import AnalyseMissingData from './analyseMissingData.mjs'
 import AnalyseConclusionMessage from './analyseConclusionMessage.mjs'
 import VideoRetentionLocalPreview from '../VideoRetentionLocalPreview.mjs'
@@ -362,7 +365,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                                       {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
                                     </div>
                                     <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
-                                      Modtaget {new Date(analysis.created_at).toLocaleDateString('da-DK')}{analysis.load_kg != null ? ` · ${analysis.load_kg} kg` : ''}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                                      Modtaget {new Date(analysis.created_at).toLocaleDateString('da-DK')}{analysis.load_kg != null ? ` · ${komma(analysis.load_kg)} kg` : ''}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
                                     </div>
                                   </div>
                                   <span style={{ color: '#67dff5', border: '1px solid rgba(103,223,245,0.4)', background: 'rgba(103,223,245,0.1)', padding: '0.2rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -391,9 +394,9 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                                     {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
                                   </div>
                                   {coachTabCleanup ? <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
-                                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')}{coachTabCleanup ? [knownNumber(analysis.load_kg) && `${analysis.load_kg} kg`, knownNumber(analysis.reps_count) && `${analysis.reps_count} reps`].filter(Boolean).map(value => ` · ${value}`).join('') : ` · ${analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · ${analysis.reps_count || 0} reps`}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')}{coachTabCleanup ? [knownNumber(analysis.load_kg) && `${komma(analysis.load_kg)} kg`, knownNumber(analysis.reps_count) && `${analysis.reps_count} reps`].filter(Boolean).map(value => ` · ${value}`).join('') : ` · ${analysis.load_kg != null ? `${komma(analysis.load_kg)} kg` : 'kg ikke angivet'} · ${analysis.reps_count || 0} reps`}{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
                                   </div> : <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.25rem' }}>
-                                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${analysis.load_kg} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${komma(analysis.load_kg)} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
                                   </div>}
                                   {analysis.source_mode === 'athlete_submission' && (
                                     <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', marginTop: '0.3rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
@@ -706,7 +709,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                                       <div key={pr.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                                         <div style={{ width: 6, height: 6, borderRadius: '50%', background: isLatest ? '#c8923a' : 'rgba(237,234,226,0.15)', flexShrink: 0 }} />
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', color: isLatest ? '#edeae2' : '#7a7770', fontWeight: isLatest ? 500 : 400 }}>
-                                          {pr.weight} kg{pr.reps > 1 ? ` × ${pr.reps}` : ''}
+                                          {komma(pr.weight)} kg{pr.reps > 1 ? ` × ${pr.reps}` : ''}
                                         </span>
                                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginLeft: 'auto' }}>{fmtPRDate(danskDag(pr.logged_at))}</span>
                                       </div>
@@ -1160,7 +1163,7 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                                 if (dataEnoughEnabled() && !dataAllowed('D21', dataEnoughEnabled() ? liftEvidence(athleteLogs, label) : {})) return missing('D21', () => liftEvidence(athleteLogs, label), <p key={label}>{dataMessage('D21')}</p>, label)
                                 const observed = dataEnoughEnabled() ? liftEvidence(athleteLogs, label).rows : []
                                 const regression = dataEnoughEnabled() ? datedRegression(observed) : null
-                                const trend = dataEnoughEnabled() ? (regression ? { text: `Observeret e1RM-trend ${regression.slope.toFixed(2)} kg pr. dag`, color: '#b8b4a8' } : null) : liftTrend(ls.actualData)
+                                const trend = dataEnoughEnabled() ? (regression ? { text: `Observeret e1RM-trend ${decimaler(regression.slope, 2)} kg pr. dag`, color: '#b8b4a8' } : null) : liftTrend(ls.actualData)
                                 const tl = dataEnoughEnabled() ? regression?.data || [] : trendLine(ls.actualData)
                                 return (
                                   <div key={label}>

@@ -35,7 +35,7 @@ test('A: squat staaet stille 3 uger med stigende RPE -> alert med tal, uge og ha
 
 test('B: RPE +1,5 over plan -> naevner det tungeste loeft og hvad der skal saenkes', () => {
   const [before] = v1(fixtures.b)
-  assert.equal(before.detail, 'snit-afvigelse 1.66 RPE over 3 uger (48 sæt)', 'v1: tal uden loeft og uden handling')
+  assert.equal(before.detail, 'snit-afvigelse 1,66 RPE over 3 uger (48 sæt)', 'v1: tal uden loeft og uden handling')
   const signal = only(fixtures.b)
   assert.equal(signal.detector, 'rpe_drift')
   assert.equal(signal.severity, 'alert')

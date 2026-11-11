@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { calendarDay } from '../calendarDate.js'
 
@@ -71,7 +73,7 @@ export function videoSetQueueDetail(video) {
   const set = video.session_context?.video_set
   return set && typeof set.exercise_name === 'string' && Number.isInteger(set.set_number)
     && number(set.load_kg, 1000) != null && number(set.reps, 20, true) != null
-    ? `${set.exercise_name} · sæt ${set.set_number} · ${set.load_kg} kg · ${set.reps} ${antalOrd(set.reps, 'gentagelse', 'gentagelser')}` : null
+    ? `${set.exercise_name} · sæt ${set.set_number} · ${komma(set.load_kg)} kg · ${set.reps} ${antalOrd(set.reps, 'gentagelse', 'gentagelser')}` : null
 }
 
 export function renderVideoSetPicker(h, { options, choice, onChange, onContinue, onClose }) {

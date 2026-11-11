@@ -1,3 +1,6 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
+const feltKomma = value => String(value ?? '').replace('.', ',')
 import { antalOrd } from '../entropi2/antalOrd.mjs'
 import OpvarmStige from './WarmupLadderView.mjs'
 import { upcomingProgramWeek, programDayPreview } from './programNaesteUge.mjs'
@@ -888,17 +891,17 @@ export default function ProgramTab({
                                       <>
                                         {showPrescription && (ex.recommended_weight != null ? (
                                           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
-                                            Anbefalet: {ex.recommended_weight}kg
+                                            Anbefalet: {komma(ex.recommended_weight)}kg
                                           </div>
                                         ) : (() => {
                                           const s = suggestNextWeight(ex.name, ex.intensity, ex.reps)
                                           if (!s) return null
                                           if (s.stop) return <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: (programAppearanceOn ? programColors.muted : '#7a7770'), marginBottom: '0.2rem' }}>{SMERTE_LINJE}</div>
                                           const diff = s.weight - s.baseWeight
-                                          const diffStr = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : '='
+                                          const diffStr = diff > 0 ? `+${komma(diff)}` : diff < 0 ? `${komma(diff)}` : '='
                                           return (
                                             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#c8923a', marginBottom: '0.2rem' }}>
-                                              Forslag: {s.weight} kg <span style={{ color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>({diffStr} kg · RPE {s.fromRpe})</span>{s.basisDates && <small>Grundlag: {s.basisDates.join(', ')}</small>}
+                                              Forslag: {komma(s.weight)} kg <span style={{ color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>({diffStr} kg · RPE {komma(s.fromRpe)})</span>{s.basisDates && <small>Grundlag: {s.basisDates.join(', ')}</small>}
                                             </div>
                                           )
                                         })())}
@@ -1029,7 +1032,7 @@ export default function ProgramTab({
                                                     <span
                                                       style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.82rem', color: done ? (programAppearanceOn ? programColors.muted : '#4a4844') : '#edeae2', textDecoration: done ? 'line-through' : 'underline dotted', cursor: 'text' }}
                                                       onClick={e => { e.stopPropagation(); setWarmupSetEditing(editKey) }}
-                                                    >{ws.weight}kg</span>
+                                                    >{komma(ws.weight)}kg</span>
                                                   )}
                                                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>× {ws.reps}</span>
                                                   <button
@@ -1066,7 +1069,7 @@ export default function ProgramTab({
                                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: (programAppearanceOn ? programTones.skipped.color : '#4a4844') }}>✕ Sprunget over</span>
                                           ) : logged ? (
                                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'baseline' }}>
-                                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{logged.weight}kg × {logged.reps_completed}</span>
+                                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{komma(logged.weight)}kg × {logged.reps_completed}</span>
                                               {logged.rpe_actual != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>RPE {logged.rpe_actual}</span>}
                                               {logged.note && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontStyle: 'italic' }}>{visibleRpeNote(logged.note)}</span>}
                                             </div>
@@ -1110,7 +1113,7 @@ export default function ProgramTab({
                                           <input
                                             aria-label={programAppearanceOn ? `Vægt · ${setContext}` : `Vægt, sæt ${setNum}`}
                                             style={{ ...s.fieldInput, width: '80px', minWidth: '80px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, padding: '0.65rem 0.5rem', fontSize: '1.1rem', textAlign: 'center' }}
-                                            type="text" inputMode="decimal" placeholder="kg" value={input.weight}
+                                            type="text" inputMode="decimal" placeholder="kg" value={feltKomma(input.weight)}
                                             onChange={e => {
                                               // type=text + inputMode=decimal: numerisk tastatur, men fuld
                                               // kontrol — så feltet kan ryddes helt og "0" kan skrives.

@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 // APP-S1 UI candidate. INERT during producer verification; React is not executed.
 import { useState } from 'react'
 import { CHECKLIST, NOTICE, checklistState, finalizeDraft, meetPlan, timeLabel } from './staevnedagPlan.mjs'
@@ -21,7 +23,7 @@ function LiftPlan({ lift }) {
     {lift.sets.length === 0 ? <p>Angiv en åbner over 20 kg og højst 1000 kg for at få et forslag.</p> : <>
       <label>Forventet åbner, lokal tid <input type="time" value={start} onChange={event => setStart(event.target.value)} /></label>
       <p>Forslag: 20 kg stang, afrunding til 2,5 kg og op til fem sæt 25, 18, 12, 8 og 4 minutter før åbneren. Ret med coachen, når tidsplanen ændres.</p>
-      <ol>{rows.map((row, index) => <li key={index}>{row.weight} kg × {row.reps} ({row.pct}), {timeLabel(start, row.minutesBefore)}</li>)}</ol>
+      <ol>{rows.map((row, index) => <li key={index}>{komma(row.weight)} kg × {row.reps} ({row.pct}), {timeLabel(start, row.minutesBefore)}</li>)}</ol>
       {rows.length === 0 && <p>Alle sæt er fjernet lokalt.</p>}
       {editing ? <>
         {draft.map((row, index) => <div key={index}>

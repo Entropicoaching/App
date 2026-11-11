@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
 // Program-fanen (ugeplan, sessioner, øvelsesformular) — udskilt fra
 // Dashboard.jsx (ordre 130 · commit 2) som sin egen lazy-loadede chunk, så
@@ -1044,12 +1046,12 @@ export default function ProgramTab({
                                               const last = bestLog(ex.name, ex.reps)
                                               if (ex.recommended_weight != null) return (
                                                 <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
-                                                  Anbefalet: {ex.recommended_weight}kg <span style={{ opacity: 0.6 }}>✎</span>
+                                                  Anbefalet: {komma(ex.recommended_weight)}kg <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               if (last) return (
                                                 <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
-                                                  Sidst logget: {last.weight}kg × {last.reps_completed} reps <span style={{ opacity: 0.6 }}>✎</span>
+                                                  Sidst logget: {komma(last.weight)}kg × {last.reps_completed} reps <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               return (

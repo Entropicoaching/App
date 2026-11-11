@@ -1,3 +1,5 @@
+// u8d: lukket prøve-loader tillader ingen ny import; samme regel som danskTal.decimaler.
+const decimaler = (value, digits = 1) => value.toFixed(digits).replace('.', ',')
 import { markerRepliesEnabled, mountMarkerReplyForm, repliesForMarker } from '../videoMarkerReplies.mjs'
 // VC-EPIK2 local playback contract. No backend fields or persistence writes.
 export const DEFAULT_VIDEO_FEEDBACK_PLAYBACK = false
@@ -219,7 +221,7 @@ export function mountFeedbackPlayback(root, scope, { urlApi = globalThis.URL, di
       if (disposed || token !== generation) return
       feedback = parsed
       for (const m of feedback.markers) {
-        const b = el('button', `${m.start.toFixed(2)} s: ${m.text || 'Tegning'}`)
+        const b = el('button', `${decimaler(m.start, 2)} s: ${m.text || 'Tegning'}`)
         b.type = 'button'; b.dataset.markerId = m.id
         Object.assign(b.style, { minHeight: '44px', maxWidth: '100%', whiteSpace: 'normal', overflowWrap: 'anywhere' }); list.append(b)
       }

@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Stævne: stævneplan, historik og rekorder.
 // Samme navne som props som i Dashboard; kun kroppen er flyttet.
@@ -187,7 +189,7 @@ export default function StaevneTab({
                         <div key={pr.id} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '0.5rem' }}>
                           <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.88rem', color: '#edeae2', fontWeight: 300 }}>{exerciseSetView(pr.exercise_name).name}</span>
                           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', color: '#c8923a' }}>{pr.weight} kg</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.95rem', color: '#c8923a' }}>{komma(pr.weight)} kg</span>
                             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', color: '#a8a498', letterSpacing: '0.06em' }}>{pr.logged_at.slice(0, 10)}</span>
                           </div>
                         </div>

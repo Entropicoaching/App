@@ -1,3 +1,5 @@
+// u8d: lukket prøve-loader tillader ingen ny import; samme regel som danskTal.decimaler.
+const decimaler = (value, digits = 1) => value.toFixed(digits).replace('.', ',');
 import { createSession, mark, calibrate, clearCalibration, lock, compare, aggregate, pointerPoint, save, restore, JOINTS } from './vaMark2.mjs';
 import { fixtures } from './vaMark2Fixtures.mjs';
 // Pure DOM controller with injected storage. No browser globals at module evaluation.
@@ -21,7 +23,7 @@ export function mount(dom,getStorage) {
       el(prefix+'Path').setAttribute('d',d);
     }
     const n=s().marks.reduce((n,m)=>n+JOINTS.filter(k=>m.pose[k]).length,0),total=f().frames.length*JOINTS.length;
-    el('coverage').textContent=n+'/'+total+' ledpunkter ('+(100*n/total).toFixed(1)+' %) | '+(s().locked?'fastlaast':'kladde');
+    el('coverage').textContent=n+'/'+total+' ledpunkter ('+decimaler(100*n/total)+' %) | '+(s().locked?'fastlaast':'kladde');
     el('frameInfo').textContent=f().clip_id+' | frame '+q.frame_id+' | '+q.t_s+' s | venstre side';
     el('scaleInfo').textContent=s().calibration?'45 cm / '+s().calibration.disc_px+' px fra markeret diameter':'Ingen markeret diameter';
     el('result').textContent=JSON.stringify(compare(f(),s()),null,2);

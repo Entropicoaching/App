@@ -1,3 +1,6 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
+const feltKomma = value => String(value ?? '').replace('.', ',')
 import { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
 import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
 import { vaerdTekst, ventendeSaetTekst } from './vaerdTekst.mjs'
@@ -335,7 +338,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   ) : suggestion ? (
     <div style={st.infoCelle}>
       <div style={st.infoEtiket}>{vaerdTekst.app}</div>
-      <div style={st.infoVaerdiAccent}>{suggestion.weight} kg <span style={{ color: '#7a7770', fontWeight: 400, fontSize: '0.75rem' }}>(RPE {suggestion.fromRpe})</span>{suggestion.basisDates && <small>Grundlag: {suggestion.basisDates.join(', ')}</small>}</div>
+      <div style={st.infoVaerdiAccent}>{komma(suggestion.weight)} kg <span style={{ color: '#7a7770', fontWeight: 400, fontSize: '0.75rem' }}>(RPE {komma(suggestion.fromRpe)})</span>{suggestion.basisDates && <small>Grundlag: {suggestion.basisDates.join(', ')}</small>}</div>
     </div>
   ) : smerteBesked ? (
     <div data-testid="smerte-besked" style={{ ...st.infoCelle, ...st.infoTekst }}>{smerteBesked}</div>
@@ -343,7 +346,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const sidsteCelle = last && (
     <div style={st.infoCelle}>
       <div style={st.infoEtiket}>Sidste gang</div>
-      <div style={st.infoVaerdi}>{last.weight} kg × {last.reps}{last.rpe ? ` @${last.rpe}` : ''}</div>
+      <div style={st.infoVaerdi}>{komma(last.weight)} kg × {last.reps}{last.rpe ? ` @${komma(last.rpe)}` : ''}</div>
     </div>
   )
 
@@ -352,7 +355,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
     <input
       aria-label={`Vægt, sæt ${setNumber}`}
       style={{ ...st.tal, width: talBredde(input.weight || 'kg'), minWidth: '2.5ch' }}
-      type="text" inputMode="decimal" placeholder="kg" value={input.weight}
+      type="text" inputMode="decimal" placeholder="kg" value={feltKomma(input.weight)}
       onChange={e => {
         const v = e.target.value.replace(',', '.')
         if (v === '' || /^\d*\.?\d*$/.test(v)) { touchedRef.current.add(key); setLogInputs(p => ({ ...p, [key]: { ...p[key], weight: v } })) }
@@ -408,7 +411,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             <span style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center' }}>
               <span aria-hidden="true" style={st.klaretMaerke}>✓</span>
               <span>
-                {priorSetNumbers.length} sæt klaret{lastPrior && !lastPrior.skipped ? ` · senest ${lastPrior.weight} kg × ${lastPrior.reps_completed}` : ''}
+                {priorSetNumbers.length} sæt klaret{lastPrior && !lastPrior.skipped ? ` · senest ${komma(lastPrior.weight)} kg × ${lastPrior.reps_completed}` : ''}
                 {/* ORDRE 397: sæt fra denne øvelse der venter på net. */}
                 {(() => {
                   const waiting = priorSetNumbers.filter(n => pendingSyncKeys.includes(`${ex.id}_${n}`)).length
@@ -453,7 +456,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
                     <input
                       aria-label={`Vægt, ret sæt ${n}`}
                       style={{ ...s.fieldInput, width: '80px', minWidth: '80px', minHeight: '44px', boxSizing: 'border-box', flexShrink: 0, textAlign: 'center', fontSize: '1.05rem', fontWeight: 500 }}
-                      type="text" inputMode="decimal" value={editInput.weight}
+                      type="text" inputMode="decimal" value={feltKomma(editInput.weight)}
                       onChange={e => {
                         const v = e.target.value.replace(',', '.')
                         if (v === '' || /^\d*\.?\d*$/.test(v)) setEditInput(p => ({ ...p, weight: v }))
@@ -513,7 +516,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             return (
               <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', color: '#a8a498' }}>
                 <span style={{ textAlign: 'left' }}>
-                  {view.label} {n}: {log.skipped ? 'Sprunget over' : `${log.weight} kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${log.rpe_actual}` : ''}`}
+                  {view.label} {n}: {log.skipped ? 'Sprunget over' : `${komma(log.weight)} kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${komma(log.rpe_actual)}` : ''}`}
                   {pendingSyncKeys.includes(`${ex.id}_${n}`) && (
                     <>{' '}<span data-venter-paa-net="1" style={{ color: '#c8923a', whiteSpace: 'nowrap' }}>· ☁ sendes når du har net</span></>
                   )}

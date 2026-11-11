@@ -1,3 +1,5 @@
+// u8d: lukket prøve-loader tillader ingen ny import; samme regel som danskTal.decimaler.
+const decimaler = (value, digits = 1) => value.toFixed(digits).replace('.', ',')
 import { parsePlaybackDocument, activeMarkers, adjacentMarker } from './athlete/videoFeedbackPlayback.mjs'
 import { ATHLETE, PREVIEW_ANALYSIS } from './fridayPreviewSeed.mjs'
 
@@ -46,7 +48,7 @@ export function mountPreviewMarkers(root, scope, { enabled = false } = {}) {
   let time = feedback.markers[0].start
   function update(value) {
     if (!Number.isFinite(value) || value < 0 || value > feedback.clip.duration) return
-    time = value; slider.value = String(time); status.textContent = `${time.toFixed(1)} s / ${feedback.clip.duration} s`
+    time = value; slider.value = String(time); status.textContent = `${decimaler(time)} s / ${feedback.clip.duration} s`
     const active = activeMarkers(feedback.markers,time)
     comments.replaceChildren(...active.map(m => el('p',m.text)))
     strokes.replaceChildren()
@@ -63,7 +65,7 @@ export function mountPreviewMarkers(root, scope, { enabled = false } = {}) {
   for (const [button,direction] of [[previous,-1],[next,1]])
     listen(button,'click',() => { const m = adjacentMarker(feedback.markers,time,direction); if (m) update(m.start) })
   for (const m of feedback.markers) {
-    const b = el('button',`${m.start.toFixed(1)} s: ${m.text}`)
+    const b = el('button',`${decimaler(m.start)} s: ${m.text}`)
     listen(b,'click',() => update(m.start)); buttons.push(b); list.append(b)
   }
   for (const b of [previous,next,...buttons]) { b.type = 'button'; Object.assign(b.style,{minHeight:'44px',whiteSpace:'normal',overflowWrap:'anywhere'}) }

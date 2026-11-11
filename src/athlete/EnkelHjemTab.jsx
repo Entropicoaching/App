@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { messageText } from '../entropi2/conversation/conversationModel.mjs'
 import { renderStaevneHome } from './staevneHome.mjs'
@@ -660,7 +662,7 @@ function HjemTab({
                     </div>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', letterSpacing: '0.06em' }}>Logget i dag · {todayLog.weight} kg</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#4a4844', letterSpacing: '0.06em' }}>Logget i dag · {komma(todayLog.weight)} kg</span>
                       {/* G10: ~17px høj — samme metode som F13-F16/F26 (ordre 68): minHeight + boxSizing, bredden bevares. */}
                       <button style={{ ...s.btnGhost, fontSize: '0.5rem', padding: '0.2rem 0.5rem', minHeight: '44px', boxSizing: 'border-box', display: 'inline-flex', alignItems: 'center' }} onClick={() => setWeightInput(todayLog.weight.toString())}>Ret</button>
                     </div>
@@ -712,7 +714,7 @@ function HjemTab({
                         {bestList.map((b, i) => (
                           <div key={b.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem', padding: '0.4rem 0', borderBottom: i < bestList.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
                             <span style={{ fontSize: '0.85rem', color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.name}</span>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', whiteSpace: 'nowrap', flexShrink: 0 }}>{b.weight} kg{b.reps ? ` × ${b.reps}` : ''}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', whiteSpace: 'nowrap', flexShrink: 0 }}>{komma(b.weight)} kg{b.reps ? ` × ${b.reps}` : ''}</span>
                           </div>
                         ))}
                       </div>

@@ -25,7 +25,7 @@ test('all shared legacy inbox renderers hide timed metadata with marker replies 
       assert.equal(markerReplyPreview(message), expected)
       const reply = { sender_role: 'athlete', category: 'teknik', athlete_id: athlete.id,
         content: markerReplyContent({ athleteId: athlete.id, analysisId: 'synthetic-video' }, { id: 'marker', start: 2 }, 'Et spørgsmål') }
-      assert.equal(markerReplyPreview(reply), flag === '1' ? 'Svar til videomarkering ved 2.00 s: Et spørgsmål' : reply.content)
+      assert.equal(markerReplyPreview(reply), flag === '1' ? 'Svar til videomarkering ved 2,00 s: Et spørgsmål' : reply.content)
     }
   } finally {
     if (original) Object.defineProperty(globalThis, 'localStorage', original)

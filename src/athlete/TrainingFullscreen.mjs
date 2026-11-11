@@ -1,3 +1,6 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
+const feltKomma = value => String(value ?? '').replace('.', ',')
 import { antalOrd } from '../entropi2/antalOrd.mjs'
 import { createElement as h, useState, useEffect, useRef, useId } from 'react'
 import { findDagensPas, nextSetInSession, sessionSetTotal, sessionLoggedCount } from '../nextSet.js'
@@ -103,7 +106,7 @@ export default function TrainingFullscreen(props) {
           ex.note && h('p', { style: { whiteSpace: 'pre-wrap' } }, 'Coachkommentar: ', ex.note),
           h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 } },
             ...[['weight', 'Vægt i kg', weight, 'decimal'], ['reps', 'Gentagelser', reps, 'numeric'], ['rpe', 'RPE', input.rpe ?? '', 'decimal']].map(([name, text, value, inputMode]) =>
-              h('label', { key: name }, text, h('input', { type: 'text', inputMode, style: field, value,
+              h('label', { key: name }, text, h('input', { type: 'text', inputMode, style: field, value: name === 'reps' ? value : feltKomma(value),
                 onChange: event => update(name, event.target.value) })))),
           h('p', null, 'RPE er valgfri. Skriv 0 kg ved en øvelse uden ekstra vægt.'),
           h('button', { type: 'button', style: { ...button, width: '100%' }, disabled: approval.current.pending.has(key),
@@ -118,5 +121,5 @@ export default function TrainingFullscreen(props) {
           .filter(log => log.exercise_id === exercise.id)
           .sort((a, b) => a.set_number - b.set_number)
           .map(log => h('p', { key: `${exercise.id}_${log.set_number}` },
-            `${exercise.name}, sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} gent., RPE ${present(log.rpe_actual)}`}`))))))
+            `${exercise.name}, sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${komma(present(log.weight))} kg, ${present(log.reps_completed)} gent., RPE ${komma(present(log.rpe_actual))}`}`))))))
 }

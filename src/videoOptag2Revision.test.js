@@ -50,7 +50,7 @@ test('capture: decoded raw duration must match actual recorded elapsed time', as
 
 test('long source does not show a size until a valid interval is selected', async () => {
   const f = make(); const work = f.api.select({ name: '125s' }); await f.metadata(125); await work;
-  assert.ok(!f.nodes.some(n => n.textContent?.includes('2.0 MB')));
+  assert.ok(!f.nodes.some(n => n.textContent?.includes('2,0 MB')));
   f.fields[0].value = '20'; f.fields[1].value = '35'; f.fields[1].oninput?.();
-  assert.ok(f.nodes.some(n => n.textContent?.includes('2.0 MB'))); f.api.dispose();
+  assert.ok(f.nodes.some(n => n.textContent?.includes('2,0 MB'))); f.api.dispose();
 });

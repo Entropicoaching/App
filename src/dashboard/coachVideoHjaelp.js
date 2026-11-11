@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { videoSetQueueDetail } from '../athlete/videoSetSelection.mjs'
 import { withDataEnoughFlag } from '../dataEnough.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (linje 35-178 før
@@ -132,7 +134,7 @@ function videoCoachFeedbackPayload(existing, draft, personalBaseline) {
 function coachVideoPriorityDetail(video) {
   const selectedSet = videoSetQueueDetail(video)
   if (selectedSet) return `Video fra dagens pas · ${selectedSet}`
-  const lift = `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${video.load_kg} kg` : ''}`
+  const lift = `${VIDEOCOACH_LIFTS[video.lift] || video.lift} · ${videoCoachVariationLabel(video.lift, video.variation)}${video.load_kg != null ? ` · ${komma(video.load_kg)} kg` : ''}`
   // ORDRE 266 · commit 2: en atlet-indsendt måling (fra "Film et sæt" eller
   // standardvejens "Send til coach") fortjener sin egen ordlyd i indbakken -
   // "afventer sporing" er teknisk sandt, men ikke det coachen skal reagere på.

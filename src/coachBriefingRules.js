@@ -94,9 +94,9 @@ export function detectSignalsV1({ athlete, logs = [], today }) {
       : dropoutVerdict === 'context' ? `${name}: træningen er dalet lidt`
         : dropoutVerdict === 'insufficient' ? `${name}: for spinkelt grundlag for frafalds-varsel`
           : `${name}: træningsmængde stabil`,
-    detail: ['alert', 'context'].includes(dropoutVerdict) ? `${rpw} sæt/uge nu mod ${Math.round(norm)} historisk`
+    detail: ['alert', 'context'].includes(dropoutVerdict) ? `${dec(perWeek)} sæt/uge nu mod ${Math.round(norm)} historisk`
       : dropoutVerdict === 'insufficient' ? 'kræver ≥3 aktive uger med normal mængde'
-        : `${rpw} sæt/uge (norm ${Math.round(norm)})`,
+        : `${dec(perWeek)} sæt/uge (norm ${Math.round(norm)})`,
     metrics: { recent_per_week: Number(rpw), norm_per_week: norm, active_weeks: activeWeeks, sets_30d: s30 },
   })
 
@@ -124,7 +124,7 @@ export function detectSignalsV1({ athlete, logs = [], today }) {
     const verdict = ranked.length < 6 || r3 == null || p3 == null ? 'insufficient'
       : rvol < 0.7 * pvol ? 'insufficient'
         : pct <= -5 ? 'context' : 'ok'
-    const trend = r3 != null && p3 != null ? `${lift} e1RM ${Math.round(p3)}→${Math.round(r3)} kg (${pct.toFixed(1)}%)` : ''
+    const trend = r3 != null && p3 != null ? `${lift} e1RM ${Math.round(p3)}→${Math.round(r3)} kg (${dec(pct)} %)` : ''
     out.push({
       athlete_id: athlete.id, athlete_name: name, detector: 'stagnation', severity: verdict,
       headline: verdict === 'context' ? `${name}: ${lift} e1RM fladt/faldende`
@@ -149,9 +149,9 @@ export function detectSignalsV1({ athlete, logs = [], today }) {
     headline: rpeVerdict === 'alert' ? `${name}: træner tungere end planlagt`
       : rpeVerdict === 'context' ? `${name}: træner lettere end planlagt`
         : rpeVerdict === 'insufficient' ? `${name}: ingen uafhængig RPE-log` : `${name}: RPE følger planen`,
-    detail: ['alert', 'context'].includes(rpeVerdict) ? `snit-afvigelse ${drift.toFixed(2)} RPE over 3 uger (${n21} sæt)`
+    detail: ['alert', 'context'].includes(rpeVerdict) ? `snit-afvigelse ${dec(drift, 2)} RPE over 3 uger (${n21} sæt)`
       : rpeVerdict === 'insufficient' ? 'atleten logger ikke faktisk RPE adskilt fra plan'
-        : `afvigelse ${drift.toFixed(2)} RPE (${n21} sæt)`,
+        : `afvigelse ${dec(drift, 2)} RPE (${n21} sæt)`,
     metrics: { avg_drift: drift == null ? null : Number(drift.toFixed(2)), sets_21d: n21, sets_differing: ndiff },
   })
 

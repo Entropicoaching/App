@@ -1,3 +1,5 @@
+// u8d: lukket prøve-loader tillader ingen ny import; samme regel som danskTal.decimaler.
+const decimaler = (value, digits = 1) => value.toFixed(digits).replace('.', ',')
 import { messageText } from './entropi2/conversation/conversationModel.mjs'
 // VC-SVAR1 uses ordinary technique messages. No schema or media persistence.
 export const DEFAULT_MARKER_REPLIES = false
@@ -37,7 +39,7 @@ export function repliesForMarker(messages, scope, markerId) {
 }
 export function markerReplyPreview(message) {
   const reply = markerRepliesEnabled() && parseMarkerReply(message)
-  return reply ? `${prefix} ved ${reply.start.toFixed(2)} s: ${reply.reply}` : messageText(message)
+  return reply ? `${prefix} ved ${decimaler(reply.start, 2)} s: ${reply.reply}` : messageText(message)
 }
 export function createMarkerReplySender({ athleteId, analysisId, insert }) {
   let busy = false
@@ -59,7 +61,7 @@ export function mountMarkerReplyForm(root, scope, markers, send) {
   const el = (tag, text) => { const n = doc.createElement(tag); if (text) n.textContent = text; return n }
   const label = el('label', 'Svar til markering '), select = el('select')
   select.setAttribute('aria-label', 'Vælg markering til dit svar')
-  for (const marker of markers) { const n = el('option', `${marker.start.toFixed(2)} s: ${marker.text || 'Tegning'}`); n.value = marker.id; select.append(n) }
+  for (const marker of markers) { const n = el('option', `${decimaler(marker.start, 2)} s: ${marker.text || 'Tegning'}`); n.value = marker.id; select.append(n) }
   select.value = selected; label.append(select)
   const inputLabel = el('label', 'Dit svar eller spørgsmål '), input = el('textarea')
   input.maxLength = 600; input.setAttribute('aria-label', 'Dit svar til markeringen'); input.value = ''; inputLabel.append(input)

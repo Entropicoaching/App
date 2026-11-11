@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 export const DEFAULT_ANALYSE_SAMLET = false
 
 // Explicit opt-in, no persistence and no athlete data.
@@ -37,7 +39,7 @@ export function renderAnalyseSamlet(h, { lift, selectedId, chooseLift, chooseAna
         h('p', null, 'Plads til klip og coachens gennemgang. Videoafspilning og godkendelse tilsluttes først efter beslutning.')) : h('p', null, 'Intet klip valgt.')),
       section('AI-rapport', selected ? h('div', null,
         h('p', null, 'Syntetisk rapportudkast for den valgte analyse. Ingen automatisk vurdering.'),
-        h('p', null, `${selected.label}, ${selected.date}: ${selected.kg} kg, ${selected.reps} gentagelser. Status: ${selected.status}.`),
+        h('p', null, `${selected.label}, ${selected.date}: ${komma(selected.kg)} kg, ${selected.reps} gentagelser. Status: ${selected.status}.`),
         h('p', null, selected.note)) : h('p', null, 'Rapport kræver en analyse.')),
       section('Historik', history.length ? h('ul', { style: { paddingLeft: '1.2rem' } }, ...history.map(row => h('li', { key: row.id, style: { marginBottom: 8 } },
         h('button', { type: 'button', style: buttonStyle, 'aria-pressed': selected.id === row.id, onClick: () => chooseAnalysis(row.id) }, `${row.date} · ${row.label} · ${row.status}`)))) : h('p', null, 'Ingen historik endnu.')),

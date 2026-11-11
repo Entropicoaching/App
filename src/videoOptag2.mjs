@@ -1,3 +1,5 @@
+// u8d: lukket prøve-loader tillader ingen ny import; samme regel som danskTal.decimaler.
+const decimaler = (value, digits = 1) => value.toFixed(digits).replace('.', ',');
 import { compressVideo2, estimateVideoBytes, compressionProfile } from './videoCompression2.mjs';
 // VC-OPTAG2. Kun et eksplicit kodevalg aktiverer forslaget.
 export const DEFAULT_VIDEO_OPTAG2 = false;
@@ -130,7 +132,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
       duration = seconds;
       sizeLine.textContent = '';
       if (seconds <= MAX_CAPTURE_SECONDS)
-        sizeLine.textContent = `Forventet størrelse: ${(estimateVideoBytes(seconds) / 1000000).toFixed(1)} MB (540p, ca. 1 Mbit/s).`;
+        sizeLine.textContent = `Forventet størrelse: ${decimaler(estimateVideoBytes(seconds) / 1000000)} MB (540p, ca. 1 Mbit/s).`;
       if (seconds <= MAX_CAPTURE_SECONDS) {
         if (encoded) {
           if (!file.size || !/^video\//.test(file.type || '') ||
@@ -138,7 +140,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
               !Number.isFinite(preview.videoWidth) || preview.videoWidth <= 0 || preview.videoWidth > 960)
             throw Error('encoded-output');
           approved = file;
-          sizeLine.textContent = `Forventet størrelse: ${(estimateVideoBytes(seconds) / 1000000).toFixed(1)} MB (540p, ca. 1 Mbit/s). Klar til upload.`;
+          sizeLine.textContent = `Forventet størrelse: ${decimaler(estimateVideoBytes(seconds) / 1000000)} MB (540p, ca. 1 Mbit/s). Klar til upload.`;
           clearPreview(); panel.hidden = true; launcher.focus(); onReady(file);
         } else {
           await encode(0, seconds);
@@ -253,7 +255,7 @@ export function mountVideoOptag2({ videoOptag2 = DEFAULT_VIDEO_OPTAG2, athlete =
   start.oninput = end.oninput = () => {
     const from = Number(start.value), to = Number(end.value);
     sizeLine.textContent = start.value.trim() && end.value.trim() && validInterval(from, to, duration)
-      ? `Forventet størrelse: ${(estimateVideoBytes(to - from) / 1000000).toFixed(1)} MB (540p, ca. 1 Mbit/s).` : '';
+      ? `Forventet størrelse: ${decimaler(estimateVideoBytes(to - from) / 1000000)} MB (540p, ca. 1 Mbit/s).` : '';
   };
   const cancel = () => { reset(); onPending(); panel.hidden = true; launcher.focus(); onCancel(); };
   close.onclick = cancel;

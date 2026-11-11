@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { visibleRpeNote } from '../rpeEvidence.mjs'
 import { heavyPointEvidence } from '../dataEvidence.mjs'
 import { bestHeavySetPerDay } from '../exerciseProgress.js'
@@ -229,7 +231,7 @@ export default function LogTab({
                                   return (
                                     <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: chipSize, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
                                       <span style={{ color: '#4a4844' }}>S{set.n} </span>
-                                      <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
+                                      <span style={{ color: '#c8923a' }}>{komma(set.weight)}kg</span>
                                       {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
                                       {set.rpe_actual != null && (
                                         <span style={{ color: rpeColor, marginLeft: '0.3rem' }}>
@@ -307,7 +309,7 @@ export default function LogTab({
                                       {row.sortedSets.map(set => (
                                         <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: chipSize, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
                                           <span style={{ color: '#4a4844' }}>S{set.n} </span>
-                                          <span style={{ color: '#c8923a' }}>{set.weight}kg</span>
+                                          <span style={{ color: '#c8923a' }}>{komma(set.weight)}kg</span>
                                           {set.reps && <span style={{ color: '#7a7770' }}> × {set.reps}</span>}
                                           {set.rpe_actual != null && <span style={{ color: '#7a7770', marginLeft: '0.3rem' }}>RPE {set.rpe_actual}{set.rpe_planned != null ? `/${set.rpe_planned}` : ''}</span>}
                                         </div>

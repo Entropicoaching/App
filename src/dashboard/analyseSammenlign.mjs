@@ -1,3 +1,5 @@
+// u8d: lukket prøve-loader tillader ingen ny import; samme regel som danskTal.decimaler.
+const decimaler = (value, digits = 1) => value.toFixed(digits).replace('.', ',')
 import { analyseDemo } from './analyseSamlet.mjs'
 
 export const DEFAULT_ANALYSE_SAMMENLIGN = false
@@ -82,14 +84,14 @@ export function renderComparison(h, state, dispatch) {
             ...clips.map(row => h('option', { key: row.id, value: row.id }, `${row.date} ${row.label}`)))),
           clip ? h('div', null,
             h('p', null, `${clip.date} ${clip.label}. Kliplængde ${clip.duration} s.`),
-            h('svg', { viewBox: '0 0 100 100', role: 'img', 'aria-label': `${label}, syntetisk billede ved ${state.time.toFixed(2)} sekunder`, 'data-time': state.time, style: { width: '100%', background: '#20282c', maxHeight: 300 } },
+            h('svg', { viewBox: '0 0 100 100', role: 'img', 'aria-label': `${label}, syntetisk billede ved ${decimaler(state.time, 2)} sekunder`, 'data-time': state.time, style: { width: '100%', background: '#20282c', maxHeight: 300 } },
               h('polyline', { points: clip.points.map(p => `${p.x * 100},${p.y * 100}`).join(' '), fill: 'none', stroke: '#c8923a', strokeWidth: 1 }),
               ...clip.points.map(p => h('circle', { key: p.time, cx: p.x * 100, cy: p.y * 100, r: 2, fill: '#fff' })),
               h('circle', { cx: point.x * 100, cy: point.y * 100, r: 4, fill: '#72daca', 'data-current-point': side })),
             h('p', null, 'Billedpunkter fra syntetisk fixture. Ingen fysisk enhed eller automatisk konklusion.'),
             ...clip.points.map(p => action(`${label}: ${p.label} ${p.time} s`, () => dispatch({ type: 'seek', value: p.time })))) : h('p', null, 'Vælg to forskellige videoer af samme løft.'))
       })),
-    h('p', { role: 'status', 'aria-live': 'polite' }, pair.length ? `${state.playing ? 'Afspiller' : 'Pause'}. Fælles tid ${state.time.toFixed(2)} af ${duration} s. Begge starter ved 0. Stop ved korteste klip.` : 'Der kræves to forskellige videoer af samme løft. Ingen sammenligning endnu.'),
+    h('p', { role: 'status', 'aria-live': 'polite' }, pair.length ? `${state.playing ? 'Afspiller' : 'Pause'}. Fælles tid ${decimaler(state.time, 2)} af ${duration} s. Begge starter ved 0. Stop ved korteste klip.` : 'Der kræves to forskellige videoer af samme løft. Ingen sammenligning endnu.'),
     action('Afspil begge', () => dispatch({ type: 'play' }), !duration || state.playing),
     action('Pause begge', () => dispatch({ type: 'pause' }), !state.playing),
     action('Til start', () => dispatch({ type: 'seek', value: 0 }), !duration),

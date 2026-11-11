@@ -1,3 +1,5 @@
+// u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
+const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { createElement as h } from 'react'
 import { buildFourWeeks } from './coachFourWeeks.mjs'
 import { isSessionDone } from '../nextSet.js'
@@ -39,7 +41,7 @@ export function profileWeekLines({ athleteId, reads = {}, today = new Date() } =
   }).sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
   return { title: `Seneste uge: ${week.start} til ${model.day}`, lines: [
     `Pas: ${!ready('weeks') ? unavailable('weeks') : !logsReady ? logStatus : !week.plans.length ? 'Ingen dateret plan denne uge.' : `${completed.length} af ${sessions.length} gennemført`}`,
-    `Bedste sæt (tungest): ${!logsReady ? logStatus : best ? `${bestLog?.exercises?.name || 'Øvelse'} ${best.weight} kg × ${best.reps}` : 'Ingen gennemførte sæt denne uge.'}`,
+    `Bedste sæt (tungest): ${!logsReady ? logStatus : best ? `${bestLog?.exercises?.name || 'Øvelse'} ${komma(best.weight)} kg × ${best.reps}` : 'Ingen gennemførte sæt denne uge.'}`,
     `Seneste fra atleten: ${!ready('messages') ? unavailable('messages') : !ready('videos') ? unavailable('videos') : reads.videos.rows.length >= 30 ? 'Ufuldstændigt videogrundlag.' : candidates[0]?.text || 'Ingen besked eller video denne uge.'}`,
   ] }
 }
