@@ -147,16 +147,17 @@ test('confirmed row during a pending callback waits for settlement and retains e
   } finally { f.view.dispose() }
 })
 
-test('historical, skipped, queued, parked, foreign, unplanned and invalid timestamp rows do not start', () => {
+// U11: et sæt i offline-køen starter nu pausen (se u11AtletPas.test.mjs). Her er køen et parkeret sæt.
+test('historical, skipped, parked, foreign, unplanned and invalid timestamp rows do not start', () => {
   const f = setup()
   try {
     f.p.exerciseLogs = [f.row(1)]; f.view.controller.start(); assert.equal(f.timers.size, 0)
-    f.p.pendingSyncKeys = ['a_3']; f.p.parkedSets = [{ exerciseId: 'a', setNumber: 4 }]
+    f.p.pendingSyncKeys = ['a_3']; f.p.parkedSets = [{ exerciseId: 'a', setNumber: 4 }, { exerciseId: 'a', setNumber: 3 }]
     f.p.exerciseLogs.push(f.row(2, { skipped: true }), f.row(3), f.row(4),
       f.row(5, { athlete_id: 'other' }), f.row(6, { logged_at: 'bad' }),
       f.row(7, { logged_at: '2026-11-03T11:59:59Z' }), f.row(9))
     f.view.update(); assert.equal(f.timers.size, 0)
-    f.p.pendingSyncKeys = []; f.view.update(); assert.equal(f.timers.size, 1)
+    f.p.pendingSyncKeys = []; f.p.parkedSets = [{ exerciseId: 'a', setNumber: 4 }]; f.view.update(); assert.equal(f.timers.size, 1)
   } finally { f.view.dispose() }
 })
 

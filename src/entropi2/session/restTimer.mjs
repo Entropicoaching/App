@@ -87,8 +87,12 @@ export function createRestTimer(doc, clock = globalThis) {
       if (dead) return
       const nextIdentity = s.session ? JSON.stringify([s.selection.stamp, s.session.id]) : null
       const exercises = s.session?.exercises || []
-      const rows = (s.logs || []).filter(row => !row.skipped && !row._optimistic &&
-        !(p.pendingSyncKeys || []).includes(`${row.exercise_id}_${row.set_number}`) &&
+      // U11: et sæt i offline-køen er gemt på telefonen og sendes senere, så pausen starter også der.
+      // Et optimistisk sæt uden for køen venter stadig på serveren; et parkeret sæt starter aldrig.
+      const queued = row => (p.pendingSyncKeys || []).includes(`${row.exercise_id}_${row.set_number}`)
+      const local = s.session ? (p.exerciseLogs || []).filter(row => row && queued(row) &&
+        (row.athlete_id == null || row.athlete_id === p.athleteId)) : []
+      const rows = [...(s.logs || []), ...local].filter(row => !row.skipped && (!row._optimistic || queued(row)) &&
         !(p.parkedSets || []).some(x => x.exerciseId === row.exercise_id && x.setNumber === row.set_number) &&
         exercises.some(ex => ex.id === row.exercise_id && Number.isInteger(row.set_number) && row.set_number > 0 && row.set_number <= ex.sets))
       const key = row => `${row.exercise_id}_${row.set_number}`

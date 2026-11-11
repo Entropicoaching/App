@@ -318,6 +318,12 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         form.append(createSetNote(doc, { value: s.note, disabled: busy,
           onChange: action(value => controller.editNote(key, value, s.selection.stamp)) }), approve)
         body.append(form)
+        // U11: film sættet direkte fra passet. Videocoachen åbner oven på, og passet bliver stående.
+        if (p.readOnly !== true && typeof p.onFilmSet === 'function') {
+          const film = el('button', 'Film dette sæt', { type: 'button', 'data-u11-film': '' })
+          film.addEventListener('click', action(() => p.onFilmSet()))
+          body.append(film)
+        }
         if (typeof p.onSkipSet === 'function' || typeof p.onSkipExercise === 'function') {
           const skip = el('section', null, { class: 'card', 'aria-label': 'Spring over', 'data-session-skip-actions': '' })
           const add = (label, enabled, run) => {

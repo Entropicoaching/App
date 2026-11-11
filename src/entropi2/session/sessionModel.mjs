@@ -1,6 +1,7 @@
 import { findDagensPas, nextSetInSession, sessionSetTotal, sessionLoggedCount } from '../../nextSet.js'
 import { inputInteger, parseInputNumber, optionalInput } from '../../inputValues.js'
 import { fixedRepsEntry } from '../../fixedRepsEntry.js'
+import { parseRepsPrescription } from '../../repsPrescription.js'
 import { noteValue, withSetNote } from './noter/noteModel.mjs'
 import { calcWarmupSets } from '../../warmup.js'
 
@@ -39,8 +40,11 @@ export function setSuggestion(p, n, logs = p.exerciseLogs || []) {
     !queued(p, `${row.exercise_id}_${row.set_number}`) && !parked(p, `${row.exercise_id}_${row.set_number}`))
     .sort((a, b) => b.set_number - a.set_number)
     .map(row => sessionInput({ weight: row.weight, reps: row.reps_completed, rpe: '' })).find(Boolean)
+  // U11: et interval som "4-6" udfylder det laveste tal, som det gamle dagens-pas-kort gjorde.
+  // Ellers gav første tryk på Godkendt en fejl i hvert første sæt. Tekst som AMRAP kræver stadig indtastning.
+  const range = parseRepsPrescription(n.exercise.reps)
   return previous ? { weight: previous.weight, reps: previous.reps, label: 'Som sidste sæt' }
-    : { weight: n.exercise.recommended_weight ?? '', reps: fixedRepsEntry(n.exercise.reps) ?? '', label: 'Som planlagt' }
+    : { weight: n.exercise.recommended_weight ?? '', reps: fixedRepsEntry(n.exercise.reps) ?? (range.type === 'range' && range.min > 0 ? String(range.min) : ''), label: 'Som planlagt' }
 }
 export function quickSetLabel(input, suggestion) {
   const entered = sessionInput(input), proposed = sessionInput({ ...suggestion, rpe: '' })

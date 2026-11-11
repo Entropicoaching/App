@@ -85,9 +85,10 @@ test('edited next-set drafts win; explicit clear remains empty across refresh, c
   assert.equal(f.calls.length, 1); assert.match(f.root.textContent, /Skriv vægt/)
 })
 
-test('zero weight is a complete plan; ranges, missing and invalid prescriptions require input', async t => {
+// U11: et interval udfylder nu det laveste tal (som det gamle dagens-pas-kort), så det er en komplet plan.
+test('zero weight and ranges are complete plans; missing and invalid prescriptions require input', async t => {
   const f = setup(t)
-  for (const [weight, reps, label] of [[0, '5', 'Som planlagt'], [80, '5-8', 'Godkendt'], ['', '5', 'Godkendt'], ['bad', '5', 'Godkendt'], [80, '0', 'Godkendt']]) {
+  for (const [weight, reps, label] of [[0, '5', 'Som planlagt'], [80, '5-8', 'Som planlagt'], ['', '5', 'Godkendt'], ['bad', '5', 'Godkendt'], [80, '0', 'Godkendt']]) {
     f.exercise.recommended_weight = weight; f.exercise.reps = reps; f.view.update(); f.view.controller.start()
     assert.ok(button(f.root, label))
     assert.equal(f.calls.length, 0)
