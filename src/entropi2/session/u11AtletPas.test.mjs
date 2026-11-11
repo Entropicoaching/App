@@ -73,3 +73,28 @@ test('U11 hul 3: et sæt i offline-køen starter pausen; et parkeret sæt gør i
     assert.equal(g.timers.size, 0, 'et optimistisk sæt uden kø venter stadig på serveren')
   })()
 })
+
+test('U11 hul 3, som i appen: passets skrivning lægger sættet i atletens kø uden en række, og pausen starter', async t => {
+  const store = new Map()
+  const storage = { getItem: k => store.has(k) ? store.get(k) : null, setItem: (k, v) => store.set(k, String(v)), removeItem: k => store.delete(k) }
+  const before = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  Object.defineProperty(globalThis, 'localStorage', { value: storage, configurable: true, writable: true })
+  t.after(() => before ? Object.defineProperty(globalThis, 'localStorage', before) : delete globalThis.localStorage)
+  const f = setup(t, f => {
+    f.p.onLogSet = (ex, set_number, total, reps, planned, input) => {
+      f.calls.push({ set_number })
+      storage.setItem(`entropi_offline_sets:${f.p.athleteId}`, JSON.stringify({ [`${ex.id}_${set_number}`]: { exerciseId: ex.id, setNumber: set_number,
+        payload: { logged_at: new Date().toISOString(), weight: Number(input.weight), reps_completed: reps, skipped: false }, clientId: 'syntetisk' } }))
+      f.p.pendingSyncKeys = [`${ex.id}_${set_number}`]
+      return { phase: 'queued' }
+    }
+  })
+  f.root.querySelector('form').dispatch('submit'); await new Promise(r => setTimeout(r, 0)); f.view.update()
+  assert.equal(f.calls.length, 1); assert.equal(f.p.exerciseLogs.length, 0)
+  assert.equal(f.timers.size, 1, 'pausen kører ud fra køen')
+  // En anden atlets kø eller en sletning i køen starter intet.
+  const g = setup(t)
+  storage.setItem(`entropi_offline_sets:${g.p.athleteId}`, JSON.stringify({ 'quick-a_1': { op: 'delete', exerciseId: 'quick-a', setNumber: 1 } }))
+  g.p.pendingSyncKeys = ['quick-a_1']; g.view.update()
+  assert.equal(g.timers.size, 0)
+})

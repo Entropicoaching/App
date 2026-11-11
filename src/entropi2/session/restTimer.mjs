@@ -1,6 +1,8 @@
 import { mainLiftName } from '../../exerciseSetView.js'
 import { sessionPrescription } from './sessionPrescription.mjs'
 import { parsePlannedRest } from './tempo/tempoParser.mjs'
+import { loadOfflineSets } from '../../offlineSetQueue.js'
+import { sessionStorage } from './sessionSetSave.mjs'
 
 // Local display only: observe confirmed rows, never call logging or storage.
 export function createRestTimer(doc, clock = globalThis) {
@@ -90,8 +92,17 @@ export function createRestTimer(doc, clock = globalThis) {
       // U11: et sæt i offline-køen er gemt på telefonen og sendes senere, så pausen starter også der.
       // Et optimistisk sæt uden for køen venter stadig på serveren; et parkeret sæt starter aldrig.
       const queued = row => (p.pendingSyncKeys || []).includes(`${row.exercise_id}_${row.set_number}`)
-      const local = s.session ? (p.exerciseLogs || []).filter(row => row && queued(row) &&
-        (row.athlete_id == null || row.athlete_id === p.athleteId)) : []
+      // Passets egen skrivning lægger sættet i køen uden en række i exerciseLogs; så læses det fra
+      // atletens egen kø (samme navnerum som sessionSetSave). Lageret kan kaste; så ingen kø-række.
+      const local = s.session ? (p.pendingSyncKeys || []).flatMap(key => {
+        const row = (p.exerciseLogs || []).find(r => r && `${r.exercise_id}_${r.set_number}` === key &&
+          (r.athlete_id == null || r.athlete_id === p.athleteId))
+        if (row) return [row]
+        let entry = null
+        try { entry = loadOfflineSets(p.athleteId, sessionStorage())[key] } catch { entry = null }
+        return entry && entry.op !== 'delete' && entry.payload && `${entry.exerciseId}_${entry.setNumber}` === key
+          ? [{ ...entry.payload, exercise_id: entry.exerciseId, set_number: entry.setNumber, athlete_id: p.athleteId, _optimistic: true }] : []
+      }) : []
       const rows = [...(s.logs || []), ...local].filter(row => !row.skipped && (!row._optimistic || queued(row)) &&
         !(p.parkedSets || []).some(x => x.exerciseId === row.exercise_id && x.setNumber === row.set_number) &&
         exercises.some(ex => ex.id === row.exercise_id && Number.isInteger(row.set_number) && row.set_number > 0 && row.set_number <= ex.sets))
