@@ -503,7 +503,7 @@ test('actual imported handler progresses across exercises; close/reopen keeps co
   // The actual handler deliberately does not carry inputOverride weight to next set.
   f.fill(0, '40'); f.fill(1, '5'); await f.click('Godkendt'); f.runtime.render()
   assert.match(f.runtime.text(), /Roning/)
-  assert.equal(f.runtime.nodes(n => n.type === 'input')[0].props.value, 20)
+  assert.equal(f.runtime.nodes(n => n.type === 'input')[0].props.value, '20')
   await f.click('Godkendt'); f.runtime.render()
   assert.equal(f.props.exerciseLogs.length, 3)
   assert.equal(f.props.restPause, null)

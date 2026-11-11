@@ -280,7 +280,7 @@ export default function VideoReviewModal({ coachRyd = false, coachId, videoRevie
                     {VIDEOCOACH_LIFTS[analysis.lift] || analysis.lift} · {videoCoachVariationLabel(analysis.lift, analysis.variation)}
                   </div>
                   <div style={{ color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', marginTop: '0.3rem' }}>
-                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${komma(analysis.load_kg)} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${analysis.rpe}` : ''}
+                    {new Date(analysis.analyzed_at).toLocaleDateString('da-DK')} · {analysis.load_kg != null ? `${komma(analysis.load_kg)} kg` : 'kg ikke angivet'} · {analysis.reps_count || 0} reps{analysis.rpe != null ? ` · RPE ${komma(analysis.rpe)}` : ''}
                   </div>
                   {analysis.source_mode === 'athlete_submission' && <div style={{ color: '#67dff5', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.45rem', marginTop: '0.35rem', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Sendt af atleten</div>}
                 </div>

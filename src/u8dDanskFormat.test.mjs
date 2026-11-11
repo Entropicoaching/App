@@ -111,10 +111,16 @@ test('u8d: rå vægte foran kg står med komma på atlet- og coachskærme', () =
     'dashboard/analyseSamlet.mjs': ['${komma(selected.kg)} kg'],
     'dashboard/coachVideoHjaelp.js': ['${komma(video.load_kg)} kg'],
   }
+  // K1: rester fra den separate kontrol (offline-kø, næste sæt, RPE ved logget sæt og videoanalyser).
+  skal['athlete/DagensPasCard.jsx'].push('${komma(p.payload?.weight ?? 0)} kg', '` @ ${komma(nextSetWeight)} kg`')
+  skal['athlete/ProgramTab.jsx'].push('RPE {komma(logged.rpe_actual)}')
+  for (const fil of ['dashboard/AnalyseTab.jsx', 'dashboard/VideoReviewModal.jsx', 'athlete/athleteAnalysisBefore.jsx',
+    'athlete/beskederOgVaegt.jsx', 'athlete/contactBaseFactory.jsx']) skal[fil].push('RPE ${komma(analysis.rpe)}')
   for (const [fil, stykker] of Object.entries(skal)) {
     const tekst = src(fil)
     for (const stykke of stykker) assert.ok(tekst.includes(stykke), `${fil}: ${stykke}`)
     assert.doesNotMatch(tekst, /[{$]\{?(?:[a-z]+\.)?(?:weight|load_kg|recommended_weight)\}\s?kg/i, fil)
+    assert.doesNotMatch(tekst, /RPE \$?\{(?:analysis\.rpe|logged\.rpe_actual|log\.rpe_actual)\}/, fil)
   }
 })
 

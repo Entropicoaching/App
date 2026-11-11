@@ -1070,7 +1070,7 @@ export default function ProgramTab({
                                           ) : logged ? (
                                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'baseline' }}>
                                               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.85rem', color: '#edeae2' }}>{komma(logged.weight)}kg × {logged.reps_completed}</span>
-                                              {logged.rpe_actual != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>RPE {logged.rpe_actual}</span>}
+                                              {logged.rpe_actual != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: (programAppearanceOn ? programColors.muted : '#7a7770') }}>RPE {komma(logged.rpe_actual)}</span>}
                                               {logged.note && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontStyle: 'italic' }}>{visibleRpeNote(logged.note)}</span>}
                                             </div>
                                           ) : (

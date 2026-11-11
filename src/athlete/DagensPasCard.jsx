@@ -232,7 +232,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       ].filter(g => g.sets.length > 0).map(g => (
         <div key={g.why} data-parkerede-saet={g.sets.length} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#c8923a', marginTop: '0.5rem', textAlign: 'center' }}>
           {g.sets.length} sæt kunne ikke sendes, {g.why}. Skriv tallene til din coach:{' '}
-          {g.sets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${p.payload?.weight ?? 0} kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
+          {g.sets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${komma(p.payload?.weight ?? 0)} kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
         </div>
       ))}
       {pendingSyncCount > 0 && (
@@ -681,7 +681,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '0.6rem' }}>
           {showNextPreview && !smerteBesked ? (
             <div style={st.naesteSaet}>
-              Næste: {nextSetReps || '—'} reps{nextSetWeight != null ? ` @ ${nextSetWeight} kg` : ''}
+              Næste: {nextSetReps || '—'} reps{nextSetWeight != null ? ` @ ${komma(nextSetWeight)} kg` : ''}
             </div>
           ) : <span />}
           <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', flexShrink: 0, minHeight: '44px', boxSizing: 'border-box' }}>
