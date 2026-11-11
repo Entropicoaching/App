@@ -259,7 +259,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         }
         for (const [name, label, mode] of [['weight', 'Vægt i kg', 'decimal'], ['reps', 'Gentagelser', 'numeric'], ['rpe', 'Oplevet RPE (valgfri)', 'decimal']]) {
           const lab = el('label', label), input = el('input', null, { type: 'text', inputmode: mode, 'data-field': name })
-          input.value = String(s.input[name]); input.disabled = busy
+          // u8c: vægt og RPE vises med dansk komma; det gemte tal læses med parseInputNumber.
+          input.value = name === 'reps' ? String(s.input[name]) : planKg(s.input[name]); input.disabled = busy
           input.addEventListener('input', action(() => controller.edit(key, name, input.value, s.selection.stamp)))
           inputs[name] = input
           if (stepButtons[name]) {
@@ -353,7 +354,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       if (given(ex.sets) && given(ex.reps)) history.append(el('p', `${ex.sets} × ${ex.reps}`))
       showHistory(history, ex, `exercise-history-${index}`)
       for (const log of s.logs.filter(l => l.exercise_id === ex.id).slice().sort((a, b) => a.set_number - b.set_number))
-        history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${present(log.weight)} kg, ${present(log.reps_completed)} gent.${given(log.rpe_actual) ? `, RPE ${log.rpe_actual}` : ''}`}`))
+        history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${planKg(present(log.weight))} kg, ${present(log.reps_completed)} gent.${given(log.rpe_actual) ? `, RPE ${planKg(log.rpe_actual)}` : ''}`}`))
     }
     body.append(history)
     for (const node of body.querySelectorAll('details')) {

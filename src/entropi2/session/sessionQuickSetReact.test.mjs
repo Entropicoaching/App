@@ -41,7 +41,7 @@ test('real React SessionScreen: one submit, prop refresh, next defaults/focus, O
     assert.ok(plan.matches('.plan-card'))
     assert.ok(host.querySelector('form').matches('.registration-card'))
     await press('+2,5')
-    assert.equal(host.querySelector('[data-field="weight"]').value, '82.5')
+    assert.equal(host.querySelector('[data-field="weight"]').value, '82,5')
     const write = f.p.onLogSet
     let release
     f.p.onLogSet = (...args) => new Promise(resolve => { release = () => resolve(write(...args)) })
@@ -56,7 +56,7 @@ test('real React SessionScreen: one submit, prop refresh, next defaults/focus, O
     f.p.onLogSet = write
     await act(async () => rerender())
     assert.equal(f.calls.length, 1)
-    assert.equal(host.querySelector('[data-field="weight"]').value, '82.5')
+    assert.equal(host.querySelector('[data-field="weight"]').value, '82,5')
     assert.equal(host.querySelector('[data-field="reps"]').value, '5')
     assert.equal(host.querySelector('[data-field="rpe"]').value, '')
     assert.equal(doc.activeElement, host.querySelector('[data-heading]'))

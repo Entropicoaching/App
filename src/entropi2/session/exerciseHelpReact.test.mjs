@@ -149,7 +149,7 @@ test('same-set refresh preserves open help and local focus; closed help stays cl
   assert.equal(f.doc.activeElement, f.help().querySelector('summary'))
   await f.press('+2,5')
   assert.equal(f.help().open, false)
-  assert.equal(f.host.querySelector('[data-field="weight"]').value, '82.5')
+  assert.equal(f.host.querySelector('[data-field="weight"]').value, '82,5')
   assert.equal(f.calls.length, 0)
 })
 

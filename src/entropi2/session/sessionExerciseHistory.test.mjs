@@ -126,7 +126,7 @@ test('history does not change form, steppers, tempo, notes, plates, warmup or fi
   try {
     toggle(fold(t), true); button(t.root, '+2,5').click(); button(t.root, '+1').click(); button(t.root, '8').click()
     button(t.root, 'Teknik').click(); t.view.update()
-    assert.equal(t.root.querySelector('[data-field="weight"]').value, '82.5')
+    assert.equal(t.root.querySelector('[data-field="weight"]').value, '82,5')
     assert.equal(t.root.querySelector('[data-field="reps"]').value, '6')
     assert.equal(t.root.querySelector('[data-field="rpe"]').value, '8')
     assert.equal(button(t.root, 'Teknik').getAttribute('aria-pressed'), 'true')

@@ -115,7 +115,7 @@ test('freshly mounted session shows exact queued weight, reps, missing RPE and n
   f.p.exerciseLogs = overlayQueuedSets([], loadOfflineSets('synthetic-a', f.storage), 'synthetic-a')
   const root = dom(), view = mountSession(root, () => f.p, { clock: { Date, setInterval: () => 1, clearInterval() {} } })
   t.after(() => view.dispose()); view.controller.start()
-  assert.equal(root.querySelector('[data-field="weight"]').value, '82.5')
+  assert.equal(root.querySelector('[data-field="weight"]').value, '82,5')
   assert.equal(root.querySelector('[data-field="reps"]').value, '5')
   assert.equal(root.querySelector('[data-field="rpe"]').value, '')
   assert.equal(root.querySelector('textarea').value, 'Teknik')
@@ -140,7 +140,7 @@ test('quick submit stays queued offline; replay unlocks next same-exercise defau
   globalThis.navigator.onLine = true
   await f.handlers().flushOfflineSets(); f.view.update()
   assert.equal(f.view.controller.state().next.setNumber, 2)
-  assert.equal(f.root.querySelector('[data-field="weight"]').value, '82.5')
+  assert.equal(f.root.querySelector('[data-field="weight"]').value, '82,5')
   assert.equal(f.root.querySelector('[data-field="reps"]').value, '6')
   assert.equal(f.root.querySelector('[data-field="rpe"]').value, '')
   assert.ok(button(f.root, 'Som sidste sæt'))

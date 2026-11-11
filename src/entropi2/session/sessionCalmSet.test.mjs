@@ -91,14 +91,14 @@ test('saving and waiting lock controls, error preserves RPE and restores availab
   const saving = approve(f)
   assert.equal(fold(f).open, true)
   assert.equal(step(f, 'rpe-8.5').disabled, true)
-  assert.equal(input(f, 'rpe').value, '8.5')
+  assert.equal(input(f, 'rpe').value, '8,5')
   assert.ok(f.doc.activeElement === f.root.querySelector('[data-heading]'))
   assert.match(fold(f).textContent, /0 til 10/)
   resolve({ phase: 'error' }); await saving
   assert.equal(step(f, 'rpe-8.5').disabled, false)
   step(f, 'rpe-8.5').focus(); f.view.update()
   assert.ok(f.doc.activeElement === step(f, 'rpe-8.5'))
-  assert.equal(input(f, 'rpe').value, '8.5')
+  assert.equal(input(f, 'rpe').value, '8,5')
   assert.match(f.root.querySelector('[data-announce]').textContent, /Dine tal er bevaret/)
 })
 
@@ -109,7 +109,7 @@ test('offline, parked and optimistic sets preserve entered RPE and locks; OFF an
     if (phase === 'parked') f.p.parkedSets = [{ exerciseId: 'quick-a', setNumber: 1 }]
     if (phase === 'waiting') f.p.exerciseLogs = [{ exercise_id: 'quick-a', set_number: 1, _optimistic: true }]
     f.view.update()
-    assert.equal(fold(f).open, true); assert.equal(input(f, 'rpe').value, '7.5')
+    assert.equal(fold(f).open, true); assert.equal(input(f, 'rpe').value, '7,5')
     assert.equal(input(f, 'rpe').disabled, true); assert.equal(step(f, 'rpe-8').disabled, true)
     assert.equal(f.calls.length, 0)
     f.p.readOnly = true; f.view.update(); assert.equal(fold(f), null)
