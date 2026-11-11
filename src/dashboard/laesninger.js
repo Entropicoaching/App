@@ -657,7 +657,7 @@ export function lavLaesninger({
       try {
         const [history, baseline] = await Promise.all([
           readFourWeekSource(fourWeekCapture, 'videos', athleteId, () => supabase.from('video_analyses')
-            .select('id,client_analysis_id,athlete_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,session_context,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path')
+            .select('id,client_analysis_id,athlete_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,session_context,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path,bar_path')
             .eq('athlete_id', athleteId).order('analyzed_at', { ascending: false }).limit(30)),
           supabase.from('athlete_baselines_v3')
             .select('lift,variation,metric_key,metric_method,baseline_version,median,mad,n_analyses,n_reps,last_analyzed_at')
@@ -678,7 +678,7 @@ export function lavLaesninger({
     setVideoAnalysisError(null)
     const [historyResult, baselineResult] = await Promise.all([
       readFourWeekSource(fourWeekCapture, 'videos', athleteId, () => supabase.from('video_analyses')
-        .select('id,client_analysis_id,athlete_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,session_context,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path')
+        .select('id,client_analysis_id,athlete_id,source_mode,lift,variation,load_kg,rpe,reps_count,status,analyzed_at,created_at,low_conf_pct,position_quality_pct,quality_flags,metrics,session_context,athlete_feedback,findings,engine_version,tracker_version,analysis_state,video_path,bar_path')
         .eq('athlete_id', athleteId)
         .order('analyzed_at', { ascending: false })
         .limit(30)),

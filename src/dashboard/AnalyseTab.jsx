@@ -357,6 +357,14 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                           // eget, enklere kort med ét klik til at spore den.
                           if (analysis.analysis_state === 'awaiting_analysis') {
                             const opening = videoAnalysisReviewLoadingId === analysis.id
+                            // U9 (Marc 11. nov.): har atleten selv sporet sættet, vises atletens stangbane her,
+                            // og "Spor nu" kun når der ingen sporing er. Ingen ny import (lukkede prøvegrafer).
+                            const bane = analysis.bar_path
+                            const athleteTracked = !!bane && Array.isArray(bane.dx) && Array.isArray(bane.dy) && bane.dx.length > 0 &&
+                              bane.dx.length === bane.dy.length && bane.dx.length <= 240 && Number.isFinite(Number(bane.x0)) && Number.isFinite(Number(bane.y0))
+                            const sporPunkter = athleteTracked ? bane.dx.reduce((acc, dx, i) => [...acc, { x: acc[i].x + Number(dx), y: acc[i].y + Number(bane.dy[i]) }], [{ x: Number(bane.x0), y: Number(bane.y0) }]) : []
+                            const sporXs = sporPunkter.map(p => p.x), sporYs = sporPunkter.map(p => p.y)
+                            const sporBox = athleteTracked ? [Math.min(...sporXs) - 20, Math.min(...sporYs) - 20, Math.max(40, Math.max(...sporXs) - Math.min(...sporXs) + 40), Math.max(60, Math.max(...sporYs) - Math.min(...sporYs) + 40)].join(' ') : null
                             return (
                               <div key={analysis.id || analysis.client_analysis_id} style={{ border: '1px solid rgba(103,223,245,0.28)', background: 'rgba(103,223,245,0.05)', padding: isMobile ? '0.8rem' : '0.95rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.8rem', flexWrap: 'wrap' }}>
@@ -369,12 +377,20 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                                     </div>
                                   </div>
                                   <span style={{ color: '#67dff5', border: '1px solid rgba(103,223,245,0.4)', background: 'rgba(103,223,245,0.1)', padding: '0.2rem 0.45rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                                    Afventer sporing
+                                    {athleteTracked ? 'Sporet af atleten' : 'Afventer sporing'}
                                   </span>
                                 </div>
+                                {athleteTracked && (
+                                  <div data-u9-atletens-sporing="" style={{ marginTop: '0.65rem' }}>
+                                    <div style={{ color: '#b8b4a8', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.35rem' }}>Atletens sporing</div>
+                                    <svg viewBox={sporBox} width="100%" height="150" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Atletens stangbane" style={{ display: 'block' }}>
+                                      <polyline points={sporPunkter.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#c8923a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                  </div>
+                                )}
                                 <div style={{ marginTop: '0.75rem', paddingTop: '0.65rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
                                   <button disabled={opening} onClick={() => openAwaitingAnalysisVideo(analysis)} style={{ ...s.btnPrimary, padding: '0.38rem 0.7rem', fontSize: '0.52rem', opacity: opening ? 0.55 : 1 }}>
-                                    {opening ? 'Åbner…' : 'Spor nu →'}
+                                    {opening ? 'Åbner…' : athleteTracked ? 'Åbn video →' : 'Spor nu →'}
                                   </button>
                                 </div>
                               </div>

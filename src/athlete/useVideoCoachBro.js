@@ -153,6 +153,7 @@ export function useVideoCoachBro({
           lift: message.lift, variation: message.variation, mimeType,
           fileSize: file?.size, loadKg: selectedSet ? selectedSet.load_kg : message.loadKg, rpe: message.rpe,
           athleteNote: message.athleteNote, plateCalibration: message.plateCalibration,
+          barPath: message.barPath,
         })
         if (requestError || !(file instanceof Blob)) {
           reply({ ok: false, error: requestError || 'Ugyldig video' })
@@ -199,7 +200,7 @@ export function useVideoCoachBro({
           athleteId: currentAthlete.id, athleteName: currentAthlete.name,
           clientAnalysisId: message.clientAnalysisId, lift: message.lift, variation: message.variation,
           loadKg: message.loadKg, rpe: message.rpe, athleteNote: message.athleteNote, videoPath: path,
-          plateCalibration: message.plateCalibration,
+          plateCalibration: message.plateCalibration, barPath: message.barPath,
         })
         // ORDRE 131 · commit 3: rid coachen med en videorække der reelt bliver
         // gemt - ventende stille-fejl-koder (G14/G15/G16) lægges kun ind her,

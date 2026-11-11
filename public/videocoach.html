@@ -7164,6 +7164,16 @@ async function runFullAnalysis(barPt) {
 // vilkårlig grænse, der skal afgøre, hvornår vi giver op.
 let vcUploadRetry = null;
 
+// U9 (Marc 11. nov.): har atleten selv sporet sættet, følger stangbanen med, så coachen ser
+// atletens sporing i stedet for "Spor nu". Kun en gældende bane for det valgte løft.
+function vcAthleteTrackedBarPath(lift) {
+  try {
+    const path = latestCleanPath();
+    if (!path || path.superseded || (path.analysis?.lift && path.analysis.lift !== lift)) return null;
+    return vcV3BarPath(path);
+  } catch { return null; }
+}
+
 async function vcAthleteUploadAndGo() {
   if (!VC_V3_ATHLETE_BRIDGE) return;
   const liftDisplay = document.getElementById('liftSel').value;
@@ -7202,6 +7212,7 @@ async function vcAthleteUploadAndGo() {
       // ORDRE 109 · commit 3: sendt med, så coachen kan se om atleten måtte
       // kalibrere skiven manuelt, uden at skulle spørge.
       plateCalibration: vcPlateCalibReason,
+      barPath: vcAthleteTrackedBarPath(lift),
     });
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
@@ -8762,7 +8773,7 @@ function vcV3RequestUploadAndGo(options) {
 }
 
 function vcV3RequestUploadAndGoRaw({ requestId = vcV3Uuid(), clientAnalysisId, file, mimeType,
-  lift, variation, loadKg = null, rpe = null, athleteNote = null, plateCalibration = null }) {
+  lift, variation, loadKg = null, rpe = null, athleteNote = null, plateCalibration = null, barPath = null }) {
   if (!VC_V3_ATHLETE_BRIDGE || !VC_V3_HOST)
     return Promise.reject(new Error('VideoCoach er ikke forbundet til appen'));
   return new Promise((resolve, reject) => {
@@ -8773,7 +8784,7 @@ function vcV3RequestUploadAndGoRaw({ requestId = vcV3Uuid(), clientAnalysisId, f
     vcV3UploadPending.set(requestId, { resolve, reject, timer });
     VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:upload-and-go`,
       requestId, clientAnalysisId, file, mimeType, lift, variation,
-      loadKg, rpe, athleteNote, plateCalibration }, location.origin);
+      loadKg, rpe, athleteNote, plateCalibration, barPath }, location.origin);
   });
 }
 

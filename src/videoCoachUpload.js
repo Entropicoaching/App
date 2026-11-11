@@ -77,9 +77,21 @@ const PLATE_CALIBRATION_REASONS = new Set([
   'plate:auto:ring', 'plate:auto:farve', 'plate:auto:lum',
 ])
 
+// U9 (Marc 11. nov.): atletens egen stangbane følger med videoen, så coachen ikke skal spore igen.
+// Samme format og grænser som videoCoachSubmission (x0, y0 og højst 240 skridt på ±2000).
+function validBarPath(barPath) {
+  const step = value => typeof value === 'number' && Number.isFinite(value) && value >= -2000 && value <= 2000
+  return !!barPath && typeof barPath === 'object' && !Array.isArray(barPath) &&
+    typeof barPath.x0 === 'number' && Number.isFinite(barPath.x0) && typeof barPath.y0 === 'number' && Number.isFinite(barPath.y0) &&
+    Array.isArray(barPath.dx) && Array.isArray(barPath.dy) && barPath.dx.length === barPath.dy.length &&
+    barPath.dx.length > 0 && barPath.dx.length <= 240 && barPath.dx.every(step) && barPath.dy.every(step) &&
+    Object.values(barPath).every(value => Array.isArray(value) || value === null || ['number', 'string'].includes(typeof value)) &&
+    JSON.stringify(barPath).length <= 20000
+}
+
 export function validateVideoUploadRequest({
   athleteId, clientAnalysisId, lift, variation, mimeType, fileSize, loadKg, rpe, athleteNote,
-  plateCalibration,
+  plateCalibration, barPath = null,
 } = {}) {
   if (!isUuid(athleteId)) return 'Atleten kunne ikke identificeres'
   if (!isUuid(clientAnalysisId)) return 'Analysen mangler et gyldigt klient-id'
@@ -94,6 +106,7 @@ export function validateVideoUploadRequest({
     return 'Notatet til coachen er ugyldigt eller for langt'
   if (plateCalibration != null && !PLATE_CALIBRATION_REASONS.has(plateCalibration))
     return 'Kalibreringsårsagen er ugyldig'
+  if (barPath != null && !validBarPath(barPath)) return 'Stangbanen har et ugyldigt eller for stort format'
   return null
 }
 
@@ -103,9 +116,10 @@ export function validateVideoUploadRequest({
 // uden analyse lovlig efter video_analyses_v3_payload_bounds.
 export function buildAwaitingAnalysisRow({
   athleteId, athleteName = null, clientAnalysisId, lift, variation,
-  loadKg = null, rpe = null, athleteNote = null, videoPath, plateCalibration = null,
+  loadKg = null, rpe = null, athleteNote = null, videoPath, plateCalibration = null, barPath = null,
 }) {
   return {
+    ...(validBarPath(barPath) ? { bar_path: JSON.parse(JSON.stringify(barPath)) } : {}),
     client_analysis_id: clientAnalysisId,
     athlete_id: athleteId,
     athlete_name: athleteName,
