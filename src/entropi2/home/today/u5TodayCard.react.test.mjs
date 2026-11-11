@@ -94,7 +94,8 @@ test('U5 2/4: forsiden viser kortet øverst kun med flaget, aldrig i forhåndsvi
   assert.doesNotMatch(render(h(Home, { ...props, u5Today: false })), /data-u5-today/)
   const on = render(h(Home, { ...props, u5Today: true }))
   assert.match(on, /data-u5-today/)
-  assert.ok(on.indexOf('data-u5-today') < on.indexOf('aria-label="Dit næste pas"'))
+  // U9 (Marc 11. nov.): passet står først, "I dag" lige under.
+  assert.ok(on.indexOf('data-u5-today') > on.indexOf('aria-label="Dit næste pas"'))
   assert.doesNotMatch(render(h(Home, { ...props, u5Today: true, sessionReadOnly: true })), /data-u5-today/)
 })
 
@@ -162,9 +163,10 @@ test('U5 4/4: flaget er tændt; kortet står øverst, Start og Log i dag findes 
     weightLogs: [], readinessLog: null, setReadinessInput() {}, setWeightInput() {}, saveReadiness() {}, logWeight() {},
     readHomeReadiness: async () => ({ status: 'loading' }) }))
   assert.equal((html.match(/>Start (dagens|næste) pas</g) ?? []).length, 1)
-  const card = html.slice(html.indexOf('data-u5-today'), html.indexOf('aria-label="Dit næste pas"'))
+  // U9 (Marc 11. nov.): passet står først, "I dag" lige under.
+  const card = html.slice(html.indexOf('data-u5-today'), html.indexOf('data-home-quick-logs'))
   assert.ok(card.length > 0)
   assert.match(card, /Træning · 0 af 2 sæt/)
   assert.equal((html.match(/data-home-quick-logs=/g) ?? []).length, 1)
-  assert.ok(html.indexOf('data-home-quick-logs') > html.indexOf('aria-label="Dit næste pas"'))
+  assert.ok(html.indexOf('data-home-quick-logs') > html.indexOf('data-u5-today'))
 })

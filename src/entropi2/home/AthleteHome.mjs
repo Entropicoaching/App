@@ -182,20 +182,8 @@ export default function AthleteHome(props) {
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
     h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (name ? `Godt arbejde i dag, ${name}` : 'Godt arbejde i dag')
       : target ? (name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?') : (name ? `Dit overblik, ${name}` : 'Dit overblik')),
-    !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
-      canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
-      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost }),
-    // U5: "I dag" øverst med det, der mangler, og let logning. Bag sit eget flag.
-    u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData,
-      u5Training: model.kind === 'today' || model.kind === 'done' ? { kind: model.kind, logged: model.logged, total: model.total,
-        exercises: target?.session.exercises } : null }),
-    // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
-    u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && athlete?.id && model.today && h(DayFeeling, {
-      key: `u7:${athlete.id}:${model.today}`, athleteId: athlete.id, today: model.today, client: props.u5Client, storage: props.storage }),
-    // U8: påmindelse og coachsvar som push, kun når pakke D og nøglen findes. Ellers som i U7.
-    u8Enabled('push', props.u8Push) && !props.sessionReadOnly && athlete?.id && h(PushCard, {
-      key: `u8:${athlete.id}`, athleteId: athlete.id, client: props.u5Client, storage: props.storage, setTab: props.setTab }),
-    h('section', { style: s.card, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading },
+    // U9 (Marc 11. nov.): genvejen til dagens eller næste pas er det første, atleten møder; resten rykker ned.
+    h('section', { style: { ...s.card, borderColor: '#c8923a' }, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading, 'data-u9-pas': '' },
       !(programLoading || programError) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'
         : target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
@@ -224,6 +212,19 @@ export default function AthleteHome(props) {
       props.sessionRootRef && h('section', { ref: props.sessionRootRef, 'aria-label': 'Dit valgte pas' }),
       link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
+    !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
+      canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
+      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost }),
+    // U5: "I dag" øverst med det, der mangler, og let logning. Bag sit eget flag.
+    u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData,
+      u5Training: model.kind === 'today' || model.kind === 'done' ? { kind: model.kind, logged: model.logged, total: model.total,
+        exercises: target?.session.exercises } : null }),
+    // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
+    u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && athlete?.id && model.today && h(DayFeeling, {
+      key: `u7:${athlete.id}:${model.today}`, athleteId: athlete.id, today: model.today, client: props.u5Client, storage: props.storage }),
+    // U8: påmindelse og coachsvar som push, kun når pakke D og nøglen findes. Ellers som i U7.
+    u8Enabled('push', props.u8Push) && !props.sessionReadOnly && athlete?.id && h(PushCard, {
+      key: `u8:${athlete.id}`, athleteId: athlete.id, client: props.u5Client, storage: props.storage, setTab: props.setTab }),
     record && h(HomeRecordCard, { record }),
     h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow,
       trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
