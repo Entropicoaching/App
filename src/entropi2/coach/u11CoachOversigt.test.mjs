@@ -35,8 +35,8 @@ const text = n => Array.isArray(n) ? n.map(text).join('') : n == null || n === f
   typeof n !== 'object' ? String(n) : text(n.props?.children)
 
 test('U11 model: én række pr. atlet i navneorden med blok og uge, seneste pas og ét statusmærke', () => {
-  const rows = athleteOverviewModel({ day: today, athletes, plans: calendarWeeks, calendarReady: true,
-    logs: { usable: true, rows: logs }, actions: [{ athlete: { id: 'a-3' } }, { athlete: { id: 'a-4' }, reason: 'Smerte nævnt 9. nov.' }] })
+  const rows = athleteOverviewModel({ day: today, athletes, plans: calendarWeeks, calendarReady: true, complete: true,
+    logs: { usable: true, complete: true, rows: logs }, actions: [{ athlete: { id: 'a-3' } }, { athlete: { id: 'a-4' }, reason: 'Smerte nævnt 9. nov.' }] })
   assert.deepEqual(rows.map(r => r.athlete.name), ['Syntetisk Alma', 'Syntetisk Bo', 'Syntetisk Cille', 'Syntetisk Dan'])
   const by = Object.fromEntries(rows.map(r => [r.athlete.id, r]))
   assert.equal(by['a-1'].program, 'Styrke 2 · uge 5')
@@ -61,17 +61,51 @@ test('U11 model: uden kalender eller log gætter listen ikke', () => {
     logs: { usable: false, rows: [] }, actions: [] })
   for (const row of rows) {
     assert.equal(row.program, null); assert.equal(row.lastSession, null)
-    assert.deepEqual(row.badge, { tone: 'calm', text: 'Rolig' })
+    assert.equal(row.badge, null, 'uden fuldt grundlag intet "Rolig"')
   }
-  const slutter = athleteOverviewModel({ day: '2026-11-17', athletes: [athletes[0]], plans: calendarWeeks, calendarReady: true,
-    logs: { usable: true, rows: [] }, actions: [] })
+  // Uge 6 starter 16. nov. og slutter 22. nov.: 6 dage tilbage giver mærket; 7 dage gør ikke, som i Kræver dit blik.
+  const slutter = athleteOverviewModel({ day: '2026-11-16', athletes: [athletes[0]], plans: calendarWeeks, calendarReady: true,
+    complete: true, logs: { usable: true, complete: true, rows: [] }, actions: [] })
   assert.deepEqual(slutter[0].badge, { tone: 'warn', text: 'Slutter snart' })
+  const syv = athleteOverviewModel({ day: '2026-11-15', athletes: [athletes[0]], plans: calendarWeeks, calendarReady: true,
+    complete: true, logs: { usable: true, complete: true, rows: [] }, actions: [] })
+  assert.deepEqual(syv[0].badge, { tone: 'calm', text: 'Rolig' })
+})
+
+test('U11 kontrolfund: et afskåret logvindue, manglende læsninger og udaterede uger gætter ikke', () => {
+  const base = { day: today, athletes, plans: calendarWeeks, calendarReady: true, actions: [] }
+  // Logvinduet ramte loftet (partial): en dato vises, når den findes, ellers ingenting.
+  const partial = athleteOverviewModel({ ...base, complete: false, logs: { usable: true, complete: false, rows: logs } })
+  const by = Object.fromEntries(partial.map(r => [r.athlete.id, r]))
+  assert.equal(by['a-1'].lastSession, 'Seneste pas i går')
+  assert.equal(by['a-3'].lastSession, null)
+  // Beskeder eller videoer kunne ikke læses: intet "Rolig", men advarsler fra kalenderen står.
+  assert.equal(by['a-1'].badge, null)
+  assert.deepEqual(by['a-2'].badge, { tone: 'warn', text: 'Program udløbet' })
+  // Kun udaterede uger: ingen påstand om "Intet program".
+  const undated = athleteOverviewModel({ ...base, complete: true, logs: { usable: true, complete: true, rows: [] },
+    plans: { ...calendarWeeks, 'a-3': [{ id: 'w-x', athlete_id: 'a-3', week_number: 1, block_name: 'Ny', start_date: null, exercise_count: 4 }] } })
+  const c = undated.find(r => r.athlete.id === 'a-3')
+  assert.equal(c.program, 'Ny · uge 1 · uden dato')
+  assert.equal(c.badge, null, 'usikker slutdato giver intet "Rolig"')
+  // Kun fremtidige uger siger, at programmet ikke er startet.
+  const future = athleteOverviewModel({ ...base, day: '2026-10-30', complete: true, logs: { usable: true, complete: true, rows: [] } })
+  assert.equal(future.find(r => r.athlete.id === 'a-1').program, 'Styrke 2 · uge 4 · starter om 3 dage')
+  // En ugyldig logtid gør atletens seneste pas ukendt i stedet for at springe den over.
+  const bad = athleteOverviewModel({ ...base, complete: true,
+    logs: { usable: true, complete: true, rows: [...logs, { athlete_id: 'a-1', logged_at: 'ikke en tid' }] } })
+  assert.equal(bad.find(r => r.athlete.id === 'a-1').lastSession, null)
+})
+
+test('U11 kontrolfund: en tom gruppe vises ikke', () => {
+  const all = nodes(CoachView(props({ athletes: [], readContext: { coachId: 'owner-1', day: today, athleteIds: [] } })))
+  assert.deepEqual(all.filter(n => n.props?.['data-u11-gruppe']).map(n => n.props['data-u11-gruppe']), [])
 })
 
 test('U11 visning: ét tryk på en atlet åbner programmet med vej tilbage til forsiden', () => {
   const calls = []
-  const view = AthleteOverview({ context: { day: today, athletes, plans: calendarWeeks, calendarReady: true,
-    logs: { usable: true, rows: logs }, actions: [] }, openProfile: (...args) => calls.push(args) })
+  const view = AthleteOverview({ context: { day: today, athletes, plans: calendarWeeks, calendarReady: true, complete: true,
+    logs: { usable: true, complete: true, rows: logs }, actions: [] }, openProfile: (...args) => calls.push(args) })
   const buttons = nodes(view).filter(n => n.type === 'button')
   assert.equal(buttons.length, 4)
   assert.match(text(buttons[1]), /Syntetisk Bo.*Rolig.*Styrke 2 · uge 5 · Seneste pas i går/)

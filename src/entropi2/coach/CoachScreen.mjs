@@ -134,6 +134,11 @@ export function CoachView(input = {}) {
   const foldHeading = { display: 'inline', fontSize: 20, margin: 0 }
   // Foldene viser en tydelig pil, saa man ser, at de kan aabnes.
   const arrow = h('span', { 'aria-hidden': true, style: { marginRight: 10, color: '#d8b16b' } }, '▸')
+  // U11: en gruppe uden indhold vises ikke (kontrolfund 5).
+  const group = (key, title, children) => children.some(Boolean) && h('details', { key, 'aria-label': title,
+    'data-u11-gruppe': key, 'data-u11-top': key, style: fold },
+  h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, title)),
+  h('div', { style: { paddingLeft: 12 } }, ...children))
   return h('main', { 'data-entropi2-coach': true, style: { boxSizing: 'border-box',
     maxWidth: 900, marginInline: 'auto', padding: 20, background: '#141410', color: '#edeae2',
     fontFamily: s.wrap.fontFamily, lineHeight: 1.5, overflowWrap: 'anywhere' } },
@@ -186,9 +191,7 @@ export function CoachView(input = {}) {
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Alle samtaler (${model.athletes.length})`)),
       ...model.athletes.map(a => h('button', { key: a.id, type: 'button', style: { ...button, margin: 4 },
         disabled: !available, onClick: available ? () => props.openProfile(a, 'beskeder', 'inbox') : undefined }, a.name))) : [
-      h('details', { key: 'hold', 'aria-label': 'Holdet', 'data-u11-gruppe': 'hold', 'data-u11-top': 'hold', style: fold },
-        h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdet')),
-        h('div', { style: { paddingLeft: 12 } },
+      group('hold', 'Holdet', [
         team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
           h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
           h(CoachTeamRegistrations, { enabled: true, model: team })),
@@ -212,10 +215,8 @@ export function CoachView(input = {}) {
             ...model.athletes.filter(a => model.nutrition.has(a.id)).map(a => h('li', { key: a.id,
               style: { marginBlock: 12 }, 'data-coach-nutrition': a.id },
               h('strong', null, a.name), h('span', { style: { display: 'block' } }, model.nutrition.get(a.id).text))))),
-        )),
-      h('details', { key: 'programmer', 'aria-label': 'Programmer og noter', 'data-u11-gruppe': 'programmer', 'data-u11-top': 'programmer', style: fold },
-        h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Programmer og noter')),
-        h('div', { style: { paddingLeft: 12 } },
+      ]),
+      group('programmer', 'Programmer og noter', [
         !inbox && ending.rows.length > 0 && h('details', { 'aria-label': 'Programmer der slutter', 'data-coach-fold': 'programslut', style: fold },
           h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Programmer der slutter')),
           h(ProgramEndingView, { context: model, openProfile: props.openProfile })),
@@ -248,5 +249,5 @@ export function CoachView(input = {}) {
                 client: props.notesClient, u3: u3DataEnabled(props.u3Data),
                 onOpen: typeof props.openProfile === 'function'
                   ? () => props.openProfile(row.athlete, 'hub', 'list') : undefined }))))),
-        ))])
+      ])])
 }

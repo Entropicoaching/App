@@ -4,7 +4,7 @@ import { parsePlannedRest } from './tempo/tempoParser.mjs'
 import { loadOfflineSets } from '../../offlineSetQueue.js'
 import { sessionStorage } from './sessionSetSave.mjs'
 
-// Local display only: observe confirmed rows, never call logging or storage.
+// Local display only: observe confirmed rows and the athlete's own offline queue; never write logs or storage.
 export function createRestTimer(doc, clock = globalThis) {
   const el = (tag, text, attrs = {}) => {
     const n = doc.createElement(tag)

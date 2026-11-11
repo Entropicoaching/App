@@ -318,10 +318,11 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         form.append(createSetNote(doc, { value: s.note, disabled: busy,
           onChange: action(value => controller.editNote(key, value, s.selection.stamp)) }), approve)
         body.append(form)
-        // U11: film sættet direkte fra passet. Videocoachen åbner oven på, og passet bliver stående.
+        // U11: film sættet direkte fra passet. Passet er en modal dialog i browserens øverste lag, så
+        // intet kan ligge over den; passet lukkes først (sættene er gemt) og åbnes igen med ét tryk.
         if (p.readOnly !== true && typeof p.onFilmSet === 'function') {
           const film = el('button', 'Film dette sæt', { type: 'button', 'data-u11-film': '' })
-          film.addEventListener('click', action(() => p.onFilmSet()))
+          film.addEventListener('click', action(() => { controller.close(); p.onFilmSet() }))
           body.append(film)
         }
         if (typeof p.onSkipSet === 'function' || typeof p.onSkipExercise === 'function') {
