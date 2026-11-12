@@ -4958,6 +4958,22 @@ function mpMatchPoint(from,to,p,pred,search,pr=4){
   return best;
 }
 
+// ORDRE 1192: sporing uden requestVideoFrameCallback (og rVFC-fallback) gik frame
+// for frame med seek til currentTime+FRAME. En pause-frame sidder præcis på en
+// frame-grænse, så et seek til grænsen plus FRAME rammer ofte frame k i stedet
+// for k+1 (flydende tal). Samme frame blev målt to gange, og næste måling
+// sprang to frames: ved hurtige reps (1,6 s pr. rep) hang banen 40 til 60 px
+// efter ved vending. Nu søges til midt i næste frame, og målingen får frame-
+// starten som tid, så hver frame måles præcis én gang.
+async function mpSeekFrames(session,processFrame){
+  let label=video.currentTime;
+  while(tracking&&label+FRAME<session.trackingEnd){
+    label+=FRAME;
+    await seekTo(label+FRAME*.5);
+    await processFrame(label);
+  }
+}
+
 const MP_TRACK_RATES=[.1,.15,.2,.25,.30];
 function mpP80(values){
   const q=[...values].sort((a,b)=>a-b);
@@ -5520,14 +5536,10 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     });
     video.pause();video.playbackRate=oldRate;video.muted=oldMuted;
     if(tracking&&path.pts.length<5){
-      while(tracking&&video.currentTime+FRAME<session.trackingEnd){
-        await seekTo(video.currentTime+FRAME);await processFrame(video.currentTime);
-      }
+      await mpSeekFrames(session,processFrame);
     }
   }else{
-    while(tracking&&video.currentTime+FRAME<session.trackingEnd){
-      await seekTo(video.currentTime+FRAME);await processFrame(video.currentTime);
-    }
+    await mpSeekFrames(session,processFrame);
   }
   // ORDRE 225 · commit 2 — ryd op i det ærlige lofts interval: loopet kan
   // slutte af andre grunde (klippet blev færdigt, earlyStopped, manuelt stop)

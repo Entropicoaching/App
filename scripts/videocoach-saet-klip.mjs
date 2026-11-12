@@ -19,6 +19,8 @@ export const STANDARD = { navn: 'saet-5-reps', leadIn: 3.0, leadOut: 3.0, repDur
 export const PRESETS = {
   'saet-5-reps': {},
   'kort-ind-ud': { navn: 'kort-ind-ud', leadIn: 0.5, leadOut: 0.4 },
+  // ORDRE 1192: hurtige reps, 1,6 s pr. rep med kort pause (trackeren hang efter ved vending)
+  'hurtig-reps': { navn: 'hurtig-reps', leadIn: 0.4, leadOut: 0.3, repDur: 1.6, holdDur: 0.5 },
 }
 const smooth = x => { const c = Math.max(0, Math.min(1, x)); return c * c * (3 - 2 * c) }
 export function tidslinje(cfg = {}) {
