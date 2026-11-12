@@ -1,6 +1,7 @@
 import { FOODS } from '../foedevarer/catalog.mjs'
 import { calculateMeals } from '../foedevarer.mjs'
 import { solvePortions } from './solver.mjs'
+import { juster } from './planMaal.mjs'
 import { suggestFoodItems } from './suggestions.mjs'
 
 const KEYS = ['kcal', 'protein', 'carb', 'fat']
@@ -70,7 +71,16 @@ export function generateGramPlan(input) {
       meals: [], totals: null, displayTotals: null, deviation: null, bounds: null,
       message: 'Der er ingen tilgængelige prioriterede fødevarer til et tomt måltid. Vælg fødevarer og portionsgrænser. Der er endnu ingen gramplan.' }
   }
-  const grams = solvePortions(rows, KEYS.map(key => target[key]), KEYS.map(key => tolerance[key]))
+  const solved = solvePortions(rows, KEYS.map(key => target[key]), KEYS.map(key => tolerance[key]))
+  // Ordre 1176: kun portioner flyttes (aldrig varer), inden for coachens min/max, så kcal og protein ender inden for 5 %.
+  const poster = rows.map((row, i) => ({ grams: solved[i], kcal100: row.macros[0], protein100: row.macros[1],
+    min: row.minGrams, max: row.maxGrams }))
+  const udenfor = (key, k, g) => Math.abs(rows.reduce((sum, row, i) => sum + row.macros[k] * g[i] / 100, 0) - target[key]) > tolerance[key]
+  const faerdig = g => !udenfor('kcal', 0, g) && !udenfor('protein', 1, g)
+  // Tolerancen er max(5 %, absolut grænse), så realistiske dage ligger inden for 5 %. Justeringen bruges kun, når den
+  // faktisk får begge inden for tolerancen; ellers beholdes søgningens bedste gitterpunkt.
+  const justeret = faerdig(solved) ? null : juster(poster, { kcal: target.kcal, protein: target.protein }, undefined, GENERATOR_POLICY.stepGrams)
+  const grams = justeret && faerdig(justeret) ? justeret : solved
   const totals = Object.fromEntries(KEYS.map((key, k) => [key,
     rows.reduce((sum, row, i) => sum + row.macros[k] * grams[i] / 100, 0)]))
   const deviation = Object.fromEntries(KEYS.map(key => {
