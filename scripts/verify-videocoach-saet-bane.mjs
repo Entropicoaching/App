@@ -22,6 +22,7 @@ const root = join(here, '..')
 const arg = (n, d) => (process.argv.slice(2).find(a => a.startsWith(`--${n}=`)) || `--${n}=${d}`).split('=').slice(1).join('=')
 const klipDir = arg('klip', join(root, 'docs', 'videocoach', 'clip-cache', 'saet-bane'))
 const navn = arg('navn', '')
+const RVFC = arg('rvfc', '0') === '1'   // 1: mål requestVideoFrameCallback-vejen (Edge/Chrome) i stedet for seek-fallbacken
 if (!navn) {
   // uden --navn: kør alle navngivne klip hver for sig (hver i sin egen proces)
   let bad = 0
@@ -66,7 +67,7 @@ let strokes = [], colorInput = { value: '#e63946' };
 let barBtn = { textContent: '', classList: { add(){}, remove(){} } }, playBtn = { textContent: '' };
 function playLabel(){ return '' } function say(){}
 let setAthleteState = null, awaitShClick = null, analyzing = false;
-let SLIM = false, ATHLETE = false, COACHWEB = false, DESKTOP = true, HAS_RVFC = false;
+let SLIM = false, ATHLETE = false, COACHWEB = false, DESKTOP = true, HAS_RVFC = ${RVFC};
 let FRAME = 1 / 30, TRACKER_BENCHMARK = false, TRACKER_PROBE = false, VC_TRACKER_FAST = true;
 let vcTiming = { trackingStartedAt: null };
 let wizard = null, plateConfirm = null, awaitCalib = false, awaitBarClick = false, analysisSession = null, tracking = true, curUrl = 'x';

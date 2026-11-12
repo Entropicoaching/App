@@ -4965,8 +4965,8 @@ function mpMatchPoint(from,to,p,pred,search,pr=4){
 // sprang to frames: ved hurtige reps (1,6 s pr. rep) hang banen 40 til 60 px
 // efter ved vending. Nu søges til midt i næste frame, og målingen får frame-
 // starten som tid, så hver frame måles præcis én gang.
-async function mpSeekFrames(session,processFrame){
-  let label=video.currentTime;
+async function mpSeekFrames(session,processFrame,fromT){
+  let label=fromT!=null?fromT:video.currentTime;
   while(tracking&&label+FRAME<session.trackingEnd){
     label+=FRAME;
     await seekTo(label+FRAME*.5);
@@ -5518,6 +5518,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   };
 
   if(HAS_RVFC){
+    let rvfcLastT=null,rvfcGapAt=null;
     const oldRate=video.playbackRate,oldMuted=video.muted;video.muted=true;
     // Start langsomt på coach-mobil i stedet for først at reagere efter tabte
     // frames. 0.1x giver svage telefoner tid til hvert kildeframe; brugerens
@@ -5528,14 +5529,22 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       video.addEventListener('pause',done);video.addEventListener('ended',done);
       const stepFn=async(now,meta)=>{
         if(!tracking||meta.mediaTime+FRAME>=session.trackingEnd){done();return;}
+        // ORDRE 1198: springer afspilningen en frame over (analysen er langsommere
+        // end kildens frame-takt), mister sporet hurtige reps (målt i Edge: 0 af 5
+        // reps på 1,6 s-klippet). Så stoppes afspilningen, og resten tages frame
+        // for frame med seek, hvor ingen frame springes over.
+        if(rvfcLastT!=null&&meta.mediaTime-rvfcLastT>FRAME*1.6){rvfcGapAt=rvfcLastT;done();return;}
         const processed=await processFrame(meta.mediaTime);
+        rvfcLastT=meta.mediaTime;
         if(processed===false||!tracking){done();return;}
         if(!video.ended)video.requestVideoFrameCallback(stepFn);
       };
       video.requestVideoFrameCallback(stepFn);video.play().catch(done);
     });
     video.pause();video.playbackRate=oldRate;video.muted=oldMuted;
-    if(tracking&&path.pts.length<5){
+    if(tracking&&rvfcGapAt!=null){
+      await mpSeekFrames(session,processFrame,rvfcGapAt);
+    }else if(tracking&&path.pts.length<5){
       await mpSeekFrames(session,processFrame);
     }
   }else{
