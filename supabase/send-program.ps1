@@ -73,8 +73,10 @@ try {
         Write-Host "  start_date: $start_date" -ForegroundColor Green
     }
 
-    # Sæt weekday på sessionerne ud fra "day"-feltet i JSON (0=mandag ... 6=søndag)
-    $dayMap = @{ monday=0; tuesday=1; wednesday=2; thursday=3; friday=4; saturday=5; sunday=6 }
+    # Saet weekday paa sessionerne ud fra "day"-feltet i JSON (0=mandag ... 6=soendag).
+    # Databasen rangerer session_order efter ugedag (ukendt sidst), saa payloaden sorteres
+    # paa samme maade foer matchning (send-program-ugedag.ps1, ordre 1185).
+    . (Join-Path $PSScriptRoot "send-program-ugedag.ps1")
     $jsonSessions = $json.p_payload.sessions
     if ($jsonSessions) {
         $SESS = "https://dsqgaxwgtcbqgphsofav.supabase.co/rest/v1/sessions"
@@ -82,12 +84,11 @@ try {
             -Uri "$SESS`?week_id=eq.$($r.week_id)&select=id,session_order&order=session_order" `
             -Headers $headers
         $sat = 0
-        for ($i = 0; $i -lt $jsonSessions.Count; $i++) {
-            $day = $jsonSessions[$i].day
-            if ($day -and $dayMap.ContainsKey($day.ToLower())) {
-                $db = $dbSessions | Where-Object { $_.session_order -eq $i }
+        foreach ($p in (Get-SessionerEfterUgedag $jsonSessions)) {
+            if ($null -ne $p.Weekday) {
+                $db = $dbSessions | Where-Object { $_.session_order -eq $p.Order }
                 if ($db) {
-                    $wdBody = [System.Text.Encoding]::UTF8.GetBytes("{`"weekday`":$($dayMap[$day.ToLower()])}")
+                    $wdBody = [System.Text.Encoding]::UTF8.GetBytes("{`"weekday`":$($p.Weekday)}")
                     Invoke-RestMethod -Method Patch `
                         -Uri "$SESS`?id=eq.$($db.id)" `
                         -Headers ($headers + @{ Prefer = "return=minimal" }) `
