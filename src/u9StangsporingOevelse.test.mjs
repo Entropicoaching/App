@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 // U9 punkt 4 (Marc 11. nov.): "skal man vælge hvilken øvelse man laver før man kan sætte bar trackeren på,
 // jeg forstod ikke hvorfor den ikke gad tracke skiven, og opdagede det først 3. gang".
 // Grunden stod i statuskortet, som er skjult i starttrinnet. Nu siger starttrinnet det med det samme.
-const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8')
+const html = readFileSync(new URL('../public/videocoach.html', import.meta.url), 'utf8').replaceAll('\r\n', '\n')
 const slice = (from, to) => { const a = html.indexOf(from); assert.ok(a > 0, from); return html.slice(a, html.indexOf(to, a) + to.length) }
 
 function gate({ lift = '', start = null, state = 'ready' } = {}) {
