@@ -1,0 +1,1 @@
+function e(e){let t=String(e??``).trim();return/^\d+$/.test(t)?t:null}function t(e){let t=String(e??``).trim();if(!t)return{type:`fixed`,min:null,max:null};let n=t.match(/^(\d+)\s*[-–]\s*(\d+)$/);return n?{type:`range`,min:parseInt(n[1],10),max:parseInt(n[2],10)}:t.toLowerCase()===`frit`?{type:`free`,min:null,max:null}:{type:`fixed`,min:null,max:null}}export{e as n,t};
