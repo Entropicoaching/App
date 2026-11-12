@@ -74,6 +74,8 @@
     border-radius:16px; background:rgba(18,17,14,.86); backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px); box-shadow:0 18px 48px rgba(0,0,0,.38); }
   #barPathHUD[hidden] { display:none; }
+  /* ORDRE 1092: HUD og fartstabel maa aldrig ligge oven paa velkomstkortet (tomt atlet-trin) */
+  body[data-athlete-state="empty"] #barPathHUD { display:none !important; }
   .vcHudHead { display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .vcHudTitle { color:var(--text); font:600 12px system-ui,sans-serif; letter-spacing:-.01em; }
   .vcHudQuality { color:#78d89a; font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
@@ -95,6 +97,16 @@
     border-color:var(--accent); }
   .vcMetricCards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
   .vcMetricCards[hidden] { display:none !important; }
+  /* ORDRE 1064: rolig fart-tabel under banen */
+  .vcSpeedTable { grid-column:1 / -1; max-width:420px; margin-top:4px; font:12px 'IBM Plex Mono',monospace; color:var(--text); }
+  .vcSpeedTable[hidden] { display:none !important; }
+  .vcSpeedTable table { width:100%; border-collapse:collapse; }
+  .vcSpeedTable th { color:var(--dim); font:600 8px system-ui,sans-serif; letter-spacing:.08em;
+    text-transform:uppercase; text-align:right; padding:2px 6px; }
+  .vcSpeedTable td { text-align:right; white-space:nowrap; padding:2px 6px; border-top:1px solid rgba(237,234,226,.075); }
+  .vcSpeedTable th:first-child, .vcSpeedTable td:first-child { text-align:left; }
+  .vcSpeedTable tr.sel td { color:var(--accent); }
+  .vcSpeedTable .vcSpeedNote { margin-top:4px; color:var(--dim); font:10px system-ui,sans-serif; }
   .vcMetric { min-width:0; padding:8px; border:1px solid rgba(237,234,226,.075);
     border-radius:10px; background:rgba(237,234,226,.025); }
   .vcMetric small { display:block; color:var(--dim); font-size:7px; letter-spacing:.08em;
@@ -1082,6 +1094,7 @@
     <button id="vcToggleMetrics" class="active" type="button">Metrics</button>
   </div>
   <p id="vcOlderRepsHint" class="vcOlderRepsHint" role="status" hidden>Kræver mindst 2 analyserede reps</p>
+  <div id="vcSpeedTable" class="vcSpeedTable" hidden></div>
 </section>
 <section id="exportPreview" hidden aria-modal="true" role="dialog" aria-label="Exportpreview">
   <div class="vcExportCard">
@@ -1194,6 +1207,7 @@
      lægger funktionerne på window, FØR hovedscriptet nedenfor kører sine
      event-handlere (som først kalder dem ved brugerinput, altså efter load). -->
 <script type="module" src="videocoach-zoom.js"></script>
+<script type="module" src="videocoach-velocity.js"></script>
 <script>
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -1479,6 +1493,7 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
     document.getElementById('vcPhaseLegend').textContent = '';
     document.getElementById('vcRepSelector').textContent = '';
     document.getElementById('vcMetricCards').textContent = '';
+    vcRenderSpeedTable(null);
     return;
   }
   hud.hidden = false;
@@ -1518,6 +1533,7 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   ] : [['Gns. fart','—'],['Løftevej','—'],['Tempo','—']];
   metrics.innerHTML = values.map(([label,value]) =>
     `<div class="vcMetric"><small>${label}</small><b>${value}</b></div>`).join('');
+  vcRenderSpeedTable(path, repIndex);
   if (TRACKER_BENCHMARK) window.__vcCleanRebuildAudit = {
     session:path.analysisSession, raw:{count:path.raw.pts.length,times:path.raw.times.length,
       confidence:path.raw.confidence.length,valid:path.raw.valid.length,
@@ -1539,6 +1555,31 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
     review:{start:trimStart,end:trimEndEff()}, currentRep:repIndex
   };
   vcSyncSystem();
+}
+
+// ORDRE 1064: fart pr. rep og fartstab pr. saet. Laeser kun den allerede beregnede
+// analyse (udglattet bane, valid-flag, rep-vinduer); regnekoden ligger i videocoach-velocity.js.
+function vcRenderSpeedTable(path, selected = -1) {
+  const box = document.getElementById('vcSpeedTable');
+  if (!box) return;
+  const reps = path?.analysis?.reps || [];
+  if (!path?.raw || !cmPerPx || !reps.length || !window.vcVelocity) { box.hidden = true; box.textContent = ''; return; }
+  const res = window.vcVelocity.repSpeeds({
+    y: path.analysis.pts.map(p => p.y), t: path.raw.times, valid: path.raw.valid,
+    cmPerPx, reps: reps.map(r => ({ start: r.start, end: r.end })) });
+  // ORDRE 1092: gns./top vises fra SAMME tal som HUD'en (analysis.reps[i].mcv/peak); repSpeeds
+  // bestemmer kun, om repen er sikker nok til at vise et tal. Tab regnes paa de viste tal.
+  const shown = res.reps.map((r, i) => Number.isFinite(r.mean) && Number.isFinite(reps[i].mcv)
+    ? { mean: reps[i].mcv, peak: reps[i].peak } : { mean: null, peak: null });
+  const loss = window.vcVelocity.repLossPct(shown.map(r => r.mean));
+  const lossPct = window.vcVelocity.setVelocityLoss(shown.map(r => r.mean));
+  const fmt = (v, d) => Number.isFinite(v) ? v.toFixed(d) : '-';
+  const rows = shown.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` +
+    `<td>${fmt(r.mean, 2)}</td><td>${fmt(r.peak, 2)}</td><td>${fmt(loss[i], 0)}</td></tr>`).join('');
+  box.innerHTML = '<table><thead><tr><th>Rep</th><th>m/s gns.</th><th>m/s top</th><th>Tab %</th></tr></thead>' +
+    `<tbody>${rows}</tbody></table>` +
+    (lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${lossPct.toFixed(0)} % (bedste mod sidste rep)</div>`);
+  box.hidden = false;
 }
 
 function olderRepsAvailable(path) {
@@ -1713,6 +1754,243 @@ document.addEventListener('visibilitychange', () => {
 
 let rendering = false;
 let curUrl = null;
+// ORDRE 1022 · robust indgang: klippet normaliseres FØR sporingen. Telefonklip er
+// 4K/60 fps/HEVC; sporeren (fredet, uændret) er målt på ~720x1280 ved 30 fps, og
+// på rå 4K/1080p/60 fps gav samme klip 1 og 3 reps mod de rigtige 5 (se
+// docs/RAPPORT-1022.md). Her afspilles klippet ÉN gang i normal fart, hvert frame
+// tegnes i trin-halvering (boks-filter, ingen aliasering) i højst 1280 px på den
+// lange led og højst 30 fps, og WebCodecs (MediaRecorder som reserve) gemmer et nyt, jævnt klip. Sporeren
+// får det nye klip som `video.src` og røres ikke. Originalfilen (til upload) er
+// uændret. Kan klippet ikke normaliseres, bruges originalen, og atleten får det at vide.
+const VC_NORM_MAX_SIDE = 1280;
+const vcNorm = { via: null, forceRecorder: false, done: false, busy: false, used: false, error: null, job: 0, cancel: null, warning: '' };
+function vcNormMime() {
+  if (typeof MediaRecorder === 'undefined' || !HTMLCanvasElement.prototype.captureStream) return null;
+  return ['video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
+    .find(t => MediaRecorder.isTypeSupported(t)) || null;
+}
+function vcNormTarget(w, h) {
+  const k = Math.min(1, VC_NORM_MAX_SIDE / Math.max(w, h));
+  return { w: Math.max(2, Math.round(w * k / 2) * 2), h: Math.max(2, Math.round(h * k / 2) * 2) };
+}
+// Minimal mp4-muxer til H.264 fra WebCodecs (længde-præfikset NAL + avcC): ingen B-frames,
+// dts = pts, ét chunk. Tidsstemplerne er EKSAKTE (mediaTime fra kilden), ikke vægur.
+function vcMp4Mux(w, h, avcC, samples) {
+  const TS = 90000, u32 = n => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255], u16 = n => [(n >> 8) & 255, n & 255];
+  const str = s => [...s].map(c => c.charCodeAt(0));
+  const box = (t, ...p) => { const body = p.flat(); return [...u32(8 + body.length), ...str(t), ...body]; };
+  const fb = (t, v, ...p) => box(t, u32(v), ...p);
+  const dts = samples.map(s => Math.round(s.ts * TS));
+  const dur = samples.map((s, i) => (i + 1 < samples.length ? dts[i + 1] - dts[i] : (i ? dts[i] - dts[i - 1] : 3000)));
+  const total = dts[dts.length - 1] + dur[dur.length - 1];
+  const matrix = [...u32(0x10000), ...u32(0), ...u32(0), ...u32(0), ...u32(0x10000), ...u32(0), ...u32(0), ...u32(0), ...u32(0x40000000)];
+  const ftyp = box('ftyp', str('isom'), u32(512), str('isomiso2avc1mp41'));
+  const mdatSize = 8 + samples.reduce((a, s) => a + s.data.byteLength, 0);
+  const stts = fb('stts', 0, u32(dur.length), dur.flatMap(d => [...u32(1), ...u32(d)]));
+  const keys = samples.map((s, i) => (s.key ? i + 1 : 0)).filter(Boolean);
+  const stss = fb('stss', 0, u32(keys.length), keys.flatMap(u32));
+  const stsc = fb('stsc', 0, u32(1), u32(1), u32(samples.length), u32(1));
+  const stsz = fb('stsz', 0, u32(0), u32(samples.length), samples.flatMap(s => u32(s.data.byteLength)));
+  const stco = fb('stco', 0, u32(1), u32(ftyp.length + 8));
+  const avc1 = box('avc1', new Array(6).fill(0), u16(1), new Array(16).fill(0), u16(w), u16(h), u32(0x480000), u32(0x480000), u32(0), u16(1),
+    new Array(32).fill(0), u16(0x18), u16(0xffff), box('avcC', [...avcC]));
+  const stbl = box('stbl', fb('stsd', 0, u32(1), avc1), stts, stss, stsc, stsz, stco);
+  const minf = box('minf', fb('vmhd', 1, u16(0), [0, 0, 0, 0, 0, 0]), box('dinf', fb('dref', 0, u32(1), fb('url ', 1))), stbl);
+  const mdia = box('mdia', fb('mdhd', 0, u32(0), u32(0), u32(TS), u32(total), u16(0x55c4), u16(0)),
+    fb('hdlr', 0, u32(0), str('vide'), u32(0), u32(0), u32(0), str('VideoHandler'), [0]), minf);
+  const trak = box('trak', fb('tkhd', 3, u32(0), u32(0), u32(1), u32(0), u32(total), u32(0), u32(0), u16(0), u16(0), u16(0), u16(0), matrix, u32(w << 16), u32(h << 16)), mdia);
+  const moov = box('moov', fb('mvhd', 0, u32(0), u32(0), u32(TS), u32(total), u32(0x10000), u16(0x100), u16(0), u32(0), u32(0), matrix, new Array(24).fill(0), u32(2)), trak);
+  return new Blob([new Uint8Array(ftyp), new Uint8Array([...u32(mdatSize), ...str('mdat')]), ...samples.map(s => s.data), new Uint8Array(moov)], { type: 'video/mp4' });
+}
+// Sink 1 (foretrukket): WebCodecs H.264 + egen mp4-muxer = regelmæssige, eksakte tidsstempler.
+async function vcSinkWebCodecs(w, h) {
+  if (typeof VideoEncoder === 'undefined' || typeof VideoFrame === 'undefined') return null;
+  const cfg = { codec: 'avc1.42001f', width: w, height: h, bitrate: 4e6, framerate: 30, avc: { format: 'avc' }, latencyMode: 'realtime' };
+  let sup = null; try { sup = await VideoEncoder.isConfigSupported(cfg); } catch {}
+  if (!sup || !sup.supported) return null;
+  const samples = []; let avcC = null, failed = false, n = 0, lastSlot = -1;
+  const enc = new VideoEncoder({
+    output: (chunk, meta) => {
+      const d = new Uint8Array(chunk.byteLength); chunk.copyTo(d);
+      if (meta && meta.decoderConfig && meta.decoderConfig.description) avcC = new Uint8Array(meta.decoderConfig.description);
+      samples.push({ data: d, ts: chunk.timestamp / 1e6, key: chunk.type === 'key' });
+    },
+    error: () => { failed = true; },
+  });
+  try { enc.configure(cfg); } catch { try { enc.close(); } catch {} return null; }   // opsætningsfejl -> reserven
+  return {
+    mime: 'video/mp4;wc',
+    abort() { try { if (enc.state !== 'closed') enc.close(); } catch {} },
+    frame(mediaTime, canvas) {
+      if (failed) return;
+      const slot = Math.round(mediaTime * 30);          // 30 fps-gitter
+      if (slot <= lastSlot) return;
+      lastSlot = slot;
+      const f = new VideoFrame(canvas, { timestamp: Math.round(slot / 30 * 1e6) });
+      enc.encode(f, { keyFrame: n++ % 30 === 0 }); f.close();
+    },
+    async end() {
+      if (failed) return { error: 'record' };
+      try { await enc.flush(); enc.close(); } catch { try { enc.close(); } catch {} return { error: 'record' }; }
+      if (!samples.length || !avcC || failed) return { error: 'record' };
+      const t0 = samples[0].ts; samples.forEach(s => { s.ts -= t0; });
+      return { blob: vcMp4Mux(w, h, avcC, samples) };
+    },
+  };
+}
+// Sink 2 (reserve): MediaRecorder - tidsstempler er vægur og derfor ujævne.
+function vcSinkRecorder(out) {
+  const mime = vcNormMime();
+  if (!mime) return null;
+  const track = out.captureStream(0).getVideoTracks()[0];
+  const chunks = [];
+  let rec;
+  try { rec = new MediaRecorder(new MediaStream([track]), { mimeType: mime, videoBitsPerSecond: 4e6 }); } catch { return null; }
+  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  try { rec.start(1000); } catch { try { track.stop(); } catch {} return null; }
+  let lastSlot = -1;
+  return {
+    mime,
+    abort() { try { if (rec.state !== 'inactive') rec.stop(); } catch {} try { track.stop(); } catch {} },
+    frame(mediaTime) { const s = Math.round(mediaTime * 30); if (s > lastSlot) { lastSlot = s; if (track.requestFrame) track.requestFrame(); } },
+    end() {
+      return new Promise(res => {
+        rec.onstop = () => { try { track.stop(); } catch {} res(chunks.length ? { blob: new Blob(chunks, { type: mime.split(';')[0] }) } : { error: 'record' }); };
+        rec.onerror = () => res({ error: 'record' });
+        setTimeout(() => { try { rec.stop(); } catch { res({ error: 'record' }); } }, 150);
+      });
+    },
+  };
+}
+// Returnerer { blob, via } eller { error }. onProgress(0..1).
+function vcNormalizeClip(src, onProgress, registerCancel) {
+  return new Promise(resolve => {
+    const v = document.createElement('video');
+    v.muted = true; v.playsInline = true; v.preload = 'auto';
+    if (src.startsWith('http')) v.crossOrigin = 'anonymous';
+    let finished = false, watchdog = null, sink = null, ended = false;
+    const finish = r => {
+      if (finished) return; finished = true; clearInterval(watchdog);
+      try { v.pause(); } catch {}
+      if (sink && sink.abort && !(r && r.blob)) { try { sink.abort(); } catch {} }   // frigiv encoder/recorder ved alle fejlgange
+      v.onended = null; v.onerror = null; v.onloadedmetadata = null;
+      v.removeAttribute('src'); try { v.load(); } catch {} resolve(r);
+    };
+    if (registerCancel) registerCancel(() => finish({ error: 'cancelled' }));
+    // vagthund fra start (ikke først efter opsætningen): ingen fremdrift i 8 s = opgiv
+    let lastProg = performance.now(), lastCT = -1;
+    watchdog = setInterval(() => {
+      if (v.currentTime !== lastCT) { lastCT = v.currentTime; lastProg = performance.now(); }
+      else if (performance.now() - lastProg > 8000) finish({ error: 'stalled' });
+    }, 1000);
+    v.onerror = () => finish({ error: 'decode' });
+    v.onloadedmetadata = async () => { try {
+      if (!v.videoWidth || !isFinite(v.duration)) return finish({ error: 'decode' });
+      const t = vcNormTarget(v.videoWidth, v.videoHeight);
+      const out = document.createElement('canvas'); out.width = t.w; out.height = t.h;
+      const octx2 = out.getContext('2d', { alpha: false });
+      octx2.imageSmoothingEnabled = true; octx2.imageSmoothingQuality = 'high';
+      // mellemtrin: halvér indtil højst 2x mål (boks-filter i stedet for aliasering)
+      const steps = [];
+      let sw = v.videoWidth, sh = v.videoHeight;
+      while (sw / 2 >= t.w * 1.01 && sh / 2 >= t.h * 1.01) {
+        sw = Math.round(sw / 2); sh = Math.round(sh / 2);
+        const c = document.createElement('canvas'); c.width = sw; c.height = sh;
+        const x = c.getContext('2d', { alpha: false }); x.imageSmoothingQuality = 'high';
+        steps.push({ c, x });
+      }
+      if (typeof v.requestVideoFrameCallback !== 'function') return finish({ error: 'no-frame-api' });   // ingen jævn frame-levering: brug originalen
+      sink = (vcNorm.forceRecorder ? null : await vcSinkWebCodecs(t.w, t.h)) || vcSinkRecorder(out);
+      if (finished) { if (sink && sink.abort) sink.abort(); return; }   // annulleret mens encoderen blev sat op
+      if (!sink) return finish({ error: 'no-recorder' });
+      const via = sink.mime.startsWith('video/mp4;wc') ? 'webcodecs' : 'mediarecorder';
+      let lastMT = -1;
+      const frame = (_n, m) => {
+        if (finished || ended) return;
+        if (m.mediaTime !== lastMT) {
+          lastMT = m.mediaTime;
+          let prev = v;
+          for (const s of steps) { s.x.drawImage(prev, 0, 0, s.c.width, s.c.height); prev = s.c; }
+          octx2.drawImage(prev, 0, 0, t.w, t.h);
+          sink.frame(m.mediaTime, out);
+        }
+        if (onProgress) onProgress(Math.min(1, m.mediaTime / v.duration));
+        v.requestVideoFrameCallback(frame);
+      };
+      v.onended = async () => {
+        if (ended || finished) return; ended = true;
+        let r; try { r = await sink.end(); } catch { r = { error: 'record' }; }
+        finish(r.blob ? { blob: r.blob, via } : r);
+      };
+      v.requestVideoFrameCallback(frame);
+      v.play().catch(() => finish({ error: 'play' }));
+    } catch { finish({ error: 'setup' }); } };
+    v.src = src;
+  });
+}
+// MediaRecorder-webm har ofte duration=Infinity; tving browseren til at finde den rigtige
+function vcNormFixDuration() {
+  const fix = () => {
+    if (video.duration !== Infinity) return;
+    const back = () => { video.removeEventListener('timeupdate', back); video.currentTime = 0; };
+    video.addEventListener('timeupdate', back);
+    video.currentTime = 1e7;
+  };
+  video.addEventListener('loadedmetadata', fix, { once: true });
+}
+// kaldt fra begin(): true = normalisering er sat i gang (begin() kaldes igen bagefter).
+// Kun klip større end ${VC_NORM_MAX_SIDE} px på den lange led normaliseres (alle 4K/1080p-telefonklip);
+// mindre klip går som hidtil direkte videre, uden ventetid og uden ændring.
+// Fallback-advarslen skal overleve begin(): egen linje, ikke den fælles statusbesked.
+function vcNormWarn(txt) {
+  vcNorm.warning = txt || '';
+  let el = document.getElementById('vcNormWarn');
+  if (!el && txt) {
+    el = document.createElement('div'); el.id = 'vcNormWarn'; el.setAttribute('role', 'alert');
+    el.style.cssText = 'position:fixed;left:8px;right:8px;top:8px;z-index:60;padding:8px 12px;border-radius:8px;background:#3b2f10;color:#ffe9a8;font-size:13px;line-height:1.35';
+    el.onclick = () => vcNormWarn('');
+    document.body.appendChild(el);
+  }
+  if (el) { el.textContent = txt || ''; el.hidden = !txt; }
+}
+function vcNormMaybeStart(resumeFn) {
+  if (vcNorm.done) return false;
+  if (vcNorm.busy) return true;
+  if (Math.max(video.videoWidth, video.videoHeight) <= VC_NORM_MAX_SIDE) { vcNorm.done = true; return false; }
+  vcNorm.busy = true;
+  const job = ++vcNorm.job;                    // kun det nyeste job må skrive til fælles tilstand
+  const mine = () => vcNorm.job === job;
+  const src = video.currentSrc || video.src;
+  (async () => {
+    const secs = Math.round(video.duration || 0);
+    const msg = p => { if (mine()) say(`Gør klippet klar til analysen (${secs} s) ... ${Math.round(p * 100)} %`); };
+    msg(0);
+    let res;
+    try { res = await vcNormalizeClip(src, msg, c => { vcNorm.cancel = c; }); } catch { res = { error: 'setup' }; }
+    if (!mine()) return;                       // nyt klip valgt imens: kasser resultatet, rør ikke det nye klips tilstand
+    vcNorm.cancel = null;
+    vcNorm.done = true; vcNorm.busy = false;
+    if (res.blob) {
+      if (curUrl) URL.revokeObjectURL(curUrl);
+      curUrl = URL.createObjectURL(res.blob);
+      vcNorm.used = true; vcNorm.via = res.via;
+      video.crossOrigin = null;
+      vcNormFixDuration();
+      video.src = curUrl; video.load();   // onloadedmetadata -> begin() igen
+    } else {
+      vcNorm.error = res.error;
+      if (res.error === 'decode') {
+        say('Dit kamera-format kan ikke åbnes her. Optag i "Mest kompatibel"/H.264 (iPhone: Indstillinger > Kamera > Formater) og vælg klippet igen.');
+        setTimeout(() => { if (mine()) say(''); }, 9000);
+      } else {
+        vcNormWarn('Klippet kunne ikke gøres klar, så analysen bruger originalen og kan være mindre præcis. Optag gerne i 1080p/30 fps og prøv igen.');
+      }
+      resumeFn();
+    }
+  })();
+  return true;
+}
+
 // ORDRE 57 · commit 2: coachen åbner en afventende atlet-video via signeret
 // URL i stedet for en lokalt valgt fil. remoteUrl deler resten af opsætningen
 // (canvas, wake lock, TRÆNINGSMODE-armering) 1:1 med den lokale sti.
@@ -1731,6 +2009,9 @@ function loadFile(file, remoteUrl = null) {
   if (setCoachLayer) setCoachLayer(1);                // ny video → ren Lag 1
   // nulstil alt der hører til den GAMLE video
   cmPerPx = null; calibPts = [];
+  if (vcNorm.cancel) { try { vcNorm.cancel(); } catch {} }   // ORDRE 1044 · stop gammelt job
+  vcNorm.job++; vcNorm.cancel = null; vcNormWarn('');
+  vcNorm.done = false; vcNorm.busy = false; vcNorm.used = false; vcNorm.error = null;   // ORDRE 1022
   vcTiming = { videoLoadedAt:null, setupClicks:0, trackingStartedAt:null };
   vcPriorSetup = null;
   analysisSession = null;
@@ -1757,6 +2038,7 @@ function loadFile(file, remoteUrl = null) {
   let started = false;
   const begin = () => {
     if (started || !video.videoWidth) return;
+    if (vcNormMaybeStart(begin)) return;   // ORDRE 1022 · normalisér klippet først
     started = true;
     vcTiming.videoLoadedAt = performance.now();   // ORDRE 43 · baseline: video indlæst
     vcSyncPriorSetup();   // ORDRE 43 · hent evt. tidligere opsætning for atlet+løft
@@ -1825,13 +2107,13 @@ function loadFile(file, remoteUrl = null) {
     if (COACHWEB) document.body.dataset.coachState = 'setup';
     say(c === 4
       ? 'Formatet understøttes ikke på denne enhed (typisk HEVC). Optag i ' +
-        '"Mest kompatibel"/H.264 og prøv igen.'
+        '"Mest kompatibel"/H.264 (iPhone: Indstillinger > Kamera > Formater) og prøv igen.'
       : `Videoen kunne ikke læses (fejlkode ${c || '?'}). Prøv at vælge den igen.`);
     setTimeout(() => say(''), 10000);
   };
-  setTimeout(() => { if (!started && !video.error)
+  setTimeout(() => { if (!started && !video.error && !vcNorm.busy)
     say('Loader stadig ... store videoer tager lidt tid'); }, 4000);
-  setTimeout(() => { if (!started && !video.error)
+  setTimeout(() => { if (!started && !video.error && !vcNorm.busy)
     say('Videoen ser ud til at hænge - prøv en mindre fil eller H.264-format'); },
     15000);
   if (remoteUrl) {
@@ -10015,13 +10297,11 @@ function hasSeenFilmGuide(storage = globalThis.localStorage) {
 function markFilmGuideSeen(storage = globalThis.localStorage) {
   try { if (storage) storage.setItem(FILM_GUIDE_SEEN_KEY, '1'); } catch { /* privat vindue/fuld storage - ingen huskeevne, ikke fatalt */ }
 }
+// ORDRE 1022: tre linjer, bygget på Til Marc\VIDEO-FILMPROTOKOL.html (opstilling, billedet, kameraet).
 const FILM_GUIDE_POINTS = [
-  'Kamera fra siden, i hoftehøjde — ikke skråt.',
-  'Hele kroppen i billedet hele vejen, også i bunden.',
-  'Hænder og fødder fri af skiver og rack.',
-  'Ét løft, eller et kort sæt — ikke hele træningen.',
-  'Stramt tøj, ikke løse shorts eller T-shirt.',
-  'Godt, jævnt lys — undgå modlys.',
+  'Telefonen stille i hoftehøjde, ren sidevisning, 3–5 meter fra skiven.',
+  'Hele skiven og hele kroppen i billedet fra start til slut. Ét sæt, godt lys.',
+  'Kameraet: 30 eller 60 billeder i sekundet, ikke slowmotion, og vælg "Mest kompatibel" (H.264).',
 ];
 const FILM_GUIDE_FOOTER = 'Det coachen ikke kan se, kan han ikke vurdere.';
 function filmGuideFullHtml() {
@@ -10033,11 +10313,7 @@ function filmGuideFullHtml() {
 // kogt yderligere ned til tre linjer (ordren beder om "kort, tre linjer").
 // Vises altid fuldt ud - flowet er i sig selv nyt/sjældnere brugt end
 // standardvejen, så der er ingen "vis igen"-tilstand at spare væk til.
-const FILM_GUIDE_INSTANT_POINTS = [
-  'Kamera fra siden, i hoftehøjde — ikke skråt.',
-  'Hele kroppen og skiven fri af rack og andre skiver.',
-  'Ét sæt ad gangen, i godt og jævnt lys.',
-];
+const FILM_GUIDE_INSTANT_POINTS = FILM_GUIDE_POINTS;
 function filmGuideInstantHtml() {
   return '<span class="athFilmGuideTitle">📷 Før du filmer</span>' +
     '<ul>' + FILM_GUIDE_INSTANT_POINTS.map(p => `<li>${p}</li>`).join('') + '</ul>';
