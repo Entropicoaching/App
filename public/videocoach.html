@@ -3099,8 +3099,13 @@ function vcFindSetBounds(times, motion, duration, opts = {}) {
     return { ok:false, reason:'for-kort-eller-ugyldigt-klip' };
   const stepS = (times[n - 1] - times[0]) / Math.max(1, n - 1) || duration / n;
   const need = Math.max(2, Math.round((opts.sustainS ?? 1.0) / Math.max(0.05, stepS)));
-  const marginBefore = opts.marginBeforeS ?? 0.6;
-  const marginAfter = opts.marginAfterS ?? 0.3;
+  // ORDRE 1180: marginerne følger stikprøveafstanden. En forskel mellem to
+  // prøver kan først overstige tærsklen, når skiven har flyttet sig langt
+  // (glidende start, langsom eksentrik), så den virkelige start ligger typisk
+  // et par prøver FØR den fundne. Faste 0,6 s klippede første rep af ved korte
+  // indløb og grove prøver; margin på 2 prøver + 0,3 s gør det ikke.
+  const marginBefore = opts.marginBeforeS ?? Math.max(0.6, 2 * stepS + 0.3);
+  const marginAfter = opts.marginAfterS ?? Math.max(0.3, stepS);
 
   // Adaptiv støjgrænse: hver optagelse har sin egen ro (korn/kompression),
   // så en fast tærskel ville enten overse langsomme løft eller fyre på støj.
