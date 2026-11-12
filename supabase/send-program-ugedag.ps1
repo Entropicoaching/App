@@ -1,5 +1,6 @@
 # send-program-ugedag.ps1 - ren funktion, ingen netvaerk (ordre 1185)
-# Samme regel som create_program_week (sql/create_program_week.sql) og drafter.send (1183):
+# Samme regel som create_program_week (sql/create_program_week.sql). NB: drafter.send i
+# repos\entropi-agent matcher stadig paa payload-indeks (kun engelske dage), se ordre 1187.
 # stabil sortering efter ugedag, ukendt dag sidst. Resultatet giver for hvert pas
 # session_order (0-baseret, som databasen) og weekday (0=mandag ... 6=soendag, $null hvis ukendt).
 
