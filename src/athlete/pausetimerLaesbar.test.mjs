@@ -41,3 +41,11 @@ test('saetkortets tekst er mindst 11 px og afkrydsningen er 24 px', () => {
   assert.match(kort, /type="checkbox" checked=\{showNextPreview\}[\s\S]{0,200}width: '24px', height: '24px'/)
   for (const m of kort.matchAll(/fontSize: '([\d.]+)rem'/g)) assert.ok(Number(m[1]) >= MIN_REM, m[0])
 })
+
+test('nedtaellingsringens tekst er mindst 11 px', () => {
+  const kilde = laes('./CountdownRing.jsx')
+  const stoerrelser = [...kilde.matchAll(/fontSize: '([\d.]+)rem'/g)].map(m => Number(m[1]))
+  assert.ok(stoerrelser.length > 0)
+  for (const r of stoerrelser) assert.ok(r >= MIN_REM, `${r}rem er under 11 px`)
+  assert.match(kilde, /width: 128, height: 128/)
+})

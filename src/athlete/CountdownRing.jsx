@@ -19,7 +19,7 @@ export default function CountdownRing({ total, remaining, done }) {
           ? <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.6rem', color: '#6cba6c', lineHeight: 1 }}>✓</span>
           : <>
               <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.4rem', color: '#edeae2', lineHeight: 1 }}>{remaining}</span>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.12em', color: '#7a7770', textTransform: 'uppercase', marginTop: '0.2rem' }}>sek</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.12em', color: '#7a7770', textTransform: 'uppercase', marginTop: '0.2rem' }}>sek</span>
             </>}
       </div>
     </div>
