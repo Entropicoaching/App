@@ -103,7 +103,7 @@ function Ramme({
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative', ...(coachNavigation === true ? { flexWrap: 'wrap', gap: 8, minWidth: 0, maxWidth: '100%' } : {}) }}>
           {backBtn}
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.64rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#a8a498' }}>{today()}</div>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#a8a498' }}>{today()}</div>
           {/* BUG (ORDRE 20): denne konto-menu fandtes slet ikke før — en atlet
               (eller en coach der ved en fejl var havnet her) havde ingen vej ud
               af appen uden at rydde browser-data manuelt. Log ud skal ALTID
