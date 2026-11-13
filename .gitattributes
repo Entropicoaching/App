@@ -11,3 +11,5 @@
 /scripts/generalproeve/** text eol=lf
 /scripts/generalproeve/live/*.sql -whitespace
 /scripts/generalproeve/prod-skema-20261108.sql -whitespace
+# U9-prøven af stangsporingen skærer i videocoach.html ved LF; en frisk Windows-udtjekning giver CRLF.
+/public/videocoach.html text eol=lf

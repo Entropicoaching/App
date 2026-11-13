@@ -3,6 +3,7 @@ import * as React from 'react'
 import PlanActivation from './activation.mjs'
 import MealDraftImport from './MealDraftImport.mjs'
 import PlanDayOverview from './PlanDayOverview.mjs'
+import ClaudeWeek from './ClaudeWeek.mjs'
 import { openPortalPlan } from './portalModel.mjs'
 import { coachPlanView, recipeChoice } from './view.mjs'
 import { FOODS } from '../foedevarer/index.mjs'
@@ -31,7 +32,7 @@ export default function PortalPlan(props = {}) {
   return h(ScopedPortalPlan, { key: JSON.stringify([session.user.id, athlete.id, today]),
     coachId: session.user.id, athlete, date: today, nutritionRead: props.nutritionRead,
     client: props.client, loadClient: props.loadClient, loadReferenceFoods: props.loadReferenceFoods,
-    loadExtendedReferenceFoods: props.loadExtendedReferenceFoods })
+    loadExtendedReferenceFoods: props.loadExtendedReferenceFoods, weekClient: props.weekClient })
 }
 
 // Mounted directly in Kost & mål, independently of opening the meal editor.
@@ -79,9 +80,10 @@ function ScopedPortalPlan(props) {
   const [date, setDate] = React.useState(props.date)
   // The disclosure needs no effect before interaction. A host ref retires launch
   // callbacks synchronously at detachment, including StrictMode ref replays.
-  return React.createElement('div', { ref: node => { current.current = node !== null } },
-    date !== props.date && h('p', null, `Koststatus og registrering nedenfor gælder ${props.date}, ikke den valgte plandato.`),
-    h(ActiveReport, { ...props, enabled: true, refresh }),
+  // U10b: with the host's own client, Claude's week comes first and the manual
+  // builder (and its local four-day overview) moves behind "Ret".
+  const week = props.weekClient && h(ClaudeWeek, { client: props.weekClient, athlete: props.athlete, today: props.date })
+  const builder = [
     opened && React.createElement(PlanDayOverview, { enabled: true, coachId: props.coachId, athleteId: props.athlete.id,
       today: props.date, selectedDate: date, onContinue: () => {
         if (!current.current) return
@@ -114,7 +116,14 @@ function ScopedPortalPlan(props) {
     h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
     opened && h(extendedRequested ? ExtendedReferencePlanEditor : referenceRequested ? ReferencePlanEditor : PlanEditor, { ...props, active: expanded, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
       key: JSON.stringify([date, props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
-        profileCalculation(props.athlete, date)]) })))
+        profileCalculation(props.athlete, date)]) }))]
+  const status = [
+    date !== props.date && h('p', null, `Koststatus og registrering nedenfor gælder ${props.date}, ikke den valgte plandato.`),
+    h(ActiveReport, { ...props, enabled: true, refresh })]
+  return React.createElement('div', { ref: node => { current.current = node !== null } },
+    ...(week ? [week, ...status, h('details', { 'data-ret': true, style: { marginTop: 16, textAlign: 'left' } },
+      h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Ret'), ...builder)]
+      : [...status, ...builder]))
 }
 
 export function PortalNutritionReport(props = {}) {
