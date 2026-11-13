@@ -58,9 +58,9 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
                   }}
                 >
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{item.label}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{item.label}</span>
                   {priorityCount > 0 && (
-                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.44rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{priorityCount}</span>
+                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.7rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{priorityCount}</span>
                   )}
                 </button>
               )
@@ -77,7 +77,7 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
               <div style={{ width: 36, height: 4, background: 'rgba(237,234,226,0.2)', borderRadius: 2, margin: '0 auto 0.8rem' }} />
               {sheetPreviewPick ? (
                 <>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Se som atlet'}</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Se som atlet'}</div>
                   <div style={{ maxHeight: '40vh', overflowY: 'auto' }}>
                     {athletes.map(a2 => (
                       <button type="button" key={a2.id}
@@ -91,28 +91,28 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
                       >{a2.name}</button>
                     ))}
                   </div>
-                  <button onClick={() => setSheetPreviewPick(false)} style={{ ...s.btnGhost, marginTop: '0.75rem', width: '100%' }}>← Tilbage</button>
+                  <button onClick={() => setSheetPreviewPick(false)} style={{ ...s.btnGhost, fontSize: '0.7rem', marginTop: '0.75rem', width: '100%' }}>← Tilbage</button>
                 </>
               ) : (
                 <>
                   <nav aria-label="Daglig navigation" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    <button type="button" onClick={() => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) }} style={s.btnGhost}>Forside</button>
-                    <button type="button" onClick={() => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) }} style={s.btnGhost}>Arbejdsindbakke</button>
-                    <button type="button" onClick={() => { setSidebarOpen(true); setMenuSheetOpen(false) }} style={s.btnGhost}>Atleter</button>
+                    <button type="button" onClick={() => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) }} style={{ ...s.btnGhost, fontSize: '0.7rem' }}>Forside</button>
+                    <button type="button" onClick={() => { setView('inbox'); setSelectedAthlete(null); setSidebarOpen(false); setMenuSheetOpen(false) }} style={{ ...s.btnGhost, fontSize: '0.7rem' }}>Arbejdsindbakke</button>
+                    <button type="button" onClick={() => { setSidebarOpen(true); setMenuSheetOpen(false) }} style={{ ...s.btnGhost, fontSize: '0.7rem' }}>Atleter</button>
                   </nav>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
                     {[
                       { label: programOverblik === true ? 'Programoverblik' : 'Kalender', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('calendar') }, icon: <><rect x="3" y="5" width="18" height="16" rx="2" /><line x1="3" y1="10" x2="21" y2="10" /><line x1="8" y1="3" x2="8" y2="7" /><line x1="16" y1="3" x2="16" y2="7" /></> },
                       { label: 'Bibliotek', onClick: () => { setMenuSheetOpen(false); setSelectedAthlete(null); setView('library') }, icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></> },
                     ].map(m => (
-                      <button key={m.label} onClick={m.onClick} style={s.btnGhost}>
+                      <button key={m.label} onClick={m.onClick} style={{ ...s.btnGhost, fontSize: '0.7rem' }}>
                         {programOverblik === true && m.label === 'Programoverblik' && <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{m.icon}</svg>}
                         {m.label}
                       </button>
                     ))}
                   </div>
                   <CoachMenuMore enabled={coachRyd} title="Mere">
-                  {coachRyd && <button type="button" onClick={() => { setSidebarOpen(false); setMenuSheetOpen(false); goToMyProfile() }} style={s.btnGhost}>Min træning</button>}
+                  {coachRyd && <button type="button" onClick={() => { setSidebarOpen(false); setMenuSheetOpen(false); goToMyProfile() }} style={{ ...s.btnGhost, fontSize: '0.7rem' }}>Min træning</button>}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                     {[
                       { label: 'VideoCoach', onClick: () => { setMenuSheetOpen(false); openVideoCoachV3() }, icon: <><rect x="2" y="6" width="13" height="12" rx="2" /><path d="M15 10.5 22 7v10l-7-3.5" /></> },
@@ -126,10 +126,10 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
                     ))}
                   </div>
                   <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '0.6rem', display: 'flex', flexDirection: 'column' }}>
-                    <button onClick={() => { setMenuSheetOpen(false); setShowAddModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>+ Tilføj atlet</button>
-                    <button onClick={exportTraeningsdata} disabled={exportingTraening} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingTraening ? '...' : '↓ Træningsdata'}</button>
-                    <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
-                    <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
+                    <button onClick={() => { setMenuSheetOpen(false); setShowAddModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>+ Tilføj atlet</button>
+                    <button onClick={exportTraeningsdata} disabled={exportingTraening} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingTraening ? '...' : '↓ Træningsdata'}</button>
+                    <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
+                    <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
                   </div>
                   </CoachMenuMore>
                 </>
@@ -194,9 +194,9 @@ function LegacyMobilNav({ coachRyd = false, programOverblik = false,
                   }}
                 >
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{item.label}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{item.label}</span>
                   {priorityCount > 0 && (
-                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.44rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{priorityCount}</span>
+                    <span style={{ position: 'absolute', top: '0.3rem', right: 'calc(50% - 1.15rem)', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.7rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, padding: '0 0.15rem', fontFamily: "'IBM Plex Mono', monospace" }}>{priorityCount}</span>
                   )}
                 </button>
               )
@@ -213,7 +213,7 @@ function LegacyMobilNav({ coachRyd = false, programOverblik = false,
               <div style={{ width: 36, height: 4, background: 'rgba(237,234,226,0.2)', borderRadius: 2, margin: '0 auto 0.8rem' }} />
               {sheetPreviewPick ? (
                 <>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Se som atlet'}</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.6rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Se som atlet'}</div>
                   <div style={{ maxHeight: '40vh', overflowY: 'auto' }}>
                     {athletes.map(a2 => (
                       <div key={a2.id}
@@ -227,7 +227,7 @@ function LegacyMobilNav({ coachRyd = false, programOverblik = false,
                       >{a2.name}</div>
                     ))}
                   </div>
-                  <button onClick={() => setSheetPreviewPick(false)} style={{ ...s.btnGhost, marginTop: '0.75rem', width: '100%' }}>← Tilbage</button>
+                  <button onClick={() => setSheetPreviewPick(false)} style={{ ...s.btnGhost, fontSize: '0.7rem', marginTop: '0.75rem', width: '100%' }}>← Tilbage</button>
                 </>
               ) : (
                 <>
@@ -246,10 +246,10 @@ function LegacyMobilNav({ coachRyd = false, programOverblik = false,
                     ))}
                   </div>
                   <div style={{ borderTop: '1px solid rgba(237,234,226,0.07)', paddingTop: '0.6rem', display: 'flex', flexDirection: 'column' }}>
-                    <button onClick={() => { setMenuSheetOpen(false); setShowAddModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>+ Tilføj atlet</button>
-                    <button onClick={exportTraeningsdata} disabled={exportingTraening} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingTraening ? '...' : '↓ Træningsdata'}</button>
-                    <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
-                    <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
+                    <button onClick={() => { setMenuSheetOpen(false); setShowAddModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#b8b4a8', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>+ Tilføj atlet</button>
+                    <button onClick={exportTraeningsdata} disabled={exportingTraening} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingTraening ? '...' : '↓ Træningsdata'}</button>
+                    <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
+                    <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
                   </div>
                 </>
               )}

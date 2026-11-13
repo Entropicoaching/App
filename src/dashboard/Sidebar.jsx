@@ -23,7 +23,7 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
   const NavItem = coachRyd ? 'button' : 'div'
   const previewPicker = (onPreviewAthlete && previewPickerOpen && (
             <div style={{ background: '#141410', border: '1px solid rgba(200,146,58,0.3)', padding: '0.5rem' }}>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Vælg profil'}</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem' }}>{pickingMine ? 'Vælg din egen profil (huskes)' : 'Vælg profil'}</div>
               {athletes.map(a => (
                 <NavItem
                   {...(coachRyd ? { type: 'button' } : {})}
@@ -34,7 +34,7 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >{a.name}</NavItem>
               ))}
-              <button onClick={() => { setPreviewPickerOpen(false); setPickingMine(false) }} style={{ ...s.btnGhost, fontSize: '0.48rem', padding: '0.2rem 0.5rem', marginTop: '0.3rem', width: '100%' }}>Annuller</button>
+              <button onClick={() => { setPreviewPickerOpen(false); setPickingMine(false) }} style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.2rem 0.5rem', marginTop: '0.3rem', width: '100%' }}>Annuller</button>
             </div>
           ))
   return (
@@ -55,7 +55,7 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
       }}>
         <div style={{ ...s.sidebarLogo, cursor: 'pointer' }} onClick={() => { setView('list'); setSelectedAthlete(null); setSidebarOpen(false) }}>
           <div style={s.wordmark}>Entropi<span style={{ color: '#c8923a' }}>.</span></div>
-          <div style={s.sub}>Coach Portal</div>
+          <div style={{ ...s.sub, fontSize: '0.7rem' }}>Coach Portal</div>
         </div>
         <nav style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
           {navigationItems.filter(item => !coachRyd || item.label !== 'Min træning').map(item => (
@@ -64,20 +64,20 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
               key={item.label}
               {...(programOverblik && item.label === 'Programoverblik' && !coachRyd ? { role: 'button', tabIndex: 0, onKeyDown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.onClick() } } } : {})}
               onClick={item.onClick}
-              style={{ ...(coachRyd ? { border: 0, textAlign: 'left', minHeight: 44 } : {}), display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 1.25rem', cursor: 'pointer', borderLeft: item.active ? '2px solid #c8923a' : '2px solid transparent', background: item.active ? 'rgba(200,146,58,0.08)' : 'transparent', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: item.active ? '#c8923a' : '#b8b4a8' }}
+              style={{ ...(coachRyd ? { border: 0, textAlign: 'left', minHeight: 44 } : {}), display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 1.25rem', cursor: 'pointer', borderLeft: item.active ? '2px solid #c8923a' : '2px solid transparent', background: item.active ? 'rgba(200,146,58,0.08)' : 'transparent', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: item.active ? '#c8923a' : '#b8b4a8' }}
               onMouseEnter={e => { if (!item.active) e.currentTarget.style.background = 'rgba(237,234,226,0.03)' }}
               onMouseLeave={e => { if (!item.active) e.currentTarget.style.background = 'transparent' }}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{item.icon}</svg>
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge > 0 && (
-                <span style={{ background: '#c8923a', color: '#141410', fontSize: '0.46rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{item.badge}</span>
+                <span style={{ background: '#c8923a', color: '#141410', fontSize: '0.7rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{item.badge}</span>
               )}
             </NavItem>
           ))}
-          {coachRyd && <button type="button" style={s.btnGhost} onClick={navigationItems[0].onClick}>Atleter</button>}
+          {coachRyd && <button type="button" style={{ ...s.btnGhost, fontSize: '0.7rem' }} onClick={navigationItems[0].onClick}>Atleter</button>}
           <div style={{ borderTop: '1px solid rgba(237,234,226,0.06)', margin: '0.75rem 1.25rem' }} />
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', padding: '0 1.25rem', marginBottom: '0.45rem' }}>Atleter</div>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', padding: '0 1.25rem', marginBottom: '0.45rem' }}>Atleter</div>
           {athletes.filter(a => !hiddenAthleteIds.has(a.id)).map(ath => {
             const isActive = (view === 'profile' || view === 'list') && selectedAthlete?.id === ath.id
             const unread = unreadCounts[ath.id] || 0
@@ -94,32 +94,32 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
                 onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(237,234,226,0.03)' }}
                 onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
               >
-                <div style={{ width: 28, height: 28, borderRadius: '50%', border: `1.5px solid ${ringColor}`, background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: isActive ? '#c8923a' : '#b8b4a8' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', border: `1.5px solid ${ringColor}`, background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: isActive ? '#c8923a' : '#b8b4a8' }}>
                   {initials(ath.name)}
                 </div>
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300, fontSize: '0.78rem', color: isActive ? '#c8923a' : '#d5d2c8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ath.name.split(' ')[0]}</div>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#5f5c55', marginTop: '0.05rem', letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#5f5c55', marginTop: '0.05rem', letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {hol?.onHoliday ? ferieBadgeLabel(hol) : ws ? `Uge ${ws.week_number}${ws.session_count > 0 ? '' : ' · tom'}` : 'Intet program'}
                   </div>
                 </div>
                 {unread > 0 && (
-                  <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{unread}</span>
+                  <span style={{ background: '#c8923a', color: '#141410', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 700, borderRadius: '999px', padding: '0.1rem 0.35rem', flexShrink: 0 }}>{unread}</span>
                 )}
               </NavItem>
             )
           })}
           {athletes.length === 0 && (
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', padding: '0.5rem 1.25rem' }}>Ingen atleter</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', padding: '0.5rem 1.25rem' }}>Ingen atleter</div>
           )}
         </nav>
         <div style={s.sidebarFooter}>
           <CoachMenuMore enabled={coachRyd} title="Mere">
-          {coachRyd && <button type="button" onClick={navigationItems.find(item => item.label === 'Min træning').onClick} style={s.btnGhost}>Min træning</button>}
+          {coachRyd && <button type="button" onClick={navigationItems.find(item => item.label === 'Min træning').onClick} style={{ ...s.btnGhost, fontSize: '0.7rem' }}>Min træning</button>}
           {onPreviewAthlete && !previewPickerOpen && (
             <button
               onClick={() => { setPickingMine(false); setPreviewPickerOpen(true) }}
-              style={{ ...s.btnPrimary, width: '100%' }}
+              style={{ ...s.btnPrimary, fontSize: '0.7rem', width: '100%' }}
             >Se som atlet</button>
           )}
           {!coachRyd && previewPicker}
@@ -127,10 +127,10 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
               sjældne handlinger og skal ikke fylde i det daglige. */}
           {!coachRyd && <button
             onClick={() => setSidebarMoreOpen(o => !o)}
-            style={{ background: 'transparent', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.55rem 0.1rem 0.15rem', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: sidebarMoreOpen ? '#c8923a' : '#7a7770' }}
+            style={{ background: 'transparent', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.55rem 0.1rem 0.15rem', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: sidebarMoreOpen ? '#c8923a' : '#7a7770' }}
           >
             <span>Værktøjer</span>
-            <span style={{ fontSize: '0.5rem', transform: sidebarMoreOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▾</span>
+            <span style={{ fontSize: '0.7rem', transform: sidebarMoreOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▾</span>
           </button>}
           {(coachRyd || sidebarMoreOpen) && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', paddingTop: '0.3rem' }}>
@@ -139,7 +139,7 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
                 const days = lastBackup ? Math.floor((Date.now() - new Date(lastBackup)) / 86400000) : null
                 const stale = days == null || days >= 7
                 const backupNote = days == null ? '⚠ aldrig' : days === 0 ? '✓ i dag' : stale ? `⚠ ${days}d` : `✓ ${days}d`
-                const row = { background: 'transparent', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.1rem', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.06em', color: '#7a7770', textAlign: 'left' }
+                const row = { background: 'transparent', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.1rem', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', color: '#7a7770', textAlign: 'left' }
                 return (
                   <>
                     <button onClick={openVideoCoachV3} style={row}
