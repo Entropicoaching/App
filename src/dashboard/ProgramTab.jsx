@@ -91,7 +91,7 @@ export default function ProgramTab({
   return (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                  <div role="heading" aria-level={2} aria-label={`Program: ${weeks.length} uger`} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
+                  <div role="heading" aria-level={2} aria-label={`Program: ${weeks.length} uger`} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
                     {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -168,17 +168,17 @@ export default function ProgramTab({
                 {/* Sæt datoer-panel: preview af udfyldte start_date'er før gem, rører ingen daterede uger */}
                 {weekDateFill && (
                   <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
                       Sæt datoer · {weekDateFill.rows.length} uge{weekDateFill.rows.length !== 1 ? 'r' : ''} mangler en dato
                     </div>
                     {weekDateFill.rows.length === 0 ? (
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', marginBottom: '0.85rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginBottom: '0.85rem' }}>
                         Ingen uger mangler en dato.
                       </div>
                     ) : (
                       <div style={{ marginBottom: '0.85rem' }}>
                         {weekDateFill.rows.map(row => (
-                          <div key={row.id} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#edeae2', lineHeight: 1.9, borderBottom: '1px solid rgba(237,234,226,0.06)', padding: '0.15rem 0' }}>
+                          <div key={row.id} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#edeae2', lineHeight: 1.9, borderBottom: '1px solid rgba(237,234,226,0.06)', padding: '0.15rem 0' }}>
                             <span>Uge {row.week_number}</span>
                             <span style={{ color: '#c8923a' }}>{new Date(row.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                           </div>
@@ -199,20 +199,20 @@ export default function ProgramTab({
                   <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
                     {weekDraft.error ? (
                       <>
-                        <div role="alert" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#e05555', lineHeight: 1.6, marginBottom: '0.75rem' }}>{weekDraft.error}</div>
+                        <div role="alert" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#e05555', lineHeight: 1.6, marginBottom: '0.75rem' }}>{weekDraft.error}</div>
                         <button style={s.btnGhost} onClick={() => setWeekDraft(null)}>Luk</button>
                       </>
                     ) : (
                       <>
-                        <div role="status" aria-live="polite" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
+                        <div role="status" aria-live="polite" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>
                           Udkast: uge {weekDraft.data.draft.p_payload.week} · start {weekDraft.data.draft.start_date}
                         </div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', marginBottom: '0.85rem' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginBottom: '0.85rem' }}>
                           Kopieret fra uge {weekDraft.data.source_week.week_number} ({weekDraft.data.source_week.block_name || 'uden blok'})
                           {' · '}{weekDraft.data.draft.p_payload.sessions.length} sessioner
                         </div>
                         {weekDraft.data.planned_target && (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#6cba6c', lineHeight: 1.5, marginTop: '-0.45rem', marginBottom: '0.85rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#6cba6c', lineHeight: 1.5, marginTop: '-0.45rem', marginBottom: '0.85rem' }}>
                             Planlagt måluge · {weekDraft.data.planned_target.block_name || 'uden blok'}
                             {weekDraft.data.planned_target.block_description ? ` — ${weekDraft.data.planned_target.block_description}` : ''}
                           </div>
@@ -236,16 +236,16 @@ export default function ProgramTab({
                              <div style={{ marginBottom: '0.85rem', padding: '0.75rem', border: '1px solid rgba(200,146,58,0.28)', background: 'rgba(200,146,58,0.06)' }}>
                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.42rem' }}>
                                  <div style={{ ...s.fieldLabel, color: '#c8923a' }}>{dataAllowed('D69', { rows: rawForecast }) ? 'Forventet progression' : dataMessage('D69')}</div>
-                                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: progression.can_commit ? '#6cba6c' : '#c8923a' }}>{statusLabel}</div>
+                                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: progression.can_commit ? '#6cba6c' : '#c8923a' }}>{statusLabel}</div>
                                </div>
-                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', lineHeight: 1.45, marginBottom: '0.6rem' }}>
+                               <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', lineHeight: 1.45, marginBottom: '0.6rem' }}>
                                  Ret kladden her. En manuel ændring kræver begrundelse og ny godkendelse, før den kan sendes.
                                </div>
                                {progression.reasons?.map((reason, index) => (
-                                 <div key={index} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', lineHeight: 1.55, marginBottom: '0.28rem' }}>⚠ {reason}</div>
+                                 <div key={index} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', lineHeight: 1.55, marginBottom: '0.28rem' }}>⚠ {reason}</div>
                                ))}
                                {progression.approval_error && (
-                                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#e05555', lineHeight: 1.55, marginBottom: '0.28rem' }}>{progression.approval_error}</div>
+                                 <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#e05555', lineHeight: 1.55, marginBottom: '0.28rem' }}>{progression.approval_error}</div>
                                )}
                                {forecast.map(item => {
                                  const draftExercise = draftExerciseForForecast(weekDraft.data.draft.p_payload, item.key)
@@ -255,7 +255,7 @@ export default function ProgramTab({
                                  const missingReason = override && !String(override.reason || '').trim()
                                  return (
                                    <div key={item.key} style={{ padding: '0.65rem 0', borderTop: '1px solid rgba(237,234,226,0.08)' }}>
-                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#d8d4ca', lineHeight: 1.55, marginBottom: '0.45rem' }}>
+                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#d8d4ca', lineHeight: 1.55, marginBottom: '0.45rem' }}>
                                        {item.session_label}: {item.exercise_name} · {decisionLabel[item.expected?.decision] || 'review'}
                                      </div>
                                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(88px, 1fr))', gap: '0.45rem' }}>
@@ -274,7 +274,7 @@ export default function ProgramTab({
                                      </div>
                                      {override && (
                                        <div style={{ marginTop: '0.5rem' }}>
-                                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#c8923a', marginBottom: '0.2rem' }}>
+                                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', marginBottom: '0.2rem' }}>
                                            Manuel ændring: {override.fields.map(field => FORECAST_FIELD_LABELS[field]).join(', ')}
                                          </div>
                                          <input
@@ -287,7 +287,7 @@ export default function ProgramTab({
                                            disabled={approvingProgression}
                                            onChange={e => setDraftForecastOverrideReason(item.key, e.target.value)}
                                          />
-                                         {missingReason && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#e05555', marginTop: '0.2rem' }}>Begrundelse kræves før godkendelse.</div>}
+                                         {missingReason && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#e05555', marginTop: '0.2rem' }}>Begrundelse kræves før godkendelse.</div>}
                                        </div>
                                      )}
                                    </div>
@@ -299,7 +299,7 @@ export default function ProgramTab({
                                 </button>
                               )}
                               {!progression.can_commit && (
-                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.45 }}>Ugen kan ikke sendes, før forventningen er komplet og godkendt.</div>
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.5rem', lineHeight: 1.45 }}>Ugen kan ikke sendes, før forventningen er komplet og godkendt.</div>
                               )}
                             </div>
                           )
@@ -308,16 +308,16 @@ export default function ProgramTab({
                           <div style={{ marginBottom: '0.85rem' }}>
                             <div style={{ ...s.fieldLabel, marginBottom: '0.4rem' }}>Automatiske justeringer</div>
                             {weekDraft.data.changes.map((c, i) => (
-                              <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#edeae2', lineHeight: 1.7 }}>• {c}</div>
+                              <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#edeae2', lineHeight: 1.7 }}>• {c}</div>
                             ))}
                           </div>
                         ) : (
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#7a7770', marginBottom: '0.85rem' }}>{coachTabCleanup ? 'Kopi af kildeugen.' : 'Ingen automatiske justeringer — ren kopi af kildeugen.'}</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginBottom: '0.85rem' }}>{coachTabCleanup ? 'Kopi af kildeugen.' : 'Ingen automatiske justeringer — ren kopi af kildeugen.'}</div>
                         )}
                         {weekDraft.data.warnings.length > 0 && (
                           <div style={{ marginBottom: '0.85rem' }}>
                             {weekDraft.data.warnings.map((w, i) => (
-                              <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', lineHeight: 1.7 }}>⚠ {w}</div>
+                              <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', lineHeight: 1.7 }}>⚠ {w}</div>
                             ))}
                           </div>
                         )}
@@ -378,20 +378,20 @@ export default function ProgramTab({
                   const fmtShort = d => d.toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
                   return (
                     <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1.5rem' }}>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem' }}>Periodiseringsplan</div>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1rem' }}>Periodiseringsplan</div>
 
                       {/* Planassistent: udfylder kun det lokale blokudkast. Oprettelse sker altid separat nederst. */}
                       <div style={{ marginBottom: '1.25rem', padding: '0.85rem', border: '1px solid rgba(200,146,58,0.24)', background: 'rgba(200,146,58,0.055)' }}>
                         <div style={{ ...s.fieldLabel, marginBottom: '0.3rem', color: '#c8923a' }}>Planassistent — udkast</div>
-                        <div style={{ fontSize: '0.68rem', color: '#98948a', lineHeight: 1.45, marginBottom: '0.65rem' }}>Laver kun et redigerbart blokudkast. Uger oprettes først nederst, når du vælger det.</div>
+                        <div style={{ fontSize: '0.7rem', color: '#98948a', lineHeight: 1.45, marginBottom: '0.65rem' }}>Laver kun et redigerbart blokudkast. Uger oprettes først nederst, når du vælger det.</div>
                         <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                          <select aria-label="Planassistentens fokus" value={planAssistantFocus} onChange={e => setPlanAssistantFocus(e.target.value)} style={{ ...s.fieldSelect, minWidth: '142px', padding: '0.4rem 0.55rem', fontSize: '0.65rem' }}>
+                          <select aria-label="Planassistentens fokus" value={planAssistantFocus} onChange={e => setPlanAssistantFocus(e.target.value)} style={{ ...s.fieldSelect, minWidth: '142px', padding: '0.4rem 0.55rem', fontSize: '0.7rem' }}>
                             <option value="competition">Mod stævne</option>
                             <option value="strength">Grundstyrke</option>
                             <option value="offseason">Off-season</option>
                           </select>
-                          <button style={{ ...s.btnGhost, fontSize: '0.56rem', padding: '0.4rem 0.7rem' }} onClick={applyPeriodizationSuggestion}>Lav forslag</button>
-                          {planAssistantFocus === 'competition' && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: compDate ? '#7a7770' : '#b36a58' }}>{compDate ? `Stævne: ${new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'Mangler stævnedato'}</span>}
+                          <button style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.4rem 0.7rem' }} onClick={applyPeriodizationSuggestion}>Lav forslag</button>
+                          {planAssistantFocus === 'competition' && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: compDate ? '#7a7770' : '#b36a58' }}>{compDate ? `Stævne: ${new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'Mangler stævnedato'}</span>}
                         </div>
                       </div>
 
@@ -403,10 +403,10 @@ export default function ProgramTab({
                             <button
                               key={preset.label}
                               onClick={() => setBlockPlan(withBlockPurposes(preset.blocks).map((b, i) => ({ id: Date.now() + i, ...b })))}
-                              style={{ ...s.btnGhost, fontSize: '0.56rem', padding: '0.4rem 0.7rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.1rem', lineHeight: 1.2 }}
+                              style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.4rem 0.7rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.1rem', lineHeight: 1.2 }}
                             >
                               <span style={{ color: '#b8b4a8' }}>{preset.label}</span>
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.44rem', color: '#7a7770', letterSpacing: '0.04em' }}>{preset.desc}</span>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', letterSpacing: '0.04em' }}>{preset.desc}</span>
                             </button>
                           ))}
                         </div>
@@ -419,13 +419,13 @@ export default function ProgramTab({
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '0.75rem' }}>
                             {weeks.map(w => (
                               <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770', minWidth: '52px' }}>Uge {w.week_number}</span>
-                                {w.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', minWidth: '80px' }}>{new Date(w.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', minWidth: '52px' }}>Uge {w.week_number}</span>
+                                {w.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', minWidth: '80px' }}>{new Date(w.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
                                 <select
                                   aria-label={`Blok for uge ${w.week_number}`}
                                   value={assignEdits[w.id] ?? w.block_name ?? ''}
                                   onChange={e => setAssignEdits(p => ({ ...p, [w.id]: e.target.value }))}
-                                  style={{ ...s.fieldSelect, padding: '0.25rem 0.5rem', fontSize: '0.62rem', flex: 1, maxWidth: '180px' }}
+                                  style={{ ...s.fieldSelect, padding: '0.25rem 0.5rem', fontSize: '0.7rem', flex: 1, maxWidth: '180px' }}
                                 >
                                   <option value="">— ingen blok —</option>
                                   {BLOCK_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
@@ -433,7 +433,7 @@ export default function ProgramTab({
                               </div>
                             ))}
                           </div>
-                          <button style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.75rem' }} onClick={async () => {
+                          <button style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.3rem 0.75rem' }} onClick={async () => {
                             await Promise.all(weeks.map(w => {
                               const newName = assignEdits[w.id] !== undefined ? (assignEdits[w.id] || null) : (w.block_name || null)
                               if (newName === (w.block_name || null)) return Promise.resolve()
@@ -452,7 +452,7 @@ export default function ProgramTab({
                               Snap til mandag, så uge 1 starter på en normal træningsuge. */}
                           {compDate && totalWeeks > 0 && (
                             <button
-                              style={{ ...s.btnGhost, fontSize: '0.54rem', padding: '0.4rem 0.75rem' }}
+                              style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.4rem 0.75rem' }}
                               onClick={() => {
                                 const comp = new Date(compDate + 'T12:00:00')
                                 const start = new Date(comp.getTime() - totalWeeks * 7 * 24 * 3600 * 1000)
@@ -485,14 +485,14 @@ export default function ProgramTab({
                                 onChange={e => setBlockPlan(p => p.map((b, j) => j === i ? { ...b, weeks: Math.max(1, parseInt(e.target.value) || 1) } : b))}
                                 style={{ ...s.fieldInput, width: '52px', padding: '0.35rem 0.5rem', fontSize: '0.72rem', textAlign: 'center' }}
                               />
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>uge{block.weeks !== 1 ? 'r' : ''}</span>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>uge{block.weeks !== 1 ? 'r' : ''}</span>
                             </div>
                             <button aria-label={`Fjern blok ${i + 1}`} onClick={() => setBlockPlan(p => p.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', color: '#4a4844', cursor: 'pointer', fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}>✕</button>
                           </div>
                         ))}
                         <button
                           onClick={() => setBlockPlan(p => [...p, { id: Date.now(), name: BLOCK_NAMES[0], weeks: 2, description: blockPurpose(BLOCK_NAMES[0]) }])}
-                          style={{ ...s.btnGhost, fontSize: '0.52rem', padding: '0.3rem 0.7rem', alignSelf: 'flex-start', marginTop: '0.25rem' }}
+                          style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.3rem 0.7rem', alignSelf: 'flex-start', marginTop: '0.25rem' }}
                         >+ Tilføj blok</button>
                       </div>
 
@@ -505,20 +505,20 @@ export default function ProgramTab({
                               return (
                                 <div key={block.id} title={`${block.name}: ${block.weeks} uge${block.weeks !== 1 ? 'r' : ''}`}
                                   style={{ width: `${pct}%`, flexShrink: 0, background: blockColor(block.name), display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                  {block.weeks >= 2 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#141410', fontWeight: 600, letterSpacing: '0.06em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 6px' }}>{block.name}</span>}
+                                  {block.weeks >= 2 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#141410', fontWeight: 600, letterSpacing: '0.06em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', padding: '0 6px' }}>{block.name}</span>}
                                 </div>
                               )
                             })}
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770' }}>{fmtShort(new Date(planStartDate + 'T12:00:00'))}</span>
-                            {endDate && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#7a7770' }}>slutter {fmtShort(endDate)}</span>}
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>{fmtShort(new Date(planStartDate + 'T12:00:00'))}</span>
+                            {endDate && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>slutter {fmtShort(endDate)}</span>}
                           </div>
                         </div>
                       )}
 
                       {/* Status */}
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', marginBottom: '1rem' }}>
+                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', marginBottom: '1rem' }}>
                         <span style={{ color: '#7a7770' }}>Total: {totalWeeks} uger</span>
                         {endDate && <span style={{ color: '#7a7770' }}> · slutter {fmtD(endDate)}</span>}
                         {diffDays != null && (
@@ -573,7 +573,7 @@ export default function ProgramTab({
                   return (
                     <div style={{ marginBottom: '1.5rem' }}>
                       {compDate && weeksToComp != null && (
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: weeksToComp > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: weeksToComp > 0 ? '#c8923a' : '#6cba6c', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>
                           {weeksToComp > 0 ? `${weeksToComp} uger til stævne` : 'Stævne passeret'} · {new Date(compDate + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
                       )}
@@ -584,7 +584,7 @@ export default function ProgramTab({
                         const fmt = ds => new Date(ds + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })
                         return (
                           <div style={{ marginBottom: '1.25rem' }}>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.6rem' }}>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.6rem' }}>
                             Periodisering · klik ✎ for at omdøbe blok
                           </div>
                           <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
@@ -647,9 +647,9 @@ export default function ProgramTab({
                                     ) : (
                                       <>
                                         <span role="button" tabIndex={0} aria-label={`Gå til ${range}`} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); gotoWeek(first) }} style={{ fontSize: '0.82rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{phase.name || 'Uden blok'}</span>
-                                        {isDone && <span style={{ color, fontSize: '0.6rem', lineHeight: 1 }}>✓</span>}
+                                        {isDone && <span style={{ color, fontSize: '0.7rem', lineHeight: 1 }}>✓</span>}
                                         {isActive && (
-                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.4rem', letterSpacing: '0.1em', textTransform: 'uppercase', color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
+                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
                                         )}
                                         <button
                                           onClick={e => { e.stopPropagation(); setRenameValue(phase.name || ''); setRenamingBlock(first.id) }}
@@ -660,11 +660,11 @@ export default function ProgramTab({
                                       </>
                                     )}
                                   </div>
-                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
                                     {range} · {phase.weeks.length}u
                                   </div>
                                   {dates && (
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', color: '#4a4844', marginTop: '0.18rem' }}>{dates}</div>
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', marginTop: '0.18rem' }}>{dates}</div>
                                   )}
                                 </div>
                               )
@@ -710,12 +710,12 @@ export default function ProgramTab({
                         return (
                           <div style={{ marginBottom: '1.5rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844' }}>Volumen &amp; intensitet</span>
-                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#7a7770' }}>
+                              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844' }}>Volumen &amp; intensitet</span>
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>
                                 <span style={{ width: '8px', height: '8px', background: 'rgba(237,234,226,0.3)' }} /> sæt/uge
                               </span>
                               {hasRpe && (
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#7a7770' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>
                                   <span style={{ width: '12px', height: '2px', background: '#c8923a' }} /> ø RPE
                                 </span>
                               )}
@@ -775,15 +775,15 @@ export default function ProgramTab({
                               role="button" tabIndex={0} aria-label={`Gå til uge ${week.week_number}`} onKeyDown={activateOnKey}
                               onClick={() => gotoWeek(week)}
                             >
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.48rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isLatest ? '#c8923a' : '#7a7770', marginBottom: '0.2rem' }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isLatest ? '#c8923a' : '#7a7770', marginBottom: '0.2rem' }}>
                                 UGE {week.week_number}{isCompWeek ? ' 🏆' : ''}
                               </div>
                               {week.block_name && (
                                 <div style={{ fontSize: '0.76rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>{week.block_name}</div>
                               )}
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', color: '#4a4844', marginTop: '0.25rem' }}>{week.sessions?.length || 0} træninger</div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', marginTop: '0.25rem' }}>{week.sessions?.length || 0} træninger</div>
                               {pct != null && (
-                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: pctColor, marginTop: '0.2rem' }}>{pct}%</div>
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: pctColor, marginTop: '0.2rem' }}>{pct}%</div>
                               )}
                             </div>
                           )
@@ -796,7 +796,7 @@ export default function ProgramTab({
                 {/* Add week form */}
                 {addingWeek && (
                   <div style={{ background: '#1c1c18', border: '1px solid rgba(200,146,58,0.3)', padding: '1.25rem', marginBottom: '1rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>Ny uge</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.75rem' }}>Ny uge</div>
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1fr 1fr 1.5fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                       <div>
                         <div style={s.fieldLabel}>Uge nr.</div>
@@ -828,7 +828,7 @@ export default function ProgramTab({
                 )}
 
                 {weeks.length === 0 && !addingWeek && (
-                  <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2rem 0' }}>
+                  <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2rem 0' }}>
                     Ingen uger endnu — tilføj den første
                   </div>
                 )}
@@ -840,7 +840,7 @@ export default function ProgramTab({
                   const active = programActiveStart()
                   const chip = (key, label, isActive, color) => (
                     <button key={key} onClick={() => { setProgramBlockStart(key); setOpenWeekId(null) }}
-                      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.04em', padding: '0.4rem 0.7rem', cursor: 'pointer',
+                      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.04em', padding: '0.4rem 0.7rem', cursor: 'pointer',
                         background: isActive ? (color ? color + '22' : 'rgba(200,146,58,0.15)') : 'transparent',
                         border: `1px solid ${isActive ? (color ? color + '88' : 'rgba(200,146,58,0.5)') : 'rgba(237,234,226,0.12)'}`,
                         color: isActive ? (color || '#c8923a') : '#7a7770' }}>{label}</button>
@@ -912,20 +912,20 @@ export default function ProgramTab({
                       >
                         <div>
                           <div role="heading" aria-level={3} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
-                            <span role="button" tabIndex={0} aria-expanded={openWeekId === week.id} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); setOpenWeekId(openWeekId === week.id ? null : week.id) }} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
-                            {week.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', letterSpacing: '0.06em' }}>{new Date(week.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })} – {new Date(new Date(week.start_date + 'T12:00:00').getTime() + 6 * 24 * 3600 * 1000).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
+                            <span role="button" tabIndex={0} aria-expanded={openWeekId === week.id} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); setOpenWeekId(openWeekId === week.id ? null : week.id) }} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
+                            {week.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', letterSpacing: '0.06em' }}>{new Date(week.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })} – {new Date(new Date(week.start_date + 'T12:00:00').getTime() + 6 * 24 * 3600 * 1000).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
                             {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{week.block_name}</span>}
                           </div>
-                          {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
+                          {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
                           {week.block_description && <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.78rem', color: '#4a4844', fontStyle: 'italic', marginTop: '0.2rem' }}>{week.block_description}</div>}
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: programCopyEnabled === true ? 1 : 0, ...(programCopyEnabled === true ? { maxWidth: '100%' } : {}), flexWrap: 'wrap', justifyContent: programCopyEnabled === true && isMobile ? 'flex-start' : 'flex-end' }}>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase' }}>{week.sessions?.length || 0} træninger</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', textTransform: 'uppercase' }}>{week.sessions?.length || 0} træninger</span>
                           <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingWeek(week.id); setWeekForm({ week_number: week.week_number, block_name: week.block_name || '', coach_note: week.coach_note || '', block_description: week.block_description || '', start_date: week.start_date || '' }) }}>Rediger</button>
                           {programCopyEnabled === true && <button style={s.btnEdit} disabled={!!copyDisabled} onClick={e => { e.stopPropagation(); copyWeek(week.id) }}>Kopiér uge</button>}
                           {programCopyEnabled === true && <button style={s.btnEdit} disabled={!!copyDisabled} onClick={e => { e.stopPropagation(); requestCopy('week', [week]) }}>Kopiér med progression</button>}
                           <button aria-label={programCopyEnabled === true ? `Slet uge ${week.week_number}` : undefined} style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteWeek(week.id) }}>Slet</button>
-                          <span style={{ color: '#4a4844', fontSize: '0.65rem', marginLeft: '0.25rem' }}>{openWeekId === week.id ? '▲' : '▼'}</span>
+                          <span style={{ color: '#4a4844', fontSize: '0.7rem', marginLeft: '0.25rem' }}>{openWeekId === week.id ? '▲' : '▼'}</span>
                         </div>
                       </div>
                     )}
@@ -961,16 +961,16 @@ export default function ProgramTab({
                                   <div role="heading" aria-level={4} style={{ fontSize: '0.88rem', color: '#edeae2', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                                     <span role="button" tabIndex={0} aria-expanded={openSessionId === session.id} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); setOpenSessionId(openSessionId === session.id ? null : session.id) }}>{session.title}</span>
                                     {session.weekday != null && WEEKDAYS_LONG[session.weekday] && (
-                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.12rem 0.4rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
+                                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#c8923a', border: '1px solid rgba(200,146,58,0.4)', padding: '0.12rem 0.4rem' }}>{WEEKDAYS_LONG[session.weekday]}</span>
                                     )}
                                     {(() => {
                                       const st = sessionLogStatus(session)
                                       if (st.total === 0 && st.logged === 0) return null
                                       const label = st.kind === 'done' ? '✓ Logget' : st.kind === 'partial' ? `${st.logged}/${st.total} sæt` : 'Ikke logget'
-                                      return <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.46rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: st.color, border: `1px solid ${st.color}66`, padding: '0.12rem 0.4rem' }}>{label}</span>
+                                      return <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: st.color, border: `1px solid ${st.color}66`, padding: '0.12rem 0.4rem' }}>{label}</span>
                                     })()}
                                   </div>
-                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
+                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
                                     {session.exercises?.length || 0} øvelser
                                   </div>
                                 </div>
@@ -981,7 +981,7 @@ export default function ProgramTab({
                                     <>
                                       <select
                                         aria-label={`Kopiér ${session.title} til uge`}
-                                        style={{ ...s.fieldInput, fontSize: '0.6rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
+                                        style={{ ...s.fieldInput, fontSize: '0.7rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
                                         defaultValue=""
                                         onChange={e => { if (e.target.value) copySessionToWeek(session, e.target.value) }}
                                         onClick={e => e.stopPropagation()}
@@ -991,14 +991,14 @@ export default function ProgramTab({
                                           <option key={w.id} value={w.id}>Uge {w.week_number}{w.block_name ? ` — ${w.block_name}` : ''}</option>
                                         ))}
                                       </select>
-                                      <button aria-label="Annuller kopiering af træning" style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={e => { e.stopPropagation(); setCopyingSession(null) }}>✕</button>
+                                      <button aria-label="Annuller kopiering af træning" style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.2rem 0.4rem' }} onClick={e => { e.stopPropagation(); setCopyingSession(null) }}>✕</button>
                                     </>
                                   ) : (
                                     <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setCopyingSession(session.id) }}>Kopiér</button>
                                   )}
                                   <button style={s.btnEdit} onClick={e => { e.stopPropagation(); setEditingSession(session.id); setSessionForm({ title: session.title, weekday: session.weekday ?? null }) }}>Rediger</button>
                                   <button style={s.btnDanger} onClick={e => { e.stopPropagation(); deleteSession(session.id) }}>Slet</button>
-                                  <span style={{ color: '#4a4844', fontSize: '0.6rem', marginLeft: '0.2rem' }}>{openSessionId === session.id ? '▲' : '▼'}</span>
+                                  <span style={{ color: '#4a4844', fontSize: '0.7rem', marginLeft: '0.2rem' }}>{openSessionId === session.id ? '▲' : '▼'}</span>
                                 </div>
                               </div>
                             )}
@@ -1022,10 +1022,10 @@ export default function ProgramTab({
                                         <div style={{ flex: 1 }}>
                                           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
                                             <div style={{ fontSize: '0.85rem', color: '#b8b4a8', minWidth: '120px' }}>{ex.name}</div>
-                                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>
+                                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>
                                               {ex.sets && `${ex.sets} sæt`}{ex.reps && ` × ${ex.reps}`}{ex.intensity && ` · ${ex.intensity}`}
                                             </div>
-                                            {ex.note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', fontStyle: 'italic' }}>{ex.note}</div>}
+                                            {ex.note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', fontStyle: 'italic' }}>{ex.note}</div>}
                                           </div>
                                           {editingRecommended === ex.id ? (
                                             <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.3rem', alignItems: 'center' }}>
@@ -1038,24 +1038,24 @@ export default function ProgramTab({
                                                 onKeyDown={e => { if (e.key === 'Enter') saveRecommendedWeight(ex.id); if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cancelRecommended(setEditingRecommended, recommendedReturn, ex.id) } }}
                                                 autoFocus
                                               />
-                                              <button style={{ ...s.btnPrimary, fontSize: '0.55rem', padding: '0.2rem 0.5rem' }} onClick={() => saveRecommendedWeight(ex.id)}>Gem</button>
-                                              <button style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.5rem' }} onClick={() => cancelRecommended(setEditingRecommended, recommendedReturn, ex.id)}>Annuller</button>
+                                              <button style={{ ...s.btnPrimary, fontSize: '0.7rem', padding: '0.2rem 0.5rem' }} onClick={() => saveRecommendedWeight(ex.id)}>Gem</button>
+                                              <button style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.2rem 0.5rem' }} onClick={() => cancelRecommended(setEditingRecommended, recommendedReturn, ex.id)}>Annuller</button>
                                             </div>
                                           ) : (
                                             (() => {
                                               const last = bestLog(ex.name, ex.reps)
                                               if (ex.recommended_weight != null) return (
-                                                <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#c8923a', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
+                                                <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput(ex.recommended_weight.toString()) }}>
                                                   Anbefalet: {komma(ex.recommended_weight)}kg <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               if (last) return (
-                                                <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                <div ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} role="button" tabIndex={0} aria-label={`Rediger anbefalet vægt for ${ex.name}`} onKeyDown={activateOnKey} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.25rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
                                                   Sidst logget: {komma(last.weight)}kg × {last.reps_completed} reps <span style={{ opacity: 0.6 }}>✎</span>
                                                 </div>
                                               )
                                               return (
-                                                <button ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} style={{ ...s.btnSm, marginTop: '0.25rem', fontSize: '0.5rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
+                                                <button ref={node => restoreRecommendedFocus(node, recommendedReturn, ex.id)} style={{ ...s.btnSm, marginTop: '0.25rem', fontSize: '0.7rem' }} onClick={() => { setEditingRecommended(ex.id); setRecommendedInput('') }}>
                                                   + Anbefalet vægt
                                                 </button>
                                               )
@@ -1067,7 +1067,7 @@ export default function ProgramTab({
                                             <>
                                               <select
                                                 aria-label={`Kopiér ${ex.name} til træning`}
-                                                style={{ ...s.fieldInput, fontSize: '0.65rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
+                                                style={{ ...s.fieldInput, fontSize: '0.7rem', padding: '0.2rem 0.4rem', width: 'auto', cursor: 'pointer' }}
                                                 defaultValue=""
                                                 onChange={e => { if (e.target.value) copyExerciseToSession(ex, e.target.value) }}
                                               >
@@ -1084,7 +1084,7 @@ export default function ProgramTab({
                                                   )
                                                 })}
                                               </select>
-                                              <button aria-label="Annuller kopiering af øvelse" style={{ ...s.btnGhost, fontSize: '0.55rem', padding: '0.2rem 0.4rem' }} onClick={() => setCopyingExercise(null)}>✕</button>
+                                              <button aria-label="Annuller kopiering af øvelse" style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.2rem 0.4rem' }} onClick={() => setCopyingExercise(null)}>✕</button>
                                             </>
                                           ) : (
                                             <button style={s.btnEdit} onClick={() => setCopyingExercise(ex.id)}>Kopiér</button>
@@ -1132,7 +1132,7 @@ export default function ProgramTab({
                             </div>
                           </div>
                         ) : (
-                          <button style={{ ...s.btnGhost, marginTop: '0.5rem', fontSize: '0.54rem' }} onClick={() => { setAddingSession(week.id); setSessionForm({ title: '', weekday: null }) }}>
+                          <button style={{ ...s.btnGhost, marginTop: '0.5rem', fontSize: '0.7rem' }} onClick={() => { setAddingSession(week.id); setSessionForm({ title: '', weekday: null }) }}>
                             + Tilføj træning
                           </button>
                         )}

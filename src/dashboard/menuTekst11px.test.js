@@ -28,3 +28,10 @@ test('../athlete/Ramme.jsx: datoen paa Hjem er mindst 11 px', () => {
   assert.ok(linje)
   assert.deepEqual(smaa(linje), [])
 })
+
+// Ordre 1310: coachens atletside (profilhoved, programfane og delte knapper) maa ikke have tekst under 11 px.
+for (const fil of ['./ProfilHoved.jsx', './ProgramTab.jsx', '../dashboardShared.js']) {
+  test(`${fil}: ingen skrift under 11 px paa coachens atletside`, () => {
+    assert.deepEqual(smaa(kilde(fil)), [])
+  })
+}
