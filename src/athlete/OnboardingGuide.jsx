@@ -44,7 +44,7 @@ function OnboardingGuide({
                     ),
                   },
                   {
-                    label: 'Readiness',
+                    label: 'Dagsform',
                     icon: (
                       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -54,7 +54,7 @@ function OnboardingGuide({
                 ].map(({ label, icon }) => (
                   <div key={label} style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.5rem 0.75rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.65rem' }}>
                     <div style={{ color: '#c8923a' }}>{icon}</div>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>{label}</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>{label}</div>
                   </div>
                 ))}
               </div>
@@ -88,7 +88,7 @@ function OnboardingGuide({
             <button
               type="button"
               onClick={completeOnboardingGuide}
-              style={{ background: 'none', border: 'none', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', padding: '0.4rem' }}
+              style={{ background: 'none', border: 'none', color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', padding: '0.4rem' }}
             >
               Spring guiden over
             </button>
