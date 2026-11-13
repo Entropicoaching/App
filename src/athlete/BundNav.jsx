@@ -77,7 +77,7 @@ function BundNav({
               padding: '0.7rem 0',
               color: tab === key ? '#c8923a' : '#a8a498',
               fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '0.52rem',
+              fontSize: '0.7rem',
               letterSpacing: '0.04em',
               textTransform: 'uppercase',
               transition: 'color 0.15s ease',

@@ -50,3 +50,8 @@ test('../Dashboard.jsx: knappen i den oeverste bjaelke er mindst 11 px', () => {
   assert.ok(linje)
   assert.deepEqual(smaa(linje), [])
 })
+
+// Ordre 1358: atletens nederste menu (BundNav.jsx) maa ikke have tekst under 11 px.
+test('../athlete/BundNav.jsx: ingen skrift under 11 px i atletens nederste menu', () => {
+  assert.deepEqual(smaa(kilde('../athlete/BundNav.jsx')), [])
+})
