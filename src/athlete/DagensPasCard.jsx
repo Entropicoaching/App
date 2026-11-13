@@ -167,10 +167,10 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       onClick={checkinNudge.onClick}
       style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', borderBottom: '1px solid rgba(237,234,226,0.08)', padding: '0 0 0.6rem', marginBottom: '0.85rem', cursor: 'pointer' }}
     >
-      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#a9a69e' }}>
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.04em', color: '#a9a69e' }}>
         Ugens check-in mangler stadig.
       </span>
-      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.06em', color: '#c8923a', flexShrink: 0 }}>
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', color: '#c8923a', flexShrink: 0 }}>
         Log den →
       </span>
     </button>
@@ -183,7 +183,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   const rateSession = finishedSession && !ratedHere.has(finishedSession.id) ? finishedSession : null
   const rateLine = rateSession && onRateSession && (
     <div data-vurder-pas={rateSession.id} style={{ borderBottom: '1px solid rgba(237,234,226,0.08)', padding: '0 0 0.6rem', marginBottom: '0.85rem' }}>
-      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', letterSpacing: '0.04em', color: '#b8b4a8', marginBottom: '0.4rem' }}>
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.04em', color: '#b8b4a8', marginBottom: '0.4rem' }}>
         {rateSession.title || 'Passet'} er klaret. Hvordan gik det?
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -205,7 +205,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         <button
           type="button"
           onClick={() => setRatedHere(p => new Set([...p, rateSession.id]))}
-          style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', letterSpacing: '0.04em', marginLeft: 'auto', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: '0 0.25rem' }}
+          style={{ background: 'none', border: 'none', color: '#7a7770', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.04em', marginLeft: 'auto', minWidth: '44px', minHeight: '44px', boxSizing: 'border-box', padding: '0 0.25rem' }}
         >spring over</button>
       </div>
     </div>
@@ -214,7 +214,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   // ORDRE 439 · blok 1: en kort, rolig fejring på sættet, der lige blev
   // logget (sat og ryddet i saetSkrivning.js: 5 s, eller fortryd).
   const rekordLinje = rekordFejring && (
-    <div data-rekord-fejring={rekordFejring.key} role="status" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', background: 'rgba(200,146,58,0.07)', borderLeft: '2px solid #c8923a', padding: '0.5rem 0.65rem', marginBottom: '0.75rem' }}>
+    <div data-rekord-fejring={rekordFejring.key} role="status" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', background: 'rgba(200,146,58,0.07)', borderLeft: '2px solid #c8923a', padding: '0.5rem 0.65rem', marginBottom: '0.75rem' }}>
       <span aria-hidden="true">🏆 </span>{rekordFejring.tekst}
     </div>
   )
@@ -230,13 +230,13 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         { sets: parkedSets.filter(p => p.reason === '23503'), why: 'fordi coachen har ændret øvelsen' },
         { sets: parkedSets.filter(p => p.reason !== '23503'), why: 'efter flere forsøg' },
       ].filter(g => g.sets.length > 0).map(g => (
-        <div key={g.why} data-parkerede-saet={g.sets.length} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#c8923a', marginTop: '0.5rem', textAlign: 'center' }}>
+        <div key={g.why} data-parkerede-saet={g.sets.length} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.04em', color: '#c8923a', marginTop: '0.5rem', textAlign: 'center' }}>
           {g.sets.length} sæt kunne ikke sendes, {g.why}. Skriv tallene til din coach:{' '}
           {g.sets.map(p => `${p.exerciseName || 'øvelse'} sæt ${p.setNumber}: ${komma(p.payload?.weight ?? 0)} kg × ${p.payload?.reps_completed ?? 0}`).join(' · ')}
         </div>
       ))}
       {pendingSyncCount > 0 && (
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.04em', color: '#7a7770', marginTop: '0.5rem', textAlign: 'center' }}>
           {ventendeSaetTekst(pendingSyncCount)}
         </div>
       )}
@@ -266,11 +266,11 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             onClick={() => onOpenSession(up.session.id)}
             style={{ display: 'block', width: '100%', textAlign: 'left', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.13)', padding: '0.75rem', cursor: 'pointer' }}
           >
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.3rem' }}>
               Næste: uge {up.week.week_number}
             </div>
             <div style={{ fontSize: '0.9rem', color: '#edeae2' }}>{up.session.title}</div>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: '#7a7770', marginTop: '0.2rem' }}>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.2rem' }}>
               {exerciseViewGroups(up.session.exercises).map(e => e.name).join(' · ')}
             </div>
           </button>
@@ -446,7 +446,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
             if (isEditingThis) {
               return (
                 <div key={n} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', padding: '0.5rem', marginBottom: '0.2rem', border: '1px solid rgba(200,146,58,0.25)', background: 'rgba(200,146,58,0.04)' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.04em', color: '#c8923a' }}>Retter sæt {n}</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.04em', color: '#c8923a' }}>Retter sæt {n}</div>
                   <div data-ret-raekke="vaegt" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <button
                       type="button" aria-label="2,5 kg mindre (ret)"
@@ -514,7 +514,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
               )
             }
             return (
-              <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.66rem', color: '#a8a498' }}>
+              <div key={n} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#a8a498' }}>
                 <span style={{ textAlign: 'left' }}>
                   {view.label} {n}: {log.skipped ? 'Sprunget over' : `${komma(log.weight)} kg × ${log.reps_completed}${log.rpe_actual != null ? `, RPE ${komma(log.rpe_actual)}` : ''}`}
                   {pendingSyncKeys.includes(`${ex.id}_${n}`) && (
@@ -643,7 +643,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
           {intetLogget
             ? <span style={{ color: '#e0a94c', fontWeight: 600 }}>{vaerdTekst.foersteSaet}</span>
             : <><span style={{ color: '#e0a94c', fontWeight: 600 }}>Pause {visTid(restSecondsForExercise(ex))}</span> · tryk for at starte</>}
-          {!intetLogget && !pauseForklaret && <span style={{ display: 'block', fontSize: '0.64rem', color: '#a8a498' }}>Pausen starter af sig selv, når du godkender et sæt.</span>}
+          {!intetLogget && !pauseForklaret && <span style={{ display: 'block', fontSize: '0.7rem', color: '#a8a498' }}>Pausen starter af sig selv, når du godkender et sæt.</span>}
         </button>
       )}
       {foersteAaben && createPortal(
@@ -662,7 +662,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         document.body
       )}
       {spoergNulKg && nulKgSpurgt === key && (
-        <div data-nul-kg={key} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', marginTop: '0.5rem' }}>
+        <div data-nul-kg={key} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.03em', lineHeight: 1.45, color: '#c8923a', marginTop: '0.5rem' }}>
           Vægtfeltet er tomt. Skriv vægten, eller tryk Godkendt igen for at gemme sættet uden vægt (0 kg).
         </div>
       )}
@@ -671,7 +671,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         <button
           type="button"
           onClick={() => onUndoLastSet(lastLoggedSet.exerciseId, lastLoggedSet.setNumber)}
-          style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%', minHeight: '44px', boxSizing: 'border-box', fontSize: '0.56rem', color: '#7a7770' }}
+          style={{ ...s.btnGhost, marginTop: '0.5rem', width: '100%', minHeight: '44px', boxSizing: 'border-box', fontSize: '0.7rem', color: '#7a7770' }}
         >↺ Fortryd sidste sæt</button>
       )}
       {ventendeSaet}
@@ -684,13 +684,13 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
               Næste: {nextSetReps || '—'} reps{nextSetWeight != null ? ` @ ${komma(nextSetWeight)} kg` : ''}
             </div>
           ) : <span />}
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', flexShrink: 0, minHeight: '44px', boxSizing: 'border-box' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', flexShrink: 0, minHeight: '44px', minWidth: '44px', boxSizing: 'border-box' }}>
             <input
               type="checkbox" checked={showNextPreview}
               onChange={e => { setShowNextPreview(e.target.checked); saveShowNextSetPreview(e.target.checked) }}
-              style={{ accentColor: '#c8923a', width: '16px', height: '16px' }}
+              style={{ accentColor: '#c8923a', width: '24px', height: '24px', margin: 0 }}
             />
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#a8a498' }}>Vis næste sæt</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#a8a498' }}>Vis næste sæt</span>
           </label>
         </div>
       )}
@@ -708,7 +708,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         naeste={naeste}
         triggerLabel={model => naesteKnapNavn(naeste, model.percent)}
         fallback={naeste ? (
-          <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#7a7770', textAlign: 'left' }}>
+          <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', textAlign: 'left' }}>
             Næste øvelse: <span style={{ color: '#b8b4a8' }}>{naeste.name}</span>{naesteOevelseDetalje(naeste)}
           </div>
         ) : null}
@@ -718,7 +718,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
       {onVarmOp && activeNext && (viewRow?.offset || 0) + setNumber === 1 && (
         <button
           type="button" data-testid="varm-op-link" onClick={onVarmOp}
-          style={{ display: 'block', width: '100%', minHeight: '44px', marginTop: '0.4rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.06em', color: '#c8923a' }}
+          style={{ display: 'block', width: '100%', minHeight: '44px', marginTop: '0.4rem', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', color: '#c8923a' }}
         >Varm op først →</button>
       )}
     </div>

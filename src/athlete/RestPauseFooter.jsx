@@ -62,12 +62,12 @@ function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
           onClick={() => setOpen(true)}
           style={{ background: 'none', border: 'none', padding: 0, margin: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.6rem', flex: 1, minWidth: 0, minHeight: '44px', textAlign: 'left' }}
         >
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a', whiteSpace: 'nowrap' }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a', whiteSpace: 'nowrap' }}>
           {done ? 'Pause slut' : 'Pause'}{pause.label ? ` · ${pause.label}` : ''}
         </span>
-        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2', lineHeight: 1, whiteSpace: 'nowrap' }}>{done ? '✓' : visTid(liveSeconds)}</span>
+        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.35rem', color: '#edeae2', lineHeight: 1, whiteSpace: 'nowrap' }}>{done ? '✓' : visTid(liveSeconds)}</span>
         {nextLabel && (
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.54rem', color: '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
             {nextLabel}
           </span>
         )}
@@ -89,13 +89,13 @@ function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
           style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(10,10,8,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         >
           <div style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', padding: '1.75rem', width: '100%', maxWidth: '360px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a' }}>{done ? 'Pause slut' : 'Pause'}</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: done ? '#6cba6c' : '#c8923a' }}>{done ? 'Pause slut' : 'Pause'}</div>
             {pause.label && <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', margin: 0, textAlign: 'center', lineHeight: 1.2 }}>{pause.label}</h2>}
             <CountdownRing total={pause.durationSeconds} remaining={liveSeconds} done={done} />
-            {nextLabel && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#b8b4a8', textAlign: 'center', lineHeight: 1.5 }}>{nextLabel}</div>}
-            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button type="button" data-testid="rest-pause-close" onClick={() => setOpen(false)} style={{ background: 'none', border: '1px solid rgba(237,234,226,0.2)', color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '0.5rem 1.25rem', minHeight: '44px', cursor: 'pointer' }}>Luk</button>
-              <button type="button" onClick={clear} style={{ background: 'none', border: '1px solid rgba(237,234,226,0.1)', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', padding: '0.5rem 1.25rem', minHeight: '44px', cursor: 'pointer' }}>Skjul pausen</button>
+            {nextLabel && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.74rem', color: '#b8b4a8', textAlign: 'center', lineHeight: 1.5 }}>{nextLabel}</div>}
+            <div style={{ display: 'flex', gap: '0.6rem', width: '100%' }}>
+              <button type="button" data-testid="rest-pause-close" onClick={() => setOpen(false)} style={{ background: 'none', border: '1px solid rgba(237,234,226,0.2)', color: '#edeae2', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', padding: '0.5rem 1rem', minHeight: '52px', flex: 1, cursor: 'pointer' }}>Luk</button>
+              <button type="button" onClick={clear} style={{ background: 'none', border: '1px solid rgba(237,234,226,0.1)', color: '#7a7770', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.74rem', padding: '0.5rem 1rem', minHeight: '52px', flex: 1, cursor: 'pointer' }}>Skjul pausen</button>
             </div>
           </div>
         </div>,
