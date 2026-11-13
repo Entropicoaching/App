@@ -737,7 +737,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             <button
               onClick={goToMyProfile}
               title="Min træning — hop til din egen profil (tast M)"
-              style={{ ...s.btnPrimary, fontSize: '0.55rem', padding: '0.4rem 0.8rem', whiteSpace: 'nowrap' }}
+              style={{ ...s.btnPrimary, fontSize: '0.7rem', padding: '0.4rem 0.8rem', whiteSpace: 'nowrap' }}
             >⚡ Min træning</button>
           )}
         </div>

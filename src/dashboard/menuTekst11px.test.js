@@ -42,3 +42,11 @@ for (const fil of ['../athlete/FremgangTab.jsx', './LogTab.jsx']) {
     assert.deepEqual(smaa(kilde(fil)), [])
   })
 }
+
+// Ordre 1343: knappen "Min traening" i den oeverste bjaelke (Dashboard.jsx) maa ikke vaere under 11 px.
+test('../Dashboard.jsx: knappen i den oeverste bjaelke er mindst 11 px', () => {
+  const src = kilde('../Dashboard.jsx')
+  const linje = src.split('\n').find(l => l.includes('...s.btnPrimary') && l.includes("whiteSpace: 'nowrap'"))
+  assert.ok(linje)
+  assert.deepEqual(smaa(linje), [])
+})
