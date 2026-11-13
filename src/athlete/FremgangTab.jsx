@@ -142,12 +142,12 @@ function RekordRaekker({ rekorder, attr }) {
     <div {...{ [attr]: rekorder.length }} style={{ display: 'flex', flexDirection: 'column' }}>
       {rekorder.map((r, i) => (
         <div key={`${r.navn}-${r.dato}-${i}`} data-rekord={r.type} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', padding: '0.5rem 0', borderBottom: i < rekorder.length - 1 ? '1px solid rgba(237,234,226,0.05)' : 'none' }}>
-          <span style={{ fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
+          <span style={{ fontFamily: mono, fontSize: '0.7rem', color: '#a8a498', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
           <span style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
             <span style={{ display: 'block', fontSize: '0.88rem', color: '#edeae2' }}>
               {r.type === 'e1rm' ? `${r.navn} e1RM ${r.e1rm} kg` : `${r.navn} ${kgTal(r.weight)} kg × ${r.reps}`}
             </span>
-            <span style={{ display: 'block', fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', marginTop: '0.1rem' }}>
+            <span style={{ display: 'block', fontFamily: mono, fontSize: '0.7rem', color: '#a8a498', marginTop: '0.1rem' }}>
               {r.type === 'e1rm'
                 ? `+${r.plus} kg · ${kgTal(r.weight)} kg × ${r.reps}`
                 : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
@@ -168,18 +168,18 @@ function HovedRaekke({ h, sidst }) {
   return (
     <div data-rekord-hoved={h.key} style={{ padding: '0.5rem 0', borderBottom: sidst ? 'none' : '1px solid rgba(237,234,226,0.05)' }}>
       <div data-rekord={r.type} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem' }}>
-        <span style={{ fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
+        <span style={{ fontFamily: mono, fontSize: '0.7rem', color: '#a8a498', width: '3.6rem', flexShrink: 0 }}>{kortDato(r.dato)}</span>
         <span style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
           <span style={{ display: 'block', fontSize: '0.88rem', color: '#edeae2' }}>
             {r.type === 'e1rm' ? `${h.navn} e1RM ${r.e1rm} kg` : `${h.navn} ${kgTal(r.weight)} kg × ${r.reps}`}
           </span>
-          <span style={{ display: 'block', fontFamily: mono, fontSize: '0.66rem', color: '#a8a498', marginTop: '0.1rem' }}>
+          <span style={{ display: 'block', fontFamily: mono, fontSize: '0.7rem', color: '#a8a498', marginTop: '0.1rem' }}>
             {r.type === 'e1rm' ? `nået første gang med ${kgTal(r.weight)} kg × ${r.reps}` : `${r.plus === 1 ? '1 rep' : `${r.plus} reps`} mere end før på ${kgTal(r.weight)} kg`}
           </span>
         </span>
         {flere && (
           <button type="button" data-rekord-historik-knap={h.key} aria-expanded={aaben} onClick={() => setAaben(v => !v)}
-            style={{ background: 'none', border: '1px solid rgba(237,234,226,0.15)', color: '#a8a59c', fontFamily: mono, fontSize: '0.66rem', padding: '0.3rem 0.5rem', cursor: 'pointer', minHeight: 32 }}>
+            style={{ background: 'none', border: '1px solid rgba(237,234,226,0.15)', color: '#a8a59c', fontFamily: mono, fontSize: '0.7rem', padding: '0.3rem 0.5rem', cursor: 'pointer', minHeight: 32 }}>
             {aaben ? 'Skjul' : `Historik (${h.historik.length})`}
           </button>
         )}
@@ -205,7 +205,7 @@ function RekordListe({ rekorder }) {
         : <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>Ingen rekorder på de fire hovedløft endnu.</div>}
       {andre.length > 0 && (
         <div data-rekord-varianter style={{ marginTop: '1rem' }}>
-          <div style={{ fontFamily: mono, fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.25rem' }}>Varianter og assistance</div>
+          <div style={{ fontFamily: mono, fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.25rem' }}>Varianter og assistance</div>
           <RekordRaekker rekorder={andre} attr="data-rekord-varianter-liste" />
         </div>
       )}
@@ -279,7 +279,7 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
       {renderBlockStrength(createElement, { enabled: blokStyrke === true, loading: fremgangLoading, allWeeks, currentWeek, fremgangLogs, exerciseLogs })}
       <BlokFremgang enabled={blokFremgang === true && !fremgangLoading} weeks={allWeeks} logs={fremgangLogs} />
       <div style={{ marginBottom: '1rem' }}>
-        <div style={{ fontFamily: mono, fontSize: '0.66rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.5rem' }}>Fremgang</div>
+        <div style={{ fontFamily: mono, fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#a8a498', marginBottom: '0.5rem' }}>Fremgang</div>
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>Bliver du stærkere?</h1>
       </div>
 
@@ -299,7 +299,7 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
                 const hovednavn = hovednavnForFamilie(familie, navnEnFamilie)
                 const aktiv = navnEnFamilie.includes(oevelse)
                 return (
-                  <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={{ ...(aktiv ? s.btnPrimary : { ...s.btnGhost, color: '#c4c0b4' }), fontSize: '0.68rem', minHeight: '44px' }}>
+                  <button key={familie.key} onClick={() => setValgtOevelse(hovednavn)} style={{ ...(aktiv ? s.btnPrimary : { ...s.btnGhost, color: '#c4c0b4' }), fontSize: '0.7rem', minHeight: '44px' }}>
                     {familie.label}
                   </button>
                 )
@@ -308,7 +308,7 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
 
             {andreSorteret.length > 0 && (
               <div style={{ marginBottom: '1rem' }}>
-                <div style={{ ...s.fieldLabel, color: '#a8a498', fontSize: '0.66rem' }}>Andre øvelser</div>
+                <div style={{ ...s.fieldLabel, color: '#a8a498', fontSize: '0.7rem' }}>Andre øvelser</div>
                 <select value={andreSorteret.includes(oevelse) ? oevelse : ''} onChange={e => e.target.value && setValgtOevelse(e.target.value)} style={s.fieldInput}>
                   <option value="" disabled>Vælg øvelse…</option>
                   {andreSorteret.map(navn => <option key={navn} value={navn}>{navn}</option>)}
@@ -335,7 +335,7 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
                       {kortDato(valgtSaet.dag)}: {kgTal(valgtSaet.weight)} kg × {valgtSaet.reps} ({saetTypeOrd(valgtSaet.navn)}) giver e1RM {valgtSaet.e1rm} kg. Tryk på et punkt for at se dets sæt.
                     </div>
                   )}
-                  <div style={{ fontSize: '0.66rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
+                  <div style={{ fontSize: '0.7rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
                     Ét punkt pr. træningsdag: dagens højeste e1RM (Epley: vægt × (1 + reps/30)), kun fra tunge sæt på højst 8 reps. Backoff, teknik-singler og volumensæt tæller ikke med, så lette sæt aldrig trækker kurven ned.
                   </div>
                 </>
@@ -351,9 +351,9 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
 
       {rekorder && (
         <div style={s.card}>
-          <div style={{ ...s.cardLabel, fontSize: '0.66rem' }}>Dine rekorder</div>
+          <div style={{ ...s.cardLabel, fontSize: '0.7rem' }}>Dine rekorder</div>
           <RekordListe rekorder={rekorder} />
-          <div style={{ fontSize: '0.66rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
+          <div style={{ fontSize: '0.7rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
             Rekorder tæller kun tunge sæt (højst 8 reps, ikke backoff, teknik eller volumen).
           </div>
         </div>

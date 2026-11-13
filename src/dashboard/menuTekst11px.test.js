@@ -35,3 +35,10 @@ for (const fil of ['./ProfilHoved.jsx', './ProgramTab.jsx', '../dashboardShared.
     assert.deepEqual(smaa(kilde(fil)), [])
   })
 }
+
+// Ordre 1317: atletens Fremgang og coachens Log maa ikke have tekst under 11 px.
+for (const fil of ['../athlete/FremgangTab.jsx', './LogTab.jsx']) {
+  test(`${fil}: ingen skrift under 11 px`, () => {
+    assert.deepEqual(smaa(kilde(fil)), [])
+  })
+}

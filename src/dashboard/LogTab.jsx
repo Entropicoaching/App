@@ -37,7 +37,7 @@ export default function LogTab({
 }) {
   if (coachTabState(athleteLogs, athleteId, coachTabCleanup) !== 'ready') return <CoachReadStatus value={athleteLogs} athleteId={athleteId} enabled={coachTabCleanup} label="Træningslog" />
   // Telefon: saet og noter i Log skal kunne laeses uden at zoome (ordre 433).
-  const chipSize = isMobile ? '0.72rem' : '0.54rem'
+  const chipSize = isMobile ? '0.72rem' : '0.7rem'
               // Build trend index: exName → sorted [{ date, avg }]
               const trendEntries = {}
               for (const log of athleteLogs) {
@@ -152,22 +152,22 @@ export default function LogTab({
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
                           <div>
                             <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'baseline', marginBottom: '0.25rem' }}>
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{danskDatoTekst(sess.date)}</div>
-                              {sess.weekNum && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {sess.weekNum}</div>}
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{danskDatoTekst(sess.date)}</div>
+                              {sess.weekNum && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {sess.weekNum}</div>}
                             </div>
                             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{sess.sessionTitle}</div>
                           </div>
                           <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: totalLogged >= totalPlanned && totalPlanned > 0 ? '#6cba6c' : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: totalLogged >= totalPlanned && totalPlanned > 0 ? '#6cba6c' : '#7a7770', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                               {totalLogged}/{totalPlanned} sæt
                             </div>
                             {totalSkipped > 0 && (
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.15rem' }}>
                                 {totalSkipped} sprunget over
                               </div>
                             )}
                             {sessAvg > 0 && (
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase', marginTop: '0.15rem' }}>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', textTransform: 'uppercase', marginTop: '0.15rem' }}>
                                 Ø {sessAvg} kg
                               </div>
                             )}
@@ -176,7 +176,7 @@ export default function LogTab({
 
                         {sess.sessionRating && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', color: '#c8923a', letterSpacing: '0.04em' }}>
+                            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', letterSpacing: '0.04em' }}>
                               {'★'.repeat(sess.sessionRating)}{'☆'.repeat(5 - sess.sessionRating)}
                             </div>
                             {sess.sessionComment && (
@@ -202,9 +202,9 @@ export default function LogTab({
                             <div key={j} style={{ marginBottom: '1rem', paddingLeft: '0.75rem', borderLeft: `2px solid ${borderColor}` }}>
                               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.15rem' }}>
                                 <div style={{ fontSize: '0.85rem', color: '#b8b4a8' }}>{ex.name}</div>
-                                {trend && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: trend.color, letterSpacing: '0.06em', flexShrink: 0, marginLeft: '0.75rem' }}>{trend.text}</div>}
+                                {trend && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: trend.color, letterSpacing: '0.06em', flexShrink: 0, marginLeft: '0.75rem' }}>{trend.text}</div>}
                               </div>
-                              {(!coachTabCleanup || planText) && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', marginBottom: '0.4rem' }}>
+                              {(!coachTabCleanup || planText) && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', marginBottom: '0.4rem' }}>
                                 Plan: {planText}
                               </div>}
                               {ex.plannedSets > 0 && (
@@ -213,8 +213,8 @@ export default function LogTab({
                                     <div style={{ height: '3px', width: `${completion * 100}%`, background: completion >= 1 ? '#6cba6c' : '#c8923a', borderRadius: '2px' }} />
                                   </div>
                                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: isMobile ? '0.64rem' : '0.5rem', color: isMobile ? '#7a7770' : '#4a4844' }}>{doneSets}/{ex.plannedSets} sæt{skippedSets > 0 && <span style={{ color: '#c8923a' }}>{doneSets === 0 ? ' · sprunget over' : ` · ${skippedSets} sprunget over`}</span>}</div>
-                                    {exAvg > 0 && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#7a7770' }}>Ø {exAvg}kg{maxW > exAvg ? ` · maks ${maxW}kg` : ''}</div>}
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: isMobile ? '0.7rem' : '0.7rem', color: isMobile ? '#7a7770' : '#4a4844' }}>{doneSets}/{ex.plannedSets} sæt{skippedSets > 0 && <span style={{ color: '#c8923a' }}>{doneSets === 0 ? ' · sprunget over' : ` · ${skippedSets} sprunget over`}</span>}</div>
+                                    {exAvg > 0 && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>Ø {exAvg}kg{maxW > exAvg ? ` · maks ${maxW}kg` : ''}</div>}
                                   </div>
                                 </div>
                               )}
@@ -252,22 +252,22 @@ export default function LogTab({
 
                 return (
                   <div style={{ marginTop: '1.5rem' }}>
-                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1.25rem' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '1.25rem' }}>
                       Træningslog
                     </div>
                     {logSessions.length === 0 ? (
-                      <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                      <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                         Ingen loggede træninger endnu
                       </div>
                     ) : (
                       <>
                         {/* Øvelses-filter */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Øvelse</span>
+                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7a7770' }}>Øvelse</span>
                           <select
                             value={filterName || ''}
                             onChange={e => setLogExerciseFilter(e.target.value || null)}
-                            style={{ background: '#1c1c18', color: '#edeae2', border: '1px solid rgba(237,234,226,0.15)', borderRadius: 4, padding: '0.4rem 0.6rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.62rem', cursor: 'pointer', maxWidth: '100%' }}
+                            style={{ background: '#1c1c18', color: '#edeae2', border: '1px solid rgba(237,234,226,0.15)', borderRadius: 4, padding: '0.4rem 0.6rem', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', cursor: 'pointer', maxWidth: '100%' }}
                           >
                             <option value="">Alle øvelser</option>
                             {exerciseNames.map(n => <option key={n} value={n}>{n}</option>)}
@@ -276,7 +276,7 @@ export default function LogTab({
 
                         {filterName ? (
                           progression.length === 0 ? (
-                            <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                            <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                               Ingen loggede sæt for {filterName} endnu
                               {coachTabCleanup && <button style={{ marginLeft: '0.75rem', minHeight: '44px' }} onClick={() => setLogExerciseFilter(null)}>Vis alle øvelser</button>}
                             </div>
@@ -296,15 +296,15 @@ export default function LogTab({
                                   <div key={row.date + idx} style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(237,234,226,0.05)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.4rem' }}>
                                       <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'baseline', minWidth: 0 }}>
-                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.56rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{danskDatoTekst(row.date)}</span>
-                                        {row.weekNum != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {row.weekNum}</span>}
+                                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#c8923a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{danskDatoTekst(row.date)}</span>
+                                        {row.weekNum != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', textTransform: 'uppercase' }}>Uge {row.weekNum}</span>}
                                       </div>
                                       <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline', flexShrink: 0 }}>
-                                        {row.e1rm > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#b8b4a8' }}>e1RM {komma(row.e1rm)}kg</span>}
-                                        {delta && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: delta.color, letterSpacing: '0.06em' }}>{delta.text}</span>}
+                                        {row.e1rm > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#b8b4a8' }}>e1RM {komma(row.e1rm)}kg</span>}
+                                        {delta && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: delta.color, letterSpacing: '0.06em' }}>{delta.text}</span>}
                                       </div>
                                     </div>
-                                    {row.planText && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: '#4a4844', marginBottom: '0.4rem' }}>Plan: {row.planText}</div>}
+                                    {row.planText && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', marginBottom: '0.4rem' }}>Plan: {row.planText}</div>}
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                                       {row.sortedSets.map(set => (
                                         <div key={set.n} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: chipSize, background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', padding: '0.2rem 0.5rem', color: '#edeae2' }}>
@@ -325,11 +325,11 @@ export default function LogTab({
                           return (
                             <div key={g.key} style={{ marginBottom: '0.5rem' }}>
                               <button onClick={() => toggleWeek(g.key)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', background: '#1c1c18', border: '1px solid rgba(237,234,226,0.08)', borderRadius: 4, padding: '0.65rem 0.85rem', cursor: 'pointer', marginBottom: open ? '1rem' : 0 }}>
-                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#edeae2' }}>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#edeae2' }}>
                                   {g.weekNum != null ? `Uge ${g.weekNum}` : 'Uden uge'}
                                 </span>
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
-                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', color: '#7a7770' }}>{g.sessions.length} træning{g.sessions.length === 1 ? '' : 'er'} · {g.totalSets} sæt</span>
+                                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770' }}>{g.sessions.length} træning{g.sessions.length === 1 ? '' : 'er'} · {g.totalSets} sæt</span>
                                   <span style={{ color: '#c8923a', fontSize: '0.7rem' }}>{open ? '▾' : '▸'}</span>
                                 </span>
                               </button>
