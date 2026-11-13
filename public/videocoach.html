@@ -1852,6 +1852,10 @@ function vcSinkRecorder(out) {
   return {
     mime,
     abort() { try { if (rec.state !== 'inactive') rec.stop(); } catch {} try { track.stop(); } catch {} },
+    // ORDRE 1206: MediaRecorder starter koldt og taber ca. 0,4 s af de første billeder
+    // (første rep forsvandt på usikre adresser uden WebCodecs). Opvarmning med det
+    // første billede som stille lead-in, så tabet rammer stilstand og ikke løftet.
+    async warm() { for (let i = 0; i < 24; i++) { if (track.requestFrame) track.requestFrame(); await new Promise(r => setTimeout(r, 33)); } },
     frame(mediaTime) { const s = Math.round(mediaTime * 30); if (s > lastSlot) { lastSlot = s; if (track.requestFrame) track.requestFrame(); } },
     end() {
       return new Promise(res => {
@@ -1922,6 +1926,14 @@ function vcNormalizeClip(src, onProgress, registerCancel) {
         let r; try { r = await sink.end(); } catch { r = { error: 'record' }; }
         finish(r.blob ? { blob: r.blob, via } : r);
       };
+      if (sink.warm) {
+        if (v.readyState < 2) await new Promise(r => v.addEventListener('loadeddata', r, { once: true }));
+        let prev0 = v;
+        for (const st of steps) { st.x.drawImage(prev0, 0, 0, st.c.width, st.c.height); prev0 = st.c; }
+        octx2.drawImage(prev0, 0, 0, t.w, t.h);
+        await sink.warm();
+        if (finished) return;
+      }
       v.requestVideoFrameCallback(frame);
       v.play().catch(() => finish({ error: 'play' }));
     } catch { finish({ error: 'setup' }); } };
@@ -3081,6 +3093,11 @@ function paintTrim() {
 // presearch-rig.mjs og køres mod syntetiske lav-opløsnings-frames. Se
 // docs/videocoach/RAPPORT.md (saettets-start) for målt tid og træfsikkerhed.
 // Formålet er kun at finde ET TIDSPUNKT (ikke en bane) - se vcFindSetBounds.
+// Den uberørte session-armering fra begin() (auto, step 0, ingen punkter) er ikke
+// "Marc er i gang" - ellers afbryder sætforslaget altid sig selv (ORDRE 1206).
+function vcWizardIGang() {
+  return !!wizard && !(wizard.session && wizard.auto && wizard.step === 0 && !wizard.pts.length);
+}
 function vcMotionSeries(frames) {
   const n = frames.length;
   const motion = new Array(n).fill(0);
@@ -3180,7 +3197,7 @@ async function vcRunSetBoundsPresearch(duration) {
     const savedTime = video.currentTime;
     const frames = [];
     for (const t of times) {
-      if (wizard || tracking || awaitCalib || plateConfirm) return { ok:false, ms: performance.now() - startedAt };
+      if (vcWizardIGang() || tracking || awaitCalib || plateConfirm) return { ok:false, ms: performance.now() - startedAt };
       await seekTo(Math.min(t, lastSafe));
       psCtx.drawImage(video, 0, 0, psCan.width, psCan.height);
       const d = psCtx.getImageData(0, 0, psCan.width, psCan.height).data;
@@ -3201,7 +3218,7 @@ async function vcRunSetBoundsPresearch(duration) {
 // denne kører, opdages det her, og forslaget kasseres uden at forstyrre ham.
 async function vcApplySetBoundsSuggestion(videoToken, duration) {
   const r = await vcRunSetBoundsPresearch(duration);
-  if (curUrl !== videoToken || wizard || tracking) return;   // video skiftet, eller Marc er i gang
+  if (curUrl !== videoToken || vcWizardIGang() || tracking) return;   // video skiftet, eller Marc er i gang
   setBoundsSuggestion = r;
   if (!r.ok || (!r.foundStart && !r.foundEnd)) { paintTrim(); return; }   // intet brugbart -> skyderen som i dag
   trimStart = r.start;
