@@ -11,13 +11,13 @@ export const ATHLETE_ONBOARDING_GUIDE_STEPS = [
   },
   {
     key: 'parathed',
-    heading: 'Start med din parathed.',
-    body: 'Før du træner, logger du søvn, energi og hvordan kroppen føles. Det hjælper dig og din coach med at følge formen.',
+    heading: 'Fortæl, hvordan du har det.',
+    body: 'På Hjem finder du knappen "Parathed" under dagens pas. Før du træner, logger du søvn, energi og hvordan kroppen føles. Det hjælper dig og din coach med at følge formen.',
   },
   {
     key: 'find-session',
     heading: 'Sådan ser du din uge og dagens pas.',
-    body: 'På Hjem ser du ugens plan og kortet med dagens næste sæt. Tryk på "Hele passet" nederst i sætkortet for at se et pasoverblik med alle øvelser og sæt.',
+    body: 'På Hjem ser du ugens plan og kortet med dagens næste sæt. Tryk på "Hele passet" nederst i loggen for at se et pasoverblik med alle øvelser og sæt.',
   },
   {
     key: 'log-saet',
