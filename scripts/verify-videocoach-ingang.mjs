@@ -83,12 +83,13 @@ for (const c of CLIPS) {
   }, { x: gt.samples[3].x, y: gt.samples[3].y, r: gt.plateRadius, w: gt.width })
   out.trackMs = Date.now() - t1
   Object.assign(out, r)
+  out.slots = await page.evaluate(() => vcNorm.slots || null)   // ORDRE 1238: manglende pladser i det normaliserede klip
   out.via = await page.evaluate(() => vcNorm.via); out.result = r.reps >= 1 ? 'BANE' : 'FEJL'
   results.push(out); await browser.close()
 }
 srv.close()
 console.log(JSON.stringify(results, null, 1))
 const want = r => (r.clip === 'long60.mp4' ? 3 : 1) * gt.repWindows.length
-const bad = results.filter(r => (r.clip.includes('uden-hevc') ? r.result !== 'BESKED' : r.reps !== want(r)))
+const bad = results.filter(r => (r.clip.includes('uden-hevc') ? r.result !== 'BESKED' : (r.reps !== want(r) || (r.slots && r.slots.missing > 0))))
 console.log(bad.length ? `FEJL: ${bad.map(r => r.clip).join(', ')}` : `GRØN: alle klip giver forventede reps (${gt.repWindows.length}, 3x for long60) eller en klar besked`)
 process.exit(bad.length ? 1 : 0)

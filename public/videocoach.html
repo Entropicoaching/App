@@ -1808,7 +1808,7 @@ async function vcSinkWebCodecs(w, h) {
   const cfg = { codec: 'avc1.42001f', width: w, height: h, bitrate: 4e6, framerate: 30, avc: { format: 'avc' }, latencyMode: 'realtime' };
   let sup = null; try { sup = await VideoEncoder.isConfigSupported(cfg); } catch {}
   if (!sup || !sup.supported) return null;
-  const samples = []; let avcC = null, failed = false, n = 0, lastSlot = -1;
+  const samples = []; let avcC = null, failed = false, n = 0, lastSlot = -1, filled = 0;
   const enc = new VideoEncoder({
     output: (chunk, meta) => {
       const d = new Uint8Array(chunk.byteLength); chunk.copyTo(d);
@@ -1825,15 +1825,23 @@ async function vcSinkWebCodecs(w, h) {
       if (failed) return;
       const slot = Math.round(mediaTime * 30);          // 30 fps-gitter
       if (slot <= lastSlot) return;
+      // ORDRE 1238: springer afspilningen pladser over (4K HEVC under belastning), holdes nærmeste billede
+      // for de manglende pladser, så tidslinjen er hulfri og ingen rep forsvinder.
+      for (let s = (lastSlot < 0 ? slot : lastSlot + 1); s <= slot; s++) {
+        if (s < slot) filled++;
+        const f = new VideoFrame(canvas, { timestamp: Math.round(s / 30 * 1e6) });
+        enc.encode(f, { keyFrame: n++ % 30 === 0 }); f.close();
+      }
       lastSlot = slot;
-      const f = new VideoFrame(canvas, { timestamp: Math.round(slot / 30 * 1e6) });
-      enc.encode(f, { keyFrame: n++ % 30 === 0 }); f.close();
     },
     async end() {
       if (failed) return { error: 'record' };
       try { await enc.flush(); enc.close(); } catch { try { enc.close(); } catch {} return { error: 'record' }; }
       if (!samples.length || !avcC || failed) return { error: 'record' };
       const t0 = samples[0].ts; samples.forEach(s => { s.ts -= t0; });
+      let missing = 0;   // manglende pladser i det færdige klip (skal være 0)
+      for (let i = 1; i < samples.length; i++) missing += Math.max(0, Math.round((samples[i].ts - samples[i - 1].ts) * 30) - 1);
+      vcNorm.slots = { total: samples.length, filled, missing };
       return { blob: vcMp4Mux(w, h, avcC, samples) };
     },
   };
@@ -1848,7 +1856,7 @@ function vcSinkRecorder(out) {
   try { rec = new MediaRecorder(new MediaStream([track]), { mimeType: mime, videoBitsPerSecond: 4e6 }); } catch { return null; }
   rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
   try { rec.start(1000); } catch { try { track.stop(); } catch {} return null; }
-  let lastSlot = -1;
+  let lastSlot = -1, filled = 0;
   return {
     mime,
     abort() { try { if (rec.state !== 'inactive') rec.stop(); } catch {} try { track.stop(); } catch {} },
@@ -1856,7 +1864,13 @@ function vcSinkRecorder(out) {
     // (første rep forsvandt på usikre adresser uden WebCodecs). Opvarmning med det
     // første billede som stille lead-in, så tabet rammer stilstand og ikke løftet.
     async warm() { for (let i = 0; i < 24; i++) { if (track.requestFrame) track.requestFrame(); await new Promise(r => setTimeout(r, 33)); } },
-    frame(mediaTime) { const s = Math.round(mediaTime * 30); if (s > lastSlot) { lastSlot = s; if (track.requestFrame) track.requestFrame(); } },
+    frame(mediaTime) {
+      const s = Math.round(mediaTime * 30);
+      if (s <= lastSlot) return;
+      if (lastSlot >= 0) for (let k = lastSlot + 1; k < s; k++) { filled++; if (track.requestFrame) track.requestFrame(); }   // ORDRE 1238: udfyld huller
+      lastSlot = s; if (track.requestFrame) track.requestFrame();
+      vcNorm.slots = { total: s + 1, filled, missing: 0 };
+    },
     end() {
       return new Promise(res => {
         rec.onstop = () => { try { track.stop(); } catch {} res(chunks.length ? { blob: new Blob(chunks, { type: mime.split(';')[0] }) } : { error: 'record' }); };
