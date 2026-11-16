@@ -1,6 +1,7 @@
 import { createElement as h } from 'react'
 import { profileModel } from './profileModel.mjs'
 import { profileStyles as s } from './profileStyles.mjs'
+import { TemaValg } from '../../tema/temaValg.mjs'
 
 // Opt-in display only. The host supplies its existing confirmed logout action.
 // No client, storage, effects, identity lookup or new write path.
@@ -21,6 +22,7 @@ export default function Profile(props = {}) {
       h('p', { style: s.label }, 'Pr. dag'),
       h('dl', { style: s.list }, field('Kalorier', model.kcal), field('Protein', model.protein))),
     props.children,
+    showLogOut && h(TemaValg, { style: { marginBottom: 12 } }),
     showLogOut && h('button', { type: 'button', style: s.button, disabled: !canLogOut,
       onClick: () => { if (canLogOut) return onLogOut() } }, loggingOut === true ? 'Logger ud…' : 'Log ud'),
     logoutError === true && h('p', { role: 'alert', style: s.value }, 'Du kunne ikke logges ud. Prøv igen.'))

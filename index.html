@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg?v=8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#141410" />
+    <meta name="theme-color" content="#f7f2e9" />
+    <script>/* Ordre 1541: lys skærm er standard; mørk huskes (Mig > Mørk skærm, eller ?tema=moerk / ?tema=lys). */try{var t=new URLSearchParams(location.search).get("tema");if(t==="moerk")localStorage.setItem("entropi:tema","moerk");if(t==="lys")localStorage.removeItem("entropi:tema");if(localStorage.getItem("entropi:tema")==="moerk"){document.documentElement.setAttribute("data-tema","moerk");document.querySelector('meta[name="theme-color"]').setAttribute("content","#141410")}}catch(e){}</script>
     <link rel="manifest" href="/manifest.webmanifest" />
     <script>
       // service worker: "Del til VideoCoach" + offline-app (se public/sw.js)

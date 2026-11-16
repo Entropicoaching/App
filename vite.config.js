@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { varmTemaPlugin } from './src/tema/varmTema.mjs'
 import { writeFileSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -118,6 +119,8 @@ function roleGuessPreloadPlugin() {
 
 export default defineConfig({
   plugins: [
+    // Ordre 1541: lyst varmt tema; faste farver bliver til CSS-variabler ved bygning.
+    varmTemaPlugin(),
     react(),
     roleGuessPreloadPlugin(),
     {
