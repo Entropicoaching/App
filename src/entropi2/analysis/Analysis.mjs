@@ -24,6 +24,7 @@ import AthleteWeekCard from '../u3/AthleteWeekCard.mjs'
 import { strengthLines } from '../u3/athleteWeekModel.mjs'
 import { calendarDay } from '../../calendarDate.js'
 import BlocksView from './blokforblok/BlocksView.mjs'
+import PaaSigtView from './paasigt/PaaSigtView.mjs'
 
 const explanationSummaryStyle = { minHeight: 44, paddingTop: 12, paddingBottom: 12,
   boxSizing: 'border-box', cursor: 'pointer', opacity: 0.8 }
@@ -76,6 +77,8 @@ export default function Analysis(props = {}) {
   ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs })] : []),
   // U3b: retningen pr. hovedløft står i "Din udvikling", så e1RM kun vises ét sted.
   h(DevelopmentView, { ...props, now, ...(u3 && !strengthUnavailable ? { u3Trends: strengthLines(props.fremgangLogs, calendarDay(now)) } : {}) }),
+  // Ordre 1543: tendens i procent, ugens plan og næste top; foldet ind og uden tal fra "Din udvikling".
+  h(PaaSigtView, { ...props, now }),
   ...(hasWeightStatus ? [h(WeightReadStatus, { state: mineProps.weights.state,
     latestDate: latestAnalysisWeightDate(mineProps.weights, mineProps.athleteId, mineModel.end, mineModel.start),
     retry: props.retryWeight })] : []),
