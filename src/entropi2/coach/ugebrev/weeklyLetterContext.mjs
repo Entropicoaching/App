@@ -1,6 +1,6 @@
 import { antalOrd } from '../../antalOrd.mjs'
 import { calendarDay } from '../../../calendarDate.js'
-import { buildNutritionReport } from '../../kostplan/rapport/nutritionReport.mjs'
+import { buildNutritionReport, buildDailyPlanNutritionReport } from '../../kostplan/rapport/nutritionReport.mjs'
 
 const number = value => value > 0 && value < 0.1 ? '<0,1'
   : new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
@@ -39,9 +39,14 @@ function nutritionContext(data) {
     || !identity(data.coachId) || receipt.coachId !== data.coachId
     || receipt.athleteId !== data.athleteId || receipt.date !== data.asOf) throw Error('Ugyldigt kostgrundlag')
   try {
-    const report = buildNutritionReport({ enabled: true, athleteId: data.athleteId, date: data.asOf,
-      plans: receipt.planHistory === 'unavailable' ? [] : receipt.plans,
-      mealLogs: receipt.mealLogs, weightLogs: receipt.weightLogs })
+    // Saved daily references, when the host supplies them, give the dated targets;
+    // without them the older receipt.plans contract is used unchanged.
+    const report = receipt.dailyReferences != null
+      ? buildDailyPlanNutritionReport({ enabled: true, athleteId: data.athleteId, date: data.asOf,
+        dailyReferences: receipt.dailyReferences, mealLogs: receipt.mealLogs })
+      : buildNutritionReport({ enabled: true, athleteId: data.athleteId, date: data.asOf,
+        plans: receipt.planHistory === 'unavailable' ? [] : receipt.plans,
+        mealLogs: receipt.mealLogs, weightLogs: receipt.weightLogs })
     if (!report.week.loggedDays) return null
     const metrics = ['kcal', 'protein'].flatMap(key => {
       const metric = report.week.metrics[key]

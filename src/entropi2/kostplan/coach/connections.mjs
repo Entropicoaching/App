@@ -1,7 +1,7 @@
 import { RECIPES, recipePortions, scaleRecipe } from '../opskrifter/index.mjs'
 import { catalogFoods, totals, number, day, identifier } from './model.mjs'
 import { planProteinDistribution } from '../protein/model.mjs'
-import { buildNutritionReport } from '../rapport/nutritionReport.mjs'
+import { buildNutritionReport, buildDailyPlanNutritionReport } from '../rapport/nutritionReport.mjs'
 import { isDayReceipt } from '../../../mealEvidence.mjs'
 import { tjekMaaltid } from '../realisme.mjs'
 
@@ -66,10 +66,15 @@ export function portalNutritionReport(options = {}) {
   try {
     // An explicit unavailable capability means there is no production history
     // to compare. Missing reads are not silently turned into empty lists.
-    if (receipt.planHistory === 'unavailable') return null
-    const plans = receipt.plans
-    const report = buildNutritionReport({ enabled: true, athleteId, date, plans,
-      mealLogs: receipt.mealLogs, weightLogs: receipt.weightLogs })
+    // Saved daily references (loadDailyReferences) replace the older receipt.plans
+    // path when the host has read them; otherwise the old contract is unchanged.
+    const daily = receipt.dailyReferences != null
+    if (!daily && receipt.planHistory === 'unavailable') return null
+    const report = daily
+      ? buildDailyPlanNutritionReport({ enabled: true, athleteId, date,
+        dailyReferences: receipt.dailyReferences, mealLogs: receipt.mealLogs })
+      : buildNutritionReport({ enabled: true, athleteId, date, plans: receipt.plans,
+        mealLogs: receipt.mealLogs, weightLogs: receipt.weightLogs })
     const hasPlan = report.week.plannedDays > 0 || report.week.conflictDays > 0
     return report.week.loggedDays > 0 && hasPlan ? { state: 'ready', report } : null
   } catch { return { state: 'error' } }
