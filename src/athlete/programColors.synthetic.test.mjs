@@ -12,7 +12,8 @@ const firstCard = tree => passes(tree)[0].props.children[0]
 const badge = (tree, label) => nodes(tree, n => n.type === 'span' && text(n) === label)[0]
 const log = skipped => ({ exercise_id: 'ex-1-0', set_number: 1, skipped })
 
-test('colours: empty and error cards stay neutral, accessible and independent of planned content', () => {
+test('colours: empty and error cards stay neutral, accessible and independent of planned content', t => {
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-09T12:00:00Z') })
   for (const programError of [false, true]) {
     const calls = []
     const tree = render({ allWeeks: [], currentWeek: null, programError,
