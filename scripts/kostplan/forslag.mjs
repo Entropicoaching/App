@@ -1,6 +1,7 @@
 // U10a (ordre 111): en ugeplan fra Claude bliver til SQL-tekst med 7 forslag.
-// Ren funktion: ingen net, ingen nøgler, ingen database. Scriptet skriver aldrig
+// Ren funktion: ingen net, ingen nøgler, ingen database. Uden send skriver scriptet aldrig
 // en godkendelse; det gør coachen i appen (kostplan_v1_approvals kræver auth.uid()).
+// Med send (ordre 1537a, efter coachens ja i chatten) godkendes ugen som coachen.
 // Reglerne genbruges fra appen: fødevarekataloget, realismeprøven, snapshotkontrakten
 // og dagsummen. Intet her regner næring eller portionsgrænser på en ny måde.
 import { EXTENDED_COACH_FOODS } from '../../src/entropi2/kostplan/foedevarer/frida55Extended.mjs'
@@ -108,16 +109,41 @@ export function tjekUgeplan(input) {
 const lit = value => `'${String(value).replace(/'/g, "''")}'`
 const json = value => `${lit(JSON.stringify(value))}::jsonb`
 
+// Ordre 1537a: "Send uge til atleten" som SQL, kun efter coachens ja i chatten.
+// Samme insert som knappen (version_id, approval_kind 'coach'); databasens egne triggere
+// tjekker, at coachen ejer atleten, sætter coach_id og approved_at og gør planen godkendt.
+// auth.uid() sættes lokalt i transaktionen til atletens egen coach og intet andet.
+function sendSql(plan, ids) {
+  const athlete = `${lit(plan.athleteId)}::uuid`
+  const planIds = ids.map(id => `${lit(id.plan)}::uuid`).join(', ')
+  return [
+    '-- Coachen har sagt ja i chatten: ugen sendes til atleten (samme som "Send uge til atleten").',
+    `select set_config('request.jwt.claim.sub', coach_id::text, true),
+  set_config('request.jwt.claims', json_build_object('sub', coach_id, 'role', 'authenticated')::text, true)
+  from public.athletes where id = ${athlete} and coach_id is not null;`,
+    `insert into public.kostplan_v1_approvals (version_id, approval_kind) values\n${ids.map(id =>
+      `  (${lit(id.version)}, 'coach')`).join(',\n')};`,
+    `do $sendt$ begin
+  if (select count(*) from public.kostplan_v1_plans p join public.kostplan_v1_approvals ap on ap.plan_id = p.id
+      where p.id in (${planIds}) and p.athlete_id = ${athlete} and p.status = 'godkendt') <> ${ids.length} then
+    raise exception 'Ugen blev ikke sendt; intet er gemt';
+  end if;
+end $sendt$;`,
+  ]
+}
+
 // SQL-tekst til skillens eksisterende adgang. Status udelades, så tabellens standard
 // 'forslag' gælder, og kun kolonnerne i coachens insert-tilladelse bruges.
-export function lavForslagSql(input, { uuid = () => globalThis.crypto.randomUUID() } = {}) {
+// send: true tilføjer coachens godkendelse i samme transaktion (ordre 1537a).
+export function lavForslagSql(input, { uuid = () => globalThis.crypto.randomUUID(), send = false } = {}) {
   const plan = tjekUgeplan(input)
   const ids = plan.days.map(() => ({ plan: uuid(), version: uuid() }))
   if (ids.some(id => !UUID.test(id.plan) || !UUID.test(id.version))) stop('uuid-generatoren gav et ugyldigt id.')
   const datoer = plan.days.map(d => d.date)
   const lines = [
     `-- Kostplan-forslag fra Claude (U10a): ${plan.days.length} dage fra ${datoer[0]} til ${datoer.at(-1)}.`,
-    '-- Status er forslag. Coachen godkender i appen; dette script skriver aldrig en godkendelse.',
+    send ? '-- Sendes til atleten i samme transaktion, fordi coachen har sagt ja i chatten.'
+      : '-- Status er forslag. Coachen godkender i appen; dette script skriver aldrig en godkendelse.',
     'begin;',
     // Ingen dubletter og intet forslag mod et mål, der er ændret siden as_of.
     `do $guard$ begin
@@ -138,6 +164,7 @@ end $guard$;`,
       lit(version), lit(planId), 1, lit(d.date), lit(plan.basisAsOf), json(plan.calculationBasis),
       lit(plan.rationale), lit(plan.goal), Number(plan.intensity), json(d.meals)].join(', ')});`)
   })
+  if (send) lines.push(...sendSql(plan, ids))
   lines.push('commit;')
   return { sql: lines.join('\n') + '\n', plan, ids }
 }

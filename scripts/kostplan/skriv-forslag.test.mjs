@@ -76,10 +76,14 @@ test('atleten ser intet forslag, før coachen har godkendt', async () => {
   } finally { await db.close() }
 })
 
-test('scriptet laver aldrig en approvals-sætning', async () => {
+// Ordre 1537a: kun forslag.mjs' send-del (coachens ja i chatten) må godkende; uden send aldrig.
+test('scriptet laver aldrig en approvals-sætning uden send', async () => {
   const { sql } = await skrivForslag(ugeplan())
   assert.doesNotMatch(sql, /approval/i)
-  for (const file of ['forslag.mjs', 'skriv-forslag.mjs', 'validMealsSql.mjs', 'husstand.mjs']) {
+  const forslag = readFileSync(new URL('forslag.mjs', import.meta.url), 'utf8')
+  assert.equal((forslag.match(/insert\s+into\s+(public\.)?kostplan_v1_approvals/gi) ?? []).length, 1)
+  assert.match(forslag, /if \(send\) lines\.push\(\.\.\.sendSql\(plan, ids\)\)/)
+  for (const file of ['skriv-forslag.mjs', 'validMealsSql.mjs', 'husstand.mjs']) {
     const source = readFileSync(new URL(file, import.meta.url), 'utf8')
     assert.doesNotMatch(source, /insert\s+into\s+(public\.)?kostplan_v1_approvals/i, file)
   }
