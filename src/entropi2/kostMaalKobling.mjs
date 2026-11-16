@@ -66,7 +66,7 @@ export function kostMaalNutritionRead(props = {}) {
 export default function CoachKostMaal(props = {}) {
   if (props.enabled !== true) return null
   const { athlete, weightStatus, today, editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
-    session, loading, loadError, coachNutrition, readContext, nutritionRead } = props
+    session, loading, loadError, coachNutrition, readContext, nutritionRead, weekClient } = props
   const weight = kostMaalVaegt(weightStatus, athlete?.id)
   const receipt = nutritionRead === undefined ? kostMaalNutritionRead(props) : nutritionRead
   return h('div', null, h(KostMaal, { key: athlete?.id, enabled: true, athlete, weightLogs: weight.rows, today,
@@ -74,5 +74,5 @@ export default function CoachKostMaal(props = {}) {
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
     session, loading, loadError, coachNutrition, readContext }),
     h(PortalKostJustering, { enabled: true, athlete, coachId: session?.user?.id, date: today, loading, loadError, nutritionRead: receipt }),
-    h(PortalPlan, { enabled: true, athlete, today, session, nutritionRead: receipt }))
+    h(PortalPlan, { enabled: true, athlete, today, session, nutritionRead: receipt, weekClient }))
 }

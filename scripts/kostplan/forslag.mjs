@@ -1,0 +1,143 @@
+// U10a (ordre 111): en ugeplan fra Claude bliver til SQL-tekst med 7 forslag.
+// Ren funktion: ingen net, ingen nøgler, ingen database. Scriptet skriver aldrig
+// en godkendelse; det gør coachen i appen (kostplan_v1_approvals kræver auth.uid()).
+// Reglerne genbruges fra appen: fødevarekataloget, realismeprøven, snapshotkontrakten
+// og dagsummen. Intet her regner næring eller portionsgrænser på en ny måde.
+import { EXTENDED_COACH_FOODS } from '../../src/entropi2/kostplan/foedevarer/frida55Extended.mjs'
+import { sumDay } from '../../src/entropi2/kostplan/foedevarer/totals.mjs'
+import { supportedFoodSnapshot, supportedPlanSnapshot } from '../../src/entropi2/kostplan/sqlSnapshot.mjs'
+import { tjekMaaltid } from '../../src/entropi2/kostplan/realisme.mjs'
+import { FRIDA_KOBLING } from './fridaKobling.mjs'
+
+export const BASIS_KEYS = Object.freeze(['weight_trend', 'training_volume', 'training_intensity',
+  'food_log', 'readiness', 'competition_date'])
+export const MAKS_AFVIGELSE_PROCENT = 5
+export const MAALTIDER_PR_DAG = Object.freeze({ min: 4, max: 6 })
+
+const catalog = new Map(EXTENDED_COACH_FOODS.map(food => [food.id, food]))
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+const object = value => value !== null && typeof value === 'object' && !Array.isArray(value)
+const text = value => typeof value === 'string' && value.trim().length > 0
+const fmt = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
+
+export class ForslagFejl extends Error {
+  constructor(message) { super(message); this.name = 'ForslagFejl' }
+}
+const stop = message => { throw new ForslagFejl(message) }
+
+function dato(value, felt) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)
+    || new Date(value + 'T00:00:00Z').toISOString().slice(0, 10) !== value) stop(`${felt} skal være en dato (ÅÅÅÅ-MM-DD).`)
+  return value
+}
+const plusDage = (value, n) => new Date(Date.parse(value + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10)
+
+// Én portion: { foodId, grams } med en lokal vare, eller { foodId: 'frida55:N', grams,
+// dagligvare } med en Frida-række. Dagligvaren er den lokale vare, som realismeprøven
+// kender, og den skal være koblet til netop den Frida-række (fridaKobling.mjs).
+function portion(item, sted) {
+  if (!object(item) || !text(item.foodId)) stop(`${sted}: en portion mangler foodId.`)
+  const food = catalog.get(item.foodId)
+  if (!food) stop(`${sted}: ${item.foodId} findes ikke i appens fødevarekatalog.`)
+  return { food: supportedFoodSnapshot(food), grams: item.grams }
+}
+function realismeVare(item, sted) {
+  if (!String(item?.foodId).startsWith('frida55:')) return { foodId: item?.foodId, grams: item?.grams }
+  if (!text(item.dagligvare)) stop(`${sted}: ${item.foodId} mangler dagligvare til realismeprøven.`)
+  if (FRIDA_KOBLING[item.dagligvare] !== item.foodId) stop(`${sted}: ${item.dagligvare} er ikke koblet til ${item.foodId}.`)
+  return { name: item.dagligvare, grams: item.grams }
+}
+
+function dag(input, index, plan) {
+  const sted = `Dag ${index + 1} (${input?.date ?? 'uden dato'})`
+  if (!object(input) || !Array.isArray(input.meals)) stop(`${sted}: dagen skal have en liste af måltider.`)
+  const { min, max } = MAALTIDER_PR_DAG
+  if (input.meals.length < min || input.meals.length > max) stop(`${sted}: dagen skal have ${min} til ${max} måltider, ikke ${input.meals.length}.`)
+  const meals = input.meals.map((meal, m) => {
+    const navn = text(meal?.name) ? meal.name : `måltid ${m + 1}`
+    if (!Array.isArray(meal?.portions)) stop(`${sted}, ${navn}: måltidet mangler portioner.`)
+    const realisme = tjekMaaltid({ items: meal.portions.map(p => realismeVare(p, `${sted}, ${navn}`)) })
+    if (!realisme.ok) stop(`${sted}, ${navn}: ${realisme.problemer.join(' ')}`)
+    return { name: meal.name, portions: meal.portions.map(p => portion(p, `${sted}, ${navn}`)) }
+  })
+  // Samme kanoniske form, som appen skriver og godkender (kostplan_v1_valid_meals i JS).
+  let snapshot
+  try {
+    snapshot = supportedPlanSnapshot({ goal: plan.goal, intensity: plan.intensity, meals })
+  } catch (error) { stop(`${sted}: måltiderne passer ikke til kostplanens kontrakt (${error.message}).`) }
+  const total = sumDay(snapshot.meals.map(meal => meal.portions)).nutrients
+  for (const [key, label, enhed, maal] of [['energyKcal', 'Energi', 'kcal', plan.targets.kcal],
+    ['proteinG', 'Protein', 'g', plan.targets.protein]]) {
+    const value = total[key].value
+    if (value === null) stop(`${sted}: ${label.toLowerCase()} kan ikke beregnes, fordi en fødevare mangler tallet.`)
+    const procent = Math.abs(value - maal) / maal * 100
+    if (procent > MAKS_AFVIGELSE_PROCENT) stop(`${sted}: ${label} ${fmt(value)} ${enhed} afviger ${fmt(procent)} % fra målet ${fmt(maal)} ${enhed} (højst ${MAKS_AFVIGELSE_PROCENT} %).`)
+  }
+  return { date: input.date, meals: snapshot.meals, kcal: total.energyKcal.value, protein: total.proteinG.value }
+}
+
+// Ugeplanens felter og reglerne fra planen (ORDRE-APP-PLAN-KOSTPLAN-CLAUDE-20261111, afsnit 1 punkt 3).
+export function tjekUgeplan(input) {
+  if (!object(input)) stop('Ugeplanen skal være et JSON-objekt.')
+  if (typeof input.athleteId !== 'string' || !UUID.test(input.athleteId)) stop('athleteId skal være atletens uuid.')
+  if (!['bulk', 'vedligehold', 'cut'].includes(input.goal)) stop('goal skal være bulk, vedligehold eller cut.')
+  if (typeof input.intensity !== 'number' || !(input.intensity >= 0 && input.intensity <= 1)) stop('intensity skal være et tal fra 0 til 1.')
+  if (!text(input.rationale) || input.rationale.length > 4000) stop('rationale skal være én sætning til coachen.')
+  const t = input.targets
+  if (!object(t) || !(t.kcal > 0) || !(t.protein > 0)) stop('targets skal have kcal og protein fra athletes. Atleten mangler mål, så der laves intet forslag.')
+  const asOf = dato(t.as_of, 'targets.as_of')
+  const basisAsOf = dato(input.basisAsOf, 'basisAsOf')
+  const basis = input.calculationBasis ?? {}
+  if (!object(basis) || Object.keys(basis).some(key => !BASIS_KEYS.includes(key))) stop(`calculationBasis må kun have ${BASIS_KEYS.join(', ')}.`)
+  if (!Array.isArray(input.days) || input.days.length !== 7) stop('Ugeplanen skal have præcis 7 dage.')
+  const first = dato(input.days[0]?.date, 'Dag 1 date')
+  input.days.forEach((d, i) => {
+    if (dato(d?.date, `Dag ${i + 1} date`) !== plusDage(first, i)) stop(`Dag ${i + 1} skal være ${plusDage(first, i)}; dagene skal følge hinanden.`)
+  })
+  // basis_as_of <= effective_from, og effective_from = valid_from = dagen.
+  if (basisAsOf > first) stop(`basisAsOf ${basisAsOf} ligger efter ugens første dag ${first}.`)
+  if (asOf > basisAsOf) stop(`targets.as_of ${asOf} ligger efter basisAsOf ${basisAsOf}.`)
+  const plan = { athleteId: input.athleteId, goal: input.goal, intensity: input.intensity,
+    rationale: input.rationale.trim(), basisAsOf,
+    targets: { kcal: t.kcal, protein: t.protein, as_of: asOf },
+    calculationBasis: { ...Object.fromEntries(BASIS_KEYS.map(key => [key, basis[key] ?? null])),
+      targets: { kcal: t.kcal, protein: t.protein, as_of: asOf } } }
+  return { ...plan, days: input.days.map((d, i) => dag(d, i, plan)) }
+}
+
+const lit = value => `'${String(value).replace(/'/g, "''")}'`
+const json = value => `${lit(JSON.stringify(value))}::jsonb`
+
+// SQL-tekst til skillens eksisterende adgang. Status udelades, så tabellens standard
+// 'forslag' gælder, og kun kolonnerne i coachens insert-tilladelse bruges.
+export function lavForslagSql(input, { uuid = () => globalThis.crypto.randomUUID() } = {}) {
+  const plan = tjekUgeplan(input)
+  const ids = plan.days.map(() => ({ plan: uuid(), version: uuid() }))
+  if (ids.some(id => !UUID.test(id.plan) || !UUID.test(id.version))) stop('uuid-generatoren gav et ugyldigt id.')
+  const datoer = plan.days.map(d => d.date)
+  const lines = [
+    `-- Kostplan-forslag fra Claude (U10a): ${plan.days.length} dage fra ${datoer[0]} til ${datoer.at(-1)}.`,
+    '-- Status er forslag. Coachen godkender i appen; dette script skriver aldrig en godkendelse.',
+    'begin;',
+    // Ingen dubletter og intet forslag mod et mål, der er ændret siden as_of.
+    `do $guard$ begin
+  if not exists (select 1 from public.athletes where id = ${lit(plan.athleteId)}::uuid
+      and kcal_target = ${Number(plan.targets.kcal)} and protein_target = ${Number(plan.targets.protein)}) then
+    raise exception 'Atleten findes ikke, eller kostmålet er ændret siden ${plan.targets.as_of}';
+  end if;
+  if exists (select 1 from public.kostplan_v1_plans where athlete_id = ${lit(plan.athleteId)}::uuid
+      and status = 'forslag' and valid_from in (${datoer.map(d => lit(d) + '::date').join(', ')})) then
+    raise exception 'Der ligger allerede et forslag for en af dagene';
+  end if;
+end $guard$;`,
+  ]
+  plan.days.forEach((d, i) => {
+    const { plan: planId, version } = ids[i]
+    lines.push(`insert into public.kostplan_v1_plans (id, athlete_id, valid_from) values (${lit(planId)}, ${lit(plan.athleteId)}, ${lit(d.date)});`)
+    lines.push(`insert into public.kostplan_v1_versions (id, plan_id, version_no, effective_from, basis_as_of, calculation_basis, rationale, goal, intensity, meals) values (${[
+      lit(version), lit(planId), 1, lit(d.date), lit(plan.basisAsOf), json(plan.calculationBasis),
+      lit(plan.rationale), lit(plan.goal), Number(plan.intensity), json(d.meals)].join(', ')});`)
+  })
+  lines.push('commit;')
+  return { sql: lines.join('\n') + '\n', plan, ids }
+}

@@ -10,9 +10,11 @@ import { FOODS } from './foedevarer/index.mjs'
 // bruges til at gruppere den printbare indkøbsliste.
 const VARER = [
   ['Skyr naturel', 'Mejeri', 100, 500],
-  ['Græsk yoghurt 2%', 'Mejeri', 100, 400],
+  // Minimum sænket i ordre 72: græsk yoghurt bruges også som tzatziki og
+  // dressing (40 g), og hytteost som smørepålæg i tunrøre (50 g).
+  ['Græsk yoghurt 2%', 'Mejeri', 40, 400],
   ['Græsk yoghurt 0%', 'Mejeri', 100, 400],
-  ['Hytteost', 'Mejeri', 100, 400],
+  ['Hytteost', 'Mejeri', 50, 400],
   ['Mælk minimælk', 'Mejeri', 100, 500],
   ['Kakaomælk', 'Mejeri', 200, 500],
   ['Feta', 'Mejeri', 20, 80],
@@ -34,11 +36,14 @@ const VARER = [
   ['Müsli uden sukker', 'Kolonial', 30, 120],
   ['Cornflakes', 'Kolonial', 30, 100],
   ['Riskager naturel', 'Kolonial', 15, 60],
-  ['Ris kogt', 'Kolonial', 100, 450],
-  ['Pasta kogt', 'Kolonial', 100, 450],
+  // Ris, pasta og kartofler: øvre grænse hævet i ordre 72 til store løftere
+  // (190 cm, 95 til 105 kg i overskud), hvis aftensmad ligger omkring 1.000 kcal.
+  // 550 g kogt ris er cirka 200 g tør ris; se husstand/README.md.
+  ['Ris kogt', 'Kolonial', 100, 550],
+  ['Pasta kogt', 'Kolonial', 100, 550],
   ['Quinoa kogt', 'Kolonial', 100, 400],
   ['Linser kogte', 'Kolonial', 80, 350],
-  ['Kartofler kogte', 'Frugt og grønt', 100, 500],
+  ['Kartofler kogte', 'Frugt og grønt', 100, 600],
   ['Syltetøj', 'Kolonial', 10, 50],
   ['Honning', 'Kolonial', 5, 40],
   ['Soja sauce', 'Kolonial', 5, 30],
@@ -46,8 +51,10 @@ const VARER = [
   ['Olivenolie', 'Kolonial', 3, 30],
   ['Rapsolie', 'Kolonial', 3, 30],
   ['Mandler', 'Kolonial', 10, 50],
+  ['Græskarkerner', 'Kolonial', 10, 40],
   ['Valnødder', 'Kolonial', 10, 50],
   ['Banan', 'Frugt og grønt', 80, 250],
+  ['Appelsin', 'Frugt og grønt', 80, 250],
   ['Æble', 'Frugt og grønt', 80, 250],
   ['Pære', 'Frugt og grønt', 80, 250],
   ['Blåbær', 'Frugt og grønt', 50, 250],
@@ -60,10 +67,52 @@ const VARER = [
   ['Grønne bønner', 'Frugt og grønt', 50, 300],
   ['Løg', 'Frugt og grønt', 20, 150],
   ['Ærter frosne', 'Frost', 50, 250],
+  // Husstandsplanen (ordre 72): almindelige varer i Netto og Dagli'Brugsen.
+  ['Kvark naturel', 'Mejeri', 100, 500],
+  ['Proteinmælk', 'Mejeri', 200, 600],
+  ['Cremefraiche 9%', 'Mejeri', 15, 80],
+  ['Parmesan', 'Mejeri', 5, 30],
+  ['Smør', 'Mejeri', 3, 20],
+  ['Skinke mager', 'Køl', 20, 120],
+  ['Kyllingelår u/skind', 'Kød og fisk', 75, 300],
+  ['Kalkun', 'Kød og fisk', 75, 300],
+  ['Bøf/oksefilet', 'Kød og fisk', 75, 300],
+  ['Svinekød mørbrad', 'Kød og fisk', 75, 300],
+  ['Svinekam', 'Kød og fisk', 75, 300],
+  ['Torsk', 'Frost', 100, 350],
+  ['Makrel i tomat', 'Kolonial', 40, 160],
+  ['Bulgur kogt', 'Kolonial', 100, 550],
+  ['Couscous kogt', 'Kolonial', 100, 550],
+  ['Bønner kidney', 'Kolonial', 50, 250],
+  ['Hvedemel', 'Kolonial', 3, 30],
+  ['Tomatpuré', 'Kolonial', 5, 40],
+  ['Kokosmælk', 'Kolonial', 20, 120],
+  ['Salsa', 'Kolonial', 20, 120],
+  ['Sesamfrø', 'Kolonial', 2, 20],
+  ['Hindbær', 'Frost', 50, 250],
+  ['Edamame bønner', 'Frost', 50, 200],
+  ['Spinat', 'Frugt og grønt', 20, 200],
+  ['Gulerod', 'Frugt og grønt', 30, 250],
+  ['Champignon', 'Frugt og grønt', 30, 200],
+  ['Rødbede kogte', 'Frugt og grønt', 30, 200],
+  // Uge 3 og 4 (ordre 96): almindelige vintervarer i Netto og Dagli'Brugsen.
+  ['Hvidkål', 'Frugt og grønt', 30, 250],
+  ['Porre', 'Frugt og grønt', 30, 200],
+  ['Blomkål', 'Frugt og grønt', 50, 300],
+  ['Rosenkål', 'Frost', 50, 250],
+  ['Grønkål', 'Frost', 50, 250],
+  ['Søde kartofler', 'Frugt og grønt', 100, 500],
+  ['Rødkål', 'Kolonial', 30, 150],
+  ['Kikærter kogte', 'Kolonial', 50, 250],
+  ['Hakket svinekød', 'Kød og fisk', 75, 300],
+  ['Rejer', 'Frost', 30, 250],
+  // Ordre 109: hullerne i mikronæringen (D-vitamin, jern, fed fisk).
+  ['Laks røget', 'Køl', 30, 120],
 ]
 
 // Tilbehør tæller ikke som selve retten: olie, sovs og sødt pålæg alene er ikke et måltid.
-const TILBEHOER = new Set(['Olivenolie', 'Rapsolie', 'Soja sauce', 'Dressing let', 'Syltetøj', 'Honning', 'Pesto'])
+const TILBEHOER = new Set(['Olivenolie', 'Rapsolie', 'Soja sauce', 'Dressing let', 'Syltetøj', 'Honning', 'Pesto',
+  'Smør', 'Hvedemel', 'Tomatpuré', 'Sesamfrø', 'Salsa', 'Cremefraiche 9%'])
 
 export const AFDELINGER = Object.freeze(['Frugt og grønt', 'Brød', 'Mejeri', 'Kød og fisk', 'Køl', 'Frost', 'Kolonial', 'Øvrige'])
 export const DANSKE_DAGLIGVARER = Object.freeze(Object.fromEntries(VARER.map(([name, afdeling, min, max]) =>
