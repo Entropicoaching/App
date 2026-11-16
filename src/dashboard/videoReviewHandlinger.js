@@ -9,6 +9,7 @@ import { videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection 
 import { supabase } from '../supabase.js'
 import { videoCoachFeedbackPayload, videoCoachFeedbackDraft } from './coachVideoHjaelp.js'
 import { VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload.js'
+import { hentFraVideolager, videolagerUrl } from '../videolager/klient.js'
 import { createVideoReviewStatusHandler } from './videoReviewStatus.mjs'
 
 // Sammenlign og skriv i samme UPDATE, så et gammelt review ikke overskriver nyere arbejde.
@@ -138,12 +139,19 @@ export function lavVideoReviewHandlinger({
     setVideoAnalysisReviewLoadingId(analysis.id)
     setVideoAnalysisReviewError(null)
     try {
-      const { data, error } = await supabase.storage.from(VIDEOCOACH_UPLOAD_BUCKET)
-        .createSignedUrl(analysis.video_path, 600)
-      if (error || !data?.signedUrl) throw error || new Error('Videoen kunne ikke åbnes')
+      // ORDRE 1537v0: nye klip ligger i videolageret (R2), ældre i Supabase. Lageret spørges først, når det er slået til.
+      const lager = videolagerUrl()
+      let url = lager ? await hentFraVideolager({ base: lager, videoPath: analysis.video_path,
+        token: (await supabase.auth.getSession()).data?.session?.access_token }) : null
+      if (!url) {
+        const { data, error } = await supabase.storage.from(VIDEOCOACH_UPLOAD_BUCKET)
+          .createSignedUrl(analysis.video_path, 600)
+        if (error || !data?.signedUrl) throw error || new Error('Videoen kunne ikke åbnes')
+        url = data.signedUrl
+      }
       videoCoachPendingCompletionRef.current = {
         clientAnalysisId: analysis.client_analysis_id, athleteId,
-        url: data.signedUrl, lift: analysis.lift, variation: analysis.variation,
+        url, lift: analysis.lift, variation: analysis.variation,
       }
       openVideoCoachV3()
     } catch (error) {

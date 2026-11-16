@@ -109,6 +109,13 @@ test('download-url følger RLS: ingen synlig række giver ingen adresse', async 
   assert.equal((await call('/download-url', { token: 'ukendt-token-som-er-lang-nok-123', body: { video_path: KEY } })).status, 401)
 })
 
+test('download-url: et klip, der ikke ligger i lageret (ældre klip i Supabase), giver 404 med not_in_lager', async () => {
+  const { call } = setup({}, { rows: [{ id: 'r1' }] })
+  const svar = await call('/download-url', { token: COACH_TOKEN, body: { video_path: KEY } })
+  assert.equal(svar.status, 404)
+  assert.equal((await svar.json()).not_in_lager, true)
+})
+
 test('s3-vejen: adressen peger direkte på R2 og binder content-type og størrelse', async () => {
   const { call } = setup({ R2_ACCOUNT_ID: 'konto', R2_ACCESS_KEY_ID: 'opdigtet-id', R2_SECRET_ACCESS_KEY: 'opdigtet', R2_BUCKET_NAME: 'videocoach' })
   const issued = await (await call('/upload-url', { token: ATHLETE_TOKEN, body: uploadBody(400 * 1024 * 1024) })).json()

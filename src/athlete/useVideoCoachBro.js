@@ -14,6 +14,7 @@ import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft } from '../videoCoachSubmission'
 import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequest,
   videoUploadAlreadyExistsError, VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
+import { uploadTilVideolager, videolagerUrl } from '../videolager/klient.js'
 import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
@@ -173,7 +174,12 @@ export function useVideoCoachBro({
         markUploadInflight(currentAthlete.id, message.requestId)
         let upload
         try {
-          upload = videoUploadRetryEnabled()
+          // ORDRE 1537v0: med VITE_VIDEOLAGER_URL går klippet til videolageret (R2) i stedet for Supabase.
+          const lager = videolagerUrl()
+          upload = lager
+            ? await uploadTilVideolager({ base: lager, token: (await supabase.auth.getSession()).data?.session?.access_token,
+              clientAnalysisId: message.clientAnalysisId, path, file, mimeType, signal: controller.signal })
+            : videoUploadRetryEnabled()
             ? await uploadVideoAttempt(createAbortableUploadClient, controller.signal,
               VIDEOCOACH_UPLOAD_BUCKET, path, file, mimeType)
             : await createAbortableUploadClient(controller.signal).storage

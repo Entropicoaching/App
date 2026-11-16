@@ -49,8 +49,9 @@ const ready = page => page.waitForFunction(() => !document.getElementById('canva
   await page.setInputFiles('#fileInput', file(small, 'b.mp4'))
   const ok = await ready(page)
   await page.waitForTimeout(25000)            // giv det gamle job tid til (fejlagtigt) at skrive
-  const s = await page.evaluate(() => ({ used: vcNorm.used, busy: vcNorm.busy, w: video.videoWidth, h: video.videoHeight, same: video.src === curUrl, src: video.src.slice(0, 5) }))
-  check('klipskift: kun sidste job skriver', ok && !s.used && !s.busy && Math.max(s.w, s.h) <= 1280 && s.same, JSON.stringify(s))
+  // ORDRE 1537v0: et lille klip omkodes stadig ikke (intet klargjort klip), men dets billeder læses nu direkte (used)
+  const s = await page.evaluate(() => ({ klargjort: !!vcNorm.blob, busy: vcNorm.busy, w: video.videoWidth, h: video.videoHeight, same: video.src === curUrl, src: video.src.slice(0, 5) }))
+  check('klipskift: kun sidste job skriver', ok && !s.klargjort && !s.busy && Math.max(s.w, s.h) <= 1280 && s.same, JSON.stringify(s))
   check('klipskift: ingen pageerror', !errs.length, errs[0])
   await browser.close()
 }
