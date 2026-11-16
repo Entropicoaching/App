@@ -43,9 +43,9 @@ function lastSessionLine(rows, id, day, complete) {
 export function athleteOverviewModel(context = {}) {
   const { day, athletes = [], plans = {}, calendarReady, logs, actions = [], complete } = context
   if (!civil(day)) return []
-  // Mærket viser grunden fra Kræver dit blik (første grund), ikke bare at der er en grund.
-  const attention = new Map(actions.map(row => [row?.athlete?.id,
-    typeof row?.reason === 'string' && row.reason.trim() ? row.reason.trim() : 'Kræver dit blik']))
+  // Ordre 1544 (Marc 16. nov.: ingen gentagelser): grunden står allerede i Kræver dit blik lige over listen.
+  // Mærket siger kun, at atleten står dér, så samme tekst og tal ikke står to gange på forsiden.
+  const attention = new Set(actions.map(row => row?.athlete?.id))
   const ending = new Map(calendarReady ? buildProgramOverblik({ athletes, calendarWeeks: plans, today: day })
     .filter(entry => !hasUndatedPlannedWeek(plans[entry.athlete.id] || []))
     .map(entry => [entry.athlete.id, entry]) : [])
@@ -53,7 +53,7 @@ export function athleteOverviewModel(context = {}) {
     const entry = ending.get(athlete.id)
     // Kontrolfund 3 og 5: "Rolig" kun på fuldt grundlag og med sikker slutdato; "Slutter snart" som Kræver dit blik (< 7).
     const calm = complete === true && calendarReady && !hasUndatedPlannedWeek(plans[athlete.id] || [])
-    const badge = attention.has(athlete.id) ? { tone: 'gold', text: attention.get(athlete.id) }
+    const badge = attention.has(athlete.id) ? { tone: 'gold', text: 'Kræver dit blik' }
       : entry?.daysLeft != null && entry.daysLeft < 0 ? { tone: 'warn', text: 'Program udløbet' }
         : entry?.daysLeft != null && entry.daysLeft < 7 ? { tone: 'warn', text: 'Slutter snart' }
           : calm ? { tone: 'calm', text: 'Rolig' } : null

@@ -10,7 +10,7 @@ import CoachProgramsView from './CoachProgramsView.mjs'
 import AthleteOverview from './AthleteOverview.mjs'
 import { CoachTeamRegistrations } from '../tracking/hold/CoachTeam.mjs'
 import { coachTeamModel } from './coachTeamModel.mjs'
-import { coachHomeModel, openCoachRow, selectCoachTab } from './coachModel.mjs'
+import { coachHomeModel, openCoachRow } from './coachModel.mjs'
 import CoachRadar, { coachRadarEnabled } from './radar/CoachRadar.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import { useCoachAttention } from './useCoachAttention.mjs'
@@ -78,7 +78,6 @@ export function CoachView(input = {}) {
   const ending = inbox ? null : programEndingModel(model)
   const reload = typeof props.reloadOverview === 'function' ? props.reloadOverview : null
   const available = typeof props.openProfile === 'function' && typeof props.openCoachPriorityItem === 'function'
-  const canTab = typeof props.setView === 'function' && typeof props.setSelectedAthlete === 'function'
   // U6: ét udkast pr. række. "Skriv" åbner samtalen med udkastet i feltet; coachen retter og sender selv.
   const drafts = !inbox && u6Enabled('drafts', props.u6Drafts)
   const rowAttention = row => model.u3?.attentionState === 'ready' ? attentionFor(props.u3Attention, row.athlete.id, model.day) : null
@@ -143,14 +142,11 @@ export function CoachView(input = {}) {
     maxWidth: 900, marginInline: 'auto', padding: 20, background: '#141410', color: '#edeae2',
     fontFamily: s.wrap.fontFamily, lineHeight: 1.5, overflowWrap: 'anywhere' } },
     h('style', null, '[data-entropi2-coach] :is(button,summary):focus-visible{outline:3px solid #f1cf7b;outline-offset:3px}'),
-    h('nav', { 'aria-label': 'Coach', style: { display: 'flex', gap: 8, flexWrap: 'wrap' } },
-      ...[['home', 'Overblik'], ['inbox', 'Indbakke']].map(([value, label]) => h('button', {
-        key: value, type: 'button', style: button, disabled: !canTab,
-        'aria-current': (value === 'inbox') === inbox ? 'page' : undefined,
-        onClick: canTab ? () => selectCoachTab(value, props) : undefined }, label))),
-    // Marc 3. nov.: dansk dato og luft til knapperne over.
-    h('p', { style: { marginTop: 20, marginBottom: 0, color: '#b9b4a8' } }, `Coach · ${coachDay(model.day)}`),
-    h('h1', { style: { fontFamily: 'Georgia, serif', fontSize: 36, lineHeight: 1.15 } }, inbox ? 'Indbakke' : 'Det vigtigste først.'),
+    // Ordre 1544 (Marc 16. nov.: "pas på at det ikke er gentagelser på siderne"): Overblik og Indbakke stod
+    // både her og i menuen (Forside og Coach Briefing). Menuen bærer dem nu alene. På forsiden står
+    // Kræver dit blik øverst uden en overskrift over sig; indbakken beholder sin.
+    h('p', { style: { marginTop: 0, marginBottom: 0, color: '#b9b4a8' } }, `Coach · ${coachDay(model.day)}`),
+    inbox && h('h1', { style: { fontFamily: 'Georgia, serif', fontSize: 36, lineHeight: 1.15 } }, 'Indbakke'),
     !available && h('p', { role: 'alert' }, 'Navigationen er ikke tilsluttet.'),
     h('section', { 'aria-label': inbox ? 'Ulæste beskeder og indsendelser' : 'Atleter der kræver handling', ...(inbox ? {} : { 'data-u11-top': 'opgaver' }) },
       h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
