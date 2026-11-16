@@ -17,6 +17,13 @@ export function statusText(week) {
   return 'Udkast fra Claude'
 }
 
+export function seenText(week) {
+  if (week.seen === 'set') return `Set af atleten ${kortDato(week.seenOn)}`
+  if (week.seen === 'delvist') return `Delvist set af atleten (${week.seenDays} af 7 dage)`
+  if (week.seen === 'ikke') return 'Ikke set af atleten endnu'
+  return null
+}
+
 export function claudeWeekView(week, { onSend, onReload, sending = false, error = '' } = {}) {
   if (week.state === 'empty') return h('section', { 'data-claude-week': 'empty', style: { textAlign: 'left' } },
     h('h3', null, 'Forslag fra Claude'), h('p', null, 'Intet forslag endnu.'))
@@ -24,6 +31,7 @@ export function claudeWeekView(week, { onSend, onReload, sending = false, error 
   return h('section', { 'data-claude-week': week.status, style: { textAlign: 'left', overflowWrap: 'anywhere' } },
     h('h3', { style: { marginBottom: 8 } }, 'Forslag fra Claude'),
     h('p', { style: { margin: '0 0 8px' } }, h('span', { role: 'status', 'data-status': week.status, style: maerke }, statusText(week))),
+    seenText(week) && h('p', { style: { margin: '0 0 8px' } }, h('span', { role: 'status', 'data-seen': week.seen, style: maerke }, seenText(week))),
     week.rationale && h('p', { style: { margin: '0 0 12px' } }, week.rationale),
     h('p', { style: { margin: '0 0 8px', fontSize: 14 } }, `Mål ${tal(kcal)} kcal · ${tal(protein)} g protein · ugen slutter ${kortDato(week.end)}`),
     h('ul', { style: { listStyle: 'none', padding: 0, margin: 0 } }, ...week.days.map(d => h('li', { key: d.date, 'data-day': d.date,
