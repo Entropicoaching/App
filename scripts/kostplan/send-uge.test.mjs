@@ -104,3 +104,27 @@ test('--send uden coach på atleten stopper i databasen, og intet gemmes', { tim
     assert.equal(await s.count('kostplan_v1_approvals'), 0)
   } finally { await s.close() }
 })
+
+test('lav-uge -> skriv-forslag --send: generatorens uge ender sendt i prøvedatabasen', { timeout: 60000 }, async () => {
+  const { lavUge } = await import('./lav-uge.mjs')
+  const { ugeplan: plan, tekst } = lavUge({ athleteId: ATHLETES.mine, goal: 'vedligehold', intensity: 0.5,
+    rationale: 'Syntetisk testuge fra generatoren.', basisAsOf: today,
+    targets: { kcal: 2800, protein: 180, as_of: today }, carb: 330, fat: 80, start: today,
+    dagtyper: [
+      [{ name: 'Morgenmad', items: ['Havregryn', 'Skyr naturel', 'Banan', 'Blåbær'] }, { name: 'Frokost', items: ['Rugbrød', 'Kyllingebryst', 'Agurk', 'Tomat'] },
+        { name: 'Mellemmåltid', items: ['Skyr naturel', 'Mandler', 'Æble'] }, { name: 'Aftensmad', items: ['Ris kogt', 'Laks fersk', 'Broccoli', 'Olivenolie'] },
+        { name: 'Aftensnack', items: ['Hytteost', 'Knækbrød'] }],
+      [{ name: 'Morgenmad', items: ['Æg helt', 'Rugbrød', 'Ost 30+', 'Æble'] }, { name: 'Frokost', items: ['Kartofler kogte', 'Laks fersk', 'Broccoli', 'Rapsolie'] },
+        { name: 'Mellemmåltid', items: ['Hytteost', 'Banan', 'Valnødder'] }, { name: 'Aftensmad', items: ['Ris kogt', 'Kyllingebryst', 'Tomat', 'Olivenolie'] },
+        { name: 'Aftensnack', items: ['Skyr naturel', 'Knækbrød'] }],
+    ] })
+  assert.equal(plan.days.length, 7)
+  assert.match(tekst, /Morgenmad: Havregryn \d+ g/)
+  assert.throws(() => lavUge({ ...plan, carb: 330, fat: 80, start: today, dagtyper: [[{ name: 'X', items: ['Pizza ukendt'] }]] }), /findes ikke/)
+  const s = await scene()
+  try {
+    await s.db.exec((await skrivForslag(plan, { send: true })).sql)
+    assert.equal((await readClaudeWeek({ client: s.coach, athlete, today })).status, 'sendt')
+    assert.equal((await s.atletSer(today))?.active, true)
+  } finally { await s.close() }
+})
