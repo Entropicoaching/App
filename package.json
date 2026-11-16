@@ -119,7 +119,10 @@
     "verify:456": "node outputs/456/verify-456.mjs",
     "verify:kritik-464": "node outputs/kritik-464/verify-kritik-464.mjs",
     "verify:kritik-483": "node outputs/kritik-483/verify-kritik-483.mjs",
-    "verify:kritik-494": "node outputs/kritik-494/verify-kritik-494.mjs"
+    "verify:kritik-494": "node outputs/kritik-494/verify-kritik-494.mjs",
+    "verify:videocoach-ingang": "node scripts/verify-videocoach-ingang.mjs",
+    "verify:videocoach-norm-fejl": "node scripts/verify-videocoach-norm-fejl.mjs",
+    "verify:videocoach-velocity": "node scripts/verify-videocoach-velocity.mjs"
   },
   "dependencies": {
     "@supabase/auth-js": "^2.112.3",

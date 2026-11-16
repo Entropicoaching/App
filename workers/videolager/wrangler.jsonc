@@ -1,0 +1,14 @@
+// ORDRE 1537b · videolager (Cloudflare Worker + R2). Lokalt: se scripts/verify-videolager-lokal.mjs.
+// Værdierne her er kun til lokal kørsel; driftens værdier og nøgler sættes i sidste trin af Marc.
+{
+  "name": "entropi-videolager",
+  "main": "index.js",
+  "compatibility_date": "2026-08-01",
+  "r2_buckets": [{ "binding": "VIDEO", "bucket_name": "videocoach" }],
+  "vars": {
+    "R2_BUCKET_NAME": "videocoach",
+    "ALLOWED_ORIGINS": "http://localhost:5173",
+    "SUPABASE_URL": "http://127.0.0.1:8997",
+    "SUPABASE_PUBLISHABLE_KEY": "lokal"
+  }
+}

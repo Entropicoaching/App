@@ -89,3 +89,5 @@ playwright-report/
 src/athlete/synthetic-counter-*/
 src/kandFix2-mutation-*/
 .trin1-profile-*/
+# ORDRE 1537b: wranglers lokale arbejdsmappe
+.wrangler/

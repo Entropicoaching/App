@@ -371,7 +371,7 @@ async function runCoachStep(browser, origin, { clientAnalysisId }) {
   const tracked = await withTimeout(vcPage.evaluate(({ x, y, r, cmPerPxValue }) => {
     cmPerPx = cmPerPxValue
     return runFullAnalysis({ x, y, r })
-  }, { x: p0.x, y: p0.y, r: groundTruth.plateRadius, cmPerPxValue }), 120000, 'runFullAnalysis')
+  }, { x: p0.x, y: p0.y, r: groundTruth.plateRadius, cmPerPxValue }), Number(process.env.VC_TRACK_TIMEOUT_MS || 120000), 'runFullAnalysis')
   const trackMs = Date.now() - trackStartedAt
   // runFullAnalysis returnerer eksplicit `false` ved fejl, men falder bare ud
   // for enden af funktionen (returnerer `undefined`) i sin egen succes-sti -
