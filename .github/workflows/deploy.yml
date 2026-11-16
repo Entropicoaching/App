@@ -20,6 +20,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
+          # Ordre 1537v0: tom, indtil videolageret (R2) slaas til som repo-variabel; tom vaerdi = Supabase-lageret som hidtil
+          VITE_VIDEOLAGER_URL: ${{ vars.VITE_VIDEOLAGER_URL }}
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -9,7 +9,6 @@ import { videoCoachPersonalBaselineOptions, videoCoachPersonalBaselineSelection 
 import { supabase } from '../supabase.js'
 import { videoCoachFeedbackPayload, videoCoachFeedbackDraft } from './coachVideoHjaelp.js'
 import { VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload.js'
-import { hentFraVideolager, videolagerUrl } from '../videolager/klient.js'
 import { createVideoReviewStatusHandler } from './videoReviewStatus.mjs'
 
 // Sammenlign og skriv i samme UPDATE, så et gammelt review ikke overskriver nyere arbejde.
@@ -140,8 +139,10 @@ export function lavVideoReviewHandlinger({
     setVideoAnalysisReviewError(null)
     try {
       // ORDRE 1537v0: nye klip ligger i videolageret (R2), ældre i Supabase. Lageret spørges først, når det er slået til.
-      const lager = videolagerUrl()
-      let url = lager ? await hentFraVideolager({ base: lager, videoPath: analysis.video_path,
+      // Klienten hentes først, når lageret er slået til; uden variablen er alt som før.
+      const lagerKlient = import.meta.env?.VITE_VIDEOLAGER_URL ? await import('../videolager/klient.js') : null
+      const lager = lagerKlient ? lagerKlient.videolagerUrl() : ''
+      let url = lager ? await lagerKlient.hentFraVideolager({ base: lager, videoPath: analysis.video_path,
         token: (await supabase.auth.getSession()).data?.session?.access_token }) : null
       if (!url) {
         const { data, error } = await supabase.storage.from(VIDEOCOACH_UPLOAD_BUCKET)

@@ -1,0 +1,14 @@
+// ORDRE 1537v0 · videolageret i drift (Cloudflare Worker + R2 i EU). Ingen nøgler her:
+// R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_S3_HOST, SUPABASE_URL og SUPABASE_PUBLISHABLE_KEY
+// sættes som hemmeligheder af Marc med VIDEOLAGER-NOEGLE.cmd (wrangler secret put).
+// Udgivelse (kræver Marcs ja): wrangler deploy -c workers/videolager/wrangler.drift.jsonc
+{
+  "name": "entropi-videolager",
+  "main": "index.js",
+  "compatibility_date": "2026-08-01",
+  "r2_buckets": [{ "binding": "VIDEO", "bucket_name": "videocoach", "jurisdiction": "eu" }],
+  "vars": {
+    "R2_BUCKET_NAME": "videocoach",
+    "ALLOWED_ORIGINS": "https://app.entropicoaching.dk"
+  }
+}

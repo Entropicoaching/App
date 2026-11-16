@@ -2042,6 +2042,7 @@ function vcNormalizeClip(src, onProgress, registerCancel) {
 // Slås fra med ?normdirect=0 (til sammenligning).
 const VC_NORM_DIRECT = MODE_PARAMS.get('normdirect') !== '0';
 const VC_NORM_REMOTE_MAX = 200e6;   // et fjernklip hentes helt; større end det går den gamle vej
+const VC_NORM_SAME_MAX = 80e6;      // et lille klip, der spores uden omkodning, ligger i hukommelsen; større går den gamle vej
 // Læser moov og giver videosporets prøver: plads i filen, størrelse, tid og nøglebilleder.
 async function vcMp4Index(blob) {
   const rd = async (o, n) => new DataView(await blob.slice(o, o + n).arrayBuffer());
@@ -2075,6 +2076,8 @@ async function vcMp4Index(blob) {
     const scale = moov.getUint32(mdhd.s + (moov.getUint8(mdhd.s) === 1 ? 20 : 12));
     const mo = tkhd.s + (moov.getUint8(tkhd.s) === 1 ? 52 : 40);
     const rot = (((Math.round(Math.atan2(moov.getInt32(mo + 4), moov.getInt32(mo)) / (Math.PI / 2)) % 4) + 4) % 4) * 90;
+    // spejlet klip (negativ determinant): kendes ikke her, den gamle vej viser det rigtigt
+    if (moov.getInt32(mo) * moov.getInt32(mo + 16) - moov.getInt32(mo + 4) * moov.getInt32(mo + 12) < 0) return null;
     const stbl = kid(kid(mdia, 'minf'), 'stbl'), stsd = kid(stbl, 'stsd');
     const stts = kid(stbl, 'stts'), ctts = kid(stbl, 'ctts'), stss = kid(stbl, 'stss'), stsz = kid(stbl, 'stsz'), stsc = kid(stbl, 'stsc');
     const stco = kid(stbl, 'stco'), co64 = kid(stbl, 'co64');
@@ -2143,6 +2146,13 @@ async function vcMp4Index(blob) {
   }
   return null;
 }
+// Et løfte med tidsgrænse: hænger afkoder eller encoder, bliver det en fejl, og den gamle vej tager over.
+function vcWithin(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), ms);
+    promise.then(v => { clearTimeout(timer); resolve(v); }, e => { clearTimeout(timer); reject(e); });
+  });
+}
 // Telefonklip ligger ofte på siden med en drejning i filen; afkoderen drejer ikke selv.
 function vcDrawTurned(x, f, W, H, rot) {
   if (!rot) return x.drawImage(f, 0, 0, W, H);
@@ -2154,16 +2164,20 @@ function vcDrawTurned(x, f, W, H, rot) {
 }
 // Returnerer det samme som vcNormalizeClip: { blob, via, frames, motion } eller { error }.
 // onlySame: klippet omkodes ikke (små klip); svaret er { same, frames } med filens egne billeder eller { error }.
-async function vcNormalizeDirect(src, vw, vh, onProgress, registerCancel, onlySame = false) {
+async function vcNormalizeDirect(src, vw, vh, onProgress, registerCancel, onlySame = false, file = null) {
   if (typeof VideoDecoder === 'undefined' || typeof EncodedVideoChunk === 'undefined') return { error: 'no-webcodecs' };
   let cancelled = false, failed = null, dec = null, sink = null;
   const pend = [];
   if (registerCancel) registerCancel(() => { cancelled = true; });
   try {
-    const resp = await fetch(src);
-    if (!resp.ok) return { error: 'fetch' };
-    if (!src.startsWith('blob:') && +(resp.headers.get('content-length') || 0) > VC_NORM_REMOTE_MAX) { try { resp.body.cancel(); } catch {} return { error: 'too-big' }; }
-    const blob = await resp.blob();
+    // En lokalt valgt fil læses, som den ligger (ingen kopi i hukommelsen); et fjernklip hentes.
+    let blob = file;
+    if (!blob) {
+      const resp = await fetch(src);
+      if (!resp.ok) return { error: 'fetch' };
+      if (!src.startsWith('blob:') && +(resp.headers.get('content-length') || 0) > VC_NORM_REMOTE_MAX) { try { resp.body.cancel(); } catch {} return { error: 'too-big' }; }
+      blob = await resp.blob();
+    }
     const ix = await vcMp4Index(blob);
     if (cancelled) return { error: 'cancelled' };
     if (!ix) return { error: 'no-index' };
@@ -2174,7 +2188,7 @@ async function vcNormalizeDirect(src, vw, vh, onProgress, registerCancel, onlySa
     // Små klip (højst 1280 px: Instagram, 720p, et klargjort klip coachen åbner) omkodes ikke: filens egne
     // billeder er sporerens billeder, præcis de samme pixels som afspilleren viser.
     if (onlySame) {
-      if ((turned ? ix.h : ix.w) !== vw || (turned ? ix.w : ix.h) !== vh || blob.size > VC_NORM_REMOTE_MAX) return { error: 'not-same' };
+      if ((turned ? ix.h : ix.w) !== vw || (turned ? ix.w : ix.h) !== vh || blob.size > VC_NORM_SAME_MAX) return { error: 'not-same' };
       const all = new Uint8Array(await blob.arrayBuffer()), samples = [];
       for (let i = 0; i < ix.n; i++) samples.push({ data: all.subarray(ix.offs[i], ix.offs[i] + ix.size[i]), ts: ix.pts[i], key: !!ix.key[i] });
       return { same: true, via: 'webcodecs', frames: { w: vw, h: vh, cw: ix.w, ch: ix.h, rot: ix.rot, reorder: ix.reorder, avcC: ix.description, codec: ix.codec, samples } };
@@ -2248,13 +2262,13 @@ async function vcNormalizeDirect(src, vw, vh, onProgress, registerCancel, onlySa
       }
       i = j + 1;
     }
-    if (!failed && !cancelled) await dec.flush();
+    if (!failed && !cancelled) await vcWithin(dec.flush(), 8000);
     pend.sort((a, b) => a.timestamp - b.timestamp);
     while (pend.length) handle(pend.shift());
     try { dec.close(); } catch {} dec = null;
     if (cancelled) return { error: 'cancelled' };
     if (failed || !shown) return { error: failed || 'empty' };
-    const r = await sink.end();
+    const r = await vcWithin(sink.end(), 15000);
     if (!r.blob) return r;
     sink = null;
     return { blob: r.blob, via: 'webcodecs', frames: r.frames || null, motion: pre.times.length >= 4 ? { times: pre.times, frames: pre.frames } : null };
@@ -2289,6 +2303,11 @@ function vcNormWarn(txt) {
   }
   if (el) { el.textContent = txt || ''; el.hidden = !txt; }
 }
+// Den lokalt valgte fil, når det er den, der afspilles (ikke et fjernklip, coachen har åbnet)
+function vcNormLocalFile() {
+  const src = video.currentSrc || video.src || '';
+  return src.startsWith('blob:') && src === curUrl && vcAthletePendingFile ? vcAthletePendingFile : null;
+}
 function vcNormMaybeStart(resumeFn) {
   if (vcNorm.done) return false;
   if (vcNorm.busy) return true;
@@ -2302,7 +2321,7 @@ function vcNormMaybeStart(resumeFn) {
     vcNorm.done = true;
     if (direct) {
       const job = vcNorm.job;
-      vcNormalizeDirect(video.currentSrc || video.src, vw, vh, null, null, true).then(res => {
+      vcNormalizeDirect(video.currentSrc || video.src, vw, vh, null, null, true, vcNormLocalFile()).then(res => {
         if (vcNorm.job !== job) return;
         if (res.same) { vcNorm.used = true; vcNorm.via = res.via; vcNorm.frames = res.frames; vcNorm.motion = null; }
         else vcNorm.directError = res.error;
@@ -2320,7 +2339,7 @@ function vcNormMaybeStart(resumeFn) {
     msg(0);
     let res = null;
     if (direct) {
-      try { res = await vcNormalizeDirect(src, vw, vh, msg, c => { vcNorm.cancel = c; }); } catch { res = { error: 'direct' }; }
+      try { res = await vcNormalizeDirect(src, vw, vh, msg, c => { vcNorm.cancel = c; }, false, vcNormLocalFile()); } catch { res = { error: 'direct' }; }
       if (!mine()) return;
       vcNorm.directError = res.blob ? null : res.error;
       if (res.error === 'cancelled') return;
@@ -5436,13 +5455,13 @@ async function mpDirectFrames(startT, endT, onFrame) {
   const hold = src.reorder ? 3 : 0;   // B-frames: hold få billeder og tag det tidligste
   let lastSlot = Math.round(startT * 30);   // 60 fps-kilde: sporeren får 30 billeder i sekundet som ved klargjorte klip
   const queue = [];
-  let failed = false, drained = false, wake = null, dec;
+  let failed = false, drained = false, wake = null, dec, lastOut = performance.now();
   const poke = () => { if (wake) { const w = wake; wake = null; w(); } };
   try {
     const cfg = { codec: src.codec, codedWidth: src.cw || src.w, codedHeight: src.ch || src.h, description: src.avcC, optimizeForLatency: !hold };
     const sup = await VideoDecoder.isConfigSupported(cfg);
     if (!sup || !sup.supported) return null;
-    dec = new VideoDecoder({ output: f => { queue.push(f); if (hold) queue.sort((a, b) => a.timestamp - b.timestamp); poke(); }, error: () => { failed = true; poke(); } });
+    dec = new VideoDecoder({ output: f => { lastOut = performance.now(); queue.push(f); if (hold) queue.sort((a, b) => a.timestamp - b.timestamp); poke(); }, error: () => { failed = true; poke(); } });
     dec.configure(cfg);
     dec.ondequeue = poke;
   } catch { try { if (dec) dec.close(); } catch {} return null; }
@@ -5461,7 +5480,12 @@ async function mpDirectFrames(startT, endT, onFrame) {
       }
       if (queue.length <= (failed || drained ? 0 : hold)) {
         if (failed || drained) break;
-        await new Promise(r => { wake = r; });
+        // Vagthund: vent højst et kvart sekund ad gangen. Trykkes Stop, slutter løkken; kommer der intet
+        // billede i 8 s (afkoderen hænger), gives op her, og resten tages med seek som ved andre fejl.
+        await new Promise(r => { wake = r; setTimeout(r, 250); });
+        wake = null;
+        if (!tracking) stopped = true;
+        else if (performance.now() - lastOut > 8000) failed = true;
         continue;
       }
       const f = queue.shift(), t = f.timestamp / 1e6, slot = Math.round(t * 30);
@@ -5471,6 +5495,7 @@ async function mpDirectFrames(startT, endT, onFrame) {
           if (t + FRAME >= endT) stopped = true;
           else if (await onFrame(f, t) === false) stopped = true;
           else last = t;
+          lastOut = performance.now();   // sporerens eget arbejde tæller ikke som stilstand
         }
       } finally { f.close(); }
     }
@@ -7896,7 +7921,7 @@ function vcAthleteTrackedBarPath(lift) {
 function vcAthleteFileToSend() {
   const original = vcAthletePendingFile;
   if (!original) return null;
-  if (vcNorm.used && vcNorm.via === 'webcodecs' && vcNorm.blob && vcNorm.blob.size > 0 && vcNorm.blob.size < original.size) {
+  if (typeof vcNorm !== 'undefined' && vcNorm.used && vcNorm.via === 'webcodecs' && vcNorm.blob && vcNorm.blob.size > 0 && vcNorm.blob.size < original.size) {
     try { return new File([vcNorm.blob], 'klargjort.mp4', { type: 'video/mp4' }); } catch { return original; }
   }
   return original;
