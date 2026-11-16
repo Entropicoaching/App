@@ -6,16 +6,22 @@ const { useEffect, useMemo, useState } = React
 const control = { minHeight: 44, minWidth: 44, font: 'inherit', maxWidth: '100%', boxSizing: 'border-box', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
 const ml = value => new Intl.NumberFormat('da-DK').format(Math.round(value))
 
-// Et glas, der fyldes op mod målet. Kun visning; tallet står også som tekst.
+// Et glas, der fyldes op mod målet. Tallet står også som tekst.
+// Ordre 1542a (Marc 16. nov.: "glasset fylder ikke når jeg trykker"): farverne står i style, ikke som
+// SVG-attributter, fordi temaet gør dem til var(), og var() virker ikke i fill=/stroke= (konturen forsvandt).
 export function WaterGlass({ fraction, reached }) {
   const height = 112, top = 8, fill = Math.round(height * Math.max(0, Math.min(1, fraction)))
   return h('svg', { width: 72, height: 132, viewBox: '0 0 72 132', role: 'img',
     'aria-label': reached ? 'Glasset er fyldt: mål nået' : `Glasset er fyldt ${Math.round(fraction * 100)} procent`,
-    'data-water-fill': String(Math.round(fraction * 100)), style: { flex: '0 0 auto' } },
+    'data-water-fill': String(Math.round(fraction * 100)), style: { flex: '0 0 auto', display: 'block' } },
   h('defs', null, h('clipPath', { id: 'e2-water-glass' }, h('path', { d: 'M8 8 L64 8 L58 124 L14 124 Z' }))),
-  h('rect', { x: 0, y: top + height - fill, width: 72, height: fill, fill: reached ? '#5fb38a' : '#4a90c8', clipPath: 'url(#e2-water-glass)' }),
-  h('path', { d: 'M8 8 L64 8 L58 124 L14 124 Z', fill: 'none', stroke: '#edeae2', strokeWidth: 3, strokeLinejoin: 'round' }))
+  h('rect', { x: 0, y: top + height - fill, width: 72, height: fill, clipPath: 'url(#e2-water-glass)', style: { fill: reached ? '#5fb38a' : '#4a90c8' } }),
+  h('path', { d: 'M8 8 L64 8 L58 124 L14 124 Z', strokeWidth: 3, strokeLinejoin: 'round', style: { fill: 'none', stroke: '#edeae2' } }))
 }
+
+// Uden mål fyldes glasset mod 2 liter, så et tryk altid kan ses; teksten siger, at det ikke er et mål.
+export const GLAS_UDEN_MAAL_ML = 2000
+export const GLAS_ML = 250
 
 // Væskemål øverst i væskekortet. add(ml) er væskeloggens egen tilføjelse.
 export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd, serverGoal, onGoalSaved }) {
@@ -32,6 +38,8 @@ export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd, se
     setGoal(current => current === serverGoal ? current : (saveWaterGoal(device, athleteId, String(serverGoal)), serverGoal))
   }, [serverGoal, device, athleteId])
   const p = waterProgress(totalMl, goal)
+  const glas = goal ? p : waterProgress(totalMl, GLAS_UDEN_MAAL_ML)
+  const kanDrikke = canAdd === true && typeof add === 'function'
   const save = event => {
     event.preventDefault()
     if (waterGoalValue(draft) === null) { setMessage(`Skriv et mål mellem ${ml(waterGoalLimits.min)} og ${ml(waterGoalLimits.max)} ml.`); return }
@@ -49,11 +57,15 @@ export default function WaterGoal({ athleteId, storage, totalMl, add, canAdd, se
     goal && h('button', { type: 'button', style: control, onClick: () => { setEditing(false); setDraft(''); setMessage('') } }, 'Annuller'))
   return h('section', { 'aria-label': 'Væskemål', 'data-water-goal': goal ? String(goal) : '',
     style: { padding: 16, display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' } },
-  h(WaterGlass, { fraction: p.fraction, reached: p.reached }),
+  // Et tryk på glasset er et glas vand (250 ml), ligesom knappen + 250 ml.
+  h('button', { type: 'button', 'data-water-glass-tap': '', disabled: !kanDrikke, onClick: () => add?.(String(GLAS_ML)),
+    'aria-label': `Tryk på glasset: drukket ${GLAS_ML} ml vand`,
+    style: { padding: 4, margin: 0, border: 'none', borderRadius: 8, background: 'transparent', cursor: kanDrikke ? 'pointer' : 'default', touchAction: 'manipulation' } },
+  h(WaterGlass, { fraction: glas.fraction, reached: p.reached })),
   h('div', { style: { flex: '1 1 12rem', minWidth: 0 } },
     h('h2', { style: { color: '#edeae2', margin: '0 0 4px' } }, 'Dit væskemål'),
     !goal && !editing && h('div', null,
-      h('p', null, `Du har drukket ${ml(p.total)} ml. Sæt et dagligt mål, så fyldes glasset op.`),
+      h('p', null, `Du har drukket ${ml(p.total)} ml. Tryk på glasset for et glas (${GLAS_ML} ml). Sæt et dagligt mål, så fyldes glasset mod dit mål; indtil da viser det ${ml(GLAS_UDEN_MAAL_ML)} ml.`),
       h('p', null, 'Aftal tallet med din coach. Når kostbilaget er klar, står anbefalingen her.')),
     goal && h('p', { role: 'status', 'aria-live': 'polite', style: { fontSize: '1.15em', margin: '4px 0' } },
       p.reached ? `Mål nået (${ml(goal)} ml).` : `${ml(p.total)} af ${ml(goal)} ml. ${ml(p.missing)} ml tilbage.`),

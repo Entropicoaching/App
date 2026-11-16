@@ -2,10 +2,10 @@
 // opsætning ... jeg vil gerne det er mere imødekommende ui".
 // Appens farver står som faste hex-værdier i hundredvis af inline styles, og mange
 // prøver låser kildeteksten. Derfor ændres kilden ikke: Vite oversætter ved bygning
-// de faste farver til CSS-variabler (tema.css). Lys varm palet er standard; mørk
-// tilstand (data-tema="moerk") giver præcis de gamle farver tilbage.
+// de faste farver til CSS-variabler (tema.css). Ordre 1542a: mørk varm palet (dyb brun,
+// lys creme tekst, amber) er standard; lys tilstand (data-tema="lys") er 1541's lyse palet.
 
-// Kildefarve -> variabel. Variablen har den gamle farve i mørk tilstand.
+// Kildefarve -> variabel. tema.css giver variablen en varm mørk og en lys værdi.
 export const FARVER = {
   // flader
   '#141410': 'e-bg', '#0f0e0b': 'e-bg', '#16160f': 'e-bg',
@@ -32,7 +32,7 @@ export const FARVER = {
   '#9b6bd4': 'e-lilla',
 }
 
-// Sjældne farver: lys værdi her; i mørk tilstand falder var() tilbage til den gamle hex.
+// Sjældne farver: lys værdi her; i mørk tilstand falder var() tilbage til den gamle hex (neutrale flader får varm brun i tema.css).
 // Videoafspilning og fuldskærmstræning beholder deres farver (ligger over video/mørk flade).
 export const EKSTRA = {
   // neutrale mørke flader -> lys flade

@@ -37,14 +37,26 @@ test('kun appens egne filer temaes', () => {
   assert.equal(skalTemaes('C:/r/src/videoCompression2.mjs'), false)
 })
 
-test('lys er standard; mørk huskes og kan slås fra', () => {
+test('mørk er standard (1542a); lys huskes og kan slås fra igen', () => {
   const data = new Map()
   const storage = { getItem: k => data.get(k) ?? null, setItem: (k, v) => data.set(k, v), removeItem: k => data.delete(k) }
   const attrs = {}
   const doc = { documentElement: { setAttribute: (k, v) => { attrs[k] = v }, removeAttribute: k => { delete attrs[k] } }, querySelector: () => null }
-  assert.equal(laesTema(storage), 'lys')
-  saetTema('moerk', { storage, doc })
-  assert.equal(data.get(TEMA_NOEGLE), 'moerk'); assert.equal(attrs['data-tema'], 'moerk'); assert.equal(laesTema(storage), 'moerk')
+  assert.equal(laesTema(storage), 'moerk')
+  data.set(TEMA_NOEGLE, 'moerk'); assert.equal(laesTema(storage), 'moerk', 'valget fra 1541 giver stadig mørk')
   saetTema('lys', { storage, doc })
-  assert.equal(laesTema(storage), 'lys'); assert.equal(attrs['data-tema'], undefined)
+  assert.equal(data.get(TEMA_NOEGLE), 'lys'); assert.equal(attrs['data-tema'], 'lys'); assert.equal(laesTema(storage), 'lys')
+  saetTema('moerk', { storage, doc })
+  assert.equal(laesTema(storage), 'moerk'); assert.equal(attrs['data-tema'], undefined)
+  assert.equal(laesTema({ getItem: () => { throw new Error('privat') } }), 'moerk')
+})
+
+test('tema.css: mørk varm bund som standard, lys kun med data-tema="lys"', async () => {
+  const { readFile } = await import('node:fs/promises')
+  const css = await readFile(new URL('./tema.css', import.meta.url), 'utf8')
+  const rod = css.slice(css.indexOf(':root {'), css.indexOf('}', css.indexOf(':root {')))
+  assert.match(rod, /--e-bg: #1e1912;/)
+  assert.match(rod, /color-scheme: dark;/)
+  assert.match(css, /:root\[data-tema="lys"\] \{\s+--e-bg: #f7f2e9;/)
+  assert.doesNotMatch(css, /data-tema="moerk"/)
 })

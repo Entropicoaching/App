@@ -1,7 +1,48 @@
-/* Ordre 1541: lyst varmt tema som standard; data-tema="moerk" giver de gamle farver.
+/* Ordre 1542a (Marc 16. nov. kl. 20:45): "mere natte tema". Mørk varm skærm er standard:
+   dyb brun bund, lys creme tekst, samme varme amber. data-tema="lys" giver den lyse palet fra 1541.
    Variablerne bruges af de faste farver, som src/tema/varmTema.mjs oversætter ved bygning.
-   Kontrast: al tekst mindst 4,5 mod alle flader (plan/1541/kontrast.mjs). */
+   Kontrast: al tekst mindst 4,5 mod alle flader i begge temaer (plan/1542a/kontrast.mjs). */
 :root {
+  --e-bg: #1e1912;
+  --e-flade: #28211a;
+  --e-flade2: #231d16;
+  --e-flade3: #332b21;
+  --e-kant: #4d4236;
+  --e-kant2: #67594a;
+  --e-tekst: #f4ede1;
+  --e-tekst2: #d3c8b6;
+  --e-daempet: #ab9f8c;
+  --e-svag: #a39783;
+  --e-amber: #d99a3d;
+  --e-amber2: #ebb764;
+  --e-groen: #7cc47a;
+  --e-groen2: #9cbf97;
+  --e-roed: #ee7b70;
+  --e-roed2: #e08a6c;
+  --e-blaa: #7fd8ea;
+  --e-blaa2: #7fb6cc;
+  --e-lilla: #b896e6;
+  --e-tekst-rgb: 244, 237, 225;
+  --e-bg-rgb: 30, 25, 18;
+  --e-flade-rgb: 40, 33, 26;
+  --e-alfa: 1;
+  /* sjældne neutrale flader: varm brun i stedet for kold sort */
+  --e-h191915: #241e17;
+  --e-h211f1a: #2a231b;
+  --e-h22201a: #2a231b;
+  --e-h25251f: #2d261d;
+  --e-h262620: #2d261d;
+  --e-h292923: #30281f;
+  --e-h2a2a24: #30281f;
+  --e-h30302a: #382f24;
+  --e-h383730: #43392c;
+  --text-h: var(--e-tekst);
+  --bg: var(--e-bg);
+  color-scheme: dark;
+  background: var(--e-bg);
+}
+
+:root[data-tema="lys"] {
   --e-bg: #f7f2e9;
   --e-flade: #fffdf9;
   --e-flade2: #f3ede2;
@@ -25,43 +66,13 @@
   --e-bg-rgb: 247, 242, 233;
   --e-flade-rgb: 255, 253, 249;
   --e-alfa: 1.6;
-  --text-h: var(--e-tekst);
-  --bg: var(--e-bg);
   color-scheme: light;
-  background: var(--e-bg);
-}
-
-:root[data-tema="moerk"] {
-  --e-bg: #141410;
-  --e-flade: #1c1c18;
-  --e-flade2: #171713;
-  --e-flade3: #242420;
-  --e-kant: #414139;
-  --e-kant2: #59564c;
-  --e-tekst: #edeae2;
-  --e-tekst2: #b8b4a8;
-  --e-daempet: #7a7770;
-  --e-svag: #4a4844;
-  --e-amber: #c8923a;
-  --e-amber2: #e0ae5c;
-  --e-groen: #6cba6c;
-  --e-groen2: #8caf88;
-  --e-roed: #e05555;
-  --e-roed2: #cf6b4e;
-  --e-blaa: #67dff5;
-  --e-blaa2: #5b9bb5;
-  --e-lilla: #9b6bd4;
-  --e-tekst-rgb: 237, 234, 226;
-  --e-bg-rgb: 20, 20, 16;
-  --e-flade-rgb: 28, 28, 24;
-  --e-alfa: 1;
-  color-scheme: dark;
 }
 
 body { background: var(--e-bg); color: var(--e-tekst); }
 
-/* Sjældne farver (EKSTRA i varmTema.mjs): kun lys tilstand; mørk bruger fallback. */
-:root:not([data-tema="moerk"]) {
+/* Sjældne farver (EKSTRA i varmTema.mjs) i lys tilstand; mørk bruger fallback eller de varme flader ovenfor. */
+:root[data-tema="lys"] {
   --e-h191915: #ece4d5;
   --e-h243020: #dcebd9;
   --e-h262620: #ece4d5;
@@ -117,7 +128,7 @@ body { background: var(--e-bg); color: var(--e-tekst); }
 [stroke="#7a7770"] { stroke: var(--e-daempet); }
 [stroke="#67dff5"] { stroke: var(--e-blaa); }
 [stroke="#242420"] { stroke: var(--e-flade3); }
-:root:not([data-tema="moerk"]) [stroke^="rgba(237,234,226"] { stroke: rgba(var(--e-tekst-rgb), 0.16); }
+:root[data-tema="lys"] [stroke^="rgba(237,234,226"] { stroke: rgba(var(--e-tekst-rgb), 0.16); }
 
 /* Tekst mindst 11 px (Marcs regel fra 13. nov.): små inline-størrelser løftes uden at røre de låste kilder. */
 [style*="font-size: 0.4rem"], [style*="font-size: 0.45rem"], [style*="font-size: 0.48rem"], [style*="font-size: 0.5rem"],

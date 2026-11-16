@@ -56,3 +56,46 @@ test('glasset fyldes op mod målet, og over målet står "Mål nået", ikke en l
   // U9: folden gentager ikke totalen; den viser posterne til ret og fjern.
   assert.equal(all(log, 'li').length, 5)
 })
+
+// Ordre 1542a (Marc 16. nov.: "glasset fylder ikke når jeg trykker"): glasset selv er en knap,
+// det fyldes også uden mål, og farverne står i style, så temaets var() virker i SVG.
+test('tryk på glasset er et glas vand og fylder det, også uden mål; ny dag starter tomt', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(date + 'T12:00:00+01:00') })
+  const dom = hostFixture(), root = createRoot(dom.host), storage = memory()
+  dom.globals({ localStorage: storage })
+  t.after(async () => { await act(async () => { root.unmount(); await tick() }); dom.restore() })
+  const props = { enabled: true, athleteId, date, client: {}, currentDay: () => date, storage }
+  await act(async () => { root.render(h(StrictMode, null, h(WaterDayLog, props))); await tick() })
+  const goal = () => all(dom.host, 'section').find(n => n.getAttribute('aria-label') === 'Væskemål')
+  const glas = () => all(dom.host, 'button').find(n => n.getAttribute('data-water-glass-tap') === '')
+  const fill = () => Number(all(dom.host, 'svg')[0].getAttribute('data-water-fill'))
+  const tryk = async () => act(async () => { propsOf(glas()).onClick(); await tick() })
+  assert.ok(glas(), 'glasset er en knap')
+  assert.equal(glas().getAttribute('disabled'), null)
+  assert.equal(fill(), 0)
+  await tryk()
+  assert.equal(fill(), 13, '250 af 2 liter uden mål')
+  assert.match(goal().textContent, /Du har drukket 250 ml/)
+  await tryk()
+  assert.equal(fill(), 25)
+  // Med mål fyldes glasset mod målet, og tallet står én gang.
+  await act(async () => { propsOf(all(goal(), 'input')[0]).onChange({ currentTarget: { value: '1000' } }); await tick() })
+  await act(async () => { propsOf(all(goal(), 'form')[0]).onSubmit({ preventDefault() {} }); await tick() })
+  assert.equal(fill(), 50)
+  assert.match(goal().textContent, /500 af 1\.000 ml\. 500 ml tilbage/)
+  assert.equal(goal().textContent.match(/500 af/g).length, 1)
+  await tryk(); await tryk()
+  assert.equal(fill(), 100)
+  assert.match(goal().textContent, /Mål nået \(1\.000 ml\)\./)
+  // Farverne står i style (ikke fill=/stroke=), så temaets var() virker.
+  for (const n of [...all(dom.host, 'rect'), ...all(dom.host, 'path')]) {
+    assert.equal(n.getAttribute('stroke'), null); assert.equal(n.getAttribute('fill'), null)
+  }
+  // Ny dag: et nyt glas uden dagens vand.
+  const nyDato = new Date(new Date(date + 'T12:00:00Z').getTime() + 864e5).toISOString().slice(0, 10)
+  t.mock.timers.setTime(new Date(nyDato + 'T12:00:00+01:00').getTime())
+  await act(async () => { root.render(h(StrictMode, null, h(WaterDayLog, { ...props, date: nyDato, currentDay: () => nyDato }))); await tick() })
+  assert.equal(fill(), 0)
+  await tryk()
+  assert.equal(fill(), 25)
+})
