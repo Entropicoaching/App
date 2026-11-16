@@ -35,7 +35,7 @@ test('1542: antal sæt står kun i pas-kortet, og datoen i toppen er dansk', () 
   const card = readFileSync(new URL('./today/TodayCard.mjs', import.meta.url), 'utf8')
   assert.doesNotMatch(card, /Træning · \$\{training\.logged/)
   const ramme = readFileSync(new URL('../../athlete/Ramme.jsx', import.meta.url), 'utf8')
-  assert.match(ramme, /\{dagTekst\(today\(\)\)\}/)
+  assert.match(ramme, /danskDato === true \? dagTekst\(today\(\)\) : today\(\)/)
   const body = ramme.slice(ramme.indexOf('function dagTekst'), ramme.indexOf('function Ramme'))
   const dagTekst = new Function('UGEDAGE', 'MAANEDER', `${body}; return dagTekst`)(
     ['søn.', 'man.', 'tirs.', 'ons.', 'tors.', 'fre.', 'lør.'],
