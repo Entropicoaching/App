@@ -1,0 +1,125 @@
+/* Ordre 1541: lyst varmt tema som standard; data-tema="moerk" giver de gamle farver.
+   Variablerne bruges af de faste farver, som src/tema/varmTema.mjs oversætter ved bygning.
+   Kontrast: al tekst mindst 4,5 mod alle flader (plan/1541/kontrast.mjs). */
+:root {
+  --e-bg: #f7f2e9;
+  --e-flade: #fffdf9;
+  --e-flade2: #f3ede2;
+  --e-flade3: #ece4d5;
+  --e-kant: #d8ccb8;
+  --e-kant2: #c5b69c;
+  --e-tekst: #2b2419;
+  --e-tekst2: #4d4436;
+  --e-daempet: #625848;
+  --e-svag: #665c4c;
+  --e-amber: #8c5b0c;
+  --e-amber2: #85570f;
+  --e-groen: #2c7236;
+  --e-groen2: #3a6c41;
+  --e-roed: #a8332b;
+  --e-roed2: #9a4329;
+  --e-blaa: #0a6377;
+  --e-blaa2: #2b607d;
+  --e-lilla: #653ca0;
+  --e-tekst-rgb: 43, 36, 25;
+  --e-bg-rgb: 247, 242, 233;
+  --e-flade-rgb: 255, 253, 249;
+  --e-alfa: 1.6;
+  --text-h: var(--e-tekst);
+  --bg: var(--e-bg);
+  color-scheme: light;
+  background: var(--e-bg);
+}
+
+:root[data-tema="moerk"] {
+  --e-bg: #141410;
+  --e-flade: #1c1c18;
+  --e-flade2: #171713;
+  --e-flade3: #242420;
+  --e-kant: #414139;
+  --e-kant2: #59564c;
+  --e-tekst: #edeae2;
+  --e-tekst2: #b8b4a8;
+  --e-daempet: #7a7770;
+  --e-svag: #4a4844;
+  --e-amber: #c8923a;
+  --e-amber2: #e0ae5c;
+  --e-groen: #6cba6c;
+  --e-groen2: #8caf88;
+  --e-roed: #e05555;
+  --e-roed2: #cf6b4e;
+  --e-blaa: #67dff5;
+  --e-blaa2: #5b9bb5;
+  --e-lilla: #9b6bd4;
+  --e-tekst-rgb: 237, 234, 226;
+  --e-bg-rgb: 20, 20, 16;
+  --e-flade-rgb: 28, 28, 24;
+  --e-alfa: 1;
+  color-scheme: dark;
+}
+
+body { background: var(--e-bg); color: var(--e-tekst); }
+
+/* Sjældne farver (EKSTRA i varmTema.mjs): kun lys tilstand; mørk bruger fallback. */
+:root:not([data-tema="moerk"]) {
+  --e-h191915: #ece4d5;
+  --e-h243020: #dcebd9;
+  --e-h262620: #ece4d5;
+  --e-h292923: #ece4d5;
+  --e-h302437: #e7def3;
+  --e-h302719: #f1e2c3;
+  --e-h383730: #d8ccb8;
+  --e-h403522: #f1e2c3;
+  --e-h211f1a: #ece4d5;
+  --e-h22201a: #ece4d5;
+  --e-h25251f: #ece4d5;
+  --e-h2a2a24: #ece4d5;
+  --e-h30302a: #e4dccc;
+  --e-h31291c: #f1e2c3;
+  --e-h2a2416: #f1e2c3;
+  --e-h263b26: #dcebd9;
+  --e-h17211e: #dcebd9;
+  --e-h2b2538: #e7def3;
+  --e-h202b3b: #dbe6f0;
+  --e-h1c2a38: #dbe6f0;
+  --e-h20282c: #dbe6f0;
+  --e-hd4d0c6: #4d4436;
+  --e-hd4d0c4: #4d4436;
+  --e-hd5d2c8: #4d4436;
+  --e-hd9d4c8: #4d4436;
+  --e-hc7c3b9: #4d4436;
+  --e-hc9d7c7: #3a6c41;
+  --e-he0bb7a: #85570f;
+  --e-he6bb76: #85570f;
+  --e-hedc17b: #85570f;
+  --e-hd7b16e: #85570f;
+  --e-hc9b58f: #85570f;
+  --e-hffcb83: #85570f;
+  --e-hb9d5a0: #3a6c41;
+  --e-hd7e4aa: #3a6c41;
+  --e-h8ee3cf: #1f6b5f;
+  --e-h72daca: #1f6b5f;
+  --e-h4ec8b4: #1f6b5f;
+  --e-hd7bce7: #653ca0;
+  --e-hd3c5f0: #653ca0;
+  --e-hb5cbed: #2b607d;
+  --e-hffb0a0: #9a4329;
+}
+
+/* SVG-attributter (fill="#..") kan ikke bruge var(); CSS slår attributten. */
+[fill="#edeae2"] { fill: var(--e-tekst); }
+[fill="#a8a498"] { fill: var(--e-tekst2); }
+[fill="#7a7770"] { fill: var(--e-daempet); }
+[fill="#4a4844"] { fill: var(--e-svag); }
+[fill="#67dff5"] { fill: var(--e-blaa); }
+[stroke="#c8923a"] { stroke: var(--e-amber); }
+[stroke="#6cba6c"] { stroke: var(--e-groen); }
+[stroke="#7a7770"] { stroke: var(--e-daempet); }
+[stroke="#67dff5"] { stroke: var(--e-blaa); }
+[stroke="#242420"] { stroke: var(--e-flade3); }
+:root:not([data-tema="moerk"]) [stroke^="rgba(237,234,226"] { stroke: rgba(var(--e-tekst-rgb), 0.16); }
+
+/* Tekst mindst 11 px (Marcs regel fra 13. nov.): små inline-størrelser løftes uden at røre de låste kilder. */
+[style*="font-size: 0.4rem"], [style*="font-size: 0.45rem"], [style*="font-size: 0.48rem"], [style*="font-size: 0.5rem"],
+[style*="font-size: 0.52rem"], [style*="font-size: 0.55rem"], [style*="font-size: 0.58rem"], [style*="font-size: 0.6rem"],
+[style*="font-size: 0.62rem"], [style*="font-size: 0.65rem"], [style*="font-size: 0.68rem"] { font-size: 11px !important; }

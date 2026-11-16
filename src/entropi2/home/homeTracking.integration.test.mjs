@@ -49,7 +49,10 @@ test('actual Home reads one scoped history, exposes selected quick form and adds
   assert.equal(reads, 1)
   const card = find(f.view, n => Object.hasOwn(n.props, 'data-home-week-tracking'))
   assert.ok(card); assert.equal(card.type, 'details'); assert.equal(card.props.open, undefined)
-  assert.equal(f.view.tree.children.filter(x => x && typeof x === 'object').at(-1), card)
+  // Ordre 1541: kortet ligger nu nederst i "Mere i dag", som er forsidens sidste kort (kun placering).
+  const mere = f.view.tree.children.filter(x => x && typeof x === 'object').at(-1)
+  assert.equal(mere.props['data-home-mere'], '')
+  assert.equal(mere.children.filter(x => x && typeof x === 'object').at(-1), card)
   assert.equal(nodes(f.view).filter(n => n.type === 'summary' && textContent(n) === 'Ugen i korte træk').length, 1)
   assert.match(textContent(card), /1\/7 dage/); assert.match(textContent(card), /For lidt data/)
   assert.doesNotMatch(textContent(card), /0 pas|100 %|Kost i forhold/)

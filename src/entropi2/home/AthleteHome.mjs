@@ -219,40 +219,44 @@ export default function AthleteHome(props) {
     u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData,
       u5Training: model.kind === 'today' || model.kind === 'done' ? { kind: model.kind, logged: model.logged, total: model.total,
         exercises: target?.session.exercises } : null }),
-    // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
-    u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && athlete?.id && model.today && h(DayFeeling, {
-      key: `u7:${athlete.id}:${model.today}`, athleteId: athlete.id, today: model.today, client: props.u5Client, storage: props.storage }),
-    // U8: påmindelse og coachsvar som push, kun når pakke D og nøglen findes. Ellers som i U7.
-    u8Enabled('push', props.u8Push) && !props.sessionReadOnly && athlete?.id && h(PushCard, {
-      key: `u8:${athlete.id}`, athleteId: athlete.id, client: props.u5Client, storage: props.storage, setTab: props.setTab }),
     record && h(HomeRecordCard, { record }),
     h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow,
       trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
-    // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
-    !props.sessionReadOnly && h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
-      disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
-    !props.sessionReadOnly && h(HomeCheckIn, { enabled, athleteId: athlete?.id, now, onHoliday: props.onHoliday, storage: props.storage }),
-    week?.plan && h('details', { style: s.card, 'data-home-week-plan': '' },
-      h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 44 } }, 'Se ugens plan'),
-      h(WeekPlan, week.plan)),
-    nutrition && h('button', { type: 'button',
-      style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left' },
-      disabled: typeof setTab !== 'function', onClick: go('kost') }, nutrition.text),
-    coach && h('section', { style: s.card, 'aria-label': 'Fra din coach' },
-      h('p', { style: s.eyebrow }, 'Fra din coach'),
-      h('h2', { style: s.heading }, 'Seneste besked'),
-      h('p', { style: s.text }, coachText.preview),
-      coachText.rest && h('details', null,
-        h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Læs resten af beskeden'),
-        h('p', { style: s.text }, coachText.rest)),
-      coach?.created_at && typeof formatMsgTime === 'function' && h('p', { style: s.text }, formatMsgTime(coach.created_at)),
-      link('beskeder', 'Se besked og video')),
-    // Presentation only: the host passes its existing confirmed coach ownership decision.
-    props.coachOwnTraining !== true && h('h2', { style: s.heading }, 'Resten af din dag'),
-    props.coachOwnTraining !== true && h('nav', { style: s.links, 'aria-label': 'Genveje' },
-      link('fremgang', 'Analyse'), !nutrition && link('kost', 'Kost'),
-      link('mobilisering', 'Mobilitet'), !coach && link('beskeder', 'Din coach')),
-    hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
-      h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),
-      h(AthleteWeek, { enabled: true, snapshot, compactHome: true })))
+    // Ordre 1541 (Marc 16. nov.: "pas på at det ikke føles for overvældende ... gem det i under kategorierne"):
+    // træning og dagens logning står øverst; alt sekundært ligger samlet bag "Mere i dag".
+    h('details', { style: { ...s.card, padding: 16 }, 'data-home-mere': '' },
+      h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer', fontWeight: 600 } }, 'Mere i dag'),
+      // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
+      u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && athlete?.id && model.today && h(DayFeeling, {
+        key: `u7:${athlete.id}:${model.today}`, athleteId: athlete.id, today: model.today, client: props.u5Client, storage: props.storage }),
+      // U8: påmindelse og coachsvar som push, kun når pakke D og nøglen findes. Ellers som i U7.
+      u8Enabled('push', props.u8Push) && !props.sessionReadOnly && athlete?.id && h(PushCard, {
+        key: `u8:${athlete.id}`, athleteId: athlete.id, client: props.u5Client, storage: props.storage, setTab: props.setTab }),
+      // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
+      !props.sessionReadOnly && h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
+        disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
+      !props.sessionReadOnly && h(HomeCheckIn, { enabled, athleteId: athlete?.id, now, onHoliday: props.onHoliday, storage: props.storage }),
+      week?.plan && h('details', { style: s.card, 'data-home-week-plan': '' },
+        h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 44 } }, 'Se ugens plan'),
+        h(WeekPlan, week.plan)),
+      nutrition && h('button', { type: 'button',
+        style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left' },
+        disabled: typeof setTab !== 'function', onClick: go('kost') }, nutrition.text),
+      coach && h('section', { style: s.card, 'aria-label': 'Fra din coach' },
+        h('p', { style: s.eyebrow }, 'Fra din coach'),
+        h('h2', { style: s.heading }, 'Seneste besked'),
+        h('p', { style: s.text }, coachText.preview),
+        coachText.rest && h('details', null,
+          h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Læs resten af beskeden'),
+          h('p', { style: s.text }, coachText.rest)),
+        coach?.created_at && typeof formatMsgTime === 'function' && h('p', { style: s.text }, formatMsgTime(coach.created_at)),
+        link('beskeder', 'Se besked og video')),
+      // Presentation only: the host passes its existing confirmed coach ownership decision.
+      props.coachOwnTraining !== true && h('h2', { style: s.heading }, 'Resten af din dag'),
+      props.coachOwnTraining !== true && h('nav', { style: s.links, 'aria-label': 'Genveje' },
+        link('fremgang', 'Analyse'), !nutrition && link('kost', 'Kost'),
+        link('mobilisering', 'Mobilitet'), !coach && link('beskeder', 'Din coach')),
+      hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
+        h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),
+        h(AthleteWeek, { enabled: true, snapshot, compactHome: true }))))
 }
