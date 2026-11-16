@@ -118,7 +118,10 @@ export default function QuickLogs(props) {
     if (energy !== undefined && (!suggestion || statusFor(latest.current)?.readiness)) return
     reset(); setAttempt(null)
     // Fast-form buttons disappear on expansion; return to the stable row button.
-    opener.current = kind === 'readiness' ? readinessOpener.current : event.currentTarget
+    // Med "I dag"-kortet er dagsformknappen skjult; fokus vender tilbage til kortets knap.
+    const shown = latest.current.todayCard === true && typeof document !== 'undefined' ? document.activeElement : null
+    opener.current = shown && shown !== document.body && typeof shown.focus === 'function' ? shown
+      : kind === 'readiness' ? readinessOpener.current : event.currentTarget
     const p = latest.current
     const history = p.trackingData
     const scoped = history?.athleteId === athlete.id && history?.today === today
@@ -158,9 +161,12 @@ export default function QuickLogs(props) {
     if (current() && available(kind) && control.current === renderedController &&
       control.current?.setField(kind, key, value)) mirror(kind, control.current.snapshot().draft)
   }
-  const rowButton = (kind, label, logged) => props.sessionReadOnly || !available(kind) ? null : h('button', { type: 'button',
-    ref: kind === 'readiness' ? readinessOpener : undefined,
-    style: { ...s.secondary, marginTop: 0, whiteSpace: 'nowrap', minWidth: 0 },
+  // Ordre 1542: med "I dag"-kortet står vægt og dagsform dér. Vægtknappen udgår; dagsformknappen
+  // bliver skjult, så kortets "Udfyld dagsform" stadig kan åbne den fulde formular herunder.
+  const covered = props.todayCard === true
+  const rowButton = (kind, label, logged) => props.sessionReadOnly || !available(kind) || covered && kind === 'weight' ? null : h('button', { type: 'button',
+    ref: kind === 'readiness' ? readinessOpener : undefined, hidden: covered || undefined,
+    style: { ...s.secondary, marginTop: 0, whiteSpace: 'nowrap', minWidth: 0, ...(covered ? { display: 'none' } : {}) },
     'aria-label': logged ? `${label} · ${kind === 'readiness' && open !== kind && status.energy != null ? readinessReceipt : 'Logget i dag'}` : label,
     'aria-expanded': open === kind || kind === 'readiness' && fast,
     'aria-controls': open || fast ? `${id}-panel` : undefined,
@@ -174,7 +180,8 @@ export default function QuickLogs(props) {
   const readinessInput = draft?.readiness ?? {}
   const repeat = state?.canRepeat && (open === 'weight' ? state.weightSource !== undefined : state.readinessSource !== undefined)
   const saved = state?.phase === 'saved'
-  const suggestion = !open && available('readiness') ? homeReadinessSuggestion(props) : null
+  // Kortet har sit eget ét-tryks energivalg; samme valg her ville stå to gange.
+  const suggestion = !open && !covered && available('readiness') ? homeReadinessSuggestion(props) : null
   const fast = Boolean(suggestion || open === 'readiness' && quick)
   const fastInput = open ? readinessInput : suggestion
   const selectEnergy = (value, event) => {
@@ -182,7 +189,7 @@ export default function QuickLogs(props) {
     if (open) edit('readiness', 'energy', String(value))
     else launch('readiness', String(value))(event)
   }
-  return h('div', { 'data-home-quick-logs': '', style: { marginBottom: 20 } },
+  return h('div', { 'data-home-quick-logs': '', style: { marginBottom: covered && !open ? 0 : 20 } },
     h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }, 'aria-label': 'Log i dag' },
       rowButton('readiness', 'Dagsform', status.readiness), rowButton('weight', 'Vægt i dag', weightDone)),
     fast && h('section', { id: `${id}-panel`, 'data-home-readiness-fast': '', 'aria-label': 'Dagsform',

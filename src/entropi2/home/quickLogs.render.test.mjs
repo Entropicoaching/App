@@ -18,7 +18,9 @@ test('real React: shortcuts occur once beneath the session overview and do not d
   assert.equal((html.match(/data-home-quick-logs/g) || []).length, 1)
   assert.ok(html.indexOf('data-home-quick-logs') > html.indexOf('Dit næste pas'))
   assert.ok(html.indexOf('data-home-quick-logs') < html.indexOf('data-film-set'))
-  assert.match(html, />Dagsform<\/button>/); assert.match(html, />Vægt i dag<\/button>/)
+  // Ordre 1542: vægt og dagsform står én gang, i "I dag"-kortet.
+  assert.match(html, /hidden=""[^>]*>Dagsform<\/button>/); assert.doesNotMatch(html, />Vægt i dag<\/button>/)
+  assert.match(html, /data-u5-weight/)
   const quick = html.slice(html.indexOf('data-home-quick-logs'), html.indexOf('data-film-set'))
   assert.doesNotMatch(quick, /<form|check-in|Logget i dag/)
   assert.match(html.slice(html.indexOf('data-film-set')), /data-home-checkin/)

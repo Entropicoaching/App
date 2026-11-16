@@ -16,6 +16,16 @@ function logOutQuestion(unsent) {
   return `Log ud af Entropi? Du har ${unsent} sæt, der ikke er sendt endnu. De sendes først, når du logger ind igen på denne telefon med net. Annuller, hvis du vil vente, til de er sendt.`
 }
 
+// Ordre 1542 (Marc 16. nov.): datoen i toppen skrives som "man. 16. nov." i stedet for 2026-11-16.
+const UGEDAGE = ['søn.', 'man.', 'tirs.', 'ons.', 'tors.', 'fre.', 'lør.']
+const MAANEDER = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
+function dagTekst(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso))
+  if (!m) return String(iso ?? '')
+  const ugedag = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))).getUTCDay()
+  return `${UGEDAGE[ugedag]} ${Number(m[3])}. ${MAANEDER[Number(m[2]) - 1]}`
+}
+
 function Ramme({
   coachOwnTraining = false, coachNavigation = false,
   videoSetEnabled = false, videoSetReady = false, videoSetPicker,
@@ -103,7 +113,7 @@ function Ramme({
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative', ...(coachNavigation === true ? { flexWrap: 'wrap', gap: 8, minWidth: 0, maxWidth: '100%' } : {}) }}>
           {backBtn}
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#a8a498' }}>{today()}</div>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.05em', color: '#a8a498' }}>{dagTekst(today())}</div>
           {/* BUG (ORDRE 20): denne konto-menu fandtes slet ikke før — en atlet
               (eller en coach der ved en fejl var havnet her) havde ingen vej ud
               af appen uden at rydde browser-data manuelt. Log ud skal ALTID

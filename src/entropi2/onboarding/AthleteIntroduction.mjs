@@ -9,10 +9,15 @@ const FIRST_VISIT_STEPS = [
   { title: 'Din dag', text: 'Brug Din coach på Hjem, hvis du har spørgsmål. Du behøver ikke registrere noget for at afslutte introduktionen.' },
 ]
 
-function dailyStep({ canLogReadiness, canLogWeight, visKost }) {
+// Ordre 1542: med "I dag"-kortet står vægt og dagsform kun i kortet; knapperne Dagsform og Vægt i dag vises ikke.
+function dailyStep({ canLogReadiness, canLogWeight, visKost, todayCard }) {
   const tips = []
-  if (canLogReadiness === true) tips.push('Tryk på Dagsform på Hjem, vælg dine svar og tryk Gem.')
-  if (canLogWeight === true) tips.push('Tryk på Vægt i dag på Hjem, skriv din vægt og tryk Gem.')
+  if (canLogReadiness === true) tips.push(todayCard === true
+    ? 'Under I dag på Hjem vælger du din energi eller trykker Udfyld dagsform.'
+    : 'Tryk på Dagsform på Hjem, vælg dine svar og tryk Gem.')
+  if (canLogWeight === true) tips.push(todayCard === true
+    ? 'Under I dag på Hjem skriver du din vægt og trykker Gem.'
+    : 'Tryk på Vægt i dag på Hjem, skriv din vægt og tryk Gem.')
   else if (visKost === true) tips.push('Du finder din vægt under Kost.')
   return tips.length ? { title: canLogReadiness === true && canLogWeight === true ? 'Dagsform og vægt'
     : canLogReadiness === true ? 'Dagsform' : 'Din vægt',
@@ -27,7 +32,7 @@ export default function AthleteIntroduction(props = {}) {
   return h(ScopedIntroduction, { ...props, scopeKey, key: scopeKey })
 }
 
-function ScopedIntroduction({ scopeKey, firstName, storage, headingRef, canLogReadiness, canLogWeight, visKost }) {
+function ScopedIntroduction({ scopeKey, firstName, storage, headingRef, canLogReadiness, canLogWeight, visKost, todayCard }) {
   const initial = () => ({ ...readFirstVisit(scopeKey, storage), storage, step: 0 })
   const [state, setState] = useState(initial)
   const live = useRef(state), active = useRef(true), finished = useRef(false), title = useRef(null)
@@ -61,7 +66,7 @@ function ScopedIntroduction({ scopeKey, firstName, storage, headingRef, canLogRe
     setState({ ...state, step })
     title.current?.focus()
   }
-  const step = state.step === 3 ? dailyStep({ canLogReadiness, canLogWeight, visKost }) : FIRST_VISIT_STEPS[state.step]
+  const step = state.step === 3 ? dailyStep({ canLogReadiness, canLogWeight, visKost, todayCard }) : FIRST_VISIT_STEPS[state.step]
   return h('section', { 'aria-label': 'Introduktion', 'data-home-onboarding': '',
     style: { ...s.card, minWidth: 0, overflowWrap: 'anywhere' } },
     h('p', { style: s.eyebrow, 'aria-live': 'polite', 'aria-atomic': true }, `Trin ${state.step + 1} af ${FIRST_VISIT_STEPS.length}`),

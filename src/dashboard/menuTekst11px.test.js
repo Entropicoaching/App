@@ -24,7 +24,7 @@ for (const fil of ['./Sidebar.jsx', './MobilNav.jsx']) {
 // Ordre 1301: datoen paa Hjem (Ramme.jsx) maa heller ikke vaere under 11 px.
 test('../athlete/Ramme.jsx: datoen paa Hjem er mindst 11 px', () => {
   const src = kilde('../athlete/Ramme.jsx')
-  const linje = src.split('\n').find(l => l.includes('{today()}'))
+  const linje = src.split('\n').find(l => l.includes('{dagTekst(today())}'))
   assert.ok(linje)
   assert.deepEqual(smaa(linje), [])
 })
