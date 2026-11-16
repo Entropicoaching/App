@@ -163,13 +163,14 @@ export default function TodayCard(props) {
   const lines = planOn && trainingToday ? planWeightLines(exercises, lastByName, { topSet: u7Enabled('topSet', props.u7TopSet) }) : []
   const planned = lines.some(line => line.source === 'plan')
   const trainingRow = () => h('div', { key: 'training', style: row, 'data-u5-training': '' },
-    h('p', { style: label }, `Træning · ${training.logged ?? 0} af ${training.total ?? 0} sæt`),
+    // Ordre 1542: antal sæt står kun i pas-kortet øverst ("3 af 4 sæt klaret"); her står planen.
+    h('p', { style: label }, 'Træning'),
     lines.length > 0 && h('ul', { 'data-u6-plan-weight': '', style: { ...hint, margin: '0 0 6px', paddingLeft: 18 } },
       ...lines.slice(0, 4).map(line => h('li', { key: line.id, 'data-u6-source': line.source }, planWeightText(line))),
       lines.length > 4 && h('li', { key: 'flere' }, `${lines.length - 4} øvelser mere i passet`)),
     h('p', { style: { ...hint, margin: 0 } }, planned
       ? 'Coachens vægt står i første sæt. Ret den, hvis dagen siger noget andet.'
-      : 'Start dagens pas lige herunder. Første sæt står klar til ét tryk.'))
+      : 'Start dagens pas øverst. Første sæt står klar til ét tryk.'))
   const repeatYesterday = async () => {
     if (copy?.running || !mealData?.yesterday.length) return
     const list = mealData.yesterday

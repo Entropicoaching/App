@@ -214,13 +214,17 @@ export default function AthleteHome(props) {
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
-      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost }),
+      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost,
+      todayCard: u5TodayEnabled(props.u5Today) }),
     // U5: "I dag" øverst med det, der mangler, og let logning. Bag sit eget flag.
     u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData,
       u5Training: model.kind === 'today' || model.kind === 'done' ? { kind: model.kind, logged: model.logged, total: model.total,
         exercises: target?.session.exercises } : null }),
     record && h(HomeRecordCard, { record }),
+    // Ordre 1542 (Marc 16. nov.: "pas på at det ikke er gentagelser på siderne"): når "I dag" vises,
+    // står vægt og dagsform kun dér; QuickLogs beholder den fulde dagsform, som "Udfyld dagsform" åbner.
     h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow,
+      todayCard: u5TodayEnabled(props.u5Today) && !props.sessionReadOnly,
       trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
     // Ordre 1541 (Marc 16. nov.: "pas på at det ikke føles for overvældende ... gem det i under kategorierne"):
     // træning og dagens logning står øverst; alt sekundært ligger samlet bag "Mere i dag".

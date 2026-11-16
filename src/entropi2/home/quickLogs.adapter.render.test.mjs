@@ -20,8 +20,10 @@ function shortcuts(role, athlete, preview = role === 'coach') {
   if (athlete === otherAthlete) { assert.doesNotMatch(html, /data-home-quick-logs/); return '' }
   assert.equal((html.match(/data-home-quick-logs/g) || []).length, 1)
   const row = html.slice(html.indexOf('data-home-quick-logs'), html.indexOf('data-film-set'))
-  assert.match(row, />Dagsform<\/button>/)
-  assert.match(row, />Vægt i dag<\/button>/)
+  // Ordre 1542: vægt står i "I dag"-kortet; dagsformknappen er skjult og åbnes derfra.
+  assert.match(row, /hidden=""[^>]*>Dagsform<\/button>/)
+  assert.doesNotMatch(row, />Vægt i dag<\/button>/)
+  assert.match(html, /data-u5-weight/)
   assert.doesNotMatch(row, /<form/)
   return row
 }

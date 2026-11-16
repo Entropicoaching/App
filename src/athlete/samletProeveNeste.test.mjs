@@ -64,8 +64,12 @@ for (const mode of ['athlete', 'own']) {
     assert.equal(counts.length, 1); assert.equal(nodeText(counts[0]), 'Ugen: 0 af 1 pas')
     const quick = nodes.find(node => /\bdata-home-quick-logs=/.test(node.attributes ?? ''))
     assert.ok(quick)
+    // Ordre 1542: vægt og dagsform står i "I dag"-kortet; her er kun den skjulte dagsformknap,
+    // som kortets "Udfyld dagsform" åbner.
     assert.deepEqual(elements(quick).filter(node => node.tag === 'button').map(node =>
-      nodeText(node).replace(/\s*✓$/, '')), ['Dagsform', 'Vægt i dag'])
+      nodeText(node).replace(/\s*✓$/, '')), ['Dagsform'])
+    assert.match(elements(quick).find(node => node.tag === 'button').attributes, /\shidden=""/)
+    assert.match(html, /data-u5-weight/)
     assert.match(html, /data-home-checkin/)
     // One of three slots is confirmed: an incomplete session cannot count as a full pass.
     const seed = scenario(mode, 'hjem').seed

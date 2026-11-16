@@ -163,3 +163,11 @@ test('retained error-dismiss handler cannot dismiss a replacement adapter introd
   assert.deepEqual(host.props.storage.writes, [])
   host.unmount(); dismiss()
 })
+
+// Ordre 1542: med "I dag"-kortet peger vejledningen på kortet, ikke på de skjulte knapper.
+test('1542: daily guidance points to the I dag card when it is shown', () => {
+  const host = createHost(Introduction, props({ todayCard: true }))
+  click(host, 'Næste'); click(host, 'Næste'); click(host, 'Næste')
+  assert.match(textContent(host.tree), /Dagsform og vægt.*Under I dag på Hjem.*Udfyld dagsform.*Under I dag på Hjem skriver du din vægt/)
+  assert.doesNotMatch(textContent(host.tree), /Vægt i dag|Tryk på Dagsform/)
+})

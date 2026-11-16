@@ -1,4 +1,5 @@
 import { createElement } from 'react'
+import * as React from 'react'
 import { renderVideoSetPicker } from './videoSetSelection.mjs'
 // Atlet-visningens faste ramme: VideoCoach-iframen, RPE-guiden, fortryd-toasten,
 // bekraeftelses-modalen og topbaren med kontomenuen — JSX'en flyttet uaendret
@@ -16,6 +17,27 @@ function logOutQuestion(unsent) {
   return `Log ud af Entropi? Du har ${unsent} sæt, der ikke er sendt endnu. De sendes først, når du logger ind igen på denne telefon med net. Annuller, hvis du vil vente, til de er sendt.`
 }
 
+// Ordre 1542 (Marc 16. nov.): datoen i toppen skrives som "man. 16. nov." i stedet for 2026-11-16.
+// Kun i den nye visning (entropi2): AthleteView er kildelåst og den gamle vært låst byte for byte
+// (previewInitialPresentation), så Ramme ser efter montering, om den står i [data-entropi2-athlete].
+const UGEDAGE = ['søn.', 'man.', 'tirs.', 'ons.', 'tors.', 'fre.', 'lør.']
+const MAANEDER = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
+// Lukkede prøveharnesser erstatter 'react' med kun createElement; så vises datoen som før.
+const harHooks = ['useEffect', 'useRef', 'useState'].every(navn => typeof React[navn] === 'function')
+function useDanskDatoMedHooks() {
+  const ref = React.useRef(null)
+  const [dansk, setDansk] = React.useState(false)
+  React.useEffect(() => { setDansk(Boolean(ref.current?.closest?.('[data-entropi2-athlete]'))) }, [])
+  return [ref, dansk]
+}
+const useDanskDato = harHooks ? useDanskDatoMedHooks : () => [null, false]
+function dagTekst(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso))
+  if (!m) return String(iso ?? '')
+  const ugedag = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))).getUTCDay()
+  return `${UGEDAGE[ugedag]} ${Number(m[3])}. ${MAANEDER[Number(m[2]) - 1]}`
+}
+
 function Ramme({
   coachOwnTraining = false, coachNavigation = false,
   videoSetEnabled = false, videoSetReady = false, videoSetPicker,
@@ -23,6 +45,7 @@ function Ramme({
   onExitPreview, onRecheckRole, openRpePicker, recheckingRole, restartOnboardingGuide, role, setAccountMenuOpen, setConfirmDialog,
   setOpenRpePicker, setShowRpeGuide, showRpeGuide, undoDelete, undoPending, undoToast,
 }) {
+  const [datoRef, danskDato] = useDanskDato()
   return (
     <>
       {role === 'athlete' && athleteVideoCoachOpen && (
@@ -103,7 +126,7 @@ function Ramme({
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative', ...(coachNavigation === true ? { flexWrap: 'wrap', gap: 8, minWidth: 0, maxWidth: '100%' } : {}) }}>
           {backBtn}
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#a8a498' }}>{today()}</div>
+          <div ref={datoRef ?? undefined} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', ...(danskDato === true ? { letterSpacing: '0.05em' } : { letterSpacing: '0.1em', textTransform: 'uppercase' }), color: '#a8a498' }}>{danskDato === true ? dagTekst(today()) : today()}</div>
           {/* BUG (ORDRE 20): denne konto-menu fandtes slet ikke før — en atlet
               (eller en coach der ved en fejl var havnet her) havde ingen vej ud
               af appen uden at rydde browser-data manuelt. Log ud skal ALTID
