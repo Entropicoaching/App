@@ -84,3 +84,6 @@ outputs/**/*.pdf
 outputs/**/*.har
 test-results/
 playwright-report/
+
+# ORDRE 1537b: wranglers lokale arbejdsmappe
+.wrangler/
