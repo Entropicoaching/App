@@ -17,10 +17,10 @@ const meal = (date, kcal = 2000, protein = 150) => ({ id: `meal-${date}`, athlet
 // 14 dage: de første 10 rammer planen, de sidste 4 spiser for lidt.
 const logs = () => windowDays.map((date, i) => i < 10 ? meal(date) : meal(date, 900, 40))
 
-function setup({ archived = false, noPlan = false, planFails = false, rows = logs() } = {}) {
+function setup({ archived = false, noPlan = false, planFails = false, rows = logs(), carbFat = [null, null] } = {}) {
   const f = historyFixture()
   if (!noPlan) {
-    f.plan(1, '2026-11-01', 'godkendt', athlete); f.version(10, uuid(1), '2026-11-01', 1, 2000, 150); f.approve(10, uuid(1), '2026-11-01T10:00:00Z', athlete)
+    f.plan(1, '2026-11-01', 'godkendt', athlete); f.version(10, uuid(1), '2026-11-01', 1, 2000, 150, carbFat[0] ?? 0, carbFat[1]); f.approve(10, uuid(1), '2026-11-01T10:00:00Z', athlete)
     if (archived) { f.plan(2, '2026-11-10', 'arkiveret', athlete); f.version(12, uuid(2), '2026-11-10', 1, 2000, 150); f.approve(12, uuid(2), '2026-11-10T10:00:00Z', athlete) }
   }
   const db = nutritionDatabase(rows, { goals: [{ id: athlete, kcal_target: 2400, protein_target: 150 }] })
@@ -118,4 +118,39 @@ test('en plan, der ikke er præcis de 14 afsluttede dage, ignoreres', async () =
   const batch = await withPlan(client)
   batch.plan = { ...batch.plan, from: addCalendarDays(batch.plan.from, 1) }
   assert.match(lineOf(batch).text, /mod profilens mål$/)
+})
+
+// Ordre 1615: kulhydrat og fedt mod planens dagsmål på samme linje, ingen ny linje.
+const macroMeal = (date, carb, fat) => ({ ...meal(date), carb, fat })
+const macroLogs = (carb, fat) => windowDays.map((date, i) => i < 10 ? macroMeal(date, 250, 70) : macroMeal(date, carb, fat))
+const PLAN_ONLY = 'Kost · mod kostplan · 10 af 14 vurderede dage ramt, seneste 14 dage'
+
+test('plan med kulhydrat- og fedtmål: samme linje får kulhydrat og fedt (10 af 14)', async () => {
+  const { client, f } = setup({ carbFat: [250, 70], rows: macroLogs(100, 20).map((r, i) => i < 10 ? r : { ...r, kcal: 900, protein: 40 }) })
+  const line = lineOf(await withPlan(client))
+  assert.equal(line.text, PLAN_ONLY + ' · Kulhydrat 10 af 14, Fedt 10 af 14 inden for 10 % af planen')
+  assert.deepEqual(line.macros, { carb: { hit: 10, days: 14 }, fat: { hit: 10, days: 14 } })
+  assert.equal(f.writes().length, 0)
+})
+
+test('10 % tolerance, hvert mål for sig: 275 g kulhydrat ramt, 276 ikke; fedt uden mål udelades', async () => {
+  const rows = windowDays.map((date, i) => macroMeal(date, i < 5 ? 275 : 276, 70))
+  const line = lineOf(await withPlan(setup({ carbFat: [250, null], rows }).client))
+  assert.match(line.text, / · Kulhydrat 5 af 14 inden for 10 % af planen$/)
+  assert.doesNotMatch(line.text, /Fedt/); assert.deepEqual(line.macros, { carb: { hit: 5, days: 14 } })
+})
+
+test('plan uden kulhydrat- og fedtmål, eller kun 0: linjen er som før', async () => {
+  assert.equal(lineOf(await withPlan(setup({ rows: macroLogs(100, 20).map((r, i) => i < 10 ? r : { ...r, kcal: 900, protein: 40 }) }).client)).text, PLAN_ONLY)
+  assert.equal(lineOf(await withPlan(setup({ carbFat: [0, 0] }).client)).text, PLAN_ONLY)
+})
+
+test('null i loggen gør dagen ukendt for feltet (under 4 dage vises intet), 0 er et tal', async () => {
+  const nulls = windowDays.map((date, i) => macroMeal(date, i < 11 ? null : 250, 70))
+  const a = lineOf(await withPlan(setup({ carbFat: [250, 70], rows: nulls }).client))
+  assert.match(a.text, / · Fedt 14 af 14 inden for 10 % af planen$/); assert.doesNotMatch(a.text, /Kulhydrat/)
+  assert.deepEqual(a.macros, { fat: { hit: 14, days: 14 } })
+  const zeros = windowDays.map(date => macroMeal(date, 0, 0))
+  const b = lineOf(await withPlan(setup({ carbFat: [250, 70], rows: zeros }).client))
+  assert.match(b.text, / · Kulhydrat 0 af 14, Fedt 0 af 14 inden for 10 % af planen$/)
 })
