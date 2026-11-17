@@ -1,5 +1,5 @@
--- Ordre 1611 tilbageruldning: den gamle daglige briefing tilbage, som foer
--- coach-besked-ved-behov-v1.sql. Haendelsestabellen bevares (kun noegler og tider).
+-- Ordre 1613 tilbageruldning: den gamle daglige briefing tilbage, som foer
+-- coach-mail-sluk-v1.sql. Koeres kun, hvis Marc vil have mailen igen.
 
 begin;
 

@@ -11,7 +11,7 @@ const hooks = 'data:text/javascript,' + encodeURIComponent(`
   import { useState } from ${JSON.stringify(host)};
   export const useId = () => useState(() => 'synthetic-timed-home')[0];`)
 const parents = new Set(['./AthleteHome.mjs', './HomeCheckIn.mjs', './QuickLogs.mjs',
-  './ugeplan/WeekPlan.mjs', '../tracking/ugeatlet/AthleteWeek.mjs', '../onboarding/AthleteIntroduction.mjs', '../checkin/WeeklyCheckIn.mjs', '../meld/MeldCoach.mjs']
+  './ugeplan/WeekPlan.mjs', '../tracking/ugeatlet/AthleteWeek.mjs', '../onboarding/AthleteIntroduction.mjs', '../checkin/WeeklyCheckIn.mjs']
   .map(path => new URL(path, import.meta.url).href))
 const loader = registerHooks({ resolve(specifier, context, next) {
   return specifier === 'react' && parents.has(context.parentURL)

@@ -21,7 +21,6 @@ import { u5TodayEnabled } from './today/flag.mjs'
 import DayFeeling from '../u7/DayFeeling.mjs'
 import { u7Enabled } from '../u7/flag.mjs'
 import PushCard from '../u8/PushCard.mjs'
-import MeldCoach from '../meld/MeldCoach.mjs'
 import { u8Enabled } from '../u8/flag.mjs'
 
 const clock = () => new Date()
@@ -243,8 +242,6 @@ export default function AthleteHome(props) {
       // Marc 3. nov.: videocoachen skal kunne naas direkte fra startsiden.
       !props.sessionReadOnly && h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20 }, 'data-film-set': '',
         disabled: typeof onFilmSet !== 'function', onClick: () => latest.current.onFilmSet?.() }, 'Film et sæt til videocoach'),
-      // Ordre 1611 (Marc 17. nov.): syg eller skadet meldes til coachen, som kun får mail ved sådan en melding.
-      !props.sessionReadOnly && athlete?.id && h(MeldCoach, { key: `meld:${athlete.id}`, athleteId: athlete.id, client: props.u5Client }),
       !props.sessionReadOnly && h(HomeCheckIn, { enabled, athleteId: athlete?.id, now, onHoliday: props.onHoliday, storage: props.storage }),
       week?.plan && h('details', { style: s.card, 'data-home-week-plan': '' },
         h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 44 } }, 'Se ugens plan'),
