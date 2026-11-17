@@ -6143,24 +6143,46 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       if(free&&reach>=radius&&!hasCycle(i))escape=i;
     }
     if(escape<0)return;
-    // Gå tilbage fra flugten til det sidste rolige punkt (under 0,2 radius flyttet over 8 billeder),
-    // men aldrig forbi en vending: punkter før den hører til sættets sidste løft.
-    let cut=escape-1,far=0;
-    for(let i=escape-1;i>cycleAt;i--){
+    // Banen slutter lige før flugten. Kun når sporet kom fra et roligt punkt nærmere startstedet
+    // (løftets top i squat og bænk, gulvet i dødløft) og derfra gik lige væk og ud, slutter den
+    // allerede ved det rolige punkt: det stykke er en tur væk uden vej hjem, aldrig et løft.
+    // Kontrol 1610v: en flugt lige efter sidste løft må aldrig klippe løftets optur af.
+    let cut=escape-1;
+    while(cut>cycleAt&&!ok(cut))cut--;
+    const awayAtEscape=Math.abs(path.pts[cut].y-ref);
+    let nearest=awayAtEscape;
+    for(let i=cut;i>cycleAt;i--){
       if(!ok(i))continue;
-      const back=Math.hypot(path.pts[i].x-path.pts[escape].x,path.pts[i].y-path.pts[escape].y);
-      if(back<far-radius*.15)break;
-      if(back>far){far=back;cut=i;}
+      const away=Math.abs(path.pts[i].y-ref);
+      if(away>nearest+radius*.15)break;
+      nearest=Math.min(nearest,away);
       let still=0,moved=false;
       for(let k=i-1;k>=Math.max(0,i-8);k--){
         if(!ok(k))continue;
         if(Math.hypot(path.pts[k].x-path.pts[i].x,path.pts[k].y-path.pts[i].y)>radius*.2){moved=true;break;}
         still++;
       }
-      if(!moved&&still>=4){cut=i;break;}
+      if(!moved&&still>=4){
+        if(away<awayAtEscape-radius*.5)cut=i;
+        break;
+      }
     }
+    // Nærmer halen sig startstedets højde igen i én ubrudt bevægelse (et sidste løft, der føres
+    // skråt ud af området og hjem), beholdes banen til det punkt, hvor den er nærmest. Et hop eller
+    // et hul i sporingen er ikke en bevægelse.
+    let homeAway=awayAtEscape,homeAt=-1,last=cut,gap=0;
+    for(let i=escape;i<n;i++){
+      if(!ok(i)){if(++gap>3)break;continue;}
+      if(Math.hypot(path.pts[i].x-path.pts[last].x,path.pts[i].y-path.pts[last].y)>radius*.5*(gap+1))break;
+      last=i;gap=0;
+      const away=Math.abs(path.pts[i].y-ref);
+      if(away<homeAway-radius*.05){homeAway=away;homeAt=i;}
+    }
+    if(homeAt>cut&&awayAtEscape-homeAway>=radius*.5)cut=homeAt;
+    if(cut>=n-1)return;
     path.tailCutAt=path.times[cut];path.tailCutFrames=n-1-cut;
-    path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;path.confidence.length=cut+1;
+    path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;
+    if(path.confidence)path.confidence.length=cut+1;
   };
   trimEscapedTail();
   freezeRawAcquisition(path,session);

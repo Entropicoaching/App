@@ -46,14 +46,76 @@ test('en hale til siden ud af billedet klippes også, selv når de sidste billed
   assert.ok(Math.abs(path.pts.length - hvile) <= 3, `klippet ved ${path.pts.length}, hvile ${hvile}`)
 })
 
-test('en flugt lige efter sidste løft, uden hvile imellem, klipper ikke løftet af', () => {
+// Kontrol 1610v: uden hvile efter sidste løft må klipningen aldrig tage løftets optur med.
+const udenHvile = hale => {
   const { path } = bane({ reps: 3 })
-  path.pts.length -= 20   // ingen hvile efter sidste løft
+  path.pts.length -= 20
   const top = path.pts.length
-  for (let i = 1; i <= 45; i++) path.pts.push({ x: 300, y: TOP + 30 * i })
+  for (let i = 1; i <= 45; i++) path.pts.push(hale(i))
   for (const k of ['times', 'valid', 'confidence']) path[k] = path.pts.map((_, i) => k === 'times' ? i / FPS : k === 'valid' ? true : 1)
   klip(path, R)
-  assert.ok(path.pts.length >= top - 2 && path.pts.length <= top + 3, `klippet ved ${path.pts.length}, toppen ved ${top}`)
+  return { path, top }
+}
+
+test('en flugt lige efter sidste løft, uden hvile imellem, klipper ikke løftet af', () => {
+  const ned = udenHvile(i => ({ x: 300, y: TOP + 30 * i }))
+  assert.ok(ned.path.pts.length >= ned.top - 2, `ned: klippet ved ${ned.path.pts.length}, toppen ved ${ned.top}`)
+  assert.ok(Math.max(...ned.path.pts.map(q => q.y)) <= BOTTOM + 30, 'banen ender ikke under sættets laveste punkt')
+  const side = udenHvile(i => ({ x: 300 + 25 * i, y: TOP }))
+  assert.ok(side.path.pts.length >= side.top - 2 && side.path.pts.length <= side.top + 3, `til siden: klippet ved ${side.path.pts.length}, toppen ved ${side.top}`)
+  const op = udenHvile(i => ({ x: 300, y: TOP - 25 * i }))
+  assert.ok(op.path.pts.length >= op.top - 2 && op.path.pts.length <= op.top + 3, `opad: klippet ved ${op.path.pts.length}, toppen ved ${op.top}`)
+})
+
+test('bænk med pause på brystet, ført tilbage i stativet uden pause i toppen, beholder sidste løft', () => {
+  const pts = []
+  for (let i = 0; i < 15; i++) pts.push({ x: 300, y: TOP })
+  for (let r = 0; r < 3; r++) {
+    for (let i = 1; i <= 25; i++) pts.push({ x: 300, y: TOP + (BOTTOM - TOP) * smooth(i / 25) })
+    for (let i = 0; i < 12; i++) pts.push({ x: 300, y: BOTTOM })
+    for (let i = 1; i <= 22; i++) pts.push({ x: 300, y: BOTTOM - (BOTTOM - TOP) * smooth(i / 22) })
+    if (r < 2) for (let i = 0; i < 15; i++) pts.push({ x: 300, y: TOP })
+  }
+  const top = pts.length
+  for (let i = 1; i <= 20; i++) pts.push({ x: 300 - 6.5 * i, y: TOP - 2 * i })
+  for (let i = 0; i < 20; i++) pts.push({ x: 170, y: TOP - 40 })
+  const path = { pts, times: pts.map((_, i) => i / FPS), valid: pts.map(() => true), confidence: pts.map(() => 1) }
+  klip(path, R)
+  assert.ok(path.pts.length >= top - 2, `klippet ved ${path.pts.length}, toppen ved ${top}`)
+})
+
+test('et sidste løft, der presses skråt ud af området og hjem i samme bevægelse, beholdes', () => {
+  const pts = []
+  for (let i = 0; i < 15; i++) pts.push({ x: 300, y: TOP })
+  for (let r = 0; r < 3; r++) {
+    for (let i = 1; i <= 25; i++) pts.push({ x: 300, y: TOP + (BOTTOM - TOP) * smooth(i / 25) })
+    for (let i = 0; i < 12; i++) pts.push({ x: 300, y: BOTTOM })
+    if (r < 2) { for (let i = 1; i <= 22; i++) pts.push({ x: 300, y: BOTTOM - (BOTTOM - TOP) * smooth(i / 22) }); for (let i = 0; i < 15; i++) pts.push({ x: 300, y: TOP }) }
+  }
+  for (let i = 1; i <= 30; i++) pts.push({ x: 300 - 130 * smooth(i / 30), y: BOTTOM - (BOTTOM - TOP) * smooth(i / 30) })
+  const top = pts.length
+  for (let i = 0; i < 25; i++) pts.push({ x: 170, y: TOP })
+  const path = { pts, times: pts.map((_, i) => i / FPS), valid: pts.map(() => true), confidence: pts.map(() => 1) }
+  klip(path, R)
+  assert.ok(path.pts.length >= top - 3, `klippet ved ${path.pts.length}, toppen ved ${top}`)
+})
+
+test('et hop væk efter et hul i sporingen beholdes ikke, selv om det ender nær startstedets højde', () => {
+  const { path } = bane({ reps: 3 })
+  const n = path.pts.length
+  for (let i = 1; i <= 30; i++) path.pts.push({ x: 300, y: TOP + (BOTTOM - TOP) * smooth(i / 30) })
+  for (let i = 0; i < 40; i++) path.pts.push({ x: 300, y: BOTTOM })
+  for (let i = 0; i < 30; i++) path.pts.push({ x: 700, y: TOP - 200 })
+  path.times = path.pts.map((_, i) => i / FPS); path.valid = path.pts.map((_, i) => !(i >= n + 30 && i < n + 70)); path.confidence = path.valid.map(Number)
+  klip(path, R)
+  assert.ok(path.pts.every(q => q.x < 400), 'hoppet er klippet af')
+})
+
+test('en bane uden confidence kan også klippes', () => {
+  const { path } = bane({ haleSek: 2, hale: t => ({ x: 300, y: TOP + 900 * t }) })
+  delete path.confidence
+  klip(path, R)
+  assert.ok(Math.max(...path.pts.map(q => q.y)) <= BOTTOM)
 })
 
 test('et sæt, der slutter i ro, røres ikke', () => {
