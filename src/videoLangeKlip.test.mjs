@@ -109,3 +109,10 @@ test('halen: én linje i analysen, læselig, ingen knap og ingen gentagelse', ()
   const instant = html.slice(html.indexOf('showInstantResult = path => {'), html.indexOf('athleteInstantResult.hidden = false;', html.indexOf('showInstantResult = path => {')))
   assert.match(instant, /syncTailCutNote\(path\);/)
 })
+
+test('lange klip: coachen læser et klargjort klip på 3 minutter fra lageret direkte', () => {
+  const max = Number(new Function(`return ${(html.match(/const VC_NORM_REMOTE_MAX = ([^;]+);/) || [])[1]}`)())
+  assert.ok(max >= upload.VIDEOCOACH_LAGER_MAX_BYTES, `fjernklip læses op til ${max} byte`)
+  // kun en lokal fil (der ellers ikke ligger i hukommelsen) har loftet på 80 MB
+  assert.match(html, /\(turned \? ix\.w : ix\.h\) !== vh \|\| \(file && blob\.size > VC_NORM_SAME_MAX\)\) return \{ error: 'not-same' \};/)
+})
