@@ -85,15 +85,25 @@ export function paaSigtModel(props = {}, now) {
     if (!(from > 0) || !(to > 0)) return []
     const weeks = Math.round(fit.span / 7)
     const percent = Math.round((to / from - 1) * 100)
-    const direction = percent > 0 ? 'frem' : percent < 0 ? 'tilbage' : 'stille'
-    const text = direction === 'stille'
+    let direction = percent > 0 ? 'frem' : percent < 0 ? 'tilbage' : 'stille'
+    let text = direction === 'stille'
       ? `${subjekt(lift)} har ligget stabilt de seneste ${uger(weeks)}.`
       : `${subjekt(lift)} er gået ${Math.abs(percent)} % ${direction} på ${uger(weeks)}.`
     // Toppen: bedste skøn i samme rep-område i det seneste halve år.
     const best = Math.max(...all.filter(r => r.repZone === zone && r.logged_at < last.day).map(r => r.value))
     const perWeek = fit.slope * 7
     let top = null
-    if (last.value > best) top = 'Din seneste uge er dit bedste skøn i et halvt år, så du er på toppen nu.'
+    // Lig med toppen tæller, men en jævn linje på toppen er allerede sagt som "stabilt".
+    const paaToppen = direction === 'stille' ? last.value > best : last.value >= best - 1e-9
+    if (paaToppen) {
+      top = 'Din seneste uge er dit bedste skøn i et halvt år, så du er på toppen nu.'
+      // Ordre 1554: "tilbage" og "på toppen nu" står aldrig i samme løftlinje.
+      if (direction === 'tilbage') {
+        direction = 'toppen'
+        text = `${subjekt(lift)} er på toppen nu: den seneste uge er dit bedste skøn i et halvt år.`
+        top = null
+      }
+    }
     else if (direction === 'frem' && perWeek > 0) {
       const n = Math.max(1, Math.ceil((best - last.value) / perWeek))
       top = n <= PAA_SIGT_TOP_UGER ? `Holder tempoet, er en ny top realistisk om cirka ${uger(n)}.`

@@ -46,6 +46,38 @@ test('næste top regnes af tempoet og kun inden for 8 uger', () => {
   assert.equal(fjern.lifts[0].top, 'Holder tempoet, er en ny top mere end 8 uger væk.')
 })
 
+test('ligger seneste niveau lig med eller over tidligere top, står der aldrig "om cirka 1 uge"', () => {
+  const lig = paaSigtModel(props({ fremgangLogs: [set(20, 156), ...squat] }), now)
+  assert.equal(lig.lifts[0].direction, 'frem')
+  assert.equal(lig.lifts[0].top, 'Din seneste uge er dit bedste skøn i et halvt år, så du er på toppen nu.')
+  const over = paaSigtModel(props({ fremgangLogs: [set(20, 150), ...squat] }), now)
+  assert.equal(over.lifts[0].top, 'Din seneste uge er dit bedste skøn i et halvt år, så du er på toppen nu.')
+  assert.doesNotMatch(JSON.stringify([lig, over]), /om cirka/)
+})
+
+test('en smule under toppen er ikke på toppen endnu', () => {
+  const under = paaSigtModel(props({ fremgangLogs: [set(20, 157), ...squat] }), now)
+  assert.equal(under.lifts[0].direction, 'frem')
+  assert.equal(under.lifts[0].top, 'Holder tempoet, er en ny top realistisk om cirka 1 uge.')
+  assert.doesNotMatch(under.lifts[0].top, /toppen nu/)
+})
+
+test('"tilbage" og "på toppen nu" står aldrig i samme sætning eller løftlinje', () => {
+  // Linjen over otte uger peger nedad, men seneste uge er det bedste skøn: kun "på toppen nu".
+  const logs = [[6, 156], [5, 156], [4, 140], [3, 130], [2, 130], [1, 130], [0, 156]].map(([w, kg]) => set(w, kg))
+  const m = paaSigtModel(props({ fremgangLogs: logs }), now)
+  const l = m.lifts[0]
+  assert.equal(l.direction, 'toppen')
+  assert.equal(l.text, 'Din squat er på toppen nu: den seneste uge er dit bedste skøn i et halvt år.')
+  assert.equal(l.top, null)
+  const html = renderToStaticMarkup(createElement(PaaSigtView, props({ fremgangLogs: logs })))
+  assert.match(html, /på toppen nu/)
+  assert.doesNotMatch(html, /tilbage/)
+  // Under toppen med nedadgående linje: stadig "tilbage" og ingen "toppen nu".
+  const ned = paaSigtModel(props({ fremgangLogs: [6, 4, 2, 0].map(w => set(w, 150 + w)) }), now)
+  assert.doesNotMatch(`${ned.lifts[0].text} ${ned.lifts[0].top}`, /toppen nu/)
+})
+
 test('for lidt data giver én rolig sætning og intet gæt', () => {
   for (const logs of [[], [set(1, 150), set(0, 152)], [3, 2, 1, 0].map(w => set(w, 150 + w)),
     [8, 7, 6, 5, 4, 3].map(w => set(w, 150 + w))]) {
