@@ -54,4 +54,8 @@ export const sessionStyle = `
 .e2-session summary {cursor:pointer;padding:8px 0}
 .e2-session [role=alert] {border-left:3px solid #c8923a;padding-left:12px}
 .e2-session button:disabled,.e2-session button[aria-pressed="true"]:disabled {background:#30302a;color:#b8b4a8;border-color:#858578;border-style:dashed;opacity:1;cursor:not-allowed}
+@media (max-width:600px) {
+.e2-session dialog {scroll-padding-bottom:96px}
+.e2-session .approve {position:sticky;bottom:12px;z-index:2;box-shadow:0 0 0 12px #141410}
+}
 `

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { mountSession } from './sessionView.mjs'
 import { dom, button } from './a11y-dom.mjs'
 import { quickSetFixture } from './sessionQuickSetFixture.mjs'
+import { sessionStyle } from './sessionStyle.mjs'
 
 function setup(t, patch = {}) {
   const f = quickSetFixture(), root = dom(), timers = new Set()
@@ -171,4 +172,25 @@ test('ordre 1576: a fold the athlete closes stays closed for the rest of the pas
   assert.equal(await approve(f), true)
   assert.equal(fold(f).open, false)
   assert.equal(f.calls[1].input.rpe, '')
+})
+
+test('ordre 1582: on small screens the set button sticks to the bottom of the dialog, so one press logs without scrolling', () => {
+  const media = sessionStyle.match(/@media \(max-width:(\d+)px\) \{([\s\S]*)\n\}\n$/)
+  assert.ok(media, 'small-screen block'); assert.ok(Number(media[1]) >= 480)
+  const sticky = media[2].match(/\.e2-session \.approve \{([^}]+)\}/)[1]
+  assert.match(sticky, /position:sticky/); assert.match(sticky, /bottom:\d+px/)
+  assert.match(media[2], /\.e2-session dialog \{scroll-padding-bottom:\d+px\}/)
+  assert.match(sessionStyle, /\.e2-session \.approve \{width:100%;min-height:52px/)
+})
+
+test('ordre 1582: the set button is the last control of the form, closed or open RPE fold, and one press still logs the set', async t => {
+  const f = setup(t)
+  for (const open of [false, true]) {
+    fold(f).open = open; f.view.update()
+    const b = f.root.querySelector('.approve'), form = b.parentElement
+    assert.equal(b.getAttribute('type'), 'submit'); assert.equal(form.children[form.children.length - 1], b)
+    assert.ok(form.contains(fold(f)))
+  }
+  assert.equal(await approve(f), true)
+  assert.equal(f.calls.length, 1)
 })
