@@ -31,6 +31,33 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
     const tekst = invitationTekst({ email: a.email, appAdresse: typeof __APP_ADRESSE__ === 'string' ? __APP_ADRESSE__ : '' })
     setInvitationSvar(await kopierInvitation(tekst, globalThis.navigator?.clipboard))
   }
+  // Ordre 1600: coachen retter login-mailen, så længe atleten ikke er koblet. Skrivningen
+  // hentes ved tryk fra atletHandlinger.js (dynamisk import, uændret importgraf), og kortet
+  // opdateres via onMobilitySaved, der lægger den gemte række i selectedAthlete og athletes.
+  const [mailUdkast, setMailUdkast] = useState(a.email || '')
+  const [mailSvar, setMailSvar] = useState(null)
+  const [gemmerMail, setGemmerMail] = useState(false)
+  const [mailAtlet, setMailAtlet] = useState(a.id)
+  if (mailAtlet !== a.id) { setMailAtlet(a.id); setMailUdkast(a.email || ''); setMailSvar(null) }
+  async function gemAtletMail(event) {
+    event?.preventDefault?.()
+    if (gemmerMail) return
+    setGemmerMail(true)
+    try {
+      const { retAtletMail } = await import('./atletHandlinger.js')
+      const svar = await retAtletMail({ athlete: a, email: mailUdkast, client: supabase })
+      setMailSvar(svar)
+      if (svar.ok && svar.athlete) {
+        setMailUdkast(svar.athlete.email || '')
+        setInvitationSvar(null)
+        onMobilitySaved?.(svar.athlete)
+      }
+    } catch {
+      setMailSvar({ ok: false, besked: 'Mailen blev ikke gemt. Prøv igen.' })
+    } finally {
+      setGemmerMail(false)
+    }
+  }
   useEffect(() => {
     let ignore = false
     const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
@@ -139,6 +166,18 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
               </div>
             </div>
 </CoachFold>
+            {a.user_id === null && (
+              <form onSubmit={gemAtletMail} noValidate style={{ marginBottom: '0.75rem' }}>
+                <label htmlFor="atlet-login-mail" style={{ ...s.fieldLabel, display: 'block', color: '#b8b4a8' }}>Atletens login-mail</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <input id="atlet-login-mail" type="email" inputMode="email" autoComplete="off" autoCapitalize="none" spellCheck={false}
+                    value={mailUdkast} onChange={e => { setMailUdkast(e.target.value); setMailSvar(null) }}
+                    style={{ ...s.fieldInput, flex: '1 1 12rem', width: 'auto', minWidth: 0, minHeight: 44, boxSizing: 'border-box' }} />
+                  <button type="submit" disabled={gemmerMail} style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }}>{gemmerMail ? 'Gemmer' : 'Gem'}</button>
+                </div>
+                {mailSvar && <div role={mailSvar.ok ? 'status' : 'alert'} style={{ color: mailSvar.ok ? '#b8b4a8' : '#e0a555', fontSize: '0.75rem', lineHeight: 1.5, marginTop: '0.4rem' }}>{mailSvar.besked}</div>}
+              </form>
+            )}
             {a.user_id === null && (String(a.email || '').trim() ? (
               <div style={{ marginBottom: '1rem' }}>
                 <button type="button" style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }} onClick={kopierInvitationTekst}>Kopiér invitation</button>

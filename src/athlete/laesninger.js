@@ -34,6 +34,18 @@ import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from '.
 // grænse for "Kunne ikke indlæse", og langt over et normalt svar.
 const SNAPSHOT_AFTER_MS = 8000
 
+// Ordre 1600: claim_athlete_profile_v3 RAISER (P0001) med disse beskeder, når
+// serveren har svaret, men mailen ikke kobler en atletrække. Alt andet (netfejl,
+// andre koder, tomt svar) er en ægte fejl og viser stadig fejlbeskeden.
+const CLAIM_UDEN_KOBLING = [
+  'No unclaimed athlete profile matches this login',
+  'Athlete profile match is ambiguous; coach linking required',
+  'Matching athlete profile is already linked to another user',
+]
+export function claimUdenKobling(error) {
+  return error?.code === 'P0001' && CLAIM_UDEN_KOBLING.includes(String(error.message || '').trim())
+}
+
 export function lavLaesninger({
   indbakke2 = false,
   athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
@@ -121,6 +133,9 @@ export function lavLaesninger({
       if (!error && !data) {
         const claim = await withRetry(() => supabase.rpc('claim_athlete_profile_v3'))
         if (claim.error || !isUuid(claim.data)) {
+          // Ordre 1600: serveren svarede, men ingen atletrække passer til mailen.
+          // Så vises IkkeKoblet med mailen i stedet for en generisk datafejl.
+          if (claimUdenKobling(claim.error)) { setLoading(false); return }
           setLoadError(true)
           return
         }

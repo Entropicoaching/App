@@ -11,6 +11,31 @@ import { supabase } from '../supabase'
 import { normalizeAthleteLoginEmail } from '../athleteOnboarding'
 import { nextWeekStartDate } from '../weekDates'
 
+// Ordre 1600: coachen retter login-mailen på en atlet, der endnu ikke er koblet
+// (samme normalisering som addAthlete og claim-rpc'en). En koblet atlets mail
+// ændres aldrig: tjekkes her og igen i selve skrivningen (.is('user_id', null)).
+export const GYLDIG_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+export async function retAtletMail({ athlete, email, client = supabase } = {}) {
+  if (!athlete?.id || athlete.user_id !== null) {
+    return { ok: false, besked: 'Atleten er allerede koblet til sin konto, så mailen kan ikke ændres.' }
+  }
+  const mail = normalizeAthleteLoginEmail(email)
+  if (!GYLDIG_MAIL.test(mail)) return { ok: false, besked: 'Skriv en gyldig mail, fx navn@eksempel.dk.' }
+  if (mail === normalizeAthleteLoginEmail(athlete.email)) return { ok: true, athlete, besked: 'Mailen er uændret.' }
+  let data, error
+  try {
+    ({ data, error } = await client.from('athletes').update({ email: mail })
+      .eq('id', athlete.id).is('user_id', null).select())
+  } catch (thrown) {
+    error = thrown || new Error('save failed')
+  }
+  if (error?.code === '23505') return { ok: false, besked: 'En anden af dine atleter har allerede den mail.' }
+  if (error) return { ok: false, besked: 'Mailen blev ikke gemt. Prøv igen.' }
+  const opdateret = Array.isArray(data) ? data[0] : data
+  if (!opdateret) return { ok: false, besked: 'Mailen blev ikke gemt. Atleten er måske lige blevet koblet, så åbn profilen igen.' }
+  return { ok: true, athlete: opdateret, besked: 'Mailen er gemt. Kopiér invitationen igen, så atleten får den nye mail.' }
+}
+
 export function lavAtletHandlinger({
   askConfirm, editData, emptyNewAthlete, exerciseLibrary, fetchAthletePRs, fetchMeetPlan,
   fetchMeetResults, fetchWarmupTemplates, meetPlanForm, meetResultForm, newAthlete, openProfile,
