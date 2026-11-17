@@ -23,6 +23,9 @@ export default function WeeklyReport({ today, ...props }) {
         n && h('p', null, `Kostdage logget: ${n.logged}/7`),
         n && n.plan && h('p', null,
           `Proteinmål nået mod kostplan: ${n.plan.reached} af ${n.plan.logged} ${antalOrd(n.plan.logged, 'logget dag', 'loggede dage')}`),
+        n && n.plan && (n.plan.carb || n.plan.fat) && h('p', null,
+          [['carb', 'Kulhydrat', n.plan.carb], ['fat', 'Fedt', n.plan.fat]].filter(([, , m]) => m)
+            .map(([, label, m]) => `${label} inden for 10 % af planen: ${m.reached} af ${m.logged}`).join(' · ')),
         n && n.plan && n.reached !== null && n.profileLogged > 0 && h('p', null,
           `Øvrige dage mod profilens mål: ${n.reached} af ${n.profileLogged} ${antalOrd(n.profileLogged, 'logget dag', 'loggede dage')}`),
         n && !n.plan && n.reached !== null && h('p', null,

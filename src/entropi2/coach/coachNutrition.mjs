@@ -2,7 +2,7 @@ import { antalOrd } from '../antalOrd.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { isDayReceipt } from '../../mealEvidence.mjs'
-import { kostDageModPlan, planWindow, KCAL_TOLERANCE, MIN_ASSESSED_DAYS } from '../analysis/kostDageModPlan.mjs'
+import { kostDageModPlan, makroDageModPlan, planWindow, MIN_ASSESSED_DAYS } from '../analysis/kostDageModPlan.mjs'
 
 const ordinal = day => Date.parse(day + 'T00:00:00Z') / 86400000
 const civilDay = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && activityDay(value) === value
@@ -65,26 +65,10 @@ export function planSource(source, day) {
 // Samme 10 %-tolerance som kcal. En dag tæller kun, hvis planen har et mål over 0 og alle dagens
 // rækker har tal (0 er et tal, null er ukendt). Under 4 dage for et felt vises intet for det felt.
 function macroDays(entry, assessed) {
-  const goals = new Map(entry.planDays.filter(d => d?.state === 'approved' && assessed.has(d.date)).map(d => [d.date, d.targets]))
-  const eaten = new Map()
-  for (const row of entry.meals) {
-    if (!row || !assessed.has(row.date) || isDayReceipt(row)) continue
-    const sum = eaten.get(row.date) ?? { carb: 0, fat: 0, carbKnown: true, fatKnown: true }
-    for (const key of ['carb', 'fat']) {
-      const value = parseInputNumber(row[key])
-      if (value === null) sum[key + 'Known'] = false; else sum[key] += value
-    }
-    eaten.set(row.date, sum)
-  }
+  const days = makroDageModPlan({ planDays: entry.planDays, meals: entry.meals, dates: new Set(assessed.keys()) })
   const parts = []
   for (const [key, label] of [['carb', 'Kulhydrat'], ['fat', 'Fedt']]) {
-    let n = 0, hit = 0
-    for (const [date, sum] of eaten) {
-      const goal = goals.get(date)?.[key]
-      if (!sum[key + 'Known'] || typeof goal !== 'number' || !Number.isFinite(goal) || goal <= 0) continue
-      n++
-      if (Math.abs(sum[key] - goal) <= goal * KCAL_TOLERANCE) hit++
-    }
+    const n = days[key].size, hit = [...days[key].values()].filter(Boolean).length
     if (n >= MIN_ASSESSED_DAYS) parts.push({ key, label, hit, n })
   }
   return parts

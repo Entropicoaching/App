@@ -2,7 +2,7 @@ import { adaptCoachState, hasUndatedPlannedWeek } from './coachModel.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { planSource } from './coachNutrition.mjs'
-import { proteinDageModPlan } from '../analysis/kostDageModPlan.mjs'
+import { proteinDageModPlan, makroDageModPlan } from '../analysis/kostDageModPlan.mjs'
 
 const ordinal = day => Date.parse(day + 'T00:00:00Z') / 86400000
 const civil = day => typeof day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day) && activityDay(day) === day
@@ -53,9 +53,14 @@ function nutritionDays(props, data) {
       continue
     }
     const rest = [...days].filter(([date]) => !hits.has(date)).map(([, sum]) => sum)
+    // Ordre 1619: kulhydrat og fedt på de samme dage, med 1615s 10 %-regel (delt hjælper).
+    const macros = makroDageModPlan({ planDays: entry.planDays, meals: entry.meals, dates: new Set(planDates) })
+    const macro = key => { const m = [...macros[key]].filter(([date]) => planDates.includes(date)).map(([, hit]) => hit)
+      return m.length ? { logged: m.length, reached: m.filter(Boolean).length } : null }
     result.set(athlete.id, { logged: days.size, proteinGoal: goal > 0 ? goal : null,
       reached: goal > 0 ? rest.filter(d => d.protein + 1e-9 >= goal).length : null, profileLogged: rest.length,
-      plan: { logged: planDates.length, reached: planDates.filter(date => hits.get(date)).length } })
+      plan: { logged: planDates.length, reached: planDates.filter(date => hits.get(date)).length,
+        ...(macro('carb') && { carb: macro('carb') }), ...(macro('fat') && { fat: macro('fat') }) } })
   }
   return result
 }

@@ -52,3 +52,28 @@ export function kostDageModPlan(input) {
 export function proteinDageModPlan(input) {
   return new Map([...dagsSummer(input)].map(([date, entry]) => [date, proteinHit(entry)]))
 }
+
+// Ordre 1619: kulhydrat og fedt pr. dag mod planens dagsmål (flyttet fra kostlinjen, 1615, så kostlinje og
+// ugerapport vurderer samme dag ens). dates er de dage, der allerede er vurderet. En dag får kun svar for et
+// felt, hvis planen har et mål over 0 og alle dagens rækker har tal (0 er et tal, null er ukendt).
+export function makroDageModPlan({ planDays, meals, dates } = {}) {
+  const result = { carb: new Map(), fat: new Map() }
+  if (!Array.isArray(planDays) || !Array.isArray(meals) || !dates) return result
+  const goals = new Map(planDays.filter(d => d?.state === 'approved' && dates.has(d.date)).map(d => [d.date, d.targets]))
+  const eaten = new Map()
+  for (const row of meals) {
+    if (!row || !dates.has(row.date) || isDayReceipt(row)) continue
+    const sum = eaten.get(row.date) ?? { carb: 0, fat: 0, carbKnown: true, fatKnown: true }
+    for (const key of ['carb', 'fat']) {
+      const value = parseInputNumber(row[key])
+      if (value === null) sum[key + 'Known'] = false; else sum[key] += value
+    }
+    eaten.set(row.date, sum)
+  }
+  for (const [date, sum] of eaten) for (const key of ['carb', 'fat']) {
+    const goal = goals.get(date)?.[key]
+    if (!sum[key + 'Known'] || typeof goal !== 'number' || !Number.isFinite(goal) || goal <= 0) continue
+    result[key].set(date, Math.abs(sum[key] - goal) <= goal * KCAL_TOLERANCE)
+  }
+  return result
+}
