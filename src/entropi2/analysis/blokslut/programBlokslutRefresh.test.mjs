@@ -152,8 +152,10 @@ test('week refresh follows actual plan dates even when the first training day is
   const shifted = p.allWeeks.map((w, i) => ({ ...w, start_date: ['2026-10-21', '2026-10-28', '2026-11-04'][i] }))
   fixture.weeks = shifted
   const next = { ...p, allWeeks: shifted }
+  const before = reads().length
   screen.render(next)
-  await until(screen, tree => /21.10.2026/.test(text(card(tree))))
+  // Ordre 1564: kortet viser ikke datoen mere (blokhovedet gør); vent på den nye læsning og hovedets nye dato.
+  await until(screen, tree => reads().length > before && /Gennemførte pas/.test(text(card(tree))) && /21\. okt/.test(text(tree)))
   const calls = reads()
   instant = '2026-11-09T12:00:00Z' // Monday is still the same training week.
   screen.render(); for (let i = 0; i < 4; i++) await tick(screen)
