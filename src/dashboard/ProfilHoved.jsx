@@ -11,6 +11,7 @@ import { s, initials, formatLastSeen } from '../dashboardShared.js'
 import { styrkeLinje, styrkeSmerteRegel } from '../coachFremgang.js'
 import { statusLabels } from './coachKonstanter.js'
 import { HUB_SECTIONS } from './hubSektioner.jsx'
+import InvitationKnap from './InvitationKnap.jsx'
 
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
@@ -132,6 +133,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
               </div>
             </div>
 </CoachFold>
+            <InvitationKnap a={a} />
 
             {/* Sektions-navigation: de sektioner man bruger dagligt står som
                 tydelige TEKST-faner; resten ligger i en "Mere"-menu. Erstatter den

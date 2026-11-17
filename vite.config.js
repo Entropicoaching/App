@@ -134,6 +134,8 @@ export default defineConfig({
   ],
   define: {
     __BUILD_ID__: JSON.stringify(buildId),
+    // Ordre 1598: appens live adresse staar i public/CNAME og bruges i coachens invitationstekst.
+    __APP_ADRESSE__: JSON.stringify('https://' + readFileSync(join(__dirname, 'public', 'CNAME'), 'utf8').trim()),
   },
   base: '/',
 })

@@ -77,7 +77,7 @@ test('de omskrevne tekster står i kilden, og de gamle er væk', () => {
     'KostUge.jsx': ['{dateLabel(week.startDate)} til {dateLabel(week.endDate)}'],
     'ProgramTab.jsx': ['Skriv til din coach, hvis det varer ved.', "'Ikke gemt. Prøv igen'", '>Opvarmningssæt<'],
     'Ramme.jsx': ["label: '1 til 2 tilbage'", "label: '4 til 5 tilbage'"],
-    'IkkeKoblet.jsx': ['så kobler coachen dig.'],
+    'IkkeKoblet.jsx': ['så hjælper coachen dig videre.'],
     'StaevnedagTab.jsx': ['Din coach har ikke lagt en forsøgsplan endnu.'],
     'Indlaeser.jsx': ['Dataene kunne ikke hentes. Tjek din forbindelse og prøv igen.'],
   }
