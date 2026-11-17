@@ -1,5 +1,5 @@
 import { addCalendarDays, calendarDay } from '../../calendarDate.js'
-import { mentionsPain } from '../../coachBriefingRules.js'
+import { mentionsPain, stilstandUdeSaet, STILSTAND_SPOERG } from '../../coachBriefingRules.js'
 import { nutritionTrend } from '../tracking/nutritionTrend.mjs'
 import { onVacation } from '../u3/couplings.mjs'
 import { mondayOf, shortDate } from '../u3/format.mjs'
@@ -100,6 +100,22 @@ export function lowProtein(source, athleteId, day) {
   return trend?.signal === 'lavt protein' ? { reason: 'Protein under målet' } : null
 }
 
+// Ordre 1545: stilstand fra briefingens SQL-regel (stalled >= 3) med Marcs domme fra 8. okt.:
+// et sprunget eller fejlet sæt i perioden giver "Spørg atleten først"; ellers "overvej deload"
+// uden øvelsesnavne. Fladt uden stigende RPE er ikke akut og vises ikke her. Ukendte sæt
+// (source.logs null) giver ingen grund, så coachen aldrig får det forkerte forslag.
+export const STILSTAND_RANK = 2
+const flatLog = r => ({ name: r?.exercises?.name, logged_at: r?.logged_at, weight: r?.weight,
+  reps_completed: r?.reps_completed, skipped: r?.skipped, session_id: r?.exercises?.session_id,
+  block_name: r?.exercises?.sessions?.weeks?.block_name, week_number: r?.exercises?.sessions?.weeks?.week_number })
+export function stagnationReason(source) {
+  const signal = source?.signal, lift = signal?.o_metrics?.lift, stalled = Number(signal?.o_metrics?.stalled_weeks)
+  if (typeof lift !== 'string' || !(stalled >= 3) || !Array.isArray(source.logs)) return null
+  const ude = stilstandUdeSaet(source.logs.map(flatLog), lift, stalled)
+  if (ude) return { reason: `${STILSTAND_SPOERG} (${lift.toLocaleLowerCase('da')} står stille, ${ude.grund})` }
+  return signal.o_severity === 'alert' ? { reason: `${lift} står stille ${stalled} uger: overvej deload` } : null
+}
+
 // Alle nye grunde for én atlet. attention er L1 for netop denne atlet, eller
 // null, når L1 ikke er komplet: så vises smerte, readiness og check-in ikke.
 export function attentionCandidates({ athlete, day, attention, weeks, nutritionSource, nutritionReady }) {
@@ -112,6 +128,7 @@ export function attentionCandidates({ athlete, day, attention, weeks, nutritionS
     add('readiness', RANK.readinessDrop, readinessDrop(attention.readiness, day))
     if (daily) add('sleep', RANK.readinessDrop, sleepFromDaily(daily, day))
     add('checkin', RANK.checkinStopped, checkinStopped(attention.readiness, day, athlete))
+    if (attention.stagnation) add('stagnation', STILSTAND_RANK, stagnationReason(attention.stagnation))
   }
   if (nutritionReady) add('protein', RANK.lowProtein, lowProtein(nutritionSource, athlete.id, day))
   return out

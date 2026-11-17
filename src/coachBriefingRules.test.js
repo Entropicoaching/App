@@ -29,7 +29,8 @@ test('A: squat staaet stille 3 uger med stigende RPE -> alert med tal, uge og ha
   assert.equal(signal.detector, 'stagnation')
   assert.equal(signal.severity, 'alert')
   assert.equal(signal.headline, 'Atlet A: Squat stået stille 3 uger (140×5 siden uge 5), RPE 8→9 mod plan 8')
-  assert.match(signal.detail, /deload eller en variation/)
+  // Ordre 1545 (dom V-STILSTAND-FORSLAG 8. okt.): "overvej", ingen opfundne oevelser.
+  assert.equal(signal.detail, 'Overvej deload i næste blok')
   hasAction(signal)
 })
 

@@ -291,12 +291,51 @@ function detectDropout({ athlete }, L, T, onVacation) {
   return null
 }
 
+// Ordre 1545 (Marcs dom V-STILSTAND-SPRUNGET 8. okt.: "1 sprunget saet er nok til 'spoerg atleten
+// foerst', samme regel som fejlede saet"). Taeller loeftets sprungne saet (log.skipped, som dinUge.js)
+// og fejlede saet (gennemfoert med 0 reps, som afvigelse.js) fra ugen efter den seneste top. Perioden
+// er de `stalled` sidste uger med tunge saet, samme serie som detectStagnation. Lette saet (efter
+// navnet) og deload-uger taeller ikke. Logs er flade: { name, logged_at, weight, reps_completed,
+// skipped, session_id, block_name, week_number? }. null = intet sprunget eller fejlet.
+export function stilstandUdeSaet(logs, lift, stalled, weeks = []) {
+  const weekNumber = new Map(weeks.map(week => [mondayOf(toDay(week.start_date)), week.week_number]))
+  const deloadSessions = new Set(weeks.filter(week => erDeloadBlok(week.block_name))
+    .flatMap(week => (week.sessions || []).map(session => session.id)))
+  // erTungtSaet(navn, 1) ser kun paa navnet (let saet eller ej).
+  const rows = (logs || []).filter(log => log && liftOf(log.name) === lift && erTungtSaet(log.name, 1)
+    && !deloadSessions.has(log.session_id) && !erDeloadBlok(log.block_name))
+    .map(log => ({ log, d: toDay(log.logged_at) })).filter(row => Number.isFinite(row.d))
+  const heavyWeeks = [...new Set(rows
+    .filter(({ log }) => !log.skipped && log.weight != null && erTungtSaet(log.name, log.reps_completed ?? log.reps))
+    .map(row => mondayOf(row.d)))].sort((a, b) => a - b)
+  if (!heavyWeeks.length || !(stalled >= 1)) return null
+  const high = heavyWeeks.length > stalled ? heavyWeeks[heavyWeeks.length - 1 - stalled] : null
+  const from = high != null ? high + 7 * DAY : heavyWeeks[Math.max(0, heavyWeeks.length - stalled)]
+  const hits = rows.filter(({ log, d }) => d >= from
+    && (log.skipped === true || (log.reps_completed != null && log.reps_completed !== '' && Number(log.reps_completed) === 0)))
+  if (!hits.length) return null
+  const sprunget = hits.filter(({ log }) => log.skipped === true).length
+  const fejlet = hits.length - sprunget
+  const labels = hits.map(({ log, d }) => log.week_number ?? weekNumber.get(mondayOf(d)) ?? null)
+  const uger = [...new Set(labels)].filter(n => n != null).sort((a, b) => a - b)
+  const list = uger.length > 1 ? `${uger.slice(0, -1).join(', ')} og ${uger[uger.length - 1]}` : String(uger[0])
+  const naar = labels.every(n => n != null) ? `i uge ${list}` : `siden ${dayText(from)}`
+  const dele = [
+    sprunget && `${sprunget} ${sprunget === 1 ? 'sprunget' : 'sprungne'} sæt`,
+    fejlet && `${fejlet} ${fejlet === 1 ? 'fejlet' : 'fejlede'} sæt`,
+  ].filter(Boolean)
+  return { sprunget, fejlet, uger, grund: `${dele.join(' og ')} ${naar}` }
+}
+export const STILSTAND_SPOERG = 'Spørg atleten først'
+// Dom V-STILSTAND-FORSLAG: "overvej", aldrig opfundne tal eller oevelser.
+export const STILSTAND_OVERVEJ = 'Overvej deload i næste blok'
+
 // Stagnation: antal uger siden loeftets seneste nye top (bedste e1RM > 0,5 %
 // over alt foer). >=3 uger = plateau. Stiger topsaettets RPE imens (>=0,5
 // siden toppen, eller >=0,5 over plan) er det alert; ellers context. v1's
 // fald-regel (<=-5 % med bevaret volumen) er bevaret. Et signal pr. atlet:
 // det tydeligste loeft; antallet af andre flade loeft staar i teksten.
-function detectStagnation({ athlete, weeks = [] }, L) {
+function detectStagnation({ athlete, weeks = [], logs = [] }, L) {
   const weekNumber = new Map(weeks.map(week => [mondayOf(toDay(week.start_date)), week.week_number]))
   // Ordre 1516: en deload-uge (blokken hedder deload/aflast/taper) er hverken bevis for eller imod et
   // plateau: dens saet udelades helt, ogsaa som "uge uden ny top". Samme regel som SQL v3 (ordre 1451).
@@ -343,14 +382,18 @@ function detectStagnation({ athlete, weeks = [] }, L) {
       const to = latest.top.rpe_actual
       const plan = latest.top.rpe_planned
       const rising = from != null && to != null && (to - from >= 0.5 || (plan != null && to >= plan + 0.5))
-      const metrics = { lift, stalled_weeks: stalled, top_weight: high.top.weight, top_reps: high.top.reps, rpe_from: from, rpe_to: to, rpe_planned: plan }
+      const ude = stilstandUdeSaet(logs, lift, stalled, weeks)
+      const metrics = { lift, stalled_weeks: stalled, top_weight: high.top.weight, top_reps: high.top.reps, rpe_from: from, rpe_to: to, rpe_planned: plan,
+        ...(ude ? { skipped_sets: ude.sprunget, failed_sets: ude.fejlet } : {}) }
+      // Ordre 1545: et sprunget eller fejlet saet i perioden betyder "spoerg atleten foerst".
+      const spoerg = ude && `${STILSTAND_SPOERG}: ${ude.grund}`
       found.push(rising
         ? { rank: 0, stalled, s: signal(athlete, 'stagnation', 'alert',
           `${lift} stået stille ${stalled} uger (${setText(high.top.weight, high.top.reps)} siden ${label}), RPE ${rpeText(from)}→${rpeText(to)} mod plan ${rpeText(plan)}`,
-          `Overvej deload eller en variation (fx pause- eller tempo-${lift.toLowerCase()}) i næste blok`, metrics) }
+          spoerg || STILSTAND_OVERVEJ, metrics) }
         : { rank: 1, stalled, s: signal(athlete, 'stagnation', 'context',
           `${lift} fladt ${stalled} uger (${setText(high.top.weight, high.top.reps)} siden ${label}), RPE uændret${to != null ? ` @${rpeText(to)}` : ''}`,
-          'Ikke akut: har planen bedt om mere? Ellers +2,5 kg næste uge', metrics) })
+          spoerg || 'Ikke akut: har planen bedt om mere? Ellers +2,5 kg næste uge', metrics) })
       continue
     }
     if (prior.length === 3) {
