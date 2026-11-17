@@ -156,3 +156,53 @@ test('et spor, der forlader sættets område, men kommer hjem igen, røres ikke'
   klip(path, R)
   assert.equal(path.pts.length, foer)
 })
+
+// Kontrol 2 for 1610v: sættets sidste optur beholdes altid, også når kameraet flytter sig under løftet.
+test('et kamera, der flyttes til siden under sidste løft og bliver der, koster ikke løftet', () => {
+  for (const [bredde, billeder, start] of [[300, 24, -10], [300, 60, -10], [160, 8, 0], [110, 24, 6]]) {
+    const { path, hvile } = bane({ reps: 5 })
+    const bund = hvile - 50 + start
+    path.pts.forEach((q, i) => { if (i > bund) q.x += bredde * smooth(Math.min(1, (i - bund) / billeder)) })
+    klip(path, R)
+    assert.ok(path.pts.length >= hvile - 20, `flyt ${bredde} px over ${billeder} billeder fra ${start}: klippet ved ${path.pts.length}, sidste optur slutter ved ${hvile - 20}`)
+  }
+})
+
+test('et håndholdt kamera, der driver gennem flere løft, koster ingen løft', () => {
+  for (const [dx, dy] of [[2.5, 0], [3, 1.5], [0, 2.5], [3, -1]]) {
+    const { path, hvile } = bane({ reps: 5 })
+    path.pts.forEach((q, i) => { if (i > 200) { q.x += dx * (i - 200); q.y += dy * (i - 200) } })
+    klip(path, R)
+    assert.ok(path.pts.length >= hvile - 20, `drift ${dx},${dy}: klippet ved ${path.pts.length}, sidste optur slutter ved ${hvile - 20}`)
+  }
+})
+
+test('atleten går i stativet uden pause, og sporet glider langsomt opad: banen slutter i toppen', () => {
+  const { path, top } = udenHvile(i => ({ x: 300 + 600 * smooth(i / 45), y: TOP - 20 * (i / 45) }))
+  assert.ok(Math.abs(path.pts.length - top) <= 3, `klippet ved ${path.pts.length}, toppen ved ${top}`)
+})
+
+test('en hale, der går tre radius gennem gulvet og op igen et andet sted, er ikke et løft', () => {
+  for (const op of [TOP, 800]) {
+    const { path, hvile } = bane({ reps: 5, haleSek: 3, hale: t => t < 1
+      ? { x: 300 + 200 * smooth(t), y: TOP + 800 * smooth(t) }
+      : { x: 500 + 400 * smooth(Math.min(1, (t - 1) / 1.3)), y: 1300 - (1300 - op) * smooth(Math.min(1, (t - 1) / 1.3)) } })
+    klip(path, R)
+    assert.ok(Math.abs(path.pts.length - hvile) <= 3, `klippet ved ${path.pts.length}, hvile ${hvile}`)
+    assert.ok(Math.max(...path.pts.map(q => q.y)) <= BOTTOM)
+  }
+})
+
+test('dødløft touch and go, hvor stangen ruller efter sidste nedlægning, slutter på gulvet', () => {
+  const pts = []
+  for (let i = 0; i < 15; i++) pts.push({ x: 300, y: BOTTOM })
+  for (let r = 0; r < 4; r++) {
+    for (let i = 1; i <= 30; i++) pts.push({ x: 300, y: BOTTOM - 500 * smooth(i / 30) })
+    for (let i = 1; i <= 25; i++) pts.push({ x: 300, y: TOP + 500 * smooth(i / 25) })
+  }
+  const gulv = pts.length
+  for (let i = 1; i <= 25; i++) pts.push({ x: 300 + 220 * smooth(i / 25), y: BOTTOM + 30 * (i / 25) })
+  const path = { pts, times: pts.map((_, i) => i / FPS), valid: pts.map(() => true), confidence: pts.map(() => 1) }
+  klip(path, R)
+  assert.ok(Math.abs(path.pts.length - gulv) <= 3, `klippet ved ${path.pts.length}, gulvet ved ${gulv}`)
+})

@@ -6096,42 +6096,76 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   // forlader det område, hvor hele sættet foregik, og aldrig kommer tilbage. Så slutter banen ved
   // det sidste rolige punkt før flugten, i stedet for at fortsætte ud af billedet.
   // Selve sporingen ovenfor er uændret; kun halen fjernes, og kun når alle fire krav holder:
-  //   1) der har været mindst én hel lodret tur væk og hjem før flugten (et løft, der slutter i
-  //      toppen eller bunden af sin første tur, røres aldrig),
-  //   2) alle gyldige punkter efter flugten ligger uden for området for alt, hvad der kom før,
-  //   3) flugten når mindst én skiveradius uden for det område,
-  //   4) der er ingen hel lodret tur i halen. En hale med et løft i er ikke en hale; sådan ser et
-  //      kamera ud, der langsomt driver, mens sættet fortsætter.
+  //   1) der har været mindst én hel lodret tur væk og hjem (et løft, der slutter i toppen eller
+  //      bunden af sin første tur, røres aldrig),
+  //   2) halen begynder først efter sættets sidste optur. En optur hører til sættet, når den ligner
+  //      de tidligere: højst halvanden gang så høj, mindst 0,6 gange så høj, og start og slut højst
+  //      1,25 skiveradius over eller under den forrige opturs. Vandret flytning tæller ikke, så et
+  //      kamera, der flyttes under sidste løft, koster aldrig løftet. En optur, der fortsætter op
+  //      over toppen, beholdes, til den forlader sættets højde,
+  //   3) alle gyldige punkter efter flugten ligger uden for området for alt, hvad der kom før,
+  //   4) flugten når mindst én skiveradius uden for det område.
   const trimEscapedTail=()=>{
     const n=path.pts.length,ok=i=>path.valid[i]!==false;
     if(n<12)return;
     const minX=new Float64Array(n),maxX=new Float64Array(n),minY=new Float64Array(n),maxY=new Float64Array(n);
-    let a=Infinity,b=-Infinity,c=Infinity,d=-Infinity,ref=null,away=false,cycleAt=-1;
+    let a=Infinity,b=-Infinity,c=Infinity,d=-Infinity,ref=null;
+    // Vendepunkter: et punkt er en top eller bund, når sporet bagefter går mindst 1,2 radius den anden vej.
+    const turns=[];let dir=0,lo=null,hi=null,cur=null;
     for(let i=0;i<n;i++){
       if(ok(i)){
-        const q=path.pts[i];a=Math.min(a,q.x);b=Math.max(b,q.x);c=Math.min(c,q.y);d=Math.max(d,q.y);
-        if(ref==null)ref=q.y;
-        if(!away&&Math.abs(q.y-ref)>=radius*1.2)away=true;
-        else if(away&&cycleAt<0&&Math.abs(q.y-ref)<=radius*.5)cycleAt=i;
+        const q=path.pts[i],y=q.y;a=Math.min(a,q.x);b=Math.max(b,q.x);c=Math.min(c,y);d=Math.max(d,y);
+        if(ref==null)ref=y;
+        if(!dir){
+          if(!lo||y<lo.y)lo={i,y};
+          if(!hi||y>hi.y)hi={i,y};
+          if(y-lo.y>=radius*1.2){turns.push({i:lo.i,y:lo.y,top:true});dir=1;cur={i,y};}
+          else if(hi.y-y>=radius*1.2){turns.push({i:hi.i,y:hi.y,top:false});dir=-1;cur={i,y};}
+        }else if(dir>0){
+          if(y>cur.y)cur={i,y};
+          else if(cur.y-y>=radius*1.2){turns.push({i:cur.i,y:cur.y,top:false});dir=-1;cur={i,y};}
+        }else if(y<cur.y)cur={i,y};
+        else if(y-cur.y>=radius*1.2){turns.push({i:cur.i,y:cur.y,top:true});dir=1;cur={i,y};}
       }
       minX[i]=a;maxX[i]=b;minY[i]=c;maxY[i]=d;
     }
-    if(cycleAt<0)return;
-    const outside=(q,j)=>Math.hypot(Math.max(minX[j]-q.x,0,q.x-maxX[j]),Math.max(minY[j]-q.y,0,q.y-maxY[j]));
-    // Flugten begynder ved det første punkt efter den hele tur, hvor alle tre sidste krav holder.
-    const hasCycle=from=>{
-      let y0=null,gone=false;
-      for(let i=from;i<n;i++){
+    if(turns.length<2)return;
+    if(dir<0){
+      // Sidste optur er ikke afsluttet af en nedtur. Den slutter, hvor stangen er nået op i den
+      // forrige tops højde og ikke længere stiger (under 0,05 radius på 0,2 s); en langsom glidning
+      // bagefter er ikke en del af løftet.
+      const from=turns.at(-1),zone=turns.at(-2).y+radius*.3,time=i=>path.times?.[i]??i/30;
+      let end={i:from.i,y:from.y};
+      for(let i=from.i+1;i<n;i++){
         if(!ok(i))continue;
         const y=path.pts[i].y;
-        if(y0==null)y0=y;
-        if(!gone&&Math.abs(y-y0)>=radius*1.2)gone=true;
-        else if(gone&&Math.abs(y-y0)<=radius*.5)return true;
+        if(end.y<=zone){
+          if(time(i)-time(end.i)>.2)break;
+          if(y<=end.y-radius*.05)end={i,y};
+        }else if(y<end.y)end={i,y};
       }
-      return false;
-    };
+      turns.push({i:end.i,y:end.y,top:true});
+    }
+    let keep=-1,lastBot=0,lastTop=0,minAmp=Infinity,maxAmp=0;
+    for(let k=1;k<turns.length;k++){
+      const from=turns[k-1],to=turns[k];
+      if(!to.top)continue;
+      const amp=from.y-to.y,near=from.y<=lastBot+radius*1.25;
+      if(keep<0||(near&&to.y>=lastTop-radius*1.25&&amp<=maxAmp*1.5&&amp>=minAmp*.6)){
+        keep=to.i;lastBot=from.y;lastTop=to.y;minAmp=Math.min(minAmp,amp);maxAmp=Math.max(maxAmp,amp);
+      }else if(near&&from.i>=keep&&to.y<lastTop){
+        for(let i=from.i;i<=to.i;i++){
+          if(!ok(i))continue;
+          if(path.pts[i].y<lastTop-radius*.3)break;
+          keep=i;
+        }
+      }
+    }
+    if(keep<0)return;
+    const outside=(q,j)=>Math.hypot(Math.max(minX[j]-q.x,0,q.x-maxX[j]),Math.max(minY[j]-q.y,0,q.y-maxY[j]));
+    // Flugten begynder ved det første punkt efter sættet, hvor krav 3 og 4 holder.
     let escape=-1;
-    for(let i=cycleAt+1;i<n&&escape<0;i++){
+    for(let i=keep+1;i<n&&escape<0;i++){
       if(!ok(i)||!(outside(path.pts[i],i-1)>2))continue;
       let free=true,reach=0;
       for(let k=i;k<n;k++){
@@ -6140,18 +6174,17 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         if(!(o>2)){free=false;break;}
         reach=Math.max(reach,o);
       }
-      if(free&&reach>=radius&&!hasCycle(i))escape=i;
+      if(free&&reach>=radius)escape=i;
     }
     if(escape<0)return;
     // Banen slutter lige før flugten. Kun når sporet kom fra et roligt punkt nærmere startstedet
     // (løftets top i squat og bænk, gulvet i dødløft) og derfra gik lige væk og ud, slutter den
-    // allerede ved det rolige punkt: det stykke er en tur væk uden vej hjem, aldrig et løft.
-    // Kontrol 1610v: en flugt lige efter sidste løft må aldrig klippe løftets optur af.
+    // allerede ved det rolige punkt, men aldrig før sættets sidste optur er slut.
     let cut=escape-1;
-    while(cut>cycleAt&&!ok(cut))cut--;
+    while(cut>keep&&!ok(cut))cut--;
     const awayAtEscape=Math.abs(path.pts[cut].y-ref);
     let nearest=awayAtEscape;
-    for(let i=cut;i>cycleAt;i--){
+    for(let i=cut;i>=keep;i--){
       if(!ok(i))continue;
       const away=Math.abs(path.pts[i].y-ref);
       if(away>nearest+radius*.15)break;
@@ -6167,18 +6200,6 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         break;
       }
     }
-    // Nærmer halen sig startstedets højde igen i én ubrudt bevægelse (et sidste løft, der føres
-    // skråt ud af området og hjem), beholdes banen til det punkt, hvor den er nærmest. Et hop eller
-    // et hul i sporingen er ikke en bevægelse.
-    let homeAway=awayAtEscape,homeAt=-1,last=cut,gap=0;
-    for(let i=escape;i<n;i++){
-      if(!ok(i)){if(++gap>3)break;continue;}
-      if(Math.hypot(path.pts[i].x-path.pts[last].x,path.pts[i].y-path.pts[last].y)>radius*.5*(gap+1))break;
-      last=i;gap=0;
-      const away=Math.abs(path.pts[i].y-ref);
-      if(away<homeAway-radius*.05){homeAway=away;homeAt=i;}
-    }
-    if(homeAt>cut&&awayAtEscape-homeAway>=radius*.5)cut=homeAt;
     if(cut>=n-1)return;
     path.tailCutAt=path.times[cut];path.tailCutFrames=n-1-cut;
     path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;
