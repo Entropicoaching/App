@@ -33,10 +33,10 @@ test('U11 hul 1: et interval som "4-6" udfylder det laveste tal, så første try
   }
 })
 
-test('U11 hul 2: "Film dette sæt" står i passet, lægger passet til side og åbner videocoachen', t => {
+test('U11 hul 2: "Film sættet" står i passet, lægger passet til side og åbner videocoachen', t => {
   let filmed = 0, openWhenFilmed = null, f
   f = setup(t, g => { g.p.onFilmSet = () => { filmed++; openWhenFilmed = f.view.controller.state().open } })
-  const film = button(f.root, 'Film dette sæt')
+  const film = button(f.root, 'Film sættet')
   assert.ok(film, 'knappen findes i passet')
   film.dispatch('click')
   assert.equal(filmed, 1)
@@ -46,9 +46,9 @@ test('U11 hul 2: "Film dette sæt" står i passet, lægger passet til side og å
   assert.ok(f.view.controller.state().selection, 'passet er gemt og åbnes igen med ét tryk')
   assert.ok(button(f.root, 'Åbn dagens pas'))
   const none = setup(t)
-  assert.equal(button(none.root, 'Film dette sæt'), undefined, 'uden videocoach ingen knap')
+  assert.equal(button(none.root, 'Film sættet'), undefined, 'uden videocoach ingen knap')
   const preview = setup(t, f => { f.p.onFilmSet = () => { filmed++ }; f.p.readOnly = true })
-  assert.equal(button(preview.root, 'Film dette sæt'), undefined, 'coachens forhåndsvisning filmer ikke')
+  assert.equal(button(preview.root, 'Film sættet'), undefined, 'coachens forhåndsvisning filmer ikke')
 })
 
 test('U11 hul 3: et sæt i offline-køen starter pausen; et parkeret sæt gør ikke', t => {

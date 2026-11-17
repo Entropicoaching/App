@@ -22,6 +22,16 @@ export const PRESETS = {
   // ORDRE 1192: hurtige reps, 1,6 s pr. rep med kort pause (trackeren hang efter ved vending)
   'hurtig-reps': { navn: 'hurtig-reps', leadIn: 0.4, leadOut: 0.3, repDur: 1.6, holdDur: 0.5 },
 }
+// ORDRE 1610v (Marc 17. nov.: stangsporet fortsatte "igennem gulvet" i slutningen af klippet).
+// Klip, hvor der sker noget efter sidste rep: kameraet ryster, kameraet tages op (billedet glider
+// ned, og skiven forsvinder ud forneden), atleten gaar ind foran skiven og ud forneden, eller skiven
+// forsvinder. Proeves af scripts/verify-videocoach-slut-spor.mjs.
+export const SLUT_PRESETS = {
+  'slut-ryst': { navn: 'slut-ryst', leadIn: 0.5, leadOut: 3.6, slut: 'ryst' },
+  'slut-kamera': { navn: 'slut-kamera', leadIn: 0.5, leadOut: 3.6, slut: 'kamera' },
+  'slut-gaar-ud': { navn: 'slut-gaar-ud', leadIn: 0.5, leadOut: 3.6, slut: 'gaar-ud' },
+  'slut-forsvinder': { navn: 'slut-forsvinder', leadIn: 0.5, leadOut: 3.6, slut: 'forsvinder' },
+}
 const smooth = x => { const c = Math.max(0, Math.min(1, x)); return c * c * (3 - 2 * c) }
 export function tidslinje(cfg = {}) {
   const c = { ...STANDARD, ...cfg }
@@ -54,6 +64,32 @@ function disc(cx,cy,t){
   const th=t*2.1;for(const ph of [0,Math.PI*0.9]){const o=21*(ph?2.3:1);g.fillStyle='rgb(205,205,205)';g.beginPath();g.arc(cx+Math.cos(th+ph)*o,cy+Math.sin(th+ph)*o,9.5,0,7);g.fill()}
 }
 const sm=x=>{const c=Math.max(0,Math.min(1,x));return c*c*(3-2*c)};
+// ORDRE 1610v: det der sker efter sidste rep (se SLUT_PRESETS). Kameraets forskydning flytter baade
+// baggrund og skive; daekkeren (en opdigtet, moenstret flade) ligger foran skiven.
+const SLUT=${JSON.stringify(tl.slut || '')},T0=${tl.leadIn + tl.phase},OW=560,OH=1500;
+const rnd=i=>{const s=Math.sin(i*91.7+3.1)*43758.5453;return s-Math.floor(s)};
+const bgC=new OffscreenCanvas(W,H);bgC.getContext('2d').putImageData(bg,0,0);
+const occ=new OffscreenCanvas(OW,OH),og=occ.getContext('2d');
+og.fillStyle='rgb(58,58,66)';og.fillRect(0,0,OW,OH);
+for(let i=0;i<900;i++){const v=40+Math.floor(rnd(i)*150);og.fillStyle='rgb('+v+','+v+','+v+')';og.fillRect(rnd(i+.3)*(OW-20),rnd(i+.6)*(OH-20),10+rnd(i+.1)*40,10+rnd(i+.2)*40)}
+window.__scene=t=>{
+  const u=t-T0,ry=(a,f)=>a*(Math.sin(u*f*6.2832)+.4*Math.sin(u*f*1.65*6.2832+1));let cx=0,cy=0,skive=true,o=null;
+  if(SLUT==='ryst'&&u>.4){cx=ry(18,4.3);cy=ry(18,3.7)}
+  if(SLUT==='kamera'&&u>.5){cx=ry(7,4.3);cy=ry(7,3.7)+1700*sm((u-.9)/1.3)}
+  if(SLUT==='gaar-ud'&&u>.4)o={x:-OW+sm((u-.4)/.7)*(W/2+OW/2),y:${TOP_Y}-420+sm((u-1.1)/1.6)*2000};
+  if(SLUT==='forsvinder'&&u>.5){skive=false;cx=ry(5,4.3);cy=ry(5,3.7)+60*sm((u-.5)/2.5)}
+  return {cx,cy,skive,o};
+};
+function tegn(t){
+  const p=window.__truth(t),sc=window.__scene(t);
+  const ox=((sc.cx%W)+W)%W,oy=((sc.cy%H)+H)%H;
+  for(const a of [ox-W,ox])for(const b of [oy-H,oy])g.drawImage(bgC,a,b);
+  const x=p.x+sc.cx,y=p.y+sc.cy;
+  if(sc.skive)disc(x,y,t);
+  if(sc.o)g.drawImage(occ,sc.o.x,sc.o.y);
+  const daekket=!!sc.o&&x>sc.o.x-R*.5&&x<sc.o.x+OW+R*.5&&y>sc.o.y-R*.5&&y<sc.o.y+OH+R*.5;
+  return {x,y,synlig:sc.skive&&!daekket&&x>-R&&x<W+R&&y>-R&&y<H+R};
+}
 window.__truth=t=>{const tp=t-${tl.leadIn};let y=${TOP_Y};if(tp>=0&&tp<=${tl.phase}){const k=Math.min(${N_REPS - 1},Math.floor(tp/${tl.cycle}));const lt=tp-k*${tl.cycle};if(lt<=${tl.repDur}){const d=lt<${tl.repDur}/2?lt/(${tl.repDur}/2):(${tl.repDur}-lt)/(${tl.repDur}/2);y=${TOP_Y}+(${BOTTOM_Y - TOP_Y})*sm(d)}}return {x:W/2,y}};
 const b64=u=>{let s='';for(let k=0;k<u.length;k+=32768)s+=String.fromCharCode.apply(null,u.subarray(k,k+32768));return btoa(s)};
 window.record=async(n)=>{
@@ -64,9 +100,9 @@ window.record=async(n)=>{
   enc.configure(cfg);
   const frames=[];
   for(let i=0;i<n;i++){
-    const t=i/FPS,p=window.__truth(t);g.putImageData(bg,0,0);disc(p.x,p.y,t);
+    const t=i/FPS,p=tegn(t);
     const vf=new VideoFrame(cv,{timestamp:Math.round(i*1e6/FPS),duration:Math.round(1e6/FPS)});
-    enc.encode(vf,{keyFrame:i%30===0});vf.close();frames.push({i,t:+t.toFixed(5),x:p.x,y:p.y});
+    enc.encode(vf,{keyFrame:i%30===0});vf.close();frames.push({i,t:+t.toFixed(5),x:p.x,y:p.y,synlig:p.synlig});
     if(enc.encodeQueueSize>8)await new Promise(r=>setTimeout(r,0));
   }
   await enc.flush();

@@ -177,9 +177,13 @@ export function useVideoCoachBro({
           // Klienten hentes først, når lageret er slået til; uden variablen er alt som før.
           const lagerKlient = import.meta.env?.VITE_VIDEOLAGER_URL ? await import('../videolager/klient.js') : null
           const lager = lagerKlient ? lagerKlient.videolagerUrl() : ''
-          upload = lager
+          const lagerSvar = lager
             ? await lagerKlient.uploadTilVideolager({ base: lager, token: (await supabase.auth.getSession()).data?.session?.access_token,
               clientAnalysisId: message.clientAnalysisId, path, file, mimeType, signal: controller.signal })
+            : null
+          // ORDRE 1610v: tager videolageret ikke imod klippet (og atleten ikke selv har afbrudt), sendes det
+          // til Supabase som før, så en fejl i lageret aldrig alene stopper en indsendelse.
+          upload = lagerSvar && (!lagerSvar.error || controller.signal.aborted) ? lagerSvar
             : videoUploadRetryEnabled()
             ? await uploadVideoAttempt(createAbortableUploadClient, controller.signal,
               VIDEOCOACH_UPLOAD_BUCKET, path, file, mimeType)

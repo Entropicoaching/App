@@ -48,7 +48,8 @@ function Ramme({
   const [datoRef, danskDato] = useDanskDato()
   return (
     <>
-      {role === 'athlete' && athleteVideoCoachOpen && (
+      {/* Ordre 1610v: en coach, der træner på sin egen profil, filmer som atleten (Marc 17. nov.). */}
+      {(role === 'athlete' || coachOwnTraining) && athleteVideoCoachOpen && (
         <div
           role="dialog"
           aria-label="VideoCoach"

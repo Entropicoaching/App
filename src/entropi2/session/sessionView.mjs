@@ -323,14 +323,16 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         })
         form.append(createSetNote(doc, { value: s.note, disabled: busy,
           onChange: action(value => controller.editNote(key, value, s.selection.stamp)) }), approve)
-        body.append(form)
         // U11: film sættet direkte fra passet. Passet er en modal dialog i browserens øverste lag, så
         // intet kan ligge over den; passet lukkes først (sættene er gemt) og åbnes igen med ét tryk.
-        if (p.readOnly !== true && typeof p.onFilmSet === 'function') {
-          const film = el('button', 'Film dette sæt', { type: 'button', 'data-u11-film': '' })
+        // Ordre 1610v (Marc 17. nov.: "mangler en tydeligere måde"): knappen står ved øvelsen, lige
+        // før registreringen, ikke under Godkend.
+        if (typeof p.onFilmSet === 'function') {
+          const film = el('button', 'Film sættet', { type: 'button', class: 'film-set', 'data-u11-film': '' })
           film.addEventListener('click', action(() => { controller.close(); p.onFilmSet() }))
           body.append(film)
         }
+        body.append(form)
         if (typeof p.onSkipSet === 'function' || typeof p.onSkipExercise === 'function') {
           const skip = el('section', null, { class: 'card', 'aria-label': 'Spring over', 'data-session-skip-actions': '' })
           const add = (label, enabled, run) => {

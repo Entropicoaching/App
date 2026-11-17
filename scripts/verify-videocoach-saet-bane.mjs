@@ -15,7 +15,7 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 import { spawnSync } from 'node:child_process'
-import { lavKlip, PLATE_R, PRESETS } from './videocoach-saet-klip.mjs'
+import { lavKlip, PLATE_R, PRESETS, SLUT_PRESETS, BOTTOM_Y } from './videocoach-saet-klip.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
@@ -40,8 +40,11 @@ let clipPath = ['mp4', 'webm'].map(e => join(klipDir, `${navn}.${e}`)).find(exis
 const truthPath = join(klipDir, `${navn}.sand-bane.json`)
 if (!clipPath || !existsSync(truthPath)) {
   console.log('Prøveklippet mangler, optager det i Edge (ca. 25 s) ...')
-  clipPath = (await lavKlip(klipDir, { ...PRESETS[navn], navn })).clipPath
+  clipPath = (await lavKlip(klipDir, { ...(PRESETS[navn] || SLUT_PRESETS[navn]), navn })).clipPath
 }
+// ORDRE 1610v: klip med noget efter sidste rep (SLUT_PRESETS) spores til klippets sidste billede.
+const SLUT = Boolean(SLUT_PRESETS[navn])
+const SLUT_MAX = 0.04
 const truth = JSON.parse(readFileSync(truthPath, 'utf8'))
 
 const html = readFileSync(join(root, 'public', 'videocoach.html'), 'utf8')
@@ -88,7 +91,7 @@ window.koerAnalyse = async (s, e, p0, lift) => {
   const ok = await startMultipointTracking({ x: p0.x, y: p0.y, r: p0.r }, session);
   const path = strokes.find(x => x.type === 'path'); let reps = [];
   if (path) { path.analysisSession = session; analyzePath(path); reps = (path.reps || []).map(r => ({ start: path.times[r.start], end: path.times[r.end] })) }
-  return { ok, pts: path ? path.pts.map(p => ({ x: p.x, y: p.y })) : [], times: path ? [...path.times] : [], valid: path ? [...path.valid] : [], reps };
+  return { ok, pts: path ? path.pts.map(p => ({ x: p.x, y: p.y })) : [], times: path ? [...path.times] : [], valid: path ? [...path.valid] : [], reps, haleKlippet: path ? path.tailCutAt ?? null : null };
 };
 <\/script></body></html>`
 
@@ -99,7 +102,7 @@ const sandAt = t => {
   let lo = 0, hi = n - 1
   while (lo < hi - 1) { const m = (lo + hi) >> 1; if (f[m].t <= t) lo = m; else hi = m }
   const k = (t - f[lo].t) / (f[hi].t - f[lo].t)
-  return { x: f[lo].x + (f[hi].x - f[lo].x) * k, y: f[lo].y + (f[hi].y - f[lo].y) * k }
+  return { x: f[lo].x + (f[hi].x - f[lo].x) * k, y: f[lo].y + (f[hi].y - f[lo].y) * k, synlig: f[lo].synlig }
 }
 
 const runtime = join(homedir(), '.cache', 'codex-runtimes', 'codex-primary-runtime', 'dependencies', 'node', 'node_modules', 'playwright')
@@ -120,7 +123,7 @@ try {
   await page.evaluate(() => { tracking = false })
   const sug = await page.evaluate(d => window.saetForslag(d), dims.d)
   out.forslag = { start: sug.start, end: sug.end, foundStart: sug.foundStart, foundEnd: sug.foundEnd, ok: sug.ok }
-  const trimStart = sug.ok ? sug.start : 0, trimEnd = sug.ok ? Math.min(sug.end, dims.d) : dims.d
+  const trimStart = sug.ok ? sug.start : 0, trimEnd = sug.ok && !SLUT ? Math.min(sug.end, dims.d) : dims.d
   console.log(`klip ${dims.w}x${dims.h}, ${dims.d.toFixed(2)} s; sandt sæt ${firstStart.toFixed(2)}-${lastEnd.toFixed(2)} s; forslag ${trimStart.toFixed(2)}-${trimEnd.toFixed(2)} s`)
   if (trimStart > firstStart + 0.05) out.fails.push(`forslaget klipper starten af (${trimStart.toFixed(2)} > ${firstStart.toFixed(2)})`)
   if (trimEnd < lastEnd - 0.05) out.fails.push(`forslaget klipper slutningen af (${trimEnd.toFixed(2)} < ${lastEnd.toFixed(2)})`)
@@ -148,6 +151,22 @@ try {
   console.log(`baneafvigelse: gennemsnit ${(mean * 100).toFixed(2)} % (krav højst ${MEAN_MAX * 100} %), værste pr. rep ${perRep.map(x => (x * 100).toFixed(2)).join(' / ')} % (krav højst ${REP_MAX * 100} %)`)
   if (!(mean <= MEAN_MAX)) out.fails.push(`gennemsnitlig afvigelse ${(mean * 100).toFixed(2)} % over ${MEAN_MAX * 100} %`)
   if (perRep.some(x => !(x <= REP_MAX))) out.fails.push('mindst én rep afviger mere end 4 %')
+
+  // 4) ORDRE 1610v: efter sidste rep må et gyldigt punkt hverken forlade skiven eller følge den
+  //    ud under sættets laveste punkt ("gennem gulvet"). Sporet skal stoppe eller holde sig.
+  if (SLUT) {
+    const gulv = BOTTOM_Y + SLUT_MAX * dims.h
+    const hale = res.times.map((t, i) => i).filter(i => res.times[i] > lastEnd + 0.3 && res.valid[i])
+    const vaek = hale.filter(i => dev[i] > SLUT_MAX), under = hale.filter(i => res.pts[i].y > gulv)
+    const usynlig = hale.filter(i => sandAt(res.times[i]).synlig === false)
+    out.hale = { gyldige: hale.length, vaekFraSkiven: vaek.length, underGulvet: under.length, udenSkive: usynlig.length,
+      dybesteY: hale.length ? Math.max(...hale.map(i => res.pts[i].y)) : null, gulvY: gulv,
+      sidsteGyldige: res.times.filter((t, i) => res.valid[i]).at(-1) ?? null }
+    console.log(`efter sidste rep (${lastEnd.toFixed(2)} s): ${hale.length} gyldige punkter, ${vaek.length} mere end ${SLUT_MAX * 100} % fra skiven, ${under.length} under sættets laveste punkt, ${usynlig.length} uden synlig skive; dybeste y ${out.hale.dybesteY?.toFixed(0)} (gulv ${gulv.toFixed(0)}), sidste gyldige ${out.hale.sidsteGyldige?.toFixed(2)} s`)
+    if (vaek.length) out.fails.push(`${vaek.length} gyldige punkter efter sættet ligger mere end ${SLUT_MAX * 100} % fra skiven`)
+    if (under.length) out.fails.push(`${under.length} gyldige punkter efter sættet ligger under sættets laveste punkt`)
+    if (usynlig.length > 6) out.fails.push(`${usynlig.length} gyldige punkter efter sættet har ingen synlig skive`)
+  }
 } finally { await browser.close() }
 const ud = arg('ud', '')
 if (ud) writeFileSync(ud, JSON.stringify(out, null, 1))

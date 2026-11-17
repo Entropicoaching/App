@@ -240,6 +240,11 @@ test('MIN TRÆNING: actual frame wraps return/profile/date and bottom navigation
         assert.ok(nodes(frame).some(node => node.props.style?.maxWidth === '100%' && node.props.style.flexWrap === 'wrap'))
       } else assert.deepEqual(topbar.props.style, base.topbar)
     }
+    // Ordre 1610v: vinduet tegnes også for coachen på egen profil, aldrig i forhåndsvisning af en anden atlet.
+    const video = athlete => nodes(Ramme({ ...named(mount(athlete), 'Ramme').props,
+      athleteVideoCoachOpen: true, athleteVideoCoachInstant: true })).find(node => node.type === 'iframe')
+    assert.equal(video(ownAthlete)?.props.src, 'synthetic-video&instant=1')
+    assert.equal(video(otherAthlete), undefined)
     const routes = []
     const nav = BundNav({ athlete: ownAthlete, hasMeetPlan: false, setTab: route => routes.push(route),
       sharedVideoAnalyses: [], tab: 'hjem', unreadMsgCount: 0 })

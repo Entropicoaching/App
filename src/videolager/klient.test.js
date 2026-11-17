@@ -81,3 +81,15 @@ test('hent: adresse for klip i lageret, null for ældre klip og ved fejl (så Su
   const ingenRaekke = lager({ rows: [] })
   assert.equal(await hentFraVideolager({ base: BASE, token: TOKEN, videoPath: PATH, fetchFn: ingenRaekke.fetchFn }), null)
 })
+
+// ORDRE 1610v · en fejl i videolageret må ikke alene stoppe en indsendelse: atletens upload falder
+// tilbage til Supabase, undtagen når atleten selv har afbrudt.
+test('atletens upload falder tilbage til Supabase, når videolageret ikke tager imod klippet', async () => {
+  const { readFileSync } = await import('node:fs')
+  const hook = readFileSync(new URL('../athlete/useVideoCoachBro.js', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
+  const start = hook.indexOf('const lagerSvar = lager'), slut = hook.indexOf('} catch (error) {', start)
+  assert.ok(start > 0 && slut > start)
+  const valg = hook.slice(start, slut)
+  assert.match(valg, /upload = lagerSvar && \(!lagerSvar\.error \|\| controller\.signal\.aborted\) \? lagerSvar\n\s+: videoUploadRetryEnabled\(\)/)
+  assert.match(valg, /\.from\(VIDEOCOACH_UPLOAD_BUCKET\)\n\s+\.upload\(path, file, \{ contentType: mimeType, upsert: false \}\)/)
+})
