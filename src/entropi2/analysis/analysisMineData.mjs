@@ -2,6 +2,7 @@ import { calendarDay, addCalendarDays } from '../../calendarDate.js'
 import { parseInputNumber } from '../../inputValues.js'
 import { isDayReceipt } from '../../mealEvidence.mjs'
 import { analysisSessions } from './analysisSnapshots.mjs'
+import { kostDageModPlan } from './kostDageModPlan.mjs'
 
 const state = (rows, loading, error) => error ? 'error' : loading === true ? 'loading'
   : Array.isArray(rows) ? 'ready' : 'unavailable'
@@ -59,4 +60,16 @@ export function analysisMineData(props = {}, now) {
     ...(!Array.isArray(props.weightLogs) && !props.mineData?.weights
       ? { weights: { state: state(null, props.weightLoading, props.weightError), rows: [] } } : {}),
   }
+}
+
+// Coachens godkendte plan mod loggen: giver kostdagene deres goalMet, så kortet
+// "Kostdage mod mål" kan vise N af M. Kun med en bekræftet læsning for præcis denne atlet;
+// uden basis (eller med under 4 vurderede dage) er rækkerne uændrede og kortet vises ikke.
+export function mineDataWithPlan(mineProps, basis) {
+  const source = mineProps?.nutritionDays
+  if (!basis || basis.athleteId !== mineProps.athleteId || source?.state !== 'ready' || !Array.isArray(source.rows)) return mineProps
+  const goals = kostDageModPlan({ planDays: basis.planDays, meals: basis.meals, today: mineProps.today })
+  if (!goals.size) return mineProps
+  return { ...mineProps, nutritionDays: { ...source,
+    rows: source.rows.map(r => goals.has(r.date) && typeof r.goalMet !== 'boolean' ? { ...r, goalMet: goals.get(r.date) } : r) } }
 }

@@ -39,7 +39,7 @@ export default function MineData(props = {}) {
       text('Dage med en kostlog er ikke nødvendigvis hele kostdage.')),
     visible.nutrition && nutrition.assessedDays > 0 && card('nutrition-goals', 'Kostdage mod mål',
       text(`${nutrition.goalDays} af ${nutrition.assessedDays} ${antalOrd(nutrition.assessedDays, 'kostdag', 'kostdage')} med vurderbart mål nåede dagens mål.`),
-      text('Kun registrerede dage med kendt målstatus indgår i sammenligningen.')),
+      text('Målet er coachens godkendte kostplan for dagen: kcal inden for 10 % og protein mindst 90 % af planen. De seneste 14 dage, uden i dag. Dage uden plan eller log indgår ikke.')),
     visible.weight && card('weight', 'Kropsvægt',
       text(`${weight.recordedDays} ${antalOrd(weight.recordedDays, 'dag', 'dage')} med registreret kropsvægt.`),
       h('ul', { style: { paddingLeft: 20, lineHeight: 1.6 } }, ...weight.weeks.filter(week => week.kg !== null).map(week =>

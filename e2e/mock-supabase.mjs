@@ -280,6 +280,7 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, PUT, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', '*')
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Range')
   }
 
   async function readJson(req) {
@@ -363,6 +364,8 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
     if (req.method === 'GET') {
       let result = applyFilters(rows, url.searchParams)
       result = applyOrder(result, url.searchParams.get('order'))
+      // Ordre 1580: som PostgREST ved Prefer: count=exact (kostplanens historikbaerer tæller).
+      if (/count=exact/.test(req.headers.prefer ?? '')) res.setHeader('Content-Range', `*/${result.length}`)
       const offset = url.searchParams.get('offset')
       if (offset) result = result.slice(Number(offset))
       const limit = url.searchParams.get('limit')

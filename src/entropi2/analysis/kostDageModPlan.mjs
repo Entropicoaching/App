@@ -1,0 +1,45 @@
+import { addCalendarDays } from '../../calendarDate.js'
+import { parseInputNumber } from '../../inputValues.js'
+import { isDayReceipt } from '../../mealEvidence.mjs'
+
+// Dhurvas valg (ordre 1580), ikke Marcs: en kostdag rammer coachens plan, når
+// kcal ligger inden for 10 % af planens mål og protein er mindst 90 % af planens mål.
+export const KCAL_TOLERANCE = 0.10
+export const PROTEIN_MIN_SHARE = 0.90
+// Samme grænse som coachens kostlinje: under 4 vurderede dage vises intet.
+export const MIN_ASSESSED_DAYS = 4
+export const WINDOW_DAYS = 14
+
+const positive = value => typeof value === 'number' && Number.isFinite(value) && value > 0
+const day = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+
+// De 14 afsluttede dage før i dag. I dag er ikke færdig og kan ikke ramme eller misse.
+export const planWindow = today => ({ start: addCalendarDays(today, -WINDOW_DAYS), end: addCalendarDays(today, -1) })
+
+// Ren: planDays er godkendte dagsreferencer ({ date, state, targets }), meals er atletens
+// egne kostrækker. Dage uden godkendt plan, uden log eller med ukendt kcal/protein
+// får intet svar. Ingen gæt og intet fald tilbage til profilens kcal_target.
+export function kostDageModPlan({ planDays, meals, today } = {}) {
+  if (!day(today) || !Array.isArray(planDays) || !Array.isArray(meals)) return new Map()
+  const { start, end } = planWindow(today)
+  const targets = new Map(planDays.filter(d => d?.state === 'approved' && day(d.date)
+    && d.date >= start && d.date <= end && positive(d.targets?.kcal) && positive(d.targets?.protein))
+    .map(d => [d.date, d.targets]))
+  const eaten = new Map()
+  for (const row of meals) {
+    if (!row || !day(row.date) || !targets.has(row.date) || isDayReceipt(row)) continue
+    const kcal = parseInputNumber(row.kcal), protein = parseInputNumber(row.protein)
+    const sum = eaten.get(row.date) ?? { kcal: 0, protein: 0, known: true }
+    if (kcal === null || protein === null) sum.known = false
+    else { sum.kcal += kcal; sum.protein += protein }
+    eaten.set(row.date, sum)
+  }
+  const result = new Map()
+  for (const [date, sum] of eaten) {
+    if (!sum.known) continue
+    const goal = targets.get(date)
+    result.set(date, Math.abs(sum.kcal - goal.kcal) <= goal.kcal * KCAL_TOLERANCE
+      && sum.protein >= goal.protein * PROTEIN_MIN_SHARE)
+  }
+  return result.size >= MIN_ASSESSED_DAYS ? result : new Map()
+}

@@ -9,6 +9,7 @@ import { analysisWeekExtras, copyAnalysisWeek } from './analysisWeekExtras.mjs'
 import WeeklyReport from './ugerapport/WeeklyReport.mjs'
 import MineData from '../athlete/minedata/MineData.mjs'
 import { analysisMineData } from './analysisMineData.mjs'
+import MineDataMedKostplan from './AnalysisMedKostplan.mjs'
 import IntensityView from './intensitet/IntensityView.mjs'
 import { analysisIntensity } from './analysisSnapshots.mjs'
 import { weeklyIntensity } from './intensitet/intensityModel.mjs'
@@ -88,7 +89,10 @@ export default function Analysis(props = {}) {
   showReport && h(WeeklyReport, { ...props, now }),
   showMineData && h('details', { 'data-analysis-mine-data': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Mine data'),
-    h(MineData, { ...mineViewProps, showRecords: false })),
+    // Kostdage mod planen læses kun med atletens egen klient; ellers står Mine data som før.
+    props.u3Client && props.readOnly !== true
+      ? h(MineDataMedKostplan, { mineProps: mineViewProps, athlete: props.athlete, client: props.u3Client, now })
+      : h(MineData, { ...mineViewProps, showRecords: false })),
   showIntensity && h('details', { 'data-analysis-intensity': true, style: { marginBottom: 16 } },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Intensitet pr. uge'),
     h(IntensityView, { entropi2: true, exerciseLogs: analysisIntensity(props), asOf: now })),
