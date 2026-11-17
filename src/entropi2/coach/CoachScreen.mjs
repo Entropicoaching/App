@@ -67,6 +67,21 @@ function ClockedCoach(props) {
     onShowMoreInbox: props.onShowMoreInbox ?? (() => setInboxLimit(limit => limit + 10)) })
 }
 
+// Ordre 1547 (1544's fund: grunden blev skåret af ved 390 px). Rækken har plads til cirka 60 tegn på
+// 2 linjer. Er navn og grund længere, står hovedet i rækken ("Spørg atleten først"), og resten står i
+// folden under den, så hele grunden kan læses uden at stå to gange.
+export const GRUND_TO_LINJER = 60
+export function reasonParts(name, reason) {
+  const text = String(reason ?? '')
+  if (`${name ?? ''} · ${text}`.length <= GRUND_TO_LINJER) return { head: text, rest: null }
+  const paren = text.indexOf(' (')
+  if (paren > 0 && text.endsWith(')')) return { head: text.slice(0, paren), rest: upperFirst(text.slice(paren + 2, -1)) }
+  const colon = text.indexOf(': ')
+  if (colon > 0) return { head: text.slice(0, colon), rest: upperFirst(text.slice(colon + 2)) }
+  return { head: text, rest: null }
+}
+const upperFirst = text => text.charAt(0).toLocaleUpperCase('da') + text.slice(1)
+
 export function CoachView(input = {}) {
   if (input.enabled !== true) return null
   const { tab = 'home', today = new Date(), athleteQuery = '', onAthleteQueryChange,
@@ -96,16 +111,19 @@ export function CoachView(input = {}) {
         'aria-label': `Skriv til ${row.athlete.name} med udkastet`,
         onClick: available ? () => { offerCoachDraft(draft); props.openProfile(row.athlete, 'beskeder', 'list') } : undefined }, 'Skriv'))
   }
-  // U11: én linje pr. opgave (navn · grund). Også-linjen, dagens tal, tung uge, ugens kost og udkastet
+  // U11: én række pr. opgave (navn · grund). Også-linjen, dagens tal, tung uge, ugens kost og udkastet
   // ligger samlet i en lukket fold under rækken, så tre opgaver ikke fylder hele telefonen.
-  const oneLine = { display: 'block', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+  // Ordre 1547: grunden står på højst 2 linjer ved 390 px; er den længere, står hele grunden i folden.
+  const twoLines = { display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, minWidth: 0, overflow: 'hidden', whiteSpace: 'normal' }
   const rowDetails = row => {
     const also = model.u3 && !inbox && alsoLine(row.reasons), day = dayLine(row)
     const heavy = heavyWeek && rowAttention(row), draft = draftBlock(row)
-    if (!also && !day && !heavy && !coachData && !draft) return null
+    const long = reasonParts(row.athlete.name, row.reason).rest
+    if (!also && !day && !heavy && !coachData && !draft && !long) return null
     return h('details', { 'data-u11-detaljer': row.athlete.id, style: { margin: '0 0 10px', paddingInline: 4 } },
       h('summary', { style: { cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center', color: '#b9b4a8' } },
-        arrow, draft ? 'Detaljer og udkast' : 'Detaljer'),
+        arrow, long ? 'Hele grunden' + (also || day || heavy || coachData || draft ? ' og detaljer' : '') : draft ? 'Detaljer og udkast' : 'Detaljer'),
+      long && h('span', { 'data-coach-hel-grund': true, style: { display: 'block', marginTop: 4, color: '#edeae2' } }, long),
       also && h('span', { 'data-coach-also': true, style: { display: 'block', marginTop: 4, color: '#b9b4a8' } }, also),
       day && h('span', { 'data-u7-day': row.athlete.id, style: { display: 'block', marginTop: 4, color: '#edeae2' } }, day),
       heavy && h(HeavyWeekLine, { key: `u6-heavy:${row.athlete.id}:${model.day}`, client: props.notesClient,
@@ -120,8 +138,8 @@ export function CoachView(input = {}) {
       ...(index === 0 && !inbox ? { borderColor: '#c8923a' } : {}) },
     onClick: available ? () => openCoachRow(row, props, inbox ? 'inbox' : 'list') : undefined },
     h('span', { style: { ...s.avatar, display: 'inline-flex', flex: 'none', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
-    h('span', { 'data-u11-linje': '', style: { ...oneLine, flex: 1 } },
-      h('strong', null, row.athlete.name), h('span', { style: { color: '#d9d4c8' } }, ' · ', row.reason))),
+    h('span', { 'data-u11-linje': '', style: { ...twoLines, flex: 1 } },
+      h('strong', null, row.athlete.name), h('span', { style: { color: '#d9d4c8' } }, ' · ', inbox ? row.reason : reasonParts(row.athlete.name, row.reason).head))),
     !inbox && rowDetails(row))
   const rows = inbox ? model.inbox : model.actions
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
@@ -156,10 +174,9 @@ export function CoachView(input = {}) {
           model.state === 'empty' ? h('p', { role: 'status' }, 'Ingen synlige atleter.') :
             !model.complete && h('p', { role: 'status' }, 'Overblikket skal opdateres. ',
               reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket')),
-      (rows.length > 0 || model.complete && !model.isLoading && !model.hasError) &&
-        h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
-      inbox && (rows.length > 0 || model.complete && !model.isLoading && !model.hasError) &&
-        h('p', { 'aria-live': 'polite', 'data-coach-inbox-count': true }, `${firstRows.length} af ${rows.length}`),
+      // Ordre 1547 (1544's fund): tom liste siger kun den rolige sætning nedenfor, ikke "0 opgaver i alt" og "0 af 0".
+      rows.length > 0 && h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
+      inbox && rows.length > 0 && h('p', { 'aria-live': 'polite', 'data-coach-inbox-count': true }, `${firstRows.length} af ${rows.length}`),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map(rowButton)) :
         model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError &&
           h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.'),

@@ -1,4 +1,4 @@
-import { CoachMenuMore } from './coachMenuMore.mjs'
+import { CoachMenuMore, CoachTemaValg } from './coachMenuMore.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Mobilens bundnavigation og menu-ark.
 // Samme navne som props som i Dashboard; linjerne står i et fragment (ingen DOM-ændring).
@@ -131,6 +131,8 @@ function CleanMobilNav({ coachRyd = false, programOverblik = false,
                     <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
                     <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
                   </div>
+                  {/* Ordre 1547 (Marc 16. nov. kl. 21:15): coachen vælger selv Mørk eller Lys, som atleten under Mig. */}
+                  <CoachTemaValg style={{ margin: '0.75rem 0' }} />
                   </CoachMenuMore>
                 </>
               )}
@@ -251,6 +253,8 @@ function LegacyMobilNav({ coachRyd = false, programOverblik = false,
                     <button onClick={exportBackup} disabled={exportingBackup} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>{exportingBackup ? '...' : '↓ Sikkerhedskopi'}</button>
                     <button onClick={() => signOutHard()} style={{ background: 'none', border: 'none', textAlign: 'left', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', padding: '0.55rem 0.25rem', cursor: 'pointer' }}>Log ud</button>
                   </div>
+                  {/* Ordre 1547 (Marc 16. nov. kl. 21:15): coachen vælger selv Mørk eller Lys, som atleten under Mig. */}
+                  <CoachTemaValg style={{ margin: '0.75rem 0' }} />
                 </>
               )}
             </div>

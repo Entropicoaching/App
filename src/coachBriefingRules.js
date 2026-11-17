@@ -297,8 +297,7 @@ function detectDropout({ athlete }, L, T, onVacation) {
 // er de `stalled` sidste uger med tunge saet, samme serie som detectStagnation. Lette saet (efter
 // navnet) og deload-uger taeller ikke. Logs er flade: { name, logged_at, weight, reps_completed,
 // skipped, session_id, block_name, week_number? }. null = intet sprunget eller fejlet.
-export function stilstandUdeSaet(logs, lift, stalled, weeks = []) {
-  const weekNumber = new Map(weeks.map(week => [mondayOf(toDay(week.start_date)), week.week_number]))
+function stilstandRaekker(logs, lift, weeks = []) {
   const deloadSessions = new Set(weeks.filter(week => erDeloadBlok(week.block_name))
     .flatMap(week => (week.sessions || []).map(session => session.id)))
   // erTungtSaet(navn, 1) ser kun paa navnet (let saet eller ej).
@@ -308,6 +307,15 @@ export function stilstandUdeSaet(logs, lift, stalled, weeks = []) {
   const heavyWeeks = [...new Set(rows
     .filter(({ log }) => !log.skipped && log.weight != null && erTungtSaet(log.name, log.reps_completed ?? log.reps))
     .map(row => mondayOf(row.d)))].sort((a, b) => a - b)
+  return { rows, heavyWeeks }
+}
+// Ordre 1547: toppen og de `stalled` uger efter den ligger i logs. Saa giver flere aeldre saet
+// samme svar fra stilstandUdeSaet (perioden starter ugen efter toppen).
+export const stilstandHarToppen = (logs, lift, stalled, weeks = []) =>
+  stalled >= 1 && stilstandRaekker(logs, lift, weeks).heavyWeeks.length > stalled
+export function stilstandUdeSaet(logs, lift, stalled, weeks = []) {
+  const weekNumber = new Map(weeks.map(week => [mondayOf(toDay(week.start_date)), week.week_number]))
+  const { rows, heavyWeeks } = stilstandRaekker(logs, lift, weeks)
   if (!heavyWeeks.length || !(stalled >= 1)) return null
   const high = heavyWeeks.length > stalled ? heavyWeeks[heavyWeeks.length - 1 - stalled] : null
   const from = high != null ? high + 7 * DAY : heavyWeeks[Math.max(0, heavyWeeks.length - stalled)]

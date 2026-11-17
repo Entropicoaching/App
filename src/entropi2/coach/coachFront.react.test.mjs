@@ -25,7 +25,9 @@ test('real React: task limit, order, closed remainder and inbox portions for zer
   for (const count of [0, 1, 10, 20]) {
     const p = fixture(count), model = coachHomeModel(p, day)
     const html = render(h(CoachScreen, p))
-    assert.match(html, new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
+    // Ordre 1547 (genfanget bevidst, 1544's fund): tom liste siger ikke "0 opgaver i alt" eller "0 af 0"; den rolige sætning står alene.
+    if (count === 0) assert.doesNotMatch(html, /opgaver i alt|0 af 0/)
+    else assert.match(html, new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
     assert.equal((html.split('data-coach-fold="opgaver"')[0].match(/data-coach-action=/g) ?? []).length, Math.min(3, count))
     assert.deepEqual([...html.matchAll(/data-coach-action="([^"]+)"/g)].map(m => m[1]), model.actions.map(r => r.key))
     if (count > 3) {
@@ -35,7 +37,8 @@ test('real React: task limit, order, closed remainder and inbox portions for zer
     const inbox = render(h(CoachScreen, { ...p, tab: 'inbox' }))
     assert.doesNotMatch(inbox, /Vis resten|type="search"/)
     assert.equal((inbox.match(/data-coach-action=/g) ?? []).length, Math.min(10, model.inbox.length))
-    assert.match(inbox, new RegExp(`${Math.min(10, count)} af ${count}`))
+    if (count === 0) assert.doesNotMatch(inbox, /0 af 0|opgaver i alt/)
+    else assert.match(inbox, new RegExp(`${Math.min(10, count)} af ${count}`))
     assert.equal(inbox.includes('Vis 10 flere'), count > 10)
     const expanded = render(h(CoachView, { ...p, tab: 'inbox', inboxLimit: 20 }))
     assert.deepEqual([...expanded.matchAll(/data-coach-action="([^"]+)"/g)].map(m => m[1]), model.inbox.map(r => r.key))

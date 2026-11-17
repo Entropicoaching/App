@@ -1,6 +1,8 @@
 import { addCalendarDays, calendarDay } from '../../calendarDate.js'
 import { u7Enabled } from '../u7/flag.mjs'
 import { readCoachDaily } from '../u7/coachData.mjs'
+import { stilstandHarToppen } from '../../coachBriefingRules.js'
+import { flatLog } from './coachAttention.mjs'
 
 // L1 (U3-planen afsnit 2): readiness og noter for coachens synlige atleter.
 // R2: der hentes loft plus 1. Rammer en af de to dele loftet eller fejler den,
@@ -23,7 +25,32 @@ async function capped(build, cap) {
 // resten af L1 er upåvirket.
 export const STILSTAND_DAGE = 26 * 7
 export const STILSTAND_CAP = 999
-async function readStagnation(client, ids, day) {
+// Ordre 1547: sætlæsningen henter kun det, reglen bruger. Løftet: et bredt navnefilter i samme kald
+// (stilstandUdeSaet klassificerer selv bagefter, så filteret må gerne tage for meget med). Perioden:
+// først toppen plus de stillestående uger (stalled + 2 uger); ligger toppen ikke der, 26 uger som før.
+// Fejler navnefilteret, læses uden det. Svaret gemmes pr. klient i STILSTAND_GEM_MS, så takten på
+// 60 sekunder ikke kalder RPC'en og sætlæsningen hver gang; en fejl gemmes aldrig.
+export const STILSTAND_NAVNE = Object.freeze({ Squat: ['squat'], 'Bænk': ['bænk', 'baenk', 'bench'], 'Dødløft': ['dl'], 'Sumo dødløft': ['dl'] })
+export const stilstandKortDage = stalled => Math.min(STILSTAND_DAGE, (stalled + 2) * 7)
+export const STILSTAND_GEM_MS = 15 * 60 * 1000
+const gemt = new WeakMap()
+async function readLiftLogs(client, signal, day) {
+  const lift = signal.o_metrics.lift, stalled = Number(signal.o_metrics.stalled_weeks)
+  const navne = STILSTAND_NAVNE[lift]
+  const read = (dage, filter) => capped(() => {
+    let query = client.from('exercise_logs')
+      .select(`athlete_id, logged_at, weight, reps_completed, skipped, exercises${filter ? '!inner' : ''}(name, session_id, sessions(weeks(week_number, block_name)))`)
+      .eq('athlete_id', signal.o_athlete_id).or('skipped.eq.true,reps_completed.lte.8')
+    if (filter) query = query.or(navne.map(navn => `name.ilike.*${navn}*`).join(','), { referencedTable: 'exercises' })
+    return query.gte('logged_at', `${addCalendarDays(day, -dage)}T00:00:00Z`).order('logged_at')
+  }, STILSTAND_CAP)
+  const withFallback = async dage => (navne ? await read(dage, true) : null) ?? read(dage, false)
+  const kort = stilstandKortDage(stalled)
+  const logs = await withFallback(kort)
+  if (kort >= STILSTAND_DAGE || (logs && stilstandHarToppen(logs.map(flatLog), lift, stalled))) return logs
+  return withFallback(STILSTAND_DAGE)
+}
+async function readStagnationNow(client, ids, day) {
   try {
     if (typeof client.rpc !== 'function') return null
     const result = await client.rpc('entropi_training_signals_v1')
@@ -32,21 +59,26 @@ async function readStagnation(client, ids, day) {
       (r.o_severity === 'alert' || r.o_severity === 'context') && Number(r.o_metrics?.stalled_weeks) >= 3 && typeof r.o_metrics?.lift === 'string')
     const out = {}
     await Promise.all(signals.map(async signal => {
-      const logs = await capped(() => client.from('exercise_logs')
-        .select('athlete_id, logged_at, weight, reps_completed, skipped, exercises(name, session_id, sessions(weeks(week_number, block_name)))')
-        .eq('athlete_id', signal.o_athlete_id).or('skipped.eq.true,reps_completed.lte.8')
-        .gte('logged_at', `${addCalendarDays(day, -STILSTAND_DAGE)}T00:00:00Z`).order('logged_at'), STILSTAND_CAP)
-      out[signal.o_athlete_id] = { signal, logs }
+      out[signal.o_athlete_id] = { signal, logs: await readLiftLogs(client, signal, day) }
     }))
     return out
   } catch {
     return null
   }
 }
+async function readStagnation(client, ids, day, now = Date.now()) {
+  const key = JSON.stringify([day, ids])
+  const hit = gemt.get(client)
+  if (hit && hit.key === key && now - hit.at < STILSTAND_GEM_MS) return hit.value
+  const value = await readStagnationNow(client, ids, day)
+  const ok = value !== null && Object.values(value).every(v => v.logs !== null)
+  if (ok) gemt.set(client, { key, at: now, value })
+  return value
+}
 
 // U7: med flaget læses også søvn og smerte fra tracking_daily_v1. Mangler tabellen, er daily null,
 // og L1 er komplet som før; dagsdata gør aldrig resten ufuldstændigt.
-export async function readCoachAttention(client, athleteIds, today, { daily = u7Enabled('coachData') } = {}) {
+export async function readCoachAttention(client, athleteIds, today, { daily = u7Enabled('coachData'), now } = {}) {
   const day = calendarDay(today)
   const ids = Array.isArray(athleteIds) ? [...new Set(athleteIds.filter(id => typeof id === 'string' && id))].sort() : []
   const base = { day, ids, complete: false, readiness: null, notes: null, daily: null }
@@ -59,7 +91,7 @@ export async function readCoachAttention(client, athleteIds, today, { daily = u7
     capped(() => client.from('exercise_logs').select('athlete_id, logged_at, note')
       .in('athlete_id', ids).not('note', 'is', null).gte('logged_at', `${addCalendarDays(day, -15)}T00:00:00Z`).order('logged_at'), L1_CAPS.notes),
     daily ? readCoachDaily(client, ids, day).catch(() => null) : null,
-    readStagnation(client, ids, day),
+    readStagnation(client, ids, day, now),
   ])
   return { ...base, complete: readiness !== null && notes !== null, readiness, notes, daily: Array.isArray(dayRows) ? dayRows : null,
     ...(stagnation ? { stagnation } : {}) }

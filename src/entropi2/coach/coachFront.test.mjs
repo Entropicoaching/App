@@ -46,7 +46,9 @@ test('home shows 0, 1 or 3 tasks before a closed remainder; inbox starts with te
     }
     p.openCoachPriorityItem = (...args) => calls.push(args)
     const model = coachHomeModel(p, day), tree = CoachView(p)
-    assert.match(text(tree), new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
+    // Ordre 1547 (genfanget bevidst, 1544's fund): tom liste siger ikke "0 opgaver i alt" eller "0 af 0"; den rolige sætning står alene.
+    if (count === 0) assert.doesNotMatch(text(tree), /opgaver i alt/)
+    else assert.match(text(tree), new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
     assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), model.actions.map(r => r.key))
     const rest = fold(tree, 'opgaver')
     assert.equal(Boolean(rest), count > 3)
@@ -78,8 +80,14 @@ test('inbox reveals ten more locally, preserves every task key and callback, and
     let visible = Math.min(10, count), tree = app.render()
     for (;;) {
       assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), expected.slice(0, visible).map(r => r.key))
-      assert.match(text(tree), new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
-      assert.equal(text(all(tree).find(n => n.props['data-coach-inbox-count'])), `${visible} af ${count}`)
+      // Ordre 1547 (genfanget bevidst, 1544's fund): tom liste siger ikke "0 opgaver i alt" eller "0 af 0"; den rolige sætning står alene.
+      if (count === 0) {
+        assert.doesNotMatch(text(tree), /opgaver i alt|0 af 0/)
+        assert.equal(all(tree).find(n => n.props['data-coach-inbox-count']), undefined)
+      } else {
+        assert.match(text(tree), new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
+        assert.equal(text(all(tree).find(n => n.props['data-coach-inbox-count'])), `${visible} af ${count}`)
+      }
       assert.ok(fold(tree, 'samtaler'))
       const more = all(tree).find(n => n.type === 'button' && text(n) === 'Vis 10 flere')
       assert.equal(Boolean(more), visible < count)

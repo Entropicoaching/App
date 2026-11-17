@@ -105,7 +105,7 @@ export function lowProtein(source, athleteId, day) {
 // uden øvelsesnavne. Fladt uden stigende RPE er ikke akut og vises ikke her. Ukendte sæt
 // (source.logs null) giver ingen grund, så coachen aldrig får det forkerte forslag.
 export const STILSTAND_RANK = 2
-const flatLog = r => ({ name: r?.exercises?.name, logged_at: r?.logged_at, weight: r?.weight,
+export const flatLog = r => ({ name: r?.exercises?.name, logged_at: r?.logged_at, weight: r?.weight,
   reps_completed: r?.reps_completed, skipped: r?.skipped, session_id: r?.exercises?.session_id,
   block_name: r?.exercises?.sessions?.weeks?.block_name, week_number: r?.exercises?.sessions?.weeks?.week_number })
 export function stagnationReason(source) {

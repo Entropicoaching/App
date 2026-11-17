@@ -42,6 +42,13 @@ function CoachReadStatus({ value, athleteId, enabled, label }) {
   </div>
 }
 
+// Ordre 1547: logget-procenten fra den tidligere ugerække står nu på ugens kort i listen.
+function loggetProcent(week, logs) {
+  const total = (week.sessions || []).flatMap(x => x.exercises || []).reduce((acc, e) => acc + (e.sets || 0), 0)
+  const logged = (logs || []).filter(log => !log.skipped && log.exercises?.sessions?.weeks?.week_number === week.week_number).length
+  return total > 0 && logged > 0 ? `${Math.round(logged / total * 100)} % logget` : ''
+}
+
 export default function ProgramTab({
   coachTabCleanup = false, addExercise, addingExercise, addingSession, addingWeek, addSession, addWeek,
   applyPeriodizationSuggestion, applyWeekDateFill,
@@ -544,20 +551,12 @@ export default function ProgramTab({
                   const compDate = selectedAthlete?.competition_date
                   const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
                   const weeksToComp = compMs != null ? Math.ceil(compMs / (7 * 24 * 3600 * 1000)) : null
-                  const latestWeekNum = weeks[weeks.length - 1]?.week_number
-                  const compWeekNum = weeksToComp != null ? latestWeekNum + weeksToComp - 1 : null
 
                   const complianceByWeekNum = {}
                   for (const log of athleteLogs) {
                     const wn = log.exercises?.sessions?.weeks?.week_number
                     if (wn == null || log.skipped) continue
                     complianceByWeekNum[wn] = (complianceByWeekNum[wn] || 0) + 1
-                  }
-                  const totalSetsByWeekNum = {}
-                  for (const week of weeks) {
-                    totalSetsByWeekNum[week.week_number] = (week.sessions || [])
-                      .flatMap(s => s.exercises || [])
-                      .reduce((acc, e) => acc + (e.sets || 0), 0)
                   }
 
                   // Højeste ugenummer atleten faktisk har logget i = den uge de
@@ -735,7 +734,7 @@ export default function ProgramTab({
                                         stroke={d.active ? d.color : 'none'} strokeWidth={d.active ? 1.5 : 0}
                                         rx="2"
                                       />
-                                      <text x={cx(i)} y={PAD_T + chartH + 12} textAnchor="middle" fontSize="7" fill={d.active ? '#c8923a' : '#7a7770'} fontFamily="'IBM Plex Mono', monospace">{d.w.week_number}</text>
+                                      <text x={cx(i)} y={PAD_T + chartH + 14} textAnchor="middle" fontSize="11" fill={d.active ? '#c8923a' : '#7a7770'} fontFamily="'IBM Plex Mono', monospace">{d.w.week_number}</text>
                                     </g>
                                   )
                                 })}
@@ -751,44 +750,7 @@ export default function ProgramTab({
                           </div>
                         )
                       })()}
-
-                      <div style={{ overflowX: 'auto', display: 'flex', gap: '0.5rem', paddingBottom: '0.5rem', width: '100%' }}>
-                        {weeks.map(week => {
-                          const isLatest = week.week_number === latestWeekNum
-                          const isCompWeek = compWeekNum != null && week.week_number === compWeekNum
-                          const isPostComp = compWeekNum != null && week.week_number > compWeekNum
-                          const logged = complianceByWeekNum[week.week_number] || 0
-                          const total = totalSetsByWeekNum[week.week_number] || 0
-                          const pct = total > 0 && logged > 0 ? Math.round(logged / total * 100) : null
-                          const pctColor = pct == null ? '#4a4844' : pct >= 80 ? '#6cba6c' : pct >= 50 ? '#c8923a' : '#e05555'
-                          return (
-                            <div
-                              key={week.id}
-                              style={{
-                                minWidth: '90px', flexShrink: 0,
-                                background: isLatest ? 'rgba(200,146,58,0.1)' : '#1c1c18',
-                                border: `1px solid ${isLatest ? '#c8923a' : isCompWeek ? 'rgba(108,186,108,0.5)' : 'rgba(237,234,226,0.07)'}`,
-                                padding: '0.65rem 0.75rem',
-                                cursor: 'pointer',
-                                opacity: isPostComp ? 0.35 : 1,
-                              }}
-                              role="button" tabIndex={0} aria-label={`Gå til uge ${week.week_number}`} onKeyDown={activateOnKey}
-                              onClick={() => gotoWeek(week)}
-                            >
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isLatest ? '#c8923a' : '#7a7770', marginBottom: '0.2rem' }}>
-                                UGE {week.week_number}{isCompWeek ? ' 🏆' : ''}
-                              </div>
-                              {week.block_name && (
-                                <div style={{ fontSize: '0.76rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>{week.block_name}</div>
-                              )}
-                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', marginTop: '0.25rem' }}>{week.sessions?.length || 0} træninger</div>
-                              {pct != null && (
-                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: pctColor, marginTop: '0.2rem' }}>{pct}%</div>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
+                      {/* Ordre 1547: ugekortet står én gang, i listen nedenfor (med logget-procenten); rækken her gentog det. */}
                     </div>
                   )
                 })()}
@@ -916,6 +878,7 @@ export default function ProgramTab({
                             {week.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', letterSpacing: '0.06em' }}>{new Date(week.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })} – {new Date(new Date(week.start_date + 'T12:00:00').getTime() + 6 * 24 * 3600 * 1000).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
                             {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{week.block_name}</span>}
                           </div>
+                          {loggetProcent(week, athleteLogs) && <div data-uge-logget={week.week_number} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.2rem' }}>{loggetProcent(week, athleteLogs)}</div>}
                           {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}
                           {week.block_description && <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '0.78rem', color: '#4a4844', fontStyle: 'italic', marginTop: '0.2rem' }}>{week.block_description}</div>}
                         </div>

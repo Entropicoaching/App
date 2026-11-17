@@ -133,6 +133,8 @@ test('U11 forside: hver opgave er én linje; detaljer og udkast ligger i en lukk
   const action = all.find(n => n.props?.['data-coach-action'])
   assert.ok(action, 'mindst én opgave')
   const line = nodes(action).find(n => n.props?.['data-u11-linje'] !== undefined)
-  assert.equal(line.props.style.whiteSpace, 'nowrap')
-  assert.equal(line.props.style.textOverflow, 'ellipsis')
+  // Ordre 1547 (genfanget bevidst, Marcs ord via 1544: grunden skal kunne læses ved 390 px): højst 2 linjer,
+  // og en længere grund deles, så resten står i folden under rækken (se coachSideFaerdig.test.mjs).
+  assert.equal(line.props.style.WebkitLineClamp, 2)
+  assert.equal(line.props.style.overflow, 'hidden')
 })

@@ -85,7 +85,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
                 lukket underkategori, saa programmet ikke skubbes ned; smerte aabner det, saa intet advarende gemmes. */}
             {styrke && (
               <details data-styrke-linje={styrke.dele.map(d => d.type).join(',')} open={styrke.dele.some(d => d.type === 'smerte')} style={{ ...s.card, marginBottom: '1rem', padding: '0.7rem 0.85rem', borderColor: styrke.dele[0].type === 'smerte' ? '#e0555538' : 'rgba(200,146,58,0.22)' }}>
-                <summary style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', minHeight: 32, display: 'flex', alignItems: 'center' }}><span aria-hidden="true" style={{ marginRight: '0.5rem', color: '#c8923a' }}>▸</span>Hvad gør atleten stærkere nu</summary>
+                <summary style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center' }}><span aria-hidden="true" style={{ marginRight: '0.5rem', color: '#c8923a' }}>▸</span>Hvad gør atleten stærkere nu</summary>
                 <div style={{ color: '#d8d4ca', fontSize: isMobile ? '0.78rem' : '0.74rem', lineHeight: 1.45 }}>
                   {styrke.dele.map((d, i) => (
                     <div key={d.type} style={{ color: d.type === 'smerte' ? '#e05555' : (d.type === 'ok' || d.type === 'let-uge') ? '#7a7770' : '#d8d4ca', marginTop: i ? '0.2rem' : 0 }}>{d.type === 'smerte' && profilePriorityContext?.label === 'Smerte' ? styrkeSmerteRegel(d.tekst) : d.tekst}</div>

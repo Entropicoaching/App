@@ -92,7 +92,9 @@ test('Kandidatens uge, pas, fase og vægt har særskilte tastaturbindinger', () 
   buttonBindings(program)
   for (const token of [
     'aria-expanded={openWeekId === week.id}', 'aria-expanded={openSessionId === session.id}',
-    'aria-label={`Gå til ${range}`}', 'aria-label={`Gå til uge ${week.week_number}`}',
+    // Ordre 1547 (genfanget bevidst): ugerækken med "Gå til uge N" er væk, så ugekortet står én gang.
+    // Ugen nås med tastaturet fra blokkens "Gå til" og ugekortets egen knap (aria-expanded nedenfor).
+    'aria-label={`Gå til ${range}`}',
     'aria-label={`Rediger anbefalet vægt for ${ex.name}`}',
     'onClick={e => { e.stopPropagation(); setOpenWeekId',
     'onClick={e => { e.stopPropagation(); setOpenSessionId',

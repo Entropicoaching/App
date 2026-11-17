@@ -1,4 +1,4 @@
-import { CoachMenuMore } from './coachMenuMore.mjs'
+import { CoachMenuMore, CoachTemaValg } from './coachMenuMore.mjs'
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Sidebaren: logo, menupunkter, atletliste, "Se som atlet", Værktøjer.
 // Samme navne som props som i Dashboard; linjerne står i et fragment (ingen DOM-ændring).
@@ -159,6 +159,8 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
                       onMouseEnter={e => e.currentTarget.style.color = '#e05555'} onMouseLeave={e => e.currentTarget.style.color = '#7a7770'}>
                       <span>Log ud</span><span>→</span>
                     </button>
+                    {/* Ordre 1547 (Marc 16. nov. kl. 21:15): coachen vælger selv Mørk eller Lys, som atleten under Mig. */}
+                    <CoachTemaValg style={{ margin: '0.75rem 0' }} />
                   </>
                 )
               })()}
