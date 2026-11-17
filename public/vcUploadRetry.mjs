@@ -14,6 +14,13 @@ export function uploadRetryEnabled(storage = () => globalThis.localStorage, sear
 // U4: samme grænse og tekst som appens validateVideoUploadRequest (src/videoCoachUpload.js).
 export const VC_UPLOAD_MAX_BYTES = 50 * 1024 * 1024
 export const VC_UPLOAD_TOO_LARGE = 'Videoen er større end 50 MB. Optag et kortere klip eller i lavere kvalitet (fx 1080p), og send igen.'
+// ORDRE 1616v: med videolageret (R2) bærer appen lager=1 i adressen, og grænsen er 200 MB
+// (samme tal som VIDEOCOACH_LAGER_MAX_BYTES i src/videoCoachUpload.js), så 3 minutter kan sendes.
+export const VC_LAGER_MAX_BYTES = 200 * 1024 * 1024
+export function uploadMaxBytes(search = globalThis.location?.search) {
+  try { return new URLSearchParams(search || '').get('lager') === '1' ? VC_LAGER_MAX_BYTES : VC_UPLOAD_MAX_BYTES }
+  catch { return VC_UPLOAD_MAX_BYTES }
+}
 
 export function mountUploadRetry(document, retry, storage, search) {
   if (!uploadRetryEnabled(storage, search)) return null
@@ -29,6 +36,8 @@ export function mountUploadRetry(document, retry, storage, search) {
   button.textContent = 'Prøv igen'
   button.style.cssText = 'min-height:44px;min-width:100px'
   button.hidden = true
+  const maxBytes = uploadMaxBytes(search)
+  const tooLarge = VC_UPLOAD_TOO_LARGE.replace('50 MB', `${Math.round(maxBytes / 1048576)} MB`)
   panel.append(status, button)
   const host = document.getElementById?.('athleteSubmitCard') || document.body
   host.append(panel)
@@ -48,11 +57,11 @@ export function mountUploadRetry(document, retry, storage, search) {
   }
   return {
     reset() { if (!active) panel.hidden = true },
-    tooLargeText: VC_UPLOAD_TOO_LARGE,
+    tooLargeText: tooLarge,
     // En for stor fil afvises før overførslen. Intet "Prøv igen": samme fil fejler igen.
     refuseTooLarge(file) {
-      if (active || !(file?.size > VC_UPLOAD_MAX_BYTES)) return false
-      show(VC_UPLOAD_TOO_LARGE)
+      if (active || !(file?.size > maxBytes)) return false
+      show(tooLarge)
       return true
     },
     run(send) {

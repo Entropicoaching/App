@@ -7,6 +7,23 @@ export const VIDEOCOACH_UPLOAD_BUCKET = 'videocoach-uploads'
 // (app-planen 9. nov., afsnit 2). Grænsen tjekkes her, før overførslen starter,
 // så en lang video aldrig fejler først efter hele overførslen.
 export const VIDEOCOACH_UPLOAD_MAX_BYTES = 50 * 1024 * 1024
+// ORDRE 1616v: med videolageret (R2) går klippet uden om Supabase-planens 50 MB. Et klargjort klip
+// fylder ca. 30 MB pr. minut (4 Mbit/s) og appens egen optagelse ca. 38 MB (5 Mbit/s), så 3 minutter
+// er 90 til 115 MB. Workeren tager op til 1 GB direkte til R2 (src/videolager/worker.js).
+export const VIDEOCOACH_LAGER_MAX_BYTES = 200 * 1024 * 1024
+
+export function videoUploadMaxBytes(lagerTil) {
+  return lagerTil === true ? VIDEOCOACH_LAGER_MAX_BYTES : VIDEOCOACH_UPLOAD_MAX_BYTES
+}
+
+// Reserven til Supabase findes kun for klip, Supabase kan tage imod.
+export function videoUploadReserveMulig(fileSize) {
+  return Number(fileSize) <= VIDEOCOACH_UPLOAD_MAX_BYTES
+}
+
+export function videoUploadTooLargeText(maxBytes = VIDEOCOACH_UPLOAD_MAX_BYTES) {
+  return `Videoen er større end ${Math.round(maxBytes / 1048576)} MB. Optag et kortere klip eller i lavere kvalitet (fx 1080p), og send igen.`
+}
 
 // Sti-udledningen bruger KUN mime-typen, aldrig filnavnet — se ORDRE-Vaidya.md.
 export const VIDEOCOACH_UPLOAD_EXT_BY_MIME = {
@@ -91,7 +108,7 @@ function validBarPath(barPath) {
 
 export function validateVideoUploadRequest({
   athleteId, clientAnalysisId, lift, variation, mimeType, fileSize, loadKg, rpe, athleteNote,
-  plateCalibration, barPath = null,
+  plateCalibration, barPath = null, maxBytes = VIDEOCOACH_UPLOAD_MAX_BYTES,
 } = {}) {
   if (!isUuid(athleteId)) return 'Atleten kunne ikke identificeres'
   if (!isUuid(clientAnalysisId)) return 'Analysen mangler et gyldigt klient-id'
@@ -99,7 +116,7 @@ export function validateVideoUploadRequest({
   if (!/^[a-z0-9]+([._-][a-z0-9]+)*$/.test(variation || '')) return 'Ugyldig variation'
   if (!videoUploadMimeAllowed(mimeType)) return 'Videoformatet understøttes ikke'
   if (!finiteInRange(fileSize, Number.MIN_VALUE, Number.MAX_VALUE) || fileSize == null) return 'Videofilen er tom eller ugyldig'
-  if (Number(fileSize) > VIDEOCOACH_UPLOAD_MAX_BYTES) return 'Videoen er større end 50 MB. Optag et kortere klip eller i lavere kvalitet (fx 1080p), og send igen.'
+  if (Number(fileSize) > maxBytes) return videoUploadTooLargeText(maxBytes)
   if (!finiteInRange(loadKg, 0, 1000)) return 'Belastningen er uden for det tilladte interval'
   if (!finiteInRange(rpe, 0, 10)) return 'RPE er uden for det tilladte interval'
   if (athleteNote != null && (typeof athleteNote !== 'string' || athleteNote.length > 1000))

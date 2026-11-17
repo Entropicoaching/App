@@ -13,7 +13,7 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft } from '../videoCoachSubmission'
 import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequest,
-  videoUploadAlreadyExistsError, VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
+  videoUploadAlreadyExistsError, videoUploadMaxBytes, videoUploadReserveMulig, VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
 import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
@@ -154,6 +154,8 @@ export function useVideoCoachBro({
           fileSize: file?.size, loadKg: selectedSet ? selectedSet.load_kg : message.loadKg, rpe: message.rpe,
           athleteNote: message.athleteNote, plateCalibration: message.plateCalibration,
           barPath: message.barPath,
+          // ORDRE 1616v: med videolageret er grænsen 200 MB, så klip på 3 minutter kan sendes.
+          maxBytes: videoUploadMaxBytes(Boolean(import.meta.env?.VITE_VIDEOLAGER_URL)),
         })
         if (requestError || !(file instanceof Blob)) {
           reply({ ok: false, error: requestError || 'Ugyldig video' })
@@ -183,7 +185,9 @@ export function useVideoCoachBro({
             : null
           // ORDRE 1610v: tager videolageret ikke imod klippet (og atleten ikke selv har afbrudt), sendes det
           // til Supabase som før, så en fejl i lageret aldrig alene stopper en indsendelse.
+          // ORDRE 1616v: et klip over Supabases 50 MB har ingen reserve; så vises lagerets fejl, og atleten kan sende igen.
           upload = lagerSvar && (!lagerSvar.error || controller.signal.aborted) ? lagerSvar
+            : !videoUploadReserveMulig(file.size) ? (lagerSvar || { data: null, error: { message: 'Videolageret svarede ikke. Prøv igen' } })
             : videoUploadRetryEnabled()
             ? await uploadVideoAttempt(createAbortableUploadClient, controller.signal,
               VIDEOCOACH_UPLOAD_BUCKET, path, file, mimeType)

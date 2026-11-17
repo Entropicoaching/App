@@ -90,6 +90,6 @@ test('atletens upload falder tilbage til Supabase, når videolageret ikke tager 
   const start = hook.indexOf('const lagerSvar = lager'), slut = hook.indexOf('} catch (error) {', start)
   assert.ok(start > 0 && slut > start)
   const valg = hook.slice(start, slut)
-  assert.match(valg, /upload = lagerSvar && \(!lagerSvar\.error \|\| controller\.signal\.aborted\) \? lagerSvar\n\s+: videoUploadRetryEnabled\(\)/)
+  assert.match(valg, /upload = lagerSvar && \(!lagerSvar\.error \|\| controller\.signal\.aborted\) \? lagerSvar\n(\s+: !videoUploadReserveMulig\(file\.size\) [^\n]+\n)?\s+: videoUploadRetryEnabled\(\)/)
   assert.match(valg, /\.from\(VIDEOCOACH_UPLOAD_BUCKET\)\n\s+\.upload\(path, file, \{ contentType: mimeType, upsert: false \}\)/)
 })
