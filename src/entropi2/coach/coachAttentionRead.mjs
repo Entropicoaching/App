@@ -24,7 +24,6 @@ async function capped(build, cap) {
 // gælder hver atlet for sig. Fejler noget, er stilstand null for alle eller for den ene atlet;
 // resten af L1 er upåvirket.
 export const STILSTAND_DAGE = 26 * 7
-export const STILSTAND_CAP = 999
 // Ordre 1547: sætlæsningen henter kun det, reglen bruger. Løftet: et bredt navnefilter i samme kald
 // (stilstandUdeSaet klassificerer selv bagefter, så filteret må gerne tage for meget med). Perioden:
 // først toppen plus de stillestående uger (stalled + 2 uger); ligger toppen ikke der, 26 uger som før.
@@ -35,21 +34,46 @@ export const STILSTAND_NAVNE = Object.freeze({ Squat: ['squat'], 'Bænk': ['b_nk
 export const stilstandKortDage = stalled => Math.min(STILSTAND_DAGE, (stalled + 2) * 7)
 export const STILSTAND_GEM_MS = 15 * 60 * 1000
 const gemt = new WeakMap()
+// Ordre 1562: intet loft, der tavst taber grunden. Sættene læses side for side fra de nyeste (faldende
+// logged_at og id) og stopper, så snart toppen og de stillestående uger efter den er med, eller ved en tom
+// side. Ældre sæt ændrer ikke svaret (stilstandUdeSaet tæller fra ugen efter toppen). Når grænsen på
+// STILSTAND_SIDER sider nås uden toppen, bruges de nyeste rækker og svaret får loft: true; sprungne og
+// fejlede sæt i dem ligger i de stillestående uger, så "Spørg atleten først" stadig er rigtig.
+export const STILSTAND_SIDE = 500
+export const STILSTAND_SIDER = 8
+async function readPages(build, done) {
+  const rows = []
+  try {
+    for (let side = 0; side < STILSTAND_SIDER; side++) {
+      const result = await build().range(rows.length, rows.length + STILSTAND_SIDE - 1)
+      if (result?.error || !Array.isArray(result?.data)) return null
+      if (!result.data.length) return { rows, loft: false }
+      rows.push(...result.data)
+      if (done(rows)) return { rows, loft: false }
+    }
+  } catch {
+    return null
+  }
+  return { rows, loft: true }
+}
 async function readLiftLogs(client, signal, day) {
   const lift = signal.o_metrics.lift, stalled = Number(signal.o_metrics.stalled_weeks)
   const navne = STILSTAND_NAVNE[lift]
-  const read = (dage, filter) => capped(() => {
+  const harToppen = rows => stilstandHarToppen(rows.map(flatLog), lift, stalled)
+  const read = (dage, filter) => readPages(() => {
     let query = client.from('exercise_logs')
-      .select(`athlete_id, logged_at, weight, reps_completed, skipped, exercises${filter ? '!inner' : ''}(name, session_id, sessions(weeks(week_number, block_name)))`)
+      .select(`id, athlete_id, logged_at, weight, reps_completed, skipped, exercises${filter ? '!inner' : ''}(name, session_id, sessions(weeks(week_number, block_name)))`)
       .eq('athlete_id', signal.o_athlete_id).or('skipped.eq.true,reps_completed.lte.8')
     if (filter) query = query.or(navne.map(navn => `name.ilike.*${navn}*`).join(','), { referencedTable: 'exercises' })
-    return query.gte('logged_at', `${addCalendarDays(day, -dage)}T00:00:00Z`).order('logged_at')
-  }, STILSTAND_CAP)
+    return query.gte('logged_at', `${addCalendarDays(day, -dage)}T00:00:00Z`)
+      .order('logged_at', { ascending: false }).order('id', { ascending: false })
+  }, harToppen)
   const withFallback = async dage => (navne ? await read(dage, true) : null) ?? read(dage, false)
   const kort = stilstandKortDage(stalled)
-  const logs = await withFallback(kort)
-  if (kort >= STILSTAND_DAGE || (logs && stilstandHarToppen(logs.map(flatLog), lift, stalled))) return logs
-  return withFallback(STILSTAND_DAGE)
+  let svar = await withFallback(kort)
+  if (svar && !svar.loft && kort < STILSTAND_DAGE && !harToppen(svar.rows)) svar = await withFallback(STILSTAND_DAGE)
+  if (!svar) return { logs: null }
+  return { logs: svar.rows.reverse(), ...(svar.loft ? { loft: true } : {}) }
 }
 async function readStagnationNow(client, ids, day) {
   try {
@@ -60,7 +84,7 @@ async function readStagnationNow(client, ids, day) {
       (r.o_severity === 'alert' || r.o_severity === 'context') && Number(r.o_metrics?.stalled_weeks) >= 3 && typeof r.o_metrics?.lift === 'string')
     const out = {}
     await Promise.all(signals.map(async signal => {
-      out[signal.o_athlete_id] = { signal, logs: await readLiftLogs(client, signal, day) }
+      out[signal.o_athlete_id] = { signal, ...await readLiftLogs(client, signal, day) }
     }))
     return out
   } catch {

@@ -1,9 +1,10 @@
 // Ordre 1547: sætlæsningen til stilstand henter kun løftet og perioden, reglen bruger, og samme svar
-// som før (ordre 1545: alle tunge eller sprungne sæt i 26 uger). Kun syntetiske data.
+// som før (ordre 1545: alle tunge eller sprungne sæt i 26 uger). Ordre 1562: side for side fra de nyeste,
+// uden tavst loft. Kun syntetiske data.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { addCalendarDays } from '../../calendarDate.js'
-import { readCoachAttention, attentionFor, STILSTAND_DAGE, STILSTAND_CAP, STILSTAND_GEM_MS } from './coachAttentionRead.mjs'
+import { readCoachAttention, attentionFor, STILSTAND_DAGE, STILSTAND_GEM_MS, STILSTAND_SIDE, STILSTAND_SIDER, stilstandKortDage } from './coachAttentionRead.mjs'
 import { stagnationReason } from './coachAttention.mjs'
 
 const day = '2026-11-16'
@@ -28,15 +29,16 @@ function athleteLogs(tops, extra = () => [], pas = 2) {
   }
   return rows
 }
+let nextId = 0
 function row(at, name, weight, reps, w, skipped = false) {
-  return { athlete_id: A, logged_at: at, weight, reps_completed: skipped ? null : reps, skipped,
+  return { id: ++nextId, athlete_id: A, logged_at: at, weight, reps_completed: skipped ? null : reps, skipped,
     exercises: { name, session_id: `syn-pas-${at}`, sessions: { weeks: { week_number: w + 1, block_name: 'Opbygning' } } } }
 }
 
 // ILIKE som i en database, der kun folder ASCII: Æ og æ er forskellige tegn; * er %, _ er ét tegn.
 const asciiLower = text => String(text ?? '').replace(/[A-Z]/g, c => c.toLowerCase())
 const ilike = (pattern, value) => new RegExp(`^${asciiLower(pattern).split('*').map(part => part.split('_').map(t => t.replace(/[.+?^$()|[\]{}\\]/g, '\\$&')).join('.')).join('.*')}$`).test(asciiLower(value))
-// Lille PostgREST-lignende falsk klient: eq, gte, or (også på exercises), !inner, limit. Tæller rækker pr. kald.
+// Lille PostgREST-lignende falsk klient: eq, gte, or (også på exercises), !inner, order, range, limit. Tæller rækker pr. kald.
 function fakeClient(logs, { rpcRows, failNameFilter = false } = {}) {
   const calls = [], rpcCalls = []
   const match = (r, cond) => {
@@ -51,7 +53,7 @@ function fakeClient(logs, { rpcRows, failNameFilter = false } = {}) {
     calls, rpcCalls,
     rpc: async name => { rpcCalls.push(name); return { data: rpcRows, error: null } },
     from(table) {
-      const call = { table, filters: [], inner: false, nameFilter: null, limit: null, rows: 0 }
+      const call = { table, filters: [], inner: false, nameFilter: null, limit: null, range: null, order: [], rows: 0 }
       calls.push(call)
       const b = {
         select(cols) { call.inner = /exercises!inner/.test(cols); return b },
@@ -65,7 +67,8 @@ function fakeClient(logs, { rpcRows, failNameFilter = false } = {}) {
           else { call.stag = true; call.filters.push(r => conds.some(c => match(r, c))) }
           return b
         },
-        order() { return b },
+        order(col, { ascending = true } = {}) { call.order.push([col, ascending ? 1 : -1]); return b },
+        range(from, to) { call.range = [from, to]; return b },
         limit(n) { call.limit = n; return b },
         then(resolve, reject) {
           if (call.nameFilter && failNameFilter) return Promise.resolve({ data: null, error: { message: 'syntetisk' } }).then(resolve, reject)
@@ -74,6 +77,11 @@ function fakeClient(logs, { rpcRows, failNameFilter = false } = {}) {
             rows = rows.map(r => (call.nameFilter.some(c => match(r.exercises, c)) ? r : { ...r, exercises: null }))
             if (call.inner) rows = rows.filter(r => r.exercises)
           }
+          rows = [...rows].sort((x, y) => {
+            for (const [col, dir] of call.order) if (x[col] !== y[col]) return (x[col] < y[col] ? -1 : 1) * dir
+            return 0
+          })
+          if (call.range) rows = rows.slice(call.range[0], call.range[1] + 1)
           if (call.limit != null) rows = rows.slice(0, call.limit)
           call.rows = rows.length
           return Promise.resolve({ data: rows, error: null }).then(resolve, reject)
@@ -86,11 +94,12 @@ function fakeClient(logs, { rpcRows, failNameFilter = false } = {}) {
 const signal = stalled => ({ o_athlete_id: A, o_athlete_name: 'Atlet', o_detector: 'stagnation', o_severity: 'alert',
   o_headline: 'Atlet: Squat stået stille', o_detail: 'x', o_metrics: { lift: 'Squat', stalled_weeks: stalled } })
 
-// Før (ordre 1545): alle tunge eller sprungne sæt i 26 uger, uden løftfilter.
+// Før (ordre 1545): alle tunge eller sprungne sæt i 26 uger, uden løftfilter, med loft på 999 rækker.
+const LOFT_1545 = 999
 const before = logs => {
   const from = `${addCalendarDays(day, -STILSTAND_DAGE)}T00:00:00Z`
   const rows = logs.filter(r => r.athlete_id === A && (r.skipped === true || (r.reps_completed != null && r.reps_completed <= 8)) && r.logged_at >= from)
-  return rows.length > STILSTAND_CAP ? null : rows
+  return rows.length > LOFT_1545 ? null : rows
 }
 const setsRead = client => client.calls.filter(c => c.stag)
 
@@ -166,7 +175,7 @@ test('travl atlet: før ramte loftet på 999 rækker, og grunden forsvandt; nu v
   const client = fakeClient(logs, { rpcRows: [signal(3)] })
   const result = await readCoachAttention(client, [A], day, { daily: false, now: 0 })
   assert.match(stagnationReason(attentionFor(result, A, day).stagnation).reason, /Spørg atleten først \(squat står stille, 1 sprunget sæt i uge 25\)/)
-  console.log(`TAL travl: før over loftet (${logs.length} saet i alt), efter ${setsRead(client).map(c => c.rows).join(' + ')} i ét kald`)
+  console.log(`TAL travl: før over loftet (${logs.length} saet i alt), efter ${setsRead(client).map(c => c.rows).join(' + ')} i ${setsRead(client).length} kald`)
 })
 
 test('navnefilteret tager alle stavemåder af hovedløftene med, også uden at databasen folder Æ', async () => {
@@ -179,4 +188,68 @@ test('navnefilteret tager alle stavemåder af hovedløftene med, også uden at d
     assert.ok(lift, navn)
     assert.ok(STILSTAND_NAVNE[lift].some(m => ilike(`*${m}*`, navn)), `${navn} (${lift}) skal med i filteret`)
   }
+})
+
+// Ordre 1562: samme løft, mange sæt. extra lægger `n` ekstra squatsæt i hvert pas på den flade vægt (ingen ny top).
+const mangeSquat = (fra, n) => (w, p) => [
+  ...(w >= fra ? Array.from({ length: n }, () => ['Squat', RISING[22], 5]) : []),
+  ...(w === 24 && p === 1 ? [['Squat', RISING[22], 5, true]] : []),
+]
+// Hele svaret uden loft: alle løftets tunge eller sprungne sæt i 26 uger (det reglen ville se med ubegrænset læsning).
+const fuld = logs => {
+  const from = `${addCalendarDays(day, -STILSTAND_DAGE)}T00:00:00Z`
+  return logs.filter(r => r.exercises.name === 'Squat' && (r.skipped === true || r.reps_completed <= 8) && r.logged_at >= from)
+}
+
+test('over 999 squatsæt i 26 uger: læses side for side, intet tabes, og grunden er "Spørg atleten først"', async () => {
+  const [tops] = scenarios.spoerg
+  const logs = athleteLogs(tops, mangeSquat(0, 80), 3)
+  assert.ok(fuld(logs).length > 999, `${fuld(logs).length} squatsæt`)
+  const client = fakeClient(logs, { rpcRows: [signal(3)] })
+  const result = await readCoachAttention(client, [A], day, { daily: false, now: 0 })
+  const stag = attentionFor(result, A, day).stagnation
+  assert.equal(stag.loft, undefined)
+  assert.deepEqual(stagnationReason(stag), stagnationReason({ signal: signal(3), logs: fuld(logs) }))
+  assert.match(stagnationReason(stag).reason, /^Spørg atleten først \(squat står stille, 1 sprunget sæt i uge 25\)/)
+  const reads = setsRead(client)
+  assert.ok(reads.length > 1 && reads.every(c => c.range && c.range[1] - c.range[0] + 1 === STILSTAND_SIDE), 'flere sider à STILSTAND_SIDE')
+  assert.deepEqual(reads[0].order, [['logged_at', -1], ['id', -1]], 'nyeste først, id som tiebreak')
+  console.log(`TAL meget travl: ${fuld(logs).length} squatsæt i 26 uger, læst ${reads.map(c => c.rows).join(' + ')} i ${reads.length} kald`)
+})
+
+test('vinduet: kun løftet med stilstand og kun fra det korte vindue, når toppen ligger der', async () => {
+  const [tops, extra] = scenarios.spoerg
+  const logs = athleteLogs(tops, extra)
+  const client = fakeClient(logs, { rpcRows: [signal(3)] })
+  const result = await readCoachAttention(client, [A], day, { daily: false, now: 0 })
+  const got = attentionFor(result, A, day).stagnation.logs
+  const from = `${addCalendarDays(day, -stilstandKortDage(3))}T00:00:00Z`
+  assert.ok(got.length > 0)
+  assert.ok(got.every(r => /squat/i.test(r.exercises.name)), 'kun squat (navnefilteret)')
+  assert.ok(got.every(r => r.logged_at >= from), 'kun fra det korte vindue')
+  assert.ok(logs.some(r => r.exercises.name === 'Bænkpres' && r.logged_at >= from), 'bænk fandtes i vinduet, men er filtreret fra')
+  assert.deepEqual(got.map(r => r.logged_at), [...got.map(r => r.logged_at)].sort(), 'stigende igen efter læsningen')
+})
+
+test('grænsen: STILSTAND_SIDER sider uden toppen giver de nyeste sæt, loft: true og stadig grunden', async () => {
+  const [tops] = scenarios.spoerg
+  const perUge = Math.ceil((STILSTAND_SIDER * STILSTAND_SIDE) / 3) + 50
+  const logs = athleteLogs(tops, mangeSquat(23, Math.ceil(perUge / 2)))
+  const client = fakeClient(logs, { rpcRows: [signal(3)] })
+  const result = await readCoachAttention(client, [A], day, { daily: false, now: 0 })
+  const stag = attentionFor(result, A, day).stagnation
+  assert.equal(stag.loft, true, 'loftet er synligt i svaret')
+  assert.equal(stag.logs.length, STILSTAND_SIDER * STILSTAND_SIDE)
+  assert.equal(setsRead(client).length, STILSTAND_SIDER, 'ikke flere kald end grænsen')
+  assert.match(stagnationReason(stag).reason, /^Spørg atleten først \(squat står stille, 1 sprunget sæt i uge 25\)/)
+})
+
+test('10 minutter med takten på 60 sekunder: 1 RPC og én sætlæsning (før: 11 af hver)', async () => {
+  const [tops, extra] = scenarios.spoerg
+  const client = fakeClient(athleteLogs(tops, extra), { rpcRows: [signal(3)] })
+  for (let i = 0; i <= 10; i++) await readCoachAttention(client, [A], day, { daily: false, now: 5_000_000 + i * 60_000 })
+  assert.equal(client.rpcCalls.length, 1)
+  const reads = setsRead(client).length
+  assert.equal(reads, 1)
+  console.log(`TAL 10 min: ${client.rpcCalls.length} RPC og ${reads} sætlæsning ved 11 opdateringer`)
 })
