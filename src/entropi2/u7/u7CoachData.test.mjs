@@ -133,3 +133,28 @@ test('U7 4/5: flaget følger samme mønster', () => {
   assert.equal(u7Enabled('coachData', true), true)
   assert.equal(u7Enabled('coachData', false), false)
 })
+
+test('1607: dagslinjen viser væske som snit i liter over dage med mere end 0 ml, uden nyt kald', async () => {
+  const water = [2000, 2500, 3000, 2200, 2800].map((ml, i) => ({ athlete_id: A, logged_date: d([0, -1, -2, -4, -5][i]), water_ml: ml }))
+  assert.equal(dayNumbersLine(water, day), 'Væske 2,5 l i snit (5 dage) · sidste 7 dage')
+  assert.equal(dayNumbersLine([...daily, ...water], day), 'Søvn 2,3/5 (3 dage) · Smerte 3/10 10. nov. · Væske 2,5 l i snit (5 dage) · sidste 7 dage')
+  assert.equal(dayNumbersLine([{ athlete_id: A, logged_date: d(-1), water_ml: 1000 }], day), 'Væske 1,0 l i snit (1 dag) · sidste 7 dage')
+  assert.equal(dayNumbersLine([{ athlete_id: A, logged_date: d(-9), water_ml: 3000 }], day), null, 'uden for vinduet tæller ikke')
+  assert.equal(dayNumbersLine(daily, day), 'Søvn 2,3/5 (3 dage) · Smerte 3/10 10. nov. · sidste 7 dage', 'ingen væske: linjen som før')
+  const none = [{ athlete_id: A, logged_date: d(-1), water_ml: null }, { athlete_id: A, logged_date: d(0), water_ml: 0 }, { athlete_id: A, logged_date: d(-2), water_ml: '2000' }]
+  assert.equal(dayNumbersLine(none, day), null, 'null, 0 og tekst tælles ikke')
+  assert.equal(dayNumbersLine([...daily.slice(0, 3), ...none], day), 'Søvn 3,0/5 (2 dage) · Smerte 6/10 (venstre knæ) 9. nov. · sidste 7 dage')
+})
+
+test('1607: kun søvn uden væske giver kun søvndelen', () => {
+  assert.equal(dayNumbersLine([{ athlete_id: A, logged_date: d(-1), sleep_quality: 4 }], day), 'Søvn 4,0/5 (1 dag) · sidste 7 dage')
+})
+
+test('1607: coachens ene dagslæsning henter water_ml i samme select', async () => {
+  const selects = []
+  const backend = fakeBackend({ tables: { readiness_logs: [], exercise_logs: [], tracking_daily_v1: [{ athlete_id: A, logged_date: d(-1), water_ml: 2500 }] } })
+  const client = { from: table => { const b = backend.client.from(table); const select = b.select; b.select = cols => (selects.push([table, cols]), select(cols)); return b } }
+  const result = await readCoachAttention(client, [A], day, { daily: true })
+  assert.ok(selects.some(([t, cols]) => t === 'tracking_daily_v1' && /water_ml/.test(cols)), 'select indeholder water_ml')
+  assert.equal(attentionFor(result, A, day).daily[0].water_ml, 2500)
+})
