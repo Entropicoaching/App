@@ -158,3 +158,26 @@ test('1607: coachens ene dagslæsning henter water_ml i samme select', async () 
   assert.ok(selects.some(([t, cols]) => t === 'tracking_daily_v1' && /water_ml/.test(cols)), 'select indeholder water_ml')
   assert.equal(attentionFor(result, A, day).daily[0].water_ml, 2500)
 })
+
+test('1612: dagslinjen viser Kostvane x af 7 dage for dage med en ikke-tom kost_done_at', () => {
+  const done = o => ({ athlete_id: A, logged_date: d(o), kost_done_at: `${d(o)}T10:00:00.000Z` })
+  assert.equal(dayNumbersLine([done(0), done(-2), done(-3)], day), 'Kostvane 3 af 7 dage · sidste 7 dage')
+  assert.equal(dayNumbersLine([...daily, done(-1)], day), 'Søvn 2,3/5 (3 dage) · Smerte 3/10 10. nov. · Kostvane 1 af 7 dage · sidste 7 dage')
+  assert.equal(dayNumbersLine([done(-9)], day), null, 'uden for vinduet tæller ikke')
+  assert.equal(dayNumbersLine(daily, day), 'Søvn 2,3/5 (3 dage) · Smerte 3/10 10. nov. · sidste 7 dage', 'ingen kostvane: linjen som efter 1607')
+})
+
+test('1612: null og tom kost_done_at tælles ikke', () => {
+  const rows = [{ athlete_id: A, logged_date: d(0), kost_done_at: null }, { athlete_id: A, logged_date: d(-1), kost_done_at: '' }, { athlete_id: A, logged_date: d(-2) }]
+  assert.equal(dayNumbersLine(rows, day), null)
+})
+
+test('1612: coachens ene dagslæsning henter kost_done_at i samme select', async () => {
+  const selects = []
+  const backend = fakeBackend({ tables: { readiness_logs: [], exercise_logs: [], tracking_daily_v1: [{ athlete_id: A, logged_date: d(-1), kost_done_at: `${d(-1)}T10:00:00.000Z` }] } })
+  const client = { from: table => { const b = backend.client.from(table); const select = b.select; b.select = cols => (selects.push([table, cols]), select(cols)); return b } }
+  const result = await readCoachAttention(client, [A], day, { daily: true })
+  assert.ok(selects.some(([t, cols]) => t === 'tracking_daily_v1' && /kost_done_at/.test(cols)), 'select indeholder kost_done_at')
+  assert.equal(selects.filter(([t, cols]) => t === 'tracking_daily_v1' && /logged_date/.test(cols)).length, 1, 'ét datakald, intet ekstra pr. atlet')
+  assert.ok(attentionFor(result, A, day).daily[0].kost_done_at)
+})
