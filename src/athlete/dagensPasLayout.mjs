@@ -125,6 +125,11 @@ export function logStil() {
     statiskReps: { fontFamily: T.sans, fontSize: '1.6rem', fontWeight: 500, color: T.accent, whiteSpace: 'nowrap' },
     ekstraRaekke: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' },
     ekstraKnap: aktiv => ({ fontFamily: T.mono, fontSize: '0.7rem', letterSpacing: '0.06em', color: aktiv ? T.accent : T.daempet, background: aktiv ? T.accentSvag : 'transparent', border: `1px solid ${aktiv ? T.accentKant : T.kant}`, minHeight: '52px', boxSizing: 'border-box', padding: '0 0.5rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }),
+    // Ordre 1568: RPE med − og + på hver side af værdien, som vægtens trinfliser.
+    rpeTrin: { display: 'grid', gridTemplateColumns: '44px minmax(0, 1fr) 44px', alignItems: 'stretch', minWidth: 0, minHeight: '52px', boxSizing: 'border-box', border: `1px solid ${T.kant}`, background: 'transparent' },
+    rpeTrinValgt: { display: 'grid', gridTemplateColumns: '44px minmax(0, 1fr) 44px', alignItems: 'stretch', minWidth: 0, minHeight: '52px', boxSizing: 'border-box', border: `1px solid ${T.accentKant}`, background: T.accentSvag },
+    rpeTrinKnap: { ...trin, minWidth: '44px', width: '44px', minHeight: '52px', fontSize: '1.4rem', color: T.tekst },
+    rpeTrinVaerdi: { fontFamily: T.mono, fontSize: '0.7rem', letterSpacing: '0.06em', color: T.accent, background: 'transparent', border: 'none', borderLeft: `1px solid ${T.linje}`, borderRight: `1px solid ${T.linje}`, minWidth: 0, minHeight: '52px', boxSizing: 'border-box', padding: 0, cursor: 'pointer', whiteSpace: 'nowrap' },
     handlinger: { display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.75rem' },
     godkendt: { flex: 1, minHeight: '64px', boxSizing: 'border-box', fontSize: '0.85rem', letterSpacing: '0.14em', borderRadius: '2px' },
     springOver: { minHeight: '44px', boxSizing: 'border-box', fontSize: '0.7rem', border: 'none', color: T.stille },

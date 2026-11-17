@@ -3,6 +3,7 @@ const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 const feltKomma = value => String(value ?? '').replace('.', ',')
 import { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
 import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
+import { RPE_VALUES, stepRpeInInputs } from './rpeTrin.mjs'
 import { vaerdTekst, ventendeSaetTekst } from './vaerdTekst.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
@@ -40,8 +41,7 @@ function ugensSenesteSaet(exerciseLogs, exerciseId) {
   return bedst ? { weight: Number(bedst.weight), reps: bedst.reps_completed } : null
 }
 
-// ORDRE 419 (I2): samme RPE-skala som Program-fanens vælger (ProgramTab.jsx).
-const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
+// ORDRE 419 (I2): samme RPE-skala som Program-fanens vælger; nu i rpeTrin.mjs (ordre 1568).
 
 // ORDRE 263 · commit 1 — "Dagens pas": øverst på forsiden, præcis det næste
 // sæt (øvelse, vægt, reps, RPE), stort nok til at læses på armslængde, med
@@ -375,6 +375,7 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
   )
   const vaegtMinus = <button type="button" aria-label="2,5 kg mindre" onClick={() => stepWeightBy(-2.5)} style={st.trinFlise}>−</button>
   const vaegtPlus = <button type="button" aria-label="2,5 kg mere" onClick={() => stepWeightBy(2.5)} style={st.trinFliseHoejre}>+</button>
+  const stepRpeBy = delta => setLogInputs(p => stepRpeInInputs(p, key, p[key] || input, plannedRpe, delta))
   const repsMinus = <button type="button" aria-label="1 rep mindre" onClick={() => stepRepsBy(-1)} style={st.trinFlise}>−</button>
   const repsPlus = <button type="button" aria-label="1 rep mere" onClick={() => stepRepsBy(1)} style={st.trinFliseHoejre}>+</button>
 
@@ -554,13 +555,17 @@ function DagensPasCard({ onStartPause, pauseAktiv, pas, exerciseHistory, exercis
         </div>
         {/* ORDRE 419 (I2): RPE-vælger og note, nu side om side under tallene. */}
         <div style={st.ekstraRaekke}>
-          <button
-            type="button"
-            aria-label={`RPE, sæt ${setNumber}: ${input.rpe || plannedRpe || 'ikke valgt'}`}
-            aria-expanded={rpeOpenFor === key}
-            onClick={() => setRpeOpenFor(rpeOpenFor === key ? null : key)}
-            style={st.ekstraKnap(!!input.rpe)}
-          >RPE {komma(input.rpe || plannedRpe || '–')} ▾</button>
+          <div data-rpe-trin="raekke" style={input.rpe ? st.rpeTrinValgt : st.rpeTrin}>
+            <button type="button" aria-label="RPE 0,5 lavere" onClick={() => stepRpeBy(-0.5)} style={st.rpeTrinKnap}>−</button>
+            <button
+              type="button"
+              aria-label={`RPE, sæt ${setNumber}: ${input.rpe || plannedRpe || 'ikke valgt'}`}
+              aria-expanded={rpeOpenFor === key}
+              onClick={() => setRpeOpenFor(rpeOpenFor === key ? null : key)}
+              style={st.rpeTrinVaerdi}
+            >RPE {komma(input.rpe || plannedRpe || '–')} ▾</button>
+            <button type="button" aria-label="RPE 0,5 højere" onClick={() => stepRpeBy(0.5)} style={st.rpeTrinKnap}>+</button>
+          </div>
           <button
             type="button"
             aria-label={`Note, sæt ${setNumber}`}
