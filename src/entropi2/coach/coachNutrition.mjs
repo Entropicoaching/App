@@ -1,6 +1,8 @@
 import { antalOrd } from '../antalOrd.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
+import { isDayReceipt } from '../../mealEvidence.mjs'
+import { kostDageModPlan, planWindow } from '../analysis/kostDageModPlan.mjs'
 
 const ordinal = day => Date.parse(day + 'T00:00:00Z') / 86400000
 const civilDay = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && activityDay(value) === value
@@ -43,6 +45,38 @@ export function kostvaneTal(props, day, athletes, rosterReady) {
     ingen: roster.filter(a => count(a) === 0).length }
 }
 
+// Ordre 1588: kostplanens dagsreferencer pr. atlet, kun når læsningen er den, vi forventer
+// (præcis de 14 afsluttede dage). Alt andet giver intet, og så bruges profilens mål som før.
+function planSource(source, day) {
+  const plan = source.plan, { start, end } = planWindow(day)
+  if (!plan || plan.from !== start || plan.through !== end || !Array.isArray(plan.athletes) ||
+    !Array.isArray(plan.meals)) return new Map()
+  const allowed = new Set(source.athleteIds), result = new Map()
+  for (const entry of plan.athletes) {
+    if (!allowed.has(entry?.athlete_id) || result.has(entry.athlete_id) || !Array.isArray(entry.days)) continue
+    if (!entry.days.some(d => d?.state === 'approved' && d.date >= start && d.date <= end)) continue
+    result.set(entry.athlete_id, { planDays: entry.days,
+      meals: plan.meals.filter(row => row?.athlete_id === entry.athlete_id) })
+  }
+  return result
+}
+
+// Samme måling som atletens "Kostdage mod mål" (genbrug af kostDageModPlan, samme 14 dage).
+// Under 4 vurderede dage er linjen stille; den falder aldrig tilbage til profilens mål.
+function planLine(entry, plan, day) {
+  const goals = kostDageModPlan({ planDays: entry.planDays, meals: entry.meals, today: day })
+  if (!goals.size) return null
+  const { start, end } = planWindow(day)
+  const logged = new Set(entry.meals.filter(row => row?.date >= start && row.date <= end && !isDayReceipt(row) &&
+    typeof row.meal === 'string' && row.meal.trim()).map(row => row.date))
+  const hit = [...goals.values()].filter(Boolean).length
+  const notAssessed = [...logged].filter(date => !goals.has(date)).length
+  return { from: plan.from, through: plan.through, mod: 'plan', days: goals.size, hit, notAssessed,
+    kcal: null, protein: null, kcalTarget: null, proteinTarget: null, proteinReachedDays: null,
+    text: `Kost · mod kostplan · ${hit} af ${goals.size} vurderede dage ramt, seneste 14 dage` +
+      (notAssessed > 0 ? ` · ${notAssessed} ${antalOrd(notAssessed, 'dag', 'dage')} ikke vurderet` : '') }
+}
+
 export function coachNutritionLines(props, day, athletes, rosterReady) {
   const result = new Map(), source = readySource(props, day, rosterReady)
   if (!source) return result
@@ -66,7 +100,13 @@ export function coachNutritionLines(props, day, athletes, rosterReady) {
     if (!allowed.has(target?.athlete_id) || targets.has(target.athlete_id)) return result
     targets.set(target.athlete_id, target)
   }
+  const planned = planSource(source, day)
   for (const athlete of athletes) {
+    if (planned.has(athlete.id)) {
+      const line = planLine(planned.get(athlete.id), source.plan, day)
+      if (line) result.set(athlete.id, line)
+      continue
+    }
     const days = totals.get(athlete.id)
     if (!days || days.size < 4) continue
     const kcal = [...days.values()].reduce((n, d) => n + d.kcal, 0) / days.size
@@ -86,7 +126,7 @@ export function coachNutritionLines(props, day, athletes, rosterReady) {
     result.set(athlete.id, { from: source.from, through: day, days: days.size, kcal, protein,
       kcalTarget: kcalTarget > 0 ? kcalTarget : null,
       proteinTarget: proteinTarget > 0 ? proteinTarget : null, proteinReachedDays,
-      text: `Kost · ${days.size}/7 dage · Gns. pr. logget dag: ${Math.round(kcal)} kcal / ${Math.round(protein)} g protein · ${goals}${proteinProgress}` })
+      text: `Kost · ${days.size}/7 dage · Gns. pr. logget dag: ${Math.round(kcal)} kcal / ${Math.round(protein)} g protein · ${goals}${proteinProgress} · mod profilens mål` })
   }
   return result
 }

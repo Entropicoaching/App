@@ -40,7 +40,7 @@ test('no data keeps one named athlete without placeholder parts', () => {
 test('nutrition alone retains exact existing text and protein progress', () => {
   const p = fixture(); nutrition(p)
   assert.equal(line(p), model(p).nutrition.get('a').text)
-  assert.match(line(p), /Protein nået 4 af 4 dage$/)
+  assert.match(line(p), /Protein nået 4 af 4 dage · mod profilens mål$/)
 })
 test('latest activity only, Danish calendar relative days and skipped logs', () => {
   const p = fixture(); log(p, 'a', '2026-11-01'); message(p, 'a', '2026-11-02')
