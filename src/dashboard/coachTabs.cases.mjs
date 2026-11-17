@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { baseProps, ready } from './coachTabsFixture.mjs'
+import { calendarDay, addCalendarDays } from '../calendarDate.js'
 export async function coachTabsCases(test, render) {
  const views = {}
  for (const name of ['OversigtTab','ProgramTab','LogTab','AnalyseTab','StaevneTab','HubTab','NoterTab','VolumenKort']) views[name] = (await import(`./${name}.jsx`)).default
@@ -21,6 +22,24 @@ export async function coachTabsCases(test, render) {
    assert.match(output,state==='loading'?/Henter dagens check-in/:state==='error'?/Dagens check-in kunne ikke hentes/:/delvist hentet/)
   }
   assert.match(show('OversigtTab'),/Ingen check-in/)
+ })
+ test('overview shows the latest check-in with its date when nothing is logged today', () => {
+  const today = calendarDay(), dag = n => addCalendarDays(today, n)
+  const row = (n, score = 38) => ({ logged_date: dag(n), readiness_score: score, sleep_hours: 5.5, energy: 2 })
+  const todayOut = show('OversigtTab', { athleteReadiness: ready([row(0, 80), row(-1, 40)]) })
+  assert.match(todayOut, /Parathed i dag/); assert.doesNotMatch(todayOut, /Seneste check-in/); assert.match(todayOut, /vs\. sidst/)
+  const yesterday = show('OversigtTab', { athleteReadiness: ready([row(-1), row(-3, 70)]) })
+  assert.match(yesterday, /Seneste check-in: i går/); assert.match(yesterday, /38/); assert.match(yesterday, /5\.5t/)
+  assert.doesNotMatch(yesterday, /Parathed i dag|Ingen check-in|vs\. sidst|som sidst/)
+  const week = show('OversigtTab', { athleteReadiness: ready([row(-7)]) })
+  assert.match(week, /Seneste check-in: \S+\. \d+\. \S+/); assert.match(week, /38/)
+  const old = show('OversigtTab', { athleteReadiness: ready([row(-8)]) })
+  assert.match(old, /Seneste check-in: \S+\. \d+\. \S+/); assert.doesNotMatch(old, /38|Parathed i dag|Ingen check-in/)
+  assert.match(show('OversigtTab', { athleteReadiness: ready([]) }), /Ingen check-in/)
+  for (const state of ['error', 'incomplete']) {
+   const failed = show('OversigtTab', { athleteReadiness: Object.assign([row(-1)], { coachRead: { state, athleteId: 'synthetic-a', retry: () => {} } }) })
+   assert.doesNotMatch(failed, /Seneste check-in|Ingen check-in/)
+  }
  })
  test('program has one confirmed-empty start, no empty result after failure', () => {
   assert.match(show('ProgramTab'),/Ingen uger endnu/)

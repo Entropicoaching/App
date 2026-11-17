@@ -1,6 +1,6 @@
 import BlokFremgang from '../BlokFremgang.jsx'
 import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
-import { calendarDay } from '../calendarDate.js'
+import { calendarDay, calendarDaysBetween } from '../calendarDate.js'
 
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Oversigt: sidst aktiv, parathed, resultater, kostmål, stævne, volumenkort.
@@ -9,6 +9,13 @@ import { s, readinessSignal } from '../dashboardShared.js'
 import LazyBoundary from '../LazyBoundary.jsx'
 import { entropi2Enabled } from '../entropi2/flag.mjs'
 import { shouldShowPainHistory } from '../entropi2/tracking/smerte/painRead.mjs'
+
+// Dansk dato for seneste check-in: "i går" eller "fre. 14. nov." (dato uden klokkeslæt, regnet som kalenderdag).
+function senesteCheckinDato(day, todayStr) {
+  if (calendarDaysBetween(day, todayStr) === 1) return 'i går'
+  const d = new Date(`${day}T12:00:00Z`)
+  return Number.isFinite(d.getTime()) ? d.toLocaleDateString('da-DK', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }) : day
+}
 
 const painHistoryFactory = () => import('../entropi2/tracking/smerte/CoachPainHistory.mjs')
 
@@ -61,43 +68,51 @@ export default function OversigtTab({
                 if (coachTabState(athleteReadiness, a.id, coachTabCleanup) !== 'ready') return <CoachReadStatus value={athleteReadiness} athleteId={a.id} enabled={coachTabCleanup} label="Dagens check-in" />
                 const todayStr = calendarDay()
                 const todayR = athleteReadiness.find(r => r.logged_date === todayStr)
-                if (!todayR) return (
+                const prevR = athleteReadiness.find(r => r.logged_date < todayStr)
+                if (!todayR && !prevR) return (
                   <div style={{ ...s.card, marginBottom: '1.5rem', color: '#7a7770', fontSize: '0.78rem' }}>
                     Ingen check-in logget i dag endnu.
                   </div>
                 )
-                const sig = readinessSignal(todayR.readiness_score)
-                const prevR = athleteReadiness.find(r => r.logged_date < todayStr)
+                // Ingen række i dag: vis den seneste, dæmpet og med datoen. Ældre end 7 dage kun med datoen.
+                const latestR = todayR || prevR
+                const seneste = !todayR
+                if (seneste && calendarDaysBetween(latestR.logged_date, todayStr) > 7) return (
+                  <div style={{ ...s.card, marginBottom: '1.5rem', color: '#7a7770', fontSize: '0.78rem' }}>
+                    {`Seneste check-in: ${senesteCheckinDato(latestR.logged_date, todayStr)}`}
+                  </div>
+                )
+                const sig = readinessSignal(latestR.readiness_score)
                 let trend = null
-                if (prevR && todayR.readiness_score != null && prevR.readiness_score != null) {
+                if (todayR && prevR && todayR.readiness_score != null && prevR.readiness_score != null) {
                   const d = todayR.readiness_score - prevR.readiness_score
                   trend = d > 2 ? { text: `↑ +${d} vs. sidst`, color: '#6cba6c' }
                     : d < -2 ? { text: `↓ ${d} vs. sidst`, color: '#e05555' }
                     : { text: '= som sidst', color: '#7a7770' }
                 }
-                if (dataEnoughEnabled()) {
+                if (todayR && dataEnoughEnabled()) {
                   trend = dataAllowed('D04', { rows: [todayR, prevR].filter(Boolean) })
                     ? { text: `Forskel mellem ${prevR.logged_date} og ${todayR.logged_date}: ${todayR.readiness_score - prevR.readiness_score} point`, color: '#b8b4a8' }
                     : { text: dataMessage('D04'), color: '#7a7770' }
                 }
                 const params = [
-                  todayR.sleep_hours != null && ['Søvn', `${todayR.sleep_hours}t`],
-                  todayR.energy != null && ['Energi', `${todayR.energy}/5`],
-                  todayR.motivation != null && ['Motivation', `${todayR.motivation}/5`],
-                  todayR.stress != null && ['Stress', `${todayR.stress}/5`],
-                  todayR.soreness_level != null && ['Ømhed', `${todayR.soreness_level}/5`],
+                  latestR.sleep_hours != null && ['Søvn', `${latestR.sleep_hours}t`],
+                  latestR.energy != null && ['Energi', `${latestR.energy}/5`],
+                  latestR.motivation != null && ['Motivation', `${latestR.motivation}/5`],
+                  latestR.stress != null && ['Stress', `${latestR.stress}/5`],
+                  latestR.soreness_level != null && ['Ømhed', `${latestR.soreness_level}/5`],
                 ].filter(Boolean)
                 return (
-                  <div style={{ ...s.card, background: sig.bg, marginBottom: '1.5rem' }}>
+                  <div style={{ ...s.card, background: seneste ? 'transparent' : sig.bg, marginBottom: '1.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
                       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.9rem' }}>
                         <div>
-                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.3rem' }}>Parathed i dag</div>
-                          <div style={{ fontSize: '0.95rem', color: sig.color }}>{sig.text}</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.52rem', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4a4844', marginBottom: '0.3rem' }}>{seneste ? `Seneste check-in: ${senesteCheckinDato(latestR.logged_date, todayStr)}` : 'Parathed i dag'}</div>
+                          {!seneste && <div style={{ fontSize: '0.95rem', color: sig.color }}>{sig.text}</div>}
                           {trend && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.5rem', color: trend.color, letterSpacing: '0.06em', marginTop: '0.25rem' }}>{trend.text}</div>}
                         </div>
                         <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.6rem', fontWeight: 500, color: sig.color, letterSpacing: '-0.02em', lineHeight: 1 }}>
-                          {todayR.readiness_score}<span style={{ fontSize: '0.55rem', color: '#4a4844', fontWeight: 400, marginLeft: '0.2rem' }}>/100</span>
+                          {latestR.readiness_score}<span style={{ fontSize: '0.55rem', color: '#4a4844', fontWeight: 400, marginLeft: '0.2rem' }}>/100</span>
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '1.1rem', flexWrap: 'wrap' }}>
@@ -109,10 +124,10 @@ export default function OversigtTab({
                         ))}
                       </div>
                     </div>
-                    {todayR.sore_zones?.length > 0 && (
+                    {latestR.sore_zones?.length > 0 && (
                       <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
                         <div style={s.fieldLabel}>Lokal ømhed</div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>{todayR.sore_zones.join(', ')}</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>{latestR.sore_zones.join(', ')}</div>
                       </div>
                     )}
                   </div>
