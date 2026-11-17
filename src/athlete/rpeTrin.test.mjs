@@ -2,8 +2,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { chooseRpeInput } from '../rpeEvidence.mjs'
-import { RPE_VALUES, stepRpe, stepRpeInInputs } from './rpeTrin.mjs'
+import { chooseRpeInput, stepRpe, stepRpeInInputs } from '../rpeEvidence.mjs'
+const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 import { logStil } from './dagensPasLayout.mjs'
 
 const kilde = readFileSync(new URL('./DagensPasCard.jsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n')

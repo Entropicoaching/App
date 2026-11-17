@@ -2,8 +2,7 @@
 const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 const feltKomma = value => String(value ?? '').replace('.', ',')
 import { APP_LOG2_ENABLED, previousLog2Set, log2Defaults, fillLog2Input, renderLog2Button } from './appLog2.mjs'
-import { chooseRpeInput, visibleRpeNote } from '../rpeEvidence.mjs'
-import { RPE_VALUES, stepRpeInInputs } from './rpeTrin.mjs'
+import { chooseRpeInput, visibleRpeNote, stepRpeInInputs } from '../rpeEvidence.mjs'
 import { vaerdTekst, ventendeSaetTekst } from './vaerdTekst.mjs'
 import { parseInputNumber } from '../inputValues.js'
 
@@ -41,7 +40,8 @@ function ugensSenesteSaet(exerciseLogs, exerciseId) {
   return bedst ? { weight: Number(bedst.weight), reps: bedst.reps_completed } : null
 }
 
-// ORDRE 419 (I2): samme RPE-skala som Program-fanens vælger; nu i rpeTrin.mjs (ordre 1568).
+// ORDRE 419 (I2): samme RPE-skala som Program-fanens vælger (ProgramTab.jsx).
+const RPE_VALUES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
 
 // ORDRE 263 · commit 1 — "Dagens pas": øverst på forsiden, præcis det næste
 // sæt (øvelse, vægt, reps, RPE), stort nok til at læses på armslængde, med

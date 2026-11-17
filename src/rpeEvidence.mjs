@@ -26,3 +26,14 @@ export function rpeOrigin(row) {
       (proof[3] === row.logged_at || (Number.isFinite(instant(proof[3])) && instant(proof[3]) === instant(row.logged_at))) ? 'athlete' : undefined
   } catch { return undefined }
 }
+
+// Ordre 1568: RPE med eet tryk i dagens pas. Udgangspunkt: valgt RPE, ellers
+// planlagt, ellers 8; nærmeste halve tal inden for 5,5 til 10.
+const rpeTal = v => { const n = typeof v === 'number' ? v : parseFloat(String(v ?? '').replace(',', '.')); return Number.isFinite(n) ? n : null }
+export function stepRpe(valgt, planlagt, delta) {
+  const start = rpeTal(valgt) ?? rpeTal(planlagt) ?? 8
+  return Math.min(10, Math.max(5.5, Math.round((start + delta) * 2) / 2))
+}
+// Samme skrivning som vælgeren: chooseRpeInput.
+export const stepRpeInInputs = (state, key, input, planlagt, delta) =>
+  chooseRpeInput(state, key, stepRpe(input.rpe, planlagt, delta), input)
