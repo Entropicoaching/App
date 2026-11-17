@@ -181,3 +181,40 @@ test('1612: coachens ene dagslæsning henter kost_done_at i samme select', async
   assert.equal(selects.filter(([t, cols]) => t === 'tracking_daily_v1' && /logged_date/.test(cols)).length, 1, 'ét datakald, intet ekstra pr. atlet')
   assert.ok(attentionFor(result, A, day).daily[0].kost_done_at)
 })
+
+test('1614: dagslinjen viser Væske x af y l, når atleten har et mål; ellers som efter 1607', () => {
+  const rows = [2000, 2500, 3000, 2200, 2800].map((ml, i) => ({ athlete_id: A, logged_date: d([0, -1, -2, -4, -5][i]), water_ml: ml, water_goal_ml: 3000 }))
+  assert.equal(dayNumbersLine([{ athlete_id: A, logged_date: d(-1), water_ml: 2400, water_goal_ml: 3000 }], day), 'Væske 2,4 af 3,0 l i snit (1 dag) · sidste 7 dage')
+  assert.equal(dayNumbersLine(rows, day), 'Væske 2,5 af 3,0 l i snit (5 dage) · sidste 7 dage')
+  assert.equal(dayNumbersLine([...daily, ...rows], day), 'Søvn 2,3/5 (3 dage) · Smerte 3/10 10. nov. · Væske 2,5 af 3,0 l i snit (5 dage) · sidste 7 dage')
+  assert.equal(dayNumbersLine(rows.map(({ water_goal_ml, ...r }) => r), day), 'Væske 2,5 l i snit (5 dage) · sidste 7 dage', 'intet mål: linjen som før')
+  for (const goal of [0, null, undefined, '3000', -5, NaN]) {
+    assert.equal(dayNumbersLine([{ athlete_id: A, logged_date: d(-1), water_ml: 2400, water_goal_ml: goal }], day), 'Væske 2,4 l i snit (1 dag) · sidste 7 dage', `mål ${String(goal)} tælles som intet mål`)
+  }
+  assert.equal(dayNumbersLine([{ athlete_id: A, logged_date: d(-1), water_goal_ml: 3000 }], day), null, 'mål uden loggede dage giver ingen linje')
+})
+
+test('1614: coachens dagslæsning henter alle atleters væskemål i ét samlet kald og lægger målet på rækkerne', async () => {
+  const calls = []
+  const backend = fakeBackend({ tables: { readiness_logs: [], exercise_logs: [],
+    tracking_daily_v1: [{ athlete_id: A, logged_date: d(-1), water_ml: 2400 }, { athlete_id: B, logged_date: d(-1), water_ml: 1800 }],
+    nutrition_targets_v1: [
+      { id: 't1', athlete_id: A, effective_from: d(-20), kcal: null, protein_g: null, water_ml: 2500, created_at: '1' },
+      { id: 't2', athlete_id: A, effective_from: d(-3), kcal: null, protein_g: null, water_ml: 3000, created_at: '2' },
+      { id: 't3', athlete_id: A, effective_from: d(2), kcal: null, protein_g: null, water_ml: 9000, created_at: '3' },
+      { id: 't4', athlete_id: B, effective_from: d(-3), kcal: 2500, protein_g: 150, water_ml: null, created_at: '4' }] } })
+  const client = { from: table => { const b = backend.client.from(table); const select = b.select; b.select = cols => (calls.push([table, cols]), select(cols)); return b } }
+  const result = await readCoachAttention(client, [A, B], day, { daily: true })
+  assert.equal(calls.filter(([t, cols]) => t === 'nutrition_targets_v1' && /water_ml/.test(cols)).length, 1, 'ét målkald for to atleter')
+  assert.equal(attentionFor(result, A, day).daily[0].water_goal_ml, 3000, 'målet, der gælder i dag')
+  assert.equal(attentionFor(result, B, day).daily[0].water_goal_ml, undefined, 'intet væskemål hos B')
+  assert.equal(dayNumbersLine(attentionFor(result, A, day).daily, day), 'Væske 2,4 af 3,0 l i snit (1 dag) · sidste 7 dage')
+  assert.equal(dayNumbersLine(attentionFor(result, B, day).daily, day), 'Væske 1,8 l i snit (1 dag) · sidste 7 dage')
+})
+
+test('1614: mangler målene, eller fejler læsningen, er dagsrækkerne som før', async () => {
+  const backend = fakeBackend({ tables: { readiness_logs: [], exercise_logs: [], tracking_daily_v1: [{ athlete_id: A, logged_date: d(-1), water_ml: 2400 }] } })
+  const result = await readCoachAttention(backend.client, [A], day, { daily: true })
+  assert.equal(attentionFor(result, A, day).daily[0].water_ml, 2400)
+  assert.equal('water_goal_ml' in attentionFor(result, A, day).daily[0], false)
+})

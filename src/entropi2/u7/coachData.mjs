@@ -29,7 +29,11 @@ export async function readCoachDaily(client, ids, day) {
     const result = await client.from(DAILY).select('athlete_id, logged_date, sleep_quality, pain, pain_location, water_ml, kost_done_at')
       .in('athlete_id', ids).gte('logged_date', addCalendarDays(day, -(DAILY_DAYS - 1))).order('logged_date').limit(DAILY_CAP + 1)
     if (result?.error || !Array.isArray(result?.data) || result.data.length > DAILY_CAP) return null
-    return result.data
+    // Atletens væskemål (samme kilde som atletens Kost): ét samlet kald for alle atleter. Fejler det, vises væsken som før.
+    const targets = await readTargets({ client, athleteIds: ids })
+    if (targets.state !== 'ready') return result.data
+    const goals = new Map(ids.map(id => [id, targetOn(targets.rows, id, day, 'water_ml')?.value ?? null]))
+    return result.data.map(r => goals.get(r?.athlete_id) ? { ...r, water_goal_ml: goals.get(r.athlete_id) } : r)
   } catch { return null }
 }
 
@@ -53,7 +57,7 @@ export function sleepFromDaily(rows, today) {
   return mean <= SLEEP_ATTENTION ? { mean, days: values.length, reason: `Søvn ${formatNumber(mean, 1)}/5 i snit de sidste 3 dage` } : null
 }
 
-// Tallene under rækken: snit af søvn, seneste smerte og snit af væske (dage med mere end 0 ml) og dage med afsluttet kostvane de sidste 7 dage, kun det der findes.
+// Tallene under rækken: snit af søvn, seneste smerte og snit af væske (dage med mere end 0 ml, mod atletens mål når det findes) og dage med afsluttet kostvane de sidste 7 dage, kun det der findes.
 export function dayNumbersLine(rows, today) {
   const day = calendarDay(today)
   if (!day) return null
@@ -65,7 +69,8 @@ export function dayNumbersLine(rows, today) {
   const parts = []
   if (sleep.length) parts.push(`Søvn ${formatNumber(sleep.reduce((n, v) => n + v, 0) / sleep.length, 1)}/5 (${sleep.length} ${sleep.length === 1 ? 'dag' : 'dage'})`)
   if (pains.length) parts.push(`Smerte ${pains.at(-1).pain}/10${place(pains.at(-1))} ${shortDate(pains.at(-1).logged_date)}`)
-  if (water.length) parts.push(`Væske ${formatNumber(water.reduce((n, v) => n + v, 0) / water.length / 1000, 1)} l i snit (${water.length} ${water.length === 1 ? 'dag' : 'dage'})`)
+  const goal = recent.map(r => r?.water_goal_ml).find(v => typeof v === 'number' && Number.isFinite(v) && v > 0)
+  if (water.length) parts.push(`Væske ${formatNumber(water.reduce((n, v) => n + v, 0) / water.length / 1000, 1)}${goal ? ` af ${formatNumber(goal / 1000, 1)} l` : ' l'} i snit (${water.length} ${water.length === 1 ? 'dag' : 'dage'})`)
   if (kost) parts.push(`Kostvane ${kost} af 7 dage`)
   return parts.length ? `${parts.join(' · ')} · sidste 7 dage` : null
 }
