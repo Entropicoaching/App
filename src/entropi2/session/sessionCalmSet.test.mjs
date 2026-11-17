@@ -78,7 +78,8 @@ test('RPE field selection and fold summary focus survive; next set resets fold a
   step(f, 'rpe-9').focus(); step(f, 'rpe-9').click(); f.view.update()
   assert.equal(await approve(f), true)
   assert.equal(f.calls[0].input.rpe, '9'); assert.equal(f.calls[0].input.rpe_source, 'athlete')
-  assert.equal(fold(f).open, false); assert.equal(input(f, 'rpe').value, '')
+  // Ordre 1576: efter et sæt med RPE står folden åben i næste sæt, men feltet er tomt (aldrig kopieret).
+  assert.equal(fold(f).open, true); assert.equal(input(f, 'rpe').value, '')
   assert.ok(f.doc.activeElement === f.root.querySelector('[data-heading]'))
 })
 
@@ -135,4 +136,39 @@ test('a step inside a closed RPE fold is unavailable and cannot receive restored
   fold(f).open = false; f.view.update()
   assert.equal(fold(f).open, false)
   assert.ok(f.doc.activeElement === f.root.querySelector('[data-heading]'))
+})
+
+test('ordre 1576: fold open from set 2 after RPE given, one tap saves; closed without RPE, in set 1 and when self-closed', async t => {
+  const f = setup(t)
+  assert.equal(fold(f).open, false); assert.equal(input(f, 'rpe').value, '')
+  step(f, 'rpe-9').click(); f.view.update()
+  assert.equal(await approve(f), true)
+  assert.equal(fold(f).open, true); assert.equal(input(f, 'rpe').value, '')
+  step(f, 'rpe-8').click(); f.view.update()
+  assert.equal(await approve(f), true)
+  assert.equal(f.calls[1].input.rpe, '8'); assert.equal(f.calls[1].input.rpe_source, 'athlete')
+  assert.equal(f.p.exerciseLogs[1].rpe_actual, 8)
+  assert.equal(fold(f).open, true); assert.equal(input(f, 'rpe').value, '')
+})
+
+test('ordre 1576: no RPE in the pass keeps the fold closed in every set', async t => {
+  const f = setup(t)
+  for (let n = 0; n < 2; n++) {
+    assert.equal(fold(f).open, false)
+    assert.equal(await approve(f), true)
+    assert.equal(f.calls[n].input.rpe, '')
+  }
+  assert.equal(fold(f).open, false)
+})
+
+test('ordre 1576: a fold the athlete closes stays closed for the rest of the pass', async t => {
+  const f = setup(t)
+  step(f, 'rpe-9').click(); f.view.update()
+  assert.equal(await approve(f), true)
+  assert.equal(fold(f).open, true)
+  fold(f).open = false; f.view.update()
+  assert.equal(fold(f).open, false)
+  assert.equal(await approve(f), true)
+  assert.equal(fold(f).open, false)
+  assert.equal(f.calls[1].input.rpe, '')
 })

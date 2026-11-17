@@ -41,6 +41,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
   const clearBlocks = () => { cleanBlocks.forEach(fn => fn()); cleanBlocks = [] }
   let dialog, frame, body, close, handle, unbind, stopTimer, lastPause, stepIdentity, announcement, errorStatus, dead = false, renderVersion = 0
   let overviewIdentity
+  // RPE-folden staar aaben fra naeste saet, naar atleten har givet RPE i passet; lukker atleten den, respekteres det.
+  let rpeShown = false, rpeClosedByUser = false, rpeStamp
   const overviewScope = (p, s) => JSON.stringify([programStamp(p), s.selection?.sessionId,
     calendarDay(new Date(clock.Date.now())), p.readOnly === true])
   const el = (tag, text, attrs = {}) => {
@@ -61,7 +63,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     stopTimer?.(); stopTimer = null; lastPause = undefined
     unbind?.(); unbind = null
     dialog?.remove(); dialog = null; stepIdentity = undefined
-    overviewIdentity = undefined
+    overviewIdentity = undefined; rpeShown = false; rpeClosedByUser = false; rpeStamp = undefined
   }
   function render() {
     if (dead) return
@@ -109,6 +111,10 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     const focused = doc.activeElement, fieldName = focused?.getAttribute('data-field')
     const position = fieldName ? [focused.selectionStart, focused.selectionEnd] : null
     const detailsOpen = [...body.querySelectorAll('details')].filter(n => n.open).map(n => n.getAttribute('data-detail'))
+    if (rpeStamp !== s.selection.stamp) { rpeStamp = s.selection.stamp; rpeShown = false; rpeClosedByUser = false }
+    const rpeNode = body.querySelector('[data-detail="rpe"]')
+    if (rpeNode && rpeShown && !rpeNode.open) rpeClosedByUser = true
+    else if (rpeNode?.open && !rpeShown) rpeClosedByUser = false
     const hadBodyFocus = body.contains(focused)
     const focusedDetail = focused?.tagName?.toLowerCase() === 'summary' ? focused.parentElement?.getAttribute('data-detail') : null
     const detailFocus = !sameOverview && (focusedDetail === 'overview' || focusedDetail?.startsWith('overview-')) ? null : focusedDetail
@@ -364,12 +370,15 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         history.append(el('p', `Sæt ${log.set_number}: ${log.skipped ? 'Sprunget over' : `${planKg(present(log.weight))} kg, ${present(log.reps_completed)} gent.${given(log.rpe_actual) ? `, RPE ${planKg(log.rpe_actual)}` : ''}`}`))
     }
     body.append(history)
+    const sessionIds = new Set((s.session.exercises || []).map(ex => ex.id))
+    const rpeAuto = !rpeClosedByUser && s.logs.some(l => sessionIds.has(l.exercise_id) && !l.skipped && given(l.rpe_actual))
     for (const node of body.querySelectorAll('details')) {
       const detail = node.getAttribute('data-detail')
       const overview = detail === 'overview' || detail?.startsWith('overview-')
-      node.open = (detail === 'rpe' && given(s.input.rpe)) ||
+      node.open = (detail === 'rpe' && (given(s.input.rpe) || rpeAuto)) ||
         ((overview ? sameOverview : !stepChanged) && detailsOpen.includes(detail))
     }
+    rpeShown = body.querySelector('[data-detail="rpe"]')?.open === true && !given(s.input.rpe)
     const replacement = fieldName ? body.querySelector(`[data-field="${fieldName}"]`) : null
     const stepReplacement = stepFocus ? body.querySelector(`[data-step="${stepFocus}"]`) : null
     const stepAvailable = node => {
