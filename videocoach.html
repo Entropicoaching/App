@@ -6090,6 +6090,130 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       ...(TRACKER_PROBE?{frameProbe:trackerProbe,plSearchProbe:plSearchProbeLog}: {})};
     publishTrackerBenchmarkRun(run);
   }
+  // ORDRE 1610v (Marc 17. nov.: "bartrackeren fortsatte igennem gulvet ... i slutningen af
+  // videoen"). Efter sættet kan punkterne glide med noget andet end stangen: kameraet tages op,
+  // atleten går ind foran skiven, eller skiven forsvinder. Kendetegnet er, at sporet til sidst
+  // forlader det område, hvor hele sættet foregik, og aldrig kommer tilbage. Så slutter banen ved
+  // det sidste rolige punkt før flugten, i stedet for at fortsætte ud af billedet.
+  // Selve sporingen ovenfor er uændret; kun halen fjernes, og kun når alle fire krav holder:
+  //   1) der har været mindst én hel lodret tur væk og hjem (et løft, der slutter i toppen eller
+  //      bunden af sin første tur, røres aldrig),
+  //   2) halen begynder først efter sættets sidste optur. En optur hører til sættet, når den ligner
+  //      de tidligere: højst halvanden gang så høj, mindst 0,6 gange så høj, og start og slut højst
+  //      1,25 skiveradius over eller under den forrige opturs. Vandret flytning tæller ikke, så et
+  //      kamera, der flyttes under sidste løft, koster aldrig løftet. En optur, der fortsætter op
+  //      over toppen, beholdes, til den forlader sættets højde,
+  //   3) alle gyldige punkter efter flugten ligger uden for området for alt, hvad der kom før,
+  //   4) flugten når mindst én skiveradius uden for det område.
+  const trimEscapedTail=()=>{
+    const n=path.pts.length,ok=i=>path.valid[i]!==false;
+    if(n<12)return;
+    const minX=new Float64Array(n),maxX=new Float64Array(n),minY=new Float64Array(n),maxY=new Float64Array(n);
+    let a=Infinity,b=-Infinity,c=Infinity,d=-Infinity,ref=null;
+    // Vendepunkter: et punkt er en top eller bund, når sporet bagefter går mindst 1,2 radius den anden vej.
+    const turns=[];let dir=0,lo=null,hi=null,cur=null;
+    for(let i=0;i<n;i++){
+      if(ok(i)){
+        const q=path.pts[i],y=q.y;a=Math.min(a,q.x);b=Math.max(b,q.x);c=Math.min(c,y);d=Math.max(d,y);
+        if(ref==null)ref=y;
+        if(!dir){
+          if(!lo||y<lo.y)lo={i,y};
+          if(!hi||y>hi.y)hi={i,y};
+          if(y-lo.y>=radius*1.2){turns.push({i:lo.i,y:lo.y,top:true});dir=1;cur={i,y};}
+          else if(hi.y-y>=radius*1.2){turns.push({i:hi.i,y:hi.y,top:false});dir=-1;cur={i,y};}
+        }else if(dir>0){
+          if(y>cur.y)cur={i,y};
+          else if(cur.y-y>=radius*1.2){turns.push({i:cur.i,y:cur.y,top:false});dir=-1;cur={i,y};}
+        }else if(y<cur.y)cur={i,y};
+        else if(y-cur.y>=radius*1.2){turns.push({i:cur.i,y:cur.y,top:true});dir=1;cur={i,y};}
+      }
+      minX[i]=a;maxX[i]=b;minY[i]=c;maxY[i]=d;
+    }
+    if(turns.length<2)return;
+    if(dir<0){
+      // Sidste optur er ikke afsluttet af en nedtur. Den slutter, hvor stangen er nået op i den
+      // forrige tops højde og ikke længere stiger (under 0,05 radius på 0,2 s); en langsom glidning
+      // bagefter er ikke en del af løftet.
+      const from=turns.at(-1),zone=turns.at(-2).y+radius*.3,time=i=>path.times?.[i]??i/30;
+      let end={i:from.i,y:from.y};
+      for(let i=from.i+1;i<n;i++){
+        if(!ok(i))continue;
+        const y=path.pts[i].y;
+        if(end.y<=zone){
+          if(time(i)-time(end.i)>.2)break;
+          if(y<=end.y-radius*.05)end={i,y};
+        }else if(y<end.y)end={i,y};
+      }
+      turns.push({i:end.i,y:end.y,top:true});
+    }
+    let keep=-1,lastBot=0,lastTop=0,minAmp=Infinity,maxAmp=0;
+    for(let k=1;k<turns.length;k++){
+      const from=turns[k-1],to=turns[k];
+      if(!to.top)continue;
+      const amp=from.y-to.y,near=from.y<=lastBot+radius*1.25;
+      if(keep<0||(near&&to.y>=lastTop-radius*1.25&&amp<=maxAmp*1.5&&amp>=minAmp*.6)){
+        keep=to.i;lastBot=from.y;lastTop=to.y;minAmp=Math.min(minAmp,amp);maxAmp=Math.max(maxAmp,amp);
+      }else if(near&&from.i>=keep&&to.y<lastTop){
+        for(let i=from.i;i<=to.i;i++){
+          if(!ok(i))continue;
+          if(path.pts[i].y<lastTop-radius*.3)break;
+          keep=i;
+        }
+      }
+    }
+    if(keep<0)return;
+    const outside=(q,j)=>Math.hypot(Math.max(minX[j]-q.x,0,q.x-maxX[j]),Math.max(minY[j]-q.y,0,q.y-maxY[j]));
+    // Flugten begynder ved det første punkt efter sættet, hvor krav 3 og 4 holder.
+    let escape=-1;
+    for(let i=keep+1;i<n&&escape<0;i++){
+      if(!ok(i)||!(outside(path.pts[i],i-1)>0))continue;
+      let free=true,reach=0;
+      for(let k=i;k<n;k++){
+        if(!ok(k))continue;
+        const o=outside(path.pts[k],i-1);
+        if(!(o>0)){free=false;break;}
+        reach=Math.max(reach,o);
+      }
+      if(free&&reach>=radius)escape=i;
+    }
+    if(escape<0)return;
+    // Banen slutter lige før flugten. Kun når sporet kom fra et roligt punkt nærmere startstedet
+    // (løftets top i squat og bænk, gulvet i dødløft) og derfra gik lige væk og ud, slutter den
+    // allerede ved det rolige punkt, men aldrig før sættets sidste optur er slut.
+    let cut=escape-1;
+    while(cut>keep&&!ok(cut))cut--;
+    const awayAtEscape=Math.abs(path.pts[cut].y-ref);
+    let nearest=awayAtEscape;
+    for(let i=cut;i>=keep;i--){
+      if(!ok(i))continue;
+      const away=Math.abs(path.pts[i].y-ref);
+      if(away>nearest+radius*.15)break;
+      nearest=Math.min(nearest,away);
+      let still=0,moved=false;
+      for(let k=i-1;k>=Math.max(0,i-8);k--){
+        if(!ok(k))continue;
+        if(Math.hypot(path.pts[k].x-path.pts[i].x,path.pts[k].y-path.pts[i].y)>radius*.2){moved=true;break;}
+        still++;
+      }
+      if(!moved&&still>=4){
+        if(away<awayAtEscape-radius*.5)cut=i;
+        break;
+      }
+    }
+    // Ligger der to eller flere opture, der ligner sættets, i det, der ville blive fjernet, er det
+    // ikke en hale: kameraet er flyttet midt i sættet, og sættet fortsætter (kontrol 3).
+    let lifts=0;
+    for(let k=1;k<turns.length;k++){
+      const from=turns[k-1],to=turns[k],amp=from.y-to.y;
+      if(to.top&&from.i>=cut&&amp<=maxAmp*1.5&&amp>=minAmp*.6)lifts++;
+    }
+    if(lifts>=2)return;
+    if(cut>=n-1)return;
+    path.tailCutAt=path.times[cut];path.tailCutFrames=n-1-cut;
+    path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;
+    if(path.confidence)path.confidence.length=cut+1;
+  };
+  trimEscapedTail();
   freezeRawAcquisition(path,session);
   analyzePath(path);
   // ORDRE 211 · commit 1 — instrumentering, ingen ændring i sporings- eller
