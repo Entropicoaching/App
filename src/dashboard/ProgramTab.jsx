@@ -648,7 +648,7 @@ export default function ProgramTab({
                                         <span role="button" tabIndex={0} aria-label={`Gå til ${range}`} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); gotoWeek(first) }} style={{ fontSize: '0.82rem', color: '#edeae2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{phase.name || 'Uden blok'}</span>
                                         {isDone && <span style={{ color, fontSize: '0.7rem', lineHeight: 1 }}>✓</span>}
                                         {isActive && (
-                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
+                                          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: color === '#c8923a' ? '#e0ae5c' : color, border: `1px solid ${color}`, padding: '1px 4px', borderRadius: '2px' }}>nu</span>
                                         )}
                                         <button
                                           onClick={e => { e.stopPropagation(); setRenameValue(phase.name || ''); setRenamingBlock(first.id) }}

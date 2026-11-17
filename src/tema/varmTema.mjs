@@ -21,7 +21,7 @@ export const FARVER = {
   '#c1beb5': 'e-tekst2', '#c4c0b5': 'e-tekst2', '#c4c0b4': 'e-tekst2', '#a8a59c': 'e-tekst2', '#9f9b91': 'e-tekst2', '#98948a': 'e-tekst2',
   '#7a7770': 'e-daempet', '#77746d': 'e-daempet', '#77776b': 'e-daempet', '#777267': 'e-daempet', '#8f8b82': 'e-daempet',
   '#929083': 'e-daempet', '#89897e': 'e-daempet', '#77756b': 'e-daempet', '#777365': 'e-daempet',
-  '#4a4844': 'e-svag',
+  '#4a4844': 'e-svag', '#5f5c55': 'e-daempet',
   // amber
   '#c8923a': 'e-amber', '#e0ae5c': 'e-amber2', '#d8b16b': 'e-amber2', '#f1cf7b': 'e-amber2', '#e0a555': 'e-amber2',
   '#c9b47f': 'e-amber2', '#c8b98a': 'e-amber2', '#f1c675': 'e-amber2', '#e0a94c': 'e-amber2',
