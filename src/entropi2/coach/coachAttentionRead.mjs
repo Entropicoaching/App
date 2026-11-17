@@ -30,7 +30,8 @@ export const STILSTAND_CAP = 999
 // først toppen plus de stillestående uger (stalled + 2 uger); ligger toppen ikke der, 26 uger som før.
 // Fejler navnefilteret, læses uden det. Svaret gemmes pr. klient i STILSTAND_GEM_MS, så takten på
 // 60 sekunder ikke kalder RPC'en og sætlæsningen hver gang; en fejl gemmes aldrig.
-export const STILSTAND_NAVNE = Object.freeze({ Squat: ['squat'], 'Bænk': ['bænk', 'baenk', 'bench'], 'Dødløft': ['dl'], 'Sumo dødløft': ['dl'] })
+// Kun ASCII i mønstrene: ILIKE folder ikke altid Æ og æ i databasen, så æ er et jokertegn (b_nk, b__nk for ae).
+export const STILSTAND_NAVNE = Object.freeze({ Squat: ['squat'], 'Bænk': ['b_nk', 'b__nk', 'bench'], 'Dødløft': ['dl'], 'Sumo dødløft': ['dl'] })
 export const stilstandKortDage = stalled => Math.min(STILSTAND_DAGE, (stalled + 2) * 7)
 export const STILSTAND_GEM_MS = 15 * 60 * 1000
 const gemt = new WeakMap()

@@ -33,6 +33,9 @@ function row(at, name, weight, reps, w, skipped = false) {
     exercises: { name, session_id: `syn-pas-${at}`, sessions: { weeks: { week_number: w + 1, block_name: 'Opbygning' } } } }
 }
 
+// ILIKE som i en database, der kun folder ASCII: Æ og æ er forskellige tegn; * er %, _ er ét tegn.
+const asciiLower = text => String(text ?? '').replace(/[A-Z]/g, c => c.toLowerCase())
+const ilike = (pattern, value) => new RegExp(`^${asciiLower(pattern).split('*').map(part => part.split('_').map(t => t.replace(/[.+?^$()|[\]{}\\]/g, '\\$&')).join('.')).join('.*')}$`).test(asciiLower(value))
 // Lille PostgREST-lignende falsk klient: eq, gte, or (også på exercises), !inner, limit. Tæller rækker pr. kald.
 function fakeClient(logs, { rpcRows, failNameFilter = false } = {}) {
   const calls = [], rpcCalls = []
@@ -41,7 +44,7 @@ function fakeClient(logs, { rpcRows, failNameFilter = false } = {}) {
     const v = r?.[col]
     if (op === 'eq') return String(v) === val
     if (op === 'lte') return v != null && Number(v) <= Number(val)
-    if (op === 'ilike') return new RegExp(`^${val.replaceAll('*', '.*')}$`, 'i').test(String(v ?? ''))
+    if (op === 'ilike') return ilike(val, v)
     throw new Error(`ukendt op ${op}`)
   }
   return {
@@ -164,4 +167,16 @@ test('travl atlet: før ramte loftet på 999 rækker, og grunden forsvandt; nu v
   const result = await readCoachAttention(client, [A], day, { daily: false, now: 0 })
   assert.match(stagnationReason(attentionFor(result, A, day).stagnation).reason, /Spørg atleten først \(squat står stille, 1 sprunget sæt i uge 25\)/)
   console.log(`TAL travl: før over loftet (${logs.length} saet i alt), efter ${setsRead(client).map(c => c.rows).join(' + ')} i ét kald`)
+})
+
+test('navnefilteret tager alle stavemåder af hovedløftene med, også uden at databasen folder Æ', async () => {
+  const { STILSTAND_NAVNE } = await import('./coachAttentionRead.mjs')
+  const { liftOf } = await import('../../coachBriefingRules.js')
+  const navne = ['Squat', 'BACK SQUAT', 'Topsæt squat', 'Bænkpres', 'BÆNKPRES', 'Baenkpres', 'Bench press', 'Bænkpres - topsæt', 'bænk (comp)',
+    'Dødløft', 'DØDLØFT', 'Doedloeft', 'Deadlift', 'DL', 'Dødløft (sumo)', 'Sumo deadlift', 'Konventionel dødløft']
+  for (const navn of navne) {
+    const lift = liftOf(navn)
+    assert.ok(lift, navn)
+    assert.ok(STILSTAND_NAVNE[lift].some(m => ilike(`*${m}*`, navn)), `${navn} (${lift}) skal med i filteret`)
+  }
 })
