@@ -6166,12 +6166,12 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // Flugten begynder ved det første punkt efter sættet, hvor krav 3 og 4 holder.
     let escape=-1;
     for(let i=keep+1;i<n&&escape<0;i++){
-      if(!ok(i)||!(outside(path.pts[i],i-1)>2))continue;
+      if(!ok(i)||!(outside(path.pts[i],i-1)>0))continue;
       let free=true,reach=0;
       for(let k=i;k<n;k++){
         if(!ok(k))continue;
         const o=outside(path.pts[k],i-1);
-        if(!(o>2)){free=false;break;}
+        if(!(o>0)){free=false;break;}
         reach=Math.max(reach,o);
       }
       if(free&&reach>=radius)escape=i;
@@ -6200,6 +6200,14 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         break;
       }
     }
+    // Ligger der to eller flere opture, der ligner sættets, i det, der ville blive fjernet, er det
+    // ikke en hale: kameraet er flyttet midt i sættet, og sættet fortsætter (kontrol 3).
+    let lifts=0;
+    for(let k=1;k<turns.length;k++){
+      const from=turns[k-1],to=turns[k],amp=from.y-to.y;
+      if(to.top&&from.i>=cut&&amp<=maxAmp*1.5&&amp>=minAmp*.6)lifts++;
+    }
+    if(lifts>=2)return;
     if(cut>=n-1)return;
     path.tailCutAt=path.times[cut];path.tailCutFrames=n-1-cut;
     path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;

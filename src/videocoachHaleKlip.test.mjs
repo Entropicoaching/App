@@ -206,3 +206,20 @@ test('dødløft touch and go, hvor stangen ruller efter sidste nedlægning, slut
   klip(path, R)
   assert.ok(Math.abs(path.pts.length - gulv) <= 3, `klippet ved ${path.pts.length}, gulvet ved ${gulv}`)
 })
+
+// Kontrol 3 for 1610v.
+test('en hale, der synker langsomt gennem gulvet, klippes også', () => {
+  const { path, hvile } = bane({ reps: 5, haleSek: 14, hale: t => ({ x: 300, y: TOP + 30 * t * 1.5 + (t > 1 ? 0 : 0) }) })
+  // 1,5 px pr. billede fra toppen: først når sporet er under sættets bund, er det en flugt
+  klip(path, R)
+  assert.ok(Math.max(...path.pts.map(q => q.y)) <= BOTTOM + 3, `dybeste ${Math.max(...path.pts.map(q => q.y))}`)
+  assert.ok(path.pts.length >= hvile - 20)
+})
+
+test('billedet rettes halvanden radius ned og til siden midt i sættet: ingen løft går tabt', () => {
+  const { path } = bane({ reps: 5 })
+  const foer = path.pts.length
+  path.pts.forEach((q, i) => { if (i > 180) { const e = smooth(Math.min(1, (i - 180) / 24)); q.x += 80 * e; q.y += 150 * e } })
+  klip(path, R)
+  assert.equal(path.pts.length, foer)
+})
