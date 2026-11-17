@@ -9,6 +9,7 @@ import HomeOnboarding from '../onboarding/AthleteIntroduction.mjs'
 import HomeCheckIn from './HomeCheckIn.mjs'
 import QuickLogs from './QuickLogs.mjs'
 import { calendarDay } from '../../calendarDate.js'
+import { renderStaevneHome } from '../../athlete/staevneHome.mjs'
 import { readHomeReadiness, homeWeekSnapshot } from './homeTrackingRead.mjs'
 import AthleteWeek from '../tracking/ugeatlet/AthleteWeek.mjs'
 import { buildAthleteWeek } from '../tracking/ugeatlet/athleteWeekModel.mjs'
@@ -176,6 +177,8 @@ export default function AthleteHome(props) {
   const link = (route, text) => h('button', { key: route, type: 'button', style: s.secondary,
     disabled: typeof setTab !== 'function', onClick: go(route) }, text)
   return h('main', { style: s.page, 'aria-label': 'Hjem', 'data-entropi2-home': '' },
+    // Nedtælling til stævne øverst (genbruger den gamle Hjems staevneHome, ingen ny regnemåde). Skjult uden dato eller efter datoen.
+    !props.coachOwnTraining && renderStaevneHome(h, { enabled: true, athlete, currentWeek: props.currentWeek, now, setTab }),
     // Marc 3. nov.: datoen stod tre gange (topbjaelke, her og i kortet). Topbjaelken viser datoen;
     // her kun ugen, og kortet siger "I dag" eller en dansk dato.
     !programLoading && !programError && props.offlineSnapshotAt == null && (target?.week || props.currentWeek)?.week_number != null && h('p', { style: s.eyebrow }, `Uge ${(target?.week || props.currentWeek).week_number}`),
