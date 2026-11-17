@@ -95,6 +95,7 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
   }, [enabled, athlete?.id, athlete?.kcal_target, athlete?.protein_target, date, client, foods])
   const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
   return enabled === true && athlete?.id ? createElement(KostShoppingFrame, { controller: current?.controller, athleteId: athlete.id, date, client: planClient, currentDay,
+    weightLogs, weightStatus,
     foodEntry: current?.foodEntry,
     checkin: checkin?.athleteId === athlete?.id && checkin?.date === date && current ? checkin.tracker : null, tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
 }

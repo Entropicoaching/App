@@ -3,6 +3,7 @@ import { KostplanAtletView } from './KostplanAtlet.mjs'
 import UpcomingPlan from './UpcomingPlan.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import KostvaneCheckin from './KostvaneCheckin.mjs'
+import VaegtMaal from './VaegtMaal.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
 import { calendarDay } from '../../../calendarDate.js'
 
@@ -33,7 +34,7 @@ function FoodLogEntry({ entry, gateRef, trackerFold }) {
     unavailable && React.createElement('p', { role: 'status' }, 'Kostloggen er ikke klar til at åbne. Prøv igen, når den er tilgængelig.'))
 }
 
-export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin }) {
+export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin, weightLogs, weightStatus }) {
   const [selection, setSelection] = useState(null)
   const dates = upcomingDates(date)
   const selected = selection && selection.athleteId === athleteId && selection.today === date && selection.client === client
@@ -80,6 +81,7 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
     React.createElement('section', { 'aria-label': 'Kostplan fra din coach', 'aria-busy': loading,
       style: { padding: 16, overflowWrap: 'anywhere' } },
       React.createElement('h2', { style: heading }, 'Kostplan fra din coach'),
+      plan && s.phase === 'ready' && s.planId && s.planRevision && React.createElement(VaegtMaal, { athleteId, date, client, planId: s.planId, revision: s.planRevision, weightLogs, weightStatus }),
       React.createElement('p', { role: failed ? 'alert' : 'status', 'aria-live': 'polite' }, status),
       empty && React.createElement('p', null, 'Bed din coach om at tildele en kostplan, hvis du ønsker en. Skriv under Beskeder, når du er færdig med din kostlog.'),
       !plan && !empty && React.createElement('p', null, 'Du kan stadig logge mad og bruge din lokale Ugeplan og indkøbsliste nedenfor.'),

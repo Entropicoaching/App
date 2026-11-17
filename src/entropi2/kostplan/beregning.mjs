@@ -82,6 +82,12 @@ function experienceEvidence(history, end, weightKg) {
  * for ONE athlete by the caller. No implicit clock, I/O, storage or mutations.
  * See README.md for units, evidence thresholds and the coach approval boundary.
  */
+// Atletens Kost læser samme vægttrend og samme ønskede ugentlige ændring som beregningen; ingen ny formel.
+export function weightTrend(weights, date, windowDays = 28) { return weightEvidence(weights, day(date), windowDays) }
+export function targetWeeklyPct(goal, intensity) {
+  return Object.hasOwn(GOALS, goal) && Object.hasOwn(GOALS[goal], intensity) ? GOALS[goal][intensity][1] : null
+}
+
 export function calculateNutrition(input) {
   if (!input || typeof input !== 'object') throw new TypeError('Beregningsinput kræves')
   const end = day(input.date), weightKg = input.weightKg
