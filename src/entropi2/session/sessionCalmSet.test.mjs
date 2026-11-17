@@ -194,3 +194,25 @@ test('ordre 1582: the set button is the last control of the form, closed or open
   assert.equal(await approve(f), true)
   assert.equal(f.calls.length, 1)
 })
+
+test('ordre 1594: first set of the pass opens the empty fold when the last logged day had RPE, one tap saves', async t => {
+  const f = setup(t, { rpeUsedLastTime: true })
+  assert.equal(fold(f).open, true); assert.equal(input(f, 'rpe').value, '')
+  step(f, 'rpe-8').click(); f.view.update()
+  assert.equal(await approve(f), true)
+  assert.equal(f.calls[0].input.rpe, '8'); assert.equal(f.calls[0].input.rpe_source, 'athlete')
+  assert.equal(fold(f).open, true); assert.equal(input(f, 'rpe').value, '')
+})
+
+test('ordre 1594: first set stays closed without RPE last time, with a failed read or odd values', t => {
+  for (const rpeUsedLastTime of [false, undefined, null, 'true', 1]) assert.equal(fold(setup(t, { rpeUsedLastTime })).open, false)
+})
+
+test('ordre 1594: a fold the athlete closes stays closed, also when RPE was used last time', async t => {
+  const f = setup(t, { rpeUsedLastTime: true })
+  fold(f).open = false; f.view.update()
+  assert.equal(fold(f).open, false)
+  assert.equal(await approve(f), true)
+  assert.equal(fold(f).open, false)
+  assert.equal(f.calls[0].input.rpe, '')
+})

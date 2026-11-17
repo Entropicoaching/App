@@ -371,7 +371,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     }
     body.append(history)
     const sessionIds = new Set((s.session.exercises || []).map(ex => ex.id))
-    const rpeAuto = !rpeClosedByUser && s.logs.some(l => sessionIds.has(l.exercise_id) && !l.skipped && given(l.rpe_actual))
+    // Ordre 1594: HomeSession læser én gang, om atletens seneste loggede dag havde RPE (p.rpeUsedLastTime); ellers som før.
+    const rpeAuto = !rpeClosedByUser && (s.logs.some(l => sessionIds.has(l.exercise_id) && !l.skipped && given(l.rpe_actual)) || p.rpeUsedLastTime === true)
     for (const node of body.querySelectorAll('details')) {
       const detail = node.getAttribute('data-detail')
       const overview = detail === 'overview' || detail?.startsWith('overview-')

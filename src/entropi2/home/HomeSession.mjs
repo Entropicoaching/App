@@ -1,5 +1,6 @@
 import { createElement as h, useEffect, useRef, useState } from 'react'
 import AthleteHome from './AthleteHome.mjs'
+import { readHomeRpeLastTime } from './homeRpeRead.mjs'
 import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
 import { createSessionRecordReceipts } from '../session/sessionRecordReceipt.mjs'
@@ -11,8 +12,20 @@ export default function HomeSession(props) {
   if (!records.current) records.current = createSessionRecordReceipts()
   const [loading, setLoading] = useState(false)
   const sessionRecordReceipts = records.current.read(props)
-  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts } : props
   const athleteId = props.enabled === true ? props.athlete?.id : undefined
+  // Ordre 1594: ét opslag pr. atlet, om seneste loggede dag havde RPE; fejl eller skrivebeskyttet giver false.
+  const [rpeLast, setRpeLast] = useState(null)
+  const rpeRead = props.readHomeRpeLastTime ?? readHomeRpeLastTime
+  const rpeWriter = typeof props.onLogSet === 'function' && typeof props.setLogInputs === 'function'
+  const rpeUsedLastTime = rpeLast != null && rpeLast.athleteId === athleteId && rpeLast.used === true
+  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, rpeUsedLastTime } : props
+  useEffect(() => {
+    if (props.enabled !== true || !athleteId || !rpeWriter) return
+    let active = true
+    Promise.resolve().then(() => rpeRead({ athleteId })).then(
+      used => { if (active) setRpeLast({ athleteId, used: used === true }) }, () => {})
+    return () => { active = false }
+  }, [props.enabled, athleteId, rpeWriter, rpeRead])
   const weekId = props.enabled === true ? props.currentWeek?.id : undefined
   useEffect(() => {
     if (props.enabled !== true) return
