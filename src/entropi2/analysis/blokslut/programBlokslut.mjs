@@ -97,8 +97,15 @@ export async function programBlokslutModel({ athleteId, block, now, programError
   } catch { return blokslutModel({ error: true }) }
 }
 
+// Ordre 1564: blokhovedet på Program viser den viste bloks datoer (første ugestart til sidste ugestart + 6 dage).
+export function blokhovedViserDatoen(hovedUger, model) {
+  const first = hovedUger?.[0]?.start_date, last = hovedUger?.at(-1)?.start_date
+  return model?.status === 'ready' && !!first && !!last && first === model.start &&
+    addCalendarDays(last, 6) === model.end
+}
+
 // Supplied createElement keeps this renderer usable by real React and hermetic tests.
-export function renderProgramBlokslut(h, model, { open, onToggle, onRetry }) {
+export function renderProgramBlokslut(h, model, { open, onToggle, onRetry, skjulDato }) {
   const good = model.status === 'ready'
   const gains = good ? model.lifts.filter(row => row.delta > 0) : []
   const strength = gains.length ? gains.map(row => `${row.lift}: +${number(row.delta)} kg beregnet e1RM`).join(' · ')
@@ -110,7 +117,9 @@ export function renderProgramBlokslut(h, model, { open, onToggle, onRetry }) {
       width: '100%', minWidth: 0, boxSizing: 'border-box', overflowWrap: 'anywhere', lineHeight: 1.6 } },
     h('summary', { style: { minHeight: 44, cursor: 'pointer', boxSizing: 'border-box', paddingTop: 8 } }, 'Din blok'),
     good ? h('div', null,
-      h('p', null, `${model.start.split('-').reverse().join('.')}–${model.end.split('-').reverse().join('.')}${model.through < model.end ? ' · Sidste uge er i gang.' : ''}`),
+      // Ordre 1564: datoerne står i blokhovedet; her kun det, hovedet ikke viser.
+      skjulDato ? (model.through < model.end ? h('p', null, 'Sidste uge er i gang.') : null)
+        : h('p', null, `${model.start.split('-').reverse().join('.')}–${model.end.split('-').reverse().join('.')}${model.through < model.end ? ' · Sidste uge er i gang.' : ''}`),
       h('p', null, `Gennemførte pas: ${number(model.completed)} af ${number(model.planned)}.`),
       h('p', null, model.confirmed === 0 ? 'Ingen bekræftede træningssæt i blokken endnu.' : strength),
       model.uncertain && h('p', { role: 'status' }, 'Nogle sæt er afventende eller modstridende. Opgørelsen er ufuldstændig.'),

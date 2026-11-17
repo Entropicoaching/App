@@ -266,7 +266,7 @@ function ExerciseTimer({ duration, label, accessible = false, context, entropi2 
 }
 
 // Mounted only for strict Entropi 2 ON; report state is separate from the legacy logger.
-function ProgramBlokslut({ allWeeks, athlete, programError }) {
+function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx }) {
   const [blokslut, setBlokslut] = useState(null)
   const [blokslutRetry, setBlokslutRetry] = useState(0)
   // Lazy analysis owns its full-block reader. OFF never loads it or touches storage.
@@ -311,8 +311,16 @@ function ProgramBlokslut({ allWeeks, athlete, programError }) {
         onClick={() => setBlokslutRetry(value => value + 1)}>Prøv igen</button>
     </div>
   )
+  // Ordre 1564: blokhovedet viser allerede den viste bloks datoer; Din blok gentager dem kun for en anden blok.
+  const hovedFase = (() => {
+    const phases = computePhases(allWeeks)
+    let acc = 0
+    for (const p of phases) { if (acc + p.weeks.length > viewingWeekIdx) return p; acc += p.weeks.length }
+    return phases[0]
+  })()
+  const skjulDato = blokslutCurrent?.api.blokhovedViserDatoen(hovedFase?.weeks, blokslutCurrent.model) === true
   return (blokslutCurrent && blokslutCurrent.api.renderProgramBlokslut(createElement, blokslutCurrent.model, {
-    open: blokslutCurrent.open,
+    open: blokslutCurrent.open, skjulDato,
     onToggle: event => {
       const open = event.currentTarget.open
       setBlokslut(previous => previous?.key === blokslutCurrent.key ? { ...previous, open } : previous)
@@ -631,7 +639,7 @@ export default function ProgramTab({
                     logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
                     goToWeek,
                   }, programAppearanceOn)}
-                  {entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} />}
+                  {entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} viewingWeekIdx={viewingWeekIdx} />}
                   {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
                       (kun aktuel uge; readinessLog er allerede i state). */}
                   {isCurrentWeek && readinessLog && readinessLog.readiness_score != null && readinessLog.readiness_score < 75 && (() => {

@@ -84,7 +84,11 @@ test('actual copied Program: OFF and middle of block read no report data; follow
   const p = props(); p.allWeeks.push({ id: 'next', start_date: '2026-11-09', block_name: 'Basis', week_number: 4, sessions: [] })
   p.currentWeek = p.allWeeks[3]; p.viewingWeekIdx = 0
   screen = mount(Program, p); screen.render()
-  assert.match(text(card(await settled(screen))), /19.10.2026.*08.11.2026.*Gennemførte pas: 3 af 3/)
+  // Ordre 1564: blokhovedet viser datoerne; kortet gentager dem ikke.
+  const done = await settled(screen)
+  assert.match(text(card(done)), /Gennemførte pas: 3 af 3/)
+  assert.doesNotMatch(text(card(done)), /19\.10\.2026/)
+  assert.equal((text(done).match(/19\. okt\.? til 8\. nov/g) || []).length, 1)
   assert.equal(logCalls().length, before + 1)
   instant = '2026-11-16T12:00:00Z'
   // Long new block: the old report expires even when browsing old weeks.
