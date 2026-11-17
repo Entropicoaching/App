@@ -73,7 +73,8 @@ export function renderProgramBlockOverview(h, options) {
       ? h('button', { type: 'button', onClick: options.onRetry,
         style: { minHeight: 44, padding: '0.75rem', cursor: 'pointer' } }, 'Prøv igen') : null)
   return h('section', { 'aria-label': 'Din aktuelle blok', style },
-    h('h2', { style: { fontSize: '1.2rem', marginTop: 0 } }, model.name),
+    // Ordre 1546: i den nye visning står blokkens navn og datoer i blokhovedet lige under.
+    options.skjulNavn ? null : h('h2', { style: { fontSize: '1.2rem', marginTop: 0 } }, model.name),
     h('p', null, `Uge ${model.currentWeek} af ${model.totalWeeks}`),
     model.partial ? h('p', { role: 'status' }, 'Nogle programuger kunne ikke vises.') : null,
     model.next ? h('div', null,

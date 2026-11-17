@@ -143,7 +143,7 @@ test('late version response after owner/client/day switch and overlapping date r
   await act(async () => { g.resolve(); await pending; await tick() })
   assert.match(list(r.host).textContent, /Linser: 375 g/)
   r.props.athleteId = 'synthetic-second'; await r.render()
-  assert.equal(list(r.host), undefined); assert.match(section(r.host).textContent, /ingen aktiv kostplan fra din coach/)
+  assert.equal(list(r.host), undefined); assert.match(section(r.host).textContent, /Indkøbslisten laves ud fra planen/)
 })
 
 test('today included explicitly, all deselected, invalid dates, current day revocation and OFF do no writes', async t => {
@@ -182,7 +182,7 @@ test('actual before-migration state (no plans table) is an honest no-plan text, 
   r.f.options.missing = tableNames[0]
   await r.click('Hent indkøbsgrundlag igen')
   assert.equal(list(r.host), undefined); assert.equal(button(section(r.host), 'Kopiér indkøbsliste'), undefined)
-  assert.match(section(r.host).textContent, /ingen aktiv kostplan fra din coach for de valgte dage/)
+  assert.match(section(r.host).textContent, /Indkøbslisten laves ud fra planen, når din coach har aktiveret den/)
   assert.doesNotMatch(section(r.host).textContent, /ufuldstændig|tabeller/)
   r.f.options.missing = false
   await r.click('Hent indkøbsgrundlag igen'); assert.match(list(r.host).textContent, /Linser: 450 g/)

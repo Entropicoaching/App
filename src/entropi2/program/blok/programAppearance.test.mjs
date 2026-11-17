@@ -33,7 +33,7 @@ test('mounted default has block and week accents, deduplicated plan targets and 
   const original = JSON.stringify(props.allWeeks)
   const tree = render(props), summary = nodes(tree, n => n.props['aria-label'] === 'Din aktuelle blok')[0]
   assert.equal(summary.props.style.borderInlineStart, '4px solid #c8923a')
-  assert.match(text(summary), /Styrke.*Uge 1 af 1/)
+  assert.match(text(summary), /Uge 1 af 1/)
   const view = intensity(tree)
   assert.equal(nodes(view, n => n.type === 'span' && text(n) === 'RPE 8').length, 1)
   assert.match(text(view), /75–80 %/)

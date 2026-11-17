@@ -544,7 +544,7 @@ export default function ProgramTab({
                             : viewingWeekIdx > activeWeekIdx
                               ? <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
                               : <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
-                          {viewedRange && <span style={{ color: '#a8a498' }}> · {viewedRange}</span>}
+                          {viewedRange && !(entropi2 === true && viewedRange === dateRange) && <span style={{ color: '#a8a498' }}> · {viewedRange}</span>}
                           {!blockOverviewOn && <span style={{ color: '#a8a498' }}> · aktiv uge {activeWeekIdx + 1} af {totalWeeks}</span>}
                         </div>
                       </div>
@@ -626,6 +626,7 @@ export default function ProgramTab({
                     }}>Næste pas · {nextSession.title || 'Åbn pas'}</button>}
                   {blockOverviewOn && programBlockElement({
                     allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate, programError,
+                    skjulNavn: entropi2 === true,
                     onRetry: () => fetchProgram(athlete.id),
                     logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
                     goToWeek,

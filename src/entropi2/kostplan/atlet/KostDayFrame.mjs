@@ -82,7 +82,7 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
       React.createElement('h2', { style: heading }, 'Kostplan fra din coach'),
       React.createElement('p', { role: failed ? 'alert' : 'status', 'aria-live': 'polite' }, status),
       empty && React.createElement('p', null, 'Bed din coach om at tildele en kostplan, hvis du ønsker en. Skriv under Beskeder, når du er færdig med din kostlog.'),
-      !plan && React.createElement('p', null, 'Du kan stadig logge mad og bruge din lokale Ugeplan og indkøbsliste nedenfor.'),
+      !plan && !empty && React.createElement('p', null, 'Du kan stadig logge mad og bruge din lokale Ugeplan og indkøbsliste nedenfor.'),
       (empty || failed || (plan && s.phase === 'ready')) && typeof controller?.load === 'function' && React.createElement('button', {
         type: 'button', style: control, onClick: controller.load }, 'Hent kostplan igen')),
     plan && React.createElement(KostplanAtletView, { enabled: true, snapshot: s,

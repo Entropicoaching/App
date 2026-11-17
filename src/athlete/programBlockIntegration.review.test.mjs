@@ -51,7 +51,7 @@ test('review: actual shared default enables top summary, active block wins over 
   assert.deepEqual(calls, [])
   const fold = nodes(block, n => n.type === 'details')[0]
   assert.equal(fold.props.open, undefined)
-  assert.equal(nodes(block, n => n.type === 'h2').length, 1)
+  assert.equal(nodes(block, n => n.type === 'h2').length, 0) // ordre 1546: navnet står i blokhovedet
   const visible = block.props.children.filter(n => n.type !== 'details').map(text).join(' ')
   assert.doesNotMatch(visible, /planlagte sæt|Hviledage|Logstatus/)
   const history = nodes(block, n => n.props['data-program-history'])[0]
@@ -77,7 +77,6 @@ test('review: missing volume, undated marker and unsafe-looking name stay honest
   const tree = summary(render(props))
   assert.match(text(tree), /Planlagt volumen ukendt/)
   assert.match(text(tree), /Uge 12.*0 planlagte sæt/)
-  assert.match(text(tree), /<svg onload=fixture\(\)>/)
   assert.equal(nodes(tree, n => n.props.dangerouslySetInnerHTML !== undefined).length, 0)
 })
 

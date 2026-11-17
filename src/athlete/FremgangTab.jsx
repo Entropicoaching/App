@@ -322,7 +322,7 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
                 <div style={{ fontSize: '0.8rem', color: '#a8a498', fontStyle: 'italic' }}>{harLogs ? 'Kun lette sæt logget endnu (backoff, teknik eller volumen), så der er intet tungt sæt at tegne en kurve af.' : 'Du har ikke logget denne øvelse endnu. Når du har, vises din udvikling her.'}</div>
               ) : punkter.length === 1 ? (
                 <div style={{ fontSize: '0.8rem', color: '#a8a498' }}>
-                  {kgTal(punkter[0].weight)} kg × {punkter[0].reps} (e1RM {punkter[0].e1rm} kg, et skøn over det tungeste du kunne løfte én gang). Der skal være data fra flere tunge træningsdage, før der kan tegnes en kurve.
+                  {kgTal(punkter[0].weight)} kg × {punkter[0].reps}. Der skal være data fra flere tunge træningsdage, før der kan tegnes en kurve.
                 </div>
               ) : (
                 <>
@@ -350,13 +350,13 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
       {renderPersonalRecords(createElement, { enabled: personalRecords, loading: fremgangLoading, logs: fremgangLogs, exerciseLogs, currentWeek, allWeeks })}
 
       {rekorder && (
-        <div style={s.card}>
-          <div style={{ ...s.cardLabel, fontSize: '0.7rem' }}>Dine rekorder</div>
+        <details data-rekorder-fold style={s.card}>
+          <summary style={{ ...s.cardLabel, fontSize: '0.7rem', cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center' }}>Dine rekorder</summary>
           <RekordListe rekorder={rekorder} />
           <div style={{ fontSize: '0.7rem', color: '#a8a498', marginTop: '0.85rem', lineHeight: 1.5 }}>
             Rekorder tæller kun tunge sæt (højst 8 reps, ikke backoff, teknik eller volumen).
           </div>
-        </div>
+        </details>
       )}
     </>
   )

@@ -31,8 +31,13 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
   const matches = record?.scope === scope && currentDayMatches(scope)
   const controller = matches ? record.controller : null, s = controller ? record.snapshot : null
   const dates = upcomingDates(today)
+  // Ordre 1546: uden aktiv kostplan står beskeden kun øverst på Kost; indkøb foldes ind.
+  const foldet = s?.phase === 'no-plan'
+  const krop = (...born) => foldet ? [h('details', { key: 'indkoeb-foldet' },
+    h('summary', { style: { minHeight: 44, cursor: 'pointer', color: '#edeae2' } }, 'Indkøb fra kostplanen'), ...born)] : born
   return h('section', { 'aria-label': 'Indkøb fra kostplanen', style: { padding: 16, width: '100%', maxWidth: '42rem', boxSizing: 'border-box', overflowWrap: 'anywhere', textAlign: 'left' } },
-    h('h2', { style: { color: '#edeae2' } }, 'Indkøb fra kostplanen'),
+    !foldet && h('h2', { style: { color: '#edeae2' } }, 'Indkøb fra kostplanen'),
+    ...krop(
     h('p', null, grossLabel),
     h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer.'),
     h('fieldset', null, h('legend', null, 'Dage til indkøb'),
@@ -49,7 +54,7 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
       h('p', null, `Valgte datoer: ${s.dates.join(', ') || 'ingen'}.`),
       s.phase === 'loading' && h('p', { role: 'status' }, 'Henter godkendte planer… Listen er ufuldstændig.'),
       s.phase === 'empty-selection' && h('p', null, 'Vælg mindst én dag.'),
-      s.phase === 'no-plan' && h('p', { role: 'status' }, 'Der er ingen aktiv kostplan fra din coach for de valgte dage endnu. Indkøbslisten laves ud fra planen, når din coach har aktiveret den.'),
+      s.phase === 'no-plan' && h('p', { role: 'status' }, 'Indkøbslisten laves ud fra planen, når din coach har aktiveret den.'),
       s.affected.length > 0 && h('div', { role: s.phase === 'loading' ? 'status' : 'alert' },
         h('p', null, 'Listen er ufuldstændig. Berørte datoer:'),
         h('ul', null, ...s.affected.map(d => h('li', { key: d.date }, `${d.date}: ${d.reason}.`)))),
@@ -104,5 +109,5 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
           h('label', null, 'Indkøbsliste til manuel kopiering',
             h('textarea', { readOnly: true, value: s.copyText, rows: 8, maxLength: maxShoppingText,
               onFocus: event => event.currentTarget.select?.(),
-              style: { width: '100%', maxHeight: '16rem', boxSizing: 'border-box' } }))))))
+              style: { width: '100%', maxHeight: '16rem', boxSizing: 'border-box' } })))))))
 }

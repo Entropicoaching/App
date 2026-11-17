@@ -58,7 +58,7 @@ test('overview marker owns only the accented root and preserves ready/error chil
       nodes(marked[0], n => n.type === 'button')[0].props.onClick()
       assert.deepEqual(calls, ['contrast-fixture'])
     } else {
-      assert.match(text(marked[0]), /Basis.*Uge 2 af 3/)
+      assert.match(text(marked[0]), /Uge 2 af 3/)
       assert.equal(nodes(marked[0], n => n.type === 'details').length, 2)
       assert.equal(nodes(marked[0], n => n.type === 'button').length, 3)
       assert.deepEqual(calls, [])

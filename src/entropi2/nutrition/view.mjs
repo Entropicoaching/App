@@ -465,7 +465,7 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
     const hero = append(main, 'section', 'card hero'); hero.setAttribute('data-kost-del', 'maal')
     append(hero, 'h2', '', isToday ? 'Dagens mål' : 'Mål for den valgte dag')
     const planReference = s.targetReference?.source === 'approved-plan'
-    append(hero, 'p', 'muted', planReference ? 'Aktiv plans indhold · godkendte portioner.' : 'Profilens mål · ingen aktiv planreference.')
+    append(hero, 'p', 'muted', planReference ? 'Aktiv plans indhold · godkendte portioner.' : 'Profilens mål.')
     if (['idle', 'loading'].includes(s.targetReference?.state)) append(hero, 'p', 'small muted', 'Dagsplanen hentes. Målgrundlaget opdateres, når læsningen er bekræftet.')
     if (['load-error', 'unavailable', 'disposed'].includes(s.targetReference?.state)) append(hero, 'p', 'small muted',
       planReference ? 'Planen kunne ikke genlæses. Senest bekræftede indhold vises.' : 'Planreferencen er ikke tilgængelig. Profilens mål vises, hvis de er angivet.')
