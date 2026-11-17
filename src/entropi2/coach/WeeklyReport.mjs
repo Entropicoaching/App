@@ -21,6 +21,10 @@ export default function WeeklyReport({ today, ...props }) {
         t.rpe !== null && h('p', null,
           `Seneste pas · RPE-snit: ${t.rpe.toFixed(1).replace('.', ',')} (${t.rpeCount} sæt med RPE)`),
         n && h('p', null, `Kostdage logget: ${n.logged}/7`),
-        n && n.reached !== null && h('p', null,
+        n && n.plan && h('p', null,
+          `Proteinmål nået mod kostplan: ${n.plan.reached} af ${n.plan.logged} ${antalOrd(n.plan.logged, 'logget dag', 'loggede dage')}`),
+        n && n.plan && n.reached !== null && n.profileLogged > 0 && h('p', null,
+          `Øvrige dage mod profilens mål: ${n.reached} af ${n.profileLogged} ${antalOrd(n.profileLogged, 'logget dag', 'loggede dage')}`),
+        n && !n.plan && n.reached !== null && h('p', null,
           `Proteinmål nået: ${n.reached} af ${n.logged} ${antalOrd(n.logged, 'logget dag', 'loggede dage')}`)))))
 }

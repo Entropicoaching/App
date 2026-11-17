@@ -19,7 +19,8 @@ export const planWindow = today => ({ start: addCalendarDays(today, -WINDOW_DAYS
 // Ren: planDays er godkendte dagsreferencer ({ date, state, targets }), meals er atletens
 // egne kostrækker. Dage uden godkendt plan, uden log eller med ukendt kcal/protein
 // får intet svar. Ingen gæt og intet fald tilbage til profilens kcal_target.
-export function kostDageModPlan({ planDays, meals, today } = {}) {
+// Ordre 1596: dagsmålingen er delt, så ugerapportens protein og kostlinjen vurderer samme dag ens.
+function dagsSummer({ planDays, meals, today } = {}) {
   if (!day(today) || !Array.isArray(planDays) || !Array.isArray(meals)) return new Map()
   const { start, end } = planWindow(today)
   const targets = new Map(planDays.filter(d => d?.state === 'approved' && day(d.date)
@@ -35,11 +36,19 @@ export function kostDageModPlan({ planDays, meals, today } = {}) {
     eaten.set(row.date, sum)
   }
   const result = new Map()
-  for (const [date, sum] of eaten) {
-    if (!sum.known) continue
-    const goal = targets.get(date)
-    result.set(date, Math.abs(sum.kcal - goal.kcal) <= goal.kcal * KCAL_TOLERANCE
-      && sum.protein >= goal.protein * PROTEIN_MIN_SHARE)
-  }
+  for (const [date, sum] of eaten) if (sum.known) result.set(date, { sum, goal: targets.get(date) })
+  return result
+}
+const proteinHit = ({ sum, goal }) => sum.protein >= goal.protein * PROTEIN_MIN_SHARE
+
+export function kostDageModPlan(input) {
+  const result = new Map()
+  for (const [date, entry] of dagsSummer(input))
+    result.set(date, Math.abs(entry.sum.kcal - entry.goal.kcal) <= entry.goal.kcal * KCAL_TOLERANCE && proteinHit(entry))
   return result.size >= MIN_ASSESSED_DAYS ? result : new Map()
+}
+
+// Ordre 1596: kun proteindelen af samme dagsvurdering, uden grænsen på 4 dage (ugerapporten har ingen).
+export function proteinDageModPlan(input) {
+  return new Map([...dagsSummer(input)].map(([date, entry]) => [date, proteinHit(entry)]))
 }

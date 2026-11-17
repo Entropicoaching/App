@@ -47,7 +47,7 @@ export function kostvaneTal(props, day, athletes, rosterReady) {
 
 // Ordre 1588: kostplanens dagsreferencer pr. atlet, kun når læsningen er den, vi forventer
 // (præcis de 14 afsluttede dage). Alt andet giver intet, og så bruges profilens mål som før.
-function planSource(source, day) {
+export function planSource(source, day) {
   const plan = source.plan, { start, end } = planWindow(day)
   if (!plan || plan.from !== start || plan.through !== end || !Array.isArray(plan.athletes) ||
     !Array.isArray(plan.meals)) return new Map()

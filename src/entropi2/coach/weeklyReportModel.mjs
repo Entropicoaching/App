@@ -1,6 +1,8 @@
 import { adaptCoachState, hasUndatedPlannedWeek } from './coachModel.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
+import { planSource } from './coachNutrition.mjs'
+import { proteinDageModPlan } from '../analysis/kostDageModPlan.mjs'
 
 const ordinal = day => Date.parse(day + 'T00:00:00Z') / 86400000
 const civil = day => typeof day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day) && activityDay(day) === day
@@ -36,11 +38,24 @@ function nutritionDays(props, data) {
     if (!allowed.has(target?.athlete_id) || targets.has(target.athlete_id)) return result
     targets.set(target.athlete_id, target)
   }
+  // Ordre 1596: dage under godkendt kostplan tælles mod planens protein (samme dagsvurdering som
+  // kostlinjen, 1588); øvrige dage, også i dag, mod profilens mål. De to tal blandes aldrig.
+  const planned = planSource(source, data.day)
   for (const athlete of data.athletes) {
     const days = totals.get(athlete.id) || new Map()
     const goal = parseInputNumber(targets.get(athlete.id)?.protein_target)
+    const entry = planned.get(athlete.id)
+    const hits = entry ? proteinDageModPlan({ planDays: entry.planDays, meals: entry.meals, today: data.day }) : new Map()
+    const planDates = [...days.keys()].filter(date => hits.has(date))
+    if (!planDates.length) {
+      result.set(athlete.id, { logged: days.size, proteinGoal: goal > 0 ? goal : null,
+        reached: goal > 0 ? [...days.values()].filter(d => d.protein + 1e-9 >= goal).length : null })
+      continue
+    }
+    const rest = [...days].filter(([date]) => !hits.has(date)).map(([, sum]) => sum)
     result.set(athlete.id, { logged: days.size, proteinGoal: goal > 0 ? goal : null,
-      reached: goal > 0 ? [...days.values()].filter(d => d.protein + 1e-9 >= goal).length : null })
+      reached: goal > 0 ? rest.filter(d => d.protein + 1e-9 >= goal).length : null, profileLogged: rest.length,
+      plan: { logged: planDates.length, reached: planDates.filter(date => hits.get(date)).length } })
   }
   return result
 }
