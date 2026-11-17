@@ -11,7 +11,6 @@ import { s, initials, formatLastSeen } from '../dashboardShared.js'
 import { styrkeLinje, styrkeSmerteRegel } from '../coachFremgang.js'
 import { statusLabels } from './coachKonstanter.js'
 import { HUB_SECTIONS } from './hubSektioner.jsx'
-import InvitationKnap from './InvitationKnap.jsx'
 
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
@@ -25,6 +24,13 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
   // som Log-fanen. Rækker fra en tidligere profil vises aldrig (ignore-flag + athlete_id).
   const [styrkeLogs, setStyrkeLogs] = useState([])
   const moreButton = useRef(null)
+  // Ordre 1598: invitationen bygges først ved tryk (dynamisk import), så profilens importgraf er uændret.
+  const [invitationSvar, setInvitationSvar] = useState(null)
+  async function kopierInvitationTekst() {
+    const { invitationTekst, kopierInvitation } = await import('./invitationTekst.mjs')
+    const tekst = invitationTekst({ email: a.email, appAdresse: typeof __APP_ADRESSE__ === 'string' ? __APP_ADRESSE__ : '' })
+    setInvitationSvar(await kopierInvitation(tekst, globalThis.navigator?.clipboard))
+  }
   useEffect(() => {
     let ignore = false
     const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
@@ -133,7 +139,12 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
               </div>
             </div>
 </CoachFold>
-            <InvitationKnap a={a} />
+            {a.user_id === null && (String(a.email || '').trim() ? (
+              <div style={{ marginBottom: '1rem' }}>
+                <button type="button" style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }} onClick={kopierInvitationTekst}>Kopiér invitation</button>
+                {invitationSvar && <div role={invitationSvar.ok ? 'status' : 'alert'} style={{ color: invitationSvar.ok ? '#b8b4a8' : '#e0a555', fontSize: '0.75rem', lineHeight: 1.5, marginTop: '0.4rem' }}>{invitationSvar.besked}</div>}
+              </div>
+            ) : <div style={{ color: '#7a7770', fontSize: '0.75rem', lineHeight: 1.5, marginBottom: '1rem' }}>Tilføj en mail til atleten for at få en invitation at kopiere.</div>)}
 
             {/* Sektions-navigation: de sektioner man bruger dagligt står som
                 tydelige TEKST-faner; resten ligger i en "Mere"-menu. Erstatter den

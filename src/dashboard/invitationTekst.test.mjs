@@ -44,11 +44,12 @@ test('kopiering lykkes med stub og fejler synligt uden clipboard eller ved afvis
   }
 })
 
-test('knappen staar eet sted (profilkortet), vises kun uden koblet konto og har 44 px trykflade', () => {
-  assert.equal((kilde('./ProfilHoved.jsx').match(/<InvitationKnap /g) || []).length, 1)
-  const k = kilde('./InvitationKnap.jsx')
-  assert.match(k, /a\.user_id\) return null/)
+test('knappen staar eet sted (profilkortet), vises kun uden koblet konto, har 44 px trykflade og vises ved fejl', () => {
+  const k = kilde('./ProfilHoved.jsx')
+  assert.equal((k.match(/>Kopiér invitation</g) || []).length, 1)
+  assert.match(k, /a\.user_id === null && \(String\(a\.email/)
   assert.match(k, /minHeight: 44/)
-  assert.match(k, /role=\{svar\.ok \? 'status' : 'alert'\}/)
+  assert.match(k, /role=\{invitationSvar\.ok \? 'status' : 'alert'\}/)
+  assert.match(k, /Tilføj en mail til atleten/)
   assert.match(kilde('../../vite.config.js'), /__APP_ADRESSE__.*public.*CNAME/s)
 })
