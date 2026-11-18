@@ -20,6 +20,20 @@ function flagCard(section) {
     h('p', null, section.dataBasis.rule), basis(section))
 }
 
+// Cards that lack data for the same reason share one reason line; each keeps its window, rule and records.
+function insufficientGroups(sections) {
+  const groups = new Map(), shown = new Set()
+  for (const s of sections) groups.set(s.dataBasis.summary, [...(groups.get(s.dataBasis.summary) || []), s])
+  return [...groups].map(([reason, list]) => h('section', { key: reason, 'aria-label': reason, style: { marginBottom: 16 } },
+    h('h3', null, reason), h('p', null, list.map(s => s.title).join(', ')),
+    h('details', null,
+      h('summary', { style: summaryStyle }, 'Vis grundlag'),
+      ...list.map(s => h('div', { key: s.id },
+        h('p', null, `${s.title}: ${s.dataBasis.from} – ${s.dataBasis.to}. Regel: ${s.dataBasis.rule}.`),
+        s.dataBasis.observations.length > 0 && h('ul', null, ...s.dataBasis.observations.map((line, i) => h('li', { key: i }, line))))),
+      ...[...new Set(list.map(s => s.dataBasis.formula))].filter(f => !shown.has(f) && shown.add(f)).map(f => h('p', { key: f }, `Beregning: ${f}.`)))))
+}
+
 /** Unwired, read-only React view. No hooks, requests, persistence or writes. */
 export default function CoachWeek(options = {}) {
   if (options?.enabled !== true) return null
@@ -42,8 +56,9 @@ export default function CoachWeek(options = {}) {
       ...model.flags.map(flagCard)),
     remainder.length > 0 && h('details', { style: { marginTop: 12 } },
       h('summary', { style: summaryStyle }, 'Øvrigt grundlag og datamangler'),
-      ...remainder.map(section => h('section', { key: section.id, 'aria-label': section.title, style: { marginBottom: 16 } },
-        h('h3', null, section.title), h('p', null, section.dataBasis.summary), basis(section)))),
+      ...remainder.filter(s => s.state !== 'insufficient').map(section => h('section', { key: section.id, 'aria-label': section.title, style: { marginBottom: 16 } },
+        h('h3', null, section.title), h('p', null, section.dataBasis.summary), basis(section))),
+      ...insufficientGroups(remainder.filter(s => s.state === 'insufficient'))),
     h('p', null, 'Grundlag: atletens egne registreringer. Manglende registreringer er ikke nul.'),
     h('p', null, 'Coachen vurderer og planlægger. Ingen automatiske programændringer.'))
 }
