@@ -6182,44 +6182,50 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       }
     }
     if(keep<0)return;
-    const outside=(q,j)=>Math.hypot(Math.max(minX[j]-q.x,0,q.x-maxX[j]),Math.max(minY[j]-q.y,0,q.y-maxY[j]));
-    // Flugten begynder ved det første punkt efter sættet, hvor krav 3 og 4 holder.
-    let escape=-1;
-    for(let i=keep+1;i<n&&escape<0;i++){
-      if(!ok(i)||!(outside(path.pts[i],i-1)>0))continue;
-      let free=true,reach=0;
-      for(let k=i;k<n;k++){
-        if(!ok(k))continue;
-        const o=outside(path.pts[k],i-1);
-        if(!(o>0)){free=false;break;}
-        reach=Math.max(reach,o);
+    // Finder, hvor banen skal slutte, når sættets sidste optur ender ved keep; -1, når der ingen flugt er.
+    const flee=(keep,ref,minX,maxX,minY,maxY)=>{
+      const outside=(q,j)=>Math.hypot(Math.max(minX[j]-q.x,0,q.x-maxX[j]),Math.max(minY[j]-q.y,0,q.y-maxY[j]));
+      // Flugten begynder ved det første punkt efter sættet, hvor krav 3 og 4 holder.
+      let escape=-1;
+      for(let i=keep+1;i<n&&escape<0;i++){
+        if(!ok(i)||!(outside(path.pts[i],i-1)>0))continue;
+        let free=true,reach=0;
+        for(let k=i;k<n;k++){
+          if(!ok(k))continue;
+          const o=outside(path.pts[k],i-1);
+          if(!(o>0)){free=false;break;}
+          reach=Math.max(reach,o);
+        }
+        if(free&&reach>=radius)escape=i;
       }
-      if(free&&reach>=radius)escape=i;
-    }
-    if(escape<0)return;
-    // Banen slutter lige før flugten. Kun når sporet kom fra et roligt punkt nærmere startstedet
-    // (løftets top i squat og bænk, gulvet i dødløft) og derfra gik lige væk og ud, slutter den
-    // allerede ved det rolige punkt, men aldrig før sættets sidste optur er slut.
-    let cut=escape-1;
-    while(cut>keep&&!ok(cut))cut--;
-    const awayAtEscape=Math.abs(path.pts[cut].y-ref);
-    let nearest=awayAtEscape;
-    for(let i=cut;i>=keep;i--){
-      if(!ok(i))continue;
-      const away=Math.abs(path.pts[i].y-ref);
-      if(away>nearest+radius*.15)break;
-      nearest=Math.min(nearest,away);
-      let still=0,moved=false;
-      for(let k=i-1;k>=Math.max(0,i-8);k--){
-        if(!ok(k))continue;
-        if(Math.hypot(path.pts[k].x-path.pts[i].x,path.pts[k].y-path.pts[i].y)>radius*.2){moved=true;break;}
-        still++;
+      if(escape<0)return -1;
+      // Banen slutter lige før flugten. Kun når sporet kom fra et roligt punkt nærmere startstedet
+      // (løftets top i squat og bænk, gulvet i dødløft) og derfra gik lige væk og ud, slutter den
+      // allerede ved det rolige punkt, men aldrig før sættets sidste optur er slut.
+      let cut=escape-1;
+      while(cut>keep&&!ok(cut))cut--;
+      const awayAtEscape=Math.abs(path.pts[cut].y-ref);
+      let nearest=awayAtEscape;
+      for(let i=cut;i>=keep;i--){
+        if(!ok(i))continue;
+        const away=Math.abs(path.pts[i].y-ref);
+        if(away>nearest+radius*.15)break;
+        nearest=Math.min(nearest,away);
+        let still=0,moved=false;
+        for(let k=i-1;k>=Math.max(0,i-8);k--){
+          if(!ok(k))continue;
+          if(Math.hypot(path.pts[k].x-path.pts[i].x,path.pts[k].y-path.pts[i].y)>radius*.2){moved=true;break;}
+          still++;
+        }
+        if(!moved&&still>=4){
+          if(away<awayAtEscape-radius*.5)cut=i;
+          break;
+        }
       }
-      if(!moved&&still>=4){
-        if(away<awayAtEscape-radius*.5)cut=i;
-        break;
-      }
-    }
+      return cut;
+    };
+    let cut=flee(keep,ref,minX,maxX,minY,maxY);
+    if(cut<0)return;
     // Ligger der to eller flere opture, der ligner sættets, i det, der ville blive fjernet, er det
     // ikke en hale: kameraet er flyttet midt i sættet, og sættet fortsætter (kontrol 3).
     // ORDRE 1621v: en optur tæller straks, når bund og top ligger højst 2,5 radius over eller under
@@ -6228,25 +6234,56 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // flytning af billedet, og kun når sporet til sidst står, hvor et løft slutter (toppen, når
     // sættet begyndte i toppen, ellers bunden; højst 0,6 radius fra). Et spor, der er faldet gennem
     // gulvet og gynger, mens det bæres væk, er en hale.
-    let lifts=0,far=null,moved=0;
+    // ORDRE 1629v: et løft har ro, hvor det slutter, et gyng har ikke. Står sporet stille mellem de
+    // to opture langt væk (mindst 0,5 s inden for 0,3 radius i toppen, eller på gulvet i dødløft), er
+    // de løft, uanset hvor sporet ender. I dødløft, hvor et gyng også ender i bunden, tæller opture
+    // langt væk kun med den ro, medmindre sættet selv blev løftet uden ro på gulvet. Og når sættet
+    // er fortsat efter sådan en flytning af billedet, klippes en hale efter dets sidste løft på
+    // samme måde som ovenfor, målt mod området efter flytningen, i stedet for at løftene efter
+    // flytningen går tabt.
+    const time=i=>path.times?.[i]??i/30;
+    const calm=at=>{
+      const q=path.pts[at],near=i=>!ok(i)||Math.hypot(path.pts[i].x-q.x,path.pts[i].y-q.y)<=radius*.3;
+      let lo=at,hi=at;
+      while(lo>0&&near(lo-1))lo--;
+      while(hi<n-1&&near(hi+1))hi++;
+      return time(hi)-time(lo)>=.5;
+    };
+    let lifts=0,far=null,moved=0,soft=null,sure=false,bounce=turns[0].top,solidEnd=-1,lastEnd=-1;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k],amp=from.y-to.y;
       if(!to.top)continue;
-      if(from.i<cut){lastBot=from.y;lastTop=to.y;continue;}
+      if(from.i<cut){lastBot=from.y;lastTop=to.y;if(k>1&&!calm(from.i))bounce=true;continue;}
       if(amp>maxAmp*1.5||amp<minAmp*.6)continue;
-      const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y};
-      const same=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
+      const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y,end:to.i},before={bot:lastBot,top:lastTop};
+      const pair=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
         &&Math.abs(now.by-far.by)<=radius*1.25&&Math.abs(now.ty-far.ty)<=radius*1.25;
+      const rested=pair&&calm(turns[0].top?far.end:from.i),same=pair&&(rested||bounce);
       if(same||(Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5)){
-        lifts+=same?2:1;if(same)moved+=2;lastBot=from.y;lastTop=to.y;far=null;
+        lifts+=same?2:1;lastBot=from.y;lastTop=to.y;far=null;
+        if(same&&!rested){moved+=2;soft??=before;}
+        if(rested&&!soft)sure=true;
+        if(!soft)solidEnd=to.i;
+        lastEnd=to.i;
       }else far=now;
     }
-    if(moved){
-      let last=n-1;
-      while(last>cut&&!ok(last))last--;
-      if(Math.abs(path.pts[last].y-(turns[0].top?lastTop:lastBot))>radius*.6)lifts-=moved;
+    let last=n-1;
+    while(last>cut&&!ok(last))last--;
+    if(soft&&Math.abs(path.pts[last].y-(turns[0].top?lastTop:lastBot))>radius*.6){
+      lifts-=moved;lastBot=soft.bot;lastTop=soft.top;lastEnd=solidEnd;
     }
-    if(lifts>=2)return;
+    if(lifts>=2){
+      // Sættet fortsatte efter en stor flytning af billedet. En ny flugt efter dets sidste løft er halen.
+      if(!sure||!(lastEnd>cut&&lastEnd<last))return;
+      a=Infinity;b=-Infinity;c=Infinity;d=-Infinity;
+      for(let i=cut;i<n;i++){
+        if(ok(i)){const q=path.pts[i];a=Math.min(a,q.x);b=Math.max(b,q.x);c=Math.min(c,q.y);d=Math.max(d,q.y);}
+        minX[i]=a;maxX[i]=b;minY[i]=c;maxY[i]=d;
+      }
+      const again=flee(lastEnd,turns[0].top?lastTop:lastBot,minX,maxX,minY,maxY);
+      if(again<0)return;
+      cut=again;
+    }
     if(cut>=n-1)return;
     path.tailCutAt=path.times[cut];path.tailCutFrames=n-1-cut;
     path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;
