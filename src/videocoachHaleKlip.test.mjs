@@ -545,3 +545,47 @@ test('en hale gennem gulvet, der holder stille og gør ét udsving magen til sæ
   assert.deepEqual(tabt, [], `${tabt.length} af 48 baner taber løft`)
   assert.deepEqual(hale, [], `${hale.length} af 48 haler står tilbage under gulvet`)
 })
+
+// Ordre 1661v: resten, som kontrollen af 1634v fandt (work/1634v/kontrol3/egen-to.mjs, samme generator).
+// Billedet rettes over 2,5 radius opad i en hvile, mindst to løft med ro følger, og billedet flyttes ned
+// igen, mens sidste løft er på vej op. Klippet ender uden hale, så intet skal klippes: reglen for en hale
+// gennem det nye gulv tog sidste løfts optur med (1128 flere baner end nu med denne generator).
+// Er flytningen nedad større end selve løftet, eller ender sporet uden for sættets gamle område, kan den
+// gamle regel (flugt fra hele sættets område) stadig tage løftet, som før 1634v: 560 af 8640 baner. Det er
+// en kendt grænse, og tallet må ikke vokse.
+test('billedet rettes opad i en hvile og flyttes ned igen midt i sidste løfts optur: sidste optur klippes ikke af', () => {
+  const tabt = [], inde = []
+  let n = 0
+  for (const [loeft, rom] of [['squat', 4.2], ['dødløft', 4.8], ['bænk', 2.2], ['bænk', 2.8], ['squat', 3]]) for (const r of [14, 100]) for (const fps of [30, 60]) for (const ryst of [0, 0.08])
+    for (const dy1 of [-2.6, -3.5, -5]) for (const dy2 of [1, 1.6, 2.2, 2.6, 3.5, 5]) for (const fase of [0.1, 0.35, 0.6]) for (const hv of [0.6, 1.2]) for (const ro of [0, 2.4]) {
+      const top = 10 * r + 300, bot = top + rom * r, doed = loeft === 'dødløft', a = doed ? bot : top, b = doed ? top : bot
+      const pts = [{ x: 300, y: a }], slut = []
+      const hold = s => { const q = pts.at(-1); for (let i = 0; i < Math.round(s * fps); i++) pts.push({ ...q }) }
+      const to = (s, x, y) => { const q = pts.at(-1), m = Math.max(2, Math.round(s * fps)); for (let i = 1; i <= m; i++) pts.push({ x: q.x + (x - q.x) * glat(i / m), y: q.y + (y - q.y) * glat(i / m) }) }
+      hold(0.6)
+      let s1 = 0, s2 = 0
+      for (let k = 0; k < 7; k++) {
+        // flytningen nedad begynder fase sekunder inde i sidste løfts optur
+        if (k === 6 && doed) s2 = pts.length + Math.round(fase * fps)
+        to(1.1, 300, b); if (doed) slut.push(pts.length - 1)
+        if (k === 6 && !doed) s2 = pts.length + Math.round(fase * fps)
+        to(0.9, 300, a); if (!doed) slut.push(pts.length - 1)
+        if (k === 1) { s1 = pts.length; hold(1.3) } else if (k < 6) hold(hv)
+      }
+      hold(ro)
+      pts.forEach((q, i) => {
+        const m1 = glat((i - s1 - 0.2 * fps) / (0.6 * fps)), m2 = glat((i - s2) / (0.5 * fps)), t = i / fps
+        q.y += dy1 * r * m1 + dy2 * r * m2 + ryst * r * Math.sin(t * 1.3 * 6.283 + 1); q.x += 0.3 * r * m1 - 0.2 * r * m2 + ryst * r * Math.sin(t * 2.1 * 6.283)
+      })
+      const path = lavBane(pts, fps)
+      klip(path, r)
+      n++
+      if (slut.at(-1) <= path.pts.length + 1) continue
+      const navn = `${loeft} ${rom}R R ${r} fps ${fps} ryst ${ryst} op ${dy1}R ned ${dy2}R fase ${fase} hvile ${hv} ro efter ${ro}: banen ender ${slut.at(-1) - path.pts.length + 1} billeder før sidste opturs slutning`
+      tabt.push(navn)
+      if (dy2 < rom && dy1 + dy2 <= 0) inde.push(navn)
+    }
+  assert.equal(n, 8640)
+  assert.deepEqual(inde, [], `${inde.length} baner mister sidste optur, selv om flytningen nedad er mindre end løftet og sporet bliver inden for det gamle område`)
+  assert.ok(tabt.length <= 560, `${tabt.length} af 8640 baner mister sidste optur (560 før 1634v): ${tabt.slice(0, 3).join(' | ')}`)
+})
