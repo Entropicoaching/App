@@ -117,6 +117,8 @@
     font-size:7px; letter-spacing:.05em; }
   .vcOverlayControls button:disabled { opacity:.42; cursor:not-allowed; }
   .vcOlderRepsHint { margin:0; color:var(--dim); font-size:8px; line-height:1.35; }
+  .vcTailCutNote { margin:0; color:rgba(237,234,226,.72); font-size:11px; line-height:1.35; }
+  #athleteInstantResult .vcTailCutNote { margin-top:8px; }
   #exportPreview { position:fixed; inset:0; z-index:50; display:grid; place-items:center;
     padding:18px; background:rgba(0,0,0,.66); backdrop-filter:blur(8px); }
   #exportPreview[hidden] { display:none; }
@@ -1148,6 +1150,7 @@ body.athlete #dropHint #athFilmGuide li::before { content:none; }
   <div id="vcPhaseLegend" class="vcPhaseLegend" aria-label="Faselegend"></div>
   <div id="vcRepSelector" class="vcRepSelector" aria-label="Rep selector"></div>
   <div id="vcMetricCards" class="vcMetricCards"></div>
+  <p id="vcTailCutNote" class="vcTailCutNote" role="status" hidden>Slutningen af videoen er skåret fra, fordi stangen ikke kunne følges.</p>
   <div class="vcOverlayControls" aria-label="Overlay toggles">
     <button id="vcTogglePhases" class="active" type="button">Faser</button>
     <button id="vcToggleHistory" class="active" type="button"
@@ -1545,6 +1548,7 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
   const hud = document.getElementById('barPathHUD');
   if (!hud) return;
   syncOlderRepsAffordance(path);
+  syncTailCutNote(path);
   if (!path?.analysis) {
     const state = document.body.dataset.athleteState || '';
     hud.hidden = true;
@@ -1647,6 +1651,12 @@ function vcRenderSpeedTable(path, selected = -1) {
 
 function olderRepsAvailable(path) {
   return (path?.analysis?.reps?.length || 0) >= 2;
+}
+
+// ORDRE 1616v: har haleklipningen (trimEscapedTail) fjernet billeder, står der én linje under analysen.
+function syncTailCutNote(path) {
+  const note = document.getElementById('vcTailCutNote');
+  if (note) note.hidden = !(path?.analysis && path.tailCutFrames > 0);
 }
 
 function syncOlderRepsAffordance(path = latestCleanPath()) {
@@ -2041,8 +2051,8 @@ function vcNormalizeClip(src, onProgress, registerCancel) {
 // hukommelsen, så sporeren kan læse dem direkte. Fejler noget her, bruges den gamle vej uændret.
 // Slås fra med ?normdirect=0 (til sammenligning).
 const VC_NORM_DIRECT = MODE_PARAMS.get('normdirect') !== '0';
-const VC_NORM_REMOTE_MAX = 200e6;   // et fjernklip hentes helt; større end det går den gamle vej
-const VC_NORM_SAME_MAX = 80e6;      // et lille klip, der spores uden omkodning, ligger i hukommelsen; større går den gamle vej
+const VC_NORM_REMOTE_MAX = 200 * 1024 * 1024;   // et fjernklip hentes helt; større end det går den gamle vej (samme tal som videolagerets grænse, ordre 1616v)
+const VC_NORM_SAME_MAX = 80e6;      // en lokal fil, der spores uden omkodning, ligger i hukommelsen; større går den gamle vej
 // Læser moov og giver videosporets prøver: plads i filen, størrelse, tid og nøglebilleder.
 async function vcMp4Index(blob) {
   const rd = async (o, n) => new DataView(await blob.slice(o, o + n).arrayBuffer());
@@ -2187,8 +2197,10 @@ async function vcNormalizeDirect(src, vw, vh, onProgress, registerCancel, onlySa
     if (!sup || !sup.supported) return { error: 'no-decoder' };
     // Små klip (højst 1280 px: Instagram, 720p, et klargjort klip coachen åbner) omkodes ikke: filens egne
     // billeder er sporerens billeder, præcis de samme pixels som afspilleren viser.
+    // ORDRE 1616v: et fjernklip er allerede hentet helt (højst VC_NORM_REMOTE_MAX), så et klargjort klip på 3 minutter
+    // (ca. 90 MB) læses direkte; den gamle vej blev ikke færdig med det på 20 minutter.
     if (onlySame) {
-      if ((turned ? ix.h : ix.w) !== vw || (turned ? ix.w : ix.h) !== vh || blob.size > VC_NORM_SAME_MAX) return { error: 'not-same' };
+      if ((turned ? ix.h : ix.w) !== vw || (turned ? ix.w : ix.h) !== vh || (file && blob.size > VC_NORM_SAME_MAX)) return { error: 'not-same' };
       const all = new Uint8Array(await blob.arrayBuffer()), samples = [];
       for (let i = 0; i < ix.n; i++) samples.push({ data: all.subarray(ix.offs[i], ix.offs[i] + ix.size[i]), ts: ix.pts[i], key: !!ix.key[i] });
       return { same: true, via: 'webcodecs', frames: { w: vw, h: vh, cw: ix.w, ch: ix.h, rot: ix.rot, reorder: ix.reorder, avcC: ix.description, codec: ix.codec, samples } };
@@ -11230,7 +11242,10 @@ if (ATHLETE) {
   athleteInstantSaveBtn.id = 'athleteInstantSaveBtn';
   athleteInstantSaveBtn.textContent = 'Send video til coach';
   athleteInstantActions.append(athleteInstantDiscardBtn, athleteInstantSaveBtn);
-  athleteInstantResult.append(athleteInstantHead, athleteInstantRows, athleteInstantFoot, athleteInstantActions);
+  // ORDRE 1616v: i instant-flowet ligger resultatpanelet over stangbane-kortet, så linjen om den
+  // afskårne hale flyttes herind (samme element, så den aldrig står to steder).
+  const athleteTailNote = VC_ATHLETE_INSTANT ? document.getElementById('vcTailCutNote') : null;
+  athleteInstantResult.append(athleteInstantHead, athleteInstantRows, ...(athleteTailNote ? [athleteTailNote] : []), athleteInstantFoot, athleteInstantActions);
   document.body.appendChild(athleteInstantResult);
 
   athleteInstantDiscardBtn.onclick = () => {
@@ -11251,6 +11266,7 @@ if (ATHLETE) {
     const reps = path?.analysis?.reps || [];
     const drift = instantRepDriftCm(path);
     athleteInstantHead.textContent = `${reps.length} rep${reps.length === 1 ? '' : 's'} fundet`;
+    syncTailCutNote(path);
     athleteInstantRows.innerHTML = reps.map((rep, i) => {
       const cm = drift[i] != null ? `${drift[i]} cm sidelæns` : 'afvigelse ukendt';
       const time = (rep.eccS + rep.pauseS + rep.conS).toFixed(1);
