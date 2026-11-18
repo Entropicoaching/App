@@ -109,6 +109,15 @@ export function coachPriorityFocus(items) {
 export function coachPriorityTaskContext(item) {
   if (!item?.key) return null
   const isSignal = item.kind === 'signal'
+  // Ordre 1665: atletens tekst står kun i Samtale med atleten, hvor coachen svarer; kortet viser status.
+  if (item.kind === 'message') {
+    const hvad = item.track === 'teknik' ? 'skrevet om en video' : 'svaret'
+    const antal = item.count > 1 ? ` (${item.count} ulæste)` : ''
+    return {
+      key: item.key, kind: item.kind, label: item.label || 'Opgave', color: item.color || '#c8923a',
+      summary: `Atleten har ${hvad}${antal}. Læs og svar i Samtale med atleten.`, detail: null,
+    }
+  }
   return {
     key: item.key,
     kind: item.kind,
