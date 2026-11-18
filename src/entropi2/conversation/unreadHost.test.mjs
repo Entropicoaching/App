@@ -13,9 +13,9 @@ test('ulæst-sammendrag: kun en indlæst og tilgængelig samtale giver et tal', 
   assert.equal(unreadSummary({ available: true, loaded: false, athleteId: 'x', thread }), null)
   assert.equal(unreadSummary({ available: false, loaded: true, athleteId: 'x', thread }), null)
   assert.deepEqual(unreadSummary({ available: true, loaded: true, role: 'athlete', athleteId: 'x', thread }),
-    { role: 'athlete', athleteId: 'x', messages: 1, videos: 1, readVideoIds: ['v1'] })
+    { role: 'athlete', athleteId: 'x', messages: 1, videos: 1, readVideoIds: ['v1'], readMessageIds: ['b'] })
   assert.deepEqual(unreadSummary({ available: true, loaded: true, role: 'coach', athleteId: 'x', thread }),
-    { role: 'coach', athleteId: 'x', messages: 1, videos: 1, readVideoIds: ['v2'] })
+    { role: 'coach', athleteId: 'x', messages: 1, videos: 1, readVideoIds: ['v2'], readMessageIds: ['a'] })
 })
 
 test('ulæst-sammendrag: ens tal giver ingen ny besked til værten', () => {

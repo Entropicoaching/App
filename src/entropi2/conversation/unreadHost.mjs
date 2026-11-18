@@ -1,5 +1,7 @@
 // U2: samtalens ulæst-tal føres tilbage til værten, så atletens fane-prik og
 // coachens indbakke ikke bliver stående, efter at et svar er læst i samtalen.
+import { noteReadMessages } from '../home/ulaestBesked.mjs'
+
 export const CONVERSATION_UNREAD_EVENT = 'entropi2:samtale-ulaest'
 
 export function unreadSummary(snapshot) {
@@ -11,12 +13,14 @@ export function unreadSummary(snapshot) {
     messages: thread.filter(item => item.kind === 'message' && unread(item)).length,
     videos: thread.filter(item => item.kind === 'video' && unread(item)).length,
     readVideoIds: thread.filter(item => item.kind === 'video' && !unread(item)).map(item => item.value.id),
+    readMessageIds: thread.filter(item => item.kind === 'message' && !unread(item)).map(item => item.value.id),
   }
 }
 
 export const sameUnread = (a, b) => a === b || !!a && !!b && a.role === b.role && a.athleteId === b.athleteId
   && a.messages === b.messages && a.videos === b.videos
   && a.readVideoIds.length === b.readVideoIds.length && a.readVideoIds.every((id, i) => id === b.readVideoIds[i])
+  && (a.readMessageIds?.length ?? 0) === (b.readMessageIds?.length ?? 0) && (a.readMessageIds ?? []).every((id, i) => id === b.readMessageIds[i])
 
 // Atletens delte videoer: en video, samtalen har vist som læst, tæller ikke længere i prikken.
 export function seenSharedVideos(analyses, summary, now = new Date().toISOString()) {
@@ -37,6 +41,8 @@ export function shareUnread(entry, summary, previous, target = globalThis.window
   if (!summary) return
   if (summary.role === 'athlete' && entry?.athlete?.id === summary.athleteId) {
     entry.setUnreadMsgCount?.(summary.messages)
+    // Ordre 1669: Hjem tæller de samme ulæste coachbeskeder, så linjen forsvinder, når samtalen har vist dem.
+    noteReadMessages(summary.athleteId, summary.readMessageIds)
     entry.setSharedVideoAnalyses?.(prev => seenSharedVideos(prev, summary))
   }
   if (summary.role === 'coach' && previous && typeof target?.dispatchEvent === 'function')

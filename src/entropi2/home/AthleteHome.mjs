@@ -1,4 +1,5 @@
 import { messageText } from '../conversation/conversationModel.mjs'
+import { unreadCoachCount } from './ulaestBesked.mjs'
 import { createElement as h, useEffect, useMemo, useRef, useState } from 'react'
 import { homeModel, startHomeSession } from './homeModel.mjs'
 import { homeStyles as s } from './homeStyles.mjs'
@@ -148,6 +149,7 @@ export default function AthleteHome(props) {
   // conversation link useful without exposing metadata or inventing video data.
   const coachText = coach && coachMessageParts(coachContent.trim()
     ? coachContent : 'Din coach har sendt feedback på din video')
+  const unreadCoach = props.sessionReadOnly || props.coachOwnTraining === true ? 0 : unreadCoachCount(messages, athlete?.id)
   const namedExercises = target?.session.exercises.filter(e => typeof e.name === 'string' && e.name.trim()) ?? []
   const canStart = !props.sessionReadOnly && typeof onStartSession === 'function'
   const go = route => () => latest.current.setTab?.(route)
@@ -185,6 +187,11 @@ export default function AthleteHome(props) {
     // Marc 3. nov.: overskriften maa ikke spoerge til et pas, der allerede er klaret.
     h('h1', { ref: headingRef, tabIndex: -1, style: s.title }, model.kind === 'done' ? (name ? `Godt arbejde i dag, ${name}` : 'Godt arbejde i dag')
       : target ? (name ? `Klar til dit pas, ${name}?` : 'Klar til dit pas?') : (name ? `Dit overblik, ${name}` : 'Dit overblik')),
+    // Ordre 1669 (Marc 17. nov.: beskeder er eneste kanal for skade og sygdom): med ord og ét tryk, kun ved ulæste.
+    // Tæller kun coachens ulæste beskeder fra den eksisterende beskedlæsning; teksten gentages ikke her.
+    unreadCoach > 0 && h('button', { type: 'button', style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left', borderColor: '#c8923a' },
+      'data-ny-besked': '', disabled: typeof setTab !== 'function', onClick: go('beskeder') },
+      unreadCoach === 1 ? 'Ny besked fra din coach' : `${unreadCoach} nye beskeder fra din coach`),
     // U9 (Marc 11. nov.): genvejen til dagens eller næste pas er det første, atleten møder; resten rykker ned.
     h('section', { style: { ...s.card, borderColor: '#c8923a' }, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading, 'data-u9-pas': '' },
       !(programLoading || programError) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
