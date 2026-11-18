@@ -12,6 +12,16 @@ const macros = value => value
 const volumeLabels = { rest: 'hvile', light: 'lav', moderate: 'moderat', high: 'høj' }
 const intensityLabels = { light: 'lav', moderate: 'moderat', high: 'høj' }
 
+// Med aktiv godkendt plan står kun de kendte mål; uden plan står "ukendt" som før (ordre 1667).
+const coachTarget = (athlete, activePlan) => {
+  const parts = [Object.hasOwn(GOALS, athlete?.goal) ? GOALS[athlete.goal] : null,
+    number(athlete?.kcal_target) === null ? null : format(athlete.kcal_target, 'kcal'),
+    number(athlete?.protein_target) === null ? null : format(athlete.protein_target, 'g protein')]
+  const known = parts.filter(Boolean)
+  return activePlan && known.length ? known.join(' · ')
+    : [parts[0] ?? 'ukendt', format(athlete?.kcal_target, 'kcal'), format(athlete?.protein_target, 'g protein')].join(' · ')
+}
+
 // Mounted in the existing editor. Notes belong only to this open draft: no
 // inferred profile fields, automatic food filtering, storage or calculation.
 export function planContextView(h, { athlete, date, snapshot: s, notes, onNote }) {
@@ -22,8 +32,7 @@ export function planContextView(h, { athlete, date, snapshot: s, notes, onNote }
   return h('section', { 'aria-label': 'Mål og plangrundlag', style: { padding: '1rem', overflowWrap: 'anywhere' } },
     h('h3', null, 'Mål og plangrundlag'),
     h('dl', null,
-      ...row('coach', 'Aktuelt coachmål fra profilen',
-        `${Object.hasOwn(GOALS, athlete?.goal) ? GOALS[athlete.goal] : 'ukendt'} · ${format(athlete?.kcal_target, 'kcal')} · ${format(athlete?.protein_target, 'g protein')}`),
+      ...row('coach', 'Aktuelt coachmål fra profilen', coachTarget(athlete, s.activePlan)),
       ...row('draft', 'Mål valgt i kladden', GOALS[s.form.goal] ?? 'ukendt'),
       ...row('suggestion', 'Separat beregningsforslag', s.calculated ? macros(s.suggestion) : 'Ikke tilgængeligt fra profilen; manuelle mål angives nedenfor.'),
       ...row('portions', 'Planens aktuelle portionssum', macros(s.totals))),
