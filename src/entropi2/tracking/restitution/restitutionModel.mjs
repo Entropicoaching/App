@@ -7,10 +7,12 @@ const day = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val
   && calendarDay(value) === value
 const timestamp = /^\d{4}-\d{2}-\d{2}(?:$|T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$)/
 const fields = ['sleep_hours', 'energy', 'stress', 'soreness_level']
+// Motivation is shown beside the others but never gates or feeds the level.
+const shown = [...fields, 'motivation']
 const mean = values => values.length ? values.sort((a, b) => a - b).reduce((sum, n) => sum + n, 0) / values.length : null
 
 function dailyBasis(rows, from, to) {
-  const seen = new Set(), values = Object.fromEntries(fields.map(field => [field, []]))
+  const seen = new Set(), values = Object.fromEntries(shown.map(field => [field, []]))
   let invalidMeasurements = 0, latestCompleteDate = null
   for (const row of rows) {
     if (!day(row.logged_date)) throw Error('Invalid day')
@@ -28,9 +30,11 @@ function dailyBasis(rows, from, to) {
         if (raw !== null && raw !== undefined) invalidMeasurements++
       }
     }
+    const motivation = row.motivation
+    if (Number.isInteger(motivation) && motivation >= 1 && motivation <= 5) values.motivation.push(motivation)
     if (complete && (!latestCompleteDate || row.logged_date > latestCompleteDate)) latestCompleteDate = row.logged_date
   }
-  return { metrics: Object.fromEntries(fields.map(field => [field, {
+  return { metrics: Object.fromEntries(shown.map(field => [field, {
     count: values[field].length, average: values[field].length >= 4 ? mean(values[field]) : null,
   }])), latestCompleteDate, invalidMeasurements }
 }

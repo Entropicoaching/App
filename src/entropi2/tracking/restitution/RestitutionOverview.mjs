@@ -39,7 +39,7 @@ export default function RestitutionOverview(props = {}) {
     return h('section', { className: 'e2-restitution', 'aria-label': 'Din dagsform' },
       h('style', null, styles),
       h('p', null, `Seneste 7 dage · ${model.recentFrom}–${model.to}`),
-      h('dl', null, [['energy', 'Energi', '5 højest'], ['stress', 'Stress', '5 højest'],
+      h('dl', null, [['energy', 'Energi', '5 højest'], ['motivation', 'Motivation', '5 højest'], ['stress', 'Stress', '5 højest'],
         ['soreness_level', 'Ømhed', '5 mest']].map(([key, label, scale]) => {
         const metric = model.metrics[key]
         return h('div', { key }, h('dt', null, label), h('dd', null,

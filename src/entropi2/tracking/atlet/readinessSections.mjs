@@ -10,7 +10,7 @@ export function readinessSections(snapshot, { enabled = false } = {}) {
   if (!['ready', 'empty'].includes(model.status)) return null
   const rows = snapshot.dailyRows.filter(row => !row._optimistic).map(row => ({
     athlete_id: row.athlete_id, logged_date: row.logged_date,
-    sleep_hours: row.sleep_hours, energy: row.energy, stress: row.stress,
+    sleep_hours: row.sleep_hours, energy: row.energy, motivation: row.motivation, stress: row.stress,
     soreness_level: row.soreness_level,
   }))
   // Count only confirmed rows; optimistic answers cannot create a section.

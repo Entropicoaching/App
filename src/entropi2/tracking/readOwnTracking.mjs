@@ -3,7 +3,7 @@ import { calendarDay, addCalendarDays } from '../../calendarDate.js'
 // Below the API's usual 1000-row cap. A full cap is deliberately incomplete.
 export const TRACKING_READ_CAP = 500
 // Mine tal shows wellbeing only. Other domains have their own Mine data reads.
-const columns = 'id,athlete_id,logged_date,sleep_hours,energy,stress,soreness_level'
+const columns = 'id,athlete_id,logged_date,sleep_hours,energy,motivation,stress,soreness_level'
 
 export function trackingScope(props = {}) {
   if (props.enabled !== true) return null

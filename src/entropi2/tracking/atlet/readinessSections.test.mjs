@@ -48,6 +48,6 @@ test('structural errors reject both sections; projection ignores unrelated priva
   const result = build(input)
   assert.ok(result.sleep); assert.ok(result.restitution)
   assert.deepEqual(Object.keys(result.sleep.readinessRows[0]).sort(),
-    ['athlete_id', 'logged_date', 'sleep_hours', 'energy', 'stress', 'soreness_level'].sort())
+    ['athlete_id', 'logged_date', 'sleep_hours', 'energy', 'motivation', 'stress', 'soreness_level'].sort())
   assert.deepEqual(result.sleep.exerciseLogs, []); assert.deepEqual(result.sleep.qualityRows, [])
 })
