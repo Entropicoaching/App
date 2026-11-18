@@ -7,7 +7,7 @@ import { ATHLETE_ONBOARDING_GUIDE_STEPS as steps } from './athleteOnboardingGuid
 const kilde = fil => readFileSync(new URL(fil, import.meta.url), 'utf8')
 const komponenter = [
   './entropi2/home/QuickLogs.mjs', './entropi2/home/today/TodayCard.mjs', './entropi2/home/AthleteHome.mjs',
-  './entropi2/session/sessionOverview.mjs', './entropi2/session/sessionModel.mjs', './athlete/DagensPasCard.jsx',
+  './entropi2/session/sessionOverview.mjs', './entropi2/session/sessionModel.mjs', './athlete/DagensPasCard.jsx', './entropi2/session/sessionView.mjs',
 ].map(kilde).join('\n')
 const navneIGuiden = steps.flatMap(step => [...step.body.matchAll(/"([^"]+)"/g)].map(m => m[1]))
 const findes = navn => komponenter.includes(`'${navn}'`) || komponenter.includes(`>${navn}<`) || komponenter.includes(`\`${navn} `)
@@ -17,7 +17,7 @@ test('guiden har 3 til 5 trin', () => {
 })
 
 test('guiden nævner de knapper, der ses på live Hjem og i loggen', () => {
-  for (const navn of ['Udfyld dagsform', 'Dagsform', 'Start dagens pas', 'Overblik over passet', 'Som planlagt', 'Godkendt']) {
+  for (const navn of ['Udfyld dagsform', 'I dag', 'Start dagens pas', 'Mere i dag', 'Se ugens plan', 'Overblik over passet', 'Som planlagt', 'Godkendt', 'Tilføj oplevet anstrengelse (RPE)']) {
     assert.ok(navneIGuiden.includes(navn), `guiden nævner ikke ${navn}`)
   }
 })
@@ -36,7 +36,8 @@ test('Parathed og Hele passet står ikke i guiden, da de kun findes i de gamle s
 test('RPE-vælgeren nævnt i guiden findes på sætkortet', () => {
   const log = steps.find(step => step.key === 'log-saet').body
   assert.ok(log.includes('RPE'))
-  assert.match(kilde('./athlete/DagensPasCard.jsx'), /Vælg RPE for sæt/)
+  assert.ok(log.includes('Tilføj oplevet anstrengelse (RPE)'))
+  assert.match(kilde('./entropi2/session/sessionView.mjs'), /Tilføj oplevet anstrengelse \(RPE\)/)
 })
 
 test('ingen tekst i guiden er under 11 px (0.7rem)', () => {

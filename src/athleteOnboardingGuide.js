@@ -12,17 +12,17 @@ export const ATHLETE_ONBOARDING_GUIDE_STEPS = [
   {
     key: 'dagsform',
     heading: 'Fortæl, hvordan du har det.',
-    body: 'På Hjem trykker du på "Udfyld dagsform" eller "Dagsform" under dagens pas. Før du træner, svarer du på energi og hvordan kroppen føles. Det hjælper dig og din coach med at følge formen.',
+    body: 'På Hjem trykker du på "Udfyld dagsform" i kortet "I dag". Før du træner, svarer du på energi og hvordan kroppen føles. Det hjælper dig og din coach med at følge formen.',
   },
   {
     key: 'find-session',
     heading: 'Sådan ser du din uge og dagens pas.',
-    body: 'På Hjem ser du ugens plan og kortet med dagens næste sæt. Når du har trykket på "Start dagens pas", åbner du "Overblik over passet" øverst i loggen for at se alle øvelser og sæt.',
+    body: 'På Hjem står dagens pas øverst, og ugens plan finder du under "Mere i dag" og "Se ugens plan". Tryk på "Start dagens pas". Så åbner du "Overblik over passet" øverst i loggen for at se alle øvelser og sæt.',
   },
   {
     key: 'log-saet',
     heading: 'Sådan logger du dagens pas.',
-    body: 'Tjek kg (vægt) og reps (gentagelser) i sætkortet, og ret tallene, hvis du løftede noget andet. Når du har lavet sættet, trykker du på knappen under sættet for at gemme det. Den hedder "Som planlagt", når tallene er som i planen, og "Godkendt", når du har rettet dem. Du kan også vælge RPE. RPE er dit eget skøn over, hvor hårdt sættet føltes, og der er ingen rigtige eller forkerte tal. Er du i tvivl om noget, så spørg din coach.',
+    body: 'Tjek kg (vægt) og reps (gentagelser) i sætkortet, og ret tallene, hvis du løftede noget andet. Når du har lavet sættet, trykker du på den store knap nederst for at gemme det. Den hedder "Som planlagt", når tallene er som i planen, og "Godkendt", når du har rettet dem. Du kan også vælge RPE under "Tilføj oplevet anstrengelse (RPE)". RPE er dit eget skøn over, hvor hårdt sættet føltes, og der er ingen rigtige eller forkerte tal. Er du i tvivl om noget, så spørg din coach.',
   },
 ]
 
