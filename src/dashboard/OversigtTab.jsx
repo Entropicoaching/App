@@ -1,6 +1,6 @@
 import BlokFremgang from '../BlokFremgang.jsx'
 import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
-import { calendarDay, calendarDaysBetween } from '../calendarDate.js'
+import { calendarDay, calendarDaysBetween, weeksToCompetition } from '../calendarDate.js'
 
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Oversigt: sidst aktiv, parathed, resultater, kostmål, stævne, volumenkort.
@@ -295,8 +295,7 @@ export default function OversigtTab({
                     </div>
                   </div>
                 ) : a.competition_date ? (() => {
-                  const compMs = new Date(a.competition_date + 'T12:00:00') - new Date()
-                  const weeksLeft = Math.ceil(compMs / (7 * 24 * 3600 * 1000))
+                  const weeksLeft = weeksToCompetition(a.competition_date) ?? 0
                   return (
                     <div>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.3rem', color: '#edeae2', marginBottom: '0.4rem' }}>

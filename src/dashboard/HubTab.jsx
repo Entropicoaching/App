@@ -1,5 +1,5 @@
 import { CoachFold } from '../coachRyd.mjs'
-import { calendarDay } from '../calendarDate.js'
+import { calendarDay, weeksToCompetition } from '../calendarDate.js'
 
 // ORDRE 377: flyttet uændret fra src/Dashboard.jsx (se docs/DASHBOARD-KORT.md).
 // Profilfanen Hjem (hub): statuslinje og sektionsgitter.
@@ -25,7 +25,7 @@ export default function HubTab({ coachRyd = false,
               const unread = unreadCounts[a.id] ?? 0
               const pendingVideoCount = videoAnalyses.filter(item => item.status === 'draft').length
               const compDate = a.competition_date
-              const weeksToComp = compDate ? Math.ceil((new Date(compDate + 'T12:00:00') - new Date()) / (7 * 24 * 3600 * 1000)) : null
+              const weeksToComp = compDate ? weeksToCompetition(compDate) : null
               const stat = [
                 sig && { label: 'Parathed i dag', value: todayR.readiness_score, sub: sig.text, color: sig.color },
                 (!coachTabCleanup || Object.hasOwn(weeklyActivity, a.id)) && { label: 'Træninger denne uge', value: plannedPas != null ? `${trainings} af ${plannedPas}` : trainings, sub: weeklyActivity[a.id]?.sets ? `${weeklyActivity[a.id].sets} sæt` : 'logget', color: '#edeae2' },

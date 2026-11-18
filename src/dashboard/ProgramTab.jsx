@@ -1,6 +1,7 @@
 // u8d: lukkede prøve-loadere tillader ingen ny import; samme regel som danskTal.mjs.
 const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 import { dataEnoughEnabled, dataAllowed, dataMessage } from '../dataEnough.mjs'
+import { weeksToCompetition } from '../calendarDate.js'
 // Program-fanen (ugeplan, sessioner, øvelsesformular) — udskilt fra
 // Dashboard.jsx (ordre 130 · commit 2) som sin egen lazy-loadede chunk, så
 // atletlisten og check-in-gennemgangen ikke skal hente program-redigeringen
@@ -549,8 +550,7 @@ export default function ProgramTab({
                 {/* Block overview grid */}
                 {weeks.length > 0 && (() => {
                   const compDate = selectedAthlete?.competition_date
-                  const compMs = compDate ? new Date(compDate + 'T12:00:00') - new Date() : null
-                  const weeksToComp = compMs != null ? Math.ceil(compMs / (7 * 24 * 3600 * 1000)) : null
+                  const weeksToComp = compDate ? weeksToCompetition(compDate) : null
 
                   const complianceByWeekNum = {}
                   for (const log of athleteLogs) {

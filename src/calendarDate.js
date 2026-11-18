@@ -33,3 +33,11 @@ export function calendarDaysBetween(from, to) {
   const a = calendarTime(from), b = calendarTime(to)
   return a === null || b === null ? null : (b - a) / DAY
 }
+
+// Uger til stævne ud fra kalenderdage (Europe/Copenhagen), så 49 dage er 7 uger i alle visninger.
+// Stævnedagen selv tæller som 1 uge, som før; en dato i fortiden giver 0 eller mindre.
+export function weeksToCompetition(competitionDate, now = new Date()) {
+  const days = calendarDaysBetween(calendarDay(now), competitionDate)
+  if (days === null) return null
+  return days === 0 ? 1 : Math.ceil(days / 7)
+}
