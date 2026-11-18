@@ -26,21 +26,21 @@ test('actual reader: explicit scoped bounded sleep query feeds actual model, no 
   assert.equal(m.state, 'ready'); assert.equal(m.evidence.id, 'sleepHours')
   assert.match(m.text, /søvn/); assert.equal(m.training, null); assert.equal(m.nutritionDays, null)
   assert.equal(m.incomplete, true)
-  assert.deepEqual(f.calls, [['from', 'readiness_logs'], ['select', 'id,athlete_id,logged_date,sleep_hours,energy,stress,soreness_level'],
+  assert.deepEqual(f.calls, [['from', 'readiness_logs'], ['select', 'id,athlete_id,logged_date,sleep_hours,energy,motivation,stress,soreness_level'],
     ['eq', 'athlete_id', 'synthetic-athlete'], ['gte', 'logged_date', '2026-10-29'],
     ['lte', 'logged_date', '2026-11-04'], ['order', 'logged_date'], ['order', 'id'], ['range', 0, 999]])
 })
 
 test('production recovery scales enter the draft with their own basis, never 0–10 soreness', async () => {
   const f = fixture()
-  f.rows.forEach(row => Object.assign(row, { energy: 2, stress: 4, soreness_level: 5 }))
+  f.rows.forEach(row => Object.assign(row, { energy: 2, motivation: 3, stress: 4, soreness_level: 5 }))
   const m = await readWeeklyLetter(f.options)
   assert.match(m.text, /energi: 2\/5.*4\/7 dage/)
-  assert.match(m.text, /stress: 4\/5/); assert.match(m.text, /ømhed: 5\/5/)
+  assert.match(m.text, /motivation: 3\/5.*4\/7 dage/); assert.match(m.text, /stress: 4\/5/); assert.match(m.text, /ømhed: 5\/5/)
   assert.match(m.text, /5 timer på 4\/7 dage \(2026-10-29 – 2026-11-04\)/)
-  assert.equal(m.context.find(c => c.id === 'recovery').metrics.length, 3)
+  assert.equal(m.context.find(c => c.id === 'recovery').metrics.length, 4)
   assert.notEqual(m.evidence.id, 'soreness')
-  for (const key of ['energy', 'stress', 'soreness_level']) {
+  for (const key of ['energy', 'motivation', 'stress', 'soreness_level']) {
     for (const value of [0, 6, 2.5, '2', NaN]) {
       const invalid = fixture(); invalid.rows[0][key] = value
       await assert.rejects(readWeeklyLetter(invalid.options))

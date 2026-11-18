@@ -68,7 +68,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
         letterStatus.textContent = 'Din tekst er bevaret. Tøm beskedfeltet, før du laver et nyt udkast.'
       } else if (model.state === 'ready') {
         if (controller.draft(model.text) === false) throw Error('Beskedfeltet er låst.')
-        letterStatus.textContent = `${model.from} – ${model.asOf}. Udkastet bygger kun på registreret søvn, energi, stress og ømhed. Øvrige data er ukendte. Redigér teksten, og tryk selv Send.`
+        letterStatus.textContent = `${model.from} – ${model.asOf}. Udkastet bygger kun på registreret søvn, energi, motivation, stress og ømhed. Øvrige data er ukendte. Redigér teksten, og tryk selv Send.`
         input.focus?.()
       } else if (model.state === 'empty') {
         letterStatus.textContent = 'Der er endnu ikke et sikkert grundlag for et ugebrev. Ingen kendte registreringer af søvn, energi, stress eller ømhed i de seneste 7 dage.'

@@ -125,7 +125,7 @@ test('import failure stays local; explicit retry imports the actual reader, draf
     wait.release(); await operation; wait.reset()
     assert.equal(f.reads.filter(table => table === 'readiness_logs').length, 1)
     assert.match(input.value, /energi|ømhed|belastning/)
-    assert.match(f.root.textContent, /registreret søvn, energi, stress og ømhed/)
+    assert.match(f.root.textContent, /registreret søvn, energi, motivation, stress og ømhed/)
     assert.equal(button(f.root, 'Lav udkast til ugebrev').disabled, true)
     assert.deepEqual(f.writes, [])
   } finally { failImport = false; gate = undefined; f.cleanup() }

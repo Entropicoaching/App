@@ -110,6 +110,25 @@ test('native recovery scales retain missing values, require four dates for means
   assert.deepEqual(context(d, 'recovery').metrics.map(metric => metric.key), ['energy', 'stress'])
 })
 
+test('motivation joins the recovery context only with three logged days and never invents a figure', () => {
+  const d = emptyFixture()
+  const rows = motivationDays => letterFixture().daily.map((row, i) => ({ day: row.day, source: 'athlete_manual',
+    energy: 3, motivation: i < motivationDays ? 4 : null }))
+  const metric = data => context(data, 'recovery').metrics.find(m => m.key === 'motivation')
+  d.recoveryDays = rows(7)
+  assert.deepEqual([metric(d).sampleCount, metric(d).value, metric(d).title], [7, 4, 'motivation'])
+  assert.match(context(d, 'recovery').text, /motivation: 4\/5 i gennemsnit på 7\/7 dage/)
+  d.recoveryDays = rows(3)
+  assert.deepEqual([metric(d).sampleCount, metric(d).value], [3, 4])
+  assert.match(context(d, 'recovery').text, /motivation: 4\/5 i gennemsnit på 3\/7 dage/)
+  for (const n of [2, 0]) {
+    d.recoveryDays = rows(n)
+    assert.equal(metric(d), undefined); assert.doesNotMatch(context(d, 'recovery').text, /motivation/)
+  }
+  d.recoveryDays = rows(7); d.recoveryDays[0].motivation = 6
+  assert.equal(metric(d), undefined)
+})
+
 test('context never touches private cycle fields, raw notes or caller-owned data', () => {
   const d = nutritionData()
   const poison = object => Object.defineProperty(object, 'cycle', { get() { assert.fail('private read') } })

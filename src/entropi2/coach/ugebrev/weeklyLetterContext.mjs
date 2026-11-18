@@ -14,11 +14,12 @@ function recoveryContext(data, from, asOf) {
   if (!Array.isArray(rows) || rows.length > 7 || !rows.every(row => row
     && row.source === 'athlete_manual' && day(row.day) && row.day >= from && row.day <= asOf)
     || new Set(rows.map(row => row.day)).size !== rows.length) return null
-  const metrics = [['energy', 'energi'], ['stress', 'stress'], ['sorenessLevel', 'ømhed']].flatMap(([key, title]) => {
+  const metrics = [['energy', 'energi'], ['motivation', 'motivation'], ['stress', 'stress'], ['sorenessLevel', 'ømhed']].flatMap(([key, title]) => {
     if (rows.some(row => row[key] != null && (!Number.isInteger(row[key]) || row[key] < 1 || row[key] > 5))) return []
     const known = rows.filter(row => row[key] != null)
-    if (!known.length) return []
-    const value = known.length >= 4 ? known.reduce((sum, row) => sum + row[key], 0) / known.length : null
+    // Motivation is mentioned from three logged days; below that it stays out of the draft.
+    if (!known.length || key === 'motivation' && known.length < 3) return []
+    const value = known.length >= (key === 'motivation' ? 3 : 4) ? known.reduce((sum, row) => sum + row[key], 0) / known.length : null
     return [{ key, title, sampleCount: known.length, value }]
   })
   if (!metrics.length) return null
