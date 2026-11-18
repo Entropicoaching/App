@@ -621,7 +621,8 @@ export function mountNutrition(host, controller, { onCoach, onNavigate, clock = 
           }
         }
       }
-      if (remaining) {
+      // Med en godkendt plan viser kortet Dagens kostplan allerede samme linje (1659).
+      if (remaining && !planReference) {
         const parts = []
         if (remaining.kcal !== null) parts.push(displayNumber(remaining.kcal) === '0' ? 'Energi nået' : `${displayNumber(remaining.kcal)} kcal`)
         if (remaining.protein !== null) parts.push(displayNumber(remaining.protein) === '0' ? 'Protein nået' : `${displayNumber(remaining.protein)} g protein`)

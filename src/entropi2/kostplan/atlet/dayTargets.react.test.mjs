@@ -58,7 +58,9 @@ test('real ReactDOM daily targets: actual Entropi2Kost wiring updates both views
       assert.doesNotMatch(hero().textContent, /2.400|160 g/)
       const status = () => host.querySelectorAll('section').find(n => n.getAttribute('aria-label') === 'Dagens status')
       assert.match(status().textContent, /Tilbage i dag: 500 kcal · 50 g protein/)
-      assert.match(tracker().textContent, /500 kcal · 50 g protein/)
+      // 1659: Tilbage-linjen står kun i kortet Dagens kostplan, ikke også i kostloggen under det.
+      assert.doesNotMatch(tracker().textContent, /Tilbage (i dag|til målet)/)
+      assert.equal(host.textContent.match(/Tilbage (i dag|til målet)/g).length, 1)
       const eat = host.querySelectorAll('button').find(n => n.getAttribute('aria-label') === 'Frokost <syntetisk>: Spist som planlagt')
       // The minimal DOM does not bubble. Deliver the native-shaped event to
       // ReactDOM's actual delegated listeners; never call replacement logic.
@@ -68,7 +70,8 @@ test('real ReactDOM daily targets: actual Entropi2Kost wiring updates both views
       })
       assert.equal(f.rows.length, 1)
       assert.match(status().textContent, /Tilbage i dag: 300 kcal · 30 g protein/)
-      assert.match(tracker().textContent, /300 kcal · 30 g protein/)
+      assert.doesNotMatch(tracker().textContent, /Tilbage (i dag|til målet)/)
+      assert.equal(host.textContent.match(/Tilbage (i dag|til målet)/g).length, 1)
       assert.match(hero().textContent, /500 kcal.*50 g/)
       assert.equal(tracker().querySelector('[data-focus="field-Måltid"]').value, 'Syntetisk ufærdigt måltid')
       assert.equal(f.plan.writes().length, 0)
