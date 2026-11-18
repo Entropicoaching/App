@@ -6225,8 +6225,10 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // ORDRE 1621v: en optur tæller straks, når bund og top ligger højst 2,5 radius over eller under
     // den forrige opturs. Længere væk tæller opture kun, når to i træk ligger samme sted (bund og top
     // højst 0,5 radius til siden og 1,25 radius i højden fra hinanden), som løft gør efter en stor
-    // flytning af billedet. Et spor, der er faldet gennem gulvet og gynger, mens det bæres væk, er en hale.
-    let lifts=0,far=null;
+    // flytning af billedet, og kun når sporet til sidst står, hvor et løft slutter (toppen, når
+    // sættet begyndte i toppen, ellers bunden; højst 0,6 radius fra). Et spor, der er faldet gennem
+    // gulvet og gynger, mens det bæres væk, er en hale.
+    let lifts=0,far=null,moved=0;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k],amp=from.y-to.y;
       if(!to.top)continue;
@@ -6236,8 +6238,13 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       const same=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
         &&Math.abs(now.by-far.by)<=radius*1.25&&Math.abs(now.ty-far.ty)<=radius*1.25;
       if(same||(Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5)){
-        lifts+=same?2:1;lastBot=from.y;lastTop=to.y;far=null;
+        lifts+=same?2:1;if(same)moved+=2;lastBot=from.y;lastTop=to.y;far=null;
       }else far=now;
+    }
+    if(moved){
+      let last=n-1;
+      while(last>cut&&!ok(last))last--;
+      if(Math.abs(path.pts[last].y-(turns[0].top?lastTop:lastBot))>radius*.6)lifts-=moved;
     }
     if(lifts>=2)return;
     if(cut>=n-1)return;

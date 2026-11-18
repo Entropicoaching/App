@@ -228,14 +228,14 @@ test('billedet rettes halvanden radius ned og til siden midt i sættet: ingen l�
 const glat = x => smooth(Math.max(0, Math.min(1, x)))
 const lavBane = (pts, fps = FPS) => ({ pts: pts.map(q => ({ ...q })), times: pts.map((_, i) => i / fps), valid: pts.map(() => true), confidence: pts.map(() => 1) })
 // fem løft; derefter falder sporet gennem gulvet og gynger op og ned (telefonen bæres væk)
-function gyngeHale({ rom, doed = false, dybde, udsving, gange = 2 }) {
+function gyngeHale({ rom, doed = false, dybde, udsving, gange = 2, skridt = 60 }) {
   const bot = TOP + rom * R, a = doed ? bot : TOP, b = doed ? TOP : bot, pts = [{ x: 300, y: a }]
   const hold = n => { const q = pts.at(-1); for (let i = 0; i < n; i++) pts.push({ ...q }) }
   const to = (n, x, y) => { const q = pts.at(-1); for (let i = 1; i <= n; i++) pts.push({ x: q.x + (x - q.x) * glat(i / n), y: q.y + (y - q.y) * glat(i / n) }) }
   hold(15); for (let r = 0; r < 5; r++) { to(30, 300, b); to(30, 300, a); hold(15) }
   const slut = pts.length, hy = bot + dybde * R
   to(30, 400, hy)
-  for (let k = 0; k < gange; k++) { to(20, 440 + 60 * k, hy - udsving * R); to(20, 470 + 60 * k, hy) }
+  for (let k = 0; k < gange; k++) { to(20, 400 + skridt * (k + 2 / 3), hy - udsving * R); to(20, 400 + skridt * (k + 7 / 6), hy) }
   hold(20)
   return { path: lavBane(pts), slut, bot }
 }
@@ -251,6 +251,37 @@ test('en hale gennem gulvet med to eller tre udsving på størrelse med et løft
     }
   }
   assert.deepEqual(ikke, [], `${ikke.length} af 63 haler står tilbage under gulvet`)
+})
+
+test('en hale gennem gulvet, der gynger på stedet og ender i bunden, klippes også ved gulvet (squat og bænk)', () => {
+  // Dødløft er ikke med: dér slutter et løft i bunden, og gyng på stedet kan ikke skelnes fra løft
+  // efter en stor flytning af billedet.
+  const ikke = []
+  for (const [navn, rom] of [['bænk', 2], ['squat', 4]]) for (const [dybde, gange] of [[4, 2], [3, 2], [5, 3]]) for (const udsving of [1.2, 2, 3, 4]) {
+    const { path, slut, bot } = gyngeHale({ rom, dybde, udsving, gange, skridt: 0 })
+    klip(path, R)
+    const under = (Math.max(...path.pts.map(q => q.y)) - bot) / R
+    if (under > 0.3 || path.pts.length < slut - 3) ikke.push(`${navn} dybde ${dybde}R, ${gange} udsving på ${udsving}R: ${under.toFixed(2)}R under gulvet`)
+  }
+  assert.deepEqual(ikke, [], `${ikke.length} af 24 haler står tilbage under gulvet`)
+})
+
+test('billedet rettes tre radius ned eller op midt i sættet, og sættet fortsætter: ingen løft går tabt', () => {
+  for (const doed of [false, true]) for (const dy of [-3, 3, 4]) for (const efter of [2, 3]) {
+    const a = doed ? BOTTOM : TOP, b = doed ? TOP : BOTTOM, pts = []
+    for (let i = 0; i < 15; i++) pts.push({ x: 300, y: a })
+    let skift = 0
+    for (let r = 0; r < 5; r++) {
+      for (let i = 1; i <= 30; i++) pts.push({ x: 300, y: a + (b - a) * smooth(i / 30) })
+      for (let i = 1; i <= 30; i++) pts.push({ x: 300, y: b + (a - b) * smooth(i / 30) })
+      if (r === 4 - efter) skift = pts.length
+      for (let i = 0; i < 36; i++) pts.push({ x: 300, y: a })
+    }
+    pts.forEach((q, i) => { const m = glat((i - skift - 6) / 18); q.x += 50 * m; q.y += dy * R * m })
+    const path = lavBane(pts), foer = path.pts.length
+    klip(path, R)
+    assert.equal(path.pts.length, foer, `${doed ? 'dødløft' : 'squat'}, ${dy}R, ${efter} løft efter flytningen`)
+  }
 })
 
 // Samme generator som kontrol 1 (work/1616v/kontrol1/baner3.mjs): tilfældige sæt med kamera og hale.
