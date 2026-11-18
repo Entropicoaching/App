@@ -7,6 +7,7 @@ import { weekNutrition, mealDays } from './nutritionWeek.mjs'
 import { sessionCounts } from './sessionCounts.mjs'
 import { k1EnergyWeight, k2ProteinReadiness, excludedDays, athleteCouplingSentence } from './couplings.mjs'
 import { formatNumber, signed, mondayOf, periodLabel } from './format.mjs'
+import { waterKostParts } from '../u7/dayWaterKost.mjs'
 
 // U3-planen afsnit 1: "Min uge" for den seneste afsluttede uge og "Udvikling".
 // Planen kalder filen athleteWeekCard.mjs, men på Windows er det samme fil som
@@ -62,7 +63,15 @@ export function strengthLines(fremgangLogs, today) {
   }).filter(Boolean)
 }
 
-export function athleteWeekCardModel({ today, athlete, data, weightLogs, fremgangLogs, now = new Date() } = {}) {
+// Væske og kostvane de seneste 7 dage fra tracking_daily_v1: samme regnestykke som coachens dagslinje
+// (u7/dayWaterKost.mjs). Kun når læsningen er klar og mindst ét af tallene findes; ellers null.
+export function dayWaterKostLine(daily, today) {
+  if (daily?.state !== 'ready' || !Array.isArray(daily.rows)) return null
+  const parts = waterKostParts(daily.rows, today)
+  return parts.length ? `${parts.join(' · ')} · sidste 7 dage` : null
+}
+
+export function athleteWeekCardModel({ today, athlete, data, weightLogs, fremgangLogs, daily, now = new Date() } = {}) {
   const day = calendarDay(today)
   if (!day || !athlete?.id) return null
   const start = addCalendarDays(mondayOf(day), -7), end = addCalendarDays(start, 6)
@@ -124,7 +133,7 @@ export function athleteWeekCardModel({ today, athlete, data, weightLogs, fremgan
   const strength = strengthLines(fremgangLogs, day)
   return {
     start, end, label: `Min uge · ${periodLabel(start, end)}`,
-    lines, sentence, showCard: lines.length > 0,
+    lines, sentence, dayLine: dayWaterKostLine(daily, day), showCard: lines.length > 0,
     focus: lines.length > 0 ? athleteFocus(lines, { nutritionDays }) : null,
     strength: strength === null ? null : { lifts: strength, message: strength.length ? null : NO_STRENGTH },
   }

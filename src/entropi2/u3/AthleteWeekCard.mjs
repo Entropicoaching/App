@@ -6,6 +6,8 @@ const h = React.createElement
 import { calendarDay } from '../../calendarDate.js'
 import { readAthleteU3Shared } from './readAthleteU3.mjs'
 import { athleteWeekCardModel } from './athleteWeekModel.mjs'
+import { readDaily } from '../u7/dayData.mjs'
+import { addCalendarDays } from '../../calendarDate.js'
 
 import { formatNumber, signed } from './format.mjs'
 import { Bars, Dots, FocusBox, Sparkline } from './charts.mjs'
@@ -60,6 +62,7 @@ export function AthleteWeekCardView({ model }) {
           part.sub && h('span', { style: small }, part.sub),
           part.chart)
       })),
+      model.dayLine && h('p', { 'data-u3-day-line': true, style: { ...small, fontSize: 14, marginBottom: 0, marginTop: 12 } }, model.dayLine),
       model.sentence && h('p', { 'data-u3-coupling': true, style: { ...small, fontSize: 14, marginBottom: 0, marginTop: 12 } }, model.sentence)))
 }
 
@@ -68,6 +71,7 @@ export function AthleteWeekCardView({ model }) {
 export default function AthleteWeekCard({ client, athlete, now, weightLogs }) {
   const today = calendarDay(now ?? new Date())
   const [data, setData] = React.useState(null)
+  const [daily, setDaily] = React.useState(null)
   React.useEffect(() => {
     let live = true
     setData(null)
@@ -75,7 +79,15 @@ export default function AthleteWeekCard({ client, athlete, now, weightLogs }) {
     readAthleteU3Shared(client, athlete.id, today).then(result => { if (live) setData(result) }, () => {})
     return () => { live = false }
   }, [client, athlete?.id, today])
+  // Væske og kostvane de seneste 7 dage (samme tabel og tal som coachens dagslinje). Fejl eller manglende tabel: kortet som før.
+  React.useEffect(() => {
+    let live = true
+    setDaily(null)
+    if (!client || !athlete?.id || !today) return undefined
+    readDaily({ client, athleteId: athlete.id, from: addCalendarDays(today, -6), to: today }).then(result => { if (live) setDaily({ day: today, ...result }) }, () => {})
+    return () => { live = false }
+  }, [client, athlete?.id, today])
   if (!data || data.day !== today) return h('div', { 'data-u3-athlete-top': true })
-  const model = athleteWeekCardModel({ today, athlete, data, weightLogs, now: now ?? new Date() })
+  const model = athleteWeekCardModel({ today, athlete, data, weightLogs, daily: daily?.day === today ? daily : null, now: now ?? new Date() })
   return h(AthleteWeekCardView, { model })
 }

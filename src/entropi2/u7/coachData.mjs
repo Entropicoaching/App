@@ -1,6 +1,7 @@
 import { addCalendarDays, calendarDay } from '../../calendarDate.js'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { formatNumber, mondayOf, shortDate } from '../u3/format.mjs'
+import { DAILY_DAYS, within, waterKostParts } from './dayWaterKost.mjs'
 import { DAILY, TARGETS, tableState, readTargets, targetOn, appendTarget } from './dayData.mjs'
 
 // U7 del 4: coachen ser søvn og smerte som tal og ugens kost mod atletens mål.
@@ -8,14 +9,8 @@ import { DAILY, TARGETS, tableState, readTargets, targetOn, appendTarget } from 
 export const PAIN_ATTENTION = 4
 export const SLEEP_ATTENTION = 2
 export const DAILY_CAP = 1000
-export const DAILY_DAYS = 7
+export { DAILY_DAYS }
 
-const dayOf = value => typeof value === 'string' ? calendarDay(value.slice(0, 10)) : null
-const within = (rows, day, days) => {
-  // days dage tilbage fra i dag, i dag medregnet: 7 betyder i dag og de 6 dage før.
-  const from = addCalendarDays(day, -(days - 1))
-  return (Array.isArray(rows) ? rows : []).filter(r => { const d = dayOf(r?.logged_date); return d && d >= from && d <= day })
-}
 const painValue = r => Number.isInteger(r?.pain) && r.pain >= 0 && r.pain <= 10 ? r.pain : null
 const sleepValue = r => Number.isInteger(r?.sleep_quality) && r.sleep_quality >= 1 && r.sleep_quality <= 5 ? r.sleep_quality : null
 const place = r => typeof r?.pain_location === 'string' && r.pain_location.trim() ? ` (${r.pain_location.trim().slice(0, 40)})` : ''
@@ -64,14 +59,10 @@ export function dayNumbersLine(rows, today) {
   const recent = within(rows, day, DAILY_DAYS)
   const sleep = recent.map(sleepValue).filter(v => v !== null)
   const pains = recent.filter(r => painValue(r) !== null).sort((a, b) => a.logged_date.localeCompare(b.logged_date))
-  const water = recent.map(r => r?.water_ml).filter(v => typeof v === 'number' && Number.isFinite(v) && v > 0)
-  const kost = recent.filter(r => typeof r?.kost_done_at === 'string' && r.kost_done_at !== '').length
   const parts = []
   if (sleep.length) parts.push(`Søvn ${formatNumber(sleep.reduce((n, v) => n + v, 0) / sleep.length, 1)}/5 (${sleep.length} ${sleep.length === 1 ? 'dag' : 'dage'})`)
   if (pains.length) parts.push(`Smerte ${pains.at(-1).pain}/10${place(pains.at(-1))} ${shortDate(pains.at(-1).logged_date)}`)
-  const goal = recent.map(r => r?.water_goal_ml).find(v => typeof v === 'number' && Number.isFinite(v) && v > 0)
-  if (water.length) parts.push(`Væske ${formatNumber(water.reduce((n, v) => n + v, 0) / water.length / 1000, 1)}${goal ? ` af ${formatNumber(goal / 1000, 1)} l` : ' l'} i snit (${water.length} ${water.length === 1 ? 'dag' : 'dage'})`)
-  if (kost) parts.push(`Kostvane ${kost} af 7 dage`)
+  parts.push(...waterKostParts(rows, day))
   return parts.length ? `${parts.join(' · ')} · sidste 7 dage` : null
 }
 
