@@ -6166,13 +6166,13 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       }
       turns.push({i:end.i,y:end.y,top:true});
     }
-    let keep=-1,lastBot=0,lastTop=0,minAmp=Infinity,maxAmp=0;
+    let keep=-1,whole=-1,lastBot=0,lastTop=0,minAmp=Infinity,maxAmp=0;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k];
       if(!to.top)continue;
       const amp=from.y-to.y,near=from.y<=lastBot+radius*1.25;
       if(keep<0||(near&&to.y>=lastTop-radius*1.25&&amp<=maxAmp*1.5&&amp>=minAmp*.6)){
-        keep=to.i;lastBot=from.y;lastTop=to.y;minAmp=Math.min(minAmp,amp);maxAmp=Math.max(maxAmp,amp);
+        keep=whole=to.i;lastBot=from.y;lastTop=to.y;minAmp=Math.min(minAmp,amp);maxAmp=Math.max(maxAmp,amp);
       }else if(near&&from.i>=keep&&to.y<lastTop){
         for(let i=from.i;i<=to.i;i++){
           if(!ok(i))continue;
@@ -6225,7 +6225,12 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       return cut;
     };
     let cut=flee(keep,ref,minX,maxX,minY,maxY);
-    if(cut<0)return;
+    // ORDRE 1634v: er billedet rettet opad midt i sættet, ligger en hale gennem det nye gulv stadig
+    // inden for det gamle område, så der findes ingen flugt herfra. Så ledes der alligevel efter et
+    // sæt, der er fortsat langt væk, fra den sidste optur, der helt lignede de tidligere, og kun et
+    // sikkert fund (se nedenfor) giver en ny måling af halen.
+    const none=cut<0;
+    if(none)cut=whole;
     // Ligger der to eller flere opture, der ligner sættets, i det, der ville blive fjernet, er det
     // ikke en hale: kameraet er flyttet midt i sættet, og sættet fortsætter (kontrol 3).
     // ORDRE 1621v: en optur tæller straks, når bund og top ligger højst 2,5 radius over eller under
@@ -6269,6 +6274,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     };
     let lifts=0,far=null,moved=0,soft=null,sure=false,bounce=turns[0].top,first=-1,solidEnd=-1,lastEnd=-1;
     let minRise=Infinity,maxRise=0,rest=Infinity;
+    const like=u=>u.amp>=minAmp*.85&&u.amp<=maxAmp*1.15&&u.rise>=minRise*.75&&u.rise<=maxRise*1.35;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k],amp=from.y-to.y;
       if(!to.top)continue;
@@ -6283,7 +6289,6 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y,start:from.i,end:to.i,amp,rise:rise(from,to)},before={bot:lastBot,top:lastTop};
       const pair=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
         &&Math.abs(now.by-far.by)<=radius*1.25&&Math.abs(now.ty-far.ty)<=radius*1.25;
-      const like=u=>u.amp>=minAmp*.85&&u.amp<=maxAmp*1.15&&u.rise>=minRise*.75&&u.rise<=maxRise*1.35;
       const pause=pair?still(turns[0].top?far.end:from.i):0,rested=pair&&pause>=.5,twins=pair&&like(far)&&like(now);
       const same=pair&&(rested||bounce||rest===Infinity||twins);
       const alike=rested&&twins&&(rest===Infinity||(rest>=.5&&pause>=rest*.75));
@@ -6296,6 +6301,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         lastEnd=to.i;
       }else far=now;
     }
+    // Uden flugt fra hele sættets område røres banen kun, når intet løft kan gå tabt: en optur langt
+    // væk, der ligner sættets løft, men står alene, kan være et løft.
+    if(none&&far&&like(far))return;
     let last=n-1;
     while(last>cut&&!ok(last))last--;
     if(soft&&Math.abs(path.pts[last].y-(turns[0].top?lastTop:lastBot))>radius*.6){
@@ -6312,7 +6320,17 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       const again=flee(lastEnd,turns[0].top?lastTop:lastBot,minX,maxX,minY,maxY);
       if(again<0)return;
       cut=again;
-    }
+      // Uden flugt fra hele sættets område klippes kun, når sporet ikke stiger en god del af et løfts højde igen efter klippet:
+      // er billedet flyttet to gange, kan sættet være fortsat inden for det gamle område.
+      if(none){
+        let low=-Infinity;
+        for(let i=cut;i<n;i++){
+          if(!ok(i))continue;
+          low=Math.max(low,path.pts[i].y);
+          if(low-path.pts[i].y>=minAmp*.4)return;
+        }
+      }
+    }else if(none)return;
     if(cut>=n-1)return;
     path.tailCutAt=path.times[cut];path.tailCutFrames=n-1-cut;
     path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;
