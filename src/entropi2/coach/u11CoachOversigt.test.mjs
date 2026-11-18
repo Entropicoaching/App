@@ -49,12 +49,13 @@ test('U11 model: én række pr. atlet i navneorden med blok og uge, seneste pas 
   // Kræver dit blik vinder over alt andet; intet program og intet pas siges ligeud.
   assert.equal(by['a-3'].program, 'Intet program')
   assert.equal(by['a-3'].lastSession, 'Intet pas logget')
-  assert.deepEqual(by['a-3'].badge, { tone: 'gold', text: 'Kræver dit blik' })
+  // Ordre 1707: atleten står allerede i Kræver dit blik lige over, så rækken har intet mærke.
+  assert.equal(by['a-3'].badge, null)
   // Uge uden bloknavn; et sprunget sæt er ikke et pas.
   assert.equal(by['a-4'].program, 'Uge 1')
   assert.equal(by['a-4'].lastSession, 'Intet pas logget')
   // Ordre 1544: grunden står kun i Kræver dit blik; mærket gentager den ikke.
-  assert.deepEqual(by['a-4'].badge, { tone: 'gold', text: 'Kræver dit blik' })
+  assert.equal(by['a-4'].badge, null)
 })
 
 test('U11 model: uden kalender eller log gætter listen ikke', () => {
