@@ -87,3 +87,18 @@ export function nutritionGoalWeek(props = {}, basis = nutritionBasis(props)) {
   return { days: days.size, kcal, protein,
     text: `Seneste 7 dage med nuværende mål: ${goals} (${logged}).` }
 }
+
+// Seneste logdags måltider (navn og kcal) ud fra samme kvittering og samme gyldighed som
+// nutritionBasis; ingen nyt kald. Datoen er en kalenderdag (Europe/Copenhagen), aldrig UTC-regnet.
+export function nutritionLatestMeals(props = {}, basis = nutritionBasis(props)) {
+  if (basis.state !== 'ready' || basis.days.size === 0) return null
+  const day = [...basis.days.keys()].sort().at(-1)
+  const meals = props.coachNutrition.rows.filter(row => row.athlete_id === props.athlete.id && row.date === day &&
+    !(typeof row.meal === 'string' && row.meal.trimStart().startsWith('[appData2-day-v1]')) &&
+    typeof row.meal === 'string' && row.meal.trim() &&
+    parseInputNumber(row.kcal) !== null && parseInputNumber(row.protein) !== null)
+    .map(row => ({ id: row.id, name: row.meal.trim(), kcal: parseInputNumber(row.kcal) }))
+  if (!meals.length) return null
+  const label = new Date(day + 'T12:00:00Z').toLocaleDateString('da-DK', { day: 'numeric', month: 'short', timeZone: 'Europe/Copenhagen' })
+  return { day, label, meals }
+}

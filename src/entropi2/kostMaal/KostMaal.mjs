@@ -2,7 +2,7 @@ import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h, useRef, useState } from 'react'
 import { energySuggestion } from './energySuggestion.mjs'
 import { vaegtRaekker, vaegtMaalLinje } from '../kostplan/atlet/vaegtMaalModel.mjs'
-import { nutritionBasis, nutritionWeek, nutritionGoalWeek } from './nutritionWeek.mjs'
+import { nutritionBasis, nutritionWeek, nutritionGoalWeek, nutritionLatestMeals } from './nutritionWeek.mjs'
 import { DEFAULT_ENABLED, kostMaalModel, displayNumber, positive, validTargetDraft, proteinSuggestion } from './model.mjs'
 
 const button = { minHeight: 44, padding: '10px 16px', font: 'inherit', border: '1px solid #777267', borderRadius: 8, color: 'inherit', background: '#282820', cursor: 'pointer' }
@@ -30,6 +30,7 @@ function EnabledKostMaal(props) {
   const basis = nutritionBasis(props)
   const week = nutritionWeek(props, basis)
   const goalWeek = nutritionGoalWeek(props, basis)
+  const latestMeals = nutritionLatestMeals(props, basis)
   const energy = weightReady ? energySuggestion(model, week, basis) : { kcal: null }
   const showEnergy = basis.state === 'ready' && weightReady && (energy.kcal !== null || helpRequested)
   const connected = typeof startEdit === 'function' && typeof setEditData === 'function' &&
@@ -67,6 +68,10 @@ function EnabledKostMaal(props) {
     basis.skipped > 0 && h('p', { role: 'status' }, basis.skipped === 1
       ? '1 ugyldigt måltid er udeladt fra kostgrundlaget.'
       : `${basis.skipped} ugyldige måltider er udeladt fra kostgrundlaget.`),
+    latestMeals && h('details', { 'data-seneste-maaltider': latestMeals.day },
+      h('summary', { style: { minHeight: 44, cursor: 'pointer' } }, `Måltider ${latestMeals.label}`),
+      h('ul', { style: { margin: '4px 0 14px', paddingLeft: 20 } }, latestMeals.meals.map(meal =>
+        h('li', { key: meal.id }, `${meal.name} · ${displayNumber(meal.kcal)} kcal`)))),
     active ? h('form', { onSubmit: submit, 'aria-busy': Boolean(locked) },
       h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 12 } }, field('kcal_target', 'Kcal-mål'), field('protein_target', 'Proteinmål (g)')),
       h('p', null, 'Et tomt felt fjerner målet.'),
