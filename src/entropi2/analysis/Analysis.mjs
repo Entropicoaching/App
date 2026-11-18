@@ -27,6 +27,8 @@ import { calendarDay } from '../../calendarDate.js'
 import BlocksView from './blokforblok/BlocksView.mjs'
 import PaaSigtView from './paasigt/PaaSigtView.mjs'
 import StaevnerView from './StaevnerView.mjs'
+import StartmaksView from './StartmaksView.mjs'
+import { developmentModel } from './developmentModel.mjs'
 
 const explanationSummaryStyle = { minHeight: 44, paddingTop: 12, paddingBottom: 12,
   boxSizing: 'border-box', cursor: 'pointer', opacity: 0.8 }
@@ -82,6 +84,9 @@ export default function Analysis(props = {}) {
   ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs })] : []),
   // U3b: retningen pr. hovedløft står i "Din udvikling", så e1RM kun vises ét sted.
   h(DevelopmentView, { ...props, now, ...(trends ? { u3Trends: trends } : {}) }),
+  // Ordre 1713: coachens startmaks fra atletens egen række; foldet som udgangspunkt, når egne e1RM findes.
+  h(StartmaksView, { athlete: props.athlete, ownNumbers: !!strengthUnavailable ||
+    developmentModel(props, now).lifts.some(lift => lift.observed > 0) }),
   // Ordre 1705: stævneresultater, coachen har registreret; kun læsning med atletens id, intet uden rækker.
   // Under U3-flaget som ugekortet og blokkene, så slukket flag giver uændret Analysis og ingen læsning.
   ...(u3 ? [h(StaevnerView, { client: props.u3Client, athleteId: props.athlete.id })] : []),
