@@ -86,6 +86,13 @@ export function kostMaalKvitteringMedDage(receipt, status) {
   return { ...receipt, planHistory: 'daily', dailyReferences: status.refs }
 }
 
+// Planversionens mål (goal, intensity) for i dag, fra de samme dagsreferencer som kvitteringen allerede har læst.
+// Uden godkendt version for netop i dag er svaret null, og vægtlinjen udebliver.
+export function kostMaalPlanVersion(receipt, today) {
+  const day = receipt?.dailyReferences?.days?.find(d => d?.date === today)
+  return day?.state === 'approved' ? { goal: day.goal, intensity: day.intensity } : null
+}
+
 function KostDagsReferencer({ receipt, client, render }) {
   const [status, setStatus] = useState(null)
   const { coachId, athleteId, date } = receipt
@@ -104,7 +111,7 @@ export default function CoachKostMaal(props = {}) {
   const body = value => h('div', null, h(KostMaal, { key: athlete?.id, enabled: true, athlete, weightLogs: weight.rows, today,
     weightState: weight.state, retryWeight: weightStatus?.athleteId === athlete?.id ? weightStatus?.retry : undefined,
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
-    session, loading, loadError, coachNutrition, readContext }),
+    session, loading, loadError, coachNutrition, readContext, planVersion: kostMaalPlanVersion(value, today) }),
     h(PortalKostJustering, { enabled: true, athlete, coachId: session?.user?.id, date: today, loading, loadError, nutritionRead: value }),
     h(PortalPlan, { enabled: true, athlete, today, session, nutritionRead: value, weekClient }))
   // Kun den egne, ufuldstændige læsning får referencer; en udefra leveret nutritionRead bruges uændret.

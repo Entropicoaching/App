@@ -113,3 +113,12 @@ test('malformed/foreign/stale daily contract fails; absent history stays unknown
   for (const enabled of [undefined, false, 'true', 1]) assert.equal(report({ enabled, get dailyReferences() { assert.fail('OFF') } }), null)
   assert.equal(createPlanAdapter({ enabled: false, get client() { assert.fail('OFF') } }), null)
 })
+
+test('1620: godkendte dage bærer versionens goal og intensity (til coachens vægtlinje); ukendte dage bærer dem ikke', async () => {
+  const f = historyFixture(); f.plan(1, '2026-11-05'); f.version(10, uuid(1), '2026-11-05'); f.approve(10, uuid(1), '2026-11-05T12:00:00Z')
+  const refs = await load(f)
+  assert.equal(refs.days[0].goal, undefined); assert.equal(refs.days[0].intensity, undefined)
+  assert.equal(refs.days[4].state, 'approved')
+  assert.equal(refs.days[4].goal, 'vedligehold'); assert.equal(refs.days[4].intensity, 0.1)
+  assert.equal(f.calls.length, 4); assert.equal(f.writes().length, 0)
+})

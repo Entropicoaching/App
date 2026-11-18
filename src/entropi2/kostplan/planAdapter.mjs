@@ -154,7 +154,8 @@ async function readDailyReferences(client, athleteId, date, options = {}) {
       // An archived candidate cannot be dated or safely removed to revive an
       // older plan. Its affected days stay unknown until a later reference wins.
       if (first.p.status === 'arkiveret') return unknown(d, 'archive-date-unavailable')
-      return { date: d, state: 'approved', reason: null, planId: first.p.id, versionId: first.v.id, targets: first.targets }
+      return { date: d, state: 'approved', reason: null, planId: first.p.id, versionId: first.v.id, targets: first.targets,
+        goal: first.v.goal, intensity: first.v.intensity }
     })
     return { ...base, state: 'ready', reason: null, days }
   } catch (error) {

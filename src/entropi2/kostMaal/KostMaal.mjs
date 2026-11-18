@@ -1,6 +1,7 @@
 import { antalOrd } from '../antalOrd.mjs'
 import { createElement as h, useRef, useState } from 'react'
 import { energySuggestion } from './energySuggestion.mjs'
+import { vaegtRaekker, vaegtMaalLinje } from '../kostplan/atlet/vaegtMaalModel.mjs'
 import { nutritionBasis, nutritionWeek, nutritionGoalWeek } from './nutritionWeek.mjs'
 import { DEFAULT_ENABLED, kostMaalModel, displayNumber, positive, validTargetDraft, proteinSuggestion } from './model.mjs'
 
@@ -14,7 +15,7 @@ export default function KostMaal(props = {}) {
 }
 
 function EnabledKostMaal(props) {
-  const { enabled = DEFAULT_ENABLED, athlete, weightLogs, today,
+  const { enabled = DEFAULT_ENABLED, athlete, weightLogs, today, planVersion,
     editing, editData = {}, startEdit, setEditData, setEditing, saveEdit, saving = false } = props
   const pending = useRef(false)
   const [busy, setBusy] = useState(false)
@@ -23,6 +24,9 @@ function EnabledKostMaal(props) {
   const weightReady = props.weightState == null || props.weightState === 'ready'
   const model = kostMaalModel({ athlete, weightLogs: weightReady ? weightLogs : [], today })
   const suggestion = proteinSuggestion(model)
+  // Samme linje som atleten ser, kun med planens mål og nok vejninger; ellers ingen linje.
+  const vaegtMaal = weightReady && planVersion && model.day
+    ? vaegtMaalLinje({ rows: vaegtRaekker(weightLogs, athlete?.id), date: model.day, version: planVersion }) : null
   const basis = nutritionBasis(props)
   const week = nutritionWeek(props, basis)
   const goalWeek = nutritionGoalWeek(props, basis)
@@ -87,6 +91,7 @@ function EnabledKostMaal(props) {
       value('Seneste vejning', `${displayNumber(model.latest.weight)} kg · ${model.latest.date}`),
       model.trend !== null && value('Trend · mod de foregående 7 dage',
         Math.abs(model.trend) < 0.05 ? 'Stabil vægt · 0 kg' : `${model.trend > 0 ? '+' : ''}${displayNumber(model.trend)} kg`)),
+    vaegtMaal && h('p', { role: 'status', 'data-vaegt-maal': vaegtMaal.status }, vaegtMaal.text),
     weightReady && model.day && !model.latest && h('p', null, 'Ingen vejninger endnu.'),
     weightReady && !model.day && h('p', { role: 'status' }, 'Vælg en gyldig dagsdato for vægtgrundlaget.'),
     (model.bodyweight !== null || model.latest) && h('details', null,
