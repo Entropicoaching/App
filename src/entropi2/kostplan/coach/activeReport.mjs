@@ -59,11 +59,13 @@ export function startActiveReport(options, onResult) {
   return () => { current = false }
 }
 
-export function activeReportView(create, result, onRetry) {
+export function activeReportView(create, result, onRetry, draftVisible = false) {
   if (!result) return null
   if (result.state === 'unavailable' || result.state === 'ready' && !result.report) {
+    // Dagsplan carries the "no active plan" sentence while the draft is on screen.
+    const sentenceInDraft = draftVisible === true && result.state !== 'unavailable' && !result.activePlan
     return create('div', null,
-      create('p', { role: 'status' }, result.state === 'unavailable'
+      !sentenceInDraft && create('p', { role: 'status' }, result.state === 'unavailable'
         ? 'Aktivering er ikke tilgængelig: kostplanens tabeller mangler. Lokale kladder er ikke delt med atleten.'
         : result.activePlan
           ? 'Atleten har en bekræftet aktiv kostplan. Der er endnu ingen måltidslogs i perioden.'

@@ -69,6 +69,7 @@ function ScopedKostJustering({ options, proposal }) {
 function ScopedPortalPlan(props) {
   const [opened, setOpened] = React.useState(false)
   const [expanded, setExpanded] = React.useState(false)
+  const [retOpen, setRetOpen] = React.useState(false)
   const [referenceRequested, setReferenceRequested] = React.useState(false)
   const [extendedRequested, setExtendedRequested] = React.useState(false)
   // The catalogue choice is made before any editor/controller is constructed.
@@ -119,9 +120,9 @@ function ScopedPortalPlan(props) {
         profileCalculation(props.athlete, date)]) }))]
   const status = [
     date !== props.date && h('p', null, `Koststatus og registrering nedenfor gælder ${props.date}, ikke den valgte plandato.`),
-    h(ActiveReport, { ...props, enabled: true, refresh })]
+    h(ActiveReport, { ...props, enabled: true, refresh, draftVisible: opened && expanded && (!week || retOpen) })]
   return React.createElement('div', { ref: node => { current.current = node !== null } },
-    ...(week ? [week, ...status, h('details', { 'data-ret': true, style: { marginTop: 16, textAlign: 'left' } },
+    ...(week ? [week, ...status, h('details', { 'data-ret': true, style: { marginTop: 16, textAlign: 'left' }, onToggle: event => setRetOpen(event.currentTarget.open) },
       h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Ret'), ...builder)]
       : [...status, ...builder]))
 }
@@ -307,7 +308,7 @@ function ActiveReportSession(props) {
   [props.coachId, props.athlete.id, props.date, props.nutritionRead, props.client, props.loadClient, attempt])
   if (result?.receipt !== props.nutritionRead || result?.client !== props.client
     || result?.loadClient !== props.loadClient || result?.attempt !== attempt) return null
-  return activeReportView(h, result.value, () => setAttempt(value => value + 1))
+  return activeReportView(h, result.value, () => setAttempt(value => value + 1), props.draftVisible === true)
 }
 
 export function ActiveReport(props = {}) {
