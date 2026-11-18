@@ -6147,13 +6147,21 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       // forrige tops højde og ikke længere stiger (under 0,05 radius på 0,2 s); en langsom glidning
       // bagefter er ikke en del af løftet.
       const from=turns.at(-1),zone=turns.at(-2).y+radius*.3,time=i=>path.times?.[i]??i/30;
-      let end={i:from.i,y:from.y};
+      // Loftet følger kameraets drift: forrige top plus flytningen fra toppen før den, og 0,2 radius til rystelser.
+      const prev=turns.at(-2).y,roof=prev+Math.min(0,turns.length>3?prev-turns.at(-4).y:0)-radius*.2;
+      let end={i:from.i,y:from.y},stalled=false;
       for(let i=from.i+1;i<n;i++){
         if(!ok(i))continue;
         const y=path.pts[i].y;
         if(end.y<=zone){
-          if(time(i)-time(end.i)>.2)break;
-          if(y<=end.y-radius*.05)end={i,y};
+          // ORDRE 1621v: et håndholdt kamera kan holde sporet stille et øjeblik midt i opturens
+          // sidste stykke. Stiger sporet videre inden for 0,5 s uden at flytte sig til siden
+          // (højst 0,3 radius) og uden at gå over loftet, er det stadig løftet og ikke en glidning
+          // bagefter.
+          const gap=time(i)-time(end.i);
+          if(gap>.5)break;
+          if(gap>.2)stalled=true;
+          if(y<=end.y-radius*.05&&(!stalled||(y>=roof&&Math.abs(path.pts[i].x-path.pts[end.i].x)<=radius*.3)))end={i,y};
         }else if(y<end.y)end={i,y};
       }
       turns.push({i:end.i,y:end.y,top:true});
@@ -6214,10 +6222,29 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     }
     // Ligger der to eller flere opture, der ligner sættets, i det, der ville blive fjernet, er det
     // ikke en hale: kameraet er flyttet midt i sættet, og sættet fortsætter (kontrol 3).
-    let lifts=0;
+    // ORDRE 1621v: en optur tæller straks, når bund og top ligger højst 2,5 radius over eller under
+    // den forrige opturs. Længere væk tæller opture kun, når to i træk ligger samme sted (bund og top
+    // højst 0,5 radius til siden og 1,25 radius i højden fra hinanden), som løft gør efter en stor
+    // flytning af billedet, og kun når sporet til sidst står, hvor et løft slutter (toppen, når
+    // sættet begyndte i toppen, ellers bunden; højst 0,6 radius fra). Et spor, der er faldet gennem
+    // gulvet og gynger, mens det bæres væk, er en hale.
+    let lifts=0,far=null,moved=0;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k],amp=from.y-to.y;
-      if(to.top&&from.i>=cut&&amp<=maxAmp*1.5&&amp>=minAmp*.6)lifts++;
+      if(!to.top)continue;
+      if(from.i<cut){lastBot=from.y;lastTop=to.y;continue;}
+      if(amp>maxAmp*1.5||amp<minAmp*.6)continue;
+      const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y};
+      const same=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
+        &&Math.abs(now.by-far.by)<=radius*1.25&&Math.abs(now.ty-far.ty)<=radius*1.25;
+      if(same||(Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5)){
+        lifts+=same?2:1;if(same)moved+=2;lastBot=from.y;lastTop=to.y;far=null;
+      }else far=now;
+    }
+    if(moved){
+      let last=n-1;
+      while(last>cut&&!ok(last))last--;
+      if(Math.abs(path.pts[last].y-(turns[0].top?lastTop:lastBot))>radius*.6)lifts-=moved;
     }
     if(lifts>=2)return;
     if(cut>=n-1)return;
