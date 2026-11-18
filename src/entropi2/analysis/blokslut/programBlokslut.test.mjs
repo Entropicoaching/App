@@ -84,3 +84,18 @@ test('offline one-week snapshot cannot invent block end; authoritative plan conf
   assert.deepEqual(confirmed.weeks, all)
   await assert.rejects(confirmProgramBlock('synthetic', all, '2026-11-04', () => ({ error: true })))
 })
+test('ny atlets foerste uge (ordre 1647): en blok paa een uge uden logget saet viser ingen blokrapport, men viser den naar der er logget', async () => {
+  const ugen = [{ ...weeks()[0], id: 'foerste', start_date: '2026-11-16' }]
+  const blok = selectProgramBlock(ugen, '2026-11-18')
+  assert.equal(blok.end_date, '2026-11-22')
+  const tom = await programBlokslutModel({ athleteId: 'synthetic', block: blok, now: '2026-11-18', readPage: () => ({ data: [] }) })
+  assert.equal(tom.status, 'ready'); assert.equal(tom.confirmed, 0)
+  assert.equal(renderProgramBlokslut(h, tom, { open: true }), null)
+  const logget = await programBlokslutModel({ athleteId: 'synthetic', block: blok, now: '2026-11-18',
+    readPage: () => ({ data: [{ id: 'l1', exercise_id: 'ex-0-0', set_number: 1, logged_at: '2026-11-17', weight: 100, reps_completed: 3 }] }) })
+  assert.equal(logget.confirmed, 1)
+  assert.match(text(renderProgramBlokslut(h, logget, { open: true })), /Din blok.*Gennemførte pas/)
+  // en blok paa flere uger uden logs vises stadig (coach-aftalen om manglende registreringer)
+  const flere = await programBlokslutModel({ athleteId: 'synthetic', block: block(), now: '2026-11-10', readPage: () => ({ data: [] }) })
+  assert.match(text(renderProgramBlokslut(h, flere, { open: true })), /Ingen bekræftede/)
+})

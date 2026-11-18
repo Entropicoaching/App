@@ -107,6 +107,8 @@ export function blokhovedViserDatoen(hovedUger, model) {
 // Supplied createElement keeps this renderer usable by real React and hermetic tests.
 export function renderProgramBlokslut(h, model, { open, onToggle, onRetry, skjulDato }) {
   const good = model.status === 'ready'
+  // Ordre 1647: en ny atlets foerste uge (blok paa en uge, intet logget endnu) har intet at rapportere; ellers staar der "Sidste uge er i gang" og "Aftal med din coach" paa dag et.
+  if (good && model.weeks.length === 1 && model.confirmed === 0 && model.through < model.end) return null
   const gains = good ? model.lifts.filter(row => row.delta > 0) : []
   const strength = gains.length ? gains.map(row => `${row.lift}: +${number(row.delta)} kg beregnet e1RM`).join(' · ')
     : good && model.lifts.some(row => row.delta !== null)
