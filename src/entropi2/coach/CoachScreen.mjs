@@ -102,7 +102,7 @@ export function CoachView(input = {}) {
   const heavyWeek = !inbox && u6Enabled('heavyWeek', props.u6HeavyWeek)
   // U7 del 4: søvn og smerte som tal på rækken og ugens kost mod det mål, der gjaldt. Kun med data.
   const coachData = !inbox && u7Enabled('coachData', props.u7CoachData)
-  const dayLine = row => coachData ? dayNumbersLine(rowAttention(row)?.daily, model.day) : null
+  const dayLine = row => coachData ? dayNumbersLine(rowAttention(row)?.daily, model.day, row.reasons) : null
   const draftBlock = row => {
     const draft = draftFor(row)
     return draft && h('div', { 'data-u6-draft': row.athlete.id, style: { margin: '0 0 12px', paddingInline: 4 } },

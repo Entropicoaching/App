@@ -53,7 +53,8 @@ export function sleepFromDaily(rows, today) {
 }
 
 // Tallene under rækken: snit af søvn, seneste smerte og snit af væske (dage med mere end 0 ml, mod atletens mål når det findes) og dage med afsluttet kostvane de sidste 7 dage, kun det der findes.
-export function dayNumbersLine(rows, today) {
+// Ordre 1679: en smerte, som rækkens grund allerede siger ordret (skip), står ikke igen her.
+export function dayNumbersLine(rows, today, skip = []) {
   const day = calendarDay(today)
   if (!day) return null
   const recent = within(rows, day, DAILY_DAYS)
@@ -61,7 +62,8 @@ export function dayNumbersLine(rows, today) {
   const pains = recent.filter(r => painValue(r) !== null).sort((a, b) => a.logged_date.localeCompare(b.logged_date))
   const parts = []
   if (sleep.length) parts.push(`Søvn ${formatNumber(sleep.reduce((n, v) => n + v, 0) / sleep.length, 1)}/5 (${sleep.length} ${sleep.length === 1 ? 'dag' : 'dage'})`)
-  if (pains.length) parts.push(`Smerte ${pains.at(-1).pain}/10${place(pains.at(-1))} ${shortDate(pains.at(-1).logged_date)}`)
+  const pain = pains.length ? `Smerte ${pains.at(-1).pain}/10${place(pains.at(-1))} ${shortDate(pains.at(-1).logged_date)}` : null
+  if (pain && !skip.includes(pain)) parts.push(pain)
   parts.push(...waterKostParts(rows, day))
   return parts.length ? `${parts.join(' · ')} · sidste 7 dage` : null
 }

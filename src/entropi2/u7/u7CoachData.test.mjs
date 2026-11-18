@@ -122,7 +122,8 @@ test('U7 4/5: coachens forside viser tallene under rækken kun med flaget', asyn
   const on = CoachView({ ...props, u7CoachData: true })
   const all = texts(on)
   assert.ok(all.includes('Smerte 5/10 11. nov.') || all.some(t => /^Smerte \d+\/10/.test(t)), all.join(' | '))
-  assert.ok(all.some(t => t.startsWith('DAY:Søvn 1,5/5 (2 dage) · Smerte 5/10')), all.join(' | '))
+  // Ordre 1679: smerten står i rækkens grund, så dagslinjen gentager den ikke.
+  assert.ok(all.includes('DAY:Søvn 1,5/5 (2 dage) · sidste 7 dage'), all.join(' | '))
   assert.ok(find(on, WeekTargetLine))
   const off = CoachView({ ...props, u7CoachData: false })
   assert.ok(!texts(off).some(t => t.startsWith('DAY:')))
@@ -217,4 +218,14 @@ test('1614: mangler målene, eller fejler læsningen, er dagsrækkerne som før'
   const result = await readCoachAttention(backend.client, [A], day, { daily: true })
   assert.equal(attentionFor(result, A, day).daily[0].water_ml, 2400)
   assert.equal('water_goal_ml' in attentionFor(result, A, day).daily[0], false)
+})
+
+test('Ordre 1679: dagslinjen gentager ikke en smerte, som rækkens grund allerede siger', () => {
+  const today = [{ athlete_id: A, logged_date: day, sleep_quality: 4, pain: 6, pain_location: 'venstre knæ', water_ml: 1000 }]
+  const grund = painFromDaily(today, day).reason
+  assert.equal(dayNumbersLine(today, day), `Søvn 4,0/5 (1 dag) · ${grund} · Væske 1,0 l i snit (1 dag) · sidste 7 dage`)
+  assert.equal(dayNumbersLine(today, day, [grund]), 'Søvn 4,0/5 (1 dag) · Væske 1,0 l i snit (1 dag) · sidste 7 dage')
+  assert.equal(dayNumbersLine(today, day, ['Smerte 9/10 en anden dag']), dayNumbersLine(today, day), 'kun en ens tekst udelades')
+  const udenSted = [{ athlete_id: A, logged_date: day, pain: 6 }]
+  assert.equal(dayNumbersLine(udenSted, day, [painFromDaily(udenSted, day).reason]), null)
 })
