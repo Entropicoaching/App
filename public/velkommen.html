@@ -180,7 +180,7 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
   <!-- 3 -->
   <div class="step">
     <div class="head"><span class="n">03</span><h2>Vælg en adgangskode og tryk «Opret konto»</h2></div>
-    <p class="say">Mindst 6 tegn. Får du en mail med et bekræftelseslink, så tryk på linket og log derefter ind. Ellers er du logget ind med det samme.</p>
+    <p class="say">Får du en mail med et bekræftelseslink, så tryk på linket og log derefter ind. Ellers er du logget ind med det samme.</p>
     <div class="phone"><div class="screen">
       <div class="notch"></div>
       <div class="mini-brand">Entropi<span>.</span></div>
@@ -233,7 +233,7 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
         <p class="fine">▸ Se øvelser og coachnoter</p>
         <div class="ghost">Se mit program</div>
       </div>
-      <div class="dagblk"><b>I dag</b>Vægt · Dagsform · Mad · Træning</div>
+      <div class="dagblk"><b>I dag</b>Vægt · Dagsform · Træning · Mad</div>
       <div class="tabs"><span class="on">Hjem</span><span>Program</span><span>Fremgang</span><span>Kost</span><span>Beskeder</span><span>Mere</span></div>
     </div></div>
   </div>
@@ -243,7 +243,7 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
     <p class="say">Passet viser ét sæt ad gangen, fx «Sæt 1 af 4». Vægt og gentagelser er udfyldt fra planen. Ret dem
     med knapperne, hvis sættet blev anderledes. Vil du angive din RPE, åbner du «Tilføj oplevet anstrengelse (RPE)»
     og vælger et tal; den er valgfri. Tryk så den gyldne knap
-    (<b style="color:var(--gold);font-weight:400">Som planlagt</b>, eller <b style="color:var(--gold);font-weight:400">Godkendt</b>
+    (<b style="color:var(--gold);font-weight:400">Som planlagt</b> eller «Som sidste sæt», eller <b style="color:var(--gold);font-weight:400">Godkendt</b>
     hvis du har ændret tallene) og vent på bekræftelsen. Bagefter starter pausetimeren af sig selv. Måtte du droppe et sæt,
     trykker du «Spring sættet over». Det er bedre end at lade det stå tomt.</p>
     <div class="phone"><div class="screen">
@@ -287,7 +287,7 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
 </div>
 
 <script>
-  // Personalisering via link: ?navn=Henrik&mail=henerceninks@gmail.com
+  // Personalisering via link: ?navn=Atlet&mail=din@email.dk
   var q = new URLSearchParams(location.search);
   var navn = (q.get('navn') || '').trim();
   var mail = (q.get('mail') || '').trim();
