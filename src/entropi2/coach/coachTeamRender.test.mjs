@@ -9,19 +9,22 @@ import { coachHomeModel } from './coachModel.mjs'
 import { productionFixture, athleteId } from './coachProductionFixture.mjs'
 
 const render = p => renderToStaticMarkup(h(CoachView, p))
+// Ordre 1692: atleternes registreringer står i rækken i Dine atleter; Holdoverblik har kun forklaringen.
+const raekker = html => html.match(/<section aria-label="Dine atleter"[\s\S]*?<\/section>/)?.[0] ?? ''
 const hold = html => html.match(/<details aria-label="Holdoverblik"[\s\S]*?<\/details>/)?.[0] ?? ''
 
-test('real React: current Dashboard data mount one closed fold after attention, before cards', () => {
+test('real React: current Dashboard data mount one closed fold after attention, after the athlete list', () => {
   const html = render(productionFixture()), section = hold(html)
   assert.ok(section)
   assert.ok(html.indexOf('Kræver dit blik') < html.indexOf('data-coach-fold="hold"'))
-  assert.ok(html.indexOf('data-coach-fold="hold"') < html.indexOf('data-coach-fold="atleter"'))
+  assert.ok(html.indexOf('Dine atleter') < html.indexOf('data-coach-fold="hold"'))
   assert.doesNotMatch(section.split('<summary')[0], / open(?:=|>| )/)
   assert.equal((section.match(/>Holdoverblik</g) ?? []).length, 1)
   for (const text of ['Syntetisk atlet', '1 registreringssignal', '1/28 dage registreret',
-    '7/7 dage registreret', '2026-10-07', '2026-10-28', 'min-height:48px', 'minmax(0, 1fr)']) {
-    assert.ok(section.includes(text), text)
+    '7/7 dage registreret', '2026-10-07', '2026-10-28']) {
+    assert.ok(raekker(html).includes(text), text)
   }
+  assert.ok(!section.includes('Syntetisk atlet'), 'Holdoverblik gentager ikke atletens navn')
   assert.doesNotMatch(section, /ukendt|kunne ikke|Vægt|Dagsform|Lavt protein|Seneste pas|ulæst|<button/i)
   // Kontrol-genbasering: basens atletkort viser nu ogsaa det korte signal (data-coach-short-signal);
   // holdfolden maa stadig ikke gentage det.
@@ -40,7 +43,7 @@ test('real React: no observed data, loading, failed, stale or hidden roster neve
 test('real React: only available domains render; sparse records never claim zero total flags', () => {
   const p = productionFixture(); delete p.coachNutrition
   p.coachActionsStatus.activity.rows = [{ athlete_id: athleteId, logged_at: p.today }]
-  const section = hold(render(p))
+  const section = raekker(render(p))
   assert.match(section, /1\/28 dage registreret/)
   assert.doesNotMatch(section, /Kost 2026|0 flag|0 registreringssignal|ukendt/i)
   p.coachActionsStatus.activity.state = 'partial'
@@ -53,7 +56,7 @@ test('real React: escaped visible names, no hidden athlete, no analysis or cycle
   p.readContext.athleteIds.push('synthetic-hidden')
   p.coachActionsStatus.activity.ids.push('synthetic-hidden')
   p.coachNutrition.athleteIds.push('synthetic-hidden')
-  const section = hold(render(p))
+  const section = raekker(render(p))
   assert.match(section, /&lt;script&gt;synthetic&lt;\/script&gt;/)
   assert.doesNotMatch(section, /<script>|HIDDEN-SENTINEL|cycle|synthetic-hidden/i)
   // Kontrol-genbasering: basens atletkort laeser coachAnalysis legitimt; holdmodellen selv maa ikke.

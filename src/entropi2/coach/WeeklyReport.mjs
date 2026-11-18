@@ -4,30 +4,38 @@ import { weeklyReportModel, hasWeeklyReportData } from './weeklyReportModel.mjs'
 
 const displayDate = day => day.split('-').reverse().join('.')
 
-export default function WeeklyReport({ today, ...props }) {
+// Ordre 1692: atletens ugerapport uden navn, til rækken i Dine atleter.
+export function weeklyReportLines({ training: t, nutrition: n }) {
+  return [
+    t.start && h('p', null, 'Programuge fra ', h('time', { dateTime: t.start }, displayDate(t.start))),
+    t.completed !== null ? h('p', null, t.planned !== null
+      ? `Pas logget: ${t.completed} af ${t.planned} ${antalOrd(t.planned, 'planlagt', 'planlagte')}` : `Pas logget: ${t.completed}`) :
+      t.planned !== null && h('p', null, `Pas planlagt: ${t.planned}`),
+    t.rpe !== null && h('p', null,
+      `Seneste pas · RPE-snit: ${t.rpe.toFixed(1).replace('.', ',')} (${t.rpeCount} sæt med RPE)`),
+    n && h('p', null, `Kostdage logget: ${n.logged}/7`),
+    n && n.plan && h('p', null,
+      `Proteinmål nået mod kostplan: ${n.plan.reached} af ${n.plan.logged} ${antalOrd(n.plan.logged, 'logget dag', 'loggede dage')}`),
+    n && n.plan && (n.plan.carb || n.plan.fat) && h('p', null,
+      [['carb', 'Kulhydrat', n.plan.carb], ['fat', 'Fedt', n.plan.fat]].filter(([, , m]) => m)
+        .map(([, label, m]) => `${label} inden for 10 % af planen: ${m.reached} af ${m.logged}`).join(' · ')),
+    n && n.plan && n.reached !== null && n.profileLogged > 0 && h('p', null,
+      `Øvrige dage mod profilens mål: ${n.reached} af ${n.profileLogged} ${antalOrd(n.profileLogged, 'logget dag', 'loggede dage')}`),
+    n && !n.plan && n.reached !== null && h('p', null,
+      `Proteinmål nået: ${n.reached} af ${n.logged} ${antalOrd(n.logged, 'logget dag', 'loggede dage')}`),
+  ].filter(Boolean)
+}
+
+export default function WeeklyReport({ today, utenAtleter = false, ...props }) {
   const model = weeklyReportModel(props, today)
   const rows = model.rows.filter(hasWeeklyReportData)
   if (!model.ready || !rows.length) return null
   return h('section', { 'aria-label': 'Ugerapport pr. atlet' },
     h('h2', null, 'Ugerapport'),
     h('details', { 'data-u9-forklaring': '' }, h('summary', { style: { cursor: 'pointer', minHeight: 44 } }, 'Forklaring'), h('p', null, 'Træning: aktuel programuge til i dag. Et pas tælles én gang, når mindst ét sæt er logget uden at være sprunget over. Kost: seneste 7 dage til og med i dag.')),
+    utenAtleter ? h('p', null, 'Atleternes egne tal står under hver atlet i Dine atleter.') :
     h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.map(({ athlete, training: t, nutrition: n }) =>
       h('li', { key: athlete.id, 'data-coach-weekly-report': athlete.id, style: { marginBlock: 16 } },
         h('h3', null, athlete.name),
-        t.start && h('p', null, 'Programuge fra ', h('time', { dateTime: t.start }, displayDate(t.start))),
-        t.completed !== null ? h('p', null, t.planned !== null
-          ? `Pas logget: ${t.completed} af ${t.planned} ${antalOrd(t.planned, 'planlagt', 'planlagte')}` : `Pas logget: ${t.completed}`) :
-          t.planned !== null && h('p', null, `Pas planlagt: ${t.planned}`),
-        t.rpe !== null && h('p', null,
-          `Seneste pas · RPE-snit: ${t.rpe.toFixed(1).replace('.', ',')} (${t.rpeCount} sæt med RPE)`),
-        n && h('p', null, `Kostdage logget: ${n.logged}/7`),
-        n && n.plan && h('p', null,
-          `Proteinmål nået mod kostplan: ${n.plan.reached} af ${n.plan.logged} ${antalOrd(n.plan.logged, 'logget dag', 'loggede dage')}`),
-        n && n.plan && (n.plan.carb || n.plan.fat) && h('p', null,
-          [['carb', 'Kulhydrat', n.plan.carb], ['fat', 'Fedt', n.plan.fat]].filter(([, , m]) => m)
-            .map(([, label, m]) => `${label} inden for 10 % af planen: ${m.reached} af ${m.logged}`).join(' · ')),
-        n && n.plan && n.reached !== null && n.profileLogged > 0 && h('p', null,
-          `Øvrige dage mod profilens mål: ${n.reached} af ${n.profileLogged} ${antalOrd(n.profileLogged, 'logget dag', 'loggede dage')}`),
-        n && !n.plan && n.reached !== null && h('p', null,
-          `Proteinmål nået: ${n.reached} af ${n.logged} ${antalOrd(n.logged, 'logget dag', 'loggede dage')}`)))))
+        ...weeklyReportLines({ training: t, nutrition: n })))))
 }

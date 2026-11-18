@@ -45,13 +45,12 @@ test('real React: task limit, order, closed remainder and inbox portions for zer
   }
 })
 
-test('real React: restored search and open fold are controlled by the host', () => {
-  const html = render(h(CoachScreen, { ...fixture(10), athleteQuery: 'ÆBLE', athletesOpen: true,
-    onAthleteQueryChange() {}, onAthletesOpenChange() {} }))
-  assert.match(html, /<details[^>]*data-coach-fold="atleter"[^>]*\bopen/)
+test('real React: restored search is controlled by the host', () => {
+  // Ordre 1692: Atletkort er flyttet ind i Dine atleter; søgningen står over listen, og der er ingen åben fold at gendanne.
+  const html = render(h(CoachScreen, { ...fixture(10), athleteQuery: 'ÆBLE', onAthleteQueryChange() {} }))
   assert.match(html, /type="search"[^>]*value="ÆBLE"/)
   assert.match(html, /1 af 10/)
-  assert.equal((html.match(/data-coach-summary=/g) ?? []).length, 1)
+  assert.equal((html.match(/data-u11-atlet=/g) ?? []).length, 1)
 })
 
 test('real React: remounted inbox respects the host portion and keeps remaining tasks reachable', () => {
@@ -65,15 +64,14 @@ test('real React: remounted inbox respects the host portion and keeps remaining 
   }
 })
 
-test('real React: controlled name search, no match and reset render inside the athlete fold only', () => {
+test('real React: controlled name search, no match and reset render above the athlete list', () => {
   const p = fixture(10)
   for (const [athleteQuery, expected] of [['', 10], ['  ÆBLE  ', 1], ['intet-match', 0]]) {
     const html = render(h(CoachView, { ...p, athleteQuery, onAthleteQueryChange() {} }))
     assert.match(html, /<label[^>]*>Søg efter atletnavn<input type="search"/)
     assert.match(html, new RegExp(`${expected} af 10`))
-    assert.equal((html.match(/data-coach-action=/g) ?? []).length, 10)
+    assert.equal((html.match(/data-u11-atlet=/g) ?? []).length, expected)
     assert.equal(html.includes('Ingen match på atletnavnet.'), expected === 0)
     if (athleteQuery) assert.match(html, /Nulstil søgning/)
-    assert.doesNotMatch(html, /<details[^>]*data-coach-fold="atleter"[^>]*\bopen/)
   }
 })

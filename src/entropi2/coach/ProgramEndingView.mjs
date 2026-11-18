@@ -19,6 +19,19 @@ export function programEndingModel(context) {
   return { state: 'ready', rows }
 }
 
+// Ordre 1692: knappen uden navn i teksten (slutdatoen står som Planlagt til i programlinjerne), til rækken i Dine atleter (navnet står kun i knappens aria-label).
+export function programEndingLines(model, athleteId, openProfile) {
+  const row = model.rows.find(r => r.athlete.id === athleteId)
+  if (!row) return []
+  const canOpen = typeof openProfile === 'function'
+  return [
+    h('button', { key: 'b', type: 'button', disabled: !canOpen, 'aria-label': `Planlæg næste blok for ${row.athlete.name}`,
+      style: { minHeight: 48, padding: '12px 16px', font: 'inherit', color: '#edeae2',
+        background: '#1c1c18', border: '1px solid #c8923a', borderRadius: 12, cursor: canOpen ? 'pointer' : 'default' },
+      onClick: canOpen ? () => openProfile(row.athlete, 'program', 'list') : undefined }, 'Planlæg næste blok'),
+  ]
+}
+
 export default function ProgramEndingView({ context, openProfile }) {
   const model = programEndingModel(context)
   if (model.state !== 'ready' || model.rows.length === 0) return null

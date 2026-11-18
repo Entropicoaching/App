@@ -55,10 +55,28 @@ export default function CoachTeam(options = {}) {
 
 // Connected view: shorter, existing Dashboard reads have their own honest
 // windows. The standalone snapshot view above keeps its explicit contract.
+// Ordre 1692: atletens egne linjer uden navn, til rækken i Dine atleter.
+export function teamAthleteLines(model, athleteId) {
+  const athlete = model?.athletes?.find(a => a.athleteId === athleteId)
+  if (!athlete) return []
+  return [
+    athlete.signalCount > 0 && h('p', { key: 'sig' },
+      `${athlete.signalCount} ${antalOrd(athlete.signalCount, 'registreringssignal', 'registreringssignaler')}`),
+    athlete.trainingDays !== null && h('p', { key: 'tr' },
+      `Træningslog ${model.trainingFrom} – ${model.asOf}: ${athlete.trainingDays}/28 dage registreret.`),
+    athlete.nutritionDays !== null && h('p', { key: 'ko' },
+      `Kost ${model.nutritionFrom} – ${model.asOf}: ${athlete.nutritionDays}/7 dage registreret.`),
+  ].filter(Boolean)
+}
+
 export function CoachTeamRegistrations(options = {}) {
   if (options.enabled !== true) return null
   const model = options.model
   if (!model?.athletes?.length) return null
+  if (options.utenAtleter === true) return h('section', { 'aria-label': 'Holdets registreringer',
+    style: { minWidth: 0, maxWidth: '100%', overflowWrap: 'anywhere' } },
+  h('p', null, `Registreringer til og med ${model.asOf}. Atleternes egne tal står under hver atlet i Dine atleter.`),
+  h('p', null, 'Signaler beregnes kun fra tilstrækkelige belastnings- og kostdata. Dage med log er ikke bevis for komplette pas eller kostdage. Manglende træningslog kan være hvile.'))
   return h('section', { 'aria-label': 'Holdets registreringer',
     style: { minWidth: 0, maxWidth: '100%', overflowWrap: 'anywhere' } },
     h('p', null, `Registreringer til og med ${model.asOf}. Atleter med data vises; flest registreringssignaler først.`),

@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import CoachAthleteWorkspace from './CoachAthleteWorkspace.mjs'
+import { htmlTekst } from './htmlTekst.mjs'
+import { renderToStaticMarkup } from 'react-dom/server'
 import WeeklyReport from './WeeklyReport.mjs'
 import { CoachView } from './CoachScreen.mjs'
 
@@ -28,10 +29,11 @@ test('coach home: attention comes first; only useful confirmed folds are mounted
   // Existing validated nutrition days make the team fold useful here.
   // U11 (Marc 11. nov.: "stadig lidt rodet"): foldene ligger nu i to lukkede grupper, Holdet og
   // Programmer og noter. Atletkortene flytter ned, fordi den åbne atletliste står over grupperne.
-  assert.deepEqual(folds, [undefined, 'hold', 'ugerapport', 'kost', undefined, 'noter', 'atleter'])
+  // Ordre 1692: Atletkort, Ugens programmer og Programmer der slutter er flyttet ind i Dine atleter (én fold pr. række).
+  assert.deepEqual(folds, [undefined, 'hold', 'ugerapport', 'kost', undefined, 'noter'])
   assert.deepEqual(all.filter(n => n.type === 'details').map(n => n.props['data-u11-gruppe']).filter(Boolean), ['hold', 'programmer'])
   for (const d of all.filter(n => n.type === 'details')) assert.notEqual(d.props.open, true)
-  assert.ok(all.some(n => n.props?.['data-coach-nutrition'] === 'athlete-1'), 'kost line still rendered inside the fold')
+  assert.match(htmlTekst(CoachView(props('home'))), /Syntetisk atlet[\s\S]*Flere tal[\s\S]*Kost/, 'kost line still rendered inside the athlete row')
 })
 
 test('coach inbox: "Venter på dig" open, "Alle samtaler" folded', () => {
@@ -45,17 +47,15 @@ test('coach inbox: "Venter på dig" open, "Alle samtaler" folded', () => {
 test('new content stays inside native closed folds after the open attention section', () => {
   const view = CoachView(props('home')), all = nodes(view)
   const attention = all.find(n => label(n) === 'Atleter der kræver handling')
-  const athletes = all.find(n => n.props?.['data-coach-fold'] === 'atleter')
   const weekly = all.find(n => n.props?.['data-coach-fold'] === 'ugerapport')
   assert.equal(attention.type, 'section')
-  for (const fold of [athletes, weekly]) {
-    assert.equal(fold.type, 'details'); assert.notEqual(fold.props.open, true)
-    const summary = nodes(fold).find(n => n.type === 'summary')
-    assert.ok(summary.props.style.minHeight >= 44)
-    assert.ok(all.indexOf(attention) < all.indexOf(fold))
-  }
-  assert.equal(nodes(athletes).filter(n => n.type === CoachAthleteWorkspace).length, 1)
+  assert.equal(weekly.type, 'details'); assert.notEqual(weekly.props.open, true)
+  assert.ok(nodes(weekly).find(n => n.type === 'summary').props.style.minHeight >= 44)
+  assert.ok(all.indexOf(attention) < all.indexOf(weekly))
+  // Ordre 1692: atletens egne tal står i rækkens fold "Flere tal"; Ugerapport har kun forklaringen.
   const report = nodes(weekly).find(n => n.type === WeeklyReport)
   assert.ok(report)
-  assert.equal(nodes(report.type(report.props)).filter(n => n.props?.['data-coach-weekly-report']).length, 1)
+  assert.equal(nodes(report.type(report.props)).filter(n => n.props?.['data-coach-weekly-report']).length, 0)
+  const html = renderToStaticMarkup(view)
+  assert.equal((html.match(/<details[^>]*data-u11-flere/g) ?? []).length, 1)
 })

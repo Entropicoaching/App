@@ -7,7 +7,8 @@ import { productionFixture, day, athleteId } from './coachProductionFixture.mjs'
 import { SessionNotesView } from './SessionNotesView.mjs'
 import { addCalendarDays } from '../../calendarDate.js'
 const render = props => renderToStaticMarkup(h(CoachView, props))
-const cards = html => [...html.matchAll(/<article aria-label="Atletkort:[\s\S]*?<\/article>/g)].map(match => match[0])
+// Ordre 1692: Atletkort er flyttet ind i Dine atleter; atletens række med foldens tal er "kortet".
+const cards = html => [...html.matchAll(/<section aria-label="Dine atleter"[\s\S]*?<\/section>/g)].map(match => match[0])
 
 test('real React SSR: Dashboard-shaped props without coachAnalysis show supported signals, never unknown card rows', () => {
   const p = productionFixture()
@@ -15,11 +16,10 @@ test('real React SSR: Dashboard-shaped props without coachAnalysis show supporte
   // SSR runs real hooks in the folded session-note view and draft component too.
   const html = render(p), list = cards(html)
   assert.equal(list.length, 1)
-  assert.doesNotMatch(list[0], /ukendt|Vægttrend|Kost logget|Kostdage|Pas logget|<dl/i)
+  assert.doesNotMatch(list[0], /ukendt|Vægttrend|<dl/i)
   assert.match(list[0], /Syntetisk atlet/)
   assert.match(list[0], /Seneste pas i dag/)
   assert.match(list[0], /Lavt protein i de seneste 7 loggede dage/)
-  assert.match(list[0], /Åbn/)
   assert.equal((list[0].match(/data-coach-short-signal/g) ?? []).length, 1)
   assert.ok(html.indexOf('Kræver dit blik') < html.indexOf('Dine atleter'))
   assert.doesNotMatch(html, /Opfølgningssignal ukendt|Vægttrend ukendt/)
@@ -31,7 +31,7 @@ test('real React SSR: confirmed empty activity is visible without inventing rich
   const html = render(p), list = cards(html)
   assert.equal(list.length, 1)
   assert.doesNotMatch(list[0], /ukendt|Vægttrend|Opfølgningssignal|Kost|Seneste pas|data-coach-short-signal/i)
-  assert.match(list[0], /Ingen pas i det indlæste grundlag/)
+  assert.match(list[0], /Intet pas logget/)
   assert.doesNotMatch(html, /Beskedudkast fra ugerapport|Lav beskedudkast/)
 })
 

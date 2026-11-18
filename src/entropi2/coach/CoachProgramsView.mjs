@@ -7,6 +7,25 @@ const date = value => value.split('-').reverse().join('.')
 const number = new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 })
 const colors = { red: '#ffb0a0', yellow: '#f1cf7b', normal: '#edeae2', unknown: '#b8b4a8' }
 
+// Ordre 1692: atletens programlinjer uden navn, til rækken i Dine atleter.
+export function programLinesFor(context, athleteId) {
+  if (!context.rosterReady || !context.calendarReady) return []
+  const entry = buildProgramOverblik({ athletes: context.athletes, calendarWeeks: context.plans, today: context.day })
+    .find(e => e.athlete.id === athleteId)
+  if (!entry) return []
+  const undated = hasUndatedPlannedWeek(context.plans[entry.athlete.id])
+  return [
+    h('p', { key: 'p' }, undated ? 'Sæt dato på programugen' :
+      entry.status === 'empty' ? 'Opret program' :
+        `Planlagt til ${date(entry.lastDate)} · Uge ${entry.calendarWeek.week}, ${entry.calendarWeek.year}` +
+          (entry.lastWeek !== null ? ` · Programuge ${entry.lastWeek}` : '')),
+    !undated && entry.weeksLeft !== null && h('p', { key: 'u' }, entry.daysLeft < 0 ? 'Programmet er udløbet' :
+      `${number.format(entry.weeksLeft)} ${antalOrd(entry.weeksLeft, 'uge', 'uger')} tilbage` +
+        (entry.urgency === 'red' ? ' · Under 1 uge' : entry.urgency === 'yellow' ? ' · Under 2 uger' : '')),
+    entry.nextCompetition && h('p', { key: 's' }, `Næste stævne: ${date(entry.nextCompetition)}`),
+  ].filter(Boolean)
+}
+
 // The home screen has one place for dating tasks. An undated week never
 // becomes a claim about when the plan ends, even when other weeks have dates.
 export default function CoachProgramsView({ context, openProfile }) {

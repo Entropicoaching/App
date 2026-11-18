@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import CoachScreen, { CoachView } from './CoachScreen.mjs'
 import WeeklyReport from './WeeklyReport.mjs'
 import { weeklyReportModel } from './weeklyReportModel.mjs'
+import { htmlTekst } from './htmlTekst.mjs'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 const today = '2026-11-03'
 function fixture() {
@@ -41,11 +43,12 @@ test('counts sessions once, skips omitted sets and averages latest session only'
   assert.deepEqual(p, before)
 })
 test('actual overview renders report and inbox stays unchanged', () => {
-  const p = fixture(), tree = view(p)
-  assert.equal(nodes(tree).find(n => n.type === 'time').props.dateTime, '2026-11-02')
-  assert.equal(nodes(tree).filter(n => n.props?.['data-coach-weekly-report']).length, 1)
+  // Ordre 1692: atletens ugerapport står i rækken i Dine atleter (én fold uden navn), ikke i en navngivet liste.
+  const p = fixture(), tree = view(p), html = renderToStaticMarkup(tree)
+  assert.match(html, /<time dateTime="2026-11-02"/)
+  assert.equal(html.split('data-u11-flere').length - 1, 1)
   for (const expected of ['02.11.2026', 'Pas logget: 2 af 3 planlagte', 'RPE-snit: 9,0', 'Kostdage logget: 2/7', 'Proteinmål nået: 1 af 2'])
-    assert.ok(text(tree).includes(expected), expected)
+    assert.ok(htmlTekst(tree).includes(expected), expected)
   assert.equal(nodes(CoachView({ ...p, enabled: true, today, tab: 'inbox' })).filter(n => n.props?.['data-coach-weekly-report']).length, 0)
 })
 test('OFF returns before reading sensitive getters or starting clock hooks', () => {
@@ -90,9 +93,9 @@ test('invalid plan count and missing RPE are explicit unknowns', () => {
   const p = fixture(); p.calendarWeeks.a[0].session_count = undefined
   p.coachActionsStatus.activity.rows.forEach(r => { r.rpe_actual = '' })
   assert.equal(row(p).training.planned, null); assert.equal(row(p).training.rpe, null)
-  assert.doesNotMatch(text(view(p)), /RPE-snit/)
-  assert.match(text(view(p)), /Pas logget: 2/)
-  assert.doesNotMatch(text(view(p)), /af ukendt/)
+  assert.doesNotMatch(htmlTekst(view(p)), /RPE-snit/)
+  assert.match(htmlTekst(view(p)), /Pas logget: 2/)
+  assert.doesNotMatch(htmlTekst(view(p)), /af ukendt/)
 })
 test('nutrition rejects stale, malformed, foreign and duplicate data', () => {
   for (const change of [p => { p.coachNutrition.complete = false }, p => { p.coachNutrition.state = 'partial' },
@@ -103,14 +106,14 @@ test('nutrition rejects stale, malformed, foreign and duplicate data', () => {
     p => { p.coachNutrition.rows.push(p.coachNutrition.rows[0]) },
     p => { p.coachNutrition.targets.push(p.coachNutrition.targets[0]) }]) {
     const p = fixture(); change(p); assert.equal(row(p).nutrition, null)
-    assert.doesNotMatch(text(view(p)), /Kostdage logget|Proteinmål nået/)
+    assert.doesNotMatch(htmlTekst(view(p)), /Kostdage logget|Proteinmål nået/)
   }
 })
 test('missing protein target preserves known logged day count', () => {
   const p = fixture(); p.coachNutrition.targets = []
   assert.equal(row(p).nutrition.logged, 2); assert.equal(row(p).nutrition.reached, null)
-  assert.match(text(view(p)), /Kostdage logget: 2\/7/)
-  assert.doesNotMatch(text(view(p)), /Proteinmål/)
+  assert.match(htmlTekst(view(p)), /Kostdage logget: 2\/7/)
+  assert.doesNotMatch(htmlTekst(view(p)), /Proteinmål/)
 })
 test('Danish midnight and week start exclude prior days', () => {
   const p = fixture()

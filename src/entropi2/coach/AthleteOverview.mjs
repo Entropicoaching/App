@@ -66,11 +66,22 @@ export function athleteOverviewModel(context = {}) {
 const tones = { gold: { color: '#141410', background: '#d8b16b' }, warn: { color: '#f1cf7b', background: '#2a2416' },
   calm: { color: '#b9b4a8', background: '#24241f' } }
 
-export default function AthleteOverview({ context, openProfile }) {
-  const rows = athleteOverviewModel(context)
-  if (!rows.length) return null
+// Ordre 1692: søgningen fra Atletkort står nu over listen, når holdet har mere end seks atleter.
+export const SEARCH_FROM = 7
+export default function AthleteOverview({ context, openProfile, details, query = '', onQueryChange }) {
+  const all = athleteOverviewModel(context)
+  if (!all.length) return null
+  const needle = query.trim().toLocaleLowerCase('da')
+  const rows = all.filter(row => row.athlete.name.toLocaleLowerCase('da').includes(needle))
   const canOpen = typeof openProfile === 'function'
-  return h('ul', { style: { listStyle: 'none', padding: 0, margin: 0 } }, ...rows.map(row =>
+  const flere = athlete => {
+    const children = typeof details === 'function' ? details(athlete)?.filter(Boolean) : null
+    return children?.length ? h('details', { 'data-u11-flere': athlete.id, style: { margin: '0 0 10px', paddingInline: 4 } },
+      h('summary', { style: { cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center', color: '#b9b4a8' } },
+        h('span', { 'aria-hidden': true, style: { marginRight: 10, color: '#d8b16b' } }, '▸'), 'Flere tal'),
+      ...children) : null
+  }
+  const list = h('ul', { style: { listStyle: 'none', padding: 0, margin: 0 } }, ...rows.map(row =>
     h('li', { key: row.athlete.id }, h('button', {
       type: 'button', disabled: !canOpen, 'data-u11-atlet': row.athlete.id,
       'aria-label': `Åbn programmet for ${row.athlete.name}`,
@@ -84,5 +95,17 @@ export default function AthleteOverview({ context, openProfile }) {
           padding: '2px 10px', borderRadius: 999, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, row.badge.text)),
       (row.program || row.lastSession) && h('span', { style: { display: 'block', marginTop: 2, color: '#b9b4a8', fontSize: 15,
         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } },
-      [row.program, row.lastSession].filter(Boolean).join(' · '))))))
+      [row.program, row.lastSession].filter(Boolean).join(' · '))),
+    // Ordre 1692: atletens øvrige oplysninger i én lukket fold under rækken, uden at navnet gentages.
+    flere(row.athlete))))
+  if (all.length < SEARCH_FROM) return list
+  const field = { font: 'inherit', color: '#edeae2', background: '#1c1c18', border: '1px solid #77776b', borderRadius: 8, minHeight: 44 }
+  return h('div', null,
+    h('label', { style: { display: 'block' } }, 'Søg efter atletnavn',
+      h('input', { type: 'search', value: query, onChange: event => onQueryChange?.(event.target.value),
+        style: { ...field, display: 'block', boxSizing: 'border-box', width: '100%', marginTop: 8, padding: '0 12px' } })),
+    needle && h('button', { type: 'button', style: { ...field, marginTop: 8, padding: '0 14px' }, onClick: () => onQueryChange?.('') }, 'Nulstil søgning'),
+    h('p', { 'aria-live': 'polite' }, `${rows.length} af ${all.length}`),
+    rows.length === 0 && h('p', null, 'Ingen match på atletnavnet.'),
+    list)
 }

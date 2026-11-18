@@ -12,6 +12,15 @@ export default function AthleteCard(props = {}) {
   if (props.enabled !== true) return null
   const model = athleteCardModel(props.facts)
   const canOpen = typeof props.onOpen === 'function'
+  // Ordre 1692: under atletens række i Dine atleter står navnet og seneste pas allerede; kun beskeder og korte signaler står her.
+  if (props.utenNavn === true && props.compact) {
+    const beskeder = model.messages.state === 'ready' && model.messages.count > 0 && model.messages.text
+    const signaler = props.compact.signals.slice(0, 2)
+    if (!beskeder && !signaler.length) return null
+    return h('div', { 'data-coach-summary': model.id, style: { minWidth: 0, overflowWrap: 'anywhere' } },
+      beskeder && h('p', null, beskeder),
+      ...signaler.map(text => h('p', { key: text, 'data-coach-short-signal': true }, text)))
+  }
   if (props.compact) {
     const status = [['ready', 'empty'].includes(model.lastSession.state) && model.lastSession.text,
       model.messages.state === 'ready' && model.messages.count > 0 && model.messages.text].filter(Boolean).join(' · ')

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import CoachScreen, { CoachView } from './CoachScreen.mjs'
 import Workspace, { CoachMessageDraft, CoachMessageDraftView } from './CoachAthleteWorkspace.mjs'
 import AthleteCard from './atletkort/AthleteCard.mjs'
+import AthleteOverview from './AthleteOverview.mjs'
 import WeekEvaluation from './evaluering/WeekEvaluationView.mjs'
 import PlanGrundlagView from './planlaegning/PlanGrundlagView.mjs'
 import BelastningOgTrend from '../tracking/visning/BelastningOgTrend.mjs'
@@ -29,19 +30,22 @@ function fixture() {
           strength: 'obs', reason: 'Belastningen har ændret sig', dataBasis: { sufficient: true,
             sampleCount: 7, minimumSampleCount: 4, from: '2026-10-28', to: today, summary: '7 egne registreringer' } }] }] } } } }
 }
-const nodes = n => Array.isArray(n) ? n.flatMap(nodes) : !n || typeof n !== 'object' ? [] : [n, ...nodes(n.props?.children ?? n.children)]
+// Ordre 1692: arbejdsområdet ligger i rækkens fold "Flere tal" i Dine atleter (en komponent); udvid den, som visningen gør.
+const nodes = n => Array.isArray(n) ? n.flatMap(nodes) : !n || typeof n !== 'object' ? [] :
+  n.type === AthleteOverview ? [n, ...nodes(AthleteOverview(n.props))] : [n, ...nodes(n.props?.children ?? n.children)]
 const text = n => typeof n === 'string' ? n : Array.isArray(n) ? n.map(text).join(' ') : n && typeof n === 'object' ? text(n.props?.children ?? n.children) : ''
 const data = p => coachAthleteWorkspace(p, coachHomeModel(p, today), athlete)
 const entry = p => nodes(CoachView(p)).find(n => n.type === Workspace)
-const workspace = p => { const n = entry(p); return n && n.type(n.props) }
+// Prøven ser kortet i sin fulde form; i forsiden står navnet kun i rækken (utenNavn).
+const workspace = p => { const n = entry(p); return n && n.type({ ...n.props, utenNavn: false }) }
 const rendered = tree => nodes(tree).filter(n => [AthleteCard, WeekEvaluation, PlanGrundlagView, BelastningOgTrend].includes(n.type)).map(n => n.type(n.props))
 
 test('screen connects one authorized card and all three closed athlete folds after attention', () => {
   const p = fixture(), tree = CoachView(p), all = nodes(tree), n = all.find(node => node.type === Workspace)
   assert.equal(all.filter(n => n.type === Workspace).length, 1)
   assert.ok(all.indexOf(all.find(n => n.props['aria-label'] === 'Atleter der kræver handling')) < all.indexOf(n))
-  const parent = all.find(n => n.props['data-coach-fold'] === 'atleter')
-  assert.notEqual(parent.props.open, true)
+  const parent = all.find(n => n.props['data-u11-flere'] === id)
+  assert.equal(parent.type, 'details'); assert.notEqual(parent.props.open, true)
   const view = workspace(p), folds = nodes(view).filter(n => n.props['data-coach-athlete-fold'])
   assert.deepEqual(folds.map(n => n.props['data-coach-athlete-fold']), ['Ugeevaluering', 'Belastning og trend', 'Planlægningsgrundlag', 'Beskedudkast fra ugerapport'])
   folds.forEach(f => { assert.equal(f.type, 'details'); assert.notEqual(f.props.open, true); assert.ok(nodes(f).find(n => n.type === 'summary').props.style.minHeight >= 44) })

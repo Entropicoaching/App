@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import CoachScreen, { CoachView } from './CoachScreen.mjs'
+import AthleteOverview from './AthleteOverview.mjs'
 import { DEFAULT_ENTROPI2_COACH, coachHomeModel } from './coachModel.mjs'
 
 const today = '2026-11-02'
@@ -18,8 +19,10 @@ function fixture() {
 const model = (p, day = today) => coachHomeModel(p, day)
 const line = p => model(p).nutrition.get('athlete-1')
 // React stores children in props; the hermetic adapter uses a children field.
+// Ordre 1692: atletens kostlinje står i rækken i Dine atleter (en komponent); udvid den, som visningen gør.
 const nodes = n => Array.isArray(n) ? n.flatMap(nodes) :
-  !n || typeof n !== 'object' ? [] : [n, ...nodes(n.props?.children ?? n.children)]
+  !n || typeof n !== 'object' ? [] : n.type === AthleteOverview ? [n, ...nodes(AthleteOverview(n.props))] :
+    [n, ...nodes(n.props?.children ?? n.children)]
 const nutritionNodes = tree => nodes(tree).filter(n => n.props?.['data-coach-nutrition'])
 
 test('nutrition traversal handles React children and the hermetic adapter', () => {

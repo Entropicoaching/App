@@ -1,4 +1,6 @@
 import test from 'node:test'
+import AthleteOverview from './AthleteOverview.mjs'
+import { htmlTekst } from './htmlTekst.mjs'
 import assert from 'node:assert/strict'
 import CoachScreen, { CoachView } from './CoachScreen.mjs'
 import ProgramEndingView, { programEndingModel } from './ProgramEndingView.mjs'
@@ -105,9 +107,11 @@ test('missing callback disables action and markup remains literal text', () => {
 test('small hook mounts only in enabled overview; OFF never reads program data or runs hooks', () => {
   const p = fixture()
   const tree = CoachView({ ...p, enabled: true, today })
-  const child = nodes(tree).find(n => n.type === ProgramEndingView)
-  assert.ok(child); assert.equal(child.props.context.day, today)
-  assert.equal(nodes(CoachView({ ...p, enabled: true, today, tab: 'inbox' })).some(n => n.type === ProgramEndingView), false)
+  // Ordre 1692: knappen Planlæg næste blok står i atletens række i Dine atleter, ikke i en navngivet liste.
+  const overview = nodes(tree).find(n => n.type === AthleteOverview)
+  assert.ok(overview); assert.equal(overview.props.context.day, today)
+  assert.match(htmlTekst(tree), /Planlæg næste blok/)
+  assert.doesNotMatch(htmlTekst(CoachView({ ...p, enabled: true, today, tab: 'inbox' })), /Planlæg næste blok/)
   const hostile = { get calendarWeeks() { throw Error('OFF read') } }
   assert.equal(CoachScreen(hostile), null); assert.equal(CoachView({ ...p, enabled: false }), null)
 })

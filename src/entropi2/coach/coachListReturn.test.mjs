@@ -26,6 +26,16 @@ const source = readFileSync(new URL('../../Dashboard.jsx', import.meta.url), 'ut
 const stateNames = [...source.matchAll(/const \[(\w+)(?:,\s*\w+)?\] = useState\(/g)].map(m => m[1])
 let cursor = 0, generation = 0, capturedScreen
 const setters = {}, fixture = productionFixture()
+// Ordre 1692: søgningen vises først ved syv atleter eller flere; gør holdet stort nok.
+{
+  const ids = Array.from({ length: 7 }, (_, i) => `synthetic-${i}`)
+  fixture.athletes = ids.map((id, i) => ({ id, name: `Syntetisk atlet ${i}` }))
+  fixture.readContext.athleteIds = ids
+  fixture.calendarWeeks = Object.fromEntries(ids.map(id => [id, []]))
+  fixture.coachActionsStatus.activity = { ...fixture.coachActionsStatus.activity, ids }
+  fixture.coachMorningData.messages = { ...fixture.coachMorningData.messages, ids }
+  fixture.coachMorningData.videos = { ...fixture.coachMorningData.videos, ids }
+}
 const fakes = { ...globalThis[Symbol.for('rebase.dashboard')].fakes }
 fakes.react = {
   useState(initial) {
@@ -83,7 +93,7 @@ registerHooks({
 const { default: Dashboard } = await import(url)
 function Host(props) { cursor = 0; return Dashboard(props) }
 const all = tree => runtime.nodes(tree, () => true)
-const fold = tree => all(tree).find(n => n.props['data-coach-fold'] === 'atleter')
+// Ordre 1692: Atletkort er flyttet ind i Dine atleter; søgefeltet og rækkerne er det, Dashboard husker tilbage fra profilen.
 const input = tree => all(tree).find(n => n.type === 'input' && n.props.type === 'search')
 
 test('Dashboard keeps only query and fold across actual profile unmount/remount; reset, coach switch and OFF clear them', () => {
@@ -95,35 +105,32 @@ test('Dashboard keeps only query and fold across actual profile unmount/remount;
     const app = runtime.mount(Host, props)
     const draw = (next = props) => { capturedScreen = null; return app.render(next) }
     let tree = draw()
-    assert.equal(fold(tree).props.open, false)
-    const target = { open: true }
-    fold(tree).props.onToggle({ target, currentTarget: target })
     input(tree).props.onChange({ target: { value: 'SYNTETISK' } })
     tree = draw()
-    assert.equal(input(tree).props.value, 'SYNTETISK'); assert.equal(fold(tree).props.open, true)
+    assert.equal(input(tree).props.value, 'SYNTETISK')
     const oldOwnerCallback = capturedScreen.onAthleteQueryChange
-    all(tree).find(n => n.props['data-coach-summary']).props.onClick()
+    all(tree).find(n => n.props['data-u11-atlet']).props.onClick()
     tree = draw()
-    assert.equal(fold(tree), undefined); assert.equal(capturedScreen, null)
+    assert.equal(input(tree), undefined); assert.equal(capturedScreen, null)
     const profile = all(tree).find(n => n.type === 'ProfilHoved')
     assert.equal(profile.props.profileReturnView, 'list')
     profile.props.setView(profile.props.profileReturnView)
     tree = draw()
-    assert.equal(input(tree).props.value, 'SYNTETISK'); assert.equal(fold(tree).props.open, true)
+    assert.equal(input(tree).props.value, 'SYNTETISK')
     all(tree).find(n => n.type === 'button' && runtime.text(n) === 'Nulstil søgning').props.onClick()
-    tree = draw(); assert.equal(input(tree).props.value, ''); assert.equal(fold(tree).props.open, true)
+    tree = draw(); assert.equal(input(tree).props.value, '')
     input(tree).props.onChange({ target: { value: 'ingen match' } }); tree = draw()
-    assert.match(runtime.text(fold(tree)), /Ingen match/)
+    assert.match(runtime.text(tree), /Ingen match/)
     const other = { ...props, session: { user: { id: 'synthetic-other-coach' } } }
     tree = draw(other)
-    assert.equal(input(tree).props.value, ''); assert.equal(fold(tree).props.open, false)
+    assert.equal(input(tree).props.value, '')
     oldOwnerCallback('stale owner callback')
     tree = draw(other); assert.equal(input(tree).props.value, '')
-    tree = draw(props); assert.equal(input(tree).props.value, ''); assert.equal(fold(tree).props.open, false)
+    tree = draw(props); assert.equal(input(tree).props.value, '')
     input(tree).props.onChange({ target: { value: 'SYNTETISK' } })
-    fold(tree).props.onToggle({ target, currentTarget: target }); draw()
+    draw()
     tree = draw({ ...props, entropi2: false }); assert.equal(capturedScreen, null)
-    tree = draw(); assert.equal(input(tree).props.value, ''); assert.equal(fold(tree).props.open, false)
+    tree = draw(); assert.equal(input(tree).props.value, '')
     // Dashboard owns presentation fields, not athlete data, reads or drafts.
     assert.deepEqual(Object.keys(currentViewState()).sort(), ['athleteQuery', 'athletesOpen', 'inboxLimit', 'owner'])
     function currentViewState() {

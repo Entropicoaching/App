@@ -41,10 +41,10 @@ export function CoachMessageDraftView({ suggestion, draft, setDraft }) {
 
 // U3: client og u3 kommer fra CoachScreen. Uden klient eller med u3 falsk monteres
 // U3-foldene ikke, og intet læses.
-export default function CoachAthleteWorkspace({ data, athlete, onOpen, client, u3 }) {
+export default function CoachAthleteWorkspace({ data, athlete, onOpen, client, u3, utenNavn = false }) {
   if (!data) return null
   return h('div', { 'data-coach-athlete-workspace': athlete.id, style: { minWidth: 0, marginBlock: 16 } },
-    h(AthleteCard, { enabled: true, facts: data.facts, compact: data.compact, onOpen }),
+    h(AthleteCard, { enabled: true, facts: data.facts, compact: data.compact, onOpen, utenNavn }),
     data.error && h('p', { role: 'alert' }, 'Atletens analysegrundlag kunne ikke hentes. Prøv igen efter opdatering.'),
     data.evaluation && fold('Ugeevaluering', h(WeekEvaluation, { enabled: true, input: data.evaluation })),
     (data.tracking || data.signals.length > 0) && fold('Belastning og trend', h('div', null,

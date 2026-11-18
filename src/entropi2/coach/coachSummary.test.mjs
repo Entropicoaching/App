@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import CoachScreen, { CoachView } from './CoachScreen.mjs'
 import CoachAthleteWorkspace from './CoachAthleteWorkspace.mjs'
 import AthleteCard from './atletkort/AthleteCard.mjs'
+import AthleteOverview from './AthleteOverview.mjs'
 import { coachHomeModel } from './coachModel.mjs'
 const today = '2026-11-03'
 function fixture(ids = ['a']) {
@@ -27,10 +28,12 @@ function nutrition(p) {
       .map((date, i) => ({ id: `meal-${i}`, athlete_id: 'a', date, meal: 'Syntetisk', kcal: 2000, protein: 150 })),
     targets: [{ athlete_id: 'a', protein_target: 150, kcal_target: 2000 }] }
 }
-const nodes = n => Array.isArray(n) ? n.flatMap(nodes) : !n || typeof n !== 'object' ? [] : [n, ...nodes(n.props?.children ?? n.children)]
+// Ordre 1692: atletens kort ligger under rækken i Dine atleter (en komponent); udvid den, som visningen gør.
+const nodes = n => Array.isArray(n) ? n.flatMap(nodes) : !n || typeof n !== 'object' ? [] :
+  n.type === AthleteOverview ? [n, ...nodes(AthleteOverview(n.props))] : [n, ...nodes(n.props?.children ?? n.children)]
 const text = n => typeof n === 'string' ? n : Array.isArray(n) ? n.map(text).join('') : n && typeof n === 'object' ? text(n.props?.children ?? n.children) : ''
 const cards = p => nodes(CoachView({ ...p, today, enabled: true })).filter(n => n.type === CoachAthleteWorkspace)
-  .flatMap(n => nodes(n.type(n.props))).filter(n => n.type === AthleteCard).map(n => n.type(n.props))
+  .flatMap(n => nodes(n.type({ ...n.props, utenNavn: false }))).filter(n => n.type === AthleteCard).map(n => n.type(n.props))
 const summaries = p => cards(p).map(card => nodes(card).find(n => n.type === 'button'))
 
 test('no data keeps one named athlete without placeholder parts', () => {
@@ -98,7 +101,7 @@ test('synthetic DOM: semantic keyboard button, named section, wrapping styles fo
   assert.equal(row.type, 'button'); assert.equal(row.props.type, 'button'); assert.equal(row.props.disabled, false)
   assert.ok(row.props.style.minHeight >= 44)
   assert.equal(cards(p)[0].props.style.minWidth, 0); assert.equal(cards(p)[0].props.style.overflowWrap, 'anywhere')
-  assert.ok(nodes(tree).some(n => n.props?.['aria-label'] === 'Atletoverblik'))
+  assert.ok(nodes(tree).some(n => n.props?.['aria-label'] === 'Dine atleter'))
   assert.match(text(tree), /focus-visible/)
   row.props.onClick(); assert.deepEqual(calls, [[p.athletes[0], 'hub', 'list']])
   assert.equal(summaries(fixture())[0].props.disabled, true)

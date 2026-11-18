@@ -103,18 +103,6 @@ test('inbox reveals ten more locally, preserves every task key and callback, and
   }
 })
 
-test('controlled athlete fold ignores nested toggles and records both open and closed states', () => {
-  const p = fixture(), changes = []
-  const list = fold(CoachView({ ...p, athletesOpen: true, onAthletesOpenChange: value => changes.push(value) }), 'atleter')
-  assert.equal(list.props.open, true)
-  const currentTarget = { open: true }
-  list.props.onToggle({ target: {}, currentTarget }); assert.deepEqual(changes, [])
-  list.props.onToggle({ target: currentTarget, currentTarget })
-  currentTarget.open = false
-  list.props.onToggle({ target: currentTarget, currentTarget })
-  assert.deepEqual(changes, [true, false])
-})
-
 test('program task callbacks in the folded remainder retain the same profile tab and return route', () => {
   const p = fixture(), calls = []
   p.latestByTrack = {}; p.unreadByTrack = {}
@@ -127,39 +115,41 @@ test('program task callbacks in the folded remainder retain the same profile tab
   }
 })
 
-test('local controlled search preserves model order, task list, scope, full names and profile return', () => {
+// Ordre 1692: Atletkort er flyttet ind i Dine atleter. Søgningen står over listen; hver række åbner atletens program.
+const rowsOf = tree => all(tree).filter(n => n.props['data-u11-atlet'])
+const searchBox = tree => all(tree).find(n => n.type === 'input')
+
+test('local controlled search preserves task list, scope, full names and profile return', () => {
   const p = fixture(), calls = [], queries = []
-  p.athletes.push({ id: 'foreign', name: 'Syntetisk skjult' })
   p.openProfile = (...args) => calls.push(args)
   const model = coachHomeModel(p, day)
   for (const query of ['', '  ÆBLE  ', 'meget langt', 'intet-match']) {
-    const tree = CoachView({ ...p, athleteQuery: query, onAthleteQueryChange: value => queries.push(value) })
-    const list = fold(tree, 'atleter'), workspaces = all(list).filter(n => n.type === Workspace)
-    const expected = model.summaries.filter(row => row.athlete.name.toLocaleLowerCase('da').includes(query.trim().toLocaleLowerCase('da')))
-    assert.deepEqual(workspaces.map(n => n.props.athlete.id), expected.map(r => r.athlete.id))
-    assert.match(text(list), new RegExp(`${expected.length} af 10`))
-    assert.equal(text(list).includes('Ingen match'), expected.length === 0)
+    const tree = mount(CoachScreen, { ...p, athleteQuery: query, onAthleteQueryChange: value => queries.push(value) }).render()
+    const expected = model.athletes.filter(a => a.name.toLocaleLowerCase('da').includes(query.trim().toLocaleLowerCase('da')))
+    assert.deepEqual(rowsOf(tree).map(n => n.props['data-u11-atlet']).sort(), expected.map(a => a.id).sort())
+    assert.match(text(tree), new RegExp(`${expected.length} af 10`))
+    assert.equal(text(tree).includes('Ingen match'), expected.length === 0)
     assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), model.actions.map(r => r.key))
-    const input = all(list).find(n => n.type === 'input')
+    const input = searchBox(tree)
     assert.equal(input.props.type, 'search'); assert.ok(input.props.style.minHeight >= 44)
     input.props.onChange({ target: { value: 'ny søgning' } }); assert.equal(queries.at(-1), 'ny søgning')
-    for (const workspace of workspaces) {
-      workspace.props.onOpen(); assert.deepEqual(calls.at(-1), [workspace.props.athlete, 'hub', 'list'])
+    for (const row of rowsOf(tree)) {
+      row.props.onClick(); assert.deepEqual(calls.at(-1)?.slice(1), ['program', 'list'])
     }
-    const reset = all(list).find(n => n.type === 'button' && text(n) === 'Nulstil søgning')
+    const reset = all(tree).find(n => n.type === 'button' && text(n) === 'Nulstil søgning')
     if (query.trim()) { reset.props.onClick(); assert.equal(queries.at(-1), '') }
   }
 })
 
 test('actual enabled state boundary retains search across renders without storage or reads', () => {
   const app = mount(CoachScreen, fixture())
-  const before = app.render(), input = all(before).find(n => n.type === 'input')
+  const before = app.render(), input = searchBox(before)
   input.props.onChange({ target: { value: 'ÆBLE' } })
   const filtered = app.render()
-  assert.match(text(fold(filtered, 'atleter')), /1 af 10/)
+  assert.match(text(filtered), /1 af 10/)
   assert.equal(actions(filtered).length, 10)
-  all(fold(filtered, 'atleter')).find(n => n.type === 'button' && text(n) === 'Nulstil søgning').props.onClick()
-  assert.match(text(fold(app.render(), 'atleter')), /10 af 10/)
+  all(filtered).find(n => n.type === 'button' && text(n) === 'Nulstil søgning').props.onClick()
+  assert.match(text(app.render()), /10 af 10/)
 })
 
 test('loading, failed and empty reads cannot become search misses or task counts', () => {
@@ -168,7 +158,7 @@ test('loading, failed and empty reads cannot become search misses or task counts
     if (state === 'loading') p.loading = true
     if (state === 'error') p.loadError = true
     const tree = CoachView({ ...p, athleteQuery: 'intet-match' })
-    assert.equal(fold(tree, 'atleter'), undefined)
+    assert.equal(rowsOf(tree).length, 0)
     assert.doesNotMatch(text(tree), /Ingen match/)
     assert.equal(actions(tree).length, 0)
     if (state !== 'empty') assert.doesNotMatch(text(tree), /opgaver i alt/)
