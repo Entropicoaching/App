@@ -358,7 +358,8 @@ test('håndholdt kamera med drift opad: toppen af sidste optur beholdes (6000 ti
 
 // Ordre 1629v: de to huller, 1621v selv skrev ned (plan/1621v/KONTROL.md, G2 og G1), med kontrollens generator.
 // Seks løft med hvile imellem; efter løft tre rettes billedet dy radius (og en halv radius til siden),
-// og efter sidste løft kommer en hale gennem gulvet eller opad.
+// og efter sidste løft kommer en hale gennem gulvet eller opad ('lige op': to radius over den nye top, hvor
+// sporet også lå, mens billedet blev flyttet).
 function flytningOgHale({ loeft, rom, R: r, fps, dy, hale, pause }) {
   const top = 6 * r + 300, bot = top + rom * r, doed = loeft === 'dødløft', a = doed ? bot : top, b = doed ? top : bot
   const pts = [{ x: 300, y: a }], slut = []
@@ -369,7 +370,7 @@ function flytningOgHale({ loeft, rom, R: r, fps, dy, hale, pause }) {
   for (let k = 0; k < 6; k++) { to(1, 300, b); to(1, 300, a); slut.push(pts.length - 1); if (k === 2) skift = pts.length; hold(1.2) }
   const saet = pts.length
   hold(pause)
-  if (hale === 'gulv') to(1, 300 + r, bot + 4 * r); else to(1, 300 + r, top - 3 * r)
+  if (hale === 'gulv') to(1, 300 + r, bot + 4 * r); else if (hale === 'op') to(1, 300 + r, top - 3 * r); else to(1, 300 + 0.5 * r, top - 2 * r)
   hold(1)
   pts.forEach((q, i) => { const m = glat((i - skift - 0.2 * fps) / (0.6 * fps)); q.x += 0.5 * r * m; q.y += dy * r * m })
   const efter = pts.slice(skift + fps, saet)
@@ -379,7 +380,9 @@ function flytningOgHale({ loeft, rom, R: r, fps, dy, hale, pause }) {
 test('billedet rettes over 2,5 radius midt i sættet, og klippet ender med en hale: ingen løft går tabt, og halen klippes', () => {
   const tabt = [], hale = []
   let n = 0
-  for (const [loeft, rom] of [['squat', 4], ['dødløft', 5], ['bænk', 2]]) for (const r of [14, 100]) for (const fps of [30, 60]) for (const dy of [-3, 2.6, 3, 4]) for (const type of ['gulv', 'op']) for (const pause of [0, 0.5]) {
+  for (const [loeft, rom] of [['squat', 4], ['dødløft', 5], ['bænk', 2]]) for (const r of [14, 100]) for (const fps of [30, 60]) for (const dy of [-3, 2.6, 3, 4]) for (const type of ['gulv', 'op', 'lige op']) for (const pause of [0, 0.5]) {
+    // i dødløft er en tur lige op fra gulvet til to radius over toppen ikke til at skelne fra et løft
+    if (loeft === 'dødløft' && type === 'lige op') continue
     const { path, slut, fra, gulv, loft } = flytningOgHale({ loeft, rom, R: r, fps, dy, hale: type, pause })
     klip(path, r)
     n++
@@ -389,9 +392,9 @@ test('billedet rettes over 2,5 radius midt i sættet, og klippet ender med en ha
     const ys = path.pts.slice(fra).map(q => q.y), ude = (type === 'gulv' ? Math.max(...ys) - gulv : loft - Math.min(...ys)) / r
     if (ude > 0.3) hale.push(`${navn}: ${ude.toFixed(2)}R`)
   }
-  assert.equal(n, 192)
-  assert.deepEqual(tabt, [], `${tabt.length} af 192 baner taber løft efter flytningen`)
-  assert.deepEqual(hale, [], `${hale.length} af 192 haler står tilbage`)
+  assert.equal(n, 256)
+  assert.deepEqual(tabt, [], `${tabt.length} af 256 baner taber løft efter flytningen`)
+  assert.deepEqual(hale, [], `${hale.length} af 256 haler står tilbage`)
 })
 
 test('dødløft: en hale gennem gulvet, der gynger på stedet og ender i bunden, klippes ved gulvet', () => {

@@ -6239,7 +6239,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // de løft, uanset hvor sporet ender. I dødløft, hvor et gyng også ender i bunden, tæller opture
     // langt væk kun med den ro, medmindre sættet selv blev løftet uden ro på gulvet. Og når sættet
     // er fortsat efter sådan en flytning af billedet, klippes en hale efter dets sidste løft på
-    // samme måde som ovenfor, målt mod området efter flytningen, i stedet for at løftene efter
+    // samme måde som ovenfor, målt mod området fra første løft efter flytningen, i stedet for at løftene efter
     // flytningen går tabt.
     const time=i=>path.times?.[i]??i/30;
     const calm=at=>{
@@ -6249,17 +6249,18 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       while(hi<n-1&&near(hi+1))hi++;
       return time(hi)-time(lo)>=.5;
     };
-    let lifts=0,far=null,moved=0,soft=null,sure=false,bounce=turns[0].top,solidEnd=-1,lastEnd=-1;
+    let lifts=0,far=null,moved=0,soft=null,sure=false,bounce=turns[0].top,first=-1,solidEnd=-1,lastEnd=-1;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k],amp=from.y-to.y;
       if(!to.top)continue;
       if(from.i<cut){lastBot=from.y;lastTop=to.y;if(k>1&&!calm(from.i))bounce=true;continue;}
       if(amp>maxAmp*1.5||amp<minAmp*.6)continue;
-      const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y,end:to.i},before={bot:lastBot,top:lastTop};
+      const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y,start:from.i,end:to.i},before={bot:lastBot,top:lastTop};
       const pair=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
         &&Math.abs(now.by-far.by)<=radius*1.25&&Math.abs(now.ty-far.ty)<=radius*1.25;
       const rested=pair&&calm(turns[0].top?far.end:from.i),same=pair&&(rested||bounce);
       if(same||(Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5)){
+        if(first<0)first=same?far.start:from.i;
         lifts+=same?2:1;lastBot=from.y;lastTop=to.y;far=null;
         if(same&&!rested){moved+=2;soft??=before;}
         if(rested&&!soft)sure=true;
@@ -6276,7 +6277,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       // Sættet fortsatte efter en stor flytning af billedet. En ny flugt efter dets sidste løft er halen.
       if(!sure||!(lastEnd>cut&&lastEnd<last))return;
       a=Infinity;b=-Infinity;c=Infinity;d=-Infinity;
-      for(let i=cut;i<n;i++){
+      for(let i=first;i<n;i++){
         if(ok(i)){const q=path.pts[i];a=Math.min(a,q.x);b=Math.max(b,q.x);c=Math.min(c,q.y);d=Math.max(d,q.y);}
         minX[i]=a;maxX[i]=b;minY[i]=c;maxY[i]=d;
       }
