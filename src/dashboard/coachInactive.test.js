@@ -60,7 +60,7 @@ test('actual activity handler makes only the existing scoped non-skipped read an
   state.responses.push({ data: [{ athlete_id: 'a', logged_at: '2026-10-24T12:00:00Z' }] })
   await handlers.fetchAthleteActivityLogs(['a'])
   assert.equal(state.calls.length, 1); assert.equal(state.calls[0].table, 'exercise_logs')
-  assert.deepEqual(state.calls[0].steps, [['select', 'athlete_id, logged_at'], ['in', 'athlete_id', ['a']], ['eq', 'skipped', false], ['order', 'logged_at', { ascending: false }]])
+  assert.deepEqual(state.calls[0].steps, [['select', 'athlete_id, logged_at, exercises(sessions(id))'], ['in', 'athlete_id', ['a']], ['eq', 'skipped', false], ['order', 'logged_at', { ascending: false }]])
   assert.equal(s.value.activity.state, 'ready'); assert.equal(captured.last.a, '2026-10-24')
   state.responses.push({ data: null, error: {} }); await handlers.fetchAthleteActivityLogs(['a']); assert.equal(s.value.activity.state, 'error')
 })

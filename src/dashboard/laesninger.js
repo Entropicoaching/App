@@ -196,7 +196,7 @@ export function lavLaesninger({
     if (!athleteIds.length) return
     const { data } = await readCoachActivity(coachActions, athleteIds, setCoachActionsStatus, () => readMorningSource(coachMorning, 'logs', athleteIds, setCoachMorningData, () => supabase
       .from('exercise_logs')
-      .select('athlete_id, logged_at')
+      .select('athlete_id, logged_at, exercises(sessions(id))')
       .in('athlete_id', athleteIds)
       .eq('skipped', false)
       .order('logged_at', { ascending: false }), morningStartDay))
