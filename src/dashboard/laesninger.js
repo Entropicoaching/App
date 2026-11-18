@@ -711,11 +711,29 @@ export function lavLaesninger({
   }
 
   async function fetchAthleteReadiness(athleteId) {
-    if (tabReads) return readCoachTabRows({ ...tabOptions(setAthleteReadiness, athleteId, fetchAthleteReadiness),
-      // This is a deliberate recent window, not a claim about the athlete's entire history.
-      query: () => supabase.from('readiness_logs').select('*').eq('athlete_id', athleteId)
-        .order('logged_date', { ascending: false }).limit(90),
-    })
+    if (tabReads) {
+      // Ordre 1683: atletens seneste dagstjek (tracking_daily_v1) følger med, så Parathed i dag kan vise
+      // dagens smerte i stedet for en ømhed, der kan være gårsdagens forslag. Fejl eller manglende tabel: intet.
+      let dayPain = null
+      const readDayPain = async () => {
+        try {
+          const result = await supabase.from('tracking_daily_v1').select('athlete_id, logged_date, pain, pain_location')
+            .eq('athlete_id', athleteId).order('logged_date', { ascending: false }).limit(1)
+          const row = !result?.error && Array.isArray(result?.data) ? result.data[0] : null
+          dayPain = row?.athlete_id === athleteId ? row : null
+        } catch { dayPain = null }
+      }
+      return readCoachTabRows({ ...tabOptions(setAthleteReadiness, athleteId, fetchAthleteReadiness),
+        // This is a deliberate recent window, not a claim about the athlete's entire history.
+        query: async () => {
+          const result = await supabase.from('readiness_logs').select('*').eq('athlete_id', athleteId)
+            .order('logged_date', { ascending: false }).limit(90)
+          if (!result?.error) await readDayPain()
+          return result
+        },
+        publish: rows => setAthleteReadiness(dayPain ? Object.assign(rows, { dayPain }) : rows),
+      })
+    }
     const { data } = await supabase
       .from('readiness_logs')
       .select('*')

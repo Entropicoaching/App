@@ -9,6 +9,7 @@ import { s, readinessSignal } from '../dashboardShared.js'
 import LazyBoundary from '../LazyBoundary.jsx'
 import { entropi2Enabled } from '../entropi2/flag.mjs'
 import { shouldShowPainHistory } from '../entropi2/tracking/smerte/painRead.mjs'
+import { dayPainOn } from '../entropi2/u7/coachDayPain.mjs'
 
 // Dansk dato for seneste check-in: "i går" eller "fre. 14. nov." (dato uden klokkeslæt, regnet som kalenderdag).
 function senesteCheckinDato(day, todayStr) {
@@ -95,12 +96,15 @@ export default function OversigtTab({
                     ? { text: `Forskel mellem ${prevR.logged_date} og ${todayR.logged_date}: ${todayR.readiness_score - prevR.readiness_score} point`, color: '#b8b4a8' }
                     : { text: dataMessage('D04'), color: '#7a7770' }
                 }
+                // Ordre 1683: dagstjekkets smerte samme dag står i stedet for ømheden (ét tal, ingen modsigelse).
+                const dagssmerte = seneste ? null : dayPainOn(athleteReadiness.dayPain, a.id, latestR.logged_date)
                 const params = [
                   latestR.sleep_hours != null && ['Søvn', `${latestR.sleep_hours}t`],
                   latestR.energy != null && ['Energi', `${latestR.energy}/5`],
                   latestR.motivation != null && ['Motivation', `${latestR.motivation}/5`],
                   latestR.stress != null && ['Stress', `${latestR.stress}/5`],
-                  latestR.soreness_level != null && ['Ømhed', `${latestR.soreness_level}/5`],
+                  dagssmerte ? ['Smerte', `${dagssmerte.pain}/10`]
+                    : latestR.soreness_level != null && ['Ømhed', `${latestR.soreness_level}/5`],
                 ].filter(Boolean)
                 return (
                   <div style={{ ...s.card, background: seneste ? 'transparent' : sig.bg, marginBottom: '1.5rem' }}>
@@ -124,6 +128,12 @@ export default function OversigtTab({
                         ))}
                       </div>
                     </div>
+                    {dagssmerte?.location && (
+                      <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                        <div style={s.fieldLabel}>Smertested</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#7a7770' }}>{dagssmerte.location}</div>
+                      </div>
+                    )}
                     {latestR.sore_zones?.length > 0 && (
                       <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
                         <div style={s.fieldLabel}>Lokal ømhed</div>
