@@ -595,7 +595,8 @@ export default function ProgramTab({
                                 ? `uge ${first.week_number}`
                                 : `uge ${first.week_number}–${last.week_number}`
                               const fd = first.start_date, ld = last.start_date
-                              const dates = fd && ld
+                              // Ordre 1653: ved én uge står de samme datoer i ugekortet lige under.
+                              const dates = fd && ld && phase.weeks.length > 1
                                 ? `${fmt(fd)} – ${fmt(new Date(new Date(ld + 'T12:00:00').getTime() + 6 * 86400000).toISOString().slice(0, 10))}`
                                 : null
                               let isDone = false, isActive = false
