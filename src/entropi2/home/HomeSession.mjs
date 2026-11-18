@@ -1,6 +1,7 @@
 import { createElement as h, useEffect, useRef, useState } from 'react'
 import AthleteHome from './AthleteHome.mjs'
 import { readHomeRpeLastTime } from './homeRpeRead.mjs'
+import { readCoachWarmupTemplates } from '../session/opvarmning/coachWarmup.mjs'
 import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
 import { createSessionRecordReceipts } from '../session/sessionRecordReceipt.mjs'
@@ -18,7 +19,11 @@ export default function HomeSession(props) {
   const rpeRead = props.readHomeRpeLastTime ?? readHomeRpeLastTime
   const rpeWriter = typeof props.onLogSet === 'function' && typeof props.setLogInputs === 'function'
   const rpeUsedLastTime = rpeLast != null && rpeLast.athleteId === athleteId && rpeLast.used === true
-  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, rpeUsedLastTime } : props
+  // Ordre 1704: ét opslag pr. atlet af coachens opvarmning; kun svaret for den viste atlet bruges.
+  const [warmupRead, setWarmupRead] = useState(null)
+  const warmupReader = props.readCoachWarmupTemplates ?? readCoachWarmupTemplates
+  const coachWarmupTemplates = warmupRead != null && warmupRead.athleteId === athleteId ? warmupRead.templates : []
+  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, rpeUsedLastTime, coachWarmupTemplates } : props
   useEffect(() => {
     if (props.enabled !== true || !athleteId || !rpeWriter) return
     let active = true
@@ -26,6 +31,13 @@ export default function HomeSession(props) {
       used => { if (active) setRpeLast({ athleteId, used: used === true }) }, () => {})
     return () => { active = false }
   }, [props.enabled, athleteId, rpeWriter, rpeRead])
+  useEffect(() => {
+    if (props.enabled !== true || !athleteId) return
+    let active = true
+    Promise.resolve().then(() => warmupReader({ athleteId })).then(
+      templates => { if (active) setWarmupRead({ athleteId, templates: Array.isArray(templates) ? templates : [] }) }, () => {})
+    return () => { active = false }
+  }, [props.enabled, athleteId, warmupReader])
   const weekId = props.enabled === true ? props.currentWeek?.id : undefined
   useEffect(() => {
     if (props.enabled !== true) return

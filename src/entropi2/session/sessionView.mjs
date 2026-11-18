@@ -14,6 +14,7 @@ import { stepWeight, stepReps } from '../../setLogDefaults.js'
 import { createRestTimer } from './restTimer.mjs'
 import { mountPlateCalculator } from './plader/plateView.mjs'
 import { createOpvarmning } from './opvarmning/OpvarmningView.mjs'
+import { coachWarmupSteps } from './opvarmning/coachWarmup.mjs'
 import { mountTempoView } from './tempo/tempoView.mjs'
 import { createSetNote } from './noter/noteDom.mjs'
 import { sessionPrescription } from './sessionPrescription.mjs'
@@ -145,7 +146,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       warm.append(el('summary', mobility.kind === 'ready' ? 'Opvarmning (5-10 min)' : 'Opvarmningssæt'))
       if (mobility.kind === 'ready') warm.append(createMobilityPlan(doc, { enabled: true, session: s.session }))
       else if (mobility.kind === 'error') warm.append(el('p', 'Opvarmningen kunne ikke vises. Bed din coach kontrollere planen.', { role: 'alert' }))
-      warm.append(createOpvarmning(doc, { enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) } }))
+      warm.append(createOpvarmning(doc, { enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) },
+        coachSteps: coachWarmupSteps(p.coachWarmupTemplates, s.next.exercise.name) }))
       body.append(warm)
     }
     body.append(el('h1', summary ? 'Opsummering af passet' : s.next?.exercise.name || s.session.title || 'Dagens pas', { tabindex: '-1', 'data-heading': '' }))
@@ -230,7 +232,8 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       if (n.setNumber === 1 && !dailyWarmup) {
         const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
         warm.append(el('summary', 'Opvarmningssæt'), createOpvarmning(doc, {
-          enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) }
+          enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) },
+          coachSteps: coachWarmupSteps(p.coachWarmupTemplates, ex.name)
         }))
         body.append(warm)
       }
