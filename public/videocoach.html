@@ -6147,13 +6147,21 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       // forrige tops højde og ikke længere stiger (under 0,05 radius på 0,2 s); en langsom glidning
       // bagefter er ikke en del af løftet.
       const from=turns.at(-1),zone=turns.at(-2).y+radius*.3,time=i=>path.times?.[i]??i/30;
-      let end={i:from.i,y:from.y};
+      // Loftet følger kameraets drift: forrige top plus flytningen fra toppen før den, og 0,2 radius til rystelser.
+      const prev=turns.at(-2).y,roof=prev+Math.min(0,turns.length>3?prev-turns.at(-4).y:0)-radius*.2;
+      let end={i:from.i,y:from.y},stalled=false;
       for(let i=from.i+1;i<n;i++){
         if(!ok(i))continue;
         const y=path.pts[i].y;
         if(end.y<=zone){
-          if(time(i)-time(end.i)>.2)break;
-          if(y<=end.y-radius*.05)end={i,y};
+          // ORDRE 1621v: et håndholdt kamera kan holde sporet stille et øjeblik midt i opturens
+          // sidste stykke. Stiger sporet videre inden for 0,5 s uden at flytte sig til siden
+          // (højst 0,3 radius) og uden at gå over loftet, er det stadig løftet og ikke en glidning
+          // bagefter.
+          const gap=time(i)-time(end.i);
+          if(gap>.5)break;
+          if(gap>.2)stalled=true;
+          if(y<=end.y-radius*.05&&(!stalled||(y>=roof&&Math.abs(path.pts[i].x-path.pts[end.i].x)<=radius*.3)))end={i,y};
         }else if(y<end.y)end={i,y};
       }
       turns.push({i:end.i,y:end.y,top:true});
@@ -6214,10 +6222,17 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     }
     // Ligger der to eller flere opture, der ligner sættets, i det, der ville blive fjernet, er det
     // ikke en hale: kameraet er flyttet midt i sættet, og sættet fortsætter (kontrol 3).
+    // ORDRE 1621v: det gælder kun, når opturens bund og top ligger højst 2,5 radius over eller
+    // under den forrige opturs. Et spor, der er faldet længere gennem gulvet og gynger dér, er en hale.
     let lifts=0;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k],amp=from.y-to.y;
-      if(to.top&&from.i>=cut&&amp<=maxAmp*1.5&&amp>=minAmp*.6)lifts++;
+      if(!to.top)continue;
+      if(from.i<cut){lastBot=from.y;lastTop=to.y;}
+      else if(amp<=maxAmp*1.5&&amp>=minAmp*.6
+        &&Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5){
+        lifts++;lastBot=from.y;lastTop=to.y;
+      }
     }
     if(lifts>=2)return;
     if(cut>=n-1)return;

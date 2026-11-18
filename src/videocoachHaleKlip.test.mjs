@@ -223,3 +223,104 @@ test('billedet rettes halvanden radius ned og til siden midt i sættet: ingen l�
   klip(path, R)
   assert.equal(path.pts.length, foer)
 })
+
+// Ordre 1621v: de to fund fra kontrol 1 af 1616v (plan/1616v/KONTROL1.md), med kontrollens egne baner.
+const glat = x => smooth(Math.max(0, Math.min(1, x)))
+const lavBane = (pts, fps = FPS) => ({ pts: pts.map(q => ({ ...q })), times: pts.map((_, i) => i / fps), valid: pts.map(() => true), confidence: pts.map(() => 1) })
+// fem løft; derefter falder sporet gennem gulvet og gynger op og ned (telefonen bæres væk)
+function gyngeHale({ rom, doed = false, dybde, udsving, gange = 2 }) {
+  const bot = TOP + rom * R, a = doed ? bot : TOP, b = doed ? TOP : bot, pts = [{ x: 300, y: a }]
+  const hold = n => { const q = pts.at(-1); for (let i = 0; i < n; i++) pts.push({ ...q }) }
+  const to = (n, x, y) => { const q = pts.at(-1); for (let i = 1; i <= n; i++) pts.push({ x: q.x + (x - q.x) * glat(i / n), y: q.y + (y - q.y) * glat(i / n) }) }
+  hold(15); for (let r = 0; r < 5; r++) { to(30, 300, b); to(30, 300, a); hold(15) }
+  const slut = pts.length, hy = bot + dybde * R
+  to(30, 400, hy)
+  for (let k = 0; k < gange; k++) { to(20, 440 + 60 * k, hy - udsving * R); to(20, 470 + 60 * k, hy) }
+  hold(20)
+  return { path: lavBane(pts), slut, bot }
+}
+
+test('en hale gennem gulvet med to eller tre udsving på størrelse med et løft klippes ved gulvet', () => {
+  const ikke = []
+  for (const [navn, rom, doed] of [['bænk', 2, false], ['squat', 4, false], ['dødløft', 5, true]]) {
+    for (const [dybde, gange] of [[4, 2], [3, 2], [5, 3]]) for (const udsving of [1.2, 1.5, 2, 2.5, 3, 3.5, 4]) {
+      const { path, slut, bot } = gyngeHale({ rom, doed, dybde, udsving, gange })
+      klip(path, R)
+      const under = (Math.max(...path.pts.map(q => q.y)) - bot) / R
+      if (under > 0.3 || path.pts.length < slut - 3) ikke.push(`${navn} dybde ${dybde}R, ${gange} udsving på ${udsving}R: ${path.pts.length} punkter (sæt slut ${slut}), ${under.toFixed(2)}R under gulvet`)
+    }
+  }
+  assert.deepEqual(ikke, [], `${ikke.length} af 63 haler står tilbage under gulvet`)
+})
+
+// Samme generator som kontrol 1 (work/1616v/kontrol1/baner3.mjs): tilfældige sæt med kamera og hale.
+function tilfaeldigeSaet(froe, antal, klip) {
+  let seed = froe
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296 }
+  const U = (a, b) => a + (b - a) * rnd(), pick = a => a[Math.floor(rnd() * a.length)]
+  const profiler = { fast: { ryst: 0.02, drift: 0 }, haandholdt: { ryst: 0.1, drift: 0.4 }, urolig: { ryst: 0.2, drift: 0.9 } }
+  const tal = {}
+  for (let it = 0; it < antal; it++) {
+    const profNavn = pick(Object.keys(profiler)), prof = profiler[profNavn]
+    const R = pick([14, 40, 80, 160, 300]), fps = pick([30, 30, 60]), loeft = pick(['squat', 'baenk', 'doed'])
+    const reps = 1 + Math.floor(rnd() * 8), rom = U(loeft === 'baenk' ? 1.6 : 2.2, loeft === 'baenk' ? 3 : 5) * R
+    const top = 3 * R, bot = top + rom, x0 = 4 * R, pts = []
+    let sidsteOpSlut = 0
+    const push = (x, y) => pts.push({ x, y })
+    const hold = (sec, x, y) => { for (let i = 0; i < Math.round(sec * fps); i++) push(x, y) }
+    const gaa = (sec, x1, y1, xb = 0) => { const a = pts.at(-1), n = Math.max(2, Math.round(sec * fps)); for (let i = 1; i <= n; i++) { const e = glat(i / n); push(a.x + (x1 - a.x) * e + xb * Math.sin(Math.PI * i / n), a.y + (y1 - a.y) * e) } }
+    const start = loeft === 'doed' ? bot : top
+    push(x0, start); hold(U(0.2, 1.5), x0, start)
+    const xb = loeft === 'baenk' ? U(0.1, 0.5) * R : U(0, 0.2) * R
+    for (let r = 0; r < reps; r++) {
+      const romR = rom * U(0.92, 1.05)
+      gaa(U(0.6, 2.2), x0 + (loeft === 'baenk' ? xb : 0), loeft === 'doed' ? bot - romR : top + romR, loeft === 'baenk' ? 0 : xb)
+      if (loeft === 'doed') sidsteOpSlut = pts.length - 1
+      if (rnd() < (loeft === 'squat' ? 0.15 : 0.6)) hold(U(0.1, 1.2), pts.at(-1).x, pts.at(-1).y)
+      gaa(U(0.6, 3), x0, start, loeft === 'baenk' ? 0 : -xb)
+      if (loeft !== 'doed') sidsteOpSlut = pts.length - 1
+      if (r < reps - 1) hold(rnd() < 0.2 ? 0 : U(0.1, 3), x0, start)
+    }
+    const saetSlut = pts.length - 1
+    const driftY = U(-prof.drift, prof.drift) * R / (saetSlut / reps), driftX = U(-prof.drift, prof.drift) * R / (saetSlut / reps)
+    const f1 = U(1, 4), f2 = U(1, 4), p1 = U(0, 6), p2 = U(0, 6)
+    const hale = pick(['ingen', 'ro', 'gulv', 'gulv-direkte', 'side', 'op', 'skraa-ned', 'u'])
+    const pause = hale === 'gulv-direkte' ? 0 : pick([0, 0.1, 0.3, 1])
+    const end = pts.at(-1)
+    if (hale !== 'ingen') hold(pause, end.x, end.y)
+    if (hale === 'ro') hold(U(1, 4), end.x, end.y)
+    if (hale === 'gulv' || hale === 'gulv-direkte') { gaa(U(0.3, 2), end.x + U(-1, 1) * R, bot + U(1.5, 8) * R); hold(U(0, 2), pts.at(-1).x, pts.at(-1).y) }
+    if (hale === 'side') { gaa(U(0.5, 2), end.x + pick([-1, 1]) * U(1.5, 6) * R, end.y + U(-0.3, 0.3) * R); hold(U(0, 2), pts.at(-1).x, pts.at(-1).y) }
+    if (hale === 'op') { gaa(U(0.5, 2), end.x + U(-2, 2) * R, top - U(1.5, 3) * R); hold(U(0, 1), pts.at(-1).x, pts.at(-1).y) }
+    if (hale === 'skraa-ned') { gaa(U(0.5, 2), end.x + pick([-1, 1]) * U(1.5, 4) * R, bot + U(1.2, 5) * R); hold(U(0, 1), pts.at(-1).x, pts.at(-1).y) }
+    if (hale === 'u') { gaa(U(0.4, 1.5), end.x + U(0.5, 3) * R, bot + U(2.6, 6) * R); gaa(U(0.4, 1.5), end.x + U(3, 6) * R, top + U(0, 1) * R); hold(U(0, 1), pts.at(-1).x, pts.at(-1).y) }
+    let gulv = -Infinity
+    pts.forEach((q, i) => {
+      const j = Math.min(i, saetSlut), t = i / fps
+      q.x += driftX * j + prof.ryst * R * Math.sin(t * f1 * 6.283 + p1); q.y += driftY * j + prof.ryst * R * Math.sin(t * f2 * 6.283 + p2)
+      if (i <= saetSlut) gulv = Math.max(gulv, q.y)
+    })
+    const path = lavBane(pts, fps)
+    if (rnd() < 0.3) { const a = Math.floor(rnd() * (pts.length - 12)), l = 1 + Math.floor(rnd() * 8); for (let i = a + 1; i <= a + l; i++) { path.valid[i] = false; path.pts[i] = { ...path.pts[a] } } }
+    klip(path, R)
+    const m = path.pts.length, tabt = sidsteOpSlut - (m - 1), andel = tabt > 0 ? Math.round((path.pts[m - 1].y - pts[sidsteOpSlut].y) / rom * 100) : 0
+    const t = tal[profNavn] ??= { n: 0, taber: 0, over10: 0, over25: 0, gulvhaler: 0, underGulv: 0 }
+    t.n++
+    if (tabt > Math.max(2, 0.07 * fps)) { t.taber++; if (andel > 10) t.over10++; if (andel > 25) t.over25++ }
+    if (/gulv|skraa/.test(hale)) { t.gulvhaler++; if (+(Math.max(...path.pts.map(q => q.y - gulv)) / R).toFixed(2) > 0.3) t.underGulv++ }
+  }
+  return tal
+}
+
+test('håndholdt kamera med drift opad: toppen af sidste optur beholdes (6000 tilfældige sæt, frø 1)', () => {
+  const tal = tilfaeldigeSaet(1, 6000, klip)
+  assert.equal(tal.haandholdt.n, 2069)
+  // bbbe50cb tabte toppen i 7 af de 2069 håndholdte sæt, 1616v i 19 (4 over 10 % af løftets højde)
+  assert.ok(tal.haandholdt.taber <= 7, `håndholdt: ${tal.haandholdt.taber} af 2069 mister toppen af sidste optur`)
+  assert.ok(tal.haandholdt.over10 <= 1, `håndholdt: ${tal.haandholdt.over10} mister over 10 % af løftets højde`)
+  assert.equal(tal.haandholdt.over25, 0)
+  // og intet andet må blive dårligere end 1616v: fast telefon 1 og 0, haler under gulvet 0, 5 og 23
+  assert.ok(tal.fast.taber <= 1 && tal.fast.underGulv === 0, `fast: ${JSON.stringify(tal.fast)}`)
+  assert.ok(tal.haandholdt.underGulv <= 5, `håndholdt under gulv: ${tal.haandholdt.underGulv}`)
+  assert.ok(tal.urolig.taber <= 45 && tal.urolig.over25 <= 10 && tal.urolig.underGulv <= 23, `urolig: ${JSON.stringify(tal.urolig)}`)
+})
