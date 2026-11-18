@@ -360,17 +360,29 @@ test('håndholdt kamera med drift opad: toppen af sidste optur beholdes (6000 ti
 // Seks løft med hvile imellem; efter løft tre rettes billedet dy radius (og en halv radius til siden),
 // og efter sidste løft kommer en hale gennem gulvet eller opad ('lige op': to radius over den nye top, hvor
 // sporet også lå, mens billedet blev flyttet).
-function flytningOgHale({ loeft, rom, R: r, fps, dy, hale, pause }) {
+// Ordre 1634v: `dybde` er halens dybde under gulvet i radius, `side` dens flytning til siden, `gynge` antal udsving i halen (på løftets højde,
+// 0,7 s pr. tur), og med `midt` ('op' eller 'ned') rettes billedet midt i femte løfts optur eller nedtur i stedet
+// for i hvilen efter tredje løft, så kun sjette løft er helt.
+function flytningOgHale({ loeft, rom, R: r, fps, dy, hale, pause, dybde = 4, side = 1, gynge = 0, midt = null, hvile = 1.2 }) {
   const top = 6 * r + 300, bot = top + rom * r, doed = loeft === 'dødløft', a = doed ? bot : top, b = doed ? top : bot
   const pts = [{ x: 300, y: a }], slut = []
   const hold = s => { const q = pts.at(-1); for (let i = 0; i < Math.round(s * fps); i++) pts.push({ ...q }) }
   const to = (s, x, y) => { const q = pts.at(-1), n = Math.max(2, Math.round(s * fps)); for (let i = 1; i <= n; i++) pts.push({ x: q.x + (x - q.x) * glat(i / n), y: q.y + (y - q.y) * glat(i / n) }) }
   hold(0.5)
   let skift = 0
-  for (let k = 0; k < 6; k++) { to(1, 300, b); to(1, 300, a); slut.push(pts.length - 1); if (k === 2) skift = pts.length; hold(1.2) }
+  for (let k = 0; k < 6; k++) {
+    const foerst = pts.length
+    to(1, 300, b)
+    const vend = pts.length
+    to(1, 300, a); slut.push(pts.length - 1)
+    if (midt && k === 4) skift = ((midt === 'op') === doed ? foerst : vend) + Math.round(0.1 * fps)
+    if (!midt && k === 2) skift = pts.length
+    hold(hvile)
+  }
   const saet = pts.length
   hold(pause)
-  if (hale === 'gulv') to(1, 300 + r, bot + 4 * r); else if (hale === 'op') to(1, 300 + r, top - 3 * r); else to(1, 300 + 0.5 * r, top - 2 * r)
+  if (hale === 'gulv') to(1, 300 + side * r, bot + dybde * r); else if (hale === 'op') to(1, 300 + r, top - 3 * r); else to(1, 300 + 0.5 * r, top - 2 * r)
+  for (let k = 0; k < gynge; k++) { to(0.7, 300 + side * r, bot + (dybde - rom) * r); to(0.7, 300 + side * r, bot + dybde * r) }
   hold(1)
   pts.forEach((q, i) => { const m = glat((i - skift - 0.2 * fps) / (0.6 * fps)); q.x += 0.5 * r * m; q.y += dy * r * m })
   const efter = pts.slice(skift + fps, saet)
@@ -481,4 +493,55 @@ test('dødløft: billedet rettes over 2,5 radius ned efter første løft eller e
     klip(path, R)
     assert.equal(path.pts.length, foerKlip, `${dy}R efter løft ${foer}, ro før ${ro} billeder`)
   }
+})
+
+// Ordre 1634v: de tilfælde, 1629v selv skrev ned som ikke dækkede (plan/1629v/TJEK.md), med samme generator.
+// (d) Billedet rettes opad, og halen går gennem det nye gulv, men bliver inden for det gamle område.
+test('billedet rettes over 2,5 radius opad midt i sættet, og halen gennem det nye gulv ender inden for det gamle område: halen klippes, og ingen løft går tabt', () => {
+  const tabt = [], hale = []
+  let n = 0
+  for (const [loeft, rom] of [['squat', 4], ['dødløft', 5], ['bænk', 2]]) for (const r of [14, 100]) for (const fps of [30, 60]) for (const [dy, dybde] of [[-2.6, 1.5], [-3, 1.5], [-3, 2], [-4, 2], [-4, 3]]) for (const pause of [0, 0.5]) {
+    const { path, slut, fra, gulv } = flytningOgHale({ loeft, rom, R: r, fps, dy, hale: 'gulv', pause, dybde, side: 0.2 })
+    klip(path, r)
+    n++
+    const navn = `${loeft} R ${r} fps ${fps} flytning ${dy}R hale ${dybde}R under nyt gulv pause ${pause}`
+    const mangler = slut.filter(s => s > path.pts.length + 1).length
+    if (mangler) tabt.push(`${navn}: ${mangler} løft`)
+    const ude = (Math.max(...path.pts.slice(fra).map(q => q.y)) - gulv) / r
+    if (ude > 0.3) hale.push(`${navn}: ${ude.toFixed(2)}R`)
+  }
+  assert.equal(n, 120)
+  assert.deepEqual(tabt, [], `${tabt.length} af 120 baner taber løft`)
+  assert.deepEqual(hale, [], `${hale.length} af 120 haler står tilbage under det nye gulv`)
+})
+
+// (b) Billedet rettes midt i en tur, så kun ét helt løft følger, og klippet ender med en hale: løftet går
+// stadig tabt (304 af 576 baner med denne generator, som før). Det er en kendt grænse: en regel, der lod en
+// enkelt optur langt væk tælle som løft, lod også en hale med ét udsving magen til et løft stå under gulvet
+// (kontrollen: bænk og dødløft fik 6 reps og 69 og 111 punkter under bunden). Prøven her holder den vej lukket.
+test('en hale gennem gulvet, der holder stille og gør ét udsving magen til sættets løft, klippes ved gulvet og tæller ikke som løft', () => {
+  const tabt = [], hale = []
+  let n = 0
+  for (const [loeft, rom] of [['squat', 4], ['dødløft', 5], ['bænk', 2]]) for (const r of [14, 100]) for (const fps of [30, 60]) for (const dybde of [3, 5]) for (const ro of [0.6, 1.2]) {
+    const top = 6 * r + 300, bot = top + rom * r, doed = loeft === 'dødløft', a = doed ? bot : top, b = doed ? top : bot
+    const pts = [{ x: 300, y: a }], slut = []
+    const hold = s => { const q = pts.at(-1); for (let i = 0; i < Math.round(s * fps); i++) pts.push({ ...q }) }
+    const to = (s, x, y) => { const q = pts.at(-1), m = Math.max(2, Math.round(s * fps)); for (let i = 1; i <= m; i++) pts.push({ x: q.x + (x - q.x) * glat(i / m), y: q.y + (y - q.y) * glat(i / m) }) }
+    hold(0.5)
+    for (let k = 0; k < 5; k++) { to(1, 300, b); to(1, 300, a); slut.push(pts.length - 1); hold(1.2) }
+    // halen: ned gennem gulvet, ro, ét udsving på løftets højde og tempo, ro
+    const hjem = a + (rom + dybde) * r, ude = b + (rom + dybde) * r
+    to(1, 300 + r, hjem); hold(ro); to(1, 300 + r, ude); to(1, 300 + r, hjem); hold(1.5)
+    const path = { pts, times: pts.map((_, i) => i / fps), valid: pts.map(() => true), confidence: pts.map(() => 1) }
+    klip(path, r)
+    n++
+    const navn = `${loeft} R ${r} fps ${fps} hale ${dybde}R under gulvet, ro ${ro} s`
+    const mangler = slut.filter(q => q > path.pts.length + 1).length
+    if (mangler) tabt.push(`${navn}: ${mangler} løft`)
+    const under = (Math.max(...path.pts.map(q => q.y)) - bot) / r
+    if (under > 0.3) hale.push(`${navn}: ${under.toFixed(2)}R`)
+  }
+  assert.equal(n, 48)
+  assert.deepEqual(tabt, [], `${tabt.length} af 48 baner taber løft`)
+  assert.deepEqual(hale, [], `${hale.length} af 48 haler står tilbage under gulvet`)
 })
