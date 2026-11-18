@@ -97,6 +97,7 @@ h2{font-family:var(--sans);font-size:1.2rem;font-weight:400;margin:0;line-height
 .chips{display:flex;flex-wrap:wrap;gap:.2rem;margin-bottom:.35rem}
 .chips span{border:1px solid var(--line);border-radius:4px;font-size:.44rem;padding:.2rem .32rem;color:var(--dim)}
 .chips span.on{border-color:rgba(200,146,58,.6);background:rgba(200,146,58,.18);color:var(--gold)}
+.chips.rpe{gap:.14rem}.chips.rpe span{padding:.2rem .24rem}
 .skiprow{display:flex;gap:.25rem;margin-top:.35rem}
 .skiprow span{flex:1;border:1px solid var(--line);border-radius:4px;text-align:center;font-size:.4rem;
   color:var(--dim);padding:.3rem .1rem}
@@ -194,7 +195,8 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
       <div class="ring" style="width:150px;height:34px;border-radius:4px;left:50%;transform:translateX(-50%);bottom:34px"></div>
     </div></div>
     <div class="done"><b>Sådan ser det rigtige ud:</b> Hjem viser dit første pas.
-    Gør Hjem ikke det, så luk appen helt og åbn den igen — og skriv til mig hvis den stadig er tom.</div>
+    Gør Hjem ikke det, så luk appen helt og åbn den igen. Står der «Din coach er ved at lægge dit program»,
+    er programmet ikke lagt ind endnu: tryk «Skriv til din coach» og skriv en besked til mig.</div>
   </div>
 
   <!-- 4 -->
@@ -233,14 +235,15 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
         <p class="fine">▸ Se øvelser og coachnoter</p>
         <div class="ghost">Se mit program</div>
       </div>
-      <div class="dagblk"><b>I dag</b>Vægt · Dagsform · Træning · Mad</div>
+      <div class="dagblk"><b>I dag</b>Vægt · Dagsform · Mad · Træning</div>
       <div class="tabs"><span class="on">Hjem</span><span>Program</span><span>Fremgang</span><span>Kost</span><span>Beskeder</span><span>Mere</span></div>
     </div></div>
   </div>
 
   <div class="step">
     <h2>Log hvert sæt</h2>
-    <p class="say">Passet viser ét sæt ad gangen, fx «Sæt 1 af 4». Vægt og gentagelser er udfyldt fra planen. Ret dem
+    <p class="say">Øverst i passet ligger «Opvarmning (5-10 min)». Åbn den før første sæt: her står din coachs opvarmning,
+    og ellers et forslag til opvarmningssæt. Passet viser så ét sæt ad gangen, fx «Sæt 1 af 4». Vægt og gentagelser er udfyldt fra planen. Ret dem
     med knapperne, hvis sættet blev anderledes. Vil du angive din RPE, åbner du «Tilføj oplevet anstrengelse (RPE)»
     og vælger et tal; den er valgfri. Tryk så den gyldne knap
     (<b style="color:var(--gold);font-weight:400">Som planlagt</b> eller «Som sidste sæt», eller <b style="color:var(--gold);font-weight:400">Godkendt</b>
@@ -250,6 +253,7 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
       <div class="notch"></div>
       <div class="mini-brand">Entropi<span>.</span></div>
       <div class="mini-tag">Dag 1 — Squat</div>
+      <div class="opt" style="border:1px solid var(--line);border-radius:6px;padding:.4rem .5rem;margin:0 0 .45rem">▸ Opvarmning (5-10 min)</div>
       <div class="setlbl">Sæt 1 af 4</div>
       <div class="plan"><b>4-6 gentagelser · 80 kg</b><span>Intensitet: RPE 8</span></div>
       <div class="film">Film sættet</div>
@@ -258,7 +262,9 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
       <div class="fl">Gentagelser</div>
       <div class="row3"><i>−1</i><span class="v lit">4<i class="caret" style="display:inline-block;width:1px;height:.6rem;background:var(--gold);margin-left:1px;vertical-align:-1px;border:0;padding:0;animation:blink 1.1s steps(1) infinite"></i></span><i>+1</i></div>
       <div class="opt">▾ Tilføj oplevet anstrengelse (RPE)</div>
-      <div class="chips"><span>6</span><span>6,5</span><span>7</span><span>7,5</span><span class="on">8</span><span>8,5</span><span>9</span></div>
+      <div class="chips rpe"><span>6</span><span>6,5</span><span>7</span><span>7,5</span><span class="on">8</span><span>8,5</span><span>9</span><span>9,5</span><span>10</span></div>
+      <div class="setlbl">Din note (højst 140 tegn)</div>
+      <div class="chips"><span>Let</span><span>Tungt</span><span>Smerte</span><span>Teknik</span></div>
       <div class="cta lit">Som planlagt</div>
       <div class="skiprow"><span>Spring sættet over</span><span>Spring øvelsen over</span></div>
     </div></div>
@@ -268,9 +274,11 @@ hr{border:none;border-top:1px solid var(--line);margin:4rem 0 0}
   </div>
 
   <div class="step">
-    <h2>Mad og beskeder</h2>
+    <h2>Fremgang, mad og beskeder</h2>
     <p class="say">Resten af appen ligger i bunden.</p>
     <div class="two">
+      <div style="grid-column:1/-1"><b>Fremgang</b>Her ser du din udvikling. Har jeg lagt startmaks ind, står de under «Dine startmaks fra din coach»;
+      dine egne tal kommer frem, når du logger vægt og gentagelser i passet.</div>
       <div><b>Kost</b>Tryk «Log mad» og skriv, hvad du har spist. Et måltid er nok til at tælle dagen med. Har din coach
       lavet en kostplan, står den her.</div>
       <div><b>Beskeder</b>Skriv til mig under «Din coach». Du kan også trykke «Send video» eller «Film sættet» i passet, så
