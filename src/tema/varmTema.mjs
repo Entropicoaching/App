@@ -17,7 +17,7 @@ export const FARVER = {
   '#3a3a36': 'e-kant', '#414139': 'e-kant', '#59564c': 'e-kant2', '#575044': 'e-kant2',
   // tekst
   '#edeae2': 'e-tekst', '#f5f5ee': 'e-tekst', '#f0f4f1': 'e-tekst', '#d8d4ca': 'e-tekst', '#d2cfc6': 'e-tekst', '#d1c9b8': 'e-tekst',
-  '#b8b4a8': 'e-tekst2', '#a8a498': 'e-tekst2', '#b3afa4': 'e-tekst2', '#a9a69e': 'e-tekst2', '#b9b4a8': 'e-tekst2',
+  '#b8b4a8': 'e-tekst2', '#a8a498': 'e-tekst2', '#b3afa4': 'e-tekst2', '#a9a69e': 'e-tekst2', '#b9b4a8': 'e-tekst2', '#b6b2a8': 'e-tekst2',
   '#c1beb5': 'e-tekst2', '#c4c0b5': 'e-tekst2', '#c4c0b4': 'e-tekst2', '#a8a59c': 'e-tekst2', '#9f9b91': 'e-tekst2', '#98948a': 'e-tekst2',
   '#7a7770': 'e-daempet', '#77746d': 'e-daempet', '#77776b': 'e-daempet', '#777267': 'e-daempet', '#8f8b82': 'e-daempet',
   '#929083': 'e-daempet', '#89897e': 'e-daempet', '#77756b': 'e-daempet', '#777365': 'e-daempet',
