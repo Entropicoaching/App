@@ -651,6 +651,12 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     latestByTrack, pendingByTrack, openCoachPriorityItem, profilePriorityKey, profileReturnView, trainingSignals, unreadByTrack,
     videoReviewQueue, view,
   })
+  // Ordre 1707 (Marc 18. nov.: "coachens opgaver er lidt off"): i Entropi 2 tæller menuens Coach Briefing kun det,
+  // indbakken viser (beskeder og videoer), og "Aktuel opgave" står kun, mens opgaven stadig står i køen, med køens mærke.
+  const navPriorityCount = e2 ? coachPriorityItems.filter(item => item.kind === 'message' || item.kind === 'video').length : coachPriorityCount
+  const liveProfileItem = profilePriorityContext ? coachPriorityItems.find(item => item.key === profilePriorityContext.key) : null
+  const shownPriorityContext = !e2 ? profilePriorityContext : liveProfileItem ? { ...profilePriorityContext,
+    label: liveProfileItem.label || profilePriorityContext.label, color: liveProfileItem.color || profilePriorityContext.color } : null
 
 
   const replyVisit = [view, profileReturnView, profilePriorityKey, selectedAthlete?.id,
@@ -721,7 +727,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         }}>Prøv egen træning igen</button>
       </div>}
       <Sidebar {...(selfNavigationEnabled ? { onSelectOwnAthlete } : {})} {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
-        athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
+        athletes, athleteWeekSummary, coachPriorityCount: navPriorityCount, exportBackup, exportingBackup, exportingTraening,
         exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
         openProfile, openVideoCoachV3, pickingMine, previewPickerOpen, selectedAthlete, setMyAthleteId,
         setPickingMine, setPreviewPickerOpen, setSelectedAthlete, setSidebarMoreOpen, setSidebarOpen, setView,
@@ -743,7 +749,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
         </div>
 
         <MobilNav {...(selfNavigationEnabled ? { onSelectOwnAthlete } : {})} {...(programOverview ? { programOverblik: true } : {})} {...{ coachRyd,
-          athletes, coachPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
+          athletes, coachPriorityCount: navPriorityCount, exportBackup, exportingBackup, exportingTraening, exportTraeningsdata,
           goToMyProfile, isMobile, menuSheetOpen, onPreviewAthlete, openVideoCoachV3, pickingMine,
           selectedAthlete, setMenuSheetOpen, setMyAthleteId, setPickingMine, setSelectedAthlete, setSheetPreviewPick,
           setShowAddModal, setSidebarOpen, setView, sheetPreviewPick, view,
@@ -846,7 +852,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             <ProfilHoved {...{ mobilitetCoach: mobilitetCoach === true, mobilitetHjemme: mobilitetHjemme === true, mobilitetOpfoelgning: mobilitetOpfoelgning === true, adherenceContent: mobilitetOpfoelgning === true ? <MobilityAdherenceProfile key={a.id} enabled={true} athleteId={a.id} /> : null, mobilityCoachId: session?.user?.id, onMobilitySaved: updated => { setSelectedAthlete(previous => previous?.id === updated.id ? updated : previous); setAthletes(previous => previous.map(item => item.id === updated.id ? updated : item)) }, mobilitetHjalp: mobilitetHjalp === true, coachRyd,
               ...(e2 ? { coachTabCleanup: true } : {}),
               a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
-              priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
+              priorityQueueContext, profilePriorityContext: shownPriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
               setNavMenuOpen, setShowDeleteModal, setView, showFlash, unreadCounts,
             }} />
 

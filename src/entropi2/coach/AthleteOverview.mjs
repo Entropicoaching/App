@@ -53,7 +53,9 @@ export function athleteOverviewModel(context = {}) {
     const entry = ending.get(athlete.id)
     // Kontrolfund 3 og 5: "Rolig" kun på fuldt grundlag og med sikker slutdato; "Slutter snart" som Kræver dit blik (< 7).
     const calm = complete === true && calendarReady && !hasUndatedPlannedWeek(plans[athlete.id] || [])
-    const badge = attention.has(athlete.id) ? { tone: 'gold', text: 'Kræver dit blik' }
+    // Ordre 1707 (Marc 18. nov.: "coach siden er lidt rodet"): atleten står allerede i Kræver dit blik lige over;
+    // et mærke med samme ord gentog afsnittets overskrift på hver række, så den række har intet mærke.
+    const badge = attention.has(athlete.id) ? null
       : entry?.daysLeft != null && entry.daysLeft < 0 ? { tone: 'warn', text: 'Program udløbet' }
         : entry?.daysLeft != null && entry.daysLeft < 7 ? { tone: 'warn', text: 'Slutter snart' }
           : calm ? { tone: 'calm', text: 'Rolig' } : null

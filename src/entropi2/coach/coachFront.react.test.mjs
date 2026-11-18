@@ -26,8 +26,8 @@ test('real React: task limit, order, closed remainder and inbox portions for zer
     const p = fixture(count), model = coachHomeModel(p, day)
     const html = render(h(CoachScreen, p))
     // Ordre 1547 (genfanget bevidst, 1544's fund): tom liste siger ikke "0 opgaver i alt" eller "0 af 0"; den rolige sætning står alene.
-    if (count === 0) assert.doesNotMatch(html, /opgaver i alt|0 af 0/)
-    else assert.match(html, new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
+    // Ordre 1707: forsiden siger aldrig "n opgaver i alt"; rækkerne og "Vis resten (n)" bærer tallet.
+    assert.doesNotMatch(html, /opgaver? i alt|0 af 0/)
     assert.equal((html.split('data-coach-fold="opgaver"')[0].match(/data-coach-action=/g) ?? []).length, Math.min(3, count))
     assert.deepEqual([...html.matchAll(/data-coach-action="([^"]+)"/g)].map(m => m[1]), model.actions.map(r => r.key))
     if (count > 3) {

@@ -59,7 +59,7 @@ test('real React effect mounts weekly view: loaded, folded, empty, failure, clea
   // Choose a timestamp in the current week without consulting data outside this fixture.
   const at = new Date().toISOString()
   const messages = [{ id: 'synthetic-message', athlete_id: 'synthetic', sender_role: 'athlete',
-    created_at: at, content: 'Syntetisk tekst' }]
+    created_at: at, content: 'Syntetisk tekst', read_by_coach: true }] // Ordre 1707: allerede læst; ugetallet handler ikke om læst.
   const createController = () => {
     controller = createConversation({ enabled: true, storage: () => null, adapters: {
       scope: () => { scopeReads++; return { role: 'coach', athleteId: 'synthetic', ownerId: 'synthetic-owner' } },

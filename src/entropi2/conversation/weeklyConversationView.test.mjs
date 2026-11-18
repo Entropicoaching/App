@@ -31,8 +31,10 @@ function fixture(role = 'coach', clock = () => new Date('2026-11-04T12:00:00Z'))
   return { root, controller, messages, analyses, writes, dispose,
     fail: value => { fail = value }, scope: value => { scope = { ...scope, ...value } } }
 }
+// Ordre 1707: coachen gemmer viste ulæste beskeder som læst; ugetallene her handler ikke om læst,
+// så de syntetiske beskeder er allerede læst, og ugeopgørelsen må stadig ikke skrive noget.
 const message = (id, sender_role, created_at, extra = {}) => ({ id, sender_role, created_at,
-  athlete_id: 'synthetic', content: 'Syntetisk tekst', ...extra })
+  athlete_id: 'synthetic', content: 'Syntetisk tekst', read_by_coach: true, ...extra })
 const summary = f => f.root.children[1]
 
 test('actual controller/view shows weekly counts at top with native collapsed details and no writes', async () => {

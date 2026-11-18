@@ -47,8 +47,8 @@ test('home shows 0, 1 or 3 tasks before a closed remainder; inbox starts with te
     p.openCoachPriorityItem = (...args) => calls.push(args)
     const model = coachHomeModel(p, day), tree = CoachView(p)
     // Ordre 1547 (genfanget bevidst, 1544's fund): tom liste siger ikke "0 opgaver i alt" eller "0 af 0"; den rolige sætning står alene.
-    if (count === 0) assert.doesNotMatch(text(tree), /opgaver i alt/)
-    else assert.match(text(tree), new RegExp(`${count} ${count === 1 ? 'opgave' : 'opgaver'} i alt`))
+    // Ordre 1707: forsiden siger aldrig "n opgaver i alt"; rækkerne og "Vis resten (n)" bærer tallet.
+    assert.doesNotMatch(text(tree), /opgaver? i alt/)
     assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), model.actions.map(r => r.key))
     const rest = fold(tree, 'opgaver')
     assert.equal(Boolean(rest), count > 3)

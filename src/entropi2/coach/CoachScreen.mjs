@@ -191,7 +191,9 @@ export function CoachView(input = {}) {
             !model.complete && h('p', { role: 'status' }, 'Overblikket skal opdateres. ',
               reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket')),
       // Ordre 1547 (1544's fund): tom liste siger kun den rolige sætning nedenfor, ikke "0 opgaver i alt" og "0 af 0".
-      rows.length > 0 && h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
+      // Ordre 1707 (Marc 18. nov.: "coach siden er lidt rodet"): på forsiden står rækkerne selv, og "Vis resten (n)"
+      // bærer tallet over tre; "n opgaver i alt" var et tal uden handling. Indbakken beholder sit tal.
+      inbox && rows.length > 0 && h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
       inbox && rows.length > 0 && h('p', { 'aria-live': 'polite', 'data-coach-inbox-count': true }, `${firstRows.length} af ${rows.length}`),
       rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map(rowButton)) :
         model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError &&

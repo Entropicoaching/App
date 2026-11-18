@@ -26,10 +26,11 @@ export function formatConversationTime(value, now = new Date()) {
   return `${prefix} ${parts.hour}:${parts.minute}`
 }
 
-// Explicit expansion is the view acknowledgement. No mount/load/scroll read effects.
+// Explicit expansion is the view acknowledgement. No scroll read effects. For the coach, an
+// unread message shown expanded after load is also an acknowledgement (ordre 1707).
 export function mountConversation(root, controller, { enabled = false, now = () => new Date() } = {}) {
   if (enabled !== true) return () => {}
-  const doc = root.ownerDocument, expanded = new Set()
+  const doc = root.ownerDocument, expanded = new Set(), autoSeen = new Set()
   let disposed = false, templateError = '', templates = [], composition = '', clearedTimedId = null
   const node = (tag, text) => { const el = doc.createElement(tag); if (text) el.textContent = text
     if (['button', 'select', 'textarea', 'input'].includes(tag)) Object.assign(el.style, {
@@ -233,6 +234,12 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     // U2: tråden står altid efter tidspunkt, så et svar står under det, det svarer
     // på, og en læsning aldrig flytter en besked. Ulæste markeres og nås med springknappen.
     const ordered = state.thread
+    // Ordre 1707 (Marc 18. nov.: "selv når jeg har set en besked står notifikations talet der stadig"):
+    // coachens ulæste beskeder står foldet ud med hele teksten, og først når teksten står i listen,
+    // gemmes de som læst. Video kræver stadig, at coachen åbner den. Atletens side er uændret.
+    const shown = state.role === 'coach' && state.loaded && !state.loading && !state.error
+      ? ordered.filter(item => item.kind === 'message' && item.unreadCoach && !autoSeen.has(item.key)).map(item => item.key) : []
+    for (const key of shown) { autoSeen.add(key); expanded.add(key) }
     firstUnread = null
     jump.hidden = unread === 0; jump.disabled = unread === 0
     jump.textContent = `${unread} ${antalOrd(unread, 'ulæst', 'ulæste')} · Spring til første ulæste`
@@ -297,6 +304,9 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       pending.dataset.pending = state.operation.row.id; list.append(pending)
     }
     focusedToggle?.focus?.({ preventScroll: true })
+    if (shown.length) Promise.resolve().then(async () => {
+      for (const key of shown) { if (disposed) return; await controller.seen(key) }
+    })
   })
   return () => { disposed = true; sharing?.dispose(); ownReplies.dispose(); unsubscribe(); controller.dispose(); root.replaceChildren() }
 }

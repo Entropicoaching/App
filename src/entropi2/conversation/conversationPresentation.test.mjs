@@ -26,15 +26,24 @@ for (const role of ['athlete', 'coach']) test(`${role}: wider text and quiet met
   const dispose = mountConversation(f.host, controller, { enabled: true })
   try {
     await controller.refresh()
+    for (let i = 0; i < 6; i++) await new Promise(resolve => setTimeout(resolve, 0))
     const list = find(f.host, 'ol')[0]
     assert.equal(list.attributes.role, 'list', 'marker-free list retains explicit accessibility semantics')
     assert.equal(list.style.listStyle, 'none')
     assert.equal(list.style.paddingInlineStart, '0', 'message text reclaims the old 32px number gutter')
     assert.equal(f.host.style.overflowWrap, 'anywhere', 'long words can wrap without truncation')
-    assert.deepEqual(calls, [], 'presentation never acknowledges content')
+    // Ordre 1707: coachens ulæste besked står foldet ud med hele teksten og gemmes som læst; video venter på et tryk.
+    assert.deepEqual(calls, role === 'coach' ? [['seen', 'message:long']] : [], 'presentation never acknowledges hidden content')
+    if (role === 'coach') {
+      const shown = row(f.host, 'message:long')
+      assert.equal(shown.children[0].attributes['aria-expanded'], 'true')
+      assert.equal(shown.children[1].hidden, false); assert.equal(shown.children[2].hidden, true)
+      assert.ok(shown.children[1].textContent.startsWith(text), 'complete multiline text is shown before it counts as read')
+      assert.match(shown.children[0].textContent, /^Atlet$/)
+    }
     const send = find(f.host, 'button').find(n => n.textContent === 'Send')
     assert.equal(send.style.background, '#d8b16b', 'primary action remains visually distinct')
-    for (const key of ['message:long', 'video:feedback']) {
+    for (const key of role === 'coach' ? ['video:feedback'] : ['message:long', 'video:feedback']) {
       const item = row(f.host, key), [toggle, content, preview] = item.children
       assert.equal(toggle.tagName, 'BUTTON'); assert.equal(toggle.type, 'button')
       assert.equal(toggle.style.minHeight, '44px'); assert.equal(toggle.style.width, '100%')

@@ -222,6 +222,13 @@ for (const role of ['athlete', 'coach']) test(`læst/ulæst (${role}): værten f
   const incoming = role === 'athlete' ? 'coach' : 'athlete'
   m.f.rows.push(message('svar', incoming, 2))
   await m.timers.tick(); await settle()
+  if (role === 'coach') {
+    // Ordre 1707: coachens viste besked gemmes som læst af sig selv; værten får først 1 og derefter 0.
+    assert.ok(seen.some(summary => summary.messages === 1 && summary.athleteId === 'syntetisk-atlet'))
+    assert.equal(seen.at(-1).messages, 0)
+    assert.deepEqual(m.f.calls.filter(Array.isArray), [['seen', 'message:svar']])
+    m.cleanup(); return
+  }
   assert.equal(seen.at(-1)?.messages, 1)
   assert.equal(seen.at(-1)?.athleteId, 'syntetisk-atlet')
   await m.f.controller.seen('message:svar')

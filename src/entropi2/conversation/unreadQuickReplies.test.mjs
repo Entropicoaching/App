@@ -79,9 +79,41 @@ function fixture(role = 'coach', storage = store()) {
     setScope: next => { scope = { ...scope, ...next } }, failSend: value => { fail = value }, failSeen: value => { seenFailure = value } }
 }
 
+const settle = async () => { for (let i = 0; i < 6; i++) await new Promise(resolve => setTimeout(resolve, 0)) }
+
+// Ordre 1707 (Marc 18. nov.: "selv når jeg har set en besked står notifikations talet der stadig"):
+// coachens ulæste beskeder står foldet ud efter indlæsning og gemmes som læst én gang. Video venter på et tryk.
+test('coach: chronological thread, unread messages open expanded and are marked read once, video waits for a tap', async () => {
+  const f = fixture('coach')
+  f.rows.push(...[
+    { id: 'read', sender_role: 'athlete', read_by_coach: true },
+    { id: 'one', sender_role: 'athlete' }, { id: 'own', sender_role: 'coach' }, { id: 'two', sender_role: 'athlete' },
+  ].map((row, i) => ({ ...row, athlete_id: 'athlete', content: row.id, created_at: `2026-11-0${i + 1}T12:00:00Z` })))
+  f.videos.push({ id: 'video', athlete_id: 'athlete', status: 'shared', source_mode: 'athlete_submission',
+    created_at: '2026-11-05T12:00:00Z' })
+  await f.controller.refresh(); await settle()
+  const list = find(f.el, 'ol')[0]
+  assert.deepEqual(list.children.map(n => n.dataset.key), ['message:read', 'message:one', 'message:own', 'message:two', 'video:video'])
+  assert.deepEqual(f.calls, [['seen', 'message:one'], ['seen', 'message:two']])
+  for (const index of [1, 3]) {
+    assert.equal(list.children[index].children[0].attributes['aria-expanded'], 'true')
+    assert.equal(list.children[index].children[1].hidden, false, 'hele teksten står, før den tæller som set')
+  }
+  assert.equal(list.children[0].children[1].hidden, true, 'en allerede læst besked foldes ikke ud')
+  await button(f.el, '1 ulæst · Spring til første ulæste').event('click')
+  assert.equal(f.el.ownerDocument.focused, list.children[4].children[0])
+  assert.equal(f.calls.length, 2)
+  await list.children[4].children[0].event('click')
+  assert.equal(button(f.el, '0 ulæste · Spring til første ulæste').hidden, true)
+  assert.equal(f.calls.length, 3)
+  await f.controller.refresh(); await settle()
+  assert.equal(f.calls.length, 3, 'en ny hentning skriver ikke igen')
+  f.cleanup()
+})
+
 // U2: the thread stays chronological; reading never moves an item. Unread items
 // are marked and reached with the jump button.
-for (const role of ['coach', 'athlete']) test(`${role}: chronological thread, jump only navigates, expansion alone marks read`, async () => {
+for (const role of ['athlete']) test(`${role}: chronological thread, jump only navigates, expansion alone marks read`, async () => {
   const f = fixture(role), incoming = role === 'coach' ? 'athlete' : 'coach'
   f.rows.push(...[
     { id: 'read', sender_role: incoming, read_at: '2026-11-01T12:00:00Z', read_by_coach: true },
@@ -219,9 +251,12 @@ test('failed read acknowledgement retains unread count and can be retried on exp
   const f = fixture()
   f.rows.push({ id: 'one', athlete_id: 'athlete', sender_role: 'athlete', content: 'Syntetisk besked',
     created_at: '2026-11-03T12:00:00Z' })
-  await f.controller.refresh(); f.failSeen(true)
+  // Ordre 1707: læsningen efter indlæsning fejler; tallet består, og der prøves ikke igen af sig selv.
+  f.failSeen(true); await f.controller.refresh(); await settle()
+  assert.deepEqual(f.calls, [['seen', 'message:one']])
   const list = find(f.el, 'ol')[0]
-  await list.children[0].children[0].event('click')
+  await f.controller.refresh(); await settle()
+  assert.equal(f.calls.length, 1)
   assert.equal(button(f.el, '1 ulæst · Spring til første ulæste').hidden, false)
   assert.equal(list.children[0].children[1].hidden, false)
   assert.equal(f.controller.snapshot().thread[0].unreadCoach, true)
