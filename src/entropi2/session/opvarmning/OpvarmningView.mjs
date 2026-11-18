@@ -7,7 +7,6 @@ const kg = value => String(value).replace('.', ',')
 export function createOpvarmning(document, props = {}) {
   // Strict opt-in before reading the work set or touching the document.
   if (props.enabled !== true) return null
-  const sets = warmupSets(props.firstWorkSet)
   const el = (tag, text) => {
     const node = document.createElement(tag)
     if (text != null) node.textContent = text
@@ -15,6 +14,16 @@ export function createOpvarmning(document, props = {}) {
   }
   const section = el('section')
   section.setAttribute('class', 'e2-opvarmning')
+  // Ordre 1704: coachens gemte trin for løftet tilsidesætter det beregnede forslag.
+  const coach = Array.isArray(props.coachSteps) ? props.coachSteps : []
+  if (coach.length) {
+    section.setAttribute('aria-label', 'Opvarmning fra din coach')
+    const list = el('ol')
+    for (const step of coach) list.append(el('li', step))
+    section.append(el('h2', 'Opvarmning'), el('h3', 'Fra din coach'), list)
+    return section
+  }
+  const sets = warmupSets(props.firstWorkSet)
   section.setAttribute('aria-label', 'Forslag til opvarmning')
   section.append(el('h2', 'Opvarmning'))
   if (!sets.length) {
