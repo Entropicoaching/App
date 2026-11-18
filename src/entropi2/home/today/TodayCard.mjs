@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { homeStyles as s } from '../homeStyles.mjs'
 import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
-import { readTodayMeals, copyYesterdayMeals, readLastWeights } from './todayRead.mjs'
+import { readTodayMeals, copyYesterdayMeals, readLastWeights, readTodayPlan, planLine } from './todayRead.mjs'
 import { u6Enabled } from '../../u6/flag.mjs'
 import { planWeightLines, planWeightText, planFirstSetPrefill } from '../../u6/planWeight.mjs'
 import { u7Enabled } from '../../u7/flag.mjs'
@@ -43,6 +43,17 @@ export default function TodayCard(props) {
       .then(data => { if (active) setMeals({ data, athleteId, day: today }) }, () => { if (active) setMeals({ status: 'error' }) })
     return () => { active = false }
   }, [showMeals, athleteId, today, readMeals])
+  // Ordre 1690: Mad-rækken kender dagens godkendte kostplan. Læses én gang pr. atlet og dag som
+  // måltiderne. Prøver, der giver deres egen måltidslæser, får ingen planlæsning uden u5ReadPlan.
+  const [plan, setPlan] = React.useState(null)
+  const readPlan = props.u5ReadPlan ?? (props.u5ReadMeals ? null : readTodayPlan)
+  React.useEffect(() => {
+    if (!showMeals || typeof readPlan !== 'function') return
+    let active = true
+    Promise.resolve(readPlan({ athleteId, today, client: latest.current.u5Client }))
+      .then(data => { if (active) setPlan(data ? { line: planLine(data), athleteId, day: today } : null) }, () => { if (active) setPlan(null) })
+    return () => { active = false }
+  }, [showMeals, athleteId, today, readPlan])
   const trainingToday = props.u5Training?.kind === 'today' && !props.sessionReadOnly && !!athleteId
   const readLast = props.u5ReadLastWeights ?? readLastWeights
   React.useEffect(() => {
@@ -179,6 +190,7 @@ export default function TodayCard(props) {
     setCopy({ running: false, ...result })
   }
   const go = route => () => latest.current.setTab?.(route)
+  const planText = plan?.athleteId === athleteId && plan?.day === today ? plan.line : null
   const mealRow = () => h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
     h('p', { style: label }, 'Mad'),
     mealData.yesterday.length
@@ -188,7 +200,8 @@ export default function TodayCard(props) {
       : h('button', { type: 'button', style: primary, disabled: typeof props.setTab !== 'function', onClick: go('kost') }, 'Log mad'),
     copy && !copy.running && copy.saved < copy.total
       ? h('p', { role: 'alert', style: hint }, `${copy.saved} af ${copy.total} måltider blev gemt. Log resten under Kost.`)
-      : h('p', { style: hint }, mealData.yesterday.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.'))
+      : h('p', { style: hint, ...(planText ? { 'data-u5-meal-plan': '' } : {}) }, planText
+        || (mealData.yesterday.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.')))
 
   const rows = { weight: weightRow, readiness: readinessRow, training: trainingRow, meal: mealRow }
   // U6 (kontrollens U5-bemærkning): Mad står før træning, så knappen ses over bundmenuen ved åbning

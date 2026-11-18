@@ -19,6 +19,26 @@ export async function readTodayMeals({ athleteId, today, client } = {}) {
   } catch { return { status: 'error' } }
 }
 
+// Ordre 1690: dagens godkendte kostplan med den samme læser, som Kost bruger (planAdapter.loadActive).
+// Kun antal måltider og planens kcal. Ingen plan, manglende tabeller eller fejl giver null,
+// så Mad-rækken bevarer sin gamle tekst og aldrig viser en fejl.
+export async function readTodayPlan({ athleteId, today, client } = {}) {
+  if (typeof athleteId !== 'string' || !athleteId || calendarDay(today) !== today) return null
+  try {
+    const { createPlanAdapter } = await import('../../kostplan/planAdapter.mjs')
+    const plan = await createPlanAdapter({ enabled: true, athleteId, date: today, client: await appClient(client) }).loadActive()
+    if (!plan || !Array.isArray(plan.meals) || !plan.meals.length) return null
+    const kcal = Number.isFinite(plan.targets?.kcal) && plan.targets.kcal > 0 ? Math.round(plan.targets.kcal) : null
+    return { athleteId, today, meals: plan.meals.length, kcal }
+  } catch { return null }
+}
+
+export function planLine(plan) {
+  if (!plan || !Number.isSafeInteger(plan.meals) || plan.meals < 1) return null
+  const meals = `${plan.meals} ${plan.meals === 1 ? 'måltid' : 'måltider'}`
+  return `Din kostplan i dag: ${meals}${plan.kcal ? `, ${plan.kcal.toLocaleString('da-DK')} kcal` : ''}.`
+}
+
 // Gårsdagens måltider gemmes som nye rækker i dag gennem kostens eksisterende save-kontrakt.
 // Stopper ved første fejl og siger, hvor mange der nåede frem.
 export async function copyYesterdayMeals({ athleteId, today, meals, client } = {}) {
