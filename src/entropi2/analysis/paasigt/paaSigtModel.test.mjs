@@ -143,3 +143,10 @@ test('flere hovedløft holdes adskilt; visningen er foldet ind og uden kg', () =
   const rolig = renderToStaticMarkup(createElement(PaaSigtView, props({ fremgangLogs: [] })))
   assert.match(rolig, /data-paa-sigt-rolig/)
 })
+
+test('ordre 1657: fire uger uden ny top siges som stilstand, ikke som fremgang (samme ord som Din udvikling)', () => {
+  const m = paaSigtModel(props({ fremgangLogs: [[6, 150], [5, 153], [4, 153], [3, 153], [2, 153], [1, 153], [0, 153]].map(([w, kg]) => set(w, kg)) }), now)
+  assert.equal(m.lifts[0].direction, 'stille')
+  assert.equal(m.lifts[0].text, 'Din squat har ligget stabilt de seneste 3 uger.')
+  assert.equal(m.lifts[0].top, null)
+})

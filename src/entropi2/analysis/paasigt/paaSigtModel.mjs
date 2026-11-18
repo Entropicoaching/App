@@ -83,9 +83,15 @@ export function paaSigtModel(props = {}, now) {
     if (fit.span < PAA_SIGT_MIN_DAGE) return []
     const from = fit.at(0), to = fit.at(fit.span)
     if (!(from > 0) || !(to > 0)) return []
-    const weeks = Math.round(fit.span / 7)
+    let weeks = Math.round(fit.span / 7)
     const percent = Math.round((to / from - 1) * 100)
     let direction = percent > 0 ? 'frem' : percent < 0 ? 'tilbage' : 'stille'
+    // Ordre 1657: samme stilstand som "Din udvikling" (de seneste 4 uger går ikke over den første af dem),
+    // så der ikke står "gået frem" om et løft, som samme side kalder stillestående.
+    const sidste = points.slice(-4)
+    if (direction === 'frem' && sidste.length === 4 && sidste.every(p => p.value <= sidste[0].value)) {
+      direction = 'stille'; weeks = Math.round(calendarDaysBetween(sidste[0].day, last.day) / 7)
+    }
     let text = direction === 'stille'
       ? `${subjekt(lift)} har ligget stabilt de seneste ${uger(weeks)}.`
       : `${subjekt(lift)} er gået ${Math.abs(percent)} % ${direction} på ${uger(weeks)}.`
