@@ -228,14 +228,14 @@ test('billedet rettes halvanden radius ned og til siden midt i sættet: ingen l�
 const glat = x => smooth(Math.max(0, Math.min(1, x)))
 const lavBane = (pts, fps = FPS) => ({ pts: pts.map(q => ({ ...q })), times: pts.map((_, i) => i / fps), valid: pts.map(() => true), confidence: pts.map(() => 1) })
 // fem løft; derefter falder sporet gennem gulvet og gynger op og ned (telefonen bæres væk)
-function gyngeHale({ rom, doed = false, dybde, udsving, gange = 2, skridt = 60 }) {
+function gyngeHale({ rom, doed = false, dybde, udsving, gange = 2, skridt = 60, tur = 20, pause = 0 }) {
   const bot = TOP + rom * R, a = doed ? bot : TOP, b = doed ? TOP : bot, pts = [{ x: 300, y: a }]
   const hold = n => { const q = pts.at(-1); for (let i = 0; i < n; i++) pts.push({ ...q }) }
   const to = (n, x, y) => { const q = pts.at(-1); for (let i = 1; i <= n; i++) pts.push({ x: q.x + (x - q.x) * glat(i / n), y: q.y + (y - q.y) * glat(i / n) }) }
   hold(15); for (let r = 0; r < 5; r++) { to(30, 300, b); to(30, 300, a); hold(15) }
   const slut = pts.length, hy = bot + dybde * R
   to(30, 400, hy)
-  for (let k = 0; k < gange; k++) { to(20, 400 + skridt * (k + 2 / 3), hy - udsving * R); to(20, 400 + skridt * (k + 7 / 6), hy) }
+  for (let k = 0; k < gange; k++) { to(tur, 400 + skridt * (k + 2 / 3), hy - udsving * R); hold(pause); to(tur, 400 + skridt * (k + 7 / 6), hy) }
   hold(20)
   return { path: lavBane(pts), slut, bot }
 }
@@ -442,4 +442,23 @@ test('dødløft uden ro på gulvet: billedet rettes tre radius midt i sættet, o
     klip(path, R)
     assert.equal(path.pts.length, foer, `${dy}R, ${tur} billeder pr. tur`)
   }
+})
+
+// Kontrollens fund i 1629v: en pause i toppen af hvert udsving må ikke gøre et gyng til løft. Kun udsving, der
+// ligner sættets egne løft i højde, tempo og hvile, tæller som et sæt, der er fortsat efter en flytning af billedet.
+test('en hale gennem gulvet, der gynger med pause i toppen af hvert udsving, klippes ved gulvet, når udsvingene ikke ligner sættets løft', () => {
+  const ikke = []
+  let n = 0
+  for (const [navn, rom] of [['bænk', 2], ['squat', 4]]) for (const skridt of [0, 60]) for (const pause of [9, 18, 30]) {
+    // lavere eller højere end løftene i samme tempo, og samme højde i et andet tempo
+    for (const [faktor, tur] of [[0.7, 30], [1.4, 30], [1, 12], [1, 50]]) {
+      const { path, slut, bot } = gyngeHale({ rom, dybde: 3, udsving: faktor * rom, skridt, tur, pause })
+      klip(path, R)
+      n++
+      const under = (Math.max(...path.pts.map(q => q.y)) - bot) / R
+      if (under > 0.3 || path.pts.length < slut - 3) ikke.push(`${navn} skridt ${skridt}, pause ${pause} billeder, udsving ${faktor} gange løftet på ${tur} billeder: ${under.toFixed(2)}R under gulvet`)
+    }
+  }
+  assert.equal(n, 48)
+  assert.deepEqual(ikke, [], `${ikke.length} af 48 haler står tilbage under gulvet`)
 })

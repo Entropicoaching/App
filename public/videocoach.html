@@ -6234,36 +6234,62 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // flytning af billedet, og kun når sporet til sidst står, hvor et løft slutter (toppen, når
     // sættet begyndte i toppen, ellers bunden; højst 0,6 radius fra). Et spor, der er faldet gennem
     // gulvet og gynger, mens det bæres væk, er en hale.
-    // ORDRE 1629v: et løft har ro, hvor det slutter, et gyng har ikke. Står sporet stille mellem de
-    // to opture langt væk (mindst 0,5 s inden for 0,3 radius i toppen, eller på gulvet i dødløft), er
-    // de løft, uanset hvor sporet ender. I dødløft, hvor et gyng også ender i bunden, tæller opture
-    // langt væk kun med den ro, medmindre sættet selv blev løftet uden ro på gulvet. Og når sættet
-    // er fortsat efter sådan en flytning af billedet, klippes en hale efter dets sidste løft på
-    // samme måde som ovenfor, målt mod området fra første løft efter flytningen, i stedet for at løftene efter
-    // flytningen går tabt.
+    // ORDRE 1629v: i dødløft, hvor et gyng også ender i bunden, tæller opture langt væk kun, når
+    // sporet står stille på gulvet imellem dem (mindst 0,5 s inden for 0,3 radius), medmindre sættet
+    // selv blev løftet uden ro på gulvet. Og ligner de to opture langt væk sættets egne løft i alt,
+    // hvad der kan måles (højde inden for 15 %, tempo fra tre fjerdedele af sættets hurtigste til en
+    // tredjedel over dets langsomste, og ro, hvor et løft slutter, i mindst 0,5 s og tre fjerdedele
+    // af sættets korteste hvile, som selv er mindst 0,5 s), er sættet fortsat efter en flytning af billedet. Så klippes en
+    // hale efter dets sidste løft på samme måde som ovenfor, målt mod området fra første løft efter
+    // flytningen, i stedet for at løftene efter flytningen går tabt. Et gyng, der ikke ligner
+    // sættets løft, er stadig en hale.
     const time=i=>path.times?.[i]??i/30;
-    const calm=at=>{
+    const still=at=>{
       const q=path.pts[at],near=i=>!ok(i)||Math.hypot(path.pts[i].x-q.x,path.pts[i].y-q.y)<=radius*.3;
       let lo=at,hi=at;
       while(lo>0&&near(lo-1))lo--;
       while(hi<n-1&&near(hi+1))hi++;
-      return time(hi)-time(lo)>=.5;
+      return time(hi)-time(lo);
+    };
+    // Tempoet er tiden for opturens midterste halvdel, så ro i bund og top ikke tæller med.
+    const rise=(from,to)=>{
+      const amp=from.y-to.y;let t0=null,prev=from.i;
+      for(let i=from.i+1;i<=to.i;i++){
+        if(!ok(i))continue;
+        const up=from.y-path.pts[i].y,was=from.y-path.pts[prev].y,goal=amp*(t0==null?.25:.75);
+        if(up>=goal){
+          const at=time(prev)+(time(i)-time(prev))*(up>was?(goal-was)/(up-was):1);
+          if(t0==null){t0=at;continue;}
+          return at-t0;
+        }
+        prev=i;
+      }
+      return 0;
     };
     let lifts=0,far=null,moved=0,soft=null,sure=false,bounce=turns[0].top,first=-1,solidEnd=-1,lastEnd=-1;
+    let minRise=Infinity,maxRise=0,rest=Infinity;
     for(let k=1;k<turns.length;k++){
       const from=turns[k-1],to=turns[k],amp=from.y-to.y;
       if(!to.top)continue;
-      if(from.i<cut){lastBot=from.y;lastTop=to.y;if(k>1&&!calm(from.i))bounce=true;continue;}
+      if(from.i<cut){
+        lastBot=from.y;lastTop=to.y;
+        if(to.i<=keep){const t=rise(from,to);minRise=Math.min(minRise,t);maxRise=Math.max(maxRise,t);}
+        if(turns[0].top){if(to.i<keep)rest=Math.min(rest,still(to.i));}
+        else if(k>1){const t=still(from.i);rest=Math.min(rest,t);if(t<.5)bounce=true;}
+        continue;
+      }
       if(amp>maxAmp*1.5||amp<minAmp*.6)continue;
-      const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y,start:from.i,end:to.i},before={bot:lastBot,top:lastTop};
+      const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y,start:from.i,end:to.i,amp,rise:rise(from,to)},before={bot:lastBot,top:lastTop};
       const pair=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
         &&Math.abs(now.by-far.by)<=radius*1.25&&Math.abs(now.ty-far.ty)<=radius*1.25;
-      const rested=pair&&calm(turns[0].top?far.end:from.i),same=pair&&(rested||bounce);
+      const pause=pair?still(turns[0].top?far.end:from.i):0,rested=pair&&pause>=.5,same=pair&&(rested||bounce);
+      const like=u=>u.amp>=minAmp*.85&&u.amp<=maxAmp*1.15&&u.rise>=minRise*.75&&u.rise<=maxRise*1.35;
+      const alike=rested&&like(far)&&like(now)&&(rest===Infinity||(rest>=.5&&pause>=rest*.75));
       if(same||(Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5)){
         if(first<0)first=same?far.start:from.i;
         lifts+=same?2:1;lastBot=from.y;lastTop=to.y;far=null;
-        if(same&&!rested){moved+=2;soft??=before;}
-        if(rested&&!soft)sure=true;
+        if(same&&!alike){moved+=2;soft??=before;}
+        if(alike&&!soft)sure=true;
         if(!soft)solidEnd=to.i;
         lastEnd=to.i;
       }else far=now;
