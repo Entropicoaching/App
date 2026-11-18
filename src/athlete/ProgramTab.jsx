@@ -1275,6 +1275,13 @@ export default function ProgramTab({
                                 Træningsfeedback gemt · {sessionContext}: {session.athlete_rating} af 5
                               </div>
                             )}
+                            {programAppearanceOn && isDone && typeof session.athlete_comment === 'string' && session.athlete_comment.trim() && (() => {
+                              const comment = session.athlete_comment.trim()
+                              const style = { color: programColors.muted, marginTop: '0.5rem', lineHeight: 1.6, overflowWrap: 'anywhere', whiteSpace: 'pre-wrap' }
+                              return comment.length > 100 || comment.includes('\n')
+                                ? <details style={style}><summary style={{ cursor: 'pointer', minHeight: 44 }}>{`Din kommentar: ${comment.slice(0, 60).trim()}…`}</summary>{comment}</details>
+                                : <div style={style}>{`Din kommentar: ${comment}`}</div>
+                            })()}
                             {!readOnly && isDone && isCurrentWeek && !session.athlete_rating && !dismissedFeedback.has(session.id) && (
                               <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(200,146,58,0.05)', border: '1px solid rgba(200,146,58,0.15)' }}>
                                 <div style={{ ...s.cardLabel, marginBottom: '0.75rem' }}>Træningsfeedback</div>
