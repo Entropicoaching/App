@@ -6,6 +6,10 @@ import { useDayRow, useWaterTarget } from '../../u7/useDayRow.mjs'
 import { u7Enabled } from '../../u7/flag.mjs'
 
 const control = { minHeight: 44, minWidth: 44, font: 'inherit', maxWidth: '100%', boxSizing: 'border-box' }
+// Ordre 1685: knapperne får samme farver som Dit væskemål (WaterGoal), så de kan læses i lys og mørk tilstand.
+// Deaktiveret knap beholder læsbar tekst og står tydeligt som knap med stiplet kant.
+const knap = { ...control, background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
+const knapStil = disabled => disabled ? { ...knap, border: '1px dashed #858579', cursor: 'default' } : { ...knap, cursor: 'pointer' }
 const time = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen', hour: '2-digit', minute: '2-digit' })
 
 export default function WaterDayLog({ enabled = false, athleteId, date, client, currentDay, storage, gateRef, u7DayData }) {
@@ -89,7 +93,7 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
           'aria-label': 'Drukket vand i milliliter', style: control, value: quantity,
           onChange: event => { if (live.current === scope) { setQuantity(event.currentTarget.value); setError('') } } })),
       React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 8, marginBlock: 8 } },
-        React.createElement('button', { type: 'button', style: control, disabled: waterQuantity(quantity) === null || s.entries.length >= waterLimits.entries,
+        React.createElement('button', { type: 'button', style: knapStil(waterQuantity(quantity) === null || s.entries.length >= waterLimits.entries), disabled: waterQuantity(quantity) === null || s.entries.length >= waterLimits.entries,
           onClick: () => update(() => {
             const added = controller.add(quantity)
             if (added) setQuantity('')
@@ -98,14 +102,14 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
       s.entries.length > 0 && React.createElement('ul', { 'aria-label': 'Registreringer af drukket vand' },
         ...s.entries.map(entry => React.createElement('li', { key: entry.id },
           React.createElement('span', null, `${entry.ml} ml · ${time.format(new Date(entry.at))}`),
-          React.createElement('button', { type: 'button', style: control,
+          React.createElement('button', { type: 'button', style: knapStil(false),
             'aria-label': `Ret mængde for vandregistrering ${entry.id}: ${entry.ml} ml klokken ${time.format(new Date(entry.at))}`,
             onClick: () => {
               if (live.current !== scope || !controller?.isCurrent() || !controller.snapshot().entries.includes(entry)) return
               const draft = { scope, controller, entry, value: String(entry.ml) }
               pendingEdit.current = draft; setEdit(draft); setError('')
             } }, 'Ret mængde'),
-          React.createElement('button', { type: 'button', style: control,
+          React.createElement('button', { type: 'button', style: knapStil(false),
             'aria-label': `Fjern vandregistrering ${entry.id}: ${entry.ml} ml klokken ${time.format(new Date(entry.at))}`,
             onClick: () => {
               if (update(() => controller.remove(entry.id)) && pendingEdit.current?.entry.id === entry.id) {
@@ -122,12 +126,12 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
                   pendingEdit.current = draft; setEdit(draft); setError('')
                 } })),
             waterQuantity(editing.value) === null && React.createElement('p', { role: 'status' }, `Angiv hele ml fra 1 til ${waterLimits.ml}.`),
-            React.createElement('button', { type: 'button', style: control, disabled: waterQuantity(editing.value) === null,
+            React.createElement('button', { type: 'button', style: knapStil(waterQuantity(editing.value) === null), disabled: waterQuantity(editing.value) === null,
               onClick: () => {
                 if (pendingEdit.current !== editing) return
                 if (update(() => controller.update(editing.entry, editing.value))) { pendingEdit.current = null; setEdit(null) }
               } }, 'Gem rettelse'),
-            React.createElement('button', { type: 'button', style: control,
+            React.createElement('button', { type: 'button', style: knapStil(false),
               onClick: () => {
                 if (live.current !== scope || !controller?.isCurrent() || pendingEdit.current !== editing) return
                 pendingEdit.current = null; setEdit(null); setError('')
