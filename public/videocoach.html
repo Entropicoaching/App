@@ -6235,8 +6235,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // sættet begyndte i toppen, ellers bunden; højst 0,6 radius fra). Et spor, der er faldet gennem
     // gulvet og gynger, mens det bæres væk, er en hale.
     // ORDRE 1629v: i dødløft, hvor et gyng også ender i bunden, tæller opture langt væk kun, når
-    // sporet står stille på gulvet imellem dem (mindst 0,5 s inden for 0,3 radius), medmindre sættet
-    // selv blev løftet uden ro på gulvet. Og ligner de to opture langt væk sættets egne løft i alt,
+    // sporet står stille på gulvet imellem dem (mindst 0,5 s inden for 0,3 radius), eller når de
+    // ligner sættets løft i højde og tempo, medmindre sættet selv blev løftet uden ro på gulvet,
+    // eller der kun var ét løft at måle på. Og ligner de to opture langt væk sættets egne løft i alt,
     // hvad der kan måles (højde inden for 15 %, tempo fra tre fjerdedele af sættets hurtigste til en
     // tredjedel over dets langsomste, og ro, hvor et løft slutter, i mindst 0,5 s og tre fjerdedele
     // af sættets korteste hvile, som selv er mindst 0,5 s), er sættet fortsat efter en flytning af billedet. Så klippes en
@@ -6282,9 +6283,10 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       const now={bx:path.pts[from.i].x,by:from.y,tx:path.pts[to.i].x,ty:to.y,start:from.i,end:to.i,amp,rise:rise(from,to)},before={bot:lastBot,top:lastTop};
       const pair=far&&Math.abs(now.bx-far.bx)<=radius*.5&&Math.abs(now.tx-far.tx)<=radius*.5
         &&Math.abs(now.by-far.by)<=radius*1.25&&Math.abs(now.ty-far.ty)<=radius*1.25;
-      const pause=pair?still(turns[0].top?far.end:from.i):0,rested=pair&&pause>=.5,same=pair&&(rested||bounce);
       const like=u=>u.amp>=minAmp*.85&&u.amp<=maxAmp*1.15&&u.rise>=minRise*.75&&u.rise<=maxRise*1.35;
-      const alike=rested&&like(far)&&like(now)&&(rest===Infinity||(rest>=.5&&pause>=rest*.75));
+      const pause=pair?still(turns[0].top?far.end:from.i):0,rested=pair&&pause>=.5,twins=pair&&like(far)&&like(now);
+      const same=pair&&(rested||bounce||rest===Infinity||twins);
+      const alike=rested&&twins&&(rest===Infinity||(rest>=.5&&pause>=rest*.75));
       if(same||(Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5)){
         if(first<0)first=same?far.start:from.i;
         lifts+=same?2:1;lastBot=from.y;lastTop=to.y;far=null;

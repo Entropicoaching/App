@@ -462,3 +462,23 @@ test('en hale gennem gulvet, der gynger med pause i toppen af hvert udsving, kli
   assert.equal(n, 48)
   assert.deepEqual(ikke, [], `${ikke.length} af 48 haler står tilbage under gulvet`)
 })
+
+// Kontrollens fund 1 i 1629v: dødløft, hvor løftene efter flytningen er uden ro på gulvet, mens sættet før
+// flytningen havde ro eller kun var ét løft, må ikke miste løftene efter flytningen.
+test('dødløft: billedet rettes over 2,5 radius ned efter første løft eller efter løft med ro, og resten løftes uden ro: ingen løft går tabt', () => {
+  for (const dy of [2.7, 3.5, 5, -3.5]) for (const foer of [1, 2, 3, 4]) for (const ro of [0, 30]) {
+    const pts = []
+    for (let i = 0; i < 15; i++) pts.push({ x: 300, y: BOTTOM })
+    let skift = 0
+    for (let k = 0; k < 6; k++) {
+      for (let i = 1; i <= 30; i++) pts.push({ x: 300, y: BOTTOM - 500 * smooth(i / 30) })
+      for (let i = 1; i <= 30; i++) pts.push({ x: 300, y: TOP + 500 * smooth(i / 30) })
+      if (k === foer - 1) { skift = pts.length; for (let i = 0; i < 45; i++) pts.push({ x: 300, y: BOTTOM }) } else if (k < foer) for (let i = 0; i < ro; i++) pts.push({ x: 300, y: BOTTOM })
+    }
+    for (let i = 0; i < 30; i++) pts.push({ x: 300, y: BOTTOM })
+    pts.forEach((q, i) => { const m = glat((i - skift - 6) / 18); q.x += 50 * m; q.y += dy * R * m })
+    const path = lavBane(pts), foerKlip = path.pts.length
+    klip(path, R)
+    assert.equal(path.pts.length, foerKlip, `${dy}R efter løft ${foer}, ro før ${ro} billeder`)
+  }
+})
