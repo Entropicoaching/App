@@ -1,4 +1,5 @@
 import { readSharedInboxVideos } from '../indbakke2.mjs'
+import { noteSharedVideos } from '../entropi2/home/ulaestBesked.mjs'
 import { readProgramBlockLogs } from './programBlockOverview.mjs'
 import { rpeOrigin } from '../rpeEvidence.mjs'
 import { volumeWeeks, suggestionEvidence, repZone, prescribedRepZone } from '../dataEvidence.mjs'
@@ -210,6 +211,7 @@ export function lavLaesninger({
       return
     }
     const analyses = Array.isArray(data) ? data.filter(item => item && item.id) : []
+    noteSharedVideos(athlete?.id, analyses)
     setSharedVideoAnalyses(analyses)
     setOpenSharedVideoId(analyses[0]?.id || null)
     setSharedVideoLoading(false)

@@ -1,6 +1,6 @@
 // U2: samtalens ulæst-tal føres tilbage til værten, så atletens fane-prik og
 // coachens indbakke ikke bliver stående, efter at et svar er læst i samtalen.
-import { noteReadMessages } from '../home/ulaestBesked.mjs'
+import { noteReadMessages, noteReadVideos } from '../home/ulaestBesked.mjs'
 
 export const CONVERSATION_UNREAD_EVENT = 'entropi2:samtale-ulaest'
 
@@ -43,6 +43,7 @@ export function shareUnread(entry, summary, previous, target = globalThis.window
     entry.setUnreadMsgCount?.(summary.messages)
     // Ordre 1669: Hjem tæller de samme ulæste coachbeskeder, så linjen forsvinder, når samtalen har vist dem.
     noteReadMessages(summary.athleteId, summary.readMessageIds)
+    noteReadVideos(summary.athleteId, summary.readVideoIds)
     entry.setSharedVideoAnalyses?.(prev => seenSharedVideos(prev, summary))
   }
   if (summary.role === 'coach' && previous && typeof target?.dispatchEvent === 'function')
