@@ -36,7 +36,14 @@ export default function Analysis(props = {}) {
   if (props.entropi2 !== true) return null
   props = analysisWeightProps(props)
   const now = props.now ?? new Date()
-  const { answers, rpeHistory, personalRecords: records, setTab } = analysisModel(props, now)
+  // U3: kun med flaget og en klient fra AthleteView. Ellers er Fremgang uændret.
+  const u3 = u3DataEnabled(props.u3Data) && !!props.u3Client && props.athlete?.id != null
+  // A failed/loading read cannot turn retained history into fresh secondary data.
+  const strengthUnavailable = props.fremgangError || props.fremgangLoading || props.exerciseLogsError || props.exerciseLogsLoading
+  // Ordre 1661: samme stilstandsvurdering som Din udvikling; "Hvad går godt?" roser ikke de løft.
+  const trends = u3 && !strengthUnavailable ? strengthLines(props.fremgangLogs, calendarDay(now)) : null
+  const stilleLoeft = (trends ?? []).filter(t => t.plateau === true || t.drop === true).map(t => t.label)
+  const { answers, rpeHistory, personalRecords: records, setTab } = analysisModel({ ...props, stilleLoeft }, now)
   const volume = muscleVolume(props, now)
   const extras = analysisWeekExtras({ ...props,
     fremgangLogs: props.fremgangError || props.fremgangLoading ? undefined : props.fremgangLogs,
@@ -59,8 +66,6 @@ export default function Analysis(props = {}) {
   const showTracking = readiness ? !!(readiness.sleep || readiness.restitution)
     : trackingModel?.status === 'error' || trackingModel?.status === 'loading' ||
       trackingModel?.weeks?.some(week => week.wellbeing.some(field => field.count > 0))
-  // A failed/loading read cannot turn retained history into fresh secondary data.
-  const strengthUnavailable = props.fremgangError || props.fremgangLoading || props.exerciseLogsError || props.exerciseLogsLoading
   const visibleAnswers = answers.filter(answer => answer.value && (answer.key === 'focus' || !strengthUnavailable))
   const visibleRecords = !strengthUnavailable && records.lifts.length > 0
   const volumeWeeks = strengthUnavailable ? [] : volume.weeks.map(week => ({ ...week,
@@ -69,15 +74,13 @@ export default function Analysis(props = {}) {
   const showMore = extras.progress || (!strengthUnavailable && extras.load) || extras.share || showRpe ||
     visibleRecords || volumeWeeks.length > 0 || visibleAnswers.length > 0
   const showSecondary = showReport || showMineData || showIntensity || showMore
-  // U3: kun med flaget og en klient fra AthleteView. Ellers er Fremgang uændret.
-  const u3 = u3DataEnabled(props.u3Data) && !!props.u3Client && props.athlete?.id != null
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
   ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs })] : []),
   // U3b: retningen pr. hovedløft står i "Din udvikling", så e1RM kun vises ét sted.
-  h(DevelopmentView, { ...props, now, ...(u3 && !strengthUnavailable ? { u3Trends: strengthLines(props.fremgangLogs, calendarDay(now)) } : {}) }),
+  h(DevelopmentView, { ...props, now, ...(trends ? { u3Trends: trends } : {}) }),
   // Ordre 1543: tendens i procent, ugens plan og næste top; foldet ind og uden tal fra "Din udvikling".
   h(PaaSigtView, { ...props, now }),
   ...(hasWeightStatus ? [h(WeightReadStatus, { state: mineProps.weights.state,

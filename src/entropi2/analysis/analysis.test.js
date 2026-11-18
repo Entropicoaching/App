@@ -147,3 +147,13 @@ test('local deload remains excluded and focus explains the actual lighter block'
   assert.equal(m.answers[0].value, undefined)
   assert.match(m.answers[2].message, /lettere uge/)
 })
+
+// Ordre 1661: "Hvad går godt?" roser ikke et løft, som samme side kalder stillestående (u3-linjen i Din udvikling).
+test('Hvad går godt? springer løft over, som Din udvikling kalder stillestående eller faldende', () => {
+  const rows = [...dates.map((d, i) => log(d, 100 + i * 5, 'Bænkpres', 3, { exercise_id: `bp-${d}` })), ...dates.map((d, i) => log(d, 120 + i * 5, 'Squat'))]
+  const good = stille => model({ fremgangLogs: rows, stilleLoeft: stille }).answers[1]
+  assert.match(good([]).message, /^Bænkpres/)
+  assert.match(good(['Bænkpres']).message, /^Squat/)
+  assert.equal(good(['Bænkpres', 'Squat']).value, undefined)
+  assert.doesNotMatch(good(['Bænkpres', 'Squat']).message, /ingen stigning|viser en stigning/)
+})
