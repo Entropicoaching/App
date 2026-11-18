@@ -22,6 +22,17 @@ test('program, oversigt og hub bruger samme ugetal som Hjem', () => {
   for (const f of ['athlete/ProgramTab.jsx', 'dashboard/ProgramTab.jsx', 'dashboard/OversigtTab.jsx', 'dashboard/HubTab.jsx']) {
     const src = readFileSync(new URL('./' + f, import.meta.url), 'utf8')
     assert.ok(!/ceil\([^)]*7 \* 24 \* 3600/.test(src), f + ' regner stadig uger ud fra klokkeslæt')
-    assert.match(src, /weeksToCompetition/, f)
+    assert.match(src, /weeksToCompetition|timeZone: 'Europe\/Copenhagen'/, f)
+  }
+})
+
+test('Program-fanerne uden ny import giver samme tal som weeksToCompetition', () => {
+  for (const f of ['athlete/ProgramTab.jsx', 'dashboard/ProgramTab.jsx']) {
+    const src = readFileSync(new URL('./' + f, import.meta.url), 'utf8')
+    const udtryk = src.match(/const weeksToComp = (compDate \? \(\(\) => \{.*\}\)\(\) : null)/)[1]
+    const regn = new Function('compDate', 'return ' + udtryk)
+    const nu = new Date()
+    const dag = n => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen' }).format(new Date(nu.getTime() + n * 86400000))
+    for (const n of [-3, 0, 1, 7, 8, 14, 49, 50]) assert.equal(regn(dag(n)), weeksToCompetition(dag(n), nu), f + ' ' + n)
   }
 })

@@ -2,7 +2,6 @@
 const komma = value => String(value ?? '').replace(/(\d)\.(\d)/, '$1,$2')
 const feltKomma = value => String(value ?? '').replace('.', ',')
 import { antalOrd } from '../entropi2/antalOrd.mjs'
-import { weeksToCompetition } from '../calendarDate.js'
 import OpvarmStige from './WarmupLadderView.mjs'
 import { upcomingProgramWeek, programDayPreview } from './programNaesteUge.mjs'
 import IntensityExplanation from './IntensityExplanation.jsx'
@@ -431,7 +430,8 @@ export default function ProgramTab({
 
           const blokOversigt = allWeeks.length > 0 && (() => {
                     const compDate = athlete?.competition_date
-                    const weeksToComp = compDate ? weeksToCompetition(compDate) : null
+                    // Kalenderdage som calendarDate.weeksToCompetition (lukkede prøve-loadere tillader ingen ny import her).
+                  const weeksToComp = compDate ? (() => { const dag = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen' }).format(new Date()); const d = Math.round((Date.parse(compDate + 'T00:00:00Z') - Date.parse(dag + 'T00:00:00Z')) / 86400000); return Number.isNaN(d) ? null : d === 0 ? 1 : Math.ceil(d / 7) })() : null
 
                     const phases = computePhases(allWeeks)
                     const totalWeeks = allWeeks.length
