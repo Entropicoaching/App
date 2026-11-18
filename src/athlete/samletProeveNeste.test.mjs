@@ -82,7 +82,7 @@ for (const mode of ['athlete', 'own']) {
 
 test('samlet næste: empty, failed and OFF Home cannot invent a weekly count or record', async () => {
   const empty = await renderScenario(scenario('athlete', 'hjem', 'empty'))
-  assert.match(text(empty), /Intet program endnu/)
+  assert.match(text(empty), /Din coach er ved at lægge dit program/)
   assert.doesNotMatch(empty, /data-week-sessions|data-home-record/)
   const failure = await renderScenario(scenario('athlete', 'hjem', 'ready', { programError: true }))
   assert.match(text(failure), /Programmet kunne ikke hentes/)

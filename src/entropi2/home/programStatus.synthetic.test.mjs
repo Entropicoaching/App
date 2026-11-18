@@ -28,7 +28,7 @@ test('initial loading hides empty messaging, stale session and weekly progress',
   for (const allWeeks of [[], [week]]) {
     const view = show(t, { allWeeks, programLoading: true, programError: true })
     assert.match(view.text(), /Indlæser dit program/)
-    assert.doesNotMatch(view.text(), /Intet program endnu|kunne ikke hentes|Uge 1|Ugen:|Syntetisk pas/)
+    assert.doesNotMatch(view.text(), /Din coach er ved at lægge dit program|kunne ikke hentes|Uge 1|Ugen:|Syntetisk pas/)
     assert.equal(view.nodes(n => n.props['aria-busy'] === true).length, 1)
     assert.equal(button(view, 'Hent igen'), undefined)
     assert.equal(button(view, 'Start dagens pas'), undefined)
@@ -51,7 +51,7 @@ test('double and retained retry clicks make one read and show loading until sett
   assert.equal(button(view, 'Hent igen'), undefined)
   Object.assign(view.props, { programError: false, allWeeks: [], currentWeek: null })
   deferred.resolve(); await result; view.render()
-  assert.match(view.text(), /Intet program endnu/)
+  assert.match(view.text(), /Din coach er ved at lægge dit program/)
   assert.doesNotMatch(view.text(), /Indlæser|kunne ikke hentes/)
 })
 

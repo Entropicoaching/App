@@ -23,12 +23,18 @@ import DayFeeling from '../u7/DayFeeling.mjs'
 import { u7Enabled } from '../u7/flag.mjs'
 import PushCard from '../u8/PushCard.mjs'
 import { u8Enabled } from '../u8/flag.mjs'
+import { addCalendarDays } from '../../calendarDate.js'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
 const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
+// Ordre 1714: ferie med slutdato siger datoen og dagen efter; uden gyldig dato som før.
+const holidayEnd = iso => {
+  const back = /^\d{4}-\d{2}-\d{2}$/.test(String(iso)) && addCalendarDays(iso, 0) === iso ? addCalendarDays(iso, 1) : null
+  return back ? { until: danishDate(iso), back: danishDate(back) } : null
+}
 const danishDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${MONTHS[Number(m[2]) - 1]}` : String(iso) }
-const labels = { holiday: 'Du er på ferie', missing: 'Programmet er ikke tilgængeligt', 'no-program': 'Intet program endnu',
+const labels = { holiday: 'Du er på ferie', missing: 'Programmet er ikke tilgængeligt', 'no-program': 'Din coach er ved at lægge dit program',
   'no-next': 'Intet kommende pas planlagt', done: 'Dagens pas er klaret' }
 
 export function HomeRecordCard({ record }) {
@@ -137,6 +143,8 @@ export default function AthleteHome(props) {
   const snapshot = homeWeekSnapshot(trackingData, athlete?.id, model.today)
   const hasWeekData = snapshot && buildAthleteWeek(snapshot, { enabled: true }).status === 'ready'
   const target = model.target
+  const holiday = model.kind === 'holiday' ? holidayEnd(athlete?.vacation_until) : null
+  const noProgram = model.kind === 'no-program'
   // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
   // gamle. Registrering kræver samme uge; ellers bedes atleten genindlæse, ikke registrere forgæves.
   const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
@@ -196,9 +204,9 @@ export default function AthleteHome(props) {
       unreadLabel),
     // U9 (Marc 11. nov.): genvejen til dagens eller næste pas er det første, atleten møder; resten rykker ned.
     h('section', { style: { ...s.card, borderColor: '#c8923a' }, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading, 'data-u9-pas': '' },
-      !(programLoading || programError) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
+      !(programLoading || programError || noProgram) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'
-        : target?.session.title || (target ? 'Træning' : labels[model.kind] || labels.missing)),
+        : target?.session.title || (target ? 'Træning' : holiday ? `Du er på ferie til ${holiday.until}` : labels[model.kind] || labels.missing)),
       target ? h('div', null,
         model.date && h('p', { style: s.text }, model.date === model.today ? 'I dag' : danishDate(model.date)),
         !props.sessionReadOnly && h('button', { type: 'button', style: s.primary, disabled: !canStart || staleWeek || props.sessionLoading === true, onClick: start },
@@ -213,16 +221,18 @@ export default function AthleteHome(props) {
           h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Se øvelser og coachnoter'),
           namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
           ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`))))
+        : noProgram && !programLoading && !programError ? null
         : h('p', { role: programError && !programLoading ? 'alert' : 'status', style: s.text }, programLoading ? 'Indlæser dit program…'
           : programError ? 'Programmet kunne ikke hentes. Tjek din forbindelse og prøv igen.'
-          : model.kind === 'holiday' ? 'Din træning venter, når du er tilbage.'
+          : model.kind === 'holiday' ? holiday ? `Din træning venter fra ${holiday.back}` : 'Din træning venter, når du er tilbage.'
           : props.offlineSnapshotAt != null ? 'Opdatér programmet, når du har net, før du registrerer et pas.'
             : 'Se programmet eller kontakt din coach.'),
       (retryWeek || (!programLoading && (programError || props.offlineSnapshotAt != null))) && h('button', {
         type: 'button', style: s.primary, disabled: programLoading || typeof props.onRetryProgram !== 'function', onClick: retryProgram,
       }, retryWeek && programLoading ? 'Henter…' : 'Hent igen'),
       props.sessionRootRef && h('section', { ref: props.sessionRootRef, 'aria-label': 'Dit valgte pas' }),
-      link('program', 'Se mit program')),
+      // Ordre 1714: uden program er der intet at åbne; den ene handling er en besked til coachen.
+      noProgram ? link('beskeder', 'Skriv til din coach') : link('program', 'Se mit program')),
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
@@ -271,7 +281,7 @@ export default function AthleteHome(props) {
       props.coachOwnTraining !== true && h('h2', { style: s.heading }, 'Resten af din dag'),
       props.coachOwnTraining !== true && h('nav', { style: s.links, 'aria-label': 'Genveje' },
         link('fremgang', 'Analyse'), !nutrition && link('kost', 'Kost'),
-        link('mobilisering', 'Mobilitet'), !coach && link('beskeder', 'Din coach')),
+        link('mobilisering', 'Mobilitet'), !coach && !noProgram && link('beskeder', 'Din coach')),
       hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
         h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),
         h(AthleteWeek, { enabled: true, snapshot, compactHome: true }))))

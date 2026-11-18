@@ -44,7 +44,7 @@ test('empty, missing and invalid names render both greetings without a name', ()
 test('empty and failed program data retain the first-name greeting and honest status', () => {
   const empty = render({ allWeeks: [], currentWeek: undefined })
   assert.equal(heading(empty), 'Dit overblik, Testfornavn')
-  assert.match(empty, /Intet program endnu/)
+  assert.match(empty, /Din coach er ved at lægge dit program/)
   const failed = render({ programError: true })
   assert.equal(heading(failed), 'Dit overblik, Testfornavn')
   assert.match(failed, /Programmet kunne ikke hentes/)

@@ -42,7 +42,7 @@ for (const mode of modes) for (const tab of tabs) for (const state of ['ready', 
       assert.doesNotMatch(nodeText(h1), /Testefternavn/)
       if (state === 'empty') {
         assert.match(nodeText(h1), /Dit overblik, Testfornavn/)
-        assert.match(nodeText(tree), /Intet program endnu/)
+        assert.match(nodeText(tree), /Din coach er ved at lægge dit program/)
       }
     }
     if (state === 'empty' && tab === 'program') assert.match(nodeText(tree), /Dit program er på vej/)
