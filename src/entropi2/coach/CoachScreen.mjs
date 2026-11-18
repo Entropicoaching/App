@@ -15,6 +15,7 @@ import CoachRadar, { coachRadarEnabled } from './radar/CoachRadar.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import { useCoachAttention } from './useCoachAttention.mjs'
 import { alsoLine, ATTENTION_UNAVAILABLE } from './coachAttention.mjs'
+import { gemKvitteringer, indlaesKvitteringer, medKvittering } from './smerteKvittering.mjs'
 import { adaptCoachState } from './coachModel.mjs'
 import TeamPatternsView from './TeamPatternsView.mjs'
 import { teamAthletes } from './teamPatterns.mjs'
@@ -45,6 +46,16 @@ function ClockedCoach(props) {
   const [athleteQuery, setAthleteQuery] = useState('')
   const [athletesOpen, setAthletesOpen] = useState(false)
   const [inboxLimit, setInboxLimit] = useState(10)
+  // Ordre 1711: kvittering for smerte og ømhed gemmes lokalt pr. coach (ingen tabel).
+  const coachId = props.readContext?.coachId
+  const [kvitteringer, setKvitteringer] = useState(() => indlaesKvitteringer(coachId))
+  // coachId kendes først, når sessionen er læst; så hentes kvitteringerne for netop den coach.
+  useEffect(() => { setKvitteringer(indlaesKvitteringer(coachId)) }, [coachId])
+  const kvitterSmerte = (athleteId, mark) => setKvitteringer(old => {
+    const next = medKvittering(old, athleteId, mark)
+    gemKvitteringer(coachId, next)
+    return next
+  })
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000)
     return () => clearInterval(timer)
@@ -59,6 +70,7 @@ function ClockedCoach(props) {
     targets: props.coachNutrition?.state === 'ready' ? props.coachNutrition.targets : null, day: props.coachNutrition?.day })
   return h(CoachView, { ...props, today: props.today ?? now,
     ...(u3 && props.u3Attention === undefined ? { u3Attention: attention } : {}),
+    smerteKvittering: props.smerteKvittering ?? kvitteringer, onKvitterSmerte: props.onKvitterSmerte ?? kvitterSmerte,
     athleteQuery: props.athleteQuery ?? athleteQuery,
     onAthleteQueryChange: props.onAthleteQueryChange ?? setAthleteQuery,
     athletesOpen: props.athletesOpen ?? athletesOpen,
@@ -119,7 +131,8 @@ export function CoachView(input = {}) {
     const also = model.u3 && !inbox && alsoLine(row.reasons), day = dayLine(row)
     const heavy = heavyWeek && rowAttention(row), draft = draftBlock(row)
     const long = reasonParts(row.athlete.name, row.reason).rest
-    if (!also && !day && !heavy && !coachData && !draft && !long) return null
+    const kvitter = row.smerte && typeof props.onKvitterSmerte === 'function'
+    if (!also && !day && !heavy && !coachData && !draft && !long && !kvitter) return null
     return h('details', { 'data-u11-detaljer': row.athlete.id, style: { margin: '0 0 10px', paddingInline: 4 } },
       h('summary', { style: { cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center', color: '#b9b4a8' } },
         arrow, long ? 'Hele grunden' + (also || day || heavy || coachData || draft ? ' og detaljer' : '') : draft ? 'Detaljer og udkast' : 'Detaljer'),
@@ -130,7 +143,10 @@ export function CoachView(input = {}) {
         athleteId: row.athlete.id, day: model.day, readiness: rowAttention(row).readiness, read: props.u6ReadHeavyWeek }),
       coachData && h(WeekTargetLine, { key: `u7-week:${row.athlete.id}:${model.day}`, client: props.notesClient,
         athleteId: row.athlete.id, day: model.day, read: props.u7ReadWeekNutrition }),
-      draft)
+      draft,
+      kvitter && h('button', { type: 'button', 'data-coach-kvitter-smerte': row.athlete.id,
+        style: { ...button, minHeight: 48, paddingBlock: 10, marginTop: 8 },
+        'aria-label': `Kvittér smerte for ${row.athlete.name}`, onClick: () => props.onKvitterSmerte(row.athlete.id, row.smerte) }, 'Kvittér smerte'))
   }
   const rowButton = (row, index) => h('li', { key: row.key }, h('button', {
     type: 'button', disabled: !available, 'data-coach-action': row.key,

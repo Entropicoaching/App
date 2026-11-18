@@ -130,9 +130,10 @@ export function coachHomeModel(props = {}, today = new Date()) {
     if (u3) candidates.push(...attentionCandidates({ athlete, day,
       attention: attentionState === 'ready' ? attentionFor(source, athlete.id, day) : null,
       weeks: data.calendarReady ? plans[athlete.id] : null,
-      nutritionSource: props.coachNutrition, nutritionReady: u3Nutrition.has(athlete.id) }))
+      nutritionSource: props.coachNutrition, nutritionReady: u3Nutrition.has(athlete.id), kvitteringer: props.smerteKvittering }))
     candidates.sort(order)
-    if (candidates.length) actions.push({ ...candidates[0], reasons: candidates.map(c => c.reason) })
+    const smerte = candidates.find(c => c.smerte)?.smerte
+    if (candidates.length) actions.push({ ...candidates[0], reasons: candidates.map(c => c.reason), ...(smerte ? { smerte } : {}) })
   }
   actions.sort(order); inbox.sort(order)
   const complete = data.rosterReady && data.calendarReady && messages.complete && videos.complete && logs.complete

@@ -4,6 +4,7 @@ import { nutritionTrend } from '../tracking/nutritionTrend.mjs'
 import { onVacation } from '../u3/couplings.mjs'
 import { mondayOf, shortDate } from '../u3/format.mjs'
 import { painFromDaily, sleepFromDaily } from '../u7/coachData.mjs'
+import { erKvitteret, markFor } from './smerteKvittering.mjs'
 
 // U3-planen afsnit 2: nye grunde under "Kræver dit blik". Rene funktioner uden
 // læsninger. Tekst fra noter og kommentarer citeres aldrig; kun en fast tekst og
@@ -36,7 +37,7 @@ export function painFromVoices(weeks, today) {
     .sort((a, b) => b.start_date.localeCompare(a.start_date))
   if (!hits.length) return null
   const n = hits[0].week_number
-  return { week: n, reason: Number.isSafeInteger(n) ? `Smerte nævnt i uge ${n}` : 'Smerte nævnt i en pas-kommentar' }
+  return { week: n, date: hits[0].start_date, reason: Number.isSafeInteger(n) ? `Smerte nævnt i uge ${n}` : 'Smerte nævnt i en pas-kommentar' }
 }
 
 // (c) soreness_level mindst 4 på mindst 3 af de seneste 7 afsluttede dage.
@@ -48,7 +49,7 @@ export function soreness(rows, today) {
     const d = dayOf(r?.logged_date)
     if (d && d >= from && d < day && Number(r.soreness_level) >= 4) days.add(d)
   }
-  return days.size >= 3 ? { days: days.size, reason: `Ømhed ${days.size} af 7 dage` } : null
+  return days.size >= 3 ? { days: days.size, date: [...days].sort().at(-1), reason: `Ømhed ${days.size} af 7 dage` } : null
 }
 
 // Readiness falder: snit af de 3 seneste afsluttede dage under snittet for dag
@@ -118,13 +119,22 @@ export function stagnationReason(source) {
 
 // Alle nye grunde for én atlet. attention er L1 for netop denne atlet, eller
 // null, når L1 ikke er komplet: så vises smerte, readiness og check-in ikke.
-export function attentionCandidates({ athlete, day, attention, weeks, nutritionSource, nutritionReady }) {
+export function attentionCandidates({ athlete, day, attention, weeks, nutritionSource, nutritionReady, kvitteringer }) {
   const out = []
   const add = (kind, rank, found) => found && out.push({ key: `u3-${kind}-${athlete.id}`, athlete, rank, tab: 'hub', reason: found.reason, u3: kind })
   if (attention) {
     // U7: smerte som tal fra tracking_daily_v1 går forud for smerteord; daily findes kun med tabellen.
     const daily = Array.isArray(attention.daily) ? attention.daily : null
-    add('pain', RANK.pain, (daily && painFromDaily(daily, day)) ?? painFromNotes(attention.notes, day) ?? painFromVoices(weeks, day) ?? soreness(attention.readiness, day))
+    // Ordre 1711: en kvitteret smerte vises ikke, før atleten melder en nyere dato eller et højere niveau.
+    const sources = [['daily', () => daily && painFromDaily(daily, day)], ['notes', () => painFromNotes(attention.notes, day)],
+      ['voices', () => painFromVoices(weeks, day)], ['soreness', () => soreness(attention.readiness, day)]]
+    for (const [kind, find] of sources) {
+      const found = find()
+      if (!found) continue
+      const smerte = markFor(kind, found)
+      if (!erKvitteret(kvitteringer, athlete.id, smerte)) { add('pain', RANK.pain, found); out.at(-1).smerte = smerte }
+      break
+    }
     add('readiness', RANK.readinessDrop, readinessDrop(attention.readiness, day))
     if (daily) add('sleep', RANK.readinessDrop, sleepFromDaily(daily, day))
     add('checkin', RANK.checkinStopped, checkinStopped(attention.readiness, day, athlete))
