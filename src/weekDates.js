@@ -20,11 +20,19 @@ export function nextWeekStartDate(existingWeeks, today = new Date()) {
   return addCalendarDays(day, dow === 0 ? 0 : 7 - dow)
 }
 
-// Kun manglende datoer udfyldes, ud fra et gyldigt anker.
-export function fillMissingWeekDates(weeks) {
+// Kun manglende datoer udfyldes, ud fra et gyldigt anker. Er ingen uge dateret,
+// er ankeret den laveste uge med førstkommende mandag som start (ordre 1716).
+export function fillMissingWeekDates(weeks, today = new Date()) {
   const rows = (weeks || []).filter(w => w && inputInteger(w.week_number) !== null)
-  const anchor = rows.find(w => calendarTime(w.start_date) !== null)
-  if (!anchor) return []
+  let anchor = rows.find(w => calendarTime(w.start_date) !== null)
+  if (!anchor) {
+    // Findes der datoer vi ikke kan bruge (ugyldige eller på rækker uden gyldigt ugenummer), gætter vi ikke.
+    if ((weeks || []).some(w => w && w.start_date)) return []
+    const first = [...rows].sort((a, b) => inputInteger(a.week_number) - inputInteger(b.week_number))[0]
+    const start = first && nextWeekStartDate([], today)
+    if (!start) return []
+    anchor = { week_number: first.week_number, start_date: start }
+  }
   return rows.filter(w => !w.start_date).map(w => ({
     id: w.id, week_number: w.week_number,
     start_date: addCalendarDays(anchor.start_date, (inputInteger(w.week_number) - inputInteger(anchor.week_number)) * 7),

@@ -27,16 +27,29 @@ function logFrontendError(message, error, athleteId) {
 // Den "aktive" uge atleten lander på.
 // 1) Foretræk en dateret uge hvis 7-dages-spænd indeholder i dag (den uge man
 //    reelt træner i nu) — så man ikke hopper forbi til et højere ugenummer uden dato.
-// 2) Ellers: seneste ikke-fremtidige uge (uger uden start_date tæller som tilgængelige,
-//    fremtidige datoer udelukkes, så man ikke lander på en tom planlagt uge).
+// 2) Ellers: seneste ikke-fremtidige uge (fremtidige datoer udelukkes, så man ikke
+//    lander på en tom planlagt uge). En uge uden start_date får sin dato udledt fra den
+//    tidligste daterede uge og vinder aldrig over en dateret uge; er ingen uger
+//    daterede, er den første uge den aktive.
 function computeActiveWeekIdx(weeks) {
   if (!weeks || !weeks.length) return 0
   const today = new Date()
   today.setHours(0, 0, 0, 0)
+  // Egen startdato, ellers udledt fra den tidligste daterede uge (anker + 7 dage pr. uge),
+  // samme princip som weekStartDate. Uden nogen dato er den første uge den aktive.
+  const anchor = [...weeks].sort((a, b) => a.week_number - b.week_number).find(w => w.start_date)
+  if (!anchor) return 0
+  const starts = weeks.map(w => {
+    if (w.start_date) return new Date(w.start_date + 'T00:00:00')
+    const n = w.week_number
+    if (typeof n !== 'number' || typeof anchor.week_number !== 'number') return null
+    const d = new Date(anchor.start_date + 'T00:00:00')
+    d.setDate(d.getDate() + (n - anchor.week_number) * 7)
+    return d
+  })
   let containing = -1
-  weeks.forEach((w, i) => {
-    if (!w.start_date) return
-    const d = new Date(w.start_date + 'T00:00:00')
+  starts.forEach((d, i) => {
+    if (!d) return
     d.setHours(0, 0, 0, 0)
     const end = new Date(d.getTime())
     end.setDate(end.getDate() + 7)
@@ -44,15 +57,7 @@ function computeActiveWeekIdx(weeks) {
   })
   if (containing >= 0) return containing
   let active = -1
-  weeks.forEach((w, i) => {
-    let isFuture = false
-    if (w.start_date) {
-      const d = new Date(w.start_date + 'T00:00:00')
-      d.setHours(0, 0, 0, 0)
-      isFuture = d > today
-    }
-    if (!isFuture) active = i
-  })
+  starts.forEach((d, i) => { if (d && d <= today) active = i })
   return active >= 0 ? active : 0
 }
 

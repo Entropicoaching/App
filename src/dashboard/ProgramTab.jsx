@@ -116,7 +116,7 @@ export default function ProgramTab({
                         {programCopyEnabled === true ? (copyingWeek ? 'Kopierer...' : 'Kopiér seneste uge') : (copyingWeek ? 'Kopierer ugen …' : 'Kopiér seneste uge →')}
                       </button>
                     )}
-                    {weeks.some(w => w.start_date) && weeks.some(w => !w.start_date) && (
+                    {weeks.some(w => !w.start_date) && (
                       <button style={s.btnGhost} onClick={previewWeekDateFill}>
                         Sæt datoer
                       </button>

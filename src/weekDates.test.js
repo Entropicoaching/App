@@ -70,9 +70,17 @@ test('fillMissingWeekDates: bruger den første daterede uge i rækkefølgen som 
   assert.deepEqual(resultat, [{ id: 'w1', week_number: 1, start_date: '2026-09-07' }])
 })
 
-test('fillMissingWeekDates: ingen daterede uger overhovedet → tom liste (ingen anker at regne fra)', () => {
-  const uger = [{ id: 'w1', week_number: 1, start_date: null }, { id: 'w2', week_number: 2, start_date: null }]
-  assert.deepEqual(fillMissingWeekDates(uger), [])
+test('fillMissingWeekDates: ingen daterede uger → uge 1 faar naeste mandag, resten +7 dage', () => {
+  const uger = [{ id: 'w2', week_number: 2, start_date: null }, { id: 'w1', week_number: 1, start_date: '' }, { id: 'w3', week_number: 3, start_date: null }]
+  assert.deepEqual(fillMissingWeekDates(uger, new Date('2026-11-18T10:00:00')), [
+    { id: 'w2', week_number: 2, start_date: '2026-11-30' },
+    { id: 'w1', week_number: 1, start_date: '2026-11-23' },
+    { id: 'w3', week_number: 3, start_date: '2026-12-07' },
+  ])
+})
+
+test('fillMissingWeekDates: ingen uger overhovedet → tom liste', () => {
+  assert.deepEqual(fillMissingWeekDates([]), [])
 })
 
 test('fillMissingWeekDates: alle uger allerede daterede → tom liste, ingen ændres', () => {
@@ -86,4 +94,12 @@ test('fillMissingWeekDates: månedsskift ved tilbageregning', () => {
     { id: 'w2', week_number: 2, start_date: '2026-10-05' },
   ]
   assert.deepEqual(fillMissingWeekDates(uger), [{ id: 'w1', week_number: 1, start_date: '2026-09-28' }])
+})
+
+test('coachens Saet datoer-knap vises ogsaa naar alle uger mangler dato (1716)', async () => {
+  const { readFileSync } = await import('node:fs')
+  const kilde = readFileSync(new URL('./dashboard/ProgramTab.jsx', import.meta.url), 'utf8')
+  const knap = kilde.match(/\{weeks\.some\(([^\n]*)\) && \(\s*<button style=\{s\.btnGhost\} onClick=\{previewWeekDateFill\}>/)
+  assert.ok(knap, 'knappen findes')
+  assert.equal(knap[1], 'w => !w.start_date')
 })
