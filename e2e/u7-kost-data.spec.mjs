@@ -101,6 +101,8 @@ async function athlete(page, vp, outDir, mode, mock) {
     if (await feeling.count()) throw new Error('Søvn og smerte vises uden tabellen')
     result.homeText = (await page.locator('[data-entropi2-home]').textContent()).replace(/\s+/g, ' ')
   } else {
+    // Søvn og smerte ligger i den lukkede fold "Mere i dag" på Hjem.
+    await page.locator('[data-home-mere] > summary').click()
     await feeling.waitFor({ state: 'visible', timeout: 20000 })
     await feeling.evaluate(el => el.scrollIntoView({ block: 'center' }))
     await feeling.getByRole('button', { name: 'Søvnkvalitet 4' }).click()
@@ -121,6 +123,8 @@ async function athlete(page, vp, outDir, mode, mock) {
   }
   // Kost: vand og væskemål.
   await page.getByRole('button', { name: 'Kost', exact: true }).first().click({ timeout: 20000 })
+  // 1899: væskemålet ligger i laget Vis detaljer under Kost i dag.
+  await page.getByRole('button', { name: 'Vis detaljer' }).click({ timeout: 20000 })
   const goal = page.getByRole('region', { name: 'Væskemål' })
   await goal.waitFor({ state: 'visible', timeout: 20000 })
   await page.waitForTimeout(1200)
@@ -131,7 +135,7 @@ async function athlete(page, vp, outDir, mode, mock) {
   } else {
     // Ny telefon: dagens 750 ml og målet 3.000 ml kommer fra databasen.
     await goal.getByText('750 af 3.000 ml').waitFor({ timeout: 15000 })
-    await goal.getByRole('button', { name: 'Drukket 250 ml vand' }).click()
+    await goal.getByRole('button', { name: 'Drukket 250 ml vand', exact: true }).click()
     await goal.getByText('1.000 af 3.000 ml').waitFor({ timeout: 5000 })
     const saved = await waitFor(() => mock.table('tracking_daily_v1').some(r => r.logged_date === danishToday() && r.water_ml === 1000))
     if (!saved) throw new Error('Vandet blev ikke gemt i tabellen')
@@ -146,7 +150,8 @@ async function athlete(page, vp, outDir, mode, mock) {
 async function coach(page, vp, outDir, mode, mock) {
   await login(page, COACH_USER)
   await page.getByText('Kræver dit blik').first().waitFor({ state: 'visible', timeout: 30000 })
-  await page.getByText(/readiness falder/i).first().waitFor({ state: 'visible', timeout: 30000 })
+  // Ordre 1544/1547: Også-linjen, dagens tal og ugens kost ligger i rækkens lukkede fold Detaljer.
+  await page.getByText(/readiness falder/i).first().waitFor({ state: 'attached', timeout: 30000 })
   await page.waitForTimeout(2000)
   await noSideScroll(page, vp.width)
   const section = page.locator('section[aria-label="Atleter der kræver handling"]')
@@ -155,13 +160,15 @@ async function coach(page, vp, outDir, mode, mock) {
     if (await page.locator('[data-u7-day], [data-u7-week-target]').count()) throw new Error('Coachens U7-linjer vises uden tabellerne')
     result.coachText = (await section.textContent()).replace(/\s+/g, ' ')
   } else {
+    await page.locator(`[data-u11-detaljer="${ATHLETE_ID}"] > summary`).click()
     await page.locator(`[data-u7-day="${ATHLETE_ID}"]`).waitFor({ state: 'visible', timeout: 20000 })
     await page.locator(`[data-u7-week-target="${ATHLETE_ID}"]`).waitFor({ state: 'visible', timeout: 20000 })
     const text = (await section.textContent()).replace(/\s+/g, ' ')
     if (!/Smerte 6\/10 \(venstre knæ\)/.test(text)) throw new Error('Smerte som tal mangler: ' + text.slice(0, 400))
     const day = await page.locator(`[data-u7-day="${ATHLETE_ID}"]`).textContent()
     const week = await page.locator(`[data-u7-week-target="${ATHLETE_ID}"]`).textContent()
-    if (!/^Søvn 1,5\/5 \(2 dage\) · Smerte 6\/10 \(venstre knæ\)/.test(day)) throw new Error('Tal-linjen er forkert: ' + day)
+    // Ordre 1679: dagslinjen gentager ikke smerten, når rækkens grund allerede siger den (tjekket ovenfor).
+    if (!/^Søvn 1,5\/5 \(2 dage\)( · |$)/.test(day) || /Smerte/.test(day)) throw new Error('Tal-linjen er forkert: ' + day)
     if (!/^Kost sidste uge: protein 158 g mod mål 180 g, 2\.733 kcal mod 2\.800 i snit pr\. logget dag \(3 af 7 dage\)$/.test(week)) throw new Error('Ugens kostmål er forkert: ' + week)
     const dated = await waitFor(() => mock.table('nutrition_targets_v1').some(r => r.effective_from === danishToday() && r.protein_g === 180))
     if (!dated) throw new Error('Coachens nuværende mål blev ikke dateret: ' + JSON.stringify(mock.table('nutrition_targets_v1')))

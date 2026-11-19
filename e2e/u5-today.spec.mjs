@@ -84,7 +84,8 @@ async function freeOfNav(page, width, selector) {
 async function home(page) {
   await login(page, ATHLETE_USER)
   await page.locator('[data-entropi2-home]').waitFor({ state: 'visible', timeout: 30000 })
-  await page.locator('[data-home-quick-logs]').waitFor({ state: 'visible', timeout: 20000 })
+  // Med U5-kortet har hurtiglogningen ingen egen højde (knapperne er skjult), så den er kun tilknyttet.
+  await page.locator('[data-home-quick-logs]').waitFor({ state: 'attached', timeout: 20000 })
   await page.waitForTimeout(1200)
   return (await page.locator('[data-u5-today]').count()) > 0
 }
