@@ -165,6 +165,33 @@ test('U7 3/5: med tabellerne følger vand og væskemål med til en ny telefon og
   } finally { await m.done() }
 })
 
+// Ordre 1873: statuslinjen siger kun "i din profil", når serveren har gemt.
+for (const fail of [false, true]) {
+  test(`Ordre 1873: vand ${fail ? 'med fejlende server viser ærlig linje og beholder tallet' : 'gemt på serveren siger "i din profil"'}`, gate, async () => {
+    const { default: WaterDayLog } = await import('../kostplan/atlet/WaterDayLog.mjs')
+    const today = calendarDay()
+    const f = fakeBackend({ tables: { tracking_daily_v1: [{ athlete_id: A, logged_date: today, water_ml: 1500 }], nutrition_targets_v1: [] } })
+    if (fail) {
+      const real = f.client.from.bind(f.client)
+      f.client.from = table => {
+        const b = real(table), update = b.update
+        if (table === 'tracking_daily_v1') b.update = payload => { const q = update(payload); return payload?.water_ml === undefined ? q : { eq: () => ({ eq: () => ({ select: () => ({ then: resolve => resolve({ data: null, error: { code: '500', message: 'serverfejl' } }) }) }) }) } }
+        return b
+      }
+    }
+    const m = await mount(React.createElement(WaterDayLog, { enabled: true, athleteId: A, date: today, client: f.client, u7DayData: true }), memoryStorage())
+    try {
+      const plus = [...m.dom.host.querySelectorAll('button')].find(b => b.textContent === '+ 250 ml')
+      await m.click(plus)
+      assert.match(m.text(), /drukket 1\.750 ml/)
+      if (fail) {
+        assert.match(m.text(), /Gemt på denne enhed\. Ikke sendt til din profil endnu; prøv igen senere\./)
+        assert.doesNotMatch(m.text(), /Gemt på denne enhed og i din profil/)
+      } else assert.match(m.text(), /Gemt på denne enhed og i din profil\./)
+    } finally { await m.done() }
+  })
+}
+
 test('U7 3/5: søvn og smerte vises kun med tabellen, og ét tryk gemmer tallet', gate, async () => {
   const { default: DayFeeling } = await import('./DayFeeling.mjs')
   const today = calendarDay()

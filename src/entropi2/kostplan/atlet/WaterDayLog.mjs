@@ -20,6 +20,8 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
   const [quantity, setQuantity] = useState('')
   const [error, setError] = useState('')
   const [edit, setEdit] = useState(null)
+  const [syncFailed, setSyncFailed] = useState(false)
+  const saveSeq = useRef(0)
   const pendingEdit = useRef(null)
   // U7: med tabellerne gemmes dagens total og væskemålet også i databasen; uden dem som i U6.
   const u7 = enabled === true && u7Enabled('dayData', u7DayData)
@@ -36,7 +38,7 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
         (gateRef.current?.athleteId === athleteId && gateRef.current.date === date
           && gateRef.current.client === client && gateRef.current.preview === false)) })
     setRecord(controller ? { scope, controller, snapshot: controller.snapshot() } : null)
-    setQuantity(''); setError(''); setEdit(null); pendingEdit.current = null
+    setQuantity(''); setError(''); setEdit(null); setSyncFailed(false); saveSeq.current += 1; pendingEdit.current = null
     return () => {
       active = false
       pendingEdit.current = null
@@ -68,7 +70,13 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
     if (live.current !== scope || !controller?.isCurrent()) return false
     const changed = action(), snapshot = controller.snapshot()
     setRecord({ scope, controller, snapshot })
-    if (changed && shared) day.save({ water_ml: snapshot.totalMl })
+    if (changed && shared) {
+      // Ordre 1873: "i din profil" står kun, når serveren har gemt. Det lokale tal ændres aldrig; et sent svar for en anden dag eller en nyere skrivning ignoreres.
+      const seq = ++saveSeq.current
+      Promise.resolve(day.save({ water_ml: snapshot.totalMl })).catch(() => 'error').then(result => {
+        if (live.current === scope && saveSeq.current === seq) setSyncFailed(result !== 'saved')
+      })
+    }
     setError(changed ? '' : snapshot.status === 'conflict'
       ? 'Registreringen er ændret eller fjernet i den lokale lagring. Rettelsen er ikke gemt. Genåbn visningen for at læse den aktuelle log.'
       : snapshot.status === 'unconfirmed'
@@ -136,7 +144,7 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
                 if (live.current !== scope || !controller?.isCurrent() || pendingEdit.current !== editing) return
                 pendingEdit.current = null; setEdit(null); setError('')
               } }, 'Annuller'))))),
-      React.createElement('p', { role: 'status' }, s.status === 'saved' ? (shared ? 'Gemt på denne enhed og i din profil.' : 'Gemt på denne enhed. Deles ikke med din coach.')
+      React.createElement('p', { role: 'status' }, s.status === 'saved' ? (shared ? (syncFailed ? 'Gemt på denne enhed. Ikke sendt til din profil endnu; prøv igen senere.' : 'Gemt på denne enhed og i din profil.') : 'Gemt på denne enhed. Deles ikke med din coach.')
         : s.status === 'ready' ? null
           : s.status === 'unreadable' ? 'Lokal lagring kunne ikke læses sikkert. Nye ændringer vises kun her, indtil visningen lukkes; tidligere data overskrives ikke.'
             : 'Lagringen kunne ikke bekræftes. Listen vises kun her, indtil visningen lukkes; genåbning kan vise andre registreringer.')),
