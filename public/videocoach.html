@@ -8511,9 +8511,10 @@ function collectMetrics() {
       `${lastVals.lowConfPct}% af tiden ` +
       `(skive skjult/utydelig) - tag tallene med forbehold`);
   if (sourcePath.analysis) {
+    // ORDRE 1882v: et løft uden fart, fordi kameraet flyttede sig, bliver stående, så numrene passer.
     const measurableReps = sourcePath.reps.filter(rep =>
-      Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm));
-    if (!measurableReps.length) {
+      rep.camMoved || (Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm)));
+    if (!vcMeasuredReps(measurableReps).length) {
       lastVals.signalEligible = false;
       m.push('Velocity, ROM og tempo er skjult: signalet er ikke gyldigt nok.');
       return m.join('\n');
@@ -10268,7 +10269,8 @@ saveBtn.onclick = async () => {
     stick_pct: lastVals.stickPct ?? null,
     dip_pct: lastVals.dipPct ?? null,
     drift_cm: lastVals.driftCm != null ? +lastVals.driftCm.toFixed(1) : null,
-    reps: path && path.reps ? path.reps.map(r => r.camMoved ? null : +r.mcv.toFixed(3)) : null,
+    // ORDRE 1882v: broerne kræver et tal pr. løft i dette gamle felt; 0 betyder, at farten ikke er målt.
+    reps: path && path.reps ? path.reps.map(r => r.camMoved ? 0 : +r.mcv.toFixed(3)) : null,
     extra: {   // individuelle baseline-metrikker (median/MAD beregnes af agenten)
       hip_ratio: lastVals.hipRatio ?? null,
       eff_pct: lastVals.effPct ?? null,
