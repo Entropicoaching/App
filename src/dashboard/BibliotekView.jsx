@@ -25,6 +25,7 @@ export default function BibliotekView({
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4a4844', marginTop: '0.25rem' }}>
                     {exerciseLibrary.length} øvelser · {[...new Set(exerciseLibrary.map(e => e.category).filter(Boolean))].length} kategorier
                   </div>
+                  {exerciseLibrary.laesefejl && <div role="alert" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', color: '#e07a5f', marginTop: '0.4rem', overflowWrap: 'anywhere' }}>Øvelsesbiblioteket kunne ikke hentes</div>}
                 </div>
                 <button style={s.btnPrimary} onClick={() => { setAddingLibraryEx(true); setLibraryAddForm({ name: '', category: 'Accessory' }) }}>+ Tilføj øvelse</button>
               </div>
@@ -61,7 +62,7 @@ export default function BibliotekView({
               )}
 
               {libCategories.length === 0 ? (
-                <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>Ingen øvelser matcher søgningen</div>
+                <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3rem 0' }}>{exerciseLibrary.laesefejl ? 'Øvelsesbiblioteket kunne ikke hentes' : 'Ingen øvelser matcher søgningen'}</div>
               ) : libCategories.map(cat => (
                 <div key={cat} style={{ ...s.card, marginBottom: '1rem' }}>
                   <div style={s.cardLabel}>{cat} <span style={{ color: '#4a4844', fontWeight: 400 }}>{filteredLib.filter(e => (e.category || 'Andet') === cat).length}</span></div>

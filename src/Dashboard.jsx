@@ -914,7 +914,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               <OversigtTab {...{
                 blokFremgang: blokFremgang === true,
                 ...(e2 ? { coachTabCleanup: true } : {}),
-                a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
+                a, athleteLogs, athleteReadiness, athleteWeightLogs, currentWeight, editData, editing,
                 isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
                 setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
                 volumenKortFactory, weeks, weightTrend,

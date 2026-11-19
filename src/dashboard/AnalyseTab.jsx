@@ -744,6 +744,12 @@ export default function AnalyseTab({ analyseMissingData = false, sendMissingData
                   <AthleteSilentFailNote key={selectedAthlete?.id} athleteId={selectedAthlete?.id} />
 
                   {/* 6. Kropsvægt */}
+                  {athleteWeightLogs.laesefejl && (
+                    <div style={s.card}>
+                      <div style={s.cardLabel}>Kropsvægt</div>
+                      <div role="alert" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', color: '#e07a5f', overflowWrap: 'anywhere' }}>Vægt kunne ikke hentes</div>
+                    </div>
+                  )}
                   {weightChartData.length > 1 && (
                     <div style={s.card}>
                       <div style={s.cardLabel}>Kropsvægt</div>

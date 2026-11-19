@@ -575,8 +575,10 @@ export function lavLaesninger({
   }
 
   async function fetchExerciseLibrary() {
-    const { data } = await supabase.from('exercise_library').select('*').order('category').order('name')
-    setExerciseLibrary(data || [])
+    const { data, error } = await supabase.from('exercise_library').select('*').order('category').order('name')
+    // Ordre 1880: en fejlet læsning viser fejl og lader tidligere hentede øvelser stå, i stedet for "0 øvelser".
+    if (error || !Array.isArray(data)) { setExerciseLibrary(prev => Object.assign([...prev], { laesefejl: true })); return }
+    setExerciseLibrary(data)
   }
 
   async function fetchLatestMessages(athleteIds) {
@@ -701,13 +703,15 @@ export function lavLaesninger({
   }
 
   async function fetchAthleteWeightLogs(athleteId) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('weight_logs')
       .select('*')
       .eq('athlete_id', athleteId)
       .order('logged_at', { ascending: false })
       .limit(90)
-    setAthleteWeightLogs(data || [])
+    // Ordre 1880: en fejlet læsning viser fejl (navigation tømmer listen ved atletskift), ikke "ingen vægt".
+    if (error || !Array.isArray(data)) { setAthleteWeightLogs(prev => Object.assign([...prev], { laesefejl: true })); return }
+    setAthleteWeightLogs(data)
   }
 
   async function fetchAthleteReadiness(athleteId) {

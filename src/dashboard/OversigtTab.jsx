@@ -46,7 +46,7 @@ function fullLiftTotal(athlete, prefix = '') {
   return values.every(registeredMax) ? values.reduce((sum, value) => sum + Number(value), 0) : null
 }
 export default function OversigtTab({
-  coachTabCleanup = false, a, athleteLogs, athleteReadiness, currentWeight, editData, editing,
+  coachTabCleanup = false, a, athleteLogs, athleteReadiness, athleteWeightLogs, currentWeight, editData, editing,
   isMobile, openMeetResult, profilesLastSeen, saveEdit, saving, session,
   setActiveTab, setEditData, setEditing, startEdit, total, trainingTotal,
   volumenKortFactory, weeks, weightTrend, blokFremgang = false,
@@ -242,6 +242,9 @@ export default function OversigtTab({
                         <div><div style={s.fieldLabel}>Trænings total</div><div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', color: '#7a7770' }}>{trainingTotal} <span style={{ fontSize: '0.9rem', color: '#4a4844' }}>kg</span></div></div>
                       </div>
                       </>}
+                      {athleteWeightLogs?.laesefejl && (
+                        <div role="alert" style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', letterSpacing: '0.08em', color: '#e07a5f', overflowWrap: 'anywhere' }}>Vægt kunne ikke hentes</div>
+                      )}
                       {currentWeight !== null && (
                         <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(237,234,226,0.07)' }}>
                           <div style={s.fieldLabel}>Aktuel kropsvægt</div>
