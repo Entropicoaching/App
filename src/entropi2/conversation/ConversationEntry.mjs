@@ -39,8 +39,14 @@ export function createEntryFactory({ enabled = false, role, getEntry, openFeedba
         // promise: the local retry must make a fresh import attempt.
         const { readWeeklyLetter } = await import('../coach/ugebrev/readWeeklyLetter.mjs')
         current()
+        // Ordre 1886: kosten mod den godkendte kostplan, fra Dashboardets afsluttede kostlæsning.
+        const getNutritionRead = async ({ ownerId, athleteId, asOf }) => {
+          const { readLetterNutrition } = await import('../coach/ugebrev/readLetterNutrition.mjs')
+          return readLetterNutrition({ coachId: ownerId, athleteId, asOf,
+            source: getEntry().coachNutrition, client: entry.inboxDatabase })
+        }
         const model = await readWeeklyLetter({
-          enabled: true, getScope: adapters.scope, database: entry.inboxDatabase,
+          enabled: true, getScope: adapters.scope, database: entry.inboxDatabase, getNutritionRead,
         })
         current()
         return model

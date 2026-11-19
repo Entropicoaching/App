@@ -1014,6 +1014,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
               <ConversationEntry enabled={true} role="coach" controllerRef={e2CoachSamtaleRef} getEntry={() => ({
                 enabled: true, session, selectedAthlete, athletes, hiddenAthleteIds, inboxDatabase: supabase,
                 openVideoAnalysisReview, openAwaitingAnalysisVideo, storage: () => localStorage,
+                coachNutrition: e2CoachNutrition,
               })} />
             )}
             {!e2 && activeTab === 'beskeder' && (() => {

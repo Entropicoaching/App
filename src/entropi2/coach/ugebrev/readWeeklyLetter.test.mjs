@@ -70,8 +70,10 @@ test('actual reader passes a scoped report receipt through the actual report and
   assert.match(m.text, /1\.000 kcal mod 2\.000 kcal/)
   assert.equal(f.calls.filter(call => call[0] === 'from').length, 1)
   f.options.getNutritionRead = async () => ({ state: 'error' })
+  // Ordre 1886: en fejlet kostkvittering tager ikke resten af brevet med; kosten udelades og meldes.
   const failed = await readWeeklyLetter(f.options)
-  assert.equal(failed.state, 'error'); assert.equal(failed.text, undefined)
+  assert.equal(failed.state, 'ready'); assert.equal(failed.nutritionUnavailable, true)
+  assert.doesNotMatch(failed.text, /kcal/); assert.equal(failed.context.some(c => c.id === 'nutrition'), false)
 })
 
 test('OFF does not access any dependency getter, including optional nutrition', async () => {

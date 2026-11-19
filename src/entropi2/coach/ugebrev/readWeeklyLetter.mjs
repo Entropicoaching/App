@@ -39,10 +39,19 @@ export async function readWeeklyLetter(options = {}) {
   })
   const recoveryDays = result.data.map(row => ({ day: row.logged_date, source: 'athlete_manual',
     energy: row.energy, motivation: row.motivation, stress: row.stress, sorenessLevel: row.soreness_level }))
-  const nutritionRead = typeof getNutritionRead === 'function' ? await getNutritionRead({ ...initial, asOf }) : undefined
+  // Ordre 1886: en fejlet eller ubrugelig kostlæsning tager aldrig resten af brevet med.
+  // Brevet dannes uden kost og siger det selv (nutritionUnavailable).
+  let nutritionRead, nutritionUnavailable = false
+  if (typeof getNutritionRead === 'function') {
+    try { nutritionRead = await getNutritionRead({ ...initial, asOf }) } catch { nutritionUnavailable = true }
+  }
   current()
-  return createWeeklyLetter({ enabled: true, data: {
-    state: 'ready', complete: true, athleteId: initial.athleteId, coachId: initial.ownerId,
-    asOf, daily, recoveryDays, nutritionRead,
-  } })
+  const data = { state: 'ready', complete: true, athleteId: initial.athleteId, coachId: initial.ownerId,
+    asOf, daily, recoveryDays }
+  let letter = createWeeklyLetter({ enabled: true, data: { ...data, nutritionRead } })
+  if (letter.state === 'error' && nutritionRead !== undefined) {
+    nutritionUnavailable = true
+    letter = createWeeklyLetter({ enabled: true, data })
+  }
+  return nutritionUnavailable ? { ...letter, nutritionUnavailable } : letter
 }
