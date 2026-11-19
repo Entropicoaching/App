@@ -32,11 +32,11 @@ function Preview({ controller }) {
       h(PlanAdvice, { text: s.plan.portionGuidance })))
 }
 
-export default function UpcomingPlan({ athleteId, today, date, client }) {
+export default function UpcomingPlan({ athleteId, today, date, client, planStart }) {
   const [owned, setOwned] = useState(null)
   useEffect(() => {
     let controller
-    try { controller = createUpcomingPlan({ enabled: true, athleteId, today, date, client }) }
+    try { controller = createUpcomingPlan({ enabled: true, athleteId, today, date, client, planStart }) }
     catch { setOwned({ athleteId, today, date, client, controller: null }); return }
     setOwned({ athleteId, today, date, client, controller })
     void controller.load()
