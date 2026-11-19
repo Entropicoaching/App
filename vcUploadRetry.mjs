@@ -22,6 +22,11 @@ export function uploadMaxBytes(search = globalThis.location?.search) {
   catch { return VC_UPLOAD_MAX_BYTES }
 }
 
+function failureReason(error) {
+  const reason = typeof error?.message === 'string' ? error.message.trim().slice(0, 240) : ''
+  return reason ? ` Årsag: ${reason.replace(/[.\s]+$/, '')}.` : ''
+}
+
 export function mountUploadRetry(document, retry, storage, search) {
   if (!uploadRetryEnabled(storage, search)) return null
   const panel = document.createElement('div')
@@ -74,7 +79,8 @@ export function mountUploadRetry(document, retry, storage, search) {
         return result
       }, error => {
         if (error?.vcAborted) show('Annulleret. Videoen er stadig valgt.')
-        else show('Ikke sendt · Prøv igen. Videoen er stadig valgt, så du skal ikke vælge den igen. Hold skærmen åben, til den er sendt.', true)
+        // ORDRE 1890v (Marc 19. nov.: "den siger bar fejl"): arket ligger over banneret, så årsagen står også her.
+        else show(`Ikke sendt · Prøv igen. Videoen er stadig valgt, så du skal ikke vælge den igen. Hold skærmen åben, til den er sendt.${failureReason(error)}`, true)
         throw error
       }).finally(() => { active = null })
       return active
