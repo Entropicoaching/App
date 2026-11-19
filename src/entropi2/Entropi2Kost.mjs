@@ -6,6 +6,7 @@ import { mountExistingTracker } from './kostplan/atlet/trackerAdapter.mjs'
 import { createKostDaySession } from './kostplan/atlet/daySession.mjs'
 import KostDayFrame from './kostplan/atlet/KostDayFrame.mjs'
 import ApprovedPlanShopping from './kostplan/atlet/ApprovedPlanShopping.mjs'
+import { markSentWeekSeen } from './kostplan/atlet/markSeen.mjs'
 
 // Montering af kostskærmen med de aktuelle vægtprops. Navigation går altid til den nyeste handler.
 export function mountKost(host, { athlete, date, client, foods, storage, contracts }, latest, weight = {}) {
@@ -91,6 +92,8 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
       return () => { if (trackerHost.parentElement === container) trackerHost.remove() }
     } })
     void day.controller.load()
+    // Set-mærket til coachen: én gang pr. åbning, aldrig en fejl på skærmen.
+    void markSentWeekSeen({ client, athleteId: athlete.id, date })
     return () => { active = false; setCheckin(null); day.dispose(); if (screen.current === cleanup) screen.current = null; cleanup?.() }
   }, [enabled, athlete?.id, athlete?.kcal_target, athlete?.protein_target, date, client, foods])
   const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
