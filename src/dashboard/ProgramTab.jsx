@@ -441,11 +441,13 @@ export default function ProgramTab({
                             ))}
                           </div>
                           <button style={{ ...s.btnGhost, fontSize: '0.7rem', padding: '0.3rem 0.75rem' }} onClick={async () => {
-                            await Promise.all(weeks.map(w => {
+                            const results = await Promise.all(weeks.map(w => {
                               const newName = assignEdits[w.id] !== undefined ? (assignEdits[w.id] || null) : (w.block_name || null)
                               if (newName === (w.block_name || null)) return Promise.resolve()
                               return supabase.from('weeks').update({ block_name: newName }).eq('id', w.id)
                             }))
+                            const failed = results.find(r => r?.error)
+                            if (failed) showFlash(`Kunne ikke gemme tilknytningerne: ${failed.error.message}`, 'error')
                             fetchWeeks(selectedAthlete.id)
                           }}>Gem tilknytninger</button>
                         </div>
@@ -636,11 +638,12 @@ export default function ProgramTab({
                                         onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); if (e.key === 'Escape') setRenamingBlock(null) }}
                                         onBlur={async () => {
                                           const name = renameValue.trim() || null
-                                          setRenamingBlock(null)
                                           if (name !== (phase.name || null)) {
-                                            await supabase.from('weeks').update({ block_name: name }).in('id', phase.weeks.map(w => w.id))
+                                            const { error } = await supabase.from('weeks').update({ block_name: name }).in('id', phase.weeks.map(w => w.id))
+                                            if (error) { showFlash(`Kunne ikke omdøbe blokken: ${error.message}`, 'error'); return }
+                                            setRenamingBlock(null)
                                             fetchWeeks(selectedAthlete.id)
-                                          }
+                                          } else setRenamingBlock(null)
                                         }}
                                         style={{ flex: 1, minWidth: 0, background: '#141410', border: `1px solid ${color}`, color: '#edeae2', fontSize: '0.78rem', padding: '2px 5px' }}
                                       />

@@ -222,9 +222,13 @@ export function lavProgramHandlinger({
     })
   }
 
+  function visSkrivefejl(hvad, error) {
+    showFlash(coachTabCleanup ? `${hvad} blev ikke gemt. Prøv igen.` : `Kunne ikke gemme ${hvad.toLowerCase()}: ${error.message}`, 'error')
+  }
+
   async function addWeek() {
     const nextNum = weeks.length > 0 ? Math.max(...weeks.map(w => w.week_number)) + 1 : 1
-    await supabase.from('weeks').insert({
+    const { error } = await supabase.from('weeks').insert({
       athlete_id: selectedAthlete.id,
       week_number: weekForm.week_number ? parseInt(weekForm.week_number) : nextNum,
       block_name: weekForm.block_name || null,
@@ -232,19 +236,21 @@ export function lavProgramHandlinger({
       block_description: weekForm.block_description || null,
       start_date: weekForm.start_date || null,
     })
+    if (error) { visSkrivefejl('Ugen', error); return }
     setAddingWeek(false)
     setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: '' })
     fetchWeeks(selectedAthlete.id)
   }
 
   async function updateWeek(weekId) {
-    await supabase.from('weeks').update({
+    const { error } = await supabase.from('weeks').update({
       week_number: parseInt(weekForm.week_number),
       block_name: weekForm.block_name || null,
       coach_note: weekForm.coach_note || null,
       block_description: weekForm.block_description || null,
       start_date: weekForm.start_date || null,
     }).eq('id', weekId)
+    if (error) { visSkrivefejl('Ugen', error); return }
     setEditingWeek(null)
     fetchWeeks(selectedAthlete.id)
   }
@@ -526,7 +532,7 @@ export function lavProgramHandlinger({
     const week = weeks.find(w => w.sessions?.some(s => s.id === sessionId))
     const session = week?.sessions?.find(s => s.id === sessionId)
     const nextOrder = (session?.exercises || []).reduce((max, e) => Math.max(max, e.exercise_order ?? -1), -1) + 1
-    await supabase.from('exercises').insert({
+    const { error } = await supabase.from('exercises').insert({
       session_id: sessionId,
       name: canonicalName(exerciseForm.name) || 'Øvelse',
       sets: parseInt(exerciseForm.sets) || null,
@@ -535,19 +541,21 @@ export function lavProgramHandlinger({
       note: exerciseForm.note || null,
       exercise_order: nextOrder,
     })
+    if (error) { visSkrivefejl('Øvelsen', error); return }
     setAddingExercise(null)
     setExerciseForm({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
     fetchWeeks(selectedAthlete.id)
   }
 
   async function updateExercise(exerciseId) {
-    await supabase.from('exercises').update({
+    const { error } = await supabase.from('exercises').update({
       name: canonicalName(exerciseForm.name),
       sets: parseInt(exerciseForm.sets) || null,
       reps: exerciseForm.reps || null,
       intensity: buildIntensity(),
       note: exerciseForm.note || null,
     }).eq('id', exerciseId)
+    if (error) { visSkrivefejl('Øvelsen', error); return }
     setEditingExercise(null)
     fetchWeeks(selectedAthlete.id)
   }
