@@ -4645,7 +4645,8 @@ function analyzeCleanPath(path) {
   //   3) Squat og bænk: en mindre rest af en optur tæller, når den begynder ved bunden eller stangen
   //      forinden standsede der (mindst 0,15 s inden for 0,1 radius), og stangen bagefter bliver
   //      stående mindst 0,3 s og derfra enten går en hel nedtur (mindst 0,8 typisk optur) til en ny
-  //      bund eller står, til klippet slutter. En hale, der falder gennem gulvet, standser ikke ved
+  //      bund eller står, til klippet slutter (er halen klippet fra, ses slutningen ikke, og resten
+  //      tæller ikke). En hale, der falder gennem gulvet, standser ikke ved
   //      bunden; et løft, der går i stå og fortsætter op, går ikke ned til en ny bund; og et
   //      mislykket forsøg går kun stumpen ned igen.
   //   4) Dødløft: begyndelsen af en optur tæller, når stangen fra gulvet når mindst en halv radius
@@ -4760,7 +4761,7 @@ function analyzeCleanPath(path) {
           if (smoothedY[index] <= rise.to - plate * .5) return null;
           if (smoothedY[index] >= rise.to + plate * .5) sunk = true;
         }
-        if (index >= n && sunk) return null;
+        if (index >= n && (sunk || path.tailCutAt != null)) return null;
         return {start:rise.start,end:rise.end};
       }
       return null;
