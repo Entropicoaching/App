@@ -6272,7 +6272,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       }
       return 0;
     };
-    let lifts=0,far=null,moved=0,soft=null,sure=false,bounce=turns[0].top,first=-1,solidEnd=-1,lastEnd=-1;
+    let lifts=0,far=null,moved=0,soft=null,sure=false,bounce=turns[0].top,first=-1,solidEnd=-1,lastEnd=-1,short=false;
     let minRise=Infinity,maxRise=0,rest=Infinity;
     const like=u=>u.amp>=minAmp*.85&&u.amp<=maxAmp*1.15&&u.rise>=minRise*.75&&u.rise<=maxRise*1.35;
     for(let k=1;k<turns.length;k++){
@@ -6294,6 +6294,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       const alike=rested&&twins&&(rest===Infinity||(rest>=.5&&pause>=rest*.75));
       if(same||(Math.abs(from.y-lastBot)<=radius*2.5&&Math.abs(to.y-lastTop)<=radius*2.5)){
         if(first<0)first=same?far.start:from.i;
+        short=to.y-(same?far.ty:lastTop)>=radius*.4&&(same?far.amp:lastBot-lastTop)-amp>=radius*.4;
         lifts+=same?2:1;lastBot=from.y;lastTop=to.y;far=null;
         if(same&&!alike){moved+=2;soft??=before;}
         if(alike&&!soft)sure=true;
@@ -6322,12 +6323,39 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       cut=again;
       // Uden flugt fra hele sættets område klippes kun, når sporet ikke stiger en god del af et løfts højde igen efter klippet:
       // er billedet flyttet to gange, kan sættet være fortsat inden for det gamle område.
+      // ORDRE 1661v: flyttes billedet ned igen, mens sættets sidste løft er på vej op, ses opturen ikke
+      // som en optur, og resten af løftet ligner en hale gennem gulvet. Et nyt løft er begyndt, når
+      // sporet efter sidste talte løft standser ved bunden og går over en halv radius videre ned (squat
+      // og bænk: en hale falder gennem gulvet uden at standse der), eller når det stiger en halv
+      // radius fra gulvet, før det er gået gennem det (dødløft). Så klippes der ikke. Et dødløft
+      // slutter på gulvet, så en hale begynder tidligst, når sporet er nede ved gulvet igen.
       if(none){
+        if(short)return;
+        let down=cut;
+        if(!turns[0].top){
+          down=lastEnd;
+          while(down<n&&!(ok(down)&&path.pts[down].y>=lastBot-radius*.3))down++;
+          if(down>=n)return;
+          cut=Math.max(cut,down);
+        }
         let low=-Infinity;
-        for(let i=cut;i<n;i++){
+        for(let i=down;i<n;i++){
           if(!ok(i))continue;
           low=Math.max(low,path.pts[i].y);
-          if(low-path.pts[i].y>=minAmp*.4)return;
+          if(low-path.pts[i].y>=(!turns[0].top&&low<=lastBot+radius*.3?radius*.5:minAmp*.4))return;
+        }
+        if(turns[0].top){
+          let deep=-Infinity,at=-1,prev=-1,halt=null;
+          for(let i=lastEnd;i<n;i++){
+            if(!ok(i))continue;
+            const y=path.pts[i].y;
+            if(y>=deep+radius*.05){
+              if(at>=0&&time(prev)-time(at)>=.15&&Math.abs(deep-lastBot)<=radius*.5)halt??=deep;
+              deep=y;at=i;
+            }
+            if(halt!=null&&y-halt>=radius*.5)return;
+            prev=i;
+          }
         }
       }
     }else if(none)return;
