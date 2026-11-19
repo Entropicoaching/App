@@ -361,26 +361,29 @@ export function lavProgramHandlinger({
   async function addSession(weekId) {
     const week = weeks.find(w => w.id === weekId)
     const nextOrder = (week?.sessions || []).reduce((max, s) => Math.max(max, s.session_order ?? -1), -1) + 1
-    await supabase.from('sessions').insert({
+    const { error } = await supabase.from('sessions').insert({
       week_id: weekId,
       title: sessionForm.title || 'Træning',
       session_order: nextOrder,
       weekday: sessionForm.weekday ?? null,
     })
+    if (error) { visSkrivefejl('Træningen', error); return }
     setAddingSession(null)
     setSessionForm({ title: '', weekday: null })
     fetchWeeks(selectedAthlete.id)
   }
 
   async function updateSession(sessionId) {
-    await supabase.from('sessions').update({ title: sessionForm.title, weekday: sessionForm.weekday ?? null }).eq('id', sessionId)
+    const { error } = await supabase.from('sessions').update({ title: sessionForm.title, weekday: sessionForm.weekday ?? null }).eq('id', sessionId)
+    if (error) { visSkrivefejl('Træningen', error); return }
     setEditingSession(null)
     fetchWeeks(selectedAthlete.id)
   }
 
   function deleteSession(sessionId) {
     askConfirm('Slet denne træning?', async () => {
-      await supabase.from('sessions').delete().eq('id', sessionId)
+      const { error } = await supabase.from('sessions').delete().eq('id', sessionId)
+      if (error) { showFlash(coachTabCleanup ? 'Træningen blev ikke slettet. Prøv igen.' : `Kunne ikke slette træningen: ${error.message}`, 'error'); return }
       if (openSessionId === sessionId) setOpenSessionId(null)
       fetchWeeks(selectedAthlete.id)
     })
@@ -396,8 +399,10 @@ export function lavProgramHandlinger({
     // Renummerér HELE ugen fortløbende (0,1,2,...). Robust selv når flere dage
     // delte samme session_order — en simpel ombytning af to ens værdier ville
     // ellers ikke ændre noget (årsag til at logget-importerede uger sad fast).
-    await Promise.all(sorted.map((sn, i) =>
+    const results = await Promise.all(sorted.map((sn, i) =>
       sn.session_order === i ? null : supabase.from('sessions').update({ session_order: i }).eq('id', sn.id)))
+    const failed = results.find(r => r?.error)
+    if (failed) showFlash(coachTabCleanup ? 'Rækkefølgen blev ikke gemt. Prøv igen.' : `Kunne ikke gemme rækkefølgen: ${failed.error.message}`, 'error')
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -409,8 +414,10 @@ export function lavProgramHandlinger({
     if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return
     ;[sorted[idx], sorted[swapIdx]] = [sorted[swapIdx], sorted[idx]]
     // Samme robuste renummerering som for dage (mod dublerede exercise_order).
-    await Promise.all(sorted.map((ex, i) =>
+    const results = await Promise.all(sorted.map((ex, i) =>
       ex.exercise_order === i ? null : supabase.from('exercises').update({ exercise_order: i }).eq('id', ex.id)))
+    const failed = results.find(r => r?.error)
+    if (failed) showFlash(coachTabCleanup ? 'Rækkefølgen blev ikke gemt. Prøv igen.' : `Kunne ikke gemme rækkefølgen: ${failed.error.message}`, 'error')
     fetchWeeks(selectedAthlete.id)
   }
 
@@ -561,7 +568,8 @@ export function lavProgramHandlinger({
   }
 
   async function deleteExercise(exerciseId) {
-    await supabase.from('exercises').delete().eq('id', exerciseId)
+    const { error } = await supabase.from('exercises').delete().eq('id', exerciseId)
+    if (error) { showFlash(coachTabCleanup ? 'Øvelsen blev ikke slettet. Prøv igen.' : `Kunne ikke slette øvelsen: ${error.message}`, 'error'); return }
     fetchWeeks(selectedAthlete.id)
   }
 
