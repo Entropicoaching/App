@@ -4628,6 +4628,154 @@ function analyzeCleanPath(path) {
       start = null; lastUp = null; downRun = 0;
     }
   }
+  // ORDRE 1764v (Marc 16. nov.: "så skal videocoach dæleme også virke"). Flyttes telefonen under
+  // sættet, flytter banen sig i billedet. Så er banens samlede højde større end løftene, og løft
+  // under 40 % af den blev ikke talt; og flyttes billedet nedad, mens stangen er på vej op, ses kun
+  // en del af opturen. Reglen ovenfor er urørt. Her lægges kun løft til, målt på banens
+  // vendepunkter (en top eller bund, når sporet bagefter går mindst 0,6 skiveradius den anden vej).
+  // Sættets typiske optur er den optur på mindst en skiveradius, som opture for mest samlet højde
+  // ligner (0,85 til 1,18 gange dens højde; mindst to, ellers lægges intet til).
+  // Sættets bund (gulvet i dødløft) er, hvor forrige talte optur endte, plus en typisk optur; "ved
+  // bunden" er højst en halv radius eller 15 % af en typisk optur derfra.
+  //   1) En optur, der ligner den typiske, tæller, når den har en mage samme sted i billedet (bund
+  //      og top højst 1,25 radius fra) eller kommer før et andet talt løft. Et enkelt udsving for
+  //      sig selv til sidst tæller stadig ikke.
+  //   2) En optur fra sættets bund tæller, når den er mindst 0,44 typisk optur (det samme som 40 %
+  //      af banens højde, når billedet ikke er flyttet).
+  //   3) Squat og bænk: en mindre rest af en optur tæller, når den begynder ved bunden eller stangen
+  //      forinden standsede der (mindst 0,15 s inden for 0,1 radius), og stangen bagefter bliver
+  //      stående mindst 0,3 s og derfra enten går en hel nedtur (mindst 0,8 typisk optur) til en ny
+  //      bund eller står, til klippet slutter. En hale, der falder gennem gulvet, standser ikke ved
+  //      bunden; et løft, der går i stå og fortsætter op, går ikke ned til en ny bund; og et
+  //      mislykket forsøg går kun stumpen ned igen.
+  //   4) Dødløft: begyndelsen af en optur tæller, når stangen fra gulvet når mindst en halv radius
+  //      op og derfra går en hel nedtur (0,8 til 1,25 typisk optur) ned til et nyt gulv mindst en
+  //      halv radius under det gamle.
+  // Et tillagt løft skal have målt fart opad, så det får et tal som de andre.
+  const plate = 22.5 / cmPerPx, ok = index => raw.valid[index];
+  // Et vendepunkt flytter sig kun, når sporet kommer mindst 0,02 radius videre, så en top ligger, hvor stangen nåede op.
+  const turns = [], still = plate * .02;
+  for (let index = 0, dir = 0, lo = null, hi = null, cur = null; index <= n; index++) {
+    if (index === n) { if (cur) turns.push({i:cur.i,y:cur.y,top:dir < 0}); break; }
+    if (!ok(index)) continue;
+    const y = smoothedY[index];
+    if (!dir) {
+      if (!lo || y < lo.y) lo = {i:index,y};
+      if (!hi || y > hi.y) hi = {i:index,y};
+      if (y - lo.y >= plate * .6) { turns.push({i:lo.i,y:lo.y,top:true}); dir = 1; cur = {i:index,y}; }
+      else if (hi.y - y >= plate * .6) { turns.push({i:hi.i,y:hi.y,top:false}); dir = -1; cur = {i:index,y}; }
+    } else if (dir > 0) {
+      if (y > cur.y + still) cur = {i:index,y};
+      else if (cur.y - y >= plate * .6) { turns.push({i:cur.i,y:cur.y,top:false}); dir = -1; cur = {i:index,y}; }
+    } else if (y < cur.y - still) cur = {i:index,y};
+    else if (y - cur.y >= plate * .6) { turns.push({i:cur.i,y:cur.y,top:true}); dir = 1; cur = {i:index,y}; }
+  }
+  const rises = [];
+  for (let k = 1; k < turns.length; k++) if (turns[k].top) {
+    rises.push({start:turns[k - 1].i,end:turns[k].i,from:turns[k - 1].y,to:turns[k].y,size:turns[k - 1].y - turns[k].y});
+  }
+  const alike = (rise, size) => rise.size >= size * .85 && rise.size <= size * 1.18;
+  let ref = 0, most = 0;
+  for (const rise of rises) {
+    const others = rises.filter(other => alike(other, rise.size));
+    const height = others.reduce((sum, other) => sum + other.size, 0);
+    if (others.length >= 2 && rise.size >= plate && height > most) { most = height; ref = rise.size; }
+  }
+  if (range > 0 && ref > 0) {
+    const counted = rise => detected.some(rep => rep.start <= rise.end && rep.end >= rise.start);
+    const paired = rise => rises.some(other => other !== rise && alike(other, ref)
+      && Math.abs(other.from - rise.from) <= plate * 1.25 && Math.abs(other.to - rise.to) <= plate * 1.25);
+    // 1) opture, der ligner sættets
+    const added = [];
+    for (let k = rises.length - 1; k >= 0; k--) {
+      const rise = rises[k];
+      if (counted(rise) || !alike(rise, ref)) continue;
+      const later = detected.some(rep => rep.start > rise.end) || added.length > 0;
+      if (later || paired(rise)) added.unshift({start:rise.start,end:rise.end});
+    }
+    const all = [...detected, ...added].sort((a, b) => a.start - b.start);
+    // 2) opture fra sættets bund
+    const near = Math.max(plate * .5, ref * .15);
+    for (const rise of rises) {
+      if (rise.size < ref * .44 || all.some(rep => rep.start <= rise.end && rep.end >= rise.start)) continue;
+      const previous = all.filter(rep => rep.end < rise.start).at(-1);
+      if (!previous || Math.abs(rise.from - (smoothedY[previous.end] + ref)) > near) continue;
+      all.push({start:rise.start,end:rise.end});
+      all.sort((a, b) => a.start - b.start);
+    }
+    // 3) og 4) billedet blev flyttet nedad under opturen: højst ét løft mellem to talte
+    const cutShort = (previous, until) => {
+      const floor = smoothedY[previous.end] + ref;
+      if (lift === 'deadlift') {
+        let index = previous.end;
+        while (index < until && !(ok(index) && smoothedY[index] >= floor - near)) index++;
+        let low = -Infinity, at = -1;
+        for (; index < until; index++) {
+          if (!ok(index)) continue;
+          const y = smoothedY[index];
+          if (y > floor + near) return null;
+          if (y > low) { low = y; at = index; }
+          else if (low - y >= plate * .3) break;
+        }
+        let high = low, top = at;
+        for (; index < until; index++) {
+          if (!ok(index)) continue;
+          const y = smoothedY[index];
+          if (y < high) { high = y; top = index; }
+          else if (y - high >= ref * .8) break;
+        }
+        if (index >= until || low - high < plate * .5) return null;
+        let deep = smoothedY[index];
+        for (; index < n; index++) {
+          if (!ok(index)) continue;
+          const y = smoothedY[index];
+          if (y > deep) deep = y;
+          else if (deep - y >= plate * .3) break;
+        }
+        return deep - high <= ref * 1.25 && deep >= low + plate * .5 ? {start:at,end:top} : null;
+      }
+      if (!(squatMode || benchMode)) return null;
+      for (const rise of rises) {
+        if (rise.start <= previous.end || rise.end >= until) continue;
+        let halted = Math.abs(rise.from - floor) <= near;
+        for (let from = previous.end; from < rise.start && !halted; from++) {
+          if (!ok(from) || Math.abs(smoothedY[from] - floor) > near) continue;
+          let low = smoothedY[from], high = low, to = from;
+          for (let index = from + 1; index <= rise.start; index++) {
+            if (!ok(index)) continue;
+            low = Math.max(low, smoothedY[index]); high = Math.min(high, smoothedY[index]);
+            if (low - high > plate * .1) break;
+            to = index;
+          }
+          halted = raw.times[to] - raw.times[from] >= .15;
+        }
+        if (!halted) return null;
+        let index = rise.end + 1;
+        while (index < n && (!ok(index) || Math.abs(smoothedY[index] - rise.to) <= plate * .5)) index++;
+        if (raw.times[Math.min(index, n - 1)] - raw.times[rise.end] < .3) return null;
+        let sunk = false;
+        for (; index < n; index++) {
+          if (!ok(index)) continue;
+          if (smoothedY[index] >= rise.to + ref * .8) break;
+          if (smoothedY[index] <= rise.to - plate * .5) return null;
+          if (smoothedY[index] >= rise.to + plate * .5) sunk = true;
+        }
+        if (index >= n && sunk) return null;
+        return {start:rise.start,end:rise.end};
+      }
+      return null;
+    };
+    const final = [];
+    all.forEach((rep, k) => {
+      final.push(rep);
+      const extra = cutShort(rep, k + 1 < all.length ? all[k + 1].start : n);
+      if (extra) final.push(extra);
+    });
+    const kept = final.filter(rep => detected.includes(rep)
+      || velocity.slice(rep.start, rep.end + 1).some(value => value > .05));
+    detected.length = 0;
+    detected.push(...kept);
+  }
   const phase = (kind, startIndex, endIndex) => ({kind,
     start:Math.max(0, Math.min(n - 1, startIndex)),
     end:Math.max(0, Math.min(n - 1, Math.max(startIndex, endIndex)))});
