@@ -73,6 +73,14 @@ export function videoUploadAlreadyExistsError(error) {
   return /duplicate/i.test(message) || /already exists/i.test(message)
 }
 
+// ORDRE 1890v (Marc 19. nov.: "den siger bar fejl"): en coach, der træner på sin egen profil (ordre 1610v),
+// er logget ind som coach. Lageret og databasen tager kun imod video fra atletens eget login, så
+// afvisningen får grunden med på dansk. Atletens eget login får teksten uændret.
+export function videoSendCoachLoginReason(text, athlete, userId) {
+  const coachLogin = typeof userId === 'string' && !!userId && athlete?.coach_id === userId && athlete?.user_id !== userId
+  return coachLogin ? `Du er logget ind som coach, og video kan kun sendes fra atletens eget login (${text})` : text
+}
+
 // Defense-in-depth: samme tjekliste som databasens
 // entropi_vc3_athlete_insert_own_draft-policy og video_analyses_v3_payload_bounds
 // (schema_version/schema_v/source_mode/status/coach_note/bias_note håndteres af

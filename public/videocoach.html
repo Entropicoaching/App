@@ -450,6 +450,21 @@
     background:rgba(24,24,20,.94); backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px); box-shadow:0 12px 34px rgba(0,0,0,.28); }
   body.athlete #athleteInstantResult[hidden] { display:none; }
+  /* ORDRE 1890v (Marc 19. nov.): panelet kan foldes til en lille bjælke, så videoen og banen ses
+     i fuld højde. Foldet er kun overskriften tilbage; indholdet står urørt i DOM'et. */
+  body.athlete #athleteInstantFoldBtn { display:flex; align-items:center; justify-content:space-between;
+    gap:10px; width:100%; min-height:44px; margin:-6px 0 2px; padding:0; border:0; background:none;
+    color:inherit; text-align:left; text-transform:none; letter-spacing:normal; border-radius:0;
+    box-shadow:none; cursor:pointer; }
+  body.athlete #athleteInstantFoldBtn .athInstantHead { margin-bottom:0; }
+  body.athlete #athleteInstantFoldBtn .athInstantFoldLabel { flex:0 0 auto; color:var(--accent);
+    font-family:system-ui,sans-serif; font-size:12px; font-weight:650; letter-spacing:.04em;
+    text-transform:uppercase; }
+  body.athlete #athleteInstantResult[data-folded="true"] { padding-top:6px; padding-bottom:0; overflow:hidden; }
+  body.athlete #athleteInstantResult[data-folded="true"] > :not(#athleteInstantFoldBtn) { display:none; }
+  body.athlete #athleteInstantResult[data-folded="true"] #athleteInstantFoldBtn { margin:0 0 6px; }
+  /* Foldet skjules også stangbane-kortet bag panelet, ellers dækker det stadig den nederste halvdel af videoen. */
+  body.athlete[data-athlete-state="done"][data-instant-folded="true"] #barPathHUD { display:none !important; }
   body.athlete #athleteInstantResult .athInstantHead { color:var(--text);
     font-family:system-ui,sans-serif; font-size:15px; font-weight:650;
     letter-spacing:-.01em; margin-bottom:8px; }
@@ -2581,7 +2596,10 @@ function step(dt) {
   tv.currentTime = Math.max(0, Math.min(tv.duration, tv.currentTime + dt));
 }
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
+  // ORDRE 1890v (Marc 19. nov.): mellemrum i notatet til coachen startede afspilningen og nulstillede
+  // ringen. Genveje virker aldrig, mens fokus er i et felt, man skriver i.
+  const field = e.target;
+  if (field && (field.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(field.tagName || ''))) return;
   if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
   if (e.code === 'ArrowLeft') step(-FRAME);
   if (e.code === 'ArrowRight') step(FRAME);
@@ -11574,6 +11592,23 @@ if (ATHLETE) {
   // afskårne hale flyttes herind (samme element, så den aldrig står to steder).
   const athleteTailNote = VC_ATHLETE_INSTANT ? document.getElementById('vcTailCutNote') : null;
   athleteInstantResult.append(athleteInstantHead, athleteInstantRows, ...(athleteTailNote ? [athleteTailNote] : []), athleteInstantFoot, athleteInstantActions);
+  // ORDRE 1890v (Marc 19. nov.: "kan man ikke minimere send til coach overlay"): overskriften er en
+  // knap, der folder panelet til en lille bjælke og åbner det igen. Intet i panelet ændres af det.
+  const athleteInstantFoldBtn = document.createElement('button');
+  athleteInstantFoldBtn.type = 'button';
+  athleteInstantFoldBtn.id = 'athleteInstantFoldBtn';
+  const athleteInstantFoldLabel = document.createElement('span');
+  athleteInstantFoldLabel.className = 'athInstantFoldLabel';
+  athleteInstantFoldBtn.append(athleteInstantHead, athleteInstantFoldLabel);
+  athleteInstantResult.prepend(athleteInstantFoldBtn);
+  const setAthleteInstantFolded = folded => {
+    athleteInstantResult.dataset.folded = String(folded);
+    document.body.dataset.instantFolded = String(folded);
+    athleteInstantFoldBtn.setAttribute('aria-expanded', String(!folded));
+    athleteInstantFoldLabel.textContent = folded ? 'Vis ▴' : 'Skjul ▾';
+  };
+  athleteInstantFoldBtn.onclick = () => setAthleteInstantFolded(athleteInstantResult.dataset.folded !== 'true');
+  setAthleteInstantFolded(false);
   document.body.appendChild(athleteInstantResult);
 
   athleteInstantDiscardBtn.onclick = () => {
@@ -11603,6 +11638,7 @@ if (ATHLETE) {
     athleteInstantSaveBtn.disabled = false;
     athleteInstantDiscardBtn.disabled = false;
     athleteInstantSaveBtn.textContent = 'Send video til coach';
+    setAthleteInstantFolded(false);
     athleteInstantResult.hidden = false;
   };
 

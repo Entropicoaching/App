@@ -13,7 +13,7 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft } from '../videoCoachSubmission'
 import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequest,
-  videoUploadAlreadyExistsError, videoUploadMaxBytes, videoUploadReserveMulig, VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
+  videoSendCoachLoginReason, videoUploadAlreadyExistsError, videoUploadMaxBytes, videoUploadReserveMulig, VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
 import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
@@ -117,6 +117,10 @@ export function useVideoCoachBro({
           reply({ ok: false, error: 'VideoCoach-forbindelsen er ikke registreret' })
           return
         }
+        // ORDRE 1890v (Marc 19. nov.: "den siger bar fejl"): videolageret og databasen tager kun imod video
+        // fra atletens eget login (worker.js:85, vc_upload_athlete_insert_own, entropi_vc3_athlete_insert_own_draft).
+        // En coach, der træner på sin egen profil (ordre 1610v), afvises derfor; så står grunden på dansk.
+        const coachLoginReason = text => videoSendCoachLoginReason(text, currentAthlete, session?.user?.id)
         const selectionState = videoSetRef?.current
         const selectedSet = selectionState?.enabled === true ? selectionState.selected : null
         if (selectionState?.enabled === true && (!selectedSet || selectionState.athleteId !== currentAthlete.id)) {
@@ -207,7 +211,7 @@ export function useVideoCoachBro({
             return
           }
           if (!videoUploadAlreadyExistsError(upload.error)) {
-            reply({ ok: false, error: `Video kunne ikke uploades: ${upload.error.message || 'ukendt fejl'}` })
+            reply({ ok: false, error: coachLoginReason(`Video kunne ikke uploades: ${upload.error.message || 'ukendt fejl'}`) })
             return
           }
         }
@@ -227,7 +231,7 @@ export function useVideoCoachBro({
         if (saved.error) {
           // Videoen er allerede lagt i bucket'en (idempotent sti pr. client_analysis_id) -
           // kun selve rækken mangler. Et nyt tryk på "Prøv at sende igen" er nok.
-          reply({ ok: false, error: saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes. Prøv igen.' })
+          reply({ ok: false, error: coachLoginReason(saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes. Prøv igen.') })
           return
         }
         clearPendingSilentFails(currentAthlete.id)
