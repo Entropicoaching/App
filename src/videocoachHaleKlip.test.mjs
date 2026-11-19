@@ -589,3 +589,88 @@ test('billedet rettes opad i en hvile og flyttes ned igen midt i sidste løfts o
   assert.deepEqual(inde, [], `${inde.length} baner mister sidste optur, selv om flytningen nedad er mindre end løftet og sporet bliver inden for det gamle område`)
   assert.ok(tabt.length <= 560, `${tabt.length} af 8640 baner mister sidste optur (560 før 1634v): ${tabt.slice(0, 3).join(' | ')}`)
 })
+
+// Ordre 1764v (Marc 16. nov.: "så skal videocoach dæleme også virke"). Reptællingen fra analyzeCleanPath
+// i public/videocoach.html, kørt efter haleklipningen som på siden. Flyttes telefonen under sættet, blev
+// løft ikke talt: banens samlede højde blev større end løftene, og en optur, hvor billedet flyttes nedad,
+// ses kun delvist.
+const taelFra = html.indexOf('  const median = values => {', html.indexOf('function analyzeCleanPath(path) {'))
+const taelTil = html.indexOf('  const phase = (kind, startIndex, endIndex)', taelFra)
+assert.ok(taelFra > 0 && taelTil > taelFra, 'reptællingen findes i videocoach.html')
+const taelKode = new Function('raw', 'n', 'canvas', 'cmPerPx', 'lift', `const squatMode=lift==='squat',benchMode=lift==='bench';\n${html.slice(taelFra, taelTil)}\n  return detected`)
+function reps(path, r, lift, medKlip = true) {
+  if (medKlip) klip(path, r)
+  const raw = { pts: path.pts, times: path.times, valid: path.valid.map(v => v === true) }
+  return taelKode(raw, raw.pts.length, { width: Math.max(720, r * 6.75) }, 45 / (2 * r), lift)
+}
+// Et sæt med flytninger af billedet og en hale. flyt: [{ efter: løft nr. (hvilen efter det), i: 'hvile' | 'op', dy, sek }]
+function saetMedFlyt({ loeft = 'squat', rom = 4, r = 100, fps = 30, antal = 5, flyt = [], hvile = 1, ro = 2, ryst = 0, hale = null }) {
+  const top = 10 * r + 300, bot = top + rom * r, doed = loeft === 'deadlift', a = doed ? bot : top, b = doed ? top : bot
+  const pts = [{ x: 300, y: a }], skift = []
+  const hold = s => { const q = pts.at(-1); for (let i = 0; i < Math.round(s * fps); i++) pts.push({ ...q }) }
+  const to = (s, x, y) => { const q = pts.at(-1), m = Math.max(2, Math.round(s * fps)); for (let i = 1; i <= m; i++) pts.push({ x: q.x + (x - q.x) * glat(i / m), y: q.y + (y - q.y) * glat(i / m) }) }
+  hold(0.6)
+  for (let k = 1; k <= antal; k++) {
+    const op = flyt.find(f => f.loeft === k && f.i === 'op')
+    if (op && doed) skift.push({ ...op, fra: pts.length + Math.round(0.3 * fps) })
+    to(1.1, 300, b)
+    if (op && !doed) skift.push({ ...op, fra: pts.length + Math.round(0.05 * fps) })
+    to(1.3, 300, a)
+    const hv = flyt.find(f => f.loeft === k && f.i === 'hvile')
+    if (hv) { skift.push({ ...hv, fra: pts.length + Math.round(0.2 * fps) }); hold(1.2) }
+    if (k < antal) hold(hvile)
+  }
+  hold(ro)
+  if (hale) hale({ pts, hold, to, top, bot, a })
+  pts.forEach((q, i) => {
+    for (const f of skift) q.y += f.dy * r * glat((i - f.fra) / ((f.sek || 0.8) * fps))
+    q.y += ryst * r * Math.sin(i / fps * 1.3 * 6.283 + 1); q.x += ryst * r * Math.sin(i / fps * 2.1 * 6.283)
+  })
+  return lavBane(pts, fps)
+}
+
+test('reptælling uden flytning: fem løft giver fem reps i squat, bænk og dødløft', () => {
+  for (const [loeft, rom] of [['squat', 4.1], ['bench', 2.2], ['deadlift', 4.1]]) for (const r of [14, 107, 300]) for (const fps of [30, 60])
+    assert.equal(reps(saetMedFlyt({ loeft, rom, r, fps }), r, loeft).length, 5, `${loeft} R ${r} fps ${fps}`)
+})
+
+test('reptælling: billedet flyttes to gange i hvilerne, og løftene er små mod flytningerne: alle løft tælles', () => {
+  // bænk 2,2 radius, billedet 4,5 radius ned efter løft 2 og 3 radius op efter løft 4 (før 1764v: 0 reps)
+  for (const r of [14, 107]) for (const ryst of [0, 0.08]) {
+    const flyt = [{ loeft: 2, i: 'hvile', dy: 4.5 }, { loeft: 4, i: 'hvile', dy: -3 }]
+    assert.equal(reps(saetMedFlyt({ loeft: 'bench', rom: 2.2, r, antal: 6, flyt, ryst }), r, 'bench').length, 6, `bænk R ${r} ryst ${ryst}`)
+    assert.equal(reps(saetMedFlyt({ loeft: 'deadlift', rom: 3, r, antal: 6, flyt, ryst }), r, 'deadlift').length, 6, `dødløft R ${r} ryst ${ryst}`)
+  }
+})
+
+test('reptælling: billedet rettes op i en hvile og flyttes ned igen midt i sidste løfts optur: sidste løft tælles', () => {
+  // som klippene k3-to-flyt-squat (3,5 radius ned), k3-to-flyt-squat5 (5 radius ned) og to-doed-op-ned
+  for (const r of [14, 107]) for (const dy of [2, 3.5, 5]) {
+    const flyt = [{ loeft: 2, i: 'hvile', dy: -2.7 }, { loeft: 5, i: 'op', dy }]
+    assert.equal(reps(saetMedFlyt({ loeft: 'squat', rom: 4.1, r, flyt, ro: 3 }), r, 'squat').length, 5, `squat R ${r} ned ${dy}`)
+  }
+  for (const r of [14, 107]) for (const dy of [2, 3.5]) {
+    const flyt = [{ loeft: 2, i: 'hvile', dy: -3 }, { loeft: 5, i: 'op', dy }]
+    assert.equal(reps(saetMedFlyt({ loeft: 'deadlift', rom: 4.1, r, flyt, ro: 3 }), r, 'deadlift').length, 5, `dødløft R ${r} ned ${dy}`)
+  }
+})
+
+test('reptælling: det, der ikke er løft, tælles stadig ikke', () => {
+  const r = 100
+  // (b): efter sættet falder sporet 8 radius gennem gulvet og gør ét udsving magen til sættets løft. Uden
+  // haleklipning, så tællingen selv ser udsvinget: løftene er under 40 % af banens højde og tælles, fordi de
+  // har mager samme sted; udsvinget står alene og tælles ikke.
+  const etUdsving = rom => ({ pts, hold, to, bot }) => { to(1.5, 320, bot + 8 * r); hold(0.6); to(1.3, 320, bot + 8 * r - rom * r); hold(2) }
+  assert.equal(reps(saetMedFlyt({ rom: 4.1, r, hale: etUdsving(4.1) }), r, 'squat', false).length, 5, 'ét udsving efter sættet')
+  assert.equal(reps(saetMedFlyt({ loeft: 'bench', rom: 2.2, r, hale: etUdsving(2.2) }), r, 'bench', false).length, 5, 'bænk: ét udsving efter sættet')
+  // en hale gennem gulvet, der ikke standser ved bunden og kommer lidt op igen
+  const gulvOp = ({ pts, hold, to, bot }) => { to(1.2, 320, bot + 3 * r); hold(0.8); to(0.8, 320, bot + 1.8 * r); hold(1.5) }
+  assert.equal(reps(saetMedFlyt({ rom: 4.1, r, hale: gulvOp }), r, 'squat', false).length, 5, 'hale gennem gulvet og lidt op')
+  assert.equal(reps(saetMedFlyt({ loeft: 'deadlift', rom: 4.1, r, hale: gulvOp }), r, 'deadlift', false).length, 5, 'dødløft: hale gennem gulvet og lidt op')
+  // sidste løft går i stå en tredjedel oppe, synker lidt og fortsætter op: ét løft, ikke to
+  const gaarIStaa = ({ pts, hold, to, top, bot }) => { to(1.1, 300, bot); to(0.6, 300, bot - 1.4 * r); hold(0.3); to(0.3, 300, bot - 1.2 * r); to(1.2, 300, top); hold(2) }
+  assert.equal(reps(saetMedFlyt({ rom: 4.1, r, antal: 4, hale: gaarIStaa }), r, 'squat').length, 5, 'løft, der går i stå og fortsætter')
+  // et løft, der kun kommer en fjerdedel op og går ned igen til samme bund, og derefter et helt løft
+  const halvt = ({ pts, hold, to, top, bot }) => { to(1.1, 300, bot); to(0.5, 300, bot - 1 * r); to(0.5, 300, bot); to(1.3, 300, top); hold(2) }
+  assert.equal(reps(saetMedFlyt({ rom: 4.1, r, antal: 4, hale: halvt }), r, 'squat').length, 5, 'en fjerdedel op og ned igen')
+})
