@@ -226,11 +226,16 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   // 1916: læs den næste sendte uge kun, når Kost i dag er vist uden planmåltider.
   // Kun læsning; fejl eller ingen plan giver ingen linje.
   const wantNext = quick && noPlanToday && typeof onShowPlan === 'function'
+  // Én læsning pr. atlet, dag og klient: StrictMode og et midlertidigt skjult Kost i dag læser ikke igen.
   const [next, setNext] = useState(null)
+  const nextRead = useRef(null)
   useEffect(() => {
     if (!wantNext) return undefined
     let live = true
-    void readNextPlanStart({ client, athleteId, today: date }).then(start => { if (live) setNext({ athleteId, date, client, start }) })
+    const r = nextRead.current
+    const read = r?.athleteId === athleteId && r?.date === date && r?.client === client ? r
+      : (nextRead.current = { athleteId, date, client, promise: readNextPlanStart({ client, athleteId, today: date }) })
+    void read.promise.then(start => { if (live) setNext({ athleteId, date, client, start }) })
     return () => { live = false }
   }, [wantNext, client, athleteId, date])
   const nextStart = wantNext && next?.athleteId === athleteId && next?.date === date && next?.client === client ? next.start : null
