@@ -37,6 +37,8 @@ with check (exists (
     and a.user_id = (select auth.uid()) and p.status = 'godkendt'
 ));
 
+-- Production gives new public tables everything for the API roles by default; take it back first.
+revoke all on table public.kostplan_v1_seen from public, anon, authenticated;
 grant select on table public.kostplan_v1_seen to authenticated;
 grant insert (athlete_id, plan_id, version_id) on public.kostplan_v1_seen to authenticated;
 

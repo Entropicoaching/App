@@ -24,6 +24,7 @@ test('contract: only kostplan_v1_seen, RLS on, narrow grants, begin/commit, no l
   assert.match(sql, /primary key \(athlete_id, version_id\)/)
   assert.match(sql, /alter table public\.kostplan_v1_seen enable row level security;/)
   assert.doesNotMatch(sql, /\bdrop\b|\bto anon\b|security definer|\bupdate\b|\bdelete\b/i)
+  assert.match(sql, /revoke all on table public\.kostplan_v1_seen from public, anon, authenticated;\s*grant select/)
   assert.deepEqual([...sql.matchAll(/grant ([^;]+);/g)].map(m => m[1].replace(/\s+/g, ' ')), [
     'select on table public.kostplan_v1_seen to authenticated',
     'insert (athlete_id, plan_id, version_id) on public.kostplan_v1_seen to authenticated'])
@@ -60,6 +61,8 @@ test('REQUIRED PGlite: athlete writes own seen row once, coach reads own athlete
         create function auth.uid() returns uuid language sql stable as
           $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
         grant usage on schema public, auth to authenticated, anon;
+        -- Som produktionen (prod-skema-20261108.sql:60): nye tabeller i public får alt for API-rollerne.
+        alter default privileges in schema public grant all on tables to anon, authenticated;
         grant execute on function auth.uid() to authenticated, anon;
         create table public.athletes(id uuid primary key, user_id uuid, coach_id uuid);
         alter table public.athletes enable row level security;
