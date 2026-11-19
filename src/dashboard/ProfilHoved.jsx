@@ -14,6 +14,29 @@ import { HUB_SECTIONS } from './hubSektioner.jsx'
 
 const STYRKE_LOG_DAGE = 120 // 84 dage "før"-vindue + margen
 
+const STYRKE_FEJL_TEKST = 'Styrke og smerte kunne ikke hentes'
+
+// Ordre 1884: styrkelinje og smertesignal. En fejlet læsning må ikke ligne en atlet uden logs.
+// Samme soegning som foer (ordre 1440); returnerer status i stedet for at sluge fejl.
+async function hentStyrkeLogs(client, athleteId, fra) {
+  try {
+    const { data, error } = await client.from('exercise_logs')
+      .select('athlete_id, exercise_id, note, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
+      .eq('athlete_id', athleteId).gte('logged_at', fra)
+      .order('logged_at', { ascending: false }).limit(2000)
+    if (error || !Array.isArray(data)) return { status: 'error' }
+    return { status: 'ok', rows: data }
+  } catch {
+    return { status: 'error' }
+  }
+}
+
+// Ved fejl bevares tidligere hentede raekker for samme atlet; en anden atlets raekker bevares aldrig.
+function naesteStyrkeTilstand(prev, athleteId, svar) {
+  if (svar.status === 'ok') return { athleteId, status: 'ok', rows: svar.rows }
+  return { athleteId, status: 'error', rows: prev.athleteId === athleteId ? prev.rows : [] }
+}
+
 export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgning = false, adherenceContent = null, mobilitetCoach = false, mobilityCoachId, onMobilitySaved, mobilitetHjalp = false, coachRyd = false,
   coachTabCleanup = false, a, activeTab, isMobile, navMenuOpen, nextPriorityItem, openCoachPriorityItem,
   priorityQueueContext, profilePriorityContext, profileReturnView, profilesLastSeen, setActiveTab, setEditing,
@@ -22,7 +45,10 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
   // Ordre 1440: linjen henter sin egen smalle logrække (kun de felter og de seneste
   // STYRKE_LOG_DAGE dage den bruger), så Hjem ikke trækker de op til 2000 fulde rækker
   // som Log-fanen. Rækker fra en tidligere profil vises aldrig (ignore-flag + athlete_id).
-  const [styrkeLogs, setStyrkeLogs] = useState([])
+  // Ordre 1884: en fejlet laesning vises som en linje; tidligere raekker for samme atlet bevares.
+  const [styrkeTilstand, setStyrkeTilstand] = useState({ athleteId: null, status: 'ok', rows: [] })
+  const styrkeLogs = styrkeTilstand.rows
+  const styrkeFejl = styrkeTilstand.status === 'error' && styrkeTilstand.athleteId === a.id
   const moreButton = useRef(null)
   // Ordre 1598: invitationen bygges først ved tryk (dynamisk import), så profilens importgraf er uændret.
   const [invitationSvar, setInvitationSvar] = useState(null)
@@ -61,11 +87,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
   useEffect(() => {
     let ignore = false
     const fra = new Date(Date.now() - STYRKE_LOG_DAGE * 864e5).toISOString().slice(0, 10)
-    supabase.from('exercise_logs')
-      .select('athlete_id, exercise_id, note, weight, reps_completed, logged_at, skipped, exercises(name, sessions(id, athlete_comment, weeks(block_name)))')
-      .eq('athlete_id', a.id).gte('logged_at', fra)
-      .order('logged_at', { ascending: false }).limit(2000)
-      .then(({ data }) => { if (!ignore) setStyrkeLogs(data || []) }, () => {})
+    hentStyrkeLogs(supabase, a.id, fra).then(svar => { if (!ignore) setStyrkeTilstand(prev => naesteStyrkeTilstand(prev, a.id, svar)) })
     return () => { ignore = true }
   }, [a.id])
   const styrke = useMemo(() => {
@@ -117,6 +139,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
             <CoachFold enabled={coachRyd} title="Profiloplysninger">
             {/* Ordre 1544 (Marc 11. og 16. nov.): et tryk paa en atlet skal vise programmet. Styrkekortet er nu en
                 lukket underkategori, saa programmet ikke skubbes ned; smerte aabner det, saa intet advarende gemmes. */}
+            {styrkeFejl && <div data-styrke-fejl role="alert" style={{ ...s.card, marginBottom: '1rem', padding: '0.7rem 0.85rem', color: '#e05555', fontSize: isMobile ? '0.78rem' : '0.74rem', lineHeight: 1.45, borderColor: '#e0555538' }}>{STYRKE_FEJL_TEKST}</div>}
             {styrke && (
               <details data-styrke-linje={styrke.dele.map(d => d.type).join(',')} open={styrke.dele.some(d => d.type === 'smerte')} style={{ ...s.card, marginBottom: '1rem', padding: '0.7rem 0.85rem', borderColor: styrke.dele[0].type === 'smerte' ? '#e0555538' : 'rgba(200,146,58,0.22)' }}>
                 <summary style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7a7770', cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center' }}><span aria-hidden="true" style={{ marginRight: '0.5rem', color: '#c8923a' }}>▸</span>Hvad gør atleten stærkere nu</summary>
