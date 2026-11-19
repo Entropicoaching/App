@@ -2,6 +2,7 @@ import * as React from 'react'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
 import { statusLinje, hurtigeMaaltider, forslag, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
+import { readNextPlanStart } from './upcomingPlanModel.mjs'
 
 // 1899 (Marc 19. nov.): Kost skal være "rigtig simpelt og overskueligt at indtaste";
 // detaljerne er et lag, man åbner. Kortet bruger kostloggens egen log og
@@ -21,6 +22,12 @@ const idle = () => idleState
 const noneState = () => none
 const fmt = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
 const readyPhase = phase => ['ready', 'saved', 'save-error'].includes(phase)
+const WEEKDAYS = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
+// "fredag 20. november": ugedag og dato uden Intl's "den".
+const ugedagDato = day => {
+  const d = new Date(day + 'T00:00:00Z')
+  return `${WEEKDAYS[d.getUTCDay()]} ${new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(d)}`
+}
 
 // Venter, til både kostloggen og dagsplanen er klar (fx efter en genhentning),
 // så et hurtigt tryk lige efter et andet ikke afvises.
@@ -35,7 +42,7 @@ function whenReady(sources, ms = 10000) {
   })
 }
 
-export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom }) {
+export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan }) {
   const t = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || noneState, tracker?.snapshot || noneState)
   const s = useSyncExternalStore(controller?.subscribe || noSubscribe, controller?.snapshot || idle, controller?.snapshot || idle)
   const log = t?.athleteId === athleteId && t?.date === date ? t : none
@@ -124,6 +131,10 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   return h('section', { 'aria-label': 'Kost i dag', 'data-kost-i-dag': '', style: card },
     h('h2', { style: { margin: '0 0 4px', color: '#edeae2' } }, 'Kost i dag'),
     h('p', { 'data-kost-i-dag-tal': '', style: { margin: 0, fontSize: '1.05em' } }, statusLinje(log, pending)),
+    // 1916: en sendt uge, der starter senere, står som én linje; "Se planen" åbner den i laget.
+    nyPlan && h('div', { 'data-kost-ny-plan': nyPlan.date, style: { ...row, alignItems: 'center' } },
+      h('span', null, `Ny kostplan fra ${ugedagDato(nyPlan.date)}`),
+      h('button', { type: 'button', style: { ...control, minHeight: 44 }, onClick: nyPlan.onOpen }, 'Se planen')),
     // Fast højde: beskeden skifter uden at flytte knapperne.
     h('div', { style: { minHeight: 48, marginTop: 4 } },
       note && h('p', { role: note.error ? 'alert' : 'status', 'aria-live': 'polite', style: { margin: 0, fontWeight: note.error ? 600 : 400 } }, note.text),
@@ -201,12 +212,26 @@ const device = () => { try { return typeof localStorage === 'undefined' ? null :
 // Laget "Vis detaljer": alt det gamle står uændret og monteret i children; det
 // skjules kun. Valget huskes pr. atlet på enheden. Uden en skrivbar dag i dag
 // (fremtidig dato, anden dag) vises laget åbent som før.
-export function KostLag({ quick, preview, athleteId, date, checkin, controller, weight, foodEntry, foodGate, trackerFold, water, children }) {
+export function KostLag({ quick, preview, athleteId, date, checkin, controller, weight, foodEntry, foodGate, trackerFold, water,
+  noPlanToday = false, client, onShowPlan, children }) {
   const [details, setDetails] = useState(() => ({ athleteId, open: laesDetaljer(device(), athleteId) }))
   const detailsOpen = details.athleteId === athleteId ? details.open : laesDetaljer(device(), athleteId)
   const [custom, setCustom] = useState(0)
   const setOpen = next => { gemDetaljer(device(), athleteId, next); setDetails({ athleteId, open: next }) }
   const layerOpen = !quick || detailsOpen || preview
+  // 1916: læs den næste sendte uge kun, når Kost i dag er vist uden planmåltider.
+  // Kun læsning; fejl eller ingen plan giver ingen linje.
+  const wantNext = quick && noPlanToday && typeof onShowPlan === 'function'
+  const [next, setNext] = useState(null)
+  useEffect(() => {
+    if (!wantNext) return undefined
+    let live = true
+    void readNextPlanStart({ client, athleteId, today: date }).then(start => { if (live) setNext({ athleteId, date, client, start }) })
+    return () => { live = false }
+  }, [wantNext, client, athleteId, date])
+  const nextStart = wantNext && next?.athleteId === athleteId && next?.date === date && next?.client === client ? next.start : null
+  // Laget åbnes kun for denne visning; atletens husket valg for "Vis detaljer" ændres ikke.
+  const nyPlan = nextStart ? { date: nextStart, onOpen: () => { setDetails({ athleteId, open: true }); onShowPlan(nextStart) } } : null
   // "Egne tal" åbner laget og derefter kostloggens eget felt (samme vej som Log mad).
   useEffect(() => {
     if (!custom || !layerOpen || !foodGate?.current) return
@@ -214,7 +239,7 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   }, [custom, layerOpen])
   const waterLog = h(WaterDayLog, { ...water, compact: quick && !layerOpen })
   return h('div', { style: { textAlign: 'left' } },
-    quick && h(KostIDag, { tracker: checkin, controller, athleteId, date, weight, water: layerOpen ? null : waterLog,
+    quick && h(KostIDag, { tracker: checkin, controller, athleteId, date, weight, water: layerOpen ? null : waterLog, nyPlan,
       onCustom: () => { if (!layerOpen) setOpen(true); setCustom(n => n + 1) } }),
     quick && h('div', { style: { padding: '0 16px 8px' } },
       h('button', { type: 'button', style: control, 'aria-expanded': layerOpen, 'aria-controls': `kost-detaljer-${athleteId}`,

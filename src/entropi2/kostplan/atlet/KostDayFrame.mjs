@@ -4,7 +4,7 @@ import UpcomingPlan from './UpcomingPlan.mjs'
 import KostvaneCheckin from './KostvaneCheckin.mjs'
 import VaegtMaal from './VaegtMaal.mjs'
 import { KostLag } from './KostIDag.mjs'
-import { upcomingDates } from './upcomingPlanModel.mjs'
+import { previewDates } from './upcomingPlanModel.mjs'
 import { calendarDay } from '../../../calendarDate.js'
 
 const { useState, useSyncExternalStore } = React
@@ -16,6 +16,10 @@ const subscribe = () => () => {}
 // on the dark athlete page above the styled diary.
 const control = { minHeight: 44, minWidth: 44, font: 'inherit', whiteSpace: 'normal', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
 const heading = { color: '#edeae2' }
+const dayLabel = (today, day) => {
+  const n = Math.round((Date.parse(day + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86400000)
+  return n === 0 ? 'I dag' : n === 1 ? 'I morgen' : 'Om ' + n + ' dage'
+}
 
 // A new capability is committed for each visible current-day session. Retained
 // callbacks cannot become valid again when returning from a future preview.
@@ -36,9 +40,11 @@ function FoodLogEntry({ entry, gateRef, trackerFold }) {
 
 export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin, weightLogs, weightStatus, weight, shopping }) {
   const [selection, setSelection] = useState(null)
-  const dates = upcomingDates(date)
-  const selected = selection && selection.athleteId === athleteId && selection.today === date && selection.client === client
-    && dates.includes(selection.date) ? selection.date : date
+  const owned = selection && selection.athleteId === athleteId && selection.today === date && selection.client === client
+  // 1916: "Se planen" kan vælge en sendt uges start ud over de 3 dage; den kommer så med i listen.
+  const planStart = owned ? selection.planStart : undefined
+  const dates = previewDates(date, planStart)
+  const selected = owned && dates.includes(selection.date) ? selection.date : date
   const preview = selected !== date
   const waterGate = React.useRef(null)
   const foodGate = React.useRef(null)
@@ -49,8 +55,14 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
       // Retire retained intake callbacks before React commits the preview.
       waterGate.current = null
       foodGate.current = null
-      setSelection({ athleteId, today: date, client, date: next })
+      setSelection({ athleteId, today: date, client, date: next, planStart })
     }
+  }
+  const showPlan = start => {
+    if (!previewDates(date, start).includes(start) || start === date) return
+    waterGate.current = null
+    foodGate.current = null
+    setSelection({ athleteId, today: date, client, date: start, planStart: start })
   }
   const s = useSyncExternalStore(controller?.subscribe || subscribe, controller?.snapshot || snapshot, controller?.snapshot || snapshot)
   const loading = ['idle', 'loading'].includes(s.phase)
@@ -61,22 +73,25 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
     : failed ? 'Kostplanen kunne ikke hentes. Det er endnu ikke afklaret, om du har en aktiv plan.'
       : empty ? 'Du har ingen aktiv kostplan fra din coach for denne dag.'
         : plan ? 'Din godkendte kostplan vises nedenfor.' : 'Kostplanens status er ikke afklaret.'
+  // 1916: dagen er hentet uden planmåltider; først da må Kost i dag nævne en kommende uge.
+  const mealsShown = !preview && plan && !!s.planId && Array.isArray(s.meals) && s.meals.length > 0
+  const noPlanToday = !preview && !loading && !failed && !mealsShown && (empty || (plan && s.phase === 'ready'))
   let foodDayAvailable = !preview && foodEntry && date === calendarDay(new Date())
   if (foodDayAvailable && typeof currentDay === 'function') {
     try { foodDayAvailable = currentDay() === date } catch { foodDayAvailable = false }
   }
   // 1899: "Kost i dag" øverst; alt herunder ligger uændret i laget "Vis detaljer" (KostLag ejer valget).
   return React.createElement(KostLag, { quick: !!foodDayAvailable, preview, athleteId, date, checkin, controller: plan ? controller : null,
-    weight, foodEntry, foodGate, trackerFold, water: { enabled: !preview, athleteId, date, client, currentDay, gateRef: waterGate } },
+    weight, foodEntry, foodGate, trackerFold, noPlanToday, client, onShowPlan: showPlan, water: { enabled: !preview, athleteId, date, client, currentDay, gateRef: waterGate } },
     dates.length > 1 && React.createElement('label', { style: { display: 'block', padding: 16 } }, 'Vælg plandato',
       React.createElement('select', { value: selected, 'aria-label': 'Vælg plandato', style: { ...control, display: 'block', marginTop: 8, maxWidth: '100%' },
-        onChange: selectDate }, ...dates.map((day, index) => React.createElement('option', { key: day, value: day },
-        `${index === 0 ? 'I dag' : index === 1 ? 'I morgen' : 'Om ' + index + ' dage'} · ${new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(day + 'T00:00:00Z'))}`)))),
+        onChange: selectDate }, ...dates.map(day => React.createElement('option', { key: day, value: day },
+        `${dayLabel(date, day)} · ${new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(day + 'T00:00:00Z'))}`)))),
     // U1: today's habit card sits right above the "Log mad" entry; the full diary stays below.
     ...(foodDayAvailable ? [
       ...(checkin ? [React.createElement(KostvaneCheckin, { key: 'kostvane', tracker: checkin, athleteId, date, client })] : []),
       React.createElement(FoodLogEntry, { key: 'food-entry', entry: foodEntry, gateRef: foodGate, trackerFold })] : []),
-    preview && React.createElement(UpcomingPlan, { athleteId, today: date, date: selected, client }),
+    preview && React.createElement(UpcomingPlan, { athleteId, today: date, date: selected, client, planStart }),
     // This subtree keeps its identity while browsing. No load, date change or
     // disposal reaches today's diary, drafts, receipts or nested week planner.
     React.createElement('div', { key: 'today', hidden: preview, inert: preview ? true : undefined },
