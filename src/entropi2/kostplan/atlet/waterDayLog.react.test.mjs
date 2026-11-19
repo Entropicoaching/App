@@ -9,6 +9,7 @@ import Entropi2Kost from '../../Entropi2Kost.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import { createWaterDayLog, waterDayKey, waterLimits, waterQuantity } from './waterDayLogModel.mjs'
 import { fixture, athleteId, date } from './daySession.fixture.mjs'
+import { detaljerNoegle } from './kostIDagModel.mjs'
 import { all, byKey, propsOf, tick, button, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
 
 const key = waterDayKey(athleteId, date)
@@ -19,6 +20,8 @@ const clock = t => t.mock.timers.enable({ apis: ['Date'], now: new Date(date + '
 async function mount(t, { route = true, setup, storage } = {}) {
   clock(t)
   const f = fixture(); f.approve(); setup?.(f)
+  // 1899: væskemålet og rettelserne står med laget Vis detaljer åbent (valget huskes på enheden).
+  f.values.set(detaljerNoegle(athleteId), '1')
   const dom = hostFixture(), root = createRoot(dom.host), warnings = [], reads = []
   const device = storage || { getItem(k) { reads.push(k); return f.storage.getItem(k) }, setItem: f.storage.setItem }
   dom.globals({ localStorage: device })

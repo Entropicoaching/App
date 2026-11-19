@@ -2,6 +2,7 @@ import * as React from 'react'
 const { useEffect, useLayoutEffect, useMemo, useRef, useState } = React
 import { createWaterDayLog, waterLimits, waterQuantity } from './waterDayLogModel.mjs'
 import WaterGoal from './WaterGoal.mjs'
+import { readWaterGoal } from './waterGoalModel.mjs'
 import { useDayRow, useWaterTarget } from '../../u7/useDayRow.mjs'
 import { u7Enabled } from '../../u7/flag.mjs'
 
@@ -12,7 +13,9 @@ const knap = { ...control, background: '#1c1c18', color: '#edeae2', border: '1px
 const knapStil = disabled => disabled ? { ...knap, border: '1px dashed #858579', cursor: 'default' } : { ...knap, cursor: 'pointer' }
 const time = new Intl.DateTimeFormat('da-DK', { timeZone: 'Europe/Copenhagen', hour: '2-digit', minute: '2-digit' })
 
-export default function WaterDayLog({ enabled = false, athleteId, date, client, currentDay, storage, gateRef, u7DayData }) {
+const mlTal = value => new Intl.NumberFormat('da-DK').format(Math.round(value))
+
+export default function WaterDayLog({ enabled = false, athleteId, date, client, currentDay, storage, gateRef, u7DayData, compact = false }) {
   const scope = useMemo(() => ({ enabled, athleteId, date, client, currentDay, storage, gateRef }),
     [enabled, athleteId, date, client, currentDay, storage, gateRef])
   const live = useRef(null)
@@ -85,6 +88,20 @@ export default function WaterDayLog({ enabled = false, athleteId, date, client, 
     return changed
   }
   const editing = edit?.scope === scope && edit.controller === controller ? edit : null
+  // 1899: i "Kost i dag" én linje med to knapper. Samme væskelog og samme gemning; mål og rettelser ligger under Vis detaljer.
+  if (compact) {
+    let goal = target.status === 'ready' && target.goal ? target.goal : null
+    if (!goal) { try { goal = readWaterGoal(storage === undefined ? globalThis.localStorage : storage, athleteId) } catch { goal = null } }
+    const canAdd = !!s && s.entries.length < waterLimits.entries
+    return React.createElement('div', { 'data-water-compact': '', style: { display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginTop: 12 } },
+      React.createElement('span', { style: { fontWeight: 600 } }, 'Vand'),
+      React.createElement('span', { role: 'status', 'aria-live': 'polite', style: { flex: '1 1 auto' } },
+        s ? `${mlTal(s.totalMl)}${goal ? ` af ${mlTal(goal)}` : ''} ml` : 'Ikke klar'),
+      React.createElement('span', { style: { display: 'flex', gap: 8 } },
+        ...[250, 500].map(amount => React.createElement('button', { key: amount, type: 'button', style: { ...knapStil(!canAdd), padding: '8px 10px', whiteSpace: 'nowrap' }, disabled: !canAdd,
+          'aria-label': `Drukket ${amount} ml vand`, onClick: () => update(() => controller.add(String(amount))) }, `+ ${amount} ml`))),
+      error && React.createElement('p', { role: 'alert', style: { flexBasis: '100%', margin: 0 } }, error))
+  }
   // U1: the goal and the filling glass stay visible; the detailed log folds below.
   // U9 (Marc 11. nov.): folden gentog glassets tal og knapper. Nu én lukket linje til andre mængder og rettelser.
   return React.createElement('div', null,

@@ -41,9 +41,10 @@ test('Kost-siden: kortet står øverst, "Jeg spiste som i går" logger gårsdage
   await render()
   const card = () => all(dom.host, 'section').find(n => n.getAttribute('aria-label') === 'Dagens kostvane')
   assert.ok(card(), 'kortet vises')
-  // Kortet står før kostplanen, væsken og selve kostloggen.
+  // 1899: "Kost i dag" står øverst; kostvanekortet er første kort i laget Vis detaljer, før kostplanen, væsken og kostloggen.
   const order = all(dom.host, 'section').map(n => n.getAttribute('aria-label'))
-  assert.equal(order[0], 'Dagens kostvane')
+  assert.equal(order[0], 'Kost i dag')
+  assert.equal(order[1], 'Dagens kostvane')
   assert.equal(card().getAttribute('data-kostvane-trin'), '1')
   assert.match(card().textContent, /2 af 4 kostdage i denne uge/)
   const repeat = button(card(), 'Jeg spiste som i går (2 måltider)')

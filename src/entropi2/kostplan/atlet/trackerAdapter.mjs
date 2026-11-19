@@ -35,6 +35,9 @@ export function mountExistingTracker(host, options = {}) {
       subscribe: fn => controller.subscribe(fn),
       snapshot: () => { if (!alive) return null; cached ??= controller.snapshot(); return cached },
       log: (meal, intent) => alive ? controller.log(meal, intent) : Promise.resolve(false),
+      // 1899 Kost i dag: same food portion path as the diary's own "Log portion".
+      logFood: (index, amount, unitIndex, intent) => alive ? controller.logFood(index, amount, unitIndex, intent) : Promise.resolve(false),
+      foodAmount: index => alive ? controller.foodAmount(index) : 100,
     })
     cleanup.updateWeight = unmount.updateWeight
     cleanup.openFoodLog = outer => alive && unmount.openFoodLog(outer)

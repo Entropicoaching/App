@@ -46,11 +46,11 @@ export function KostTrackerHost({ session, screen, weight }) {
 }
 
 // Independent read-only shopping state; the normal tracker remains mounted.
+// 1899: indkøb ligger i laget "Vis detaljer" sammen med resten af detaljerne.
 function KostShoppingFrame(props) {
   return createElement('div', null,
-    createElement(KostDayFrame, props),
-    createElement(ApprovedPlanShopping, { enabled: true, athleteId: props.athleteId,
-      today: props.date, client: props.client, currentDay: props.currentDay }))
+    createElement(KostDayFrame, { ...props, shopping: createElement(ApprovedPlanShopping, { enabled: true, athleteId: props.athleteId,
+      today: props.date, client: props.client, currentDay: props.currentDay }) }))
 }
 
 // React-ramme om én atlet/dag. Vægtopdateringer erstatter ikke dagssessionen.
@@ -95,7 +95,7 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
   }, [enabled, athlete?.id, athlete?.kcal_target, athlete?.protein_target, date, client, foods])
   const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
   return enabled === true && athlete?.id ? createElement(KostShoppingFrame, { controller: current?.controller, athleteId: athlete.id, date, client: planClient, currentDay,
-    weightLogs, weightStatus,
+    weightLogs, weightStatus, weight,
     foodEntry: current?.foodEntry,
     checkin: checkin?.athleteId === athlete?.id && checkin?.date === date && current ? checkin.tracker : null, tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
 }

@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 import Entropi2Kost from '../../Entropi2Kost.mjs'
 import { createWaterDayLog, waterDayKey, waterLimits } from './waterDayLogModel.mjs'
 import { fixture, athleteId, date } from './daySession.fixture.mjs'
+import { detaljerNoegle } from './kostIDagModel.mjs'
 import { all, button, propsOf, tick, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
 
 const key = waterDayKey(athleteId, date)
@@ -18,6 +19,8 @@ const addInput = host => all(water(host), 'input').find(n => n.getAttribute('ari
 async function mount(t, { entries = [entry()], configure } = {}) {
   t.mock.timers.enable({ apis: ['Date'], now: new Date(date + 'T12:00:00Z') })
   const f = fixture(); f.approve(); f.values.set(key, raw(entries))
+  // 1899: rettelserne står med laget Vis detaljer åbent (valget huskes på enheden).
+  f.values.set(detaljerNoegle(athleteId), '1')
   f.values.set('synthetic-foreign-water', 'original foreign bytes')
   const device = configure?.(f) || f.storage
   const dom = hostFixture(), root = createRoot(dom.host), warnings = []
