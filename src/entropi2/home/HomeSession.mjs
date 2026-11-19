@@ -1,7 +1,7 @@
 import { createElement as h, useEffect, useRef, useState } from 'react'
 import AthleteHome from './AthleteHome.mjs'
 import { readHomeRpeLastTime } from './homeRpeRead.mjs'
-import { readCoachWarmupTemplates } from '../session/opvarmning/coachWarmup.mjs'
+import { readCoachWarmup } from '../session/opvarmning/coachWarmup.mjs'
 import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
 import { createSessionRecordReceipts } from '../session/sessionRecordReceipt.mjs'
@@ -21,9 +21,12 @@ export default function HomeSession(props) {
   const rpeUsedLastTime = rpeLast != null && rpeLast.athleteId === athleteId && rpeLast.used === true
   // Ordre 1704: ét opslag pr. atlet af coachens opvarmning; kun svaret for den viste atlet bruges.
   const [warmupRead, setWarmupRead] = useState(null)
-  const warmupReader = props.readCoachWarmupTemplates ?? readCoachWarmupTemplates
-  const coachWarmupTemplates = warmupRead != null && warmupRead.athleteId === athleteId ? warmupRead.templates : []
-  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, rpeUsedLastTime, coachWarmupTemplates } : props
+  const warmupReader = props.readCoachWarmupTemplates ?? readCoachWarmup
+  const warmupShown = warmupRead != null && warmupRead.athleteId === athleteId
+  const coachWarmupTemplates = warmupShown ? warmupRead.templates : []
+  // Ordre 1881: en fejlet læsning (svar med failed, eller et kastet kald) vises i passet.
+  const coachWarmupFailed = warmupShown && warmupRead.failed === true
+  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, rpeUsedLastTime, coachWarmupTemplates, coachWarmupFailed } : props
   useEffect(() => {
     if (props.enabled !== true || !athleteId || !rpeWriter) return
     let active = true
@@ -35,7 +38,8 @@ export default function HomeSession(props) {
     if (props.enabled !== true || !athleteId) return
     let active = true
     Promise.resolve().then(() => warmupReader({ athleteId })).then(
-      templates => { if (active) setWarmupRead({ athleteId, templates: Array.isArray(templates) ? templates : [] }) }, () => {})
+      read => { if (active) setWarmupRead({ athleteId, ...warmupAnswer(read) }) },
+      () => { if (active) setWarmupRead({ athleteId, templates: [], failed: true }) })
     return () => { active = false }
   }, [props.enabled, athleteId, warmupReader])
   const weekId = props.enabled === true ? props.currentWeek?.id : undefined
@@ -64,4 +68,10 @@ export default function HomeSession(props) {
     h(AthleteHome, { ...props, sessionRootRef: root, sessionLoading: loading,
       sessionReadOnly: typeof props.onLogSet !== 'function' && typeof props.setLogInputs !== 'function',
       onStartSession: ready ? (sessionId, weekId) => bridge.current?.start(sessionId, weekId) ?? false : undefined }))
+}
+
+// Ordre 1881: læseren giver { templates, failed } eller (ældre form) kun listen.
+function warmupAnswer(read) {
+  if (Array.isArray(read)) return { templates: read, failed: false }
+  return { templates: Array.isArray(read?.templates) ? read.templates : [], failed: read?.failed === true }
 }

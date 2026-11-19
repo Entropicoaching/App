@@ -35,6 +35,9 @@ const messages = { saving: 'Gemmer sættet. Vent på svar.', waiting: 'Afventer 
 
 // This is the production DOM renderer, also imported by hermetic DOM tests.
 // It owns only nodes under root, no storage, media, global listeners or writes.
+// Ordre 1881: vises over forslaget, når coachens opvarmning ikke kunne hentes.
+const COACH_WARMUP_FAILED = 'Coachens opvarmning kunne ikke hentes. Her er et forslag.'
+
 export function mountSession(root, latest, { clock = globalThis } = {}) {
   const doc = root.ownerDocument
   const rest = createRestTimer(doc, clock)
@@ -146,6 +149,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       warm.append(el('summary', mobility.kind === 'ready' ? 'Opvarmning (5-10 min)' : 'Opvarmningssæt'))
       if (mobility.kind === 'ready') warm.append(createMobilityPlan(doc, { enabled: true, session: s.session }))
       else if (mobility.kind === 'error') warm.append(el('p', 'Opvarmningen kunne ikke vises. Bed din coach kontrollere planen.', { role: 'alert' }))
+      if (p.coachWarmupFailed === true) warm.append(el('p', COACH_WARMUP_FAILED, { class: 'muted', role: 'status' }))
       warm.append(createOpvarmning(doc, { enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) },
         coachSteps: coachWarmupSteps(p.coachWarmupTemplates, s.next.exercise.name) }))
       body.append(warm)
@@ -231,7 +235,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       // Later exercises keep their own ramp. The first exercise shares the daily fold.
       if (n.setNumber === 1 && !dailyWarmup) {
         const warm = el('details', null, { class: 'card', 'data-detail': 'warmup' })
-        warm.append(el('summary', 'Opvarmningssæt'), createOpvarmning(doc, {
+        warm.append(el('summary', 'Opvarmningssæt'), ...(p.coachWarmupFailed === true ? [el('p', COACH_WARMUP_FAILED, { class: 'muted', role: 'status' })] : []), createOpvarmning(doc, {
           enabled: true, firstWorkSet: { weight: parseInputNumber(s.input.weight) },
           coachSteps: coachWarmupSteps(p.coachWarmupTemplates, ex.name)
         }))
