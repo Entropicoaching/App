@@ -145,7 +145,8 @@ export function lavIndbakkeHandlinger({
   }
 
   async function togglePin(messageId, currentPinned) {
-    await supabase.from('messages').update({ pinned: !currentPinned }).eq('id', messageId)
+    const { error } = await supabase.from('messages').update({ pinned: !currentPinned }).eq('id', messageId)
+    if (error) { showFlash('Kunne ikke ændre fastgørelsen: ' + error.message, 'error'); return }
     fetchMessages(selectedAthlete.id)
   }
 

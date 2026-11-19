@@ -59,7 +59,8 @@ export function lavAtletHandlinger({
       notes: meetPlanForm.notes || null,
       updated_at: new Date().toISOString(),
     }
-    await supabase.from('meet_plans').upsert(payload, { onConflict: 'athlete_id' })
+    const { error } = await supabase.from('meet_plans').upsert(payload, { onConflict: 'athlete_id' })
+    if (error) { showFlash('Kunne ikke gemme stævneplanen: ' + error.message, 'error'); setSavingMeetPlan(false); return }
     await fetchMeetPlan(athleteId)
     setSavingMeetPlan(false)
   }
@@ -67,23 +68,26 @@ export function lavAtletHandlinger({
 
   async function saveWarmupTemplate(category, steps, athleteId) {
     const existing = warmupTemplates.find(t => t.exercise_category === category && t.athlete_id === athleteId)
+    let error
     if (existing) {
-      await supabase.from('warmup_templates').update({ steps }).eq('id', existing.id)
+      ({ error } = await supabase.from('warmup_templates').update({ steps }).eq('id', existing.id))
     } else {
-      await supabase.from('warmup_templates').insert({
+      ({ error } = await supabase.from('warmup_templates').insert({
         coach_id: session.user.id,
         athlete_id: athleteId,
         exercise_category: category,
         steps,
-      })
+      }))
     }
+    if (error) { showFlash('Kunne ikke gemme opvarmningen: ' + error.message, 'error'); return }
     fetchWarmupTemplates(selectedAthlete.id)
     setEditingWarmup(null)
     setWarmupNewStep('')
   }
 
   async function deleteWarmupTemplate(templateId) {
-    await supabase.from('warmup_templates').delete().eq('id', templateId)
+    const { error } = await supabase.from('warmup_templates').delete().eq('id', templateId)
+    if (error) { showFlash('Kunne ikke slette opvarmningen: ' + error.message, 'error'); return }
     fetchWarmupTemplates(selectedAthlete.id)
   }
 
@@ -268,14 +272,16 @@ export function lavAtletHandlinger({
 
   function deleteMeetResult(id) {
     askConfirm('Slet dette stævneresultat?', async () => {
-      await supabase.from('meet_results').delete().eq('id', id)
+      const { error } = await supabase.from('meet_results').delete().eq('id', id)
+      if (error) { showFlash('Kunne ikke slette resultatet: ' + error.message, 'error'); return }
       setMeetResults(prev => prev.coachRead ? Object.assign(prev.filter(m => m.id !== id), { coachRead: prev.coachRead }) : prev.filter(m => m.id !== id))
       showFlash('Resultat slettet', 'success')
     })
   }
 
   async function deleteAthlete() {
-    await supabase.from('athletes').delete().eq('id', selectedAthlete.id)
+    const { error } = await supabase.from('athletes').delete().eq('id', selectedAthlete.id)
+    if (error) { showFlash('Kunne ikke slette atleten: ' + error.message, 'error'); return }
     setAthletes(prev => prev.filter(a => a.id !== selectedAthlete.id))
     setShowDeleteModal(false)
     setView('list')
