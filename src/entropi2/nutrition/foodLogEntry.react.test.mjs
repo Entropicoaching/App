@@ -8,6 +8,7 @@ import Entropi2Kost, { mountKost } from '../Entropi2Kost.mjs'
 import { mountNutrition } from './view.mjs'
 import { createNutritionController } from './controller.mjs'
 import { sessionReactDocument } from '../session/sessionQuickSetReactDom.mjs'
+import { detaljerNoegle } from '../kostplan/atlet/kostIDagModel.mjs'
 import { fixture, athleteId, date, flush } from '../kostplan/atlet/daySession.fixture.mjs'
 import { LOCAL_FOODS } from '../../athlete/lokaleFoedevarer.js'
 
@@ -33,6 +34,8 @@ const draft = host => [...manualKeys, 'food-search', 'food-choice', 'field-Mæng
 async function route(t, options = {}) {
   t.mock.timers.enable({ apis: ['Date'], now: new Date(date + 'T12:00:00Z') })
   const f = fixture(options); if (options.approved) f.approve()
+  // 1899: Log mad og Frida-fødevarerne står i laget Vis detaljer; prøven kører med laget åbent (huskes på enheden).
+  f.values.set(detaljerNoegle(athleteId), '1')
   let storageReads = 0, today = date
   const get = f.storage.getItem; f.storage.getItem = k => { storageReads++; return get(k) }
   const doc = sessionReactDocument(), host = doc.createElement('div'); doc.body.append(host)

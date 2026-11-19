@@ -49,7 +49,7 @@ export function KostTrackerHost({ session, screen, weight }) {
 // 1899: indkøb ligger i laget "Vis detaljer" sammen med resten af detaljerne.
 function KostShoppingFrame(props) {
   return createElement('div', null,
-    createElement(KostDayFrame, { ...props, shopping: createElement(ApprovedPlanShopping, { enabled: true, athleteId: props.athleteId,
+    createElement(KostDayFrame, { ...props, shopping: createElement(ApprovedPlanShopping, { key: 'shopping', enabled: true, athleteId: props.athleteId,
       today: props.date, client: props.client, currentDay: props.currentDay }) }))
 }
 

@@ -11,6 +11,7 @@ import { FRIDA_FOODS } from '../kostplan/foedevarer/frida55.mjs'
 import { createFood } from '../kostplan/foedevarer/catalog.mjs'
 import { LOCAL_FOODS } from '../../athlete/lokaleFoedevarer.js'
 import { sessionReactDocument } from '../session/sessionQuickSetReactDom.mjs'
+import { detaljerNoegle } from '../kostplan/atlet/kostIDagModel.mjs'
 import { fixture, athleteId, date, flush } from '../kostplan/atlet/daySession.fixture.mjs'
 
 const key=(host,name)=>host.querySelectorAll('[data-focus]').find(n=>n.getAttribute('data-focus')===name)
@@ -38,6 +39,8 @@ async function mounted(t, options={}) {
 async function route(t) {
   t.mock.timers.enable({apis:['Date'],now:new Date(date+'T12:00:00Z')})
   const f=fixture(),doc=sessionReactDocument(),host=doc.createElement('div');doc.body.append(host)
+  // 1899: Log mad og Frida-fødevarerne står i laget Vis detaljer; prøven kører med laget åbent (huskes på enheden).
+  f.values.set(detaljerNoegle(athleteId),'1')
   const globals={window:doc.defaultView,IS_REACT_ACT_ENVIRONMENT:true,localStorage:f.storage}
   const originals=new Map(Object.keys(globals).map(k=>[k,Object.getOwnPropertyDescriptor(globalThis,k)]))
   for(const [k,v] of Object.entries(globals)) Object.defineProperty(globalThis,k,{configurable:true,value:v})
