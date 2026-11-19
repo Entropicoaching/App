@@ -687,3 +687,47 @@ test('reptælling: det, der ikke er løft, tælles stadig ikke', () => {
     assert.equal(reps(saetMedFlyt({ loeft, rom, r: R, hale: mislykket }), R, loeft).length, 5, `mislykket forsøg på stænger ${loeft} rom ${rom} R ${R} står ${staa} s, ${under} radius under bunden`)
   }
 })
+
+// Ordre 1882v (Marc 16. nov.: "så skal videocoach dæleme også virke"). Flyttes billedet, mens stangen er på
+// vej op, ses opturen kortere eller længere, end den var. Løftet tælles, men mærkes (moved), så det ikke får
+// en fart og ikke tæller i "Fartstab i sættet". Alle løft, der beholder deres fart, er hele opture.
+const helOptur = (path, liste, rom, r) => liste.filter(rep => !rep.moved).every(rep => {
+  const hoejde = path.pts[rep.start].y - path.pts[rep.end].y
+  return hoejde > rom * r * 0.85 && hoejde < rom * r * 1.18
+})
+test('fart ved flytning: uden flytning er intet løft mærket, heller ikke et halvt løft mellem de hele', () => {
+  for (const [loeft, rom] of [['squat', 4.1], ['bench', 2.2], ['deadlift', 4.1]]) for (const r of [14, 107, 300]) for (const ryst of [0, 0.08]) {
+    const liste = reps(saetMedFlyt({ loeft, rom, r, ryst }), r, loeft)
+    assert.equal(liste.length, 5); assert.equal(liste.filter(rep => rep.moved).length, 0, `${loeft} R ${r} ryst ${ryst}`)
+  }
+  for (const r of [14, 107]) for (const del of [0.5, 0.6, 0.7]) {
+    // ned til 50 til 70 % dybde og op igen, derefter et helt løft: stangen ender, hvor den kom fra
+    const halvt = ({ to, hold, top, bot }) => { to(0.8, 300, top + (bot - top) * del); to(0.8, 300, top); hold(1); to(1.1, 300, bot); to(1.3, 300, top); hold(2) }
+    assert.equal(reps(saetMedFlyt({ rom: 4.1, r, antal: 4, hale: halvt }), r, 'squat').filter(rep => rep.moved).length, 0, `halvt løft ${del} R ${r}`)
+    // et sidste forsøg fra bunden, der går i stå 60 % oppe og ned igen til samme bund
+    const forsoeg = ({ to, hold, top, bot }) => { to(1.1, 300, bot); to(0.9, 300, bot - (bot - top) * del); hold(0.3); to(0.9, 300, bot); hold(2) }
+    assert.equal(reps(saetMedFlyt({ rom: 4.1, r, antal: 4, hale: forsoeg }), r, 'squat').filter(rep => rep.moved).length, 0, `forsøg ${del} R ${r}`)
+  }
+})
+
+test('fart ved flytning: billedet flyttes ned midt i sidste løfts optur: løftet tælles, men er mærket, og resten er hele opture', () => {
+  // som klippene k3-to-flyt-squat5 og to-doed-op-ned (før 1882v: Rep 5 med 0,51 og 0,38 m/s, "Fartstab" 30 og 49 %)
+  for (const [loeft, dyer] of [['squat', [2, 3.5, 5]], ['deadlift', [2, 3.5]]]) for (const r of [14, 107]) for (const dy of dyer) {
+    const flyt = [{ loeft: 2, i: 'hvile', dy: loeft === 'squat' ? -2.7 : -3 }, { loeft: 5, i: 'op', dy }]
+    const path = saetMedFlyt({ loeft, rom: 4.1, r, flyt, ro: 3 }), liste = reps(path, r, loeft)
+    assert.equal(liste.length, 5, `${loeft} R ${r} ned ${dy}`)
+    assert.equal(liste.at(-1).moved, true, `${loeft} R ${r} ned ${dy}: sidste løft er mærket`)
+    assert.ok(liste.filter(rep => !rep.moved).length >= 3, `${loeft} R ${r} ned ${dy}: mindst tre løft beholder farten`)
+    assert.ok(helOptur(path, liste, 4.1, r), `${loeft} R ${r} ned ${dy}: løft med fart er hele opture`)
+  }
+})
+
+test('fart ved flytning: billedet flyttes ned eller op midt i et løft i sættet: kun det løft er mærket', () => {
+  for (const loeft of ['squat', 'bench', 'deadlift']) for (const r of [14, 107]) for (const dy of [-2, -1.5, 1.5, 2]) {
+    const rom = loeft === 'bench' ? 3 : 4.1
+    const path = saetMedFlyt({ loeft, rom, r, flyt: [{ loeft: 3, i: 'op', dy, sek: 0.6 }] }), liste = reps(path, r, loeft)
+    assert.equal(liste.length, 5, `${loeft} R ${r} flyt ${dy}`)
+    assert.deepEqual(liste.map(rep => rep.moved === true), [false, false, true, false, false], `${loeft} R ${r} flyt ${dy}`)
+    assert.ok(helOptur(path, liste, rom, r), `${loeft} R ${r} flyt ${dy}: løft med fart er hele opture`)
+  }
+})

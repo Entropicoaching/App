@@ -106,6 +106,7 @@
   .vcSpeedTable td { text-align:right; white-space:nowrap; padding:2px 6px; border-top:1px solid rgba(237,234,226,.075); }
   .vcSpeedTable th:first-child, .vcSpeedTable td:first-child { text-align:left; }
   .vcSpeedTable tr.sel td { color:var(--accent); }
+  .vcSpeedTable td.vcSpeedMoved { white-space:normal; color:var(--dim); font:11px system-ui,sans-serif; }
   .vcSpeedTable .vcSpeedNote { margin-top:4px; color:var(--dim); font:10px system-ui,sans-serif; }
   .vcMetric { min-width:0; padding:8px; border:1px solid rgba(237,234,226,.075);
     border-radius:10px; background:rgba(237,234,226,.025); }
@@ -1626,6 +1627,10 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
 
 // ORDRE 1064: fart pr. rep og fartstab pr. saet. Laeser kun den allerede beregnede
 // analyse (udglattet bane, valid-flag, rep-vinduer); regnekoden ligger i videocoach-velocity.js.
+// ORDRE 1882v: et løft, hvor kameraet flyttede sig under opturen (rep.camMoved), har ingen fart.
+// Det vises som tekst og tæller ikke i fartfald; uden sådan et løft regnes alt som før.
+function vcMeasuredReps(reps) { return (reps || []).filter(rep => !rep.camMoved); }
+function vcRepSpeedText(rep, digits = 2) { return rep.camMoved ? 'fart ikke målt' : `${rep.mcv.toFixed(digits)} m/s`; }
 function vcRenderSpeedTable(path, selected = -1) {
   const box = document.getElementById('vcSpeedTable');
   if (!box) return;
@@ -1639,13 +1644,14 @@ function vcRenderSpeedTable(path, selected = -1) {
   const shown = res.reps.map((r, i) => Number.isFinite(r.mean) && Number.isFinite(reps[i].mcv)
     ? { mean: reps[i].mcv, peak: reps[i].peak } : { mean: null, peak: null });
   const loss = window.vcVelocity.repLossPct(shown.map(r => r.mean));
-  const lossPct = window.vcVelocity.setVelocityLoss(shown.map(r => r.mean));
+  const lossPct = window.vcVelocity.setVelocityLoss(shown.filter((_, i) => !reps[i].camMoved).map(r => r.mean));
   const fmt = (v, d) => Number.isFinite(v) ? v.toFixed(d) : '-';
-  const rows = shown.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` +
-    `<td>${fmt(r.mean, 2)}</td><td>${fmt(r.peak, 2)}</td><td>${fmt(loss[i], 0)}</td></tr>`).join('');
+  const rows = shown.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` + (reps[i].camMoved
+    ? '<td colspan="3" class="vcSpeedMoved">fart ikke målt, kameraet flyttede sig</td></tr>'
+    : `<td>${fmt(r.mean, 2)}</td><td>${fmt(r.peak, 2)}</td><td>${fmt(loss[i], 0)}</td></tr>`)).join('');
   box.innerHTML = '<table><thead><tr><th>Rep</th><th>m/s gns.</th><th>m/s top</th><th>Tab %</th></tr></thead>' +
     `<tbody>${rows}</tbody></table>` +
-    (lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${lossPct.toFixed(0)} % (bedste mod sidste rep)</div>`);
+    (lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${lossPct.toFixed(0)} % (bedste mod sidste${reps.at(-1).camMoved ? ' målte' : ''} rep)</div>`);
   box.hidden = false;
 }
 
@@ -4148,7 +4154,7 @@ function drawVelBar() {
   }
   // snit-markør for det rep man står i (vandret streg + "snit")
   const rep = (path.reps || []).find(r => i >= r.start && i <= r.end);
-  if (rep && rep.mcv != null) {
+  if (rep && Number.isFinite(rep.mcv)) {
     const my = bBot - Math.max(0, Math.min(1, Math.abs(rep.mcv) / vmax)) * bh;
     ctx.strokeStyle = 'rgba(237,234,226,.8)';
     ctx.setLineDash([5, 4]); ctx.lineWidth = Math.max(1.5, canvas.width / 800);
@@ -4213,9 +4219,10 @@ function drawVelPanel() {
   const path = strokes.filter(s => s.type === 'path' && s.reps && s.reps.length).pop();
   if (!path) return;
   const fs = Math.max(16, canvas.width / 60);
+  const first = vcMeasuredReps(path.reps)[0];
   const lines = path.reps.map((r, i) => {
-    const loss = i ? Math.round((1 - r.mcv / path.reps[0].mcv) * 100) : null;
-    return `Rep ${i+1}:  ${r.mcv.toFixed(2)} m/s` +
+    const loss = r !== first && !r.camMoved ? Math.round((1 - r.mcv / first.mcv) * 100) : null;
+    return `Rep ${i+1}:  ${vcRepSpeedText(r)}` +
            (loss !== null ? `   ${loss >= 0 ? '−' : '+'}${Math.abs(loss)}%` : '');
   });
   ctx.save();
@@ -4236,8 +4243,9 @@ function drawVelPanel() {
     panelY = Math.min(panelY, safe.bottom - panelHeight - safe.padY);
   ctx.fillRect(panelX, panelY, w, panelHeight);
   lines.forEach((l, i) => {
-    const loss = i ? 1 - path.reps[i].mcv / path.reps[0].mcv : 0;
-    ctx.fillStyle = loss > 0.2 ? '#ff453a' : loss > 0.1 ? '#ffd60a' : '#4cd964';
+    const loss = path.reps[i] !== first && !path.reps[i].camMoved ? 1 - path.reps[i].mcv / first.mcv : 0;
+    ctx.fillStyle = path.reps[i].camMoved ? 'rgba(237,234,226,0.55)'
+      : loss > 0.2 ? '#ff453a' : loss > 0.1 ? '#ffd60a' : '#4cd964';
     const ly = panelY + (i + 1.1) * fs * 1.3;
     ctx.fillText((path.ghostRep === i ? '👻 ' : '') + l, panelX + fs * 0.7, ly);
     velPanelHits.push({ x: panelX, y: ly - fs, w, h: fs * 1.3, idx: i, path });
@@ -4770,10 +4778,35 @@ function analyzeCleanPath(path) {
     all.forEach((rep, k) => {
       final.push(rep);
       const extra = cutShort(rep, k + 1 < all.length ? all[k + 1].start : n);
-      if (extra) final.push(extra);
+      if (extra) final.push({...extra,moved:true});
     });
     const kept = final.filter(rep => detected.includes(rep)
       || velocity.slice(rep.start, rep.end + 1).some(value => value > .05));
+    // ORDRE 1882v (Marc 16. nov.: "så skal videocoach dæleme også virke"). Flyttes billedet, mens
+    // stangen er på vej op, ses opturen kortere eller længere, end den var, og farten bliver forkert.
+    // Løftet tælles som før, men får ingen fart: løft fra 3) og 4), og en optur under 0,75 eller over
+    // 1,3 typisk optur, når toppen ligger et andet sted end forrige top (dødløft fra start har ingen),
+    // og stangen bagefter alligevel går en typisk nedtur. Uden en flytning ender stangen, hvor den kom fra.
+    // Sidste optur har ingen nedtur efter sig: er den under 0,75 typisk optur efter en typisk nedtur,
+    // og står stangen derfra mindst 0,3 s til klippets slutning (halen ikke klippet fra), er den også set delvist.
+    for (const rep of kept) {
+      if (rep.moved) continue;
+      let k = -1, most = 0;
+      for (let j = 1; j < turns.length; j++) {
+        const shared = Math.min(rep.end, turns[j].i) - Math.max(rep.start, turns[j - 1].i);
+        if (turns[j].top && shared > most) { most = shared; k = j; }
+      }
+      if (k < 0) continue;
+      const size = turns[k - 1].y - turns[k].y;
+      if (size >= ref * .75 && size <= ref * 1.3) continue;
+      if (k + 1 >= turns.length) {
+        rep.moved = size < ref * .75 && k >= 2 && alike({size:turns[k - 1].y - turns[k - 2].y}, ref)
+          && raw.times[n - 1] - raw.times[turns[k].i] >= .3 && path.tailCutAt == null;
+        continue;
+      }
+      const elsewhere = k >= 2 ? Math.abs(turns[k].y - turns[k - 2].y) > near : lift === 'deadlift';
+      if (elsewhere && alike({size:turns[k + 1].y - turns[k].y}, ref)) rep.moved = true;
+    }
     detected.length = 0;
     detected.push(...kept);
   }
@@ -4813,7 +4846,7 @@ function analyzeCleanPath(path) {
       if (detectedRep.end < viewEnd) repPhases.push(phase('lockout', detectedRep.end, viewEnd));
     }
     phases.push(...repPhases.map(item => ({...item,rep:repIndex})));
-    const positive = velocity.slice(detectedRep.start, detectedRep.end + 1)
+    const positive = detectedRep.moved ? [] : velocity.slice(detectedRep.start, detectedRep.end + 1)
       .filter(value => Number.isFinite(value) && value > .05);
     const validSamples = raw.valid.slice(viewStart, viewEnd + 1).filter(Boolean).length;
     const eccentricSeconds = repPhases.filter(item => item.kind === 'eccentric' || item.kind === 'return')
@@ -4826,7 +4859,7 @@ function analyzeCleanPath(path) {
       romCm:(smoothedY[detectedRep.start] - smoothedY[detectedRep.end]) * cmPerPx,
       conS:+Math.max(0, raw.times[detectedRep.end] - raw.times[detectedRep.start]).toFixed(2),
       eccS:+eccentricSeconds.toFixed(2),pauseS:+pauseSeconds.toFixed(2),
-      validRatio:validSamples / Math.max(1, viewEnd - viewStart + 1)};
+      validRatio:validSamples / Math.max(1, viewEnd - viewStart + 1),camMoved:detectedRep.moved === true};
   });
   let pathLength = 0;
   for (let index = 1; index < n; index++) if (raw.valid[index] && raw.valid[index - 1])
@@ -8497,8 +8530,10 @@ function collectMetrics() {
     m.push(`Vandring (ROM): ${lastVals.romCm} cm`);
   }
   if (path.reps && path.reps.length) {
+    const measured = vcMeasuredReps(path.reps);
     path.reps.forEach((r, i) => {
-      const loss = i ? ` (fartfald ${Math.round((1 - r.mcv/path.reps[0].mcv)*100)}%)` : '';
+      if (r.camMoved) { m.push(`Rep ${i+1}: fart ikke målt, kameraet flyttede sig`); return; }
+      const loss = r !== measured[0] ? ` (fartfald ${Math.round((1 - r.mcv/measured[0].mcv)*100)}%)` : '';
       const tempo = r.conS ? ` · tempo ${r.eccS}s ned/${r.pauseS}s pause/${r.conS}s op`
                            + ` · peak ${r.peak.toFixed(2)} m/s` : '';
       m.push(`Rep ${i+1}: snitfart ${r.mcv.toFixed(2)} m/s${loss}${tempo}`);
@@ -8511,11 +8546,12 @@ function collectMetrics() {
     lastVals.effPct = path.effPct;
     lastVals.hystCm = path.hystCm;
     lastVals.repCount = path.reps.length;
-    lastVals.repSpeeds = path.reps.map(r => +r.mcv.toFixed(2));
-    lastVals.bestRep = lastVals.repSpeeds.indexOf(Math.max(...lastVals.repSpeeds)) + 1;
-    lastVals.slowestRep = lastVals.repSpeeds.indexOf(Math.min(...lastVals.repSpeeds)) + 1;
-    lastVals.lossPct = path.reps.length > 1 ? Math.round(
-      (1 - path.reps[path.reps.length-1].mcv / path.reps[0].mcv) * 100) : null;
+    lastVals.repSpeeds = path.reps.map(r => r.camMoved ? null : +r.mcv.toFixed(2));
+    const speeds = lastVals.repSpeeds.filter(value => value !== null);
+    lastVals.bestRep = lastVals.repSpeeds.indexOf(Math.max(...speeds)) + 1;
+    lastVals.slowestRep = lastVals.repSpeeds.indexOf(Math.min(...speeds)) + 1;
+    lastVals.lossPct = measured.length > 1 ? Math.round(
+      (1 - measured[measured.length-1].mcv / measured[0].mcv) * 100) : null;
     if (cmPerPx && path.reps.length > 1) {
       const bottoms = path.reps.map(r => Math.max(
         ...ys.slice(Math.max(0, r.start), Math.min(ys.length, r.end + 1))));
@@ -8706,8 +8742,9 @@ function collectMetrics() {
     };
     const ms = mskel && mskel.bot && mskel.top && (mskel.botBarY !== mskel.topBarY) ? mskel : null;
     const lines = path.reps.map((r, i) => {
-      let s = `Rep ${i + 1}: snitfart ${r.mcv.toFixed(2)} m/s`;
-      if (r.peak != null) s += `, peak ${(+r.peak).toFixed(2)} m/s`;
+      let s = r.camMoved ? `Rep ${i + 1}: fart ikke målt, kameraet flyttede sig`
+        : `Rep ${i + 1}: snitfart ${r.mcv.toFixed(2)} m/s`;
+      if (r.peak != null && !r.camMoved) s += `, peak ${(+r.peak).toFixed(2)} m/s`;
       if (ms) {
         let maxY = -Infinity;
         for (let j = r.start; j <= Math.min(r.end, path.pts.length - 1); j++)
@@ -9133,11 +9170,11 @@ function keyNumbers() {
   const path = strokes.filter(s => s.type === 'path' && s.vel).pop();
   const rows = [];
   if (path && path.reps && path.reps.length) {
-    const best = Math.max(...path.reps.map(r => r.mcv));
-    rows.push(['Snitfart (bedste rep)',
-      best.toFixed(2) + ' m/s' + (v.lossPct != null ? `  ·  fartfald ${v.lossPct}%` : '')]);
+    const best = Math.max(...vcMeasuredReps(path.reps).map(r => r.mcv));
+    rows.push(['Snitfart (bedste rep)', (Number.isFinite(best) ? best.toFixed(2) + ' m/s' : 'ikke målt') +
+      (v.lossPct != null ? `  ·  fartfald ${v.lossPct}%` : '')]);
     if (path.reps.length > 1)
-      rows.push(['Reps', path.reps.map(r => r.mcv.toFixed(2)).join(' → ') + ' m/s']);
+      rows.push(['Reps', path.reps.map(r => r.camMoved ? 'ikke målt' : r.mcv.toFixed(2)).join(' → ') + ' m/s']);
   }
   if (v.stickPct != null)
     rows.push(['Sticking point',
@@ -9470,7 +9507,7 @@ function buildResultCard() {
   g.font = "600 20px 'IBM Plex Mono', monospace"; g.fillStyle = '#c8923a';
   g.fillText('REFERAT', PAD, ry); ry += 36;
   const reps = path.reps || [];
-  const best = reps.length ? Math.max(...reps.map(r => r.mcv)).toFixed(2) : '–';
+  const best = vcMeasuredReps(reps).length ? Math.max(...vcMeasuredReps(reps).map(r => r.mcv)).toFixed(2) : '–';
   const sumLine = `${reps.length || 1} rep${(reps.length === 1) ? '' : 's'} · bedste ${best} m/s` +
     (lastVals && lastVals.lossPct != null ? ` · fartfald ${lastVals.lossPct}% over sættet` : '');
   g.font = "28px 'IBM Plex Mono', monospace"; g.fillStyle = '#edeae2';
@@ -10231,7 +10268,7 @@ saveBtn.onclick = async () => {
     stick_pct: lastVals.stickPct ?? null,
     dip_pct: lastVals.dipPct ?? null,
     drift_cm: lastVals.driftCm != null ? +lastVals.driftCm.toFixed(1) : null,
-    reps: path && path.reps ? path.reps.map(r => +r.mcv.toFixed(3)) : null,
+    reps: path && path.reps ? path.reps.map(r => r.camMoved ? null : +r.mcv.toFixed(3)) : null,
     extra: {   // individuelle baseline-metrikker (median/MAD beregnes af agenten)
       hip_ratio: lastVals.hipRatio ?? null,
       eff_pct: lastVals.effPct ?? null,
@@ -10262,7 +10299,7 @@ saveBtn.onclick = async () => {
       bench_stick_shoulder_offset_cm: lastVals.benchStickShoulderOffsetCm ?? null,
       bench_top_shoulder_offset_cm: lastVals.benchTopShoulderOffsetCm ?? null,
       tempo: path && path.reps ? path.reps.map(r =>
-        ({ ecc: r.eccS, pause: r.pauseS, con: r.conS, peak: +r.peak.toFixed(2) }))
+        ({ ecc: r.eccS, pause: r.pauseS, con: r.conS, peak: r.camMoved ? null : +r.peak.toFixed(2) }))
         : null,
       // ORDRE 43 · baseline før optimering - ingen tredjeparts-analytics,
       // tallene ender kun i denne analyserækkes egen extra-kolonne.
@@ -10727,8 +10764,9 @@ function openRepPicker(path) {
   card.id = 'repPickCard';
   let rows = '';
   path.reps.forEach((r, i) => {
-    const loss = i ? Math.round((1 - r.mcv / path.reps[0].mcv) * 100) + '%' : '–';
-    rows += `<tr><td>Rep ${i + 1}</td><td>${r.mcv.toFixed(2)} m/s</td>` +
+    const first = vcMeasuredReps(path.reps)[0];
+    const loss = r !== first && !r.camMoved ? Math.round((1 - r.mcv / first.mcv) * 100) + '%' : '–';
+    rows += `<tr><td>Rep ${i + 1}</td><td>${vcRepSpeedText(r)}</td>` +
       `<td>${loss}</td>` +
       `<td><input type="radio" name="repA" value="${i}"` +
       `${i === 0 ? ' checked' : ''}></td>` +
