@@ -4642,11 +4642,12 @@ function analyzeCleanPath(path) {
   //      sig selv til sidst tæller stadig ikke.
   //   2) En optur fra sættets bund tæller, når den er mindst 0,44 typisk optur (det samme som 40 %
   //      af banens højde, når billedet ikke er flyttet).
-  //   3) Squat og bænk: en mindre rest af en optur tæller, når stangen forinden standsede ved bunden
-  //      (mindst 0,15 s inden for 0,1 radius), og stangen bagefter bliver stående mindst 0,3 s og derfra enten går ned
-  //      til en ny, dybere bund eller står, til klippet slutter. En hale, der falder gennem gulvet,
-  //      standser ikke ved bunden, og et løft, der går i stå og fortsætter op, går ikke ned til en
-  //      ny bund.
+  //   3) Squat og bænk: en mindre rest af en optur tæller, når den begynder ved bunden eller stangen
+  //      forinden standsede der (mindst 0,15 s inden for 0,1 radius), og stangen bagefter bliver
+  //      stående mindst 0,3 s og derfra enten går en hel nedtur (mindst 0,8 typisk optur) til en ny
+  //      bund eller står, til klippet slutter. En hale, der falder gennem gulvet, standser ikke ved
+  //      bunden; et løft, der går i stå og fortsætter op, går ikke ned til en ny bund; og et
+  //      mislykket forsøg går kun stumpen ned igen.
   //   4) Dødløft: begyndelsen af en optur tæller, når stangen fra gulvet når mindst en halv radius
   //      op og derfra går en hel nedtur (0,8 til 1,25 typisk optur) ned til et nyt gulv mindst en
   //      halv radius under det gamle.
@@ -4752,11 +4753,14 @@ function analyzeCleanPath(path) {
         let index = rise.end + 1;
         while (index < n && (!ok(index) || Math.abs(smoothedY[index] - rise.to) <= plate * .5)) index++;
         if (raw.times[Math.min(index, n - 1)] - raw.times[rise.end] < .3) return null;
+        let sunk = false;
         for (; index < n; index++) {
           if (!ok(index)) continue;
-          if (smoothedY[index] >= rise.from + plate * .5) break;
+          if (smoothedY[index] >= rise.to + ref * .8) break;
           if (smoothedY[index] <= rise.to - plate * .5) return null;
+          if (smoothedY[index] >= rise.to + plate * .5) sunk = true;
         }
+        if (index >= n && sunk) return null;
         return {start:rise.start,end:rise.end};
       }
       return null;

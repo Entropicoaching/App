@@ -673,4 +673,11 @@ test('reptælling: det, der ikke er løft, tælles stadig ikke', () => {
   // et løft, der kun kommer en fjerdedel op og går ned igen til samme bund, og derefter et helt løft
   const halvt = ({ pts, hold, to, top, bot }) => { to(1.1, 300, bot); to(0.5, 300, bot - 1 * r); to(0.5, 300, bot); to(1.3, 300, top); hold(2) }
   assert.equal(reps(saetMedFlyt({ rom: 4.1, r, antal: 4, hale: halvt }), r, 'squat').length, 5, 'en fjerdedel op og ned igen')
+  // kontrollen af 1764v: et mislykket sidste forsøg uden flytning (ned til bunden, en tredjedel op, i stå og ned
+  // igen til bunden eller 0,8 radius under på stænger) er ikke et løft
+  for (const [loeft, rom] of [['squat', 4.1], ['squat', 3], ['bench', 2.4]]) for (const R of [14, 107]) for (const staa of [0, 0.5]) for (const under of [0, 0.8]) {
+    const mislykket = ({ pts, hold, to, bot }) => { to(1.1, 300, bot); hold(0.3); to(0.8, 300, bot - rom * R / 3); hold(staa); to(0.9, 300, bot + under * R); hold(2) }
+    if (loeft === 'bench' && under) continue
+    assert.equal(reps(saetMedFlyt({ loeft, rom, r: R, hale: mislykket }), R, loeft).length, 5, `mislykket forsøg ${loeft} rom ${rom} R ${R} står ${staa} s, ${under} radius under bunden`)
+  }
 })
