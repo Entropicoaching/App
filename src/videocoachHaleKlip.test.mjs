@@ -597,11 +597,11 @@ test('billedet rettes opad i en hvile og flyttes ned igen midt i sidste løfts o
 const taelFra = html.indexOf('  const median = values => {', html.indexOf('function analyzeCleanPath(path) {'))
 const taelTil = html.indexOf('  const phase = (kind, startIndex, endIndex)', taelFra)
 assert.ok(taelFra > 0 && taelTil > taelFra, 'reptællingen findes i videocoach.html')
-const taelKode = new Function('raw', 'n', 'canvas', 'cmPerPx', 'lift', `const squatMode=lift==='squat',benchMode=lift==='bench';\n${html.slice(taelFra, taelTil)}\n  return detected`)
+const taelKode = new Function('raw', 'n', 'canvas', 'cmPerPx', 'lift', 'path', `const squatMode=lift==='squat',benchMode=lift==='bench';\n${html.slice(taelFra, taelTil)}\n  return detected`)
 function reps(path, r, lift, medKlip = true) {
   if (medKlip) klip(path, r)
   const raw = { pts: path.pts, times: path.times, valid: path.valid.map(v => v === true) }
-  return taelKode(raw, raw.pts.length, { width: Math.max(720, r * 6.75) }, 45 / (2 * r), lift)
+  return taelKode(raw, raw.pts.length, { width: Math.max(720, r * 6.75) }, 45 / (2 * r), lift, path)
 }
 // Et sæt med flytninger af billedet og en hale. flyt: [{ efter: løft nr. (hvilen efter det), i: 'hvile' | 'op', dy, sek }]
 function saetMedFlyt({ loeft = 'squat', rom = 4, r = 100, fps = 30, antal = 5, flyt = [], hvile = 1, ro = 2, ryst = 0, hale = null }) {
@@ -679,5 +679,11 @@ test('reptælling: det, der ikke er løft, tælles stadig ikke', () => {
     const mislykket = ({ pts, hold, to, bot }) => { to(1.1, 300, bot); hold(0.3); to(0.8, 300, bot - rom * R / 3); hold(staa); to(0.9, 300, bot + under * R); hold(2) }
     if (loeft === 'bench' && under) continue
     assert.equal(reps(saetMedFlyt({ loeft, rom, r: R, hale: mislykket }), R, loeft).length, 5, `mislykket forsøg ${loeft} rom ${rom} R ${R} står ${staa} s, ${under} radius under bunden`)
+  }
+  // ordre 1861v: ender forsøget på stænger 1 eller 2 radius under bunden, klipper haleklipningen nedturen fra, og
+  // sporet ser ud til at stå ved forsøgets top til klippets slutning. Tællingen kender klippetiden og tæller ikke
+  for (const [loeft, rom] of [['squat', 4.1], ['squat', 3], ['bench', 2.4]]) for (const R of [14, 107]) for (const staa of [0, 0.5]) for (const under of [1, 2]) {
+    const mislykket = ({ pts, hold, to, bot }) => { to(1.1, 300, bot); hold(0.3); to(0.8, 300, bot - rom * R / 3); hold(staa); to(0.9, 300, bot + under * R); hold(2) }
+    assert.equal(reps(saetMedFlyt({ loeft, rom, r: R, hale: mislykket }), R, loeft).length, 5, `mislykket forsøg på stænger ${loeft} rom ${rom} R ${R} står ${staa} s, ${under} radius under bunden`)
   }
 })
