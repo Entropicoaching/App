@@ -38,6 +38,7 @@ export function mountExistingTracker(host, options = {}) {
       // 1899 Kost i dag: same food portion path as the diary's own "Log portion".
       logFood: (index, amount, unitIndex, intent) => alive ? controller.logFood(index, amount, unitIndex, intent) : Promise.resolve(false),
       foodAmount: index => alive ? controller.foodAmount(index) : 100,
+      undoLog: (token, intent) => alive ? controller.undoLog(token, intent) : Promise.resolve(false),
     })
     cleanup.updateWeight = unmount.updateWeight
     cleanup.openFoodLog = outer => alive && unmount.openFoodLog(outer)

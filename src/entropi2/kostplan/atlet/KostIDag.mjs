@@ -60,14 +60,16 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     setPending(list => [...list, { id, navn, values }])
     setNote({ text: `Gemmer ${navn}…` })
     queue.current = queue.current.then(async () => {
-      let ok = false
-      try { ok = await whenReady(sources) && await action(`kost-i-dag:${date}:${Date.now()}:${id}`) === true } catch { ok = false }
+      const intent = `kost-i-dag:${date}:${Date.now()}:${id}`
+      let result = false
+      try { result = await whenReady(sources) ? await action(intent) : false } catch { result = false }
+      const ok = result === true
       // Behold tallet som ventende, til kostloggen har hentet dagen igen, så linjen ikke blinker.
       if (ok) await whenReady(sources, 5000)
       if (!alive.current) return
       setPending(list => list.filter(item => item.id !== id))
-      setNote(ok ? { text: `${navn} gemt.` }
-        : { error: true, text: `${navn} blev ikke gemt. Tjek forbindelsen og prøv igen.`, retry: () => run(navn, values, action) })
+      setNote(ok ? { text: `${navn} gemt.`, intent }
+        : result?.note ?? { error: true, text: `${navn} blev ikke gemt. Tjek forbindelsen og prøv igen.`, retry: () => run(navn, values, action) })
     })
   }
   const busy = navn => pending.some(item => item.navn === navn)
@@ -125,14 +127,28 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     // Fast højde: beskeden skifter uden at flytte knapperne.
     h('div', { style: { minHeight: 48, marginTop: 4 } },
       note && h('p', { role: note.error ? 'alert' : 'status', 'aria-live': 'polite', style: { margin: 0, fontWeight: note.error ? 600 : 400 } }, note.text),
-      note?.retry && h('button', { type: 'button', style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, onClick: note.retry }, 'Prøv igen')),
+      note?.retry && h('button', { type: 'button', style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, onClick: note.retry }, note.retryText || 'Prøv igen'),
+      // Kostloggens egen fortrydelse (5 sekunder) for et forkert tryk.
+      note?.intent && log.undo?.token === note.intent && typeof tracker?.undoLog === 'function' && h('button', { type: 'button',
+        style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, disabled: pending.length > 0,
+        onClick: async () => {
+          const navn = log.undo.meal
+          const ok = await tracker.undoLog(note.intent, `kost-i-dag-fortryd:${date}:${Date.now()}`)
+          if (alive.current) setNote(ok === true ? { text: `${navn} er fortrudt.` } : { error: true, text: `${navn} blev ikke fortrudt. Det er stadig gemt.` })
+        } }, 'Fortryd')),
 
     (open.length > 0 || eaten.length > 0) && h('p', { style: label }, 'Fra din kostplan'),
     open.length > 0 && h('div', { style: row },
       ...open.map(meal => h('button', { key: meal.id, type: 'button', style: primary,
         disabled: busy(meal.name) || meal.canSave === false,
         'aria-label': `${meal.name}: spist som planlagt`,
-        onClick: () => run(meal.name, meal.values, async () => await controller.markEaten(meal.id) === true) },
+        onClick: () => run(meal.name, meal.values, async () => {
+          if (await controller.markEaten(meal.id) === true) return true
+          // En uafklaret registrering kan være gemt; den må ikke prøves blindt igen.
+          const now = controller.snapshot()
+          return now?.phase === 'uncertain' ? { note: { error: true, text: `${meal.name}: ${now.message || 'Registreringen er uafklaret.'} Se kostplanen under Vis detaljer.`,
+            retry: () => { controller.load?.(); setNote(null) }, retryText: 'Hent dagen igen' } } : false
+        }) },
       busy(meal.name) ? `Gemmer ${meal.name}…` : `${meal.name} som planlagt`))),
     eaten.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `Spist: ${eaten.map(meal => meal.name).join(', ')}`),
     blocked.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `${blocked.map(meal => meal.name).join(', ')} skal kontrolleres under Vis detaljer.`),

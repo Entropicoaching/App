@@ -74,20 +74,27 @@ test('Kost i dag: ét tryk for planmåltid, i går og seneste; nyt måltid på t
 
   await r.press(r.labelled('Frokost <syntetisk>: spist som planlagt'))
   assert.deepEqual(r.inserts().map(c => c.value.meal), ['Frokost <syntetisk>'])
-  assert.equal(r.labelled('Frokost <syntetisk>: spist som planlagt'), undefined)
+  assert.equal(!!r.labelled('Frokost <syntetisk>: spist som planlagt'), false)
   assert.match(r.card().textContent, /Spist: Frokost <syntetisk>/)
 
   await r.press(r.labelled('Spist igen: Rugbrød med æg'))
   assert.deepEqual(r.inserts().map(c => [c.value.meal, c.value.date]), [['Frokost <syntetisk>', date], ['Rugbrød med æg', date]])
   assert.match(r.card().textContent, /Rugbrød med æg gemt\./)
+  // Et forkert tryk fortrydes med kostloggens egen Fortryd.
+  const rows = r.f.rows.filter(row => row.date === date).length
+  await r.press(button(r.card(), 'Fortryd'))
+  assert.equal(r.f.rows.filter(row => row.date === date).length, rows - 1)
+  assert.match(r.card().textContent, /Rugbrød med æg er fortrudt\./)
+  await r.press(r.labelled('Spist igen: Rugbrød med æg'))
 
   // Nyt måltid: skriv, vælg forslaget, Log. Frida-fødevarer foreslås ikke her.
   const field = all(r.card(), 'input').find(n => n.getAttribute('aria-label') === 'Nyt måltid')
   await act(async () => { propsOf(field).onChange({ currentTarget: { value: 'kyll' } }); await tick() })
-  assert.equal(r.labelled('Vælg Kylling Frida'), undefined)
+  assert.equal(!!r.labelled('Vælg Kylling Frida'), false)
   await r.press(r.labelled('Vælg Kyllingebryst'))
   await r.press(r.labelled('Log Kyllingebryst'))
   const last = r.inserts().at(-1).value
+  assert.equal(r.inserts().length, 4)
   assert.equal(last.meal, 'Kyllingebryst · 1 stk (150 g)'); assert.equal(last.kcal, 165)
 
   // Vand: én væskelog; kompakt i kortet, ingen anden væskevisning.
@@ -147,4 +154,15 @@ test('Vis detaljer: et husket åbent lag står åbent ved næste besøg og kan l
   await s.press(button(s.host, 'Skjul detaljer'))
   assert.equal(s.layer().getAttribute('hidden') !== null, true)
   assert.equal(s.f.values.get(detaljerNoegle(athleteId)), '0')
+})
+
+test('Kost i dag: en uafklaret planregistrering siges som uafklaret og prøves ikke blindt igen', async t => {
+  const r = await mount(t, { lostInsert: true })
+  await r.press(r.labelled('Frokost <syntetisk>: spist som planlagt'))
+  const alert = all(r.card(), '[role="alert"]')[0]
+  assert.match(alert?.textContent ?? r.card().textContent, /Frokost <syntetisk>: .*Se kostplanen under Vis detaljer\./)
+  assert.equal(!!button(r.card(), 'Prøv igen'), false)
+  assert.equal(!!button(r.card(), 'Hent dagen igen'), true)
+  const igen = r.labelled('Frokost <syntetisk>: spist som planlagt')
+  assert.equal(!igen || igen.getAttribute('disabled') !== null, true, 'ingen blind gentagelse')
 })
