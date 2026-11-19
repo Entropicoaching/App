@@ -18,11 +18,14 @@ export async function runKostU1(page, outDir = OUT_DIR) {
   const shot = name => page.screenshot({ path: join(outDir, `kost-u1-${name}.png`), fullPage: true })
   await login(page, ATHLETE_USER)
   await page.getByRole('button', { name: 'Kost', exact: true }).first().click({ timeout: 20000 })
+  // 1899: "Kost i dag" står øverst; kostvanekortet og væskemålet ligger i laget Vis detaljer.
+  await page.getByRole('region', { name: 'Kost i dag' }).waitFor({ state: 'visible', timeout: 20000 })
+  await page.getByRole('button', { name: 'Vis detaljer' }).click()
   const card = page.getByRole('region', { name: 'Dagens kostvane' })
   await card.waitFor({ state: 'visible', timeout: 20000 })
   await card.getByText(/kostdage i denne uge|Ugens mål er nået/).waitFor({ timeout: 10000 })
   await shot('01-kostvane')
-  // Kortet er det første på siden og passer i bredden.
+  // Kortet passer i bredden.
   const box = await card.boundingBox()
   if (!box || box.width > MOBILE.width) throw new Error('Kostvanekortet er bredere end telefonen')
   const scroll = await page.evaluate(() => document.documentElement.scrollWidth)
