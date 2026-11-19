@@ -350,7 +350,7 @@ const device = () => { try { return typeof localStorage === 'undefined' ? null :
 // skjules kun. Valget huskes pr. atlet på enheden. Uden en skrivbar dag i dag
 // (fremtidig dato, anden dag) vises laget åbent som før.
 export function KostLag({ quick, preview, athleteId, date, checkin, controller, weight, foodEntry, foodGate, trackerFold, water,
-  noPlanToday = false, client, onShowPlan, onSeen, children }) {
+  noPlanToday = false, client, onShowPlan, planSeen = false, onSeen, children }) {
   const [details, setDetails] = useState(() => ({ athleteId, open: laesDetaljer(device(), athleteId) }))
   const detailsOpen = details.athleteId === athleteId ? details.open : laesDetaljer(device(), athleteId)
   const [custom, setCustom] = useState(0)
@@ -375,9 +375,10 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   const nextStart = wantNext && next?.athleteId === athleteId && next?.date === date && next?.client === client ? next.start : null
   // Laget åbnes kun for denne visning; atletens husket valg for "Vis detaljer" ændres ikke.
   const nyPlan = nextStart ? { date: nextStart, onOpen: () => { setDetails({ athleteId, open: true }); onShowPlan(nextStart) } } : null
-  // 1914: atleten åbner det gamle kostplankort bag "Vis detaljer"; det tæller som set.
-  const detailsShown = quick && detailsOpen
-  useEffect(() => { if (detailsShown) onSeen?.() }, [detailsShown, onSeen])
+  // 1914: set-mærket, når dagens planmåltider står synligt (KostDayFrame giver planSeen),
+  // eller når atleten åbner det gamle kostplankort bag "Vis detaljer".
+  const seenNow = planSeen || (quick && detailsOpen)
+  useEffect(() => { if (seenNow) onSeen?.() }, [seenNow, onSeen])
   // "Egne tal" åbner laget og derefter kostloggens eget felt (samme vej som Log mad).
   useEffect(() => {
     if (!custom || !layerOpen) return
