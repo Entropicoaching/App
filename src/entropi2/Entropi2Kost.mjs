@@ -74,13 +74,21 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
     const day = createKostDaySession({ enabled: true, athleteId: athlete.id, date, client: planClient, storage,
       onDiaryChanged: () => screen.current?.refresh?.(),
       currentDay: () => (typeof latest.current.currentDay === 'function' ? latest.current.currentDay() : date) })
-    let trackerHost, cleanup, active = true
+    let trackerHost, cleanup, active = true, seen = false
     // Capture this exact session and cleanup, never a later screen owner.
     const foodEntry = { openFoodLog(outer) {
       if (!active || !cleanup || screen.current !== cleanup || !trackerHost?.isConnected) return false
       return cleanup.openFoodLog?.(outer) === true
     } }
-    setSession({ ...day, foodEntry, attachTracker(container, currentWeight) {
+    // Set-mærket til coachen (1914): skrives først, når atleten ser planen (KostDayFrame
+    // kalder markSeen), højst én gang pr. åbning og aldrig med en fejl på skærmen.
+    // Den rå klient bruges, ikke kapacitetsproberne.
+    const markSeen = () => {
+      if (!active || seen) return
+      seen = true
+      void markSentWeekSeen({ client, athleteId: athlete.id, date })
+    }
+    setSession({ ...day, foodEntry, markSeen, attachTracker(container, currentWeight) {
       if (!trackerHost) {
         const target = container.ownerDocument.createElement('div')
         cleanup = mountKost(target, { athlete, date, client, foods, storage, contracts: day.contracts }, latest, currentWeight)
@@ -92,13 +100,11 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
       return () => { if (trackerHost.parentElement === container) trackerHost.remove() }
     } })
     void day.controller.load()
-    // Set-mærket til coachen: én gang pr. åbning, aldrig en fejl på skærmen.
-    void markSentWeekSeen({ client, athleteId: athlete.id, date })
     return () => { active = false; setCheckin(null); day.dispose(); if (screen.current === cleanup) screen.current = null; cleanup?.() }
   }, [enabled, athlete?.id, athlete?.kcal_target, athlete?.protein_target, date, client, foods])
   const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
   return enabled === true && athlete?.id ? createElement(KostShoppingFrame, { controller: current?.controller, athleteId: athlete.id, date, client: planClient, currentDay,
     weightLogs, weightStatus, weight,
-    foodEntry: current?.foodEntry,
+    foodEntry: current?.foodEntry, onSeen: current?.markSeen,
     checkin: checkin?.athleteId === athlete?.id && checkin?.date === date && current ? checkin.tracker : null, tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
 }

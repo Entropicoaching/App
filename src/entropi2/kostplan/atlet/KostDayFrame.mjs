@@ -34,7 +34,7 @@ function FoodLogEntry({ entry, gateRef, trackerFold }) {
     unavailable && React.createElement('p', { role: 'status' }, 'Kostloggen er ikke klar til at åbne. Prøv igen, når den er tilgængelig.'))
 }
 
-export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin, weightLogs, weightStatus, weight, shopping }) {
+export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin, weightLogs, weightStatus, weight, shopping, onSeen }) {
   const [selection, setSelection] = useState(null)
   const dates = upcomingDates(date)
   const selected = selection && selection.athleteId === athleteId && selection.today === date && selection.client === client
@@ -61,13 +61,16 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
     : failed ? 'Kostplanen kunne ikke hentes. Det er endnu ikke afklaret, om du har en aktiv plan.'
       : empty ? 'Du har ingen aktiv kostplan fra din coach for denne dag.'
         : plan ? 'Din godkendte kostplan vises nedenfor.' : 'Kostplanens status er ikke afklaret.'
+  // 1914: dagens planmåltider står synligt (i Kost i dag eller i kostplanens kort); så har atleten set den sendte uge.
+  const planSeen = !preview && plan && !!s.planId && Array.isArray(s.meals) && s.meals.length > 0
+  React.useEffect(() => { if (planSeen) onSeen?.() }, [planSeen, onSeen])
   let foodDayAvailable = !preview && foodEntry && date === calendarDay(new Date())
   if (foodDayAvailable && typeof currentDay === 'function') {
     try { foodDayAvailable = currentDay() === date } catch { foodDayAvailable = false }
   }
   // 1899: "Kost i dag" øverst; alt herunder ligger uændret i laget "Vis detaljer" (KostLag ejer valget).
   return React.createElement(KostLag, { quick: !!foodDayAvailable, preview, athleteId, date, checkin, controller: plan ? controller : null,
-    weight, foodEntry, foodGate, trackerFold, water: { enabled: !preview, athleteId, date, client, currentDay, gateRef: waterGate } },
+    weight, foodEntry, foodGate, trackerFold, onSeen, water: { enabled: !preview, athleteId, date, client, currentDay, gateRef: waterGate } },
     dates.length > 1 && React.createElement('label', { style: { display: 'block', padding: 16 } }, 'Vælg plandato',
       React.createElement('select', { value: selected, 'aria-label': 'Vælg plandato', style: { ...control, display: 'block', marginTop: 8, maxWidth: '100%' },
         onChange: selectDate }, ...dates.map((day, index) => React.createElement('option', { key: day, value: day },
