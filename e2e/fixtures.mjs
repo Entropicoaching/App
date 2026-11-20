@@ -55,6 +55,7 @@ export function buildSeed({ withLogs = false, withAnalyzedVideo = false, withMea
         id: ATHLETE_ID,
         user_id: ATHLETE_USER.id,
         name: 'Testatlet',
+        coach_id: COACH_USER.id, // egen-profil-reglen (coachSelfTraining.mjs) kræver coach_id
         email: ATHLETE_USER.email,
         status: 'active',
         hidden: false,

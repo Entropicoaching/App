@@ -107,7 +107,7 @@ export async function runCoachAfvigelse(page, { appUrl, outDir }) {
   await page.getByRole('button', { name: 'Log ind' }).click()
 
   // ---- Blok 1: sortér efter "Afvigelse denne uge" ----
-  await page.getByRole('button', { name: /Testatlet.*Uge/ }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByRole('button', { name: /Åbn programmet for Testatlet/ }).waitFor({ state: 'visible', timeout: 15000 })
   await page.getByRole('button', { name: /Ø Skredet/ }).waitFor({ state: 'visible' })
   await page.getByRole('button', { name: /Ø Ingen Plan/ }).waitFor({ state: 'visible' })
   await shot('01-listen-usorteret')

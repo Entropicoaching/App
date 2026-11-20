@@ -160,7 +160,7 @@ export async function runCoachSporing(page, { appUrl, mockUrl, outDir, awaitingR
   await page.locator('#athlete-auth-email').fill(COACH_USER.email)
   await page.locator('#athlete-auth-password').fill(COACH_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByRole('button', { name: /Testatlet.*Uge/ }).click()
+  await page.getByRole('button', { name: /Åbn programmet for Testatlet/ }).click()
   await openAnalyseTab(page)
 
   await page.getByText('Afventer sporing').waitFor({ state: 'visible', timeout: 10000 })

@@ -19,10 +19,10 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   await page.locator('#athlete-auth-password').fill(COACH_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
 
-  // Atletlisten viser Testatlet (rækken er selv en role="button"). Matcher på
+  // Atletlisten viser Testatlet (forsidens række har knappen "Åbn programmet for Testatlet", U11 f27c24c6). Matcher på
   // "Uge" i navnet for ikke at ramme en evt. indbakke-prioritetskort med
   // samme navn (fx en afventende video, se ordre 155's video-review.spec.mjs).
-  const athleteRow = page.getByRole('button', { name: /Testatlet.*Uge/ })
+  const athleteRow = page.getByRole('button', { name: /Åbn programmet for Testatlet/ })
   await athleteRow.waitFor({ state: 'visible', timeout: 10000 })
   await shot('01-atletliste')
   await athleteRow.click()
@@ -56,7 +56,11 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   await shot('04-videoer-analyse-fane')
 
   // Coach Briefing (Indbakken) åbner (sidebar-punktet er en <div onClick>, ikke en <button>).
-  await page.getByText('Coach Briefing', { exact: true }).first().click()
+  // Ved 390 px er sidemenuen en lukket skuffe: der er Coach Briefing en knap i
+  // den nederste navigation. På bred skærm er sidebar-punktet en <div>.
+  const briefingKnap = page.getByRole('button', { name: 'Coach Briefing', exact: true })
+  if (await briefingKnap.count() > 0) await briefingKnap.first().click()
+  else await page.getByText('Coach Briefing', { exact: true }).first().click()
   await page.getByText('Coach Briefing', { exact: true }).first().waitFor({ state: 'visible', timeout: 10000 })
   const crashedInbox = await page.getByText('Ups — noget gik galt.').count()
   assert.equal(crashedInbox, 0, 'Coach Briefing ramte ErrorBoundary-fallbacken')
@@ -77,23 +81,31 @@ export async function runMinTraeningPreview(page, { appUrl, outDir }) {
   await page.locator('#athlete-auth-email').fill(COACH_USER.email)
   await page.locator('#athlete-auth-password').fill(COACH_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByRole('button', { name: /Testatlet.*Uge/ }).waitFor({ state: 'visible', timeout: 10000 })
+  await page.getByRole('button', { name: /Åbn programmet for Testatlet/ }).waitFor({ state: 'visible', timeout: 10000 })
 
   // entropi_my_athlete_id læses kun ved mount (useState-initializer i
   // Dashboard.jsx) — sat efter login, derfor et reload for at få den med.
+  // Seedens atlet har coach_id = coachen, så den gemte profil genkendes som
+  // coachens egen (coachSelfTraining.mjs) og Min træning tager den direkte vej.
   await page.evaluate((id) => { localStorage.setItem('entropi_my_athlete_id', id) }, ATHLETE_ID)
   await page.reload()
-  await page.getByRole('button', { name: /Testatlet.*Uge/ }).waitFor({ state: 'visible', timeout: 10000 })
+  await page.getByRole('button', { name: /Åbn programmet for Testatlet/ }).waitFor({ state: 'visible', timeout: 10000 })
 
-  await page.getByText('Min træning', { exact: true }).first().click()
-  // "← Coach view" er den entydige markør for at Atletvisningen (ikke
-  // Dashboard) rent faktisk er monteret — se AthleteView.jsx's backBtn.
-  await page.getByText('← Coach view', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  const minKnap = page.getByRole('button', { name: /^(⚡ )?Min træning$/i })
+  if (await minKnap.count() > 0) await minKnap.first().click()
+  else await page.getByText('Min træning', { exact: true }).first().click()
+  // Tilbageknappen ("Til coachportalen", før "← Coach view") er den entydige
+  // markør for at Atletvisningen (ikke Dashboard) rent faktisk er monteret —
+  // se AthleteView.jsx's backBtn.
+  await page.getByRole('button', { name: /Til coachportalen|← Coach view/ }).waitFor({ state: 'visible', timeout: 10000 })
   await shot('06-min-traening-preview')
 
   const crashed = await page.getByText('Ups — noget gik galt.').count()
   assert.equal(crashed, 0, '"Min træning" ramte ErrorBoundary-fallbacken')
 }
+
+// Alene-kørsel: E2E_BREDDE=390 måler coachens forside som på telefonen.
+const BREDDE = Number(process.env.E2E_BREDDE) === 390 ? { width: 390, height: 844 } : { width: 1280, height: 900 }
 
 async function main() {
   const { createMockSupabase } = await import('./mock-supabase.mjs')
@@ -105,11 +117,11 @@ async function main() {
   const vite = await startVite()
   const browser = await launchBrowser()
   try {
-    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+    const page = await browser.newPage({ viewport: BREDDE })
     page.on('console', msg => { if (msg.type() === 'error') console.error('[console.error]', msg.text()) })
     await runCoachReview(page, { appUrl: APP_URL, outDir: OUT_DIR })
     // Egen frisk side (egen login) som i run-all.mjs; den foerste er allerede logget ind.
-    const page2 = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+    const page2 = await browser.newPage({ viewport: BREDDE })
     await runMinTraeningPreview(page2, { appUrl: APP_URL, outDir: OUT_DIR })
     console.log('\nGRØN: coachen ser atletlisten, ugens tre sæt, dagens readiness, Analyse-fanen, indbakken og "Min træning" uden fejl.')
     process.exitCode = 0
