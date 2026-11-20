@@ -822,12 +822,12 @@ const laasFra = html.indexOf('const RL_PX=40'), laasTil = html.indexOf('// Refer
 assert.ok(laasFra > 0 && laasTil > laasFra, 'låsen findes i videocoach.html')
 const laas = new Function(`let ocan=null,document=null;\n${html.slice(laasFra, laasTil)}\n  return {RL_PX,RL_HI,rlReference,rlScore,rlSearch}`)()
 // Et gråt udsnit, som rlGrab ville give det: skive med ringe og to mærker, der følger drejningen, på en ujævn væg.
-function udsnit({ dx = 0, dy = 0, drej = 0, skive = true, lys = 1, range = 12 }) {
+function udsnit({ dx = 0, dy = 0, drej = 0, skive = true, lys = 1, range = 12, stor = 1 }) {
   const R = laas.RL_PX, half = range + R + 2, n = 2 * half + 1, g = new Float32Array(n * n)
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
     const s = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453
     let v = 118 + (s - Math.floor(s)) * 16 + x * .3
-    const px = x - half - dx, py = y - half - dy, q = Math.hypot(px, py) / R
+    const px = x - half - dx, py = y - half - dy, q = Math.hypot(px, py) / (R * stor)
     if (skive && q < 1) {
       v = q < .1 ? 188 : q < .16 ? 150 : q < .44 ? 48 : q < .5 ? 120 : q < .94 ? 36 : 58
       const a = Math.atan2(py, px) - drej, vink = Math.atan2(Math.sin(a), Math.cos(a))
@@ -860,4 +860,15 @@ test('låsen: væggen, skivens kant og et punkt ved siden af midten ligner ikke 
 test('låsen: sporingen bruger den og kan køre uden (?laas=0)', () => {
   assert.ok(html.includes("MODE_PARAMS.get('laas')==='0'?null:rlInit(p0,radius,path)"))
   assert.ok(html.includes('path.refLock.recaptures++') && html.includes('path.refLock.pulls++'))
+  // kontrol 1899v: uden låsen er hvilens spring over hvert andet billede som før, og låsen følger skivens størrelse
+  assert.ok(html.includes('if(VC_TRACKER_FAST&&!(directRun&&lock)&&quietStreak>=QUIET_NEEDED&&!skippedLast){'))
+  assert.ok(html.includes('for(const k of [lock.k*1.04,lock.k/1.04]){') && html.includes('const i0=base.i,a=path.pts[i0],t0=path.times[i0];'))
+})
+
+test('låsen: en skive, der er blevet 8 % større, ligner ikke i samme størrelse, men gør i den rigtige', () => {
+  // rlGrab skalerer udsnittet efter skiveradius; her er udsnittet tegnet, som det ser ud i hver størrelse
+  const ref = laas.rlReference(udsnit({}))
+  assert.ok(laas.rlSearch(udsnit({ stor: 1.08 }), ref).score < laas.RL_HI, 'forkert størrelse')
+  const hit = laas.rlSearch(udsnit({ stor: 1.08 / 1.04 / 1.04, dx: 4, dy: -3 }), ref)
+  assert.ok(hit.score >= laas.RL_HI && Math.hypot(hit.x - 4, hit.y + 3) <= 1, `to trin større: lighed ${hit.score.toFixed(2)}`)
 })

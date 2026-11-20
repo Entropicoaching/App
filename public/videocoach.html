@@ -5730,7 +5730,7 @@ async function mpDirectFrames(startT, endT, onFrame) {
 // uanset hvordan skiven er drejet, og referencen opdateres aldrig, så den kan ikke glide.
 // Låsen bruges kun, når den er sikker (ligheden mindst RL_HI): så trækkes sporet ind på referencen, og
 // er sporet fulgt med noget andet, fanges det markerede udsnit igen. Ellers gør sporingen som før.
-const RL_PX=40,RL_RINGS=24,RL_HI=.82;
+const RL_PX=40,RL_RINGS=24,RL_HI=.82,RL_MID=.7,RL_TRY=[1,1.06,1/1.06,1.12,1/1.12];
 const rlRings=(()=>{
   const rings=[];
   for(let j=0;j<RL_RINGS;j++){
@@ -5819,7 +5819,7 @@ function rlSearch(f,ref,step=3){
 // et punkt ved siden af midten ligner alle andre punkter i samme afstand fra midten. Derfor lægges
 // referencen i det mest ensartede punkt tæt ved (skivens midte, højst 0,45 radius væk), og sporet er det
 // punkt plus den faste afstand til det markerede. Låsen bruges kun, når referencen har tydelig struktur
-// og er entydig: intet andet sted inden for 0,6 radius må ligne.
+// og er entydig: intet andet sted inden for 0,6 radius må ligne (lighed under 0,5).
 function rlInit(p0,radius,path){
   const wide=Math.round(RL_PX*.6),near=Math.round(RL_PX*.45);
   let f=rlGrab(p0.x,p0.y,wide,radius);
@@ -5834,15 +5834,17 @@ function rlInit(p0,radius,path){
     if(Math.hypot(px,py)>near)continue;
     const q=even(px,py);if(q<best.q)best={px,py,q};
   }
-  const off=best.q<own*.8&&Math.hypot(best.px,best.py)>=2?{x:best.px/f.s,y:best.py/f.s}:{x:0,y:0};
+  // en midte ligger inde i det afsøgte område; et fund på randen er ikke en midte
+  const d=Math.hypot(best.px,best.py);
+  const off=best.q<own*.8&&d>=2&&d<=near-3?{x:best.px/f.s,y:best.py/f.s}:{x:0,y:0};
   if(off.x||off.y)f=rlGrab(p0.x+off.x,p0.y+off.y,wide,radius);
   const ref=rlReference(f);let other=-1;
   for(let py=-wide;py<=wide;py+=2)for(let px=-wide;px<=wide;px+=2)
     if(Math.hypot(px,py)>=RL_PX*.15)other=Math.max(other,rlScore(f,ref,px,py));
-  const usable=ref.sd>=6&&other<RL_HI-.07;
+  const usable=ref.sd>=6&&other<.5;
   path.refLock={usable,sd:+ref.sd.toFixed(1),other:+other.toFixed(2),off:[+off.x.toFixed(1),+off.y.toFixed(1)],
     sure:0,pulls:0,recaptures:0};
-  return usable?{ref,off,good:null,low:0,pending:null}:null;
+  return usable?{ref,off,k:1,tryK:0,good:null,ok:null,low:0,pending:null}:null;
 }
 
 async function startMultipointTracking(p0, session = analysisSession || createAnalysisSession(), options = {}) {
@@ -6023,8 +6025,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // bekræftede OG langsomme - se opsætningen ovenfor. Den fulde matching
     // (og dermed en chance for at opdage fornyet fart) køres derfor mindst
     // hveranden frame, aldrig længere ude af sync end det.
-    // ORDRE 1899v: på den direkte vej behandles hvert billede; der er ingen afspilning at holde trit med.
-    if(VC_TRACKER_FAST&&!directRun&&quietStreak>=QUIET_NEEDED&&!skippedLast){
+    // ORDRE 1899v: med låsen på den direkte vej behandles hvert billede; der er ingen afspilning at holde
+    // trit med. Uden låsen er alt som før.
+    if(VC_TRACKER_FAST&&!(directRun&&lock)&&quietStreak>=QUIET_NEEDED&&!skippedLast){
       skippedLast=true;skippedFrames++;
       path.pts.push({...cur});path.times.push(tNow);path.valid.push(true);path.confidence.push(1);
       const pctQ=Math.round(tNow/video.duration*100);
@@ -6292,10 +6295,22 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     if(lock){
       // ORDRE 1899v, 1) Står sporet stadig på det markerede udsnit? Er referencen sikker, og ligger den
       // et stykke fra sporet, trækkes sporet ind på den, lidt ad gangen, så banen ikke hopper.
-      const off=lock.off;
-      const hit=accepted?rlSearch(rlGrab(cur.x+off.x,cur.y+off.y,lockRange,radius),lock.ref):null;
-      if(hit){hit.x-=off.x;hit.y-=off.y;}
+      // Skiven kan skifte størrelse i billedet (stangen kommer nærmere kameraet). Er ligheden ikke helt i
+      // top, prøves referencen også lidt større og lidt mindre, og den størrelse, der ligner bedst, beholdes.
+      const look=k=>{
+        const h=rlSearch(rlGrab(cur.x+lock.off.x*k,cur.y+lock.off.y*k,lockRange,radius*k),lock.ref);
+        if(h){h.x-=lock.off.x*k;h.y-=lock.off.y*k;h.k=k;}
+        return h;
+      };
+      let hit=accepted?look(lock.k):null;
+      if(hit&&(hit.score<RL_HI||(hit.score<.93&&path.pts.length%3===0)))
+        for(const k of [lock.k*1.04,lock.k/1.04]){
+          if(k<.6||k>1.7)continue;
+          const h=look(k);
+          if(h&&h.score>hit.score+.01)hit=h;
+        }
       if(hit&&hit.score>=RL_HI){
+        lock.k=hit.k;
         const dx=hit.x-cur.x,dy=hit.y-cur.y,dist=Math.hypot(dx,dy);
         if(dist>radius*.012){
           // meget sikker reference: sporet lægges næsten helt på den; ellers halvvejs
@@ -6306,27 +6321,35 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         }
         path.refLock.sure++;
         lock.good={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
-        lock.low=0;lock.pending=null;
-      }else lock.low++;
+        lock.ok=lock.good;lock.low=0;lock.pending=null;
+      }else{
+        lock.low++;
+        // Ligner udsnittet stadig nogenlunde, står sporet formentlig rigtigt: punktet huskes som det
+        // seneste, der kan stoles på, men sporet trækkes ikke.
+        if(hit&&hit.score>=RL_MID)lock.ok={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
+      }
       // 2) Tilbagefangst. Har referencen ikke passet i tre billeder, ledes der efter det markerede udsnit
-      // omkring det sidste sikre punkt, så langt stangen kan være nået. Kun et sikkert og entydigt fund,
-      // set samme sted i to billeder i træk, tæller. Billederne imellem fulgte noget andet: de mærkes
-      // usikre og lægges på linjen mellem de to sikre punkter. Uden fund gør sporingen som før.
-      if(lock.low>=3&&lock.good&&(tNow-lock.good.t<=1.5||path.pts.length%6===0)){
-        const lostS=tNow-lock.good.t;
-        const reach=Math.min(radius*2.5,radius*.6+(lock.good.speed+radius*2)*lostS);
-        const range=Math.round(reach*RL_PX/radius);
-        const found=rlSearch(rlGrab(lock.good.x+off.x,lock.good.y+off.y,range,radius),lock.ref,range>30?4:3);
-        if(found){found.x-=off.x;found.y-=off.y;}
+      // omkring det seneste punkt, der kunne stoles på, så langt stangen kan være nået. Kun et sikkert og
+      // entydigt fund, set samme sted i to billeder i træk, tæller. Billederne siden det seneste punkt, der
+      // kunne stoles på, fulgte noget andet: de mærkes usikre og lægges på linjen mellem de to punkter.
+      // Uden fund gør sporingen som før.
+      const base=lock.ok;
+      if(lock.low>=3&&base&&(tNow-base.t<=1.5||path.pts.length%6===0)){
+        const lostS=tNow-base.t,k=lock.k*RL_TRY[lock.tryK%RL_TRY.length];
+        const reach=Math.min(radius*2.5,radius*.6+(base.speed+radius*2)*lostS);
+        const range=Math.round(reach*RL_PX/(radius*k));
+        const found=rlSearch(rlGrab(base.x+lock.off.x*k,base.y+lock.off.y*k,range,radius*k),lock.ref,range>30?4:3);
+        if(found){found.x-=lock.off.x*k;found.y-=lock.off.y*k;}
         const sure=found&&found.score>=RL_HI+.03&&found.score-found.second>=.06&&
           (!accepted||Math.hypot(found.x-cur.x,found.y-cur.y)>radius*.35);
         const before=lock.pending;
         lock.pending=sure?{x:found.x,y:found.y,t:tNow}:null;
+        if(!sure)lock.tryK++;   // næste gang prøves en anden størrelse
         if(sure&&before&&Math.hypot(found.x-before.x,found.y-before.y)<=radius*.6){
           const frame=COACHWEB?await mpFrameCooperative(found,anchorExtent):mpFrame(found,anchorExtent);
           const recaptured=mpGoodFeatures(frame,found,radius);
           if(recaptured.length>=5){
-            const i0=lock.good.i,a=path.pts[i0],t0=path.times[i0];
+            const i0=base.i,a=path.pts[i0],t0=path.times[i0];
             for(let i=i0+1;i<path.pts.length;i++){
               const u=(path.times[i]-t0)/Math.max(1e-3,tNow-t0);
               path.pts[i]={x:a.x+(found.x-a.x)*u,y:a.y+(found.y-a.y)*u};
@@ -6339,8 +6362,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
             if(!accepted)path.lowConf=Math.max(0,(path.lowConf||0)-1);
             accepted=true;lost=0;frameConfidence=.5;recoveryPending=null;homeCorrectionPending=null;
             if(benchMode){benchOutputX=cur.x;benchPreviousRaw={...cur};}
+            lock.k=k;
             lock.good={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
-            lock.low=0;lock.pending=null;
+            lock.ok=lock.good;lock.low=0;lock.pending=null;
             path.refLock.recaptures++;
           }
         }
