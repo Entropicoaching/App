@@ -305,6 +305,13 @@ export function createNutritionController({ enabled = false, athlete, date, cont
       if (!undo || undo.token !== token || now() >= undo.expiresAt) return Promise.resolve(false)
       return mutate('remove', undo.rowId, null, intent, true, true)
     },
+    // 1933: fortryd en hel gruppe (Alt fra i går) med de rækkeider, knappen selv lavede; samme remove som undoLog.
+    async undoRows(rowIds, intent) {
+      if (!Array.isArray(rowIds) || rowIds.length === 0 || !validId(intent)) return 0
+      let removed = 0
+      for (const [i, rowId] of rowIds.entries()) if (await mutate('remove', rowId, null, `${intent}:${i}`, true, true) === true) removed++
+      return removed
+    },
     async load() {
       if (disposed || pending) return false
       const token = ++loadToken

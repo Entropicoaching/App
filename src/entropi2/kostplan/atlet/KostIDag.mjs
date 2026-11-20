@@ -57,6 +57,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const [ret, setRet] = useState(null)
   const queue = useRef(Promise.resolve())
   const mangdeRef = useRef(null)
+  const groupRef = useRef(null)
   const seq = useRef(0)
   const alive = useRef(true)
   useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
@@ -179,6 +180,15 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       note && h('p', { role: note.error ? 'alert' : 'status', 'aria-live': 'polite', style: { margin: 0, fontWeight: note.error ? 600 : 400 } }, note.text),
       note?.retry && h('button', { type: 'button', style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, onClick: note.retry }, note.retryText || 'Prøv igen'),
       // Kostloggens egen fortrydelse (5 sekunder) for et forkert tryk.
+      // 1933: Alt fra i går fortryder alle sine rækker, så længe den sidste rækkes fortrydelse (5 sekunder) gælder.
+      note?.intent && groupRef.current?.intent === note.intent && log.undo?.token === groupRef.current.token && typeof tracker?.undoRows === 'function' && h('button', { type: 'button',
+        style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, disabled: pending.length > 0,
+        onClick: async () => {
+          const { ids } = groupRef.current
+          const antal = await tracker.undoRows(ids, `kost-i-dag-fortryd:${date}:${Date.now()}`)
+          if (alive.current) setNote(antal === ids.length ? { text: `${ids.length} måltider fra i går er fortrudt.` }
+            : { error: true, text: `${antal} af ${ids.length} måltider fra i går blev fortrudt. Resten er stadig gemt; se Vis detaljer.` })
+        } }, 'Fortryd'),
       note?.intent && log.undo?.token === note.intent && typeof tracker?.undoLog === 'function' && h('button', { type: 'button',
         style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, disabled: pending.length > 0,
         onClick: async () => {
@@ -220,7 +230,17 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     (iGaar.length > 0 || gentag.length > 0) && h('div', { style: row },
       iGaar.length > 0 && h('button', { type: 'button', style: primary, disabled: pending.length > 0,
         onClick: () => run(`${iGaar.length} måltider fra i går`, iGaar.reduce((sum, meal) => ({ kcal: sum.kcal + meal.kcal, protein: sum.protein + meal.protein }), { kcal: 0, protein: 0 }),
-          async intent => { for (const [i, meal] of iGaar.entries()) if (await tracker.log(meal, `${intent}:${i}`) !== true || !await whenReady(sources)) return false; return true }) },
+          async intent => {
+          // 1933: rækkeiderne gemmes, så ét Fortryd kan fjerne hele gruppen igen.
+          const ids = []
+          for (const [i, meal] of iGaar.entries()) {
+            if (await tracker.log(meal, `${intent}:${i}`) !== true || !await whenReady(sources)) return false
+            const undo = tracker.snapshot?.()?.undo
+            if (undo?.token === `${intent}:${i}` && undo.rowId) ids.push(undo.rowId)
+          }
+          if (ids.length === iGaar.length) groupRef.current = { intent, token: `${intent}:${iGaar.length - 1}`, ids }
+          return true
+        }) },
       `Alt fra i går (${iGaar.length})`),
       ...gentag.map(meal => {
         const anden = andenMaengde(log, meal)

@@ -275,3 +275,22 @@ test('Kost i dag: et planmåltid, som coachen har navngivet "· N g", står kun 
   assert.equal(all(r.card(), 'button').filter(n => n.getAttribute('aria-label') === 'Ret mængde: Frokost · 200 g').length, 1)
   assert.match(r.card().textContent, /Spist: Frokost · 200 g · 200 g/)
 })
+
+// 1933 (Marc 19. nov.): et fejltryk på "Alt fra i går" skal kunne fortrydes med ét tryk.
+test('Kost i dag: Alt fra i går kan fortrydes med ét tryk og fjerner præcis de rækker, knappen lavede', async t => {
+  const r = await mount(t)
+  const alt = () => all(r.card(), 'button').find(n => /^Alt fra i går \(\d+\)$/.test(n.textContent))
+  const idag = () => r.f.rows.filter(row => row.date === date)
+  const foer = idag().map(row => row.id)
+  await r.press(alt())
+  assert.equal(r.inserts().length, 2)
+  assert.equal(idag().length, foer.length + 2)
+  const nye = idag().map(row => row.id).filter(id => !foer.includes(id))
+  assert.ok(button(r.card(), 'Fortryd'), 'Fortryd vises for hele gruppen')
+  await r.press(button(r.card(), 'Fortryd'))
+  assert.deepEqual(idag().map(row => row.id), foer, 'kun gruppens to rækker er fjernet')
+  assert.equal(r.f.calls.filter(c => c.action === 'delete' || c.action === 'remove').length >= 2, true)
+  assert.match(r.card().textContent, /2 måltider fra i går er fortrudt\./)
+  assert.equal(nye.length, 2)
+  assert.equal(!!button(r.card(), 'Fortryd'), false)
+})
