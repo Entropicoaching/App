@@ -171,6 +171,42 @@ function programWeekStorageKey(athleteId) {
   return typeof athleteId === 'string' && athleteId ? `entropi2:athlete:${encodeURIComponent(athleteId)}:program:last-week` : null
 }
 
+// Opvarmningsflueben overlever genindlaesning samme dag: kun lokal lagring pr.
+// atlet, gemt med dagens dato og ryddet naar datoen skifter. Ligger her (ikke
+// i en egen fil), fordi de lukkede prøve-loadere ikke tillader nye imports.
+// Intet gaar til serveren; enhver lagringsfejl sluges.
+export function warmupCheckedKey(athleteId) {
+  return typeof athleteId === 'string' && athleteId ? `entropi_warmup_checked:${encodeURIComponent(athleteId)}` : null
+}
+function warmupCheckedToday(now = new Date()) {
+  const p = n => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}`
+}
+export function loadWarmupChecked(athleteId, now = new Date(), storage = globalThis.localStorage) {
+  try {
+    const key = warmupCheckedKey(athleteId)
+    if (!key || !storage) return {}
+    const parsed = JSON.parse(storage.getItem(key) || 'null')
+    if (!parsed || parsed.date !== warmupCheckedToday(now) || !parsed.checked || typeof parsed.checked !== 'object') {
+      if (parsed) storage.removeItem(key)
+      return {}
+    }
+    return parsed.checked
+  } catch {
+    return {}
+  }
+}
+export function saveWarmupChecked(athleteId, checked, now = new Date(), storage = globalThis.localStorage) {
+  try {
+    const key = warmupCheckedKey(athleteId)
+    if (!key || !storage) return false
+    storage.setItem(key, JSON.stringify({ date: warmupCheckedToday(now), checked }))
+    return true
+  } catch {
+    return false
+  }
+}
+
 const BLOCK_PALETTE = ['#4e8fcf','#c8923a','#6cba6c','#9b6bd4','#cf6b4e','#4ec8b4']
 function blockColor(name) {
   if (!name) return '#4a4844'
@@ -949,7 +985,8 @@ export default function ProgramTab({
                                     const usingOwn = !!egneVægte
                                     const sets = egneVægte || calcWarmupSets(w, ex.reps, ex.name)
                                     const isOpen = exWarmupExpanded.has(exKey)
-                                    const exChecked = warmupChecked[exKey] || {}
+                                    const storedChecked = loadWarmupChecked(athlete.id)
+                                    const exChecked = { ...(storedChecked[exKey] || {}), ...(warmupChecked[exKey] || {}) }
                                     const doneCnt = Object.values(exChecked).filter(Boolean).length
                                     const isEditingWeight = exWarmupWeightEditing === exKey
                                     const korrigerSæt = (index, correction) => {
@@ -1014,10 +1051,16 @@ export default function ProgramTab({
                                                 <div
                                                   key={i}
                                                   style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.35rem', cursor: 'pointer' }}
-                                                  onClick={() => setWarmupChecked(prev => ({
-                                                    ...prev,
-                                                    [exKey]: { ...(prev[exKey] || {}), [k]: !done }
-                                                  }))}
+                                                  onClick={() => {
+                                                    const next = { ...storedChecked }
+                                                    for (const id of Object.keys(warmupChecked)) next[id] = { ...(next[id] || {}), ...warmupChecked[id] }
+                                                    next[exKey] = { ...(storedChecked[exKey] || {}), ...(warmupChecked[exKey] || {}), [k]: !done }
+                                                    saveWarmupChecked(athlete.id, next)
+                                                    setWarmupChecked(prev => ({
+                                                      ...prev,
+                                                      [exKey]: { ...(prev[exKey] || {}), [k]: !done }
+                                                    }))
+                                                  }}
                                                 >
                                                   <div style={{ width: '14px', height: '14px', border: `1px solid ${done ? '#6cba6c' : 'rgba(237,234,226,0.2)'}`, background: done ? 'rgba(108,186,108,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                                     {done && <span style={{ color: '#6cba6c', fontSize: '0.55rem', lineHeight: 1 }}>✓</span>}
