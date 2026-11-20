@@ -312,3 +312,55 @@ test('Kost i dag: Prøv igen efter delvis fejl på Alt fra i går logger kun de 
   await r.press(button(r.card(), 'Fortryd'))
   assert.deepEqual(idag().map(row => row.id), foer, 'Fortryd fjerner alle tre gemte rækker')
 })
+
+// 1936 (Marc 19. nov.: en træls gentagelig handling lidt nemmere): et forkert logget måltid fjernes direkte i Kost i dag.
+test('Kost i dag: Fjern tager et logget måltid væk med ét tryk, rører kun den række og kan fortrydes', async t => {
+  const r = await mount(t, { extraRows: [{ ...meal(date, 'Syntetisk snack', 300, 12), id: 'i-dag-1' }, { ...meal(date, 'Syntetisk frokost uden gram', 450, 25), id: 'i-dag-2', created_at: date + 'T12:00:00Z' }] })
+  const idag = () => r.f.rows.filter(row => row.date === date).map(row => row.id).sort()
+  const sletninger = () => r.f.calls.filter(c => c.action === 'delete')
+  assert.match(r.card().textContent, /I dag 750 af/)
+  await r.press(r.labelled('Fjern måltid: Syntetisk snack'))
+  assert.deepEqual(idag(), ['i-dag-2'], 'kun den ene række er væk')
+  assert.equal(sletninger().length, 1)
+  assert.ok(sletninger()[0].filters.some(([k, , v]) => k === 'id' && v === 'i-dag-1'), 'sletningen går på rækkens eget id')
+  assert.ok(sletninger()[0].filters.some(([k, , v]) => k === 'athlete_id' && v === athleteId), 'og atletens eget id')
+  assert.match(r.card().textContent, /Syntetisk snack er fjernet\./)
+  assert.match(r.card().textContent, /I dag 450 af/)
+  assert.equal(!!r.labelled('Fjern måltid: Syntetisk snack'), false)
+  assert.ok(r.labelled('Fjern måltid: Syntetisk frokost uden gram'), 'rækker uden gram kan også fjernes')
+  await r.press(button(r.card(), 'Fortryd'))
+  assert.deepEqual(r.f.rows.filter(row => row.date === date).map(row => [row.meal, row.kcal, row.protein]).sort(),
+    [['Syntetisk frokost uden gram', 450, 25], ['Syntetisk snack', 300, 12]])
+  assert.match(r.card().textContent, /Syntetisk snack er sat tilbage\./)
+  assert.match(r.card().textContent, /I dag 750 af/)
+  assert.equal(!!button(r.card(), 'Fortryd'), false)
+})
+
+test('Kost i dag: en fejlet fjernelse beholder rækken og dagens tal og siger det', async t => {
+  let fail = true
+  const r = await mount(t, { extraRows: [{ ...meal(date, 'Syntetisk snack', 300, 12), id: 'i-dag-1' }],
+    beforeLog: call => { if (call.action === 'delete' && fail) throw Error('syntetisk netfejl') } })
+  await r.press(r.labelled('Fjern måltid: Syntetisk snack'))
+  assert.match(all(r.card(), '[role="alert"]')[0]?.textContent ?? '', /Syntetisk snack blev ikke fjernet\. Det er stadig gemt\./)
+  assert.deepEqual(r.f.rows.filter(row => row.date === date).map(row => row.id), ['i-dag-1'])
+  assert.match(r.card().textContent, /I dag 300 af/)
+  fail = false
+  await r.press(button(r.card(), 'Prøv igen'))
+  assert.deepEqual(r.f.rows.filter(row => row.date === date), [])
+  assert.match(r.card().textContent, /I dag 0 af/)
+})
+
+test('Kost i dag: et spist planmåltid fjernes direkte, står som åbent igen, og Fortryd sætter det tilbage som spist', async t => {
+  const r = await mount(t)
+  await r.press(r.labelled('Frokost <syntetisk>: spist som planlagt'))
+  assert.match(r.card().textContent, /Spist: Frokost <syntetisk> · 200 g/)
+  await r.press(r.labelled('Fjern måltid: Frokost <syntetisk>'))
+  assert.deepEqual(r.f.rows.filter(row => row.date === date), [])
+  assert.match(r.card().textContent, /I dag 0 af/)
+  assert.ok(r.labelled('Frokost <syntetisk>: spist som planlagt'), 'planmåltidet kan spises som planlagt igen')
+  assert.doesNotMatch(r.card().textContent, /Spist: Frokost/)
+  await r.press(button(r.card(), 'Fortryd'))
+  assert.deepEqual(r.f.rows.filter(row => row.date === date).map(row => [row.meal, row.kcal]), [['Frokost <syntetisk>', 200]])
+  assert.match(r.card().textContent, /Spist: Frokost <syntetisk> · 200 g/)
+  assert.doesNotMatch(r.card().textContent, /skal kontrolleres/)
+})

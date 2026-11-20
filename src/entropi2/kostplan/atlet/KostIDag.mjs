@@ -58,6 +58,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const queue = useRef(Promise.resolve())
   const mangdeRef = useRef(null)
   const groupRef = useRef(null)
+  const fjernRef = useRef(null)
   const seq = useRef(0)
   const alive = useRef(true)
   useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
@@ -68,10 +69,10 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       ready: v => !v || v.mode !== 'plan' || (readyPhase(v.phase) && !v.pending) || v.phase === 'uncertain' }] : []),
   ]
   // Optimistisk: tallet og "Gemmer …" vises straks; trykkene gemmes i rækkefølge.
-  const run = (navn, values, action) => {
+  const run = (navn, values, action, tekst = {}) => {
     const id = ++seq.current
     setPending(list => [...list, { id, navn, values }])
-    setNote({ text: `Gemmer ${navn}…` })
+    setNote({ text: tekst.gemmer ?? `Gemmer ${navn}…` })
     queue.current = queue.current.then(async () => {
       const intent = `kost-i-dag:${date}:${Date.now()}:${id}`
       let result = false
@@ -81,8 +82,8 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       if (ok) await whenReady(sources, 5000)
       if (!alive.current) return
       setPending(list => list.filter(item => item.id !== id))
-      setNote(ok ? { text: `${navn} gemt.`, intent }
-        : result?.note ?? { error: true, text: `${navn} blev ikke gemt. Tjek forbindelsen og prøv igen.`, retry: () => run(navn, values, action) })
+      setNote(ok ? { text: tekst.gemt ?? `${navn} gemt.`, intent }
+        : result?.note ?? { error: true, text: tekst.fejl ?? `${navn} blev ikke gemt. Tjek forbindelsen og prøv igen.`, retry: () => run(navn, values, action, tekst) })
     })
   }
   const busy = navn => pending.some(item => item.navn === navn)
@@ -139,6 +140,32 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     })
     setRet(null)
   }
+  // 1936: et forkert logget måltid fjernes direkte her med kostloggens egen sletning (samme remove som laget);
+  // Fortryd lægger præcis rækken tilbage. Et planmåltid sættes tilbage som planlagt, hvis mængden ikke var rettet.
+  const removable = new Set(log.removableIds ?? [])
+  const fjernbare = typeof tracker?.remove === 'function' ? (log.logs ?? []).filter(row => removable.has(row.id)) : []
+  const fjern = row => {
+    const navn = String(row.meal ?? '').trim()
+    const planMeal = eaten.find(meal => meal.logId === row.id)
+    const værdi = { kcal: -(Number(row.kcal) || 0), protein: -(Number(row.protein) || 0) }
+    const gen = { meal: row.meal, kcal: row.kcal, protein: row.protein, carb: row.carb, fat: row.fat }
+    run(navn, værdi, async intent => {
+      if (await tracker.remove(row.id, intent) !== true) return false
+      fjernRef.current = { intent, row: gen, planMeal: planMeal && planMeal.values.kcal === Number(row.kcal) && planMeal.values.protein === Number(row.protein) ? planMeal.id : null }
+      return true
+    }, { gemmer: `Fjerner ${navn}…`, gemt: `${navn} er fjernet.`, fejl: `${navn} blev ikke fjernet. Det er stadig gemt.` })
+  }
+  const fortrydFjern = async () => {
+    const { row, planMeal } = fjernRef.current
+    const navn = String(row.meal ?? '').trim()
+    fjernRef.current = null
+    setNote({ text: `Sætter ${navn} tilbage…` })
+    let ok = false
+    try {
+      ok = planMeal && controller?.markEaten ? await controller.markEaten(planMeal) === true : await tracker.log(row, `kost-i-dag-fortryd-fjern:${date}:${Date.now()}`) === true
+    } catch { ok = false }
+    if (alive.current) setNote(ok ? { text: `${navn} er sat tilbage.` } : { error: true, text: `${navn} blev ikke sat tilbage. Log det igen under Nyt måltid.` })
+  }
   const choose = ({ index, food }) => {
     const units = unitsForFood(food), unit = units.length > 1 ? 1 : 0
     setChosen({ index, name: food.name, unit, amount: unit ? '1' : String(tracker?.foodAmount?.(index) ?? 100) })
@@ -189,6 +216,8 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
           if (alive.current) setNote(antal === ids.length ? { text: `${ids.length} måltider fra i går er fortrudt.` }
             : { error: true, text: `${antal} af ${ids.length} måltider fra i går blev fortrudt. Resten er stadig gemt; se Vis detaljer.` })
         } }, 'Fortryd'),
+      note?.intent && fjernRef.current?.intent === note.intent && h('button', { type: 'button',
+        style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, disabled: pending.length > 0, onClick: fortrydFjern }, 'Fortryd'),
       note?.intent && log.undo?.token === note.intent && typeof tracker?.undoLog === 'function' && h('button', { type: 'button',
         style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, disabled: pending.length > 0,
         onClick: async () => {
@@ -271,6 +300,14 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       h('button', { type: 'button', style: primary, disabled: !retNy || pending.length > 0, 'aria-label': `Gem ${retItem.name}`, onClick: gemRet },
         retNy ? `Gem · ${fmt(retNy.kcal)} kcal` : 'Gem'),
       h('button', { type: 'button', style: { ...control, background: 'transparent' }, onClick: () => setRet(null) }, 'Fortryd')),
+
+    // 1936: Fjern direkte på hver række; ingen bekræftelsesdialog, Fortryd står i beskeden.
+    fjernbare.length > 0 && h('p', { style: label }, 'Fjern et forkert måltid'),
+    fjernbare.length > 0 && h('ul', { style: { listStyle: 'none', margin: '8px 0 0', padding: 0 } },
+      ...fjernbare.map(row => h('li', { key: row.id, style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 4 } },
+        h('span', { style: { minWidth: 0, overflowWrap: 'anywhere' } }, String(row.meal ?? '').trim()),
+        h('button', { type: 'button', style: control, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${String(row.meal ?? '').trim()}`,
+          onClick: () => fjern(row) }, 'Fjern')))),
 
     water,
 
