@@ -39,6 +39,8 @@ export function mountExistingTracker(host, options = {}) {
       logFood: (index, amount, unitIndex, intent) => alive ? controller.logFood(index, amount, unitIndex, intent) : Promise.resolve(false),
       foodAmount: index => alive ? controller.foodAmount(index) : 100,
       undoLog: (token, intent) => alive ? controller.undoLog(token, intent) : Promise.resolve(false),
+      // 1923 Kost i dag: the diary's own "Ret måltid" update of the same row.
+      update: (rowId, meal, intent) => alive ? controller.update(rowId, meal, intent) : Promise.resolve(false),
     })
     cleanup.updateWeight = unmount.updateWeight
     cleanup.openFoodLog = outer => alive && unmount.openFoodLog(outer)

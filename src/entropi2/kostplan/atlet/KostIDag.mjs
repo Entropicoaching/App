@@ -2,6 +2,7 @@ import * as React from 'react'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
 import { statusLinje, hurtigeMaaltider, forslag, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
+import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import { readNextPlanStart } from './upcomingPlanModel.mjs'
 
@@ -52,6 +53,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const [query, setQuery] = useState('')
   const [chosen, setChosen] = useState(null)
   const [vaegt, setVaegt] = useState(null)
+  const [ret, setRet] = useState(null)
   const queue = useRef(Promise.resolve())
   const mangdeRef = useRef(null)
   const seq = useRef(0)
@@ -102,6 +104,18 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     const { index, amount, unit } = valgt
     run(portion.meal, portion, intent => tracker.logFood(index, amount, unit, intent))
     setChosen(null); setQuery('')
+  }
+  // 1923: et logget fødevaremåltid i dag rettes i samme række (kostloggens egen update).
+  const logget = typeof tracker?.update === 'function' ? loggetIDag(log) : []
+  const retItem = ret && logget.find(item => item.id === ret.id)
+  const retNy = retItem ? nyMaengde(log, retItem, ret.amount) : null
+  const gemRet = () => {
+    if (!retNy) return
+    const { id, row } = retItem, nyt = retNy
+    // Kun forskellen vises som ventende, så dagens tal følger med straks.
+    run(nyt.meal, { kcal: nyt.kcal - (Number(row.kcal) || 0), protein: nyt.protein - (Number(row.protein) || 0) },
+      intent => tracker.update(id, nyt, intent))
+    setRet(null)
   }
   const choose = ({ index, food }) => {
     const units = unitsForFood(food), unit = units.length > 1 ? 1 : 0
@@ -183,6 +197,20 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
           h('button', { type: 'button', style: control, disabled: busy(meal.meal), 'aria-label': `Anden mængde: ${meal.meal}`,
             onClick: () => { setChosen(anden); setQuery('') } }, 'Ret g'))
       })),
+
+    // 1923: tryk på et logget måltid åbner mængden udfyldt; Gem retter samme række.
+    logget.length > 0 && h('p', { style: label }, 'Logget i dag'),
+    logget.length > 0 && h('div', { style: row },
+      ...logget.map(item => h('button', { key: item.id, type: 'button', style: control, disabled: pending.length > 0,
+        'aria-label': `Ret mængde: ${item.row.meal}`, 'aria-pressed': retItem?.id === item.id,
+        onClick: () => setRet(retItem?.id === item.id ? null : { id: item.id, amount: String(item.grams) }) }, item.row.meal))),
+    retItem && h('div', { role: 'group', 'aria-label': `Ret mængde: ${retItem.name}`, style: { ...row, alignItems: 'center' } },
+      h('input', { type: 'text', inputMode: 'decimal', value: ret.amount, 'aria-label': `Ny mængde ${retItem.name}`,
+        style: { ...control, cursor: 'text', width: '5.5rem' }, onChange: event => setRet({ ...ret, amount: event.currentTarget.value }) }),
+      h('span', null, 'g'),
+      h('button', { type: 'button', style: primary, disabled: !retNy || pending.length > 0, 'aria-label': `Gem ${retItem.name}`, onClick: gemRet },
+        retNy ? `Gem · ${fmt(retNy.kcal)} kcal` : 'Gem'),
+      h('button', { type: 'button', style: { ...control, background: 'transparent' }, onClick: () => setRet(null) }, 'Fortryd')),
 
     water,
 

@@ -206,3 +206,28 @@ test('Kost i dag: Ret g logger samme fødevare med en anden mængde på tre tryk
   assert.equal(r.inserts().length, 1)
   assert.equal(last.meal, 'Kyllingebryst · 200 g'); assert.equal(last.kcal, 220)
 })
+
+// 1923 (Marc 19. nov.: en træls gentagelig handling lidt nemmere): et logget måltid rettes i samme række.
+test('Kost i dag: tryk på et logget måltid retter mængden i samme række; en fejl beholder den gamle', async t => {
+  let fail = true
+  const r = await mount(t, { extraRows: [{ ...meal(date, 'Kyllingebryst · 150 g', 165, 35), id: 'i-dag-1' }],
+    beforeLog: call => { if (call.action === 'update' && fail) throw Error('syntetisk netfejl') } })
+  const raekker = () => r.f.rows.filter(row => row.date === date)
+  assert.match(r.card().textContent, /I dag 165 af/)
+  await r.press(r.labelled('Ret mængde: Kyllingebryst · 150 g'))
+  const field = () => all(r.card(), 'input').find(n => n.getAttribute('aria-label') === 'Ny mængde Kyllingebryst')
+  assert.equal(propsOf(field()).value, '150', 'mængden står udfyldt')
+  await act(async () => { propsOf(field()).onChange({ currentTarget: { value: '200' } }); await tick() })
+  await r.press(r.labelled('Gem Kyllingebryst'))
+  // Fejl: beskeden står, og rækken og dagens tal er de gamle.
+  assert.match(all(r.card(), '[role="alert"]')[0]?.textContent ?? '', /Kyllingebryst · 200 g blev ikke gemt/)
+  assert.deepEqual(raekker().map(row => [row.meal, row.kcal]), [['Kyllingebryst · 150 g', 165]])
+  assert.match(r.card().textContent, /I dag 165 af/)
+  fail = false
+  await r.press(button(r.card(), 'Prøv igen'))
+  assert.deepEqual(raekker().map(row => [row.id, row.meal, row.kcal]), [['i-dag-1', 'Kyllingebryst · 200 g', 220]], 'én række med ny mængde')
+  assert.equal(r.inserts().length, 0, 'ingen ny række')
+  assert.match(r.card().textContent, /I dag 220 af/)
+  assert.match(r.card().textContent, /Kyllingebryst · 200 g gemt\./)
+  assert.ok(r.labelled('Ret mængde: Kyllingebryst · 200 g'))
+})
