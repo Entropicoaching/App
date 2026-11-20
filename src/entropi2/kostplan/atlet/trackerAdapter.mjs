@@ -135,8 +135,34 @@ export function createTrackedAthleteDay(options = {}) {
     receipts.write(current.filter(item => item.key !== key))
     return true
   }
+  // 1924: et spist planmåltid får ny mængde i SAMME række. Kvitteringen skrives først
+  // og lægges tilbage, hvis rækken ikke blev rettet; en anden sessions ændring afvises.
+  const adjustMeal = async (payload, writeRow) => {
+    if (disposed || !loadedPlan || payload.key !== entryKey(payload.meal_id)) throw new Error('Forkert dagsplan')
+    const entries = receipts.read(), existing = entries.find(entry => entry.key === payload.key)
+    const row = loadedLogs.find(item => item.id === existing?.log_id && item.date === date)
+    if (!existing || existing.state !== 'confirmed' || existing.log_id !== payload.log_id
+      || JSON.stringify(existing) !== seen.get(payload.key) || !row || !sameLoggedMeal(row, existing))
+      throw new Error('Måltidet skal kontrolleres i kostloggen')
+    const next = { ...existing, foods: payload.foods.map(({ id, grams }) => ({ id, grams })), log: { ...payload.log } }
+    try { receipts.write(entries.map(item => item.key === next.key ? next : item)) } catch { return false }
+    seen.set(next.key, JSON.stringify(next))
+    let ok = false
+    try { ok = await writeRow(existing.log_id, { ...payload.log }) === true } catch { ok = false }
+    if (!ok) {
+      // Rækken har stadig den gamle mængde; den gamle kvittering lægges tilbage.
+      const current = receipts.read()
+      if (JSON.stringify(current.find(item => item.key === next.key)) !== JSON.stringify(next)) throw new Error('Kvitteringen er ændret')
+      receipts.write(current.map(item => item.key === next.key ? existing : item))
+      if (!disposed) seen.set(next.key, JSON.stringify(existing))
+      return false
+    }
+    if (!disposed) loadedLogs = loadedLogs.map(item => item.id === row.id ? { ...item, ...payload.log } : item)
+    return true
+  }
   const model = createAthleteDay({ enabled: true, athleteId, date, loadDay, currentDay,
-    saveMeal: writable ? saveMeal : undefined, releaseMeal: writable ? releaseMeal : undefined })
+    saveMeal: writable ? saveMeal : undefined, releaseMeal: writable ? releaseMeal : undefined,
+    adjustMeal: writable ? adjustMeal : undefined })
   const dispose = model.dispose
   return { ...model, dispose() { disposed = true; loadToken++; loadedPlan = null; loadedLogs = []; seen.clear(); dispose() } }
 }

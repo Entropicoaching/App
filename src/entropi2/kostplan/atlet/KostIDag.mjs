@@ -3,6 +3,7 @@ import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
 import { statusLinje, hurtigeMaaltider, forslag, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
 import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
+import { scaledMeal } from './dayModel.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import { readNextPlanStart } from './upcomingPlanModel.mjs'
 
@@ -106,7 +107,10 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     setChosen(null); setQuery('')
   }
   // 1923: et logget fødevaremåltid i dag rettes i samme række (kostloggens egen update).
-  const logget = typeof tracker?.update === 'function' ? loggetIDag(log) : []
+  const planRows = new Set(planMeals.flatMap(meal => meal.logId ? [meal.logId] : []))
+  const planNames = new Set(planMeals.map(meal => meal.name))
+  const logget = typeof tracker?.update === 'function'
+    ? loggetIDag(log, row => planRows.has(row.id) || planNames.has(String(row.meal ?? '').trim())) : []
   const retItem = ret && logget.find(item => item.id === ret.id)
   const retNy = retItem ? nyMaengde(log, retItem, ret.amount) : null
   const gemRet = () => {
@@ -115,6 +119,23 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     // Kun forskellen vises som ventende, så dagens tal følger med straks.
     run(nyt.meal, { kcal: nyt.kcal - (Number(row.kcal) || 0), protein: nyt.protein - (Number(row.protein) || 0) },
       intent => tracker.update(id, nyt, intent))
+    setRet(null)
+  }
+  // 1924: et spist planmåltid rettes til en ny samlet mængde i samme række; kostplanens
+  // kvittering følger med, så måltidet stadig står som spist.
+  const kanRettePlan = typeof controller?.adjustEaten === 'function' && typeof tracker?.update === 'function'
+  const gramTotal = meal => meal.foods.reduce((sum, food) => sum + (Number(food.grams) || 0), 0)
+  const retPlan = ret?.plan && kanRettePlan ? eaten.find(meal => meal.id === ret.plan && meal.logId) : null
+  const planNy = retPlan ? scaledMeal(retPlan.foods, ret.amount) : null
+  const gemPlan = () => {
+    if (!planNy) return
+    const meal = retPlan, nyt = planNy, navn = `${meal.name} · ${fmt(nyt.grams)} g`
+    run(navn, { kcal: nyt.values.kcal - meal.values.kcal, protein: nyt.values.protein - meal.values.protein }, async intent => {
+      if (await controller.adjustEaten(meal.id, nyt.grams, (rowId, value) => tracker.update(rowId, value, intent)) === true) return true
+      const now = controller.snapshot()
+      return now?.phase === 'uncertain' ? { note: { error: true, text: `${meal.name}: ${now.message} Se kostplanen under Vis detaljer.`,
+        retry: () => { controller.load?.(); setNote(null) }, retryText: 'Hent dagen igen' } } : false
+    })
     setRet(null)
   }
   const choose = ({ index, food }) => {
@@ -179,7 +200,20 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
             retry: () => { controller.load?.(); setNote(null) }, retryText: 'Hent dagen igen' } } : false
         }) },
       busy(meal.name) ? `Gemmer ${meal.name}…` : `${meal.name} som planlagt`))),
-    eaten.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `Spist: ${eaten.map(meal => meal.name).join(', ')}`),
+    eaten.length > 0 && !kanRettePlan && h('p', { style: { margin: '8px 0 0' } }, `Spist: ${eaten.map(meal => meal.name).join(', ')}`),
+    // 1924: tryk på et spist planmåltid åbner mængden udfyldt; Gem retter samme række.
+    eaten.length > 0 && kanRettePlan && h('div', { style: row },
+      ...eaten.map(meal => h('button', { key: meal.id, type: 'button', style: control, disabled: !meal.logId || pending.length > 0,
+        'aria-label': `Ret mængde: ${meal.name}`, 'aria-pressed': retPlan?.id === meal.id,
+        onClick: () => setRet(retPlan?.id === meal.id ? null : { plan: meal.id, amount: String(Math.round(gramTotal(meal) * 10) / 10).replace('.', ',') }) },
+      `Spist: ${meal.name} · ${fmt(gramTotal(meal))} g`))),
+    retPlan && h('div', { role: 'group', 'aria-label': `Ret mængde: ${retPlan.name}`, style: { ...row, alignItems: 'center' } },
+      h('input', { type: 'text', inputMode: 'decimal', value: ret.amount, 'aria-label': `Ny mængde ${retPlan.name}`,
+        style: { ...control, cursor: 'text', width: '5.5rem' }, onChange: event => setRet({ ...ret, amount: event.currentTarget.value }) }),
+      h('span', null, 'g'),
+      h('button', { type: 'button', style: primary, disabled: !planNy || pending.length > 0, 'aria-label': `Gem ${retPlan.name}`, onClick: gemPlan },
+        planNy ? `Gem · ${fmt(planNy.values.kcal)} kcal` : 'Gem'),
+      h('button', { type: 'button', style: { ...control, background: 'transparent' }, onClick: () => setRet(null) }, 'Fortryd')),
     blocked.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `${blocked.map(meal => meal.name).join(', ')} skal kontrolleres under Vis detaljer.`),
 
     (iGaar.length > 0 || gentag.length > 0) && h('p', { style: label }, 'Spist igen'),

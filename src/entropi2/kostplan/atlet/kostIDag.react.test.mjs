@@ -231,3 +231,47 @@ test('Kost i dag: tryk på et logget måltid retter mængden i samme række; en 
   assert.match(r.card().textContent, /Kyllingebryst · 200 g gemt\./)
   assert.ok(r.labelled('Ret mængde: Kyllingebryst · 200 g'))
 })
+
+// 1924 (Marc 19. nov.: en træls gentagelig handling lidt nemmere): et spist planmåltid rettes i samme række og står stadig som spist.
+test('Kost i dag: tryk på et spist planmåltid retter mængden i samme række; det står stadig som spist; en fejl beholder den gamle', async t => {
+  let fail = true
+  const r = await mount(t, { beforeLog: call => { if (call.action === 'update' && fail) throw Error('syntetisk netfejl') } })
+  await r.press(r.labelled('Frokost <syntetisk>: spist som planlagt'))
+  const plan = () => r.f.rows.filter(row => row.date === date)
+  const kvittering = () => [...r.f.values.entries()].find(([key]) => key.startsWith('entropi2:kostplan:atlet:v1:'))?.[1]
+  assert.deepEqual(plan().map(row => [row.meal, row.kcal]), [['Frokost <syntetisk>', 200]])
+  assert.equal(!!r.labelled('Ret mængde: Frokost <syntetisk>'), true)
+  assert.match(r.card().textContent, /Spist: Frokost <syntetisk> · 200 g/)
+  const gammel = kvittering()
+  await r.press(r.labelled('Ret mængde: Frokost <syntetisk>'))
+  const field = () => all(r.card(), 'input').find(n => n.getAttribute('aria-label') === 'Ny mængde Frokost <syntetisk>')
+  assert.equal(propsOf(field()).value, '200', 'mængden står udfyldt')
+  await act(async () => { propsOf(field()).onChange({ currentTarget: { value: '300' } }); await tick() })
+  assert.match(r.labelled('Gem Frokost <syntetisk>').textContent, /Gem · 300 kcal/)
+  await r.press(r.labelled('Gem Frokost <syntetisk>'))
+  // Fejl: rækken og kvitteringen er de gamle, og måltidet står stadig som spist.
+  assert.match(all(r.card(), '[role="alert"]')[0]?.textContent ?? '', /Frokost <syntetisk> · 300 g blev ikke gemt/)
+  assert.deepEqual(plan().map(row => [row.meal, row.kcal]), [['Frokost <syntetisk>', 200]])
+  assert.equal(kvittering(), gammel)
+  assert.match(r.card().textContent, /Spist: Frokost <syntetisk> · 200 g/)
+  assert.doesNotMatch(r.card().textContent, /skal kontrolleres/)
+  fail = false
+  await r.press(button(r.card(), 'Prøv igen'))
+  assert.deepEqual(plan().map(row => [row.meal, row.kcal, row.protein]), [['Frokost <syntetisk>', 300, 30]], 'én række med ny mængde')
+  assert.equal(r.inserts().length, 1, 'ingen ny række ud over Spist')
+  assert.notEqual(kvittering(), gammel)
+  // Efter kostplanens egen genindlæsning: stadig spist med den nye mængde, ikke "skal kontrolleres".
+  assert.match(r.card().textContent, /Spist: Frokost <syntetisk> · 300 g/)
+  assert.doesNotMatch(r.card().textContent, /skal kontrolleres/)
+  assert.match(r.card().textContent, /Frokost <syntetisk> · 300 g gemt\./)
+  assert.match(r.card().textContent, /I dag 300 af/)
+})
+
+test('Kost i dag: et planmåltid, som coachen har navngivet "· N g", står kun under Spist, ikke under Logget i dag', async t => {
+  const r = await mount(t, { lunchName: 'Frokost · 200 g' })
+  await r.press(r.labelled('Frokost · 200 g: spist som planlagt'))
+  assert.deepEqual(r.f.rows.filter(row => row.date === date).map(row => row.meal), ['Frokost · 200 g'])
+  assert.doesNotMatch(r.card().textContent, /Logget i dag/)
+  assert.equal(all(r.card(), 'button').filter(n => n.getAttribute('aria-label') === 'Ret mængde: Frokost · 200 g').length, 1)
+  assert.match(r.card().textContent, /Spist: Frokost · 200 g · 200 g/)
+})
