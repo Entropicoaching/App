@@ -3,10 +3,11 @@
 // fra forsiden til hvert trin i ugen, og tager skærmbilleder af forsiden.
 //   A Atlet Besked: ulæst besked, uge sendt til denne og næste uge
 //   B Atlet Video: video venter på feedback, uge sendt til denne og næste uge
-//   C Atlet Slutter: programmet slutter søndag (mangler ny uge)
-//   D Atlet Udløbet: programmet udløb for en uge siden (mangler ny uge, ingen log i sidste uge)
+//   C Atlet Slutter: uge i gang, ingen næste uge endnu (mandag: sendt; ordre 2007)
+//   D Atlet Udløbet: programmet udløb i går (mangler ny uge)
 //   E Atlet Sendt: uge sendt til denne og næste uge, intet venter
 //
+// Ordre 2007: dagen er sat fast til mandag 2026-11-23 (browserens ur og mockens data), aldrig ud fra uret.
 // Kørsel: node e2e/coach-uge-2005a.spec.mjs. E2E_BREDDE=1280 for desktop, E2E_TEMA=lys for lyst tema.
 // E2E_2005A_FOER=1 måler uden at kræve den nye forside (bruges til før-målingen på main).
 
@@ -22,13 +23,10 @@ const LYS = process.env.E2E_TEMA === 'lys'
 const LABEL = `${FOER ? 'foer' : 'efter'}-${DESKTOP ? 1280 : 390}${LYS ? '-lys' : ''}`
 
 const DAY = 86400000
-const copenhagenToday = () => {
-  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen', year: 'numeric', month: '2-digit', day: '2-digit' })
-    .formatToParts(new Date()).map(x => [x.type, x.value]))
-  return `${p.year}-${p.month}-${p.day}`
-}
+const FAST_TID = '2026-11-23T08:00:00Z'
+const copenhagenToday = () => '2026-11-23'
 const addDays = (iso, n) => new Date(Date.parse(iso + 'T00:00:00Z') + n * DAY).toISOString().slice(0, 10)
-const agoIso = minutes => new Date(Date.now() - minutes * 60000).toISOString()
+const agoIso = minutes => new Date(Date.parse(FAST_TID) - minutes * 60000).toISOString()
 
 export const ATLETER = [
   { key: 'a', navn: 'Atlet Besked', uger: [0, 7] },
@@ -101,6 +99,7 @@ async function tilbage(page) {
 
 export async function runCoachUge(page, { appUrl, outDir, desktop }) {
   const shot = name => page.screenshot({ path: join(outDir, `coach-uge-2005a-${LABEL}-${name}.png`), fullPage: false })
+  await page.clock.setFixedTime(new Date(FAST_TID))
   await page.goto(appUrl)
   if (LYS) { await page.evaluate(() => localStorage.setItem('entropi:tema', 'lys')); await page.reload() }
   await page.locator('#athlete-auth-email').fill(COACH_USER.email)
@@ -111,10 +110,7 @@ export async function runCoachUge(page, { appUrl, outDir, desktop }) {
   await shot('forside')
   const tryk = {}
 
-  // 1. Hvem mangler ny uge: åbn programmet for de to atleter uden næste uge.
-  tryk.nyUgeSlutter = await tapTo(page, page.locator('button', { hasText: /Atlet Slutter · Program/ }).first())
-  await page.getByText(/← Tilbage til/).first().waitFor({ state: 'visible', timeout: 10000 })
-  await tilbage(page)
+  // 1. Hvem mangler ny uge: åbn programmet for atleten med udløbet program.
   tryk.nyUgeUdloebet = await tapTo(page, page.locator('button', { hasText: /Atlet Udløbet · Program/ }).first())
   await page.getByText(/← Tilbage til/).first().waitFor({ state: 'visible', timeout: 10000 })
   await tilbage(page)
@@ -133,10 +129,10 @@ export async function runCoachUge(page, { appUrl, outDir, desktop }) {
   const sendt = page.locator('[data-coach-uge="sendt"]')
   if (await sendt.count() && await sendt.isVisible()) {
     // Efter Tilbage henter forsiden kalenderen igen; vent på rækkerne.
-    await page.waitForFunction(() => document.querySelectorAll('[data-coach-uge="sendt"] button').length >= 3, null, { timeout: 15000 })
+    await page.waitForFunction(() => document.querySelectorAll('[data-coach-uge="sendt"] button').length >= 4, null, { timeout: 15000 })
     const tekst = await sendt.innerText()
-    for (const navn of ['Atlet Besked', 'Atlet Video', 'Atlet Sendt']) assert.ok(tekst.includes(navn), `Sendt skal nævne ${navn}: ${tekst}`)
-    for (const navn of ['Atlet Slutter', 'Atlet Udløbet']) assert.ok(!tekst.includes(navn), `Sendt må ikke nævne ${navn}: ${tekst}`)
+    for (const navn of ['Atlet Besked', 'Atlet Video', 'Atlet Sendt', 'Atlet Slutter']) assert.ok(tekst.includes(navn), `Sendt skal nævne ${navn}: ${tekst}`)
+    for (const navn of ['Atlet Udløbet']) assert.ok(!tekst.includes(navn), `Sendt må ikke nævne ${navn}: ${tekst}`)
     tryk.sendt = 0
   } else {
     let n = 0
@@ -160,7 +156,7 @@ export async function runCoachUge(page, { appUrl, outDir, desktop }) {
 
   console.log(`TRYK ${LABEL} ${JSON.stringify(tryk)}`)
   if (!FOER) {
-    assert.deepEqual(tryk, { nyUgeSlutter: 1, nyUgeUdloebet: 1, besked: 1, video: 1, sendt: 0, nyAtlet: 1 })
+    assert.deepEqual(tryk, { nyUgeUdloebet: 1, besked: 1, video: 1, sendt: 0, nyAtlet: 1 })
     console.log(`\nGRØN: coachens uge ${LABEL}: ny uge, besked og video med ét tryk, sendt på forsiden, ny atlet med ét tryk.`)
   }
   return tryk
