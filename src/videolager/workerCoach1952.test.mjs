@@ -83,3 +83,24 @@ test('ordre 1952: upload-url for atlet, coachens egen atlet, fremmed atlet og an
     assert.equal(env.VIDEO.store.has(`${ATHLETES.other}/${ANALYSIS}.mp4`), false)
   } finally { await server.close() }
 })
+
+// Kontrol 1952, bemærkning 1: workerens eget tjek alene, uden RLS. Opslaget giver her en fremmed række tilbage
+// (som hvis RLS på athletes var for løs); workeren skal stadig sige nej.
+test('ordre 1952: workeren afviser en fremmed række, selv hvis opslaget viser den', async () => {
+  const USER = '5e000000-0000-4000-8000-0000000000aa'
+  const FREMMED = '5e000000-0000-4000-8000-0000000000bb'
+  const EGEN = '5e000000-0000-4000-8000-0000000000cc'
+  const rows = { [FREMMED]: { id: FREMMED, user_id: 'en-anden', coach_id: 'en-anden-coach' }, [EGEN]: { id: EGEN, user_id: null, coach_id: USER } }
+  const fetchFn = async url => {
+    const u = new URL(url)
+    if (u.pathname === '/auth/v1/user') return new Response(JSON.stringify({ id: USER }), { status: 200 })
+    const id = (u.searchParams.get('id') || '').replace(/^eq\./, '')
+    return new Response(JSON.stringify(rows[id] ? [rows[id]] : []), { status: 200 })
+  }
+  const env = { VIDEO: fakeBucket(), SUPABASE_URL: 'https://supabase.test', SUPABASE_PUBLISHABLE_KEY: 'offentlig' }
+  const ask = athleteId => handleVideolager(new Request(`${ORIGIN}/upload-url`, { method: 'POST',
+    headers: { authorization: 'Bearer token-for-opdigtet-coach-1234567890' },
+    body: JSON.stringify({ athlete_id: athleteId, client_analysis_id: ANALYSIS, mime_type: 'video/mp4', size: 5 }) }), env, { fetchFn })
+  assert.equal((await ask(FREMMED)).status, 403)
+  assert.equal((await ask(EGEN)).status, 200)
+})
