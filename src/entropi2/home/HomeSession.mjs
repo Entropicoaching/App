@@ -5,6 +5,7 @@ import { readCoachWarmup } from '../session/opvarmning/coachWarmup.mjs'
 import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
 import { createSessionRecordReceipts } from '../session/sessionRecordReceipt.mjs'
+import AtletUgevideo from '../../ugevideo/AtletUgevideo.mjs'
 
 // Functional opt-in entry, entirely within the home namespace.
 export default function HomeSession(props) {
@@ -63,6 +64,9 @@ export default function HomeSession(props) {
   const ready = typeof props.onLogSet === 'function' && typeof props.setLogInputs === 'function' &&
     typeof props.parsePlannedRpe === 'function'
   return h('div', { 'data-entropi2-home-session': '' },
+    // Ordre 1953: coachens ugevideo øverst på Hjem; kun atleten selv, ikke coachens forhåndsvisning eller egen træning.
+    athleteId && props.readOnly !== true && props.coachOwnTraining !== true &&
+      h(AtletUgevideo, { key: `ugevideo-${athleteId}`, athleteId, client: props.ugevideoClient }),
     // The host deliberately removes both write callbacks for its read-only preview.
     // A partially connected writer still receives Home's actionable start error.
     h(AthleteHome, { ...props, sessionRootRef: root, sessionLoading: loading,

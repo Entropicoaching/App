@@ -118,8 +118,11 @@ test('udkastet: kun atleten selv og hendes coach kan se en ugevideo, og en rollb
 })
 
 test('appen viser kortene de rigtige steder', () => {
-  const atlet = readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')
-  assert.match(atlet, /\{e2Home && !e2ReadOnly && !e2EgenCoach && <AtletUgevideo key=\{`ugevideo-\$\{athlete\.id\}`\} client=\{inboxDatabase\} athleteId=\{athlete\.id\} \/>\}/)
-  const coach = readFileSync(new URL('../Dashboard.jsx', import.meta.url), 'utf8')
-  assert.match(coach, /\{e2 && activeTab === 'beskeder' && <CoachUgevideo key=\{`ugevideo-\$\{a\.id\}`\} client=\{supabase\} athlete=\{a\} \/>\}/)
+  // Hjem: kun atleten selv, ikke coachens forhåndsvisning (readOnly) eller coachens egen træning.
+  const hjem = readFileSync(new URL('../entropi2/home/HomeSession.mjs', import.meta.url), 'utf8')
+  assert.match(hjem, /athleteId && props\.readOnly !== true && props\.coachOwnTraining !== true &&\s+h\(AtletUgevideo/)
+  assert.match(hjem, /h\(AtletUgevideo, \{ key: `ugevideo-\$\{athleteId\}`, athleteId, client: props\.ugevideoClient \}\)/)
+  // Samtale: kun coachen, og kun når atleten er i coachens egen liste (scoped).
+  const samtale = readFileSync(new URL('../entropi2/conversation/ConversationEntry.mjs', import.meta.url), 'utf8')
+  assert.match(samtale, /role === 'coach' && scoped && h\(CoachUgevideo, \{ key: `ugevideo-\$\{athleteId\}`, client: entry\.inboxDatabase, athlete: entry\.selectedAthlete \}\)/)
 })

@@ -78,10 +78,11 @@ export async function hentCoachUgevideoer({ client, athleteId, limit = 4 }) {
 }
 
 // Atletens video: denne uges eller næste uges (lagt i weekenden), nyeste først.
+// Uden client (atletens Hjem) bruges appens fælles klient.
 export async function hentAtletUgevideo({ client, athleteId, day = calendarDay() }) {
-  if (!client || !athleteId) return null
+  if (!athleteId) return null
   const denne = mandagI(day)
-  const { data, error } = await client.from(UGEVIDEO_TABLE).select(KOLONNER)
+  const { data, error } = await (client || await lagerKilde(client)).from(UGEVIDEO_TABLE).select(KOLONNER)
     .eq('athlete_id', athleteId).gte('week_start', denne).lte('week_start', addCalendarDays(denne, 7))
     .order('week_start', { ascending: false }).order('created_at', { ascending: false }).limit(1)
   return !error && Array.isArray(data) && data[0] ? data[0] : null
@@ -89,7 +90,7 @@ export async function hentAtletUgevideo({ client, athleteId, day = calendarDay()
 
 // Kort adresse til at afspille klippet: videolageret først, så Supabase-lageret.
 export async function ugevideoAdresse({ client, videoPath, env = import.meta.env }) {
-  if (!client || !videoPath) return null
+  if (!videoPath) return null
   const lager = await lagerKlient(env)
   const fraLager = lager ? await lager.klient.hentFraVideolager({ base: lager.base, token: await token(client), videoPath }) : null
   if (fraLager) return fraLager
@@ -99,9 +100,9 @@ export async function ugevideoAdresse({ client, videoPath, env = import.meta.env
 
 // Atleten har set videoen. Kun første gang; rækkens trigger lader atleten ændre intet andet.
 export async function markerUgevideoSet({ client, video, now = new Date() }) {
-  if (!client || !video?.id || video.athlete_seen_at) return video?.athlete_seen_at || null
+  if (!video?.id || video.athlete_seen_at) return video?.athlete_seen_at || null
   const tid = now.toISOString()
-  const { error } = await client.from(UGEVIDEO_TABLE).update({ athlete_seen_at: tid }).eq('id', video.id).is('athlete_seen_at', null)
+  const { error } = await (client || await lagerKilde(client)).from(UGEVIDEO_TABLE).update({ athlete_seen_at: tid }).eq('id', video.id).is('athlete_seen_at', null)
   return error ? null : tid
 }
 

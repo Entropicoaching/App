@@ -6,6 +6,7 @@ import { createConversation } from './conversationController.mjs'
 import { createConversationAdapters, athleteConversationScope, coachConversationScope, athleteUploadEntry } from './conversationAdapters.mjs'
 import { u6Enabled } from '../u6/flag.mjs'
 import { applyCoachDraft } from '../u6/draftHandoff.mjs'
+import CoachUgevideo from '../../ugevideo/CoachUgevideo.mjs'
 
 // All names below are existing App/AthleteView/Dashboard capabilities.
 // getEntry must read current render state, not capture a previous athlete/session.
@@ -71,6 +72,8 @@ export default function ConversationEntry({ enabled = false, role, getEntry, con
     (role === 'athlete' ? scope.athleteUserId === ownerId : role === 'coach' && scope.athletes.some(row => row.id === athleteId))
   const initial = scoped ? { athleteId, messages: entry.messages, analyses: entry.sharedVideoAnalyses } : undefined
   return h('section', { 'aria-label': 'Samlet samtale' },
+    // Ordre 1953: coachens ugevideo til den valgte atlet, over samtalen; kun for coachens egne atleter.
+    role === 'coach' && scoped && h(CoachUgevideo, { key: `ugevideo-${athleteId}`, client: entry.inboxDatabase, athlete: entry.selectedAthlete }),
     h(Conversation, { key: `${role}:${ownerId}:${athleteId}`, enabled, createController: factory, controllerRef, initial,
       onUnread: (summary, previous) => shareUnread(live.current(), summary, previous) }),
     role === 'athlete' && feedback?.athlete_id === athleteId && entry.athlete?.user_id === ownerId

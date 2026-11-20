@@ -9,7 +9,7 @@ export default function AtletUgevideo({ client, athleteId, day, hent = hentAtlet
   const [status, setStatus] = useState('idle')
 
   useEffect(() => {
-    if (!client || !athleteId) return
+    if (!athleteId) return
     let aktiv = true
     Promise.resolve(hent({ client, athleteId, ...(day ? { day } : {}) })).then(v => { if (aktiv) setVideo(v || null) }, () => {})
     return () => { aktiv = false }
@@ -26,7 +26,7 @@ export default function AtletUgevideo({ client, athleteId, day, hent = hentAtlet
     if (seenAt) setVideo(v => (v ? { ...v, athlete_seen_at: seenAt } : v))
   }
 
-  return h('section', { style: { ...s.card, borderColor: '#c8923a' }, 'aria-label': 'Ugevideo fra din coach', 'data-ugevideo-atlet': '' },
+  return h('div', { style: { maxWidth: 480, margin: '0 auto', paddingTop: 20 } }, h('section', { style: { ...s.card, borderColor: '#c8923a', marginBottom: 0 }, 'aria-label': 'Ugevideo fra din coach', 'data-ugevideo-atlet': '' },
     h('p', { style: s.eyebrow }, 'Fra din coach'),
     h('h2', { style: { ...s.heading, fontSize: 24, margin: '8px 0 4px' } }, 'Ugevideo'),
     h('p', { style: { ...s.text, margin: 0 } }, ugeTekst(video.week_start)),
@@ -36,5 +36,5 @@ export default function AtletUgevideo({ client, athleteId, day, hent = hentAtlet
         style: { display: 'block', width: '100%', maxHeight: '70vh', marginTop: 16, borderRadius: 8, background: '#000' } })
       : h('button', { type: 'button', style: s.primary, disabled: status === 'busy', onClick: aabn },
         status === 'busy' ? 'Henter videoen …' : 'Se ugevideo'),
-    status === 'error' && h('p', { role: 'alert', style: { ...s.text, fontSize: 14, color: '#e08a6d' } }, 'Videoen kunne ikke hentes. Prøv igen.'))
+    status === 'error' && h('p', { role: 'alert', style: { ...s.text, fontSize: 14, color: '#e08a6d' } }, 'Videoen kunne ikke hentes. Prøv igen.')))
 }

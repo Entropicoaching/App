@@ -49,7 +49,7 @@ export default function CoachUgevideo({ client, athlete, day, laeg = laegUgevide
         style: { ...s.secondary, marginTop: 0, borderColor: v.key === uge ? '#c8923a' : '#414139' }, onClick: () => setUge(v.key) },
       `${v.label} (${ugeTekst(v.weekStart).replace('Ugen fra ', '')})`))),
     h('label', { style: { ...s.secondary, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', cursor: 'pointer' } },
-      fil ? `Valgt: ${fil.name || 'video'}` : 'Vælg video',
+      h('span', null, fil ? `Valgt: ${fil.name || 'video'}` : 'Vælg video'),
       h('input', { key: inputKey, type: 'file', accept: 'video/*', 'aria-label': 'Vælg video',
         style: { position: 'absolute', width: 1, height: 1, opacity: 0 },
         onChange: e => { setFil(e.target.files?.[0] || null); setStatus({ kind: 'idle' }) } })),
