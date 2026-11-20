@@ -571,8 +571,27 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
   // listen selv er commited til DOM'en (almindelig useEffect, ikke layout —
   // ingen synligt flimmer set i e2e-prøven), så dokumentets højde allerede
   // matcher den rullede liste før vi ruller.
+  // ORDRE 1930: i Entropi 2 henter listen kalenderdata igen ved tilbagevejen og
+  // er kort for tom (dokumentet klemmer scrollY til 0), så gendannelsen gentages
+  // hver gang dokumentets højde ændrer sig, til coachen selv rører skærmen eller
+  // 3 sekunder er gået.
   useEffect(() => {
-    if (view === 'list') window.scrollTo(0, listScrollYRef.current)
+    if (view !== 'list') return undefined
+    const mål = listScrollYRef.current
+    window.scrollTo(0, mål)
+    if (!mål) return undefined
+    const gendan = () => { if (Math.abs(window.scrollY - mål) > 1) window.scrollTo(0, mål) }
+    const iGang = typeof ResizeObserver === 'function' ? new ResizeObserver(gendan) : null
+    iGang?.observe(document.documentElement)
+    const rørt = ['wheel', 'touchstart', 'keydown', 'mousedown']
+    const stop = () => {
+      iGang?.disconnect()
+      clearTimeout(tid)
+      rørt.forEach(n => window.removeEventListener(n, stop))
+    }
+    const tid = setTimeout(stop, 3000)
+    rørt.forEach(n => window.addEventListener(n, stop, { passive: true }))
+    return stop
   }, [view])
 
   useVideoCoachBro({

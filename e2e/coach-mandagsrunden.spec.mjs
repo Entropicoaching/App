@@ -1,12 +1,16 @@
-// ORDRE 285 · commit 3 — "mandagsrunden som én prøve": bevist, ikke antaget.
-// Coachen sorterer en LANG atletliste (20 atleter, kræver reel rulning ved
-// 390×844) efter "Afvigelse denne uge", går ind på de tre øverste én ad
-// gangen og tilbage — og PRØVEN venter på det faktiske DOM-udfald for både
-// sorteringen (uændret rækkefølge, samme princip som e2e/coach-afvigelse.
-// spec.mjs) OG rullepositionen (samme scrollY før klik-ind som efter
-// tilbage-klik, målt i pixels, ikke antaget).
+// ORDRE 285 · commit 3, rettet i ordre 1930 til Entropi 2: coachens forside viser
+// en LANG atletliste (20 atleter, kræver reel rulning ved 390×844), coachen går
+// ind på de tre øverste én ad gangen ("Åbn programmet for <navn>") og tilbage
+// ("← Tilbage til atleter") — og PRØVEN venter på det faktiske DOM-udfald:
+// listens rækkefølge er uændret OG rullepositionen er den samme (scrollY,
+// målt i pixels) før klik-ind og efter tilbage-klik.
+// Pensioneret i 1930: sorteringsknappen "Afvigelse denne uge" findes kun i den
+// gamle forside (entropi2=false). Entropi 2 viser den ikke; om funktionen skal
+// tilbage er Marcs beslutning (se plan/1928/TJEK.md), og sorteringen testes
+// stadig af e2e/coach-afvigelse.spec.mjs.
 //
 // Kørsel: node e2e/coach-mandagsrunden.spec.mjs (npm run e2e:mandagsrunden)
+// E2E_BREDDE=1280 måler ved desktopbredde i stedet for 390×844.
 
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
@@ -79,22 +83,15 @@ export async function runCoachMandagsrunden(page, { appUrl, outDir }) {
   await page.locator('#athlete-auth-email').fill(COACH_USER.email)
   await page.locator('#athlete-auth-password').fill(COACH_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByRole('button', { name: /Ø Topafvigelse Ét/ }).waitFor({ state: 'visible', timeout: 15000 })
-
-  await page.getByRole('button', { name: 'Afvigelse denne uge', exact: true }).click()
+  await page.getByRole('button', { name: /Åbn programmet for Ø Topafvigelse Ét/ }).waitFor({ state: 'visible', timeout: 15000 })
 
   const rowNames = async () => {
-    const rows = [...(await page.locator('div[role="button"]').allTextContents())]
+    const rows = await page.locator('button[data-u11-atlet]').evaluateAll(els => els.map(el => el.getAttribute('aria-label') || ''))
     return TOP_TRE.map(t => rows.findIndex(text => text.includes(t.navn)))
   }
-  await page.waitForFunction((navne) => {
-    const rows = [...document.querySelectorAll('div[role="button"]')].map(el => el.textContent || '')
-    const idx = navne.map(n => rows.findIndex(t => t.includes(n)))
-    return idx.every(i => i >= 0) && idx[0] < idx[1] && idx[1] < idx[2]
-  }, TOP_TRE.map(t => t.navn), { timeout: 10000 })
   const [i1, i2, i3] = await rowNames()
-  assert.ok(i1 < i2 && i2 < i3, `forventede rækkefølge Ét → To → Tre, fik indekser ${i1}/${i2}/${i3}`)
-  await shot('01-sorteret')
+  assert.ok(i1 >= 0 && i2 >= 0 && i3 >= 0, `forventede alle tre øverste atleter i listen, fik indekser ${i1}/${i2}/${i3}`)
+  await shot('01-liste')
 
   // Listen skal reelt kunne rulles ved 20 atleter/390×844 — ellers beviser
   // rullepositions-tjekket nedenfor ingenting.
@@ -107,30 +104,33 @@ export async function runCoachMandagsrunden(page, { appUrl, outDir }) {
     const navn = TOP_TRE[n].navn
     await page.evaluate((y) => window.scrollTo(0, y), rulleOffsets[n])
     await page.waitForTimeout(50) // lad scroll-eventet slå igennem før vi måler
+    // Playwright ruller selv rækken ind i skærmen ved klik; gør det først, så scrollY måles lige før trykket.
+    const rk = page.getByRole('button', { name: new RegExp(`Åbn programmet for ${navn}`) })
+    await rk.scrollIntoViewIfNeeded()
+    await page.waitForTimeout(50)
     const scrollFoer = await page.evaluate(() => window.scrollY)
 
-    await page.getByText(navn, { exact: true }).first().click()
-    await page.getByText(navn, { exact: true }).first().waitFor({ state: 'visible', timeout: 10000 })
+    await page.getByRole('button', { name: new RegExp(`Åbn programmet for ${navn}`) }).click()
     await page.getByText('← Tilbage til atleter', { exact: false }).waitFor({ state: 'visible', timeout: 10000 })
     await shot(`0${n + 2}-atlet-${n + 1}-aabnet`)
 
     await page.getByText('← Tilbage til atleter', { exact: false }).click()
-    await page.getByRole('button', { name: new RegExp(navn) }).waitFor({ state: 'visible', timeout: 10000 })
-    await page.waitForTimeout(50)
+    await page.getByRole('button', { name: new RegExp(`Åbn programmet for ${navn}`) }).waitFor({ state: 'visible', timeout: 10000 })
+    // Listen henter kalenderdata igen og er kort for tom; vent, til den igen er fuld højde.
+    await page.waitForFunction((min) => document.documentElement.scrollHeight - window.innerHeight >= min, 50, { timeout: 10000 })
+    await page.waitForTimeout(1200)
     const scrollEfter = await page.evaluate(() => window.scrollY)
 
-    // Sorteringen (aria-pressed + DOM-rækkefølge) skal stadig stå ved "Afvigelse denne uge".
-    const stadigAfvigelse = await page.getByRole('button', { name: 'Afvigelse denne uge', exact: true }).getAttribute('aria-pressed')
-    assert.equal(stadigAfvigelse, 'true', `sorteringen skal stadig være "Afvigelse denne uge" efter tilbage fra ${navn}`)
+    // Rækkefølgen er uændret efter tilbage.
     const [j1, j2, j3] = await rowNames()
-    assert.ok(j1 < j2 && j2 < j3, `rækkefølgen skal være uændret efter tilbage fra ${navn}, fik ${j1}/${j2}/${j3}`)
+    assert.ok(j1 === i1 && j2 === i2 && j3 === i3, `rækkefølgen skal være uændret efter tilbage fra ${navn}, fik ${j1}/${j2}/${j3} mod ${i1}/${i2}/${i3}`)
 
     // Rullepositionen: samme scrollY før klik-ind som efter tilbage-klik.
     assert.equal(scrollEfter, scrollFoer, `rullepositionen skal holde efter tilbage fra ${navn}: var ${scrollFoer}px før, ${scrollEfter}px efter`)
   }
   await shot('05-alle-tre-besoegt')
 
-  console.log('\nGRØN: mandagsrunden — sorterer 20 atleter efter afvigelse, går ind på de tre øverste én ad gangen og tilbage, sorteringen og rullepositionen holder hele vejen.')
+  console.log('\nGRØN: mandagsrunden — viser 20 atleter, går ind på de tre øverste én ad gangen og tilbage, rækkefølgen og rullepositionen holder hele vejen.')
 }
 
 async function main() {
@@ -139,7 +139,7 @@ async function main() {
   const vite = await startVite()
   const browser = await launchBrowser()
   try {
-    const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+    const page = await browser.newPage({ viewport: process.env.E2E_BREDDE === '1280' ? { width: 1280, height: 900 } : { width: 390, height: 844 } })
     const consoleErrors = []
     page.on('pageerror', err => consoleErrors.push(`pageerror: ${err.message}`))
     page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(`console.error: ${msg.text()}`) })
