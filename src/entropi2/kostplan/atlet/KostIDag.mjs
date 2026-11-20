@@ -144,6 +144,12 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   // Fortryd lægger præcis rækken tilbage. Et planmåltid sættes tilbage som planlagt, hvis mængden ikke var rettet.
   const removable = new Set(log.removableIds ?? [])
   const fjernbare = typeof tracker?.remove === 'function' ? (log.logs ?? []).filter(row => removable.has(row.id)) : []
+  const fjernbarIds = new Set(fjernbare.map(row => row.id))
+  // 1940: hvert måltid står ét sted. Et spist planmåltid har Ret og Fjern i sin egen række under kostplanen;
+  // alt andet står i én liste, Logget i dag, med Fjern i samme række.
+  const planRaekker = new Set(kanRettePlan ? eaten.flatMap(meal => meal.logId ? [meal.logId] : []) : [])
+  const redigerbare = new Set(logget.map(item => item.id))
+  const listen = (log.logs ?? []).filter(row => !planRaekker.has(row.id) && (fjernbarIds.has(row.id) || redigerbare.has(row.id)))
   const fjern = row => {
     const navn = String(row.meal ?? '').trim()
     const planMeal = eaten.find(meal => meal.logId === row.id)
@@ -242,10 +248,17 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     eaten.length > 0 && !kanRettePlan && h('p', { style: { margin: '8px 0 0' } }, `Spist: ${eaten.map(meal => meal.name).join(', ')}`),
     // 1924: tryk på et spist planmåltid åbner mængden udfyldt; Gem retter samme række.
     eaten.length > 0 && kanRettePlan && h('div', { style: row },
-      ...eaten.map(meal => h('button', { key: meal.id, type: 'button', style: control, disabled: !meal.logId || pending.length > 0,
-        'aria-label': `Ret mængde: ${meal.name}`, 'aria-pressed': retPlan?.id === meal.id,
-        onClick: () => setRet(retPlan?.id === meal.id ? null : { plan: meal.id, amount: String(Math.round(gramTotal(meal) * 10) / 10).replace('.', ',') }) },
-      `Spist: ${meal.name} · ${fmt(gramTotal(meal))} g`))),
+      ...eaten.map(meal => {
+        const ret = h('button', { key: meal.id, type: 'button', style: control, disabled: !meal.logId || pending.length > 0,
+          'aria-label': `Ret mængde: ${meal.name}`, 'aria-pressed': retPlan?.id === meal.id,
+          onClick: () => setRet(retPlan?.id === meal.id ? null : { plan: meal.id, amount: String(Math.round(gramTotal(meal) * 10) / 10).replace('.', ',') }) },
+        `Spist: ${meal.name} · ${fmt(gramTotal(meal))} g`)
+        const raekke = fjernbare.find(item => item.id === meal.logId)
+        // 1940: Fjern i samme række som planmåltidets Ret.
+        return !raekke ? ret : h('span', { key: meal.id, style: { display: 'inline-flex', gap: 4 } }, ret,
+          h('button', { type: 'button', style: control, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${String(raekke.meal ?? '').trim()}`,
+            onClick: () => fjern(raekke) }, 'Fjern'))
+      })),
     retPlan && h('div', { role: 'group', 'aria-label': `Ret mængde: ${retPlan.name}`, style: { ...row, alignItems: 'center' } },
       h('input', { type: 'text', inputMode: 'decimal', value: ret.amount, 'aria-label': `Ny mængde ${retPlan.name}`,
         style: { ...control, cursor: 'text', width: '5.5rem' }, onChange: event => setRet({ ...ret, amount: event.currentTarget.value }) }),
@@ -288,11 +301,19 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       })),
 
     // 1923: tryk på et logget måltid åbner mængden udfyldt; Gem retter samme række.
-    logget.length > 0 && h('p', { style: label }, 'Logget i dag · tryk for at rette mængden'),
-    logget.length > 0 && h('div', { style: row },
-      ...logget.map(item => h('button', { key: item.id, type: 'button', style: control, disabled: pending.length > 0,
-        'aria-label': `Ret mængde: ${item.row.meal}`, 'aria-pressed': retItem?.id === item.id,
-        onClick: () => setRet(retItem?.id === item.id ? null : { id: item.id, amount: String(item.grams) }) }, item.row.meal))),
+    // 1940: samme række har Fjern (1936, Fortryd i beskeden); ingen bekræftelsesdialog.
+    listen.length > 0 && h('p', { style: label }, logget.length > 0 ? 'Logget i dag · tryk på navnet for at rette mængden' : 'Logget i dag'),
+    listen.length > 0 && h('ul', { style: { listStyle: 'none', margin: '8px 0 0', padding: 0 } },
+      ...listen.map(raekke => {
+        const navn = String(raekke.meal ?? '').trim(), item = logget.find(x => x.id === raekke.id)
+        return h('li', { key: raekke.id, style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 4 } },
+          item ? h('button', { type: 'button', style: { ...control, minWidth: 0, overflowWrap: 'anywhere', textAlign: 'left' }, disabled: pending.length > 0,
+            'aria-label': `Ret mængde: ${item.row.meal}`, 'aria-pressed': retItem?.id === item.id,
+            onClick: () => setRet(retItem?.id === item.id ? null : { id: item.id, amount: String(item.grams) }) }, item.row.meal)
+            : h('span', { style: { minWidth: 0, overflowWrap: 'anywhere' } }, navn),
+          fjernbarIds.has(raekke.id) && h('button', { type: 'button', style: control, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${navn}`,
+            onClick: () => fjern(raekke) }, 'Fjern'))
+      })),
     retItem && h('div', { role: 'group', 'aria-label': `Ret mængde: ${retItem.name}`, style: { ...row, alignItems: 'center' } },
       h('input', { type: 'text', inputMode: 'decimal', value: ret.amount, 'aria-label': `Ny mængde ${retItem.name}`,
         style: { ...control, cursor: 'text', width: '5.5rem' }, onChange: event => setRet({ ...ret, amount: event.currentTarget.value }) }),
@@ -300,14 +321,6 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       h('button', { type: 'button', style: primary, disabled: !retNy || pending.length > 0, 'aria-label': `Gem ${retItem.name}`, onClick: gemRet },
         retNy ? `Gem · ${fmt(retNy.kcal)} kcal` : 'Gem'),
       h('button', { type: 'button', style: { ...control, background: 'transparent' }, onClick: () => setRet(null) }, 'Fortryd')),
-
-    // 1936: Fjern direkte på hver række; ingen bekræftelsesdialog, Fortryd står i beskeden.
-    fjernbare.length > 0 && h('p', { style: label }, 'Fjern et forkert måltid'),
-    fjernbare.length > 0 && h('ul', { style: { listStyle: 'none', margin: '8px 0 0', padding: 0 } },
-      ...fjernbare.map(row => h('li', { key: row.id, style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 4 } },
-        h('span', { style: { minWidth: 0, overflowWrap: 'anywhere' } }, String(row.meal ?? '').trim()),
-        h('button', { type: 'button', style: control, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${String(row.meal ?? '').trim()}`,
-          onClick: () => fjern(row) }, 'Fjern')))),
 
     water,
 
@@ -350,7 +363,7 @@ const device = () => { try { return typeof localStorage === 'undefined' ? null :
 // skjules kun. Valget huskes pr. atlet på enheden. Uden en skrivbar dag i dag
 // (fremtidig dato, anden dag) vises laget åbent som før.
 export function KostLag({ quick, preview, athleteId, date, checkin, controller, weight, foodEntry, foodGate, trackerFold, water,
-  noPlanToday = false, client, onShowPlan, children }) {
+  noPlanToday = false, client, onShowPlan, planSeen = false, onSeen, children }) {
   const [details, setDetails] = useState(() => ({ athleteId, open: laesDetaljer(device(), athleteId) }))
   const detailsOpen = details.athleteId === athleteId ? details.open : laesDetaljer(device(), athleteId)
   const [custom, setCustom] = useState(0)
@@ -374,7 +387,12 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   }, [wantNext, client, athleteId, date])
   const nextStart = wantNext && next?.athleteId === athleteId && next?.date === date && next?.client === client ? next.start : null
   // Laget åbnes kun for denne visning; atletens husket valg for "Vis detaljer" ændres ikke.
-  const nyPlan = nextStart ? { date: nextStart, onOpen: () => { setDetails({ athleteId, open: true }); onShowPlan(nextStart) } } : null
+  // 1914: Se planen viser den sendte uge og tæller som set.
+  const nyPlan = nextStart ? { date: nextStart, onOpen: () => { setDetails({ athleteId, open: true }); onShowPlan(nextStart); onSeen?.() } } : null
+  // 1914: set-mærket, når dagens planmåltider står synligt (KostDayFrame giver planSeen),
+  // eller når atleten åbner det gamle kostplankort bag "Vis detaljer".
+  const seenNow = planSeen || (quick && detailsOpen)
+  useEffect(() => { if (seenNow) onSeen?.() }, [seenNow, onSeen])
   // "Egne tal" åbner laget og derefter kostloggens eget felt (samme vej som Log mad).
   useEffect(() => {
     if (!custom || !layerOpen) return

@@ -46,6 +46,8 @@ const TIMESTAMP_DEFAULTS = {
   messages: ['created_at'],
   readiness_logs: ['created_at'],
   video_analyses: ['created_at'],
+  // 1938: kostplan_v1_seen.seen_at har default now() i migrationsudkastet.
+  kostplan_v1_seen: ['seen_at'],
 }
 
 // ORDRE 209 · commit 3: src/volume/rettelser.js prøver ved kørsel om
@@ -394,8 +396,8 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
       for (const item of incoming) {
         if (ownUser) item.user_id = ownUser
         if (onConflict) {
-          const existing = ownUser ? rows.find(r => onConflict.split(',').every(c => r[c] === item[c]))
-            : rows.find(r => r[onConflict] === item[onConflict])
+          // 1938: en sammensat nøgle (fx athlete_id,version_id) matches på alle kolonner, som i Postgres.
+          const existing = rows.find(r => onConflict.split(',').every(c => r[c] === item[c]))
           if (existing) {
             if (ignoreDuplicates) { created.push(existing); continue }
             Object.assign(existing, item)
