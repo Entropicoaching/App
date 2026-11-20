@@ -9838,12 +9838,23 @@ function vcV3CurrentBaselineInsights(lift, variation, vals) {
 }
 
 function vcV3Reps(path) {
+  // ORDRE 1897v (Marc 16. nov.: "så skal videocoach dæleme også virke"). eccS og pauseS tæller også
+  // ventetiden i toppen (og dødløftets nedlægning) EFTER opturen, så optur minus de to lå før forrige
+  // løfts slutning, og coachens gem blev afvist ("Repdetaljerne indeholder ugyldige kvalitetsdata").
+  // Løftet starter, hvor dets egen nedtur starter (uden nedtur: hvor opturen starter), og aldrig før
+  // forrige løfts slutning.
+  let previousFinish = 0;
   return (path && path.reps || []).map((rep, index) => {
     const conStart = Number(path.times && path.times[rep.start]);
     const end = Number(path.times && path.times[rep.end]);
     const lead = Math.max(0, Number(rep.eccS || 0) + Number(rep.pauseS || 0));
-    const start = Number.isFinite(conStart) ? Math.max(0, conStart - lead) : 0;
+    const descent = Array.isArray(rep.phases) ? rep.phases.find(item => item.kind === 'eccentric') : null;
+    const descentStart = descent ? Number(path.times && path.times[descent.start]) : NaN;
+    const own = !Array.isArray(rep.phases) ? conStart - lead
+      : Number.isFinite(descentStart) ? Math.min(descentStart, conStart) : conStart;
+    const start = Number.isFinite(conStart) ? Math.max(0, previousFinish, own) : previousFinish;
     const finish = Number.isFinite(end) ? Math.max(start, end) : start;
+    previousFinish = finish;
     const from = Math.max(0, Number(rep.start) || 0);
     const to = Math.max(from, Number(rep.end) || from);
     const validity = Array.isArray(path.valid) ? path.valid.slice(from, to + 1) : [];
