@@ -374,7 +374,8 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   }, [wantNext, client, athleteId, date])
   const nextStart = wantNext && next?.athleteId === athleteId && next?.date === date && next?.client === client ? next.start : null
   // Laget åbnes kun for denne visning; atletens husket valg for "Vis detaljer" ændres ikke.
-  const nyPlan = nextStart ? { date: nextStart, onOpen: () => { setDetails({ athleteId, open: true }); onShowPlan(nextStart) } } : null
+  // 1914: Se planen viser den sendte uge og tæller som set.
+  const nyPlan = nextStart ? { date: nextStart, onOpen: () => { setDetails({ athleteId, open: true }); onShowPlan(nextStart); onSeen?.() } } : null
   // 1914: set-mærket, når dagens planmåltider står synligt (KostDayFrame giver planSeen),
   // eller når atleten åbner det gamle kostplankort bag "Vis detaljer".
   const seenNow = planSeen || (quick && detailsOpen)
