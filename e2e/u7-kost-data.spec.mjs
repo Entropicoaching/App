@@ -153,20 +153,22 @@ async function coach(page, vp, outDir, mode, mock) {
   // Ordre 1544/1547: Også-linjen, dagens tal og ugens kost ligger i rækkens lukkede fold Detaljer.
   await page.getByText(/readiness falder/i).first().waitFor({ state: 'attached', timeout: 30000 })
   await page.waitForTimeout(2000)
+  // Ordre 2005a: readiness og dagens tal står under Signaler fra appen i den lukkede fold Mere.
+  await page.locator('[data-coach-fold="mere"] > summary').click()
   await noSideScroll(page, vp.width)
-  const section = page.locator('section[aria-label="Atleter der kræver handling"]')
+  const section = page.locator('section[aria-label="Signaler fra appen"]')
   const result = { mode }
   if (mode !== 'med') {
     if (await page.locator('[data-u7-day], [data-u7-week-target]').count()) throw new Error('Coachens U7-linjer vises uden tabellerne')
     result.coachText = (await section.textContent()).replace(/\s+/g, ' ')
   } else {
-    await page.locator(`[data-u11-detaljer="${ATHLETE_ID}"] > summary`).click()
-    await page.locator(`[data-u7-day="${ATHLETE_ID}"]`).waitFor({ state: 'visible', timeout: 20000 })
-    await page.locator(`[data-u7-week-target="${ATHLETE_ID}"]`).waitFor({ state: 'visible', timeout: 20000 })
+    await section.locator(`[data-u11-detaljer="${ATHLETE_ID}"] > summary`).click()
+    await section.locator(`[data-u7-day="${ATHLETE_ID}"]`).waitFor({ state: 'visible', timeout: 20000 })
+    await section.locator(`[data-u7-week-target="${ATHLETE_ID}"]`).waitFor({ state: 'visible', timeout: 20000 })
     const text = (await section.textContent()).replace(/\s+/g, ' ')
     if (!/Smerte 6\/10 \(venstre knæ\)/.test(text)) throw new Error('Smerte som tal mangler: ' + text.slice(0, 400))
-    const day = await page.locator(`[data-u7-day="${ATHLETE_ID}"]`).textContent()
-    const week = await page.locator(`[data-u7-week-target="${ATHLETE_ID}"]`).textContent()
+    const day = await section.locator(`[data-u7-day="${ATHLETE_ID}"]`).textContent()
+    const week = await section.locator(`[data-u7-week-target="${ATHLETE_ID}"]`).textContent()
     // Ordre 1679: dagslinjen gentager ikke smerten, når rækkens grund allerede siger den (tjekket ovenfor).
     if (!/^Søvn 1,5\/5 \(2 dage\)( · |$)/.test(day) || /Smerte/.test(day)) throw new Error('Tal-linjen er forkert: ' + day)
     if (!/^Kost sidste uge: protein 158 g mod mål 180 g, 2\.733 kcal mod 2\.800 i snit pr\. logget dag \(3 af 7 dage\)$/.test(week)) throw new Error('Ugens kostmål er forkert: ' + week)

@@ -55,7 +55,10 @@ test('forsiden: Dine atleter gentager ikke "Kræver dit blik" som mærke; andre 
 
 test('forsiden: intet "n opgaver i alt"; indbakken beholder sit tal', () => {
   const screen = readFileSync(new URL('./CoachScreen.mjs', import.meta.url), 'utf8')
-  const line = screen.split(/\r?\n/).find(l => l.includes("'opgaver'} i alt"))
-  assert.ok(line, 'linjen findes')
-  assert.match(line, /^\s*inbox && rows\.length > 0 &&/)
+  // Ordre 2005a: tallet står kun i indbakkens egen gren (inbox ? ... : forsiden), og der står det én gang.
+  const lines = screen.split(/\r?\n/)
+  const at = lines.findIndex(l => l.includes("'opgaver'} i alt"))
+  assert.ok(at > 0, 'linjen findes')
+  assert.equal(lines.filter(l => l.includes("'opgaver'} i alt")).length, 1)
+  assert.match(lines.slice(Math.max(0, at - 3), at).join('\n'), /inbox \? h\('section', \{ 'aria-label': 'Ulæste beskeder og indsendelser'/)
 })

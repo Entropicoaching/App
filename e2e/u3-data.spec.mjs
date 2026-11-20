@@ -157,12 +157,16 @@ async function athleteRich(page, vp, outDir) {
 async function coachRich(page, vp, outDir) {
   const shot = name => page.screenshot({ path: join(outDir, `u3-coach-${vp.name}-${name}.png`), fullPage: true })
   await login(page, COACH_USER)
+  // Ordre 2005a: smerte, readiness og check-in står under Signaler fra appen i den lukkede fold Mere.
+  const mere = page.locator('[data-coach-fold="mere"] > summary')
+  await mere.waitFor({ state: 'visible', timeout: 30000 })
+  await mere.click()
   const pain = page.getByText('Smerte nævnt', { exact: false }).first()
   await pain.waitFor({ state: 'visible', timeout: 30000 })
   const html = await page.content()
   if (/ondt i knæet/.test(html)) throw new Error('Notens tekst står i DOM')
   await noSideScroll(page, vp.width)
-  await page.locator('section[aria-label="Atleter der kræver handling"]').screenshot({ path: join(outDir, `u3-coach-${vp.name}-01-kraever-dit-blik.png`) })
+  await page.locator('section[aria-label="Signaler fra appen"]').screenshot({ path: join(outDir, `u3-coach-${vp.name}-01-kraever-dit-blik.png`) })
   const team = page.locator('[data-coach-fold="holdet-samlet"]')
   await team.locator('summary').click()
   await team.getByText('logger kost', { exact: false }).waitFor({ state: 'visible', timeout: 20000 })
