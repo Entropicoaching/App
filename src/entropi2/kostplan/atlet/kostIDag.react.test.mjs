@@ -166,3 +166,27 @@ test('Kost i dag: en uafklaret planregistrering siges som uafklaret og prøves i
   const igen = r.labelled('Frokost <syntetisk>: spist som planlagt')
   assert.equal(!igen || igen.getAttribute('disabled') !== null, true, 'ingen blind gentagelse')
 })
+
+// 1918 (Marc 19. nov.: Kost skal være rigtig simpelt): "Ikke fundet: notér med egne tal" må ikke svigte tavst.
+test('Ikke fundet: notér med egne tal siger fra, når kostloggen ikke er klar, og et nyt tryk prøver igen', async t => {
+  let slip = null
+  const r = await mount(t, { beforeLog: call => call.action !== 'insert' ? undefined : new Promise(resolve => { slip = resolve }) })
+  const field = all(r.card(), 'input').find(n => n.getAttribute('aria-label') === 'Nyt måltid')
+  await act(async () => { propsOf(field).onChange({ currentTarget: { value: 'zzzz ukendt ret' } }); await tick() })
+  const egne = () => button(r.card(), 'Ikke fundet: notér med egne tal')
+  const besked = () => all(r.card(), '[role="status"]').find(n => /Kostloggen er ikke klar\. Prøv igen om lidt\./.test(n.textContent))
+  // Uden hængende gem åbner knappen kostloggen som i dag: ingen besked.
+  await r.press(egne())
+  assert.equal(!!besked(), false, 'ingen besked, når kostloggen er klar')
+  assert.equal(r.layer().getAttribute('hidden') !== null, false, 'laget er åbnet')
+  // Et måltidsgem er i gang: kostloggen er ikke skrivbar, og openFoodLog giver false.
+  act(() => { propsOf(r.labelled('Spist igen: Rugbrød med æg')).onClick() })
+  await act(async () => { for (let i = 0; i < 6; i++) await tick() })
+  await r.press(egne())
+  assert.ok(besked(), 'synlig besked i stedet for tavshed')
+  // Gemmet er færdigt; et nyt tryk prøver igen, og beskeden forsvinder.
+  slip?.({ error: null, data: null })
+  await act(async () => { for (let i = 0; i < 12; i++) await tick() })
+  await r.press(egne())
+  assert.equal(!!besked(), false, 'nyt tryk prøver igen og lykkes')
+})

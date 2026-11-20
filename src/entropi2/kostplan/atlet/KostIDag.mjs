@@ -42,7 +42,7 @@ function whenReady(sources, ms = 10000) {
   })
 }
 
-export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan }) {
+export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote }) {
   const t = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || noneState, tracker?.snapshot || noneState)
   const s = useSyncExternalStore(controller?.subscribe || noSubscribe, controller?.snapshot || idle, controller?.snapshot || idle)
   const log = t?.athleteId === athleteId && t?.date === date ? t : none
@@ -187,6 +187,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
         'aria-label': `Vælg ${item.food.name}`, onClick: () => choose(item) }, item.food.name)),
       h('button', { type: 'button', style: { ...control, background: 'transparent' }, onClick: () => onCustom?.() },
         valg.meals.length || valg.foods.length ? 'Egne tal' : 'Ikke fundet: notér med egne tal')),
+    customNote && h('p', { role: 'status', style: { margin: '8px 0 0' } }, customNote),
     valgt && h('div', { role: 'group', 'aria-label': `Mængde: ${valgt.name}`, style: { ...row, alignItems: 'center' } },
       h('input', { type: 'text', inputMode: 'decimal', value: valgt.amount, 'aria-label': `Mængde ${valgt.name}`,
         style: { ...control, cursor: 'text', width: '5.5rem' },
@@ -217,6 +218,7 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   const [details, setDetails] = useState(() => ({ athleteId, open: laesDetaljer(device(), athleteId) }))
   const detailsOpen = details.athleteId === athleteId ? details.open : laesDetaljer(device(), athleteId)
   const [custom, setCustom] = useState(0)
+  const [notReady, setNotReady] = useState(false)
   const setOpen = next => { gemDetaljer(device(), athleteId, next); setDetails({ athleteId, open: next }) }
   const layerOpen = !quick || detailsOpen || preview
   // 1916: læs den næste sendte uge kun, når Kost i dag er vist uden planmåltider.
@@ -239,12 +241,13 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   const nyPlan = nextStart ? { date: nextStart, onOpen: () => { setDetails({ athleteId, open: true }); onShowPlan(nextStart) } } : null
   // "Egne tal" åbner laget og derefter kostloggens eget felt (samme vej som Log mad).
   useEffect(() => {
-    if (!custom || !layerOpen || !foodGate?.current) return
-    foodEntry?.openFoodLog?.(trackerFold?.current)
+    if (!custom || !layerOpen) return
+    // Svigter åbningen (gem i gang, kostloggen ikke skrivbar), siges det; et nyt tryk prøver igen.
+    setNotReady(!foodGate?.current || foodEntry?.openFoodLog?.(trackerFold?.current) !== true)
   }, [custom, layerOpen])
   const waterLog = h(WaterDayLog, { ...water, compact: quick && !layerOpen })
   return h('div', { style: { textAlign: 'left' } },
-    quick && h(KostIDag, { tracker: checkin, controller, athleteId, date, weight, water: layerOpen ? null : waterLog, nyPlan,
+    quick && h(KostIDag, { customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, water: layerOpen ? null : waterLog, nyPlan,
       onCustom: () => { if (!layerOpen) setOpen(true); setCustom(n => n + 1) } }),
     quick && h('div', { style: { padding: '0 16px 8px' } },
       h('button', { type: 'button', style: control, 'aria-expanded': layerOpen, 'aria-controls': `kost-detaljer-${athleteId}`,
