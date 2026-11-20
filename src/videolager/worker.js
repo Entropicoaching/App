@@ -110,7 +110,10 @@ async function handleDownloadUrl(request, env, ctx) {
   // RLS afgør det: kun den, der må se rækken, får en adresse.
   const rows = await supabaseJson(`/rest/v1/video_analyses?select=id&video_path=eq.${encodeURIComponent(key)}&limit=1`, ctx.token, env, ctx.fetchFn)
   if (rows === null) return ctx.json(401, { error: 'Log ind igen' })
-  if (!rows.length) return ctx.json(404, { error: 'Videoen findes ikke' })
+  // ORDRE 1953: coachens ugevideo til atleten. Samme regel: RLS viser kun rækken for atleten selv og hendes coach.
+  // Før migrationen findes tabellen ikke; så er svaret det samme som i dag.
+  const ugevideo = rows.length ? [] : await supabaseJson(`/rest/v1/coach_week_videos?select=id&video_path=eq.${encodeURIComponent(key)}&limit=1`, ctx.token, env, ctx.fetchFn)
+  if (!rows.length && !ugevideo?.length) return ctx.json(404, { error: 'Videoen findes ikke' })
   // Ældre klip ligger i Supabase: appen spørger der, når lageret ikke har klippet.
   if (!(await env.VIDEO.head(key))) return ctx.json(404, { error: 'Videoen ligger ikke i videolageret', not_in_lager: true })
   return ctx.json(200, await issueUrl(env, ctx.origin, 'GET', key, {}, ctx.now))

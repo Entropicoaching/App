@@ -33,7 +33,7 @@ function fakeBucket() {
 }
 
 // Opdigtet Supabase: atleten har en athletes-række; coachen har ingen, men må se video_analyses.
-function fakeSupabase({ rows = [] } = {}) {
+function fakeSupabase({ rows = [], weekRows = null } = {}) {
   return async (url, init) => {
     const token = init.headers.authorization.replace('Bearer ', '')
     const known = token === ATHLETE_TOKEN || token === COACH_TOKEN
@@ -43,6 +43,8 @@ function fakeSupabase({ rows = [] } = {}) {
     if (path === '/auth/v1/user') return reply(200, { id: token === ATHLETE_TOKEN ? USER : 'coach' })
     if (path === '/rest/v1/athletes') return reply(200, token === ATHLETE_TOKEN ? [{ id: ATHLETE }] : [])
     if (path === '/rest/v1/video_analyses') return reply(200, rows)
+    // ORDRE 1953: null betyder, at tabellen ikke findes endnu (før migrationen).
+    if (path === '/rest/v1/coach_week_videos' && weekRows) return reply(200, weekRows)
     return reply(404, {})
   }
 }
@@ -148,4 +150,21 @@ test('signering: blob-adresser kan ikke ændres, og SigV4 rammer AWS eget eksemp
     accessKeyId: 'AKIAIOSFODNN7' + 'EXAMPLE', secretAccessKey: ['wJalrXUtnFEMI', 'K7MDENG', 'bPxRfiCY' + 'EXAMPLEKEY'].join('/'),
     region: 'us-east-1', expiresSeconds: 86400, now: new Date('2013-05-24T00:00:00Z') })
   assert.equal(new URL(presigned).searchParams.get('X-Amz-Signature'), 'aeeed9bbccd4d02ee5c0109b86d86835f995330da4c265957d157751f604d404')
+})
+
+test('ordre 1953: download-url giver coachens ugevideo til den, der må se rækken, og intet ellers', async () => {
+  const synlig = setup({}, { rows: [], weekRows: [{ id: 'u1' }] })
+  await synlig.env.VIDEO.put(KEY, new Uint8Array([7, 8]), { httpMetadata: { contentType: 'video/mp4' } })
+  const svar = await synlig.call('/download-url', { token: ATHLETE_TOKEN, body: { video_path: KEY } })
+  assert.equal(svar.status, 200)
+  const hent = await synlig.call((await svar.json()).url, { method: 'GET' })
+  assert.deepEqual([...new Uint8Array(await hent.arrayBuffer())], [7, 8])
+  // RLS skjuler rækken for en fremmed: ingen adresse.
+  const skjult = setup({}, { rows: [], weekRows: [] })
+  await skjult.env.VIDEO.put(KEY, new Uint8Array([7, 8]), { httpMetadata: { contentType: 'video/mp4' } })
+  assert.equal((await skjult.call('/download-url', { token: COACH_TOKEN, body: { video_path: KEY } })).status, 404)
+  // Før migrationen findes tabellen ikke: samme 404 som i dag, ikke "Log ind igen".
+  const foer = setup({}, { rows: [] })
+  assert.equal((await foer.call('/download-url', { token: COACH_TOKEN, body: { video_path: KEY } })).status, 404)
+  assert.equal((await foer.call('/download-url', { token: 'ukendt-token-som-er-lang-nok-123', body: { video_path: KEY } })).status, 401)
 })
