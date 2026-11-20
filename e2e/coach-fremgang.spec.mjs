@@ -96,7 +96,8 @@ async function main() {
       await page.locator('#athlete-auth-password').fill(COACH_USER.password)
       await page.getByRole('button', { name: 'Log ind' }).click()
       const open = async (navn) => {
-        const row = page.getByRole('button', { name: new RegExp(`${navn}.*Uge`) }).first()
+        // Forsiden (Dine atleter) viser atleten som knappen "Åbn programmet for <navn>" (ordre 1692/f27c24c6).
+        const row = page.getByRole('button', { name: `Åbn programmet for ${navn}` })
         await row.waitFor({ state: 'visible', timeout: 10000 }); await row.click(); await page.waitForTimeout(1500)
       }
       const tilListe = async () => { await page.getByRole('button', { name: /Tilbage til/ }).click(); await page.waitForTimeout(500) }
@@ -108,7 +109,13 @@ async function main() {
         }
         await page.getByRole('button', { name: new RegExp(`${label}$`) }).first().click(); await page.waitForTimeout(1200)
       }
-      const linje = () => page.evaluate(() => { const e = document.querySelector('[data-styrke-linje]'); return e ? { typer: e.getAttribute('data-styrke-linje'), tekst: e.innerText } : null })
+      // Ordre 1544: styrkelinjen er en lukket fold ("Hvad gør atleten stærkere nu"); smerte åbner den selv. Coachen åbner den med et tryk.
+      const linje = async () => {
+        const fold = page.locator('[data-styrke-linje]').first()
+        if (!(await fold.evaluate(el => el.open))) await fold.getByText('Hvad gør atleten stærkere nu').click()
+        await page.waitForTimeout(300)
+        return page.evaluate(() => { const e = document.querySelector('[data-styrke-linje]'); return e ? { typer: e.getAttribute('data-styrke-linje'), tekst: e.innerText } : null })
+      }
 
       await open('Testatlet')
       if (FOER) {

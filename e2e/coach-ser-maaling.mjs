@@ -47,35 +47,38 @@ async function main() {
     await page.locator('#athlete-auth-password').fill(COACH_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
 
-    // A) Atletlisten viser målingen uden noget klik.
-    const measurementText = '3 reps · Ø 2.4 cm sidelæns · Ø 2.1s/rep'
-    await page.getByText(measurementText, { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
-    await shot(page, '01-atletlisten')
+    // A) Forsiden (Kræver dit blik) viser atletens gemte måling som opgaven
+    // "<navn> · Video venter på feedback" uden noget andet klik end login.
+    // FORÆLDET FØR: den kompakte tekst "3 reps · Ø 2.4 cm sidelæns · Ø 2.1s/rep"
+    // i atletlisten og "Ny måling fra et sæt" i Coach Briefing fandtes kun på
+    // den gamle forside (ForsideView, entropi2={false}). Entropi 2 er tændt for
+    // alle (src/entropi2/flag.mjs), og forsiden er siden U11 (f27c24c6) en
+    // opgaverække plus atletknapper "Åbn programmet for <navn>".
+    const opgave = page.getByRole('button', { name: /Video venter på feedback/ })
+    await opgave.first().waitFor({ state: 'visible', timeout: 10000 })
+    await shot(page, '01-forsiden')
 
-    // B) Coach Briefing-forhåndsvisningen på samme side viser "Ny måling fra et sæt".
-    await page.getByText(/Ny måling fra et sæt · Squat/).waitFor({ state: 'visible', timeout: 10000 })
+    // B) Coach Briefing (menuen) viser samme opgave i indbakken.
+    await page.getByText('Coach Briefing', { exact: true }).first().click()
+    await page.getByRole('heading', { name: 'Indbakke' }).waitFor({ state: 'visible', timeout: 10000 })
+    await opgave.first().waitFor({ state: 'visible', timeout: 10000 })
     await shot(page, '02-kraever-dit-blik')
 
-    // C) Ét klik på den kompakte måling åbner den eksisterende reviewvisning.
-    // Scoperet til selve dialogen (ikke page-bred getByText) - AnalyseTab
-    // (mountet bagved, samme klik) har sin EGEN "Gennemgå måling"-knap i sin
-    // videoliste, som ellers ville give en falsk-positiv match.
-    // Ren CSS-attributmatch, ikke getByRole/getByLabel: den ydre atlet-række
-    // er selv role="button" og arver den indre knaps aria-label ind i sit
-    // eget tilgængelige navn (nestede interaktive elementer), så en
-    // navnebaseret matcher rammer BEGGE.
-    await page.locator('button[aria-label^="Åbn gemt måling"]').click()
+    // C) Ét klik på opgaven åbner den eksisterende reviewvisning med den gemte
+    // måling (dialogen, ikke Analyse-fanen bagved, som har sin egen liste).
+    await opgave.first().click()
     const dialog = page.getByRole('dialog')
     await dialog.waitFor({ state: 'visible', timeout: 10000 })
     await dialog.getByText('Gennemgå måling').first().waitFor({ state: 'visible', timeout: 10000 })
-    await dialog.getByText('3 reps').first().waitFor({ state: 'visible', timeout: 10000 })
+    await dialog.getByText(/3 reps/).first().waitFor({ state: 'visible', timeout: 10000 })
+    await dialog.getByText('2,4 cm').first().waitFor({ state: 'visible', timeout: 10000 })
     await shot(page, '03-review-aabnet')
 
     const crashed = await page.getByText('Ups — noget gik galt.').count()
     assert.equal(crashed, 0, 'Reviewvisningen ramte ErrorBoundary-fallbacken')
     assert.deepEqual(consoleErrors, [], `Ingen browser-fejl forventet, fandt: ${JSON.stringify(consoleErrors)}`)
 
-    console.log(`\nGRØN: coachen ser en gemt måling (${MEASURED_VIDEO_ID}) i atletlisten og Coach Briefing uden at åbne VideoCoach, og ét klik åbner den eksisterende reviewvisning.`)
+    console.log(`\nGRØN: coachen ser en gemt måling (${MEASURED_VIDEO_ID}) på forsiden og i Coach Briefing uden at åbne VideoCoach, og ét klik åbner den eksisterende reviewvisning.`)
     process.exitCode = 0
   } catch (err) {
     console.error('\nFEJL:', err.message)
