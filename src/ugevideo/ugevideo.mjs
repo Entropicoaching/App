@@ -4,12 +4,10 @@
 // klippet i videolageret (R2) når det er slået til, ellers i Supabase-lageret som atletens videoer.
 // Kun atleten selv og hendes coach kan se rækken og klippet (RLS og lagerets mappe-policies).
 import { calendarDay, addCalendarDays } from '../calendarDate.js'
-import { VIDEOCOACH_UPLOAD_BUCKET, VIDEOCOACH_UPLOAD_MAX_BYTES } from '../videoCoachUpload.js'
+import { VIDEOCOACH_UPLOAD_BUCKET, VIDEOCOACH_UPLOAD_MAX_BYTES, buildVideoUploadPath } from '../videoCoachUpload.js'
 
 export const UGEVIDEO_TABLE = 'coach_week_videos'
 const KOLONNER = 'id,athlete_id,week_start,video_path,note,created_at,athlete_seen_at'
-const UDVIDELSER = { 'video/mp4': 'mp4', 'video/quicktime': 'mov', 'video/webm': 'webm' }
-
 // Mandagen i den uge, dagen ligger i (YYYY-MM-DD, kalenderdag i Danmark).
 export function mandagI(day = calendarDay()) {
   const d = new Date(`${day}T12:00:00Z`)
@@ -22,9 +20,9 @@ export function ugeValg(day = calendarDay()) {
   return [{ key: 'denne', label: 'Denne uge', weekStart: denne }, { key: 'naeste', label: 'Næste uge', weekStart: addCalendarDays(denne, 7) }]
 }
 
+// Samme sti som atletens videoer, så workeren udsteder præcis den (src/videolager/worker.js efter 1952).
 export function ugevideoSti(athleteId, id, mimeType) {
-  const ext = UDVIDELSER[String(mimeType || '').split(';')[0].trim().toLowerCase()]
-  return athleteId && /^[0-9a-f-]{36}$/i.test(String(id)) && ext ? `${athleteId}/${id}.${ext}` : null
+  return buildVideoUploadPath(athleteId, id, mimeType)
 }
 
 const nyId = () => globalThis.crypto.randomUUID()
@@ -48,7 +46,7 @@ export async function laegUgevideo({ client, athleteId, weekStart, file, note = 
   if (!client || !athleteId || !/^\d{4}-\d{2}-\d{2}$/.test(String(weekStart)) || !file) return { error: 'Vælg en video først' }
   const mimeType = file.type || 'video/mp4'
   const path = ugevideoSti(athleteId, id, mimeType)
-  if (!path) return { error: 'Videoen skal være mp4, mov eller webm' }
+  if (!path) return { error: 'Videoen skal være mp4, mov, webm, m4v eller 3gp' }
   let upload = null
   const lager = await lagerKlient(env)
   if (lager) upload = await lager.klient.uploadTilVideolager({ base: lager.base, token: await token(client),

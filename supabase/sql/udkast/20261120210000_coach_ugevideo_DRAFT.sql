@@ -14,7 +14,7 @@ create table if not exists public.coach_week_videos (
   athlete_id uuid not null references public.athletes(id) on delete cascade,
   coach_id uuid not null default auth.uid(),
   week_start date not null check (extract(isodow from week_start) = 1),
-  video_path text not null unique check (video_path ~ '^[0-9a-fA-F-]{36}/[0-9a-fA-F-]{36}\.(mp4|mov|webm)$'),
+  video_path text not null unique check (video_path ~ '^[0-9a-fA-F-]{36}/[0-9a-fA-F-]{36}\.(mp4|mov|webm|m4v|3gp)$'),
   note text check (note is null or char_length(note) <= 2000),
   created_at timestamptz not null default now(),
   athlete_seen_at timestamptz,
