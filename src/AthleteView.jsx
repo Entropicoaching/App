@@ -46,6 +46,7 @@ import { compactHomeworkEnabled, renderHomeworkEntry, renderHomeworkHome } from 
 import { entropi2Enabled, loadEntropi2Styles, HomeSession, Entropi2Kost, ConversationEntry, Entropi2Mobility, Entropi2Analysis, useEntropi2Dag, LOCAL_FOODS } from './entropi2/athleteEntry.mjs'
 
 import { useOwnTracking } from './entropi2/tracking/useOwnTracking.mjs'
+import AtletUgevideo from './ugevideo/AtletUgevideo.mjs'
 import { homeProgramReadSetters, retryHomeProgram } from './entropi2/home/homeProgramRead.mjs'
 
 import { ProfileMenu, ProfilePage } from './entropi2/profile/ProfilePage.mjs'
@@ -861,6 +862,8 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
         {...(e2ReadOnly ? { disabled: true, 'aria-label': 'Atletvisning uden skrivninger' } : {})}
         style={e2ProfileOpen ? { ...s.page, display: 'none' } : e2ReadOnly ? { ...s.page, border: 0, margin: 0, minWidth: 0 } : s.page}>
 
+        {/* ORDRE 1953: coachens ugevideo øverst på Hjem; kun for atleten selv, ikke i coachens forhåndsvisning. */}
+        {e2Home && !e2ReadOnly && !e2EgenCoach && <AtletUgevideo key={`ugevideo-${athlete.id}`} client={inboxDatabase} athleteId={athlete.id} />}
         {e2Home && (
           <HomeSession key={athlete.id} enabled={true} coachOwnTraining={e2EgenCoach} athlete={athlete} messages={messages} formatMsgTime={formatMsgTime}
             setTab={setTab} allWeeks={allWeeks} currentWeek={currentWeek} exerciseLogs={exerciseLogs} onHoliday={onHoliday}

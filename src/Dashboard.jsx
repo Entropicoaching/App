@@ -48,6 +48,7 @@ import LogTab from './dashboard/LogTab.jsx'
 import StaevneTab from './dashboard/StaevneTab.jsx'
 import NoterTab from './dashboard/NoterTab.jsx'
 import BeskederTab from './dashboard/BeskederTab.jsx'
+import CoachUgevideo from './ugevideo/CoachUgevideo.mjs'
 import { COACH_SAVE_NEXT_ENABLED, createInboxSaveNext, inboxReplyMatches } from './dashboard/coachSaveNext.mjs'
 import VideoReviewModal from './dashboard/VideoReviewModal.jsx'
 import StaevneResultatModal from './dashboard/StaevneResultatModal.jsx'
@@ -1029,6 +1030,8 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
             )}
 
             {/* TAB: BESKEDER */}
+            {/* ORDRE 1953: coachens ugevideo til atleten, over samtalen. */}
+            {e2 && activeTab === 'beskeder' && <CoachUgevideo key={`ugevideo-${a.id}`} client={supabase} athlete={a} />}
             {e2 && activeTab === 'beskeder' && (
               <ConversationEntry enabled={true} role="coach" controllerRef={e2CoachSamtaleRef} getEntry={() => ({
                 enabled: true, session, selectedAthlete, athletes, hiddenAthleteIds, inboxDatabase: supabase,
