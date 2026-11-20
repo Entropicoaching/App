@@ -161,6 +161,10 @@
      og bag topbjaelken paa desktop. Coachens visning: under videoen over
      vaerktoejerne paa mobil, i den tomme venstre margin paa desktop. */
   body.coachweb #banner { top:auto; bottom:192px; max-width:min(92vw,380px); font-size:13px; }
+  /* ORDRE 1899v: fremdriftsbjælke under teksten, mens stangen spores (se vcSporBar) */
+  #banner[data-spor]::after { content:''; display:block; height:4px; margin-top:7px; border-radius:2px;
+    background:linear-gradient(to right, var(--accent) var(--spor,0%), rgba(255,255,255,.2) var(--spor,0%)); }
+  body.athlete #banner[data-spor] { background:#141410; width:min(82vw,320px); padding:18px 16px 19px; }
   /* Tidslinjen laa bag vaerktoejerne, og tidsteksten blev klemt til en lodret stribe i hoejre kant. */
   /* layoutBars() maaler foden, mens den er skjult i setup, og satte derfor
      tidslinjen bag vaerktoejerne; paa coachskaermen ligger den fast over dem. */
@@ -5719,6 +5723,128 @@ async function mpDirectFrames(startT, endT, onFrame) {
   return { last, failed: failed && !stopped };
 }
 
+// ORDRE 1899v (Marc 19. nov.: "bar tracker misser stadig, den er ikke reliabel i at blive på spottet").
+// Sporet følger punkter fra billede til billede, så små fejl lægges sammen, og sporet glider (mest når
+// skiven drejer, eller noget går forbi). Låsen er en fast reference til det markerede udsnit: gråtonens
+// gennemsnit i ringe om punktet, taget én gang i det billede, punktet blev markeret i. Ringene er ens,
+// uanset hvordan skiven er drejet, og referencen opdateres aldrig, så den kan ikke glide.
+// Låsen bruges kun, når den er sikker (ligheden mindst RL_HI): så trækkes sporet ind på referencen, og
+// er sporet fulgt med noget andet, fanges det markerede udsnit igen. Ellers gør sporingen som før.
+const RL_PX=40,RL_RINGS=24,RL_HI=.82;
+const rlRings=(()=>{
+  const rings=[];
+  for(let j=0;j<RL_RINGS;j++){
+    const rho=(.06+.9*j/(RL_RINGS-1))*RL_PX,n=Math.max(8,Math.round(6.2832*rho/1.6));
+    const dx=new Int16Array(n),dy=new Int16Array(n);
+    for(let a=0;a<n;a++){dx[a]=Math.round(Math.cos(a/n*6.2832)*rho);dy[a]=Math.round(Math.sin(a/n*6.2832)*rho);}
+    rings.push({dx,dy,n});
+  }
+  return rings;
+})();
+let rlCan=null,rlCtx=null;
+// Gråt udsnit om (cx,cy) fra det aktuelle billede, skaleret så skiveradius er RL_PX; range er, hvor langt
+// fra midten der kan søges (i udsnittets pixels).
+function rlGrab(cx,cy,range,radius){
+  const s=RL_PX/radius,half=range+RL_PX+2,n=2*half+1,src=(half+.5)/s;
+  if(!rlCan){rlCan=document.createElement('canvas');rlCtx=rlCan.getContext('2d',{willReadFrequently:true});}
+  if(rlCan.width!==n){rlCan.width=n;rlCan.height=n;}
+  rlCtx.fillStyle='#000';rlCtx.fillRect(0,0,n,n);
+  rlCtx.drawImage(ocan,cx-src,cy-src,2*src,2*src,0,0,n,n);
+  const d=rlCtx.getImageData(0,0,n,n).data,g=new Float32Array(n*n);
+  for(let i=0;i<g.length;i++)g[i]=d[i*4]*.3+d[i*4+1]*.59+d[i*4+2]*.11;
+  return {g,n,half,s,cx,cy,range};
+}
+// Pr. ring: gråtonens gennemsnit (out) og dens spredning rundt i ringen (spread).
+function rlProfile(f,px,py,out,spread,skip=1){
+  const g=f.g,n=f.n,base=(f.half+py)*n+f.half+px;
+  for(let j=0;j<RL_RINGS;j+=skip){
+    const r=rlRings[j],dx=r.dx,dy=r.dy;let sum=0,sq=0;
+    for(let a=0;a<r.n;a++){const v=g[base+dy[a]*n+dx[a]];sum+=v;sq+=v*v;}
+    const m=sum/r.n;
+    out[j]=m;spread[j]=Math.sqrt(Math.max(0,sq/r.n-m*m));
+  }
+}
+function rlReference(f){
+  const z=new Float32Array(RL_RINGS),spread=new Float32Array(RL_RINGS);
+  rlProfile(f,0,0,z,spread);
+  let m=0;for(let j=0;j<RL_RINGS;j++)m+=z[j];m/=RL_RINGS;
+  let v=0;for(let j=0;j<RL_RINGS;j++){z[j]-=m;v+=z[j]*z[j];}
+  const sd=Math.sqrt(v/RL_RINGS);
+  for(let j=0;j<RL_RINGS;j++)spread[j]/=sd||1;
+  return {z,spread,sd};
+}
+const rlTmp=new Float32Array(RL_RINGS),rlTmpSpread=new Float32Array(RL_RINGS);
+// Lighed med referencen: ringenes gennemsnit skal følge referencens (korrelation, så lys og kontrast er
+// uden betydning), og ringene skal være lige så ensartede rundt som i referencen. Det sidste afviser
+// steder, der kun ligner i gennemsnit, fx skivens kant mod væggen.
+function rlScore(f,ref,px,py,skip=1){
+  rlProfile(f,px,py,rlTmp,rlTmpSpread,skip);
+  let m=0,k=0;
+  for(let j=0;j<RL_RINGS;j+=skip){m+=rlTmp[j];k++;}
+  m/=k;let v=0,rv=0,c=0;
+  for(let j=0;j<RL_RINGS;j+=skip){const d=rlTmp[j]-m;v+=d*d;c+=d*ref.z[j];rv+=ref.z[j]*ref.z[j];}
+  if(!(v>1e-6&&rv>1e-6))return -1;
+  const sd=Math.sqrt(v/k);let u=0;
+  for(let j=0;j<RL_RINGS;j+=skip)u+=Math.abs(rlTmpSpread[j]/sd-ref.spread[j]);
+  return c/Math.sqrt(v*rv)-.6*u/k;
+}
+// Bedste lighed med referencen i udsnittet. Grov søgning i trin, derefter hvert pixel om det bedste og
+// en parabel til brøkdele af et pixel. second = bedste lighed mindst 0,3 radius fra fundet (entydighed).
+function rlSearch(f,ref,step=3){
+  const R=f.range,coarse=[];let best=null;
+  for(let py=-R;py<=R;py+=step)for(let px=-R;px<=R;px+=step){
+    const sc=rlScore(f,ref,px,py,step>3?2:1);coarse.push(px,py,sc);
+    if(!best||sc>best.score)best={px,py,score:sc};
+  }
+  if(!best)return null;
+  const c=best;best={px:c.px,py:c.py,score:-2};
+  for(let py=Math.max(-R,c.py-step+1);py<=Math.min(R,c.py+step-1);py++)
+    for(let px=Math.max(-R,c.px-step+1);px<=Math.min(R,c.px+step-1);px++){
+      const sc=rlScore(f,ref,px,py);
+      if(sc>best.score)best={px,py,score:sc};
+    }
+  let second=-1;
+  for(let i=0;i<coarse.length;i+=3)
+    if(Math.hypot(coarse[i]-best.px,coarse[i+1]-best.py)>=RL_PX*.3&&coarse[i+2]>second)second=coarse[i+2];
+  let fx=best.px,fy=best.py;
+  const sub=(a,b,c)=>{const d=a-2*b+c;return d<-1e-6?Math.max(-.5,Math.min(.5,.5*(a-c)/d)):0;};
+  if(Math.abs(best.px)<R&&Math.abs(best.py)<R){
+    fx+=sub(rlScore(f,ref,best.px-1,best.py),best.score,rlScore(f,ref,best.px+1,best.py));
+    fy+=sub(rlScore(f,ref,best.px,best.py-1),best.score,rlScore(f,ref,best.px,best.py+1));
+  }
+  return {x:f.cx+fx/f.s,y:f.cy+fy/f.s,score:best.score,second};
+}
+
+// Referencen tages én gang ved det markerede punkt. Ringene er ens hele vejen rundt om skivens midte, så
+// et punkt ved siden af midten ligner alle andre punkter i samme afstand fra midten. Derfor lægges
+// referencen i det mest ensartede punkt tæt ved (skivens midte, højst 0,45 radius væk), og sporet er det
+// punkt plus den faste afstand til det markerede. Låsen bruges kun, når referencen har tydelig struktur
+// og er entydig: intet andet sted inden for 0,6 radius må ligne.
+function rlInit(p0,radius,path){
+  const wide=Math.round(RL_PX*.6),near=Math.round(RL_PX*.45);
+  let f=rlGrab(p0.x,p0.y,wide,radius);
+  const even=(px,py)=>{
+    rlProfile(f,px,py,rlTmp,rlTmpSpread);
+    let m=0,sp=0;for(let j=0;j<RL_RINGS;j++){m+=rlTmp[j];sp+=rlTmpSpread[j];}
+    m/=RL_RINGS;let v=0;for(let j=0;j<RL_RINGS;j++)v+=(rlTmp[j]-m)**2;
+    return sp/RL_RINGS/Math.max(1,Math.sqrt(v/RL_RINGS));
+  };
+  const own=even(0,0);let best={px:0,py:0,q:own};
+  for(let py=-near;py<=near;py+=2)for(let px=-near;px<=near;px+=2){
+    if(Math.hypot(px,py)>near)continue;
+    const q=even(px,py);if(q<best.q)best={px,py,q};
+  }
+  const off=best.q<own*.8&&Math.hypot(best.px,best.py)>=2?{x:best.px/f.s,y:best.py/f.s}:{x:0,y:0};
+  if(off.x||off.y)f=rlGrab(p0.x+off.x,p0.y+off.y,wide,radius);
+  const ref=rlReference(f);let other=-1;
+  for(let py=-wide;py<=wide;py+=2)for(let px=-wide;px<=wide;px+=2)
+    if(Math.hypot(px,py)>=RL_PX*.15)other=Math.max(other,rlScore(f,ref,px,py));
+  const usable=ref.sd>=6&&other<RL_HI-.07;
+  path.refLock={usable,sd:+ref.sd.toFixed(1),other:+other.toFixed(2),off:[+off.x.toFixed(1),+off.y.toFixed(1)],
+    sure:0,pulls:0,recaptures:0};
+  return usable?{ref,off,good:null,low:0,pending:null}:null;
+}
+
 async function startMultipointTracking(p0, session = analysisSession || createAnalysisSession(), options = {}) {
   awaitBarClick=false;tracking=true;barBtn.textContent='⏹ Stop sporing';
   // ORDRE 43 · baseline: kun FØRSTE gang trackeren kører for denne analyse -
@@ -5761,6 +5887,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   let anchorFrame=mpFrame(p0,anchorExtent),anchorTime=startT,cur={x:p0.x,y:p0.y},vel={x:0,y:0};
   let lastGoodVel={x:0,y:0};
   let features=mpGoodFeatures(anchorFrame,cur,radius),lost=0,gapStrikes=0,lastSlowT=-Infinity;
+  // ORDRE 1899v: fast reference til det markerede udsnit (se rlInit). Slås fra med ?laas=0.
+  const lockRange=Math.round(RL_PX*.3);
+  const lock=typeof MODE_PARAMS!=='undefined'&&MODE_PARAMS.get('laas')==='0'?null:rlInit(p0,radius,path);
   let lastMediaT=startT,stableFrames=0,lastRateChangeT=startT;
   let frameSource=video,directRun=false;   // ORDRE 1537v2: billedkilde (video eller VideoFrame)
   const sourceSteps=[],workSamples=[];
@@ -5894,7 +6023,8 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // bekræftede OG langsomme - se opsætningen ovenfor. Den fulde matching
     // (og dermed en chance for at opdage fornyet fart) køres derfor mindst
     // hveranden frame, aldrig længere ude af sync end det.
-    if(VC_TRACKER_FAST&&quietStreak>=QUIET_NEEDED&&!skippedLast){
+    // ORDRE 1899v: på den direkte vej behandles hvert billede; der er ingen afspilning at holde trit med.
+    if(VC_TRACKER_FAST&&!directRun&&quietStreak>=QUIET_NEEDED&&!skippedLast){
       skippedLast=true;skippedFrames++;
       path.pts.push({...cur});path.times.push(tNow);path.valid.push(true);path.confidence.push(1);
       const pctQ=Math.round(tNow/video.duration*100);
@@ -5949,7 +6079,9 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       kept=moves.filter((q,i)=>residuals[i]<=Math.max(3,3*mad));
       if(probe)probe.kept=kept.length;
       let nx=cur.x+mpMedian(kept.map(q=>q.dx)),ny=cur.y+mpMedian(kept.map(q=>q.dy));
-      if(plateIdentityUsable&&!deadliftMode){
+      // ORDRE 1899v: stod sporet sikkert på den faste reference i forrige billede, holder låsen sporet på
+      // plads (se nedenfor), og skivekontrollen her springes over. Det er den, der koster mest tid pr. billede.
+      if(plateIdentityUsable&&!deadliftMode&&!(lock&&lock.good&&lock.low===0)){
         const quickPad=radius*1.55;
         const quickFrame=plCapture(nx-quickPad,ny-quickPad,quickPad*2,quickPad*2);
         let correction=mpQuickPlateSearch(quickFrame,{x:nx,y:ny},radius,plateModel);
@@ -5998,7 +6130,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       }
       const nearHome=Math.hypot(nx-p0.x,ny-p0.y)<=radius*1.35;
       if(plateIdentityUsable&&deadliftMode&&nearHome&&!wasNearHome){homeEntryFrames=10;repInProgress++;}
-      if(plateIdentityUsable&&deadliftMode&&nearHome&&homeEntryFrames>0){
+      if(plateIdentityUsable&&deadliftMode&&nearHome&&homeEntryFrames>0&&!(lock&&lock.good&&lock.low===0)){
         const homeR=radius*1.15,pad=homeR+radius*1.4+auditStep*2;
         const homeFrame=plCapture(p0.x-pad,p0.y-pad,pad*2,pad*2);
         const homeHit=plSearch(homeFrame,p0,radius,plateModel,homeR,auditStep,'home-confirm',tNow);
@@ -6157,6 +6289,63 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     // ORDRE 225 · commit 2 — det ærlige loft (lostWatchdogInterval ovenfor)
     // læser kun denne variabel; ingen ny timer-registrering herfra (se
     // begrundelsen ved lostWatchdogInterval).
+    if(lock){
+      // ORDRE 1899v, 1) Står sporet stadig på det markerede udsnit? Er referencen sikker, og ligger den
+      // et stykke fra sporet, trækkes sporet ind på den, lidt ad gangen, så banen ikke hopper.
+      const off=lock.off;
+      const hit=accepted?rlSearch(rlGrab(cur.x+off.x,cur.y+off.y,lockRange,radius),lock.ref):null;
+      if(hit){hit.x-=off.x;hit.y-=off.y;}
+      if(hit&&hit.score>=RL_HI){
+        const dx=hit.x-cur.x,dy=hit.y-cur.y,dist=Math.hypot(dx,dy);
+        if(dist>radius*.012){
+          // meget sikker reference: sporet lægges næsten helt på den; ellers halvvejs
+          const gain=hit.score>=.93?.85:.5;
+          cur={x:cur.x+dx*gain,y:cur.y+dy*gain};
+          vel={x:vel.x+dx*gain/dt*.65,y:vel.y+dy*gain/dt*.65};lastGoodVel=vel;
+          path.refLock.pulls++;
+        }
+        path.refLock.sure++;
+        lock.good={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
+        lock.low=0;lock.pending=null;
+      }else lock.low++;
+      // 2) Tilbagefangst. Har referencen ikke passet i tre billeder, ledes der efter det markerede udsnit
+      // omkring det sidste sikre punkt, så langt stangen kan være nået. Kun et sikkert og entydigt fund,
+      // set samme sted i to billeder i træk, tæller. Billederne imellem fulgte noget andet: de mærkes
+      // usikre og lægges på linjen mellem de to sikre punkter. Uden fund gør sporingen som før.
+      if(lock.low>=3&&lock.good&&(tNow-lock.good.t<=1.5||path.pts.length%6===0)){
+        const lostS=tNow-lock.good.t;
+        const reach=Math.min(radius*2.5,radius*.6+(lock.good.speed+radius*2)*lostS);
+        const range=Math.round(reach*RL_PX/radius);
+        const found=rlSearch(rlGrab(lock.good.x+off.x,lock.good.y+off.y,range,radius),lock.ref,range>30?4:3);
+        if(found){found.x-=off.x;found.y-=off.y;}
+        const sure=found&&found.score>=RL_HI+.03&&found.score-found.second>=.06&&
+          (!accepted||Math.hypot(found.x-cur.x,found.y-cur.y)>radius*.35);
+        const before=lock.pending;
+        lock.pending=sure?{x:found.x,y:found.y,t:tNow}:null;
+        if(sure&&before&&Math.hypot(found.x-before.x,found.y-before.y)<=radius*.6){
+          const frame=COACHWEB?await mpFrameCooperative(found,anchorExtent):mpFrame(found,anchorExtent);
+          const recaptured=mpGoodFeatures(frame,found,radius);
+          if(recaptured.length>=5){
+            const i0=lock.good.i,a=path.pts[i0],t0=path.times[i0];
+            for(let i=i0+1;i<path.pts.length;i++){
+              const u=(path.times[i]-t0)/Math.max(1e-3,tNow-t0);
+              path.pts[i]={x:a.x+(found.x-a.x)*u,y:a.y+(found.y-a.y)*u};
+              if(path.valid[i])path.lowConf=(path.lowConf||0)+1;
+              path.valid[i]=false;path.confidence[i]=0;
+            }
+            const dtp=Math.max(1e-3,tNow-before.t);
+            vel={x:(found.x-before.x)/dtp,y:(found.y-before.y)/dtp};lastGoodVel=vel;
+            cur={x:found.x,y:found.y};anchorFrame=frame;anchorTime=tNow;features=recaptured;
+            if(!accepted)path.lowConf=Math.max(0,(path.lowConf||0)-1);
+            accepted=true;lost=0;frameConfidence=.5;recoveryPending=null;homeCorrectionPending=null;
+            if(benchMode){benchOutputX=cur.x;benchPreviousRaw={...cur};}
+            lock.good={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
+            lock.low=0;lock.pending=null;
+            path.refLock.recaptures++;
+          }
+        }
+      }
+    }
     if(deadliftMode&&accepted)lastAcceptedRealMs=performance.now();
     let outputPoint={...cur};
     if(benchMode){
@@ -6175,7 +6364,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     barBtn.textContent=`⏹ Stop sporing (${pct}%)`;
     if(analyzing){
       if(!SLIM)allBtn.textContent=`Stop analyse (${pct}%)`;
-      if(SLIM)say(accepted?`Analyserer stangbanen · ${pct}%`:`Holder sidste sikre punkt · ${pct}%`);
+      if(SLIM){say(accepted?`Analyserer stangbanen · ${pct}%`:`Holder sidste sikre punkt · ${pct}%`);vcSporBar(pct);}
     }
     const workMs=performance.now()-workStarted;
     if(TRACKER_BENCHMARK)benchmarkWorkMs.push(workMs);
@@ -11020,8 +11209,14 @@ const banner = document.getElementById('banner');
 // ikke ryddes af en ældre say('')-timer fra videoindlæsningen, før atleten
 // har nået at læse den. En ny besked erstatter den stadig med det samme.
 let sayTimer = 0;
+// ORDRE 1899v: sporingen går billede for billede; bjælken viser, hvor langt den er nået.
+function vcSporBar(pct) {
+  banner.dataset.spor = '1';
+  banner.style.setProperty('--spor', `${Math.max(0, Math.min(100, pct))}%`);
+}
 function say(txt) {
   if (!txt && banner.dataset.kvittering && Date.now() < Number(banner.dataset.kvittering)) return;
+  delete banner.dataset.spor;
   banner.textContent = txt;
   banner.hidden = !txt;
   delete banner.dataset.kvittering;

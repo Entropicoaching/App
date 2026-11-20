@@ -814,3 +814,50 @@ test('coachens gem: 600 tilfældige sæt (frø 1897) med flytninger og rystelser
   }
   assert.ok(saet > 500 && loeft > 1500 && gamle > 500, `${saet} sæt, ${loeft} løft, det gamle regnestykke gav ${gamle} overlap`)
 })
+
+// Ordre 1899v (Marc 19. nov.: "bar tracker misser stadig, den er ikke reliabel i at blive på spottet").
+// Låsen er den faste reference til det markerede udsnit: ringe om punktet, taget én gang. Her prøves
+// regnestykket fra public/videocoach.html på tegnede billeder. Sporingen på klip er målt i ordrens TJEK.
+const laasFra = html.indexOf('const RL_PX=40'), laasTil = html.indexOf('// Referencen tages én gang ved det markerede punkt.', laasFra)
+assert.ok(laasFra > 0 && laasTil > laasFra, 'låsen findes i videocoach.html')
+const laas = new Function(`let ocan=null,document=null;\n${html.slice(laasFra, laasTil)}\n  return {RL_PX,RL_HI,rlReference,rlScore,rlSearch}`)()
+// Et gråt udsnit, som rlGrab ville give det: skive med ringe og to mærker, der følger drejningen, på en ujævn væg.
+function udsnit({ dx = 0, dy = 0, drej = 0, skive = true, lys = 1, range = 12 }) {
+  const R = laas.RL_PX, half = range + R + 2, n = 2 * half + 1, g = new Float32Array(n * n)
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const s = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453
+    let v = 118 + (s - Math.floor(s)) * 16 + x * .3
+    const px = x - half - dx, py = y - half - dy, q = Math.hypot(px, py) / R
+    if (skive && q < 1) {
+      v = q < .1 ? 188 : q < .16 ? 150 : q < .44 ? 48 : q < .5 ? 120 : q < .94 ? 36 : 58
+      const a = Math.atan2(py, px) - drej, vink = Math.atan2(Math.sin(a), Math.cos(a))
+      if (q > .54 && q < .7 && (Math.abs(vink) < .25 || Math.abs(Math.abs(vink) - Math.PI) < .25)) v = 215
+    }
+    g[y * n + x] = v * lys
+  }
+  return { g, n, half, s: 1, cx: 0, cy: 0, range }
+}
+
+test('låsen: skivens midte findes igen, når skiven er flyttet, drejet og i andet lys', () => {
+  const ref = laas.rlReference(udsnit({}))
+  for (const [dx, dy, drej, lys] of [[7, -5, 1.3, 1], [-9, 8, 2.9, .7], [0, 11, .4, 1.2], [3, 2, 5.5, 1]]) {
+    const hit = laas.rlSearch(udsnit({ dx, dy, drej, lys }), ref)
+    assert.ok(hit.score >= laas.RL_HI, `flyttet ${dx},${dy} drejet ${drej}: lighed ${hit.score.toFixed(2)}`)
+    assert.ok(Math.hypot(hit.x - dx, hit.y - dy) <= 1, `flyttet ${dx},${dy} drejet ${drej}: fundet ${hit.x.toFixed(1)},${hit.y.toFixed(1)}`)
+  }
+})
+
+test('låsen: væggen, skivens kant og et punkt ved siden af midten ligner ikke referencen', () => {
+  const ref = laas.rlReference(udsnit({}))
+  assert.ok(laas.rlSearch(udsnit({ skive: false }), ref).score < laas.RL_HI, 'væg uden skive')
+  // skiven ligger en hel radius til siden: udsnittets midte står på skivens kant mod væggen
+  for (const [dx, dy] of [[40, 0], [0, -40], [-28, 28]])
+    assert.ok(laas.rlScore(udsnit({ dx, dy }), ref, 0, 0) < laas.RL_HI, `kanten ${dx},${dy}`)
+  for (const [dx, dy] of [[8, 0], [0, 10], [-7, 7]])
+    assert.ok(laas.rlScore(udsnit({ dx, dy }), ref, 0, 0) < laas.RL_HI, `ved siden af midten ${dx},${dy}`)
+})
+
+test('låsen: sporingen bruger den og kan køre uden (?laas=0)', () => {
+  assert.ok(html.includes("MODE_PARAMS.get('laas')==='0'?null:rlInit(p0,radius,path)"))
+  assert.ok(html.includes('path.refLock.recaptures++') && html.includes('path.refLock.pulls++'))
+})
