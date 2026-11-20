@@ -185,7 +185,7 @@ export function useVideoCoachBro({
           const lager = lagerKlient ? lagerKlient.videolagerUrl() : ''
           const lagerSvar = lager
             ? await lagerKlient.uploadTilVideolager({ base: lager, token: (await supabase.auth.getSession()).data?.session?.access_token,
-              clientAnalysisId: message.clientAnalysisId, path, file, mimeType, signal: controller.signal })
+              athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId, path, file, mimeType, signal: controller.signal })
             : null
           // ORDRE 1610v: tager videolageret ikke imod klippet (og atleten ikke selv har afbrudt), sendes det
           // til Supabase som før, så en fejl i lageret aldrig alene stopper en indsendelse.

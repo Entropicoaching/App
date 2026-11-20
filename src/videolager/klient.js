@@ -19,11 +19,12 @@ async function kald(base, sti, token, body, fetchFn, signal) {
 
 // Samme svarform som supabase.storage.upload ({ data, error }), og den kaster ikke.
 // Et klip, der allerede ligger der (samme client_analysis_id sendt igen), er ikke en fejl.
-export async function uploadTilVideolager({ base, token, clientAnalysisId, path, file, mimeType, signal, fetchFn = fetch }) {
+// ORDRE 1952: athleteId er den valgte atlet, så en coach kan sende for sin egen atlet (workeren tjekker det).
+export async function uploadTilVideolager({ base, token, athleteId, clientAnalysisId, path, file, mimeType, signal, fetchFn = fetch }) {
   try {
     if (!token) return { data: null, error: { message: 'Log ind igen' } }
     const { status, data } = await kald(base, '/upload-url', token,
-      { client_analysis_id: clientAnalysisId, mime_type: mimeType, size: file.size }, fetchFn, signal)
+      { ...(athleteId ? { athlete_id: athleteId } : {}), client_analysis_id: clientAnalysisId, mime_type: mimeType, size: file.size }, fetchFn, signal)
     if (status !== 200 || !data) return { data: null, error: { message: data?.error || 'Videolageret svarede ikke', status } }
     if (data.key !== path) return { data: null, error: { message: 'Videolageret gav en anden sti end ventet' } }
     if (data.exists === true) return { data: { path }, error: null }

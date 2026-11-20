@@ -82,8 +82,20 @@ async function handleUploadUrl(request, env, ctx) {
   if (size > max) return ctx.json(413, { error: `Videoen er større end ${Math.round(max / 1048576)} MB`, max_bytes: max })
   const user = await supabaseJson('/auth/v1/user', ctx.token, env, ctx.fetchFn)
   if (!user?.id) return ctx.json(401, { error: 'Log ind igen' })
-  const athletes = await supabaseJson(`/rest/v1/athletes?select=id&user_id=eq.${encodeURIComponent(user.id)}&limit=1`, ctx.token, env, ctx.fetchFn)
-  const athleteId = Array.isArray(athletes) ? athletes[0]?.id : null
+  // ORDRE 1952 (Marc 20. nov.: "2 ja"): appen sender den valgte atlet med. Atleten selv eller atletens
+  // coach (samme coach-tjek som resten af appen: athletes.coach_id) må sende; en fremmed atlet giver nej.
+  // Uden athlete_id gælder den gamle vej: atletens egen række efter login.
+  let athleteId = null
+  if (body.athlete_id != null) {
+    const wanted = String(body.athlete_id)
+    const rows = await supabaseJson(`/rest/v1/athletes?select=id,user_id,coach_id&id=eq.${encodeURIComponent(wanted)}&limit=1`, ctx.token, env, ctx.fetchFn)
+    const row = Array.isArray(rows) ? rows[0] : null
+    if (row?.id === wanted && (row.user_id === user.id || row.coach_id === user.id)) athleteId = row.id
+    else return ctx.json(403, { error: 'Du kan kun sende video for dig selv eller en atlet, du coacher' })
+  } else {
+    const athletes = await supabaseJson(`/rest/v1/athletes?select=id&user_id=eq.${encodeURIComponent(user.id)}&limit=1`, ctx.token, env, ctx.fetchFn)
+    athleteId = Array.isArray(athletes) ? athletes[0]?.id : null
+  }
   const key = buildVideoUploadPath(athleteId, body.client_analysis_id, body.mime_type)
   if (!key) return ctx.json(403, { error: 'Kun atleter kan sende video' })
   // Samme regel som i dag (upsert: false): et klip overskrives aldrig.
