@@ -336,6 +336,24 @@ test('Kost i dag: Fjern tager et logget måltid væk med ét tryk, rører kun de
   assert.equal(!!button(r.card(), 'Fortryd'), false)
 })
 
+// 1940 (Marc 19. nov.: rigtig simpelt og overskueligt): hvert logget måltid står ét sted, med Ret og Fjern i samme række.
+test('Kost i dag: ét logget måltid er én række med Ret og Fjern, under én overskrift', async t => {
+  const r = await mount(t, { extraRows: [{ ...meal(date, 'Kyllingebryst · 150 g', 165, 35), id: 'i-dag-1' }, { ...meal(date, 'Syntetisk frokost uden gram', 450, 25), id: 'i-dag-2', created_at: date + 'T12:00:00Z' }] })
+  const tekst = r.card().textContent
+  assert.equal(tekst.split('Logget i dag').length - 1, 1, 'én overskrift')
+  assert.doesNotMatch(tekst, /Fjern et forkert måltid/)
+  const lister = all(r.card(), 'ul')
+  assert.equal(lister.length, 1, 'én liste')
+  const raekker = all(lister[0], 'li')
+  assert.equal(raekker.length, 2, 'én række pr. måltid')
+  for (const raekke of raekker) assert.equal(all(raekke, 'button').filter(b => /^Fjern måltid:/.test(b.getAttribute('aria-label'))).length, 1, 'Fjern i samme række')
+  assert.equal(all(raekker.find(x => /Kyllingebryst/.test(x.textContent)), 'button').filter(b => /^Ret mængde: Kyllingebryst/.test(b.getAttribute('aria-label'))).length, 1, 'Ret i samme række')
+  assert.equal(all(r.card(), 'button').filter(b => b.getAttribute('aria-label') === 'Fjern måltid: Kyllingebryst · 150 g').length, 1, 'Fjern findes kun ét sted')
+  await r.press(r.labelled('Fjern måltid: Kyllingebryst · 150 g'))
+  assert.deepEqual(r.f.rows.filter(row => row.date === date).map(row => row.id), ['i-dag-2'])
+  assert.equal(all(r.card(), 'ul li').length, 1)
+})
+
 test('Kost i dag: en fejlet fjernelse beholder rækken og dagens tal og siger det', async t => {
   let fail = true
   const r = await mount(t, { extraRows: [{ ...meal(date, 'Syntetisk snack', 300, 12), id: 'i-dag-1' }],
