@@ -26,7 +26,7 @@ async function ingenVandretScroll(page, hvor) {
 
 async function coachAabnerSamtale(page) {
   await login(page, COACH_USER)
-  await page.getByRole('button', { name: /Åbn programmet for Testatlet/ }).first().click({ timeout: 20000 })
+  await page.getByRole('button', { name: /Åbn programmet for (Testatlet|Atlet W)/ }).first().click({ timeout: 20000 })
   const beskeder = page.getByRole('button', { name: /Beskeder/ }).first()
   if (!(await beskeder.isVisible().catch(() => false))) await page.getByRole('button', { name: /Mere/ }).first().click().catch(() => {})
   await beskeder.click({ timeout: 20000 })
