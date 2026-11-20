@@ -178,7 +178,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
         const anden = andenMaengde(log, meal)
         const igen = h('button', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), type: 'button', style: control,
           disabled: busy(meal.meal), 'aria-label': `Spist igen: ${meal.meal}`, onClick: () => logMeal(meal) }, meal.meal)
-        // 1921: samme måltid med en anden mængde; felt og Log står straks åbne (3 tryk mod 7).
+        // 1921: samme måltid med en anden mængde; felt og Log står straks åbne (3 tryk mod 4).
         return !anden ? igen : h('span', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), style: { display: 'inline-flex', gap: 4 } }, igen,
           h('button', { type: 'button', style: control, disabled: busy(meal.meal), 'aria-label': `Anden mængde: ${meal.meal}`,
             onClick: () => { setChosen(anden); setQuery('') } }, 'Ret g'))
