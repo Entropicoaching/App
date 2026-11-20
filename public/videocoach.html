@@ -1861,6 +1861,14 @@ let curUrl = null;
 // får det nye klip som `video.src` og røres ikke. Originalfilen (til upload) er
 // uændret. Kan klippet ikke normaliseres, bruges originalen, og atleten får det at vide.
 const VC_NORM_MAX_SIDE = 1280;
+// ORDRE 1932v: farten var ca. 20 % for høj ved 60 billeder i sekundet. Billederne blev valgt efter et
+// 30 fps-gitter (Math.round(tid * 30)); ved 60 fps lander hvert andet billede midt mellem to pladser, så
+// afstanden mellem de brugte billeder blev skiftevis 1, 2 og 3 kildebilleder (17, 33 og 50 ms), og det
+// klargjorte klip fik gitterets tid i stedet for billedets egen. Nu bruges et billede, når der er gået
+// mindst en tredivtedel sekund siden det forrige brugte (60 fps: præcis hvert andet, 24 og 30 fps: alle),
+// og billedet beholder sit eget tidsstempel hele vejen til fartberegningen.
+const VC_FRAME_GAP = 1 / 30 - 0.004;      // 4 ms slør: 29,97 fps og tider afrundet til mikrosekunder tæller som 30
+const VC_FRAME_HOLE = 1.55 / 30;          // større afstand end det er et hul (afspilningen tabte billeder)
 const vcNorm = { via: null, forceRecorder: false, done: false, busy: false, used: false, error: null, job: 0, cancel: null, warning: '', frames: null, motion: null, blob: null };
 function vcNormMime() {
   if (typeof MediaRecorder === 'undefined' || !HTMLCanvasElement.prototype.captureStream) return null;
@@ -1906,7 +1914,7 @@ async function vcSinkWebCodecs(w, h) {
   const cfg = { codec: 'avc1.42001f', width: w, height: h, bitrate: 4e6, framerate: 30, avc: { format: 'avc' }, latencyMode: 'realtime' };
   let sup = null; try { sup = await VideoEncoder.isConfigSupported(cfg); } catch {}
   if (!sup || !sup.supported) return null;
-  const samples = []; let avcC = null, codec = cfg.codec, failed = false, n = 0, lastSlot = -1, filled = 0;
+  const samples = []; let avcC = null, codec = cfg.codec, failed = false, n = 0, lastT = null, filled = 0;
   const enc = new VideoEncoder({
     output: (chunk, meta) => {
       const d = new Uint8Array(chunk.byteLength); chunk.copyTo(d);
@@ -1922,16 +1930,16 @@ async function vcSinkWebCodecs(w, h) {
     backlog() { return enc.encodeQueueSize; },
     frame(mediaTime, canvas) {
       if (failed) return;
-      const slot = Math.round(mediaTime * 30);          // 30 fps-gitter
-      if (slot <= lastSlot) return;
-      // ORDRE 1238: springer afspilningen pladser over (4K HEVC under belastning), holdes nærmeste billede
+      if (lastT != null && mediaTime - lastT < VC_FRAME_GAP) return;   // højst 30 billeder i sekundet (ORDRE 1932v: efter tid, ikke efter gitter)
+      // ORDRE 1238: springer afspilningen billeder over (4K HEVC under belastning), holdes nærmeste billede
       // for de manglende pladser, så tidslinjen er hulfri og ingen rep forsvinder.
-      for (let s = (lastSlot < 0 ? slot : lastSlot + 1); s <= slot; s++) {
-        if (s < slot) filled++;
-        const f = new VideoFrame(canvas, { timestamp: Math.round(s / 30 * 1e6) });
-        enc.encode(f, { keyFrame: n++ % 30 === 0 }); f.close();
+      const put = ts => { const f = new VideoFrame(canvas, { timestamp: Math.round(ts * 1e6) }); enc.encode(f, { keyFrame: n++ % 30 === 0 }); f.close(); };
+      if (lastT != null && mediaTime - lastT > VC_FRAME_HOLE) {
+        const holes = Math.round((mediaTime - lastT) * 30) - 1;
+        for (let k = 1; k <= holes; k++) { filled++; put(lastT + k * (mediaTime - lastT) / (holes + 1)); }
       }
-      lastSlot = slot;
+      put(mediaTime);                                   // billedets egen tid, ikke gitterets
+      lastT = mediaTime;
     },
     async end() {
       if (failed) return { error: 'record' };
@@ -1939,7 +1947,7 @@ async function vcSinkWebCodecs(w, h) {
       if (!samples.length || !avcC || failed) return { error: 'record' };
       const t0 = samples[0].ts; samples.forEach(s => { s.ts -= t0; });
       let missing = 0;   // manglende pladser i det færdige klip (skal være 0)
-      for (let i = 1; i < samples.length; i++) missing += Math.max(0, Math.round((samples[i].ts - samples[i - 1].ts) * 30) - 1);
+      for (let i = 1; i < samples.length; i++) if (samples[i].ts - samples[i - 1].ts > VC_FRAME_HOLE + 1e-4) missing += Math.max(0, Math.round((samples[i].ts - samples[i - 1].ts) * 30) - 1);
       vcNorm.slots = { total: samples.length, filled, missing };
       // ORDRE 1537v2: billederne beholdes, så sporeren kan læse dem direkte (se mpDirectFrames)
       return { blob: vcMp4Mux(w, h, avcC, samples), frames: { w, h, avcC, codec, samples } };
@@ -2249,18 +2257,18 @@ async function vcNormalizeDirect(src, vw, vh, onProgress, registerCancel, onlySa
     const pre = { times: [], frames: [], step: vcPresearchStep(ix.pts[ix.n - 1] || 1), c: document.createElement('canvas') };
     pre.c.width = VC_PRESEARCH_W; pre.c.height = Math.max(9, Math.round(VC_PRESEARCH_W * (t.h / Math.max(1, t.w))));
     pre.x = pre.c.getContext('2d', { willReadFrequently: true });
-    let lastSlot = -1, shown = 0, lastProg = performance.now();
+    let lastTm = null, shown = 0, lastProg = performance.now();
     const handle = f => {
       try {
         if (failed || cancelled) return;
         lastProg = performance.now();
-        const tm = f.timestamp / 1e6, slot = Math.round(tm * 30);
-        if (slot <= lastSlot) return;            // 60 fps-kilde: hvert andet billede bruges ikke
+        const tm = f.timestamp / 1e6;
+        if (lastTm != null && tm - lastTm < VC_FRAME_GAP) return;   // 60 fps-kilde: hvert andet billede bruges ikke
         if (!shown) {
           const fw = turned ? f.displayHeight : f.displayWidth, fh = turned ? f.displayWidth : f.displayHeight;
           if (Math.abs(fw / fh - vw / vh) > .03 * (vw / vh)) { failed = 'shape'; return; }
         }
-        lastSlot = slot; shown++;
+        lastTm = tm; shown++;
         vcDrawTurned(firstStep.x, f, firstStep.c.width, firstStep.c.height, ix.rot);
         let prev = firstStep.c;
         for (let i = 1; i < steps.length; i++) { steps[i].x.drawImage(prev, 0, 0, steps[i].c.width, steps[i].c.height); prev = steps[i].c; }
@@ -4621,9 +4629,31 @@ function analyzeCleanPath(path) {
     }
     return count ? sum / count : analysisPts[index].y;
   });
+  // ORDRE 1932v: positionen er et gennemsnit over op til fem billeder, så tiden skal være gennemsnittet over
+  // de samme billeder. Er billederne jævnt fordelt (30 fps), er det præcis afstanden til forrige billede som før.
+  // Er de ujævne (variabel billedrate, tabte billeder), gav den rå afstand for høj fart i de korte spring og
+  // for lav i de lange, og gennemsnittet blev for højt.
+  const smoothedT = analysisPts.map((_, index) => {
+    let sum = 0, count = 0;
+    for (let cursor = Math.max(0, index - 2); cursor <= Math.min(n - 1, index + 2); cursor++) {
+      if (!raw.valid[cursor]) continue;
+      sum += raw.times[cursor]; count++;
+    }
+    return count ? sum / count : raw.times[index];
+  });
+  const unevenAt = index => {
+    let lo = Infinity, hi = 0;
+    for (let cursor = Math.max(1, index - 2); cursor <= Math.min(n - 1, index + 2); cursor++) {
+      const gap = raw.times[cursor] - raw.times[cursor - 1];
+      if (gap < lo) lo = gap;
+      if (gap > hi) hi = gap;
+    }
+    return hi - lo > .002;
+  };
   const velocity = smoothedY.map((_, index) => {
     if (!index || !raw.valid[index] || !raw.valid[index - 1]) return NaN;
-    const dt = Math.max(1 / 240, raw.times[index] - raw.times[index - 1]);
+    const dt = Math.max(1 / 240, unevenAt(index) ? smoothedT[index] - smoothedT[index - 1]
+      : raw.times[index] - raw.times[index - 1]);
     return (smoothedY[index - 1] - smoothedY[index]) * cmPerPx / 100 / dt;
   });
   const validY = smoothedY.filter((_, index) => raw.valid[index]);
@@ -4870,13 +4900,44 @@ function analyzeCleanPath(path) {
     phases.push(...repPhases.map(item => ({...item,rep:repIndex})));
     const positive = detectedRep.moved ? [] : velocity.slice(detectedRep.start, detectedRep.end + 1)
       .filter(value => Number.isFinite(value) && value > .05);
+    // ORDRE 1932v: udglatningen over fem billeder smører løftets start og slut ud over to billeder til hver
+    // side, så gennemsnittet af de udglattede tal blev delt med for lang tid (hurtige løft 10 til 15 % for lavt
+    // mod den tegnede sande fart, ved alle billedrater). Kanten skæres derfor til med den rå bane: højst tre
+    // billeder i hver ende, og kun billeder hvor stangen selv flyttede sig under 0,05 m/s. Farten er den rå
+    // afstand delt med tiden over de billeder, der er tilbage. Reptælling, top og faser er ikke rørt.
+    // I det første og sidste billede var stangen kun i gang en del af tiden. Er springet der under en tredjedel
+    // af nabobilledets fart, regnes den del ud, som om stangen tog jævnt fart fra hvile (aldrig mindre end det).
+    const moving = [];
+    if (!detectedRep.moved) for (let index = detectedRep.start; index <= detectedRep.end; index++)
+      if (Number.isFinite(velocity[index]) && velocity[index] > .05) moving.push(index);
+    const rawRise = index => (analysisPts[index - 1].y - analysisPts[index].y) * cmPerPx / 100;
+    const rawGap = index => Math.max(1 / 240, raw.times[index] - raw.times[index - 1]);
+    let firstMoving = 0, lastMoving = moving.length - 1;
+    for (let cut = 0; cut < 3 && firstMoving < lastMoving &&
+      !(rawRise(moving[firstMoving]) / rawGap(moving[firstMoving]) > .05); cut++) firstMoving++;
+    for (let cut = 0; cut < 3 && lastMoving > firstMoving &&
+      !(rawRise(moving[lastMoving]) / rawGap(moving[lastMoving]) > .05); cut++) lastMoving--;
+    let riseM = 0, riseS = 0;
+    for (let cursor = firstMoving; cursor <= lastMoving; cursor++) {
+      riseM += rawRise(moving[cursor]); riseS += rawGap(moving[cursor]);
+    }
+    const edgeShare = (edge, next) => {
+      const ratio = rawRise(next) / rawGap(next) / (rawRise(edge) / rawGap(edge));
+      return ratio > 3 ? Math.min(1, (1 + Math.sqrt(1 + ratio)) / ratio) : 1;
+    };
+    if (lastMoving - firstMoving >= 4) {
+      riseS -= rawGap(moving[firstMoving]) * (1 - edgeShare(moving[firstMoving], moving[firstMoving + 1]));
+      riseS -= rawGap(moving[lastMoving]) * (1 - edgeShare(moving[lastMoving], moving[lastMoving - 1]));
+    }
+    const smoothedMean = positive.length ? positive.reduce((sum, value) => sum + value, 0) / positive.length : NaN;
+    const meanVelocity = positive.length && riseS > 0 && riseM / riseS > .05 ? riseM / riseS : smoothedMean;
     const validSamples = raw.valid.slice(viewStart, viewEnd + 1).filter(Boolean).length;
     const eccentricSeconds = repPhases.filter(item => item.kind === 'eccentric' || item.kind === 'return')
       .reduce((sum, item) => sum + Math.max(0, raw.times[item.end] - raw.times[item.start]), 0);
     const pauseSeconds = repPhases.filter(item => item.kind === 'pause' || item.kind === 'transition' || item.kind === 'lockout')
       .reduce((sum, item) => sum + Math.max(0, raw.times[item.end] - raw.times[item.start]), 0);
     return {start:detectedRep.start,end:detectedRep.end,viewStart,viewEnd,
-      phases:repPhases,mcv:positive.length ? positive.reduce((sum, value) => sum + value, 0) / positive.length : NaN,
+      phases:repPhases,mcv:meanVelocity,
       peak:positive.length ? Math.max(...positive) : NaN,
       romCm:(smoothedY[detectedRep.start] - smoothedY[detectedRep.end]) * cmPerPx,
       conS:+Math.max(0, raw.times[detectedRep.end] - raw.times[detectedRep.start]).toFixed(2),
@@ -5669,7 +5730,7 @@ async function mpDirectFrames(startT, endT, onFrame) {
   if (!S.some(s => s.ts > startT + 1e-3)) return null;
   let key = 0; for (let k = 0; k < S.length; k++) if (S[k].key && S[k].ts <= startT + 1e-3) key = k;   // sidste nøglebillede før start
   const hold = src.reorder ? 3 : 0;   // B-frames: hold få billeder og tag det tidligste
-  let lastSlot = Math.round(startT * 30);   // 60 fps-kilde: sporeren får 30 billeder i sekundet som ved klargjorte klip
+  let lastT = Math.round(startT * 30) / 30;   // 60 fps-kilde: sporeren får hvert andet billede (ORDRE 1932v: valgt efter tid, så afstanden er ens)
   const queue = [];
   let failed = false, drained = false, wake = null, dec, lastOut = performance.now();
   const poke = () => { if (wake) { const w = wake; wake = null; w(); } };
@@ -5704,10 +5765,10 @@ async function mpDirectFrames(startT, endT, onFrame) {
         else if (performance.now() - lastOut > 8000) failed = true;
         continue;
       }
-      const f = queue.shift(), t = f.timestamp / 1e6, slot = Math.round(t * 30);
+      const f = queue.shift(), t = f.timestamp / 1e6;
       try {
-        if (t > startT + 1e-3 && slot > lastSlot) {
-          lastSlot = slot;
+        if (t > startT + 1e-3 && t - lastT >= VC_FRAME_GAP) {
+          lastT = t;
           if (t + FRAME >= endT) stopped = true;
           else if (await onFrame(f, t) === false) stopped = true;
           else last = t;
