@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
 import { statusLinje, hurtigeMaaltider, forslag, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
+import { andenMaengde } from './andenMaengdeModel.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import { readNextPlanStart } from './upcomingPlanModel.mjs'
 
@@ -52,6 +53,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const [chosen, setChosen] = useState(null)
   const [vaegt, setVaegt] = useState(null)
   const queue = useRef(Promise.resolve())
+  const mangdeRef = useRef(null)
   const seq = useRef(0)
   const alive = useRef(true)
   useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
@@ -92,6 +94,8 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const units = valgt ? unitsForFood(log.foods[valgt.index]) : []
   const portion = valgt ? foodPortion(log.foods[valgt.index], valgt.amount, valgt.unit) : null
 
+  // 1921: mængdefeltet ligger under Nyt måltid; åbnes det af Ret g, rulles det på plads.
+  useEffect(() => { if (chosen) mangdeRef.current?.scrollIntoView?.({ block: 'nearest' }) }, [chosen?.index])
   const logMeal = meal => run(meal.meal, meal, intent => tracker.log(meal, intent))
   const logFood = () => {
     if (!portion) return
@@ -170,8 +174,15 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
         onClick: () => run(`${iGaar.length} måltider fra i går`, iGaar.reduce((sum, meal) => ({ kcal: sum.kcal + meal.kcal, protein: sum.protein + meal.protein }), { kcal: 0, protein: 0 }),
           async intent => { for (const [i, meal] of iGaar.entries()) if (await tracker.log(meal, `${intent}:${i}`) !== true || !await whenReady(sources)) return false; return true }) },
       `Alt fra i går (${iGaar.length})`),
-      ...gentag.map(meal => h('button', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), type: 'button', style: control,
-        disabled: busy(meal.meal), 'aria-label': `Spist igen: ${meal.meal}`, onClick: () => logMeal(meal) }, meal.meal))),
+      ...gentag.map(meal => {
+        const anden = andenMaengde(log, meal)
+        const igen = h('button', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), type: 'button', style: control,
+          disabled: busy(meal.meal), 'aria-label': `Spist igen: ${meal.meal}`, onClick: () => logMeal(meal) }, meal.meal)
+        // 1921: samme måltid med en anden mængde; felt og Log står straks åbne (3 tryk mod 7).
+        return !anden ? igen : h('span', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), style: { display: 'inline-flex', gap: 4 } }, igen,
+          h('button', { type: 'button', style: control, disabled: busy(meal.meal), 'aria-label': `Anden mængde: ${meal.meal}`,
+            onClick: () => { setChosen(anden); setQuery('') } }, 'Ret g'))
+      })),
 
     water,
 
@@ -188,7 +199,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       h('button', { type: 'button', style: { ...control, background: 'transparent' }, onClick: () => onCustom?.() },
         valg.meals.length || valg.foods.length ? 'Egne tal' : 'Ikke fundet: notér med egne tal')),
     customNote && h('p', { role: 'status', style: { margin: '8px 0 0' } }, customNote),
-    valgt && h('div', { role: 'group', 'aria-label': `Mængde: ${valgt.name}`, style: { ...row, alignItems: 'center' } },
+    valgt && h('div', { ref: mangdeRef, role: 'group', 'aria-label': `Mængde: ${valgt.name}`, style: { ...row, alignItems: 'center' } },
       h('input', { type: 'text', inputMode: 'decimal', value: valgt.amount, 'aria-label': `Mængde ${valgt.name}`,
         style: { ...control, cursor: 'text', width: '5.5rem' },
         onChange: event => setChosen({ ...valgt, amount: event.currentTarget.value }) }),

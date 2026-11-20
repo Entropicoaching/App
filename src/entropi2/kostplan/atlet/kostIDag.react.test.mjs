@@ -37,6 +37,7 @@ async function mount(t, options = {}) {
   if (!t.mockedDate) { t.mock.timers.enable({ apis: ['Date'], now: new Date(date + 'T12:00:00+01:00') }); t.mockedDate = true }
   const f = fixture(options); f.approve()
   f.rows.push({ ...meal('2026-11-04', 'Havregrød med skyr', 520, 35), id: 'y1' }, { ...meal('2026-11-04', 'Rugbrød med æg', 610, 34), id: 'y2', created_at: '2026-11-04T12:00:00Z' })
+  if (options.extraRows) f.rows.push(...options.extraRows)
   if (options.open) f.values.set(detaljerNoegle(athleteId), '1')
   const dom = hostFixture(), root = createRoot(dom.host)
   dom.globals({ localStorage: f.storage })
@@ -189,4 +190,19 @@ test('Ikke fundet: notér med egne tal siger fra, når kostloggen ikke er klar, 
   await act(async () => { for (let i = 0; i < 12; i++) await tick() })
   await r.press(egne())
   assert.equal(!!besked(), false, 'nyt tryk prøver igen og lykkes')
+})
+
+// 1921 (Marc 19. nov.: en træls gentagelig handling lidt nemmere): samme måltid med en anden mængde.
+test('Kost i dag: Ret g logger samme fødevare med en anden mængde på tre tryk uden at søge', async t => {
+  const r = await mount(t, { extraRows: [{ ...meal('2026-11-04', 'Kyllingebryst · 150 g', 165, 35), id: 'y3', created_at: '2026-11-04T13:00:00Z' }] })
+  assert.equal(!!r.labelled('Anden mængde: Rugbrød med æg'), false, 'ingen knap, når fødevaren ikke findes i listen')
+  await r.press(r.labelled('Anden mængde: Kyllingebryst · 150 g'))
+  const field = all(r.card(), 'input').find(n => n.getAttribute('aria-label') === 'Mængde Kyllingebryst')
+  assert.equal(propsOf(field).value, '150', 'mængden står udfyldt')
+  assert.equal(r.inserts().length, 0, 'intet er gemt endnu')
+  await act(async () => { propsOf(field).onChange({ currentTarget: { value: '200' } }); await tick() })
+  await r.press(r.labelled('Log Kyllingebryst'))
+  const last = r.inserts().at(-1).value
+  assert.equal(r.inserts().length, 1)
+  assert.equal(last.meal, 'Kyllingebryst · 200 g'); assert.equal(last.kcal, 220)
 })
