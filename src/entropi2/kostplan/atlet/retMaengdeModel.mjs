@@ -7,10 +7,12 @@ import { parseInputNumber, nutritionValues } from '../../../athlete/kostNumbers.
 const GRAM = /^(.+?) · (?:(\d+(?:[.,]\d+)?) g|[^·]*\((\d+(?:[.,]\d+)?) g\))$/
 
 // Kun rækker, kostloggen selv lader rette (editableIds), og som har gram i navnet.
-export function loggetIDag(snapshot) {
+// 1924: planmåltidets rækker (skip) rettes under "Spist", også når coachen har
+// navngivet planmåltidet "· N g".
+export function loggetIDag(snapshot, skip = () => false) {
   if (!snapshot?.loaded || !Array.isArray(snapshot.logs)) return []
   const ret = new Set(snapshot.editableIds ?? [])
-  return snapshot.logs.filter(row => ret.has(row?.id)).flatMap(row => {
+  return snapshot.logs.filter(row => ret.has(row?.id) && !skip(row)).flatMap(row => {
     const m = GRAM.exec(String(row.meal ?? ''))
     const grams = m ? parseInputNumber(m[2] ?? m[3]) : null
     return grams > 0 ? [{ id: row.id, row, name: m[1], grams }] : []

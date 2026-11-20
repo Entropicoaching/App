@@ -36,6 +36,17 @@ export function mealValues(foods) {
   return Object.fromEntries(metrics.map(key => [key, roundNutrition(totals[key])]))
 }
 
+// 1924: et spist planmåltid til en ny samlet mængde. Hver fødevare skaleres med
+// samme faktor (0,1 g), og tallene regnes fra de skalerede gram som ved Spist.
+export function scaledMeal(foods, grams) {
+  const total = parseInputNumber(grams)
+  const before = foods.reduce((sum, food) => sum + (parseInputNumber(food.grams) ?? NaN), 0)
+  if (!(total > 0) || !(before > 0) || !Number.isFinite(total)) return null
+  const scaled = foods.map(food => ({ ...food, grams: Math.round(parseInputNumber(food.grams) * total / before * 10) / 10 }))
+  const values = mealValues(scaled)
+  return values && { grams: total, foods: scaled, values }
+}
+
 export function readAthletePlan(value, athleteId, date) {
   if (value === null) return null
   if (!value || value.athlete_id !== athleteId || value.date !== date || typeof value.active !== 'boolean') fail()
@@ -110,7 +121,7 @@ function readDay(value, athleteId, date) {
 // athlete, day, activation or plan revision changes. No client or storage globals.
 export function createAthleteDay(options = {}) {
   if (options.enabled !== true) return null
-  const { athleteId, date, loadDay, saveMeal, releaseMeal, currentDay } = options
+  const { athleteId, date, loadDay, saveMeal, releaseMeal, adjustMeal, currentDay } = options
   if (!id(athleteId) || calendarTime(date) === null || typeof loadDay !== 'function') fail()
   let phase = 'idle', data = null, message = '', pending = null, disposed = false, token = 0
   const drafts = new Map(), editing = new Set(), committed = new Set(), listeners = new Set()
@@ -125,6 +136,8 @@ export function createAthleteDay(options = {}) {
       const values = mealValues(foods)
       const blocked = data.blockedMeals.includes(meal.id)
       return { id: meal.id, name: meal.name, foods, values, eaten: !!receipt || committed.has(meal.id), blocked,
+        // 1924: dagbogsrækken bag et spist planmåltid (ikke før genindlæsning efter Spist).
+        logId: receipt && receipt.log_id !== receipt.key ? receipt.log_id : null,
         adjusted: foods.some((food, index) => parseInputNumber(food.grams) !== meal.foods[index].grams),
         editing: editing.has(meal.id), canSave: !!values && !receipt && !committed.has(meal.id)
           && !blocked && !pending && ['ready', 'save-error', 'saved'].includes(phase) && typeof saveMeal === 'function' }
@@ -230,6 +243,36 @@ export function createAthleteDay(options = {}) {
         if (!disposed) {
           phase = 'uncertain'; message = 'Gemningen kunne ikke bekræftes. Hent dagen igen før du prøver på ny.'
         }
+        return false
+      } finally { pending = null; emit() }
+    },
+    // 1924: ny mængde på et spist planmåltid. writeRow er kostloggens egen update
+    // af samme række; adapteren holder kvitteringen i trit med rækken.
+    async adjustEaten(mealId, grams, writeRow) {
+      if (disposed || pending || !['ready', 'saved', 'save-error'].includes(phase) || typeof adjustMeal !== 'function'
+        || typeof writeRow !== 'function' || committed.has(mealId)) return false
+      const receipt = data?.eaten.find(item => item.meal_id === mealId)
+      const meal = data?.plan?.meals.find(item => item.id === mealId)
+      if (!receipt || !meal || receipt.log_id === receipt.key || data.blockedMeals.includes(mealId)) return false
+      try {
+        if (typeof currentDay === 'function' && currentDay() !== date) {
+          message = 'Dagen er skiftet. Åbn dagens kost igen før du gemmer.'; emit(); return false
+        }
+      } catch { message = 'Datoen kunne ikke kontrolleres. Prøv igen.'; emit(); return false }
+      const next = scaledMeal(receipt.foods, grams)
+      if (!next) { message = 'Skriv en mængde over 0 g. Intet blev gemt.'; emit(); return false }
+      const payload = freeze({ key: receipt.key, meal_id: mealId, log_id: receipt.log_id,
+        foods: next.foods.map(food => ({ id: food.id, grams: food.grams })), log: { meal: meal.name, ...next.values } })
+      pending = receipt.key; phase = 'saving'; message = 'Gemmer mængde…'; emit()
+      try {
+        const result = await adjustMeal(payload, writeRow)
+        if (disposed) return false
+        if (result !== true) { phase = 'save-error'; message = 'Mængden blev ikke gemt. Prøv igen.'; return false }
+        data.eaten = data.eaten.map(item => item === receipt ? { ...item, foods: next.foods } : item)
+        data.logs = data.logs.map(row => row.id === receipt.log_id ? { ...row, ...next.values } : row)
+        phase = 'saved'; message = 'Mængden er rettet.'; return true
+      } catch {
+        if (!disposed) { phase = 'uncertain'; message = 'Rettelsen kunne ikke bekræftes. Hent dagen igen før du prøver på ny.' }
         return false
       } finally { pending = null; emit() }
     },

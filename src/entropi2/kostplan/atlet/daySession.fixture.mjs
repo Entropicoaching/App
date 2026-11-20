@@ -40,7 +40,7 @@ export function fixture(options = {}) {
   function approve() {
     const id = n => `30000000-0000-4000-8000-${String(n).padStart(12, '0')}`
     const snapshot = createPlanSnapshot({ goal: 'vedligehold', intensity: 0, meals: [
-      { name: 'Frokost <syntetisk>', portions: [{ grams: 200, food: {
+      { name: options.lunchName ?? 'Frokost <syntetisk>', portions: [{ grams: 200, food: {
         id: 'synthetic-food', name: 'Syntetisk mad', source: { citation: 'synthetic fixture', verification: 'synthetic' },
         nutrientsPer100g: { energyKcal: 100, proteinG: 10, carbohydrateG: 12, fatG: 2 },
       } }] },
