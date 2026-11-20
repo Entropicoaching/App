@@ -108,7 +108,7 @@ async function main() {
     await tjek(c, 'coach-02-atlet-hjem-styrkelinje')
     const tab = async (label) => {
       const k = c.getByRole('button', { name: new RegExp(`${label}$`) }).first()
-      if (!(await k.isVisible().catch(() => false))) { await c.getByRole('button', { name: /Hjem$/ }).first().locator('xpath=..').locator('button').last().click({ timeout: 5000 }); await c.waitForTimeout(300) }
+      if (!(await k.isVisible().catch(() => false))) { await c.locator('button[aria-expanded]').filter({ hasText: '▾' }).first().click({ timeout: 5000 }); await c.waitForTimeout(300) }
       await c.getByRole('button', { name: new RegExp(`${label}$`) }).first().click(); await c.waitForTimeout(1200)
     }
     await tab('Log'); await c.locator('select').first().selectOption('Bænkpres').catch(() => {}); await tjek(c, 'coach-03-fremgang-log')

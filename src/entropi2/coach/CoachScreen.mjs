@@ -188,7 +188,7 @@ export function CoachView(input = {}) {
     ]
     const workspace = summary && h(CoachAthleteWorkspace, { key: `${props.readContext?.coachId}:${athlete.id}:${model.day}`,
       athlete, data: coachAthleteWorkspace(props, model, athlete, report), client: props.notesClient, u3: u3DataEnabled(props.u3Data),
-      utenNavn: true, onOpen: typeof props.openProfile === 'function' ? () => props.openProfile(athlete, 'hub', 'list') : undefined })
+      utenNavn: true, onOpen: typeof props.openProfile === 'function' ? () => props.openProfile(athlete, 'program', 'list') : undefined })
     return [...lines, workspace]
   }
   const calm = model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError

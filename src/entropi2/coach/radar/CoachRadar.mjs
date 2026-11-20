@@ -41,7 +41,7 @@ export function CoachRadarView(input = {}) {
   const row = entry => h('li', { key: entry.athlete.id, style: { marginBlock: 10, minWidth: 0 } },
     h('button', { type: 'button', disabled: !canOpen, 'data-coach-radar-athlete': entry.athlete.id,
       style: { ...control, display: 'block', width: '100%' },
-      onClick: canOpen ? () => openProfile(entry.athlete, 'hub', 'list') : undefined },
+      onClick: canOpen ? () => openProfile(entry.athlete, 'program', 'list') : undefined },
       h('strong', { style: { display: 'block' } }, entry.athlete.name),
       h('span', { style: { display: 'block', marginTop: 4 } }, entry.reason)),
     h('details', null,
