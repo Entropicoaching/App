@@ -1,4 +1,4 @@
-// 1925: hele kost-stakken (1914, 1916, 1921, 1923, 1924) i ét forløb med tryk på 390 px mod mocken.
+// 1925: hele kost-stakken (1916, 1921, 1923, 1924) i ét forløb med tryk på 390 px mod mocken.
 // Kun syntetisk atlet og syntetisk kostplan. Kør: node e2e/kost-stak-samlet.spec.mjs
 import { join } from 'node:path'
 import { writeFileSync } from 'node:fs'
@@ -22,7 +22,7 @@ export function seed(now = new Date()) {
   const s = buildSeed({ now })
   const t = s.tables
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen' }).format(now)
-  for (const name of ['weight_logs', 'meal_logs', 'kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals', 'kostplan_v1_seen']) t[name] = t[name] ?? []
+  for (const name of ['weight_logs', 'meal_logs', 'kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']) t[name] = t[name] ?? []
   // Aktiv uge (godkendt, sendt) og en ny uge, der starter om to dage.
   // Scene 1: kun en sendt uge, der starter om to dage (1916 viser kun linjen uden planmåltider i dag).
   const ny = { id: uuid(2), athlete_id: ATHLETE_ID, valid_from: plus(today, 2), status: 'godkendt' }
@@ -59,7 +59,6 @@ export async function runStak(page, mock, today, outDir = OUT_DIR) {
   }
   const kost = page.getByRole('region', { name: 'Kost i dag' })
   const tal = () => kost.locator('[data-kost-i-dag-tal]').innerText()
-  const seen = () => mock.table('kostplan_v1_seen').length
   const noKontrol = async () => { if (/skal kontrolleres/.test(await kost.innerText())) throw new Error('"skal kontrolleres" står i Kost i dag') }
 
   await login(page, ATHLETE_USER)
@@ -67,14 +66,12 @@ export async function runStak(page, mock, today, outDir = OUT_DIR) {
     await page.getByRole('button', { name: 'Kost', exact: true }).first().click({ timeout: 20000 })
     await kost.waitFor({ state: 'visible', timeout: 20000 })
   })
-  // Scene 1, 1916: ny uge synlig uden tryk; Se planen er ét tryk og tæller som set (1914).
+  // Scene 1, 1916: ny uge synlig uden tryk; Se planen er ét tryk (set-trinnet er taget ud i 1927).
   await kost.locator('[data-kost-ny-plan]').waitFor({ timeout: 10000 })
   rapport.push({ navn: 'Ny kostplan-linjen står uden tryk (1916)', klik: 0, felter: 0, tryk: 0 })
-  await handling('Se planen (1916, sætter set-mærket 1914)', async () => {
+  await handling('Se planen (1916)', async () => {
     await kost.getByRole('button', { name: 'Se planen' }).click()
-    for (let i = 0; i < 40 && seen() === 0; i++) await page.waitForTimeout(250)
   })
-  if (seen() !== 1) throw new Error('1914: forventede én række i kostplan_v1_seen efter Se planen, fandt ' + seen())
   await page.screenshot({ path: join(outDir, `1925-ny-uge-moerk.png`), fullPage: true })
   // Scene 2: dagen ugen træder i kraft. Samme mock, samme atlet; planens start flyttes til i dag.
   mock.table('kostplan_v1_plans')[0].valid_from = today
@@ -84,8 +81,7 @@ export async function runStak(page, mock, today, outDir = OUT_DIR) {
   await kost.waitFor({ state: 'visible', timeout: 20000 })
   await kost.getByRole('button', { name: 'Frokost: spist som planlagt' }).waitFor({ timeout: 15000 })
   for (let i = 0; i < 20; i++) await page.waitForTimeout(250)
-  if (seen() !== 1) throw new Error('1914: set-rækken skal være én (ingen dublet) efter planmåltiderne vises, fandt ' + seen())
-  rapport.push({ navn: `Planmåltiderne vises og set-rækken står stadig som én (1914)`, klik: 0, felter: 0, tryk: 0 })
+  rapport.push({ navn: `Planmåltiderne vises (set-trinnet er ude)`, klik: 0, felter: 0, tryk: 0 })
 
   const foerTal = await tal()
   await handling('Frokost som planlagt', async () => {
