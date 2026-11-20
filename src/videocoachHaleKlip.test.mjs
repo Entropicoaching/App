@@ -731,3 +731,86 @@ test('fart ved flytning: billedet flyttes ned eller op midt i et løft i sættet
     assert.ok(helOptur(path, liste, rom, r), `${loeft} R ${r} flyt ${dy}: løft med fart er hele opture`)
   }
 })
+
+// Ordre 1897v (Marc 16. nov.: "så skal videocoach dæleme også virke"). Coachens "gem analyse" blev afvist på
+// alle tegnede klip med "Repdetaljerne indeholder ugyldige kvalitetsdata": vcV3Reps regnede et løfts start som
+// optur minus eccS og pauseS, men de to tæller også ventetiden i toppen (og dødløftets nedlægning) EFTER
+// opturen, så starten lå før forrige løfts slutning. Her går hele analysen og de gemte repdetaljer gennem
+// appens egen validering. Valideringen er ikke ændret.
+const { validateVideoCoachPayloadBounds } = await import('./videoCoachSubmission.js')
+const analyseFra = html.indexOf('function analyzeCleanPath(path) {'), analyseTil = html.indexOf('function analyzePath(path) {', analyseFra)
+const metricFra = html.indexOf('function vcV3Metric('), metricTil = html.indexOf('function vcV3PathLowConfidencePct(', metricFra)
+const repsFra = html.indexOf('function vcV3Reps(path) {'), repsTil = html.indexOf('function vcV3BarPath(', repsFra)
+assert.ok(analyseFra > 0 && analyseTil > analyseFra && metricFra > 0 && metricTil > metricFra && repsFra > 0 && repsTil > repsFra, 'analysen og repdetaljerne findes i videocoach.html')
+const repdetaljerKode = new Function('path', 'canvas', 'cmPerPx', `const buildVisualBarPath = () => [], updateCleanReviewUI = () => {};
+${html.slice(analyseFra, analyseTil)}\n${html.slice(metricFra, metricTil)}\n${html.slice(repsFra, repsTil)}
+  analyzeCleanPath(path); return vcV3Reps(path)`)
+function gemte(path, r, lift) {
+  klip(path, r)
+  path.raw = { pts: path.pts.map(q => ({ ...q })), times: [...path.times], valid: path.valid.map(v => v === true), start: path.times[0], end: path.times.at(-1) }
+  path.analysisSession = { schema: 1, lift }
+  const detaljer = repdetaljerKode(path, { width: Math.max(720, r * 6.75) }, 45 / (2 * r))
+  const raekke = { reps_count: detaljer.length, rep_details: detaljer, metrics: {}, findings: [], load_kg: null, rpe: null, low_conf_pct: 0, position_quality_pct: null, bar_path: null }
+  return { detaljer, path, afvist: detaljer.length ? validateVideoCoachPayloadBounds(raekke) : 'ingen reps' }
+}
+const overlap = detaljer => detaljer.filter((rep, i) => i > 0 && rep.start_s < detaljer[i - 1].end_s).length
+// det gamle regnestykke på de samme løft: optur minus eccS og pauseS
+const gamleOverlap = (path, detaljer) => path.reps.filter((rep, i) => i > 0 && Math.max(0, path.times[rep.start] - rep.eccS - rep.pauseS) < detaljer[i - 1].end_s).length
+
+test('coachens gem: repdetaljerne for et sæt uden flytning består appens validering i squat, bænk og dødløft', () => {
+  let gamle = 0
+  for (const [loeft, rom] of [['squat', 4.1], ['bench', 2.2], ['deadlift', 4.1]]) for (const r of [14, 107, 300]) for (const fps of [30, 60]) for (const hvile of [0, 1, 3]) {
+    const { detaljer, path, afvist } = gemte(saetMedFlyt({ loeft, rom, r, fps, hvile }), r, loeft), navn = `${loeft} R ${r} fps ${fps} hvile ${hvile}`
+    assert.equal(detaljer.length, 5, navn)
+    assert.equal(afvist, null, navn)
+    assert.equal(overlap(detaljer), 0, navn)
+    detaljer.forEach((rep, i) => {
+      const optur = path.times[path.reps[i].start]
+      assert.ok(rep.end_s > rep.start_s && rep.start_s <= +optur.toFixed(3), `${navn} løft ${i + 1}: starter senest ved opturen og slutter efter`)
+      assert.equal(rep.end_s, +path.times[path.reps[i].end].toFixed(3), `${navn} løft ${i + 1}: slutter, hvor opturen slutter`)
+      // squat og bænk: løftet starter ved sin egen nedtur, ikke klistret til forrige løfts slutning
+      if (loeft !== 'deadlift' && i > 0 && hvile >= 1) assert.ok(rep.start_s > detaljer[i - 1].end_s + hvile * 0.6 && optur - rep.start_s > 0.8 && optur - rep.start_s < 1.6, `${navn} løft ${i + 1}: starter ved egen nedtur (${rep.start_s}, optur ${optur.toFixed(2)})`)
+      if (loeft === 'deadlift') assert.equal(rep.start_s, +optur.toFixed(3), `${navn} løft ${i + 1}: dødløft starter ved opturen`)
+    })
+    gamle += gamleOverlap(path, detaljer)
+  }
+  assert.ok(gamle > 100, `prøven rammer fejlen: det gamle regnestykke gav ${gamle} overlap`)
+})
+
+test('coachens gem: flytninger, mærkede løft, rystelser og et mislykket sidste forsøg giver heller ingen overlap', () => {
+  // som klippene k3-to-flyt-squat5 og to-doed-op-ned (sidste løft mærket) og k5-squat-mislykket-bund
+  for (const [loeft, dyer] of [['squat', [2, 3.5, 5]], ['deadlift', [2, 3.5]]]) for (const r of [14, 107]) for (const dy of dyer) {
+    const flyt = [{ loeft: 2, i: 'hvile', dy: loeft === 'squat' ? -2.7 : -3 }, { loeft: 5, i: 'op', dy }]
+    const { detaljer, path, afvist } = gemte(saetMedFlyt({ loeft, rom: 4.1, r, flyt, ro: 3 }), r, loeft)
+    assert.equal(detaljer.length, 5, `${loeft} R ${r} ned ${dy}`); assert.equal(afvist, null, `${loeft} R ${r} ned ${dy}`)
+    assert.equal(path.reps.at(-1).camMoved, true, `${loeft} R ${r} ned ${dy}: sidste løft er stadig mærket`)
+  }
+  for (const loeft of ['squat', 'bench', 'deadlift']) for (const r of [14, 107]) for (const dy of [-2, 1.5]) for (const ryst of [0, 0.08]) {
+    const { detaljer, afvist } = gemte(saetMedFlyt({ loeft, rom: loeft === 'bench' ? 3 : 4.1, r, ryst, flyt: [{ loeft: 3, i: 'op', dy, sek: 0.6 }] }), r, loeft)
+    assert.ok(detaljer.length >= 4, `${loeft} R ${r} flyt ${dy} ryst ${ryst}`); assert.equal(afvist, null, `${loeft} R ${r} flyt ${dy} ryst ${ryst}`)
+  }
+  for (const [loeft, rom] of [['squat', 4.1], ['bench', 2.4]]) for (const r of [14, 107]) for (const under of [0, 1]) {
+    if (loeft === 'bench' && under) continue
+    const mislykket = ({ hold, to, bot }) => { to(1.1, 300, bot); hold(0.3); to(0.8, 300, bot - rom * r / 3); to(0.9, 300, bot + under * r); hold(2) }
+    const { detaljer, afvist } = gemte(saetMedFlyt({ loeft, rom, r, hale: mislykket }), r, loeft)
+    assert.equal(detaljer.length, 5, `mislykket forsøg ${loeft} R ${r} under ${under}`); assert.equal(afvist, null, `mislykket forsøg ${loeft} R ${r} under ${under}`)
+  }
+})
+
+test('coachens gem: 600 tilfældige sæt (frø 1897) med flytninger og rystelser: ingen repdetaljer afvises, og ingen overlapper', () => {
+  let seed = 1897, saet = 0, loeft = 0, gamle = 0
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296 }
+  const U = (a, b) => a + (b - a) * rnd(), pick = a => a[Math.floor(rnd() * a.length)]
+  for (let it = 0; it < 600; it++) {
+    const lift = pick(['squat', 'bench', 'deadlift']), r = pick([14, 40, 107, 300]), antal = 1 + Math.floor(rnd() * 8)
+    const flyt = Array.from({ length: Math.floor(rnd() * 3) }, () => ({ loeft: 1 + Math.floor(rnd() * antal), i: pick(['hvile', 'op']), dy: U(-3, 3), sek: U(0.4, 1.2) }))
+    const path = saetMedFlyt({ loeft: lift, rom: U(lift === 'bench' ? 1.8 : 2.6, lift === 'bench' ? 3 : 5), r, fps: pick([30, 60]), antal, flyt, hvile: pick([0, 0.3, 1, 2.5]), ro: U(0.2, 3), ryst: pick([0, 0.03, 0.08]) })
+    const { detaljer, afvist } = gemte(path, r, lift)
+    if (!detaljer.length) continue
+    saet++; loeft += detaljer.length
+    assert.equal(afvist, null, `sæt ${it} (${lift} R ${r}, ${antal} løft)`)
+    assert.equal(overlap(detaljer), 0, `sæt ${it}`)
+    gamle += gamleOverlap(path, detaljer)
+  }
+  assert.ok(saet > 500 && loeft > 1500 && gamle > 500, `${saet} sæt, ${loeft} løft, det gamle regnestykke gav ${gamle} overlap`)
+})
