@@ -199,7 +199,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       })),
 
     // 1923: tryk på et logget måltid åbner mængden udfyldt; Gem retter samme række.
-    logget.length > 0 && h('p', { style: label }, 'Logget i dag'),
+    logget.length > 0 && h('p', { style: label }, 'Logget i dag · tryk for at rette mængden'),
     logget.length > 0 && h('div', { style: row },
       ...logget.map(item => h('button', { key: item.id, type: 'button', style: control, disabled: pending.length > 0,
         'aria-label': `Ret mængde: ${item.row.meal}`, 'aria-pressed': retItem?.id === item.id,
