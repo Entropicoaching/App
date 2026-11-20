@@ -8,9 +8,8 @@ import { all, propsOf, tick, button, hostFixture } from '../../nutrition/diaryTe
 import { previewDates, readNextPlanStart } from './upcomingPlanModel.mjs'
 
 // 1916: en sendt uge, der starter i morgen eller senere (højst 13 dage), står som én linje
-// i "Kost i dag"; "Se planen" åbner laget på datoen og skriver intet (set-mærket er ikke med). Syntetisk atlet, ingen database.
-// Alarm: ingen skrivning til en set-tabel må forekomme (1927).
-const erSet = table => /seen/.test(table)
+// i "Kost i dag"; "Se planen" åbner laget på datoen og tæller som set. Syntetisk atlet, ingen database.
+const SEEN = 'kostplan_v1_seen'
 const plus = n => new Date(Date.parse(date + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10)
 const failing = () => { const q = { lte: () => q, gte: () => q, eq: () => q, limit: () => q,
   then: (resolve, reject) => Promise.resolve({ data: null, error: { code: 'synthetic-read-error' } }).then(resolve, reject) }; return q }
@@ -33,7 +32,7 @@ async function mount(t, { planFrom = plus(1), approve = true, readError = false,
   }
   const seen = [], upserts = [], reads = []
   const client = { from(table) {
-    if (erSet(table)) return { async upsert(rows, options) {
+    if (table === SEEN) return { async upsert(rows, options) {
       upserts.push({ rows, options })
       for (const row of rows) if (!seen.some(r => r.athlete_id === row.athlete_id && r.version_id === row.version_id)) seen.push(row)
       return { data: null, error: null }
@@ -85,13 +84,13 @@ test('Se planen: åbner laget på datoen i Vælg plandato med samme Kommende kos
   const kommende = all(r.host, 'section').find(n => n.getAttribute('aria-label') === 'Kommende kostplan')
   assert.ok(kommende)
   assert.match(kommende.textContent, /Frokost <syntetisk>/)
-  assert.equal(r.upserts.length, 0)
-  assert.deepEqual(r.seen, [])
+  assert.equal(r.upserts.length, 1)
+  assert.deepEqual(r.seen, [{ athlete_id: athleteId, plan_id: r.f.plan.data.kostplan_v1_plans[0].id, version_id: r.f.plan.data.kostplan_v1_versions[0].id }])
   // Tilbage til i dag og et nyt tryk: ingen ny skrivning.
   await r.choose(date)
   assert.ok(r.line())
   await r.press(button(r.line(), 'Se planen'))
-  assert.equal(r.upserts.length, 0)
+  assert.equal(r.upserts.length, 1)
 })
 
 test('ugen starter om 8 dage: linjen vises, og datoen kommer med i Vælg plandato ved tryk', async t => {
@@ -104,7 +103,7 @@ test('ugen starter om 8 dage: linjen vises, og datoen kommer med i Vælg plandat
   assert.match(options.at(-1).textContent, /^Om 8 dage · 13\. november$/)
   assert.equal(propsOf(r.select()).value, plus(8))
   assert.match(all(r.host, 'section').find(n => n.getAttribute('aria-label') === 'Kommende kostplan').textContent, /Frokost <syntetisk>/)
-  assert.equal(r.upserts.length, 0)
+  assert.equal(r.upserts.length, 1)
 })
 
 test('ugen starter om 14 dage: ingen linje, siden som før', async t => {

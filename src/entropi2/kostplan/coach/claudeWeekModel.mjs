@@ -6,7 +6,7 @@ import { createPlanSnapshot, summarizePlanSnapshot } from '../planSnapshot.mjs'
 import { medMikronaering } from '../ugeMikronaering.mjs'
 import { day, identifier } from './model.mjs'
 
-const PLANS = 'kostplan_v1_plans', VERSIONS = 'kostplan_v1_versions', APPROVALS = 'kostplan_v1_approvals'
+const PLANS = 'kostplan_v1_plans', VERSIONS = 'kostplan_v1_versions', APPROVALS = 'kostplan_v1_approvals', SEEN = 'kostplan_v1_seen'
 export const MAKS_AFVIGELSE_PROCENT = 10
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
 export const plusDage = (date, n) => new Date(Date.parse(`${date}T00:00:00Z`) + n * 86400000).toISOString().slice(0, 10)
@@ -23,7 +23,7 @@ const sendtDag = value => { const ms = Date.parse(value); return Number.isFinite
 const positiv = value => typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null
 
 // Ren model: rækkerne fra de tre tabeller bliver til 7 dage, status og en låsegrund.
-export function weekModel({ plans = [], versions = [], approvals = [], athlete, today, start: fixedStart }) {
+export function weekModel({ plans = [], versions = [], approvals = [], seen = null, athlete, today, start: fixedStart }) {
   if (!identifier(athlete?.id) || !day(today)) fail()
   const targets = { kcal: positiv(Number(athlete.kcal_target)), protein: positiv(Number(athlete.protein_target)) }
   // Arkiverede planer kan ikke godkendes og indgår ikke.
@@ -77,6 +77,7 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
       versionNo: chosen.latest.version_no, rationale: chosen.latest.rationale ?? null,
       state: chosen.sent ? 'sendt' : unreadable ? 'ulaeselig' : chosen.everSent ? 'aendret' : 'udkast', sentOn: chosen.sentOn, unreadable,
       meals, mealCount: meals.length,
+      seenOn: chosen.sent && Array.isArray(seen) ? seen.filter(r => r.version_id === chosen.latest.id).map(r => sendtDag(r.seen_at)).filter(Boolean).sort().at(-1) ?? null : null,
       kcal: summary?.energyKcal?.value ?? null, protein: summary?.proteinG?.value ?? null }
   })
   const afvig = (value, target) => value === null || target === null ? null : Math.abs(value - target) / target * 100
@@ -89,7 +90,11 @@ export function weekModel({ plans = [], versions = [], approvals = [], athlete, 
   const status = days.every(d => d.state === 'sendt') ? 'sendt' : days.some(d => d.state === 'aendret') ? 'aendret' : 'udkast'
   const sentOn = status === 'sendt' ? days.map(d => d.sentOn).sort().at(-1) : null
   const rationale = days.find(d => d.rationale)?.rationale ?? null
-  return { state: 'ready', status, sentOn, start, end: dates[6], days, targets, rationale,
+  // Set-mærket: kun for en sendt uge og kun når set-tabellen kunne læses (ellers vises intet).
+  const seenDays = days.filter(d => d.seenOn).length
+  const seenState = status !== 'sendt' || !Array.isArray(seen) ? null : seenDays === 7 ? 'set' : seenDays ? 'delvist' : 'ikke'
+  const seenOn = seenState && seenDays ? days.map(d => d.seenOn).filter(Boolean).sort().at(-1) : null
+  return { state: 'ready', status, sentOn, seen: seenState, seenDays, seenOn, start, end: dates[6], days, targets, rationale,
     lock: status === 'sendt' ? null : lockReason(days, targets) }
 }
 
@@ -111,13 +116,17 @@ export function lockReason(days, targets) {
 async function readRows(client, athleteId, today) {
   const plans = rows(await client.from(PLANS).select('id,athlete_id,valid_from,status')
     .eq('athlete_id', athleteId).gte('valid_from', plusDage(today, -6)).order('valid_from', { ascending: true }).limit(501))
-  if (!plans.length) return { plans, versions: [], approvals: [] }
+  if (!plans.length) return { plans, versions: [], approvals: [], seen: null }
   const ids = plans.map(p => p.id)
   const versions = rows(await client.from(VERSIONS)
     .select('id,plan_id,version_no,effective_from,basis_as_of,rationale,goal,intensity,meals').in('plan_id', ids).limit(501))
   const approvals = rows(await client.from(APPROVALS)
     .select('version_id,plan_id,athlete_id,approved_at,approval_kind').in('plan_id', ids).eq('athlete_id', athleteId).limit(501))
-  return { plans, versions, approvals }
+  // Set-tabellen er ny (U10f). Mangler den eller svarer den med fejl, vises intet Set-mærke, og ugen læses som før.
+  const seenResult = versions.length ? await client.from(SEEN).select('version_id,athlete_id,seen_at')
+    .in('version_id', versions.map(v => v.id)).eq('athlete_id', athleteId).limit(501) : null
+  const seen = seenResult && !seenResult.error && Array.isArray(seenResult.data) && seenResult.data.length < 501 ? seenResult.data : null
+  return { plans, versions, approvals, seen }
 }
 
 export async function readClaudeWeek({ client, athlete, today, start }) {
