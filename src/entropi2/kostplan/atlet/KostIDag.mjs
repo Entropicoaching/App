@@ -229,18 +229,24 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     (iGaar.length > 0 || gentag.length > 0) && h('p', { style: label }, 'Spist igen'),
     (iGaar.length > 0 || gentag.length > 0) && h('div', { style: row },
       iGaar.length > 0 && h('button', { type: 'button', style: primary, disabled: pending.length > 0,
-        onClick: () => run(`${iGaar.length} måltider fra i går`, iGaar.reduce((sum, meal) => ({ kcal: sum.kcal + meal.kcal, protein: sum.protein + meal.protein }), { kcal: 0, protein: 0 }),
-          async intent => {
-          // 1933: rækkeiderne gemmes, så ét Fortryd kan fjerne hele gruppen igen.
-          const ids = []
-          for (const [i, meal] of iGaar.entries()) {
-            if (await tracker.log(meal, `${intent}:${i}`) !== true || !await whenReady(sources)) return false
-            const undo = tracker.snapshot?.()?.undo
-            if (undo?.token === `${intent}:${i}` && undo.rowId) ids.push(undo.rowId)
-          }
-          if (ids.length === iGaar.length) groupRef.current = { intent, token: `${intent}:${iGaar.length - 1}`, ids }
-          return true
-        }) },
+        onClick: () => {
+          // 1934: Prøv igen bruger samme gruppe; rækker, der allerede er gemt, logges ikke igen.
+          const gruppe = { gemt: new Set(), ids: [] }
+          run(`${iGaar.length} måltider fra i går`, iGaar.reduce((sum, meal) => ({ kcal: sum.kcal + meal.kcal, protein: sum.protein + meal.protein }), { kcal: 0, protein: 0 }),
+            async intent => {
+            // 1933: rækkeiderne gemmes, så ét Fortryd kan fjerne hele gruppen igen.
+            for (const [i, meal] of iGaar.entries()) {
+              if (gruppe.gemt.has(i)) continue
+              if (await tracker.log(meal, `${intent}:${i}`) !== true) return false
+              gruppe.gemt.add(i)
+              if (!await whenReady(sources)) return false
+              const undo = tracker.snapshot?.()?.undo
+              if (undo?.token === `${intent}:${i}` && undo.rowId) gruppe.ids.push(undo.rowId)
+            }
+            if (gruppe.ids.length === iGaar.length) groupRef.current = { intent, token: `${intent}:${iGaar.length - 1}`, ids: gruppe.ids }
+            return true
+          })
+        } },
       `Alt fra i går (${iGaar.length})`),
       ...gentag.map(meal => {
         const anden = andenMaengde(log, meal)

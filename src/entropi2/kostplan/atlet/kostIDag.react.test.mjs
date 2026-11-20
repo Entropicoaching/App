@@ -294,3 +294,21 @@ test('Kost i dag: Alt fra i går kan fortrydes med ét tryk og fjerner præcis d
   assert.equal(nye.length, 2)
   assert.equal(!!button(r.card(), 'Fortryd'), false)
 })
+
+// 1934 (Marc 19. nov.): "Prøv igen" efter delvis fejl på "Alt fra i går" må ikke logge de gemte rækker igen.
+test('Kost i dag: Prøv igen efter delvis fejl på Alt fra i går logger kun de manglende rækker, og Fortryd fjerner alle gemte', async t => {
+  let failing = true, inserts = 0
+  const r = await mount(t, { extraRows: [{ ...meal('2026-11-04', 'Aftensmad med ris', 700, 40), id: 'y3', created_at: '2026-11-04T18:00:00Z' }],
+    beforeLog: call => { if (call.action === 'insert' && ++inserts === 2 && failing) throw Error('Synthetic insert failure') } })
+  const alt = () => all(r.card(), 'button').find(n => /^Alt fra i går \(\d+\)$/.test(n.textContent))
+  const idag = () => r.f.rows.filter(row => row.date === date)
+  const foer = idag().map(row => row.id)
+  await r.press(alt())
+  assert.equal(idag().length, foer.length + 1, 'første række gemt, anden fejlede')
+  failing = false
+  await r.press(button(r.card(), 'Prøv igen'))
+  const nye = idag().filter(row => !foer.includes(row.id))
+  assert.deepEqual(nye.map(row => row.meal).sort(), ['Aftensmad med ris', 'Havregrød med skyr', 'Rugbrød med æg'], 'hver række præcis én gang')
+  await r.press(button(r.card(), 'Fortryd'))
+  assert.deepEqual(idag().map(row => row.id), foer, 'Fortryd fjerner alle tre gemte rækker')
+})
