@@ -1502,8 +1502,11 @@ function freezeRawAcquisition(path, session) {
     .map((value, index) => valid[index] ? Math.max(0, Math.min(1, Number(value) || 0)) : 0));
   const validity = Object.freeze(valid.map((value, index) => value
     ? 'valid' : confidence[index] > 0 ? 'unknown' : 'invalid'));
+  // ORDRE 1950v: kameraets samlede bevægelse pr. billede (se kbStep); null, når sporet ikke har målt den.
+  const cam = Array.isArray(path.cam) && path.cam.length === pts.length
+    ? Object.freeze(path.cam.map(point => Object.freeze({x:Number(point.x) || 0,y:Number(point.y) || 0}))) : null;
   const raw = Object.freeze({
-    pts, times, valid, confidence, validity,
+    pts, times, valid, confidence, validity, cam,
     start:times[0] ?? session.trackingStart,
     end:times.at(-1) ?? session.trackingEnd
   });
@@ -4615,12 +4618,18 @@ function analyzeCleanPath(path) {
   };
   // Støjreparation er en afledt analysevisning. Raw pts/times/confidence røres aldrig.
   const threshold = Math.max(8, canvas.width * .02);
-  const analysisPts = raw.pts.map((point, index) => {
+  const imagePts = raw.pts.map((point, index) => {
     if (!raw.valid[index]) return {x:point.x,y:point.y};
     const window = raw.pts.slice(Math.max(0, index - 2), Math.min(n, index + 3));
     const x = median(window.map(item => item.x)), y = median(window.map(item => item.y));
     return Math.hypot(point.x - x, point.y - y) > threshold ? {x,y} : {x:point.x,y:point.y};
   });
+  // ORDRE 1950v: holdes telefonen i hånden, flytter billedet sig, og skivens bane i billedet er stangens
+  // bane plus kameraets. Kameraets bevægelse (raw.cam, målt på baggrunden under sporingen) trækkes fra,
+  // så reps, fart og vandret afvigelse regnes på stangens egen bane. Banen, der tegnes oven på videoen,
+  // bliver i billedets koordinater, så den stadig ligger på skiven.
+  const cam = raw.cam && raw.cam.length === n ? raw.cam : null;
+  const analysisPts = cam ? imagePts.map((point, index) => ({x:point.x - cam[index].x,y:point.y - cam[index].y})) : imagePts;
   const smoothedY = analysisPts.map((_, index) => {
     let sum = 0, count = 0;
     for (let cursor = Math.max(0, index - 2); cursor <= Math.min(n - 1, index + 2); cursor++) {
@@ -4956,7 +4965,8 @@ function analyzeCleanPath(path) {
   });
   const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
   const analysis = {schema:1,lift,pts:analysisPts,
-    visualPts:buildVisualBarPath(analysisPts, raw.valid, raw.times),vel:velocity,reps,phases,
+    visualPts:buildVisualBarPath(imagePts, raw.valid, raw.times),vel:velocity,reps,phases,
+    camMaxPx:cam ? Math.max(0, ...cam.map(point => Math.hypot(point.x, point.y))) : null,
     rawCount:n,reviewStartTime:raw.start,reviewEndTime:raw.end,
     effPct:pathLength > 0 ? Math.round(range / pathLength * 100) : null,
     hystCm:downX.length > 3 && upX.length > 3
@@ -5652,6 +5662,96 @@ function mpMatchPoint(from,to,p,pred,search,pr=4){
   return best;
 }
 
+// ORDRE 1950v (Marc 19. nov.: "bar tracker misser stadig, den er ikke reliabel"; 1932v målte håndholdt kamera
+// 26 til 31 % for lavt). Sporet følger skiven i billedet, så kameraets egen bevægelse (langsom drift og
+// rystelse, når telefonen holdes i hånden) blev regnet med som stangens flytning. Her måles kameraets
+// bevægelse fra billede til billede på baggrunden: et gitter af små udsnit over hele billedet (uden om
+// skiven og stangens vandrette bånd) matches i halv opløsning, og den største enige klynge af
+// forskydninger er kameraets. Atleten og stangen flytter sig anderledes end væggen og gulvet og falder
+// uden for klyngen. Er der for få udsnit med struktur, eller er to klynger lige store, regnes kameraet
+// som stillestående i det billede (som før). Summen gemmes pr. billede i path.cam, og analysen trækker
+// den fra, før reps og fart regnes. Selve sporingen af skiven er ikke rørt.
+const KB_SCALE=2,KB_GRID=40,KB_PR=5,KB_SEARCH=9;
+let kbCan=null,kbCtx=null;
+function kbGrab(){
+  const w=Math.max(16,Math.round(ocan.width/KB_SCALE)),h=Math.max(16,Math.round(ocan.height/KB_SCALE));
+  if(!kbCan){kbCan=document.createElement('canvas');kbCtx=kbCan.getContext('2d',{willReadFrequently:true});}
+  if(kbCan.width!==w||kbCan.height!==h){kbCan.width=w;kbCan.height=h;}
+  kbCtx.drawImage(ocan,0,0,ocan.width,ocan.height,0,0,w,h);
+  return mpBuildFrame(kbCtx.getImageData(0,0,w,h).data,w,h,0,0,w,h);
+}
+// Brøkdele af et pixel: en parabel gennem omkostningen i nabopunkterne (som i rlSearch).
+function kbSub(a,b,c){const d=a-2*b+c;return d>1e-9?Math.max(-.5,Math.min(.5,.5*(a-c)/d)):0;}
+// prev og cur er halvopløsningsbilleder (mpBuildFrame). guess er forrige kameraskridt (fuld opløsning),
+// plate er skivens forudsagte midte og radius (fuld opløsning). Svar i fuld opløsning.
+function kbStep(prev,cur,guess,plate){
+  const s=KB_SCALE,w=cur.w,h=cur.h,m=KB_PR+2;
+  const px=plate?plate.x/s:-1e9,py=plate?plate.y/s:-1e9,pr=plate?plate.r/s:0;
+  const gx=guess?guess.x/s:0,gy=guess?guess.y/s:0;
+  const moves=[];let tried=0;
+  const g=prev.gray;
+  for(let cy=m;cy+KB_GRID<=h-m;cy+=KB_GRID)for(let cx=m;cx+KB_GRID<=w-m;cx+=KB_GRID){
+    // det punkt i cellen med mest struktur i begge retninger (mindste egenværdi, som i mpGoodFeatures)
+    let x=-1,y=-1,bestEig=350;
+    for(let yy=cy+3;yy<cy+KB_GRID-3;yy+=2)for(let xx=cx+3;xx<cx+KB_GRID-3;xx+=2){
+      if((xx-px)**2+(yy-py)**2<(pr*1.8)**2)continue;   // skiven selv
+      if(Math.abs(yy-py)<pr*.8)continue;                 // stangens vandrette bånd: muffe, den anden skive, skuldre
+      let a=0,b=0,c=0;
+      for(let j=-2;j<=2;j++)for(let i=-2;i<=2;i++){
+        const k=(yy+j)*w+xx+i,ix=(g[k+1]-g[k-1])*.5,iy=(g[k+w]-g[k-w])*.5;
+        a+=ix*ix;b+=ix*iy;c+=iy*iy;
+      }
+      const eig=(a+c-Math.sqrt(Math.max(0,(a-c)*(a-c)+4*b*b)))*.5;
+      if(eig>bestEig){bestEig=eig;x=xx;y=yy;}
+    }
+    if(x<0)continue;
+    tried++;
+    const p={x,y},fwd=mpMatchPoint(prev,cur,p,{x:x+gx,y:y+gy},KB_SEARCH,KB_PR);
+    if(!fwd||fwd.cost>.45)continue;
+    const back=mpMatchPoint(cur,prev,fwd,p,4,KB_PR);
+    if(!back||Math.hypot(back.x-p.x,back.y-p.y)>1.5)continue;
+    // Brøkdele af et pixel både frem og tilbage. Parablen alene skævvrider lidt efter teksturen (også ved
+    // stilstand); frem og tilbage skævvrider ens, så halvdelen af forskellen er uden skævhed.
+    const sub=(a,b,ax,ay,bx,by,cost)=>{
+      const as=mpPatchStats(a,ax,ay,KB_PR),c=(dx,dy)=>mpZnssd(a,b,ax,ay,bx+dx,by+dy,KB_PR,as);
+      const l=c(-1,0),r=c(1,0),u=c(0,-1),d=c(0,1);
+      return {x:Number.isFinite(l)&&Number.isFinite(r)?kbSub(l,cost,r):0,y:Number.isFinite(u)&&Number.isFinite(d)?kbSub(u,cost,d):0};
+    };
+    const sf=sub(prev,cur,x,y,fwd.x,fwd.y,fwd.cost),sb=sub(cur,prev,fwd.x,fwd.y,back.x,back.y,back.cost);
+    moves.push({dx:((fwd.x+sf.x-x)-(back.x+sb.x-fwd.x))/2,dy:((fwd.y+sf.y-y)-(back.y+sb.y-fwd.y))/2,
+      ci:Math.round((cx-m)/KB_GRID),ri:Math.round((cy-m)/KB_GRID)});
+  }
+  const out={x:0,y:0,ok:false,tried,matched:moves.length,cluster:0,second:0,spread:0,spread2:0};
+  if(moves.length<6)return out;
+  // Klynger: et punkts klynge er alle inden for 1 px (halv opløsning). Den største er kandidat, og den
+  // største blandt resten er modkandidat. Kameraet flytter hele billedet, mens noget, der går forbi
+  // (atleten, en person i baggrunden, en flade foran skiven), kun fylder en del af det. Derfor vinder
+  // den klynge, der er bredest spredt over billedets celler, selv om den har færre punkter.
+  const near=(a,b)=>(a.dx-b.dx)**2+(a.dy-b.dy)**2<=1;
+  const klynge=fra=>{
+    let best=null;
+    for(const a of fra){
+      const n=fra.filter(b=>near(a,b)).length,d=Math.hypot(a.dx-gx,a.dy-gy);
+      if(!best||n>best.n||(n===best.n&&d<best.d))best={a,n,d};
+    }
+    const alle=fra.filter(b=>near(best.a,b));
+    let c0=Infinity,c1=-Infinity,r0=Infinity,r1=-Infinity;
+    for(const b of alle){c0=Math.min(c0,b.ci);c1=Math.max(c1,b.ci);r0=Math.min(r0,b.ri);r1=Math.max(r1,b.ri);}
+    return {alle,n:alle.length,spread:(c1-c0+1)*(r1-r0+1)};
+  };
+  const A=klynge(moves),rest=moves.filter(b=>!near(A.alle[0],b)),B=rest.length?klynge(rest):null;
+  let valgt=A;
+  if(B&&B.n>=6&&B.spread>A.spread*1.3)valgt=B;
+  const anden=valgt===A?B:A;
+  out.cluster=valgt.n;out.second=anden?anden.n:0;out.spread=valgt.spread;out.spread2=anden?anden.spread:0;
+  if(valgt.n<6||valgt.n<moves.length*.3)return out;
+  // to klynger, der er lige store og lige spredte: ingen entydig baggrund
+  if(anden&&anden.n>valgt.n*.7&&anden.spread>valgt.spread*.77)return out;
+  let mx=0,my=0;for(const b of valgt.alle){mx+=b.dx;my+=b.dy;}
+  out.x=mx/valgt.n*s;out.y=my/valgt.n*s;out.ok=true;
+  return out;
+}
+
 // ORDRE 1192: sporing uden requestVideoFrameCallback (og rVFC-fallback) gik frame
 // for frame med seek til currentTime+FRAME. En pause-frame sidder præcis på en
 // frame-grænse, så et seek til grænsen plus FRAME rammer ofte frame k i stedet
@@ -5936,16 +6036,23 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
       confidence:[...(source.confidence||source.pts.map(()=>1)).slice(0,cut)],
       startFrame:previousPath.startFrame,barTracker:'multipoint-fb-v3-clean-rebuild',plateRadius:radius,
       manualCorrections:[...(previousPath.manualCorrections||[]),
-        {time:startT,point:{x:p0.x,y:p0.y},sourceSamples:cut}]};
+        {time:startT,point:{x:p0.x,y:p0.y},sourceSamples:cut}],
+      cam:[...(source.cam||source.pts.map(()=>({x:0,y:0}))).slice(0,cut).map(c=>({x:c.x,y:c.y}))]};
     path.pts.push({x:p0.x,y:p0.y});path.times.push(startT);path.valid.push(true);path.confidence.push(1);
+    path.cam.push(path.cam.length?{...path.cam[path.cam.length-1]}:{x:0,y:0});
     strokes.push(path);
   }else{
     path={type:'path',color:colorInput.value,pts:[{x:p0.x,y:p0.y}],times:[startT],
       valid:[true],confidence:[1],startFrame,barTracker:'multipoint-fb-v3-clean-rebuild',
-      plateRadius:radius,manualCorrections:[]};
+      plateRadius:radius,manualCorrections:[],cam:[{x:0,y:0}]};
     strokes.push(path);
   }
   octx.drawImage(video,0,0,ocan.width,ocan.height);
+  // ORDRE 1950v: kameraets bevægelse måles på baggrunden fra billede til billede (se kbStep). kbOff er
+  // summen siden sporingens start (fuld opløsning); den gemmes pr. billede i path.cam.
+  let kbPrev=kbGrab(),kbOff={x:0,y:0},kbLast={x:0,y:0};
+  if(path.cam.length>1)kbOff={...path.cam[path.cam.length-1]};
+  path.kamera={frames:0,used:0,matched:0,cluster:0,maxStep:0};
   const anchorExtent=radius*.82+12;
   let anchorFrame=mpFrame(p0,anchorExtent),anchorTime=startT,cur={x:p0.x,y:p0.y},vel={x:0,y:0};
   let lastGoodVel={x:0,y:0};
@@ -6091,6 +6198,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     if(VC_TRACKER_FAST&&!(directRun&&lock)&&quietStreak>=QUIET_NEEDED&&!skippedLast){
       skippedLast=true;skippedFrames++;
       path.pts.push({...cur});path.times.push(tNow);path.valid.push(true);path.confidence.push(1);
+      path.cam.push({x:kbOff.x,y:kbOff.y});
       const pctQ=Math.round(tNow/video.duration*100);
       barBtn.textContent=`⏹ Stop sporing (${pctQ}%)`;
       const workMsQ=performance.now()-workStarted;
@@ -6116,6 +6224,15 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     else vcDrawTurned(octx,frameSource,ocan.width,ocan.height,vcNorm.frames&&vcNorm.frames.rot||0);
     const currentFrame=COACHWEB?await mpFrameCooperative(pred,frameExtent):mpFrame(pred,frameExtent);
     if(!tracking)return false;
+    // ORDRE 1950v: kameraets skridt siden forrige behandlede billede, målt på baggrunden.
+    {
+      const kbCur=kbGrab(),st=kbStep(kbPrev,kbCur,kbLast,{x:pred.x,y:pred.y,r:radius});
+      kbPrev=kbCur;path.kamera.frames++;path.kamera.matched+=st.matched;path.kamera.cluster+=st.cluster;
+      if(TRACKER_BENCHMARK)(path.kameraLog||(path.kameraLog=[])).push({t:tNow,...st});
+      if(st.ok){kbOff={x:kbOff.x+st.x,y:kbOff.y+st.y};kbLast={x:st.x,y:st.y};path.kamera.used++;
+        path.kamera.maxStep=Math.max(path.kamera.maxStep,Math.hypot(st.x,st.y));}
+      else kbLast={x:0,y:0};
+    }
     const moves=[];
     for(let featureIndex=0;featureIndex<features.length;featureIndex++){
       if(COACHWEB&&featureIndex>0&&featureIndex%12===0){
@@ -6445,6 +6562,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     }
     path.pts.push(outputPoint);path.times.push(tNow);path.valid.push(accepted);
     path.confidence.push(accepted?frameConfidence:0);
+    path.cam.push({x:kbOff.x,y:kbOff.y});
     const pct=Math.round(tNow/video.duration*100);
     barBtn.textContent=`⏹ Stop sporing (${pct}%)`;
     if(analyzing){
@@ -6837,6 +6955,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     path.tailCutAt=path.times[cut];path.tailCutFrames=n-1-cut;
     path.pts.length=cut+1;path.times.length=cut+1;path.valid.length=cut+1;
     if(path.confidence)path.confidence.length=cut+1;
+    if(path.cam)path.cam.length=cut+1;   // ORDRE 1950v: kameraets bevægelse følger banen (kontrollens fund)
   };
   trimEscapedTail();
   freezeRawAcquisition(path,session);
