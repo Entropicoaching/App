@@ -45,7 +45,7 @@ for (const [name, change, expected] of [
     const p = fixture(); p.weightLogs = weightLogs; change(p)
     const before = structuredClone(p), tree = render({ ...p, editing: 'setup' }), out = text(tree)
     assert.match(out, expected)
-    assert.doesNotMatch(out, /mindst 4 loggede dage|Typisk indtag:|Seneste 7 dage: gns\.|Seneste 7 dage med nuværende mål:/)
+    assert.doesNotMatch(out, /mindst 4 loggede dage|Typisk indtag:|Seneste 7 dage: gns\.|Seneste 7 dage mod profilens mål:/)
     assert.equal(energyButtons(tree).length, 0)
     assert.deepEqual(p, before)
   }

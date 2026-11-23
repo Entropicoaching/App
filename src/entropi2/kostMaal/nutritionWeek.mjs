@@ -2,6 +2,7 @@ import { antalOrd } from '../antalOrd.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { kostMaalModel } from './model.mjs'
+import { ugeDageModPlan } from '../analysis/kostDageModPlan.mjs'
 
 const ordinal = day => Date.parse(day + 'T00:00:00Z') / 86400000
 const civilDay = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && activityDay(value) === value
@@ -71,21 +72,38 @@ export function nutritionWeek(props = {}, basis = nutritionBasis(props)) {
 
 // Compare logged daily totals with the current saved goals, not historical goals
 // or unsaved editor drafts. No logging is not evidence of reaching either goal.
+// Ordre 2030 (valg A som 1587): dage med godkendt kostplan tælles mod planens dagsmål (samme dagsvurdering
+// som kostlinjen og ugerapporten, kostDageModPlan.mjs), øvrige dage mod profilens mål som ugerapporten
+// (weeklyReportModel.mjs:49-62). De to tal blandes aldrig. Uden plandage er teksten som før.
 export function nutritionGoalWeek(props = {}, basis = nutritionBasis(props)) {
   const days = basis.state === 'ready' ? basis.days : null
   if (!days) return null
   const model = kostMaalModel({ athlete: props.athlete })
+  const plan = Array.isArray(props.planDays) && civilDay(props.today)
+    ? ugeDageModPlan({ planDays: props.planDays, through: props.today,
+      meals: props.coachNutrition.rows.filter(row => row?.athlete_id === props.athlete.id) })
+    : null
+  const planDates = plan ? plan.planDates : new Set()
+  const rest = new Map([...days].filter(([date]) => !planDates.has(date)))
   // Fixed absolute tolerance repairs binary decimal summation noise only.
   // It never scales with the goal or rounds a 0.01 shortfall up to attainment.
   const count = (key, target) => target === null ? null :
-    [...days.values()].filter(day => target - day[key] <= 1e-9).length
+    [...rest.values()].filter(day => target - day[key] <= 1e-9).length
   const kcal = count('kcal', model.kcal), protein = count('protein', model.protein)
-  if (kcal === null && protein === null) return null
-  const goals = [['energi', kcal], ['protein', protein]].filter(([, count]) => count !== null)
-    .map(([label, count]) => `${label} ${count} af 7 dage`).join(' · ')
+  const part = (kcalCount, proteinCount, of) => [['energi', kcalCount], ['protein', proteinCount]]
+    .filter(([, n]) => n !== null).map(([label, n]) => `${label} ${n} af ${of} dage`).join(' · ')
   const logged = `${days.size} ${antalOrd(days.size, 'logget dag', 'loggede dage')}`
-  return { days: days.size, kcal, protein,
-    text: `Seneste 7 dage med nuværende mål: ${goals} (${logged}).` }
+  if (!planDates.size) {
+    if (kcal === null && protein === null) return null
+    return { days: days.size, kcal, protein, text: `Seneste 7 dage mod profilens mål: ${part(kcal, protein, 7)} (${logged}).` }
+  }
+  const hits = map => [...map.values()].filter(Boolean).length
+  const planPart = part(hits(plan.kcal), hits(plan.protein), planDates.size)
+  const restDays = 7 - planDates.size
+  const restPart = restDays > 0 ? part(kcal, protein, restDays) : ''
+  return { days: days.size, mod: 'plan', kcal: hits(plan.kcal), protein: hits(plan.protein),
+    text: `Seneste 7 dage mod kostplanen: ${planPart}` +
+      (restPart ? `; øvrige ${restDays} ${antalOrd(restDays, 'dag', 'dage')} mod profilens mål: ${restPart}` : '') + ` (${logged}).` }
 }
 
 // Seneste logdags måltider (navn og kcal) ud fra samme kvittering og samme gyldighed som
