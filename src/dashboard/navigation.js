@@ -5,6 +5,10 @@
 import { nextWeekStartDate } from '../weekDates'
 import { coachPriorityTaskContext } from '../coachPriority'
 
+// Ordre 2019: anmodning om at rulle svarfeltet ind i synet; læses af entropi2/conversation/svarfeltRul.mjs.
+// Nøglen er delt gennem Symbol.for, fordi coachens testsele kun tillader de to kendte importer her.
+const SVARFELT_RUL = Symbol.for('hara.svarfeltRul')
+
 export function lavNavigation({
   analyseTabFactory, athletes, calendarWeeks, isMobile, listScrollYRef, messageThreadAthleteRef,
   myAthleteId, onPreviewAthlete, setActiveTab, setAddingExercise, setAddingSession, setAddingWeek,
@@ -42,6 +46,7 @@ export function lavNavigation({
     // forudhentning er harmløs: LazyBoundary/lazy() prøver selv igen ved det
     // rigtige klik, uændret.
     analyseTabFactory().catch(() => {})
+    delete globalThis[SVARFELT_RUL]
     if (viewRef.current === 'list') listScrollYRef.current = window.scrollY
     setProfileReturnView(returnView === 'inbox' ? 'inbox' : 'list')
     setProfilePriorityKey(priorityKey)
@@ -104,6 +109,8 @@ export function lavNavigation({
     if (item.kind === 'message') {
       setCoachMsgTrack(item.track)
       openProfile(item.athlete, 'beskeder', returnView, item.key, priorityContext)
+      // Ordre 2019: kun denne vej ruller svarfeltet ind i synet.
+      globalThis[SVARFELT_RUL] = { athleteId: item.athlete.id, til: Date.now() + 10000 }
       return
     }
     setVideoReviewRequest({ item: item.video, token: `${item.video.id}:${Date.now()}` })

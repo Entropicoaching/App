@@ -663,9 +663,12 @@ export default function ProgramTab({
                                       </>
                                     )}
                                   </div>
-                                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
-                                    {range} · {phase.weeks.length}u
-                                  </div>
+                                  {/* Ordre 2036: ved én uge står ugenummeret i ugekortet lige under. */}
+                                  {phase.weeks.length > 1 && (
+                                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: '#7a7770' }}>
+                                      {range} · {phase.weeks.length}u
+                                    </div>
+                                  )}
                                   {dates && (
                                     <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', marginTop: '0.18rem' }}>{dates}</div>
                                   )}
@@ -873,14 +876,15 @@ export default function ProgramTab({
                       </div>
                     ) : (
                       <div
-                        style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', borderLeft: openWeekId === week.id ? '3px solid #c8923a' : '3px solid transparent', padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem', ...(programCopyEnabled === true ? { flexWrap: 'wrap' } : {}) }}
+                        style={{ background: '#1c1c18', border: '1px solid rgba(237,234,226,0.07)', borderLeft: openWeekId === week.id ? '3px solid #c8923a' : '3px solid transparent', padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: '0.5rem', ...(programCopyEnabled === true || isMobile ? { flexWrap: 'wrap' } : {}) }}
                         onClick={() => setOpenWeekId(openWeekId === week.id ? null : week.id)}
                       >
                         <div>
                           <div role="heading" aria-level={3} style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
                             <span role="button" tabIndex={0} aria-expanded={openWeekId === week.id} onKeyDown={activateOnKey} onClick={e => { e.stopPropagation(); setOpenWeekId(openWeekId === week.id ? null : week.id) }} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c8923a' }}>Uge {week.week_number}</span>
-                            {week.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', letterSpacing: '0.06em' }}>{new Date(week.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })} – {new Date(new Date(week.start_date + 'T12:00:00').getTime() + 6 * 24 * 3600 * 1000).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
-                            {week.block_name && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{week.block_name}</span>}
+                            {week.start_date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#4a4844', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>{new Date(week.start_date + 'T12:00:00').toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })} – {new Date(new Date(week.start_date + 'T12:00:00').getTime() + 6 * 24 * 3600 * 1000).toLocaleDateString('da-DK', { day: 'numeric', month: 'short' })}</span>}
+                            {/* Ordre 2036: bloknavnet står i blokkortet; ugekortet gentager det kun, når flere blokke vises samlet. */}
+                            {week.block_name && programBlockStart === 'all' && computePhases(weeks).length > 1 && <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', color: '#edeae2' }}>{week.block_name}</span>}
                           </div>
                           {loggetProcent(week, athleteLogs) && <div data-uge-logget={week.week_number} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.2rem' }}>{loggetProcent(week, athleteLogs)}</div>}
                           {week.coach_note && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#7a7770', marginTop: '0.2rem' }}>{week.coach_note}</div>}

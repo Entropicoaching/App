@@ -38,7 +38,7 @@ test('1, 12 and 40 synthetic athletes: one reason each, exact order, reachable r
     for (const [i, button] of buttons.entries()) {
       assert.ok(button.props.style.minHeight >= 44)
       assert.match(text(button), /1 samtale venter på svar/)
-      button.props.onClick(); assert.deepEqual(calls.at(-1), [result.rows[i].athlete, 'hub', 'list'])
+      button.props.onClick(); assert.deepEqual(calls.at(-1), [result.rows[i].athlete, 'program', 'list'])
     }
     for (const summary of all(tree).filter(n => n.type === 'summary')) assert.ok(summary.props.style.minHeight >= 44)
     assert.doesNotMatch(text(tree), /[–—]/)

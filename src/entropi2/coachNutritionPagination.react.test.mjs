@@ -89,7 +89,7 @@ for (const failure of ['error', 'budget', 'overlap']) {
       assert.equal(batch().state, failure === 'error' ? 'error' : 'partial')
       assert.match(host.textContent, failure === 'error' ? /Kostdata kunne ikke hentes/ : /Kostdata er ufuldstændige/)
       assert.equal(host.querySelectorAll('[data-coach-nutrition]').length, 0)
-      assert.doesNotMatch(host.textContent, /Kost ·|Seneste 7 dage med nuværende mål|0 loggede dage|Spis mere/)
+      assert.doesNotMatch(host.textContent, /Kost ·|Seneste 7 dage mod profilens mål|0 loggede dage|Spis mere/)
       const retry = host.querySelectorAll('button').find(node => node.textContent === 'Hent kost igen')
       assert.ok(retry)
       broken = false

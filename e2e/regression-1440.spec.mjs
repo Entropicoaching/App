@@ -63,24 +63,25 @@ async function main() {
     await logind(a, ATHLETE_USER)
     await a.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await tjek(a, 'atlet-01-hjem-dagens-pas')
-    await a.getByRole('button', { name: 'Godkendt', exact: true }).click() // log saet 1 (planens tal)
-    const aaben = a.getByTestId('rest-pause-open')
-    await aaben.waitFor({ state: 'visible', timeout: 5000 })
+    // Entropi 2 (62386137, 5. nov.): Hjem viser 'Start dagens pas', og saettets knap hedder 'Som planlagt' (planens tal, et tryk)
+    await a.getByRole('button', { name: /Start dagens pas/ }).click()
+    await a.getByRole('button', { name: 'Som planlagt', exact: true }).click() // log saet 1 (planens tal)
+    // Entropi 2: pausetimeren staar indlejret i passet (ingen popup), 'Pause mellem saet'
+    const pauseTimer = a.getByText('Pause mellem sæt', { exact: true })
+    await pauseTimer.waitFor({ state: 'visible', timeout: 5000 })
     await a.waitForFunction(async (url) => (await (await fetch(`${url}/__e2e/table?name=exercise_logs`)).json()).some(r => r.set_number === 1 && !r.skipped && r.weight === 80), `http://127.0.0.1:${MOCK_PORT}`, { timeout: 10000 })
     await tjek(a, 'atlet-02-saet-logget-pause')
-    await aaben.click()
-    await a.getByTestId('rest-pause-popup').waitFor({ state: 'visible', timeout: 3000 })
+    await a.getByRole('button', { name: '+30 s', exact: true }).click()
     await tjek(a, 'atlet-03-timer-popup')
-    await a.getByTestId('rest-pause-close').click()
-    await a.getByTestId('rest-pause-popup').waitFor({ state: 'detached', timeout: 3000 })
     // bundnavigationen ligger nederst i viewporten, ikke oven paa indhold
     const nav = await a.evaluate(() => {
-      const n = [...document.querySelectorAll('nav,[role=navigation]')].find(e => getComputedStyle(e).position === 'fixed')
+      const n = [...document.querySelectorAll('nav,[role=navigation]')].filter(e => getComputedStyle(e).position === 'fixed').sort((x, y) => y.getBoundingClientRect().bottom - x.getBoundingClientRect().bottom)[0] // Entropi 2 har ogsaa en fast topbjaelke: tag den nederste
       if (!n) return null
       const r = n.getBoundingClientRect(); return { bund: Math.round(r.bottom), hoejde: innerHeight }
     })
     if (nav) assert.ok(nav.bund >= nav.hoejde - 2, `bundnavigation staar ikke nederst: ${JSON.stringify(nav)}`)
     console.log('  bundnavigation:', nav ? JSON.stringify(nav) : 'ingen fixed nav fundet')
+    await a.getByRole('button', { name: 'Luk pas', exact: true }).click() // Entropi 2: aabent pas daekker bundnavigationen
     await a.getByRole('button', { name: 'Program', exact: true }).first().click()
     await a.waitForTimeout(1200); await tjek(a, 'atlet-04-program')
     await a.getByRole('button', { name: 'Fremgang', exact: true }).first().click()
@@ -101,14 +102,14 @@ async function main() {
     const cctx = await browser.newContext({ viewport: { width: W, height: H } })
     const c = await nye(cctx, 'coach')
     await logind(c, COACH_USER)
-    const raekke = c.getByRole('button', { name: /Testatlet.*Uge/ }).first()
+    const raekke = c.getByRole('button', { name: /Åbn programmet for Testatlet/ }).first()
     await raekke.waitFor({ state: 'visible', timeout: 15000 })
     await tjek(c, 'coach-01-oversigt')
     await raekke.click(); await c.waitForSelector('[data-styrke-linje]', { timeout: 8000 })
     await tjek(c, 'coach-02-atlet-hjem-styrkelinje')
     const tab = async (label) => {
       const k = c.getByRole('button', { name: new RegExp(`${label}$`) }).first()
-      if (!(await k.isVisible().catch(() => false))) { await c.getByRole('button', { name: /Hjem$/ }).first().locator('xpath=..').locator('button').last().click({ timeout: 5000 }); await c.waitForTimeout(300) }
+      if (!(await k.isVisible().catch(() => false))) { await c.locator('button[aria-expanded]').filter({ hasText: '▾' }).first().click({ timeout: 5000 }); await c.waitForTimeout(300) }
       await c.getByRole('button', { name: new RegExp(`${label}$`) }).first().click(); await c.waitForTimeout(1200)
     }
     await tab('Log'); await c.locator('select').first().selectOption('Bænkpres').catch(() => {}); await tjek(c, 'coach-03-fremgang-log')

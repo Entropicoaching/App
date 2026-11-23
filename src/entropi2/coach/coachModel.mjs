@@ -73,7 +73,7 @@ export function adaptCoachState(props = {}, today = new Date()) {
 
 export function coachHomeModel(props = {}, today = new Date()) {
   const data = adaptCoachState(props, today)
-  const actions = [], inbox = [], videoKeys = new Set()
+  const actions = [], inbox = [], waiting = [], signals = [], videoKeys = new Set()
   const { day, athletes, plans, messages, videos, logs } = data
   const T = day ? ordinal(day) : null
   // U3 (afsnit 2): nye grunde kun med flaget. L1 skal være komplet for netop
@@ -133,9 +133,17 @@ export function coachHomeModel(props = {}, today = new Date()) {
       nutritionSource: props.coachNutrition, nutritionReady: u3Nutrition.has(athlete.id), kvitteringer: props.smerteKvittering }))
     candidates.sort(order)
     const smerte = candidates.find(c => c.smerte)?.smerte
-    if (candidates.length) actions.push({ ...candidates[0], reasons: candidates.map(c => c.reason), ...(smerte ? { smerte } : {}) })
+    const reasons = candidates.map(c => c.reason)
+    if (candidates.length) actions.push({ ...candidates[0], reasons, ...(smerte ? { smerte } : {}) })
+    // Ordre 2005a (Marc 20. nov.: "husk jeg er pt den eneste træner"): beskeder, videoer og programmets slutning
+    // står i forsidens uge. Resten (log, smerte, readiness, check-in, stilstand, protein) tages i check-in i chatten
+    // og står som signaler under Mere, én række pr. atlet med de samme grunde.
+    const items = candidates.filter(c => c.item)
+    if (items.length) waiting.push({ ...items[0], reasons: items.map(c => c.reason) })
+    const rest = candidates.filter(c => !c.item && !c.key.startsWith('program-'))
+    if (rest.length) signals.push({ ...rest[0], reasons: rest.map(c => c.reason), ...(smerte ? { smerte } : {}) })
   }
-  actions.sort(order); inbox.sort(order)
+  actions.sort(order); inbox.sort(order); waiting.sort(order); signals.sort(order)
   const complete = data.rosterReady && data.calendarReady && messages.complete && videos.complete && logs.complete
   const nutrition = coachNutritionLines(props, day, athletes, data.rosterReady)
   // K-R3-ENTROPI-SAMLET fund 3: en fejlet eller ufuldstaendig kostlaesning maa ikke ligne fravaer.
@@ -144,7 +152,8 @@ export function coachHomeModel(props = {}, today = new Date()) {
     : nutritionSource.state === 'partial' ? 'partial' : nutritionSource.state === 'error' ? 'error' : 'loading'
   const summaries = coachAthleteSummaries(data, nutrition, inbox)
   const kostvane = kostvaneTal(props, day, athletes, data.rosterReady)
-  return { ...data, actions, inbox, complete, nutrition, nutritionState, summaries, kostvane, ...(u3 ? { u3: { attentionState } } : {}),
+  const uge = coachWeekModel(data)
+  return { ...data, actions, inbox, waiting, signals, uge, complete, nutrition, nutritionState, summaries, kostvane, ...(u3 ? { u3: { attentionState } } : {}),
     nutritionReload: typeof nutritionSource?.reload === 'function' ? nutritionSource.reload : null,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
 }
@@ -206,4 +215,54 @@ export function coachAthleteSummaries(data, nutrition, inbox) {
   return coachAthleteList({ today: day, athletes: rows.map(row => ({
     id: row.athlete.id, unreadMessages: row.unread,
   })) }).map(row => byId.get(row.athlete.id))
+}
+
+// Ordre 2005a og 2007 (Marc 20. nov.: "optimere mit orkflow"): check-in sker i Claude-chatten, og Marc sender én uge ad
+// gangen om søndagen. Forsiden viser derfor, hvem der mangler en ny uge, og hvem der har fået sin uge. Kun kalenderen,
+// ingen nye læsninger.
+const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
+const shortDay = iso => `${Number(iso.slice(8, 10))}. ${MONTHS[Number(iso.slice(5, 7)) - 1]}`
+const isoDay = n => new Date(n * 86400000).toISOString().slice(0, 10)
+// En atlet mangler ny uge, når intet program dækker i dag eller senere (udløbet), eller når det er fredag, lørdag eller
+// søndag, og ingen sendt uge dækker den kommende mandag. Ellers er ugen sendt. Datoløse uger afgøres af kalderen.
+export function ugeStatus(weeks = [], day) {
+  const T = ordinal(day)
+  if (!Number.isFinite(T)) return { mangler: false, sendt: null }
+  const planned = weeks.filter(w => Number(w.exercise_count) > 0 && civilDay(w.start_date))
+  const current = planned.filter(w => ordinal(w.start_date) + 7 > T).sort((a, b) => b.start_date.localeCompare(a.start_date))
+  if (!current.length) return { mangler: true, reason: 'Programmet er udløbet', sendt: null }
+  const dow = new Date(T * 86400000).getUTCDay()
+  const nextMonday = T + (8 - dow) % 7
+  if ((dow === 5 || dow === 6 || dow === 0) && !planned.some(w => ordinal(w.start_date) <= nextMonday && nextMonday < ordinal(w.start_date) + 7))
+    return { mangler: true, reason: 'Ingen uge sendt til næste mandag', sendt: null }
+  return { mangler: false, sendt: current[0] }
+}
+export function coachWeekModel(data = {}) {
+  const { day, athletes = [], plans = {}, calendarReady } = data
+  if (!calendarReady || !day) return { ready: false, nyUge: [], sendt: [] }
+  const entries = new Map(buildProgramOverblik({ athletes, calendarWeeks: plans, today: day }).map(e => [e.athlete.id, e]))
+  const nyUge = [], sendt = []
+  for (const athlete of athletes) {
+    const weeks = plans[athlete.id] || []
+    const entry = entries.get(athlete.id)
+    // En ny atlet oprettes med status onboarding (entropi-checkin og entropi); uden program mangler første uge.
+    if (entry?.status === 'empty' && athlete.status === 'onboarding') {
+      nyUge.push({ key: `program-${athlete.id}`, athlete, rank: 1, tab: 'program', reason: 'Intet program i appen', reasons: [], daysLeft: Infinity })
+      continue
+    }
+    if (entry?.status !== 'planned' || hasUndatedPlannedWeek(weeks)) continue
+    const status = ugeStatus(weeks, day)
+    if (status.mangler) {
+      nyUge.push({ key: `program-${athlete.id}`, athlete, rank: 1, tab: 'program', reason: status.reason, reasons: [status.reason], daysLeft: entry.daysLeft })
+      continue
+    }
+    const newest = status.sendt
+    const n = Number(newest.week_number)
+    const label = Number.isSafeInteger(n) && n > 0 ? `Uge ${n}` : 'Ugen'
+    sendt.push({ key: `sendt-${athlete.id}`, athlete, rank: 1, tab: 'program', start: newest.start_date,
+      reason: `${label} ${shortDay(newest.start_date)} til ${shortDay(isoDay(ordinal(newest.start_date) + 6))}` })
+  }
+  nyUge.sort((a, b) => a.daysLeft - b.daysLeft || a.athlete.name.localeCompare(b.athlete.name, 'da'))
+  sendt.sort((a, b) => b.start.localeCompare(a.start) || a.athlete.name.localeCompare(b.athlete.name, 'da'))
+  return { ready: true, nyUge, sendt }
 }

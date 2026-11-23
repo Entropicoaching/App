@@ -214,7 +214,8 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
             {(() => {
               const navItems = [{ key: 'hub', label: 'Hjem' }, ...HUB_SECTIONS]
               const EMOJI = { hub: '🏠', oversigt: '📊', kost: '🍽️', program: '🏋️', log: '📓', analyse: '📈', opvarmning: '🔥', stævne: '🏆', noter: '🗒️', beskeder: '💬' }
-              const PRIMARY = coachRyd ? ['program', 'log', 'beskeder'] : ['hub', 'program', 'log', 'beskeder']
+              // Ordre 2019: Marcs uge (sende uge, svare, kost) står først; Hjem, Log, Oversigt, Analyse m.fl. ligger under Mere.
+              const PRIMARY = coachRyd ? ['program', 'log', 'beskeder'] : ['program', 'beskeder', 'kost']
               const primary = (coachRyd ? [] : PRIMARY).map(k => navItems.find(n => n.key === k)).filter(Boolean)
               const more = navItems.filter(n => !PRIMARY.includes(n.key))
               const activeInMore = more.some(n => n.key === activeTab)

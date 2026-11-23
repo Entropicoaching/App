@@ -29,6 +29,8 @@ export async function runCoachReview(page, { appUrl, outDir }) {
 
   // Atletens uge viser de tre sæt — "Log"-fanen er den der faktisk render'er
   // hvert enkelt sæt (Program-fanen viser kun komplians/overblik).
+  // Ordre 2019: Log og Hjem ligger under Mere.
+  await page.locator('button[aria-expanded]').filter({ hasText: '▾' }).first().click()
   await page.getByRole('button', { name: /Log$/ }).click()
   await page.locator('div:text-is("Squat")').first().waitFor({ state: 'visible', timeout: 10000 })
   // Squat har 4 sæt i seeden (ordre 155 tilføjede et 4. sæt til
@@ -38,6 +40,7 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   await shot('02-atletens-uge-tre-saet')
 
   // Check-in-gennemgangen viser dagens readiness (Hjem-fanens statuslinje).
+  await page.locator('button[aria-expanded]').filter({ hasText: '▾' }).first().click()
   await page.getByRole('button', { name: /Hjem$/ }).click()
   await page.getByText('Parathed i dag').waitFor({ state: 'visible', timeout: 10000 })
   await shot('03-checkin-gennemgang')
@@ -45,7 +48,7 @@ export async function runCoachReview(page, { appUrl, outDir }) {
   // Videoer-fanen ("Analyse", lazy chunk) åbner uden fejl.
   const pageErrors = []
   page.on('pageerror', err => pageErrors.push(err))
-  await page.getByRole('button', { name: /Mere/ }).click()
+  await page.locator('button[aria-expanded]').filter({ hasText: '▾' }).first().click()
   await page.getByRole('button', { name: /Analyse$/ }).click()
   // Vent på at den lazy-loadede AnalyseTab rent faktisk har renderet noget
   // (ikke bare den tomme "Indlæser..."-tilstand appen viser under chunk-hentning).

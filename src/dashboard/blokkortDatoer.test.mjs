@@ -14,3 +14,17 @@ test('blokkortets datoer vises kun ved flere uger i blokken', () => {
 test('blokkortet har ingen ny import (lukkede harnesser)', () => {
   assert.doesNotMatch(src, /blokkortDatoer/)
 })
+
+// Ordre 2036: ny klient uden gentagelser (Marc 16. nov.). Ugenummer og bloknavn står ét sted.
+test('blokkortet gentager ikke ugenummeret ved en uge i blokken', () => {
+  assert.match(src, /\{phase\.weeks\.length > 1 && \(\s*<div[^>]*>\s*\{range\} · \{phase\.weeks\.length\}u/)
+})
+
+test('ugekortet gentager kun bloknavnet, naar flere blokke vises samlet', () => {
+  assert.match(src, /week\.block_name && programBlockStart === 'all' && computePhases\(weeks\)\.length > 1/)
+})
+
+test('ugekortet bryder linjen paa telefon, saa datoen ikke presses til et ord pr. linje', () => {
+  assert.match(src, /programCopyEnabled === true \|\| isMobile \? \{ flexWrap: 'wrap' \}/)
+  assert.match(src, /letterSpacing: '0\.06em', whiteSpace: 'nowrap' \}\}>\{new Date\(week\.start_date/)
+})

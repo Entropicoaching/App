@@ -20,7 +20,7 @@ function meal(p, date, kcal, protein, id = `meal-${p.coachNutrition.rows.length}
   p.coachNutrition.rows.push({ id, athlete_id: p.athlete.id, date, kcal, protein, meal: 'Synthetic meal' })
 }
 const render = p => mount(KostMaal, p).render()
-const lines = tree => nodes(tree, n => n.type === 'p' && text(n).startsWith('Seneste 7 dage med nuværende mål:'))
+const lines = tree => nodes(tree, n => n.type === 'p' && text(n).startsWith('Seneste 7 dage mod profilens mål:'))
 function line(p) { const result = lines(render(p)); assert.equal(result.length, 1); return text(result[0]) }
 
 test('counts daily sums independently, exact targets and unrounded decimals; includes day seven', () => {
@@ -31,7 +31,7 @@ test('counts daily sums independently, exact targets and unrounded decimals; inc
   meal(p, '2026-10-27', 2200, 160)
   const before = structuredClone(p), tree = render(p), result = lines(tree)
   assert.equal(result.length, 1)
-  assert.equal(text(result[0]), 'Seneste 7 dage med nuværende mål: energi 3 af 7 dage · protein 3 af 7 dage (4 loggede dage).')
+  assert.equal(text(result[0]), 'Seneste 7 dage mod profilens mål: energi 3 af 7 dage · protein 3 af 7 dage (4 loggede dage).')
   assert.equal(result[0].props.role, undefined); assert.equal(result[0].props.style, undefined)
   assert.ok(text(tree).indexOf(text(result[0])) > text(tree).indexOf('Protein'))
   assert.ok(text(tree).indexOf(text(result[0])) < text(tree).indexOf('Rediger'))
@@ -42,7 +42,7 @@ test('zero, one and two logged days are shown without inventing unlogged attainm
   for (const count of [0, 1, 2]) {
     const p = fixture()
     for (let i = 0; i < count; i++) meal(p, `2026-11-0${2-i}`, 2100, 160)
-    assert.equal(line(p), `Seneste 7 dage med nuværende mål: energi ${count} af 7 dage · protein ${count} af 7 dage (${count === 1 ? '1 logget dag' : `${count} loggede dage`}).`)
+    assert.equal(line(p), `Seneste 7 dage mod profilens mål: energi ${count} af 7 dage · protein ${count} af 7 dage (${count === 1 ? '1 logget dag' : `${count} loggede dage`}).`)
   }
   const p = fixture(); meal(p, today, 0, 0)
   assert.match(line(p), /energi 0 af 7 dage · protein 0 af 7 dage \(1 logget dag\)/)
@@ -180,4 +180,37 @@ test('goal counts retain seven civil days across DST and year boundaries', () =>
     }
     assert.match(line(p), /energi 7 af 7 dage · protein 7 af 7 dage \(7 loggede dage\)/)
   }
+})
+
+// Ordre 2030: med aktiv kostplan tælles plandage mod planens dagsmål, øvrige dage mod profilens mål.
+const DAYS = ['2026-10-27', '2026-10-28', '2026-10-29', '2026-10-30', '2026-10-31', '2026-11-01', today]
+const planDays = (from, targets = { kcal: 2550, protein: 170 }) =>
+  DAYS.map(date => ({ date, state: date >= from ? 'approved' : 'unknown', targets: date >= from ? targets : undefined }))
+const planLine = p => text(lines2(render(p))[0])
+const lines2 = tree => nodes(tree, n => n.type === 'p' && /^Seneste 7 dage mod (kostplanen|profilens mål):/.test(text(n)))
+
+test('aktiv plan: alle syv dage tælles mod planens mål, ikke profilens (2029-målingen)', () => {
+  const p = fixture(); p.athlete.kcal_target = 2800; p.athlete.protein_target = 180
+  const eaten = [[2600, 172], [2100, 150], [2500, 168], [2900, 181], [2550, 171], [2000, 120], [2560, 150]]
+  DAYS.forEach((date, i) => meal(p, date, eaten[i][0], eaten[i][1]))
+  p.planDays = planDays(DAYS[0])
+  assert.equal(planLine(p), 'Seneste 7 dage mod kostplanen: energi 4 af 7 dage · protein 4 af 7 dage (7 loggede dage).')
+  delete p.planDays
+  assert.equal(planLine(p), 'Seneste 7 dage mod profilens mål: energi 1 af 7 dage · protein 1 af 7 dage (7 loggede dage).')
+})
+
+test('uden godkendt plan eller med arkiverede dage er teksten mod profilens mål', () => {
+  const p = fixture(); meal(p, today, 2100, 160)
+  p.planDays = planDays('2999-01-01')
+  assert.equal(planLine(p), 'Seneste 7 dage mod profilens mål: energi 1 af 7 dage · protein 1 af 7 dage (1 logget dag).')
+  p.planDays = []
+  assert.match(planLine(p), /^Seneste 7 dage mod profilens mål:/)
+})
+
+test('plan der starter midt i ugen: dage før start tælles mod profilens mål, hver for sig', () => {
+  const p = fixture()
+  meal(p, '2026-10-30', 2100, 160); meal(p, '2026-10-31', 1900, 100)
+  meal(p, '2026-11-01', 2550, 170); meal(p, today, 2000, 100)
+  p.planDays = planDays('2026-11-01')
+  assert.equal(planLine(p), 'Seneste 7 dage mod kostplanen: energi 1 af 2 dage · protein 1 af 2 dage; øvrige 5 dage mod profilens mål: energi 1 af 5 dage · protein 1 af 5 dage (4 loggede dage).')
 })

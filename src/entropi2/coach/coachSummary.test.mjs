@@ -103,7 +103,7 @@ test('synthetic DOM: semantic keyboard button, named section, wrapping styles fo
   assert.equal(cards(p)[0].props.style.minWidth, 0); assert.equal(cards(p)[0].props.style.overflowWrap, 'anywhere')
   assert.ok(nodes(tree).some(n => n.props?.['aria-label'] === 'Dine atleter'))
   assert.match(text(tree), /focus-visible/)
-  row.props.onClick(); assert.deepEqual(calls, [[p.athletes[0], 'hub', 'list']])
+  row.props.onClick(); assert.deepEqual(calls, [[p.athletes[0], 'program', 'list']])
   assert.equal(summaries(fixture())[0].props.disabled, true)
   assert.equal(nodes(CoachView({ ...p, enabled: true, today, tab: 'inbox' })).filter(n => n.type === CoachAthleteWorkspace).length, 0)
 })

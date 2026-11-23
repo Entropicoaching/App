@@ -103,15 +103,19 @@ test('inbox reveals ten more locally, preserves every task key and callback, and
   }
 })
 
+// Ordre 2005a: programmer der slutter står nu under Mangler ny uge (fem rækker, resten i en lukket fold), ikke i Kræver dit blik.
 test('program task callbacks in the folded remainder retain the same profile tab and return route', () => {
   const p = fixture(), calls = []
   p.latestByTrack = {}; p.unreadByTrack = {}
   p.calendarWeeks = Object.fromEntries(p.athletes.map(a => [a.id, [{ start_date: '2026-10-12', exercise_count: 1, week_number: 1 }]]))
   p.openProfile = (...args) => calls.push(args)
-  const model = coachHomeModel(p, day), rest = fold(CoachView(p), 'opgaver')
-  assert.equal(actions(rest).length, 7)
+  const model = coachHomeModel(p, day), tree = CoachView(p), rest = fold(tree, 'ny-uge-resten')
+  assert.equal(fold(tree, 'opgaver'), undefined)
+  assert.equal(model.uge.nyUge.length, 10)
+  assert.notEqual(rest.props.open, true)
+  assert.equal(actions(rest).length, 5)
   for (const [index, b] of actions(rest).entries()) {
-    b.props.onClick(); assert.deepEqual(calls.at(-1), [model.actions[index + 3].athlete, 'program', 'list'])
+    b.props.onClick(); assert.deepEqual(calls.at(-1), [model.uge.nyUge[index + 5].athlete, 'program', 'list'])
   }
 })
 

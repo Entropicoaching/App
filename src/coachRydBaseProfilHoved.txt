@@ -119,7 +119,7 @@ export default function ProfilHoved({
             {(() => {
               const navItems = [{ key: 'hub', label: 'Hjem' }, ...HUB_SECTIONS]
               const EMOJI = { hub: '🏠', oversigt: '📊', kost: '🍽️', program: '🏋️', log: '📓', analyse: '📈', opvarmning: '🔥', stævne: '🏆', noter: '🗒️', beskeder: '💬' }
-              const PRIMARY = ['hub', 'program', 'log', 'beskeder']
+              const PRIMARY = ['program', 'beskeder', 'kost']
               const primary = PRIMARY.map(k => navItems.find(n => n.key === k)).filter(Boolean)
               const more = navItems.filter(n => !PRIMARY.includes(n.key))
               const activeInMore = more.some(n => n.key === activeTab)

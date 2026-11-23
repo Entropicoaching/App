@@ -1,4 +1,4 @@
-import { createElement as h, useMemo, useRef, useState } from 'react'
+import { createElement as h, useEffect, useMemo, useRef, useState } from 'react'
 import Conversation from './Conversation.mjs'
 import { validId } from './conversationModel.mjs'
 import { shareUnread } from './unreadHost.mjs'
@@ -7,6 +7,7 @@ import { createConversationAdapters, athleteConversationScope, coachConversation
 import { u6Enabled } from '../u6/flag.mjs'
 import { applyCoachDraft } from '../u6/draftHandoff.mjs'
 import CoachUgevideo from '../../ugevideo/CoachUgevideo.mjs'
+import { rulSvarfeltNaarKlar } from './svarfeltRul.mjs'
 
 // All names below are existing App/AthleteView/Dashboard capabilities.
 // getEntry must read current render state, not capture a previous athlete/session.
@@ -65,6 +66,11 @@ export default function ConversationEntry({ enabled = false, role, getEntry, con
   const [feedback, setFeedback] = useState(null)
   const factory = useMemo(() => createEntryFactory({ enabled, role, getEntry: () => live.current(),
     openFeedback: setFeedback }), [enabled, role, athleteId, ownerId])
+  // Ordre 2019: åbnet fra forsidens besked-række står svarfeltet klar, uden fokus.
+  useEffect(() => {
+    if (enabled !== true || role !== 'coach') return undefined
+    return rulSvarfeltNaarKlar({ controller: controllerRef?.current, athleteId })
+  }, [enabled, role, athleteId, controllerRef])
   if (enabled !== true) return null
   // Presentation uses only the current host's fetched rows, under its existing scope.
   const scope = role === 'athlete' ? athleteConversationScope(entry) : coachConversationScope(entry)

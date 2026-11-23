@@ -30,7 +30,8 @@ test('coach home: attention comes first; only useful confirmed folds are mounted
   // U11 (Marc 11. nov.: "stadig lidt rodet"): foldene ligger nu i to lukkede grupper, Holdet og
   // Programmer og noter. Atletkortene flytter ned, fordi den åbne atletliste står over grupperne.
   // Ordre 1692: Atletkort, Ugens programmer og Programmer der slutter er flyttet ind i Dine atleter (én fold pr. række).
-  assert.deepEqual(folds, [undefined, 'hold', 'ugerapport', 'kost', undefined, 'noter'])
+  // Ordre 2005a (Marc 20. nov.: "nogle af tingene på coach view er outdatede"): grupperne ligger under én lukket fold Mere.
+  assert.deepEqual(folds, ['mere', undefined, 'hold', 'ugerapport', 'kost', undefined, 'noter'])
   assert.deepEqual(all.filter(n => n.type === 'details').map(n => n.props['data-u11-gruppe']).filter(Boolean), ['hold', 'programmer'])
   for (const d of all.filter(n => n.type === 'details')) assert.notEqual(d.props.open, true)
   assert.match(htmlTekst(CoachView(props('home'))), /Syntetisk atlet[\s\S]*Flere tal[\s\S]*Kost/, 'kost line still rendered inside the athlete row')

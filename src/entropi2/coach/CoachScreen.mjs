@@ -83,6 +83,8 @@ function ClockedCoach(props) {
 // 2 linjer. Er navn og grund længere, står hovedet i rækken ("Spørg atleten først"), og resten står i
 // folden under den, så hele grunden kan læses uden at stå to gange.
 export const GRUND_TO_LINJER = 60
+// Ordre 2005a: et trin i ugen viser fem rækker; resten står i en lukket fold under trinnet.
+export const STEP_ROWS = 5
 export function reasonParts(name, reason) {
   const text = String(reason ?? '')
   if (`${name ?? ''} · ${text}`.length <= GRUND_TO_LINJER) return { head: text, rest: null }
@@ -148,7 +150,7 @@ export function CoachView(input = {}) {
         style: { ...button, minHeight: 48, paddingBlock: 10, marginTop: 8 },
         'aria-label': `Kvittér smerte for ${row.athlete.name}`, onClick: () => props.onKvitterSmerte(row.athlete.id, row.smerte) }, 'Kvittér smerte'))
   }
-  const rowButton = (row, index) => h('li', { key: row.key }, h('button', {
+  const rowButton = (row, index, plain = false) => h('li', { key: row.key }, h('button', {
     type: 'button', disabled: !available, 'data-coach-action': row.key,
     style: { ...button, width: '100%', marginBlock: 6, display: 'flex', alignItems: 'center', minHeight: 56, paddingBlock: 8,
       ...(index === 0 && !inbox ? { borderColor: '#c8923a' } : {}) },
@@ -156,8 +158,9 @@ export function CoachView(input = {}) {
     h('span', { style: { ...s.avatar, display: 'inline-flex', flex: 'none', marginRight: 12 }, 'aria-hidden': true }, initials(row.athlete.name)),
     h('span', { 'data-u11-linje': '', style: { ...twoLines, flex: 1 } },
       h('strong', null, row.athlete.name), h('span', { style: { color: '#d9d4c8' } }, ' · ', inbox ? row.reason : reasonParts(row.athlete.name, row.reason).head))),
-    !inbox && rowDetails(row))
-  const rows = inbox ? model.inbox : model.actions
+    !inbox && !plain && rowDetails(row))
+  // Ordre 2005a: Kræver dit blik på forsiden er nu kun det, der venter på svar (beskeder og videoer), én række pr. atlet.
+  const rows = inbox ? model.inbox : model.waiting
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
   // Marc 3. nov.: keep it simple. Kun det vigtigste staar aabent; resten er foldet ind.
   const fold = { marginBlock: 16, borderTop: '1px solid #414139', paddingTop: 8 }
@@ -185,9 +188,27 @@ export function CoachView(input = {}) {
     ]
     const workspace = summary && h(CoachAthleteWorkspace, { key: `${props.readContext?.coachId}:${athlete.id}:${model.day}`,
       athlete, data: coachAthleteWorkspace(props, model, athlete, report), client: props.notesClient, u3: u3DataEnabled(props.u3Data),
-      utenNavn: true, onOpen: typeof props.openProfile === 'function' ? () => props.openProfile(athlete, 'hub', 'list') : undefined })
+      utenNavn: true, onOpen: typeof props.openProfile === 'function' ? () => props.openProfile(athlete, 'program', 'list') : undefined })
     return [...lines, workspace]
   }
+  const calm = model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError
+  const status = model.hasError ? h('p', { role: 'alert' }, 'Nogle data kunne ikke hentes. Overblikket er ufuldstændigt. ',
+    reload && h('button', { type: 'button', style: button, disabled: model.isLoading, onClick: reload }, 'Prøv igen')) :
+    model.isLoading ? h('p', { role: 'status' }, 'Opdaterer overblikket…') :
+      model.state === 'empty' ? h('p', { role: 'status' }, 'Ingen synlige atleter.') :
+        !model.complete && h('p', { role: 'status' }, 'Overblikket skal opdateres. ',
+          reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket'))
+  // Ordre 2005a: ét trin i ugen. Rækkerne åbner atletens program med ét tryk; Sendt har ingen detaljer under sig.
+  const step = (key, title, list, empty, plain = false) => h('section', { 'aria-label': title, 'data-coach-uge': key },
+    h('h2', null, title, list.length > 0 && h('span', { style: { color: '#b9b4a8', fontWeight: 400 } }, ` (${list.length})`)),
+    list.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...list.slice(0, STEP_ROWS).map(row => rowButton(row, -1, plain))) :
+      model.uge.ready && calm && h('p', { style: { color: '#b9b4a8' } }, empty),
+    list.length > STEP_ROWS && h('details', { 'data-coach-fold': `${key}-resten`, style: fold },
+      h('summary', { style: foldSummary }, arrow, `Vis resten (${list.length - STEP_ROWS})`),
+      h('ul', { style: { listStyle: 'none', padding: 0 } }, ...list.slice(STEP_ROWS).map(row => rowButton(row, -1, plain)))))
+  const more = children => children.some(Boolean) && h('details', { 'aria-label': 'Mere', 'data-coach-fold': 'mere', style: fold },
+    h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Mere')),
+    h('div', { style: { paddingLeft: 12 } }, ...children))
   return h('main', { 'data-entropi2-coach': true, style: { boxSizing: 'border-box',
     maxWidth: 900, marginInline: 'auto', padding: 20, background: '#141410', color: '#edeae2',
     fontFamily: s.wrap.fontFamily, lineHeight: 1.5, overflowWrap: 'anywhere' } },
@@ -198,28 +219,31 @@ export function CoachView(input = {}) {
     h('p', { style: { marginTop: 0, marginBottom: 0, color: '#b9b4a8' } }, `Coach · ${coachDay(model.day)}`),
     inbox && h('h1', { style: { fontFamily: 'Georgia, serif', fontSize: 36, lineHeight: 1.15 } }, 'Indbakke'),
     !available && h('p', { role: 'alert' }, 'Navigationen er ikke tilsluttet.'),
-    h('section', { 'aria-label': inbox ? 'Ulæste beskeder og indsendelser' : 'Atleter der kræver handling', ...(inbox ? {} : { 'data-u11-top': 'opgaver' }) },
-      h('h2', null, inbox ? 'Venter på dig' : 'Kræver dit blik'),
-      model.hasError ? h('p', { role: 'alert' }, 'Nogle data kunne ikke hentes. Overblikket er ufuldstændigt. ',
-        reload && h('button', { type: 'button', style: button, disabled: model.isLoading, onClick: reload }, 'Prøv igen')) :
-        model.isLoading ? h('p', { role: 'status' }, 'Opdaterer overblikket…') :
-          model.state === 'empty' ? h('p', { role: 'status' }, 'Ingen synlige atleter.') :
-            !model.complete && h('p', { role: 'status' }, 'Overblikket skal opdateres. ',
-              reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket')),
-      // Ordre 1547 (1544's fund): tom liste siger kun den rolige sætning nedenfor, ikke "0 opgaver i alt" og "0 af 0".
-      // Ordre 1707 (Marc 18. nov.: "coach siden er lidt rodet"): på forsiden står rækkerne selv, og "Vis resten (n)"
-      // bærer tallet over tre; "n opgaver i alt" var et tal uden handling. Indbakken beholder sit tal.
-      inbox && rows.length > 0 && h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
-      inbox && rows.length > 0 && h('p', { 'aria-live': 'polite', 'data-coach-inbox-count': true }, `${firstRows.length} af ${rows.length}`),
-      rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map(rowButton)) :
-        model.complete && model.state !== 'empty' && !model.isLoading && !model.hasError &&
-          h('p', null, inbox ? 'Intet venter på dig lige nu.' : 'Ingen atleter kræver dit blik lige nu.'),
-      inbox && firstRows.length < rows.length && h('button', { type: 'button', style: button,
-        disabled: typeof onShowMoreInbox !== 'function', onClick: onShowMoreInbox }, 'Vis 10 flere'),
-      !inbox && model.u3?.attentionState === 'unavailable' && h('p', { role: 'status', 'data-u3-attention-unavailable': true }, ATTENTION_UNAVAILABLE),
-      !inbox && rows.length > 3 && h('details', { 'data-coach-fold': 'opgaver', style: fold },
-        h('summary', { style: foldSummary }, arrow, `Vis resten (${rows.length - 3})`),
-        h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.slice(3).map((row, index) => rowButton(row, index + 3))))),
+    inbox ? h('section', { 'aria-label': 'Ulæste beskeder og indsendelser' },
+      h('h2', null, 'Venter på dig'),
+      status,
+      rows.length > 0 && h('p', null, `${rows.length} ${rows.length === 1 ? 'opgave' : 'opgaver'} i alt`),
+      rows.length > 0 && h('p', { 'aria-live': 'polite', 'data-coach-inbox-count': true }, `${firstRows.length} af ${rows.length}`),
+      rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map((row, index) => rowButton(row, index))) :
+        calm && h('p', null, 'Intet venter på dig lige nu.'),
+      firstRows.length < rows.length && h('button', { type: 'button', style: button,
+        disabled: typeof onShowMoreInbox !== 'function', onClick: onShowMoreInbox }, 'Vis 10 flere')) :
+      // Ordre 2005a (Marc 20. nov.: "husk jeg er pt den eneste træner, kan vi arbejde på at optimere mit orkflow"):
+      // forsiden følger ugen. Check-in og ny uge sker i Claude-chatten; her står, hvem der mangler en ny uge,
+      // hvad der venter på svar, og hvad der er sendt, hver række med ét tryk ind.
+      h('div', { 'data-coach-uge': 'uge' },
+        model.state !== 'empty' && step('ny-uge', 'Mangler ny uge', model.uge.nyUge, 'Alle har en uge i appen.'),
+        // Ordre 1547 (1544's fund): tom liste siger kun den rolige sætning, ikke "0 opgaver i alt".
+        // Ordre 1707: "Vis resten (n)" bærer tallet over tre; indbakken beholder sit tal.
+        h('section', { 'aria-label': 'Atleter der kræver handling', 'data-u11-top': 'opgaver', 'data-coach-uge': 'venter' },
+          h('h2', null, 'Kræver dit blik'),
+          status,
+          rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map((row, index) => rowButton(row, index))) :
+            calm && h('p', null, 'Ingen atleter kræver dit blik lige nu.'),
+          rows.length > 3 && h('details', { 'data-coach-fold': 'opgaver', style: fold },
+            h('summary', { style: foldSummary }, arrow, `Vis resten (${rows.length - 3})`),
+            h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.slice(3).map((row, index) => rowButton(row, index + 3))))),
+        model.state !== 'empty' && step('sendt', 'Sendt', model.uge.sendt, 'Ingen uge sendt til denne uge endnu.', true)),
     !inbox && coachRadarEnabled(props.coachRadarEnabled) && h(CoachRadar, { enabled: true, source: props, context: model }),
     !inbox && (model.nutritionState === 'error' || model.nutritionState === 'partial') && h('details', {
       'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', 'data-coach-nutrition-state': model.nutritionState, open: true, style: fold },
@@ -229,40 +253,51 @@ export function CoachView(input = {}) {
         : 'Kostdata er ufuldstændige. Overblikket viser ikke kost lige nu.'),
       model.nutritionReload && h('button', { type: 'button', style: button, onClick: model.nutritionReload }, 'Hent kost igen')),
     // U11 (Marc 11. nov.): en nem oversigt, så coachen hurtigt kan klikke ind og se en atlets program.
-    !inbox && model.rosterReady && model.athletes.length > 0 && h('section', { 'aria-label': 'Dine atleter', 'data-u11-top': 'atleter',
+    !inbox && model.rosterReady && h('section', { 'aria-label': 'Dine atleter', 'data-u11-top': 'atleter',
       style: { marginTop: 24 } },
-      h('h2', null, `Dine atleter (${model.athletes.length})`),
-      h(AthleteOverview, { context: model, openProfile: props.openProfile, details: detailsFor, query: athleteQuery, onQueryChange: onAthleteQueryChange })),
-    // U11: det, der hører sammen, under én overskrift. Begge grupper er lukkede.
+      model.athletes.length > 0 && h('h2', null, `Dine atleter (${model.athletes.length})`),
+      model.athletes.length > 0 && h(AthleteOverview, { context: model, openProfile: props.openProfile, details: detailsFor, query: athleteQuery, onQueryChange: onAthleteQueryChange }),
+      // Ordre 2005a: ny atlet havde ingen knap ved 1280 px (kun i mobilmenuen). Samme modal, som menuen åbner.
+      typeof props.onNyAtlet === 'function' && h('button', { type: 'button', 'data-coach-ny-atlet': true,
+        style: { ...button, minHeight: 48, paddingBlock: 10, marginTop: 8 }, onClick: props.onNyAtlet }, '+ Ny atlet')),
+    // U11: det, der hører sammen, under én overskrift. Grupperne er lukkede.
     inbox ? model.rosterReady && h('details', { 'aria-label': 'Alle samtaler', 'data-coach-fold': 'samtaler', style: fold },
       h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, `Alle samtaler (${model.athletes.length})`)),
       ...model.athletes.map(a => h('button', { key: a.id, type: 'button', style: { ...button, margin: 4 },
-        disabled: !available, onClick: available ? () => props.openProfile(a, 'beskeder', 'inbox') : undefined }, a.name))) : [
-      group('hold', 'Holdet', [
-        team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
-          h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
-          h(CoachTeamRegistrations, { enabled: true, model: team, utenAtleter: true })),
-        // U3 afsnit 3: "Holdet samlet" uden navne. Læser først, når folden åbnes.
-        !inbox && u3DataEnabled(props.u3Data) && props.notesClient && model.rosterReady && h(TeamPatternsView, {
-          client: props.notesClient, day: model.day, athletes: teamAthletes(model.athletes, model.day),
-          targets: new Map(model.athletes.map(a => [a.id, props.coachNutrition?.targets?.find?.(t => t?.athlete_id === a.id)?.protein_target ?? a.protein_target])),
-          foldProps: { 'aria-label': 'Holdet samlet', 'data-coach-fold': 'holdet-samlet', style: fold },
-          summary: h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdet samlet')) }),
-        !inbox && report.ready && report.rows.some(hasWeeklyReportData) && h('details', {
-          'aria-label': 'Ugerapport', 'data-coach-fold': 'ugerapport', style: fold },
-          h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Ugerapport')),
-          h(WeeklyReport, { ...props, today, utenAtleter: true })),
-        !inbox && model.nutritionState === 'ready' && model.kostvane && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
-          h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading },
-            `Kost · ${model.kostvane.medMaal} af ${model.kostvane.aktive} logger 4+ dage`)),
-          h('p', { 'data-coach-kostvane': '' },
-            `De seneste 7 dage har ${model.kostvane.medMaal} af ${model.kostvane.aktive} atleter logget mad mindst ${model.kostvane.maal} dage. `
-            + `${model.kostvane.lidt} har logget 1 til ${model.kostvane.maal - 1} dage, og ${model.kostvane.ingen} har ikke logget.`)),
-      ]),
-      group('programmer', 'Programmer og noter', [
-        !inbox && model.rosterReady && model.athletes.length > 0 && h('details', {
-          'aria-label': 'Noter fra passene', 'data-coach-fold': 'noter', style: fold },
-          h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Noter fra passene · Vælg atlet')),
-          h(CoachSessionNotes, { source: props, context: model })),
-      ])])
+        disabled: !available, onClick: available ? () => props.openProfile(a, 'beskeder', 'inbox') : undefined }, a.name))) :
+      // Ordre 2005a: det, der overlapper check-in i chatten eller ikke bruges i ugen, er foldet ind under Mere.
+      // Intet er slettet, og ingen data er rørt.
+      more([
+        model.signals.length > 0 && h('section', { key: 'signaler', 'aria-label': 'Signaler fra appen', 'data-coach-signaler': true },
+          h('h2', { style: { ...foldHeading, display: 'block', marginTop: 8 } }, `Signaler fra appen (${model.signals.length})`),
+          h('p', { style: { color: '#b9b4a8', margin: '4px 0 0' } }, 'Log, smerte, readiness og kost. Tages i check-in i chatten.'),
+          h('ul', { style: { listStyle: 'none', padding: 0 } }, ...model.signals.map(row => rowButton(row, -1)))),
+        model.u3?.attentionState === 'unavailable' && h('p', { key: 'u3', role: 'status', 'data-u3-attention-unavailable': true }, ATTENTION_UNAVAILABLE),
+        group('hold', 'Holdet', [
+          team && h('details', { 'aria-label': 'Holdoverblik', 'data-coach-fold': 'hold', style: fold },
+            h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdoverblik')),
+            h(CoachTeamRegistrations, { enabled: true, model: team, utenAtleter: true })),
+          // U3 afsnit 3: "Holdet samlet" uden navne. Læser først, når folden åbnes.
+          u3DataEnabled(props.u3Data) && props.notesClient && model.rosterReady && h(TeamPatternsView, {
+            client: props.notesClient, day: model.day, athletes: teamAthletes(model.athletes, model.day),
+            targets: new Map(model.athletes.map(a => [a.id, props.coachNutrition?.targets?.find?.(t => t?.athlete_id === a.id)?.protein_target ?? a.protein_target])),
+            foldProps: { 'aria-label': 'Holdet samlet', 'data-coach-fold': 'holdet-samlet', style: fold },
+            summary: h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Holdet samlet')) }),
+          report.ready && report.rows.some(hasWeeklyReportData) && h('details', {
+            'aria-label': 'Ugerapport', 'data-coach-fold': 'ugerapport', style: fold },
+            h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Ugerapport')),
+            h(WeeklyReport, { ...props, today, utenAtleter: true })),
+          model.nutritionState === 'ready' && model.kostvane && h('details', { 'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', style: fold },
+            h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading },
+              `Kost · ${model.kostvane.medMaal} af ${model.kostvane.aktive} logger 4+ dage`)),
+            h('p', { 'data-coach-kostvane': '' },
+              `De seneste 7 dage har ${model.kostvane.medMaal} af ${model.kostvane.aktive} atleter logget mad mindst ${model.kostvane.maal} dage. `
+              + `${model.kostvane.lidt} har logget 1 til ${model.kostvane.maal - 1} dage, og ${model.kostvane.ingen} har ikke logget.`)),
+        ]),
+        group('programmer', 'Programmer og noter', [
+          model.rosterReady && model.athletes.length > 0 && h('details', {
+            'aria-label': 'Noter fra passene', 'data-coach-fold': 'noter', style: fold },
+            h('summary', { style: foldSummary }, arrow, h('h2', { style: foldHeading }, 'Noter fra passene · Vælg atlet')),
+            h(CoachSessionNotes, { source: props, context: model })),
+        ])]))
 }

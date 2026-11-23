@@ -20,12 +20,16 @@ export const planWindow = today => ({ start: addCalendarDays(today, -WINDOW_DAYS
 // egne kostrækker. Dage uden godkendt plan, uden log eller med ukendt kcal/protein
 // får intet svar. Ingen gæt og intet fald tilbage til profilens kcal_target.
 // Ordre 1596: dagsmålingen er delt, så ugerapportens protein og kostlinjen vurderer samme dag ens.
-function dagsSummer({ planDays, meals, today } = {}) {
-  if (!day(today) || !Array.isArray(planDays) || !Array.isArray(meals)) return new Map()
-  const { start, end } = planWindow(today)
-  const targets = new Map(planDays.filter(d => d?.state === 'approved' && day(d.date)
+function planMaal(planDays, start, end) {
+  return new Map(planDays.filter(d => d?.state === 'approved' && day(d.date)
     && d.date >= start && d.date <= end && positive(d.targets?.kcal) && positive(d.targets?.protein))
     .map(d => [d.date, d.targets]))
+}
+// Ordre 2030: through er sidste dag i et 7-dages vindue (inklusive i dag), ellers de 14 afsluttede dage.
+function dagsSummer({ planDays, meals, today, through } = {}) {
+  if (!day(today) || !Array.isArray(planDays) || !Array.isArray(meals)) return new Map()
+  const { start, end } = day(through) ? { start: addCalendarDays(through, -6), end: through } : planWindow(today)
+  const targets = planMaal(planDays, start, end)
   const eaten = new Map()
   for (const row of meals) {
     if (!row || !day(row.date) || !targets.has(row.date) || isDayReceipt(row)) continue
@@ -74,6 +78,21 @@ export function makroDageModPlan({ planDays, meals, dates } = {}) {
     const goal = goals.get(date)?.[key]
     if (!sum[key + 'Known'] || typeof goal !== 'number' || !Number.isFinite(goal) || goal <= 0) continue
     result[key].set(date, Math.abs(sum[key] - goal) <= goal * KCAL_TOLERANCE)
+  }
+  return result
+}
+
+// Ordre 2030: coachens "dage inden for mål" for de 7 dage til og med i dag, mod planens dagsmål (samme dagsvurdering
+// som kostlinjen og ugerapporten: kcal inden for 10 %, protein mindst 90 %). planDates er dagene med godkendt plan
+// og mål over 0 (nævneren); kcal og protein har kun svar for dage med log. Uden planDates tælles intet mod planen.
+export function ugeDageModPlan({ planDays, meals, through } = {}) {
+  const none = { planDates: new Set(), kcal: new Map(), protein: new Map() }
+  if (!day(through) || !Array.isArray(planDays) || !Array.isArray(meals)) return none
+  const planDates = new Set(planMaal(planDays, addCalendarDays(through, -6), through).keys())
+  const result = { planDates, kcal: new Map(), protein: new Map() }
+  for (const [date, entry] of dagsSummer({ planDays, meals, today: through, through })) {
+    result.kcal.set(date, Math.abs(entry.sum.kcal - entry.goal.kcal) <= entry.goal.kcal * KCAL_TOLERANCE)
+    result.protein.set(date, proteinHit(entry))
   }
   return result
 }

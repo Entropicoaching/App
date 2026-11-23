@@ -111,7 +111,7 @@ export default function CoachKostMaal(props = {}) {
   const body = value => h('div', null, h(KostMaal, { key: athlete?.id, enabled: true, athlete, weightLogs: weight.rows, today,
     weightState: weight.state, retryWeight: weightStatus?.athleteId === athlete?.id ? weightStatus?.retry : undefined,
     editing, editData, startEdit, setEditData, setEditing, saveEdit, saving,
-    session, loading, loadError, coachNutrition, readContext, planVersion: kostMaalPlanVersion(value, today) }),
+    session, loading, loadError, coachNutrition, readContext, planVersion: kostMaalPlanVersion(value, today), planDays: value?.dailyReferences?.days }),
     h(PortalKostJustering, { enabled: true, athlete, coachId: session?.user?.id, date: today, loading, loadError, nutritionRead: value }),
     h(PortalPlan, { enabled: true, athlete, today, session, nutritionRead: value, weekClient }))
   // Kun den egne, ufuldstændige læsning får referencer; en udefra leveret nutritionRead bruges uændret.
