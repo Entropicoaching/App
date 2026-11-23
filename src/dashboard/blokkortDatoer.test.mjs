@@ -28,3 +28,20 @@ test('ugekortet bryder linjen paa telefon, saa datoen ikke presses til et ord pr
   assert.match(src, /programCopyEnabled === true \|\| isMobile \? \{ flexWrap: 'wrap' \}/)
   assert.match(src, /letterSpacing: '0\.06em', whiteSpace: 'nowrap' \}\}>\{new Date\(week\.start_date/)
 })
+
+// Ordre 2042: ny klient uden uger. Tom tilstand siger det en gang og har en vej til foerste uge.
+test('program uden uger har ingen "0 uger", og "Opret flere uger" er vaek', () => {
+  assert.doesNotMatch(src, /\{weeks\.length\} uge\{weeks\.length !== 1/)
+  assert.doesNotMatch(src, /Opret flere uger/)
+})
+
+test('program uden uger siger "Ingen uger endnu" en gang, i overskriften', () => {
+  assert.equal(src.match(/Ingen uger endnu/g).length, 1) // programmet har ingen anden tomtekst
+  assert.match(src, /\(!addingWeek && 'Ingen uger endnu'\)/)
+  assert.doesNotMatch(src, /tilføj den første/)
+})
+
+test('periodiseringsplan og + Ny uge dublerer ikke formularen i tom tilstand', () => {
+  assert.match(src, /\{weeks\.length > 0 && <button aria-expanded=\{showBlockPlanner\}/)
+  assert.match(src, /\{!\(addingWeek && !weeks\.length\) && <button style=\{s\.btnPrimary\}/)
+})

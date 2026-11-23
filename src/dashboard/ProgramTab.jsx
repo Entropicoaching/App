@@ -98,19 +98,19 @@ export default function ProgramTab({
   return (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                  <div role="heading" aria-level={2} aria-label={`Program: ${weeks.length} uger`} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
-                    {weeks.length} uge{weeks.length !== 1 ? 'r' : ''}
+                  <div role="heading" aria-level={2} aria-label={weeks.length ? `Program: ${weeks.length} uger` : 'Program: ingen uger endnu'} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7a7770' }}>
+                    {weeks.length ? `${weeks.length} uge${weeks.length !== 1 ? 'r' : ''}` : (!addingWeek && 'Ingen uger endnu')}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <button aria-expanded={showBlockPlanner} style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
+                    {weeks.length > 0 && <button aria-expanded={showBlockPlanner} style={{ ...s.btnGhost, color: showBlockPlanner ? '#c8923a' : '#7a7770', borderColor: showBlockPlanner ? 'rgba(200,146,58,0.4)' : undefined }} onClick={() => {
                       if (!showBlockPlanner) {
                         setPlanStartDate(nextWeekStartDate(allWeeks))
                         setAssignEdits(Object.fromEntries(weeks.map(w => [w.id, w.block_name || ''])))
                       }
                       setShowBlockPlanner(p => !p)
                     }}>
-                      {coachTabCleanup && !weeks.length ? 'Opret flere uger' : 'Periodiseringsplan'}
-                    </button>
+                      Periodiseringsplan
+                    </button>}
                     {(programCopyEnabled === true || coachPlanCopyEnabled !== true) && weeks.length > 0 && (
                       <button style={{ ...s.btnGhost, opacity: copyDisabled ? 0.5 : 1 }} disabled={!!copyDisabled} aria-busy={!!copyingWeek} onClick={() => copyWeek(weeks[weeks.length - 1].id)}>
                         {programCopyEnabled === true ? (copyingWeek ? 'Kopierer...' : 'Kopiér seneste uge') : (copyingWeek ? 'Kopierer ugen …' : 'Kopiér seneste uge →')}
@@ -152,12 +152,12 @@ export default function ProgramTab({
                         {weekDraft?.loading ? 'Genererer…' : '⚡ Generér næste uge'}
                       </button>
                     )}
-                    <button style={s.btnPrimary} onClick={() => {
+                    {!(addingWeek && !weeks.length) && <button style={s.btnPrimary} onClick={() => {
                       setAddingWeek(true)
                       setWeekForm({ week_number: '', block_name: '', coach_note: '', block_description: '', start_date: nextWeekStartDate(weeks) })
                     }}>
                       + Ny uge
-                    </button>
+                    </button>}
                   </div>
                 </div>
 
@@ -793,12 +793,6 @@ export default function ProgramTab({
                       <button style={s.btnGhost} onClick={() => setAddingWeek(false)}>Annuller</button>
                       <button style={s.btnPrimary} onClick={addWeek}>Tilføj uge</button>
                     </div>
-                  </div>
-                )}
-
-                {weeks.length === 0 && !addingWeek && (
-                  <div style={{ color: '#4a4844', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2rem 0' }}>
-                    Ingen uger endnu — tilføj den første
                   </div>
                 )}
 

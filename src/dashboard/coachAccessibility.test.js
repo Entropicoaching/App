@@ -231,7 +231,7 @@ test('Modprøver af elementtræer afslører manglende eller forkert niveau og ro
 // This is source verification, not a browser or screen-reader assertion.
 function assertProgramBindings(value) {
   for (const [child, tokens] of [
-    ["{weeks.length} uge{weeks.length !== 1", ['role="heading"', 'aria-level={2}']],
+    ["`${weeks.length} uge${weeks.length !== 1", ['role="heading"', 'aria-level={2}']],
     ['>Uge {week.week_number}</span>', ['role="heading"', 'aria-level={3}']],
     ['>{session.title}</span>', ['role="heading"', 'aria-level={4}']],
     ['>{weekDraft.error}</div>', ['role="alert"']],
