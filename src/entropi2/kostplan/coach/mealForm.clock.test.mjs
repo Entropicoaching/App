@@ -1,4 +1,5 @@
 import test from 'node:test'
+import { lt } from '../lastTimeout.mjs'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { withDatabase, scope, profile, names, owner, stranger } from './generatorSql.fixture.mjs'
@@ -17,7 +18,7 @@ const child = (source, pattern) => spawnSync(process.execPath, [
   '--test-concurrency=1', '--test-reporter=tap',
   ...(pattern ? [`--test-name-pattern=${pattern}`] : []),
   '--input-type=module', '--eval', source,
-], { encoding: 'utf8', timeout: 90000, env: { TZ: 'Europe/Copenhagen' }, maxBuffer: 1000000 })
+], { encoding: 'utf8', timeout: lt(90000), env: { TZ: 'Europe/Copenhagen' }, maxBuffer: 1000000 })
 
 // These are supplementary host Date.now source contexts, not raw-file PASS
 // claims. mock.method leaves the native Date constructor available to the
@@ -31,7 +32,7 @@ const contexts = [
   ['before UTC midnight', '2026-11-07T23:59:59.999Z'],
   ['after UTC midnight', '2026-11-08T00:00:00.001Z'],
 ]
-for (const [label, wall] of contexts) test(`original form under outer Date.now source: ${label}`, { timeout: 95000 }, () => {
+for (const [label, wall] of contexts) test(`original form under outer Date.now source: ${label}`, { timeout: lt(95000) }, () => {
   const result = child(`
     import test, { mock } from 'node:test'
     import assert from 'node:assert/strict'
@@ -49,7 +50,7 @@ for (const [label, wall] of contexts) test(`original form under outer Date.now s
   assert.match(result.stdout, /# pass 2/)
 })
 
-test('real later SQL approval stays unavailable on the requested day; next day and owner succeed; stranger does not', { timeout: 60000 }, async t => {
+test('real later SQL approval stays unavailable on the requested day; next day and owner succeed; stranger does not', { timeout: lt(60000) }, async t => {
   t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-08T12:00:00Z') })
   let database
   await withDatabase(async f => {
@@ -81,7 +82,7 @@ test('real later SQL approval stays unavailable on the requested day; next day a
 
 test('Date identity is restored between cases', () => assert.equal(Date, hostDate))
 
-test('callback rejection closes the real fixture and restores the per-test Date', { timeout: 95000 }, () => {
+test('callback rejection closes the real fixture and restores the per-test Date', { timeout: lt(95000) }, () => {
   const result = child(`
     import test from 'node:test'
     import assert from 'node:assert/strict'

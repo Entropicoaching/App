@@ -1,12 +1,13 @@
 import test from 'node:test'
+import { lt } from './lastTimeout.mjs'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import * as vm from 'node:vm'
 import { fileURLToPath } from 'node:url'
 
 if (!vm.SourceTextModule) {
- test('combined actual React + original SQL integration (serial isolated child)', { timeout: 240000 }, () => {
-  const r = spawnSync(process.execPath, ['--max-old-space-size=256', '--experimental-vm-modules', '--test', '--test-concurrency=1', fileURLToPath(import.meta.url)], { encoding: 'utf8', timeout: 230000, env: {} })
+ test('combined actual React + original SQL integration (serial isolated child)', { timeout: lt(240000) }, () => {
+  const r = spawnSync(process.execPath, ['--max-old-space-size=256', '--experimental-vm-modules', '--test', '--test-concurrency=1', fileURLToPath(import.meta.url)], { encoding: 'utf8', timeout: lt(230000), env: {} })
   assert.equal(r.status, 0, r.stdout + r.stderr)
   assert.match(r.stdout, /tests 4/); assert.match(r.stdout, /pass 4/)
  })
@@ -40,7 +41,7 @@ if (!vm.SourceTextModule) {
   for (let i = 0; i < 500 && c.snapshot().activationState === 'checking'; i++) await new Promise(r => setImmediate(r))
   return stop
  }
- test('three selected future dates: advice then exact six-meal import, advice edit, save/reopen, exactly three SQL approvals and athlete readonly previews', { timeout: 90000 }, async () => withDatabase(async f => {
+ test('three selected future dates: advice then exact six-meal import, advice edit, save/reopen, exactly three SQL approvals and athlete readonly previews', { timeout: lt(90000) }, async () => withDatabase(async f => {
   const { today: date, dates: days } = f.calendar
   const storage = memoryStorage(), expected = new Map()
   await mountMealPortal(storage, { ...props, today: date, client: f.client }, async ui => {
@@ -110,7 +111,7 @@ if (!vm.SourceTextModule) {
   assert.equal(Number((await f.db.query('select count(*) n from public.meal_logs')).rows[0].n), 0)
  }))
 
- test('selected date/import/advice callbacks are frozen through uncertain activation and original SQL reconciliation, for each lost table response', { timeout: 90000 }, async () => {
+ test('selected date/import/advice callbacks are frozen through uncertain activation and original SQL reconciliation, for each lost table response', { timeout: lt(90000) }, async () => {
   for (const lost of names) await withDatabase(async f => {
    const { today: date, dates: days } = f.calendar
    const storage = memoryStorage(), day = days[0]
@@ -140,7 +141,7 @@ if (!vm.SourceTextModule) {
   }, { lost })
  })
 
- test('strict importer rejects malformed/advice fields; old date/athlete/import callbacks cannot change a new editor', { timeout: 60000 }, async () => withDatabase(async f => {
+ test('strict importer rejects malformed/advice fields; old date/athlete/import callbacks cannot change a new editor', { timeout: lt(60000) }, async () => withDatabase(async f => {
   const { today: date, dates: days } = f.calendar
   const storage = memoryStorage()
   await mountMealPortal(storage, { ...props, today: date, client: f.client }, async ui => {

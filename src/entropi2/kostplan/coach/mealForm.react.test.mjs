@@ -1,11 +1,12 @@
 import test from 'node:test'
+import { lt } from '../lastTimeout.mjs'
 import assert from 'node:assert/strict'
 import * as vm from 'node:vm'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 if (!vm.SourceTextModule) {
- test('meal form mounted StrictMode controls (serial isolated realm child)',{timeout:180000},()=>{
-  const r=spawnSync(process.execPath,['--experimental-vm-modules','--test','--test-concurrency=1',fileURLToPath(import.meta.url)],{encoding:'utf8',timeout:170000,env:{}})
+ test('meal form mounted StrictMode controls (serial isolated realm child)',{timeout:lt(180000)},()=>{
+  const r=spawnSync(process.execPath,['--experimental-vm-modules','--test','--test-concurrency=1',fileURLToPath(import.meta.url)],{encoding:'utf8',timeout:lt(170000),env:{}})
   assert.equal(r.status,0,r.stdout+r.stderr)
  })
 } else {
@@ -46,7 +47,7 @@ if (!vm.SourceTextModule) {
    result.kcal+=n.energyKcal*i.grams/100;result.protein+=n.proteinG*i.grams/100;result.carb+=n.carbohydrateG*i.grams/100;result.fat+=n.fatG*i.grams/100
   }return result
  }
- test('StrictMode actual PortalPlan: six named meals, 18 comma quantities, exact snapshot -> explicit save -> original adapter/SQL approval; repeat/reopen no extra approval',{timeout:60000},async t=>{
+ test('StrictMode actual PortalPlan: six named meals, 18 comma quantities, exact snapshot -> explicit save -> original adapter/SQL approval; repeat/reopen no extra approval',{timeout:lt(60000)},async t=>{
   // SQL approval time belongs to this historical scenario. The mounted React
   // consumer keeps its isolated realm; only the host database clock is mocked.
   // TestContext restores Date automatically, including callback/fixture failure.
@@ -149,7 +150,7 @@ if (!vm.SourceTextModule) {
    await ui.render(props(c1));await ui.act(()=>submit({preventDefault(){}}));assert.equal(node(ui,'draft-name-0').value,'')
   },'./MealDraftImport.mjs')
  })
- test('mounted activation reservation blocks retained form and edits and preserves original 18-line immutable payload',{timeout:60000},async()=>withDatabase(async f=>{
+ test('mounted activation reservation blocks retained form and edits and preserves original 18-line immutable payload',{timeout:lt(60000)},async()=>withDatabase(async f=>{
   const storage=memoryStorage();let release,entered=false;const held=new Promise(r=>{release=r})
   const client={from(table){const q=f.client.from(table);let inserting=false;const proxy=new Proxy(q,{get(target,k){
    if(k==='then')return(resolve,reject)=>(async()=>{if(inserting){entered=true;await held}return await target})().then(resolve,reject)
@@ -188,7 +189,7 @@ if (!vm.SourceTextModule) {
    for(const name of ['Morgenmad','Frokost','Aftensmad'])assert.ok(ui.host.querySelectorAll('legend').some(n=>n.textContent===name))
   })
  })
- test('unconfirmed activation locks form across reopen; retained handlers cannot replace the reserved original',{timeout:60000},async()=>withDatabase(async f=>{
+ test('unconfirmed activation locks form across reopen; retained handlers cannot replace the reserved original',{timeout:lt(60000)},async()=>withDatabase(async f=>{
   const storage=memoryStorage();let callback
   await mountFormPortal(storage,p(f.client),async ui=>{
    await ui.open();await build(ui,menu().slice(0,1));await apply(ui);await ui.click('Gem som kladde')

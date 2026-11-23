@@ -1,6 +1,7 @@
 // Independent combined cases in a separate same-engine Codex review phase.
 // The supplied fixture translates queries only; actual React/product/SQL run.
 import test from 'node:test'
+import { lt } from '../lastTimeout.mjs'
 import assert from 'node:assert/strict'
 import { withDatabase, mounted, scope, profile, names, date, coachId, athleteId } from './generatorSql.fixture.mjs'
 import { memoryStorage } from './portal.fixture.mjs'
@@ -46,7 +47,7 @@ for (const [label, athlete] of [
   ['equal macro floors', { ...profile, training: { volume: 'high', intensity: 'high' } }],
   ['different numeric targets', { ...profile, bodyweight: 75 }],
   ['unknown adult basis', { ...profile, age: undefined }],
-]) test(`combined original SQL approval loss + ${label}: mounted reconciliation preserves immutable payload and hides stale targets`, { timeout: 60000 }, async t => {
+]) test(`combined original SQL approval loss + ${label}: mounted reconciliation preserves immutable payload and hides stale targets`, { timeout: lt(60000) }, async t => {
   // Approvals belong to this historical scenario, before PGlite starts.
   t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
   try {
@@ -108,7 +109,7 @@ for (const [label, athlete] of [
   } finally { t.mock.timers.reset() }
 })
 
-test('combined partial original SQL write: changed-basis reopen stays locked while original session reconciles the same IDs', { timeout: 60000 }, async t => {
+test('combined partial original SQL write: changed-basis reopen stays locked while original session reconciles the same IDs', { timeout: lt(60000) }, async t => {
   // Approvals belong to this historical scenario, before PGlite starts.
   t.mock.timers.enable({ apis: ['Date'], now: new Date(`${scope.date}T12:00:00.000Z`) })
   try {
@@ -150,7 +151,7 @@ test('combined partial original SQL write: changed-basis reopen stays locked whi
   } finally { t.mock.timers.reset() }
 })
 
-test('combined supported projection retains zero/unknown and refuses unknown fields before every SQL write', { timeout: 60000 }, async () => withDatabase(async f => {
+test('combined supported projection retains zero/unknown and refuses unknown fields before every SQL write', { timeout: lt(60000) }, async () => withDatabase(async f => {
   const storage = memoryStorage(), c = await generated(storage)
   const plan = { ...scope, goal: c.snapshot().form.goal, intensity: c.snapshot().form.intensity, meals: structuredClone(c.snapshot().meals) }
   const uiFood = plan.meals[0].items[0].food.nutrition

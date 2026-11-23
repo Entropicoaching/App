@@ -1,5 +1,6 @@
 // Exact DRAFT SQL; synthetic in-memory PostgreSQL only. Never skips a missing gate.
 import test from 'node:test'
+import { lt } from './lastTimeout.mjs'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createPlanSnapshot, summarizePlanSnapshot } from './planSnapshot.mjs'
@@ -19,7 +20,7 @@ const snapshot = () => createPlanSnapshot({ goal: 'bulk', intensity: 0.5, meals:
 ] })
 const reject = (promise, code) => assert.rejects(promise, { code })
 
-test('REQUIRED PGlite: actual SQL, food snapshots, RLS, coach corrections, automatic limits, up/down/up', { timeout: 60000 }, async t => {
+test('REQUIRED PGlite: actual SQL, food snapshots, RLS, coach corrections, automatic limits, up/down/up', { timeout: lt(60000) }, async t => {
   let PGlite
   try { ({ PGlite } = await import('@electric-sql/pglite')) }
   catch (error) {

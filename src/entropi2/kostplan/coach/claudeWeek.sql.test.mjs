@@ -1,6 +1,7 @@
 // U10b (ordre 115): coachens uge fra Claude mod den live kostplan-pakke i PGlite, med
 // U10a-scriptets egen SQL, appens PostgREST-kald og den syntetiske testatlet.
 import test from 'node:test'
+import { lt } from '../lastTimeout.mjs'
 import assert from 'node:assert/strict'
 import { createElement as h } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -47,7 +48,7 @@ async function scene() {
     close: async () => { await server.close(); await rehearsal.db.close() } }
 }
 
-test('forslaget fra Claude vises som udkast med 7 dage, og atletens visning er tom', { timeout: 60000 }, async () => {
+test('forslaget fra Claude vises som udkast med 7 dage, og atletens visning er tom', { timeout: lt(60000) }, async () => {
   const s = await scene()
   try {
     const week = await readClaudeWeek({ client: s.coach, athlete, today })
@@ -70,7 +71,7 @@ test('forslaget fra Claude vises som udkast med 7 dage, og atletens visning er t
   } finally { await s.close() }
 })
 
-test('Send uge giver 7 godkendelser, planerne bliver godkendt, og atleten ser dagen', { timeout: 60000 }, async () => {
+test('Send uge giver 7 godkendelser, planerne bliver godkendt, og atleten ser dagen', { timeout: lt(60000) }, async () => {
   const s = await scene()
   try {
     const shown = await readClaudeWeek({ client: s.coach, athlete, today })
@@ -93,7 +94,7 @@ test('Send uge giver 7 godkendelser, planerne bliver godkendt, og atleten ser da
   } finally { await s.close() }
 })
 
-test('Send uge stopper, hvis ugen er ændret siden visningen, og godkender intet', { timeout: 60000 }, async () => {
+test('Send uge stopper, hvis ugen er ændret siden visningen, og godkender intet', { timeout: lt(60000) }, async () => {
   const s = await scene()
   try {
     const shown = await readClaudeWeek({ client: s.coach, athlete, today })
@@ -181,7 +182,7 @@ test('en løs usendt plan før eller i ugen flytter ikke Claudes 7-dages uge', (
 })
 
 // Kontrolfund 2: efter Send uge kontrolleres netop de 7 viste versioner, også når en ny uge venter bagefter.
-test('Send uge bekræfter de 7 versioner, selv om en næste uge fra Claude allerede ligger klar', { timeout: 60000 }, async () => {
+test('Send uge bekræfter de 7 versioner, selv om en næste uge fra Claude allerede ligger klar', { timeout: lt(60000) }, async () => {
   const s = await scene()
   try {
     const naeste = { ...ugeplan(), days: ugeplan().days.map((d, i) => ({ ...d, date: plusDage(today, 7 + i) })) }
@@ -212,7 +213,7 @@ test('arkiverede planer og enkeltdagsplaner tæller ikke som Claudes uge', () =>
   assert.equal(kunEnDag.state, 'empty')
 })
 
-test('en afbrudt sending kan gøres færdig: 4 dage sendt, Send uge sender de sidste 3', { timeout: 60000 }, async () => {
+test('en afbrudt sending kan gøres færdig: 4 dage sendt, Send uge sender de sidste 3', { timeout: lt(60000) }, async () => {
   const s = await scene()
   try {
     const shown = await readClaudeWeek({ client: s.coach, athlete, today })
