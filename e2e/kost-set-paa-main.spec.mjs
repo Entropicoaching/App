@@ -89,9 +89,10 @@ export async function runCoach(page, navn, outDir = OUT_DIR) {
   // Dine atleter står åbent på forsiden; tryk på atletens række åbner profilen.
   await page.getByText('Dine atleter (1)').waitFor({ timeout: 20000 })
   await page.getByText('Atlet W', { exact: true }).first().click()
-  // Profilen viser Hjem, Program, Log, Beskeder og Mere; Kost & mål ligger under Mere.
-  await page.getByRole('button', { name: /^Mere/ }).first().click({ timeout: 20000 })
-  await page.getByText('Kost & mål', { exact: false }).first().click({ timeout: 20000 })
+  // Siden 2019 er Kost & mål en fast fane i profilen; ellers ligger den under Mere.
+  const kostFane = page.getByRole('button', { name: /Kost & mål/ }).first()
+  if (!(await kostFane.isVisible().catch(() => false))) await page.getByRole('button', { name: /^Mere/ }).first().click({ timeout: 20000 })
+  await kostFane.click({ timeout: 20000 })
   const uge = page.locator('[data-claude-week="sendt"]')
   await uge.waitFor({ state: 'visible', timeout: 20000 })
   await uge.getByText(/^Sendt /).waitFor({ timeout: 15000 })
