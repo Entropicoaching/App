@@ -1651,8 +1651,10 @@ function updateCleanReviewUI(path = latestCleanPath(), force = false) {
 // analyse (udglattet bane, valid-flag, rep-vinduer); regnekoden ligger i videocoach-velocity.js.
 // ORDRE 1882v: et løft, hvor kameraet flyttede sig under opturen (rep.camMoved), har ingen fart.
 // Det vises som tekst og tæller ikke i fartfald; uden sådan et løft regnes alt som før.
-function vcMeasuredReps(reps) { return (reps || []).filter(rep => !rep.camMoved); }
-function vcRepSpeedText(rep, digits = 2) { return rep.camMoved ? 'fart ikke målt' : `${rep.mcv.toFixed(digits)} m/s`; }
+// ORDRE 2031v: et løft, hvor skiven var dækket en del af opturen (rep.usikker), har heller ingen fart.
+function vcNoSpeed(rep) { return !!(rep && (rep.camMoved || rep.usikker)); }
+function vcMeasuredReps(reps) { return (reps || []).filter(rep => !vcNoSpeed(rep)); }
+function vcRepSpeedText(rep, digits = 2) { return rep.camMoved ? 'fart ikke målt' : rep.usikker ? 'fart usikker' : `${rep.mcv.toFixed(digits)} m/s`; }
 function vcRenderSpeedTable(path, selected = -1) {
   const box = document.getElementById('vcSpeedTable');
   if (!box) return;
@@ -1666,14 +1668,14 @@ function vcRenderSpeedTable(path, selected = -1) {
   const shown = res.reps.map((r, i) => Number.isFinite(r.mean) && Number.isFinite(reps[i].mcv)
     ? { mean: reps[i].mcv, peak: reps[i].peak } : { mean: null, peak: null });
   const loss = window.vcVelocity.repLossPct(shown.map(r => r.mean));
-  const lossPct = window.vcVelocity.setVelocityLoss(shown.filter((_, i) => !reps[i].camMoved).map(r => r.mean));
+  const lossPct = window.vcVelocity.setVelocityLoss(shown.filter((_, i) => !vcNoSpeed(reps[i])).map(r => r.mean));
   const fmt = (v, d) => Number.isFinite(v) ? v.toFixed(d) : '-';
-  const rows = shown.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` + (reps[i].camMoved
-    ? '<td colspan="3" class="vcSpeedMoved">fart ikke målt, kameraet flyttede sig</td></tr>'
+  const rows = shown.map((r, i) => `<tr class="${i === selected ? 'sel' : ''}"><td>Rep ${i + 1}</td>` + (vcNoSpeed(reps[i])
+    ? `<td colspan="3" class="vcSpeedMoved">${reps[i].camMoved ? 'fart ikke målt, kameraet flyttede sig' : 'fart usikker, skiven var dækket'}</td></tr>`
     : `<td>${fmt(r.mean, 2)}</td><td>${fmt(r.peak, 2)}</td><td>${fmt(loss[i], 0)}</td></tr>`)).join('');
   box.innerHTML = '<table><thead><tr><th>Rep</th><th>m/s gns.</th><th>m/s top</th><th>Tab %</th></tr></thead>' +
     `<tbody>${rows}</tbody></table>` +
-    (lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${lossPct.toFixed(0)} % (bedste mod sidste${reps.at(-1).camMoved ? ' målte' : ''} rep)</div>`);
+    (lossPct == null ? '' : `<div class="vcSpeedNote">Fartstab i sættet: ${lossPct.toFixed(0)} % (bedste mod sidste${vcNoSpeed(reps.at(-1)) ? ' målte' : ''} rep)</div>`);
   box.hidden = false;
 }
 
@@ -4254,7 +4256,7 @@ function drawVelPanel() {
   const fs = Math.max(16, canvas.width / 60);
   const first = vcMeasuredReps(path.reps)[0];
   const lines = path.reps.map((r, i) => {
-    const loss = r !== first && !r.camMoved ? Math.round((1 - r.mcv / first.mcv) * 100) : null;
+    const loss = r !== first && !vcNoSpeed(r) ? Math.round((1 - r.mcv / first.mcv) * 100) : null;
     return `Rep ${i+1}:  ${vcRepSpeedText(r)}` +
            (loss !== null ? `   ${loss >= 0 ? '−' : '+'}${Math.abs(loss)}%` : '');
   });
@@ -4276,8 +4278,8 @@ function drawVelPanel() {
     panelY = Math.min(panelY, safe.bottom - panelHeight - safe.padY);
   ctx.fillRect(panelX, panelY, w, panelHeight);
   lines.forEach((l, i) => {
-    const loss = path.reps[i] !== first && !path.reps[i].camMoved ? 1 - path.reps[i].mcv / first.mcv : 0;
-    ctx.fillStyle = path.reps[i].camMoved ? 'rgba(237,234,226,0.55)'
+    const loss = path.reps[i] !== first && !vcNoSpeed(path.reps[i]) ? 1 - path.reps[i].mcv / first.mcv : 0;
+    ctx.fillStyle = vcNoSpeed(path.reps[i]) ? 'rgba(237,234,226,0.55)'
       : loss > 0.2 ? '#ff453a' : loss > 0.1 ? '#ffd60a' : '#4cd964';
     const ly = panelY + (i + 1.1) * fs * 1.3;
     ctx.fillText((path.ghostRep === i ? '👻 ' : '') + l, panelX + fs * 0.7, ly);
@@ -4722,7 +4724,23 @@ function analyzeCleanPath(path) {
   //      op og derfra går en hel nedtur (0,8 til 1,25 typisk optur) ned til et nyt gulv mindst en
   //      halv radius under det gamle.
   // Et tillagt løft skal have målt fart opad, så det får et tal som de andre.
-  const plate = 22.5 / cmPerPx, ok = index => raw.valid[index];
+  // ORDRE 2031v (Marc 19. nov.: "bar tracker misser stadig"). Dækkes skiven kort midt i et løft, står
+  // billederne imens som ugyldige på en ret linje mellem det sidste sikre punkt før og det første efter
+  // (tilbagefangsten). Et sådant hul regnes med som en bro, når der er gyldige billeder på begge sider,
+  // og det højst varer 2,5 s: vendepunkterne nedenfor ser så opturen gennem hullet, og løftet findes.
+  // Farten i et løft med et hul i opturen vises som usikker i stedet for et forkert tal. Er under 30 %
+  // af opturens højde set i gyldige billeder, kunne løftet ikke ses: det tælles ikke som et rep, men
+  // vises for atleten som "1 løft kunne ikke ses" (analysis.unseen). Uden huller er alt som før.
+  const bridged = new Array(n).fill(false);
+  for (let index = 0, from = -1; index <= n; index++) {
+    const valid = index < n && raw.valid[index];
+    if (!valid && index < n) { if (from < 0) from = index; continue; }
+    if (from > 0 && index < n && raw.times[index - 1] - raw.times[from] <= 2.5) for (let j = from; j < index; j++) bridged[j] = true;
+    from = -1;
+  }
+  const bridgedRun = (start, end) => { let count = 0; for (let j = start; j <= end; j++) if (bridged[j]) count++; return count; };
+  const unseen = [];
+  const plate = 22.5 / cmPerPx, ok = index => raw.valid[index] || bridged[index];
   // Et vendepunkt flytter sig kun, når sporet kommer mindst 0,02 radius videre, så en top ligger, hvor stangen nåede op.
   const turns = [], still = plate * .02;
   for (let index = 0, dir = 0, lo = null, hi = null, cur = null; index <= n; index++) {
@@ -4842,7 +4860,8 @@ function analyzeCleanPath(path) {
       if (extra) final.push({...extra,moved:true});
     });
     const kept = final.filter(rep => detected.includes(rep)
-      || velocity.slice(rep.start, rep.end + 1).some(value => value > .05));
+      || velocity.slice(rep.start, rep.end + 1).some(value => value > .05)
+      || bridgedRun(rep.start + 1, rep.end - 1) > 0);   // ORDRE 2031v: en optur gennem et hul (hullet skal ligge inde i opturen, ikke kun røre dens første eller sidste billede: kontrollens fund 2)
     // ORDRE 1882v (Marc 16. nov.: "så skal videocoach dæleme også virke"). Flyttes billedet, mens
     // stangen er på vej op, ses opturen kortere eller længere, end den var, og farten bliver forkert.
     // Løftet tælles som før, men får ingen fart: løft fra 3) og 4), og en optur under 0,75 eller over
@@ -4868,8 +4887,63 @@ function analyzeCleanPath(path) {
       const elsewhere = k >= 2 ? Math.abs(turns[k].y - turns[k - 2].y) > near : lift === 'deadlift';
       if (elsewhere && alike({size:turns[k + 1].y - turns[k].y}, ref)) rep.moved = true;
     }
+    // ORDRE 2031v: løft med et hul i opturen (se bridged ovenfor). Er under 30 % af opturens højde set i
+    // gyldige billeder, OG varer hullet længere end sættets typiske optur plus 0,6 s (så stangen kan have
+    // gjort hvad som helst imens), kunne løftet ikke ses. Ellers er løftet fundet, og farten usikker.
+    const typicalRise = (() => {
+      const seconds = kept.filter(rep => !bridgedRun(rep.start + 1, rep.end - 1)).map(rep => raw.times[rep.end] - raw.times[rep.start]).sort((a, b) => a - b);
+      return seconds.length ? seconds[seconds.length >> 1] : 1;
+    })();
+    for (const rep of kept) {
+      if (!bridgedRun(rep.start + 1, rep.end - 1)) continue;
+      let seen = 0, gap = 0;
+      for (let j = rep.start + 1; j <= rep.end; j++)
+        if (raw.valid[j] && raw.valid[j - 1]) seen += Math.max(0, analysisPts[j - 1].y - analysisPts[j].y);
+      for (let j = rep.start, from = -1; j <= rep.end + 1; j++) {
+        if (j <= rep.end && bridged[j]) { if (from < 0) from = j; continue; }
+        if (from >= 0) gap = Math.max(gap, raw.times[Math.min(j, n - 1)] - raw.times[Math.max(0, from - 1)]);
+        from = -1;
+      }
+      const height = Math.max(0, analysisPts[rep.start].y - analysisPts[rep.end].y);
+      if (seen < height * .3 && gap > typicalRise + .6) rep.unseen = true; else rep.uncertain = true;
+    }
     detected.length = 0;
-    detected.push(...kept);
+    detected.push(...kept.filter(rep => !rep.unseen));
+    unseen.push(...kept.filter(rep => rep.unseen).map(rep => ({start:rep.start,end:rep.end})));
+    // Et hul (ugyldige billeder med gyldige på begge sider, også over 2,5 s), der ikke blev til en optur:
+    // et løft er sket, mens skiven var dækket, når stangen før hullet var under toppen (mindst 0,44 typisk
+    // optur under nærmeste talte løfts top) eller på vej ned (mindst 0,1 radius ned over de sidste 0,1 til
+    // 0,4 s), og den efter hullet enten står ved toppen igen eller når den inden for 1,2 s, eller er kommet
+    // mindst 0,44 typisk optur højere op end før hullet (dødløft: skiven ses først igen på vej ned), uden
+    // at det blev til et talt løft (målt 23. nov.: dækning fra midt i nedturen til midt i opturen gav
+    // ellers 4 reps i stilhed). Hullet skal mindst kunne skjule bunden (en halv typisk optur); et kortere
+    // hul giver en optur gennem broen, som tælles ovenfor.
+    for (let index = 0, from = -1; index <= n; index++) {
+      if (index < n && !raw.valid[index]) { if (from < 0) from = index; continue; }
+      if (from < 0) continue;
+      const a = from - 1, b = index, gapSeconds = raw.times[Math.min(b, n - 1)] - raw.times[a];
+      from = -1;
+      if (a < 0 || b >= n || gapSeconds < typicalRise * .5 || unseen.some(rep => rep.start <= b && rep.end >= a)) continue;
+      const nearest = detected.filter(rep => rep.end < a).at(-1) || detected.find(rep => rep.start > b);
+      if (!nearest) continue;
+      const topY = smoothedY[nearest.end];
+      let reach = -1;
+      for (let j = b; j < n && raw.times[j] - raw.times[b] <= 1.2 && reach < 0; j++)
+        if (raw.valid[j] && Math.abs(analysisPts[j].y - topY) <= near) reach = j;
+      const higher = analysisPts[a].y - analysisPts[b].y >= ref * .44;
+      // eller ses igen højere oppe (mindst 0,2 typisk optur) og på vej ned (mindst 0,1 radius ned over de
+      // næste 0,1 til 0,4 s): så er den løftet, mens den var dækket (målt: dødløft dækket 2,5 s)
+      let after = -1;
+      for (let q = b + 1; q < n && raw.times[q] - raw.times[b] <= .4; q++) if (raw.valid[q] && raw.times[q] - raw.times[b] >= .1) after = q;
+      const downAfter = after > 0 && analysisPts[after].y - analysisPts[b].y >= plate * .1 && analysisPts[a].y - analysisPts[b].y >= ref * .2;
+      if (reach < 0 && !higher && !downAfter) continue;
+      if (detected.some(rep => rep.start <= Math.max(b, reach) && rep.end >= a)) continue;
+      let p = a - 1;
+      while (p > 0 && (!raw.valid[p] || raw.times[a] - raw.times[p] < .1)) p--;
+      const descending = p >= 0 && raw.valid[p] && raw.times[a] - raw.times[p] <= .4 && analysisPts[a].y - analysisPts[p].y >= plate * .1;
+      if (analysisPts[a].y - topY >= ref * .44 || descending) unseen.push({start:a,end:b});
+    }
+    unseen.sort((p, q) => p.start - q.start);
   }
   const phase = (kind, startIndex, endIndex) => ({kind,
     start:Math.max(0, Math.min(n - 1, startIndex)),
@@ -4907,7 +4981,7 @@ function analyzeCleanPath(path) {
       if (detectedRep.end < viewEnd) repPhases.push(phase('lockout', detectedRep.end, viewEnd));
     }
     phases.push(...repPhases.map(item => ({...item,rep:repIndex})));
-    const positive = detectedRep.moved ? [] : velocity.slice(detectedRep.start, detectedRep.end + 1)
+    const positive = detectedRep.moved || detectedRep.uncertain ? [] : velocity.slice(detectedRep.start, detectedRep.end + 1)
       .filter(value => Number.isFinite(value) && value > .05);
     // ORDRE 1932v: udglatningen over fem billeder smører løftets start og slut ud over to billeder til hver
     // side, så gennemsnittet af de udglattede tal blev delt med for lang tid (hurtige løft 10 til 15 % for lavt
@@ -4917,7 +4991,7 @@ function analyzeCleanPath(path) {
     // I det første og sidste billede var stangen kun i gang en del af tiden. Er springet der under en tredjedel
     // af nabobilledets fart, regnes den del ud, som om stangen tog jævnt fart fra hvile (aldrig mindre end det).
     const moving = [];
-    if (!detectedRep.moved) for (let index = detectedRep.start; index <= detectedRep.end; index++)
+    if (!detectedRep.moved && !detectedRep.uncertain) for (let index = detectedRep.start; index <= detectedRep.end; index++)
       if (Number.isFinite(velocity[index]) && velocity[index] > .05) moving.push(index);
     const rawRise = index => (analysisPts[index - 1].y - analysisPts[index].y) * cmPerPx / 100;
     const rawGap = index => Math.max(1 / 240, raw.times[index] - raw.times[index - 1]);
@@ -4951,7 +5025,8 @@ function analyzeCleanPath(path) {
       romCm:(smoothedY[detectedRep.start] - smoothedY[detectedRep.end]) * cmPerPx,
       conS:+Math.max(0, raw.times[detectedRep.end] - raw.times[detectedRep.start]).toFixed(2),
       eccS:+eccentricSeconds.toFixed(2),pauseS:+pauseSeconds.toFixed(2),
-      validRatio:validSamples / Math.max(1, viewEnd - viewStart + 1),camMoved:detectedRep.moved === true};
+      validRatio:validSamples / Math.max(1, viewEnd - viewStart + 1),camMoved:detectedRep.moved === true,
+      usikker:detectedRep.uncertain === true};   // ORDRE 2031v: skiven var dækket en del af opturen, farten vises som usikker
   });
   let pathLength = 0;
   for (let index = 1; index < n; index++) if (raw.valid[index] && raw.valid[index - 1])
@@ -4967,6 +5042,7 @@ function analyzeCleanPath(path) {
   const analysis = {schema:1,lift,pts:analysisPts,
     visualPts:buildVisualBarPath(imagePts, raw.valid, raw.times),vel:velocity,reps,phases,
     camMaxPx:cam ? Math.max(0, ...cam.map(point => Math.hypot(point.x, point.y))) : null,
+    unseen,   // ORDRE 2031v: løft, der ikke kunne ses (skiven dækket hele opturen), {start,end} i billeder
     rawCount:n,reviewStartTime:raw.start,reviewEndTime:raw.end,
     effPct:pathLength > 0 ? Math.round(range / pathLength * 100) : null,
     hystCm:downX.length > 3 && upX.length > 3
@@ -5892,6 +5968,7 @@ async function mpDirectFrames(startT, endT, onFrame) {
 // Låsen bruges kun, når den er sikker (ligheden mindst RL_HI): så trækkes sporet ind på referencen, og
 // er sporet fulgt med noget andet, fanges det markerede udsnit igen. Ellers gør sporingen som før.
 const RL_PX=40,RL_RINGS=24,RL_HI=.82,RL_MID=.7,RL_TRY=[1,1.06,1/1.06,1.12,1/1.12];
+const RL_COVER=.45;   // ORDRE 2031v: under denne lighed ligner udsnittet ikke skiven: den kan være dækket (se dækningsvagten)
 const rlRings=(()=>{
   const rings=[];
   for(let j=0;j<RL_RINGS;j++){
@@ -5951,16 +6028,17 @@ function rlScore(f,ref,px,py,skip=1){
 }
 // Bedste lighed med referencen i udsnittet. Grov søgning i trin, derefter hvert pixel om det bedste og
 // en parabel til brøkdele af et pixel. second = bedste lighed mindst 0,3 radius fra fundet (entydighed).
-function rlSearch(f,ref,step=3){
-  const R=f.range,coarse=[];let best=null;
-  for(let py=-R;py<=R;py+=step)for(let px=-R;px<=R;px+=step){
+// ORDRE 2031v: rangeX begrænser søgningen vandret (udsnittets pixels), når der søges langt lodret efter en dækning.
+function rlSearch(f,ref,step=3,rangeX=null){
+  const R=f.range,RX=rangeX==null?R:Math.min(R,rangeX),coarse=[];let best=null;
+  for(let py=-R;py<=R;py+=step)for(let px=-RX;px<=RX;px+=step){
     const sc=rlScore(f,ref,px,py,step>3?2:1);coarse.push(px,py,sc);
     if(!best||sc>best.score)best={px,py,score:sc};
   }
   if(!best)return null;
   const c=best;best={px:c.px,py:c.py,score:-2};
   for(let py=Math.max(-R,c.py-step+1);py<=Math.min(R,c.py+step-1);py++)
-    for(let px=Math.max(-R,c.px-step+1);px<=Math.min(R,c.px+step-1);px++){
+    for(let px=Math.max(-RX,c.px-step+1);px<=Math.min(RX,c.px+step-1);px++){
       const sc=rlScore(f,ref,px,py);
       if(sc>best.score)best={px,py,score:sc};
     }
@@ -5969,7 +6047,7 @@ function rlSearch(f,ref,step=3){
     if(Math.hypot(coarse[i]-best.px,coarse[i+1]-best.py)>=RL_PX*.3&&coarse[i+2]>second)second=coarse[i+2];
   let fx=best.px,fy=best.py;
   const sub=(a,b,c)=>{const d=a-2*b+c;return d<-1e-6?Math.max(-.5,Math.min(.5,.5*(a-c)/d)):0;};
-  if(Math.abs(best.px)<R&&Math.abs(best.py)<R){
+  if(Math.abs(best.px)<RX&&Math.abs(best.py)<R){
     fx+=sub(rlScore(f,ref,best.px-1,best.py),best.score,rlScore(f,ref,best.px+1,best.py));
     fy+=sub(rlScore(f,ref,best.px,best.py-1),best.score,rlScore(f,ref,best.px,best.py+1));
   }
@@ -6060,6 +6138,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
   // ORDRE 1899v: fast reference til det markerede udsnit (se rlInit). Slås fra med ?laas=0.
   const lockRange=Math.round(RL_PX*.3);
   const lock=typeof MODE_PARAMS!=='undefined'&&MODE_PARAMS.get('laas')==='0'?null:rlInit(p0,radius,path);
+  let coverStreak=0;   // ORDRE 2031v: billeder i træk, hvor referencen ikke ligner (dækningsvagten)
   let lastMediaT=startT,stableFrames=0,lastRateChangeT=startT;
   let frameSource=video,directRun=false;   // ORDRE 1537v2: billedkilde (video eller VideoFrame)
   const sourceSteps=[],workSamples=[];
@@ -6252,7 +6331,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
     const probe=TRACKER_PROBE?{t:tNow,moves:0,kept:0,identityChecked:false,
       identityOK:null,jump:null,maxJump:null,nextFeatures:null,accepted:false,rejectGate:null}:null;
     if(probe)probe.moves=moves.length;
-    let accepted=false,kept=[],frameConfidence=0;
+    let accepted=false,kept=[],frameConfidence=0,lockPre=null;
     const maxJump=radius*.75+Math.hypot(vel.x,vel.y)*dt*.45;
     if(moves.length>=5){
       const mdx=mpMedian(moves.map(q=>q.dx)),mdy=mpMedian(moves.map(q=>q.dy));
@@ -6347,6 +6426,27 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
           e.pairCover>=.30&&e.app<2.8;
       }
       if(probe&&probe.identityChecked)probe.identityOK=identityOK;
+      // ORDRE 2031v (Marc 19. nov.: "bar tracker misser stadig, den er ikke reliabel"). Dækkes skiven af
+      // noget, der går forbi (en hånd, en person tæt på kameraet), fandt punktsporingen stadig nok ens
+      // flytninger på det, der dækkede, og godkendte billederne, mens skiven gik videre; bagefter skrev
+      // tilbagefangsten alle billeder siden sidste sikre punkt om til en ret linje, og hele løftet
+      // forsvandt (målt: dækning i 0,45 s midt i tredje løfts optur, 4 af 5 løft). Her spørges referencen
+      // (låsen, 1899v) på det foreslåede punkt, FØR billedet godkendes: ligner udsnittet slet ikke det
+      // markerede (lighed under RL_COVER i to billeder i træk, mod 0,95 og derover på en synlig skive),
+      // er skiven dækket, og billedet tælles som tabt: sporet bliver ved det sidste sikre punkt, til
+      // skiven ses igen (tilbagefangsten nedenfor). Skivemodellen (plEvidence) kan ikke bruges som vagt:
+      // den godkendte den mønstrede flade, der dækkede (målt: circle 50 til 97 mod 122 på skiven selv).
+      // Ligner udsnittet referencen, er alt som før; målingen genbruges af låsen nedenfor, så tallene er
+      // bit for bit de samme.
+      if(lock&&kept.length>=5&&jump<=maxJump&&identityOK){
+        const h=rlSearch(rlGrab(nx+lock.off.x*lock.k,ny+lock.off.y*lock.k,lockRange,radius*lock.k),lock.ref);
+        if(h){h.x-=lock.off.x*lock.k;h.y-=lock.off.y*lock.k;h.k=lock.k;}
+        lockPre={x0:nx,y0:ny,h};
+        if(!h||h.score<RL_COVER){
+          coverStreak++;
+          if(coverStreak>=2){identityOK=false;path.covered=(path.covered||0)+1;lock.coverSeen=true;if(probe)probe.covered=true;}
+        }else coverStreak=0;
+      }
       if(kept.length>=5&&jump<=maxJump&&identityOK){
         let nextFeatures=mpGoodFeatures(currentFrame,{x:nx,y:ny},radius);
         if(nextFeatures.length<5)nextFeatures=kept.map(q=>({x:q.q.x,y:q.q.y})).slice(0,36);
@@ -6480,7 +6580,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         if(h){h.x-=lock.off.x*k;h.y-=lock.off.y*k;h.k=k;}
         return h;
       };
-      let hit=accepted?look(lock.k):null;
+      let hit=accepted?(lockPre&&lockPre.x0===cur.x&&lockPre.y0===cur.y?lockPre.h:look(lock.k)):null;   // ORDRE 2031v: samme måling som dækningsvagten ovenfor
       if(hit&&(hit.score<RL_HI||(hit.score<.93&&path.pts.length%3===0)))
         for(const k of [lock.k*1.04,lock.k/1.04]){
           if(k<.6||k>1.7)continue;
@@ -6498,6 +6598,21 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
           path.refLock.pulls++;
         }
         path.refLock.sure++;
+        // ORDRE 2031v: har dækningsvagten slået til, siden referencen sidst passede, og finder sporingen selv
+        // skiven igen (typisk samme sted som før dækningen), fulgte de billeder, der blev godkendt imens, noget
+        // andet (kontrollens fund: enkelte billeder godkendt på fladen 30 til 46 px fra skiven). De mærkes
+        // usikre og lægges på linjen mellem det sidste sikre punkt og dette, som tilbagefangsten gør.
+        if(lock.coverSeen&&lock.ok&&lock.ok.i<path.pts.length){
+          const i0=lock.ok.i,a=path.pts[i0],t0=path.times[i0];
+          for(let i=i0+1;i<path.pts.length;i++){
+            const u=(path.times[i]-t0)/Math.max(1e-3,tNow-t0);
+            path.pts[i]={x:a.x+(cur.x-a.x)*u,y:a.y+(cur.y-a.y)*u};
+            if(path.valid[i])path.lowConf=(path.lowConf||0)+1;
+            path.valid[i]=false;path.confidence[i]=0;
+          }
+          path.refLock.recaptures++;
+        }
+        lock.coverSeen=false;
         lock.good={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
         lock.ok=lock.good;lock.low=0;lock.pending=null;
       }else{
@@ -6506,23 +6621,35 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
         // seneste, der kan stoles på, men sporet trækkes ikke.
         if(hit&&hit.score>=RL_MID)lock.ok={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
       }
+      if(probe){probe.lockScore=hit?+hit.score.toFixed(3):null;probe.lockLow=lock.low;probe.lockK=+lock.k.toFixed(3);}
       // 2) Tilbagefangst. Har referencen ikke passet i tre billeder, ledes der efter det markerede udsnit
       // omkring det seneste punkt, der kunne stoles på, så langt stangen kan være nået. Kun et sikkert og
       // entydigt fund, set samme sted i to billeder i træk, tæller. Billederne siden det seneste punkt, der
       // kunne stoles på, fulgte noget andet: de mærkes usikre og lægges på linjen mellem de to punkter.
       // Uden fund gør sporingen som før.
       const base=lock.ok;
-      if(lock.low>=3&&base&&(tNow-base.t<=1.5||path.pts.length%6===0)){
+      // ORDRE 2031v: er billedet ikke godkendt (skiven dækket eller tabt), ledes der i hvert billede i op til
+      // 6 s (målt: med hvert 6. billede og en ny størrelse hver gang tog det over 1 s at finde den synlige
+      // skive igen efter en lang dækning, og løftet gik tabt). Er billedet godkendt, som før.
+      if(lock.low>=3&&base&&(tNow-base.t<=1.5||(!accepted&&tNow-base.t<=6)||path.pts.length%6===0)){
         const lostS=tNow-base.t,k=lock.k*RL_TRY[lock.tryK%RL_TRY.length];
-        const reach=Math.min(radius*2.5,radius*.6+(base.speed+radius*2)*lostS);
+        // ORDRE 2031v: er billedet ikke godkendt (skiven dækket eller tabt), kan stangen være nået langt,
+        // mens den ikke kunne ses: op til 2 m/s, så der søges så langt lodret (højst 8 radius) og 1,2 radius
+        // til siden fra det sidste sikre punkt. Er billedet godkendt, søges som før (højst 2,5 radius).
+        const far=!accepted&&cmPerPx>0?Math.min(radius*8,radius*.6+(200/cmPerPx)*lostS):0;
+        const reach=Math.max(far,Math.min(radius*2.5,radius*.6+(base.speed+radius*2)*lostS));
         const range=Math.round(reach*RL_PX/(radius*k));
-        const found=rlSearch(rlGrab(base.x+lock.off.x*k,base.y+lock.off.y*k,range,radius*k),lock.ref,range>30?4:3);
+        const rangeX=far>0?Math.min(range,Math.round(1.2*RL_PX/k)):null;
+        const found=rlSearch(rlGrab(base.x+lock.off.x*k,base.y+lock.off.y*k,range,radius*k),lock.ref,range>30?4:3,rangeX);
         if(found){found.x-=lock.off.x*k;found.y-=lock.off.y*k;}
         const sure=found&&found.score>=RL_HI+.03&&found.score-found.second>=.06&&
           (!accepted||Math.hypot(found.x-cur.x,found.y-cur.y)>radius*.35);
         const before=lock.pending;
+        if(probe)probe.recapture={k:+k.toFixed(3),range,rangeX,score:found?+found.score.toFixed(3):null,second:found?+found.second.toFixed(3):null,dx:found?Math.round(found.x-base.x):null,dy:found?Math.round(found.y-base.y):null,sure:!!sure,pending:!!before};
         lock.pending=sure?{x:found.x,y:found.y,t:tNow}:null;
-        if(!sure)lock.tryK++;   // næste gang prøves en anden størrelse
+        // næste gang prøves en anden størrelse; ORDRE 2031v: ligner fundet næsten (0,6 og derover) i en anden
+        // størrelse end låsens, prøves låsens egen størrelse først
+        if(!sure)lock.tryK=found&&found.score>=.6&&k!==lock.k?0:lock.tryK+1;
         if(sure&&before&&Math.hypot(found.x-before.x,found.y-before.y)<=radius*.6){
           const frame=COACHWEB?await mpFrameCooperative(found,anchorExtent):mpFrame(found,anchorExtent);
           const recaptured=mpGoodFeatures(frame,found,radius);
@@ -6542,7 +6669,7 @@ async function startMultipointTracking(p0, session = analysisSession || createAn
             if(benchMode){benchOutputX=cur.x;benchPreviousRaw={...cur};}
             lock.k=k;
             lock.good={x:cur.x,y:cur.y,t:tNow,i:path.pts.length,speed:Math.hypot(vel.x,vel.y)};
-            lock.ok=lock.good;lock.low=0;lock.pending=null;
+            lock.ok=lock.good;lock.low=0;lock.pending=null;coverStreak=0;lock.coverSeen=false;
             path.refLock.recaptures++;
           }
         }
@@ -8924,7 +9051,7 @@ function collectMetrics() {
   if (sourcePath.analysis) {
     // ORDRE 1882v: et løft uden fart, fordi kameraet flyttede sig, bliver stående, så numrene passer.
     const measurableReps = sourcePath.reps.filter(rep =>
-      rep.camMoved || (Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm)));
+      vcNoSpeed(rep) || (Number.isFinite(rep.mcv) && Number.isFinite(rep.romCm)));
     if (!vcMeasuredReps(measurableReps).length) {
       lastVals.signalEligible = false;
       m.push('Velocity, ROM og tempo er skjult: signalet er ikke gyldigt nok.');
@@ -8945,6 +9072,7 @@ function collectMetrics() {
     const measured = vcMeasuredReps(path.reps);
     path.reps.forEach((r, i) => {
       if (r.camMoved) { m.push(`Rep ${i+1}: fart ikke målt, kameraet flyttede sig`); return; }
+      if (r.usikker) { m.push(`Rep ${i+1}: fart usikker, skiven var dækket`); return; }
       const loss = r !== measured[0] ? ` (fartfald ${Math.round((1 - r.mcv/measured[0].mcv)*100)}%)` : '';
       const tempo = r.conS ? ` · tempo ${r.eccS}s ned/${r.pauseS}s pause/${r.conS}s op`
                            + ` · peak ${r.peak.toFixed(2)} m/s` : '';
@@ -8958,7 +9086,7 @@ function collectMetrics() {
     lastVals.effPct = path.effPct;
     lastVals.hystCm = path.hystCm;
     lastVals.repCount = path.reps.length;
-    lastVals.repSpeeds = path.reps.map(r => r.camMoved ? null : +r.mcv.toFixed(2));
+    lastVals.repSpeeds = path.reps.map(r => vcNoSpeed(r) ? null : +r.mcv.toFixed(2));
     const speeds = lastVals.repSpeeds.filter(value => value !== null);
     lastVals.bestRep = lastVals.repSpeeds.indexOf(Math.max(...speeds)) + 1;
     lastVals.slowestRep = lastVals.repSpeeds.indexOf(Math.min(...speeds)) + 1;
@@ -9155,8 +9283,9 @@ function collectMetrics() {
     const ms = mskel && mskel.bot && mskel.top && (mskel.botBarY !== mskel.topBarY) ? mskel : null;
     const lines = path.reps.map((r, i) => {
       let s = r.camMoved ? `Rep ${i + 1}: fart ikke målt, kameraet flyttede sig`
+        : r.usikker ? `Rep ${i + 1}: fart usikker, skiven var dækket`
         : `Rep ${i + 1}: snitfart ${r.mcv.toFixed(2)} m/s`;
-      if (r.peak != null && !r.camMoved) s += `, peak ${(+r.peak).toFixed(2)} m/s`;
+      if (r.peak != null && !vcNoSpeed(r)) s += `, peak ${(+r.peak).toFixed(2)} m/s`;
       if (ms) {
         let maxY = -Infinity;
         for (let j = r.start; j <= Math.min(r.end, path.pts.length - 1); j++)
@@ -9586,7 +9715,7 @@ function keyNumbers() {
     rows.push(['Snitfart (bedste rep)', (Number.isFinite(best) ? best.toFixed(2) + ' m/s' : 'ikke målt') +
       (v.lossPct != null ? `  ·  fartfald ${v.lossPct}%` : '')]);
     if (path.reps.length > 1)
-      rows.push(['Reps', path.reps.map(r => r.camMoved ? 'ikke målt' : r.mcv.toFixed(2)).join(' → ') + ' m/s']);
+      rows.push(['Reps', path.reps.map(r => r.camMoved ? 'ikke målt' : r.usikker ? 'usikker' : r.mcv.toFixed(2)).join(' → ') + ' m/s']);
   }
   if (v.stickPct != null)
     rows.push(['Sticking point',
@@ -10692,7 +10821,7 @@ saveBtn.onclick = async () => {
     dip_pct: lastVals.dipPct ?? null,
     drift_cm: lastVals.driftCm != null ? +lastVals.driftCm.toFixed(1) : null,
     // ORDRE 1882v: broerne kræver et tal pr. løft i dette gamle felt; 0 betyder, at farten ikke er målt.
-    reps: path && path.reps ? path.reps.map(r => r.camMoved ? 0 : +r.mcv.toFixed(3)) : null,
+    reps: path && path.reps ? path.reps.map(r => vcNoSpeed(r) ? 0 : +r.mcv.toFixed(3)) : null,
     extra: {   // individuelle baseline-metrikker (median/MAD beregnes af agenten)
       hip_ratio: lastVals.hipRatio ?? null,
       eff_pct: lastVals.effPct ?? null,
@@ -10723,7 +10852,7 @@ saveBtn.onclick = async () => {
       bench_stick_shoulder_offset_cm: lastVals.benchStickShoulderOffsetCm ?? null,
       bench_top_shoulder_offset_cm: lastVals.benchTopShoulderOffsetCm ?? null,
       tempo: path && path.reps ? path.reps.map(r =>
-        ({ ecc: r.eccS, pause: r.pauseS, con: r.conS, peak: r.camMoved ? null : +r.peak.toFixed(2) }))
+        ({ ecc: r.eccS, pause: r.pauseS, con: r.conS, peak: vcNoSpeed(r) ? null : +r.peak.toFixed(2) }))
         : null,
       // ORDRE 43 · baseline før optimering - ingen tredjeparts-analytics,
       // tallene ender kun i denne analyserækkes egen extra-kolonne.
@@ -11189,7 +11318,7 @@ function openRepPicker(path) {
   let rows = '';
   path.reps.forEach((r, i) => {
     const first = vcMeasuredReps(path.reps)[0];
-    const loss = r !== first && !r.camMoved ? Math.round((1 - r.mcv / first.mcv) * 100) + '%' : '–';
+    const loss = r !== first && !vcNoSpeed(r) ? Math.round((1 - r.mcv / first.mcv) * 100) + '%' : '–';
     rows += `<tr><td>Rep ${i + 1}</td><td>${vcRepSpeedText(r)}</td>` +
       `<td>${loss}</td>` +
       `<td><input type="radio" name="repA" value="${i}"` +
@@ -12038,7 +12167,10 @@ if (ATHLETE) {
     playBtn.textContent = playLabel(false);
     const reps = path?.analysis?.reps || [];
     const drift = instantRepDriftCm(path);
-    athleteInstantHead.textContent = `${reps.length} rep${reps.length === 1 ? '' : 's'} fundet`;
+    // ORDRE 2031v: et løft, hvor skiven var dækket hele opturen, siges højt i stedet for stilhed.
+    const unseen = path?.analysis?.unseen?.length || 0;
+    athleteInstantHead.textContent = `${reps.length} rep${reps.length === 1 ? '' : 's'} fundet` +
+      (unseen ? ` · ${unseen} løft kunne ikke ses` : '');
     syncTailCutNote(path);
     athleteInstantRows.innerHTML = reps.map((rep, i) => {
       const cm = drift[i] != null ? `${drift[i]} cm sidelæns` : 'afvigelse ukendt';
