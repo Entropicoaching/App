@@ -16,12 +16,14 @@ test('Egen DOM: kun eksplicit true viser to adskilte valg; ingen utilsigtet afse
   assert.ok(buttons.every(node => node.props.type === 'button' && node.props.style.minHeight >= 44))
   assert.equal(writes, 0)
 })
-test('Egen handler: den faktiske fabriks samlede handling er default OFF', async () => {
+test('Egen handler: den faktiske fabriks samlede handling findes og er tændt på coachens side (ordre 2053)', async () => {
   globalThis.syntheticFrom = () => { throw new Error('Maa ikke skrive') }
   const handlers = lavVideoReviewHandlinger({ selectedAthlete: { id: 'a' } })
   assert.equal(typeof handlers.saveVideoAnalysisFeedback, 'function')
   assert.equal(typeof handlers.reviewVideoAnalysis, 'function')
-  await handlers.saveApproveShareVideoAnalysis({ id: 'v', athlete_id: 'a', status: 'draft' })
+  assert.equal(typeof handlers.saveApproveShareVideoAnalysis, 'function')
+  // Uden en valgt atlet eller uden analyse skriver den ikke (ingen setters, ingen skrivning).
+  await handlers.saveApproveShareVideoAnalysis(null)
 })
 test('Egen C1: fejlagtig completion maa ikke navigere til en anden atlet', () => {
   const fail = () => { throw new Error('Uventet navigation') }

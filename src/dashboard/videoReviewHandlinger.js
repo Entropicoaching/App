@@ -26,7 +26,7 @@ export function lavVideoReviewHandlinger({
   videoAnalysisReviewLoadingId, videoAnalysisUpdatingId, videoBaselines, videoCoachPendingCompletionRef,
 }) {
   const saveApproveShareVideoAnalysis = createSaveApproveShareHandler({
-    selectedAthlete, videoAnalysisUpdatingId, videoBaselines, videoAnalysisFeedbackDraft,
+    enabled: true, selectedAthlete, videoAnalysisUpdatingId, videoBaselines, videoAnalysisFeedbackDraft,
     videoAnalysisBaselineFindingId, supabase, setVideoAnalysisUpdatingId,
     setVideoAnalysisReviewError, setVideoAnalysisReview, setVideoAnalyses,
     setVideoAnalysisFeedbackDraft, setVideoAnalysisBaselineFindingId,

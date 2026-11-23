@@ -125,7 +125,7 @@ function matchOne(row, col, op, rawVal) {
   const val = coerce(rawVal)
   const cell = row[col]
   switch (op) {
-    case 'eq': return String(cell) === String(val)
+    case 'eq': return (cell !== null && typeof cell === 'object' ? JSON.stringify(cell) : String(cell)) === String(val)
     case 'neq': return String(cell) !== String(val)
     case 'lt': return cell != null && cell < (isNaN(val) ? val : Number(val))
     case 'lte': return cell != null && cell <= (isNaN(val) ? val : Number(val))
