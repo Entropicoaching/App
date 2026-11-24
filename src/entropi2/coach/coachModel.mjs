@@ -7,9 +7,15 @@ import { coachNutritionLines, kostvaneTal } from './coachNutrition.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import { attentionCandidates } from './coachAttention.mjs'
 import { attentionFor } from './coachAttentionRead.mjs'
-import { erKostKlient } from './kostKlienter.mjs'
+import { erKostKlient, kostMangler } from './kostKlienter.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
+// Ordre 2103/2113: coachens kostopslag lægger kun runtime-felter på atletkopien; intet gemmes.
+const kostFelter = (kost, id) => {
+  const info = kost instanceof Map ? kost.get(id) : null
+  if (!info) return {}
+  return { ...(info.sendtTil ? { kostPakke: true, kostSendtTil: info.sendtTil } : {}), ...(info.kladde ? { kostKladde: true } : {}) }
+}
 const own = (o, k) => Object.prototype.hasOwnProperty.call(o || {}, k)
 const ordinal = day => Date.parse(day + 'T00:00:00Z') / 86400000
 const count = n => Number.isSafeInteger(n) && n > 0 ? n : 0
@@ -39,7 +45,7 @@ export function adaptCoachState(props = {}, today = new Date()) {
     if (typeof a?.id !== 'string' || !readContext.athleteIds.includes(a.id) ||
       a.hidden || hiddenAthleteIds.has(a.id)) continue
     visible.set(a.id, { ...a, name: typeof a.name === 'string' && a.name.trim() ? a.name.trim() : 'Atlet uden navn',
-      ...(props.kostKlienter instanceof Set && props.kostKlienter.has(a.id) ? { kostPakke: true } : {}) })
+      ...kostFelter(props.kostKlienter, a.id) })
   }
   const scoped = [...visible.values()]
   const plans = Object.fromEntries(scoped.map(a => [a.id,
@@ -251,7 +257,14 @@ export function coachWeekModel(data = {}) {
   const nyUge = [], sendt = []
   for (const athlete of athletes) {
     const weeks = plans[athlete.id] || []
-    // Ordre 2103: en kostklient (kostpakke, intet program) mangler ikke en første uge.
+    // Ordre 2103: en kostklient (kostpakke, intet program) mangler ikke en første træningsuge.
+    // Ordre 2113: men en kostuge mangler, når den første ikke er sendt, eller den sendte er løbet ud.
+    const kost = kostMangler(athlete, weeks, day)
+    if (kost) {
+      const reason = kost === 'ny' ? 'Mangler ny kostuge' : 'Mangler første kostuge'
+      nyUge.push({ key: `kost-${athlete.id}`, athlete, rank: 1, tab: 'program', reason, reasons: [reason], daysLeft: kost === 'ny' ? -1 : -2 })
+      continue
+    }
     if (erKostKlient(athlete, weeks)) continue
     const entry = entries.get(athlete.id)
     // En ny atlet oprettes med status onboarding (entropi-checkin og entropi); uden program mangler første uge.
