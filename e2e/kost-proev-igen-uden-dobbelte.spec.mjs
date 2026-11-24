@@ -2,7 +2,7 @@
 // Kun syntetisk "Atlet N" med tre måltider i går og intet i dag; 2. POST til meal_logs afbrydes én gang. Kør: node e2e/kost-proev-igen-uden-dobbelte.spec.mjs
 import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
-import { buildSeed, ATHLETE_USER, ATHLETE_ID } from './fixtures.mjs'
+import { buildSeed, ATHLETE_USER, ATHLETE_ID, kostPakkeTilAtlet } from './fixtures.mjs'
 import { startVite, launchBrowser, chromium, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 
 const MOBILE = { width: 390, height: 844 }
@@ -12,6 +12,7 @@ const plus = (date, n) => new Date(Date.parse(`${date}T00:00:00Z`) + n * 8640000
 export function seed(now = new Date()) {
   const s = buildSeed({ now })
   const t = s.tables
+  kostPakkeTilAtlet(t, { now }) // 2034f: Kost vises kun med kostpakke
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen' }).format(now)
   t.meal_logs = (t.meal_logs ?? []).filter(r => r.athlete_id !== ATHLETE_ID || r.date < plus(today, -1))
   const gaar = plus(today, -1)

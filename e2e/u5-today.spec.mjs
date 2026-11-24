@@ -6,7 +6,7 @@
 import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { createMockSupabase } from './mock-supabase.mjs'
-import { buildSeed, ATHLETE_USER, COACH_USER, ATHLETE_ID } from './fixtures.mjs'
+import { buildSeed, ATHLETE_USER, COACH_USER, ATHLETE_ID, kostPakkeTilAtlet } from './fixtures.mjs'
 import { startVite, launchBrowser, chromium, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 
 const VIEWPORTS = [{ name: '390', width: 390, height: 844 }, { name: '1280', width: 1280, height: 900 }]
@@ -25,6 +25,7 @@ export function todaySeed() {
   const data = buildSeed()
   const t = data.tables, today = danishToday()
   for (const name of ['weight_logs', 'meal_logs']) t[name] = t[name] ?? []
+  kostPakkeTilAtlet(t) // 2034f: Kost og Mad-rækken vises kun med kostpakke
   Object.assign(t.exercises[0], { recommended_weight: null })
   const lastWeek = { id: 'd1000000-0000-4000-8000-000000000001', athlete_id: ATHLETE_ID, week_number: 0, block_name: 'Base', start_date: addDays(t.weeks[0].start_date, -7) }
   t.weeks.unshift(lastWeek)

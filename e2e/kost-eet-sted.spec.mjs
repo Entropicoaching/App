@@ -2,7 +2,7 @@
 // Kun syntetisk "Atlet N". Kør: node e2e/kost-eet-sted.spec.mjs
 import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
-import { buildSeed, ATHLETE_USER } from './fixtures.mjs'
+import { buildSeed, ATHLETE_USER, kostPakkeTilAtlet } from './fixtures.mjs'
 import { startVite, launchBrowser, chromium, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 
 const MOBILE = { width: 390, height: 844 }
@@ -57,6 +57,7 @@ export async function runEetSted(page, outDir = OUT_DIR, tema = 'moerk') {
 
 async function main() {
   const s = buildSeed({ now: new Date() })
+  kostPakkeTilAtlet(s.tables) // 2034f: Kost vises kun med kostpakke
   const vite = await startVite()
   const browser = await launchBrowser().catch(() => chromium.launch({ headless: true, channel: 'msedge' }))
   let fejl = null

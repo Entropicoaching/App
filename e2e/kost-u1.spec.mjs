@@ -2,7 +2,7 @@
 // Kun syntetiske testkonti og data fra fixtures.mjs. Kør: node e2e/kost-u1.spec.mjs
 import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
-import { buildSeed, ATHLETE_USER, COACH_USER } from './fixtures.mjs'
+import { buildSeed, ATHLETE_USER, COACH_USER, kostPakkeTilAtlet } from './fixtures.mjs'
 import { startVite, launchBrowser, chromium, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 
 const MOBILE = { width: 390, height: 844 }
@@ -68,7 +68,9 @@ export async function runCoachKostTal(page, outDir = OUT_DIR) {
 }
 
 async function main() {
-  const mock = createMockSupabase(buildSeed())
+  const seed = buildSeed()
+  kostPakkeTilAtlet(seed.tables) // 2034f: Kost vises kun med kostpakke
+  const mock = createMockSupabase(seed)
   await mock.listen(MOCK_PORT)
   const vite = await startVite()
   // Uden hentet Playwright-Chromium bruges den installerede Edge, stadig headless.

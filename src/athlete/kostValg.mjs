@@ -4,7 +4,14 @@
 export const KOST_PER_ATLET = false
 export const KOST_VALG = Object.freeze({})
 
+// Ordre 2034f (Marc 23. nov.: kost sælges som pakke, "SKJULT for dem der ikke har"):
+// atletens egen læsning sætter `athlete.kostPakke` ud fra en godkendt kostplan de sidste
+// 6 uger eller frem (laesninger.js). Kun et udtrykkeligt `false` skjuler Kost; mangler
+// feltet (coachens forhåndsvisning, læsefejl, gamle øjebliksbilleder), vises Kost som før.
+export const kostPakkeSkjult = athlete => athlete != null && typeof athlete === 'object' && athlete.kostPakke === false
+
 export function kostSynlig(athlete, enabled = KOST_PER_ATLET, choices = KOST_VALG) {
+  if (kostPakkeSkjult(athlete)) return false
   if (enabled !== true) return true
   const id = athlete?.id
   return typeof id === 'string' && id.length > 0 && choices != null &&

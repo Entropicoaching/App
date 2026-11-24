@@ -41,6 +41,8 @@ export const supabase = {
         if (table === 'profiles') return { data: { role: fixture.role }, error: null }
         if (fixture.returnAthlete && table === 'athletes') return { data: fixture.snapshots['AthleteView.jsx'].athlete, error: null }
         if (fixture.returnAthlete && table === 'weeks') return { data: [week], error: null }
+        // Ordre 2034f: den syntetiske atlet har kostpakken (en sendt kostuge), så Kost-fanen findes i prøverne.
+        if (fixture.returnAthlete && table === 'kostplan_v1_plans') return { data: [{ id: 'synthetic-plan' }], error: null }
         const inserted = { id: body?.id || 'synthetic-saved' }
         return { data: op === 'insert' ? single ? inserted : [inserted] : single ? null : [], error: null }
       }).then(ok, fail)

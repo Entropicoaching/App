@@ -137,7 +137,10 @@ export default function AthleteHome(props) {
   const record = recordSnapshot && recordAt < recordSnapshot.expiresAt && recordAt >= recordSnapshot.expiresAt - 3 * 86400000
     ? recordSnapshot.record : null
   const week = homeWeekOverview(programProps)
-  const nutrition = nutritionTodayModel(props.nutritionToday, model.today)
+  // Ordre 2034f (Marc 23. nov.: kost er en pakke, skjult for dem uden): atletens egen læsning sætter
+  // athlete.kostPakke; kun et udtrykkeligt false fjerner Kost fra Hjem (link, Mad-rækken, guiden).
+  const visKost = props.visKost !== false && athlete?.kostPakke !== false
+  const nutrition = visKost ? nutritionTodayModel(props.nutritionToday, model.today) : null
   const trackingData = ownTracking && tracking?.athleteId === athlete?.id && tracking?.today === model.today
     ? tracking : { status: 'loading' }
   const snapshot = homeWeekSnapshot(trackingData, athlete?.id, model.today)
@@ -236,10 +239,10 @@ export default function AthleteHome(props) {
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
-      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost: props.visKost,
+      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost,
       todayCard: u5TodayEnabled(props.u5Today) }),
     // U5: "I dag" øverst med det, der mangler, og let logning. Bag sit eget flag.
-    u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData,
+    u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData, visKost,
       u5Training: model.kind === 'today' || model.kind === 'done' ? { kind: model.kind, logged: model.logged, total: model.total,
         exercises: target?.session.exercises } : null }),
     record && h(HomeRecordCard, { record }),
@@ -280,7 +283,7 @@ export default function AthleteHome(props) {
       // Presentation only: the host passes its existing confirmed coach ownership decision.
       props.coachOwnTraining !== true && h('h2', { style: s.heading }, 'Resten af din dag'),
       props.coachOwnTraining !== true && h('nav', { style: s.links, 'aria-label': 'Genveje' },
-        link('fremgang', 'Analyse'), !nutrition && link('kost', 'Kost'),
+        link('fremgang', 'Analyse'), visKost && !nutrition && link('kost', 'Kost'),
         link('mobilisering', 'Mobilitet'), !coach && !noProgram && link('beskeder', 'Din coach')),
       hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
         h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),

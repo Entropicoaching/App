@@ -208,3 +208,19 @@ export function buildSeed({ withLogs = false, withAnalyzedVideo = false, withMea
 
   return { users: [COACH_USER, ATHLETE_USER], tables }
 }
+
+// Ordre 2034f (Marc 23. nov.: kost er en pakke, skjult for atleter uden). Appen viser Kost, når
+// atleten har en godkendt kostplan med start de sidste 42 dage eller senere. Specs, der åbner Kost
+// uden at seede en rigtig uge, lægger denne markør: én godkendt plan 30 dage frem uden version, så
+// hverken Kost i dag (kun planer til og med i dag), "ny uge"-linjen (13 dage frem) eller coachens
+// "Forslag fra Claude" (kræver version) ændrer sig. Lægges sidst, så eksisterende [0]-opslag holder.
+export const KOST_PAKKE_PLAN_ID = 'bbbbbbbb-2034-4034-8034-bbbbbbbbbbbb'
+export function kostPakkeTilAtlet(tables, { athleteId = ATHLETE_ID, now = new Date() } = {}) {
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen' }).format(now)
+  const start = new Date(`${today}T00:00:00Z`); start.setUTCDate(start.getUTCDate() + 30)
+  tables.kostplan_v1_plans = tables.kostplan_v1_plans ?? []
+  if (!tables.kostplan_v1_plans.some(p => p.id === KOST_PAKKE_PLAN_ID)) {
+    tables.kostplan_v1_plans.push({ id: KOST_PAKKE_PLAN_ID, athlete_id: athleteId, valid_from: start.toISOString().slice(0, 10), status: 'godkendt' })
+  }
+  return tables
+}

@@ -2,7 +2,7 @@
 // Kun syntetisk "Atlet N". Kør: node e2e/kost-fjern-maaltid.spec.mjs
 import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
-import { buildSeed, ATHLETE_USER, ATHLETE_ID } from './fixtures.mjs'
+import { buildSeed, ATHLETE_USER, ATHLETE_ID, kostPakkeTilAtlet } from './fixtures.mjs'
 import { startVite, launchBrowser, chromium, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 
 const MOBILE = { width: 390, height: 844 }
@@ -68,6 +68,7 @@ export async function runFjern(page, mock, today, outDir = OUT_DIR, tema = 'moer
 
 async function main() {
   const s = buildSeed({ now: new Date() })
+  kostPakkeTilAtlet(s.tables) // 2034f: Kost vises kun med kostpakke
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Copenhagen' }).format(new Date())
   const vite = await startVite()
   const browser = await launchBrowser().catch(() => chromium.launch({ headless: true, channel: 'msedge' }))

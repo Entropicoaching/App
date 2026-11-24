@@ -47,6 +47,34 @@ export function claimUdenKobling(error) {
   return error?.code === 'P0001' && CLAIM_UDEN_KOBLING.includes(String(error.message || '').trim())
 }
 
+// Ordre 2034f (Marc 23. nov.: kost sælges som pakke med træning, "SKJULT for dem der ikke har").
+// Atleten har pakken, når coachen har sendt en godkendt kostplan med start de sidste 42 dage
+// eller senere. Resultatet lægges på atletrækken som `kostPakke` (kostValg.mjs skjuler Kost ved
+// `false`). Læsefejl, ukendt klient eller manglende tabel giver intet felt, så Kost vises som før.
+// Kun atletens egen visning kalder den; coachen ser altid alt.
+export const KOST_PAKKE_DAGE = 42
+export function kostPakkeFra(now = new Date()) {
+  return new Date(now.getTime() - KOST_PAKKE_DAGE * 86400000).toISOString().slice(0, 10)
+}
+export async function laesKostPakke(client, athleteId, now = new Date()) {
+  if (typeof athleteId !== 'string' || !athleteId) return undefined
+  try {
+    const { data, error } = await client.from('kostplan_v1_plans').select('id')
+      .eq('athlete_id', athleteId).eq('status', 'godkendt').gte('valid_from', kostPakkeFra(now)).limit(1)
+    if (error || !Array.isArray(data)) return undefined
+    return data.length > 0
+  } catch {
+    return undefined
+  }
+}
+// Feltet sættes på den hentede række i stedet for en kopi: AthleteView nøgler trænings-lease'en
+// (createTrainingLifetime) på selve rækkens identitet, og rækken er frisk fra klienten her.
+export async function medKostPakke(client, athlete, now) {
+  const kostPakke = await laesKostPakke(client, athlete?.id, now)
+  if (kostPakke !== undefined && athlete != null && typeof athlete === 'object') athlete.kostPakke = kostPakke
+  return athlete
+}
+
 export function lavLaesninger({
   indbakke2 = false,
   athlete, coachAthleteId, currentWeek, exerciseHistory, fetchAthleteMessages, fetchCustomFoods, fetchFrequentFoods, fetchHistoricalMealLogs,
@@ -162,6 +190,11 @@ export function lavLaesninger({
       return
     }
     if (data) {
+      // Ordre 2034f: kostpakken læses før første visning, så Kost-fanen ikke blinker.
+      if (!coachAthleteId) {
+        data = await medKostPakke(supabase, data)
+        if (isSessionCurrent() === false) return
+      }
       setOfflineSnapshotAt(null)
       rememberForOffline({ athlete: data })
       if (!coachAthleteId) {
