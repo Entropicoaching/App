@@ -450,6 +450,10 @@
     border-radius:14px; background:rgba(24,24,20,.94); backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px); box-shadow:0 12px 34px rgba(0,0,0,.28); }
   body.athlete #athleteConfirmFields[hidden] { display:none; }
+  /* ORDRE 2135: i Film et sæt ligger notat og belastning inde i resultatpanelet (analysen starter selv efter skivevalget). */
+  body.athlete #athleteInstantResult #athleteConfirmFields { position:static; max-height:none; overflow:visible;
+    margin-top:10px; padding:0; border:0; background:none; box-shadow:none; backdrop-filter:none;
+    -webkit-backdrop-filter:none; }
   /* ORDRE 262 · commit 2/3: "Film et sæt"s resultatpanel - reps/afvigelse/
      tid samt Gem/Kassér. Samme placering/glas-stil som #athleteConfirmFields
      ovenfor (bunden, over footeren) - de udelukker hinanden (confirm vs. done). */
@@ -494,6 +498,12 @@
     letter-spacing:.04em; text-transform:uppercase; }
   body.athlete #athleteInstantResult .athInstantActions button:disabled { opacity:.55; }
   body.athlete #athleteInstantDiscardBtn { border:1px solid rgba(237,234,226,.18);
+    background:transparent; color:rgba(237,234,226,.72); }
+  /* ORDRE 2135: knapperne bliver stående nederst i panelet, mens notatet ruller. */
+  body.athlete #athleteInstantResult .athInstantActions { position:sticky; bottom:-13px; margin-top:8px;
+    padding:8px 0 13px; background:rgba(24,24,20,.97); z-index:1; }
+  body.athlete #athleteInstantResult #athleteNoteInput { min-height:56px; }
+  body.athlete #athleteRetSkiveBtn { border:1px solid rgba(237,234,226,.18);
     background:transparent; color:rgba(237,234,226,.72); }
   body.athlete #athleteInstantSaveBtn { border-color:var(--accent);
     background:var(--accent); color:#141410; }
@@ -7870,6 +7880,17 @@ function vcConfirmPlateRing() {
   return { x: c.x, y: c.y, r: c.r };
 }
 
+// ORDRE 2135 (Marc 10. nov. kl. 21:18: "gøre det så let som muligt for atleten at logge"): i "Film et sæt" starter
+// analysen af sig selv, når skiven er fundet og ringen sat. Samme vej som allBtn.onclick's plateConfirm-gren, så
+// kalibreringens tal er de samme som efter et tryk på Analysér. Ringen kan rettes bagefter med "Ret skive".
+function vcAthleteAutoStart() {
+  if (!(ATHLETE && VC_ATHLETE_INSTANT) || !plateConfirm || analyzing || tracking) return false;
+  const barPt = vcConfirmPlateRing();
+  if (setAthleteState) setAthleteState('analyzing');
+  runFullAnalysis(barPt);
+  return true;
+}
+
 // ORDRE 80 · start: realtids-sporing til "Vis mig nu"
 // -----------------------------------------------------------------------------
 // "Vis mig nu" sporede tidligere hvert af de tre vinduer via den delte,
@@ -8743,6 +8764,7 @@ function wizardClick(p) {
                : 'Forslag fra sidste gang (træk kanten hvis den sidder forkert) · ⚡ = analysér · klik langt væk = mål om');
       if (!SLIM) allBtn.textContent = 'Start analyse';
       allBtn.classList.add('active');
+      vcAthleteAutoStart();
       return;
     }
     const scale = autoCalib(p);
@@ -8768,6 +8790,7 @@ function wizardClick(p) {
                : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
       if (!SLIM) allBtn.textContent = 'Start analyse';
       allBtn.classList.add('active');
+      vcAthleteAutoStart();
       return;                           // wizard forbliver auto -> nyt klik = ny ring
     }
     // ORDRE 109 · commit 2: kanten blev ikke fundet - atleten må ALDRIG stå
@@ -8820,6 +8843,7 @@ function wizardClick(p) {
              : 'Ram skiven med ringen (træk midten for at flytte, kanten for at ændre størrelse) · ⚡ = analysér · klik langt væk = mål om');
     if (!SLIM) allBtn.textContent = 'Start analyse';
     allBtn.classList.add('active');
+    vcAthleteAutoStart();
     return;
   }
 }
@@ -12131,11 +12155,25 @@ if (ATHLETE) {
   athleteInstantSaveBtn.type = 'button';
   athleteInstantSaveBtn.id = 'athleteInstantSaveBtn';
   athleteInstantSaveBtn.textContent = 'Send video til coach';
-  athleteInstantActions.append(athleteInstantDiscardBtn, athleteInstantSaveBtn);
+  // ORDRE 2135: analysen starter selv efter skivevalget, så ringen kan ikke længere rettes før start. "Ret skive"
+  // går tilbage til skivevalget ved startbilledet; notat og belastning ligger i panelet, så de stadig kan skrives før send.
+  const athleteRetSkiveBtn = document.createElement('button');
+  athleteRetSkiveBtn.type = 'button';
+  athleteRetSkiveBtn.id = 'athleteRetSkiveBtn';
+  athleteRetSkiveBtn.textContent = 'Ret skive';
+  athleteRetSkiveBtn.onclick = () => {
+    vcPriorSetup = null; // et forslag fra sidste gang ville give samme skala igen; nu måles skiven på ny
+    looping = false;
+    document.getElementById('loopBtn').classList.remove('active');
+    video.pause();
+    if (Number.isFinite(manualTrackingBounds.start)) video.currentTime = manualTrackingBounds.start;
+    allBtn.click();
+  };
+  athleteInstantActions.append(athleteInstantDiscardBtn, ...(VC_ATHLETE_INSTANT ? [athleteRetSkiveBtn] : []), athleteInstantSaveBtn);
   // ORDRE 1616v: i instant-flowet ligger resultatpanelet over stangbane-kortet, så linjen om den
   // afskårne hale flyttes herind (samme element, så den aldrig står to steder).
   const athleteTailNote = VC_ATHLETE_INSTANT ? document.getElementById('vcTailCutNote') : null;
-  athleteInstantResult.append(athleteInstantHead, athleteInstantRows, ...(athleteTailNote ? [athleteTailNote] : []), athleteInstantFoot, athleteInstantActions);
+  athleteInstantResult.append(athleteInstantHead, athleteInstantRows, ...(athleteTailNote ? [athleteTailNote] : []), athleteInstantFoot, ...(VC_ATHLETE_INSTANT ? [athleteConfirmFields] : []), athleteInstantActions);
   // ORDRE 1890v (Marc 19. nov.: "kan man ikke minimere send til coach overlay"): overskriften er en
   // knap, der folder panelet til en lille bjælke og åbner det igen. Intet i panelet ændres af det.
   const athleteInstantFoldBtn = document.createElement('button');
@@ -12230,7 +12268,7 @@ if (ATHLETE) {
   addAthleteConfirmField('Belastning / RPE (valgfri)', document.getElementById('loadInput'));
   const athleteNoteInput = document.createElement('textarea');
   athleteNoteInput.id = 'athleteNoteInput';
-  athleteNoteInput.rows = 3;
+  athleteNoteInput.rows = 2;
   athleteNoteInput.maxLength = 1000;
   athleteNoteInput.placeholder = 'Hvad vil du gerne have coachens blik på?';
   athleteNoteInput.style.resize = 'vertical';
@@ -12397,7 +12435,7 @@ if (ATHLETE) {
     athletePreviewBtn.hidden = state !== 'confirm';
     // ORDRE 61 · commit 3: belastning/RPE og notat skal kunne udfyldes FØR
     // Start/Vis mig nu trykkes - samme trin som ringbekræftelsen.
-    athleteConfirmFields.hidden = state !== 'confirm';
+    athleteConfirmFields.hidden = VC_ATHLETE_INSTANT ? state !== 'done' : state !== 'confirm';
     // ORDRE 262 · commit 2: instant-flowet bruger ikke "Vis mig nu"
     // (vcAthletePreviewThree har sin egen, separate auto-send - se dens
     // kommentar) - skjult uanset trin, i stedet for at ændre 54/61s regel.
