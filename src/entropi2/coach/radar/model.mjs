@@ -1,6 +1,7 @@
 import { activityDay } from '../../../dashboard/coachInactive.mjs'
 import { civilDay, ordinal, shiftDay, compare, rankRadar } from './rules.mjs'
 import { scopeKey, validId } from './read.mjs'
+import { erKostKlient } from '../kostKlienter.mjs'
 
 export function radarScope(source, context) {
   if (!context?.rosterReady || !civilDay(context.day) || source?.loading || source?.loadError ||
@@ -114,7 +115,8 @@ export function coachRadarModel(options = {}) {
       rpe: ownLogs && rpeDays(ownLogs), pain: [...pain].map(([location, points]) => ({ location, points })),
       readiness: daily?.map(row => ({ day: row.day, value: row.readiness })),
       sleep: daily?.map(row => ({ day: row.day, value: row.sleep })),
-      noLogFiveDays: ownLogs ? !ownLogs.some(row => row.skipped !== true && ordinal(context.day) - ordinal(activityDay(row.logged_at)) < 5) : undefined,
+      // Ordre 2103: en kostklient (kostpakke, intet program) skal ikke have en træningslog.
+      noLogFiveDays: ownLogs ? !erKostKlient(athlete, context.plans?.[athlete.id]) && !ownLogs.some(row => row.skipped !== true && ordinal(context.day) - ordinal(activityDay(row.logged_at)) < 5) : undefined,
     } }
   })
   return { state: !logs || !readiness || !context.messages.complete || !context.videos.complete || !context.calendarReady ? 'partial' : 'ready',

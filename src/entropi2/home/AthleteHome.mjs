@@ -24,6 +24,7 @@ import { u7Enabled } from '../u7/flag.mjs'
 import PushCard from '../u8/PushCard.mjs'
 import { u8Enabled } from '../u8/flag.mjs'
 import { addCalendarDays } from '../../calendarDate.js'
+import { kostKlient as erKostKlient } from '../../athlete/kostValg.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -148,6 +149,8 @@ export default function AthleteHome(props) {
   const target = model.target
   const holiday = model.kind === 'holiday' ? holidayEnd(athlete?.vacation_until) : null
   const noProgram = model.kind === 'no-program'
+  // Ordre 2103 (Marc 24. nov.: "kost kan købes alene"): kostpakke og intet program gør Kost til dagens ting.
+  const kostKlient = visKost && erKostKlient(athlete, !noProgram)
   // Runde 12: Hjem kan have flyttet sig til en ny kalenderuge, mens appens indlæste uge er den
   // gamle. Registrering kræver samme uge; ellers bedes atleten genindlæse, ikke registrere forgæves.
   const staleWeek = Boolean(target && props.currentWeek && target.week.id !== props.currentWeek.id)
@@ -209,6 +212,7 @@ export default function AthleteHome(props) {
     h('section', { style: { ...s.card, borderColor: '#c8923a' }, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading, 'data-u9-pas': '' },
       !(programLoading || programError || noProgram) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'
+        : kostKlient ? 'Din kost i dag'
         : target?.session.title || (target ? 'Træning' : holiday ? `Du er på ferie til ${holiday.until}` : labels[model.kind] || labels.missing)),
       target ? h('div', null,
         model.date && h('p', { style: s.text }, model.date === model.today ? 'I dag' : danishDate(model.date)),
@@ -224,6 +228,9 @@ export default function AthleteHome(props) {
           h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Se øvelser og coachnoter'),
           namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
           ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`))))
+        : kostKlient ? h('div', null,
+          h('p', { style: s.text }, nutrition?.text || 'Din kostplan er klar. Åbn Kost for dagens måltider.'),
+          h('button', { type: 'button', style: s.primary, disabled: typeof setTab !== 'function', onClick: go('kost') }, 'Åbn kost'))
         : noProgram && !programLoading && !programError ? null
         : h('p', { role: programError && !programLoading ? 'alert' : 'status', style: s.text }, programLoading ? 'Indlæser dit program…'
           : programError ? 'Programmet kunne ikke hentes. Tjek din forbindelse og prøv igen.'
@@ -239,7 +246,7 @@ export default function AthleteHome(props) {
     week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
     !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
-      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost,
+      canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost, kostKlient,
       todayCard: u5TodayEnabled(props.u5Today) }),
     // U5: "I dag" øverst med det, der mangler, og let logning. Bag sit eget flag.
     u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData, visKost,
@@ -268,7 +275,7 @@ export default function AthleteHome(props) {
       week?.plan && h('details', { style: s.card, 'data-home-week-plan': '' },
         h('summary', { style: { ...s.text, cursor: 'pointer', minHeight: 44 } }, 'Se ugens plan'),
         h(WeekPlan, week.plan)),
-      nutrition && h('button', { type: 'button',
+      nutrition && !kostKlient && h('button', { type: 'button',
         style: { ...s.secondary, marginTop: 0, marginBottom: 20, textAlign: 'left' },
         disabled: typeof setTab !== 'function', onClick: go('kost') }, nutrition.text),
       coach && h('section', { style: s.card, 'aria-label': 'Fra din coach' },

@@ -627,12 +627,12 @@ export default function ProgramTab({
                         color: programColors.accent, marginBottom: 12, letterSpacing: '0.02em' }}>Entropi.</div>}
                       <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400,
                         color: programColors.text, lineHeight: 1.3, margin: '0 0 12px' }}>
-                        {programError ? 'Dit program kunne ikke hentes.' : 'Dit program er på vej.'}
+                        {programError ? 'Dit program kunne ikke hentes.' : athlete?.kostPakke === true ? 'Du har ingen træning i appen.' : 'Dit program er på vej.'}
                       </h2>
                       <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 16, lineHeight: 1.6,
                         letterSpacing: 'normal', color: programColors.muted, margin: 0 }}>
                         {programError ? 'Tjek din forbindelse og prøv igen.'
-                          : 'Din coach sætter det op inden din næste træning.'}
+                          : athlete?.kostPakke === true ? 'Din kost finder du under Kost.' : 'Din coach sætter det op inden din næste træning.'}
                       </p>
                       {programError && <button type="button" style={{ ...programTapTarget, ...programGhost, minHeight: 48, marginTop: 16,
                         fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 16, lineHeight: 1.5,
@@ -652,9 +652,9 @@ export default function ProgramTab({
                   ) : (
                     <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1.5rem' }}>
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', color: '#c8923a', marginBottom: '1rem', letterSpacing: '0.02em' }}>Entropi.</div>
-                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>Dit program er på vej.</div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', marginBottom: '0.75rem' }}>{athlete?.kostPakke === true ? 'Du har ingen træning i appen.' : 'Dit program er på vej.'}</div>
                       <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.58rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), letterSpacing: '0.08em', lineHeight: 1.7 }}>
-                        Din coach sætter det op inden din næste træning.
+                        {athlete?.kostPakke === true ? 'Din kost finder du under Kost.' : 'Din coach sætter det op inden din næste træning.'}
                       </div>
                     </div>
                   )}

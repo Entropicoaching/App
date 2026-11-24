@@ -9,6 +9,13 @@ const FIRST_VISIT_STEPS = [
   { title: 'Din dag', text: 'Brug Din coach på Hjem, hvis du har spørgsmål. Du behøver ikke registrere noget for at afslutte introduktionen.' },
 ]
 
+// Ordre 2103: en kostklient (kostpakke, intet program) får en tur uden pas og sæt.
+const KOST_STEPS = [
+  FIRST_VISIT_STEPS[0],
+  { title: 'Din kost', text: 'Tryk Åbn kost på Hjem. Her står dagens måltider. Tryk som planlagt, når du har spist, eller skriv, hvad du ellers spiste.' },
+  FIRST_VISIT_STEPS[3],
+]
+
 // Ordre 1542: med "I dag"-kortet står vægt og dagsform kun i kortet; knapperne Dagsform og Vægt i dag vises ikke.
 function dailyStep({ canLogReadiness, canLogWeight, visKost, todayCard }) {
   const tips = []
@@ -32,7 +39,8 @@ export default function AthleteIntroduction(props = {}) {
   return h(ScopedIntroduction, { ...props, scopeKey, key: scopeKey })
 }
 
-function ScopedIntroduction({ scopeKey, firstName, storage, headingRef, canLogReadiness, canLogWeight, visKost, todayCard }) {
+function ScopedIntroduction({ scopeKey, firstName, storage, headingRef, canLogReadiness, canLogWeight, visKost, todayCard, kostKlient }) {
+  const steps = kostKlient === true ? KOST_STEPS : FIRST_VISIT_STEPS
   const initial = () => ({ ...readFirstVisit(scopeKey, storage), storage, step: 0 })
   const [state, setState] = useState(initial)
   const live = useRef(state), active = useRef(true), finished = useRef(false), title = useRef(null)
@@ -66,17 +74,17 @@ function ScopedIntroduction({ scopeKey, firstName, storage, headingRef, canLogRe
     setState({ ...state, step })
     title.current?.focus()
   }
-  const step = state.step === 3 ? dailyStep({ canLogReadiness, canLogWeight, visKost, todayCard }) : FIRST_VISIT_STEPS[state.step]
+  const step = state.step === steps.length - 1 ? dailyStep({ canLogReadiness, canLogWeight, visKost, todayCard }) : steps[state.step]
   return h('section', { 'aria-label': 'Introduktion', 'data-home-onboarding': '',
     style: { ...s.card, minWidth: 0, overflowWrap: 'anywhere' } },
-    h('p', { style: s.eyebrow, 'aria-live': 'polite', 'aria-atomic': true }, `Trin ${state.step + 1} af ${FIRST_VISIT_STEPS.length}`),
+    h('p', { style: s.eyebrow, 'aria-live': 'polite', 'aria-atomic': true }, `Trin ${state.step + 1} af ${steps.length}`),
     h('h2', { ref: title, tabIndex: -1, style: s.heading }, state.step === 0 ? welcomeTitle(firstName) : step.title),
     h('p', { style: s.text }, step.text),
     state.unavailable && h('p', { role: 'status', style: s.text },
       'Dit tidligere valg kunne ikke læses på denne enhed. Du kan stadig fortsætte eller springe over.'),
     h('button', { type: 'button', style: s.primary,
-      onClick: state.step === FIRST_VISIT_STEPS.length - 1 ? finish : () => move(state.step + 1) },
-    state.step === FIRST_VISIT_STEPS.length - 1 ? 'Kom i gang' : 'Næste'),
+      onClick: state.step === steps.length - 1 ? finish : () => move(state.step + 1) },
+    state.step === steps.length - 1 ? 'Kom i gang' : 'Næste'),
     state.step > 0 && h('button', { type: 'button', style: s.secondary, onClick: () => move(state.step - 1) }, 'Tilbage'),
     h('button', { type: 'button', style: s.secondary, onClick: finish }, 'Spring over'))
 }

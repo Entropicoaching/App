@@ -21,3 +21,8 @@ export function kostSynlig(athlete, enabled = KOST_PER_ATLET, choices = KOST_VAL
 export function kostDestination(destination, visible) {
   return destination === 'kost' && visible === false ? 'hjem' : destination
 }
+
+// Ordre 2103 (Marc 24. nov.: kost kan købes alene): en kostklient har en sendt kostuge og intet program.
+// Afgøres kun af data, der findes i dag: kostPakke === true og ingen uger. Atleter med program er uændrede.
+export const kostKlient = (athlete, harProgram) => athlete != null && typeof athlete === 'object' &&
+  athlete.kostPakke === true && harProgram === false
