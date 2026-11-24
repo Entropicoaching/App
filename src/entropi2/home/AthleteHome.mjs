@@ -188,7 +188,7 @@ export default function AthleteHome(props) {
     }
     return !failed
   }
-  const link = (route, text) => h('button', { key: route, type: 'button', style: s.secondary,
+  const link = (route, text, style = s.secondary) => h('button', { key: route, type: 'button', style,
     disabled: typeof setTab !== 'function', onClick: go(route) }, text)
   return h('main', { style: s.page, 'aria-label': 'Hjem', 'data-entropi2-home': '' },
     // Nedtælling til stævne øverst (genbruger den gamle Hjems staevneHome, ingen ny regnemåde). Skjult uden dato eller efter datoen.
@@ -206,7 +206,8 @@ export default function AthleteHome(props) {
       'data-ny-besked': '', disabled: typeof setTab !== 'function', onClick: go('beskeder') },
       unreadLabel),
     // U9 (Marc 11. nov.): genvejen til dagens eller næste pas er det første, atleten møder; resten rykker ned.
-    h('section', { style: { ...s.card, borderColor: '#c8923a' }, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading, 'data-u9-pas': '' },
+    // Ordre 2035f: kortet er almindeligt (designretning A); den ene amber knap gør det til hovedkortet.
+    h('section', { style: { ...s.card, marginBottom: 8 }, 'aria-label': 'Dit næste pas', 'aria-busy': programLoading, 'data-u9-pas': '' },
       !(programLoading || programError || noProgram) && h('p', { style: s.eyebrow }, target ? model.kind === 'today' ? 'Dagens pas' : 'Næste træning' : 'Dit program'),
       h('h2', { style: s.heading }, programLoading || programError ? 'Dit program'
         : target?.session.title || (target ? 'Træning' : holiday ? `Du er på ferie til ${holiday.until}` : labels[model.kind] || labels.missing)),
@@ -218,7 +219,7 @@ export default function AthleteHome(props) {
           ? 'En ny uge er startet. Hent programmet igen for at registrere passet.'
           : 'En ny uge er startet. Genindlæs siden for at registrere passet.')
           : !canStart && h('p', { role: 'status', style: s.text }, 'Passet kunne ikke åbnes. Prøv at genindlæse siden.')),
-        model.logged != null && h('p', { style: s.text }, `${model.logged} af ${model.total} sæt klaret`),
+        model.logged != null && h('p', { style: { ...s.text, margin: '8px 0 0' } }, `${model.logged} af ${model.total} sæt klaret`),
         (namedExercises.length > 0 || target.session.exercises.some(e => e.note)) && h('details', {
           key: `${target.week.id}:${target.session.id}`, 'data-home-session-details': '' },
           h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Se øvelser og coachnoter'),
@@ -235,9 +236,12 @@ export default function AthleteHome(props) {
       }, retryWeek && programLoading ? 'Henter…' : 'Hent igen'),
       props.sessionRootRef && h('section', { ref: props.sessionRootRef, 'aria-label': 'Dit valgte pas' }),
       // Ordre 1714: uden program er der intet at åbne; den ene handling er en besked til coachen.
-      noProgram ? link('beskeder', 'Skriv til din coach') : link('program', 'Se mit program')),
-    week?.line && h('p', { style: { ...s.text, marginTop: 0 }, 'data-week-sessions': '' }, week.line),
-    !props.sessionReadOnly && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
+      // Ordre 2035f: programmet ligger også i bundmenuen, så vejen dertil er et tekstlink, ikke endnu en knap.
+      noProgram ? link('beskeder', 'Skriv til din coach') : link('program', 'Se mit program', s.link)),
+    week?.line && h('p', { style: { ...s.muted, padding: '0 4px' }, 'data-week-sessions': '' }, week.line),
+    // Ordre 2035f (Dhurva 2068): en ny klient har lige set guiden med tre trin (2065), som dækker de samme emner.
+    // Introen her vises derfor kun, når guiden ikke er gennemført; ellers er guiden den ene intro.
+    !props.sessionReadOnly && athlete?.onboarding_completed_at == null && h(HomeOnboarding, { enabled, athleteId: athlete?.id, firstName: name, storage: props.storage, headingRef,
       canLogReadiness: typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function',
       canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost,
       todayCard: u5TodayEnabled(props.u5Today) }),

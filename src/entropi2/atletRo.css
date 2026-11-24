@@ -1,0 +1,18 @@
+/* Ordre 2035f (Marc 23. nov.: "ui lidt mindre rodet for atleten"). Indlæses med entropi2.css.
+   #root centrerer al tekst; atletens skærme er venstrestillede som Hjem, så Program og den gamle
+   fremgang ikke står centreret i tekstvægge. */
+[data-entropi2-athlete] [data-entropi2-page] {
+  text-align: left;
+}
+
+/* Programfanen: mono kun til små etiketter. Pasnavn, ugedag, tællelinje, "Du er her" og næste-pas-knappen
+   i samme skrift som resten af appen; de låste kilder røres ikke. */
+[data-entropi2-athlete] [data-program-session-tone] h2,
+[data-entropi2-athlete] [data-program-session-tone] [style*="Plex Mono"][style*="font-size: 14px"],
+[data-entropi2-athlete] [data-program-session-tone] [style*="font-size: 0.8rem"],
+[data-entropi2-athlete] [data-program-week-navigation] [style*="Plex Mono"][style*="font-size: 1rem"],
+[data-entropi2-athlete] [data-program-next] {
+  font-family: 'IBM Plex Sans', Arial, sans-serif !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
