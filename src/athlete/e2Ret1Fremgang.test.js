@@ -25,11 +25,15 @@ test('RET1: den gamle analyse slås kun fra med entropi2Analyse === true', () =>
 })
 
 for (const { name, Component } of entries) {
-  test(`RET1 ${name}: med entropi2Analyse ingen gammel analyse, men den uændrede fremgangsvisning`, () => {
+  test(`RET1 ${name}: med entropi2Analyse ingen gammel analyse, men den uændrede fremgangsvisning i en fold`, () => {
     const on = mount(Component, { ...props, entropi2Analyse: true }).render()
     assert.equal(oldAnalysis(on), 0)
-    // Resten af fremgang er præcis den visning, appen har uden den gamle analyse.
-    assert.equal(serial(on), serial(mount(Component, { ...props, rel1101: false }).render()))
+    // Ordre 2035f: med Entropi 2's analyse ovenover ligger den gamle fremgang bag én fold, intet fjernet.
+    assert.equal(on.type, 'details'); assert.equal(on.props['data-fremgang-legacy'], '')
+    assert.equal(on.props.children[0].type, 'summary'); assert.equal(on.props.children[0].props.children[0], 'Flere analyser og rekorder')
+    assert.equal(on.props.children.length, 2)
+    // Indholdet i folden er præcis den visning, appen har uden den gamle analyse.
+    assert.equal(serial(on.props.children[1]), serial(mount(Component, { ...props, rel1101: false }).render()))
     // Flaget slukket (ingen entropi2Analyse): den gamle analyse vises som før.
     assert.equal(oldAnalysis(mount(Component, props).render()), 1)
   })

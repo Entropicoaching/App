@@ -44,6 +44,8 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     b.addEventListener('click', fn); return b
   }
   const title = node('h1', 'Samtale'), status = node('p'), list = node('ol'), compose = node('section')
+  // Ordre 2035f: samme overskrift som Hjem (designretning A), ikke appens 36 px.
+  Object.assign(title.style, { fontFamily: "'Playfair Display', Georgia, serif", fontSize: '28px', lineHeight: '1.15', fontWeight: '400', margin: '8px 0 16px' })
   status.setAttribute('role', 'status'); compose.setAttribute('aria-label', 'Skriv en besked')
   status.style.marginBottom = '12px'
   // Keep list semantics without spending the message width on timeline numbers.
@@ -105,6 +107,9 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   const send = button('Send', () => controller.send()), retry = button('Prøv afsendelse igen', () => controller.retry())
   Object.assign(send.style, { background: '#d8b16b', color: '#141410' })
   const reload = button('Hent igen', () => controller.refresh())
+  // Ordre 2035f: sekundære veje som tekstlinks, så kun Send ligner en knap.
+  const linkStyle = { background: 'transparent', border: '0', padding: '0', color: '#c8923a', textDecoration: 'underline', textUnderlineOffset: '3px', cursor: 'pointer', font: 'inherit' }
+  Object.assign(reload.style, linkStyle, { display: 'block', marginBottom: '8px' })
   const upload = button('Send video', () => controller.upload())
   upload.title = 'Åbn videodeling fra passet og tilføj en kort note.'
   const sharing = typeof controller.shareSet === 'function' ? athleteSharingView({ node, button, controller }) : null
@@ -159,6 +164,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     input.scrollIntoView?.({ block: 'center', behavior: reduceMotion ? 'instant' : 'smooth' })
   })
   write.hidden = true
+  Object.assign(write.style, linkStyle, { display: 'block', marginBottom: '8px' })
   const week = node('div'), weekLine = node('p'), weekDetails = node('details')
   week.setAttribute('aria-label', 'Ugens samtale')
   const weekToggle = node('summary', 'Ugens detaljer'), weekCounts = node('p')

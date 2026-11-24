@@ -80,7 +80,8 @@ export default function Analysis(props = {}) {
   return h('section', { 'aria-label': 'Din analyse', 'data-entropi2-analysis': true,
     style: { color: '#edeae2', background: '#141410', padding: 20, maxWidth: 480,
       width: '100%', boxSizing: 'border-box', overflowWrap: 'anywhere', fontFamily: "'IBM Plex Sans', Arial, sans-serif" } },
-  h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, lineHeight: '40px' } }, 'Din analyse'),
+  // Ordre 2035f: samme overskriftsstørrelse som Hjem (designretning A).
+  h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, lineHeight: '32px', margin: '8px 0 20px' } }, 'Din analyse'),
   ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs })] : []),
   // U3b: retningen pr. hovedløft står i "Din udvikling", så e1RM kun vises ét sted.
   h(DevelopmentView, { ...props, now, ...(trends ? { u3Trends: trends } : {}) }),
@@ -118,7 +119,7 @@ export default function Analysis(props = {}) {
       onClick: event => copyAnalysisWeek(event, extras.share) }, 'Del ugen')),
   showRpe && h(RpeHistoryView, { history: rpeHistory }),
   visibleRecords && h('section', { 'aria-label': 'Dine rekorder', 'data-analysis-records': true,
-    style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
+    style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 12, background: '#1c1c18' } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'Dine rekorder'),
     // Marc 3. nov.: forklaringen foldes ind; rekorderne staar oeverst.
     h('details', { style: { marginTop: 8 } }, h('summary', { style: explanationSummaryStyle }, 'Sådan tælles det'), h('p', null, records.message), h('p', { style: { lineHeight: 1.6 } }, records.note)),
@@ -133,7 +134,7 @@ export default function Analysis(props = {}) {
       })),
     ),
   volumeWeeks.length > 0 && h('section', { 'aria-label': 'Volumen pr. muskelgruppe', 'data-analysis-volume': true,
-    style: { padding: 12, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18', minWidth: 0 } },
+    style: { padding: 12, marginBottom: 16, border: '1px solid #414139', borderRadius: 12, background: '#1c1c18', minWidth: 0 } },
     h('h2', { style: { fontSize: '1.15rem' } }, 'Volumen pr. muskelgruppe'),
     h('details', { style: { marginTop: 8 } }, h('summary', { style: explanationSummaryStyle }, 'Sådan tælles det'), h('p', { style: { lineHeight: 1.6 } }, volume.message)),
     ...volumeWeeks.map(week => h('table', { key: week.start,
@@ -147,7 +148,7 @@ export default function Analysis(props = {}) {
         h('td', { style: { textAlign: 'right', padding: '6px 2px' } }, formatVolume(row.sets)),
         h('td', { style: { textAlign: 'right', padding: '6px 2px' } }, formatVolume(row.tonnage)))))))),
   ...visibleAnswers.map(a => h('section', { key: a.key, 'aria-label': a.title,
-    style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 16, background: '#1c1c18' } },
+    style: { padding: 20, marginBottom: 16, border: '1px solid #414139', borderRadius: 12, background: '#1c1c18' } },
   h('h2', { style: { fontSize: '1.15rem' } }, a.title),
   a.value && h('p', { 'data-analysis-value': a.key, style: { fontSize: '1.5rem' } }, a.value),
   h('p', { style: { lineHeight: 1.6 } }, a.message),

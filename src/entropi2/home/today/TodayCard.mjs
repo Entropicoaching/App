@@ -18,7 +18,8 @@ const row = { borderTop: '1px solid #2f2f29', paddingTop: 12, marginTop: 12 }
 const label = { ...s.text, margin: '0 0 6px', color: '#edeae2', fontWeight: 600 }
 const hint = { ...s.text, fontSize: 14, margin: '6px 0 0' }
 const step = { ...s.secondary, marginTop: 0, minWidth: 0, padding: 0 }
-const primary = { ...s.primary, marginTop: 0, minHeight: 48 }
+// Ordre 2035f: kun "Start dagens pas" er amber på Hjem; kortets egne handlinger er sekundære knapper.
+const primary = { ...s.secondary, marginTop: 0, minHeight: 48 }
 
 export default function TodayCard(props) {
   const { athlete, today } = props
@@ -210,7 +211,7 @@ export default function TodayCard(props) {
   const shownOrder = keys => mealFirst ? ['weight', 'readiness', 'meal', 'training'].filter(key => keys.includes(key)) : keys
   return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'I dag', 'data-u5-today': '' },
     h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
-    h('h2', { style: { ...s.heading, fontSize: 22, margin: '6px 0 0' } }, model.headline),
+    h('h2', { style: { ...s.heading, fontSize: 20, margin: '4px 0 0' } }, model.headline),
     model.doneLine && h('p', { style: { ...hint, margin: '4px 0 0' } }, `${model.doneLine} ✓`),
     ...shownOrder(model.missing).map(key => rows[key]?.()))
 }

@@ -5,7 +5,9 @@ import { developmentModel, developmentNumber as number, developmentDate as date 
 
 const text = value => h('p', { style: { lineHeight: 1.6 } }, value)
 const summaryStyle = { minHeight: 44, paddingTop: 12, boxSizing: 'border-box', cursor: 'pointer' }
-const card = { border: '1px solid #414139', borderRadius: 16, padding: 16, marginBottom: 16, minWidth: 0 }
+const card = { border: '1px solid #414139', borderRadius: 12, padding: 16, marginBottom: 16, minWidth: 0 }
+// Ordre 2035f: forklaringer står dæmpet og kort; det lange står i folderne.
+const note = value => h('p', { style: { lineHeight: 1.5, fontSize: 14, color: '#c1beb5', margin: '0 0 8px' } }, value)
 const compactDate = day => `${day.slice(8, 10)}.${day.slice(5, 7)}`
 const palette = ['#d8b16b', '#8ab5bc', '#bca1d5', '#98b786', '#da9d8e']
 function loadChart(model, title, value, unit) {
@@ -43,9 +45,9 @@ export default function DevelopmentView(props = {}) {
   return h('section', { 'data-development': true, 'data-analysis-history': true, 'aria-label': 'Din udvikling', style: card },
     heading,
     // U3b: med U3-tendenser er forklaringen én kort linje; kurven siger resten.
-    ...(trends.length ? [h('p', { style: { lineHeight: 1.5, fontSize: 14, color: '#c1beb5' } }, 'e1RM er et skøn ud fra dine tunge sæt, 26 uger.')] : [
-      text(`26 uger · ${date(model.start)}–${date(model.today)}. Denne uge er ufuldstændig.`),
-      lifts.length > 0 && text('Se udviklingen i dit beregnede maksimum (e1RM). Det er et skøn ud fra dine sæt, ikke en testet rekord.')]),
+    // Ordre 2035f: én kort linje i stedet for to sætninger; resten står under "Sådan læses din udvikling".
+    ...(trends.length ? [note('e1RM er et skøn ud fra dine tunge sæt, 26 uger.')] : [
+      note(`26 uger · ${date(model.start)}–${date(model.today)} · denne uge er ufuldstændig.${lifts.length > 0 ? ' e1RM er et skøn ud fra dine sæt, ikke en testet rekord.' : ''}`)]),
     ...lifts.map(lift => {
       const max = Math.max(1, ...lift.points.map(p => p.value ?? 0))
       const latest = lift.points.filter(p => p.value !== null).at(-1)
@@ -91,7 +93,6 @@ export default function DevelopmentView(props = {}) {
     }),
     blockNames.length > 0 && h('section', { 'aria-label': 'Observerede blokke' },
       h('h3', null, 'Blokke på tidslinjen'),
-      text('Bloknavne fra registrerede sæt. De viser observationer; præcise blokgrænser kræver hele blokplanen.'),
       h('div', { role: 'img', 'aria-label': 'Observerede blokke over 26 uger. Uger uden bloknavn har ingen markering.',
         style: { display: 'grid', gridTemplateColumns: 'repeat(26, minmax(0, 1fr))', gap: 2, height: 16 } },
         ...model.weeks.map(w => h('span', { key: w.start,
@@ -100,6 +101,7 @@ export default function DevelopmentView(props = {}) {
       h('ul', { style: { display: 'flex', flexWrap: 'wrap', gap: '4px 16px', paddingLeft: 20, fontSize: 14 } },
         ...blockNames.map(name => h('li', { key: name, style: { color: blockColor(name) } }, name))),
       h('details', null, h('summary', { style: summaryStyle }, 'Se bloknavne pr. uge'),
+        text('Bloknavne fra registrerede sæt. De viser observationer; præcise blokgrænser kræver hele blokplanen.'),
         h('ol', { style: { paddingLeft: 20, fontSize: 14, lineHeight: 1.6 } },
           ...model.weeks.filter(w => w.blocks.length > 0).map(w => h('li', { key: w.start }, `${date(w.start)}: ${w.blocks.join(' / ')}`))))),
     model.insights.length > 0 && h('section', { 'aria-label': 'Dine indsigter' },
@@ -107,12 +109,12 @@ export default function DevelopmentView(props = {}) {
       h('ul', { style: { paddingLeft: 20 } }, ...model.insights.map((insight, i) => h('li', { key: i },
         text(insight.text), h('details', null, h('summary', { style: summaryStyle }, 'Datagrundlag'), text(insight.evidence)))))),
     h('h3', null, hasIntensity ? 'Volumen og intensitet over tid' : 'Volumen over tid'),
-    text('Registreret volumen er kg × gentagelser. Uger uden data har ingen søjle og er ikke nul træning.'),
-    hasIntensity && text('Intensitet viser andelen af målte sæt på mindst 80 % af en kendt, uafhængig e1RM-reference.'),
     hasVolume && loadChart(model, 'Volumen pr. uge · kg × gentagelser', w => w.sets ? w.tonnage : null, 'kg × gentagelser'),
     hasIntensity && loadChart(model, 'Intensitet pr. uge · andel sæt ≥80 %', w => w.highShare, '%'),
     h('details', { 'data-development-load': true },
       h('summary', { style: summaryStyle }, hasIntensity ? 'Se registreret volumen og intensitet' : 'Se registreret volumen'),
+      text('Registreret volumen er kg × gentagelser. Uger uden data har ingen søjle og er ikke nul træning.'),
+      hasIntensity && text('Intensitet viser andelen af målte sæt på mindst 80 % af en kendt, uafhængig e1RM-reference.'),
       h('table', { style: { width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', fontSize: 13 } },
         h('caption', null, 'Registreringer pr. kalenderuge'),
         h('thead', null, h('tr', null, ...['Uge fra', 'Volumen', ...(hasIntensity ? ['Sæt ≥80 %'] : [])].map(label => h('th', { key: label, scope: 'col', style: { textAlign: 'left', padding: 4 } }, label)))),

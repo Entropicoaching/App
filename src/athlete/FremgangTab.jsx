@@ -364,5 +364,10 @@ function LegacyFremgangTab({ fremgangLinjer = DEFAULT_FREMGANG_LINJER, personalR
 
 // APP-ANALYSE-ATLET1: keep the legacy component and its handlers intact when off.
 export default function AnalyseAtlet1Entry(props) {
-  return analyseAtlet1Enabled(props) ? renderAnalyseAtlet1(createElement, props) : createElement(LegacyFremgangTab, props)
+  if (analyseAtlet1Enabled(props)) return renderAnalyseAtlet1(createElement, props)
+  // Ordre 2035f (Marc 23. nov.: mindre rodet): med Entropi 2's analyse ovenover er den gamle fremgang en fold; intet fjernet.
+  if (props.entropi2Analyse === true) return createElement('details', { 'data-fremgang-legacy': '' },
+    createElement('summary', { style: { minHeight: 44, paddingTop: 12, boxSizing: 'border-box', cursor: 'pointer' } }, 'Flere analyser og rekorder'),
+    createElement(LegacyFremgangTab, props))
+  return createElement(LegacyFremgangTab, props)
 }
