@@ -63,10 +63,12 @@ async function main() {
     await ap.getByRole('button', { name: /Opret konto/ }).click()
     await ap.getByRole('button', { name: /Videre/i }).first().waitFor({ state: 'visible', timeout: 15000 })
     for (let i = 0; i < 6; i++) {
-      const v = ap.getByRole('button', { name: /Videre|Se dit program/i })
+      const v = ap.getByRole('button', { name: /Videre|Se dit program|Gå til forsiden/i })
       if (!(await v.count())) break
       await v.first().click(); await ap.waitForTimeout(600)
     }
+    // 2065: guiden lander paa Hjem; programmet aabnes med "Se mit program".
+    await ap.getByRole('button', { name: 'Se mit program' }).first().click()
     await ap.getByRole('button', { name: /^Dag 1 Squat/ }).first().click()
     await ap.getByLabel(/^Vægt · .*sæt 1$/).fill('100')
     await ap.getByRole('button', { name: /^log/i }).first().click()

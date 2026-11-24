@@ -11,14 +11,14 @@ test('første dag fører til sætkortets felter, gem og pasoverblik', () => {
   assert.ok(log.includes('vægt') && log.includes('gentagelser'))
   assert.ok(log.includes('ret tallene') && log.includes('gemme'))
   assert.ok(log.includes('"' + card.save + '"'))
-  assert.ok(find.includes('dagens pas øverst') && find.includes('"Se ugens plan"'))
+  assert.ok(find.includes('dagens pas øverst') && find.includes('"Se mit program"'))
   assert.ok(find.includes('"' + card.overview + '"'))
   assert.ok(find.includes('alle øvelser og sæt'))
   assert.doesNotMatch(find, /markeret som "Næste"|folder det sig ud/)
 })
 
-test('guiden bevarer fire trin og RPE-hjælp uden ny pligt eller tidsløfte', () => {
-  assert.deepEqual(steps.map(step => step.key), ['velkommen', 'dagsform', 'find-session', 'log-saet'])
+test('guiden har tre trin og RPE-hjælp uden ny pligt eller tidsløfte', () => {
+  assert.deepEqual(steps.map(step => step.key), ['velkommen', 'find-session', 'log-saet'])
   const text = steps.map(step => [step.heading, step.body].join(' ')).join(' ')
   assert.doesNotMatch(text, /[–—]|minut|sekund|hurtigere|spar.*tid/i)
   const log = steps.find(step => step.key === 'log-saet').body

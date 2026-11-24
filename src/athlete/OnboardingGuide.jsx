@@ -1,15 +1,17 @@
 // Onboarding-guiden (klik-guiden ved foerste login, kan genaabnes fra
 // kontomenuen) — flyttet uaendret ud af AthleteView.jsx (ordre 373).
 // Betingelsen for at vise den staar stadig i AthleteView.
-import { ATHLETE_ONBOARDING_GUIDE_STEPS, isLastOnboardingGuideStep } from '../athleteOnboardingGuide'
+import { guideKontekstFraAtlet, onboardingGuideSteps } from '../athleteOnboardingGuide'
 import { s } from '../athleteShared'
 
 function OnboardingGuide({
   advanceOnboardingGuide, athlete, completeOnboardingGuide, currentWeek, guideStep,
 }) {
-    const guideStepData = ATHLETE_ONBOARDING_GUIDE_STEPS[guideStep] || ATHLETE_ONBOARDING_GUIDE_STEPS[0]
+    const guideKontekst = guideKontekstFraAtlet(athlete, currentWeek)
+    const steps = onboardingGuideSteps(guideKontekst)
+    const guideStepData = steps[guideStep] || steps[0]
     const isIntroStep = guideStepData.variant === 'intro'
-    const isLastGuideStep = isLastOnboardingGuideStep(guideStep)
+    const isLastGuideStep = guideStep >= steps.length - 1
     return (
       <div style={{ minHeight: '100vh', background: '#141410', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{ maxWidth: '460px', width: '100%', textAlign: 'center' }}>
@@ -72,7 +74,7 @@ function OnboardingGuide({
 
           {/* Trin-indikator */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '0.4rem', marginBottom: '2rem' }}>
-            {ATHLETE_ONBOARDING_GUIDE_STEPS.map((step, index) => (
+            {steps.map((step, index) => (
               <span key={step.key} style={{ width: '6px', height: '6px', borderRadius: '50%', background: index === guideStep ? '#c8923a' : 'rgba(237,234,226,0.15)' }} />
             ))}
           </div>
@@ -81,7 +83,7 @@ function OnboardingGuide({
             onClick={advanceOnboardingGuide}
             style={{ ...s.btnPrimary, fontSize: '0.7rem', padding: '0.85rem 2.75rem', letterSpacing: '0.14em' }}
           >
-            {isLastGuideStep ? (currentWeek ? 'Se dit program →' : 'Gå til forsiden →') : 'Videre →'}
+            {isLastGuideStep ? (guideKontekst?.landing === 'hjem' || !currentWeek ? 'Gå til forsiden →' : 'Se dit program →') : 'Videre →'}
           </button>
 
           <div style={{ marginTop: '1.25rem' }}>

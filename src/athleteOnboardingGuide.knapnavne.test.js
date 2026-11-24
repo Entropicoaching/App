@@ -17,7 +17,7 @@ test('guiden har 3 til 5 trin', () => {
 })
 
 test('guiden nævner de knapper, der ses på live Hjem og i loggen', () => {
-  for (const navn of ['Udfyld dagsform', 'I dag', 'Start dagens pas', 'Mere i dag', 'Se ugens plan', 'Overblik over passet', 'Som planlagt', 'Godkendt', 'Tilføj oplevet anstrengelse (RPE)']) {
+  for (const navn of ['Start dagens pas', 'Se mit program', 'Overblik over passet', 'Som planlagt', 'Godkendt', 'Tilføj oplevet anstrengelse (RPE)']) {
     assert.ok(navneIGuiden.includes(navn), `guiden nævner ikke ${navn}`)
   }
 })

@@ -59,3 +59,29 @@ test('hasCompletedOnboardingGuide laeser den server-gemte tilstand, ikke browser
   assert.equal(hasCompletedOnboardingGuide({ onboarding_completed_at: null }), false)
   assert.equal(hasCompletedOnboardingGuide({ onboarding_completed_at: '2026-09-04T10:00:00Z' }), true)
 })
+
+test('ordre 2065: trin 2 lover kun det, klienten ser (pas i dag, senere eller intet)', async () => {
+  const { onboardingGuideSteps } = await import('./athleteOnboardingGuide.js')
+  const find = kontekst => onboardingGuideSteps(kontekst).find(step => step.key === 'find-session').body
+  assert.match(find({ pas: 'i-dag' }), /"Start dagens pas"/)
+  const senere = find({ pas: 'senere', dato: 'mandag den 30. november' })
+  assert.match(senere, /første pas er mandag den 30. november/)
+  assert.match(senere, /"Start næste pas"/)
+  assert.match(senere, /under Program/)
+  assert.doesNotMatch(senere, /Start dagens pas/)
+  const intet = find({ pas: 'intet' })
+  assert.doesNotMatch(intet, /Start dagens pas|Start næste pas/)
+  assert.match(intet, /under Program/)
+  for (const kontekst of [{ pas: 'i-dag' }, { pas: 'senere' }, { pas: 'intet' }]) assert.equal(onboardingGuideSteps(kontekst).length, 3)
+})
+
+test('ordre 2065: beregnGuideKontekst følger Hjems model og lander på Hjem, når der er et pas', async () => {
+  const { beregnGuideKontekst } = await import('./athleteOnboardingGuide.js')
+  const uge = (start, weekday) => ({ id: 'w', week_number: 1, start_date: start, sessions: [{ id: 's', week_id: 'w', weekday, title: 'Dag 1', session_order: 1, exercises: [{ id: 'e', session_id: 's', name: 'Squat', sets: 4, reps: '5', exercise_order: 1 }] }] })
+  const now = new Date('2026-11-24T10:00:00Z')
+  const ctx = (week, extra = {}) => beregnGuideKontekst({ allWeeks: week ? [week] : [], currentWeek: week, exerciseLogs: [], athlete: { id: 'a' }, now, ...extra })
+  assert.deepEqual(ctx(uge('2026-11-23', 1)), { pas: 'i-dag', landing: 'hjem' })
+  assert.deepEqual(ctx(uge('2026-11-30', 0)), { pas: 'senere', dato: 'mandag den 30. november', landing: 'hjem' })
+  assert.deepEqual(ctx(null), { pas: 'intet', landing: 'hjem' })
+  assert.deepEqual(beregnGuideKontekst(), { pas: 'intet', landing: 'hjem' })
+})

@@ -16,7 +16,7 @@ import { smerteNoter } from '../coachFremgang.js'
 import { smerteStopFor, historikSomLogs } from '../saetSmerte.js'
 import { supabase as database, withRetry, queueWrite } from '../supabase.js'
 import { mergeAthleteSetInputs } from '../athleteTrainingInputs.js'
-import { hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athleteOnboardingGuide.js'
+import { guideKontekstFraAtlet, hasCompletedOnboardingGuide, isLastOnboardingGuideStep } from '../athleteOnboardingGuide.js'
 import { runGuardedRead } from '../athleteReadGuard.js'
 import { clearReadinessDraft } from '../readinessDraft.js'
 import { loadRestPause } from '../restPause.js'
@@ -674,7 +674,8 @@ export function lavLaesninger({
   function advanceOnboardingGuide() {
     if (isLastOnboardingGuideStep(guideStep)) {
       completeOnboardingGuide()
-      setTab(currentWeek ? 'program' : 'hjem')
+      // Ordre 2065: landingen er Hjem, når klienten har et pas at starte der, ellers Program.
+      setTab(guideKontekstFraAtlet(athlete, currentWeek).landing || (currentWeek ? 'program' : 'hjem'))
       return
     }
     setGuideStep(i => i + 1)
