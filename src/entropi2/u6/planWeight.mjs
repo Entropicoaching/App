@@ -1,6 +1,7 @@
 import { parseInputNumber } from '../../inputValues.js'
 import { fixedRepsEntry } from '../../fixedRepsEntry.js'
 import { formatKg, inputKg } from '../home/today/todayModel.mjs'
+import { exerciseSetView } from '../../exerciseSetView.js'
 
 // U6 del 1: næste uges vægt i sættet. Rene beregninger, ingen læsninger og ingen skrivninger.
 // Kilde: når coachen godkender udkastet fra draft-next-week og gemmer ugen, skriver
@@ -74,4 +75,18 @@ export function planFirstSetPrefill(exercises, logInputs = {}) {
     out[id] = { ...(logInputs?.[id] || {}), weight: inputKg(plan), reps }
   }
   return out
+}
+
+// Ét navn pr. øvelse på Hjem (ordre 2072): "Squat - topsæt" og "Squat - backoff" foldes med samme
+// exerciseSetView som Fremgang, og rækker i træk med samme øvelse står på én linje: "Squat 100 kg, 90 kg".
+export function planWeightRows(lines) {
+  const rows = []
+  for (const line of lines || []) {
+    const view = exerciseSetView(line.name)
+    const part = planWeightText({ ...line, name: view.name })
+    const row = rows.at(-1)
+    if (row && row.key === view.key && row.source === line.source) row.text += `, ${part.slice(view.name.length + 1)}`
+    else rows.push({ id: line.id, key: view.key, source: line.source, text: part })
+  }
+  return rows
 }
