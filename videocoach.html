@@ -278,6 +278,11 @@
     font-size:10px; line-height:1.4; }
   body.athlete #athleteStatus[data-tone="ready"] { border-color:rgba(200,146,58,.32); }
   body.athlete #athleteStatus[data-tone="done"] b { color:#78d89a; }
+  /* ORDRE 2120: kvitteringen efter Gem og send står midt i flowet, ikke kun som lille status. */
+  body.athlete[data-athlete-state="sent"] #athleteStatus { top:34%; width:min(86vw,380px); padding:18px 16px;
+    text-align:center; border-color:rgba(120,216,154,.5); }
+  body.athlete[data-athlete-state="sent"] #athleteStatus b { color:#78d89a; font-size:20px; margin-bottom:6px; }
+  body.athlete[data-athlete-state="sent"] #athleteStatus span { font-size:12px; color:rgba(237,234,226,.78); }
   body.athlete #athleteFlow { position:fixed; top:58px; left:50%;
     transform:translateX(-50%); z-index:13; display:grid;
     grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; width:min(88vw,430px);
@@ -12324,6 +12329,9 @@ if (ATHLETE) {
     athleteStartGuideText.textContent = `Start ${athleteTime(trimStart)} · tryk Stangbane`;
     resetAthleteStartGuide();
     syncAthleteStartGate();
+    // ORDRE 2120 (Marc 16. nov.: "videocoach daeleme ogsaa virke"): start sat og oevelse valgt aabner
+    // skivevalget af sig selv, samme vej som Stangbane-trykket (allBtn.onclick), saa Analysér kun trykkes én gang.
+    if ((document.body.dataset.athleteState || '') === 'ready' && !allBtn.disabled) allBtn.click();
   };
 
   const athleteStartBtn = document.createElement('button');
@@ -12360,7 +12368,7 @@ if (ATHLETE) {
           : 'Vi finder stangbanen og sender derefter videoen til din coach. Bliv på denne skærm, til der står Sendt.',
         'Annullér', 'ready'],
       done: ['Stangbanen er klar', 'Se banen og faserne i Bane. Tallene er et skøn ud fra videoen.', 'Ny bane', 'done'],
-      sent: ['Sendt til Marc ✓', 'Din video ligger klar til din coach. Feedbacken finder du i Beskeder under Teknik & løft.', 'Ny bane', 'done'],
+      sent: ['Sendt til din coach ✓', 'Din video ligger klar til din coach. Feedbacken finder du i Beskeder under Teknik & løft.', 'Ny bane', 'done'],
       error: ['Prøv igen', 'Vi mistede skiven. Tryk på et tydeligt punkt tæt på midten af skiven, og prøv igen.', 'Prøv igen', 'ready']
     };
     const info = states[state];
