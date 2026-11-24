@@ -76,6 +76,7 @@ async function main() {
     await ap.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
     await ap.waitForTimeout(1000)
     await ap.getByText('Fremgang', { exact: true }).last().click(); await ap.waitForTimeout(2500)
+    await ap.locator('summary', { hasText: 'Flere analyser og rekorder' }).click({ timeout: 3000 }).catch(() => {}) // Ordre 2074: 2035f lagde den gamle fremgang bag en fold
     const atletTal = {}
     for (const n of ['Bænkpres', 'Squat', 'Dødløft']) {
       await ap.getByRole('button', { name: n, exact: true }).first().click(); await ap.waitForTimeout(500)

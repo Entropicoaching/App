@@ -63,6 +63,7 @@ export async function runFremgang(page, { appUrl, outDir }) {
 
   // ---- 1) Åbn Fremgang — Squat er den eneste øvelse med logs, vælges automatisk ----
   await page.getByRole('button', { name: 'Fremgang', exact: true }).click()
+  await page.locator('summary', { hasText: 'Flere analyser og rekorder' }).click({ timeout: 3000 }).catch(() => {}) // Ordre 2074: 2035f lagde den gamle fremgang bag en fold
   await page.getByText('Bliver du stærkere?', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
   await page.getByRole('button', { name: 'Squat', exact: true }).waitFor({ state: 'visible' })
   await page.locator('[data-fremgang-linje]').first().waitFor({ state: 'visible', timeout: 5000 })

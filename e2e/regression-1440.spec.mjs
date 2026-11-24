@@ -85,6 +85,7 @@ async function main() {
     await a.getByRole('button', { name: 'Program', exact: true }).first().click()
     await a.waitForTimeout(1200); await tjek(a, 'atlet-04-program')
     await a.getByRole('button', { name: 'Fremgang', exact: true }).first().click()
+    await a.locator('summary', { hasText: 'Flere analyser og rekorder' }).click({ timeout: 3000 }).catch(() => {}) // Ordre 2074: 2035f lagde den gamle fremgang bag en fold
     await a.getByText('Bliver du stærkere?', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
     await a.locator('[data-fremgang-linje]').first().waitFor({ state: 'visible', timeout: 8000 })
     await tjek(a, 'atlet-05-fremgang')
@@ -93,7 +94,7 @@ async function main() {
     await a.getByText(/Rekord/i).first().scrollIntoViewIfNeeded().catch(() => {})
     const rek = await a.evaluate(() => document.body.innerText)
     assert.ok(/Rekord/i.test(rek), 'rekorder skal kunne ses paa Fremgang')
-    assert.ok(!/backoff/i.test(rek.split(/Rekord/i)[1] || ''), 'backoff i rekorder')
+    assert.ok(!/backoff/i.test(rek.split(/Rekord/i).pop() || ''), 'backoff i rekorder')
     await tjek(a, 'atlet-07-rekorder')
     await actx.close()
 

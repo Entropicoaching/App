@@ -91,6 +91,7 @@ async function main() {
       await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
       await page.waitForTimeout(1000)
       await page.getByText('Fremgang', { exact: true }).last().click(); await page.waitForTimeout(2500)
+      await page.locator('summary', { hasText: 'Flere analyser og rekorder' }).click({ timeout: 3000 }).catch(() => {}) // Ordre 2074: 2035f lagde den gamle fremgang bag en fold
       const udover = async (navn) => { await page.getByRole('button', { name: navn, exact: true }).first().click(); await page.waitForTimeout(500) }
       const knapper = () => page.evaluate(() => [...document.querySelectorAll('button')].filter(b => !b.closest('nav')).map(b => b.textContent.trim()))
       const valg = () => page.evaluate(() => [...document.querySelectorAll('select option')].map(o => o.textContent.trim()))
