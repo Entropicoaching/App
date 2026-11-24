@@ -205,10 +205,11 @@ export default function TodayCard(props) {
         || (mealData.yesterday.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.')))
 
   const rows = { weight: weightRow, readiness: readinessRow, training: trainingRow, meal: mealRow }
-  // U6 (kontrollens U5-bemærkning): Mad står før træning, så knappen ses over bundmenuen ved åbning
-  // på 390 px. Træningsrækken er kun status; start sker i pas-kortet lige under.
+  // U6 (kontrollens U5-bemærkning): Mad står øverst i kortet, så knappen ses over bundmenuen ved åbning
+  // på 390 px (ordre 2078: pas-kortet ligger over, så Mad efter vægt og dagsform lå under menuen).
+  // Træningsrækken er kun status; start sker i pas-kortet lige over.
   const mealFirst = u6Enabled('mealFirst', props.u6MealFirst)
-  const shownOrder = keys => mealFirst ? ['weight', 'readiness', 'meal', 'training'].filter(key => keys.includes(key)) : keys
+  const shownOrder = keys => mealFirst ? ['meal', 'weight', 'readiness', 'training'].filter(key => keys.includes(key)) : keys
   return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'I dag', 'data-u5-today': '' },
     h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
     h('h2', { style: { ...s.heading, fontSize: 20, margin: '4px 0 0' } }, model.headline),
