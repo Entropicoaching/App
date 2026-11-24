@@ -16,3 +16,7 @@
 - `marc-doedloeft-270.mov` - Marcs ægte 1-reps-klip, GRØN facit-reference.
 - `vis-mig-nu-4-reps-realistisk.mp4` (ordre 139): 4 reps bygget af Marcs rigtige rep-vindue (0,00-2,55s), strukket til 3,00s ved at GENTAGE frames (ffmpeg `setpts`+`fps`, ikke slowmo - samme bane, flere fysiske frames), 4,00s stille-stang-pause mellem reps - se `scripts/make-realistic-test-clip.mjs`.
 - `vis-mig-nu-4-reps-syntetisk.mp4` - ordre 121's ældre, kortere (0,56s-vinduer) klip; kun diagnostisk (manifestet), erstattet af klippet ovenfor som normal-krav.
+
+## Regression (ordre 2125)
+
+- Hver videoordre kører `npm run video:regression` før og efter og afleverer begge udskrifter: den tegner 26 syntetiske klip (glat, størrelsesskift, drejning, dækning, 60 fps, håndholdt) i en temp-mappe, kører sporeren og analysen headless og sammenligner reptal og fart bit for bit med `docs/videocoach/regression-facit.json`. Klippene committes ikke. Facit skrives kun med `--skriv-facit` på kode, der er kendt god, og ændringen forklares i ordren.

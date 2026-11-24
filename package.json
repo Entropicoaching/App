@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node scripts/test.mjs",
+    "video:regression": "node scripts/video-regression.mjs",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",

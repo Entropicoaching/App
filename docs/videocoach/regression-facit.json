@@ -1,0 +1,577 @@
+{
+ "beskrivelse": "Facit for npm run video:regression (ordre 2125). Lavet på live main d15f33d2; sporerens og kalibreringens kode uændret. Tal er sporerens egne, ikke den sande fart.",
+ "klip": {
+  "doed-glat-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.0749080847240167,
+    0.9890616592086757,
+    0.9204275365173453,
+    0.8394987639712073,
+    0.7513737025939298
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.04141827667481058
+  },
+  "doed-glat-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.0995295103775635,
+    0.9909730288553837,
+    0.9289806499705264,
+    0.8408652353486368,
+    0.7918642992149671
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 0.05531337570688086
+  },
+  "baenk-glat-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9432925244095913,
+    0.8727985682801152,
+    0.8182181086510724,
+    0.7424552839534455,
+    0.6503234025965922
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.1480077307416993
+  },
+  "baenk-glat-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9717833085909152,
+    0.8784251763462271,
+    0.8243921974800346,
+    0.7665460852983319,
+    0.6835528022035853
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 0.226357528909085
+  },
+  "squat-glat-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9550087615977061,
+    0.8891954259660907,
+    0.8764139941794346,
+    0.7700369281964852,
+    0.6894137818242918
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.03363612503798148
+  },
+  "squat-glat-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9773294353553531,
+    0.8903008153762849,
+    0.8309477119222037,
+    0.7726567282243407,
+    0.706929481472105
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 0.0772648867687303
+  },
+  "squat-glat-hurtig-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.370478958540458,
+    1.2817851244294536,
+    1.1591028342773075,
+    1.0729173059613715,
+    0.9849070817001425
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 502,
+   "gyldige": 502,
+   "kameraMaalt": 502,
+   "camMaxPx": 0.04095235192394589
+  },
+  "squat-stoerrelse-vokser-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9782283634365315,
+    0.8819807198881211,
+    0.8204083943657776,
+    0.7710756033485683,
+    0.7078734183064329
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.03341966543555091
+  },
+  "doed-stoerrelse-vokser-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.0616960508058435,
+    1.0035957578728585,
+    0.9201270364630556,
+    0.8418921659452043,
+    0.7698736223713436
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.06186836972117387
+  },
+  "baenk-stoerrelse-skrumper-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9716424833173184,
+    0.8800670990122939,
+    0.8229424447892499,
+    0.7661106936584928,
+    0.6831640156267877
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 0.21909693355008214
+  },
+  "squat-stoerrelse-skrumper-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9561752897171479,
+    0.8865748196407289,
+    0.8202857025828697,
+    0.7477755715877391,
+    0.6862681675749405
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.040741359625812865
+  },
+  "squat-dreje-hurtig-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9515148912791803,
+    0.8794276111432411,
+    0.9116773113730335,
+    0.7485340483431526,
+    0.7065492774297302
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.04081510933016597
+  },
+  "doed-dreje-hurtig-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.0975022106589614,
+    1.000937131499995,
+    0.9318227105530591,
+    0.8415988640502955,
+    0.751490475353965
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 0.056560717795510626
+  },
+  "baenk-kameraroll-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9303369695075803,
+    0.9191167119608691,
+    0.8315877037059054,
+    0.6922595136783116,
+    0.6725320688604399
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 8.810050588533363
+  },
+  "squat-daek-kort-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9550087615977061,
+    0.8891954259660907,
+    null,
+    0.7700334971627671,
+    0.6694561572032477
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 546,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.11193266690504157
+  },
+  "baenk-daek-kort-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9717833085909152,
+    0.8784251763462271,
+    null,
+    0.7665460852983319,
+    0.6840103924244135
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 545,
+   "kameraMaalt": 551,
+   "camMaxPx": 0.21552012785851535
+  },
+  "doed-daek-lang-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.0749080847240167,
+    0.9890616592086757,
+    null,
+    0.8394783692829832,
+    0.7514408189584046
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 540,
+   "kameraMaalt": 552,
+   "camMaxPx": 0.13387121862536516
+  },
+  "squat-daek-haand-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.948849958372589,
+    0.879154397414219,
+    null,
+    0.7498709384997635,
+    0.6891859448040458
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 544,
+   "kameraMaalt": 552,
+   "camMaxPx": 117.98699283814928
+  },
+  "baenk-haand-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9376770136565237,
+    0.8735963123091345,
+    0.8200025830363514,
+    0.7449427930094223,
+    0.6830224463306329
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 122.95729783938833
+  },
+  "baenk-haand-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9708976001723343,
+    0.8776683316994327,
+    0.8530761489558126,
+    0.7669257400327267,
+    0.6825055569413945
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 122.5109397314169
+  },
+  "doed-haand-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.0659100786674642,
+    0.9881220652285541,
+    0.9504627065189732,
+    0.8384179814513396,
+    0.7519662900489471
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 123.09237817172371
+  },
+  "doed-haand-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    1.0990209041889907,
+    0.9941377096971903,
+    0.9654462874638112,
+    0.8408722359898052,
+    0.7705351097216049
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 122.44893811739261
+  },
+  "squat-haand-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.948849958372589,
+    0.879154397414219,
+    0.8464820184127647,
+    0.7498709384997635,
+    0.6889851601109226
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 123.07236439494784
+  },
+  "squat-haand-60": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9612998128809078,
+    0.8538566175361662,
+    0.8351357755498343,
+    0.7311289885133473,
+    0.6863559101396731
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 551,
+   "gyldige": 551,
+   "kameraMaalt": 551,
+   "camMaxPx": 122.47380506548447
+  },
+  "squat-haand-grov-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9444484283427115,
+    0.8784974845581286,
+    0.8483748577205144,
+    0.730974934795974,
+    0.6892997631978224
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 245.49128768049064
+  },
+  "squat-ryst-30": {
+   "forventedeReps": 5,
+   "reps": 5,
+   "fart": [
+    0.9520200051313016,
+    0.8542477109435872,
+    0.8219616172417232,
+    0.7696789599467838,
+    0.6728910552195633
+   ],
+   "kameraFlyttet": [
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "punkter": 552,
+   "gyldige": 552,
+   "kameraMaalt": 552,
+   "camMaxPx": 13.735862137511848
+  }
+ }
+}
