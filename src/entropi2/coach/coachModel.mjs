@@ -7,6 +7,7 @@ import { coachNutritionLines, kostvaneTal } from './coachNutrition.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import { attentionCandidates } from './coachAttention.mjs'
 import { attentionFor } from './coachAttentionRead.mjs'
+import { erKostKlient } from './kostKlienter.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
 const own = (o, k) => Object.prototype.hasOwnProperty.call(o || {}, k)
@@ -37,7 +38,8 @@ export function adaptCoachState(props = {}, today = new Date()) {
   if (validContext && !loading && !loadError) for (const a of athletes) {
     if (typeof a?.id !== 'string' || !readContext.athleteIds.includes(a.id) ||
       a.hidden || hiddenAthleteIds.has(a.id)) continue
-    visible.set(a.id, { ...a, name: typeof a.name === 'string' && a.name.trim() ? a.name.trim() : 'Atlet uden navn' })
+    visible.set(a.id, { ...a, name: typeof a.name === 'string' && a.name.trim() ? a.name.trim() : 'Atlet uden navn',
+      ...(props.kostKlienter instanceof Set && props.kostKlienter.has(a.id) ? { kostPakke: true } : {}) })
   }
   const scoped = [...visible.values()]
   const plans = Object.fromEntries(scoped.map(a => [a.id,
@@ -249,6 +251,8 @@ export function coachWeekModel(data = {}) {
   const nyUge = [], sendt = []
   for (const athlete of athletes) {
     const weeks = plans[athlete.id] || []
+    // Ordre 2103: en kostklient (kostpakke, intet program) mangler ikke en første uge.
+    if (erKostKlient(athlete, weeks)) continue
     const entry = entries.get(athlete.id)
     // En ny atlet oprettes med status onboarding (entropi-checkin og entropi); uden program mangler første uge.
     // Ordre 2087: appen opretter med status active, så en atlet uden program, oprettet de seneste 14 dage, er også ny.

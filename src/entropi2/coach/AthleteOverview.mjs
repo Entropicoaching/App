@@ -3,6 +3,7 @@ import { antalOrd } from '../antalOrd.mjs'
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { hasUndatedPlannedWeek } from './coachModel.mjs'
+import { erKostKlient } from './kostKlienter.mjs'
 
 // U11 (Marc 11. nov.): "en nem oversigt så jeg hurtig kan klikke ind og se atlet x program".
 // Kun den allerede afgrænsede forsidekontekst. Ingen læsninger, ingen skrivninger.
@@ -60,8 +61,9 @@ export function athleteOverviewModel(context = {}) {
         : entry?.daysLeft != null && entry.daysLeft < 7 ? { tone: 'warn', text: 'Slutter snart' }
           : calm ? { tone: 'calm', text: 'Rolig' } : null
     return { athlete, badge,
-      program: calendarReady ? programLine(Array.isArray(plans[athlete.id]) ? plans[athlete.id] : [], day) : null,
-      lastSession: logs?.usable ? lastSessionLine(logs.rows || [], athlete.id, day, logs.complete === true) : null }
+      // Ordre 2103: en kostklient har kostpakke og intet program; det er ikke en mangel.
+      program: calendarReady ? (erKostKlient(athlete, plans[athlete.id]) ? 'Kostklient' : programLine(Array.isArray(plans[athlete.id]) ? plans[athlete.id] : [], day)) : null,
+      lastSession: logs?.usable && !erKostKlient(athlete, plans[athlete.id]) ? lastSessionLine(logs.rows || [], athlete.id, day, logs.complete === true) : null }
   }).sort((a, b) => a.athlete.name.localeCompare(b.athlete.name, 'da') || a.athlete.id.localeCompare(b.athlete.id))
 }
 

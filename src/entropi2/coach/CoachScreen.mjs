@@ -14,6 +14,8 @@ import { coachHomeModel, openCoachRow } from './coachModel.mjs'
 import CoachRadar, { coachRadarEnabled } from './radar/CoachRadar.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import { useCoachAttention } from './useCoachAttention.mjs'
+import { useKostKlienter } from './useKostKlienter.mjs'
+import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { alsoLine, ATTENTION_UNAVAILABLE } from './coachAttention.mjs'
 import { gemKvitteringer, indlaesKvitteringer, medKvittering } from './smerteKvittering.mjs'
 import { adaptCoachState } from './coachModel.mjs'
@@ -62,13 +64,16 @@ function ClockedCoach(props) {
   }, [])
   // U3: L1 for de atleter, forsiden allerede har i sin roster. Gør intet uden flaget.
   const u3 = u3DataEnabled(props.u3Data) && props.tab !== 'inbox'
+  // Ordre 2103: kostklienter (kostpakke, intet program) læses én gang pr. dag for de atleter, forsiden viser.
+  const kostDay = activityDay(props.today ?? now)
+  const kostKlienter = useKostKlienter({ client: props.notesClient, athleteIds: props.readContext?.athleteIds, day: kostDay })
   const roster = u3 ? adaptCoachState(props, props.today ?? now) : null
   const attention = useCoachAttention({ enabled: u3 && roster.rosterReady && roster.athletes.length > 0,
     client: props.notesClient, athleteIds: roster ? roster.athletes.map(a => a.id) : [], day: roster?.day })
   // U7: coachens nuværende kostmål dateres, når tabellen findes. Gør intet uden flaget eller tabellen.
   useTargetSync({ enabled: u7Enabled('coachData', props.u7CoachData) && props.tab !== 'inbox', client: props.notesClient,
     targets: props.coachNutrition?.state === 'ready' ? props.coachNutrition.targets : null, day: props.coachNutrition?.day })
-  return h(CoachView, { ...props, today: props.today ?? now,
+  return h(CoachView, { ...props, today: props.today ?? now, ...(kostKlienter ? { kostKlienter } : {}),
     ...(u3 && props.u3Attention === undefined ? { u3Attention: attention } : {}),
     smerteKvittering: props.smerteKvittering ?? kvitteringer, onKvitterSmerte: props.onKvitterSmerte ?? kvitterSmerte,
     athleteQuery: props.athleteQuery ?? athleteQuery,
