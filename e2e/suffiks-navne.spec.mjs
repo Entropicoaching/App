@@ -1,14 +1,13 @@
 // ORDRE 1420 (QA 1418 fund 1-4) — eet loeft = eet navn, ogsaa naar programmet har
 // suffiks-navne ("Squat - topsæt", "Squat - backoff", "Squat (comp)", "Bænkpres topsæt").
-// Seed har flere suffiks-navne for samme loeft; tjekker Dagens pas (mens et saet logges
-// og pausen koerer), Program (saettaeller maa aldrig overstige planen) og Fremgang
+// Seed har flere suffiks-navne for samme loeft; tjekker Hjem (Træning, ét navn og én linje pr. løft)
+// og Fremgang
 // (1RM: eet "Squat", eet "Bænkpres"). Skaermbilleder i outputs/1420 (390x844).
 // Egen kørsel: `node e2e/suffiks-navne.spec.mjs`.
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { ATHLETE_USER, ATHLETE_ID, SESSION_ID, EXERCISE_ID, WEEK_ID, buildSeed } from './fixtures.mjs'
-import { skipSpec } from './skip.mjs'
 
 const OUT_DIR = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '1420')
 mkdirSync(OUT_DIR, { recursive: true })
@@ -52,38 +51,19 @@ async function main() {
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByRole('button', { name: 'Start dagens pas' }).first().waitFor({ state: 'visible', timeout: 15000 })
+    const spring = page.getByRole('button', { name: /Spring guiden over/ })
+    if (await spring.count()) await spring.first().click()
     await page.waitForTimeout(1200)
 
-    // 1) Dagens pas: log et saet -> pause -> pop-up. Ingen suffiks-navne som oevelsesnavn.
-    assert.ok(!FORBUDT.test(await tekst()), 'Dagens pas viser suffiks-navn som oevelse')
-    await page.getByRole('button', { name: 'Godkendt', exact: true }).click()
-    const open = page.getByTestId('rest-pause-open')
-    await open.waitFor({ state: 'visible', timeout: 5000 })
-    await shot('dagens-pas-saet-logget-pause')
-    assert.ok(!FORBUDT.test(await tekst()), 'Hvilepause-linjen viser suffiks-navn')
-    await open.click()
-    const popup = page.getByTestId('rest-pause-popup'); await popup.waitFor({ state: 'visible', timeout: 3000 })
-    await shot('dagens-pas-timer-popup')
-    assert.match(await popup.innerText(), /s(?:æ|ae)t 2\/4/i, 'pop-up "Næste" skal taelle i hele loeftet (2/4), som kortet')
-    assert.ok(!FORBUDT.test(await popup.innerText()), 'Pop-up viser suffiks-navn')
-    // 2) Pop-up daekker bundnavigationen: et tryk paa nav-omraadet rammer baggrunden, ikke en fane.
-    const hit = await page.evaluate(() => {
-      const nav = document.querySelector('nav'); const r = nav.getBoundingClientRect()
-      const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
-      return { insideNav: nav.contains(el), insidePopup: !!el?.closest('[data-testid="rest-pause-popup"]') || el?.getAttribute('data-testid') === 'rest-pause-backdrop' || true }
-    })
-    assert.equal(hit.insideNav, false, 'bundnavigationen er klikbar under pop-up')
-    await page.getByTestId('rest-pause-close').click()
+    // 1) Hjem (ordre 2072): Træning viser ét navn pr. øvelse, ikke "Squat - topsæt" og "Squat - backoff" hver for sig.
+    const hjem = await tekst()
+    assert.ok(!FORBUDT.test(hjem), 'Hjem viser suffiks-navn som oevelse')
+    assert.match(hjem, /Squat 100 kg, 90 kg/, 'Hjem skal samle Squat topsæt og backoff på én linje')
+    assert.match(hjem, /Bænkpres 70 kg/, 'Hjem skal vise Bænkpres uden suffiks')
+    await shot('hjem-suffiks')
 
-    // 3) Program: saettaeller <= plan, eet navn pr. loeft.
-    await page.getByText('Program', { exact: true }).last().click(); await page.waitForTimeout(1500)
-    const prog = await tekst()
-    assert.ok(!FORBUDT.test(prog), 'Program viser suffiks-navn som oevelse')
-    for (const m of prog.matchAll(/(\d+)\s*\/\s*(\d+)\s*s(?:æ|ae)t logget/gi)) assert.ok(+m[1] <= +m[2], `saettaeller ${m[0]} over plan`)
-    await shot('program-suffiks', true)
-
-    // 4) Fremgang: eet "Squat", eet "Bænkpres".
+    // 2) Fremgang: eet "Squat", eet "Bænkpres".
     await page.getByText('Fremgang', { exact: true }).last().click(); await page.waitForTimeout(2000)
     const fr = await tekst()
     assert.ok(!FORBUDT.test(fr), 'Fremgang viser suffiks-navn som oevelse')
@@ -93,8 +73,8 @@ async function main() {
     assert.ok(squat <= 1, `"Squat" vises ${squat} gange i oevelsesvaelgeren`)
     const sw = await page.evaluate(() => document.documentElement.scrollWidth)
     assert.ok(sw <= 390, `vandret overflow ${sw}`)
-    console.log('\nGRØN: suffiks-navne foldes paa Dagens pas, pause-pop-up, Program og Fremgang; saettaeller <= plan; nav daekket af pop-up.')
+    console.log('\nGRØN: suffiks-navne foldes paa Hjem og Fremgang.')
   } catch (err) { console.error('\nFEJL:', err.message); process.exitCode = 1 }
   finally { await browser.close(); await mock.close(); await vite.stop() }
 }
-{ if (!skipSpec("suffiks-navne.spec", "Entropi 2 viser coachens øvelsesnavne uændret på Hjem og i passet (\"Squat - topsæt\", \"Squat - backoff\") og har ingen hvilepause-popup; se TJEK.md, Til Fable.", "ingen e2e; navnefoldning i Fremgang dækkes af e2e/fremgang-1451.spec.mjs")) main() }
+main()

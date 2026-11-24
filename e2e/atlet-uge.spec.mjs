@@ -114,7 +114,7 @@ export async function runAtletUge(page, { appUrl, mockUrl, outDir, clipPath }) {
   if (await spring.count()) await spring.first().click()
   await page.getByRole('button', { name: 'Start dagens pas' }).first().click()
   await page.getByText('Sæt 1 af 4', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
-  // Ordre 2069: "Sidste gang: 100 kg × 5" fra seedens 14 dage gamle log vises ikke i passet ved sæt 1 (ikke fundet i DOM); se TJEK.md, Til Fable. Ikke længere en del af prøven.
+  await page.getByText(/Sidst: 100 kg × 5/).first().waitFor({ state: 'attached', timeout: 5000 })
   await shot('01-dagens-pas')
 
   // ---- 2) Log tre sæt — pausetimeren starter af sig selv og tæller ned ----

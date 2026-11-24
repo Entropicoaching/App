@@ -1,3 +1,5 @@
+import { foldNavn } from '../../exerciseNames.js'
+
 const number = value => {
   if (typeof value !== 'number' && (typeof value !== 'string' || !/^\d+(?:\.\d+)?$/.test(value.trim()))) return null
   const n = Number(value)
@@ -9,15 +11,23 @@ const date = new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'short', 
 // Only already supplied exerciseLogs; IDs are deliberately not matched by name.
 // Rows without athlete_id follow the controller's existing athlete-scoped contract.
 // now is explicit so lookup and calendar boundaries are deterministic and pure.
-export function lastSetLine(p, exerciseId, now) {
+// Ordre 2072: uden egne logs for øvelsen i ugen bruges seneste sæt af samme (foldede) navn fra
+// p.lastSetsByName, som HomeSession læser én gang pr. atlet; id'et vinder altid, når det har et sæt.
+export function lastSetLine(p, exerciseId, now, name) {
   if (!p.athleteId || !exerciseId || !Number.isFinite(now)) return null
+  return latestLine(p, exerciseId, now, p.exerciseLogs || [], row => row?.exercise_id === exerciseId) ||
+    (typeof name === 'string' && name.trim() && p.lastSetsByName
+      ? latestLine(p, exerciseId, now, p.lastSetsByName[foldNavn(name.trim())] || [], () => true, false) : null)
+}
+
+function latestLine(p, exerciseId, now, rows, ownRow, own = true) {
   let latest = null
-  for (const row of p.exerciseLogs || []) {
-    if (!row || row.exercise_id !== exerciseId || row.skipped || row._optimistic ||
+  for (const row of rows) {
+    if (!row || !ownRow(row) || row.skipped || row._optimistic ||
         (row.athlete_id != null && row.athlete_id !== p.athleteId)) continue
     const key = `${row.exercise_id}_${row.set_number}`
-    if ((p.pendingSyncKeys || []).includes(key) ||
-        (p.parkedSets || []).some(s => s.exerciseId === exerciseId && s.setNumber === row.set_number)) continue
+    if (own && ((p.pendingSyncKeys || []).includes(key) ||
+        (p.parkedSets || []).some(s => s.exerciseId === exerciseId && s.setNumber === row.set_number))) continue
     // Require a timestamp with an explicit offset; never interpret an ambiguous local date.
     if (typeof row.logged_at !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(row.logged_at)) continue
     const calendar = row.logged_at.slice(0, 10)

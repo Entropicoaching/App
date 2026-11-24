@@ -1,6 +1,7 @@
 import { createElement as h, useEffect, useRef, useState } from 'react'
 import AthleteHome from './AthleteHome.mjs'
 import { readHomeRpeLastTime } from './homeRpeRead.mjs'
+import { readHomeLastSets } from './homeLastSetRead.mjs'
 import { readCoachWarmup } from '../session/opvarmning/coachWarmup.mjs'
 import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
@@ -21,6 +22,10 @@ export default function HomeSession(props) {
   const rpeRead = props.readHomeRpeLastTime ?? readHomeRpeLastTime
   const rpeWriter = typeof props.onLogSet === 'function' && typeof props.setLogInputs === 'function'
   const rpeUsedLastTime = rpeLast != null && rpeLast.athleteId === athleteId && rpeLast.used === true
+  // Ordre 2072: ét opslag pr. atlet af seneste sæt pr. øvelsesnavn til "Sidst:" i passet; kun svaret for den viste atlet bruges.
+  const [lastSets, setLastSets] = useState(null)
+  const lastSetsRead = props.readHomeLastSets ?? readHomeLastSets
+  const lastSetsByName = lastSets != null && lastSets.athleteId === athleteId ? lastSets.map : undefined
   // Ordre 1704: ét opslag pr. atlet af coachens opvarmning; kun svaret for den viste atlet bruges.
   const [warmupRead, setWarmupRead] = useState(null)
   const warmupReader = props.readCoachWarmupTemplates ?? readCoachWarmup
@@ -28,7 +33,7 @@ export default function HomeSession(props) {
   const coachWarmupTemplates = warmupShown ? warmupRead.templates : []
   // Ordre 1881: en fejlet læsning (svar med failed, eller et kastet kald) vises i passet.
   const coachWarmupFailed = warmupShown && warmupRead.failed === true
-  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, rpeUsedLastTime, coachWarmupTemplates, coachWarmupFailed } : props
+  latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, lastSetsByName, rpeUsedLastTime, coachWarmupTemplates, coachWarmupFailed } : props
   // Ordre 2033f: atletens eget valg under Mig (huskes pr. atlet paa telefonen); kun visningen af pausetimeren.
   if (props.enabled === true) latest.current.restTimerHidden = isRestTimerHidden(athleteId, props.storage)
   useEffect(() => {
@@ -38,6 +43,13 @@ export default function HomeSession(props) {
       used => { if (active) setRpeLast({ athleteId, used: used === true }) }, () => {})
     return () => { active = false }
   }, [props.enabled, athleteId, rpeWriter, rpeRead])
+  useEffect(() => {
+    if (props.enabled !== true || !athleteId || !rpeWriter) return
+    let active = true
+    Promise.resolve().then(() => lastSetsRead({ athleteId })).then(
+      map => { if (active) setLastSets({ athleteId, map: map && typeof map === 'object' ? map : {} }) }, () => {})
+    return () => { active = false }
+  }, [props.enabled, athleteId, rpeWriter, lastSetsRead])
   useEffect(() => {
     if (props.enabled !== true || !athleteId) return
     let active = true
