@@ -94,7 +94,7 @@ test('27 actual StrictMode groceries: readable native disclosures, full evidence
   assert.equal(all(list(r.host), 'details').length, 27, 'technical item evidence must be default-closed')
   const basis = all(shop(r.host), 'details').find(n => !list(r.host).contains(n))
   assert.ok(basis); assert.equal(basis.getAttribute('open'), null)
-  assert.match(basis.children[0].textContent, /Dage, versioner og måltider/)
+  assert.match(basis.children[0].textContent, /Om listen: dage, versioner og måltider/)
   assert.doesNotMatch(visibleText(shop(r.host)), /public\/catalog|abcdef0123456789|10000000-0000|Fødevare-id:|Kilde:/)
   for (const d of gross.days) assert.ok(basis.textContent.includes(
     `${danskDato(d.date)}: version ${d.versionNumber} (${d.versionId}), gældende fra ${danskDato(d.effectiveFrom)}. Måltider: ${d.mealNames.join(', ')}.`))

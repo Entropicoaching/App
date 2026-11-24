@@ -5,6 +5,7 @@ import { danskDato, grossLabel, preparationSuffix, shoppingNumber, shoppingItemT
 import { printShoppingList } from '../../nutrition/indkoeb/print.mjs'
 
 const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
+const vaelgDage = 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer.'
 const currentDayMatches = scope => {
   try { return !scope.currentDay || scope.currentDay() === scope.today } catch { return false }
 }
@@ -39,7 +40,8 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
     !foldet && h('h2', { style: { color: '#edeae2' } }, 'Indkøb fra kostplanen'),
     ...krop(
     h('p', null, grossLabel),
-    h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer.'),
+    // Ordre 2127: forklaringen står åben, mens der ikke er nogen liste; med en liste ligger den foldet i "Om listen".
+    !s?.complete && h('p', null, vaelgDage),
     h('fieldset', null, h('legend', null, 'Dage til indkøb'),
       ...dates.map(date => h('label', { key: date, style: { display: 'block', minHeight: 44 } },
         h('input', { type: 'checkbox', 'aria-label': `Indkøb ${danskDato(date)}`, checked: s?.dates.includes(date) ?? false,
@@ -60,15 +62,16 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
         h('ul', null, ...s.affected.map(d => h('li', { key: d.date }, `${danskDato(d.date)}: ${d.reason}.`)))),
       h('button', { type: 'button', style: control, onClick: () => controller.load() }, 'Hent indkøbsgrundlag igen'),
       s.complete && h('div', null,
-        h('p', null, 'Alle valgte datoer er læst fra godkendte versioner. Listen angiver grambehov, ikke dokumenteret næringsdækning.'),
+        // Ordre 2127: forklaringer og versionslinjer er foldet, ikke fjernet; advarslen om lokal lagring står åbent.
         h('details', null,
-          h('summary', { style: { ...control, cursor: 'pointer' } }, 'Dage, versioner og måltider'),
+          h('summary', { style: { ...control, cursor: 'pointer' } }, 'Om listen: dage, versioner og måltider'),
+          h('p', null, vaelgDage),
+          h('p', null, 'Alle valgte datoer er læst fra godkendte versioner. Listen angiver grambehov, ikke dokumenteret næringsdækning.'),
           ...s.result.days.map(d => h('p', { key: d.date },
-            `${danskDato(d.date)}: version ${d.versionNumber} (${d.versionId}), gældende fra ${danskDato(d.effectiveFrom)}. Måltider: ${d.mealNames.join(', ')}.`))),
-        h('p', null, 'Købt-markeringer er kun lokale i denne browser på denne enhed. De registrerer ikke spist mad, bekræfter ikke lager, reducerer ikke grambehov og synkroniseres ikke til coachen.'),
-        h('p', { role: 'status' }, s.purchases.persistent
-          ? 'Markeringer gemmes lokalt ved ændring. Kopiering medtager altid hele bruttolisten.'
-          : 'Lokal lagring er ikke tilgængelig eller kunne ikke bekræftes. Markeringer gælder kun i denne åbne visning. Kopiering medtager altid hele bruttolisten.'),
+            `${danskDato(d.date)}: version ${d.versionNumber} (${d.versionId}), gældende fra ${danskDato(d.effectiveFrom)}. Måltider: ${d.mealNames.join(', ')}.`)),
+          h('p', null, 'Købt-markeringer er kun lokale i denne browser på denne enhed. De registrerer ikke spist mad, bekræfter ikke lager, reducerer ikke grambehov og synkroniseres ikke til coachen.'),
+          s.purchases.persistent && h('p', { role: 'status' }, 'Markeringer gemmes lokalt ved ændring. Kopiering medtager altid hele bruttolisten.')),
+        !s.purchases.persistent && h('p', { role: 'status' }, 'Lokal lagring er ikke tilgængelig eller kunne ikke bekræftes. Markeringer gælder kun i denne åbne visning. Kopiering medtager altid hele bruttolisten.'),
         h('p', { role: 'status' }, `Mangler at købe: ${s.result.items.length - s.purchases.bought.length} af ${s.result.items.length} varer.`),
         h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map((item, index) => {
           const checked = s.purchases.bought.includes(index)
