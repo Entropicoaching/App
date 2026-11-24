@@ -7,6 +7,7 @@ import ApprovedPlanShopping from './ApprovedPlanShopping.mjs'
 import { fixture as dayFixture } from './daySession.fixture.mjs'
 import { shoppingFixture, today, dates, athleteId, tableNames, gate } from './approvedShopping.fixture.mjs'
 import { all, byKey, propsOf, tick, button, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
+import { danskDato } from './approvedShoppingModel.mjs'
 
 const section = host => all(host, 'section').find(n => n.getAttribute('aria-label') === 'Indkøb fra kostplanen')
 const list = host => all(section(host), 'ul').find(n => n.getAttribute('aria-label') === 'Samlet bruttobehov')
@@ -26,7 +27,7 @@ async function mounted(t, { route = false, ...extra } = {}) {
     await act(async () => { await propsOf(n).onClick(); await tick() })
   }
   const choose = async (date, checked) => {
-    const n = all(section(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${date}`)
+    const n = all(section(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${danskDato(date)}`)
     assert.ok(n, date)
     await act(async () => { propsOf(n).onChange({ currentTarget: { checked } }); await tick() })
   }
@@ -88,7 +89,7 @@ test('real clipboard denial/unavailable: bounded readOnly selectable fallback, h
   r.f.options.error = '42501'; await r.click('Hent indkøbsgrundlag igen')
   assert.equal(list(r.host), undefined); assert.equal(all(section(r.host), 'textarea').length, 0)
   assert.equal(button(section(r.host), 'Kopiér indkøbsliste'), undefined)
-  for (const date of dates) assert.match(section(r.host).textContent, new RegExp(date))
+  for (const date of dates) assert.match(section(r.host).textContent, new RegExp(danskDato(date)))
   r.f.options.error = null; await r.click('Hent indkøbsgrundlag igen')
   assert.match(list(r.host).textContent, /Linser: 450 g/)
 })
@@ -150,7 +151,7 @@ test('today included explicitly, all deselected, invalid dates, current day revo
   let day = today
   const r = await mounted(t, { currentDay: () => day })
   await r.choose(today, true)
-  assert.equal(list(r.host), undefined); assert.match(section(r.host).textContent, /2026-11-07: Ingen godkendt plan/)
+  assert.equal(list(r.host), undefined); assert.match(section(r.host).textContent, new RegExp(`${danskDato('2026-11-07')}: Ingen godkendt plan`))
   await r.choose(today, false)
   for (const d of dates) await r.choose(d, false)
   assert.match(section(r.host).textContent, /Vælg mindst én dag/); assert.equal(list(r.host), undefined)
@@ -196,8 +197,8 @@ for (const kind of ['missing-plan', 'capability'])
     else r.f.options.missing = tableNames[1]
     await r.click('Hent indkøbsgrundlag igen')
     assert.equal(list(r.host), undefined); assert.equal(button(section(r.host), 'Kopiér indkøbsliste'), undefined)
-    assert.match(section(r.host).textContent, /2026-11-08/)
-    assert.match(section(r.host).textContent, kind === 'capability' ? /2026-11-08: Kostplanens tabeller er ikke tilgængelige/ : /Ingen godkendt plan/)
+    assert.match(section(r.host).textContent, new RegExp(danskDato('2026-11-08')))
+    assert.match(section(r.host).textContent, kind === 'capability' ? new RegExp(`${danskDato('2026-11-08')}: Kostplanens tabeller er ikke tilgængelige`) : /Ingen godkendt plan/)
     r.f.data[tableNames[1]] = saved; r.f.options.missing = false
     await r.click('Hent indkøbsgrundlag igen'); assert.match(list(r.host).textContent, /Linser: 450 g/)
   })

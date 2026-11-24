@@ -7,6 +7,7 @@ import Entropi2Kost from '../../Entropi2Kost.mjs'
 import { shoppingFixture, athleteId, today, dates, tableNames, gate } from './approvedShopping.fixture.mjs'
 import { fixture as dayFixture } from './daySession.fixture.mjs'
 import { all, byKey, propsOf, tick, button, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
+import { danskDato } from './approvedShoppingModel.mjs'
 
 const marks = host => all(host, 'button').filter(n => n.getAttribute('role') === 'checkbox')
 const checked = host => marks(host).map(n => propsOf(n)['aria-checked'])
@@ -24,7 +25,7 @@ async function mounted(t, { route = false, denied = false } = {}) {
   const click = text => act(async () => { const n = button(shop(dom.host), text); assert.ok(n, text); await propsOf(n).onClick(); await tick() })
   const mark = i => act(async () => { await propsOf(marks(dom.host)[i]).onClick(); await tick() })
   const choose = (date, checked) => act(async () => {
-    const n = all(shop(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${date}`)
+    const n = all(shop(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${danskDato(date)}`)
     propsOf(n).onChange({ currentTarget: { checked } }); await tick()
   })
   const unmount = async () => { if (live) { live = false; await act(async () => { root.unmount(); await tick() }) } }

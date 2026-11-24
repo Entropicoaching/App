@@ -13,6 +13,7 @@ import { supportedPlanSnapshot } from '../sqlSnapshot.mjs'
 import { uuid, athleteId } from '../dailyReference.fixture.mjs'
 import { foodKey, sumApprovedShopping, formatApprovedShopping } from './approvedShoppingModel.mjs'
 import { purchaseScope, openPurchaseMarkers, purchaseNamespace, maxPurchaseBytes } from './purchaseMarkers.mjs'
+import { danskDato } from './approvedShoppingModel.mjs'
 // Independent oracle for the accepted, untagged v2 scope grammar.
 const oldScope = o => JSON.stringify([o.athleteId, o.today, [...o.result.dates].sort(),
   [...o.evidence].sort((a, b) => a.date.localeCompare(b.date)).map(d => [d.date, d.planId,
@@ -267,7 +268,7 @@ test('actual four-day controller and mounted StrictMode Frida consumer retain to
   let root=createRoot(dom.host), alive=true
   const render=()=>act(async()=>{root.render(h(StrictMode,null,h(ApprovedPlanShopping,props)));await tick()})
   const selectFour=()=>act(async()=>{
-    const n=all(dom.host,'input').find(n=>n.getAttribute('aria-label')===`Indkøb ${today}`)
+    const n=all(dom.host,'input').find(n=>n.getAttribute('aria-label')===`Indkøb ${danskDato(today)}`)
     assert.ok(n); propsOf(n).onChange({currentTarget:{checked:true}}); await tick()
   })
   const marks=()=>all(dom.host,'button').filter(n=>n.getAttribute('role')==='checkbox')

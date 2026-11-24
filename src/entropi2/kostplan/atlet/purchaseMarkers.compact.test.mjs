@@ -12,6 +12,7 @@ import { createPlanSnapshot } from '../planSnapshot.mjs'
 import { historyFixture, uuid } from '../dailyReference.fixture.mjs'
 import { food, mealNames, tableNames, today, athleteId } from './approvedShopping.fixture.mjs'
 import { all, propsOf, button, tick, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
+import { danskDato } from './approvedShoppingModel.mjs'
 
 const dates = ['2026-11-07', '2026-11-08', '2026-11-09', '2026-11-10']
 const bytes = value => new TextEncoder().encode(value).length
@@ -151,7 +152,7 @@ test('realistic 3/4-day scope is lossless, bounded and persistent through explic
   const marks = () => all(dom.host, 'button').filter(n => n.getAttribute('role') === 'checkbox')
   const render = () => act(async () => { root.render(h(StrictMode, null, h(ApprovedPlanShopping, props))); await tick() })
   const chooseToday = () => act(async () => {
-    propsOf(all(dom.host, 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${today}`)).onChange({ currentTarget: { checked: true } }); await tick()
+    propsOf(all(dom.host, 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${danskDato(today)}`)).onChange({ currentTarget: { checked: true } }); await tick()
   })
   const click = node => act(async () => { await propsOf(node).onClick(); await tick() })
   try {

@@ -15,6 +15,7 @@ import { historyFixture, uuid } from '../dailyReference.fixture.mjs'
 import { fixture as dayFixture } from './daySession.fixture.mjs'
 import { food, mealNames, tableNames, today, athleteId, dates, gate } from './approvedShopping.fixture.mjs'
 import { all, byKey, propsOf, button, tick, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
+import { danskDato } from './approvedShoppingModel.mjs'
 
 function groceries() {
   const f = historyFixture(), plan = f.plan(95000, today, 'godkendt', athleteId)
@@ -70,7 +71,7 @@ async function mounted(t, route = false) {
   const render = () => act(async () => { root.render(h(StrictMode, null, h(route ? Entropi2Kost : ApprovedPlanShopping, props))); await tick() })
   const click = n => act(async () => { assert.ok(n); await propsOf(n).onClick(); await tick() })
   const choose = (date, checked) => act(async () => {
-    const n = all(shop(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${date}`)
+    const n = all(shop(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${danskDato(date)}`)
     propsOf(n).onChange({ currentTarget: { checked } }); await tick()
   })
   const unmount = async () => { if (alive) { alive = false; await act(async () => { root.unmount(); await tick() }) } }
@@ -96,7 +97,7 @@ test('27 actual StrictMode groceries: readable native disclosures, full evidence
   assert.match(basis.children[0].textContent, /Dage, versioner og måltider/)
   assert.doesNotMatch(visibleText(shop(r.host)), /public\/catalog|abcdef0123456789|10000000-0000|Fødevare-id:|Kilde:/)
   for (const d of gross.days) assert.ok(basis.textContent.includes(
-    `${d.date}: version ${d.versionNumber} (${d.versionId}), gældende fra ${d.effectiveFrom}. Måltider: ${d.mealNames.join(', ')}.`))
+    `${danskDato(d.date)}: version ${d.versionNumber} (${d.versionId}), gældende fra ${danskDato(d.effectiveFrom)}. Måltider: ${d.mealNames.join(', ')}.`))
   for (const [i, item] of gross.items.entries()) {
     const row = list(r.host).children[i], toggle = marks(r.host)[i], details = all(row, 'details')[0], summary = details.children[0]
     assert.equal(details.getAttribute('open'), null); assert.equal(summary.tagName, 'SUMMARY')
@@ -187,7 +188,7 @@ test('mounted Kost entry: tracker survives readable disclosures; incomplete/load
   assert.equal(list(r.host), undefined); assert.equal(all(shop(r.host), 'details').length, 0)
   assert.equal(button(shop(r.host), 'Kopiér indkøbsliste'), undefined)
   assert.match(visibleText(shop(r.host)), /Listen er ufuldstændig/)
-  for (const date of dates) assert.ok(all(shop(r.host), '[role="alert"]')[0].textContent.includes(date))
+  for (const date of dates) assert.ok(all(shop(r.host), '[role="alert"]')[0].textContent.includes(danskDato(date)))
   r.day.plan.options.error = null
   await r.click(button(shop(r.host), 'Hent indkøbsgrundlag igen'))
   const stale = propsOf(marks(r.host)[4]).onClick
