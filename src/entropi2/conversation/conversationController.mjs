@@ -6,7 +6,7 @@ import { threadFor, timestampContent } from './conversationModel.mjs'
 const LOAD_ERROR = 'Samtalen kunne ikke hentes sikkert. Opdatér og prøv igen.'
 
 export function createConversation({ enabled = false, adapters, storage, uuid = () => globalThis.crypto.randomUUID() }) {
-  let active = true, generation = 0, busy = false, loading = false, error = '', draft = '', operation = null
+  let skjulTraening = false, active = true, generation = 0, busy = false, loading = false, error = '', draft = '', operation = null
   // writes tæller bekræftede skrivninger (afsendelse, læst), så en ældre baggrundshentning ikke overskriver dem.
   let messages = [], analyses = [], submissions = new Map(), loaded = false, writes = 0
   const usage = createQuickReplyUsage(storage)
@@ -28,7 +28,7 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
     const shown = operation && !(operation.status === 'pending' && delivered()) ? operation : null
     return { available, loaded: available && loaded, loading: available && loading, busy: available && busy,
       error: available ? error : enabled === true ? 'Samtalen er ikke længere tilgængelig.' : '',
-      draft: available ? draft : '', role: initial?.role, athleteId: initial?.athleteId,
+      draft: available ? draft : '', skjulTraening: available && skjulTraening, role: initial?.role, athleteId: initial?.athleteId,
       thread: available ? threadFor(initial?.athleteId, messages, [...submissions.values(), ...analyses]) : [],
       operation: available && shown ? { ...shown, row: { ...shown.row } } : null }
   }
@@ -177,6 +177,8 @@ export function createConversation({ enabled = false, adapters, storage, uuid = 
       const row = await adapters.submission(clientAnalysisId)
       guard(); submissions.set(row.id, row); return true
     }, 'Videoen kunne ikke klargøres. Prøv igen med den valgte video.'),
+    // Ordre 2132: værten skjuler træningsknapperne for en kostklient; kun et sikkert svar sætter den.
+    setSkjulTraening(value) { const next = value === true; if (next === skjulTraening) return; skjulTraening = next; emit() },
     dispose() { active = false; generation++; listeners.clear() },
   }
 }

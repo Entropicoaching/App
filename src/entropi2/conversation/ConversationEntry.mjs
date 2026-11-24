@@ -8,10 +8,11 @@ import { u6Enabled } from '../u6/flag.mjs'
 import { applyCoachDraft } from '../u6/draftHandoff.mjs'
 import CoachUgevideo from '../../ugevideo/CoachUgevideo.mjs'
 import { rulSvarfeltNaarKlar } from './svarfeltRul.mjs'
+import { laesSkjulTraening } from './kostKlientLaesning.mjs'
 
 // All names below are existing App/AthleteView/Dashboard capabilities.
 // getEntry must read current render state, not capture a previous athlete/session.
-export function createEntryFactory({ enabled = false, role, getEntry, openFeedback }) {
+export function createEntryFactory({ enabled = false, role, getEntry, openFeedback, getSkjulTraening = () => false }) {
   return () => {
     const entry = getEntry()
     const scope = () => {
@@ -29,6 +30,7 @@ export function createEntryFactory({ enabled = false, role, getEntry, openFeedba
         openFeedback(row)
       } })
     const controller = createConversation({ enabled, adapters, storage: () => getEntry().storage() })
+    controller.setSkjulTraening(role === 'athlete' && getSkjulTraening() === true)
     // U6: et udkast fra "Skriv" på forsiden lægges i feltet, når tråden er hentet. Intet sendes.
     if (enabled === true && role === 'coach' && u6Enabled('drafts')) applyCoachDraft(controller, entry.selectedAthlete?.id)
     if (enabled === true && role === 'coach') {
@@ -64,8 +66,21 @@ export default function ConversationEntry({ enabled = false, role, getEntry, con
   const athleteId = role === 'athlete' ? entry.athlete?.id : entry.selectedAthlete?.id
   const ownerId = entry.session?.user?.id
   const [feedback, setFeedback] = useState(null)
+  // Ordre 2132: en kostklient ser ikke "Send video" og "Del et sæt fra passet". Mens læsningen kører eller fejler, vises de.
+  const [skjul, setSkjul] = useState({ athleteId: null, value: false })
+  const skjulRef = useRef(false); skjulRef.current = skjul.athleteId === athleteId && skjul.value === true
+  const kostPakke = entry.athlete?.kostPakke === true
   const factory = useMemo(() => createEntryFactory({ enabled, role, getEntry: () => live.current(),
-    openFeedback: setFeedback }), [enabled, role, athleteId, ownerId])
+    openFeedback: setFeedback, getSkjulTraening: () => skjulRef.current }), [enabled, role, athleteId, ownerId])
+  useEffect(() => {
+    if (enabled !== true || role !== 'athlete' || !kostPakke || !validId(athleteId)) return undefined
+    let current = true
+    laesSkjulTraening(live.current().inboxDatabase, live.current().athlete).then(value => {
+      if (current) setSkjul({ athleteId, value })
+    }, () => {})
+    return () => { current = false }
+  }, [enabled, role, kostPakke, athleteId, ownerId])
+  useEffect(() => { controllerRef?.current?.setSkjulTraening?.(skjulRef.current) }, [skjul, athleteId, controllerRef])
   // Ordre 2019: åbnet fra forsidens besked-række står svarfeltet klar, uden fokus.
   useEffect(() => {
     if (enabled !== true || role !== 'coach') return undefined

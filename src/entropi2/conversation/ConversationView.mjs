@@ -211,14 +211,15 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     input.disabled = Boolean(locked); send.disabled = Boolean(locked || !state.draft.trim())
     write.hidden = state.role !== 'athlete'; write.disabled = input.disabled
     retry.hidden = state.operation?.status !== 'error'; retry.disabled = state.busy
-    upload.hidden = state.role !== 'athlete'; coach.hidden = state.role !== 'coach'
+    const traening = state.role === 'athlete' && state.skjulTraening !== true
+    upload.hidden = !traening; coach.hidden = state.role !== 'coach'
     // Attach privileged tools and retry only when applicable; do not rely on CSS hiding.
-    const nextComposition = `${state.role}:${retry.hidden}`
+    const nextComposition = `${state.role}:${retry.hidden}:${traening}`
     if (composition !== nextComposition) {
       composition = nextComposition
-      actions.replaceChildren(send, ...(retry.hidden ? [] : [retry]), ...(state.role === 'athlete' ? [upload] : []))
+      actions.replaceChildren(send, ...(retry.hidden ? [] : [retry]), ...(traening ? [upload] : []))
       compose.replaceChildren(...(state.role === 'coach' && controller.weeklyLetter ? [letterTools] : []),
-        input, actions, ...(state.role === 'coach' ? [coach] : sharing ? [sharing.root] : []))
+        input, actions, ...(state.role === 'coach' ? [coach] : sharing && traening ? [sharing.root] : []))
     }
     loadQuick.disabled = Boolean(locked); timed.disabled = Boolean(locked || !state.draft.trim())
     if (state.operation?.status === 'sent' && state.operation.row.category === 'teknik'
