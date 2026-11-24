@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createDocument } from '../onboarding/firstVisitDom.mjs'
-import { planWeightLines, planWeightText, planFirstSetPrefill, plannedWeight } from './planWeight.mjs'
+import { planWeightLines, planWeightRows, planWeightText, planFirstSetPrefill, plannedWeight } from './planWeight.mjs'
 import { u6Enabled } from './flag.mjs'
 
 // Kun syntetiske data: ingen navne og ingen rigtige atletrækker.
@@ -87,4 +87,16 @@ test('U6 1/5: med flaget slukket er kortet som i U5', gate, async () => {
     assert.doesNotMatch(m.text(), /142,5/)
     assert.deepEqual(inputs, {})
   } finally { await m.done() }
+})
+
+test('2072: Hjem viser ét navn pr. øvelse; topsæt og backoff samles på én linje', () => {
+  const exercises = [
+    { id: 'a', name: 'Squat - topsæt', recommended_weight: 100 },
+    { id: 'b', name: 'Squat - backoff', recommended_weight: 90 },
+    { id: 'c', name: 'Bænkpres topsæt', recommended_weight: 70 },
+    { id: 'd', name: 'Roning', recommended_weight: null },
+  ]
+  const rows = planWeightRows(planWeightLines(exercises, { roning: { weight: 50 } }))
+  assert.deepEqual(rows.map(r => r.text), ['Squat 100 kg, 90 kg', 'Bænkpres 70 kg', 'Roning 50 kg som sidst'])
+  assert.deepEqual(planWeightRows([]), [])
 })

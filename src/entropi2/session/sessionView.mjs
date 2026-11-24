@@ -137,7 +137,7 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       }
       const read = () => sessionHistoryProps(latest(), ex, clock.Date.now())
       // An error/loading snapshot must not advertise stale values as the last set.
-      const previous = !p.exerciseLogsError && !p.exerciseLogsLoading ? lastSetLine(p, ex.id, clock.Date.now()) : null
+      const previous = !p.exerciseLogsError && !p.exerciseLogsLoading ? lastSetLine(p, ex.id, clock.Date.now(), ex.name) : null
       cleanBlocks.push(mountExerciseHistory(parent, { detail, previous, read, active,
         open: !stepChanged && detailsOpen.includes(detail), aboutOpen: !stepChanged && detailsOpen.includes(`${detail}-about`) }))
     }

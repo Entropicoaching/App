@@ -34,3 +34,14 @@ test('Danish calendar is stable across midnight, week, year and DST boundaries',
     ['2025-12-31T23:30:00Z', '1. jan.'], ['2026-03-29T22:30:00Z', '30. mar.'],
     ['2026-10-25T23:30:00Z', '26. okt.']]) assert.ok(line([row({ logged_at: stamp })]).endsWith(`(${expected})`))
 })
+
+// Ordre 2072: en ny uge har nye øvelses-id'er; uden egne logs bruges seneste sæt af samme foldede navn.
+test('2072: uden egne logs bruges seneste sæt af samme navn fra tidligere uge; eget id vinder', () => {
+  const lastSetsByName = { squat: [row({ exercise_id: 'ex-gammel', weight: 100, reps_completed: 5, rpe_actual: null, exercises: undefined })] }
+  const med = (logs, name = 'Squat') => lastSetLine({ athleteId: 'athlete-a', exerciseLogs: logs, lastSetsByName }, 'ex-a', now, name)
+  assert.equal(med([]), 'Sidst: 100 kg × 5 · RPE ikke angivet (28. okt.)')
+  assert.equal(med([row()]), 'Sidst: 80 kg × 5 · RPE 8 (28. okt.)')
+  assert.equal(med([], 'Bænkpres'), null)
+  assert.equal(med([], 'Squat - topsæt'), null)
+  assert.equal(lastSetLine({ athleteId: 'athlete-a', exerciseLogs: [], lastSetsByName }, 'ex-a', now), null)
+})

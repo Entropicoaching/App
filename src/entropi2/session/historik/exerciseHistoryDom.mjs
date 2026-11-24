@@ -28,8 +28,16 @@ export function historyElement(doc, tag, attrs, ...children) {
 
 export function mountExerciseHistory(root, { detail, previous, read, active, open = false, aboutOpen = false }) {
   // No empty optional fold; errors/loading remain reachable and replace stale data.
-  if (['off', 'empty'].includes(exerciseHistory(read()).status)) return () => {}
-  const doc = root.ownerDocument, fold = doc.createElement('details'), summary = doc.createElement('summary')
+  const doc = root.ownerDocument
+  if (['off', 'empty'].includes(exerciseHistory(read()).status)) {
+    // Ordre 2072: "Sidst" fra en tidligere uge står som en almindelig linje, når ugen ikke har egen historik.
+    if (!previous) return () => {}
+    const line = doc.createElement('p')
+    line.setAttribute('class', 'muted'); line.setAttribute('data-last-set', read().exerciseId); line.textContent = previous
+    root.append(line)
+    return () => line.remove()
+  }
+  const fold = doc.createElement('details'), summary = doc.createElement('summary')
   fold.setAttribute('data-detail', detail)
   fold.setAttribute('data-exercise-history-fold', '')
   summary.textContent = previous || 'Sidst'

@@ -3,7 +3,7 @@ import { homeStyles as s } from '../homeStyles.mjs'
 import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
 import { readTodayMeals, copyYesterdayMeals, readLastWeights, readTodayPlan, planLine } from './todayRead.mjs'
 import { u6Enabled } from '../../u6/flag.mjs'
-import { planWeightLines, planWeightText, planFirstSetPrefill } from '../../u6/planWeight.mjs'
+import { planWeightLines, planWeightRows, planFirstSetPrefill } from '../../u6/planWeight.mjs'
 import { u7Enabled } from '../../u7/flag.mjs'
 
 // Hooks hentes via navnerummet, som i U3's kort: lukkede prøveharnesser kan erstatte 'react'
@@ -172,13 +172,14 @@ export default function TodayCard(props) {
 
   // Start bliver i "Dit næste pas" lige under kortet; her står kun status, så handlingen ikke findes to gange.
   const lines = planOn && trainingToday ? planWeightLines(exercises, lastByName, { topSet: u7Enabled('topSet', props.u7TopSet) }) : []
+  const planRows = planWeightRows(lines)
   const planned = lines.some(line => line.source === 'plan')
   const trainingRow = () => h('div', { key: 'training', style: row, 'data-u5-training': '' },
     // Ordre 1542: antal sæt står kun i pas-kortet øverst ("3 af 4 sæt klaret"); her står planen.
     h('p', { style: label }, 'Træning'),
-    lines.length > 0 && h('ul', { 'data-u6-plan-weight': '', style: { ...hint, margin: '0 0 6px', paddingLeft: 18 } },
-      ...lines.slice(0, 4).map(line => h('li', { key: line.id, 'data-u6-source': line.source }, planWeightText(line))),
-      lines.length > 4 && h('li', { key: 'flere' }, `${lines.length - 4} øvelser mere i passet`)),
+    planRows.length > 0 && h('ul', { 'data-u6-plan-weight': '', style: { ...hint, margin: '0 0 6px', paddingLeft: 18 } },
+      ...planRows.slice(0, 4).map(row => h('li', { key: row.id, 'data-u6-source': row.source }, row.text)),
+      planRows.length > 4 && h('li', { key: 'flere' }, `${planRows.length - 4} øvelser mere i passet`)),
     h('p', { style: { ...hint, margin: 0 } }, planned
       ? 'Coachens vægt står i første sæt. Ret den, hvis dagen siger noget andet.'
       : 'Start dagens pas øverst. Første sæt står klar til ét tryk.'))
