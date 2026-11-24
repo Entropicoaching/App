@@ -45,8 +45,9 @@ test('ugen: mangler ny uge er udløbet og ny atlet uden program; sendt er uger, 
   assert.deepEqual(model.waiting.map(r => [r.athlete.id, r.reason]), [['a', '1 ulæst besked'], ['b', 'Video venter på feedback']])
 })
 
+// Ordre 2087: en atlet uden program, oprettet de seneste 14 dage, er ny (coachUge2087.test.mjs). En ældre står ikke der.
 test('ugen: en atlet uden program og uden status onboarding står ikke under Mangler ny uge', () => {
-  const p = mandag(); p.athletes[5] = { id: 'f', name: 'Atlet Ny', status: 'active' }
+  const p = mandag(); p.athletes[5] = { id: 'f', name: 'Atlet Ny', status: 'active', created_at: '2026-09-01T10:00:00Z' }
   assert.equal(coachHomeModel(p, day).uge.nyUge.some(r => r.athlete.id === 'f'), false)
 })
 
