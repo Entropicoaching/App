@@ -6,6 +6,7 @@
 //   C Atlet Slutter: uge i gang, ingen næste uge endnu (mandag: sendt; ordre 2007)
 //   D Atlet Udløbet: programmet udløb i går (mangler ny uge)
 //   E Atlet Sendt: uge sendt til denne og næste uge, intet venter
+//   F Atlet Klient (ordre 2087): ny klient oprettet i appen for 2 dage siden med status active, ingen uger endnu
 //
 // Ordre 2007: dagen er sat fast til mandag 2026-11-23 (browserens ur og mockens data), aldrig ud fra uret.
 // Kørsel: node e2e/coach-uge-2005a.spec.mjs. E2E_BREDDE=1280 for desktop, E2E_TEMA=lys for lyst tema.
@@ -36,6 +37,8 @@ export const ATLETER = [
   { key: 'e', navn: 'Atlet Sendt', uger: [0, 7] },
 ]
 
+export const KLIENT = { navn: 'Atlet Klient', id: '20051111-1111-4111-8111-000000000006', userId: '20050000-0000-4000-8000-000000000006' }
+
 export function buildMandag() {
   const seed = buildSeed()
   const { tables } = seed
@@ -60,6 +63,11 @@ export function buildMandag() {
       tables.exercises.push({ id: `20054444-4444-4444-8444-000000000${m}`, session_id: sessionId, name: 'Squat', sets: 3, reps: '5', intensity: 'RPE 8', note: null, exercise_order: 1, recommended_weight: 100 })
     })
   })
+  // Ordre 2087: appen opretter en ny klient med status active (Dashboard.jsx), ikke onboarding.
+  tables.profiles.push({ id: KLIENT.userId, role: 'athlete', email: 'uge6@e2e.test', last_seen: null })
+  tables.athletes.push({ id: KLIENT.id, user_id: KLIENT.userId, name: KLIENT.navn, coach_id: COACH_USER.id, email: 'uge6@e2e.test',
+    status: 'active', hidden: false, snooze_until: null, competition_date: null, onboarding_completed_at: null,
+    created_at: agoIso(60 * 24 * 2) })
   tables.messages = [
     { id: '20055555-5555-4555-8555-000000000001', athlete_id: ids.a, sender_role: 'athlete', content: 'Hej coach, mandag gik fint.', category: 'besked', read_by_coach: false, created_at: agoIso(90) },
   ]
@@ -97,7 +105,7 @@ async function tilbage(page) {
   await page.locator('[data-entropi2-coach]').waitFor({ state: 'visible', timeout: 10000 })
 }
 
-export async function runCoachUge(page, { appUrl, outDir, desktop }) {
+export async function runCoachUge(page, { appUrl, outDir, desktop, mock }) {
   const shot = name => page.screenshot({ path: join(outDir, `coach-uge-2005a-${LABEL}-${name}.png`), fullPage: false })
   await page.clock.setFixedTime(new Date(FAST_TID))
   await page.goto(appUrl)
@@ -114,6 +122,14 @@ export async function runCoachUge(page, { appUrl, outDir, desktop }) {
   tryk.nyUgeUdloebet = await tapTo(page, page.locator('button', { hasText: /Atlet Udløbet · Program/ }).first())
   await page.getByText(/← Tilbage til/).first().waitFor({ state: 'visible', timeout: 10000 })
   await tilbage(page)
+
+  // Ordre 2087: den nye klient uden første uge står under Mangler ny uge og åbner programmet med ét tryk.
+  if (!FOER) {
+    await page.waitForFunction(() => /Atlet Klient · Intet program i appen/.test(document.querySelector('[data-coach-uge="ny-uge"]')?.innerText || ''), null, { timeout: 15000 })
+    tryk.nyKlient = await tapTo(page, page.locator('button', { hasText: /Atlet Klient · Intet program/ }).first())
+    await page.getByText(/← Tilbage til/).first().waitFor({ state: 'visible', timeout: 10000 })
+    await tilbage(page)
+  }
 
   // 2. Beskeder og videoer der venter.
   tryk.besked = await tapTo(page, page.locator('button', { hasText: /Atlet Besked · 1 ulæst besked/ }).first())
@@ -156,10 +172,28 @@ export async function runCoachUge(page, { appUrl, outDir, desktop }) {
 
   console.log(`TRYK ${LABEL} ${JSON.stringify(tryk)}`)
   if (!FOER) {
-    assert.deepEqual(tryk, { nyUgeUdloebet: 1, besked: 1, video: 1, sendt: 0, nyAtlet: 1 })
+    assert.deepEqual(tryk, { nyUgeUdloebet: 1, nyKlient: 1, besked: 1, video: 1, sendt: 0, nyAtlet: 1 })
     console.log(`\nGRØN: coachens uge ${LABEL}: ny uge, besked og video med ét tryk, sendt på forsiden, ny atlet med ét tryk.`)
   }
+  if (!FOER && mock) await foersteUgeGemt(page, mock, shot)
   return tryk
+}
+
+// Ordre 2087: når klientens første uge er gemt, går klienten ud af Mangler ny uge og ind under Sendt.
+async function foersteUgeGemt(page, mock, shot) {
+  const monday = addDays(copenhagenToday(), -((new Date(copenhagenToday() + 'T00:00:00Z').getUTCDay() + 6) % 7))
+  const weekId = '20052222-2222-4222-8222-000000000061', sessionId = '20053333-3333-4333-8333-000000000061'
+  mock.table('weeks').push({ id: weekId, athlete_id: KLIENT.id, week_number: 1, block_name: 'Base', start_date: monday })
+  mock.table('sessions').push({ id: sessionId, week_id: weekId, title: 'Dag 1 · Squat', session_order: 1, weekday: 0, athlete_rating: null, athlete_comment: null })
+  mock.table('exercises').push({ id: '20054444-4444-4444-8444-000000000061', session_id: sessionId, name: 'Squat', sets: 3, reps: '5', intensity: 'RPE 8', note: null, exercise_order: 1, recommended_weight: 100 })
+  await page.reload()
+  await page.getByRole('button', { name: /Åbn programmet for Atlet Klient/ }).waitFor({ state: 'attached', timeout: 20000 })
+  await page.waitForFunction(() => /Atlet Klient/.test(document.querySelector('[data-coach-uge="sendt"]')?.innerText || ''), null, { timeout: 15000 })
+  const nyUge = await page.locator('[data-coach-uge="ny-uge"]').innerText().catch(() => '')
+  assert.ok(!nyUge.includes('Atlet Klient'), `Mangler ny uge må ikke nævne Atlet Klient efter første uge: ${nyUge}`)
+  await page.waitForTimeout(800)
+  await shot('klient-sendt')
+  console.log(`GRØN: ${LABEL}: Atlet Klient gik fra Mangler ny uge til Sendt, da første uge blev gemt.`)
 }
 
 async function main() {
@@ -172,7 +206,7 @@ async function main() {
       colorScheme: LYS ? 'light' : 'dark' })
     const errors = []
     page.on('pageerror', err => errors.push(`pageerror: ${err.message}`))
-    await runCoachUge(page, { appUrl: APP_URL, outDir: process.env.E2E_2005A_OUT || OUT_DIR, desktop: DESKTOP })
+    await runCoachUge(page, { appUrl: APP_URL, outDir: process.env.E2E_2005A_OUT || OUT_DIR, desktop: DESKTOP, mock })
     const bred = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
     assert.ok(bred <= 0, `ingen vandret scroll, fandt ${bred}px`)
     assert.deepEqual(errors, [], `Ingen sidefejl forventet: ${JSON.stringify(errors)}`)

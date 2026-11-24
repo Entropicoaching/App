@@ -237,6 +237,11 @@ export function ugeStatus(weeks = [], day) {
     return { mangler: true, reason: 'Ingen uge sendt til næste mandag', sendt: null }
   return { mangler: false, sendt: current[0] }
 }
+const NY_ATLET_DAGE = 14
+const nyOprettet = (createdAt, day) => {
+  const created = typeof createdAt === 'string' ? activityDay(createdAt) : null
+  return Boolean(created) && created <= day && ordinal(day) - ordinal(created) < NY_ATLET_DAGE
+}
 export function coachWeekModel(data = {}) {
   const { day, athletes = [], plans = {}, calendarReady } = data
   if (!calendarReady || !day) return { ready: false, nyUge: [], sendt: [] }
@@ -246,7 +251,8 @@ export function coachWeekModel(data = {}) {
     const weeks = plans[athlete.id] || []
     const entry = entries.get(athlete.id)
     // En ny atlet oprettes med status onboarding (entropi-checkin og entropi); uden program mangler første uge.
-    if (entry?.status === 'empty' && athlete.status === 'onboarding') {
+    // Ordre 2087: appen opretter med status active, så en atlet uden program, oprettet de seneste 14 dage, er også ny.
+    if (entry?.status === 'empty' && (athlete.status === 'onboarding' || nyOprettet(athlete.created_at, day))) {
       nyUge.push({ key: `program-${athlete.id}`, athlete, rank: 1, tab: 'program', reason: 'Intet program i appen', reasons: [], daysLeft: Infinity })
       continue
     }
