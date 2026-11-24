@@ -7885,6 +7885,8 @@ function vcConfirmPlateRing() {
 // kalibreringens tal er de samme som efter et tryk på Analysér. Ringen kan rettes bagefter med "Ret skive".
 function vcAthleteAutoStart() {
   if (!(ATHLETE && VC_ATHLETE_INSTANT) || !plateConfirm || analyzing || tracking) return false;
+  // ORDRE 2140: et forslag fra sidste gang (vcPriorSetup) skal kunne rettes før analysen; atleten trykker Start selv.
+  if (plateConfirm.suggested) return false;
   const barPt = vcConfirmPlateRing();
   if (setAthleteState) setAthleteState('analyzing');
   runFullAnalysis(barPt);

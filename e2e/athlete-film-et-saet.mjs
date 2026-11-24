@@ -121,12 +121,13 @@ async function main() {
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByRole('button', { name: 'Mere', exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByText('Mere i dag', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
 
     const consoleErrors = []
     page.on('pageerror', err => consoleErrors.push(`pageerror: ${err.message}`))
     page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(`console.error: ${msg.text()}`) })
-    await page.getByText('Film et sæt', { exact: true }).click()
+    await page.getByText('Mere i dag', { exact: true }).click()
+    await page.getByText('Film et sæt til videocoach', { exact: true }).click()
     const frame = page.frameLocator('iframe[title="VideoCoach"]')
 
     // ---- Gennemløb 1: analysér, se tallene, KASSÉR — intet må gemmes ----

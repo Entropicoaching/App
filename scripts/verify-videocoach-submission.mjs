@@ -122,14 +122,14 @@ const boundedRow = {
   ...row, reps_count: 1, reps: [1], rep_details: [{ start_s: 0, end_s: 1,
     valid_ratio: 0.95, confidence: 0.9 }], load_kg: 100, rpe: 8,
   low_conf_pct: 5, position_quality_pct: null,
-  bar_path: { dx: [1, 2], dy: [-2, -1] },
+  bar_path: { x0: 100, y0: 200, dx: [1, 2], dy: [-2, -1] },
   metrics: { rom_cm: { value: 42, method: 'tracked_path_calibrated_v1', confidence: 0.9 } },
   findings: [{ summary: 'Stabil måling' }],
 }
 assert.equal(validateVideoCoachPayloadBounds(boundedRow), null)
 assert.match(validateVideoCoachPayloadBounds({ ...boundedRow, reps_count: 21 }), /1 og 20/)
 assert.match(validateVideoCoachPayloadBounds({ ...boundedRow,
-  bar_path: { dx: Array(241).fill(1), dy: Array(241).fill(1) } }), /Stangbanen/)
+  bar_path: { x0: 100, y0: 200, dx: Array(241).fill(1), dy: Array(241).fill(1) } }), /Stangbanen/)
 assert.match(validateVideoCoachPayloadBounds({ ...boundedRow, rep_details: null }), /Repdetaljerne/)
 assert.match(validateVideoCoachPayloadBounds({ ...boundedRow,
   rep_details: [{ ...boundedRow.rep_details[0], start_s: 2, end_s: 1 }] }), /Repdetaljerne/)
