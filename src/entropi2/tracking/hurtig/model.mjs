@@ -11,14 +11,17 @@ const fields = ['sleep_hours', ...SCORE_FIELDS]
 const emptyReadiness = () => Object.fromEntries(fields.map(key => [key, '']))
 const blank = value => value == null || (typeof value === 'string' && !value.trim())
 
-export function readinessValue(draft) {
+// Ordre 2145 (Marc 24. nov.): kort Dagsform for en kostklient uden træning = søvn og energi. Motivation, stress og ømhed
+// stilles ikke og gemmes som tomme (null); den vægtede score bruger kun de delscorer, der findes.
+export function readinessValue(draft, kort = false) {
   const result = {}
   for (const key of fields) {
+    if (kort && key !== 'sleep_hours' && key !== 'energy') { result[key] = null; continue }
     const value = blank(draft[key]) ? null : parseInputNumber(draft[key])
     if (key === 'sleep_hours') {
       if (!blank(draft[key]) && (value === null || value > 24)) throw new TypeError('Søvn skal være mellem 0 og 24 timer.')
     } else if (!Number.isInteger(value) || value < 1 || value > 5) {
-      throw new TypeError('Vælg energi, motivation, stress og ømhed fra 1 til 5. Søvn er valgfri.')
+      throw new TypeError(kort ? 'Vælg energi fra 1 til 5. Søvn er valgfri.' : 'Vælg energi, motivation, stress og ømhed fra 1 til 5. Søvn er valgfri.')
     }
     result[key] = value
   }

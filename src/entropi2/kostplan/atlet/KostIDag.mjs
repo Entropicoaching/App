@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { NY_KOSTUGE_TEKST } from './nyKostuge.mjs'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
 import { statusLinje, hurtigeMaaltider, forslag, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
@@ -385,7 +386,7 @@ const device = () => { try { return typeof localStorage === 'undefined' ? null :
 // skjules kun. Valget huskes pr. atlet på enheden. Uden en skrivbar dag i dag
 // (fremtidig dato, anden dag) vises laget åbent som før.
 export function KostLag({ quick, preview, athleteId, date, checkin, controller, weight, foodEntry, foodGate, trackerFold, water,
-  noPlanToday = false, client, onShowPlan, planSeen = false, onSeen, children }) {
+  noPlanToday = false, client, onShowPlan, planSeen = false, onSeen, nyUge = false, children }) {
   const [details, setDetails] = useState(() => ({ athleteId, open: laesDetaljer(device(), athleteId) }))
   const detailsOpen = details.athleteId === athleteId ? details.open : laesDetaljer(device(), athleteId)
   const [custom, setCustom] = useState(0)
@@ -423,6 +424,10 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
   }, [custom, layerOpen])
   const waterLog = h(WaterDayLog, { ...water, compact: quick && !layerOpen })
   return h('div', { style: { textAlign: 'left' } },
+    // Ordre 2145: kostklient, hul efter sidste sendte dag. Står over alt andet, så Kost ikke ser tom ud.
+    nyUge && h('section', { 'data-ny-kostuge': '', role: 'status', 'aria-label': NY_KOSTUGE_TEKST, style: card },
+      h('h2', { style: { margin: '0 0 8px', fontSize: '1.15rem' } }, NY_KOSTUGE_TEKST),
+      h('p', { style: { margin: 0 } }, 'Du kan stadig logge mad og vægt her, indtil den er sendt.')),
     quick && h(KostIDag, { customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, water: layerOpen ? null : waterLog, nyPlan,
       onCustom: () => { if (!layerOpen) setOpen(true); setCustom(n => n + 1) } }),
     quick && h('div', { style: { padding: '0 16px 8px' } },

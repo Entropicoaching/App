@@ -14,7 +14,7 @@ const defaultClock = { now: () => Date.now(), setTimeout: (fn, ms) => setTimeout
  */
 export function createQuickController(options = {}) {
   if (options.enabled !== true) return null
-  const { athleteId, date, data, save: injectedSave = {}, storage, clock = defaultClock, currentDay } = options
+  const { athleteId, date, data, save: injectedSave = {}, storage, clock = defaultClock, currentDay, kortDagsform = false } = options
   requireId(athleteId); dayNumber(date)
   const save = Object.fromEntries(['readiness', 'weight', 'meal'].map(kind => [kind, injectedSave[kind]]))
   const listeners = new Set(), successful = new Map()
@@ -116,7 +116,7 @@ export function createQuickController(options = {}) {
       let payload
       try {
         if (!sameDay()) throw new TypeError('Dagen er skiftet. Åbn dagens log igen.')
-        if (kind === 'readiness') payload = { athlete_id: athleteId, logged_date: date, ...readinessValue(draft.readiness) }
+        if (kind === 'readiness') payload = { athlete_id: athleteId, logged_date: date, ...readinessValue(draft.readiness, kortDagsform === true) }
         if (kind === 'weight') payload = { athlete_id: athleteId, logged_at: date, weight: weightValue(draft.weight) }
         if (kind === 'meal') {
           const meal = model.meals.find(item => item.key === selectedMeal)

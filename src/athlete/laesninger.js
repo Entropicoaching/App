@@ -511,33 +511,35 @@ export function lavLaesninger({
 
   async function saveReadiness() {
     if (!athlete) return
+    // Ordre 2145 (Marc 24. nov.): kort Dagsform for en kostklient uden træning = søvn og energi; Hjem markerer det med kort.
+    const kort = readinessInput.kort === true
     const missing = []
     if (!readinessInput.energy) missing.push('energi')
-    if (!readinessInput.motivation) missing.push('motivation')
-    if (!readinessInput.stress) missing.push('stress')
-    if (!readinessInput.soreness) missing.push('ømhed')
+    if (!kort && !readinessInput.motivation) missing.push('motivation')
+    if (!kort && !readinessInput.stress) missing.push('stress')
+    if (!kort && !readinessInput.soreness) missing.push('ømhed')
     if (missing.length) { setReadinessError('Mangler: ' + missing.join(', ')); return }
     const sleep = parseInputNumber(readinessInput.sleep)
     if ((!optionalInput(readinessInput.sleep) && sleep === null) ||
-        ['energy', 'motivation', 'stress', 'soreness'].some(k => {
+        (kort ? ['energy'] : ['energy', 'motivation', 'stress', 'soreness']).some(k => {
           const n = parseInputNumber(readinessInput[k])
           return !Number.isInteger(n) || n < 1 || n > 5
         })) {
-      setReadinessError('Skriv gyldig søvn og hele svar fra 1 til 5.')
+      setReadinessError(kort ? 'Skriv gyldig søvn og energi fra 1 til 5.' : 'Skriv gyldig søvn og hele svar fra 1 til 5.')
       return
     }
     setSavingReadiness(true)
     setReadinessError(null)
-    const score = calcReadinessScore(readinessInput)
+    const score = calcReadinessScore(kort ? { sleep: readinessInput.sleep, energy: readinessInput.energy } : readinessInput)
     const payload = {
       athlete_id: athlete.id,
       logged_date: today(),
       sleep_hours: sleep,
       energy: parseInputNumber(readinessInput.energy),
-      motivation: parseInputNumber(readinessInput.motivation),
-      stress: parseInputNumber(readinessInput.stress),
-      soreness_level: parseInputNumber(readinessInput.soreness),
-      sore_zones: readinessInput.soreZones?.length > 0 ? readinessInput.soreZones : null,
+      motivation: kort ? null : parseInputNumber(readinessInput.motivation),
+      stress: kort ? null : parseInputNumber(readinessInput.stress),
+      soreness_level: kort ? null : parseInputNumber(readinessInput.soreness),
+      sore_zones: !kort && readinessInput.soreZones?.length > 0 ? readinessInput.soreZones : null,
       readiness_score: score,
     }
     const { error } = await trainingDatabase.from('readiness_logs').insert(payload)
