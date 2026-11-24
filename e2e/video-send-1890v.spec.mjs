@@ -98,7 +98,7 @@ async function main() {
     assert.ok(row.bar_path && Array.isArray(row.bar_path.dx), 'atletens stangbane fulgte ikke med')
     const keys = await (await fetch(`${mockUrl}/__e2e/storage-keys`)).json()
     assert.ok(keys.includes(`videocoach-uploads/${row.video_path}`), 'klippet ligger ikke i lageret')
-    assert.match(await frame.locator('#athleteStatus').innerText(), /Sendt til Marc ✓/)
+    assert.match(await frame.locator('#athleteStatus').innerText(), /Sendt til din coach ✓/)
     await shot('03-sendt')
     assert.deepEqual(errors, [], `kastede fejl: ${JSON.stringify(errors)}`)
     console.log(`\nGRØN: notat med mellemrum bevaret, panel foldet (${Math.round(open.height)} til ${Math.round(folded.height)} px) og åbnet, video sendt med notat og stangbane`)

@@ -12,7 +12,7 @@ const success = html.slice(html.indexOf('async function vcAthleteUploadAndGo'), 
 
 test('U9 3: videosiden kvitterer "Sendt til Marc ✓" med klokkeslæt i statuskortet, som bliver stående', () => {
   assert.match(success, /setAthleteState\('sent', `kl\. \$\{/)
-  assert.match(html, /sent: \['Sendt til Marc ✓'/)
+  assert.match(html, /sent: \['Sendt til din coach ✓'/)
   assert.doesNotMatch(success, /athleteStatusEl\.hidden = true/, 'kvitteringen skjules ikke længere')
   assert.doesNotMatch(success, /setTimeout\(\(\) => say\(''\)/, 'kvitteringen forsvinder ikke efter 8 sekunder')
 })

@@ -45,7 +45,8 @@ export async function calibrateAthlete(frame, page, canvas, box) {
   const target = truePos(CLICK_AT_S)
   const basePos = { x: target.x * box.width / VIDEO_W, y: target.y * box.height / VIDEO_H }
   for (let attempt = 0; attempt <= MAX_CALIBRATION_ATTEMPTS; attempt++) {
-    await frame.locator('#allBtn').click()
+    // Ordre 2120: Sæt start åbner selv skivevalget; Analysér trykkes kun, hvis det ikke allerede er åbent.
+    if ((await frame.locator('body').getAttribute('data-athlete-state')) !== 'target') await frame.locator('#allBtn').click()
     await page.waitForTimeout(attempt === 0 ? 400 : 250)
     const jitter = attempt === 0 ? { x: 0, y: 0 }
       : { x: (attempt % 2 ? 6 : -6) * attempt, y: (attempt % 2 ? -5 : 5) * attempt }
