@@ -16,3 +16,11 @@
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
+
+/* Kontrol 2035f: "Du er her"-linjen har inline centrering, og "Din blok" har skarpe hjørner; samme linje og radius som resten. */
+[data-entropi2-athlete] [data-program-week-navigation] [style*="text-align: center"] {
+  text-align: left !important;
+}
+[data-entropi2-athlete] [data-entropi2-page] details[aria-label="Din blok"] {
+  border-radius: 12px;
+}
