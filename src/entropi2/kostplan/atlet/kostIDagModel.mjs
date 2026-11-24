@@ -57,3 +57,14 @@ export function laesDetaljer(storage, athleteId) {
 export function gemDetaljer(storage, athleteId, open) {
   try { storage?.setItem(detaljerNoegle(athleteId), open ? '1' : '0') } catch { /* kun denne visning */ }
 }
+
+// 2154: "Alt fra i går" kopierer gårsdagens rækker. Samme navn som et planmåltid i dag beholdes; resten får dagens plannavn
+// på plads i rækkefølgen (omdøbt måltid). Overskydende rækker beholder deres eget navn og tæller ikke som basemåltid.
+export function iGaarMedPlannavne(iGaar, planNavne) {
+  const fri = (planNavne ?? []).map(navn => String(navn ?? '').trim()).filter(Boolean)
+  const tildelt = iGaar.map(meal => {
+    const i = fri.indexOf(String(meal.meal ?? '').trim())
+    return i === -1 ? null : fri.splice(i, 1)[0]
+  })
+  return iGaar.map((meal, i) => tildelt[i] ? meal : fri.length ? { ...meal, meal: fri.shift() } : meal)
+}

@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 import Entropi2Kost from '../../Entropi2Kost.mjs'
 import { fixture, athleteId, date } from './daySession.fixture.mjs'
 import { all, propsOf, tick, button, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
+import { friUge } from '../friPulje.mjs'
 import { statusLinje, hurtigeMaaltider, forslag, detaljerNoegle, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
 
 // 1899 (Marc 19. nov.): Kost er simpel at indtaste; detaljerne er et lag, man åbner.
@@ -36,7 +37,8 @@ test('model: én statuslinje, hurtige måltider uden dubletter, forslag uden Fri
 async function mount(t, options = {}) {
   if (!t.mockedDate) { t.mock.timers.enable({ apis: ['Date'], now: new Date(date + 'T12:00:00+01:00') }); t.mockedDate = true }
   const f = fixture(options); f.approve()
-  f.rows.push({ ...meal('2026-11-04', 'Havregrød med skyr', 520, 35), id: 'y1' }, { ...meal('2026-11-04', 'Rugbrød med æg', 610, 34), id: 'y2', created_at: '2026-11-04T12:00:00Z' })
+  if (options.igaar) options.igaar.forEach((navn, i) => f.rows.push({ ...meal('2026-11-04', navn, 500, 30), id: `y${i + 1}`, created_at: `2026-11-04T${String(10 + i).padStart(2, '0')}:00:00Z` }))
+  else f.rows.push({ ...meal('2026-11-04', 'Havregrød med skyr', 520, 35), id: 'y1' }, { ...meal('2026-11-04', 'Rugbrød med æg', 610, 34), id: 'y2', created_at: '2026-11-04T12:00:00Z' })
   if (options.extraRows) f.rows.push(...options.extraRows)
   if (options.open) f.values.set(detaljerNoegle(athleteId), '1')
   const dom = hostFixture(), root = createRoot(dom.host)
@@ -308,7 +310,7 @@ test('Kost i dag: Prøv igen efter delvis fejl på Alt fra i går logger kun de 
   failing = false
   await r.press(button(r.card(), 'Prøv igen'))
   const nye = idag().filter(row => !foer.includes(row.id))
-  assert.deepEqual(nye.map(row => row.meal).sort(), ['Aftensmad med ris', 'Havregrød med skyr', 'Rugbrød med æg'], 'hver række præcis én gang')
+  assert.deepEqual(nye.map(row => row.meal).sort(), ['Aftensmad', 'Aftensmad med ris', 'Frokost <syntetisk>'], 'hver række præcis én gang (de to første får dagens plannavne, 2154)')
   await r.press(button(r.card(), 'Fortryd'))
   assert.deepEqual(idag().map(row => row.id), foer, 'Fortryd fjerner alle tre gemte rækker')
 })
@@ -381,4 +383,32 @@ test('Kost i dag: et spist planmåltid fjernes direkte, står som åbent igen, o
   assert.deepEqual(r.f.rows.filter(row => row.date === date).map(row => [row.meal, row.kcal]), [['Frokost <syntetisk>', 200]])
   assert.match(r.card().textContent, /Spist: Frokost <syntetisk> · 200 g/)
   assert.doesNotMatch(r.card().textContent, /skal kontrolleres/)
+})
+
+// 2154 (Marc 24. nov.): "Alt fra i går" skal tælle ærligt i Basemåltider fulgt, også når planens navne skifter mellem dage.
+async function altFraIGaar(t, options) {
+  const r = await mount(t, options)
+  await r.press(all(r.card(), 'button').find(n => /^Alt fra i går \(\d+\)$/.test(n.textContent)))
+  const idag = r.f.rows.filter(row => row.date === date)
+  const plan = [options.lunchName ?? 'Frokost <syntetisk>', 'Aftensmad']
+  const uge = friUge({ dage: [{ date, state: 'approved', friPct: 15, targets: { kcal: 2600 }, maaltider: plan }], raekker: idag })
+  return { navne: idag.map(row => row.meal), uge }
+}
+
+test('Alt fra i går 2154: samme plannavne begge dage giver 2 af 2', async t => {
+  const { uge } = await altFraIGaar(t, { igaar: ['Frokost <syntetisk>', 'Aftensmad'] })
+  assert.deepEqual([uge.basis, uge.basisAf], [2, 2])
+})
+
+test('Alt fra i går 2154: omdøbt planmåltid i dag tæller stadig som fulgt, og rækken får dagens plannavn', async t => {
+  const { navne, uge } = await altFraIGaar(t, { igaar: ['Frokost <syntetisk>', 'Aftensmad'], lunchName: 'Frokost 2' })
+  assert.deepEqual(navne, ['Frokost 2', 'Aftensmad'])
+  assert.deepEqual([uge.basis, uge.basisAf], [2, 2])
+})
+
+test('Alt fra i går 2154: flere måltider i går end i dag tæller aldrig dobbelt; overskuddet er ikke et basemåltid', async t => {
+  const { navne, uge } = await altFraIGaar(t, { igaar: ['Morgenmad', 'Frokost <syntetisk>', 'Aftensmad'] })
+  assert.equal(navne.length, 3)
+  assert.ok(uge.basis <= uge.basisAf && uge.basis <= 2)
+  assert.deepEqual([uge.basis, uge.basisAf], [2, 2])
 })

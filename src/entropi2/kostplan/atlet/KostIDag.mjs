@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
-import { statusLinje, hurtigeMaaltider, forslag, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
+import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
 import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import { scaledMeal } from './dayModel.mjs'
@@ -95,7 +95,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const eaten = planMeals.filter(meal => meal.eaten)
   const blocked = planMeals.filter(meal => meal.blocked)
   const gentag = hurtigeMaaltider(log)
-  const iGaar = log.loaded && (log.logs?.length ?? 0) === 0 && (log.yesterday?.length ?? 0) > 1 ? log.yesterday : []
+  const iGaar = log.loaded && (log.logs?.length ?? 0) === 0 && (log.yesterday?.length ?? 0) > 1 ? iGaarMedPlannavne(log.yesterday, planMeals.map(meal => meal.name)) : []
   const valg = forslag(log, query)
   const valgt = chosen && log.foods?.[chosen.index]?.name === chosen.name ? chosen : null
   const units = valgt ? unitsForFood(log.foods[valgt.index]) : []
