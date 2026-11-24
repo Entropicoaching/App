@@ -507,6 +507,15 @@
     background:transparent; color:rgba(237,234,226,.72); }
   body.athlete #athleteInstantSaveBtn { border-color:var(--accent);
     background:var(--accent); color:#141410; }
+  /* ORDRE 2147: Send får mere bredde end Kassér og Ret skive (højst to linjer ved 390 px); på lav skærm
+     fylder resultatrækkerne mindre, så Belastning står over knaplinjen uden rulning. */
+  body.athlete #athleteInstantResult .athInstantActions button { padding-left:6px; padding-right:6px; letter-spacing:.02em; }
+  body.athlete #athleteInstantResult #athleteInstantSaveBtn { flex:1.7 1 0; }
+  @media (max-height:720px) {
+    body.athlete #athleteInstantResult { max-height:58vh; }
+    body.athlete #athleteInstantResult .athInstantRow { padding:3px 0; }
+    body.athlete #athleteInstantResult .athInstantFoot { display:none; }
+  }
   /* coach online: samme rolige arbejdsskal som desktop, komprimeret til mobil. */
   body.coachweb { --coach-glass:rgba(18,17,14,.84); }
   body.coachweb header { display:flex; position:fixed; top:10px; left:12px; right:12px;
