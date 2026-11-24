@@ -4,7 +4,6 @@
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { ATHLETE_ID, ATHLETE_USER, buildSeed } from './fixtures.mjs'
-import { skipSpec } from './skip.mjs'
 
 const id = n => `99999999-9999-4999-8999-9999999999${n}`
 const isoDaysAgo = days => { const d = new Date(); d.setUTCDate(d.getUTCDate() - days); return d.toISOString() }
@@ -33,12 +32,13 @@ async function koer(kommentar, navn, forventForslag) {
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
     await page.getByRole('button', { name: 'Log ind' }).click()
-    await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 20000 })
-    await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
-    // Vent på historikværdien, ikke den tidligere samlede etiket med kolon.
-    await page.getByText('100 kg × 5 @7', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+    const spring = page.getByRole('button', { name: /Spring guiden over/ })
+    if (await spring.count()) await spring.first().click()
+    await page.getByRole('button', { name: 'Start dagens pas' }).first().click()
+    await page.getByText('Sæt 1 af 4', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByText(/Sidst: /).first().waitFor({ state: 'attached', timeout: 10000 })
     await page.waitForTimeout(500)
-    const antal = await page.getByText('Appens forslag', { exact: true }).count()
+    const antal = await page.getByText(/Appens forslag: [\d.,]+ kg/).count()
     await page.screenshot({ path: join(OUT_DIR, `smerte-stop-1502-${navn}.png`), fullPage: true })
     assert.equal(antal > 0, forventForslag, `${navn}: Appens forslag-linjer = ${antal}`)
     console.log(`${navn}: Appens forslag-linjer ${antal} (forventet ${forventForslag ? '>0' : '0'})`)
@@ -54,4 +54,4 @@ async function main() {
     console.log('GROEN: smerte-note standser stigningsforslaget, uden smerte staar forslaget')
   } catch (err) { console.error('\nFEJL:', err.message); process.exitCode = 1 }
 }
-if (process.argv[1] && process.argv[1].endsWith('smerte-stop-1502.spec.mjs')) { if (!skipSpec("smerte-stop-1502.spec", "Entropi 2s pas har ingen \"Appens forslag\"-linje, så stigningsforslaget og smertestoppet kan ikke ses i browseren; se TJEK.md, Til Fable.", "src/athlete/smerteStop-enhedsprøverne (modellen); ingen e2e")) main() }
+if (process.argv[1] && process.argv[1].endsWith('smerte-stop-1502.spec.mjs')) main()
