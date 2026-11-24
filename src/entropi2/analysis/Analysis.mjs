@@ -29,6 +29,7 @@ import PaaSigtView from './paasigt/PaaSigtView.mjs'
 import StaevnerView from './StaevnerView.mjs'
 import StartmaksView from './StartmaksView.mjs'
 import { developmentModel } from './developmentModel.mjs'
+import { kostKlient as erKostKlient } from '../../athlete/kostValg.mjs'
 
 const explanationSummaryStyle = { minHeight: 44, paddingTop: 12, paddingBottom: 12,
   boxSizing: 'border-box', cursor: 'pointer', opacity: 0.8 }
@@ -39,6 +40,10 @@ export default function Analysis(props = {}) {
   if (props.entropi2 !== true) return null
   props = analysisWeightProps(props)
   const now = props.now ?? new Date()
+  // Ordre 2118 (Marc 24. nov.: "kost kan købes alene"): kostpakke, ingen uge i appen og ingen løftehistorik. Så vises ingen
+  // løfte- eller programtekst, og vejen videre er Kost, ikke et tomt Program. Også mens historikken hentes, så teksten ikke blinker frem.
+  const kostklient = erKostKlient(props.athlete, props.currentWeek != null ||
+    (props.fremgangLogs?.length ?? 0) > 0 || (props.exerciseLogs?.length ?? 0) > 0)
   // U3: kun med flaget og en klient fra AthleteView. Ellers er Fremgang uændret.
   const u3 = u3DataEnabled(props.u3Data) && !!props.u3Client && props.athlete?.id != null
   // A failed/loading read cannot turn retained history into fresh secondary data.
@@ -84,15 +89,15 @@ export default function Analysis(props = {}) {
   h('h1', { style: { fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, lineHeight: '32px', margin: '8px 0 20px' } }, 'Din analyse'),
   ...(u3 ? [h(AthleteWeekCard, { client: props.u3Client, athlete: props.athlete, now, weightLogs: props.weightLogs })] : []),
   // U3b: retningen pr. hovedløft står i "Din udvikling", så e1RM kun vises ét sted.
-  h(DevelopmentView, { ...props, now, ...(trends ? { u3Trends: trends } : {}) }),
+  !kostklient && h(DevelopmentView, { ...props, now, ...(trends ? { u3Trends: trends } : {}) }),
   // Ordre 1713: coachens startmaks fra atletens egen række; foldet som udgangspunkt, når egne e1RM findes.
-  h(StartmaksView, { athlete: props.athlete, ownNumbers: !!strengthUnavailable ||
+  !kostklient && h(StartmaksView, { athlete: props.athlete, ownNumbers: !!strengthUnavailable ||
     developmentModel(props, now).lifts.some(lift => lift.observed > 0) }),
   // Ordre 1705: stævneresultater, coachen har registreret; kun læsning med atletens id, intet uden rækker.
   // Under U3-flaget som ugekortet og blokkene, så slukket flag giver uændret Analysis og ingen læsning.
-  ...(u3 ? [h(StaevnerView, { client: props.u3Client, athleteId: props.athlete.id })] : []),
+  ...(u3 && !kostklient ? [h(StaevnerView, { client: props.u3Client, athleteId: props.athlete.id })] : []),
   // Ordre 1543: tendens i procent, ugens plan og næste top; foldet ind og uden tal fra "Din udvikling".
-  h(PaaSigtView, { ...props, now }),
+  !kostklient && h(PaaSigtView, { ...props, now }),
   ...(hasWeightStatus ? [h(WeightReadStatus, { state: mineProps.weights.state,
     latestDate: latestAnalysisWeightDate(mineProps.weights, mineProps.athleteId, mineModel.end, mineModel.start),
     retry: props.retryWeight })] : []),
@@ -155,12 +160,15 @@ export default function Analysis(props = {}) {
   (props.readOnly !== true || a.destination === 'program') && typeof setTab === 'function' && h('button', { type: 'button', 'data-analysis-destination': a.destination,
     style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
     onClick: () => setTab(a.destination) }, a.action)))),
-  ...(u3 ? [h(BlocksView, { client: props.u3Client, athleteId: props.athlete.id, now, source: 'athlete',
+  ...(u3 && !kostklient ? [h(BlocksView, { client: props.u3Client, athleteId: props.athlete.id, now, source: 'athlete',
     foldProps: { style: { marginBottom: 16 } } })] : []),
-  h('details', { 'data-analysis-help': true },
+  !kostklient && h('details', { 'data-analysis-help': true },
     h('summary', { style: { minHeight: 44, paddingTop: 12, cursor: 'pointer', boxSizing: 'border-box' } }, 'Om datagrundlaget'),
     h('p', { style: { lineHeight: 1.6 } }, analysisDataHelp)),
-  !answers[2].value && typeof setTab === 'function' && h('button', { type: 'button', 'data-analysis-destination': 'program',
+  kostklient && typeof setTab === 'function' && h('button', { type: 'button', 'data-analysis-destination': 'kost',
+    style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
+    onClick: () => setTab('kost') }, 'Åbn kost'),
+  !kostklient && !answers[2].value && typeof setTab === 'function' && h('button', { type: 'button', 'data-analysis-destination': 'program',
     style: { minHeight: 44, padding: '0.5rem 1rem', color: '#171815', background: '#d8b16b', border: 0, borderRadius: 4 },
     onClick: () => setTab('program') }, 'Åbn program'))
 }
