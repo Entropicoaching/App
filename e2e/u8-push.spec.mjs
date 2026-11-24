@@ -71,6 +71,11 @@ async function home(page) {
   await page.evaluate(() => window.scrollTo(0, 0))
 }
 
+async function openMere(page) {
+  const mere = page.locator('details[data-home-mere]')
+  if (!(await mere.evaluate(el => el.open))) await mere.locator('> summary').click()
+}
+
 async function athlete(page, vp, outDir, mode, mock, cdp) {
   await login(page, ATHLETE_USER)
   await home(page)
@@ -83,6 +88,8 @@ async function athlete(page, vp, outDir, mode, mock, cdp) {
     result.homeText = (await page.locator('[data-entropi2-home]').textContent()).replace(/\s+/g, ' ')
     return result
   }
+  // Ordre 1541: alt sekundært på Hjem ligger bag "Mere i dag"; påmindelserne foldes ud først.
+  await openMere(page)
   await card.waitFor({ state: 'visible', timeout: 20000 })
   await card.evaluate(el => el.scrollIntoView({ block: 'center' }))
   await edges(page, vp.width, '[data-u8-push], [data-u8-push] *')
@@ -120,6 +127,7 @@ async function athlete(page, vp, outDir, mode, mock, cdp) {
   // Slå fra: rækken slettes.
   await page.goto(APP_URL)
   await home(page)
+  await openMere(page)
   await page.locator('[data-u8-push="on"] summary').click()
   await page.getByRole('button', { name: 'Slå påmindelser fra' }).click()
   await page.getByText('Påmindelser er slået fra på denne telefon.').waitFor({ timeout: 10000 })
@@ -131,6 +139,7 @@ async function athlete(page, vp, outDir, mode, mock, cdp) {
 async function iphone(page, vp, outDir, mock) {
   await login(page, ATHLETE_USER)
   await home(page)
+  await openMere(page)
   const card = page.locator('[data-u8-push="ios"]')
   await card.waitFor({ state: 'visible', timeout: 20000 })
   const text = (await card.textContent()).replace(/\s+/g, ' ')
@@ -171,7 +180,9 @@ async function main() {
   const resultFile = process.argv[4]
   mkdirSync(outDir, { recursive: true })
   const vite = await startVite()
-  const browser = await launchBrowser().catch(() => chromium.launch({ headless: true, channel: 'msedge' }))
+  // Den gamle headless-skal melder Notification.permission 'denied' og viser ingen beskeder, selvom tilladelsen er givet;
+  // ny headless (channel 'chromium') opfører sig som en rigtig browser.
+  const browser = await chromium.launch({ headless: true, channel: 'chromium' }).catch(() => launchBrowser()).catch(() => chromium.launch({ headless: true, channel: 'msedge' }))
   const results = []
   const fresh = async (vp, run, { userAgent } = {}) => {
     const mock = createMockSupabase(u7Seed(true))
