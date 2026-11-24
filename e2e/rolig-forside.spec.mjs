@@ -19,6 +19,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { ATHLETE_USER, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 const FASE = process.env.ROLIG_FASE || 'efter'
 const OUT_DIR = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '330')
@@ -246,4 +247,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('rolig-forside.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('rolig-forside.spec.mjs')) { if (!skipSpec("rolig-forside.spec", "Prøven måler Entropi 1-forsidens overskrift \"Ugedag · pas\", \"Mere\"-fold og toast; Entropi 2s Hjem er en anden skærm.", "e2e/ny-atlet-1469.spec.mjs og e2e/dagens-pas.spec.mjs")) main() }

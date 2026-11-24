@@ -1,7 +1,7 @@
 // ORDRE 284 · commit 3 — Fremgang-fanen klikket igennem i den ÆGTE,
 // ubuildede app (npm run dev) mod den lokale mock, på en 360px telefon: åbn
 // fanen (Squat vises automatisk, kurven har to uger), skift til en anden
-// øvelse der ikke er logget endnu ("Ingen logninger endnu."), kom tilbage
+// øvelse der ikke er logget endnu ("Du har ikke logget denne øvelse endnu"), kom tilbage
 // til Squat og se kurven stå der uændret.
 //
 // Egen, isoleret mock+vite-instans (samme grund som dagens-pas/check-in/
@@ -69,9 +69,9 @@ export async function runFremgang(page, { appUrl, outDir }) {
   await page.getByText('85×5', { exact: false }).waitFor({ state: 'visible' })
   await shot('01-squat-kurve')
 
-  // ---- 2) Skift til en øvelse uden logs — "Ingen logninger endnu." ----
+  // ---- 2) Skift til en øvelse uden logs — "Du har ikke logget denne øvelse endnu" ----
   await page.locator('select').selectOption({ label: 'Bicep curl' })
-  await page.getByText('Ingen logninger endnu.', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+  await page.getByText('Du har ikke logget denne øvelse endnu. Når du har, vises din udvikling her.', { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
   assert.equal(await page.locator('[data-fremgang-linje]').count(), 0, 'en tom øvelse skal ikke vise en kurve')
   await shot('02-tom-oevelse')
 
@@ -79,10 +79,10 @@ export async function runFremgang(page, { appUrl, outDir }) {
   await page.getByRole('button', { name: 'Squat', exact: true }).click()
   await page.locator('[data-fremgang-linje]').first().waitFor({ state: 'visible', timeout: 5000 })
   await page.getByText('85×5', { exact: false }).waitFor({ state: 'visible' })
-  assert.equal(await page.getByText('Ingen logninger endnu.', { exact: true }).count(), 0, 'Squats kurve skal være tilbage, ikke tomtilstanden')
+  assert.equal(await page.getByText('Du har ikke logget denne øvelse endnu. Når du har, vises din udvikling her.', { exact: true }).count(), 0, 'Squats kurve skal være tilbage, ikke tomtilstanden')
   await shot('03-tilbage-til-squat')
 
-  console.log('GRØN: Fremgang-fanen på 360px — Squat-kurven vises automatisk, skift til en tom øvelse viser "Ingen logninger endnu.", og at komme tilbage viser Squats kurve igen, uændret.')
+  console.log('GRØN: Fremgang-fanen på 360px — Squat-kurven vises automatisk, skift til en tom øvelse viser "Du har ikke logget denne øvelse endnu", og at komme tilbage viser Squats kurve igen, uændret.')
 }
 
 async function main() {

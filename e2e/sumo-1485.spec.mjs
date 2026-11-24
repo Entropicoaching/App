@@ -10,6 +10,7 @@ import { join, basename } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { ATHLETE_USER, COACH_USER, ATHLETE_ID } from './fixtures.mjs'
 import { seed1451 } from './fremgang-1451.spec.mjs'
+import { skipSpec } from './skip.mjs'
 
 const OUT_DIR = process.env.E2E_OUT || join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '1485')
 mkdirSync(OUT_DIR, { recursive: true })
@@ -210,4 +211,4 @@ async function main() {
   } catch (err) { console.error('\nFEJL:', err.message); process.exitCode = 1 }
   finally { await browser.close(); await mock.close(); await vite.stop() }
 }
-if (process.argv[1] && import.meta.url.endsWith('/' + basename(process.argv[1]))) main()
+if (process.argv[1] && import.meta.url.endsWith('/' + basename(process.argv[1]))) { if (!skipSpec("sumo-1485.spec", "Prøven kræver Hjems Styrkeudvikling og Entropi 1-faner, som Entropi 2 ikke tegner; Fremgang er ombygget; se TJEK.md.", "e2e/fremgang-1451.spec.mjs og e2e/coach-fremgang.spec.mjs")) main() }

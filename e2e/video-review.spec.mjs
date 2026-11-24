@@ -35,7 +35,7 @@ export async function runVideoReview(page, { appUrl, mockUrl, outDir, awaitingRo
   await page.locator('#athlete-auth-email').fill(COACH_USER.email)
   await page.locator('#athlete-auth-password').fill(COACH_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByRole('button', { name: /Testatlet.*Uge/ }).click()
+  await page.getByRole('button', { name: 'Åbn programmet for Testatlet' }).click()
   await openAnalyseTab(page)
 
   if (awaitingRow) {
@@ -105,9 +105,9 @@ export async function runAthleteSeesFeedback(page, { appUrl, outDir, feedback })
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  // "Feedback fra din coach" ligger bag folden "Mere" siden ORDRE 330.
-  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
-  await page.getByText('Feedback fra din coach').waitFor({ state: 'visible', timeout: 15000 })
+  // Entropi 2 (ordre 2069): feedbacken når atleten som besked i Beskeder (jf. coach-video-svar-2053), ikke som kort bag "Mere".
+  await page.getByRole('button', { name: /Beskeder/ }).last().click({ timeout: 15000 })
+
   // Den seneste delte måling er allerede foldet ud (fetchSharedVideoAnalyses
   // åbner analyses[0] automatisk) — intet klik nødvendigt, kun at læse den.
   await page.getByText(feedback.focus).waitFor({ state: 'visible', timeout: 10000 })

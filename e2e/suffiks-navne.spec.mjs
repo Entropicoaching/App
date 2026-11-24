@@ -8,6 +8,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { ATHLETE_USER, ATHLETE_ID, SESSION_ID, EXERCISE_ID, WEEK_ID, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 const OUT_DIR = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '1420')
 mkdirSync(OUT_DIR, { recursive: true })
@@ -96,4 +97,4 @@ async function main() {
   } catch (err) { console.error('\nFEJL:', err.message); process.exitCode = 1 }
   finally { await browser.close(); await mock.close(); await vite.stop() }
 }
-main()
+{ if (!skipSpec("suffiks-navne.spec", "Entropi 2 viser coachens øvelsesnavne uændret på Hjem og i passet (\"Squat - topsæt\", \"Squat - backoff\") og har ingen hvilepause-popup; se TJEK.md, Til Fable.", "ingen e2e; navnefoldning i Fremgang dækkes af e2e/fremgang-1451.spec.mjs")) main() }

@@ -168,13 +168,15 @@ async function coachRich(page, vp, outDir) {
   await noSideScroll(page, vp.width)
   await page.locator('section[aria-label="Signaler fra appen"]').screenshot({ path: join(outDir, `u3-coach-${vp.name}-01-kraever-dit-blik.png`) })
   const team = page.locator('[data-coach-fold="holdet-samlet"]')
+  // Ordre 2005a: Holdet ligger i foldene "Mere" og Holdet; åbn dem først.
+  await team.evaluate(el => { for (let d = el.parentElement; d; d = d.parentElement) if (d.tagName === 'DETAILS') d.open = true })
   await team.locator('summary').click()
   await team.getByText('logger kost', { exact: false }).waitFor({ state: 'visible', timeout: 20000 })
   const teamText = await team.textContent()
   if (/Atlet [B-F]|Testatlet/.test(teamText)) throw new Error('Navn i "Holdet samlet"')
   await team.locator('[data-u3-team]').waitFor({ state: 'visible' })
   await team.screenshot({ path: join(outDir, `u3-coach-${vp.name}-02-holdet-samlet.png`) })
-  await page.locator('[data-coach-fold="atleter"] > summary').click()
+  await page.locator(`[data-u11-flere="${ATHLETE_ID}"] > summary`).click() // Ordre 1692: "Flere tal" under atletens række
   const ws = page.locator(`[data-coach-athlete-workspace="${ATHLETE_ID}"]`)
   await ws.waitFor({ state: 'visible' })
   await ws.locator('[data-u3-blocks-fold] > summary').click()
@@ -211,6 +213,8 @@ async function coachThin(page, vp, outDir) {
     if (await page.getByText(text, { exact: false }).count()) throw new Error(`"${text}" vises uden data`)
   }
   const team = page.locator('[data-coach-fold="holdet-samlet"]')
+  // Ordre 2005a: Holdet ligger i foldene "Mere" og Holdet; åbn dem først.
+  await team.evaluate(el => { for (let d = el.parentElement; d; d = d.parentElement) if (d.tagName === 'DETAILS') d.open = true })
   await team.locator('summary').click()
   await team.getByText('For få atleter', { exact: false }).waitFor({ state: 'visible', timeout: 20000 })
   if (/logger kost|rammer protein/.test(await team.textContent())) throw new Error('Gruppetal med under 5 atleter')

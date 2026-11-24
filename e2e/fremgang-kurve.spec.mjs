@@ -81,7 +81,7 @@ async function main() {
     const knapper = await page.evaluate(() => [...document.querySelectorAll('button')].filter(b => !b.closest('nav')).map(b => b.textContent.trim()))
     const linjeTekst = () => page.evaluate(() => document.querySelector('[data-fremgang-linje]')?.textContent ?? null)
     const punkterAntal = () => page.evaluate(() => document.querySelectorAll('svg [data-punkt]').length)
-    const kurveY = () => page.evaluate(() => (document.querySelector('svg polyline')?.getAttribute('points') || '').split(' ').map(p => Number(p.split(',')[1])))
+    const kurveY = () => page.evaluate(() => (document.querySelector('svg [data-punkt]')?.closest('svg')?.querySelector('polyline')?.getAttribute('points') || '').split(' ').map(p => Number(p.split(',')[1])))
 
     await udover('Bænkpres')
     await shot(FOER ? 'fremgang-foer-baenk' : 'fremgang-efter-baenk')

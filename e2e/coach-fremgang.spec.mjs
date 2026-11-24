@@ -105,7 +105,7 @@ async function main() {
         // Navnene har emoji foran ("📓 Log"); ligger fanen i "Mere"-menuen, aabnes den foerst.
         const knap = page.getByRole('button', { name: new RegExp(`${label}$`) }).first()
         if (!(await knap.isVisible().catch(() => false))) {
-          await page.getByRole('button', { name: /Mere/ }).first().click().catch(() => {}); await page.waitForTimeout(300)
+          await page.locator('button[aria-expanded]', { hasText: '▾' }).first().click().catch(() => {}); await page.waitForTimeout(300)
         }
         await page.getByRole('button', { name: new RegExp(`${label}$`) }).first().click(); await page.waitForTimeout(1200)
       }

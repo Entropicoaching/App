@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { ATHLETE_USER, ATHLETE_ID, WEEK_ID, SESSION_ID, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 const TAG = process.env.E2E_TAG || 'efter'
 const OUT_DIR = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '1446', TAG)
@@ -97,4 +98,4 @@ ${txt.slice(0, 1800)}`)
     process.exit(process.exitCode || (fejl.length ? 1 : 0))
   }
 }
-main().catch(e => { console.error(e); process.exit(1) })
+{ if (!skipSpec("traening-1446.spec", "Hele Entropi 1-rejsen (Varm op-link på Hjem, Anbefalet-linje, Mobilitet-knap) er overhalet.", "e2e/ny-atlet-1469.spec.mjs og e2e/timer-1459.spec.mjs")) main().catch(e => { console.error(e); process.exit(1) }) }

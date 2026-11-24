@@ -7,6 +7,7 @@ import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { ATHLETE_USER, ATHLETE_ID, WEEK_ID } from './fixtures.mjs'
 import { seed1451 } from './fremgang-1451.spec.mjs'
+import { skipSpec } from './skip.mjs'
 
 const OUT_DIR = process.env.UDMAPPE || ''
 if (OUT_DIR) mkdirSync(OUT_DIR, { recursive: true })
@@ -106,4 +107,4 @@ ${await tekst()}`); await shot('uge-5-fre-d-volumen')
     console.log(`GRØN: en uge gennemgaaet (5 dage)${OUT_DIR ? `, tekst i ${OUT_DIR}/uge-tekst.txt` : ''}`)
   } finally { await browser.close(); await mock.close(); await vite.stop() }
 }
-main().catch(e => { console.error('FEJL:', e.message); process.exit(1) })
+{ if (!skipSpec("uge-gennemgang-1475.spec", "Ugen bygger på Entropi 1-flader (Godkendt, Spring over, Ret sæt, Vis klarede sæt, Volumen på Hjem); Entropi 2s pas har hverken Ret sæt eller klaret-sæt-linjer.", "e2e/atlet-uge.spec.mjs, e2e/ny-atlet-1469.spec.mjs og e2e/dagens-pas.spec.mjs")) main().catch(e => { console.error('FEJL:', e.message); process.exit(1) }) }

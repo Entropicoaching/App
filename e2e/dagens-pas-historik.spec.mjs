@@ -22,6 +22,7 @@
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { ATHLETE_USER, ATHLETE_ID, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 const PAST_LOG_ID = '99999999-9999-4999-8999-999999999930'
 const PAST_WEEK_ID = '99999999-9999-4999-8999-999999999931'
@@ -150,4 +151,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('dagens-pas-historik.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('dagens-pas-historik.spec.mjs')) { if (!skipSpec("dagens-pas-historik.spec", "Entropi 2 forudfylder sæt 1 fra planen og venter ikke på historik; \"Sidst:\" er kun tekst.", "e2e/dagens-pas.spec.mjs (forudfyldning og tryk-knapper)")) main() }

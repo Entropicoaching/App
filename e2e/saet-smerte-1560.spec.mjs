@@ -9,6 +9,7 @@ import { join } from 'node:path'
 import { ATHLETE_USER, ATHLETE_ID, buildSeed, COACH_USER } from './fixtures.mjs'
 import { signalerFraSeed } from '../outputs/428/coach-faelles.mjs'
 import { bygSoendagSeed } from './soendag-1545.spec.mjs'
+import { skipSpec } from './skip.mjs'
 
 const iso = (dage) => { const d = new Date(); d.setUTCDate(d.getUTCDate() - dage); return d.toISOString() }
 const LINJE = 'Ingen forslag i dag: tal med din coach om smerten'
@@ -119,4 +120,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('saet-smerte-1560.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('saet-smerte-1560.spec.mjs')) { if (!skipSpec("saet-smerte-1560.spec", "Entropi 2s pas viser ikke \"Sidste gang:\"/\"Næste: N reps\"-forslag eller smerte-besked (kun i den umonterede DagensPasCard); se TJEK.md, Til Fable.", "src/athlete/smerteStop-enhedsprøverne (modellen); ingen e2e")) main() }

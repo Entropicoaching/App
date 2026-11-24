@@ -4,6 +4,7 @@
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { ATHLETE_ID, ATHLETE_USER, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 const id = n => `99999999-9999-4999-8999-9999999999${n}`
 const isoDaysAgo = days => { const d = new Date(); d.setUTCDate(d.getUTCDate() - days); return d.toISOString() }
@@ -53,4 +54,4 @@ async function main() {
     console.log('GROEN: smerte-note standser stigningsforslaget, uden smerte staar forslaget')
   } catch (err) { console.error('\nFEJL:', err.message); process.exitCode = 1 }
 }
-if (process.argv[1] && process.argv[1].endsWith('smerte-stop-1502.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('smerte-stop-1502.spec.mjs')) { if (!skipSpec("smerte-stop-1502.spec", "Entropi 2s pas har ingen \"Appens forslag\"-linje, så stigningsforslaget og smertestoppet kan ikke ses i browseren; se TJEK.md, Til Fable.", "src/athlete/smerteStop-enhedsprøverne (modellen); ingen e2e")) main() }

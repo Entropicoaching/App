@@ -20,6 +20,7 @@ import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
 import { buildSeed, COACH_USER } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
+import { skipSpec } from './skip.mjs'
 
 const MOBILE = { width: 390, height: 844, label: 'mobil-390' }
 const DESKTOP = { width: 1280, height: 900, label: 'desktop-1280' }
@@ -218,4 +219,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('coach-automation-alerts.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('coach-automation-alerts.spec.mjs')) { if (!skipSpec("coach-automation-alerts.spec", "Entropi 2s CoachScreen viser ikke automation_alerts (\"N åbne ting\", Automatisering fejlede); se TJEK.md, Til Fable.", "ingen e2e (modellen dækkes af src/automationAlerts-prøverne); manglen er meldt til Fable")) main() }

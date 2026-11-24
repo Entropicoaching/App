@@ -8,6 +8,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { ATHLETE_USER, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 const OUT_DIR = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '1402')
 mkdirSync(OUT_DIR, { recursive: true })
@@ -69,4 +70,4 @@ async function main() {
   }
 }
 
-main()
+{ if (!skipSpec("hvile-popup.spec", "Entropi 2 har ingen pausepop-up (rest-pause-popup); pausen står indlejret i passet.", "e2e/timer-1459.spec.mjs")) main() }

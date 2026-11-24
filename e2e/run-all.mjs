@@ -55,8 +55,13 @@ async function main() {
 
     // Video op og gå + coachens gennemgang (ordre 155 · commit 1-2).
     const awaitingRow = await step('video-upload', MOBILE, page => runVideoUpload(page, opts))
-    const feedback = await step('video-review', DESKTOP, page => runVideoReview(page, { ...opts, awaitingRow }))
-    await step('atlet-ser-feedback', MOBILE, page => runAthleteSeesFeedback(page, { ...opts, feedback }))
+    // Ordre 2069: coachens gennemgang af en video og atletens feedback er flyttet i Entropi 2 (coachens opgave "Video venter på feedback",
+    // svaret når atleten som besked); det dækker e2e/coach-video-svar-2053.spec.mjs. De gamle trin kører med E2E_KOER_SKIPPEDE=1.
+    if (process.env.E2E_KOER_SKIPPEDE) {
+      const feedback = await step('video-review', DESKTOP, page => runVideoReview(page, { ...opts, awaitingRow }))
+      await step('atlet-ser-feedback', MOBILE, page => runAthleteSeesFeedback(page, { ...opts, feedback }))
+    }
+
 
     // Det der går galt (ordre 155 · commit 3).
     await step('offline-saet-log', MOBILE, page => runOfflineSetLog(page, opts))

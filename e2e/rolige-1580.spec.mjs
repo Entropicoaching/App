@@ -11,6 +11,7 @@ import { COACH_USER } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 import { signalerFraSeed } from '../outputs/428/coach-faelles.mjs'
 import { bygSoendagSeed } from './soendag-1545.spec.mjs'
+import { skipSpec } from './skip.mjs'
 
 export async function runRolige(page, { appUrl, outDir, seed, bredde }) {
   const signaler = await signalerFraSeed(seed)
@@ -72,4 +73,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('rolige-1580.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('rolige-1580.spec.mjs')) { if (!skipSpec("rolige-1580.spec", "\"N åbne ting\"-linjen findes kun i den gamle ForsideView, ikke i Entropi 2s coachforside.", "e2e/coach-uge-2005a.spec.mjs")) main() }

@@ -34,17 +34,15 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
   await shot('01-login')
   await page.getByRole('button', { name: 'Log ind' }).click()
 
-  // Dagens pas — sessionskortet på "Hjem" (mærket "Næste"). Siden ORDRE 330
-  // ligger "Mit program" bag folden "Mere".
-  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
-  await page.getByText('Mit program').waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText('Næste', { exact: true }).waitFor({ state: 'visible' })
+  // Entropi 2 (ordre 2069): Hjem har kortet "Start dagens pas"; passet åbner i en modal dialog med "Sæt N af M".
+  await page.getByRole('button', { name: 'Start dagens pas' }).first().waitFor({ state: 'visible', timeout: 15000 })
   await shot('02-hjem-dagens-pas')
-
-  await page.getByText('Dag 1 — Squat', { exact: true }).click()
+  const spring = page.getByRole('button', { name: /Spring guiden over/ })
+  if (await spring.count()) await spring.first().click()
+  await page.getByRole('button', { name: 'Start dagens pas' }).first().click()
 
   // Opvarmning vises for øvelsen (Squat har recommended_weight >= 20, se fixtures.mjs).
-  await page.getByText('Opvarmningssæt', { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  await page.locator('h2', { hasText: 'Opvarmning' }).first().waitFor({ state: 'attached', timeout: 10000 }) // sektionen ligger i passet
   await shot('03-program-opvarmning')
 
   // Log tre sæt med interval-reps (4, 5, 6) — reps-feltet er redigerbart fordi
@@ -52,14 +50,12 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
   const repsPerSet = [4, 5, 6]
   for (let i = 0; i < 3; i++) {
     const setNum = i + 1
-    await page.getByLabel(`Vægt, sæt ${setNum}`).fill('80')
-    await page.getByLabel(`Reps, sæt ${setNum}`).fill(String(repsPerSet[i]))
-    // Ikke nth(i): et allerede logget sæts knap skifter tekst til "✓", så
-    // "Log"-knappen for det NÆSTE ulogget sæt altid er den første tilbage.
-    await page.getByRole('button', { name: 'Log', exact: true }).first().click()
-    // Vent på at skrivningen er landet i mocken, før næste sæt logges —
-    // undgår at ramme knappen mens den forrige optimistiske skrivning
-    // stadig er i baggrundskøen (se queueWrite i src/supabase.js).
+    await page.getByText(`Sæt ${setNum} af 4`, { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+    await page.locator('[data-field="weight"]').fill('80')
+    await page.locator('[data-field="reps"]').fill(String(repsPerSet[i]))
+    // Tallene er rettet væk fra forslaget, så knappen hedder "Godkendt" (ellers "Som planlagt"/"Som sidste sæt").
+    await page.getByRole('button', { name: /^(Godkendt|Som planlagt|Som sidste sæt)$/ }).first().click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
+    // Vent på at skrivningen er landet i mocken, før næste sæt logges.
     await page.waitForFunction(
       async ([url, expected]) => {
         const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)
@@ -78,57 +74,48 @@ export async function runAtletJourney(page, { appUrl, mockUrl, outDir }) {
     .sort((a, b) => a.set_number - b.set_number)
     .map(l => l.reps_completed)
   assert.deepEqual(loggedReps, [4, 5, 6], `forventede reps_completed [4,5,6] i mockens exercise_logs, fik ${JSON.stringify(loggedReps)}`)
+  // Passet ligger i en modal dialog i Entropi 2; den lukkes, før fanerne kan trykkes.
+  const lukPas = page.getByRole('button', { name: 'Luk pas' })
+  if (await lukPas.first().isVisible().catch(() => false)) await lukPas.first().click()
 
   // VOLUMEN — atletens egen fane (ordre 259). Squat er kortlagt med
   // Knæ-strækkere som PRIMÆR gruppe (muskelkort.js), så de tre lige
   // gennemførte sæt skal give "3/3" (direkte/ialt) for den gruppe.
+  // Volumen ligger i bundmenuens fold "Mere" (ordre 2069).
+  await page.locator('[data-entropi2-bundnav] summary').click()
   await page.getByRole('button', { name: 'Volumen', exact: true }).click()
   await page.getByText('Knæ-strækkere').waitFor({ state: 'visible', timeout: 10000 })
   await shot('04b-volumen-denne-uge')
-  const kneeRow = page.locator('xpath=//span[normalize-space(text())="Knæ-strækkere"]/parent::div')
-  const kneeRowText = await kneeRow.textContent()
-  assert.ok(kneeRowText.includes('3/3'), `forventede "3/3" for Knæ-strækkere i Volumen-fanen, fik "${kneeRowText}"`)
+  // Entropi 2: Volumen er en tabel (Muskelgruppe / Denne uge / Sidste uge) med vægtede sæt; tre sæt Squat giver 3 på Knæ-strækkere.
+  const kneeRow = page.locator('tr', { hasText: 'Knæ-strækkere' })
+  const kneeRowText = await kneeRow.innerText()
+  assert.ok(kneeRowText.replace(/\s+/g, ' ').trim().startsWith('Knæ-strækkere 3 '), `forventede 3 vægtede sæt for Knæ-strækkere denne uge, fik "${kneeRowText}"`)
 
-  // Check-in (parathed) — tilbage til Hjem.
+  // Dagsform (Entropi 2: erstatter "Parathed"/"Log parathed"): Hjem er første fane; kortet "I dag" har energi 1 til 5 med ét tryk.
   await page.getByRole('button', { name: 'Hjem', exact: true }).click()
-  // "Parathed" i den sekundære række åbner "Mere" og ruller til kortet (ORDRE 330).
-  await page.getByRole('button', { name: /^Parathed/ }).click()
-  await page.locator('input[placeholder="timer"]').fill('8')
-  await ratingButton(page, 'Energiniveau', 4).click()
-  await ratingButton(page, 'Motivation', 4).click()
-  await ratingButton(page, 'Stress', 2).click()
-  await ratingButton(page, 'Muskelømhed', 2).click()
+  await page.getByRole('button', { name: 'Udfyld dagsform' }).first().click()
+  await page.locator('[data-home-quick-logs] button[aria-label="Energi 4"]').click()
+  for (const felt of ['Motivation', 'Stress', 'Ømhed']) await page.locator(`[data-home-quick-logs] button[aria-label="${felt} 4"]`).click()
+  await page.locator('[data-home-quick-logs] button[type="submit"]').click()
+
+
   await shot('05-checkin-udfyldt')
-  await page.getByRole('button', { name: 'Log parathed' }).click()
-  await page.waitForFunction(
-    async (url) => {
-      const res = await fetch(`${url}/__e2e/table?name=readiness_logs`)
-      const rows = await res.json()
-      return rows.length >= 1
-    },
-    mockUrl,
-    { timeout: 10000 },
-  )
+  for (let i = 0; i < 50 && (await readTable(mockUrl, 'readiness_logs')).length < 1; i++) await page.waitForTimeout(200)
+
   const readiness = await readTable(mockUrl, 'readiness_logs')
   assert.equal(readiness.length, 1, `forventede én readiness_logs-række, fik ${readiness.length}`)
   await shot('06-checkin-gemt')
 
-  // VideoCoach-forsiden åbner uden video — kun at den loader, ingen upload.
-  // APP-PARAT2: genvejen til parathed åbner ikke længere hele Mere-sektionen; VideoCoach-kortet ligger under Mere.
-  const mere = page.getByRole('button', { name: /^Mere/ })
-  if (await mere.getAttribute('aria-expanded') === 'false') await mere.click()
-  await page.getByText('VideoCoach', { exact: true }).click()
-  const vcFrame = page.locator('iframe[title="VideoCoach"]')
-  await vcFrame.waitFor({ state: 'visible', timeout: 10000 })
-  await page.frameLocator('iframe[title="VideoCoach"]').locator('#closeBtn').waitFor({ state: 'visible', timeout: 10000 })
-  await shot('07-videocoach-aabnet')
-  await page.frameLocator('iframe[title="VideoCoach"]').locator('#closeBtn').click()
-  await vcFrame.waitFor({ state: 'hidden', timeout: 10000 })
+  // Film et sæt (VideoCoach) ligger under "Mere i dag" på Hjem; kun at knappen findes, ingen upload.
+  await page.locator('[data-home-mere] > summary').click()
+  await page.locator('[data-film-set]').first().waitFor({ state: 'visible', timeout: 10000 })
+  await shot('07-film-et-saet-knap')
 
-  // Logout.
+  // Logout (kontomenuen ⋯).
   await page.getByRole('button', { name: 'Konto' }).click()
   await page.getByRole('button', { name: 'Log ud', exact: true }).click()
-  await page.getByRole('button', { name: 'Bekræft' }).click()
+  const bekraeft = page.getByRole('button', { name: 'Bekræft' })
+  if (await bekraeft.count()) await bekraeft.first().click()
   await page.locator('#athlete-auth-email').waitFor({ state: 'visible', timeout: 10000 })
   await shot('08-logget-ud')
 }

@@ -15,6 +15,7 @@ import { createMockSupabase } from './mock-supabase.mjs'
 import { buildSeed, COACH_USER } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
 import { bygCoachSeed, signalerFraSeed, ATLETER } from '../outputs/428/coach-faelles.mjs'
+import { skipSpec } from './skip.mjs'
 
 // Historik (uge -10..-2): 5 reps tunge saet pr. loeft, saa Fremgang har en tendens.
 const FORLOEB = { Alfa: [92, 1.4], Bravo: [90, 1.2], Charlie: [100, 0], Delta: [100, -0.8], Echo: [85, 2] }
@@ -136,4 +137,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('soendag-1545.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('soendag-1545.spec.mjs')) { if (!skipSpec("soendag-1545.spec", "\"N åbne ting\"-linjen findes kun i den gamle ForsideView, ikke i Entropi 2s coachforside. Seed-funktionen bygSoendagSeed eksporteres stadig.", "e2e/coach-uge-2005a.spec.mjs")) main() }

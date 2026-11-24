@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { ATHLETE_USER, SESSION_ID, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 const OUT_DIR = process.env.E2E_OUT || join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '1451')
 mkdirSync(OUT_DIR, { recursive: true })
 const pre = process.env.FREMGANG_FOER ? 'foer' : 'efter'
@@ -13,6 +14,7 @@ seed.tables.exercises.forEach(e => { e.exercise_order += 10 })
 seed.tables.exercises.push(
   { id: uuid(1), session_id: SESSION_ID, name: 'Bænkpres top set', sets: 2, reps: '3', intensity: 'RPE 8', note: null, exercise_order: 1, recommended_weight: 100 },
   { id: uuid(2), session_id: SESSION_ID, name: 'Bænkpres - backoff', sets: 2, reps: '8', intensity: 'RPE 7', note: null, exercise_order: 2, recommended_weight: 85 })
+if (skipSpec('taelling-1451.spec', "Kortet \"Top · Sæt 1/4\" findes ikke; Entropi 2 viser \"Sæt N af M\" i passet.", "e2e/saet-nu.spec.mjs og e2e/dagens-pas.spec.mjs")) process.exit(0)
 const { createMockSupabase } = await import('./mock-supabase.mjs')
 const { startVite, launchBrowser, APP_URL, MOCK_PORT } = await import('./harness.mjs')
 const vite = await startVite(); const browser = await launchBrowser()

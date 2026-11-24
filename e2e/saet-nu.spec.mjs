@@ -13,6 +13,7 @@
 // sekventielt — ikke to processer om samme port samtidig): vite startes én
 // gang (statisk bundle, ingen tilstand), mock genskabes (frisk buildSeed())
 // og browserkonteksten genåbnes (frisk localStorage) mellem de to viewports.
+// Ordre 2069: følger Entropi 2 (Start dagens pas, Sæt N af M); den gamle kollapsede klarede-sæt-linje findes ikke i passet.
 // Egen kørsel: `npm run e2e:saet-nu`.
 
 import assert from 'node:assert/strict'
@@ -39,52 +40,26 @@ async function runViewport(page, { tag, width, height, outDir }) {
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
 
-  await page.getByText('Dagens pas', { exact: true }).first().waitFor({ state: 'visible', timeout: 15000 })
-  await page.getByText(/Sæt 1\/4$/).waitFor({ state: 'visible' })
+  // Entropi 2 (ordre 2069): Hjem har kortet "Start dagens pas"; selve sættet står i det åbne pas ("Sæt N af M").
+  await page.getByRole('button', { name: /Start dagens pas/ }).first().click()
+  await page.getByText('Sæt 1 af 4', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
   await checkOverflow(page, `${tag} før sæt 1`)
   await shot('00-foer-saet-1')
 
-  // Før noget er logget: ingen "klarede sæt"-linje, og "næste sæt" (dæmpet,
-  // ingen felter) peger på sæt 2. Eksakt tekst (ikke exact:false), fordi
-  // RestPauseFooter's "Næste: <øvelse> · sæt N/M" (efter et Godkendt-tryk)
-  // ellers også matcher en løs "Næste:"-søgning.
-  const NEXT_SET_PREVIEW_TEXT = 'Næste: 4 reps @ 80 kg'
-  assert.equal(await page.getByText('Sæt 1:', { exact: false }).count(), 0, `${tag}: intet klaret sæt endnu, "Sæt 1:"-linjen må ikke stå der`)
-  await page.getByText(NEXT_SET_PREVIEW_TEXT, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
-
   for (const setNum of [1, 2, 3]) {
-    await page.getByText(`Sæt ${setNum}/4`, { exact: false }).first().waitFor({ state: 'visible', timeout: 5000 })
-    await checkOverflow(page, `${tag} lige før "Godkendt" på sæt ${setNum}`)
+    await page.getByText(`Sæt ${setNum} af 4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+    await checkOverflow(page, `${tag} lige før "Som planlagt" på sæt ${setNum}`)
     await shot(`${String(setNum).padStart(2, '0')}a-foer-godkendt-saet-${setNum}`)
 
-    await page.getByRole('button', { name: 'Godkendt', exact: true }).click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
+    await page.getByRole('button', { name: /^Som (planlagt|sidste sæt)$/ }).first().click(); await page.waitForTimeout(600) // setTapGuard: 500 ms mellem tryk
 
-    if (setNum < 4) {
-      await page.getByText(`Sæt ${setNum + 1}/4`, { exact: false }).first().waitFor({ state: 'visible', timeout: 5000 })
-    }
-    await checkOverflow(page, `${tag} lige efter "Godkendt" på sæt ${setNum}`)
+    await page.getByText(`Sæt ${setNum + 1} af 4`, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
+    await checkOverflow(page, `${tag} lige efter godkendt sæt ${setNum}`)
     await shot(`${String(setNum).padStart(2, '0')}b-efter-godkendt-saet-${setNum}`)
-
-    // ORDRE 339 · blok 1 (F3): klarede sæt står som ÉN kollapset linje
-    // ("✓ N sæt klaret"), ikke en række pr. sæt.
-    await page.getByText(`✓ ${setNum} sæt klaret`, { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
-    assert.equal(await page.getByText(`Sæt ${setNum}:`, { exact: false }).count(), 0,
-      `${tag}: klarede sæt skal være kollapset som standard`)
-    if (setNum + 2 <= 4) {
-      await page.getByText(NEXT_SET_PREVIEW_TEXT, { exact: true }).waitFor({ state: 'visible', timeout: 5000 })
-    }
   }
-  // Foldet ud: alle sæt 1..3 som kompakte linjer, men det aktuelle sæt (4)
-  // må IKKE selv stå som en klaret linje — kun de sæt der ligger FØR det.
-  await page.getByRole('button', { name: 'Vis 3 klarede sæt', exact: true }).click()
-  for (let n = 1; n <= 3; n++) {
-    await page.getByText(`Sæt ${n}:`, { exact: false }).waitFor({ state: 'visible', timeout: 5000 })
-  }
-  assert.equal(await page.getByText('Sæt 4:', { exact: false }).count(), 0,
-    `${tag}: det aktuelle sæt (4) må ikke selv stå som en klaret linje`)
   await shot('99-tre-saet-logget')
 
-  console.log(`${tag}: tre sæt logget, "Sæt N af 4" stemte hele vejen, ingen vandret overflow, ${3} klarede-sæt-linjer stod korrekt.`)
+  console.log(`${tag}: tre sæt logget, "Sæt N af 4" stemte hele vejen, ingen vandret overflow.`)
 }
 
 async function main() {

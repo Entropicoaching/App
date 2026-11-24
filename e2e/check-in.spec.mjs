@@ -14,6 +14,7 @@
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { ATHLETE_USER, ATHLETE_ID, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 function shiftDate(str, days) {
   const d = new Date(str + 'T00:00:00Z')
@@ -159,4 +160,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('check-in.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('check-in.spec.mjs')) { if (!skipSpec("check-in.spec", "\"Ugens check-in mangler stadig\", \"Log parathed\" og coachnote efter check-in findes kun i den umonterede Entropi 1-Hjem.", "e2e/u5-today.spec.mjs (Dagsform)")) main() }

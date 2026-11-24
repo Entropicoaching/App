@@ -15,6 +15,7 @@ import { join } from 'node:path'
 import { createMockSupabase } from './mock-supabase.mjs'
 import { buildSeed, COACH_USER, ATHLETE_ID } from './fixtures.mjs'
 import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR } from './harness.mjs'
+import { skipSpec } from './skip.mjs'
 
 const SKREDET_USER_ID = 'cccccccc-1111-4111-8111-cccccccccccc'
 const SKREDET_ATHLETE_ID = 'cccccccc-2222-4222-8222-cccccccccccc'
@@ -186,4 +187,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('coach-afvigelse.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('coach-afvigelse.spec.mjs')) { if (!skipSpec("coach-afvigelse.spec", "Sortering \"Afvigelse denne uge\" og planlinjerne findes ikke i Entropi 2s coachforside (bevidst fjernet i 2005a).", "e2e/coach-uge-2005a.spec.mjs og src/athleteListModel.test.mjs")) main() }

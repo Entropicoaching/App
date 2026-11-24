@@ -58,6 +58,8 @@ export async function runCoachKostTal(page, outDir = OUT_DIR) {
   const fold = page.locator('[data-coach-fold="kost"]')
   await fold.waitFor({ state: 'attached', timeout: 20000 })
   // Ordre 1692: Kost ligger i den lukkede gruppe Holdet; coachen åbner gruppen først.
+  // Ordre 2005a: Holdet ligger nu inde i den lukkede fold "Mere".
+  await page.locator('[data-coach-fold="mere"] > summary').click()
   await page.locator('[data-u11-gruppe="hold"] > summary').click()
   const heading = await fold.locator('summary').innerText()
   if (!/Kost · \d+ af \d+ logger 4\+ dage/.test(heading)) throw new Error('Coachens kostoverblik mangler tallet: ' + heading)

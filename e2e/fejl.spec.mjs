@@ -7,17 +7,18 @@
 import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { ATHLETE_USER, ATHLETE_ID, EXERCISE_ID } from './fixtures.mjs'
-import { ensureSyntheticClip } from './harness.mjs'
+import { ensureCoachSporingClip } from './harness.mjs'
+import { filmSaetUpTilDone } from './athlete-film-et-saet.mjs'
 
 async function loginAsAthlete(page, appUrl) {
   await page.goto(appUrl)
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  // "Mit program" ligger bag folden "Mere" siden ORDRE 330.
-  await page.getByRole('button', { name: 'Mere', exact: true }).click({ timeout: 15000 })
-  await page.getByText('Mit program').waitFor({ state: 'visible', timeout: 15000 })
+  // Entropi 2 (ordre 2069): Hjem har "Start dagens pas" og "Mere i dag" i stedet for "Mere"/"Mit program".
+  await page.locator('[data-home-mere] > summary').waitFor({ state: 'visible', timeout: 15000 })
 }
+
 
 async function readTable(mockUrl, name) {
   const res = await fetch(`${mockUrl}/__e2e/table?name=${encodeURIComponent(name)}`)
@@ -37,31 +38,30 @@ export async function runOfflineSetLog(page, { appUrl, mockUrl, outDir }) {
   const setNum = 4
 
   await loginAsAthlete(page, appUrl)
-  await page.getByText('Dag 1 — Squat', { exact: true }).click()
-  await page.getByLabel(`Vægt, sæt ${setNum}`).waitFor({ state: 'visible', timeout: 10000 })
+  const spring = page.getByRole('button', { name: /Spring guiden over/ })
+  if (await spring.count()) await spring.first().click()
+  await page.getByRole('button', { name: /^Start (dagens|næste) pas$/ }).first().click()
+  await page.getByText(`Sæt ${setNum} af 4`, { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
 
+  // Uden net lander sættet i den lokale kø (localStorage) og må ikke gå tabt; med net igen sendes det præcis én gang.
+  const queueKey = `entropi_offline_sets:${ATHLETE_ID}`
   await page.context().setOffline(true)
-  await page.getByLabel(`Vægt, sæt ${setNum}`).fill('80')
-  await page.getByLabel(`Reps, sæt ${setNum}`).fill('4')
-  await page.getByRole('button', { name: 'Log', exact: true }).first().click()
-
-  // Besked på skærmen: queueWrite's fire forsøg (se src/supabase.js) løber
-  // hurtigt tør uden net — ingen kunstig 12s-ventetid nødvendig her.
-  await page.getByText('Ikke gemt. Prøv igen').waitFor({ state: 'visible', timeout: 15000 })
+  await page.locator('[data-field="weight"]').fill('80')
+  await page.locator('[data-field="reps"]').fill('4')
+  await page.getByRole('button', { name: /^(Godkendt|Som planlagt|Som sidste sæt)$/ }).first().click()
+  await page.waitForFunction(k => Object.keys(JSON.parse(localStorage.getItem(k) || '{}')).length > 0, queueKey, { timeout: 15000 })
   await shot('01-offline-fejl')
 
   await page.context().setOffline(false)
-  await page.getByRole('button', { name: 'Log', exact: true }).first().click()
-  await page.waitForFunction(
-    async ([url, exId]) => {
-      const res = await fetch(`${url}/__e2e/table?name=exercise_logs`)
-      const rows = await res.json()
-      return rows.filter(r => r.exercise_id === exId && r.set_number === 4).length >= 1
-    },
-    [mockUrl, EXERCISE_ID],
-    { timeout: 15000 },
-  )
+  await page.reload()
+  await page.locator('[data-home-mere] > summary').waitFor({ state: 'visible', timeout: 15000 })
+  for (let i = 0; i < 75; i++) {
+    const rows = await readTable(mockUrl, 'exercise_logs')
+    if (rows.filter(r => r.exercise_id === EXERCISE_ID && r.set_number === 4).length >= 1) break
+    await page.waitForTimeout(200)
+  }
   await shot('02-online-igen-gemt')
+
 
   const logs = await readTable(mockUrl, 'exercise_logs')
   const set4 = logs.filter(l => l.exercise_id === EXERCISE_ID && l.set_number === 4)
@@ -74,29 +74,31 @@ export async function runOfflineSetLog(page, { appUrl, mockUrl, outDir }) {
 // mangler første gang, jf. kommentaren i src/AthleteView.jsx's upload-and-go).
 export async function runRejectedUploadRetry(page, { appUrl, mockUrl, outDir }) {
   const shot = (name) => page.screenshot({ path: join(outDir, `fejl-${name}.png`), fullPage: true })
-  const clipPath = ensureSyntheticClip()
+  const clipPath = ensureCoachSporingClip('glat').path
 
   await loginAsAthlete(page, appUrl)
   await injectFault(mockUrl, { pathPrefix: '/rest/v1/video_analyses', method: 'POST', mode: '500', times: 1 })
 
-  // APP-PARAT2: genvejen til parathed åbner ikke længere hele Mere-sektionen; VideoCoach-kortet ligger under Mere.
-  const mere = page.getByRole('button', { name: /^Mere/ })
-  if (await mere.getAttribute('aria-expanded') === 'false') await mere.click()
-  await page.getByText('VideoCoach', { exact: true }).click()
-  const frame = page.frameLocator('iframe[title="VideoCoach"]')
-  await frame.locator('body.athlete').waitFor({ state: 'attached', timeout: 10000 })
-  await frame.locator('#fileInput').setInputFiles(clipPath)
-  await frame.locator('#athleteSubmitSheet[hidden]').waitFor({ state: 'detached', timeout: 15000 })
-  await frame.locator('#liftSel').selectOption({ label: 'Squat' })
-  await frame.locator('#saveBtn').click()
+  // Entropi 2: "Film et sæt til videocoach" ligger under "Mere i dag" på Hjem.
+  const mereIDag = page.locator('[data-home-mere]')
+  if (!(await mereIDag.evaluate(el => el.open))) await mereIDag.locator('> summary').click()
+  await page.locator('[data-film-set]').first().click()
 
-  await frame.locator('#saveBtn', { hasText: 'Prøv at sende igen' }).waitFor({ state: 'visible', timeout: 15000 })
+  const frame = page.frameLocator('iframe[title="VideoCoach"]')
+  // Entropi 2: film-vejen analyserer klippet og sender med "Send video til coach"; afvisningen vises i #vcUploadRetryStatus med "Prøv igen".
+  const state = await filmSaetUpTilDone(frame, page, clipPath, name => shot(`film-${name}`))
+  assert.equal(state, 'done', 'analysen blev ikke færdig: ' + state)
+  await frame.locator('#athleteInstantSaveBtn').click()
+
+  const panel = frame.locator('#vcUploadRetryStatus')
+  await panel.getByText(/^Ikke sendt/).waitFor({ state: 'visible', timeout: 30000 })
   await shot('03-upload-afvist')
 
   const beforeRetryCount = (await readTable(mockUrl, 'video_analyses'))
     .filter(r => r.athlete_id === ATHLETE_ID).length
 
-  await frame.locator('#saveBtn').click()
+  await panel.getByRole('button', { name: 'Prøv igen' }).click()
+
   await page.waitForFunction(
     async ([url, athleteId, before]) => {
       const res = await fetch(`${url}/__e2e/table?name=video_analyses`)

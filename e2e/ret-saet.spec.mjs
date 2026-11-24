@@ -19,6 +19,7 @@ import assert from 'node:assert/strict'
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { ATHLETE_USER, EXERCISE_ID, buildSeed } from './fixtures.mjs'
+import { skipSpec } from './skip.mjs'
 
 const OUT_DIR = join(new URL('.', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'), '..', 'outputs', '320')
 mkdirSync(OUT_DIR, { recursive: true })
@@ -191,4 +192,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith('ret-saet.spec.mjs')) main()
+if (process.argv[1] && process.argv[1].endsWith('ret-saet.spec.mjs')) { if (!skipSpec("ret-saet.spec", "Entropi 2-passet har ingen \"Vis N klarede sæt\"/\"Ret sæt N\" (kun i den umonterede DagensPasCard).", "e2e/dagens-pas.spec.mjs (offline-kø og genindlæsning)")) main() }

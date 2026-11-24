@@ -13,12 +13,12 @@ export async function sendAthleteMessage(page, { appUrl, outDir, text }) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByRole('button', { name: 'Mere', exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByRole('button', { name: /Beskeder/ }).first().waitFor({ state: 'visible', timeout: 15000 })
 
-  await page.getByRole('button', { name: /Beskeder/ }).click()
-  await page.locator('input[placeholder="Skriv til din coach"]').fill(text)
+  await page.getByRole('button', { name: /Beskeder/ }).first().click()
+  await page.locator('[placeholder="Skriv en besked"]').fill(text)
   await page.getByRole('button', { name: 'Send', exact: true }).click()
-  await page.getByText(text, { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  await page.getByText(text, { exact: true }).filter({ visible: true }).first().waitFor({ state: 'visible', timeout: 10000 })
   await shot('01-atlet-sender')
 }
 
@@ -28,7 +28,7 @@ export async function coachRepliesToMessage(page, { appUrl, outDir, athleteText,
   await page.locator('#athlete-auth-email').fill(COACH_USER.email)
   await page.locator('#athlete-auth-password').fill(COACH_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByRole('button', { name: /Testatlet.*Uge/ }).click()
+  await page.getByRole('button', { name: 'Åbn programmet for Testatlet' }).click()
 
   // Ulæst-tæller på Beskeder-fanen, FØR den åbnes.
   const badge = page.getByRole('button', { name: /Beskeder/ }).locator('span').last()
@@ -36,11 +36,11 @@ export async function coachRepliesToMessage(page, { appUrl, outDir, athleteText,
   assert.equal((await badge.textContent()).trim(), '1', 'Beskeder-fanen skal vise ulæst-tælleren 1')
   await shot('02-coach-ulaest-taeller')
 
-  await page.getByRole('button', { name: /Beskeder/ }).click()
-  await page.getByText(athleteText, { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
-  await page.locator('input[placeholder="Skriv en besked..."]').fill(replyText)
+  await page.getByRole('button', { name: /Beskeder/ }).first().click()
+  await page.getByText(athleteText, { exact: true }).filter({ visible: true }).first().waitFor({ state: 'visible', timeout: 10000 })
+  await page.locator('[placeholder^="Skriv en besked"]').fill(replyText)
   await page.getByRole('button', { name: 'Send', exact: true }).click()
-  await page.getByText(replyText, { exact: true }).waitFor({ state: 'visible', timeout: 10000 })
+  await page.getByText(replyText, { exact: true }).filter({ visible: true }).first().waitFor({ state: 'visible', timeout: 10000 })
   await shot('03-coach-svarer')
 }
 
@@ -53,7 +53,7 @@ export async function athleteSeesReply(page, { appUrl, outDir, replyText }) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
   await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
-  await page.getByRole('button', { name: /Beskeder/ }).click()
-  await page.getByText(replyText, { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+  await page.getByRole('button', { name: /Beskeder/ }).first().click()
+  await page.getByText(replyText, { exact: true }).filter({ visible: true }).first().waitFor({ state: 'visible', timeout: 15000 })
   await shot('04-atlet-ser-svar')
 }

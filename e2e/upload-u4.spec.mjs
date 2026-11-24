@@ -38,6 +38,11 @@ const ownKeys = async () => (await (await fetch(`${MOCK_URL}/__e2e/storage-keys`
 // Atletens klikvej i Entropi 2: Film et sæt, vælg video, find skiven, analysér, Send video til coach.
 async function filmAndSend(page, path, shot, beforeSend = async () => {}) {
   await login(page, ATHLETE_USER)
+  // Ordre 2069: knappen ligger under "Mere i dag" (lukket fold) på Hjem.
+  await page.locator('[data-home-mere]').waitFor({ state: 'attached', timeout: 20000 })
+  const mereIDag = page.locator('[data-home-mere]')
+  if (!(await mereIDag.evaluate(el => el.open))) await mereIDag.locator('> summary').click()
+
   const film = page.getByRole('button', { name: /Film et sæt/ }).first()
   await film.waitFor({ state: 'visible', timeout: 20000 })
   await film.click()
