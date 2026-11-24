@@ -101,8 +101,8 @@ async function athlete(page, vp, outDir, mode) {
   let firstSet = null
   if (u6) {
     if (!/Squat 87,5 kg \(\+2,5\)/.test(card)) throw new Error('Planvægten mangler: ' + card)
-    // Ordre 2069: Hjem har nu kortet Dagens pas over I dag, så Mad-knappen ligger under bundmenuen ved 390 px. Meldt til Fable (TJEK.md), ikke rettet her.
-    if (!fit.firstVisible) console.warn(`ADVARSEL (Til Fable): Mad-knappen står under bundmenuen ved åbning: bund ${fit.firstBottom}, menu ${fit.navTop}`)
+    // Ordre 2078/2089: Mad-knappen skal stå helt over bundmenuen ved åbning (390 px), også uden 2035f.
+    if (!fit.firstVisible) throw new Error(`Mad-knappen står under bundmenuen ved åbning: bund ${fit.firstBottom}, menu ${fit.navTop}`)
     await page.getByRole('button', { name: /^Start (dagens|næste) pas$/ }).first().click()
     const form = page.locator('form[aria-label="Registrer sæt"]').first()
     await form.waitFor({ state: 'visible', timeout: 20000 })
@@ -159,7 +159,7 @@ async function main() {
   const fresh = async (vp, run) => {
     const mock = createMockSupabase(u6Seed())
     await mock.listen(MOCK_PORT)
-    const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } })
+    const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height }, colorScheme: process.env.E2E_SCHEME === 'dark' ? 'dark' : 'light' })
     const errors = []
     page.on('pageerror', err => errors.push(err.message))
     try {

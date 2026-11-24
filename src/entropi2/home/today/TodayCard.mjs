@@ -192,7 +192,8 @@ export default function TodayCard(props) {
   }
   const go = route => () => latest.current.setTab?.(route)
   const planText = plan?.athleteId === athleteId && plan?.day === today ? plan.line : null
-  const mealRow = () => h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
+  // first: Mad står øverst i kortet uden skillelinje og luft over sig (ordre 2089).
+  const mealRow = first => h('div', { key: 'meal', style: first ? { ...row, borderTop: 0, paddingTop: 0 } : row, 'data-u5-meal': '' },
     h('p', { style: label }, 'Mad'),
     mealData.yesterday.length
       ? h('button', { type: 'button', style: primary, disabled: copy?.running, onClick: repeatYesterday },
@@ -205,13 +206,14 @@ export default function TodayCard(props) {
         || (mealData.yesterday.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.')))
 
   const rows = { weight: weightRow, readiness: readinessRow, training: trainingRow, meal: mealRow }
-  // U6 (kontrollens U5-bemærkning): Mad står før træning, så knappen ses over bundmenuen ved åbning
+  // U6 (kontrollens U5-bemærkning): Mad står øverst i kortet, så knappen ses over bundmenuen ved åbning
   // på 390 px. Træningsrækken er kun status; start sker i pas-kortet lige under.
   const mealFirst = u6Enabled('mealFirst', props.u6MealFirst)
-  const shownOrder = keys => mealFirst ? ['weight', 'readiness', 'meal', 'training'].filter(key => keys.includes(key)) : keys
+  const shownOrder = keys => mealFirst ? ['meal', 'weight', 'readiness', 'training'].filter(key => keys.includes(key)) : keys
   return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'I dag', 'data-u5-today': '' },
-    h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
-    h('h2', { style: { ...s.heading, fontSize: 22, margin: '6px 0 0' } }, model.headline),
+    // Ordre 2089: overskriften siger allerede "i dag"; med Mad først udgår "I dag" over den, så Mad-knappen står over bundmenuen ved 390 px.
+    !mealFirst && h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
+    h('h2', { style: { ...s.heading, fontSize: 22, margin: mealFirst ? 0 : '6px 0 0' } }, model.headline),
     model.doneLine && h('p', { style: { ...hint, margin: '4px 0 0' } }, `${model.doneLine} ✓`),
-    ...shownOrder(model.missing).map(key => rows[key]?.()))
+    ...shownOrder(model.missing).map((key, i) => rows[key]?.(mealFirst && i === 0)))
 }
