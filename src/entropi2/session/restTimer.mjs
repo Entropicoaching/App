@@ -120,7 +120,8 @@ export function createRestTimer(doc, clock = globalThis) {
         }
         if (newest) begin(newest, newestAt, exercises)
       }
-      node.hidden = !s.open || s.summary || startedAt == null
+      // Ordre 2033f: atleten kan skjule uret under Mig; pausen registreres stadig (begin koerer uaendret).
+      node.hidden = !s.open || s.summary || startedAt == null || p.restTimerHidden === true
       for (const b of [pause, reset, extend]) b.disabled = node.hidden
       refresh()
     },

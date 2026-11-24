@@ -4,6 +4,7 @@ import { profileStyles as s } from './profileStyles.mjs'
 import { ExportPanel } from '../eksport/ExportPanel.mjs'
 import { ProfileGoals } from './ProfileGoals.mjs'
 import { TemaValg } from '../../tema/temaValg.mjs'
+import { PausetimerValg } from './PausetimerValg.mjs'
 
 // Uses the host's existing topbar slot; no changes to the shared account menu.
 export function ProfileMenu({ enabled, onOpen, summaryRef } = {}) {
@@ -38,6 +39,8 @@ function ActiveProfilePage(props) {
     h(Profile, { enabled: true, athlete: props.athlete, visKost: props.visKost, hideLogout: true, hideGoal: true },
       // Ordre 1542a (Marc 16. nov.: "gør evt så man selv kan vælge om man vil have hvid eller mørk tema"): valget står øverst på Mig.
       h(TemaValg, { style: { marginTop: 0, marginBottom: 16 } }),
+      // Ordre 2033f (Marc 23. nov.: timeren kan tilvaelges skjult): valget huskes pr. atlet paa telefonen.
+      h(PausetimerValg, { athleteId: props.athlete?.id, style: { marginTop: 0, marginBottom: 16 } }),
       active && h(ProfileGoals, { enabled: true, athlete: props.athlete, ownerId: props.ownerId, client: props.client,
         getScope }),
       h('p', { style: s.label }, 'Log ud findes i kontomenuen ⋯.'),

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { remainingSeconds } from '../restTimer'
 import { clearRestPause } from '../restPause'
+import { isRestTimerHidden } from '../restTimerVisning'
 import CountdownRing from './CountdownRing'
 import { visTid } from './pauseLinje'
 
@@ -51,6 +52,8 @@ function RestPauseFooter({ athleteId, pause, onClear, nextLabel }) {
 
   const done = liveSeconds <= 0
   const clear = () => { clearRestPause(athleteId); setOpen(false); onClear() }
+  // Ordre 2033f: atleten har valgt at skjule pausetimeren under Mig; pausen er stadig gemt (restPause.js).
+  if (isRestTimerHidden(athleteId)) return null
   const frac = pause.durationSeconds > 0 ? Math.max(0, Math.min(1, liveSeconds / pause.durationSeconds)) : 0
   return (
     <div style={{ position: 'fixed', left: 0, right: 0, bottom: '54px', zIndex: 90, background: '#141410', borderTop: `1px solid ${done ? 'rgba(108,186,108,0.25)' : 'rgba(200,146,58,0.2)'}` }}>

@@ -45,7 +45,8 @@ export function mountMobility(root, options = {}) {
     Object.assign(node.style, { minHeight: '48px', maxWidth: '100%', boxSizing: 'border-box',
       whiteSpace: 'normal', border: '1px solid #59564c', borderRadius: '10px',
       padding: '12px 16px', background: '#1c1c18', color: '#edeae2', font: 'inherit' })
-    const guarded = () => { if (!disposed) handler() }
+    // Ordre 2033f: en fejl i et tryk giver en besked med "Prøv igen" i stedet for en tom eller frosset skaerm.
+    const guarded = () => { if (disposed) return; try { handler() } catch (error) { failed(error) } }
     node.addEventListener('click', guarded); listeners.push([node, guarded]); return node
   }
   const exercise = (ex, parent) => {
@@ -53,6 +54,14 @@ export function mountMobility(root, options = {}) {
     element('h3', ex.name, item); element('p', ex.label, item); element('p', ex.desc, item)
   }
   const go = () => { dispose(); options.onProgram?.() }
+  function failed(error) {
+    if (disposed) return
+    clear()
+    element('style', styles)
+    const message = element('p', 'Mobilitet kunne ikke vises lige nu.'); message.setAttribute('role', 'alert')
+    action('Prøv igen', () => home())
+    try { console.error('[Mobilitet]', error) } catch { /* ingen konsol */ }
+  }
   function reload(section) {
     if (options.enabled !== true || options.athlete?.id !== historyOptions.athleteId || !currentDay()) return
     // Read the original local sources again; never repair or write on retry.

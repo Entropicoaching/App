@@ -16,6 +16,9 @@ export const sessionStyle = `
 .e2-session .plan-card > p:last-child {margin-bottom:0}
 .e2-session .registration-card {margin-top:12px}
 .e2-session .film-set {display:block;width:100%;min-height:48px;margin-top:12px;border-color:#c8923a;font-weight:600}
+.e2-session .set-row {display:flex;align-items:center;flex-wrap:wrap;gap:0 8px}
+.e2-session .set-row > p {margin:0}
+.e2-session .film-set-link {display:inline-block;min-height:44px;margin:0;padding:0 8px;border:0;background:none;color:#c8923a;font:inherit;font-weight:600;text-decoration:underline;vertical-align:middle}
 .e2-session .fields {display:grid;grid-template-columns:1fr;gap:10px}
 .e2-session [data-e2-session-feeling] {min-width:0;max-width:100%;box-sizing:border-box}
 .e2-session [data-e2-session-feeling] legend {font-size:18px}

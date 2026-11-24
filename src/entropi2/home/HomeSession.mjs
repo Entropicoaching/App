@@ -6,6 +6,7 @@ import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
 import { createSessionRecordReceipts } from '../session/sessionRecordReceipt.mjs'
 import AtletUgevideo from '../../ugevideo/AtletUgevideo.mjs'
+import { isRestTimerHidden } from '../../restTimerVisning.js'
 
 // Functional opt-in entry, entirely within the home namespace.
 export default function HomeSession(props) {
@@ -28,6 +29,8 @@ export default function HomeSession(props) {
   // Ordre 1881: en fejlet læsning (svar med failed, eller et kastet kald) vises i passet.
   const coachWarmupFailed = warmupShown && warmupRead.failed === true
   latest.current = props.enabled === true ? { ...props, sessionRecordReceipts, rpeUsedLastTime, coachWarmupTemplates, coachWarmupFailed } : props
+  // Ordre 2033f: atletens eget valg under Mig (huskes pr. atlet paa telefonen); kun visningen af pausetimeren.
+  if (props.enabled === true) latest.current.restTimerHidden = isRestTimerHidden(athleteId, props.storage)
   useEffect(() => {
     if (props.enabled !== true || !athleteId || !rpeWriter) return
     let active = true

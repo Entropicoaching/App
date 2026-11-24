@@ -224,10 +224,14 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
     // A rerender transfers the display subscriber and disposes the previous interval.
     stopTimer?.(); lastPause = p.restPause
     // Marc 3. nov.: one rest display only. When the rest timer shows, the planned pause line hides.
-    stopTimer = watchRest(lastPause, n => { timer.textContent = n > 0 ? `Pause: ${n} ${antalOrd(n, 'sekund', 'sekunder')}` : ''; timer.hidden = !(n > 0) || !rest.node.hidden }, clock)
+    // Ordre 2033f: har atleten skjult pausetimeren under Mig, vises hverken uret eller pauselinjen.
+    stopTimer = watchRest(lastPause, n => { timer.textContent = n > 0 ? `Pause: ${n} ${antalOrd(n, 'sekund', 'sekunder')}` : ''; timer.hidden = !(n > 0) || !rest.node.hidden || p.restTimerHidden === true }, clock)
     if (s.next && !summary) {
       const n = s.next, ex = n.exercise, key = s.key
-      body.append(el('p', `Sæt ${n.setNumber} af ${n.totalSets}`, { class: 'muted' }))
+      // Ordre 2033f: saetlinjen faar plads til det lille film-link ved siden af teksten.
+      const setLine = el('p', `Sæt ${n.setNumber} af ${n.totalSets}`, { class: 'muted' })
+      const setRow = el('div', null, { class: 'set-row' })
+      setRow.append(setLine); body.append(setRow)
       const groupView = mountSupersetView(body, { enabled: true, exercises: s.session.exercises,
         compact: true, currentExerciseId: ex.id })
       cleanBlocks.push(() => groupView.dispose())
@@ -334,10 +338,17 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
         // intet kan ligge over den; passet lukkes først (sættene er gemt) og åbnes igen med ét tryk.
         // Ordre 1610v (Marc 17. nov.: "mangler en tydeligere måde"): knappen står ved øvelsen, lige
         // før registreringen, ikke under Godkend.
+        // Ordre 2033f (Marc 23. nov.: "film dette set knappen er under alle set"): den store knap staar
+        // kun ved oevelsens foerste saet, der ikke er registreret eller sprunget over. Ved de naeste saet
+        // staar et lille link i saetlinjen, saa et andet saet stadig kan filmes uden ekstra skaerm.
         if (typeof p.onFilmSet === 'function') {
-          const film = el('button', 'Film sættet', { type: 'button', class: 'film-set', 'data-u11-film': '' })
+          const filmedBefore = (s.logs || []).some(l => l.exercise_id === ex.id)
+          const film = el('button', 'Film sættet', filmedBefore
+            ? { type: 'button', class: 'film-set-link', 'data-u11-film': '', 'aria-label': `Film sættet, sæt ${n.setNumber}` }
+            : { type: 'button', class: 'film-set', 'data-u11-film': '' })
           film.addEventListener('click', action(() => { controller.close(); p.onFilmSet() }))
-          body.append(film)
+          if (filmedBefore) setRow.append(film)
+          else body.append(film)
         }
         body.append(form)
         if (typeof p.onSkipSet === 'function' || typeof p.onSkipExercise === 'function') {
