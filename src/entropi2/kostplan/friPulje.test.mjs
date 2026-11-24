@@ -114,3 +114,11 @@ test('friUge: basemåltider fulgt og dage med puljen holdt; dage uden niveau tæ
   assert.deepEqual(friUge({ dage, raekker }), { basis: 3, basisAf: 4, holdt: 1, vurderede: 2, dage: 2 })
   assert.equal(friUge({ dage: [dage[2]], raekker }), null)
 })
+
+test('friUge: to planmåltider med samme navn tæller kun lige så mange gange, som de er logget (2146)', () => {
+  const dage = [{ date: '2026-11-24', state: 'approved', friPct: 15, targets: { kcal: 2000 }, maaltider: ['Morgen', 'Snack', 'Snack'] }]
+  const en = [{ date: '2026-11-24', meal: 'Snack', kcal: 100 }]
+  const to = [{ date: '2026-11-24', meal: 'Snack', kcal: 100 }, { date: '2026-11-24', meal: ' Snack', kcal: 100 }, { date: '2026-11-24', meal: 'Morgen', kcal: 400 }]
+  assert.equal(friUge({ dage, raekker: en }).basis, 1)
+  assert.deepEqual(friUge({ dage, raekker: to }), { basis: 3, basisAf: 3, holdt: 1, vurderede: 1, dage: 1 })
+})

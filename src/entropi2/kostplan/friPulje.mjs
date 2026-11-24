@@ -89,10 +89,18 @@ export function friUge({ dage, raekker }) {
   let basis = 0, basisAf = 0, holdt = 0, vurderede = 0
   for (const d of planDage) {
     const dagens = (raekker ?? []).filter(row => row?.date === d.date)
-    const navne = new Set(dagens.filter(row => !erFriRaekke(row)).map(row => String(row.meal ?? '').trim()))
+    // Hver loggede række dækker højst ét planmåltid: to planmåltider med samme navn kræver to rækker.
+    const logget = new Map()
+    for (const row of dagens.filter(row => !erFriRaekke(row))) {
+      const navn = String(row.meal ?? '').trim()
+      logget.set(navn, (logget.get(navn) ?? 0) + 1)
+    }
     const planNavne = Array.isArray(d.maaltider) ? d.maaltider : []
     basisAf += planNavne.length
-    basis += planNavne.filter(navn => navne.has(String(navn).trim())).length
+    for (const navn of planNavne) {
+      const n = String(navn).trim()
+      if ((logget.get(n) ?? 0) > 0) { basis++; logget.set(n, logget.get(n) - 1) }
+    }
     if (dagens.length) {
       vurderede++
       const { over } = friStatus({ friKcal: Math.round(d.targets.kcal * friProcent(d.friPct) / 100), logs: dagens })
