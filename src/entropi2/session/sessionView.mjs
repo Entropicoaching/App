@@ -7,6 +7,7 @@ import { createSessionController, programStamp } from './sessionModel.mjs'
 import { bindDialog, watchRest } from './sessionDom.mjs'
 import { sessionStyle } from './sessionStyle.mjs'
 import { lastSetLine } from './sessionHistory.mjs'
+import { sessionForslag } from './sessionForslag.mjs'
 import { sessionSummary } from './sessionSummary.mjs'
 import { sessionComparisons } from './sessionComparison.mjs'
 import { sessionComparisonContent } from './sessionComparisonContent.mjs'
@@ -255,6 +256,11 @@ export function mountSession(root, latest, { clock = globalThis } = {}) {
       const tempo = mountTempoView(plan, { enabled: true, ...sessionPrescription(ex), compact: true })
       cleanBlocks.push(() => tempo.dispose())
       showHistory(plan, ex, 'exercise-history-current')
+      // Ordre 2093: appens forslag eller Marcs rolige smertelinje; uden data intet.
+      const forslag = sessionForslag(p, ex)
+      if (forslag) for (const line of forslag.lines) plan.append(el('p', line, forslag.kind === 'smerte'
+        ? { class: 'muted', role: 'status', 'data-testid': 'smerte-besked', 'data-forslag': 'smerte' }
+        : { class: 'muted', 'data-forslag': 'forslag' }))
       if (ex.note) plan.append(el('p', `Coachens fokus: ${ex.note}`))
       const help = createExerciseHelp(doc, ex.name)
       if (help) plan.append(help)
