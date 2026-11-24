@@ -10,6 +10,23 @@ export const freezeShopping = value => {
   return value
 }
 const invalid = () => { throw new TypeError('Kostplanens indkøbsgrundlag kunne ikke bekræftes.') }
+const UGEDAGE = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag']
+// 2123: "tirsdag 24. nov." i stedet for ISO-datoen. Ren kalenderregning på selve datoen, uden "i dag" og uden tidszone.
+export const danskDato = iso => {
+  const d = new Date(`${iso}T00:00:00Z`)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso)) || Number.isNaN(d.getTime())) return String(iso)
+  return `${UGEDAGE[d.getUTCDay()]} ${new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(d)}`
+}
+// 2123: en sendt uge er 7 dagsplaner i træk; dagene efter den sidste er efter ugens slut. En enkelt plan (fx manuel aktivering)
+// er ingen uge og gælder videre til den næste kommer. Ukendt eller ufuldstændig række fjerner intet.
+const ISO_DAG = /^\d{4}-\d{2}-\d{2}$/
+export const datesAfterWeek = (window, validFroms) => {
+  const days = Array.isArray(validFroms) ? [...new Set(validFroms)].filter(d => ISO_DAG.test(String(d))).sort().reverse() : []
+  if (days.length < 7) return []
+  const last = days[0], time = iso => Date.parse(iso + 'T00:00:00Z')
+  const run = days.slice(0, 7).every((d, i) => time(last) - time(d) === i * 86400000)
+  return run ? window.filter(date => date > last) : []
+}
 export const shoppingNumber = value => String(value).replace('.', ',')
 export const foodKey = food => JSON.stringify([food.id, food.preparation, food.source.citation, food.source.verification])
 

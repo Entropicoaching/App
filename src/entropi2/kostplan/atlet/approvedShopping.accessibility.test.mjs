@@ -16,6 +16,7 @@ import { FOODS } from '../foedevarer/catalog.mjs'
 import { historyFixture, uuid } from '../dailyReference.fixture.mjs'
 import { today, dates, athleteId, tableNames, food, gate } from './approvedShopping.fixture.mjs'
 import { all, propsOf, button, tick, hostFixture } from '../../nutrition/diaryTemplate.fixture.mjs'
+import { danskDato } from './approvedShoppingModel.mjs'
 
 const digest = text => createHash('sha256').update(text).digest('hex')
 const marks = host => all(host, 'button').filter(n => n.getAttribute('role') === 'checkbox')
@@ -57,7 +58,7 @@ async function mount(t, data, seed) {
   const render = () => act(async () => { root.render(h(StrictMode, null, h(ApprovedPlanShopping, props))); await tick() })
   const invoke = n => act(async () => { assert.ok(n); await propsOf(n).onClick(); await tick() })
   const choose = (date, checked) => act(async () => {
-    const n = all(dom.host, 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${date}`)
+    const n = all(dom.host, 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${danskDato(date)}`)
     assert.ok(n); propsOf(n).onChange({ currentTarget: { checked } }); await tick()
   })
   const unmount = async () => { if (alive) { alive = false; await act(async () => { root.unmount(); await tick() }) } }

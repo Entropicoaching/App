@@ -1,7 +1,7 @@
 import { createElement as h, useLayoutEffect, useMemo, useState } from 'react'
 import { createApprovedShopping } from './approvedShoppingController.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
-import { grossLabel, preparationSuffix, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
+import { danskDato, grossLabel, preparationSuffix, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
 import { printShoppingList } from '../../nutrition/indkoeb/print.mjs'
 
 const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
@@ -30,7 +30,7 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
   }, [scope, athleteId, today, client, storage])
   const matches = record?.scope === scope && currentDayMatches(scope)
   const controller = matches ? record.controller : null, s = controller ? record.snapshot : null
-  const dates = upcomingDates(today)
+  const dates = upcomingDates(today).filter(date => !s?.outside?.includes(date))
   // Ordre 1546: uden aktiv kostplan står beskeden kun øverst på Kost; indkøb foldes ind.
   const foldet = s?.phase === 'no-plan'
   const krop = (...born) => foldet ? [h('details', { key: 'indkoeb-foldet' },
@@ -42,29 +42,29 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
     h('p', null, 'Vælg kalenderdage. Alle godkendte måltider og portioner for hver valgt dag tælles med. Mængderne gælder den angivne tilberedning; der omregnes ikke til råvarer.'),
     h('fieldset', null, h('legend', null, 'Dage til indkøb'),
       ...dates.map(date => h('label', { key: date, style: { display: 'block', minHeight: 44 } },
-        h('input', { type: 'checkbox', 'aria-label': `Indkøb ${date}`, checked: s?.dates.includes(date) ?? false,
+        h('input', { type: 'checkbox', 'aria-label': `Indkøb ${danskDato(date)}`, checked: s?.dates.includes(date) ?? false,
           disabled: !controller,
           onChange: event => {
             const before = controller?.snapshot().dates ?? []
             const selected = event.currentTarget.checked ? [...new Set([...before, date])] : before.filter(d => d !== date)
             void controller?.choose(selected)
-          } }), date))),
+          } }), danskDato(date)))),
     !s && h('p', { role: 'status' }, 'Indkøbsgrundlaget er ikke tilgængeligt for den aktuelle atlet og dag.'),
     s && h('div', { 'aria-live': 'polite', 'data-shopping-complete': String(s.complete) },
-      h('p', null, `Valgte datoer: ${s.dates.join(', ') || 'ingen'}.`),
+      h('p', null, `Valgte dage: ${s.dates.map(danskDato).join(', ') || 'ingen'}.`),
       s.phase === 'loading' && h('p', { role: 'status' }, 'Henter godkendte planer… Listen er ufuldstændig.'),
       s.phase === 'empty-selection' && h('p', null, 'Vælg mindst én dag.'),
       s.phase === 'no-plan' && h('p', { role: 'status' }, 'Indkøbslisten laves ud fra planen, når din coach har aktiveret den.'),
       s.affected.length > 0 && h('div', { role: s.phase === 'loading' ? 'status' : 'alert' },
         h('p', null, 'Listen er ufuldstændig. Berørte datoer:'),
-        h('ul', null, ...s.affected.map(d => h('li', { key: d.date }, `${d.date}: ${d.reason}.`)))),
+        h('ul', null, ...s.affected.map(d => h('li', { key: d.date }, `${danskDato(d.date)}: ${d.reason}.`)))),
       h('button', { type: 'button', style: control, onClick: () => controller.load() }, 'Hent indkøbsgrundlag igen'),
       s.complete && h('div', null,
         h('p', null, 'Alle valgte datoer er læst fra godkendte versioner. Listen angiver grambehov, ikke dokumenteret næringsdækning.'),
         h('details', null,
           h('summary', { style: { ...control, cursor: 'pointer' } }, 'Dage, versioner og måltider'),
           ...s.result.days.map(d => h('p', { key: d.date },
-            `${d.date}: version ${d.versionNumber} (${d.versionId}), gældende fra ${d.effectiveFrom}. Måltider: ${d.mealNames.join(', ')}.`))),
+            `${danskDato(d.date)}: version ${d.versionNumber} (${d.versionId}), gældende fra ${danskDato(d.effectiveFrom)}. Måltider: ${d.mealNames.join(', ')}.`))),
         h('p', null, 'Købt-markeringer er kun lokale i denne browser på denne enhed. De registrerer ikke spist mad, bekræfter ikke lager, reducerer ikke grambehov og synkroniseres ikke til coachen.'),
         h('p', { role: 'status' }, s.purchases.persistent
           ? 'Markeringer gemmes lokalt ved ændring. Kopiering medtager altid hele bruttolisten.'
@@ -86,7 +86,7 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
                 h('p', null, shoppingItemText(item)))))
         })),
         h('button', { type: 'button', style: control, onClick: () => printShoppingList({ title: 'Indkøb fra kostplanen',
-          subtitle: `Dage: ${s.dates.join(', ')}. Gram i den angivne tilberedning.`,
+          subtitle: `Dage: ${s.dates.map(danskDato).join(', ')}. Gram i den angivne tilberedning.`,
           items: s.result.items.filter((_, index) => !s.purchases.bought.includes(index))
             .map(item => ({ name: item.names[0], text: `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}` })) }) },
         'Print indkøbsliste'),

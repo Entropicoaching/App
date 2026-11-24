@@ -44,6 +44,7 @@ test('pinned official 27-food full export repeats official tuples; immutable gol
 })
 
 import { formatCompactShopping } from './compactShoppingText.mjs'
+import { danskDato } from './approvedShoppingModel.mjs'
 const shortLabel = 'Kopiér kort indkøbsliste'
 const fullLabel = 'Kopiér indkøbsliste'
 const section = host => all(host, 'section').find(n => n.getAttribute('aria-label') === 'Indkøb fra kostplanen')
@@ -62,7 +63,7 @@ async function mount(t, { f = official(), route = false, ...extra } = {}) {
   const render = () => act(async () => { root.render(h(StrictMode, null, h(route ? Entropi2Kost : ApprovedPlanShopping, props))); await tick() })
   const click = label => act(async () => { const n = button(section(dom.host), label); assert.ok(n, label); await propsOf(n).onClick(); await tick() })
   const choose = (date, checked) => act(async () => {
-    const n = all(section(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${date}`)
+    const n = all(section(dom.host), 'input').find(n => n.getAttribute('aria-label') === `Indkøb ${danskDato(date)}`)
     propsOf(n).onChange({ currentTarget: { checked } }); await tick()
   })
   const unmount = async () => { if (alive) { alive = false; await act(async () => { root.unmount(); await tick() }) } }

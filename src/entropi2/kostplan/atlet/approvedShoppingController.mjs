@@ -1,6 +1,6 @@
 import { formatCompactShopping } from './compactShoppingText.mjs'
 import { createPlanAdapter } from '../planAdapter.mjs'
-import { shoppingDates, shoppingVersion, sumApprovedShopping, formatApprovedShopping, freezeShopping } from './approvedShoppingModel.mjs'
+import { datesAfterWeek, shoppingDates, shoppingVersion, sumApprovedShopping, formatApprovedShopping, freezeShopping } from './approvedShoppingModel.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
 import { openPurchaseMarkers, purchaseScope } from './purchaseMarkers.mjs'
 
@@ -17,15 +17,17 @@ export function createApprovedShopping(options = {}) {
   // Validate the adapter's existing owner/client contract without any I/O.
   createPlanAdapter({ enabled: true, client, athleteId, date: today })
   let disposed = false, token = 0, attempted = false, pendingCopy = false
+  // 2123: dage uden godkendt plan (efter den sendte uges slut) er ikke en del af listen og vises ikke.
+  let outside = []
   let markers = null
   const listeners = new Set()
-  let state = freezeShopping({ phase: 'idle', dates, complete: false, result: null, affected: [], copyPending: false, copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: null })
+  let state = freezeShopping({ phase: 'idle', dates, outside, complete: false, result: null, affected: [], copyPending: false, copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: null })
   const alive = () => { try { return !disposed && isCurrent() === true } catch { return false } }
   const publish = changes => {
     state = freezeShopping({ ...state, copyPending: pendingCopy, ...changes })
     for (const fn of listeners) fn()
   }
-  const reset = (phase, affected = []) => publish({ phase, dates, affected, complete: false, result: null, copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: null })
+  const reset = (phase, affected = []) => publish({ phase, dates, outside, affected, complete: false, result: null, copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: null })
   const api = {
     snapshot: () => state,
     subscribe(fn) { if (!alive()) return () => {}; listeners.add(fn); return () => listeners.delete(fn) },
@@ -70,6 +72,28 @@ export function createApprovedShopping(options = {}) {
         }
       }
       if (!alive() || token !== attempt) return false
+      // 2123: en plan gælder til den næste kommer; den sendte uge slutter på den seneste godkendte plans første dag.
+      let gone = []
+      try {
+        const response = await client.from('kostplan_v1_plans').select('valid_from').eq('athlete_id', athleteId).eq('status', 'godkendt')
+          .order('valid_from', { ascending: false }).limit(7)
+        if (!alive() || token !== attempt) return false
+        if (!response?.error && Array.isArray(response?.data) && response.data.length > 0) gone = datesAfterWeek(upcomingDates(today), response.data.map(p => p.valid_from))
+      } catch { if (!alive() || token !== attempt) return false }
+      outside = gone
+      if (gone.length) {
+        const kept = selected.filter(d => !gone.includes(d))
+        if (!kept.length) {
+          // Standardvalget (i morgen og frem) kan ligge helt efter ugens slut: vælg så de dage, der er tilbage i ugen.
+          const rest = upcomingDates(today).filter(d => !gone.includes(d))
+          if (rest.length) { dates = rest; return api.load() }
+          reset('no-plan'); return false
+        }
+        affected.splice(0, affected.length, ...affected.filter(a => !gone.includes(a.date)))
+        evidence.splice(0, evidence.length, ...evidence.filter(v => !gone.includes(v.date)))
+        selected.splice(0, selected.length, ...kept)
+        dates = [...selected]
+      }
       // No plan on any selected day (also before the migration) is an honest
       // empty state. A partial schema and read errors stay incomplete.
       if (affected.length && !evidence.length && affected.every(a => a.reason === reasons.empty)) {
@@ -82,7 +106,7 @@ export function createApprovedShopping(options = {}) {
         // storage failed. Nothing is restored or exposed before approval checks.
         const markerOptions = { athleteId, today, result, evidence, storage: options.storage }
         if (!markers || markers.scope !== purchaseScope(markerOptions)) markers = openPurchaseMarkers(markerOptions)
-        publish({ phase: 'ready', complete: true, result, affected: [], copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: markers.snapshot() }); return true
+        publish({ phase: 'ready', dates, outside, complete: true, result, affected: [], copyStatus: '', copyText: '', compactCopyStatus: '', compactCopyText: '', purchases: markers.snapshot() }); return true
       } catch {
         reset('incomplete', selected.map(date => ({ date, reason: reasons.error }))); return false
       }
