@@ -30,7 +30,7 @@ test('source bridge: actual AthleteView passes original guarded skip actions onl
   assert.match(await source('../athleteEntry.mjs'), /default as HomeSession.*home\/HomeSession.mjs/)
   const home = await source('../home/HomeSession.mjs')
   assert.match(home, /mountHomeSession\(root.current, \(\) => latest.current/)
-  assert.match(home, /props.enabled === true \? \{ \.\.\.props, sessionRecordReceipts, rpeUsedLastTime, coachWarmupTemplates, coachWarmupFailed \} : props/)
+  assert.match(home, /props.enabled === true \? \{ \.\.\.props, sessionRecordReceipts, lastSetsByName, rpeUsedLastTime, coachWarmupTemplates, coachWarmupFailed \} : props/)
   const bridgeSource = await source('../home/homeSessionBridge.mjs')
   assert.match(bridgeSource, /import\('..\/session\/sessionView.mjs'\)/)
   assert.match(bridgeSource, /return \{ \.\.\.p, enabled: !!valid/)

@@ -72,7 +72,7 @@ async function mount(node) {
   } }
 }
 
-for (const [u7TopSet, expected] of [[true, /Squat 142,5 kg \(\+2,5\)Squat 127,5 kg(?!\s*\()/], [false, /Squat 142,5 kg \(\+17,5\)/]]) {
+for (const [u7TopSet, expected] of [[true, /Squat 142,5 kg \(\+2,5\), 127,5 kg(?!\s*\()/], [false, /Squat 142,5 kg \(\+17,5\)/]]) {
   test(`U7 2/5: I dag-kortet med u7TopSet ${u7TopSet}`, gate, async () => {
     let inputs = {}
     const m = await mount(h(TodayCard, { athlete: { id: A }, today, visKost: false, u6PlanWeight: true, u7TopSet,
