@@ -64,7 +64,9 @@ export function createKostDaySession(options = {}) {
   const publishTargets = () => {
     const s = controller.snapshot()
     if (s.mode === 'plan') approved = { planId: s.planId, revision: s.planRevision,
-      targets: Object.freeze({ ...s.targets }) }
+      // 2137: dagens mål for kcal er base + fri pulje; protein og øvrigt som basen.
+      targets: Object.freeze({ ...s.targets, ...(s.dagKcal ? { kcal: s.dagKcal } : {}) }),
+      ...(s.friPct ? { friPct: s.friPct, friKcal: s.friKcal } : {}) }
     else if (!['loading', 'load-error'].includes(s.phase)) approved = null
     // Retain the last confirmed target reference while refreshing;
     // its status is explicit. A successful no-plan read clears it immediately.

@@ -1,6 +1,7 @@
 import { calendarTime, parseInputNumber, roundNutrition } from '../../../athlete/kostNumbers.mjs'
 import { isDayReceipt } from '../../../mealEvidence.mjs'
 import { retainedNutrition, plannedMicronutrients } from './plannedMicronutrients.mjs'
+import { friProcent, skalerMaaltider, erFriRaekke } from '../friPulje.mjs'
 
 export const namespace = 'entropi2:kostplan:atlet:v1'
 export const metrics = ['kcal', 'protein', 'carb', 'fat']
@@ -78,6 +79,20 @@ export function readAthletePlan(value, athleteId, date) {
   const portionGuidance = value.portionGuidance ?? null
   if (portionGuidance !== null && (typeof portionGuidance !== 'string'
     || !portionGuidance.trim() || Array.from(portionGuidance).length > 4000)) fail()
+  // 2137: friPct > 0 skalerer måltiderne til basen (protein uændret); dagens kcal = base + pulje.
+  const friPct = friProcent(value.friPct)
+  const dagKcal = targets.kcal
+  if (friPct > 0 && dagKcal > 0) {
+    const scaled = skalerMaaltider(meals, friPct)
+    const sumMacro = key => Math.round(scaled.meals.flatMap(meal => meal.foods)
+      .reduce((n, food) => n + (food[key + '100'] ?? 0) * food.grams / 100, 0))
+    const friKcal = Math.round(dagKcal * friPct / 100)
+    const planned_ = plannedMicronutrients(scaled.meals)
+    return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals: scaled.meals, portionGuidance,
+      targets: { ...targets, kcal: dagKcal - friKcal, carb: sumMacro('carb'), fat: sumMacro('fat') },
+      friPct, friKcal, dagKcal,
+      ...(planned_.length ? { plannedMicronutrients: planned_ } : {}) }
+  }
   const planned = plannedMicronutrients(meals)
   return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals, targets, portionGuidance,
     ...(planned.length ? { plannedMicronutrients: planned } : {}) }
@@ -147,11 +162,15 @@ export function createAthleteDay(options = {}) {
       const sum = values.reduce((total, value) => total + (value ?? 0), 0)
       return [key, values.some(value => value === null) || !Number.isFinite(sum) ? null : sum]
     }))
+    // 2137: fri mad (kcal) hører til puljen og trækkes ikke fra basens kcal.
+    const friBrugt = plan?.friPct ? data.logs.filter(erFriRaekke).reduce((n, row) => n + (row.kcal ?? 0), 0) : 0
     const remaining = Object.fromEntries(metrics.map(key => [key,
-      plan?.targets[key] > 0 && totals[key] !== null ? Math.max(0, plan.targets[key] - totals[key]) : null]))
+      plan?.targets[key] > 0 && totals[key] !== null
+        ? Math.max(0, plan.targets[key] - totals[key] + (key === 'kcal' ? friBrugt : 0)) : null]))
     cached = freeze({ athleteId, date, phase, message, pending: !!pending,
       mode: data ? plan ? 'plan' : 'tracker' : null, meals, totals,
       planId: plan?.id ?? null, planRevision: plan?.revision ?? null,
+      ...(plan?.friPct ? { friPct: plan.friPct, friKcal: plan.friKcal, dagKcal: plan.dagKcal } : {}),
       portionGuidance: plan?.portionGuidance ?? null,
       ...(plan?.plannedMicronutrients ? { plannedMicronutrients: plan.plannedMicronutrients } : {}),
       targets: { ...(plan?.targets || {}) }, remaining, loggedCount: data?.logs.length || 0,

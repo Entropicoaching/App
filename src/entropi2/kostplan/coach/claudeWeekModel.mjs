@@ -5,6 +5,7 @@
 import { createPlanSnapshot, summarizePlanSnapshot } from '../planSnapshot.mjs'
 import { medMikronaering } from '../ugeMikronaering.mjs'
 import { day, identifier } from './model.mjs'
+import { friFraBasis, friProcent, medFriPct, FRI_NIVEAUER } from '../friPulje.mjs'
 
 const PLANS = 'kostplan_v1_plans', VERSIONS = 'kostplan_v1_versions', APPROVALS = 'kostplan_v1_approvals', SEEN = 'kostplan_v1_seen'
 export const MAKS_AFVIGELSE_PROCENT = 10
@@ -78,6 +79,7 @@ export function weekModel({ plans = [], versions = [], approvals = [], seen = nu
       state: chosen.sent ? 'sendt' : unreadable ? 'ulaeselig' : chosen.everSent ? 'aendret' : 'udkast', sentOn: chosen.sentOn, unreadable,
       meals, mealCount: meals.length,
       seenOn: chosen.sent && Array.isArray(seen) ? seen.filter(r => r.version_id === chosen.latest.id).map(r => sendtDag(r.seen_at)).filter(Boolean).sort().at(-1) ?? null : null,
+      friPct: friFraBasis(chosen.latest.calculation_basis),
       kcal: summary?.energyKcal?.value ?? null, protein: summary?.proteinG?.value ?? null }
   })
   const afvig = (value, target) => value === null || target === null ? null : Math.abs(value - target) / target * 100
@@ -94,7 +96,10 @@ export function weekModel({ plans = [], versions = [], approvals = [], seen = nu
   const seenDays = days.filter(d => d.seenOn).length
   const seenState = status !== 'sendt' || !Array.isArray(seen) ? null : seenDays === 7 ? 'set' : seenDays ? 'delvist' : 'ikke'
   const seenOn = seenState && seenDays ? days.map(d => d.seenOn).filter(Boolean).sort().at(-1) : null
-  return { state: 'ready', status, sentOn, seen: seenState, seenDays, seenOn, start, end: dates[6], days, targets, rationale,
+  // 2137: ugens niveau; null når dagene er blandede (fx en afbrudt ændring).
+  const planDays = days.filter(d => d.state !== 'mangler')
+  const friPct = planDays.length && planDays.every(d => d.friPct === planDays[0].friPct) ? planDays[0].friPct : null
+  return { state: 'ready', status, sentOn, friPct, seen: seenState, seenDays, seenOn, start, end: dates[6], days, targets, rationale,
     lock: status === 'sendt' ? null : lockReason(days, targets) }
 }
 
@@ -119,7 +124,7 @@ async function readRows(client, athleteId, today) {
   if (!plans.length) return { plans, versions: [], approvals: [], seen: null }
   const ids = plans.map(p => p.id)
   const versions = rows(await client.from(VERSIONS)
-    .select('id,plan_id,version_no,effective_from,basis_as_of,rationale,goal,intensity,meals').in('plan_id', ids).limit(501))
+    .select('id,plan_id,version_no,effective_from,basis_as_of,rationale,goal,intensity,meals,calculation_basis,portion_guidance').in('plan_id', ids).limit(501))
   const approvals = rows(await client.from(APPROVALS)
     .select('version_id,plan_id,athlete_id,approved_at,approval_kind').in('plan_id', ids).eq('athlete_id', athleteId).limit(501))
   // Set-tabellen er ny (U10f). Mangler den eller svarer den med fejl, vises intet Set-mærke, og ugen læses som før.
@@ -152,4 +157,28 @@ export async function sendClaudeWeek({ client, athlete, today, shown }) {
   if (sent.status !== 'sendt' || sent.days.some((d, i) => d.versionId !== fresh.days[i].versionId))
     throw Error('Ugen blev ikke bekræftet som sendt. Prøv igen.')
   return { sent }
+}
+
+// 2137: coachen sætter ugens fri pulje (0, 10, 15, 20 eller 30 %) før afsendelse. Niveauet ligger i
+// versionens calculation_basis.fri_pct, og en ny version pr. dag (samme måltider) bærer det, så ingen
+// sendt version ændres. Ugen læses igen først; en ændret uge afvises. Allerede rette dage springes over.
+export async function setClaudeWeekFri({ client, athlete, today, shown, pct }) {
+  if (!FRI_NIVEAUER.includes(Number(pct))) throw Error('Vælg 0, 10, 15, 20 eller 30 %.')
+  const fri = friProcent(Number(pct))
+  if (typeof client?.from !== 'function' || !identifier(athlete?.id) || !day(today)) fail()
+  if (shown?.state !== 'ready' || shown.status === 'sendt') throw Error('Niveauet kan kun sættes, før ugen er sendt.')
+  const data = await readRows(client, athlete.id, today)
+  const fresh = weekModel({ ...data, athlete, today, start: shown.start })
+  if (fresh.state !== 'ready' || fresh.days.some((d, i) => d.versionId !== shown.days[i]?.versionId)) throw Error('Ugen er ændret. Se den igen, før du ændrer niveauet.')
+  for (const d of fresh.days.filter(d => d.versionId && d.friPct !== fri)) {
+    const latest = data.versions.find(v => v.id === d.versionId)
+    const result = await client.from(VERSIONS).insert({ plan_id: latest.plan_id, version_no: latest.version_no + 1,
+      effective_from: latest.effective_from, basis_as_of: latest.basis_as_of, calculation_basis: medFriPct(latest.calculation_basis, fri),
+      rationale: latest.rationale, goal: latest.goal, intensity: latest.intensity, meals: latest.meals,
+      portion_guidance: latest.portion_guidance ?? null }).select('id')
+    if (result?.error) throw Error('Niveauet blev ikke gemt for alle dage. Prøv igen.')
+  }
+  const after = await readClaudeWeek({ client, athlete, today, start: fresh.start })
+  if (after.friPct !== fri) throw Error('Niveauet blev ikke bekræftet. Prøv igen.')
+  return { week: after }
 }
