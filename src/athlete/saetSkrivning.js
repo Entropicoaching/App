@@ -50,6 +50,17 @@ const isPermanentSetError = (error) => error?.code === '23503'
 const MAX_SET_FAILURES = 5
 const isServerRefusal = (error) => /^(PGRST|22|23|28|42|P0)/.test(String(error?.code || '')) || /jwt/i.test(String(error?.message || ''))
 
+// Ordre 2067: fejlteksten ved LOG nævner kun de felter, der mangler eller er ugyldige.
+export function saetFejlTekst({ vaegt, reps, rpe }) {
+  const dele = []
+  if (vaegt) dele.push('en gyldig vægt')
+  if (reps) dele.push('hele reps')
+  if (rpe) dele.push('en RPE fra 0 til 10')
+  if (!dele.length) return 'Skriv en gyldig vægt og hele reps.'
+  const sidste = dele.pop()
+  return `Skriv ${dele.length ? dele.join(', ') + ' og ' : ''}${sidste}.`
+}
+
 export function lavSaetSkrivning({
   allWeeks, athlete, currentWeek, exerciseLogs, feedbackInputs, fetchExerciseLogs, fetchPastLogs, lastLogByExerciseName,
   logInputs, setAllWeeks, setExerciseLogs, setLastLoggedSet, setLogInputs, setPendingSessionAction, setPendingSyncCount, setPrToast,
@@ -267,8 +278,10 @@ export function lavSaetSkrivning({
     const weight = parseInputNumber(input.weight, 0)
     const reps = inputInteger(repsCompleted, 0)
     const rpe = optionalInput(input.rpe) ? (preserveMissingRpe === true || dataEnoughEnabled() ? null : parseInputNumber(plannedRpe)) : parseInputNumber(input.rpe)
-    if (weight === null || reps === null || (!optionalInput(input.rpe) && (rpe === null || rpe > 10))) {
-      showFlash('Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.', 'error')
+    const rpeUgyldig = !optionalInput(input.rpe) && (rpe === null || rpe > 10)
+    if (weight === null || reps === null || rpeUgyldig) {
+      // Ordre 2067: teksten nævner kun det, der mangler eller er ugyldigt (RPE kun når der er skrevet en ugyldig RPE).
+      showFlash(saetFejlTekst({ vaegt: weight === null, reps: reps === null, rpe: rpeUgyldig }), 'error')
       return false
     }
     // APP-LOG2: behold det bekræftede øjebliksbillede til fortryd/redigering.

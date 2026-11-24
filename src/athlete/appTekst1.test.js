@@ -34,11 +34,36 @@ test('logSet og ret af sæt skriver ordentlige beskeder uden tankestreg og uden 
   assert.equal(await h.logSet('ex', 1, 1, '5', 8), false)
   assert.equal(await h.updateLoggedSet('ex', 1, { weight: '12kg', reps: '5' }), false)
   assert.deepEqual(beskeder, [
-    ['Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.', 'error'],
+    ['Skriv en gyldig vægt.', 'error'],
     ['Skriv en gyldig vægt og hele reps.', 'error'],
   ])
   assert.equal(writes.length, 0)
   for (const [tekst] of beskeder) assert.doesNotMatch(tekst, TANKESTREG)
+})
+
+// Ordre 2067: ny klients første sæt uden vægt nævner ikke RPE; RPE nævnes kun, når der er skrevet en ugyldig RPE.
+test('LOG-fejlteksten nævner kun det, der mangler eller er ugyldigt', async () => {
+  const faa = async (logInputs, reps = '5') => {
+    resetFake()
+    const beskeder = []
+    const h = lavSaetSkrivning({ athlete: { id: 'a' }, exerciseLogs: [], logInputs, setWriteRef: { current: {} }, setExerciseLogs: noop,
+      setPendingSyncCount: noop, fetchExerciseLogs: noop, showFlash: (...v) => beskeder.push(v) })
+    assert.equal(await h.logSet('ex', 1, 1, reps, null), false)
+    assert.equal(writes.length, 0)
+    assert.equal(beskeder.length, 1)
+    assert.equal(beskeder[0][1], 'error')
+    assert.doesNotMatch(beskeder[0][0], TANKESTREG)
+    return beskeder[0][0]
+  }
+  assert.equal(await faa({}), 'Skriv en gyldig vægt.')
+  assert.equal(await faa({ ex_1: { weight: '', rpe: '' } }, 'x'), 'Skriv hele reps.')
+  assert.equal(await faa({ ex_1: { weight: '80', rpe: '12' } }), 'Skriv en RPE fra 0 til 10.')
+  assert.equal(await faa({ ex_1: { weight: '80', rpe: 'høj' } }), 'Skriv en RPE fra 0 til 10.')
+  assert.equal(await faa({ ex_1: { weight: 'abc', rpe: '' } }), 'Skriv en gyldig vægt.')
+  assert.equal(await faa({ ex_1: { weight: 'abc', rpe: '12' } }), 'Skriv en gyldig vægt og en RPE fra 0 til 10.')
+  assert.equal(await faa({ ex_1: { weight: '80', rpe: '12' } }, 'x'), 'Skriv hele reps og en RPE fra 0 til 10.')
+  assert.equal(await faa({ ex_1: { weight: 'abc', rpe: '12' } }, 'x'), 'Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.')
+  assert.equal(await faa({}, 'x'), 'Skriv en gyldig vægt og hele reps.')
 })
 
 test('et pas uden øvelser får samme rolige besked, uanset om det udfyldes eller springes over', async () => {

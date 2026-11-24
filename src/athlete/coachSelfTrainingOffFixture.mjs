@@ -101,6 +101,15 @@ export const coachSelfSetDeltas = [
   [
     "  rekordGrundlagFoer, setRekordFejring, fejredeRef,\n  guardWrite = client => client,\n}) {\n  const supabase = guardWrite(database)\n  // ORDRE 439 · blok 1: er sættet en ny rekord? Regnes mod alle ANDRE sæt:\n",
     "  rekordGrundlagFoer, setRekordFejring, fejredeRef,\n}) {\n  // ORDRE 439 · blok 1: er sættet en ny rekord? Regnes mod alle ANDRE sæt:\n"
+  ],
+  // Ordre 2067: fejlteksten ved LOG bygges af saetFejlTekst (kun felter der mangler eller er ugyldige).
+  [
+    "// Ordre 2067: fejlteksten ved LOG nævner kun de felter, der mangler eller er ugyldige.\nexport function saetFejlTekst({ vaegt, reps, rpe }) {\n  const dele = []\n  if (vaegt) dele.push('en gyldig vægt')\n  if (reps) dele.push('hele reps')\n  if (rpe) dele.push('en RPE fra 0 til 10')\n  if (!dele.length) return 'Skriv en gyldig vægt og hele reps.'\n  const sidste = dele.pop()\n  return `Skriv ${dele.length ? dele.join(', ') + ' og ' : ''}${sidste}.`\n}\n\n",
+    ""
+  ],
+  [
+    "    const rpeUgyldig = !optionalInput(input.rpe) && (rpe === null || rpe > 10)\n    if (weight === null || reps === null || rpeUgyldig) {\n      // Ordre 2067: teksten nævner kun det, der mangler eller er ugyldigt (RPE kun når der er skrevet en ugyldig RPE).\n      showFlash(saetFejlTekst({ vaegt: weight === null, reps: reps === null, rpe: rpeUgyldig }), 'error')\n",
+    "    if (weight === null || reps === null || (!optionalInput(input.rpe) && (rpe === null || rpe > 10))) {\n      showFlash('Skriv en gyldig vægt, hele reps og en RPE fra 0 til 10.', 'error')\n"
   ]
 ]
 export function invertTrainingSetWrites(source) {
