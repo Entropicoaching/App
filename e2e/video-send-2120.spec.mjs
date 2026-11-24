@@ -77,14 +77,21 @@ async function filmAndSend(page, clipPath) {
     await canvas.click({ position: { x: base.x + j.x, y: base.y + j.y } }); taps.push(attempt ? `Skiven igen ${attempt}` : 'Tryk på skiven')
     await page.waitForTimeout(500)
     state = await frame.locator('body').getAttribute('data-athlete-state')
-    ok = state === 'confirm'
+    ok = state === 'confirm' || state === 'analyzing' || state === 'done'
   }
   assert.ok(ok, 'skiven blev ikke fundet')
-  await frame.locator('#athleteNoteInput').click(); taps.push('Notat')
-  await page.keyboard.type(NOTE, { delay: 30 })
-  await tap('Analysér', frame.locator('#allBtn'))
+  // ORDRE 2135: analysen starter selv efter skivevalget; ingen Analysér-tryk mere.
   await frame.locator('body[data-athlete-state="done"]').waitFor({ state: 'attached', timeout: 90000 })
   await frame.locator('#athleteInstantResult').waitFor({ state: 'visible', timeout: 5000 })
+  // Ret skive (ikke talt med): tilbage til skivevalget ved startbilledet, ny skive, ny analyse.
+  await frame.locator('#athleteRetSkiveBtn').click()
+  await frame.locator('body[data-athlete-state="target"]').waitFor({ state: 'attached', timeout: 5000 })
+  await page.waitForTimeout(600)
+  await canvas.click({ position: { x: base.x, y: base.y } })
+  await frame.locator('body[data-athlete-state="done"]').waitFor({ state: 'attached', timeout: 90000 })
+  await frame.locator('#athleteInstantResult').waitFor({ state: 'visible', timeout: 5000 })
+  await frame.locator('#athleteNoteInput').click(); taps.push('Notat')
+  await page.keyboard.type(NOTE, { delay: 30 })
   await tap('Gem og send', frame.locator('#athleteInstantSaveBtn'))
   await frame.locator('body[data-athlete-state="sent"], body[data-athlete-state="failed"]').first()
     .waitFor({ state: 'attached', timeout: 30000 }).catch(() => {})
@@ -113,7 +120,7 @@ async function main() {
     const supabaseKeys = async () => (await fetch(`${mockUrl}/__e2e/storage-keys`)).json()
 
     for (const [who, user] of [['atlet', ATHLETE_USER]]) {
-      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true })
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, colorScheme: process.env.E2E_SCHEME || 'light' })
       const errors = []
       page.on('pageerror', err => errors.push(err.message))
       const before = (await rowsFor()).length
@@ -133,7 +140,7 @@ async function main() {
         await page.getByRole('button', { name: /Til coachportalen|← Coach view/ }).waitFor({ state: 'visible', timeout: 10000 })
       }
       const sent = await filmAndSend(page, clipPath)
-      await page.screenshot({ path: join(out, `video-send-2120-${who}.png`) })
+      await page.screenshot({ path: join(out, `video-send-2120-${who}-${process.env.E2E_SCHEME || 'light'}.png`) })
       const rows = await rowsFor()
       const row = rows.length > before ? rows[rows.length - 1] : null
       const inLager = row ? lagerEnv.VIDEO.store.has(row.video_path) : false
@@ -151,6 +158,7 @@ async function main() {
       }
       results[who] = { state: sent.state, status: sent.status.replace(/\s+/g, ' ').slice(0, 160), row: !!row,
         note: row?.session_context?.athlete_note ?? null, barPath: !!row?.bar_path, inLager, inReserve, coachCanFetch, errors, receipt: sent.visible && /Sendt til din coach/.test(sent.status), taps: taps.length }
+      assert.ok(taps.filter(t => t !== 'Notat').length <= 7, `atletens vej uden notat er over 7 tryk: ${taps.join(' > ')}`)
       console.log('TRYK', taps.length, taps.join(' > ')); console.log(who, JSON.stringify(results[who]))
       await page.close()
     }

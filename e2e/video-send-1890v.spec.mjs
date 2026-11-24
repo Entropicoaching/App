@@ -51,8 +51,15 @@ async function main() {
     await page.waitForTimeout(300)
     assert.ok(await calibrateAthlete(frame, page, canvas, box), 'skiven blev ikke fundet')
 
-    // 1. Mellemrum i notatet: teksten står uændret, fokus bliver, og ringen er ikke nulstillet.
+    // Ordre 2135: analysen starter selv efter skivevalget; notatet skrives i resultatpanelet før send.
+    await frame.locator('body[data-athlete-state="done"]').waitFor({ state: 'attached', timeout: 90000 })
+    const panel = frame.locator('#athleteInstantResult')
+    await panel.waitFor({ state: 'visible', timeout: 5000 })
+    await page.waitForTimeout(6000) // banneret "Din stangbane er klar" forsvinder efter 5,5 s
+
+    // 1. Mellemrum i notatet: teksten står uændret, fokus bliver, og afspilningen ændres ikke af mellemrummet.
     const note = frame.locator('#athleteNoteInput')
+    const pausedBefore = await frame.locator('video').first().evaluate(v => v.paused)
     await note.click()
     await page.keyboard.type(NOTE, { delay: 30 })
     await page.waitForTimeout(300)
@@ -60,16 +67,11 @@ async function main() {
       value: document.getElementById('athleteNoteInput').value,
       focus: document.activeElement?.id, state: body.dataset.athleteState,
       paused: document.querySelector('video').paused }))
-    assert.deepEqual(typed, { value: NOTE, focus: 'athleteNoteInput', state: 'confirm', paused: true },
-      'mellemrum i notatet må ikke starte afspilningen eller nulstille ringen')
+    assert.deepEqual(typed, { value: NOTE, focus: 'athleteNoteInput', state: 'done', paused: pausedBefore },
+      'mellemrum i notatet må ikke ændre afspilningen eller nulstille resultatet')
     await shot('01-notat-med-mellemrum')
 
-    // 2. Stangbanen, og panelet foldet sammen og åbnet igen.
-    await frame.locator('#allBtn').click()
-    await frame.locator('body[data-athlete-state="done"]').waitFor({ state: 'attached', timeout: 90000 })
-    const panel = frame.locator('#athleteInstantResult')
-    await panel.waitFor({ state: 'visible', timeout: 5000 })
-    await page.waitForTimeout(6000) // banneret "Din stangbane er klar" forsvinder efter 5,5 s
+    // 2. Panelet foldet sammen og åbnet igen.
     const open = await panel.boundingBox()
     await frame.locator('#athleteInstantFoldBtn').click()
     const folded = await panel.boundingBox()

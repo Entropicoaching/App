@@ -82,7 +82,6 @@ export async function runAthleteVisMigNu(page, { appUrl, mockUrl, clipPath, shot
   const rowsBefore = (await readTable(mockUrl, 'video_analyses')).length
   // "Vis mig nu" (tre udvalgte reps) er skjult i "Film et sæt" (VC_ATHLETE_INSTANT, videocoach.html);
   // atletens vej er i stedet hele sporingen (#allBtn) med resultatpanelet, og derfra "Send".
-  await frame.locator('#allBtn').click()
   await frame.locator('body[data-athlete-state="done"]').waitFor({ state: 'attached', timeout: 90000 })
   const panel = frame.locator('#athleteInstantResult')
   await panel.waitFor({ state: 'visible', timeout: 5000 })

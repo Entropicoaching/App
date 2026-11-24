@@ -105,7 +105,7 @@ test('halen: én linje i analysen, læselig, ingen knap og ingen gentagelse', ()
   const fn = html.slice(html.indexOf('function updateCleanReviewUI('), html.indexOf('if (!path?.analysis) {', html.indexOf('function updateCleanReviewUI(')))
   assert.match(fn, /syncTailCutNote\(path\);/)
   // i instant-flowet ("Film sættet") ligger resultatpanelet over stangbane-kortet: samme element flyttes derind
-  assert.match(html, /const athleteTailNote = VC_ATHLETE_INSTANT \? document\.getElementById\('vcTailCutNote'\) : null;\n  athleteInstantResult\.append\(athleteInstantHead, athleteInstantRows, \.\.\.\(athleteTailNote \? \[athleteTailNote\] : \[\]\), athleteInstantFoot, athleteInstantActions\);/)
+  assert.match(html, /const athleteTailNote = VC_ATHLETE_INSTANT \? document\.getElementById\('vcTailCutNote'\) : null;\n  athleteInstantResult\.append\(athleteInstantHead, athleteInstantRows, \.\.\.\(athleteTailNote \? \[athleteTailNote\] : \[\]\), athleteInstantFoot, \.\.\.\(VC_ATHLETE_INSTANT \? \[athleteConfirmFields\] : \[\]\), athleteInstantActions\);/)
   const instant = html.slice(html.indexOf('showInstantResult = path => {'), html.indexOf('athleteInstantResult.hidden = false;', html.indexOf('showInstantResult = path => {')))
   assert.match(instant, /syncTailCutNote\(path\);/)
 })

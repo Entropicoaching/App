@@ -53,7 +53,8 @@ export async function calibrateAthlete(frame, page, canvas, box) {
     await canvas.click({ position: { x: basePos.x + jitter.x, y: basePos.y + jitter.y } })
     await page.waitForTimeout(500)
     const state = await frame.locator('body').getAttribute('data-athlete-state')
-    if (state === 'confirm') return true
+    // Ordre 2135: analysen starter selv, når skiven er fundet.
+    if (state === 'confirm' || state === 'analyzing' || state === 'done') return true
   }
   return false
 }
@@ -92,9 +93,7 @@ export async function filmSaetUpTilDone(frame, page, clipPath, shot) {
   assert.ok(calibrated, 'auto-kalibreringen fandt ikke skiven efter gentagne forsøg (atlet-flow)')
   await shot('02-skive-fundet')
 
-  // Ringen er bekræftet ('confirm') — allBtn hedder nu "Start" og tager
-  // plateConfirm-grenen i allBtn.onclick, som kalder runFullAnalysis.
-  await frame.locator('#allBtn').click()
+  // Ordre 2135: skivevalget starter analysen selv (vcAthleteAutoStart); der trykkes ikke Start.
 
   let state = null
   for (let i = 0; i < 60; i++) {

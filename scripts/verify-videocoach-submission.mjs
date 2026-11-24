@@ -259,7 +259,7 @@ console.log('VideoCoach gemmer accepterer kun en identisk, profilkoblet dublet.'
   // Synlig i PRÆCIS samme trin som ring-bekræftelsen (athletePreviewBtn), FØR
   // Start/Vis mig nu kan trykkes.
   assert.match(html,
-    /athletePreviewBtn\.hidden = state !== 'confirm';\s*\n[\s\S]{0,200}?athleteConfirmFields\.hidden = state !== 'confirm';/,
+    /athletePreviewBtn\.hidden = state !== 'confirm';\s*\n[\s\S]{0,200}?athleteConfirmFields\.hidden = (?:VC_ATHLETE_INSTANT \? state !== 'done' : )?state !== 'confirm';/,
     'Panelet skal være synligt i nøjagtig samme trin som Vis mig nu-knappen')
 }
 
