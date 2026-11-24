@@ -2,6 +2,7 @@ import { createPlanSnapshot, summarizePlanSnapshot } from './planSnapshot.mjs'
 import { supportedFoodSnapshot, supportedPlanSnapshot } from './sqlSnapshot.mjs'
 import { retainedNutrition } from './atlet/plannedMicronutrients.mjs'
 import { catalogFoods, day, identifier, totals, portionGuidance } from './coach/model.mjs'
+import { friFraBasis } from './friPulje.mjs'
 
 const tables = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
@@ -113,7 +114,7 @@ async function readDailyReferences(client, athleteId, date, options = {}) {
       || p.valid_from > date || !['forslag', 'godkendt', 'arkiveret'].includes(p.status))) historyError('invalid-history')
     if (!plans.length) return { ...base, state: 'ready', reason: null, days: dates.map(d => unknown(d, 'no-approved-version')) }
     const versions = complete(await client.from(tables[1])
-      .select('id,plan_id,version_no,effective_from,goal,intensity,meals', { count: 'exact' })
+      .select('id,plan_id,version_no,effective_from,goal,intensity,meals,calculation_basis', { count: 'exact' })
       .in('plan_id', plans.map(p => p.id)).limit(501))
     unique(versions, 'id')
     if (versions.some(v => !uuid(v.id) || !plans.some(p => p.id === v.plan_id && day(v.effective_from) && v.effective_from >= p.valid_from)
@@ -154,8 +155,10 @@ async function readDailyReferences(client, athleteId, date, options = {}) {
       // An archived candidate cannot be dated or safely removed to revive an
       // older plan. Its affected days stay unknown until a later reference wins.
       if (first.p.status === 'arkiveret') return unknown(d, 'archive-date-unavailable')
+      const friPct = friFraBasis(first.v.calculation_basis)
       return { date: d, state: 'approved', reason: null, planId: first.p.id, versionId: first.v.id, targets: first.targets,
-        goal: first.v.goal, intensity: first.v.intensity }
+        goal: first.v.goal, intensity: first.v.intensity,
+        ...(friPct > 0 ? { friPct, maaltider: createPlanSnapshot(first.v).meals.map(meal => meal.name) } : {}) }
     })
     return { ...base, state: 'ready', reason: null, days }
   } catch (error) {
@@ -284,7 +287,7 @@ export function createPlanAdapter(options = {}) {
       unique(plans, 'id')
       if (plans.some(p => p.athlete_id !== athleteId || p.status !== 'godkendt' || !day(p.valid_from) || p.valid_from > date || !uuid(p.id))) fail()
       if (!plans.length) return null
-      const versions = rows(await client.from(tables[1]).select('id,plan_id,version_no,effective_from,goal,intensity,meals,portion_guidance')
+      const versions = rows(await client.from(tables[1]).select('id,plan_id,version_no,effective_from,goal,intensity,meals,portion_guidance,calculation_basis')
         .in('plan_id', plans.map(p => p.id)).lte('effective_from', date).limit(501))
       unique(versions, 'id')
       unique(versions.map(v => ({ key: `${v.plan_id}:${v.version_no}` })), 'key')
@@ -318,7 +321,9 @@ export function createPlanAdapter(options = {}) {
         || !portionGuidance.trim() || Array.from(portionGuidance).length > 4000)) fail()
       if (!snapshot.meals.length) fail()
       const summary = summarizePlanSnapshot(snapshot)
+      const friPct = friFraBasis(v.calculation_basis)
       return { id: v.plan_id, revision: v.id, athlete_id: athleteId, date, active: true, portionGuidance,
+        ...(friPct > 0 ? { friPct } : {}),
         targets: Object.fromEntries([['kcal', 'energyKcal'], ['protein', 'proteinG'], ['carb', 'carbohydrateG'], ['fat', 'fatG']]
           .map(([key, nutrient]) => [key, summary.nutrients[nutrient].value])),
         meals: snapshot.meals.map((meal, mi) => ({ id: `${v.id}:meal:${mi}`, name: meal.name,

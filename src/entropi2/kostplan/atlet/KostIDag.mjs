@@ -6,6 +6,7 @@ import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import { scaledMeal } from './dayModel.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import { readNextPlanStart } from './upcomingPlanModel.mjs'
+import { FRI_STOERRELSER, friStatus, friPost, erFriRaekke } from '../friPulje.mjs'
 
 // 1899 (Marc 19. nov.): Kost skal være "rigtig simpelt og overskueligt at indtaste";
 // detaljerne er et lag, man åbner. Kortet bruger kostloggens egen log og
@@ -55,6 +56,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const [chosen, setChosen] = useState(null)
   const [vaegt, setVaegt] = useState(null)
   const [ret, setRet] = useState(null)
+  const [friKcal, setFriKcal] = useState('')
   const queue = useRef(Promise.resolve())
   const mangdeRef = useRef(null)
   const groupRef = useRef(null)
@@ -102,6 +104,11 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   // 1921: mængdefeltet ligger under Nyt måltid; åbnes det af Ret g, rulles det på plads.
   useEffect(() => { if (chosen) mangdeRef.current?.scrollIntoView?.({ block: 'nearest' }) }, [chosen?.index])
   const logMeal = meal => run(meal.meal, meal, intent => tracker.log(meal, intent))
+  const friNu = s?.mode === 'plan' && s.friKcal > 0 ? s.friKcal : 0
+  const friVentende = pending.filter(item => erFriRaekke({ meal: item.navn })).reduce((n, item) => n + (Number(item.values?.kcal) || 0), 0)
+  const fri = friNu ? (status => ({ ...status, brugt: status.brugt + friVentende, tilbage: status.tilbage - friVentende,
+    over: status.brugt + friVentende > status.pulje }))(friStatus({ friKcal: friNu, logs: log.logs })) : null
+  const logFri = post => { if (!post) return; run(post.meal, post, intent => tracker.log(post, intent)); setFriKcal('') }
   const logFood = () => {
     if (!portion) return
     const { index, amount, unit } = valgt
@@ -267,6 +274,21 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
         planNy ? `Gem · ${fmt(planNy.values.kcal)} kcal` : 'Gem'),
       h('button', { type: 'button', style: { ...control, background: 'transparent' }, onClick: () => setRet(null) }, 'Fortryd')),
     blocked.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `${blocked.map(meal => meal.name).join(', ')} skal kontrolleres under Vis detaljer.`),
+
+    // 2137: fast base plus fri kcal-pulje. Kun når coachen har sat et niveau over 0 %; ellers vises intet nyt.
+    fri && h('div', { 'data-kost-fri': fri.pulje, role: 'group', 'aria-label': 'Fri pulje i dag' },
+      h('p', { style: label }, `Fri i dag: ${fmt(fri.pulje)} kcal`),
+      h('p', { 'data-kost-fri-status': '', style: { margin: '4px 0 0' } },
+        fri.over ? `Brugt ${fmt(fri.brugt)} kcal, ${fmt(-fri.tilbage)} over puljen.` : `Brugt ${fmt(fri.brugt)} kcal, ${fmt(fri.tilbage)} tilbage.`),
+      h('div', { style: row },
+        ...FRI_STOERRELSER.map(item => h('button', { key: item.id, type: 'button', style: control, disabled: busy(`Fri: ${item.id}`),
+          'aria-label': `Fri mad ${item.navn.toLowerCase()}, ${item.kcal} kcal`, onClick: () => logFri(friPost(item.id)) },
+        `${item.navn} · ${item.kcal} kcal`))),
+      h('div', { style: { ...row, alignItems: 'center' } },
+        h('input', { type: 'text', inputMode: 'numeric', value: friKcal, 'aria-label': 'Fri mad i kcal', placeholder: 'kcal',
+          style: { ...control, cursor: 'text', width: '5.5rem' }, onChange: event => setFriKcal(event.currentTarget.value) }),
+        h('button', { type: 'button', style: primary, disabled: !friPost(null, friKcal) || pending.length > 0, 'aria-label': 'Log fri mad',
+          onClick: () => logFri(friPost(null, friKcal)) }, 'Log fri mad'))),
 
     (iGaar.length > 0 || gentag.length > 0) && h('p', { style: label }, 'Spist igen'),
     (iGaar.length > 0 || gentag.length > 0) && h('div', { style: row },

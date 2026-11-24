@@ -3,6 +3,7 @@ import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { parseInputNumber } from '../../athlete/kostNumbers.mjs'
 import { kostMaalModel } from './model.mjs'
 import { ugeDageModPlan } from '../analysis/kostDageModPlan.mjs'
+import { friUge } from '../kostplan/friPulje.mjs'
 
 const ordinal = day => Date.parse(day + 'T00:00:00Z') / 86400000
 const civilDay = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && activityDay(value) === value
@@ -101,9 +102,12 @@ export function nutritionGoalWeek(props = {}, basis = nutritionBasis(props)) {
   const planPart = part(hits(plan.kcal), hits(plan.protein), planDates.size)
   const restDays = 7 - planDates.size
   const restPart = restDays > 0 ? part(kcal, protein, restDays) : ''
-  return { days: days.size, mod: 'plan', kcal: hits(plan.kcal), protein: hits(plan.protein),
+  // 2137: med en fri pulje i ugen kommer basemåltider fulgt og dage med puljen holdt (kun plandage med niveau over 0 %).
+  const fri = friUge({ dage: props.planDays, raekker: props.coachNutrition.rows.filter(row => row?.athlete_id === props.athlete.id) })
+  const friPart = fri ? ` Basemåltider fulgt: ${fri.basis} af ${fri.basisAf}. Fri pulje holdt: ${fri.holdt} af ${fri.vurderede} ${antalOrd(fri.vurderede, 'logget dag', 'loggede dage')}.` : ''
+  return { days: days.size, mod: 'plan', kcal: hits(plan.kcal), protein: hits(plan.protein), ...(fri ? { fri } : {}),
     text: `Seneste 7 dage mod kostplanen: ${planPart}` +
-      (restPart ? `; øvrige ${restDays} ${antalOrd(restDays, 'dag', 'dage')} mod profilens mål: ${restPart}` : '') + ` (${logged}).` }
+      (restPart ? `; øvrige ${restDays} ${antalOrd(restDays, 'dag', 'dage')} mod profilens mål: ${restPart}` : '') + ` (${logged}).` + friPart }
 }
 
 // Seneste logdags måltider (navn og kcal) ud fra samme kvittering og samme gyldighed som

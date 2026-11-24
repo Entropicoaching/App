@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { readClaudeWeek, sendClaudeWeek } from './claudeWeekModel.mjs'
+import { readClaudeWeek, sendClaudeWeek, setClaudeWeekFri } from './claudeWeekModel.mjs'
+import { FRI_NIVEAUER } from '../friPulje.mjs'
 import { button, primaryButton } from './formStyles.mjs'
 import { ugeMikronaeringView } from './UgeMikronaering.mjs'
 
@@ -24,7 +25,7 @@ export function seenText(week) {
   return null
 }
 
-export function claudeWeekView(week, { onSend, onReload, sending = false, error = '' } = {}) {
+export function claudeWeekView(week, { onSend, onReload, onFri, sending = false, error = '' } = {}) {
   if (week.state === 'empty') return h('section', { 'data-claude-week': 'empty', style: { textAlign: 'left' } },
     h('h3', null, 'Forslag fra Claude'), h('p', null, 'Intet forslag endnu.'))
   const { kcal, protein } = week.targets
@@ -44,6 +45,13 @@ export function claudeWeekView(week, { onSend, onReload, sending = false, error 
           h('strong', null, meal.name), ': ', meal.portions.map(p => `${p.name} ${tal(p.grams)} g`).join(', '))))
           : h('p', null, d.state === 'mangler' ? 'Ingen plan.' : d.unreadable ? 'Kan ikke læses.' : '0 måltider.'))))),
     ugeMikronaeringView(h, week.mikro),
+    // 2137: niveau for fri kcal-pulje; protein ligger altid i basen. Kan sættes, til ugen er sendt.
+    h('div', { 'data-fri-niveau': week.friPct ?? 'blandet', role: 'group', 'aria-label': 'Fri pulje', style: { marginTop: 12 } },
+      h('p', { style: { margin: '0 0 6px', fontSize: 14 } },
+        week.friPct === null ? 'Fri pulje: blandet mellem dagene. Vælg ét niveau.' : week.friPct ? `Fri pulje: ${week.friPct} % af dagens kcal (protein ligger i basen)` : 'Fri pulje: 0 % (helt fast)'),
+      week.status !== 'sendt' && onFri && h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 8 } },
+        ...FRI_NIVEAUER.map(n => h('button', { key: n, type: 'button', style: { ...button, minHeight: 44, minWidth: 44, fontWeight: week.friPct === n ? 700 : 400 },
+          'aria-pressed': week.friPct === n, disabled: sending, onClick: () => onFri(n) }, `${n} %`)))),
     week.status !== 'sendt' && h('div', { style: { marginTop: 12 } },
       week.lock && h('p', { 'data-lock': true, style: { margin: '0 0 8px' } }, week.lock),
       h('button', { type: 'button', style: { ...primaryButton, width: '100%' }, disabled: Boolean(week.lock) || sending,
@@ -68,7 +76,17 @@ export default function ClaudeWeek({ client, athlete, today }) {
     state.error ? h('p', { role: 'alert' }, state.error, ' ',
       h('button', { type: 'button', style: button, onClick: () => setAttempt(n => n + 1) }, 'Prøv igen'))
       : h('p', { role: 'status' }, 'Henter ugen…'))
-  return claudeWeekView(state.week, { sending: state.sending, error: state.error, onReload: () => setAttempt(n => n + 1), onSend: async () => {
+  return claudeWeekView(state.week, { sending: state.sending, error: state.error, onReload: () => setAttempt(n => n + 1),
+    onFri: async pct => {
+      if (state.sending || state.week.friPct === pct) return
+      setState(s => ({ ...s, sending: true, error: '' }))
+      try {
+        const { week } = await setClaudeWeekFri({ client, athlete, today, shown: state.week, pct })
+        setState({ week, error: '', sending: false })
+      } catch (error) {
+        setState(s => ({ ...s, sending: false, error: error?.message || 'Niveauet kunne ikke gemmes. Prøv igen.' }))
+      }
+    }, onSend: async () => {
     if (state.sending || state.week.lock) return
     setState(s => ({ ...s, sending: true, error: '' }))
     try {
