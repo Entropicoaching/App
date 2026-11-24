@@ -107,6 +107,10 @@ export default function NyAtletModal({
                   <button style={s.btnPrimary} onClick={addAthlete} disabled={saving || !nameOk}>{saving ? 'Opretter...' : 'Opret atlet'}</button>
                 )}
               </div>
+              {/* 2059: navnet er det eneste krav, så oprettelsen står til rådighed fra trin 1 (Ny atlet, Opret nu = 2 tryk). */}
+              {addStep < 2 && (
+                <button style={{ ...s.btnGhost, width: '100%', minHeight: 44, marginTop: '0.75rem' }} onClick={addAthlete} disabled={saving || !nameOk}>{saving ? 'Opretter...' : 'Opret nu'}</button>
+              )}
             </div>
           </div>
         )

@@ -9,7 +9,7 @@
 // Dækker: PostgREST-formen for GET/POST/PATCH/DELETE på /rest/v1/<tabel>
 // (select med simpelt indlejret embed, eq/neq/lt/lte/gt/gte/in/is/or-filtre,
 // order, limit), /rest/v1/rpc/<navn>, og GoTrue-formen for
-// /auth/v1/token (password + refresh_token), /auth/v1/logout, /auth/v1/user.
+// /auth/v1/token (password + refresh_token), /auth/v1/signup, /auth/v1/logout, /auth/v1/user.
 //
 // ORDRE 155: storage er nu et ægte in-memory objektlager (upload → signeret
 // URL → hentning med Range-støtte), så "upload og gå" + coachens signerede
@@ -324,6 +324,18 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
       }
       return sendJson(res, 400, { error: 'unsupported_grant_type', msg: `Ukendt grant_type: ${grant}` })
     }
+    if (req.method === 'POST' && url.pathname === '/auth/v1/signup') {
+      // 2059: tilmelding som i produktion: ny bruger, atlet-profil, og atletrækken med samme mail og user_id null kobles.
+      const body = await readJson(req) || {}
+      const email = String(body.email || '').toLowerCase()
+      if (!email || !body.password) return sendJson(res, 422, { error: 'validation_failed', msg: 'Email og adgangskode mangler' })
+      if (usersByEmail.has(email)) return sendJson(res, 422, { error: 'user_already_exists', msg: 'User already registered' })
+      const u = { id: randomUUID(), email, password: body.password, role: 'athlete' }
+      usersByEmail.set(email, u); usersById.set(u.id, u)
+      ensure('profiles').push({ id: u.id, role: 'athlete', email, last_seen: null })
+      for (const a of ensure('athletes')) if (a.user_id == null && String(a.email || '').toLowerCase() === email) a.user_id = u.id
+      return sendJson(res, 200, issueSession(u))
+    }
     if (req.method === 'POST' && url.pathname === '/auth/v1/logout') {
       const jwt = (req.headers['authorization'] || '').replace(/^Bearer\s+/i, '')
       tokensToUser.delete(jwt)
@@ -406,6 +418,8 @@ export function createMockSupabase({ users, tables }, { maxRows = null } = {}) {
           }
         }
         const row = { id: randomUUID(), created_at: new Date().toISOString(), ...item }
+        // 2059: user_id er null i Postgres, til atleten opretter sig med invitationens mail.
+        if (table === 'athletes' && row.user_id === undefined) row.user_id = null
         for (const col of TIMESTAMP_DEFAULTS[table] || []) {
           if (row[col] == null) row[col] = new Date().toISOString()
         }
