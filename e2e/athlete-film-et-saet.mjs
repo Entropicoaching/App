@@ -124,6 +124,10 @@ async function main() {
     await page.getByText('Mere i dag', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
 
     const consoleErrors = []
+    // Ordre 2152: Hjems påmindelseskort (U8 PushCard bag "Mere i dag") kalder edge-funktionen u8-push, som mocken ikke har (404).
+    // Kun den ene kendte URL tillades; hver anden 404 og alle andre browser-fejl fejler stadig.
+    let u8Push404 = 0
+    page.on('response', res => { if (res.status() === 404 && new URL(res.url()).pathname === '/functions/v1/u8-push') u8Push404++ })
     page.on('pageerror', err => consoleErrors.push(`pageerror: ${err.message}`))
     page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(`console.error: ${msg.text()}`) })
     await page.getByText('Mere i dag', { exact: true }).click()
@@ -177,6 +181,10 @@ async function main() {
     assert.ok(savedRow, 'Gem skulle oprette en awaiting_analysis-række via den EKSISTERENDE video-vej, men ingen blev fundet')
     assert.equal(savedRow.source_mode, 'athlete_submission')
 
+    for (let i = 0; i < u8Push404; i++) {
+      const at = consoleErrors.indexOf('console.error: Failed to load resource: the server responded with a status of 404 (Not Found)')
+      if (at >= 0) consoleErrors.splice(at, 1)
+    }
     assert.deepEqual(consoleErrors, [], `Ingen browser-fejl forventet, fandt: ${JSON.stringify(consoleErrors)}`)
 
     console.log(`\nGRØN: "Film et sæt" — kalibreret, sporet, ${repCount} rep(s) vist uden dom, Kassér gemte intet, Gem ramte den eksisterende video-vej (video_analyses-række ${savedRow.id}, source_mode=${savedRow.source_mode}).`)
