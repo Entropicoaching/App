@@ -873,6 +873,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
             {...(!e2ReadOnly ? { onSkipSet: skipSet, onSkipExercise: skipExercise, onUnskipSet: unskipSet } : {})}
             {...(e2ReadOnly ? { onLogSet: undefined, setLogInputs: undefined, storage: coachPreviewStorage } : {})}
             pendingSyncKeys={pendingSyncKeys} parkedSets={parkedSets} restPause={restPause}
+            suggestNextWeight={suggestNextWeight}
             rekordFejring={rekordFejring} rekordGrundlagFoer={rekordGrundlagFoer} setRekordFejring={setRekordFejring} fejredeRef={fejredeRef}
             {...(!e2ReadOnly ? {
               readinessLog, readinessInput, setReadinessInput,
