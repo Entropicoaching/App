@@ -90,6 +90,26 @@ async function filmAndSend(page, clipPath) {
   await canvas.click({ position: { x: base.x, y: base.y } })
   await frame.locator('body[data-athlete-state="done"]').waitFor({ state: 'attached', timeout: 90000 })
   await frame.locator('#athleteInstantResult').waitFor({ state: 'visible', timeout: 5000 })
+  // ORDRE 2147: sendpanelet kan bruges ved 390 px, også på en lav skærm (667 px): Send brydes højst over 2 linjer, alle tre
+  // knapper står frit, og Belastning ligger synligt over knaplinjen uden rulning.
+  for (const h of [844, 667]) {
+    await page.setViewportSize({ width: 390, height: h })
+    await page.waitForTimeout(300)
+    const m = await frame.locator('body').evaluate(() => {
+      const r = id => document.getElementById(id).getBoundingClientRect()
+      const send = document.getElementById('athleteInstantSaveBtn')
+      const range = document.createRange(); range.selectNodeContents(send)
+      const lines = new Set([...range.getClientRects()].map(x => Math.round(x.top))).size
+      const bar = r('athleteInstantSaveBtn'), load = r('loadInput'), vh = window.innerHeight
+      return { vh, lines, sendH: bar.height, barTop: bar.top, barBottom: bar.bottom, loadTop: load.top, loadBottom: load.bottom,
+        clipped: send.scrollWidth > send.clientWidth + 1 }
+    })
+    assert.ok(m.lines <= 2 && !m.clipped, `${h}px: Send brydes over ${m.lines} linjer (afskaaret: ${m.clipped})`)
+    assert.ok(m.barTop >= 0 && m.barBottom <= m.vh, `${h}px: knaplinjen staar ikke frit i skaermen`)
+    assert.ok(m.loadTop >= 0 && m.loadBottom <= m.barTop, `${h}px: Belastning er ikke synlig over knaplinjen uden rulning (${Math.round(m.loadTop)}-${Math.round(m.loadBottom)} mod knaplinje ${Math.round(m.barTop)})`)
+  }
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.waitForTimeout(300)
   await frame.locator('#athleteNoteInput').click(); taps.push('Notat')
   await page.keyboard.type(NOTE, { delay: 30 })
   await tap('Gem og send', frame.locator('#athleteInstantSaveBtn'))
