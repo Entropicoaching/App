@@ -43,12 +43,33 @@ test('fri pulje ikke holdt på de fleste vurderede dage giver en grund, holdt p�
 test('kræver mindst 3 vurderede dage med niveau over 0 %', () => {
   const d = dates(7)
   const kunMorgen = list => list.map(date => meal(date, 'Morgen'))
-  assert.equal(followsPlan({ planDays: planDays(d), meals: kunMorgen(d.slice(0, 2)) }, day), null)
+  assert.notEqual(followsPlan({ planDays: planDays(d), meals: kunMorgen(d.slice(0, 2)) }, day)?.reason, 'Følger ikke kostplanen')
   assert.ok(followsPlan({ planDays: planDays(d), meals: kunMorgen(d.slice(0, 3)) }, day))
   // Niveau 0 % kender ingen basemåltider og ingen pulje: ingen grund, uanset logning.
   assert.equal(followsPlan({ planDays: planDays(d, 0), meals: kunMorgen(d) }, day), null)
-  // Dage uden logning tæller ikke som vurderede.
-  assert.equal(followsPlan({ planDays: planDays(d), meals: [] }, day), null)
+})
+
+// Ordre 2191: base og pulje regnes kun på loggede dage; for få loggede dage er et logningssignal, ikke "følger ikke".
+test('logger 3 af 7 dage og følger basen de dage: ingen "følger ikke"', () => {
+  const d = dates(7), loggede = d.slice(0, 3)
+  assert.equal(followsPlan({ planDays: planDays(d), meals: baseRows(loggede) }, day), null)
+  // Samme atlet ved 4 af 7 dage og med puljen holdt.
+  assert.equal(followsPlan({ planDays: planDays(d), meals: [...baseRows(d.slice(0, 4)), ...d.slice(0, 4).map(x => fri(x, 100))] }, day), null)
+})
+
+test('følger ikke planen på de loggede dage: signal, selvom kun 3 af 7 dage er logget', () => {
+  const d = dates(7), loggede = d.slice(0, 3)
+  assert.deepEqual(followsPlan({ planDays: planDays(d), meals: loggede.map(x => meal(x, 'Snack')) }, day), { reason: 'Følger ikke kostplanen' })
+  assert.deepEqual(followsPlan({ planDays: planDays(d), meals: loggede.flatMap(x => [...baseRows([x]), fri(x, 900)]) }, day), { reason: 'Følger ikke kostplanen' })
+})
+
+test('logger under 3 af 7 dage: "Logger ikke maden"; ingen logning, få plandage og ferie giver det rigtige', () => {
+  const d = dates(7)
+  assert.deepEqual(followsPlan({ planDays: planDays(d), meals: baseRows(d.slice(0, 2)) }, day), { reason: 'Logger ikke maden' })
+  assert.deepEqual(followsPlan({ planDays: planDays(d), meals: [] }, day), { reason: 'Logger ikke maden' })
+  // Kun 4 plandage med niveau: planen er ny, ingen grund.
+  assert.equal(followsPlan({ planDays: planDays(d.slice(3)), meals: [] }, day), null)
+  assert.equal(followsPlan({ planDays: planDays(d, 0), meals: [] }, day), null)
 })
 
 test('kun de 7 afsluttede dage tæller; i dag og ældre dage ignoreres; dagskvitteringer tæller ikke', () => {
@@ -56,7 +77,7 @@ test('kun de 7 afsluttede dage tæller; i dag og ældre dage ignoreres; dagskvit
   const kunMorgen = list => list.map(date => meal(date, 'Morgen'))
   assert.equal(followsPlan({ planDays: planDays([...gamle, ...i_dag]), meals: kunMorgen([...gamle, ...i_dag]) }, day), null)
   const kvittering = dates(7).map(date => ({ athlete_id: athleteId, date, meal: '[appData2-day-v1] {}', kcal: 0, protein: 0 }))
-  assert.equal(followsPlan({ planDays: planDays(dates(7)), meals: kvittering }, day), null)
+  assert.notEqual(followsPlan({ planDays: planDays(dates(7)), meals: kvittering }, day)?.reason, 'Følger ikke kostplanen')
   assert.equal(followsPlan(null, day), null)
   assert.equal(followsPlan({ planDays: 'x', meals: [] }, day), null)
 })
@@ -86,6 +107,15 @@ test('forsiden: grunden står under Kræver dit blik med fast, neutral tekst', (
   assert.match(html, /Følger ikke kostplanen/)
 })
 
+test('forsiden: logger 3 af 7 dage og følger basen: intet; logger 2 af 7: "Logger ikke maden" med samme rang', () => {
+  assert.equal(liste(fixture({ rows: baseRows(dates(7).slice(0, 3)) })), undefined)
+  const r = liste(fixture({ rows: baseRows(dates(7).slice(0, 2)) }))
+  assert.equal(r.reason, 'Logger ikke maden')
+  assert.equal(r.rank, RANK.followsPlan)
+  assert.doesNotMatch(r.reason, /advarsel|fare|alarm|kritisk|dårlig/i)
+  assert.match(render(h(CoachView, { ...fixture({ rows: baseRows(dates(7).slice(0, 2)) }), today: day })), /Logger ikke maden/)
+})
+
 test('forsiden: følger atleten planen, står der intet', () => {
   assert.equal(liste(fixture({ rows: baseRows(dates(7)) })), undefined)
 })
@@ -109,6 +139,9 @@ test('ferie og ugyldig kilde: ingen grund', () => {
   const uden = fixture({ rows: kunMorgen })
   uden.coachNutrition.plan = null
   assert.equal(liste(uden), undefined)
+  const ferieUdenLog = fixture({ rows: [] })
+  ferieUdenLog.athletes[0].vacation_until = '2026-11-20'
+  assert.equal(liste(ferieUdenLog), undefined)
   const u3Fra = fixture({ rows: kunMorgen })
   u3Fra.u3Data = false
   assert.equal(liste(u3Fra), undefined)

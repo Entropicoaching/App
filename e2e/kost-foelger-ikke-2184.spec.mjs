@@ -10,9 +10,10 @@ import { startVite, launchBrowser, MOCK_PORT, APP_URL } from './harness.mjs'
 import { seed as ugeSeed } from './kost-set-paa-main.spec.mjs'
 
 const MOBILE = { width: 390, height: 844 }
-const UD = process.env.UD_MAPPE || join(import.meta.dirname, '..', 'plan', '2184', 'skaermbilleder')
+const UD = process.env.UD_MAPPE || join(import.meta.dirname, '..', 'plan', '2191', 'skaermbilleder')
 mkdirSync(UD, { recursive: true })
 const GRUND = 'Følger ikke kostplanen'
+const LOGGER = 'Logger ikke maden'
 const plus = (day, n) => new Date(Date.parse(day + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10)
 const krav = (ok, tekst) => { if (!ok) throw new Error(tekst) }
 // Planen gælder de seneste 15 dage med niveau 20 %; kost logges de seneste dage (dage = 4: 4 af 14 basemåltider fulgt; 7: alle).
@@ -53,9 +54,12 @@ let fejl = null
 try {
   for (const navn of ['lys', 'moerk']) {
     const scheme = navn === 'lys' ? 'light' : 'dark'
-    for (const [tekst, opsaet, forventet] of [
-      ['kun frokost på 4 af 7 dage (4 af 14 basemåltider)', { maaltider: ['Frokost'], dage: 4 }, true],
-      ['følger planen (14 af 14)', { maaltider: ['Frokost', 'Aftensmad'] }, false],
+    // Ordre 2191: base og pulje regnes kun på loggede dage; for få loggede dage giver "Logger ikke maden".
+    for (const [tekst, opsaet, forventet, ikke] of [
+      ['logger ikke planen på 4 loggede dage (0 af 8 basemåltider)', { maaltider: ['Snack'], dage: 4 }, GRUND, LOGGER],
+      ['følger planen, men logger kun 3 af 7 dage', { maaltider: ['Frokost', 'Aftensmad'], dage: 3 }, null, GRUND],
+      ['logger kun 2 af 7 dage', { maaltider: ['Frokost', 'Aftensmad'], dage: 2 }, LOGGER, GRUND],
+      ['følger planen (14 af 14)', { maaltider: ['Frokost', 'Aftensmad'] }, null, GRUND],
     ]) {
       const s = seed(opsaet); const mock = createMockSupabase({ users: s.users, tables: structuredClone(s.tables) }); await mock.listen(MOCK_PORT)
       const ctx = await browser.newContext({ viewport: MOBILE, colorScheme: scheme }); const page = await ctx.newPage()
@@ -64,24 +68,25 @@ try {
         await login(page); await tema(page, navn)
         if (forventet) {
           const sektion = await aabnSignaler(page)
-          await sektion.getByText(GRUND, { exact: false }).first().waitFor({ state: 'visible', timeout: 30000 })
+          await sektion.getByText(forventet, { exact: false }).first().waitFor({ state: 'visible', timeout: 30000 })
           const indhold = await sektion.innerText()
           krav(!/advarsel|fare|alarm|kritisk/i.test(indhold), `${tekst} ${navn}: alarmord i signalet`)
+          krav(!indhold.includes(ikke), `${tekst} ${navn}: "${ikke}" må ikke stå`)
           await ingenScroll(page, `${tekst} ${navn}`)
           await sektion.evaluate(el => el.scrollIntoView({ block: 'center' }))
-          await page.screenshot({ path: join(UD, `2184-signal-foelger-ikke-${navn}.png`) })
+          await page.screenshot({ path: join(UD, `2191-signal-${forventet === GRUND ? 'foelger-ikke' : 'logger-ikke'}-${navn}.png`) })
         } else {
           await aabnSignaler(page).catch(() => null)
           await page.waitForTimeout(3000)
-          krav(await page.getByText(GRUND, { exact: false }).count() === 0, `${tekst} ${navn}: signalet må ikke stå`)
-          await page.screenshot({ path: join(UD, `2184-ingen-signal-${navn}.png`) })
+          krav(await page.getByText(GRUND, { exact: false }).count() === 0 && await page.getByText(LOGGER, { exact: false }).count() === 0, `${tekst} ${navn}: signalet må ikke stå`)
+          await page.screenshot({ path: join(UD, `2191-ingen-signal-${navn}.png`) })
         }
         console.log(`OK ${tekst} ${navn}`)
-      } catch (e) { try { await page.screenshot({ path: join(UD, `2184-fejl-${navn}.png`) }) } catch { /* ignoreret */ } throw new Error(`${tekst} ${navn}: ${e.message}`) }
+      } catch (e) { try { await page.screenshot({ path: join(UD, `2191-fejl-${navn}.png`) }) } catch { /* ignoreret */ } throw new Error(`${tekst} ${navn}: ${e.message}`) }
       finally { await ctx.close(); await mock.close() }
     }
   }
   krav(!errors.length, 'pageerror: ' + errors.join(' | '))
 } catch (err) { fejl = err } finally { await browser.close(); await vite.stop() }
 if (fejl) { console.error('FEJL:', fejl.message); process.exit(1) }
-console.log('2184 e2e grøn')
+console.log('2184 e2e grøn (ordre 2191)')

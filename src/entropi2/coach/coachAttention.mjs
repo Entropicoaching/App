@@ -105,16 +105,25 @@ export function lowProtein(source, athleteId, day) {
 
 // Ordre 2184 (Marc 24. nov. kl. 19:11: atleterne skal "rent faktisk følge planerne"): samme friUge som
 // coachens og atletens ugelinje, de 7 seneste afsluttede dage (kostplanens vindue slutter i går).
-// Kun med mindst 3 vurderede dage med niveau over 0 %, og kun når basemåltider fulgt er under halvdelen
-// eller den fri pulje ikke er holdt på de fleste vurderede dage. Fast, neutral tekst; ren læsning.
+// Ordre 2191: base og pulje regnes kun på dage med mindst én kostlogning, så en atlet, der følger planen
+// men kun logger nogle dage, ikke får et forkert råd. Kun med mindst 3 loggede dage med niveau over 0 %,
+// og kun når basemåltider fulgt er under halvdelen eller den fri pulje ikke er holdt på de fleste loggede dage.
+// Under 3 loggede dage af mindst 5 plandage med niveau giver i stedet "Logger ikke maden" (samme rang, neutral tekst).
+// Fast, neutral tekst; ren læsning.
 export const FOELGER_MIN_DAGE = 3
+export const LOGGER_MIN_PLANDAGE = 5
 export function followsPlan(entry, day) {
   if (!Array.isArray(entry?.planDays) || !Array.isArray(entry?.meals) || !calendarDay(day)) return null
   const from = addCalendarDays(day, -7), through = addCalendarDays(day, -1)
   const within = row => row?.date >= from && row.date <= through
-  const fri = friUge({ dage: entry.planDays.filter(within),
-    raekker: entry.meals.filter(row => within(row) && !isDayReceipt(row) && typeof row.meal === 'string' && row.meal.trim()) })
-  if (!fri || fri.vurderede < FOELGER_MIN_DAGE) return null
+  const raekker = entry.meals.filter(row => within(row) && !isDayReceipt(row) && typeof row.meal === 'string' && row.meal.trim())
+  const planDage = entry.planDays.filter(within)
+  const loggede = new Set(raekker.map(row => row.date))
+  const fri = friUge({ dage: planDage.filter(d => loggede.has(d?.date)), raekker })
+  if (!fri || fri.vurderede < FOELGER_MIN_DAGE) {
+    const medNiveau = friUge({ dage: planDage, raekker })
+    return medNiveau && medNiveau.dage >= LOGGER_MIN_PLANDAGE ? { reason: 'Logger ikke maden' } : null
+  }
   const lidtBase = fri.basisAf > 0 && fri.basis * 2 < fri.basisAf
   const pulje = (fri.vurderede - fri.holdt) * 2 > fri.vurderede
   return lidtBase || pulje ? { reason: 'Følger ikke kostplanen' } : null
