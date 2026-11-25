@@ -279,10 +279,15 @@
   body.athlete #athleteStatus[data-tone="ready"] { border-color:rgba(200,146,58,.32); }
   body.athlete #athleteStatus[data-tone="done"] b { color:#78d89a; }
   /* ORDRE 2120: kvitteringen efter Gem og send står midt i flowet, ikke kun som lille status. */
-  body.athlete[data-athlete-state="sent"] #athleteStatus { top:68px; width:min(86vw,380px); padding:10px 14px;
-    text-align:center; border-color:rgba(120,216,154,.5); }
-  body.athlete[data-athlete-state="sent"] #athleteStatus b { color:#78d89a; font-size:17px; margin-bottom:3px; }
-  body.athlete[data-athlete-state="sent"] #athleteStatus span { font-size:11px; color:rgba(237,234,226,.78); }
+  /* ORDRE 2175: kortet står under løftvælgeren (#vcLiftSlot, 68-108px) og over skiven (ca. 220px);
+     teksten til venstre og knappen til højre holder det lavt nok. */
+  body.athlete[data-athlete-state="sent"] #athleteStatus { top:114px; width:min(92vw,380px); padding:8px 12px;
+    display:grid; grid-template-columns:1fr auto; column-gap:10px; align-items:center;
+    text-align:left; border-color:rgba(120,216,154,.5); }
+  body.athlete[data-athlete-state="sent"] #athleteStatus[hidden] { display:none; }
+  body.athlete[data-athlete-state="sent"] #athleteStatus b { grid-column:1; color:#78d89a; font-size:15px; margin-bottom:2px; }
+  body.athlete[data-athlete-state="sent"] #athleteStatus span { grid-column:1; font-size:10.5px; color:rgba(237,234,226,.78); }
+  body.athlete[data-athlete-state="sent"] #athleteMessagesBtn { grid-column:2; grid-row:1 / span 2; margin-top:0; padding:8px 12px; font-size:12px; }
   body.athlete #athleteMessagesBtn { pointer-events:auto; min-height:44px; margin-top:6px; padding:8px 18px;
     border-radius:10px; border:1px solid rgba(120,216,154,.5); background:transparent; color:#78d89a;
     font:inherit; font-size:14px; cursor:pointer; }
