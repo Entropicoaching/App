@@ -47,7 +47,7 @@ test('mounted actual StrictMode athlete Kost: usable shopping, unchanged today t
   assert.equal(list(r.host).children.length, 5); assert.match(list(r.host).textContent, /Linser: 450 g/)
   assert.equal(r.clipboard.length, 0, 'no clipboard work on mount/read')
   const checkboxes = all(section(r.host), 'input')
-  assert.deepEqual(checkboxes.map(n => propsOf(n).checked), [false, true, true, true])
+  assert.deepEqual(checkboxes.map(n => propsOf(n).checked), [false, true, true, true, false, false, false])
   const manualInput = byKey(r.host, 'field-Måltid'), searchInput = byKey(r.host, 'food-search')
   assert.ok(manualInput); assert.ok(searchInput)
   manualInput.value = 'Ugemt syntetisk kladde'; manualInput.dispatch('input', { target: manualInput })
@@ -156,7 +156,7 @@ test('today included explicitly, all deselected, invalid dates, current day revo
   for (const d of dates) await r.choose(d, false)
   assert.match(section(r.host).textContent, /Vælg mindst én dag/); assert.equal(list(r.host), undefined)
   const count = r.f.calls.length
-  assert.equal(all(section(r.host), 'input').length, 4)
+  assert.equal(all(section(r.host), 'input').length, 7)
   await r.choose(dates[0], true)
   const retained = propsOf(button(section(r.host), 'Kopiér indkøbsliste')).onClick
   day = dates[0]; assert.equal(await retained(), false); await r.render()
@@ -202,3 +202,14 @@ for (const kind of ['missing-plan', 'capability'])
     r.f.data[tableNames[1]] = saved; r.f.options.missing = false
     await r.click('Hent indkøbsgrundlag igen'); assert.match(list(r.host).textContent, /Linser: 450 g/)
   })
+
+test('2373: Hele ugen vælger alle dage med ét tryk, og vælgeren viser hele ugen', async t => {
+  const r = await mounted(t)
+  const boxes = () => all(section(r.host), 'input').filter(n => /^Indkøb /.test(n.getAttribute('aria-label') ?? ''))
+  const valgte = () => section(r.host).textContent.split('Valgte dage:')[1].split('Hent indkøbsgrundlag')[0]
+  assert.equal(boxes().length, 7)
+  assert.doesNotMatch(valgte(), /13\. nov/)
+  await r.click('Hele ugen')
+  assert.match(valgte(), /fredag 13\. nov/)
+  assert.equal(propsOf(button(section(r.host), 'Hele ugen')).disabled, false)
+})

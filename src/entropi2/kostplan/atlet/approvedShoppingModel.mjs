@@ -1,5 +1,7 @@
 import { supportedPlanSnapshot } from '../sqlSnapshot.mjs'
 import { upcomingDates } from './upcomingPlanModel.mjs'
+import { readAthletePlan } from './dayModel.mjs'
+import { calendarTime } from '../../../athlete/kostNumbers.mjs'
 
 export const grossLabel = 'Bruttobehov – lager ikke fratrukket'
 export const maxShoppingText = 200000
@@ -20,12 +22,16 @@ export const danskDato = iso => {
 // 2123: en sendt uge er 7 dagsplaner i træk; dagene efter den sidste er efter ugens slut. En enkelt plan (fx manuel aktivering)
 // er ingen uge og gælder videre til den næste kommer. Ukendt eller ufuldstændig række fjerner intet.
 const ISO_DAG = /^\d{4}-\d{2}-\d{2}$/
-export const datesAfterWeek = (window, validFroms) => {
+// 2373: weekEnd giver den sendte uges sidste dag, eller null når der ikke er en sendt uge (fx en enkelt plan).
+export const weekEnd = validFroms => {
   const days = Array.isArray(validFroms) ? [...new Set(validFroms)].filter(d => ISO_DAG.test(String(d))).sort().reverse() : []
-  if (days.length < 7) return []
+  if (days.length < 7) return null
   const last = days[0], time = iso => Date.parse(iso + 'T00:00:00Z')
-  const run = days.slice(0, 7).every((d, i) => time(last) - time(d) === i * 86400000)
-  return run ? window.filter(date => date > last) : []
+  return days.slice(0, 7).every((d, i) => time(last) - time(d) === i * 86400000) ? last : null
+}
+export const datesAfterWeek = (window, validFroms) => {
+  const last = weekEnd(validFroms)
+  return last ? window.filter(date => date > last) : []
 }
 export const shoppingNumber = value => String(value).replace('.', ',')
 export const foodKey = food => JSON.stringify([food.id, food.preparation, food.source.citation, food.source.verification])
@@ -45,9 +51,14 @@ function addGrams(before, value) {
   return scale ? (digits.slice(0, -scale) + '.' + digits.slice(-scale)).replace(/\.?0+$/, '') : digits
 }
 
+// 2373: hele ugen fra i dag (7 dage). Læsningen tager én dato ad gangen, så vinduet er kun en grænse for valget.
+export const SHOPPING_DAYS = 7
+export const shoppingWindow = today => calendarTime(today) === null ? []
+  : Array.from({ length: SHOPPING_DAYS }, (_, i) => new Date(calendarTime(today) + i * 86400000).toISOString().slice(0, 10))
+
 export function shoppingDates(today, selected) {
-  const window = upcomingDates(today)
-  if (!window.length || !Array.isArray(selected) || selected.length > 4
+  const window = shoppingWindow(today)
+  if (!window.length || !Array.isArray(selected) || selected.length > SHOPPING_DAYS
     || new Set(selected).size !== selected.length || selected.some(d => !window.includes(d))) invalid()
   return window.filter(d => selected.includes(d))
 }
@@ -76,6 +87,19 @@ export function shoppingVersion(row, active, athleteId, date) {
   })
   return freezeShopping({ date, versionId: row.id, planId: row.plan_id,
     versionNumber: row.version_no, effectiveFrom: row.effective_from, meals: snapshot.meals })
+}
+
+// 2373: dagen viser gram efter skalering til basen og 5 g-afrunding (readAthletePlan); listen skal summere de samme gram.
+// Måltider og fødevarer ligger i samme rækkefølge i planen og i den validerede version.
+export function scaleShoppingVersion(version, active, athleteId, date) {
+  if (!(active?.friPct > 0)) return version
+  const day = readAthletePlan(active, athleteId, date)
+  if (!day || day.meals.length !== version.meals.length) invalid()
+  return freezeShopping({ ...version, meals: version.meals.map((meal, mi) => {
+    const foods = day.meals[mi].foods
+    if (foods.length !== meal.portions.length) invalid()
+    return { ...meal, portions: meal.portions.map((portion, fi) => ({ ...portion, grams: foods[fi].grams })) }
+  }) })
 }
 
 // Each selected DATE contributes all planned portions, even when it resolves

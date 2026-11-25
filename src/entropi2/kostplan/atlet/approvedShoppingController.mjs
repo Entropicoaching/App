@@ -1,7 +1,6 @@
 import { formatCompactShopping } from './compactShoppingText.mjs'
 import { createPlanAdapter } from '../planAdapter.mjs'
-import { datesAfterWeek, shoppingDates, shoppingVersion, sumApprovedShopping, formatApprovedShopping, freezeShopping } from './approvedShoppingModel.mjs'
-import { upcomingDates } from './upcomingPlanModel.mjs'
+import { weekEnd, datesAfterWeek, shoppingDates, shoppingVersion, shoppingWindow, scaleShoppingVersion, sumApprovedShopping, formatApprovedShopping, freezeShopping } from './approvedShoppingModel.mjs'
 import { openPurchaseMarkers, purchaseScope } from './purchaseMarkers.mjs'
 
 const current = () => true
@@ -13,10 +12,13 @@ const reasons = { empty: 'Ingen godkendt plan', unavailable: 'Kostplanens tabell
 export function createApprovedShopping(options = {}) {
   if (options.enabled !== true || options.readOnly === true) return null
   const { client, athleteId, today, isCurrent = current } = options
-  let dates = shoppingDates(today, options.dates ?? upcomingDates(today).slice(1))
+  let dates = shoppingDates(today, options.dates ?? shoppingWindow(today))
   // Validate the adapter's existing owner/client contract without any I/O.
   createPlanAdapter({ enabled: true, client, athleteId, date: today })
   let disposed = false, token = 0, attempted = false, pendingCopy = false
+  // 2373: standardvalget er resten af den sendte uge fra i dag; uden en kendt uge (en enkelt plan) er det som før de tre næste dage.
+  // "Hele ugen" vælger hele vinduet. Begge dele lader i dag falde af, hvis der ikke er en plan endnu.
+  let defaulted = options.dates === undefined, wholeWeek = defaulted
   // 2123: dage uden godkendt plan (efter den sendte uges slut) er ikke en del af listen og vises ikke.
   let outside = []
   let markers = null
@@ -34,6 +36,7 @@ export function createApprovedShopping(options = {}) {
     choose(selected) {
       if (!alive()) return false
       try { dates = shoppingDates(today, selected) } catch { return false }
+      defaulted = false; wholeWeek = dates.length === shoppingWindow(today).length
       return api.load()
     },
     async load() {
@@ -42,8 +45,34 @@ export function createApprovedShopping(options = {}) {
       attempted = true
       reset(selected.length ? 'loading' : 'empty-selection', selected.map(date => ({ date, reason: reasons.pending })))
       if (!selected.length) return false
+      // 2123: en plan gælder til den næste kommer; den sendte uge slutter på den seneste godkendte plans første dag.
+      // 2373: læses før dagene, så dagene efter ugens slut ikke hentes for ingenting (vinduet er nu 7 dage).
+      let gone = [], known = false
+      try {
+        const response = await client.from('kostplan_v1_plans').select('valid_from').eq('athlete_id', athleteId).eq('status', 'godkendt')
+          .order('valid_from', { ascending: false }).limit(7)
+        if (!alive() || token !== attempt) return false
+        if (!response?.error && Array.isArray(response?.data) && response.data.length > 0) {
+          const froms = response.data.map(p => p.valid_from)
+          gone = datesAfterWeek(shoppingWindow(today), froms); known = weekEnd(froms) !== null
+        }
+      } catch { if (!alive() || token !== attempt) return false }
+      if (defaulted && !known) { wholeWeek = false; selected.splice(0, selected.length, ...shoppingWindow(today).slice(1, 4)); dates = [...selected] }
+      defaulted = false
+      outside = gone
+      if (gone.length) {
+        const kept = selected.filter(d => !gone.includes(d))
+        if (!kept.length) {
+          // Standardvalget kan ligge helt efter ugens slut: vælg så de dage, der er tilbage i ugen.
+          const rest = shoppingWindow(today).filter(d => !gone.includes(d))
+          if (rest.length) { dates = rest; return api.load() }
+          reset('no-plan'); return false
+        }
+        selected.splice(0, selected.length, ...kept)
+        dates = [...selected]
+      }
       const evidence = [], affected = []
-      // At most four dates, serial reads. Never fan out child work or transport.
+      // At most seven dates, serial reads. Never fan out child work or transport.
       for (const date of selected) {
         if (!alive() || token !== attempt) return false
         try {
@@ -64,7 +93,7 @@ export function createApprovedShopping(options = {}) {
           if (!alive() || token !== attempt) return false
           if (confirmed?.id !== active.id || confirmed?.revision !== active.revision) throw Error('Version changed during read')
           shoppingVersion(response.data[0], confirmed, athleteId, date)
-          evidence.push(version)
+          evidence.push(scaleShoppingVersion(version, confirmed, athleteId, date))
         } catch (error) {
           if (!alive() || token !== attempt) return false
           affected.push({ date, reason: error?.code !== 'KOSTPLAN_UNAVAILABLE' ? reasons.error
@@ -72,27 +101,15 @@ export function createApprovedShopping(options = {}) {
         }
       }
       if (!alive() || token !== attempt) return false
-      // 2123: en plan gælder til den næste kommer; den sendte uge slutter på den seneste godkendte plans første dag.
-      let gone = []
-      try {
-        const response = await client.from('kostplan_v1_plans').select('valid_from').eq('athlete_id', athleteId).eq('status', 'godkendt')
-          .order('valid_from', { ascending: false }).limit(7)
-        if (!alive() || token !== attempt) return false
-        if (!response?.error && Array.isArray(response?.data) && response.data.length > 0) gone = datesAfterWeek(upcomingDates(today), response.data.map(p => p.valid_from))
-      } catch { if (!alive() || token !== attempt) return false }
-      outside = gone
-      if (gone.length) {
-        const kept = selected.filter(d => !gone.includes(d))
-        if (!kept.length) {
-          // Standardvalget (i morgen og frem) kan ligge helt efter ugens slut: vælg så de dage, der er tilbage i ugen.
-          const rest = upcomingDates(today).filter(d => !gone.includes(d))
-          if (rest.length) { dates = rest; return api.load() }
-          reset('no-plan'); return false
+      // 2373: standardvalget og "Hele ugen" starter i dag. Har i dag ingen plan endnu (ugen starter i morgen), falder i dag af;
+      // en manglende plan på en senere dag gør stadig listen ufuldstændig.
+      if (wholeWeek && evidence.length) {
+        const before = affected.filter(a => a.reason === reasons.empty && a.date === today).map(a => a.date)
+        if (before.length) {
+          affected.splice(0, affected.length, ...affected.filter(a => !before.includes(a.date)))
+          selected.splice(0, selected.length, ...selected.filter(d => !before.includes(d)))
+          dates = [...selected]
         }
-        affected.splice(0, affected.length, ...affected.filter(a => !gone.includes(a.date)))
-        evidence.splice(0, evidence.length, ...evidence.filter(v => !gone.includes(v.date)))
-        selected.splice(0, selected.length, ...kept)
-        dates = [...selected]
       }
       // No plan on any selected day (also before the migration) is an honest
       // empty state. A partial schema and read errors stay incomplete.

@@ -1,7 +1,6 @@
 import { createElement as h, useLayoutEffect, useMemo, useState } from 'react'
 import { createApprovedShopping } from './approvedShoppingController.mjs'
-import { upcomingDates } from './upcomingPlanModel.mjs'
-import { danskDato, grossLabel, preparationSuffix, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
+import { danskDato, shoppingWindow, grossLabel, preparationSuffix, shoppingNumber, shoppingItemText, maxShoppingText } from './approvedShoppingModel.mjs'
 import { printShoppingList } from '../../nutrition/indkoeb/print.mjs'
 
 const control = { minHeight: 44, font: 'inherit', maxWidth: '100%', whiteSpace: 'normal', background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 14px' }
@@ -31,7 +30,7 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
   }, [scope, athleteId, today, client, storage])
   const matches = record?.scope === scope && currentDayMatches(scope)
   const controller = matches ? record.controller : null, s = controller ? record.snapshot : null
-  const dates = upcomingDates(today).filter(date => !s?.outside?.includes(date))
+  const dates = shoppingWindow(today).filter(date => !s?.outside?.includes(date))
   // Ordre 1546: uden aktiv kostplan står beskeden kun øverst på Kost; indkøb foldes ind.
   const foldet = s?.phase === 'no-plan'
   const krop = (...born) => foldet ? [h('details', { key: 'indkoeb-foldet' },
@@ -43,6 +42,9 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
     // Ordre 2127: forklaringen står åben, mens der ikke er nogen liste; med en liste ligger den foldet i "Om listen".
     !s?.complete && h('p', null, vaelgDage),
     h('fieldset', null, h('legend', null, 'Dage til indkøb'),
+      // 2373: hele ugen med ét tryk.
+      h('button', { type: 'button', style: control, disabled: !controller,
+        onClick: () => void controller?.choose(dates) }, 'Hele ugen'),
       ...dates.map(date => h('label', { key: date, style: { display: 'block', minHeight: 44 } },
         h('input', { type: 'checkbox', 'aria-label': `Indkøb ${danskDato(date)}`, checked: s?.dates.includes(date) ?? false,
           disabled: !controller,

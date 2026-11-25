@@ -58,13 +58,13 @@ test('canonical decimal grams sum without binary drift, title inference or units
 })
 
 test('bounded explicit dates and empty selection never issue unsupported reads; OFF and readOnly are inert', async t => {
-  for (const bad of [undefined, [], ['2026-11-11'], ['2026-11-06'], [dates[0], dates[0]]]) {
+  for (const bad of [undefined, [], ['2026-11-14'], ['2026-11-06'], [dates[0], dates[0]]]) {
     if (Array.isArray(bad) && !bad.length) assert.deepEqual(shoppingDates(today, bad), [])
     else assert.throws(() => shoppingDates(today, bad))
   }
   assert.deepEqual(shoppingDates('2026-12-31', ['2027-01-02', '2026-12-31']), ['2026-12-31', '2027-01-02'])
   const c = controller(shoppingFixture()); t.after(c.dispose)
-  assert.equal(await c.choose(['2026-11-11']), false)
+  assert.equal(await c.choose(['2026-11-14']), false)
   assert.equal(await c.choose([]), false); assert.equal(c.snapshot().phase, 'empty-selection')
   const trap = new Proxy({}, { get() { throw Error('OFF read') } })
   for (const enabled of [false, undefined, 1, 'true']) assert.equal(createApprovedShopping({ enabled, client: trap }), null)

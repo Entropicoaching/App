@@ -11,6 +11,8 @@ export function syntheticTables(options = {}) {
     const q = {
       select(columns, options) { call.columns = columns; call.count = options?.count; return q },
       limit(n) { call.limit = n; return q },
+      // 2373: order() som i Supabase, så ugegrænsen (2123) bliver læst også i prøverne.
+      order(key, o) { call.order = [key, o?.ascending !== false]; return q },
       eq(key, value) { filters.push([key, 'eq', value]); return q },
       lte(key, value) { filters.push([key, 'lte', value]); return q },
       in(key, value) { filters.push([key, 'in', value]); return q },
@@ -53,6 +55,7 @@ export function syntheticTables(options = {}) {
             return options.response?.(call, [structuredClone(row)]) ?? { data: project([structuredClone(row)]), error: null }
           }
           let found = data[table].filter(row => filters.every(([key, op, value]) => op === 'eq' ? row[key] === value : op === 'lte' ? row[key] <= value : value.includes(row[key])))
+          if (call.order) found = [...found].sort((a, b) => (a[call.order[0]] < b[call.order[0]] ? -1 : a[call.order[0]] > b[call.order[0]] ? 1 : 0) * (call.order[1] ? 1 : -1))
           const count = found.length
           found = structuredClone(found.slice(0, call.limit))
           return options.response?.(call, found) ?? { data: project(found), error: null, ...(call.count === 'exact' ? { count } : {}) }

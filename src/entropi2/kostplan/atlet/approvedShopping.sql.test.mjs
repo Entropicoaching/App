@@ -49,7 +49,7 @@ test('original SQL/PGlite RLS + mounted actual StrictMode athlete route: three a
         enabled: true, athlete: { id: athleteId }, date: today, client: f.client, foods: [], weightLogs: [], currentDay: () => today,
       }))); await tick() })
       await wait(() => Boolean(button(shop(), 'Kopiér indkøbsliste')))
-      assert.equal(all(shop(), 'input').length, 4); assert.equal(copied.length, 0)
+      assert.equal(all(shop(), 'input').length, 7); assert.equal(copied.length, 0)
       assert.match(shop().textContent, /Linser: 450 g/); assert.match(shop().textContent, /Ris: 900 g/)
       for (const meal of mealNames) assert.ok(shop().textContent.includes(meal))
       assert.equal(all(shop(), 'form').length, 0, 'no diary/stock writes exposed in shopping')
