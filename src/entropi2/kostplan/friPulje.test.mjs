@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { FRI_MAKS, FRI_NIVEAUER, FRI_STOERRELSER, friProcent, friFraBasis, medFriPct, fordelDag, skalerMaaltider, friStatus, friPost, friUge, erFriRaekke, uplanlagteRaekker } from './friPulje.mjs'
+import { FRI_MAKS, FRI_NIVEAUER, FRI_STOERRELSER, friProcent, friFraBasis, medFriPct, fordelDag, skalerMaaltider, friStatus, friPost, friUge, erFriRaekke, uplanlagteRaekker, navnNoegle } from './friPulje.mjs'
 import { readAthletePlan } from './atlet/dayModel.mjs'
 
 // Syntetiske fødevarer pr. 100 g (ingen rigtige data).
@@ -145,4 +145,21 @@ test('2193: uplanlagt mad uden "Fri: " tæller som brugt pulje i friStatus og fr
   assert.deepEqual(friUge({ dage: [dag], raekker: medEkstra }), { basis: 3, basisAf: 3, holdt: 0, vurderede: 1, dage: 1 })
   // Uplanlagt mad inden for puljen (360 kcal) er stadig holdt.
   assert.equal(friUge({ dage: [dag], raekker: [...r(dag.date), { date: dag.date, meal: 'Kage', kcal: 360 }] }).holdt, 1)
+})
+
+test('2202: planmåltid tæller som base uanset versaler og mellemrum i navnet; ægte uplanlagt mad tæller stadig', () => {
+  // Modelprøve: dag 1 under gammel plan, dag 2 efter planændring, hvor navnene kun skifter versaler og mellemrum.
+  const gammel = ['frokost', 'Aften  mad']
+  const ny = ['Frokost', 'Aften mad']
+  const dag = (date, maaltider) => ({ date, state: 'approved', friPct: 15, targets: { kcal: 2000 }, maaltider })
+  const rows = date => gammel.map(meal => ({ date, meal, kcal: 600 }))
+  assert.equal(navnNoegle('  Aften   MAD '), 'aften mad')
+  assert.deepEqual(uplanlagteRaekker(rows('d'), ny), [])
+  assert.equal(friStatus({ friKcal: 300, logs: rows('d'), planNavne: ny }).brugt, 0)
+  assert.deepEqual(friUge({ dage: [dag('2026-11-24', ny), dag('2026-11-25', ny)], raekker: [...rows('2026-11-24'), ...rows('2026-11-25')] }),
+    { basis: 4, basisAf: 4, holdt: 2, vurderede: 2, dage: 2 })
+  // Ægte uplanlagt mad og et planmåltid logget to gange tæller som før.
+  const ekstra = { meal: 'Ekstra pizza', kcal: 900 }
+  assert.deepEqual(uplanlagteRaekker([...rows('d'), ekstra], ny), [ekstra])
+  assert.equal(uplanlagteRaekker([...rows('d'), { meal: 'FROKOST', kcal: 50 }], ny).length, 1)
 })

@@ -68,6 +68,8 @@ export function skalerMaaltider(meals, pct) {
 }
 
 // Dagens fri kcal: brugt (rækker, der starter med "Fri: ") og tilbage. Kun kcal; protein tælles ikke.
+// 2202: planmåltidsnavne sammenlignes uden versaler og med ens mellemrum, så et omdøbt planmåltid (Frokost/frokost) stadig er base.
+export const navnNoegle = navn => String(navn ?? '').trim().replace(/\s+/g, ' ').toLowerCase()
 export const erFriRaekke = row => typeof row?.meal === 'string' && row.meal.trimStart().startsWith(FRI_PREFIX)
 // 2193: mad logget under et andet navn end et planmåltid og uden "Fri: " er også brugt pulje. Hver planmåltidsrække
 // dækker højst ét planmåltid af samme navn; resten af rækkerne er uplanlagte. Dagskvitteringer er ikke mad.
@@ -75,10 +77,10 @@ export const erFriRaekke = row => typeof row?.meal === 'string' && row.meal.trim
 export function uplanlagteRaekker(logs, planNavne) {
   if (!Array.isArray(planNavne)) return []
   const dækket = new Map()
-  for (const navn of planNavne) { const n = String(navn).trim(); dækket.set(n, (dækket.get(n) ?? 0) + 1) }
+  for (const navn of planNavne) { const n = navnNoegle(navn); dækket.set(n, (dækket.get(n) ?? 0) + 1) }
   return (Array.isArray(logs) ? logs : []).filter(row => {
     if (erFriRaekke(row) || isDayReceipt(row) || typeof row?.meal !== 'string' || !row.meal.trim()) return false
-    const n = row.meal.trim()
+    const n = navnNoegle(row.meal)
     if ((dækket.get(n) ?? 0) > 0) { dækket.set(n, dækket.get(n) - 1); return false }
     return true
   })
@@ -109,13 +111,13 @@ export function friUge({ dage, raekker }) {
     // Hver loggede række dækker højst ét planmåltid: to planmåltider med samme navn kræver to rækker.
     const logget = new Map()
     for (const row of dagens.filter(row => !erFriRaekke(row))) {
-      const navn = String(row.meal ?? '').trim()
+      const navn = navnNoegle(row.meal)
       logget.set(navn, (logget.get(navn) ?? 0) + 1)
     }
     const planNavne = Array.isArray(d.maaltider) ? d.maaltider : []
     basisAf += planNavne.length
     for (const navn of planNavne) {
-      const n = String(navn).trim()
+      const n = navnNoegle(navn)
       if ((logget.get(n) ?? 0) > 0) { basis++; logget.set(n, logget.get(n) - 1) }
     }
     if (dagens.length) {
