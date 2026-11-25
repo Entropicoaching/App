@@ -59,11 +59,36 @@ export function skalerMaaltider(meals, pct) {
       if (a2 > 0 && b2 > 0 && a2 <= 1 && b2 <= 1.5) { a = a2; b = b2 }
     }
   }
-  const afrund = value => Math.round(value * 10) / 10
+  // 2366: gram rundes til hele 5 g (min. 5 g), så Marc og atleten ser samme tal og atleten kan veje. Rundingen kan flytte
+  // protein og kcal; en lille gradient-pass flytter enkelte fødevarer 5 g, så de to totaler ligger tættest muligt på kravene.
+  const TRIN = 5
+  const flade = meals.flatMap(meal => meal.foods)
+  const gram = flade.map(food => Math.max(TRIN, Math.round(food.grams * (tung(food) ? b : a) / TRIN) * TRIN))
+  const kcalMaal = baseKcal, proteinMaal = proteinTotal
+  const fejl = g => {
+    let k = 0, pr = 0
+    flade.forEach((food, i) => { k += (kcalAf(food) ?? 0) * g[i] / 100; pr += (num(food.protein100) ?? 0) * g[i] / 100 })
+    return Math.abs(k - kcalMaal) / kcalMaal + Math.abs(pr - proteinMaal) / (proteinMaal || 1)
+  }
+  for (let runde = 0; runde < 50; runde++) {
+    let bedst = fejl(gram), valg = null
+    flade.forEach((food, i) => {
+      for (const d of [-TRIN, TRIN]) {
+        if (gram[i] + d < TRIN) continue
+        gram[i] += d
+        const f = fejl(gram)
+        gram[i] -= d
+        if (f < bedst - 1e-9) { bedst = f; valg = [i, d] }
+      }
+    })
+    if (!valg) break
+    gram[valg[0]] += valg[1]
+  }
+  let n = 0
   return {
     faktorer: { lette: a, tunge: b },
     proteinFoer: proteinTotal,
-    meals: meals.map(meal => ({ ...meal, foods: meal.foods.map(food => ({ ...food, grams: afrund(food.grams * (tung(food) ? b : a)) })) })),
+    meals: meals.map(meal => ({ ...meal, foods: meal.foods.map(food => ({ ...food, grams: gram[n++] })) })),
   }
 }
 
