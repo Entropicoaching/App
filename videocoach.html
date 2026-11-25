@@ -520,7 +520,10 @@
      fylder resultatrækkerne mindre, så Belastning står over knaplinjen uden rulning. */
   body.athlete #athleteInstantResult .athInstantActions button { padding-left:6px; padding-right:6px; letter-spacing:.02em; }
   body.athlete #athleteInstantResult #athleteInstantSaveBtn { flex:1.7 1 0; }
+  /* ORDRE 2245: rep-listen ruller i sig selv (fem rækker ses), så Belastning og notat bliver over knaplinjen ved mange reps. */
+  body.athlete #athleteInstantResult .athInstantRows { max-height:150px; overflow-y:auto; overscroll-behavior:contain; }
   @media (max-height:720px) {
+    body.athlete #athleteInstantResult .athInstantRows { max-height:112px; }
     body.athlete #athleteInstantResult { max-height:58vh; }
     body.athlete #athleteInstantResult .athInstantRow { padding:3px 0; }
     body.athlete #athleteInstantResult .athInstantFoot { display:none; }
