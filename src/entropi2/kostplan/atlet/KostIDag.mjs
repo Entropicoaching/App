@@ -8,6 +8,7 @@ import { scaledMeal } from './dayModel.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import { readNextPlanStart } from './upcomingPlanModel.mjs'
 import { FRI_STOERRELSER, friStatus, friPost, erFriRaekke } from '../friPulje.mjs'
+import { ugeFriLinje, readUgeFri } from './ugeFriModel.mjs'
 
 // 1899 (Marc 19. nov.): Kost skal være "rigtig simpelt og overskueligt at indtaste";
 // detaljerne er et lag, man åbner. Kortet bruger kostloggens egen log og
@@ -47,7 +48,7 @@ function whenReady(sources, ms = 10000) {
   })
 }
 
-export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote }) {
+export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote, client }) {
   const t = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || noneState, tracker?.snapshot || noneState)
   const s = useSyncExternalStore(controller?.subscribe || noSubscribe, controller?.snapshot || idle, controller?.snapshot || idle)
   const log = t?.athleteId === athleteId && t?.date === date ? t : none
@@ -110,6 +111,23 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const friVentende = pending.filter(item => erFriRaekke({ meal: item.navn })).reduce((n, item) => n + (Number(item.values?.kcal) || 0), 0)
   const fri = friNu ? (status => ({ ...status, brugt: status.brugt + friVentende, tilbage: status.tilbage - friVentende,
     over: status.brugt + friVentende > status.pulje }))(friStatus({ friKcal: friNu, logs: log.logs })) : null
+  // 2177: ugens base og pulje som coachen ser dem. Planen læses én gang pr. atlet, dag og klient; kostrækkerne igen, når loggen ændres.
+  const [ugeFri, setUgeFri] = useState(null)
+  const ugePlan = useRef(null)
+  const ugeNu = !!fri && !!client && pending.length === 0 && log.loaded === true
+  useEffect(() => {
+    if (!ugeNu) return undefined
+    let live = true
+    const key = `${athleteId}|${date}`
+    const kendt = ugePlan.current?.key === key && ugePlan.current.client === client ? ugePlan.current.days : null
+    readUgeFri({ client, athleteId, date, planDays: kendt, isCurrent: () => live }).then(value => {
+      if (!live) return
+      if (value) ugePlan.current = { key, client, days: value.dage }
+      setUgeFri(value && { key, linje: ugeFriLinje({ dage: value.dage, raekker: value.raekker, today: date }) })
+    }, () => { if (live) setUgeFri(null) })
+    return () => { live = false }
+  }, [ugeNu, client, athleteId, date, log.logs?.length])
+  const ugeLinje = ugeNu && ugeFri?.key === `${athleteId}|${date}` ? ugeFri.linje : null
   const logFri = post => { if (!post) return; run(post.meal, post, intent => tracker.log(post, intent)); setFriKcal('') }
   const logFood = () => {
     if (!portion) return
@@ -317,6 +335,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       h('p', { style: label }, `Fri i dag: ${fmt(fri.pulje)} kcal`),
       h('p', { 'data-kost-fri-status': '', style: { margin: '4px 0 0' } },
         fri.over ? `Brugt ${fmt(fri.brugt)} kcal, ${fmt(-fri.tilbage)} over puljen.` : `Brugt ${fmt(fri.brugt)} kcal, ${fmt(fri.tilbage)} tilbage.`),
+      ugeLinje && h('p', { 'data-kost-fri-uge': '', style: { margin: '4px 0 0', opacity: 0.85 } }, ugeLinje),
       h('div', { style: row },
         ...FRI_STOERRELSER.map(item => h('button', { key: item.id, type: 'button', style: control, disabled: busy(`Fri: ${item.id}`),
           'aria-label': `Fri mad ${item.navn.toLowerCase()}, ${item.kcal} kcal`, onClick: () => logFri(friPost(item.id)) },
@@ -464,7 +483,7 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
     nyUge && h('section', { 'data-ny-kostuge': '', role: 'status', 'aria-label': NY_KOSTUGE_TEKST, style: card },
       h('h2', { style: { margin: '0 0 8px', fontSize: '1.15rem' } }, NY_KOSTUGE_TEKST),
       h('p', { style: { margin: 0 } }, 'Du kan stadig logge mad og vægt her, indtil den er sendt.')),
-    quick && h(KostIDag, { customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, water: layerOpen ? null : waterLog, nyPlan,
+    quick && h(KostIDag, { customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, client, water: layerOpen ? null : waterLog, nyPlan,
       onCustom: () => { if (!layerOpen) setOpen(true); setCustom(n => n + 1) } }),
     quick && h('div', { style: { padding: '0 16px 8px' } },
       h('button', { type: 'button', style: control, 'aria-expanded': layerOpen, 'aria-controls': `kost-detaljer-${athleteId}`,

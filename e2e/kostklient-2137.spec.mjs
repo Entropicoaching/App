@@ -72,6 +72,7 @@ try {
         const kost = await atletKost(p, navn)
         krav(await p.locator('[data-kost-fri]').count() === 0, `${navn}: 0 % skal ikke vise fri pulje`)
         krav(!(await kost.innerText()).includes('Fri i dag'), `${navn}: 0 % skal ikke vise "Fri i dag"`)
+        krav(await p.locator('[data-kost-fri-uge]').count() === 0, `${navn}: 0 % skal ikke vise ugelinjen (2177)`)
         await ingenScroll(p, `${navn} 0 %`)
         console.log(`${navn}: 0 % uden fri pulje, som før`)
       } finally { await ctx.close(); await mock.close() }
@@ -100,6 +101,14 @@ try {
         const status = await p.locator('[data-kost-fri-status]').innerText()
         krav(status.includes(`${new Intl.NumberFormat('da-DK').format(pulje - 400)} tilbage`) || status.includes('over puljen'), `${navn}: tilbage mangler: ${status}`)
         await ingenScroll(p, `${navn} 20 % efter logning`)
+        // 2177: ugelinjen under dagens status, samme tal som coachens uge; rosende, ingen alarm.
+        const uge = p.locator('[data-kost-fri-uge]'); await uge.waitFor({ timeout: 15000 })
+        const ugeTekst = await uge.innerText()
+        krav(/^Seneste 7 dage: basemåltider fulgt \d+ af \d+, fri pulje holdt \d+ af \d+ (logget dag|loggede dage)\.$/.test(ugeTekst), `${navn}: ugelinjen havde forkert form: ${ugeTekst}`)
+        krav(await p.locator('[data-kost-fri-uge]').count() === 1, `${navn}: ugelinjen skal stå én gang`)
+        if (navn === 'lys') await uge.scrollIntoViewIfNeeded()
+        if (process.env.UGE_SKAERM) await p.screenshot({ path: join(process.env.UGE_SKAERM, `2177-ugelinje-${navn}.png`) })
+        console.log(`${navn}: ugelinje "${ugeTekst}"`)
         if (navn === 'moerk') await p.screenshot({ path: join(UD, '2137-atlet-fri-pulje-moerk.png') })
         console.log(`${navn}: 20 %, pulje ${pulje} kcal, to fri poster logget, status "${status}"`)
       } finally { await ctx.close(); await mock.close() }
