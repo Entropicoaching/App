@@ -7,6 +7,7 @@ import { mountHomeSession } from './homeSessionBridge.mjs'
 import { subscribeSessionRecordCelebrations } from '../session/sessionRecordCelebration.mjs'
 import { createSessionRecordReceipts } from '../session/sessionRecordReceipt.mjs'
 import AtletUgevideo from '../../ugevideo/AtletUgevideo.mjs'
+import AfbrudtVideo from './AfbrudtVideo.mjs'
 import { isRestTimerHidden } from '../../restTimerVisning.js'
 
 // Functional opt-in entry, entirely within the home namespace.
@@ -79,6 +80,10 @@ export default function HomeSession(props) {
   const ready = typeof props.onLogSet === 'function' && typeof props.setLogInputs === 'function' &&
     typeof props.parsePlannedRpe === 'function'
   return h('div', { 'data-entropi2-home-session': '' },
+    // Ordre 2367v: en videoupload, der blev afbrudt af at appen lukkede, står øverst på Hjem, til klippet er sendt
+    // igen eller atleten lukker kortet. Også coachens egen træning (samme markør); ikke coachens forhåndsvisning.
+    athleteId && props.readOnly !== true &&
+      h(AfbrudtVideo, { key: `afbrudt-video-${athleteId}`, athleteId, storage: props.storage }),
     // Ordre 1953: coachens ugevideo øverst på Hjem; kun atleten selv, ikke coachens forhåndsvisning eller egen træning.
     athleteId && props.readOnly !== true && props.coachOwnTraining !== true &&
       h(AtletUgevideo, { key: `ugevideo-${athleteId}`, athleteId, client: props.ugevideoClient }),
