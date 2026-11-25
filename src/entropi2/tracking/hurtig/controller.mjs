@@ -11,14 +11,16 @@ const defaultClock = { now: () => Date.now(), setTimeout: (fn, ms) => setTimeout
 /** One immutable athlete/calendar day. Host owns disposal and existing write adapters.
  * No persistence of drafts or logs. Only an explicitly selected meal key is stored.
  * A save is held locally for 5 seconds; undo cancels BEFORE any write is called.
+ * Ordre 2380: a kind with an `undo` adapter is written at once instead (no hold). The snapshot then
+ * says canUndo, and undo() calls the adapter, which removes the row again (literal true = removed).
  */
 export function createQuickController(options = {}) {
   if (options.enabled !== true) return null
-  const { athleteId, date, data, save: injectedSave = {}, storage, clock = defaultClock, currentDay, kortDagsform = false } = options
+  const { athleteId, date, data, save: injectedSave = {}, storage, clock = defaultClock, currentDay, kortDagsform = false, undo: undoSave = {} } = options
   requireId(athleteId); dayNumber(date)
   const save = Object.fromEntries(['readiness', 'weight', 'meal'].map(kind => [kind, injectedSave[kind]]))
   const listeners = new Set(), successful = new Map()
-  let disposed = false, timer = null, pending = null, cached, model = null
+  let disposed = false, timer = null, pending = null, cached, model = null, lastSaved = null
   let phase = data?.status === 'loading' ? 'loading' : 'error', message = '', preferenceMessage = ''
   let draft, selectedMeal = '', readinessSource, weightSource
   if (data?.status === 'ready' && data.complete === true) {
@@ -48,7 +50,7 @@ export function createQuickController(options = {}) {
       draft: draft ? structuredClone(draft) : null, readinessSource, weightSource,
       meals: model ? structuredClone(model.meals) : [], ignoredMeals: model?.ignoredMeals ?? 0,
       canRepeat: model?.canRepeat ?? false, deadline: pending?.deadline ?? null,
-      busy: phase === 'pending' || phase === 'saving',
+      busy: phase === 'pending' || phase === 'saving', canUndo: phase === 'saved' && lastSaved !== null,
       available: Object.fromEntries(['readiness', 'weight', 'meal'].map(kind => [kind, typeof save[kind] === 'function'])) })
   }
   const emit = () => { refresh(); if (!disposed) for (const fn of listeners) fn() }
@@ -76,6 +78,7 @@ export function createQuickController(options = {}) {
       if (ok !== true) throw new Error()
       successful.set(operation.kind, JSON.stringify(operation.payload))
       phase = 'saved'; message = 'Gemt.'
+      lastSaved = typeof undoSave[operation.kind] === 'function' ? { kind: operation.kind } : null
       if (operation.kind === 'readiness') readinessSource = 'today'
       if (operation.kind === 'weight') weightSource = 'today'
       return true
@@ -83,6 +86,19 @@ export function createQuickController(options = {}) {
       if (!disposed) { phase = 'save-error'; message = 'Kunne ikke bekræfte gemningen. Dine valg er bevaret. Kontrollér loggen før du prøver igen.' }
       return false
     } finally { pending = null; if (!disposed) emit() }
+  }
+  // Ordre 2380: fortryd efter en øjeblikkelig gemning. Fejler fjernelsen, står rækken stadig, og atleten ser det.
+  const undoSaved = async () => {
+    const { kind } = lastSaved
+    phase = 'saving'; message = 'Fortryder…'; emit()
+    let removed = false
+    try { removed = await undoSave[kind]() === true } catch { removed = false }
+    if (disposed) return removed
+    if (removed) {
+      successful.delete(kind); lastSaved = null; phase = 'ready'; message = 'Fortrudt. Dagsformen er fjernet igen.'
+      if (kind === 'readiness') readinessSource = 'edited'
+    } else { phase = 'saved'; message = 'Kunne ikke fortryde. Dagsformen er stadig gemt. Tjek din forbindelse og prøv igen.' }
+    emit(); return removed
   }
   const api = {
     snapshot,
@@ -130,13 +146,17 @@ export function createQuickController(options = {}) {
       if (kind !== 'meal' && successful.get(kind) === JSON.stringify(payload)) {
         phase = 'saved'; message = 'Disse svar er allerede gemt.'; emit(); return false
       }
-      pending = { kind, payload, deadline: clock.now() + UNDO_MS }
-      phase = 'pending'; message = 'Klar til at gemme. Du kan fortryde i 5 sekunder.'
+      const now = typeof undoSave[kind] === 'function'
+      pending = { kind, payload, deadline: clock.now() + (now ? 0 : UNDO_MS) }
+      phase = 'pending'; lastSaved = null
       const operation = pending
+      if (now) { message = 'Gemmer…'; emit(); void commit(operation); return true }
+      message = 'Klar til at gemme. Du kan fortryde i 5 sekunder.'
       timer = clock.setTimeout(() => { void commit(operation) }, UNDO_MS)
       emit(); return true
     },
     undo() {
+      if (!disposed && phase === 'saved' && lastSaved) return undoSaved()
       if (disposed || phase !== 'pending') return false
       if (clock.now() >= pending.deadline) { void commit(pending); return false }
       return api.cancelPending()

@@ -8,7 +8,8 @@ import { seed as ugeSeed } from './kost-set-paa-main.spec.mjs'
 
 const MOBILE = { width: 390, height: 844 }
 // Grænser i skærmhøjder (844 px) fra indkøbsafsnittets top til varen/knappen.
-const MAX_FOERSTE_VARE = Number(process.env.MAX_FOERSTE_VARE || 0.7)
+// Ordre 2380: Kopiér-knapperne står nu foran listen (to rækker på 390 px), så første vare ligger ca. 0,13 skærm lavere: 0,73.
+const MAX_FOERSTE_VARE = Number(process.env.MAX_FOERSTE_VARE || 0.8)
 const MAX_KOPIKNAP = Number(process.env.MAX_KOPIKNAP || 1.1)
 const MAX_TRYK = 2
 const MAALE = process.env.MAALE === '1'

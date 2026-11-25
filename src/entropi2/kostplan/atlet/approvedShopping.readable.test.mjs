@@ -43,6 +43,8 @@ function groceries() {
 
 const shop = host => all(host, 'section').find(n => n.getAttribute('aria-label') === 'Indkøb fra kostplanen')
 const list = host => all(shop(host), 'ul').find(n => n.getAttribute('aria-label') === 'Samlet bruttobehov')
+// Ordre 2380: alle kilder står bag ét fælles, lukket "Kilder"; hver vare har ét punkt dér.
+const kilder = host => all(shop(host), 'details').find(n => n.getAttribute('data-shopping-kilder') !== null)
 const marks = host => all(shop(host), 'button').filter(n => n.getAttribute('role') === 'checkbox')
 // Read only the summary of a closed disclosure; textContent itself includes
 // hidden descendants and therefore cannot prove the default visual contract.
@@ -90,46 +92,46 @@ test('27 actual StrictMode groceries: readable native disclosures, full evidence
   const gross = c.snapshot().result, expectedCopy = formatApprovedShopping(gross)
   assert.equal(gross.items.length, 27); assert.equal(list(r.host).children.length, 27)
   assert.equal(gross.items[0].grams, '0.9'); assert.equal(gross.items[1].grams, '6.375')
-  console.log(`lead: 27 items, ${all(list(r.host), 'details').length} item disclosures; first full item ${shoppingItemText(gross.items[0]).length} characters`)
-  assert.equal(all(list(r.host), 'details').length, 27, 'technical item evidence must be default-closed')
-  const basis = all(shop(r.host), 'details').find(n => !list(r.host).contains(n))
+  const alleKilder = kilder(r.host)
+  console.log(`lead: 27 items, one Kilder disclosure with ${all(alleKilder, 'li').length} sources; first full item ${shoppingItemText(gross.items[0]).length} characters`)
+  assert.equal(all(list(r.host), 'details').length, 0, 'ingen kilde-fold pr. vare')
+  assert.equal(all(alleKilder, 'li').length, 27); assert.equal(alleKilder.getAttribute('open'), null)
+  assert.equal(all(alleKilder, 'summary')[0].textContent, 'Kilder')
+  const basis = all(shop(r.host), 'details').find(n => n !== alleKilder)
   assert.ok(basis); assert.equal(basis.getAttribute('open'), null)
   assert.match(basis.children[0].textContent, /Om listen: dage, versioner og måltider/)
   assert.doesNotMatch(visibleText(shop(r.host)), /public\/catalog|abcdef0123456789|10000000-0000|Fødevare-id:|Kilde:/)
   for (const d of gross.days) assert.ok(basis.textContent.includes(
     `${danskDato(d.date)}: version ${d.versionNumber} (${d.versionId}), gældende fra ${danskDato(d.effectiveFrom)}. Måltider: ${d.mealNames.join(', ')}.`))
   for (const [i, item] of gross.items.entries()) {
-    const row = list(r.host).children[i], toggle = marks(r.host)[i], details = all(row, 'details')[0], summary = details.children[0]
-    assert.equal(details.getAttribute('open'), null); assert.equal(summary.tagName, 'SUMMARY')
-    assert.equal(all(summary, 'button, input, a, summary').length, 0, 'no nested controls')
+    const row = list(r.host).children[i], toggle = marks(r.host)[i], source = all(alleKilder, 'li')[i]
     assert.equal(all(toggle, 'details, summary, button, input').length, 0)
-    assert.equal(details.contains(toggle), false)
+    assert.equal(alleKilder.contains(toggle), false)
     assert.equal(propsOf(toggle)['aria-label'], `Købt: ${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g. Tilberedning: ${item.preparation}. Vare ${i + 1} af ${gross.items.length}.`)
     assert.equal(propsOf(toggle)['aria-checked'], false)
-    assert.equal(summary.getAttribute('aria-label'), `Kilde og varegrundlag: ${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g. Tilberedning: ${item.preparation}. Vare ${i + 1} af ${gross.items.length}.`)
-    assert.match(summary.textContent, /Kilde og varegrundlag/)
-    for (const n of [summary, toggle]) {
+    assert.equal(all(source, 'strong')[0].textContent, `${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g. Tilberedning: ${item.preparation}.`)
+    for (const n of [toggle]) {
       const p = propsOf(n); assert.equal(p.style.minHeight, 44); assert.equal(p.tabIndex, undefined)
       assert.equal(p.onKeyDown, undefined); assert.equal(p.style.outline, undefined)
       n.focus(); assert.equal(r.doc.activeElement, n)
     }
     assert.equal(propsOf(toggle).style.minWidth, 44)
-    assert.equal(all(details, 'p')[0].textContent, shoppingItemText(item), 'full evidence without substitutions')
+    assert.equal(all(source, 'p')[0].textContent, shoppingItemText(item), 'full evidence without substitutions')
     assert.ok(visibleText(row).includes(`${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g.`))
     assert.ok(visibleText(row).includes(`Tilberedning: ${item.preparation}.`))
-    const content = details.parentElement
+    const content = all(row, 'span')[0].parentElement
     assert.equal(propsOf(content).style.minWidth, 0); assert.equal(propsOf(content).style.maxWidth, '100%')
     assert.equal(propsOf(content).style.flex, '1 1 16rem')
-    assert.equal(propsOf(row).style.flexWrap, 'wrap'); assert.equal(propsOf(summary).style.whiteSpace, 'normal')
+    assert.equal(propsOf(row).style.flexWrap, 'wrap'); assert.equal(propsOf(all(alleKilder, 'summary')[0]).style.whiteSpace, 'normal')
   }
   assert.equal(propsOf(shop(r.host)).style.overflowWrap, 'anywhere')
   assert.equal(propsOf(shop(r.host)).style.boxSizing, 'border-box')
   assert.equal(new Set(marks(r.host).map(n => propsOf(n)['aria-label'])).size, 27)
   assert.equal(r.writes.length, 0); assert.equal(r.copies.length, 0)
   await r.click(button(shop(r.host), 'Kopiér indkøbsliste')); assert.equal(r.copies.at(-1), expectedCopy)
-  const originalToggle = marks(r.host)[0], first = all(list(r.host), 'details')[0]
+  const originalToggle = marks(r.host)[0], first = alleKilder
   await disclosure(first, true); await disclosure(basis, true)
-  assert.ok(visibleText(list(r.host)).includes(gross.items[0].source.citation))
+  assert.ok(visibleText(alleKilder).includes(gross.items[0].source.citation))
   assert.ok(visibleText(basis).includes(r.version.id)); assert.equal(r.writes.length, 0)
   await r.click(originalToggle)
   assert.equal(marks(r.host)[0], originalToggle, 'stable keyed row and callback index')
@@ -168,7 +170,7 @@ test('mounted Kost entry: tracker survives readable disclosures; incomplete/load
   await act(async () => { await tick() })
   const manual = byKey(r.host, 'field-Måltid'), tracker = all(r.host, '[data-entropi2-kost]')[0]
   const raw = JSON.stringify(r.f.data), diaryWrites = [...r.day.writes], drafts = [...r.day.values], calls = r.day.calls.length
-  const details = all(list(r.host), 'details')[4]
+  const details = kilder(r.host)
   await disclosure(details, true); await r.click(marks(r.host)[4]); await disclosure(details, false)
   assert.equal(all(r.host, '[data-entropi2-kost]')[0], tracker)
   assert.equal(byKey(r.host, 'field-Måltid'), manual); assert.equal(manual.value, 'Bevaret syntetisk kladde')

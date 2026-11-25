@@ -181,3 +181,33 @@ test('loading, incomplete and invalid snapshots never produce empty-ready or sto
     assert.equal(f.controller.save('weight'), false); assert.equal(f.handles(), 0)
   }
 })
+
+// Ordre 2380: en art med undo-adapter skrives med det samme (ingen 5 sekunders holdetid), og Fortryd fjerner rækken igen.
+test('2380: readiness med undo-adapter skrives straks og kan fortrydes; vægt holder stadig 5 sekunder', async t => {
+  const removed = []
+  const f = fixture(t, { undo: { readiness: async () => { removed.push('r'); return true } } }), c = f.controller
+  assert.equal(c.save('readiness'), true)
+  await f.advance(0)
+  assert.deepEqual(f.calls, [{ kind: 'readiness', value: { athlete_id: athleteId, logged_date: date, ...scores } }])
+  assert.equal(c.snapshot().phase, 'saved'); assert.equal(c.snapshot().message, 'Gemt.'); assert.equal(c.snapshot().canUndo, true)
+  assert.equal(await c.undo(), true)
+  assert.deepEqual(removed, ['r']); assert.equal(c.snapshot().phase, 'ready'); assert.equal(c.snapshot().canUndo, false)
+  assert.match(c.snapshot().message, /Fortrudt/)
+  assert.equal(c.save('readiness'), true); await f.advance(0); assert.equal(f.calls.length, 2)
+  assert.equal(c.save('weight'), true); assert.equal(c.snapshot().phase, 'pending'); assert.equal(f.calls.length, 2)
+  await f.advance(4999); assert.equal(f.calls.length, 2); await f.advance(1); assert.equal(f.calls.length, 3)
+})
+
+test('2380: fejler fjernelsen, står "Gemt" tilbage med dansk fejl; fejler skrivningen, er der ingen Fortryd', async t => {
+  const f = fixture(t, { undo: { readiness: async () => false } }), c = f.controller
+  c.save('readiness'); await f.advance(0)
+  assert.equal(await c.undo(), false)
+  assert.equal(c.snapshot().phase, 'saved'); assert.equal(c.snapshot().canUndo, true)
+  assert.match(c.snapshot().message, /Kunne ikke fortryde/)
+  const time = manualClock(), saved = createQuickController({ enabled: true, athleteId, date, data: data(), clock: time.clock,
+    save: { readiness: async () => false }, undo: { readiness: async () => true } })
+  t.after(() => saved.dispose())
+  saved.save('readiness'); await time.advance(0)
+  assert.equal(saved.snapshot().phase, 'save-error'); assert.equal(saved.snapshot().canUndo, false)
+  assert.match(saved.snapshot().message, /Kunne ikke bekræfte/)
+})

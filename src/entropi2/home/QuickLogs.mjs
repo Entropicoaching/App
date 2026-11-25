@@ -117,6 +117,12 @@ export default function QuickLogs(props) {
     setAttempt({ finished: true, weightReturned: kind === 'weight' })
     return result
   }
+  // Ordre 2380: Dagsform skrives med det samme; Fortryd fjerner rækken igen gennem værtens saveReadiness.undo.
+  const confirmedUndo = async () => {
+    const p = latest.current
+    if (!current() || typeof p.saveReadiness?.undo !== 'function') return false
+    return (await p.saveReadiness.undo()) === true
+  }
   const launch = (kind, energy) => event => {
     if (!current() || control.current?.snapshot().busy || props.savingReadiness || props.savingWeight || !available(kind)) return
     const suggestion = energy === undefined ? null : homeReadinessSuggestion(latest.current)
@@ -141,7 +147,8 @@ export default function QuickLogs(props) {
         weightRows: kind === 'weight' && Array.isArray(p.weightLogs) ? p.weightLogs.filter(own) : [], mealRows: [] }
     const controller = createQuickController({ enabled: true, athleteId: athlete.id, date: today, data,
       clock: p.quickClock, currentDay: () => current() ? today : null, kortDagsform: p.kortDagsform === true,
-      save: { [kind]: confirmedSave(kind) } })
+      save: { [kind]: confirmedSave(kind) },
+      ...(kind === 'readiness' && typeof p.saveReadiness?.undo === 'function' ? { undo: { readiness: confirmedUndo } } : {}) })
     control.current = controller
     if (controller.snapshot().phase === 'ready') {
       if (suggestion) {
@@ -187,6 +194,11 @@ export default function QuickLogs(props) {
   const saved = state?.phase === 'saved'
   // Kortet har sit eget ét-tryks energivalg; samme valg her ville stå to gange.
   const kort = props.kortDagsform === true
+  // Ordre 2380: "Gemt" med Fortryd står straks efter Gem og erstatter ikke kvitteringen.
+  const gemtRaekke = !saved || !state?.canUndo ? null : h('div', null,
+    h('p', { role: state.message === 'Gemt.' ? 'status' : 'alert', style: s.text }, state.message),
+    h('button', { type: 'button', style: s.secondary, disabled: busy,
+      onClick: () => { if (current() && control.current === renderedController) void control.current?.undo() } }, 'Fortryd'))
   const suggestion = !kort && !open && !covered && available('readiness') ? homeReadinessSuggestion(props) : null
   const fast = Boolean(suggestion || open === 'readiness' && quick)
   const fastInput = open ? readinessInput : suggestion
@@ -200,7 +212,7 @@ export default function QuickLogs(props) {
       rowButton('readiness', 'Dagsform', status.readiness), rowButton('weight', 'Vægt i dag', weightDone)),
     fast && h('section', { id: `${id}-panel`, 'data-home-readiness-fast': '', 'aria-label': 'Dagsform',
       style: { ...s.card, marginTop: 12, marginBottom: 0 } },
-      status.readiness || saved ? h('p', { role: 'status', style: s.text }, readinessReceipt) :
+      status.readiness || saved ? h('div', null, h('p', { role: 'status', style: s.text }, readinessReceipt), gemtRaekke) :
         h('form', { 'aria-busy': busy, onSubmit: event => {
           event.preventDefault()
           if (current() && available('readiness') && control.current === renderedController && open === 'readiness')
@@ -226,7 +238,7 @@ export default function QuickLogs(props) {
     open && !fast && h('section', { id: `${id}-panel`, style: { ...s.card, marginTop: 12, marginBottom: 0 },
       'aria-labelledby': `${id}-heading`, onKeyDown: event => { if (event.key === 'Escape') close() } },
     h('h2', { id: `${id}-heading`, ref: heading, tabIndex: -1, style: s.heading }, open === 'readiness' ? 'Dagsform' : 'Vægt i dag'),
-    done || saved ? h('p', { role: 'status', style: s.text }, open === 'readiness' ? readinessReceipt : 'Logget i dag') : !draft ? h('div', null,
+    done || saved ? h('div', null, h('p', { role: 'status', style: s.text }, open === 'readiness' ? readinessReceipt : 'Logget i dag'), open === 'readiness' && gemtRaekke) : !draft ? h('div', null,
       h('p', { role: state?.phase === 'error' ? 'alert' : 'status', style: s.text }, state?.phase === 'error'
         ? 'Dagsformen kunne ikke hentes sikkert. Prøv igen.' : 'Henter dine registreringer…'),
       state?.phase === 'error' && h('button', { type: 'button', style: s.secondary,

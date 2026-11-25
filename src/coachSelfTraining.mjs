@@ -65,7 +65,11 @@ export function isCoachSelfTraining(entry, { session, role, athlete, coachAthlet
 export function guardTrainingActions(actions, canWrite, names) {
   return new Proxy(actions, { get(target, name) {
     const fn = target[name]
-    return names.includes(name) && typeof fn === 'function' ? (...args) => canWrite() ? fn(...args) : false : fn
+    if (!names.includes(name) || typeof fn !== 'function') return fn
+    const guarded = (...args) => canWrite() ? fn(...args) : false
+    // Ordre 2380: en undo-handling hører til skrivehandlingen og står under samme vagt.
+    if (typeof fn.undo === 'function') guarded.undo = (...args) => canWrite() ? fn.undo(...args) : false
+    return guarded
   } })
 }
 // Check delayed query execution too: a queued writer must not outlive its session.

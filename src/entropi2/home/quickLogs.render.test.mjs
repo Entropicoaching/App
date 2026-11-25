@@ -132,3 +132,52 @@ test('real ReactDOM: one energy click, explicit save, undo, retry and confirmed 
   }
   assert.equal(time.handles(), 0)
 })
+
+// Ordre 2380: med værtens saveReadiness.undo skrives Dagsform med det samme, "Gemt" og Fortryd står straks, og Fortryd fjerner rækken igen.
+test('real ReactDOM: Dagsform skrives straks, Gemt med Fortryd, Fortryd gendanner formularen; fejlet fjernelse siger det', async () => {
+  const doc = createDocument(), host = doc.createElement('div'), time = manualClock(), writes = [], removals = []
+  const previous = new Map(['window', 'IS_REACT_ACT_ENVIRONMENT'].map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]))
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: doc.defaultView })
+  Object.defineProperty(globalThis, 'IS_REACT_ACT_ENVIRONMENT', { configurable: true, value: true })
+  let removalOk = true
+  function Harness() {
+    const [readinessInput, setReadinessInput] = useState({ sleep: '', energy: null, motivation: null, stress: null, soreness: null })
+    const [readinessLog, setReadinessLog] = useState(null)
+    return h(QuickLogs, { ...props, trackingData: history, quickClock: time.clock,
+      getNow: () => new Date('2026-11-04T12:00:00Z'), readinessInput, setReadinessInput, readinessLog,
+      saveReadiness: Object.assign(async () => {
+        const saved = { athlete_id: props.athlete.id, logged_date: props.today, sleep_hours: null,
+          energy: Number(readinessInput.energy), motivation: Number(readinessInput.motivation),
+          stress: Number(readinessInput.stress), soreness_level: Number(readinessInput.soreness) }
+        writes.push(saved); setReadinessLog(saved)
+      }, { undo: async () => { removals.push(1); if (!removalOk) return false; setReadinessLog(null); return true } }) })
+  }
+  const root = createRoot(host)
+  const submit = async () => {
+    const target = elements(host).find(n => n.tagName === 'FORM')
+    assert.ok(target)
+    const event = { type: 'submit', target, bubbles: true, defaultPrevented: false,
+      preventDefault() { this.defaultPrevented = true }, stopPropagation() {} }
+    await act(async () => { host.events.get('submit:capture')?.(event); host.events.get('submit:bubble')(event) })
+  }
+  try {
+    await act(async () => root.render(h(Harness)))
+    await act(async () => click(host, '5'))
+    await submit(); await act(async () => time.advance(0))
+    assert.equal(writes.length, 1, 'skrevet uden 5 sekunders ventetid'); assert.doesNotMatch(host.textContent, /Gemmer om 5 sekunder/)
+    assert.match(host.textContent, /Gemt\./); assert.match(host.textContent, /Fortryd/)
+    removalOk = false
+    await act(async () => click(host, 'Fortryd'))
+    assert.deepEqual(removals, [1]); assert.match(host.textContent, /Kunne ikke fortryde/); assert.match(host.textContent, /Energi 5\/5 · logget i dag/)
+    removalOk = true
+    await act(async () => click(host, 'Fortryd'))
+    assert.deepEqual(removals, [1, 1]); assert.doesNotMatch(host.textContent, /logget i dag/)
+    assert.ok(elements(host).find(n => n.tagName === 'FORM'), 'formularen er tilbage')
+    assert.equal(time.handles(), 0)
+  } finally {
+    await act(async () => root.unmount())
+    for (const [key, descriptor] of previous) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor); else delete globalThis[key]
+    }
+  }
+})

@@ -72,33 +72,14 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
           ...s.result.days.map(d => h('p', { key: d.date },
             `${danskDato(d.date)}: version ${d.versionNumber} (${d.versionId}), gældende fra ${danskDato(d.effectiveFrom)}. Måltider: ${d.mealNames.join(', ')}.`)),
           h('p', null, 'Købt-markeringer er kun lokale i denne browser på denne enhed. De registrerer ikke spist mad, bekræfter ikke lager, reducerer ikke grambehov og synkroniseres ikke til coachen.'),
-          s.purchases.persistent && h('p', { role: 'status' }, 'Markeringer gemmes lokalt ved ændring. Kopiering medtager altid hele bruttolisten.')),
+          s.purchases.persistent && h('p', { role: 'status' }, 'Markeringer gemmes lokalt ved ændring. Kopiering medtager altid hele bruttolisten.'),
+          // Ordre 2380: forklaringen til Kopiér-knapperne ligger her, så knapperne står øverst uden tekst imellem.
+          h('p', null, 'Den korte liste indeholder datoer, varer, gram og tilberedning. Kopiér indkøbsliste medtager også alle kilder og godkendte versioner.')),
         !s.purchases.persistent && h('p', { role: 'status' }, 'Lokal lagring er ikke tilgængelig eller kunne ikke bekræftes. Markeringer gælder kun i denne åbne visning. Kopiering medtager altid hele bruttolisten.'),
         h('p', { role: 'status' }, `Mangler at købe: ${s.result.items.length - s.purchases.bought.length} af ${s.result.items.length} varer.`),
-        h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map((item, index) => {
-          const checked = s.purchases.bought.includes(index)
-          // Use the visible row, with its position to distinguish identical human labels.
-          const itemLabel = `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)} Vare ${index + 1} af ${s.result.items.length}.`
-          return h('li', { key: item.key, style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBlock: 8 } },
-            h('button', { type: 'button', role: 'checkbox', 'aria-checked': checked,
-              'aria-label': `Købt: ${itemLabel}`, style: { ...control, minWidth: 44 },
-              onClick: () => controller.markBought(index, !checked, s.result) }, checked ? '☑ Købt' : '☐ Ikke købt'),
-            h('div', { style: { flex: '1 1 16rem', minWidth: 0, maxWidth: '100%' } },
-              h('span', null, `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}`),
-              h('details', null,
-                h('summary', { 'aria-label': `Kilde og varegrundlag: ${itemLabel}`,
-                  style: { ...control, cursor: 'pointer' } }, 'Kilde og varegrundlag'),
-                h('p', null, shoppingItemText(item)))))
-        })),
-        h('button', { type: 'button', style: control, onClick: () => printShoppingList({ title: 'Indkøb fra kostplanen',
-          subtitle: `Dage: ${s.dates.map(danskDato).join(', ')}. Gram i den angivne tilberedning.`,
-          items: s.result.items.filter((_, index) => !s.purchases.bought.includes(index))
-            .map(item => ({ name: item.names[0], text: `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}` })) }) },
-        'Print indkøbsliste'),
         h('button', { type: 'button', style: s.copyPending ? { ...control, opacity: 0.6 } : control, disabled: s.copyPending, onClick: () => controller.copy(clipboard, s.result) }, 'Kopiér indkøbsliste'),
         h('button', { type: 'button', style: s.copyPending ? { ...control, opacity: 0.6 } : control, disabled: s.copyPending,
           onClick: () => controller.copyCompact(clipboard, s.result) }, 'Kopiér kort indkøbsliste'),
-        h('p', null, 'Den korte liste indeholder datoer, varer, gram og tilberedning. Kopiér indkøbsliste ovenfor medtager også alle kilder og godkendte versioner.'),
         s.compactCopyStatus === 'pending' && h('p', { role: 'status' }, 'Kopierer kort indkøbsliste…'),
         s.compactCopyStatus === 'copied' && h('p', { role: 'status' }, 'Kort indkøbsliste kopieret.'),
         s.compactCopyStatus === 'failed' && h('div', null,
@@ -114,5 +95,29 @@ function ShoppingSession({ athleteId, today, client, currentDay, clipboard, stor
           h('label', null, 'Indkøbsliste til manuel kopiering',
             h('textarea', { readOnly: true, value: s.copyText, rows: 8, maxLength: maxShoppingText,
               onFocus: event => event.currentTarget.select?.(),
-              style: { width: '100%', maxHeight: '16rem', boxSizing: 'border-box' } })))))))
+              style: { width: '100%', maxHeight: '16rem', boxSizing: 'border-box' } }))),
+        h('ul', { 'aria-label': 'Samlet bruttobehov' }, ...s.result.items.map((item, index) => {
+          const checked = s.purchases.bought.includes(index)
+          // Use the visible row, with its position to distinguish identical human labels.
+          const itemLabel = `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)} Vare ${index + 1} af ${s.result.items.length}.`
+          return h('li', { key: item.key, style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBlock: 8 } },
+            h('button', { type: 'button', role: 'checkbox', 'aria-checked': checked,
+              'aria-label': `Købt: ${itemLabel}`, style: { ...control, minWidth: 44 },
+              onClick: () => controller.markBought(index, !checked, s.result) }, checked ? '☑ Købt' : '☐ Ikke købt'),
+            h('div', { style: { flex: '1 1 16rem', minWidth: 0, maxWidth: '100%' } },
+              h('span', null, `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}`)))
+        })),
+        h('button', { type: 'button', style: control, onClick: () => printShoppingList({ title: 'Indkøb fra kostplanen',
+          subtitle: `Dage: ${s.dates.map(danskDato).join(', ')}. Gram i den angivne tilberedning.`,
+          items: s.result.items.filter((_, index) => !s.purchases.bought.includes(index))
+            .map(item => ({ name: item.names[0], text: `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}` })) }) },
+        'Print indkøbsliste'),
+        // Ordre 2380: alle kilder og varegrundlag samlet bag ét lukket "Kilder"; intet indhold fjernet.
+        h('details', { 'data-shopping-kilder': '' },
+          h('summary', { style: { ...control, cursor: 'pointer' } }, 'Kilder'),
+          h('p', null, 'Kilde og varegrundlag for hver vare på listen.'),
+          h('ul', { 'aria-label': 'Kilde og varegrundlag pr. vare', style: { paddingLeft: 20 } }, ...s.result.items.map(item =>
+            h('li', { key: item.key, style: { marginBlock: 8 } },
+              h('strong', null, `${item.names.join(' / ')}: ${shoppingNumber(item.grams)} g.${preparationSuffix(item.preparation)}`),
+              h('p', { style: { margin: '4px 0 0' } }, shoppingItemText(item))))))))))
 }

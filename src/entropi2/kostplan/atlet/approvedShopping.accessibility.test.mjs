@@ -21,6 +21,8 @@ import { danskDato } from './approvedShoppingModel.mjs'
 const digest = text => createHash('sha256').update(text).digest('hex')
 const marks = host => all(host, 'button').filter(n => n.getAttribute('role') === 'checkbox')
 const list = host => all(host, 'ul').find(n => n.getAttribute('aria-label') === 'Samlet bruttobehov')
+// Ordre 2380: alle kilder står bag ét fælles, lukket "Kilder"; hver vare har ét punkt dér.
+const kilder = host => all(host, 'details').find(n => n.getAttribute('data-shopping-kilder') !== null)
 const key = `${purchaseNamespace}:${encodeURIComponent(athleteId)}`
 const officialFoods = () => FRIDA_FOODS.slice(0, 26).concat(FRIDA_FOODS.at(-1))
 
@@ -77,21 +79,21 @@ async function mount(t, data, seed) {
 function contract(r) {
   const result = r.c.snapshot().result, controls = marks(r.host), rows = list(r.host)
   assert.equal(controls.length, result.items.length); assert.equal(rows.children.length, controls.length)
-  const checkboxNames = [], summaryNames = []
+  const checkboxNames = [], kildeDetails = kilder(r.host), kildeRows = all(kildeDetails, 'li')
+  assert.equal(kildeRows.length, result.items.length); assert.equal(kildeDetails.getAttribute('open'), null)
+  assert.equal(all(kildeDetails, 'summary')[0].textContent, 'Kilder'); assert.equal(all(r.host, 'details').filter(n => n.getAttribute('data-shopping-kilder') !== null).length, 1)
   for (const [i, item] of result.items.entries()) {
     const row = rows.children[i], visible = all(row, 'span')[0].textContent
-    const details = all(row, 'details')[0], summary = all(details, 'summary')[0], checkbox = controls[i]
+    const source = kildeRows[i], checkbox = controls[i]
     assert.equal(visible, `${item.names.join(' / ')}: ${String(item.grams).replace('.', ',')} g.${preparationSuffix(item.preparation)}`)
     const tail = `${visible} Vare ${i + 1} af ${controls.length}.`
     assert.equal(checkbox.getAttribute('aria-label'), 'Købt: ' + tail)
-    assert.equal(summary.getAttribute('aria-label'), 'Kilde og varegrundlag: ' + tail)
-    assert.equal(summary.textContent, 'Kilde og varegrundlag')
-    assert.equal(details.getAttribute('open'), null)
-    assert.equal(all(details, 'p')[0].textContent, shoppingItemText(item))
-    assert.equal(all(summary, 'button, input, a, summary').length, 0)
+    assert.equal(all(source, 'strong')[0].textContent, visible)
+    assert.equal(all(source, 'p')[0].textContent, shoppingItemText(item))
+    assert.equal(all(row, 'details').length, 0, 'ingen kilde-fold pr. vare')
     assert.equal(all(checkbox, 'details, summary, button, input').length, 0)
-    assert.equal(details.contains(checkbox), false)
-    for (const node of [checkbox, summary]) {
+    assert.equal(kildeDetails.contains(checkbox), false)
+    for (const node of [checkbox]) {
       assert.doesNotMatch(node.getAttribute('aria-label'), /ParameterID|SourceFood|doi\.org|Fødevare-id:|Kilde:|10000000-0000|abcdef0123456789/)
       assert.equal(node.getAttribute('aria-describedby'), null)
       assert.equal(node.getAttribute('title'), null)
@@ -101,10 +103,10 @@ function contract(r) {
       node.focus(); assert.equal(r.doc.activeElement, node)
     }
     assert.equal(propsOf(checkbox).style.minWidth, 44)
-    assert.equal(checkbox.tagName, 'BUTTON'); assert.equal(summary.tagName, 'SUMMARY')
-    checkboxNames.push(checkbox.getAttribute('aria-label')); summaryNames.push(summary.getAttribute('aria-label'))
+    assert.equal(checkbox.tagName, 'BUTTON')
+    checkboxNames.push(checkbox.getAttribute('aria-label'))
   }
-  assert.equal(new Set(checkboxNames).size, controls.length); assert.equal(new Set(summaryNames).size, controls.length)
+  assert.equal(new Set(checkboxNames).size, controls.length)
   return checkboxNames
 }
 
@@ -122,9 +124,9 @@ test('official 27 mounted foods on three/four days: short unique names, exact fu
     await r.invoke(marks(r.host)[26]); assert.equal(propsOf(marks(r.host)[26])['aria-checked'], true)
     const saved = r.values.get(key), writeCount = r.writes.length
     assert.equal(JSON.parse(saved).scope, purchaseScope({ athleteId, today, evidence, result: gross }))
-    const details = all(list(r.host), 'details')[26]
+    const details = kilder(r.host)
     await act(async () => { details.setAttribute('open', ''); details.dispatch('toggle', { target: details }); await tick() })
-    assert.equal(all(details, 'p')[0].textContent, shoppingItemText(gross.items[26]))
+    assert.equal(all(all(details, 'li')[26], 'p')[0].textContent, shoppingItemText(gross.items[26]))
     assert.equal(r.writes.length, writeCount)
     for (const label of ['Kopiér indkøbsliste', 'Kopiér kort indkøbsliste']) await r.invoke(button(r.host, label))
     assert.deepEqual(r.copies.slice(-2), [full, short]); assert.equal(r.values.get(key), saved)
@@ -241,4 +243,17 @@ test('empty selection removes item controls and sources; initial OFF/readOnly do
     } finally { await act(async () => root.unmount()); dom.restore() }
   }
   assert.equal(r.writes.length, 0); assert.equal(r.f.writes().length, 0)
+})
+
+// Ordre 2380 (2362 stop 8): Kopiér står øverst i indkøbslisten, og alle kilder står bag ét lukket "Kilder" efter listen.
+test('Kopiér står før listen og før Kilder; Kilder er ét lukket fold uden kilde-linjer foran Kopiér', async t => {
+  const r = await mount(t, fixture(officialFoods(), { official: true }))
+  const buttons = ['Kopiér indkøbsliste', 'Kopiér kort indkøbsliste'].map(label => button(r.host, label))
+  const rows = list(r.host), fold = kilder(r.host)
+  const order = all(r.host, 'button, ul, details'), before = (a, b) => order.indexOf(a) >= 0 && order.indexOf(a) < order.indexOf(b)
+  for (const b of buttons) { assert.ok(b); assert.ok(before(b, rows), 'Kopiér før listen'); assert.ok(before(b, fold)) }
+  assert.ok(before(rows, fold), 'Kilder efter listen')
+  const summaries = all(r.host, 'summary').filter(n => n.textContent === 'Kilde og varegrundlag')
+  assert.equal(summaries.length, 0); assert.equal(all(r.host, 'summary').filter(n => n.textContent === 'Kilder').length, 1)
+  assert.equal(fold.getAttribute('open'), null)
 })

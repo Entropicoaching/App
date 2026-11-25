@@ -572,6 +572,26 @@ export function lavLaesninger({
     }
   }
 
+  // Ordre 2380: Dagsform gemmes med det samme; Fortryd fjerner dagens række igen. Kun literal true betyder, at rækken er væk.
+  async function undoReadiness() {
+    if (!athlete) return false
+    setSavingReadiness(true)
+    setReadinessError(null)
+    const { error, count } = await trainingDatabase.from('readiness_logs').delete({ count: 'exact' })
+      .eq('athlete_id', athlete.id).eq('logged_date', today())
+    setSavingReadiness(false)
+    if (error || count === 0) {
+      logFrontendError('undoReadiness fejlede', error ?? new Error('ingen række fjernet'), athlete.id)
+      setReadinessError('Kunne ikke fortryde dagsformen. Tjek din forbindelse og prøv igen.')
+      return false
+    }
+    setReadinessLog(null)
+    return true
+  }
+
+  // Ordre 2380: undo følger saveReadiness gennem værtens vagt (AthleteView er hash-låst); QuickLogs læser props.saveReadiness.undo.
+  saveReadiness.undo = undoReadiness
+
   async function fetchProgram(athleteId) {
     const { data, ok } = await runGuardedRead(
       () => supabase
