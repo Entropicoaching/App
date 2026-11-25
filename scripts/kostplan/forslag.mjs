@@ -167,7 +167,7 @@ export function lavForslagSql(input, { uuid = () => globalThis.crypto.randomUUID
   const plan = tjekUgeplan(input)
   if (fri !== undefined) plan.calculationBasis = { fri_pct: friProcent(fri), ...plan.calculationBasis }
   // Teksten står i en dollar-citeret blok; $uge$ i en tekst ville lukke den for tidligt.
-  if (/$(uge|guard)$/.test(JSON.stringify(plan))) stop('Teksterne i ugen må ikke indeholde $uge$ eller $guard$.')
+  if (/\$(uge|guard)\$/.test(JSON.stringify(plan))) stop('Teksterne i ugen må ikke indeholde $uge$ eller $guard$.')
   const ids = plan.days.map(() => ({ plan: uuid(), version: uuid() }))
   if (ids.some(id => !UUID.test(id.plan) || !UUID.test(id.version))) stop('uuid-generatoren gav et ugyldigt id.')
   const datoer = plan.days.map(d => d.date)
