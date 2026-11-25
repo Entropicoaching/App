@@ -3,6 +3,7 @@ import { parseInputNumber, optionalInput } from '../../../inputValues.js'
 import { isDayReceipt } from '../../../mealEvidence.mjs'
 import { mealTemplateItems } from '../../../athlete/kostSkabeloner.mjs'
 import { fixedRepsEntry } from '../../../fixedRepsEntry.js'
+import { navnNoegle } from '../../kostplan/friPulje.mjs'
 
 // U5: rene beregninger bag "I dag"-kortet. Ingen skrivninger og ingen nye tabeller;
 // alt kommer fra weight_logs, readiness_logs, meal_logs og exercise_logs, som appen allerede bruger.
@@ -84,6 +85,21 @@ export function readinessSuggestion({ athleteId, today, trackingData, readinessL
     soreness: String(scores.soreness_level) }
 }
 
+// 2359: for en kostklient tæller kun rækker, hvis navn matcher et plannavn (navnNoegle som friPulje.mjs);
+// hver række dækker højst ét planmåltid. Resten er fri mad. Uden plannavne: alle rækker som før.
+export function planTally(planNames, todayNames) {
+  const rows = Array.isArray(todayNames) ? todayNames : []
+  if (!Array.isArray(planNames) || !planNames.length) return { logged: rows.length, free: 0 }
+  const open = new Map()
+  for (const name of planNames) open.set(navnNoegle(name), (open.get(navnNoegle(name)) ?? 0) + 1)
+  let logged = 0
+  for (const name of rows) {
+    const key = navnNoegle(name)
+    if ((open.get(key) ?? 0) > 0) { open.set(key, open.get(key) - 1); logged++ }
+  }
+  return { logged, free: rows.length - logged }
+}
+
 // Dagens og gårsdagens måltider fra meal_logs. Dagskvitteringer tæller ikke som mad.
 export function mealsModel(rows, athleteId, today) {
   if (!Array.isArray(rows) || !athleteId || !validDay(today)) return { status: 'error' }
@@ -127,10 +143,11 @@ export function todayItems({ weight, readiness, training, meal }) {
   if (readiness) items.push({ key: 'readiness', done: readiness.done === true })
   if (training?.kind === 'today' || training?.kind === 'done' && training.today === true)
     items.push({ key: 'training', done: training.kind === 'done' || training.total > 0 && training.logged >= training.total })
-  if (meal && meal.status === 'ready') items.push({ key: 'meal', done: meal.today >= (Number.isSafeInteger(meal.planned) && meal.planned > 0 ? meal.planned : 1) })
+  if (meal && meal.status === 'ready') items.push({ key: 'meal', done: (Number.isFinite(meal.planLogged) ? meal.planLogged : meal.today) >= (Number.isSafeInteger(meal.planned) && meal.planned > 0 ? meal.planned : 1), free: meal.free > 0 ? meal.free : 0 })
   const missing = items.filter(item => !item.done).map(item => item.key)
   const done = items.filter(item => item.done).map(item => item.key)
   return { items, missing, done,
     headline: !items.length ? null : missing.length ? `Mangler i dag: ${joinDanish(missing.map(key => names[key]))}` : 'Alt er logget i dag',
-    doneLine: done.length && missing.length ? `Klaret: ${joinDanish(done.map(key => names[key]))}` : null }
+    doneLine: done.length && missing.length ? `Klaret: ${joinDanish(done.map(key => names[key]))}` : null,
+    free: items.find(item => item.key === 'meal')?.free ?? 0 }
 }

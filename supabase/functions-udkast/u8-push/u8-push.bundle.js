@@ -273,6 +273,30 @@ Object.freeze({
 //#region src/mealEvidence.mjs
 var prefix = "[appData2-day-v1]";
 var isDayReceipt = (row) => typeof row?.meal === "string" && row.meal.startsWith(prefix);
+Object.freeze([
+	0,
+	10,
+	15,
+	20,
+	30
+]);
+Object.freeze([
+	Object.freeze({
+		id: "lille",
+		navn: "Lille",
+		kcal: 100
+	}),
+	Object.freeze({
+		id: "mellem",
+		navn: "Mellem",
+		kcal: 250
+	}),
+	Object.freeze({
+		id: "stor",
+		navn: "Stor",
+		kcal: 450
+	})
+]);
 //#endregion
 //#region src/entropi2/home/today/todayModel.mjs
 var names = {
@@ -300,7 +324,8 @@ function todayItems({ weight, readiness, training, meal }) {
 	});
 	if (meal && meal.status === "ready") items.push({
 		key: "meal",
-		done: meal.today >= (Number.isSafeInteger(meal.planned) && meal.planned > 0 ? meal.planned : 1)
+		done: (Number.isFinite(meal.planLogged) ? meal.planLogged : meal.today) >= (Number.isSafeInteger(meal.planned) && meal.planned > 0 ? meal.planned : 1),
+		free: meal.free > 0 ? meal.free : 0
 	});
 	const missing = items.filter((item) => !item.done).map((item) => item.key);
 	const done = items.filter((item) => item.done).map((item) => item.key);
@@ -309,7 +334,8 @@ function todayItems({ weight, readiness, training, meal }) {
 		missing,
 		done,
 		headline: !items.length ? null : missing.length ? `Mangler i dag: ${joinDanish(missing.map((key) => names[key]))}` : "Alt er logget i dag",
-		doneLine: done.length && missing.length ? `Klaret: ${joinDanish(done.map((key) => names[key]))}` : null
+		doneLine: done.length && missing.length ? `Klaret: ${joinDanish(done.map((key) => names[key]))}` : null,
+		free: items.find((item) => item.key === "meal")?.free ?? 0
 	};
 }
 //#endregion
