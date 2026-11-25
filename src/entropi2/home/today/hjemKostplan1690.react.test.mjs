@@ -142,3 +142,9 @@ test('2345: ét logget måltid af tre lukker ikke Mad-rækken på Hjem; Log mad 
     u5ReadPlan: async () => ({ meals: 3, kcal: 1696 }), setTab() {} })
   try { assert.doesNotMatch(all.host.textContent, /Mangler i dag: mad/) } finally { await all.done() }
 })
+
+test('2345: planen klar før måltiderne giver ingen fejl i Hjem-kortet', gate, async () => {
+  const m = await mount({ u5ReadMeals: () => new Promise(() => {}), u5ReadPlan: async () => ({ meals: 3, kcal: 1696 }),
+    u5Training: { kind: 'today', logged: 0, total: 3 }, setTab() {} })
+  try { assert.match(m.host.textContent, /I dag/) } finally { await m.done() }
+})
