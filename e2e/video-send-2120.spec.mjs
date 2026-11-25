@@ -180,6 +180,17 @@ async function main() {
         note: row?.session_context?.athlete_note ?? null, barPath: !!row?.bar_path, inLager, inReserve, coachCanFetch, errors, receipt: sent.visible && /Sendt til din coach/.test(sent.status), taps: taps.length }
       assert.ok(taps.filter(t => t !== 'Notat').length <= 7, `atletens vej uden notat er over 7 tryk: ${taps.join(' > ')}`)
       console.log('TRYK', taps.length, taps.join(' > ')); console.log(who, JSON.stringify(results[who]))
+      // Ordre 2165: kvitteringen har én knap til Beskeder og dækker ikke stangbanen (skiven starter ved ca. 220 px).
+      if (who === 'atlet') {
+        const card = await sent.frame.locator('#athleteStatus').boundingBox()
+        assert.ok(card && card.y + card.height <= 230, `kvitteringen dækker stangbanen (nederste kant ${card && Math.round(card.y + card.height)} px)`)
+        const knap = sent.frame.getByRole('button', { name: 'Se i Beskeder' })
+        assert.equal(await knap.count(), 1, 'kvitteringen skal have præcis én knap Se i Beskeder')
+        await knap.click(); taps.push('Se i Beskeder')
+        await page.locator('iframe[src*="videocoach"]').waitFor({ state: 'detached', timeout: 10000 })
+        await page.locator('section[aria-label="Samlet samtale"], section[aria-label="Beskeder og video"]').first().waitFor({ state: 'visible', timeout: 15000 })
+        console.log('KNAP Se i Beskeder foerer til Beskeder')
+      }
       await page.close()
     }
     for (const who of ['atlet']) {

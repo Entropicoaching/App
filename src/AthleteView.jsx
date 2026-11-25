@@ -565,6 +565,7 @@ export default function AthleteView({ opvarmStige = false, hviledageListe = fals
     videoSetRef, videoOptag2: arguments[0]?.videoOptag2 === true,
     athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
     setAthleteVideoCoachOpen, setFlash,
+    onOpenMessages: () => setTab('beskeder'),
     ...(e2ReadOnly ? { athlete: null } : {}),
   })
 
