@@ -126,8 +126,8 @@ async function filmAndSend(page, clipPath) {
   await frame.locator('#athleteInstantResult').waitFor({ state: 'visible', timeout: 5000 })
   // ORDRE 2147: sendpanelet kan bruges ved 390 px, også på en lav skærm (667 px): Send brydes højst over 2 linjer, alle tre
   // knapper står frit, og Belastning ligger synligt over knaplinjen uden rulning.
-  // Belastning under knaplinjen ved mange reps er fundet i ordre 2200 og hører ikke til ordre 2209 (kun fartpanelets skrift).
-  for (const h of Number(process.env.E2E_REPS || 5) === 5 ? [844, 667] : []) {
+  // ORDRE 2245: gælder også ved mange reps (11), hvor rep-listen før skubbede Belastning ned bag knaplinjen (fundet i ordre 2200).
+  for (const h of [844, 667]) {
     await page.setViewportSize({ width: VW, height: h })
     await page.waitForTimeout(300)
     const m = await frame.locator('body').evaluate(() => {
@@ -139,6 +139,8 @@ async function filmAndSend(page, clipPath) {
       return { vh, lines, sendH: bar.height, barTop: bar.top, barBottom: bar.bottom, loadTop: load.top, loadBottom: load.bottom,
         clipped: send.scrollWidth > send.clientWidth + 1 }
     })
+    console.log(`BELASTNING ${VW}x${h}, ${process.env.E2E_REPS || 5} reps: ${Math.round(m.loadTop)}-${Math.round(m.loadBottom)} mod knaplinje ${Math.round(m.barTop)}`)
+    if (process.env.OUT_2245 && h === 667) await page.screenshot({ path: join(process.env.OUT_2245, `belastning-${VW}x667-${process.env.E2E_REPS || 5}-reps.png`) })
     assert.ok(m.lines <= 2 && !m.clipped, `${h}px: Send brydes over ${m.lines} linjer (afskaaret: ${m.clipped})`)
     assert.ok(m.barTop >= 0 && m.barBottom <= m.vh, `${h}px: knaplinjen staar ikke frit i skaermen`)
     assert.ok(m.loadTop >= 0 && m.loadBottom <= m.barTop, `${h}px: Belastning er ikke synlig over knaplinjen uden rulning (${Math.round(m.loadTop)}-${Math.round(m.loadBottom)} mod knaplinje ${Math.round(m.barTop)})`)
