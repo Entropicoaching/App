@@ -4309,11 +4309,20 @@ function drawVelPanel() {
   const panelHeight = (lines.length + 1.9) * fs * 1.3;
   let panelX = safe.left + safe.padX;
   let panelY = safe.top + safe.padY;
+  // Ordre 2189: løftvælgeren ligger over lærredet; fartvisningen starter under den.
+  const liftEl = document.getElementById('vcLiftSlot');
+  const cRect = canvas.getBoundingClientRect();
+  if (liftEl && liftEl.getClientRects().length && cRect.height) {
+    const liftBottom = (liftEl.getBoundingClientRect().bottom - cRect.top) * (canvas.height / cRect.height);
+    if (liftBottom > 0) panelY = Math.max(panelY, liftBottom + safe.padY);
+  }
   if (safe.right - safe.left > w + safe.padX * 2)
     panelX = Math.min(panelX, safe.right - w - safe.padX);
   if (safe.bottom - safe.top > panelHeight + safe.padY * 2)
     panelY = Math.min(panelY, safe.bottom - panelHeight - safe.padY);
   ctx.fillRect(panelX, panelY, w, panelHeight);
+  { const k = canvas.width / (canvas.getBoundingClientRect().width || canvas.width), cr = canvas.getBoundingClientRect();
+    canvas.dataset.velPanelRect = [cr.left + panelX / k, cr.top + panelY / k, cr.left + (panelX + w) / k, cr.top + (panelY + panelHeight) / k].map(Math.round).join(','); }
   lines.forEach((l, i) => {
     const loss = path.reps[i] !== first && !vcNoSpeed(path.reps[i]) ? 1 - path.reps[i].mcv / first.mcv : 0;
     ctx.fillStyle = vcNoSpeed(path.reps[i]) ? 'rgba(237,234,226,0.55)'
@@ -8767,10 +8776,12 @@ function applySessionView(path = latestCleanPath()) {
   video.currentTime = path.raw.start;
   updateCleanReviewUI(path, true);
   video.play().catch(() => {});
-  say(ATHLETE
-    ? 'Din stangbane er klar · grøn = hurtig, rød = langsommere · brug frame-knapperne til detaljer'
-    : 'Klip + loop om sættet · normal fart · brug frame-knapperne til detaljer 🎙');
-  setTimeout(() => say(''), ATHLETE ? 5500 : 4200);
+  // Ordre 2189: atletens resultat har fartvisningen øverst; bannerets tekst lå halvt oven i den og vises ikke for atleten.
+  if (ATHLETE) say('');
+  else {
+    say('Klip + loop om sættet · normal fart · brug frame-knapperne til detaljer 🎙');
+    setTimeout(() => say(''), 4200);
+  }
 }
 
 function wizardClick(p) {
