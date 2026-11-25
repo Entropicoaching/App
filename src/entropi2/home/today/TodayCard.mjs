@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { homeStyles as s } from '../homeStyles.mjs'
 import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
-import { readTodayMeals, copyYesterdayMeals, readLastWeights, readTodayPlan, planLine } from './todayRead.mjs'
+import { readTodayMeals, copyYesterdayMeals, undoCopiedMeals, yesterdayToCopy, readLastWeights, readTodayPlan, planLine } from './todayRead.mjs'
 import { u6Enabled } from '../../u6/flag.mjs'
 import { planWeightLines, planWeightRows, planFirstSetPrefill } from '../../u6/planWeight.mjs'
 import { u7Enabled } from '../../u7/flag.mjs'
@@ -11,6 +11,8 @@ import { u7Enabled } from '../../u7/flag.mjs'
 // først udkastet, så gem, når værten har modtaget udkastet (samme mønster som QuickLogs).
 const h = React.createElement
 const GRACE_MS = 5000
+// 2353: samme vindue som kostloggens fortrydelse (nutrition/controller.mjs, 5 sekunder).
+const UNDO_MS = 5000
 const MONTHS = ['jan.', 'feb.', 'mar.', 'apr.', 'maj', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']
 const shortDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); return m ? `${Number(m[3])}. ${MONTHS[Number(m[2]) - 1]}` : '' }
 
@@ -34,7 +36,8 @@ export default function TodayCard(props) {
   const [meals, setMeals] = React.useState(null)
   const [copy, setCopy] = React.useState(null)
   const [lastByName, setLastByName] = React.useState(null)
-  React.useEffect(() => () => clearTimeout(timer.current), [])
+  const undoTimer = React.useRef(null)
+  React.useEffect(() => () => { clearTimeout(timer.current); clearTimeout(undoTimer.current) }, [])
   const showMeals = !props.sessionReadOnly && !!athleteId && !!today && props.visKost !== false
   const readMeals = props.u5ReadMeals ?? readTodayMeals
   React.useEffect(() => {
@@ -52,7 +55,7 @@ export default function TodayCard(props) {
     if (!showMeals || typeof readPlan !== 'function') return
     let active = true
     Promise.resolve(readPlan({ athleteId, today, client: latest.current.u5Client }))
-      .then(data => { if (active) setPlan(data ? { line: planLine(data), planned: data.meals, athleteId, day: today } : null) }, () => { if (active) setPlan(null) })
+      .then(data => { if (active) setPlan(data ? { line: planLine(data), planned: data.meals, names: Array.isArray(data.names) ? data.names : null, athleteId, day: today } : null) }, () => { if (active) setPlan(null) })
     return () => { active = false }
   }, [showMeals, athleteId, today, readPlan])
   const trainingToday = props.u5Training?.kind === 'today' && !props.sessionReadOnly && !!athleteId
@@ -95,8 +98,11 @@ export default function TodayCard(props) {
   const wDone = weightDone(props.weightLogs, athleteId, today)
   const rDone = readinessDone({ readinessLog: props.readinessLog, trackingData: props.trackingData, athleteId, today })
   const mealData = meals?.athleteId === athleteId && meals?.day === today && meals.data?.status === 'ready'
-    ? { ...meals.data, today: meals.data.today + (copy?.saved ?? 0),
+    ? { ...meals.data, today: meals.data.today + (copy?.saved ?? 0) - (copy?.undone ?? 0),
       planned: plan?.athleteId === athleteId && plan?.day === today ? plan.planned : null } : null
+  // 2353: for en kostklient får kopien plannavne som i Kost i dag; uden plan er listen gårsdagens som før.
+  const planNames = plan?.athleteId === athleteId && plan?.day === today && plan.names?.length ? plan.names : null
+  const copyList = mealData ? yesterdayToCopy(mealData.yesterday, planNames, mealData.todayNames) : []
   const training = props.u5Training
   const model = todayItems({ weight: canWeight ? { done: wDone } : null, readiness: canReadiness ? { done: rDone } : null,
     training: training ? { ...training, today: true } : null, meal: showMeals ? mealData : null })
@@ -186,26 +192,48 @@ export default function TodayCard(props) {
       ? 'Coachens vægt står i første sæt. Ret den, hvis dagen siger noget andet.'
       : 'Start dagens pas øverst. Første sæt står klar til ét tryk.'))
   const repeatYesterday = async () => {
-    if (copy?.running || !mealData?.yesterday.length) return
-    const list = mealData.yesterday
+    if (copy?.running || copy?.undoing || !copyList.length) return
+    const list = copyList, withIds = !!planNames
+    clearTimeout(undoTimer.current)
     setCopy({ running: true, saved: 0, total: list.length })
-    const result = await copyYesterdayMeals({ athleteId, today, meals: list, client: latest.current.u5Client })
-    setCopy({ running: false, ...result })
+    const result = await copyYesterdayMeals({ athleteId, today, meals: list, client: latest.current.u5Client, withIds })
+    // Fortryd gælder kun hele gruppen, ligesom "Alt fra i går" i Kost i dag; mangler et id, vises den ikke.
+    const canUndo = withIds && result.saved === result.total && result.ids?.length === result.total
+    setCopy({ running: false, ...result, undo: canUndo })
+    if (canUndo) undoTimer.current = setTimeout(() => setCopy(current => current?.undo ? { ...current, undo: false } : current), props.u5UndoMs ?? UNDO_MS)
+  }
+  const undoCopy = async () => {
+    if (!copy?.undo || copy.undoing) return
+    clearTimeout(undoTimer.current)
+    const ids = copy.ids
+    setCopy({ ...copy, undo: false, undoing: true })
+    const removed = await undoCopiedMeals({ athleteId, today, ids, client: latest.current.u5Client })
+    setCopy(current => ({ ...current, undoing: false, undone: removed, undoResult: removed === ids.length ? 'ok' : 'partial' }))
   }
   const go = route => () => latest.current.setTab?.(route)
   const planText = plan?.athleteId === athleteId && plan?.day === today
     ? (plan.planned > 1 && mealData?.today > 0 ? plan.line + ' ' + mealData.today + ' af ' + plan.planned + ' logget.' : plan.line) : null
+  // Fortryd står også, når kopien lukkede Mad-rækken (alt logget), så den altid kan nås i vinduet.
+  const undoRow = () => copy?.undo ? h('div', { key: 'meal-undo', role: 'status', 'data-u5-meal-undo': '',
+    style: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: 8, alignItems: 'center', marginTop: 8 } },
+  h('p', { style: { ...s.text, margin: 0 } }, `${copy.saved} ${copy.saved === 1 ? 'måltid' : 'måltider'} fra i går gemt.`),
+  h('button', { type: 'button', style: { ...s.secondary, marginTop: 0 }, onClick: undoCopy }, 'Fortryd')) : null
+  const undoResultLine = () => copy?.undoResult === 'ok'
+    ? h('p', { key: 'meal-undone', role: 'status', style: hint }, `${copy.ids.length} måltider fra i går er fortrudt.`)
+    : copy?.undoResult === 'partial' ? h('p', { key: 'meal-undone', role: 'alert', style: hint }, `${copy.undone} af ${copy.ids.length} måltider fra i går blev fortrudt. Resten er stadig gemt; se Kost.`) : null
   const mealRow = () => h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
     h('p', { style: label }, 'Mad'),
-    mealData.yesterday.length
-      ? h('button', { type: 'button', style: primary, disabled: copy?.running, onClick: repeatYesterday },
+    copyList.length && !copy?.undoResult
+      ? h('button', { type: 'button', style: primary, disabled: copy?.running || copy?.undoing, onClick: repeatYesterday },
         copy?.running ? `Logger ${copy.saved + 1} af ${copy.total}…`
-          : `Jeg spiste som i går (${mealData.yesterday.length} ${mealData.yesterday.length === 1 ? 'måltid' : 'måltider'})`)
+          : `Jeg spiste som i går (${copyList.length} ${copyList.length === 1 ? 'måltid' : 'måltider'})`)
       : h('button', { type: 'button', style: primary, disabled: typeof props.setTab !== 'function', onClick: go('kost') }, 'Log mad'),
-    copy && !copy.running && copy.saved < copy.total
-      ? h('p', { role: 'alert', style: hint }, `${copy.saved} af ${copy.total} måltider blev gemt. Log resten under Kost.`)
-      : h('p', { style: hint, ...(planText ? { 'data-u5-meal-plan': '' } : {}) }, planText
-        || (mealData.yesterday.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.')))
+    undoRow(),
+    copy?.undoResult ? undoResultLine()
+      : copy && !copy.running && copy.saved < copy.total
+          ? h('p', { role: 'alert', style: hint }, `${copy.saved} af ${copy.total} måltider blev gemt. Log resten under Kost.`)
+          : h('p', { style: hint, ...(planText ? { 'data-u5-meal-plan': '' } : {}) }, planText
+            || (copyList.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.')))
 
   const rows = { weight: weightRow, readiness: readinessRow, training: trainingRow, meal: mealRow }
   // U6 (kontrollens U5-bemærkning): Mad står øverst i kortet, så knappen ses over bundmenuen ved åbning
@@ -217,5 +245,7 @@ export default function TodayCard(props) {
     h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
     h('h2', { style: { ...s.heading, fontSize: 20, margin: '4px 0 0' } }, model.headline),
     model.doneLine && h('p', { style: { ...hint, margin: '4px 0 0' } }, `${model.doneLine} ✓`),
+    // 2353: lukkede kopien Mad-rækken, står Fortryd lige under overskriften, så den ses over folden på 390 px.
+    !model.missing.includes('meal') && undoRow(),
     ...shownOrder(model.missing).map(key => rows[key]?.()))
 }

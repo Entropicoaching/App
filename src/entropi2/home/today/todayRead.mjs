@@ -1,6 +1,8 @@
 import { addCalendarDays, calendarDay } from '../../../calendarDate.js'
 import { nutritionContracts } from '../../nutrition/contracts.mjs'
 import { mealsModel } from './todayModel.mjs'
+import { iGaarMedPlannavne } from '../../kostplan/atlet/kostIDagModel.mjs'
+import { navnNoegle } from '../../kostplan/friPulje.mjs'
 
 // U5: samme klient og samme tabeller som appen bruger i dag (meal_logs og exercise_logs).
 // Klienten hentes først, når kortet er monteret med flaget; prøver giver en syntetisk klient.
@@ -29,7 +31,7 @@ export async function readTodayPlan({ athleteId, today, client } = {}) {
     const plan = await createPlanAdapter({ enabled: true, athleteId, date: today, client: await appClient(client) }).loadActive()
     if (!plan || !Array.isArray(plan.meals) || !plan.meals.length) return null
     const kcal = Number.isFinite(plan.targets?.kcal) && plan.targets.kcal > 0 ? Math.round(plan.targets.kcal) : null
-    return { athleteId, today, meals: plan.meals.length, kcal }
+    return { athleteId, today, meals: plan.meals.length, kcal, names: plan.meals.map(meal => String(meal?.name ?? '')) }
   } catch { return null }
 }
 
@@ -39,18 +41,58 @@ export function planLine(plan) {
   return `Din kostplan i dag: ${meals}${plan.kcal ? `, ${plan.kcal.toLocaleString('da-DK')} kcal` : ''}.`
 }
 
+// 2353: for en kostklient kopieres i går som Kost i dags "Alt fra i går" (KostIDag.mjs, iGaarMedPlannavne),
+// så rækkerne får plannavne og tæller som base, ikke som uplanlagt mad i den frie pulje. Et planmåltid, der
+// allerede er logget i dag, kopieres ikke igen (samme navnenøgle som friPulje.mjs). Uden plan: listen som før.
+export function yesterdayToCopy(yesterday, planNames, todayNames) {
+  const list = Array.isArray(yesterday) ? yesterday : []
+  if (!Array.isArray(planNames) || !planNames.length) return list
+  const covered = new Map()
+  for (const name of todayNames ?? []) covered.set(navnNoegle(name), (covered.get(navnNoegle(name)) ?? 0) + 1)
+  const taken = new Map(), free = []
+  for (const name of planNames) {
+    const key = navnNoegle(name)
+    if ((covered.get(key) ?? 0) > (taken.get(key) ?? 0)) taken.set(key, (taken.get(key) ?? 0) + 1)
+    else free.push(name)
+  }
+  const rest = list.filter(meal => {
+    const key = navnNoegle(meal?.meal)
+    if (!(taken.get(key) > 0)) return true
+    taken.set(key, taken.get(key) - 1)
+    return false
+  })
+  return iGaarMedPlannavne(rest, free)
+}
+
 // Gårsdagens måltider gemmes som nye rækker i dag gennem kostens eksisterende save-kontrakt.
 // Stopper ved første fejl og siger, hvor mange der nåede frem.
-export async function copyYesterdayMeals({ athleteId, today, meals, client } = {}) {
+// 2353: withIds gemmer med saveWithIdentity (som kostloggens fortrydelse), så hele gruppen kan fortrydes.
+export async function copyYesterdayMeals({ athleteId, today, meals, client, withIds = false } = {}) {
   let saved = 0
+  const ids = []
   try {
     const contracts = nutritionContracts({ client: await appClient(client) })
     for (const meal of meals || []) {
-      if (await contracts.save({ ...meal, athlete_id: athleteId, date: today }) !== true) break
+      const row = { ...meal, athlete_id: athleteId, date: today }
+      if (withIds) {
+        const result = await contracts.saveWithIdentity(row)
+        if (result?.ok !== true) break
+        if (result.id) ids.push(result.id)
+      } else if (await contracts.save(row) !== true) break
       saved++
     }
   } catch { /* saved viser, hvor langt den nåede */ }
-  return { saved, total: (meals || []).length }
+  return withIds ? { saved, total: (meals || []).length, ids } : { saved, total: (meals || []).length }
+}
+
+// 2353: Fortryd for hele gruppen med kostloggens egen sletning (samme remove, som undoRows i Kost i dag bruger).
+export async function undoCopiedMeals({ athleteId, today, ids, client } = {}) {
+  let removed = 0
+  try {
+    const contracts = nutritionContracts({ client: await appClient(client) })
+    for (const id of ids || []) if (await contracts.remove({ id, athlete_id: athleteId, date: today }) === true) removed++
+  } catch { /* removed viser, hvor mange der blev fjernet */ }
+  return removed
 }
 
 // Seneste vægt og reps pr. øvelsesnavn, som fetchLastLogs i appen.
