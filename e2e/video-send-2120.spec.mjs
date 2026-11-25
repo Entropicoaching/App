@@ -20,6 +20,8 @@ import { truePos, W as VIDEO_W, H as VIDEO_H } from '../scripts/make-test-clip.m
 const MAX_CALIBRATION_ATTEMPTS = 3
 import { handleVideolager } from '../src/videolager/worker.js'
 
+// E2E_VW vælger skærmbredden (standard 390 px); 360 px bruges til at måle kvitteringens placering.
+const VW = Number(process.env.E2E_VW || 390)
 const NOTE = 'god dybde i bunden'
 const LAGER_PORT = Number(process.env.E2E_LAGER_PORT || 8995)
 
@@ -93,7 +95,7 @@ async function filmAndSend(page, clipPath) {
   // ORDRE 2147: sendpanelet kan bruges ved 390 px, også på en lav skærm (667 px): Send brydes højst over 2 linjer, alle tre
   // knapper står frit, og Belastning ligger synligt over knaplinjen uden rulning.
   for (const h of [844, 667]) {
-    await page.setViewportSize({ width: 390, height: h })
+    await page.setViewportSize({ width: VW, height: h })
     await page.waitForTimeout(300)
     const m = await frame.locator('body').evaluate(() => {
       const r = id => document.getElementById(id).getBoundingClientRect()
@@ -108,7 +110,7 @@ async function filmAndSend(page, clipPath) {
     assert.ok(m.barTop >= 0 && m.barBottom <= m.vh, `${h}px: knaplinjen staar ikke frit i skaermen`)
     assert.ok(m.loadTop >= 0 && m.loadBottom <= m.barTop, `${h}px: Belastning er ikke synlig over knaplinjen uden rulning (${Math.round(m.loadTop)}-${Math.round(m.loadBottom)} mod knaplinje ${Math.round(m.barTop)})`)
   }
-  await page.setViewportSize({ width: 390, height: 844 })
+  await page.setViewportSize({ width: VW, height: 844 })
   await page.waitForTimeout(300)
   await frame.locator('#athleteNoteInput').click(); taps.push('Notat')
   await page.keyboard.type(NOTE, { delay: 30 })
@@ -140,7 +142,7 @@ async function main() {
     const supabaseKeys = async () => (await fetch(`${mockUrl}/__e2e/storage-keys`)).json()
 
     for (const [who, user] of [['atlet', ATHLETE_USER]]) {
-      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, colorScheme: process.env.E2E_SCHEME || 'light' })
+      const page = await browser.newPage({ viewport: { width: VW, height: 844 }, isMobile: true, hasTouch: true, colorScheme: process.env.E2E_SCHEME || 'light' })
       const errors = []
       page.on('pageerror', err => errors.push(err.message))
       const before = (await rowsFor()).length
