@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { homeStyles as s } from '../homeStyles.mjs'
-import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, firstSetPrefill } from './todayModel.mjs'
+import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, planTally, firstSetPrefill } from './todayModel.mjs'
 import { readTodayMeals, copyYesterdayMeals, undoCopiedMeals, yesterdayToCopy, readLastWeights, readTodayPlan, planLine } from './todayRead.mjs'
 import { u6Enabled } from '../../u6/flag.mjs'
 import { planWeightLines, planWeightRows, planFirstSetPrefill } from '../../u6/planWeight.mjs'
@@ -97,11 +97,17 @@ export default function TodayCard(props) {
   const canReadiness = typeof props.saveReadiness === 'function' && typeof props.setReadinessInput === 'function'
   const wDone = weightDone(props.weightLogs, athleteId, today)
   const rDone = readinessDone({ readinessLog: props.readinessLog, trackingData: props.trackingData, athleteId, today })
-  const mealData = meals?.athleteId === athleteId && meals?.day === today && meals.data?.status === 'ready'
-    ? { ...meals.data, today: meals.data.today + (copy?.saved ?? 0) - (copy?.undone ?? 0),
-      planned: plan?.athleteId === athleteId && plan?.day === today ? plan.planned : null } : null
-  // 2353: for en kostklient får kopien plannavne som i Kost i dag; uden plan er listen gårsdagens som før.
   const planNames = plan?.athleteId === athleteId && plan?.day === today && plan.names?.length ? plan.names : null
+  const baseMeals = meals?.athleteId === athleteId && meals?.day === today && meals.data?.status === 'ready' ? meals.data : null
+  // 2359: for en kostklient tæller Hjem kun rækker med et plannavn; kopierede rækker har plannavne (withIds),
+  // og Fortryd fjerner dem igen. Fri mad vises som "+ N fri" og lukker aldrig Mad. Uden plan: alle rækker som før.
+  const copiedNames = baseMeals && planNames && !copy?.undoResult ? yesterdayToCopy(baseMeals.yesterday, planNames, baseMeals.todayNames).slice(0, copy?.saved ?? 0).map(row => row.meal) : []
+  const tally = baseMeals && planNames ? planTally(planNames, [...(baseMeals.todayNames ?? []), ...copiedNames]) : null
+  const mealData = baseMeals
+    ? { ...baseMeals, today: baseMeals.today + (copy?.saved ?? 0) - (copy?.undone ?? 0),
+      planned: plan?.athleteId === athleteId && plan?.day === today ? plan.planned : null,
+      ...(tally ? { planLogged: tally.logged, free: tally.free } : {}) } : null
+  // 2353: for en kostklient får kopien plannavne som i Kost i dag; uden plan er listen gårsdagens som før.
   const copyList = mealData ? yesterdayToCopy(mealData.yesterday, planNames, mealData.todayNames) : []
   const training = props.u5Training
   const model = todayItems({ weight: canWeight ? { done: wDone } : null, readiness: canReadiness ? { done: rDone } : null,
@@ -212,7 +218,7 @@ export default function TodayCard(props) {
   }
   const go = route => () => latest.current.setTab?.(route)
   const planText = plan?.athleteId === athleteId && plan?.day === today
-    ? (plan.planned > 1 && mealData?.today > 0 ? plan.line + ' ' + mealData.today + ' af ' + plan.planned + ' logget.' : plan.line) : null
+    ? (plan.planned > 1 && mealData?.today > 0 ? plan.line + ' ' + (mealData.planLogged ?? mealData.today) + ' af ' + plan.planned + ' logget.' + (mealData.free > 0 ? ' + ' + mealData.free + ' fri.' : '') : plan.line) : null
   // Fortryd står også, når kopien lukkede Mad-rækken (alt logget), så den altid kan nås i vinduet.
   const undoRow = () => copy?.undo ? h('div', { key: 'meal-undo', role: 'status', 'data-u5-meal-undo': '',
     style: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: 8, alignItems: 'center', marginTop: 8 } },
@@ -245,6 +251,8 @@ export default function TodayCard(props) {
     h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
     h('h2', { style: { ...s.heading, fontSize: 20, margin: '4px 0 0' } }, model.headline),
     model.doneLine && h('p', { style: { ...hint, margin: '4px 0 0' } }, `${model.doneLine} ✓`),
+    // 2359: Mad lukket af planmåltiderne, men der er også fri mad: vis den kort i samme linje.
+    !model.missing.includes('meal') && model.free > 0 && h('p', { style: { ...hint, margin: '4px 0 0' }, 'data-u5-meal-free': '' }, `+ ${model.free} fri`),
     // 2353: lukkede kopien Mad-rækken, står Fortryd lige under overskriften, så den ses over folden på 390 px.
     !model.missing.includes('meal') && undoRow(),
     ...shownOrder(model.missing).map(key => rows[key]?.()))
