@@ -7,6 +7,8 @@ import { createKostDaySession } from './kostplan/atlet/daySession.mjs'
 import KostDayFrame from './kostplan/atlet/KostDayFrame.mjs'
 import ApprovedPlanShopping from './kostplan/atlet/ApprovedPlanShopping.mjs'
 import { markSentWeekSeen } from './kostplan/atlet/markSeen.mjs'
+import { laesKostHul } from './kostplan/atlet/nyKostuge.mjs'
+import { calendarDay } from '../calendarDate.js'
 
 // Montering af kostskærmen med de aktuelle vægtprops. Navigation går altid til den nyeste handler.
 export function mountKost(host, { athlete, date, client, foods, storage, contracts }, latest, weight = {}) {
@@ -61,10 +63,20 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
   const screen = useRef(null)
   const [session, setSession] = useState(null)
   const [checkin, setCheckin] = useState(null)
+  // Ordre 2145: kostklient uden træning og hul efter sidste sendte kostuge; kun svaret for den viste atlet bruges.
+  const [hul, setHul] = useState(null)
   const latest = useRef({ onNavigate, onCoach, currentDay, onDayChanged })
   const weight = { weightLogs, weightInput, onWeightInput, logWeight, savingWeight, weightStatus, retryWeight }
   useEffect(() => { latest.current = { onNavigate, onCoach, currentDay, onDayChanged } })
   useEffect(() => { if (enabled === true) loadEntropi2Styles() }, [enabled])
+  useEffect(() => {
+    if (enabled !== true || !athlete?.id) return undefined
+    let active = true
+    const today = calendarDay(new Date())
+    Promise.resolve(laesKostHul({ athlete, today, client })).then(
+      value => { if (active) setHul({ athleteId: athlete.id, ...value }) }, () => { if (active) setHul(null) })
+    return () => { active = false }
+  }, [enabled, athlete?.id, athlete?.kostPakke, client])
   useEffect(() => {
     if (enabled !== true || !athlete?.id) return undefined
     // Resolve from this effect's client owner. The memoized boundary is also
@@ -105,6 +117,7 @@ export default function Entropi2Kost({ enabled = false, athlete, date, client, f
   const current = session?.athleteId === athlete?.id && session?.date === date && session?.client === planClient ? session : null
   return enabled === true && athlete?.id ? createElement(KostShoppingFrame, { controller: current?.controller, athleteId: athlete.id, date, client: planClient, currentDay,
     weightLogs, weightStatus, weight,
+    kostKlient: hul?.athleteId === athlete.id && hul.kostKlient === true, nyUge: hul?.athleteId === athlete.id && hul.nyUge === true,
     foodEntry: current?.foodEntry, onSeen: current?.markSeen,
     checkin: checkin?.athleteId === athlete?.id && checkin?.date === date && current ? checkin.tracker : null, tracker: createElement(KostTrackerHost, { session: current, screen, weight }) }) : null
 }

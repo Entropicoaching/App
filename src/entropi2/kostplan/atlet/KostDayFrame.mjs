@@ -38,7 +38,7 @@ function FoodLogEntry({ entry, gateRef, trackerFold }) {
     unavailable && React.createElement('p', { role: 'status' }, 'Kostloggen er ikke klar til at åbne. Prøv igen, når den er tilgængelig.'))
 }
 
-export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin, weightLogs, weightStatus, weight, shopping, onSeen }) {
+export default function KostDayFrame({ controller, tracker, athleteId, date, client, currentDay, foodEntry, checkin, weightLogs, weightStatus, weight, shopping, onSeen, kostKlient = false, nyUge = false }) {
   const [selection, setSelection] = useState(null)
   const owned = selection && selection.athleteId === athleteId && selection.today === date && selection.client === client
   // 1916: "Se planen" kan vælge en sendt uges start ud over de 3 dage; den kommer så med i listen.
@@ -84,7 +84,7 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
   }
   // 1899: "Kost i dag" øverst; alt herunder ligger uændret i laget "Vis detaljer" (KostLag ejer valget).
   return React.createElement(KostLag, { quick: !!foodDayAvailable, preview, athleteId, date, checkin, controller: plan ? controller : null,
-    weight, foodEntry, foodGate, trackerFold, noPlanToday, client, onShowPlan: showPlan, planSeen, onSeen, water: { enabled: !preview, athleteId, date, client, currentDay, gateRef: waterGate } },
+    weight, foodEntry, foodGate, trackerFold, noPlanToday, client, onShowPlan: showPlan, planSeen, onSeen, nyUge: nyUge === true && !preview, water: { enabled: !preview, athleteId, date, client, currentDay, gateRef: waterGate } },
     dates.length > 1 && React.createElement('label', { style: { display: 'block', padding: 16 } }, 'Vælg plandato',
       React.createElement('select', { value: selected, 'aria-label': 'Vælg plandato', style: { ...control, display: 'block', marginTop: 8, maxWidth: '100%' },
         onChange: selectDate }, ...dates.map(day => React.createElement('option', { key: day, value: day },
@@ -112,7 +112,9 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
       tracker: React.createElement('p', null, 'Åbn Kostlog og vejning nedenfor for at kontrollere måltidet.') }),
     // Keep both the React host and all imperative/nested React content in place
     // across status transitions. The diary is usable before a plan is assigned.
+    // Ordre 2145 (Marc 24. nov.): en kostklient uden træning ser indkøbslisten over Kostlog; alle andre som før (efter Kostlog).
+    ...(kostKlient === true && shopping ? [shopping] : []),
     React.createElement('details', { key: 'tracker', open: true, ref: trackerFold },
       React.createElement('summary', { style: { minHeight: 44, padding: 12, cursor: 'pointer' } }, 'Kostlog og vejning'), tracker)),
-    shopping)
+    kostKlient === true ? null : shopping)
 }

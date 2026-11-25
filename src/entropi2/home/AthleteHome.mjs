@@ -25,6 +25,7 @@ import PushCard from '../u8/PushCard.mjs'
 import { u8Enabled } from '../u8/flag.mjs'
 import { addCalendarDays } from '../../calendarDate.js'
 import { kostKlient as erKostKlient } from '../../athlete/kostValg.mjs'
+import { laesNyKostugeSikkert, NY_KOSTUGE_TEKST } from '../kostplan/atlet/nyKostuge.mjs'
 
 const clock = () => new Date()
 const firstName = name => typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
@@ -230,7 +231,8 @@ export default function AthleteHome(props) {
           namedExercises.length > 0 && h('ul', { style: { ...s.text, listStylePosition: 'inside', paddingInlineStart: 0 } }, ...namedExercises.map(e => h('li', { key: e.id }, e.name))),
           ...target.session.exercises.filter(e => e.note).map(e => h('p', { key: e.id, style: s.text }, `Coach · ${e.name || 'Øvelse'}: ${e.note}`))))
         : kostKlient ? h('div', null,
-          h('p', { style: s.text }, nutrition?.text || 'Din kostplan er klar. Åbn Kost for dagens måltider.'),
+          h(KostKlientTekst, { key: `ny:${athlete?.id}:${model.today}`, athleteId: athlete?.id, today: model.today, client: props.u5Client,
+            read: props.laesNyKostuge, text: nutrition?.text || 'Din kostplan er klar. Åbn Kost for dagens måltider.' }),
           h('button', { type: 'button', style: s.primary, disabled: typeof setTab !== 'function', onClick: go('kost') }, 'Åbn kost'))
         : noProgram && !programLoading && !programError ? null
         : h('p', { role: programError && !programLoading ? 'alert' : 'status', style: s.text }, programLoading ? 'Indlæser dit program…'
@@ -299,4 +301,18 @@ export default function AthleteHome(props) {
       hasWeekData && h('details', { style: { ...s.card, marginTop: 20 }, 'data-home-week-tracking': '' },
         h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer' } }, 'Ugen i korte træk'),
         h(AthleteWeek, { enabled: true, snapshot, compactHome: true }))))
+}
+
+// Ordre 2145 (Marc 24. nov.): dagen efter kostugens sidste dag og indtil en ny uge er sendt står der "Ny kostuge er på vej fra Marc".
+// Uden hul, under læsning og ved læsefejl står den gamle tekst.
+function KostKlientTekst({ athleteId, today, client, read, text }) {
+  const [hul, setHul] = useState(null)
+  useEffect(() => {
+    if (!athleteId || !today) return undefined
+    let active = true
+    Promise.resolve((read ?? laesNyKostugeSikkert)({ athleteId, today, client }))
+      .then(value => { if (active) setHul(value === true) }, () => { if (active) setHul(false) })
+    return () => { active = false }
+  }, [athleteId, today, client, read])
+  return h('p', { style: s.text, ...(hul ? { 'data-ny-kostuge': '' } : {}) }, hul ? NY_KOSTUGE_TEKST : text)
 }
