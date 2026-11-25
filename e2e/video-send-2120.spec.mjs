@@ -183,7 +183,13 @@ async function main() {
       // Ordre 2165: kvitteringen har én knap til Beskeder og dækker ikke stangbanen (skiven starter ved ca. 220 px).
       if (who === 'atlet') {
         const card = await sent.frame.locator('#athleteStatus').boundingBox()
-        assert.ok(card && card.y + card.height <= 230, `kvitteringen dækker stangbanen (nederste kant ${card && Math.round(card.y + card.height)} px)`)
+        // Ordre 2175: kortet ligger under løftvælgeren og over skiven (øverste kant ca. 220 px).
+        const lift = await sent.frame.locator('#vcLiftSlot').boundingBox()
+        assert.ok(lift && card, 'løftvælger og kvittering skal kunne måles')
+        assert.ok(card.y >= lift.y + lift.height, `kvitteringen dækker løftvælgeren (kort ${Math.round(card.y)} px, vælger slutter ${Math.round(lift.y + lift.height)} px)`)
+        assert.ok(card.y + card.height <= 220, `kvitteringen dækker stangbanens skive (nederste kant ${Math.round(card.y + card.height)} px)`)
+        const knapBox = await sent.frame.getByRole('button', { name: 'Se i Beskeder' }).boundingBox()
+        assert.ok(knapBox && knapBox.y >= 0 && knapBox.y + knapBox.height <= 844, 'Se i Beskeder skal ses uden scroll')
         const knap = sent.frame.getByRole('button', { name: 'Se i Beskeder' })
         assert.equal(await knap.count(), 1, 'kvitteringen skal have præcis én knap Se i Beskeder')
         await knap.click(); taps.push('Se i Beskeder')
