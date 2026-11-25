@@ -228,13 +228,15 @@ export default function TodayCard(props) {
   const undoResultLine = () => copy?.undoResult === 'ok'
     ? h('p', { key: 'meal-undone', role: 'status', style: hint }, `${copy.ids.length} måltider fra i går er fortrudt.`)
     : copy?.undoResult === 'partial' ? h('p', { key: 'meal-undone', role: 'alert', style: hint }, `${copy.undone} af ${copy.ids.length} måltider fra i går blev fortrudt. Resten er stadig gemt; se Kost.`) : null
-  const mealRow = () => h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
+  // Ordre 2370 (fund 3 og 5): kostklientens Hjem har allerede Åbn kost i kortet over; Log mad var kun en vejviser dertil.
+  const mealVejviserSkjult = props.kortDagsform === true && !copyList.length
+  const mealRow = () => mealVejviserSkjult && !(planText && mealData?.today > 0) ? null : h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
     h('p', { style: label }, 'Mad'),
     copyList.length && !copy?.undoResult
       ? h('button', { type: 'button', style: primary, disabled: copy?.running || copy?.undoing, onClick: repeatYesterday },
         copy?.running ? `Logger ${copy.saved + 1} af ${copy.total}…`
           : `Jeg spiste som i går (${copyList.length} ${copyList.length === 1 ? 'måltid' : 'måltider'})`)
-      : h('button', { type: 'button', style: primary, disabled: typeof props.setTab !== 'function', onClick: go('kost') }, 'Log mad'),
+      : mealVejviserSkjult ? null : h('button', { type: 'button', style: primary, disabled: typeof props.setTab !== 'function', onClick: go('kost') }, 'Log mad'),
     undoRow(),
     copy?.undoResult ? undoResultLine()
       : copy && !copy.running && copy.saved < copy.total

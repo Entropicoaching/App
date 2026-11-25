@@ -246,7 +246,7 @@ export default function AthleteHome(props) {
       props.sessionRootRef && h('section', { ref: props.sessionRootRef, 'aria-label': 'Dit valgte pas' }),
       // Ordre 1714: uden program er der intet at åbne; den ene handling er en besked til coachen.
       // Ordre 2035f: programmet ligger også i bundmenuen, så vejen dertil er et tekstlink, ikke endnu en knap.
-      noProgram ? link('beskeder', 'Skriv til din coach') : link('program', 'Se mit program', s.link)),
+      noProgram ? link('beskeder', 'Skriv til din coach', s.link) : link('program', 'Se mit program', s.link)),
     week?.line && h('p', { style: { ...s.muted, padding: '0 4px' }, 'data-week-sessions': '' }, week.line),
     // Ordre 2035f (Dhurva 2068): en ny klient har lige set guiden med tre trin (2065), som dækker de samme emner.
     // Introen her vises derfor kun, når guiden ikke er gennemført; ellers er guiden den ene intro.
@@ -266,7 +266,8 @@ export default function AthleteHome(props) {
       trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
     // Ordre 1541 (Marc 16. nov.: "pas på at det ikke føles for overvældende ... gem det i under kategorierne"):
     // træning og dagens logning står øverst; alt sekundært ligger samlet bag "Mere i dag".
-    h('details', { style: { ...s.card, padding: 16 }, 'data-home-mere': '' },
+    // Ordre 2370 (fund 11): foldet er Mere i dag næsten tomt, så ingen kortramme om det.
+    h('details', { style: { padding: '0 4px', marginBottom: 20 }, 'data-home-mere': '' },
       h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer', fontWeight: 600 } }, 'Mere i dag'),
       // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
       u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && !kostKlient && athlete?.id && model.today && h(DayFeeling, {
