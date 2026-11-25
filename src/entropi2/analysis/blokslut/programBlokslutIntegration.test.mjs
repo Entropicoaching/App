@@ -41,12 +41,12 @@ async function settled(screen, predicate = tree => card(tree) && !text(card(tree
   }
   assert.fail('Synthetic report did not settle')
 }
-test('actual copied Program: full block read, first open, subsequent folded; scoped backend query', async () => {
+test('actual copied Program: full block read, always folded; scoped backend query', async () => {
   store.clear(); fixture.rows = snapshot().exerciseLogs; fixture.calls.length = 0
   const p = props(), screen = mount(Program, p)
   screen.render(); const tree = await settled(screen)
-  assert.equal(card(tree).props.open, true)
-  assert.match(text(card(tree)), /Gennemførte pas: 3 af 3.*Squat: \+11 kg/)
+  assert.equal(card(tree).props.open, false)
+  assert.match(text(card(tree)), /Squat: \+11 kg/)
   assert.equal(logCalls().length, 1)
   assert.deepEqual(logCalls()[0].eq, ['athlete_id', 'synthetic-a'])
   assert.match(logCalls()[0].select, /weight,reps_completed,skipped,logged_at/)
@@ -57,7 +57,7 @@ test('actual copied Program: full block read, first open, subsequent folded; sco
   const again = mount(Program, p); again.render()
   assert.equal(card(await settled(again)).props.open, false)
   const other = mount(Program, { ...p, athlete: { id: 'synthetic-b' } }); other.render()
-  assert.equal(card(await settled(other)).props.open, true)
+  assert.equal(card(await settled(other)).props.open, false)
 })
 test('actual copied Program: empty, failed read and retry show honest output', async () => {
   fixture.rows = []; const screen = mount(Program, props()); screen.render()
@@ -68,7 +68,7 @@ test('actual copied Program: empty, failed read and retry show honest output', a
   assert.match(text(card(tree)), /kunne ikke hentes/); assert.doesNotMatch(text(card(tree)), /raw synthetic|Gennemførte/)
   fixture.failure = false; fixture.rows = snapshot().exerciseLogs
   nodes(card(tree), n => n.type === 'button')[0].props.onClick()
-  failed.render(); assert.match(text(card(await settled(failed))), /Gennemførte pas: 3 af 3/)
+  failed.render(); assert.match(text(card(await settled(failed))), /Squat: \+11 kg/)
 })
 test('actual copied Program: OFF and middle of block read no report data; following week uses completed block', async () => {
   for (const gate of [false, null, 0, 1, 'true']) {
@@ -86,7 +86,7 @@ test('actual copied Program: OFF and middle of block read no report data; follow
   screen = mount(Program, p); screen.render()
   // Ordre 1564: blokhovedet viser datoerne; kortet gentager dem ikke.
   const done = await settled(screen)
-  assert.match(text(card(done)), /Gennemførte pas: 3 af 3/)
+  assert.match(text(card(done)), /Squat: \+11 kg/)
   assert.doesNotMatch(text(card(done)), /19\.10\.2026/)
   assert.equal((text(done).match(/19\. okt\.? til 8\. nov/g) || []).length, 1)
   assert.equal(logCalls().length, before + 1)
@@ -105,12 +105,12 @@ test('actual copied Program: a late previous athlete cannot render or mark the r
   let release
   fixture.wait = new Promise(resolve => { release = resolve })
   const p = props(), screen = mount(Program, p)
-  screen.render(); await settled(screen, tree => card(tree)?.props.open === true)
+  screen.render(); await settled(screen, tree => card(tree)?.props.open === false)
   const next = { ...p, athlete: { id: 'synthetic-new' } }
   assert.equal(card(screen.render(next)), undefined)
   await flushEffects(); fixture.wait = null; release()
   const tree = await settled(screen)
-  assert.match(text(card(tree)), /Gennemførte pas: 3 af 3/)
+  assert.match(text(card(tree)), /Squat: \+11 kg/)
   assert.ok([...store.keys()].every(key => key.includes('synthetic-new')))
   assert.equal([...store.keys()].some(key => key.includes('synthetic-a')), false)
 })

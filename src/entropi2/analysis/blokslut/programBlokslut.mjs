@@ -105,7 +105,8 @@ export function blokhovedViserDatoen(hovedUger, model) {
 }
 
 // Supplied createElement keeps this renderer usable by real React and hermetic tests.
-export function renderProgramBlokslut(h, model, { open, onToggle, onRetry, skjulDato }) {
+// Ordre 2370: skjulPas fjerner passtallet (Hjem har ugens tal); kortStil lader Program give kortet samme udtryk som de andre kort.
+export function renderProgramBlokslut(h, model, { open, onToggle, onRetry, skjulDato, skjulPas, kortStil }) {
   const good = model.status === 'ready'
   // Ordre 1647: en ny atlets foerste uge (blok paa en uge, intet logget endnu) har intet at rapportere; ellers staar der "Sidste uge er i gang" og "Aftal med din coach" paa dag et.
   if (good && model.weeks.length === 1 && model.confirmed === 0 && model.through < model.end) return null
@@ -116,13 +117,13 @@ export function renderProgramBlokslut(h, model, { open, onToggle, onRetry, skjul
       : 'Styrkefremgang kan endnu ikke sammenlignes sikkert.'
   return h('details', { 'aria-label': 'Din blok', 'data-program-blokslut': true, open, onToggle,
     style: { marginBottom: 20, padding: 16, border: '1px solid #59564c', color: '#edeae2',
-      width: '100%', minWidth: 0, boxSizing: 'border-box', overflowWrap: 'anywhere', lineHeight: 1.6 } },
+      width: '100%', minWidth: 0, boxSizing: 'border-box', overflowWrap: 'anywhere', lineHeight: 1.6, ...kortStil } },
     h('summary', { style: { minHeight: 44, cursor: 'pointer', boxSizing: 'border-box', paddingTop: 8 } }, 'Din blok'),
     good ? h('div', null,
       // Ordre 1564: datoerne står i blokhovedet; her kun det, hovedet ikke viser.
       skjulDato ? (model.through < model.end ? h('p', null, 'Sidste uge er i gang.') : null)
         : h('p', null, `${model.start.split('-').reverse().join('.')}–${model.end.split('-').reverse().join('.')}${model.through < model.end ? ' · Sidste uge er i gang.' : ''}`),
-      h('p', null, `Gennemførte pas: ${number(model.completed)} af ${number(model.planned)}.`),
+      skjulPas ? null : h('p', null, `Gennemførte pas: ${number(model.completed)} af ${number(model.planned)}.`),
       h('p', null, model.confirmed === 0 ? 'Ingen bekræftede træningssæt i blokken endnu.' : strength),
       model.uncertain && h('p', { role: 'status' }, 'Nogle sæt er afventende eller modstridende. Opgørelsen er ufuldstændig.'),
       h('p', null, h('strong', null, 'Ét fokuspunkt: '), model.focus),

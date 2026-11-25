@@ -329,10 +329,10 @@ function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx }) {
       try { storage = globalThis.localStorage } catch { /* Optional persistence. */ }
       const scope = { athleteId, key, api, storage }
       setBlokslut(previous => previous?.athleteId === athleteId && previous.model ? previous :
-        { ...scope, open: !api.wasBlokslutSeen(storage, key), model: { status: 'loading', message: 'Henter blokkens data.' } })
+        { ...scope, open: false, model: { status: 'loading', message: 'Henter blokkens data.' } })
       const model = await api.programBlokslutModel({ athleteId, block: reportBlock, now, programError })
       if (!cancelled) setBlokslut(previous => ({ ...scope,
-        open: previous?.key === key ? previous.open : !api.wasBlokslutSeen(storage, key), model }))
+        open: previous?.key === key ? previous.open : false, model }))
     }).catch(() => { if (!cancelled) setBlokslut({ athleteId, planError: true }) })
     return () => { cancelled = true }
   }, [blokslutPlan, athleteId, programError, blokslutWeek, blokslutRetry])
@@ -356,7 +356,8 @@ function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx }) {
   })()
   const skjulDato = blokslutCurrent?.api.blokhovedViserDatoen(hovedFase?.weeks, blokslutCurrent.model) === true
   return (blokslutCurrent && blokslutCurrent.api.renderProgramBlokslut(createElement, blokslutCurrent.model, {
-    open: blokslutCurrent.open, skjulDato,
+    open: blokslutCurrent.open, skjulDato, skjulPas: true,
+    kortStil: { border: 'none', borderRadius: 12, background: programColors.surface, borderInlineStart: `4px solid ${programColors.accent}` },
     onToggle: event => {
       const open = event.currentTarget.open
       setBlokslut(previous => previous?.key === blokslutCurrent.key ? { ...previous, open } : previous)
@@ -779,6 +780,7 @@ export default function ProgramTab({
                           </div>
                         ) : 'Ikke angivet i planen.'}
                         {!programError && intensity.missing && intensity.targets.length > 0 && <p style={{ margin: '8px 0 0' }}>Ikke angivet for alle øvelser.</p>}
+                        {!programError && intensity.targets.some(target => /RPE/i.test(target)) && <p style={{ margin: '8px 0 0' }}>RPE er, hvor hårdt sættet føles. 10 er maks.</p>}
                       </div>
                     )}
                   </div>
