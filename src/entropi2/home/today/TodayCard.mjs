@@ -194,7 +194,7 @@ export default function TodayCard(props) {
   }
   const go = route => () => latest.current.setTab?.(route)
   const planText = plan?.athleteId === athleteId && plan?.day === today
-    ? (plan.planned > 1 && mealData.today > 0 ? plan.line + ' ' + mealData.today + ' af ' + plan.planned + ' logget.' : plan.line) : null
+    ? (plan.planned > 1 && mealData?.today > 0 ? plan.line + ' ' + mealData.today + ' af ' + plan.planned + ' logget.' : plan.line) : null
   const mealRow = () => h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
     h('p', { style: label }, 'Mad'),
     mealData.yesterday.length

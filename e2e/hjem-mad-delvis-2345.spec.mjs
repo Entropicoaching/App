@@ -24,6 +24,8 @@ async function login(page) {
 }
 const hjem = page => page.locator('[data-u5-today]').first()
 const ingenScroll = async (page, hvor) => krav(await page.evaluate(() => document.documentElement.scrollWidth) <= MOBILE.width + 1, `Vandret scroll på 390 px: ${hvor}`)
+const tema = (page, navn) => page.evaluate(v => (v === 'light' ? document.documentElement.setAttribute('data-tema', 'lys') : document.documentElement.removeAttribute('data-tema')), navn)
+let scheme = 'light'
 const trin = [
   ['ét måltid logget: Mad mangler stadig, tæller og Log mad', 1, async (page, antal) => {
     await hjem(page).waitFor({ timeout: 20000 })
@@ -46,14 +48,14 @@ const trin = [
 const vite = await startVite(), browser = await launchBrowser(), errors = []
 let fejl = null
 try {
-  for (const scheme of ['light', 'dark']) for (const [navn, loggede, run] of trin) {
-    const { s, antal } = seedKlient(loggede); krav(antal > 1, 'seeden skal have mindst to planmåltider')
+  for (const sc of ['light', 'dark']) for (const [navn, loggede, run] of trin) {
+    scheme = sc; const { s, antal } = seedKlient(loggede); krav(antal > 1, 'seeden skal have mindst to planmåltider')
     const mock = createMockSupabase({ users: s.users, tables: structuredClone(s.tables) }); await mock.listen(MOCK_PORT)
-    const ctx = await browser.newContext({ viewport: MOBILE, colorScheme: scheme }); const page = await ctx.newPage()
-    page.on('pageerror', err => errors.push(`${navn} ${scheme}: ${err.message}`))
-    try { await login(page); await run(page, antal); console.log(`OK ${navn} ${scheme}`)
-      if (process.env.UD_MAPPE && loggede === 1) await page.screenshot({ path: `${process.env.UD_MAPPE}/2345-hjem-delvis-${scheme}.png` }) }
-    catch (e) { try { await page.screenshot({ path: `${process.env.TEMP}/2345-fejl-${scheme}.png` }) } catch { /* ignoreret */ } throw new Error(`${navn} ${scheme}: ${e.message}`) }
+    const ctx = await browser.newContext({ viewport: MOBILE, colorScheme: sc }); const page = await ctx.newPage()
+    page.on('pageerror', err => errors.push(`${navn} ${sc}: ${err.message}`))
+    try { await login(page); await run(page, antal); console.log(`OK ${navn} ${sc}`)
+      if (process.env.UD_MAPPE && loggede === 1) await page.screenshot({ path: `${process.env.UD_MAPPE}/2345-hjem-delvis-${sc}.png` }) }
+    catch (e) { try { await page.screenshot({ path: `${process.env.TEMP}/2345-fejl-${sc}.png` }) } catch { /* ignoreret */ } throw new Error(`${navn} ${sc}: ${e.message}`) }
     finally { await ctx.close(); await mock.close() }
   }
   krav(!errors.length, 'pageerror: ' + errors.join(' | '))
