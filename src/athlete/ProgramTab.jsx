@@ -584,7 +584,7 @@ export default function ProgramTab({
                           {/* Brug det faktiske week_number, så caption og blok-overskrift
                               aldrig modsiger hinanden (fx uge 0 der før stod som "uge 1 af 1"). */}
                           {viewingWeekIdx === activeWeekIdx
-                            ? <span style={{ color }}>● Du er her · uge {viewedWeek?.week_number}</span>
+                            ? <span style={{ color }}>● Du er her{blockOverviewOn ? '' : ` · uge ${viewedWeek?.week_number}`}</span>
                             : viewingWeekIdx > activeWeekIdx
                               ? <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
                               : <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
@@ -705,7 +705,7 @@ export default function ProgramTab({
                   {!ugeFoerst && blokOversigt}
 
                   {/* Week header — navigation only shown when multiple weeks exist */}
-                  <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? { ...programLayout.week, background: programTones.plan.background } : {}) }}>
+                  <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? { ...programLayout.week } : {}) }}>
                     {allWeeks.length > 1 ? (
                       <>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ...(programAppearanceOn ? { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 } : {}) }}>
@@ -762,9 +762,9 @@ export default function ProgramTab({
                       </>
                     ) : (
                       <div>
-                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
+                        {!(programAppearanceOn && blockOverviewOn) && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
                           Uge {viewedWeek.week_number}
-                        </div>
+                        </div>}
                         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
                           {ugeFoerst ? 'Dit program' : viewedWeek.block_name || 'Dit program'}.
                         </h1>
