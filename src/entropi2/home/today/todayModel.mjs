@@ -91,7 +91,9 @@ export function mealsModel(rows, athleteId, today) {
   const meals = rows.filter(row => own(row, athleteId) && !isDayReceipt(row))
   const yesterday = meals.filter(row => row.date === yesterdayDay && mealTemplateItems([row]))
     .map(row => ({ meal: row.meal, kcal: row.kcal, protein: row.protein, carb: row.carb, fat: row.fat }))
-  return { status: 'ready', today: meals.filter(row => row.date === today).length, yesterday }
+  const todayRows = meals.filter(row => row.date === today)
+  // 2353: dagens navne, så "Jeg spiste som i går" ikke kopierer et planmåltid, der allerede er logget.
+  return { status: 'ready', today: todayRows.length, todayNames: todayRows.map(row => String(row.meal ?? '')), yesterday }
 }
 
 // Første sæt uden coachens vægt forudfyldes med sidste pas for samme øvelse.
