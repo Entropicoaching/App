@@ -585,7 +585,7 @@ export default function ProgramTab({
                           {/* Brug det faktiske week_number, så caption og blok-overskrift
                               aldrig modsiger hinanden (fx uge 0 der før stod som "uge 1 af 1"). */}
                           {viewingWeekIdx === activeWeekIdx
-                            ? <span style={{ color }}>● Du er her{blockOverviewOn ? '' : ` · uge ${viewedWeek?.week_number}`}</span>
+                            ? programAppearanceOn && blockOverviewOn ? <span style={{ color }}>● Du er her</span> : <span style={{ color }}>● Du er her · uge {viewedWeek?.week_number}</span>
                             : viewingWeekIdx > activeWeekIdx
                               ? <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Planlagt · uge {viewedWeek?.week_number}</span>
                               : <span style={{ color: programAppearanceOn ? programColors.muted : '#7a7770' }}>Historisk · uge {viewedWeek?.week_number}</span>}
@@ -664,7 +664,7 @@ export default function ProgramTab({
                 <>
                   {nextSession && <button type="button" data-program-next=""
                     style={{ ...programTapTarget, ...s.btnPrimary, minHeight: 48, width: '100%', marginBottom: 16, whiteSpace: 'normal', overflowWrap: 'anywhere',
-                      ...(programAppearanceOn ? { fontFamily: 'inherit', fontSize: 16, fontWeight: 600, letterSpacing: 'normal', textTransform: 'none', borderRadius: 12, padding: '12px 16px' } : {}) }}
+                      ...(programAppearanceOn && entropi2 === true ? { fontFamily: 'inherit', fontSize: 16, fontWeight: 600, letterSpacing: 'normal', textTransform: 'none', borderRadius: 12, padding: '12px 16px' } : {}) }}
                     onClick={() => {
                       goToWeek(nextSession.index)
                       setProgOpenSession(nextSession.sessionId)

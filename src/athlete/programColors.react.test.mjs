@@ -31,7 +31,7 @@ test('React colours: empty/error cards retain their neutral surface and accessib
   }
   const planned = render(programQolFixture({ viewingWeekIdx: 2 }))
   assert.match(planned, /data-program-session-tone="plan"/)
-  assert.match(planned, /data-program-week-navigation="true"[^>]*background:#202b3b/)
+  assert.match(planned, /data-program-week-navigation="true"[^>]*background:#1c1c18/)
 })
 
 test('React colours: current, completed and skipped passes retain text, aria and contrast', t => {

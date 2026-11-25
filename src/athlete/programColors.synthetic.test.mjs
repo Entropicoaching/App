@@ -50,7 +50,7 @@ test('colours: empty and error cards stay neutral, accessible and independent of
   }
   const planned = render({ viewingWeekIdx: 2 })
   assert.deepEqual(nodes(planned, n => n.props['data-program-week-navigation']).map(n => n.props.style.background),
-    ['#1c1c18', '#202b3b'], 'block keeps its neutral surface while the planned week receives blue')
+    ['#1c1c18', '#1c1c18'], 'block and planned week share one neutral card surface (ordre 2370)')
   assert.equal(firstCard(planned).props.style.background, '#202b3b')
 })
 

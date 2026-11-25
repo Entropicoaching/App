@@ -41,7 +41,8 @@ test('single week remains readable; long block names wrap; missing dates stay ab
   const p = programQolFixture(), week = { ...p.allWeeks[1], week_number: 0,
     block_name: 'LangtBloknavn'.repeat(20), start_date: null }
   const tree = render({ allWeeks: [week], currentWeek: week, viewingWeekIdx: 0 })
-  readable(nodes(tree, n => n.type === 'div' && text(n) === 'Uge 0')[0])
+  // Ordre 2370: blokoversigten siger Uge x af y, så ugekortet gentager ikke Uge N.
+  assert.equal(nodes(tree, n => n.type === 'div' && text(n) === 'Uge 0').length, 0)
   const blockName = nodes(tree, n => n.type === 'span' && text(n) === week.block_name)[0]
   assert.equal(blockName.props.style.whiteSpace, 'normal')
   assert.equal(blockName.props.style.overflowWrap, 'anywhere')
