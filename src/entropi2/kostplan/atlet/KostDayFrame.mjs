@@ -91,7 +91,7 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
         `${dayLabel(date, day)} · ${new Intl.DateTimeFormat('da-DK', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(day + 'T00:00:00Z'))}`)))),
     // U1: today's habit card sits right above the "Log mad" entry; the full diary stays below.
     ...(foodDayAvailable ? [
-      ...(checkin ? [React.createElement(KostvaneCheckin, { key: 'kostvane', tracker: checkin, athleteId, date, client })] : []),
+      ...(checkin ? [React.createElement(KostvaneCheckin, { key: 'kostvane', tracker: checkin, athleteId, date, client, planNames: mealsShown ? s.meals.map(meal => meal.name) : [] })] : []),
       React.createElement(FoodLogEntry, { key: 'food-entry', entry: foodEntry, gateRef: foodGate, trackerFold })] : []),
     preview && React.createElement(UpcomingPlan, { athleteId, today: date, date: selected, client, planStart }),
     // This subtree keeps its identity while browsing. No load, date change or
