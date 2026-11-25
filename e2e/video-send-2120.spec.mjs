@@ -190,6 +190,8 @@ async function main() {
         assert.ok(lift && card, 'løftvælger og kvittering skal kunne måles')
         assert.ok(card.y >= lift.y + lift.height, `kvitteringen dækker løftvælgeren (kort ${Math.round(card.y)} px, vælger slutter ${Math.round(lift.y + lift.height)} px)`)
         assert.ok(card.y + card.height <= 220, `kvitteringen dækker stangbanens skive (nederste kant ${Math.round(card.y + card.height)} px)`)
+        // Ordre 2179: fartvisningen (Rep n: m/s, tegnet på lærredet) er skjult i sendt-tilstand, så den ikke ligger halvt bag kortet.
+        assert.equal(await sent.frame.locator('#canvas').getAttribute('data-vel-panel'), 'hidden', 'fartvisningen ligger bag kvitteringen')
         const knapBox = await sent.frame.getByRole('button', { name: 'Se i Beskeder' }).boundingBox()
         assert.ok(knapBox && knapBox.y >= 0 && knapBox.y + knapBox.height <= 844, 'Se i Beskeder skal ses uden scroll')
         const knap = sent.frame.getByRole('button', { name: 'Se i Beskeder' })

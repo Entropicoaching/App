@@ -4284,6 +4284,10 @@ function vcVelocityPanelSafeBounds() {
 
 function drawVelPanel() {
   velPanelHits = [];
+  // ORDRE 2179: i sendt-tilstand står kvitteringen øverst; fartvisningen (canvas) skjules, så den ikke ligger halvt bag kortet.
+  const velPanelHidden = document.body.dataset.athleteState === 'sent';
+  canvas.dataset.velPanel = velPanelHidden ? 'hidden' : 'shown';
+  if (velPanelHidden) return;
   const path = strokes.filter(s => s.type === 'path' && s.reps && s.reps.length).pop();
   if (!path) return;
   const fs = Math.max(16, canvas.width / 60);
