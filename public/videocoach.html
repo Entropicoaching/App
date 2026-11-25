@@ -4290,7 +4290,10 @@ function drawVelPanel() {
   if (velPanelHidden) return;
   const path = strokes.filter(s => s.type === 'path' && s.reps && s.reps.length).pop();
   if (!path) return;
-  const fs = Math.max(16, canvas.width / 60);
+  // Ordre 2209: skriften skal kunne læses på en telefon: mindst 11 px (rep-linjer) og 9 px (forklaring) som vist, ikke som lærredspixel.
+  const cssK = (canvas.getBoundingClientRect().width || canvas.width) / canvas.width;
+  const fs = Math.max(16, canvas.width / 60, 11 / cssK);
+  const lfs = Math.max(fs * 0.62, 9 / cssK);
   const first = vcMeasuredReps(path.reps)[0];
   const lines = path.reps.map((r, i) => {
     const loss = r !== first && !vcNoSpeed(r) ? Math.round((1 - r.mcv / first.mcv) * 100) : null;
@@ -4298,15 +4301,9 @@ function drawVelPanel() {
            (loss !== null ? `   ${loss >= 0 ? '−' : '+'}${Math.abs(loss)}%` : '');
   });
   ctx.save();
-  const legend = 'grøn=hurtig · rød=langsom · tryk på rep = sammenlign';
-  ctx.font = `bold ${fs}px sans-serif`;
-  let w = Math.max(...lines.map(l => ctx.measureText(l).width)) + fs * 1.5;
-  ctx.font = `${fs * 0.62}px 'IBM Plex Mono', monospace`;
-  w = Math.max(w, ctx.measureText(legend).width + fs * 1.4);   // boksen skal også rumme forklaringen
-  ctx.font = `bold ${fs}px sans-serif`;
-  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  const legendRows = ['grøn=hurtig · rød=langsom', 'tryk på rep = sammenlign'];   // samme tekst, delt i to linjer så den er bred nok til at kunne læses
+  const legendH = legendRows.length * lfs * 1.4;
   const safe = vcVelocityPanelSafeBounds();
-  const panelHeight = (lines.length + 1.9) * fs * 1.3;
   let panelX = safe.left + safe.padX;
   let panelY = safe.top + safe.padY;
   // Ordre 2189: løftvælgeren ligger over lærredet; fartvisningen starter under den.
@@ -4316,25 +4313,42 @@ function drawVelPanel() {
     const liftBottom = (liftEl.getBoundingClientRect().bottom - cRect.top) * (canvas.height / cRect.height);
     if (liftBottom > 0) panelY = Math.max(panelY, liftBottom + safe.padY);
   }
+  // Ordre 2209: ved mange reps færre linjer og "+N", så panelet bliver inden for scenen.
+  const maxRows = Math.max(1, Math.floor((safe.bottom - safe.padY - panelY - legendH - fs * 0.3) / (fs * 1.3) - 0.4));
+  const rows = lines.map((text, idx) => ({ text, idx }));
+  if (rows.length > maxRows) {
+    const keep = Math.max(1, maxRows - 1);
+    rows.splice(keep, rows.length - keep, { text: `+${lines.length - keep}`, idx: -1 });
+  }
+  ctx.font = `bold ${fs}px sans-serif`;
+  let w = Math.max(...rows.map(r => ctx.measureText(r.text).width)) + fs * 1.5;
+  ctx.font = `${lfs}px 'IBM Plex Mono', monospace`;
+  const legendW = Math.max(...legendRows.map(l => ctx.measureText(l).width)) + fs * 1.4;
+  w = Math.max(w, legendW);   // boksen skal også rumme forklaringen
+  ctx.font = `bold ${fs}px sans-serif`;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  const repsBottom = (rows.length + 0.4) * fs * 1.3;
+  const panelHeight = repsBottom + legendH + fs * 0.3;
   if (safe.right - safe.left > w + safe.padX * 2)
     panelX = Math.min(panelX, safe.right - w - safe.padX);
   if (safe.bottom - safe.top > panelHeight + safe.padY * 2)
     panelY = Math.min(panelY, safe.bottom - panelHeight - safe.padY);
   ctx.fillRect(panelX, panelY, w, panelHeight);
   { const k = canvas.width / (canvas.getBoundingClientRect().width || canvas.width), cr = canvas.getBoundingClientRect();
-    canvas.dataset.velPanelRect = [cr.left + panelX / k, cr.top + panelY / k, cr.left + (panelX + w) / k, cr.top + (panelY + panelHeight) / k].map(Math.round).join(','); }
-  lines.forEach((l, i) => {
-    const loss = path.reps[i] !== first && !vcNoSpeed(path.reps[i]) ? 1 - path.reps[i].mcv / first.mcv : 0;
-    ctx.fillStyle = vcNoSpeed(path.reps[i]) ? 'rgba(237,234,226,0.55)'
+    canvas.dataset.velPanelRect = [cr.left + panelX / k, cr.top + panelY / k, cr.left + (panelX + w) / k, cr.top + (panelY + panelHeight) / k].map(Math.round).join(',');
+    canvas.dataset.velFs = (fs / k).toFixed(1); canvas.dataset.velLegendFs = (lfs / k).toFixed(1); canvas.dataset.velLegendW = Math.round(legendW / k); }
+  rows.forEach((row, i) => {
+    const rep = row.idx >= 0 ? path.reps[row.idx] : null;
+    const loss = rep && rep !== first && !vcNoSpeed(rep) ? 1 - rep.mcv / first.mcv : 0;
+    ctx.fillStyle = !rep || vcNoSpeed(rep) ? 'rgba(237,234,226,0.55)'
       : loss > 0.2 ? '#ff453a' : loss > 0.1 ? '#ffd60a' : '#4cd964';
     const ly = panelY + (i + 1.1) * fs * 1.3;
-    ctx.fillText((path.ghostRep === i ? '👻 ' : '') + l, panelX + fs * 0.7, ly);
-    velPanelHits.push({ x: panelX, y: ly - fs, w, h: fs * 1.3, idx: i, path });
+    ctx.fillText((rep && path.ghostRep === row.idx ? '👻 ' : '') + row.text, panelX + fs * 0.7, ly);
+    if (rep) velPanelHits.push({ x: panelX, y: ly - fs, w, h: fs * 1.3, idx: row.idx, path });
   });
   ctx.fillStyle = 'rgba(237,234,226,0.55)';
-  ctx.font = `${fs * 0.62}px 'IBM Plex Mono', monospace`;
-  ctx.fillText(legend, panelX + fs * 0.7,
-    panelY + (lines.length + 1.1) * fs * 1.3);
+  ctx.font = `${lfs}px 'IBM Plex Mono', monospace`;
+  legendRows.forEach((l, j) => ctx.fillText(l, panelX + fs * 0.7, panelY + repsBottom + (j + 0.9) * lfs * 1.4));
   ctx.restore();
 }
 

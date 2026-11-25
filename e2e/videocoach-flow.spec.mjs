@@ -31,7 +31,7 @@ import { startVite, launchBrowser, APP_URL, MOCK_PORT, OUT_DIR, ROOT, ensureCoac
 import { calibrateAthlete, CLICK_AT_S } from './athlete-film-et-saet.mjs'
 import { N_REPS } from '../scripts/make-test-clip.mjs'
 
-const MOBILE = { width: 390, height: 844 }
+const MOBILE = { width: Number(process.env.E2E_VW || 390), height: 844 }
 
 async function readTable(mockUrl, name) {
   const res = await fetch(`${mockUrl}/__e2e/table?name=${encodeURIComponent(name)}`)
@@ -150,7 +150,7 @@ async function main() {
   let ignored404 = 0
 
   async function withPage(fn) {
-    const page = await browser.newPage({ viewport: MOBILE })
+    const page = await browser.newPage({ viewport: MOBILE, colorScheme: process.env.E2E_SCHEME || 'light' })
     page.on('pageerror', err => errors.push(`pageerror: ${err.message}`))
     page.on('console', msg => { if (msg.type() === 'error') errors.push(`console.error: ${msg.text()}`) })
     page.on('response', res => {

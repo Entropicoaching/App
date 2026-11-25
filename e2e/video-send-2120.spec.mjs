@@ -102,8 +102,17 @@ async function filmAndSend(page, clipPath) {
       const p = (c.dataset.velPanelRect || '').split(',').map(Number)
       const box = id => { const e = document.getElementById(id); const r = e && !e.hidden && e.getClientRects().length ? e.getBoundingClientRect() : null; return r && r.height > 1 ? r : null }
       const hit = r => !!(r && p.length === 4 && p[0] < r.right && r.left < p[2] && p[1] < r.bottom && r.top < p[3])
-      return { shown: c.dataset.velPanel === 'shown', hasRect: p.length === 4, lift: hit(box('vcLiftSlot')), banner: hit(box('banner')) }
+      const st = document.getElementById('stage').getBoundingClientRect(), lr = box('vcLiftSlot')
+      return { shown: c.dataset.velPanel === 'shown', hasRect: p.length === 4, lift: hit(box('vcLiftSlot')), banner: hit(box('banner')),
+        fsRep: Number(c.dataset.velFs), fsLegend: Number(c.dataset.velLegendFs), legendW: Number(c.dataset.velLegendW), rect: p,
+        inside: p.length === 4 && p[0] >= st.left - 1 && p[2] <= st.right + 1 && p[1] >= st.top - 1 && p[3] <= st.bottom + 1,
+        belowLift: !lr || p[1] >= lr.bottom - 1 }
     })
+    console.log(`FARTPANEL ${VW}px: rep ${ov.fsRep}px, forklaring ${ov.fsLegend}px, forklaring-bredde ${ov.legendW}, panel ${ov.rect}`)
+    assert.ok(ov.fsRep >= 11, `resultat: rep-linjerne er for smaa (${ov.fsRep}px, kraev mindst 11)`)
+    assert.ok(ov.fsLegend >= 9, `resultat: forklaringen er for lille (${ov.fsLegend}px, kraev mindst 9)`)
+    assert.ok(ov.inside && ov.belowLift, `resultat: fartvisningen ligger ikke inden for scenen og under loeftvaelgeren (${ov.rect})`)
+    assert.ok(ov.legendW <= ov.rect[2] - ov.rect[0], 'resultat: forklaringen er bredere end panelet')
     assert.ok(ov.shown && ov.hasRect, 'resultat: fartvisningen skal ses')
     assert.equal(ov.lift, false, 'resultat: fartvisningen ligger bag løftvælgeren')
     assert.equal(ov.banner, false, 'resultat: fartvisningen ligger bag instruktionsbanneret')
@@ -117,7 +126,8 @@ async function filmAndSend(page, clipPath) {
   await frame.locator('#athleteInstantResult').waitFor({ state: 'visible', timeout: 5000 })
   // ORDRE 2147: sendpanelet kan bruges ved 390 px, også på en lav skærm (667 px): Send brydes højst over 2 linjer, alle tre
   // knapper står frit, og Belastning ligger synligt over knaplinjen uden rulning.
-  for (const h of [844, 667]) {
+  // Belastning under knaplinjen ved mange reps er fundet i ordre 2200 og hører ikke til ordre 2209 (kun fartpanelets skrift).
+  for (const h of Number(process.env.E2E_REPS || 5) === 5 ? [844, 667] : []) {
     await page.setViewportSize({ width: VW, height: h })
     await page.waitForTimeout(300)
     const m = await frame.locator('body').evaluate(() => {
@@ -147,7 +157,7 @@ async function filmAndSend(page, clipPath) {
 
 async function main() {
   const out = process.env.OUT_1952 || OUT_DIR
-  const { path: clipPath } = ensureCoachSporingClip('glat')
+  const { path: clipPath } = ensureCoachSporingClip('glat', Number(process.env.E2E_REPS || 5))
   const mock = createMockSupabase(buildSeed({}))
   await mock.listen(MOCK_PORT)
   const mockUrl = `http://127.0.0.1:${MOCK_PORT}`

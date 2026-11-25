@@ -57,7 +57,7 @@ mkdirSync(outDir, { recursive: true })
 // import-rækkefølgen (se toptekstens note).
 function isGlat() { return process.argv.includes('--glat') || process.env.VC_CLIP_GLAT === '1' }
 function clipPaths() {
-  const suffix = isGlat() ? '-glat' : ''
+  const suffix = (isGlat() ? '-glat' : '') + (N_REPS !== 5 ? `-r${N_REPS}` : '')
   return {
     outPath: join(outDir, `synthetic-set${suffix}.mp4`),
     groundTruthPath: join(outDir, `synthetic-set${suffix}.ground-truth.json`),
@@ -72,7 +72,7 @@ export const PLATE_R = 110
 const OLD_PLATE_R = 70 // fra tracker-live-bench.mjs, teksturen er skaleret herfra
 const SCALE = PLATE_R / OLD_PLATE_R
 
-export const REP_DUR = 2.4, HOLD_DUR = 1.0, N_REPS = 5, LEAD_IN = 2.0, LEAD_OUT = 2.0
+export const REP_DUR = 2.4, HOLD_DUR = 1.0, N_REPS = Math.max(1, Number(process.env.VC_CLIP_REPS) || 5), LEAD_IN = 2.0, LEAD_OUT = 2.0
 const CYCLE = REP_DUR + HOLD_DUR
 const REP_PHASE_DUR = N_REPS * REP_DUR + (N_REPS - 1) * HOLD_DUR
 export const DURATION = LEAD_IN + REP_PHASE_DUR + LEAD_OUT

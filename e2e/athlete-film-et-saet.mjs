@@ -116,7 +116,7 @@ async function main() {
   const browser = await launchBrowser()
 
   try {
-    const page = await browser.newPage({ viewport: { width: 390, height: 844 } })
+    const page = await browser.newPage({ viewport: { width: Number(process.env.E2E_VW || 390), height: 844 }, colorScheme: process.env.E2E_SCHEME || 'light' })
     await page.goto(APP_URL)
     await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email)
     await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)

@@ -108,14 +108,14 @@ export function ensureSyntheticClip() {
 // glattede vending (scripts/make-test-clip.mjs's --glat) under EGET filnavn,
 // ved siden af (aldrig i stedet for) standardklippet. Uden variant er
 // funktionen 100% uændret (samme sti, samme kald).
-export function ensureCoachSporingClip(variant) {
-  const suffix = variant ? `-${variant}` : ''
+export function ensureCoachSporingClip(variant, reps = 5) {
+  const suffix = (variant ? `-${variant}` : '') + (reps !== 5 ? `-r${reps}` : '')
   const clipPath = join(ROOT, 'test-clips', '_e2e', `coach-sporing-full${suffix}.mp4`)
   if (existsSync(clipPath)) return { path: clipPath, generatedMs: null }
   mkdirSync(join(ROOT, 'test-clips', '_e2e'), { recursive: true })
   const t0 = Date.now()
   const args = ['scripts/make-test-clip.mjs', ...(variant === 'glat' ? ['--glat'] : [])]
-  const result = spawnSync(process.execPath, args, { cwd: ROOT, stdio: 'inherit' })
+  const result = spawnSync(process.execPath, args, { cwd: ROOT, stdio: 'inherit', env: { ...process.env, VC_CLIP_REPS: String(reps) } })
   if (result.status !== 0) throw new Error(`scripts/make-test-clip.mjs fejlede ved generering af coach-sporing-klippet${variant ? ` (variant: ${variant})` : ''}`)
   const generatedMs = Date.now() - t0
   copyFileSync(join(ROOT, 'docs', 'videocoach', 'clip-cache', `synthetic-set${suffix}.mp4`), clipPath)
