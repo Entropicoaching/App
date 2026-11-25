@@ -7,7 +7,7 @@ import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import { scaledMeal } from './dayModel.mjs'
 import WaterDayLog from './WaterDayLog.mjs'
 import { readNextPlanStart } from './upcomingPlanModel.mjs'
-import { FRI_STOERRELSER, friStatus, friPost, erFriRaekke } from '../friPulje.mjs'
+import { FRI_STOERRELSER, friStatus, friPost, erFriRaekke, aabneLoggedeIds } from '../friPulje.mjs'
 import { ugeFriLinje, readUgeFri } from './ugeFriModel.mjs'
 
 // 1899 (Marc 19. nov.): Kost skal være "rigtig simpelt og overskueligt at indtaste";
@@ -94,7 +94,10 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const busy = navn => pending.some(item => item.navn === navn)
 
   const planMeals = s?.mode === 'plan' && s.planId && Array.isArray(s.meals) ? s.meals : []
-  const open = planMeals.filter(meal => !meal.eaten && !meal.blocked)
+  // 2348: et planmåltid, der er logget på anden vis, står som logget og indgår ikke i "Alt som planlagt".
+  const loggedeIds = aabneLoggedeIds(log.logs, planMeals)
+  const open = planMeals.filter(meal => !meal.eaten && !meal.blocked && !loggedeIds.has(meal.id))
+  const loggedeAlt = planMeals.filter(meal => loggedeIds.has(meal.id))
   const eaten = planMeals.filter(meal => meal.eaten)
   const blocked = planMeals.filter(meal => meal.blocked)
   const gentag = hurtigeMaaltider(log)
@@ -270,7 +273,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
           if (alive.current) setNote(ok === true ? { text: `${navn} er fortrudt.` } : { error: true, text: `${navn} blev ikke fortrudt. Det er stadig gemt.` })
         } }, 'Fortryd')),
 
-    (open.length > 0 || eaten.length > 0) && h('p', { style: label }, 'Fra din kostplan'),
+    (open.length > 0 || eaten.length > 0 || loggedeAlt.length > 0) && h('p', { style: label }, 'Fra din kostplan'),
     open.length > 0 && h('div', { style: row },
       ...open.map(meal => h('button', { key: meal.id, type: 'button', style: primary,
         disabled: busy(meal.name) || meal.canSave === false,
@@ -307,6 +310,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
               return true
             }, { gemt: `${maaltider.length} planmåltider gemt som planlagt.` })
         } }, `Alt som planlagt (${open.length})`)),
+    loggedeAlt.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `Logget: ${loggedeAlt.map(meal => meal.name).join(', ')}`),
     eaten.length > 0 && !kanRettePlan && h('p', { style: { margin: '8px 0 0' } }, `Spist: ${eaten.map(meal => meal.name).join(', ')}`),
     // 1924: tryk på et spist planmåltid åbner mængden udfyldt; Gem retter samme række.
     eaten.length > 0 && kanRettePlan && h('div', { style: row },
