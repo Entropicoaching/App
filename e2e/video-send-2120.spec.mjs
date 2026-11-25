@@ -75,6 +75,16 @@ async function filmAndSend(page, clipPath) {
   let ok = false
   for (let attempt = 0; attempt <= MAX_CALIBRATION_ATTEMPTS && !ok; attempt++) {
     if (state !== 'target') { await tap('Analysér (åbner skivevalg)', frame.locator('#allBtn')); await page.waitForTimeout(400) }
+    // Ordre 2187: ved skivevalget står budskabet kun i statuskortet; lærredets banner ligger ikke oven i det.
+    if (attempt === 0) {
+      const ov = await frame.locator('body').evaluate(() => {
+        const vis = id => { const e = document.getElementById(id); const r = e && !e.hidden ? e.getBoundingClientRect() : null; return r && r.height > 1 ? r : null }
+        const a = vis('athleteStatus'), b = vis('banner')
+        return { status: !!a, overlap: !!(a && b && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom) }
+      })
+      assert.ok(ov.status, 'skivevalget: statuskortet mangler')
+      assert.equal(ov.overlap, false, 'skivevalget: to tekster ligger oven i hinanden (statuskort og banner)')
+    }
     const j = attempt === 0 ? { x: 0, y: 0 } : { x: (attempt % 2 ? 6 : -6) * attempt, y: (attempt % 2 ? -5 : 5) * attempt }
     await canvas.click({ position: { x: base.x + j.x, y: base.y + j.y } }); taps.push(attempt ? `Skiven igen ${attempt}` : 'Tryk på skiven')
     await page.waitForTimeout(500)

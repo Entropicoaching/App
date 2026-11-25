@@ -8511,7 +8511,8 @@ allBtn.onclick = async () => {
   wizard = { step: 0, pts: [], auto: true };
   if (!SLIM) allBtn.textContent = 'Klik på skivens MIDTE';
   if (ATHLETE && setAthleteState) setAthleteState('target');
-  say(ATHLETE ? 'Tryk midt på skiven' : 'Spol til lige før løftet starter · Tryk ÉN gang midt på skiven');
+  // Ordre 2187: atleten får budskabet i statuskortet (Markér skiven); et banner med samme tekst lå oven i det.
+  say(ATHLETE ? '' : 'Spol til lige før løftet starter · Tryk ÉN gang midt på skiven');
   allBtn.classList.add('active');
 };
 
