@@ -255,13 +255,13 @@ export default function AthleteHome(props) {
       canLogWeight: typeof props.logWeight === 'function' && typeof props.setWeightInput === 'function', visKost, kostKlient,
       todayCard: u5TodayEnabled(props.u5Today) }),
     // U5: "I dag" øverst med det, der mangler, og let logning. Bag sit eget flag.
-    u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData, visKost,
+    u5TodayEnabled(props.u5Today) && !props.sessionReadOnly && h(TodayCard, { ...props, key: `u5:${athlete?.id}:${model.today}`, today: model.today, trackingData, visKost, kortDagsform: kostKlient,
       u5Training: model.kind === 'today' || model.kind === 'done' ? { kind: model.kind, logged: model.logged, total: model.total,
         exercises: target?.session.exercises } : null }),
     record && h(HomeRecordCard, { record }),
     // Ordre 1542 (Marc 16. nov.: "pas på at det ikke er gentagelser på siderne"): når "I dag" vises,
     // står vægt og dagsform kun dér; QuickLogs beholder den fulde dagsform, som "Udfyld dagsform" åbner.
-    h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow,
+    h(QuickLogs, { ...props, key: `${athlete?.id}:${model.today}`, today: model.today, getNow, kortDagsform: kostKlient,
       todayCard: u5TodayEnabled(props.u5Today) && !props.sessionReadOnly,
       trackingData, onRetry: () => setReadAttempt(n => n + 1) }),
     // Ordre 1541 (Marc 16. nov.: "pas på at det ikke føles for overvældende ... gem det i under kategorierne"):
@@ -269,7 +269,7 @@ export default function AthleteHome(props) {
     h('details', { style: { ...s.card, padding: 16 }, 'data-home-mere': '' },
       h('summary', { style: { ...s.text, minHeight: 44, cursor: 'pointer', fontWeight: 600 } }, 'Mere i dag'),
       // U7: søvn og smerte som tal, kun når tabellen findes. Uden den er forsiden som i U6.
-      u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && athlete?.id && model.today && h(DayFeeling, {
+      u7Enabled('dayData', props.u7DayData) && !props.sessionReadOnly && !kostKlient && athlete?.id && model.today && h(DayFeeling, {
         key: `u7:${athlete.id}:${model.today}`, athleteId: athlete.id, today: model.today, client: props.u5Client, storage: props.storage }),
       // U8: påmindelse og coachsvar som push, kun når pakke D og nøglen findes. Ellers som i U7.
       u8Enabled('push', props.u8Push) && !props.sessionReadOnly && athlete?.id && h(PushCard, {

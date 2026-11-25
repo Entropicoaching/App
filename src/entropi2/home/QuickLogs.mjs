@@ -16,7 +16,10 @@ const scoreButton = (label, value, selected, onClick) => h('button', { key: valu
     background: selected ? '#414139' : 'transparent' }, onClick },
 String(value), selected && h('span', { 'aria-hidden': true }, ' ✓'))
 const clock = () => new Date()
-const parentReadiness = props => Object.fromEntries(['sleep_hours', ...fields.map(([key]) => key)]
+// Ordre 2172 (Marc 24. nov.: "søvn, energi, sult, vægt"): sult findes kun i kostklientens korte Dagsform.
+const HUNGER = ['hunger', 'Sult', 'Sulten hele dagen', 'Mæt og rolig']
+const parentReadiness = props => Object.fromEntries(['sleep_hours', ...fields.map(([key]) => key),
+  ...(props.kortDagsform === true ? ['hunger'] : [])]
   .map(key => [key, props.readinessInput?.[parentKey(key)] ?? '']))
 const matches = (record, payload) => record && Object.keys(payload).every(key => record[key] === payload[key])
 const statusFor = props => {
@@ -96,7 +99,9 @@ export default function QuickLogs(props) {
     if (!current() || !available(kind)) return
     if (kind === 'weight') latest.current.setWeightInput(draft.weight)
     else latest.current.setReadinessInput(input => ({ ...input,
-      ...Object.fromEntries(Object.entries(draft.readiness).map(([key, value]) => [parentKey(key), value])) }))
+      ...Object.fromEntries(Object.entries(draft.readiness).map(([key, value]) => [parentKey(key), value])),
+      // Ordre 2145: værtens gem ved, at kun søvn og energi skal være svaret (kostklient uden træning).
+      ...(latest.current.kortDagsform === true ? { kort: true } : {}) }))
   }
   const confirmedSave = kind => async payload => {
     const p = latest.current
@@ -104,7 +109,7 @@ export default function QuickLogs(props) {
     if (!current() || p.savingReadiness || p.savingWeight || statusFor(p)?.[kind]) return false
     try {
       if (kind === 'weight' ? weightValue(p.weightInput) !== payload.weight
-        : !matches(payload, readinessValue(parentReadiness(p)))) return false
+        : !matches(payload, readinessValue(parentReadiness(p), p.kortDagsform === true))) return false
     } catch { return false }
     await (kind === 'readiness' ? p.saveReadiness() : p.logWeight())
     if (!current() || control.current !== owner) return false
@@ -135,7 +140,7 @@ export default function QuickLogs(props) {
       : { status: 'ready', complete: true, readinessRows: kind === 'readiness' ? rows : [],
         weightRows: kind === 'weight' && Array.isArray(p.weightLogs) ? p.weightLogs.filter(own) : [], mealRows: [] }
     const controller = createQuickController({ enabled: true, athleteId: athlete.id, date: today, data,
-      clock: p.quickClock, currentDay: () => current() ? today : null,
+      clock: p.quickClock, currentDay: () => current() ? today : null, kortDagsform: p.kortDagsform === true,
       save: { [kind]: confirmedSave(kind) } })
     control.current = controller
     if (controller.snapshot().phase === 'ready') {
@@ -181,7 +186,8 @@ export default function QuickLogs(props) {
   const repeat = state?.canRepeat && (open === 'weight' ? state.weightSource !== undefined : state.readinessSource !== undefined)
   const saved = state?.phase === 'saved'
   // Kortet har sit eget ét-tryks energivalg; samme valg her ville stå to gange.
-  const suggestion = !open && !covered && available('readiness') ? homeReadinessSuggestion(props) : null
+  const kort = props.kortDagsform === true
+  const suggestion = !kort && !open && !covered && available('readiness') ? homeReadinessSuggestion(props) : null
   const fast = Boolean(suggestion || open === 'readiness' && quick)
   const fastInput = open ? readinessInput : suggestion
   const selectEnergy = (value, event) => {
@@ -239,8 +245,8 @@ export default function QuickLogs(props) {
             h('label', { style: s.text }, 'Søvn (timer, valgfrit)', h('input', {
               type: 'text', inputMode: 'decimal', value: readinessInput.sleep_hours ?? '', disabled: busy, style: inputStyle,
               onChange: event => edit('readiness', 'sleep_hours', event.target.value) })),
-            ...fields.map(([key, label, low, high]) => h('fieldset', { key, disabled: busy, style: { border: 0, margin: '12px 0', padding: 0 } },
-              h('legend', { style: s.text }, `${label} · 1 ${low.toLowerCase()}, 5 ${high.toLowerCase()}`),
+            ...(kort ? [fields[0], HUNGER] : fields).map(([key, label, low, high]) => h('fieldset', { key, disabled: busy, style: { border: 0, margin: '12px 0', padding: 0 } },
+              h('legend', { style: s.text }, `${label}${key === 'hunger' ? ' (valgfrit)' : ''} · 1 ${low.toLowerCase()}, 5 ${high.toLowerCase()}`),
               h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 4 } },
                 ...[1, 2, 3, 4, 5].map(value => scoreButton(label, value,
                   Number(readinessInput[key]) === value, () => edit('readiness', key, String(value)))))))),

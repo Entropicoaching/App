@@ -30,6 +30,9 @@ import { loadOfflineSets, overlayQueuedSets, loadQueuedRatings, overlayQueuedRat
 import { browserSaysOffline, seemsOffline } from '../offlineSession.js'
 import { loadOfflineSnapshot, saveOfflineSnapshot, snapshotLogsForWeek } from './offlineSnapshot.js'
 
+// Ordre 2172: PostgREST svarer PGRST204 (Postgres 42703), når en kolonne ikke findes; her kun kolonnen hunger.
+export const manglerSultKolonne = error => (error?.code === 'PGRST204' || error?.code === '42703') && /hunger/.test(String(error?.message ?? ''))
+
 // ORDRE 397: svarer serveren ikke inden da (browseren siger online, men
 // kælderens net er dødt), vises øjebliksbilledet. Under AthleteView's 10 s-
 // grænse for "Kunne ikke indlæse", og langt over et normalt svar.
@@ -511,36 +514,50 @@ export function lavLaesninger({
 
   async function saveReadiness() {
     if (!athlete) return
+    // Ordre 2145 (Marc 24. nov.): kort Dagsform for en kostklient uden træning = søvn og energi; Hjem markerer det med kort.
+    const kort = readinessInput.kort === true
     const missing = []
     if (!readinessInput.energy) missing.push('energi')
-    if (!readinessInput.motivation) missing.push('motivation')
-    if (!readinessInput.stress) missing.push('stress')
-    if (!readinessInput.soreness) missing.push('ømhed')
+    if (!kort && !readinessInput.motivation) missing.push('motivation')
+    if (!kort && !readinessInput.stress) missing.push('stress')
+    if (!kort && !readinessInput.soreness) missing.push('ømhed')
     if (missing.length) { setReadinessError('Mangler: ' + missing.join(', ')); return }
     const sleep = parseInputNumber(readinessInput.sleep)
     if ((!optionalInput(readinessInput.sleep) && sleep === null) ||
-        ['energy', 'motivation', 'stress', 'soreness'].some(k => {
+        (kort ? ['energy'] : ['energy', 'motivation', 'stress', 'soreness']).some(k => {
           const n = parseInputNumber(readinessInput[k])
           return !Number.isInteger(n) || n < 1 || n > 5
         })) {
-      setReadinessError('Skriv gyldig søvn og hele svar fra 1 til 5.')
+      setReadinessError(kort ? 'Skriv gyldig søvn og energi fra 1 til 5.' : 'Skriv gyldig søvn og hele svar fra 1 til 5.')
       return
     }
+    // Ordre 2172: sult gemmes kun i den korte Dagsform og kun når den er valgt (valgfri, 1 til 5).
+    const hunger = kort && !optionalInput(readinessInput.hunger) ? parseInputNumber(readinessInput.hunger) : null
+    if (hunger !== null && !(Number.isInteger(hunger) && hunger >= 1 && hunger <= 5)) { setReadinessError('Vælg sult fra 1 til 5, eller lad den stå tom.'); return }
     setSavingReadiness(true)
     setReadinessError(null)
-    const score = calcReadinessScore(readinessInput)
+    const score = calcReadinessScore(kort ? { sleep: readinessInput.sleep, energy: readinessInput.energy } : readinessInput)
     const payload = {
       athlete_id: athlete.id,
       logged_date: today(),
       sleep_hours: sleep,
       energy: parseInputNumber(readinessInput.energy),
-      motivation: parseInputNumber(readinessInput.motivation),
-      stress: parseInputNumber(readinessInput.stress),
-      soreness_level: parseInputNumber(readinessInput.soreness),
-      sore_zones: readinessInput.soreZones?.length > 0 ? readinessInput.soreZones : null,
+      motivation: kort ? null : parseInputNumber(readinessInput.motivation),
+      stress: kort ? null : parseInputNumber(readinessInput.stress),
+      soreness_level: kort ? null : parseInputNumber(readinessInput.soreness),
+      sore_zones: !kort && readinessInput.soreZones?.length > 0 ? readinessInput.soreZones : null,
       readiness_score: score,
     }
-    const { error } = await trainingDatabase.from('readiness_logs').insert(payload)
+    if (hunger !== null) payload.hunger = hunger
+    let { error } = await trainingDatabase.from('readiness_logs').insert(payload)
+    // Før migrationen findes kolonnen hunger ikke. Så gemmes søvn og energi alligevel, og fejlen går til frontend_errors.
+    // Dagens log her i appen beholder sulten, så Hjems bekræftelse matcher det, atleten valgte.
+    if (error && 'hunger' in payload && manglerSultKolonne(error)) {
+      logFrontendError('saveReadiness: kolonnen hunger mangler, gemt uden sult', error, athlete.id)
+      const udenSult = { ...payload }
+      delete udenSult.hunger
+      ;({ error } = await trainingDatabase.from('readiness_logs').insert(udenSult))
+    }
     setSavingReadiness(false)
     if (error) {
       // Atleten skal ikke se en rå Supabase-fejlbesked — detaljen går til
