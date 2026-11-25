@@ -52,7 +52,7 @@ export default function TodayCard(props) {
     if (!showMeals || typeof readPlan !== 'function') return
     let active = true
     Promise.resolve(readPlan({ athleteId, today, client: latest.current.u5Client }))
-      .then(data => { if (active) setPlan(data ? { line: planLine(data), athleteId, day: today } : null) }, () => { if (active) setPlan(null) })
+      .then(data => { if (active) setPlan(data ? { line: planLine(data), planned: data.meals, athleteId, day: today } : null) }, () => { if (active) setPlan(null) })
     return () => { active = false }
   }, [showMeals, athleteId, today, readPlan])
   const trainingToday = props.u5Training?.kind === 'today' && !props.sessionReadOnly && !!athleteId
@@ -95,7 +95,8 @@ export default function TodayCard(props) {
   const wDone = weightDone(props.weightLogs, athleteId, today)
   const rDone = readinessDone({ readinessLog: props.readinessLog, trackingData: props.trackingData, athleteId, today })
   const mealData = meals?.athleteId === athleteId && meals?.day === today && meals.data?.status === 'ready'
-    ? { ...meals.data, today: meals.data.today + (copy?.saved ?? 0) } : null
+    ? { ...meals.data, today: meals.data.today + (copy?.saved ?? 0),
+      planned: plan?.athleteId === athleteId && plan?.day === today ? plan.planned : null } : null
   const training = props.u5Training
   const model = todayItems({ weight: canWeight ? { done: wDone } : null, readiness: canReadiness ? { done: rDone } : null,
     training: training ? { ...training, today: true } : null, meal: showMeals ? mealData : null })
@@ -192,7 +193,8 @@ export default function TodayCard(props) {
     setCopy({ running: false, ...result })
   }
   const go = route => () => latest.current.setTab?.(route)
-  const planText = plan?.athleteId === athleteId && plan?.day === today ? plan.line : null
+  const planText = plan?.athleteId === athleteId && plan?.day === today
+    ? (plan.planned > 1 && mealData.today > 0 ? plan.line + ' ' + mealData.today + ' af ' + plan.planned + ' logget.' : plan.line) : null
   const mealRow = () => h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
     h('p', { style: label }, 'Mad'),
     mealData.yesterday.length

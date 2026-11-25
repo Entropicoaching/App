@@ -300,7 +300,7 @@ function todayItems({ weight, readiness, training, meal }) {
 	});
 	if (meal && meal.status === "ready") items.push({
 		key: "meal",
-		done: meal.today > 0
+		done: meal.today >= (Number.isSafeInteger(meal.planned) && meal.planned > 0 ? meal.planned : 1)
 	});
 	const missing = items.filter((item) => !item.done).map((item) => item.key);
 	const done = items.filter((item) => item.done).map((item) => item.key);

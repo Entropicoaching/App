@@ -86,6 +86,15 @@ test('U5 1/4: overskriften siger hvad der mangler, i fast rækkefølge', () => {
   assert.equal(todayItems({ meal: { status: 'error' } }).headline, null)
 })
 
+test('2345: Mad er først klaret, når loggede måltider når planens antal; uden plan er ét nok', () => {
+  const mad = (today, planned) => todayItems({ meal: { status: 'ready', today, planned } })
+  assert.deepEqual(mad(1, 4).missing, ['meal'])
+  assert.deepEqual(mad(4, 4).missing, [])
+  assert.deepEqual(mad(5, 4).missing, [])
+  assert.deepEqual(mad(1, null).missing, [])
+  assert.deepEqual(mad(0, undefined).missing, ['meal'])
+})
+
 test('Kropsvægt: skrevet vægt tager komma og punktum, rundes til én decimal og kræver 30 til 250 kg', () => {
   assert.deepEqual(parseKgText('82,5'), { kg: 82.5, empty: false })
   assert.deepEqual(parseKgText(' 82.5 '), { kg: 82.5, empty: false })

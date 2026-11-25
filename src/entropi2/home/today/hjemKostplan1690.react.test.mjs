@@ -128,3 +128,17 @@ test('1690: planlinjen tåler ét måltid og manglende kcal', gate, () => {
   assert.equal(todayRead.planLine(null), null)
   assert.equal(todayRead.planLine({ meals: 0, kcal: 100 }), null)
 })
+
+test('2345: ét logget måltid af tre lukker ikke Mad-rækken på Hjem; Log mad står og tæller siger 1 af 3', gate, async () => {
+  const m = await mount({ u5ReadMeals: async () => ({ status: 'ready', today: 1, yesterday: [] }),
+    u5ReadPlan: async () => ({ meals: 3, kcal: 1696 }), setTab() {} })
+  try {
+    assert.match(m.host.textContent, /Mangler i dag: mad/)
+    assert.doesNotMatch(m.host.textContent, /Alt er logget i dag/)
+    assert.match(m.meal(), /Log mad/)
+    assert.match(m.meal(), /1 af 3 logget\./)
+  } finally { await m.done() }
+  const all = await mount({ u5ReadMeals: async () => ({ status: 'ready', today: 3, yesterday: [] }),
+    u5ReadPlan: async () => ({ meals: 3, kcal: 1696 }), setTab() {} })
+  try { assert.doesNotMatch(all.host.textContent, /Mangler i dag: mad/) } finally { await all.done() }
+})
