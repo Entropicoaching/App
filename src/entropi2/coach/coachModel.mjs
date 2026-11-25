@@ -3,7 +3,7 @@ import { messageText } from '../conversation/conversationModel.mjs'
 import { buildProgramOverblik } from '../../programOverblik.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { coachAthleteList } from './athleteListModel.mjs'
-import { coachNutritionLines, kostvaneTal } from './coachNutrition.mjs'
+import { coachNutritionLines, coachPlanEntries, kostvaneTal } from './coachNutrition.mjs'
 import { u3DataEnabled } from '../u3/flag.mjs'
 import { attentionCandidates } from './coachAttention.mjs'
 import { attentionFor } from './coachAttentionRead.mjs'
@@ -91,6 +91,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
   const attentionState = !u3 ? null : !source || source.day !== day || !athletes.every(a => source.ids?.includes(a.id)) ? 'loading'
     : source.complete === true ? 'ready' : 'unavailable'
   const u3Nutrition = u3 ? coachNutritionLines(props, day, athletes, data.rosterReady) : null
+  const planEntries = u3 ? coachPlanEntries(props, day, data.rosterReady) : null
   for (const athlete of athletes) {
     const candidates = []
     if (messages.usable) for (const track of ['besked', 'teknik']) {
@@ -138,7 +139,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
     if (u3) candidates.push(...attentionCandidates({ athlete, day,
       attention: attentionState === 'ready' ? attentionFor(source, athlete.id, day) : null,
       weeks: data.calendarReady ? plans[athlete.id] : null,
-      nutritionSource: props.coachNutrition, nutritionReady: u3Nutrition.has(athlete.id), kvitteringer: props.smerteKvittering }))
+      nutritionSource: props.coachNutrition, nutritionReady: u3Nutrition.has(athlete.id), planEntry: planEntries?.get(athlete.id), kvitteringer: props.smerteKvittering }))
     candidates.sort(order)
     const smerte = candidates.find(c => c.smerte)?.smerte
     const reasons = candidates.map(c => c.reason)

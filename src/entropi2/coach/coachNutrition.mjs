@@ -146,3 +146,10 @@ export function coachNutritionLines(props, day, athletes, rosterReady) {
   }
   return result
 }
+
+// Ordre 2184: kostplanens dagsreferencer og kostrækker pr. atlet til "Kræver dit blik", kun fra samme
+// godkendte kvittering som kostlinjerne. Ugyldig kilde eller ingen plan giver et tomt kort.
+export function coachPlanEntries(props, day, rosterReady) {
+  const source = readySource(props, day, rosterReady)
+  return source ? planSource(source, day) : new Map()
+}
