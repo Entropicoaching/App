@@ -95,6 +95,19 @@ async function filmAndSend(page, clipPath) {
   // ORDRE 2135: analysen starter selv efter skivevalget; ingen Analysér-tryk mere.
   await frame.locator('body[data-athlete-state="done"]').waitFor({ state: 'attached', timeout: 90000 })
   await frame.locator('#athleteInstantResult').waitFor({ state: 'visible', timeout: 5000 })
+  // Ordre 2189: i resultat-tilstand ligger fartvisningen (Rep n: m/s, tegnet på lærredet) frit, ikke halvt bag løftvælger eller banner.
+  {
+    const ov = await frame.locator('body').evaluate(() => {
+      const c = document.getElementById('canvas')
+      const p = (c.dataset.velPanelRect || '').split(',').map(Number)
+      const box = id => { const e = document.getElementById(id); const r = e && !e.hidden && e.getClientRects().length ? e.getBoundingClientRect() : null; return r && r.height > 1 ? r : null }
+      const hit = r => !!(r && p.length === 4 && p[0] < r.right && r.left < p[2] && p[1] < r.bottom && r.top < p[3])
+      return { shown: c.dataset.velPanel === 'shown', hasRect: p.length === 4, lift: hit(box('vcLiftSlot')), banner: hit(box('banner')) }
+    })
+    assert.ok(ov.shown && ov.hasRect, 'resultat: fartvisningen skal ses')
+    assert.equal(ov.lift, false, 'resultat: fartvisningen ligger bag løftvælgeren')
+    assert.equal(ov.banner, false, 'resultat: fartvisningen ligger bag instruktionsbanneret')
+  }
   // Ret skive (ikke talt med): tilbage til skivevalget ved startbilledet, ny skive, ny analyse.
   await frame.locator('#athleteRetSkiveBtn').click()
   await frame.locator('body[data-athlete-state="target"]').waitFor({ state: 'attached', timeout: 5000 })
