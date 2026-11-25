@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { NY_KOSTUGE_TEKST } from './nyKostuge.mjs'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
-import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, spistIgenMedPlannavn, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
+import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, spistIgenMedPlannavn, laesDetaljer, gemDetaljer, planVarerLinje } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
 import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import { scaledMeal } from './dayModel.mjs'
@@ -281,7 +281,8 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
 
     (open.length > 0 || eaten.length > 0 || loggedeAlt.length > 0) && h('p', { style: label }, 'Fra din kostplan'),
     open.length > 0 && h('div', { style: row },
-      ...open.map(meal => h('button', { key: meal.id, type: 'button', style: primary,
+      ...open.map(meal => h('span', { key: meal.id, style: { display: 'inline-flex', flexDirection: 'column', gap: 2, maxWidth: '100%' } },
+      h('button', { type: 'button', style: primary,
         disabled: busy(meal.name) || meal.canSave === false,
         'aria-label': `${meal.name}: spist som planlagt`,
         onClick: () => run(meal.name, meal.values, async () => {
@@ -291,7 +292,9 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
           return now?.phase === 'uncertain' ? { note: { error: true, text: `${meal.name}: ${now.message || 'Registreringen er uafklaret.'} Se kostplanen under Vis detaljer.`,
             retry: () => { controller.load?.(); setNote(null) }, retryText: 'Hent dagen igen' } } : false
         }) },
-      busy(meal.name) ? `Gemmer ${meal.name}…` : `${meal.name} som planlagt`)),
+      busy(meal.name) ? `Gemmer ${meal.name}…` : `${meal.name} som planlagt`),
+      // 2369: hvad der skal spises, uden at åbne Vis detaljer.
+      planVarerLinje(meal) && h('small', { style: { opacity: 0.75, fontSize: 12, lineHeight: 1.3 } }, planVarerLinje(meal)))),
       // 2156: ét tryk for resten af dagens åbne planmåltider; samme markEaten pr. måltid, ét Fortryd for gruppen.
       open.length > 1 && h('button', { type: 'button', style: primary, disabled: pending.length > 0 || open.some(meal => meal.canSave === false),
         onClick: () => {

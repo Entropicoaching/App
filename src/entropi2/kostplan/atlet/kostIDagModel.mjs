@@ -18,6 +18,17 @@ export function statusLinje(snapshot, pending = []) {
   return pending.length ? `${tekst} (gemmer)` : tekst
 }
 
+// 2369: én kort linje med varer og gram under et åbent planmåltid; samme gram som Vis detaljer (dayModel efter skalering).
+// Over 4 varer: de 3 første og "+ N mere". Ingen varer giver ingen linje.
+const gram = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
+export function planVarerLinje(meal, max = 4) {
+  const foods = (meal?.foods ?? []).filter(food => food?.name && Number(food.grams) > 0)
+  if (!foods.length) return null
+  const vis = foods.length > max ? foods.slice(0, max - 1) : foods
+  const linje = vis.map(food => `${food.name} ${gram(Number(food.grams))} g`).join(' · ')
+  return foods.length > max ? `${linje} + ${foods.length - vis.length} mere` : linje
+}
+
 // Hurtige gentagelser: favoritter, i går og seneste måltider, uden dubletter.
 export function hurtigeMaaltider(snapshot, max = 4) {
   if (!snapshot?.loaded) return []
