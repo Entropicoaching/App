@@ -663,7 +663,8 @@ export default function ProgramTab({
               ) : (
                 <>
                   {nextSession && <button type="button" data-program-next=""
-                    style={{ ...programTapTarget, ...s.btnPrimary, minHeight: 48, width: '100%', marginBottom: 16, whiteSpace: 'normal', overflowWrap: 'anywhere' }}
+                    style={{ ...programTapTarget, ...s.btnPrimary, minHeight: 48, width: '100%', marginBottom: 16, whiteSpace: 'normal', overflowWrap: 'anywhere',
+                      ...(programAppearanceOn ? { fontFamily: 'inherit', fontSize: 16, fontWeight: 600, letterSpacing: 'normal', textTransform: 'none', borderRadius: 12, padding: '12px 16px' } : {}) }}
                     onClick={() => {
                       goToWeek(nextSession.index)
                       setProgOpenSession(nextSession.sessionId)

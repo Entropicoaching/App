@@ -180,7 +180,7 @@ test('one empty athlete prompt, no implicit quick reply list; explicit coach cho
     if (role === 'coach') {
       await find(f.root, 'button').find(n => n.textContent === 'Mine hurtigsvar').events.get('click')()
       assert.match(visible(f.root), /Nyt hurtigsvar/)
-    } else assert.match(text, /Skriv til din coach herunder/)
+    } else assert.match(text, /Ingen beskeder endnu/)
     f.dispose()
   }
 })

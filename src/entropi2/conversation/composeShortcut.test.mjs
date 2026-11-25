@@ -21,31 +21,15 @@ async function mount(t, { count = 0, role = 'athlete', send } = {}) {
   return { ...f, controller, cleanup, write, input, calls }
 }
 
-for (const count of [0, 50]) test(`write shortcut: ${count} messages; one click reaches the existing draft without reads or sends`, async t => {
+// Ordre 2370 (fund 10): feltet står lige under; genvejen er fjernet, så der ikke er tre opfordringer til at skrive.
+for (const count of [0, 50]) test(`write shortcut: ${count} messages; the link is gone and a click does nothing`, async t => {
   const f = await mount(t, { count })
-  const before = f.controller.snapshot().thread.map(item => [item.key, item.unreadAthlete])
-  assert.equal(f.doc.activeElement, f.doc.body, 'mount focus is unchanged')
-  assert.equal(f.write.hidden, false); assert.equal(f.write.type, 'button')
-  assert.equal(f.write.style.minHeight, '44px')
-  assert.ok(f.host.children.indexOf(f.write) < f.host.children.indexOf(find(f.host, 'ol')[0]))
-  assert.ok(f.host.children.indexOf(find(f.host, 'ol')[0]) < f.host.children.indexOf(f.input.parentNode))
-  f.controller.draft('Syntetisk kladde med flere linjer\nbevares')
-  for (const reduced of [false, true, false]) {
-    f.setReduced(reduced); await f.write.click()
-    assert.equal(f.doc.activeElement, f.input)
-    assert.deepEqual(f.doc.focusOptions, { preventScroll: true })
-    assert.equal(f.doc.scrolled.node, f.input)
-    assert.deepEqual(f.doc.scrolled.options, { block: 'center', behavior: reduced ? 'instant' : 'smooth' })
-    assert.equal(find(f.host, 'textarea')[0], f.input)
-    assert.equal(f.input.value, 'Syntetisk kladde med flere linjer\nbevares')
-  }
-  assert.deepEqual(f.queries, Array(3).fill('(prefers-reduced-motion: reduce)'))
-  delete f.win.matchMedia; await f.write.click()
-  assert.equal(f.doc.scrolled.options.behavior, 'smooth')
-  assert.deepEqual(f.controller.snapshot().thread.map(item => [item.key, item.unreadAthlete]), before)
+  assert.equal(f.write.hidden, true)
+  f.controller.draft('Syntetisk kladde')
+  await f.write.click()
+  assert.equal(f.doc.scrolled, undefined)
+  assert.equal(f.doc.activeElement, f.doc.body)
   assert.deepEqual(f.calls, [])
-  f.cleanup(); f.doc.scrolled = null; await f.write.click()
-  assert.equal(f.doc.scrolled, null, 'disposed shortcut stays inert')
 })
 
 test('write shortcut follows the existing send/error lock and preserves the failed draft', async t => {

@@ -15,7 +15,7 @@ import { ugeFriLinje, readUgeFri } from './ugeFriModel.mjs'
 // dagsplanens egen "Spist som planlagt", så alt gemmes præcis som før.
 const h = React.createElement
 const { useEffect, useRef, useState, useSyncExternalStore } = React
-const card = { margin: 16, padding: 16, borderRadius: 12, background: '#24241f', border: '1px solid #414139', color: '#edeae2' }
+const card = { margin: '16px 0', padding: 16, borderRadius: 12, background: '#24241f', border: '1px solid #414139', color: '#edeae2' }
 const control = { minHeight: 44, minWidth: 44, maxWidth: '100%', font: 'inherit', whiteSpace: 'normal', boxSizing: 'border-box',
   background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 12px', cursor: 'pointer' }
 const primary = { ...control, background: '#edeae2', color: '#16160f', border: 0, fontWeight: 600 }
@@ -48,7 +48,7 @@ function whenReady(sources, ms = 10000) {
   })
 }
 
-export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote, client }) {
+export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote, client, skjulVaegt = false }) {
   const t = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || noneState, tracker?.snapshot || noneState)
   const s = useSyncExternalStore(controller?.subscribe || noSubscribe, controller?.snapshot || idle, controller?.snapshot || idle)
   const log = t?.athleteId === athleteId && t?.date === date ? t : none
@@ -216,7 +216,8 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
 
   // Vægt: ejerens logWeight rydder feltet ved succes og beholder det ved fejl.
   const { weightInput = '', onWeightInput, logWeight, savingWeight } = weight
-  const kanVeje = typeof logWeight === 'function' && typeof onWeightInput === 'function'
+  // Ordre 2370 (fund 5): Hjem har vægtrækken, og Vis detaljer har Din vægt; hurtigkortet gentager den ikke.
+  const kanVeje = skjulVaegt !== true && typeof logWeight === 'function' && typeof onWeightInput === 'function'
   useEffect(() => {
     if (vaegt?.phase !== 'checking' || savingWeight === true) return undefined
     if (weightInput === '') { setVaegt({ phase: 'saved', value: vaegt.value }); return undefined }
@@ -239,15 +240,16 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
         : vaegt?.phase === 'invalid' ? 'Skriv en vægt over 0 kg.' : ''
 
   return h('section', { 'aria-label': 'Kost i dag', 'data-kost-i-dag': '', style: card },
-    h('h2', { style: { margin: '0 0 4px', color: '#edeae2' } }, 'Kost i dag'),
-    h('p', { 'data-kost-i-dag-tal': '', style: { margin: 0, fontSize: '1.05em' } }, statusLinje(log, pending)),
+    // Ordre 2370 (fund 9): samme serif-overskrift som Hjem og Beskeder; tallet brydes jævnt, så protein ikke står alene.
+    h('h2', { style: { margin: '0 0 4px', color: '#edeae2', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, lineHeight: 1.15, fontWeight: 400 } }, 'Kost i dag'),
+    h('p', { 'data-kost-i-dag-tal': '', style: { margin: 0, fontSize: '1.05em', textWrap: 'balance' } }, statusLinje(log, pending)),
     maalLinje(log) && h('p', { 'data-kost-i-dag-maal': '', style: { margin: '2px 0 0', opacity: 0.85 } }, maalLinje(log)),
     // 1916: en sendt uge, der starter senere, står som én linje; "Se planen" åbner den i laget.
     nyPlan && h('div', { 'data-kost-ny-plan': nyPlan.date, style: { ...row, alignItems: 'center' } },
       h('span', null, `Ny kostplan fra ${ugedagDato(nyPlan.date)}`),
       h('button', { type: 'button', style: { ...control, minHeight: 44 }, onClick: nyPlan.onOpen }, 'Se planen')),
     // Fast højde: beskeden skifter uden at flytte knapperne.
-    h('div', { style: { minHeight: 48, marginTop: 4 } },
+    h('div', { style: { minHeight: 24, marginTop: 4 } },
       note && h('p', { role: note.error ? 'alert' : 'status', 'aria-live': 'polite', style: { margin: 0, fontWeight: note.error ? 600 : 400 } }, note.text),
       note?.retry && h('button', { type: 'button', style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, onClick: note.retry }, note.retryText || 'Prøv igen'),
       // Kostloggens egen fortrydelse (5 sekunder) for et forkert tryk.
@@ -284,7 +286,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
     (open.length > 0 || eaten.length > 0 || loggedeAlt.length > 0) && h('p', { style: label }, 'Fra din kostplan'),
     open.length > 0 && h('div', { style: row },
       ...open.map(meal => h('span', { key: meal.id, style: { display: 'inline-flex', flexDirection: 'column', gap: 2, maxWidth: '100%' } },
-      h('button', { type: 'button', style: primary,
+      h('button', { type: 'button', style: open.length > 1 ? control : primary,
         disabled: busy(meal.name) || meal.canSave === false,
         'aria-label': `${meal.name}: spist som planlagt`,
         onClick: () => run(meal.name, meal.values, async () => {
@@ -298,7 +300,8 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       // 2369: hvad der skal spises, uden at åbne Vis detaljer.
       planVarerLinje(meal) && h('small', { style: { opacity: 0.75, fontSize: 12, lineHeight: 1.3 } }, planVarerLinje(meal)))),
       // 2156: ét tryk for resten af dagens åbne planmåltider; samme markEaten pr. måltid, ét Fortryd for gruppen.
-      open.length > 1 && h('button', { type: 'button', style: primary, disabled: pending.length > 0 || open.some(meal => meal.canSave === false),
+      // Ordre 2370 (fund 4): Alt som planlagt er den ene primære knap og står øverst; de enkelte måltider er sekundære.
+      open.length > 1 && h('button', { type: 'button', style: { ...primary, order: -1, width: '100%' }, disabled: pending.length > 0 || open.some(meal => meal.canSave === false),
         onClick: () => {
           // Prøv igen bruger samme gruppe; måltider, der allerede er gemt, logges ikke igen.
           const maaltider = open.map(meal => ({ id: meal.id, name: meal.name })), gemt = new Set()
@@ -502,12 +505,12 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
     nyUge && h('section', { 'data-ny-kostuge': '', role: 'status', 'aria-label': NY_KOSTUGE_TEKST, style: card },
       h('h2', { style: { margin: '0 0 8px', fontSize: '1.15rem' } }, NY_KOSTUGE_TEKST),
       h('p', { style: { margin: 0 } }, 'Du kan stadig logge mad og vægt her, indtil den er sendt.')),
-    quick && h(KostIDag, { customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, client, water: layerOpen ? null : waterLog, nyPlan,
+    quick && h(KostIDag, { customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, skjulVaegt: true, client, water: layerOpen ? null : waterLog, nyPlan,
       onCustom: () => { if (!layerOpen) setOpen(true); setCustom(n => n + 1) } }),
     quick && h('div', { style: { padding: '0 16px 8px' } },
       h('button', { type: 'button', style: control, 'aria-expanded': layerOpen, 'aria-controls': `kost-detaljer-${athleteId}`,
         onClick: () => setOpen(!detailsOpen) }, layerOpen ? 'Skjul detaljer' : 'Vis detaljer'),
-      !layerOpen && h('p', { style: { margin: '8px 0 0', opacity: 0.85 } }, 'Makroer, gram, fødevaresøgning, skabeloner, uge og indkøb.')),
+      !layerOpen && h('p', { style: { margin: '8px 0 0', opacity: 0.85 } }, 'Uge, indkøb og flere valg.')),
     layerOpen && waterLog,
     h('div', { id: `kost-detaljer-${athleteId}`, hidden: !layerOpen, 'data-kost-detaljer': layerOpen ? 'aaben' : 'lukket' }, children))
 }

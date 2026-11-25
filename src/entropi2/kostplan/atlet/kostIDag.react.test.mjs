@@ -107,15 +107,8 @@ test('Kost i dag: ét tryk for planmåltid, i går og seneste; nyt måltid på t
   assert.equal(r.f.writes.length, before + 1)
   assert.match(all(r.card(), '[data-water-compact]')[0].textContent, /250 ml/)
 
-  // Vægt: samme logWeight som kostloggen.
-  const vaegt = all(r.card(), 'input').find(n => n.getAttribute('aria-label') === 'Vægt i kg')
-  await act(async () => { propsOf(vaegt).onChange({ currentTarget: { value: '82,4' } }); await tick() })
-  await r.render()
-  const form = all(r.card(), 'form')[0]
-  await act(async () => { await propsOf(form).onSubmit({ preventDefault() {} }); for (let i = 0; i < 4; i++) await tick() })
-  await r.render()
-  assert.deepEqual(r.weight.saved, ['82,4'])
-  assert.match(r.card().textContent, /Vægt gemt: 82,4 kg/)
+  // Ordre 2370: vægtfeltet står ikke i Kost i dag (Hjem og Vis detaljer har det).
+  assert.equal(all(r.card(), 'input').some(n => n.getAttribute('aria-label') === 'Vægt i kg'), false)
 })
 
 test('Kost i dag: tallet vises straks som ventende, og en fejlet gemning siger det tydeligt med Prøv igen', async t => {

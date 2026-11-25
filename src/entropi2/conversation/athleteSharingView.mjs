@@ -1,6 +1,7 @@
 export function athleteSharingView({ node, button, controller }) {
   const root = node('details'), summary = node('summary', 'Del et sæt fra passet')
   root.open = false
+  Object.assign(root.style, { marginTop: '16px' })
   Object.assign(summary.style, { minHeight: '44px', cursor: 'pointer' })
   const set = node('input'); set.type = 'text'; set.maxLength = 160
   set.setAttribute('aria-label', 'Sæt fra passet')

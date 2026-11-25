@@ -146,7 +146,8 @@ export function mountConversation(root, controller, { enabled = false, now = () 
   timeFeedback.append(videoSelect, seconds, timed)
   coach.append(loadQuick, quickStatus, quick, ownReplies.root, timeFeedback)
   compose.append(input, send)
-  Object.assign(root.style, { background: '#141410', color: '#edeae2', padding: '20px',
+  // Ordre 2370 (fund 9): samme sidemargen som Hjem og Program (ingen ekstra 20 px ved siden af appens egen).
+  Object.assign(root.style, { background: '#141410', color: '#edeae2', padding: '20px 0',
     fontFamily: "'IBM Plex Sans', Arial, sans-serif", lineHeight: '1.5', colorScheme: 'dark',
     maxWidth: '480px', textAlign: 'left', boxSizing: 'border-box', overflowWrap: 'anywhere' })
   let firstUnread = null
@@ -202,14 +203,17 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     title.textContent = state.role === 'coach' ? 'Samtale med atleten' : 'Din coach'
     const unread = state.thread.filter(item => state.role === 'athlete' ? item.unreadAthlete : item.unreadCoach).length
     // Marc 3. nov. (keep it simple): antallet ulaeste staar paa spring-knappen; statuslinjen siger kun det, der mangler.
-    status.textContent = state.error || (state.loading || !state.loaded ? 'Henter samtalen…' : state.thread.length ? '' : state.role === 'coach' ? 'Ingen beskeder endnu.' : 'Ingen beskeder endnu. Skriv til din coach herunder.')
+    status.textContent = state.error || (state.loading || !state.loaded ? 'Henter samtalen…' : state.thread.length ? '' : 'Ingen beskeder endnu.')
     reload.textContent = state.loading ? 'Henter…' : 'Hent igen'
+    // Ordre 2370: Hent igen er teknisk og vises kun, når noget gik galt.
+    reload.hidden = !state.error
     status.hidden = !status.textContent
     status.setAttribute('role', state.error ? 'alert' : 'status')
     input.value = state.draft
     const locked = state.busy || state.operation?.status === 'error'
     input.disabled = Boolean(locked); send.disabled = Boolean(locked || !state.draft.trim())
-    write.hidden = state.role !== 'athlete'; write.disabled = input.disabled
+    // Ordre 2370: feltet står lige under; det ekstra link var en tredje opfordring til at skrive.
+    write.hidden = true; write.disabled = input.disabled
     retry.hidden = state.operation?.status !== 'error'; retry.disabled = state.busy
     const traening = state.role === 'athlete' && state.skjulTraening !== true
     upload.hidden = !traening; coach.hidden = state.role !== 'coach'
@@ -227,9 +231,10 @@ export function mountConversation(root, controller, { enabled = false, now = () 
       clearedTimedId = state.operation.row.id
       videoSelect.value = ''; seconds.value = ''
     }
-    for (const primary of [send, timed]) Object.assign(primary.style, {
-      opacity: primary.disabled ? '0.45' : '1', cursor: primary.disabled ? 'not-allowed' : 'pointer',
-    })
+    // Ordre 2370: deaktiveret Send har læsbar tekst på almindelig flade i stedet for en dæmpet gul knap.
+    for (const primary of [send, timed]) Object.assign(primary.style, primary.disabled
+      ? { background: '#d8b16b', color: '#141410', opacity: '0.7', cursor: 'not-allowed' }
+      : { background: '#d8b16b', color: '#141410', opacity: '1', cursor: 'pointer' })
     const selected = videoSelect.value
     videoSelect.replaceChildren(node('option', 'Vælg video'))
     videoSelect.children[0].value = ''
