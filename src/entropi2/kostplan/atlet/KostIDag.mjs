@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { NY_KOSTUGE_TEKST } from './nyKostuge.mjs'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
-import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
+import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, spistIgenMedPlannavn, laesDetaljer, gemDetaljer } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
 import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import { scaledMeal } from './dayModel.mjs'
@@ -110,6 +110,12 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   // 1921: mængdefeltet ligger under Nyt måltid; åbnes det af Ret g, rulles det på plads.
   useEffect(() => { if (chosen) mangdeRef.current?.scrollIntoView?.({ block: 'nearest' }) }, [chosen?.index])
   const logMeal = meal => run(meal.meal, meal, intent => tracker.log(meal, intent))
+  // 2359b: "Spist igen" logger under et åbent planmåltids navn, når kcal og protein ligger inden for 10 %; beskeden fortæller det.
+  const spistIgen = meal => {
+    const { meal: post, plannavn } = spistIgenMedPlannavn(meal, open)
+    if (!plannavn) return logMeal(meal)
+    run(plannavn, post, intent => tracker.log(post, intent), { gemt: `Gemt som ${plannavn}` })
+  }
   const friNu = s?.mode === 'plan' && s.friKcal > 0 ? s.friKcal : 0
   const friVentende = pending.filter(item => erFriRaekke({ meal: item.navn })).reduce((n, item) => n + (Number(item.values?.kcal) || 0), 0)
   const fri = friNu ? (status => ({ ...status, brugt: status.brugt + friVentende, tilbage: status.tilbage - friVentende,
@@ -375,7 +381,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       ...gentag.map(meal => {
         const anden = andenMaengde(log, meal)
         const igen = h('button', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), type: 'button', style: control,
-          disabled: busy(meal.meal), 'aria-label': `Spist igen: ${meal.meal}`, onClick: () => logMeal(meal) }, meal.meal)
+          disabled: busy(meal.meal), 'aria-label': `Spist igen: ${meal.meal}`, onClick: () => spistIgen(meal) }, meal.meal)
         // 1921: samme måltid med en anden mængde; felt og Log står straks åbne (3 tryk mod 4).
         return !anden ? igen : h('span', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), style: { display: 'inline-flex', gap: 4 } }, igen,
           h('button', { type: 'button', style: control, disabled: busy(meal.meal), 'aria-label': `Anden mængde: ${meal.meal}`,

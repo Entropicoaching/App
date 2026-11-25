@@ -68,3 +68,20 @@ export function iGaarMedPlannavne(iGaar, planNavne) {
   })
   return iGaar.map((meal, i) => tildelt[i] ? meal : fri.length ? { ...meal, meal: fri.shift() } : meal)
 }
+
+// 2359b: "Spist igen" på et historisk måltid, hvis kcal og protein ligger inden for 10 % af et åbent planmåltid, logges under
+// planmåltidets navn (som iGaarMedPlannavne), så planmåltidet ikke står åbent og maden ikke tæller som fri. Ellers uændret.
+// aabne er kun de åbne planmåltider (ikke spist, ikke blokeret, ikke logget på anden vis), så et logget planmåltid matches ikke igen.
+const inden10 = (value, maal) => maal > 0 && Math.abs(value - maal) <= maal * 0.1
+export function spistIgenMedPlannavn(meal, aabne) {
+  const kcal = Number(meal?.kcal), protein = Number(meal?.protein)
+  if (!Number.isFinite(kcal) || !Number.isFinite(protein)) return { meal, plannavn: null }
+  let bedst = null, afstand = Infinity
+  for (const plan of Array.isArray(aabne) ? aabne : []) {
+    const maalKcal = Number(plan?.values?.kcal), maalProtein = Number(plan?.values?.protein)
+    if (!inden10(kcal, maalKcal) || !inden10(protein, maalProtein)) continue
+    const d = Math.abs(kcal - maalKcal) / maalKcal + Math.abs(protein - maalProtein) / maalProtein
+    if (d < afstand) { bedst = plan; afstand = d }
+  }
+  return bedst ? { meal: { ...meal, meal: bedst.name }, plannavn: bedst.name } : { meal, plannavn: null }
+}
