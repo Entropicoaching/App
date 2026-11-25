@@ -85,6 +85,25 @@ export function uplanlagteRaekker(logs, planNavne) {
     return true
   })
 }
+// 2348: et åbent planmåltid, hvis navn allerede har en logget række ud over de spiste planmåltiders egne, er logget på anden vis
+// (Nyt måltid, Spist igen, Hjem). Samme navnematch som uplanlagteRaekker; hver række dækker højst ét åbent planmåltid.
+export function aabneLoggedeIds(logs, meals) {
+  const raekker = new Map()
+  for (const row of Array.isArray(logs) ? logs : []) {
+    if (erFriRaekke(row) || isDayReceipt(row) || typeof row?.meal !== 'string' || !row.meal.trim()) continue
+    const n = navnNoegle(row.meal)
+    raekker.set(n, (raekker.get(n) ?? 0) + 1)
+  }
+  const liste = Array.isArray(meals) ? meals : []
+  for (const meal of liste) if (meal.eaten || meal.blocked) { const n = navnNoegle(meal.name); raekker.set(n, (raekker.get(n) ?? 0) - 1) }
+  const ids = new Set()
+  for (const meal of liste) {
+    if (meal.eaten || meal.blocked) continue
+    const n = navnNoegle(meal.name)
+    if ((raekker.get(n) ?? 0) > 0) { raekker.set(n, raekker.get(n) - 1); ids.add(meal.id) }
+  }
+  return ids
+}
 const kcalTal = row => Number(String(row.kcal).replace(',', '.')) || 0
 export function friStatus({ friKcal, logs, planNavne }) {
   const pulje = num(friKcal) !== null && friKcal > 0 ? friKcal : 0

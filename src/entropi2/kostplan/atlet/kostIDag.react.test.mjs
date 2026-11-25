@@ -483,3 +483,24 @@ test('Alt som planlagt 2156: en uafklaret registrering prøves ikke blindt igen'
   assert.ok(button(r.card(), 'Hent dagen igen'))
   assert.equal(r.inserts().length, 2, 'ingen tredje række og ingen gentagelse af den uafklarede')
 })
+
+// 2348 (Marc 24. nov.: "rent faktisk følger planerne"): et planmåltid logget på anden vis står som logget og logges ikke igen.
+test('Planmåltid logget 2348: Spist igen med plannavn giver logget, ingen som-planlagt-knap og ingen dobbeltlogning', async t => {
+  const r = await mount(t, { igaar: ['Frokost <syntetisk>', 'Aftensmad'] })
+  assert.equal(alt2156(r).textContent, 'Alt som planlagt (2)')
+  await r.press(r.labelled('Spist igen: Frokost <syntetisk>'))
+  assert.equal(!!r.labelled('Frokost <syntetisk>: spist som planlagt'), false)
+  assert.match(r.card().textContent, /Logget: Frokost <syntetisk>/)
+  assert.ok(r.labelled('Aftensmad: spist som planlagt'))
+  assert.equal(!!alt2156(r), false, 'ét åbent måltid giver ingen samlet knap')
+  assert.equal(r.inserts().length, 1)
+})
+
+test('Planmåltid logget 2348: tre planmåltider hvor kun ét er logget under plannavn giver Alt som planlagt (2) og tre rækker i alt', async t => {
+  const r = await mount(t, { tredjeMaaltid: true, extraRows: [{ ...meal(date, 'Aftensmad', 700, 40), id: 'nyt-1' }] })
+  assert.match(r.card().textContent, /Logget: Aftensmad/)
+  assert.equal(alt2156(r).textContent, 'Alt som planlagt (2)')
+  await r.press(alt2156(r))
+  assert.deepEqual(idag2156(r).map(row => row.meal).sort(), ['Aftensmad', 'Frokost <syntetisk>', 'Mellemmåltid'])
+  assert.equal(r.inserts().length, 2, 'den loggede Aftensmad logges ikke igen')
+})

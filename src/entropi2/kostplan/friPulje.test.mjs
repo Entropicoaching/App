@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { FRI_MAKS, FRI_NIVEAUER, FRI_STOERRELSER, friProcent, friFraBasis, medFriPct, fordelDag, skalerMaaltider, friStatus, friPost, friUge, erFriRaekke, uplanlagteRaekker, navnNoegle } from './friPulje.mjs'
+import { FRI_MAKS, FRI_NIVEAUER, FRI_STOERRELSER, friProcent, friFraBasis, medFriPct, fordelDag, skalerMaaltider, friStatus, friPost, friUge, erFriRaekke, uplanlagteRaekker, navnNoegle, aabneLoggedeIds } from './friPulje.mjs'
 import { readAthletePlan } from './atlet/dayModel.mjs'
 
 // Syntetiske fødevarer pr. 100 g (ingen rigtige data).
@@ -162,4 +162,19 @@ test('2202: planmåltid tæller som base uanset versaler og mellemrum i navnet; 
   const ekstra = { meal: 'Ekstra pizza', kcal: 900 }
   assert.deepEqual(uplanlagteRaekker([...rows('d'), ekstra], ny), [ekstra])
   assert.equal(uplanlagteRaekker([...rows('d'), { meal: 'FROKOST', kcal: 50 }], ny).length, 1)
+})
+
+// 2348: planmåltider logget på anden vis står som logget og tælles ikke som åbne.
+test('aabneLoggedeIds 2348: logget under plannavn (Nyt måltid, Spist igen) er logget; kun ét af to; spist og fri rækker tæller ikke med', () => {
+  const plan = [{ id: 'a', name: 'Frokost' }, { id: 'b', name: 'Aftensmad' }, { id: 'c', name: 'Mellemmåltid' }]
+  const raekke = meal => ({ meal, kcal: 300 })
+  assert.deepEqual([...aabneLoggedeIds([raekke('frokost  ')], plan)], ['a'])
+  assert.deepEqual([...aabneLoggedeIds([raekke('Aftensmad'), raekke('Fri: Kage')], plan)], ['b'])
+  assert.deepEqual([...aabneLoggedeIds([raekke('Aftensmad')], plan)].length, 1)
+  assert.deepEqual([...aabneLoggedeIds([], plan)], [])
+  assert.deepEqual([...aabneLoggedeIds([raekke('Kyllingebryst')], plan)], [])
+  // Rækken til et spist planmåltid dækker kun det selv; to planmåltider med samme navn og én række giver ingen logget.
+  const dobbelt = [{ id: 'x', name: 'Snack', eaten: true }, { id: 'y', name: 'Snack' }]
+  assert.deepEqual([...aabneLoggedeIds([raekke('Snack')], dobbelt)], [])
+  assert.deepEqual([...aabneLoggedeIds([raekke('Snack'), raekke('Snack')], dobbelt)], ['y'])
 })
