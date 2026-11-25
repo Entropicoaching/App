@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { FRI_MAKS, FRI_NIVEAUER, FRI_STOERRELSER, friProcent, friFraBasis, medFriPct, fordelDag, skalerMaaltider, friStatus, friPost, friUge, erFriRaekke } from './friPulje.mjs'
+import { FRI_MAKS, FRI_NIVEAUER, FRI_STOERRELSER, friProcent, friFraBasis, medFriPct, fordelDag, skalerMaaltider, friStatus, friPost, friUge, erFriRaekke, uplanlagteRaekker } from './friPulje.mjs'
 import { readAthletePlan } from './atlet/dayModel.mjs'
 
 // Syntetiske fødevarer pr. 100 g (ingen rigtige data).
@@ -121,4 +121,28 @@ test('friUge: to planmåltider med samme navn tæller kun lige så mange gange, 
   const to = [{ date: '2026-11-24', meal: 'Snack', kcal: 100 }, { date: '2026-11-24', meal: ' Snack', kcal: 100 }, { date: '2026-11-24', meal: 'Morgen', kcal: 400 }]
   assert.equal(friUge({ dage, raekker: en }).basis, 1)
   assert.deepEqual(friUge({ dage, raekker: to }), { basis: 3, basisAf: 3, holdt: 1, vurderede: 1, dage: 1 })
+})
+
+test('2193: uplanlagt mad uden "Fri: " tæller som brugt pulje i friStatus og friUge, planmåltider og dagskvittering gør ikke', () => {
+  const plan = ['Morgen', 'Middag', 'Aften']
+  const base = plan.map(meal => ({ meal, kcal: 600 }))
+  const ekstra = { meal: 'Ekstra pizza', kcal: 900 }
+  const kvittering = { meal: '[appData2-day-v1]["x"]', kcal: 0 }
+  assert.deepEqual(uplanlagteRaekker([...base, ekstra, kvittering, { meal: 'Fri: lille', kcal: 100 }], plan), [ekstra])
+  // Uden kendt base regnes der som før kun på "Fri: "-rækkerne.
+  assert.deepEqual(uplanlagteRaekker([...base, ekstra], undefined), [])
+  assert.deepEqual(friStatus({ friKcal: 300, logs: [...base, ekstra] }), { pulje: 300, brugt: 0, tilbage: 300, over: false })
+  assert.deepEqual(friStatus({ friKcal: 300, logs: [...base, ekstra], planNavne: plan }), { pulje: 300, brugt: 900, tilbage: -600, over: true })
+  // Fri-række og uplanlagt række lægges sammen; en lille uplanlagt post inden for puljen holder den.
+  assert.deepEqual(friStatus({ friKcal: 400, logs: [...base, { meal: 'Fri: lille', kcal: 100 }, { meal: 'Frugt', kcal: 150 }], planNavne: plan }),
+    { pulje: 400, brugt: 250, tilbage: 150, over: false })
+  // Et planmåltid logget to gange: anden række er uplanlagt.
+  assert.equal(friStatus({ friKcal: 1000, logs: [...base, { meal: 'Morgen', kcal: 600 }], planNavne: plan }).brugt, 600)
+  const dag = { date: '2026-11-24', state: 'approved', friPct: 15, targets: { kcal: 2400 }, maaltider: plan }
+  const r = date => base.map(row => ({ ...row, date }))
+  const medEkstra = [...r(dag.date), { ...ekstra, date: dag.date }]
+  assert.deepEqual(friUge({ dage: [dag], raekker: r(dag.date) }), { basis: 3, basisAf: 3, holdt: 1, vurderede: 1, dage: 1 })
+  assert.deepEqual(friUge({ dage: [dag], raekker: medEkstra }), { basis: 3, basisAf: 3, holdt: 0, vurderede: 1, dage: 1 })
+  // Uplanlagt mad inden for puljen (360 kcal) er stadig holdt.
+  assert.equal(friUge({ dage: [dag], raekker: [...r(dag.date), { date: dag.date, meal: 'Kage', kcal: 360 }] }).holdt, 1)
 })

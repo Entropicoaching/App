@@ -2,6 +2,7 @@
 // Niveauet friPct (0 til 30 % af dagens kcal) ligger i versionens calculation_basis.fri_pct,
 // så der er ingen ny kolonne. Mangler det, er det 0, og ugen opfører sig som før.
 // Protein ligger altid i basen; puljen er kcal og aldrig protein. Ren model uden læsning.
+import { isDayReceipt } from '../../mealEvidence.mjs'
 export const FRI_NIVEAUER = Object.freeze([0, 10, 15, 20, 30])
 export const FRI_MAKS = 30
 export const FRI_UDGANGSPUNKT = 15
@@ -68,10 +69,26 @@ export function skalerMaaltider(meals, pct) {
 
 // Dagens fri kcal: brugt (rækker, der starter med "Fri: ") og tilbage. Kun kcal; protein tælles ikke.
 export const erFriRaekke = row => typeof row?.meal === 'string' && row.meal.trimStart().startsWith(FRI_PREFIX)
-export function friStatus({ friKcal, logs }) {
+// 2193: mad logget under et andet navn end et planmåltid og uden "Fri: " er også brugt pulje. Hver planmåltidsrække
+// dækker højst ét planmåltid af samme navn; resten af rækkerne er uplanlagte. Dagskvitteringer er ikke mad.
+// Uden planNavne (ukendt base) regnes der kun på "Fri: "-rækkerne som før.
+export function uplanlagteRaekker(logs, planNavne) {
+  if (!Array.isArray(planNavne)) return []
+  const dækket = new Map()
+  for (const navn of planNavne) { const n = String(navn).trim(); dækket.set(n, (dækket.get(n) ?? 0) + 1) }
+  return (Array.isArray(logs) ? logs : []).filter(row => {
+    if (erFriRaekke(row) || isDayReceipt(row) || typeof row?.meal !== 'string' || !row.meal.trim()) return false
+    const n = row.meal.trim()
+    if ((dækket.get(n) ?? 0) > 0) { dækket.set(n, dækket.get(n) - 1); return false }
+    return true
+  })
+}
+const kcalTal = row => Number(String(row.kcal).replace(',', '.')) || 0
+export function friStatus({ friKcal, logs, planNavne }) {
   const pulje = num(friKcal) !== null && friKcal > 0 ? friKcal : 0
-  const brugt = (Array.isArray(logs) ? logs : []).filter(erFriRaekke)
-    .reduce((n, row) => n + (Number(String(row.kcal).replace(',', '.')) || 0), 0)
+  const raekker = Array.isArray(logs) ? logs : []
+  const brugt = [...raekker.filter(erFriRaekke), ...uplanlagteRaekker(raekker, planNavne)]
+    .reduce((n, row) => n + kcalTal(row), 0)
   return { pulje, brugt, tilbage: pulje - brugt, over: brugt > pulje }
 }
 export function friPost(stoerrelse, kcal) {
@@ -103,7 +120,7 @@ export function friUge({ dage, raekker }) {
     }
     if (dagens.length) {
       vurderede++
-      const { over } = friStatus({ friKcal: Math.round(d.targets.kcal * friProcent(d.friPct) / 100), logs: dagens })
+      const { over } = friStatus({ friKcal: Math.round(d.targets.kcal * friProcent(d.friPct) / 100), logs: dagens, planNavne: Array.isArray(d.maaltider) ? d.maaltider : undefined })
       if (!over) holdt++
     }
   }

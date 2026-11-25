@@ -110,7 +110,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const friNu = s?.mode === 'plan' && s.friKcal > 0 ? s.friKcal : 0
   const friVentende = pending.filter(item => erFriRaekke({ meal: item.navn })).reduce((n, item) => n + (Number(item.values?.kcal) || 0), 0)
   const fri = friNu ? (status => ({ ...status, brugt: status.brugt + friVentende, tilbage: status.tilbage - friVentende,
-    over: status.brugt + friVentende > status.pulje }))(friStatus({ friKcal: friNu, logs: log.logs })) : null
+    over: status.brugt + friVentende > status.pulje }))(friStatus({ friKcal: friNu, logs: log.logs, planNavne: planMeals.map(meal => meal.name) })) : null
   // 2177: ugens base og pulje som coachen ser dem. Planen læses én gang pr. atlet, dag og klient; kostrækkerne igen, når loggen ændres.
   const [ugeFri, setUgeFri] = useState(null)
   const ugePlan = useRef(null)

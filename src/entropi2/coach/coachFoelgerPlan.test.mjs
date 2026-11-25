@@ -146,3 +146,17 @@ test('ferie og ugyldig kilde: ingen grund', () => {
   u3Fra.u3Data = false
   assert.equal(liste(u3Fra), undefined)
 })
+
+test('2193: uplanlagt mad uden "Fri: " tæller som brugt pulje og giver "Følger ikke kostplanen"', () => {
+  const d = dates(6)
+  const med = (uplanlagt, kcal) => d.flatMap((date, i) => [...baseRows([date]), ...(i < uplanlagt ? [meal(date, 'Ekstra pizza', kcal)] : [])])
+  // Pulje 400 kcal pr. dag: 900 kcal ekstra på 4 af 6 dage er over puljen på de fleste dage.
+  assert.deepEqual(followsPlan({ planDays: planDays(d), meals: med(4, 900) }, day), { reason: 'Følger ikke kostplanen' })
+  assert.equal(followsPlan({ planDays: planDays(d), meals: med(3, 900) }, day), null)
+  // Små uplanlagte poster inden for puljen er holdt, og en dagskvittering tæller ikke som mad.
+  assert.equal(followsPlan({ planDays: planDays(d), meals: med(6, 300) }, day), null)
+  const kvit = d.map(date => ({ athlete_id: athleteId, date, meal: '[appData2-day-v1]["x"]', kcal: 0 }))
+  assert.equal(followsPlan({ planDays: planDays(d), meals: [...baseRows(d), ...kvit] }, day), null)
+  // Samme data uden uplanlagt mad giver samme tal som før.
+  assert.equal(followsPlan({ planDays: planDays(d), meals: med(0, 900) }, day), null)
+})
