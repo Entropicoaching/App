@@ -1,5 +1,5 @@
 import { addCalendarDays, calendarDay } from '../../calendarDate.js'
-import { mentionsPain, stilstandUdeSaet, STILSTAND_SPOERG } from '../../coachBriefingRules.js'
+import { bodyPartsOf, mentionsPain, stilstandUdeSaet, STILSTAND_SPOERG } from '../../coachBriefingRules.js'
 import { nutritionTrend } from '../tracking/nutritionTrend.mjs'
 import { onVacation } from '../u3/couplings.mjs'
 import { mondayOf, shortDate } from '../u3/format.mjs'
@@ -18,14 +18,20 @@ const finite = value => typeof value === 'number' && Number.isFinite(value)
 const average = values => values.reduce((n, v) => n + v, 0) / values.length
 const dayOf = value => typeof value === 'string' ? calendarDay(/T/.test(value) ? value : value.slice(0, 10)) : null
 
+// Regionen står kun, når noten selv nævner en kropsdel; noten citeres aldrig.
+const regionText = parts => parts.length ? `, ${parts.join(' og ')}` : ''
+
 // (a) Smerteord i exercise_logs.note de seneste 14 dage. Seneste dato vises.
 export function painFromNotes(notes, today) {
   const day = calendarDay(today)
   if (!day || !Array.isArray(notes)) return null
   const from = addCalendarDays(day, -14)
-  const dates = notes.filter(r => typeof r?.note === 'string' && mentionsPain(r.note))
-    .map(r => dayOf(r.logged_at)).filter(d => d && d >= from && d <= day).sort()
-  return dates.length ? { date: dates.at(-1), reason: `Smerte nævnt ${shortDate(dates.at(-1))}` } : null
+  const hits = notes.filter(r => typeof r?.note === 'string' && mentionsPain(r.note))
+    .map(r => ({ date: dayOf(r.logged_at), parts: bodyPartsOf(r.note) })).filter(h => h.date && h.date >= from && h.date <= day)
+    .sort((a, b) => a.date.localeCompare(b.date))
+  if (!hits.length) return null
+  const last = hits.at(-1), region = regionText(last.parts)
+  return { date: last.date, reason: `Smerte nævnt ${shortDate(last.date)}${region}` }
 }
 
 // (b) Smerteord i en pas-kommentar. Kommentaren har ingen dato, så ugen tæller
@@ -39,7 +45,8 @@ export function painFromVoices(weeks, today) {
     .sort((a, b) => b.start_date.localeCompare(a.start_date))
   if (!hits.length) return null
   const n = hits[0].week_number
-  return { week: n, date: hits[0].start_date, reason: Number.isSafeInteger(n) ? `Smerte nævnt i uge ${n}` : 'Smerte nævnt i en pas-kommentar' }
+  const region = regionText([...new Set(hits[0].session_voices.filter(v => mentionsPain(v?.comment)).flatMap(v => bodyPartsOf(v.comment)))])
+  return { week: n, date: hits[0].start_date, reason: (Number.isSafeInteger(n) ? `Smerte nævnt i uge ${n}` : 'Smerte nævnt i en pas-kommentar') + region }
 }
 
 // (c) soreness_level mindst 4 på mindst 3 af de seneste 7 afsluttede dage.

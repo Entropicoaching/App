@@ -25,11 +25,11 @@ const ome = (offset, level = 4) => ({ athlete_id: athleteId, logged_date: addCal
 
 test('kvitteret smerteadvarsel skjules, og en ny smerte efter kvitteringen viser den igen', () => {
   const foerste = row(fixture({ notes: [note('2026-10-29')] }))
-  assert.equal(foerste.reason, 'Smerte nævnt 29. okt.')
+  assert.equal(foerste.reason, 'Smerte nævnt 29. okt., knæet')
   assert.deepEqual(foerste.smerte, { kind: 'notes', date: '2026-10-29', level: null })
   const kvittering = medKvittering({}, athleteId, foerste.smerte)
   assert.equal(row(fixture({ notes: [note('2026-10-29')], kvittering })), undefined)
-  assert.equal(row(fixture({ notes: [note('2026-11-02'), note('2026-10-29')], kvittering })).reason, 'Smerte nævnt 2. nov.')
+  assert.equal(row(fixture({ notes: [note('2026-11-02'), note('2026-10-29')], kvittering })).reason, 'Smerte nævnt 2. nov., knæet')
 })
 
 test('ømhed: samme antal dage forbliver kvitteret, flere dage viser den igen', () => {

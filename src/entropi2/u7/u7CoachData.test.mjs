@@ -33,7 +33,7 @@ test('U7 4/5: "Kræver dit blik" får smerte og søvn som tal; uden dagsdata er 
   const athlete = { id: A, name: 'Syntetisk Atlet' }
   const base = { readiness: [], notes: [{ athlete_id: A, logged_at: `${d(-1)}T18:00:00Z`, note: 'lidt smerte i knæet' }] }
   const u6 = attentionCandidates({ athlete, day, attention: base, weeks: [] })
-  assert.deepEqual(u6.map(c => c.reason), ['Smerte nævnt 10. nov.'])
+  assert.deepEqual(u6.map(c => c.reason), ['Smerte nævnt 10. nov., knæet'])
   const u7 = attentionCandidates({ athlete, day, attention: { ...base, daily }, weeks: [] })
   assert.deepEqual(u7.map(c => [c.u3, c.reason]), [['pain', 'Smerte 6/10 (venstre knæ) 9. nov.'], ['sleep', 'Søvn 1,5/5 i snit de sidste 3 dage']])
   const draft = attentionDraft({ row: { athlete, u3: 'pain', key: `u3-pain-${A}` }, attention: { ...base, daily }, day })

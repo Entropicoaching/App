@@ -30,16 +30,25 @@ const readiness = (offset, score, soreness = 2) => ({ athlete_id: athleteId, log
 test('smerte i en note giver rang 0 med dato, "ingen smerter" giver ingen række', () => {
   const pain = row(fixture({ notes: [{ athlete_id: athleteId, logged_at: '2026-10-29T17:00:00Z', note: NOTE }] }))
   assert.equal(pain.rank, 0)
-  assert.equal(pain.reason, 'Smerte nævnt 29. okt.')
+  assert.equal(pain.reason, 'Smerte nævnt 29. okt., knæet')
   assert.equal(row(fixture({ notes: [{ athlete_id: athleteId, logged_at: '2026-10-29T17:00:00Z', note: 'ingen smerter i dag' }] })), undefined)
   // En note ældre end 14 dage tæller ikke.
   assert.equal(row(fixture({ notes: [{ athlete_id: athleteId, logged_at: '2026-10-18T17:00:00Z', note: NOTE }] })), undefined)
 })
 
+test('smerte uden kropsdel i noten eller kommentaren viser kun datoen, og to kropsdele nævnes begge', () => {
+  const at = note => row(fixture({ notes: [{ athlete_id: athleteId, logged_at: '2026-10-29T17:00:00Z', note }] })).reason
+  assert.equal(at('Syntetisk: det gjorde ondt på sidste sæt'), 'Smerte nævnt 29. okt.')
+  assert.equal(at('Syntetisk: smerter i knæet og ryggen'), 'Smerte nævnt 29. okt., knæet og ryggen')
+  const voice = comment => [{ start_date: '2026-10-26', week_number: 44, session_count: 1, exercise_count: 1, session_voices: [{ order: 1, rating: 3, comment }] }]
+  assert.equal(row(fixture({ voices: voice('Syntetisk: det gjorde ondt') })).reason, 'Smerte nævnt i uge 44')
+  assert.equal(row(fixture({ voices: voice('Syntetisk: ondt i ankel og nakke') })).reason, 'Smerte nævnt i uge 44, anklen og nakken')
+})
+
 test('smerte i en pas-kommentar tæller i ugen fra mandag minus 7, ikke minus 14', () => {
   const week = start => [{ start_date: start, week_number: 44, session_count: 1, exercise_count: 1,
     session_voices: [{ order: 1, rating: 3, comment: 'Syntetisk: smerter i skulderen' }] }]
-  assert.equal(row(fixture({ voices: week('2026-10-26') }))?.reason, 'Smerte nævnt i uge 44')
+  assert.equal(row(fixture({ voices: week('2026-10-26') }))?.reason, 'Smerte nævnt i uge 44, skulderen')
   assert.equal(row(fixture({ voices: week('2026-10-19') })), undefined)
 })
 
@@ -79,7 +88,7 @@ test('check-in stoppet springer atleter på ferie over', () => {
 test('flere grunde: højeste er titlen, de øvrige står som "Også"', () => {
   const p = fixture({ protein: 50, notes: [{ athlete_id: athleteId, logged_at: '2026-11-02T17:00:00Z', note: NOTE }],
     readiness: Array.from({ length: 8 }, (_, i) => readiness(8 + i * 2, 70)) })
-  assert.deepEqual(reasons(p), ['Smerte nævnt 2. nov.', 'Check-in stoppet', 'Protein under målet'])
+  assert.deepEqual(reasons(p), ['Smerte nævnt 2. nov., knæet', 'Check-in stoppet', 'Protein under målet'])
   const html = render(h(CoachView, { ...p, today: day }))
   assert.match(html, /Også: check-in stoppet, protein under målet/)
 })
@@ -113,8 +122,9 @@ test('notens tekst findes aldrig i DOM', () => {
   const p = fixture({ notes: [{ athlete_id: athleteId, logged_at: '2026-11-02T17:00:00Z', note: NOTE }],
     voices: [{ start_date: '2026-11-02', week_number: 45, session_count: 1, exercise_count: 1, session_voices: [{ order: 1, comment: 'Syntetisk: hoften gør ondt' }] }] })
   const html = render(h(CoachView, { ...p, today: day }))
-  assert.match(html, /Smerte nævnt 2. nov./)
-  assert.doesNotMatch(html, /knæet|hoften|gjorde ondt|gør ondt/)
+  // Kun regionsmærket (fast ord fra bodyPartsOf) vises; noten og kommentaren citeres aldrig.
+  assert.match(html, /Smerte nævnt 2. nov., knæet/)
+  assert.doesNotMatch(html, /gjorde ondt|gør ondt|sidste sæt/)
 })
 
 test('hooken henter igen efter 60 sekunder og ved fokus, og et forældet svar kasseres', async () => {
