@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-// U10a: node scripts/kostplan/skriv-forslag.mjs <ugeplan.json> [--ud forslag.sql] [--send]
+// U10a: node scripts/kostplan/skriv-forslag.mjs <ugeplan.json> --fri <0..30> [--ud forslag.sql] [--send]
+// Ordre 2375: --fri er Marcs niveau for den frie pulje (procent af dagens kcal) og skrives som
+// calculation_basis.fri_pct; uden --fri stopper scriptet. SQL-teksten er kompakt (under 20 KB).
 // Laver kun SQL-tekst med 7 kostplan-forslag (plans + versions, version 1).
 // Scriptet forbinder sig ikke til nogen database. Uden --send skriver det aldrig en godkendelse;
 // --send (ordre 1537a) bruges kun efter coachens ja i chatten og sender ugen som "Send uge".
@@ -7,7 +9,7 @@
 // egen kostplan_v1_valid_meals i en lokal PGlite.
 import { readFileSync, writeFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
-import { ForslagFejl, lavForslagSql } from './forslag.mjs'
+import { ForslagFejl, friProcent, lavForslagSql } from './forslag.mjs'
 import { husstandTilUgeplan } from './husstand.mjs'
 import { sqlAfviserMeals } from './validMealsSql.mjs'
 
@@ -23,20 +25,22 @@ export async function skrivForslag(ugeplan, options = {}) {
 // hvor felter.json har alt i ugeplanen undtagen days.
 async function main(argv) {
   const flag = name => { const i = argv.indexOf(name); return i >= 0 ? argv[i + 1] : undefined }
-  const values = new Set(['--ud', '--husstand', '--person', '--fra'].map(name => argv.indexOf(name) + 1).filter(i => i > 0))
+  const values = new Set(['--ud', '--husstand', '--person', '--fra', '--fri'].map(name => argv.indexOf(name) + 1).filter(i => i > 0))
   const file = argv.find((arg, i) => !arg.startsWith('--') && !values.has(i))
-  if (!file) throw new ForslagFejl('Brug: node scripts/kostplan/skriv-forslag.mjs <ugeplan.json> [--ud forslag.sql] [--send] [--husstand PLAN-DATA.json --person <nøgle> --fra <dato>]')
+  if (!file) throw new ForslagFejl('Brug: node scripts/kostplan/skriv-forslag.mjs <ugeplan.json> --fri <0 til 30> [--ud forslag.sql] [--send] [--husstand PLAN-DATA.json --person <nøgle> --fra <dato>]')
+  if (flag('--fri') === undefined) throw new ForslagFejl('Vælg niveau med --fri 0 til 30')
+  const fri = friProcent(flag('--fri'))
   const send = argv.includes('--send')
   const read = path => JSON.parse(readFileSync(path, 'utf8'))
   const ugeplan = flag('--husstand')
     ? husstandTilUgeplan(read(flag('--husstand')), { ...read(file), person: flag('--person'), fra: flag('--fra') })
     : read(file)
-  const { sql, plan } = await skrivForslag(ugeplan, { send })
+  const { sql, plan } = await skrivForslag(ugeplan, { send, fri })
   const ud = flag('--ud')
   if (ud) writeFileSync(ud, sql)
   else process.stdout.write(sql)
   const linjer = plan.days.map(d => `${d.date}: ${Math.round(d.kcal)} kcal, ${Math.round(d.protein)} g protein`)
-  process.stderr.write(`7 ${send ? 'dage klar til at sende' : 'forslag klar'} (mål ${plan.targets.kcal} kcal, ${plan.targets.protein} g protein).\n${linjer.join('\n')}\n`)
+  process.stderr.write(`7 ${send ? 'dage klar til at sende' : 'forslag klar'} (mål ${plan.targets.kcal} kcal, ${plan.targets.protein} g protein, fri pulje ${fri} %).\n${linjer.join('\n')}\n`)
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {

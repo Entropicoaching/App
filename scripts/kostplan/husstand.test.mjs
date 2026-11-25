@@ -79,7 +79,7 @@ test('kommandolinjen skriver SQL-filen fra en syntetisk husstandsplan og stopper
   try {
     writeFileSync(join(dir, 'felter.json'), JSON.stringify(felter))
     writeFileSync(join(dir, 'plan.json'), JSON.stringify(planData()))
-    const args = [script, join(dir, 'felter.json'), '--husstand', join(dir, 'plan.json'), '--person', 'testperson', '--fra', '2026-11-16']
+    const args = [script, join(dir, 'felter.json'), '--husstand', join(dir, 'plan.json'), '--person', 'testperson', '--fra', '2026-11-16', '--fri', '15']
     const ok = spawnSync(process.execPath, [...args, '--ud', join(dir, 'forslag.sql')], { encoding: 'utf8' })
     assert.equal(ok.status, 0, ok.stderr)
     assert.match(ok.stderr, /7 forslag klar/)

@@ -148,3 +148,92 @@ test('SQL-teksten afviser dubletter og et ændret kostmål i databasen', async (
     assert.equal(await count('kostplan_v1_plans'), 7)
   } finally { await db.close() }
 })
+
+// Ordre 2375: kompakt SQL (stop 5) og niveauet som flag (stop 6).
+const FASTE_ID = n => `aaaaaaaa-aaaa-4aaa-8aaa-${String(n).padStart(12, '0')}`
+const fasteIds = () => { let n = 0; return () => FASTE_ID(++n) }
+// To dagstyper (dag 2 har lidt mindre ris), så ugen ikke er syv ens dage.
+const toDagstyper = () => ugeplan({ days: DATOER.map((date, i) => {
+  const meals = dag()
+  if (i % 2) meals[3].portions[0].grams = 380
+  return { date, meals }
+}) })
+// Den gamle form, som den stod før ordre 2375: 14 enkelte inserts med hele måltidslisten i hver.
+const gammelSql = ({ plan, ids }) => {
+  const lit = v => `'${String(v).replace(/'/g, "''")}'`
+  const json = v => `${lit(JSON.stringify(v))}::jsonb`
+  return ['begin;', ...plan.days.flatMap((d, i) => [
+    `insert into public.kostplan_v1_plans (id, athlete_id, valid_from) values (${lit(ids[i].plan)}, ${lit(plan.athleteId)}, ${lit(d.date)});`,
+    `insert into public.kostplan_v1_versions (id, plan_id, version_no, effective_from, basis_as_of, calculation_basis, rationale, goal, intensity, meals) values (${[
+      lit(ids[i].version), lit(ids[i].plan), 1, lit(d.date), lit(plan.basisAsOf), json(plan.calculationBasis),
+      lit(plan.rationale), lit(plan.goal), Number(plan.intensity), json(d.meals)].join(', ')});`]), 'commit;'].join('\n')
+}
+const raekker = async db => (await db.query(`select p.id::text pid, p.athlete_id::text aid, p.valid_from::text vf, p.status,
+  v.id::text vid, v.version_no, v.effective_from::text ef, v.basis_as_of::text ba, v.calculation_basis cb, v.rationale,
+  v.goal, v.intensity::float i, v.meals from public.kostplan_v1_plans p join public.kostplan_v1_versions v on v.plan_id = p.id
+  order by p.valid_from`)).rows
+
+test('kompakt SQL giver de samme rækker som den gamle form (id, værdier og meals) og er under 20 KB', async () => {
+  const input = toDagstyper()
+  const kompakt = lavForslagSql(input, { uuid: fasteIds(), fri: 15 })
+  const gammel = lavForslagSql(input, { uuid: fasteIds(), fri: 15 })
+  assert.ok(kompakt.sql.length < 20000, `kompakt SQL fylder ${kompakt.sql.length} tegn`)
+  assert.ok(gammelSql(gammel).length > 60000, 'den gamle form er over 60 KB')
+  const [ny, gl] = [await createRehearsalDb(), await createRehearsalDb()]
+  try {
+    await ny.db.exec(kompakt.sql)
+    await gl.db.exec(gammelSql(gammel))
+    const [a, b] = [await raekker(ny.db), await raekker(gl.db)]
+    assert.equal(a.length, 7)
+    assert.deepEqual(a, b)
+    assert.ok(a.every(r => r.cb.fri_pct === 15 && r.meals.length === 5 && r.meals[0].portions[0].food.name))
+  } finally { await ny.db.close(); await gl.db.close() }
+})
+
+test('kompakt SQL med send er under 20 KB og godkender alle 7 dage med niveauet', async () => {
+  const { db, count } = await createRehearsalDb()
+  try {
+    const { sql } = await skrivForslag(toDagstyper(), { send: true, fri: 20 })
+    assert.ok(sql.length < 20000, `send-SQL fylder ${sql.length} tegn`)
+    await db.exec(sql)
+    assert.equal(await count('kostplan_v1_approvals'), 7)
+    const { rows } = await db.query(`select count(*) n from public.kostplan_v1_plans p join public.kostplan_v1_versions v on v.plan_id = p.id
+      where p.status = 'godkendt' and (v.calculation_basis ->> 'fri_pct')::numeric = 20`)
+    assert.equal(Number(rows[0].n), 7)
+  } finally { await db.close() }
+})
+
+test('fri_pct 0 skrives, og uden fri skrives intet fri_pct i biblioteket', () => {
+  assert.match(lavForslagSql(ugeplan(), { fri: 0 }).sql, /"fri_pct":0,/)
+  assert.doesNotMatch(lavForslagSql(ugeplan()).sql, /fri_pct/)
+})
+
+test('fri over 30, under 0 eller ikke et tal stopper i biblioteket', () => {
+  for (const fri of [31, -1, NaN, 'abc', '', '15 %', null]) fejl(() => lavForslagSql(ugeplan(), { fri }), /fri_pct skal være et tal fra 0 til 30/)
+  assert.match(lavForslagSql(ugeplan(), { fri: '15,5' }).sql, /"fri_pct":15\.5,/)
+})
+
+test('kommandolinjen kræver --fri og stopper over 30 eller ved ikke et tal', async () => {
+  const { spawnSync } = await import('node:child_process')
+  const { mkdtempSync, writeFileSync } = await import('node:fs')
+  const { tmpdir } = await import('node:os')
+  const { join } = await import('node:path')
+  const dir = mkdtempSync(join(tmpdir(), 'fri-2375-'))
+  const fil = join(dir, 'uge.json')
+  writeFileSync(fil, JSON.stringify(ugeplan()))
+  const script = new URL('skriv-forslag.mjs', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')
+  const kor = (...args) => spawnSync(process.execPath, [script, fil, ...args], { encoding: 'utf8' })
+  const uden = kor()
+  assert.notEqual(uden.status, 0)
+  assert.match(uden.stderr, /Vælg niveau med --fri 0 til 30/)
+  for (const vaerdi of ['31', 'abc', '-1']) {
+    const svar = kor('--fri', vaerdi)
+    assert.notEqual(svar.status, 0, vaerdi)
+    assert.match(svar.stderr, /fri_pct skal være et tal fra 0 til 30/, vaerdi)
+    assert.equal(svar.stdout, '', vaerdi)
+  }
+  const ok = kor('--fri', '15', '--send')
+  assert.equal(ok.status, 0, ok.stderr)
+  assert.match(ok.stdout, /"fri_pct":15,/)
+  assert.ok(ok.stdout.length < 20000)
+})

@@ -106,6 +106,22 @@ export function tjekUgeplan(input) {
   return { ...plan, days: input.days.map((d, i) => dag(d, i, plan)) }
 }
 
+// Ordre 2375: hver fødevare står kun én gang (id -> snapshot); måltiderne peger på den med id.
+// Formen kontrolleres, så SQL'en bygger præcis de samme meals som før.
+function kompakt(meals, foedevarer) {
+  const samme = (keys, forventet, sted) => { if (keys.join() !== forventet.join()) stop(`${sted}: uventet form i måltiderne.`) }
+  return meals.map(meal => {
+    samme(Object.keys(meal).sort(), ['name', 'portions'], 'Måltid')
+    return { name: meal.name, portions: meal.portions.map(p => {
+      samme(Object.keys(p).sort(), ['food', 'grams'], 'Portion')
+      const id = p.food.id
+      if (foedevarer.has(id) && JSON.stringify(foedevarer.get(id)) !== JSON.stringify(p.food)) stop(`${id} har to forskellige snapshots.`)
+      foedevarer.set(id, p.food)
+      return { grams: p.grams, f: id }
+    }) }
+  })
+}
+
 const lit = value => `'${String(value).replace(/'/g, "''")}'`
 const json = value => `${lit(JSON.stringify(value))}::jsonb`
 
@@ -132,14 +148,34 @@ end $sendt$;`,
   ]
 }
 
+// Niveauet (fri pulje i procent af dagens kcal) skrives af scriptet i calculation_basis.fri_pct.
+// Ordre 2375: Marcs valg, 0 til 30; et tal med komma (15,5) accepteres.
+export const MAKS_FRI_PROCENT = 30
+export function friProcent(value) {
+  const tal = typeof value === 'number' ? value : /^\d+([.,]\d+)?$/.test(String(value ?? '').trim()) ? Number(String(value).trim().replace(',', '.')) : NaN
+  if (!Number.isFinite(tal) || tal < 0 || tal > MAKS_FRI_PROCENT) stop(`fri_pct skal være et tal fra 0 til ${MAKS_FRI_PROCENT}. Vælg niveau med --fri 0 til ${MAKS_FRI_PROCENT}.`)
+  return tal
+}
+
 // SQL-tekst til skillens eksisterende adgang. Status udelades, så tabellens standard
 // 'forslag' gælder, og kun kolonnerne i coachens insert-tilladelse bruges.
 // send: true tilføjer coachens godkendelse i samme transaktion (ordre 1537a).
-export function lavForslagSql(input, { uuid = () => globalThis.crypto.randomUUID(), send = false } = {}) {
+// fri: niveauet skrives som calculation_basis.fri_pct i alle 7 versioner (ordre 2375).
+// Kompakt (ordre 2375): fælles calculation_basis og hver forskellig dags måltider står én gang
+// i en DO-blok; de 7 dage peger på dem med et nummer. Samme tabeller, kolonner og værdier som før.
+export function lavForslagSql(input, { uuid = () => globalThis.crypto.randomUUID(), send = false, fri } = {}) {
   const plan = tjekUgeplan(input)
+  if (fri !== undefined) plan.calculationBasis = { fri_pct: friProcent(fri), ...plan.calculationBasis }
   const ids = plan.days.map(() => ({ plan: uuid(), version: uuid() }))
   if (ids.some(id => !UUID.test(id.plan) || !UUID.test(id.version))) stop('uuid-generatoren gav et ugyldigt id.')
   const datoer = plan.days.map(d => d.date)
+  const foedevarer = new Map()
+  const maaltider = []
+  const nummer = plan.days.map(d => {
+    const key = JSON.stringify(kompakt(d.meals, foedevarer))
+    if (!maaltider.includes(key)) maaltider.push(key)
+    return maaltider.indexOf(key) + 1
+  })
   const lines = [
     `-- Kostplan-forslag fra Claude (U10a): ${plan.days.length} dage fra ${datoer[0]} til ${datoer.at(-1)}.`,
     send ? '-- Sendes til atleten i samme transaktion, fordi coachen har sagt ja i chatten.'
@@ -156,14 +192,29 @@ export function lavForslagSql(input, { uuid = () => globalThis.crypto.randomUUID
     raise exception 'Der ligger allerede et forslag for en af dagene';
   end if;
 end $guard$;`,
+    `do $uge$
+declare
+  cb constant jsonb := ${json(plan.calculationBasis)};
+  f constant jsonb := ${json(Object.fromEntries(foedevarer))};
+  k constant jsonb[] := array[
+${maaltider.map(key => `    ${lit(key)}::jsonb`).join(',\n')}];
+  m jsonb[] := '{}';
+  c jsonb;
+  d record;
+begin
+  foreach c in array k loop
+    m := array_append(m, (select jsonb_agg(jsonb_build_object('name', x.v->'name', 'portions', (select jsonb_agg(jsonb_build_object('grams', p.v->'grams', 'food', f->(p.v->>'f')) order by p.n)
+      from jsonb_array_elements(x.v->'portions') with ordinality p(v, n))) order by x.n) from jsonb_array_elements(c) with ordinality x(v, n)));
+  end loop;
+  for d in select * from (values
+${plan.days.map((day, i) => `    (${lit(ids[i].plan)}, ${lit(ids[i].version)}, ${lit(day.date)}, ${nummer[i]})`).join(',\n')}
+  ) as t(plan_id, version_id, dag, k) loop
+    insert into public.kostplan_v1_plans (id, athlete_id, valid_from) values (d.plan_id::uuid, ${lit(plan.athleteId)}::uuid, d.dag::date);
+    insert into public.kostplan_v1_versions (id, plan_id, version_no, effective_from, basis_as_of, calculation_basis, rationale, goal, intensity, meals)
+      values (d.version_id::uuid, d.plan_id::uuid, 1, d.dag::date, ${lit(plan.basisAsOf)}::date, cb, ${lit(plan.rationale)}, ${lit(plan.goal)}, ${Number(plan.intensity)}, m[d.k]);
+  end loop;
+end $uge$;`,
   ]
-  plan.days.forEach((d, i) => {
-    const { plan: planId, version } = ids[i]
-    lines.push(`insert into public.kostplan_v1_plans (id, athlete_id, valid_from) values (${lit(planId)}, ${lit(plan.athleteId)}, ${lit(d.date)});`)
-    lines.push(`insert into public.kostplan_v1_versions (id, plan_id, version_no, effective_from, basis_as_of, calculation_basis, rationale, goal, intensity, meals) values (${[
-      lit(version), lit(planId), 1, lit(d.date), lit(plan.basisAsOf), json(plan.calculationBasis),
-      lit(plan.rationale), lit(plan.goal), Number(plan.intensity), json(d.meals)].join(', ')});`)
-  })
   if (send) lines.push(...sendSql(plan, ids))
   lines.push('commit;')
   return { sql: lines.join('\n') + '\n', plan, ids }
