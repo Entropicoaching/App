@@ -3,13 +3,15 @@ import { mentionsPain, stilstandUdeSaet, STILSTAND_SPOERG } from '../../coachBri
 import { nutritionTrend } from '../tracking/nutritionTrend.mjs'
 import { onVacation } from '../u3/couplings.mjs'
 import { mondayOf, shortDate } from '../u3/format.mjs'
+import { friUge } from '../kostplan/friPulje.mjs'
+import { isDayReceipt } from '../../mealEvidence.mjs'
 import { painFromDaily, sleepFromDaily } from '../u7/coachData.mjs'
 import { erKvitteret, markFor } from './smerteKvittering.mjs'
 
 // U3-planen afsnit 2: nye grunde under "Kræver dit blik". Rene funktioner uden
 // læsninger. Tekst fra noter og kommentarer citeres aldrig; kun en fast tekst og
 // en dato eller et ugenummer vises.
-export const RANK = Object.freeze({ pain: 0, readinessDrop: 1, checkinStopped: 2, lowProtein: 3 })
+export const RANK = Object.freeze({ pain: 0, readinessDrop: 1, checkinStopped: 2, lowProtein: 3, followsPlan: 4 })
 export const ATTENTION_UNAVAILABLE = 'Nye opmærksomhedsgrunde kunne ikke hentes'
 
 const finite = value => typeof value === 'number' && Number.isFinite(value)
@@ -101,6 +103,23 @@ export function lowProtein(source, athleteId, day) {
   return trend?.signal === 'lavt protein' ? { reason: 'Protein under målet' } : null
 }
 
+// Ordre 2184 (Marc 24. nov. kl. 19:11: atleterne skal "rent faktisk følge planerne"): samme friUge som
+// coachens og atletens ugelinje, de 7 seneste afsluttede dage (kostplanens vindue slutter i går).
+// Kun med mindst 3 vurderede dage med niveau over 0 %, og kun når basemåltider fulgt er under halvdelen
+// eller den fri pulje ikke er holdt på de fleste vurderede dage. Fast, neutral tekst; ren læsning.
+export const FOELGER_MIN_DAGE = 3
+export function followsPlan(entry, day) {
+  if (!Array.isArray(entry?.planDays) || !Array.isArray(entry?.meals) || !calendarDay(day)) return null
+  const from = addCalendarDays(day, -7), through = addCalendarDays(day, -1)
+  const within = row => row?.date >= from && row.date <= through
+  const fri = friUge({ dage: entry.planDays.filter(within),
+    raekker: entry.meals.filter(row => within(row) && !isDayReceipt(row) && typeof row.meal === 'string' && row.meal.trim()) })
+  if (!fri || fri.vurderede < FOELGER_MIN_DAGE) return null
+  const lidtBase = fri.basisAf > 0 && fri.basis * 2 < fri.basisAf
+  const pulje = (fri.vurderede - fri.holdt) * 2 > fri.vurderede
+  return lidtBase || pulje ? { reason: 'Følger ikke kostplanen' } : null
+}
+
 // Ordre 1545: stilstand fra briefingens SQL-regel (stalled >= 3) med Marcs domme fra 8. okt.:
 // et sprunget eller fejlet sæt i perioden giver "Spørg atleten først"; ellers "overvej deload"
 // uden øvelsesnavne. Fladt uden stigende RPE er ikke akut og vises ikke her. Ukendte sæt
@@ -119,7 +138,7 @@ export function stagnationReason(source) {
 
 // Alle nye grunde for én atlet. attention er L1 for netop denne atlet, eller
 // null, når L1 ikke er komplet: så vises smerte, readiness og check-in ikke.
-export function attentionCandidates({ athlete, day, attention, weeks, nutritionSource, nutritionReady, kvitteringer }) {
+export function attentionCandidates({ athlete, day, attention, weeks, nutritionSource, nutritionReady, planEntry, kvitteringer }) {
   const out = []
   const add = (kind, rank, found) => found && out.push({ key: `u3-${kind}-${athlete.id}`, athlete, rank, tab: 'hub', reason: found.reason, u3: kind })
   if (attention) {
@@ -141,6 +160,7 @@ export function attentionCandidates({ athlete, day, attention, weeks, nutritionS
     if (attention.stagnation) add('stagnation', STILSTAND_RANK, stagnationReason(attention.stagnation))
   }
   if (nutritionReady) add('protein', RANK.lowProtein, lowProtein(nutritionSource, athlete.id, day))
+  if (planEntry && !onVacation(athlete, day)) add('plan', RANK.followsPlan, followsPlan(planEntry, day))
   return out
 }
 
