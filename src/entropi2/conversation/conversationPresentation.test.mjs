@@ -42,7 +42,8 @@ for (const role of ['athlete', 'coach']) test(`${role}: wider text and quiet met
       assert.match(shown.children[0].textContent, /^Atlet$/)
     }
     const send = find(f.host, 'button').find(n => n.textContent === 'Send')
-    assert.equal(send.style.background, '#d8b16b', 'primary action remains visually distinct')
+    // Ordre 2370: tom Send er tydeligt deaktiveret med læsbar tekst; med tekst i feltet er den amber (se ConversationView).
+    assert.equal(send.disabled, true); assert.equal(send.style.background, '#1c1c18'); assert.equal(send.style.opacity, '1')
     for (const key of role === 'coach' ? ['video:feedback'] : ['message:long', 'video:feedback']) {
       const item = row(f.host, key), [toggle, content, preview] = item.children
       assert.equal(toggle.tagName, 'BUTTON'); assert.equal(toggle.type, 'button')

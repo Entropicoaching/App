@@ -138,3 +138,6 @@ body { background: var(--e-bg); color: var(--e-tekst); }
 [style*="font-size: 0.42rem"], [style*="font-size: 0.43rem"], [style*="font-size: 0.44rem"], [style*="font-size: 0.46rem"],
 [style*="font-size: 0.54rem"], [style*="font-size: 0.56rem"], [style*="font-size: 0.64rem"], [style*="font-size: 0.66rem"],
 svg text[font-size="7"], svg text[font-size="8"], svg text[font-size="9"], svg text[font-size="10"] { font-size: 11px !important; }
+
+/* Ordre 2370 (fund 11): Hjems vægtfelt har en mørkere flade i lys tema; browserens placeholder gav kun 3,95:1. */
+:root[data-tema="lys"] [data-u5-weight] input::placeholder { color: var(--e-daempet); opacity: 1; }

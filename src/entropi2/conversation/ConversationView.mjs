@@ -206,14 +206,14 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     status.textContent = state.error || (state.loading || !state.loaded ? 'Henter samtalen…' : state.thread.length ? '' : 'Ingen beskeder endnu.')
     reload.textContent = state.loading ? 'Henter…' : 'Hent igen'
     // Ordre 2370: Hent igen er teknisk og vises kun, når noget gik galt.
-    reload.hidden = !state.error
+    reload.hidden = !state.error; reload.style.display = reload.hidden ? 'none' : 'block'
     status.hidden = !status.textContent
     status.setAttribute('role', state.error ? 'alert' : 'status')
     input.value = state.draft
     const locked = state.busy || state.operation?.status === 'error'
     input.disabled = Boolean(locked); send.disabled = Boolean(locked || !state.draft.trim())
     // Ordre 2370: feltet står lige under; det ekstra link var en tredje opfordring til at skrive.
-    write.hidden = true; write.disabled = input.disabled
+    write.hidden = true; write.style.display = 'none'; write.disabled = input.disabled
     retry.hidden = state.operation?.status !== 'error'; retry.disabled = state.busy
     const traening = state.role === 'athlete' && state.skjulTraening !== true
     upload.hidden = !traening; coach.hidden = state.role !== 'coach'
@@ -233,7 +233,7 @@ export function mountConversation(root, controller, { enabled = false, now = () 
     }
     // Ordre 2370: deaktiveret Send har læsbar tekst på almindelig flade i stedet for en dæmpet gul knap.
     for (const primary of [send, timed]) Object.assign(primary.style, primary.disabled
-      ? { background: '#d8b16b', color: '#141410', opacity: '0.7', cursor: 'not-allowed' }
+      ? { background: '#1c1c18', color: '#a8a498', opacity: '1', cursor: 'not-allowed' }
       : { background: '#d8b16b', color: '#141410', opacity: '1', cursor: 'pointer' })
     const selected = videoSelect.value
     videoSelect.replaceChildren(node('option', 'Vælg video'))
