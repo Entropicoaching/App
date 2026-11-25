@@ -48,6 +48,10 @@ export function fixture(options = {}) {
         id: 'synthetic-food-2', name: 'Syntetisk mad 2', source: { citation: 'synthetic fixture', verification: 'synthetic' },
         nutrientsPer100g: { energyKcal: 100, proteinG: 10, carbohydrateG: 12, fatG: 2 },
       } }] },
+      ...(options.tredjeMaaltid ? [{ name: 'Mellemmåltid', portions: [{ grams: 100, food: {
+        id: 'synthetic-food-3', name: 'Syntetisk mad 3', source: { citation: 'synthetic fixture', verification: 'synthetic' },
+        nutrientsPer100g: { energyKcal: 100, proteinG: 10, carbohydrateG: 12, fatG: 2 },
+      } }] }] : []),
     ] })
     plan.data[tableNames[0]].push({ id: id(1), athlete_id: athleteId, valid_from: date, status: 'godkendt' })
     plan.data[tableNames[1]].push({ id: id(2), plan_id: id(1), effective_from: date, version_no: 1, ...snapshot })

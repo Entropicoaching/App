@@ -412,3 +412,74 @@ test('Alt fra i går 2154: flere måltider i går end i dag tæller aldrig dobbe
   assert.ok(uge.basis <= uge.basisAf && uge.basis <= 2)
   assert.deepEqual([uge.basis, uge.basisAf], [2, 2])
 })
+
+// 2156 (Marc 24. nov.): "en fast base"; ét tryk for resten af dagens åbne planmåltider.
+const alt2156 = r => all(r.card(), 'button').find(n => /^Alt som planlagt \(\d+\)$/.test(n.textContent))
+const idag2156 = r => r.f.rows.filter(row => row.date === date)
+
+test('Alt som planlagt 2156: tre åbne måltider giver tre rækker med plannavne og friUge 3 af 3', async t => {
+  const r = await mount(t, { tredjeMaaltid: true })
+  assert.equal(alt2156(r).textContent, 'Alt som planlagt (3)')
+  await r.press(alt2156(r))
+  assert.deepEqual(idag2156(r).map(row => row.meal), ['Frokost <syntetisk>', 'Aftensmad', 'Mellemmåltid'])
+  assert.equal(r.inserts().length, 3)
+  const uge = friUge({ dage: [{ date, state: 'approved', friPct: 15, targets: { kcal: 2600 }, maaltider: ['Frokost <syntetisk>', 'Aftensmad', 'Mellemmåltid'] }], raekker: idag2156(r) })
+  assert.deepEqual([uge.basis, uge.basisAf], [3, 3])
+  assert.equal(!!alt2156(r), false, 'knappen forsvinder, når intet er åbent')
+  assert.match(r.card().textContent, /3 planmåltider gemt som planlagt\./)
+})
+
+test('Alt som planlagt 2156: ét åbent måltid giver ingen samlet knap', async t => {
+  const r = await mount(t)
+  assert.equal(alt2156(r).textContent, 'Alt som planlagt (2)')
+  await r.press(r.labelled('Frokost <syntetisk>: spist som planlagt'))
+  assert.equal(!!alt2156(r), false, 'ét åbent måltid giver ingen samlet knap')
+})
+
+test('Alt som planlagt 2156: ét spist i forvejen giver kun de åbne, uden dobbeltlogning', async t => {
+  const r = await mount(t, { tredjeMaaltid: true })
+  await r.press(r.labelled('Aftensmad: spist som planlagt'))
+  assert.equal(alt2156(r).textContent, 'Alt som planlagt (2)')
+  await r.press(alt2156(r))
+  assert.deepEqual(idag2156(r).map(row => row.meal).sort(), ['Aftensmad', 'Frokost <syntetisk>', 'Mellemmåltid'])
+  assert.equal(r.inserts().length, 3, 'Aftensmad logges ikke igen')
+})
+
+test('Alt som planlagt 2156: Fortryd fjerner præcis gruppens rækker, ikke andre', async t => {
+  const r = await mount(t, { tredjeMaaltid: true, extraRows: [{ ...meal(date, 'Syntetisk snack', 100, 5), id: 'egen-snack' }] })
+  await r.press(r.labelled('Aftensmad: spist som planlagt'))
+  const foer = idag2156(r).map(row => row.id)
+  await r.press(alt2156(r))
+  assert.equal(idag2156(r).length, foer.length + 2)
+  await r.press(button(r.card(), 'Fortryd'))
+  assert.deepEqual(idag2156(r).map(row => row.id), foer, 'kun gruppens to rækker er fjernet; snack og Aftensmad står')
+  assert.match(r.card().textContent, /2 planmåltider er fortrudt\./)
+  assert.equal(alt2156(r).textContent, 'Alt som planlagt (2)', 'måltiderne står åbne igen')
+})
+
+test('Alt som planlagt 2156: delvis fejl og Prøv igen logger ingen dobbelt, og Fortryd fjerner alle', async t => {
+  const r = await mount(t, { tredjeMaaltid: true })
+  // Anden reservation kan ikke skrives: intet gemmes for det måltid, og det er sikkert at prøve igen.
+  const ægte = r.f.storage.setItem
+  let skrivninger = 0, fejler = true
+  r.f.storage.setItem = (key, value) => { if (key.startsWith('entropi2:kostplan:atlet:v1:') && ++skrivninger === 3 && fejler) throw Error('syntetisk lager'); return ægte(key, value) }
+  await r.press(alt2156(r))
+  assert.equal(idag2156(r).length, 1, 'første gemt, andet fejlede')
+  assert.equal(r.inserts().length, 1)
+  assert.match(all(r.card(), '[role="alert"]')[0]?.textContent ?? '', /planmåltider blev ikke gemt/)
+  fejler = false
+  await r.press(button(r.card(), 'Prøv igen'))
+  assert.deepEqual(idag2156(r).map(row => row.meal).sort(), ['Aftensmad', 'Frokost <syntetisk>', 'Mellemmåltid'], 'hver række præcis én gang')
+  assert.equal(r.inserts().length, 3)
+  await r.press(button(r.card(), 'Fortryd'))
+  assert.deepEqual(idag2156(r), [])
+})
+
+test('Alt som planlagt 2156: en uafklaret registrering prøves ikke blindt igen', async t => {
+  let inserts = 0
+  const r = await mount(t, { tredjeMaaltid: true, beforeLog: call => { if (call.action === 'insert' && ++inserts === 2) throw Error('Synthetic lost response') } })
+  await r.press(alt2156(r))
+  assert.match(all(r.card(), '[role="alert"]')[0]?.textContent ?? '', /Se kostplanen under Vis detaljer/)
+  assert.ok(button(r.card(), 'Hent dagen igen'))
+  assert.equal(r.inserts().length, 2, 'ingen tredje række og ingen gentagelse af den uafklarede')
+})

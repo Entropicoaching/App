@@ -60,6 +60,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const queue = useRef(Promise.resolve())
   const mangdeRef = useRef(null)
   const groupRef = useRef(null)
+  const planGruppeRef = useRef(null)
   const fjernRef = useRef(null)
   const seq = useRef(0)
   const alive = useRef(true)
@@ -229,6 +230,17 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
           if (alive.current) setNote(antal === ids.length ? { text: `${ids.length} måltider fra i går er fortrudt.` }
             : { error: true, text: `${antal} af ${ids.length} måltider fra i går blev fortrudt. Resten er stadig gemt; se Vis detaljer.` })
         } }, 'Fortryd'),
+      // 2156: Alt som planlagt fortryder alle sine planrækker (markEaten giver ingen kort fortrydelse; rækkeiderne læses fra kostplanen).
+      note?.intent && planGruppeRef.current?.intent === note.intent && typeof tracker?.undoRows === 'function' && h('button', { type: 'button',
+        style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, disabled: pending.length > 0,
+        onClick: async () => {
+          const { mealIds } = planGruppeRef.current
+          const ids = (controller?.snapshot?.().meals ?? []).filter(meal => mealIds.includes(meal.id) && meal.logId).map(meal => meal.logId)
+          planGruppeRef.current = null
+          const antal = ids.length > 0 ? await tracker.undoRows(ids, `kost-i-dag-fortryd:${date}:${Date.now()}`) : 0
+          if (alive.current) setNote(antal === mealIds.length ? { text: `${mealIds.length} planmåltider er fortrudt.` }
+            : { error: true, text: `${antal} af ${mealIds.length} planmåltider blev fortrudt. Resten er stadig gemt; se Vis detaljer.` })
+        } }, 'Fortryd'),
       note?.intent && fjernRef.current?.intent === note.intent && h('button', { type: 'button',
         style: { ...control, minHeight: 32, padding: '2px 10px', marginTop: 4 }, disabled: pending.length > 0, onClick: fortrydFjern }, 'Fortryd'),
       note?.intent && log.undo?.token === note.intent && typeof tracker?.undoLog === 'function' && h('button', { type: 'button',
@@ -251,7 +263,31 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
           return now?.phase === 'uncertain' ? { note: { error: true, text: `${meal.name}: ${now.message || 'Registreringen er uafklaret.'} Se kostplanen under Vis detaljer.`,
             retry: () => { controller.load?.(); setNote(null) }, retryText: 'Hent dagen igen' } } : false
         }) },
-      busy(meal.name) ? `Gemmer ${meal.name}…` : `${meal.name} som planlagt`))),
+      busy(meal.name) ? `Gemmer ${meal.name}…` : `${meal.name} som planlagt`)),
+      // 2156: ét tryk for resten af dagens åbne planmåltider; samme markEaten pr. måltid, ét Fortryd for gruppen.
+      open.length > 1 && h('button', { type: 'button', style: primary, disabled: pending.length > 0 || open.some(meal => meal.canSave === false),
+        onClick: () => {
+          // Prøv igen bruger samme gruppe; måltider, der allerede er gemt, logges ikke igen.
+          const maaltider = open.map(meal => ({ id: meal.id, name: meal.name })), gemt = new Set()
+          run(`${maaltider.length} planmåltider`, open.reduce((sum, meal) => ({ kcal: sum.kcal + meal.values.kcal, protein: sum.protein + meal.values.protein }), { kcal: 0, protein: 0 }),
+            async intent => {
+              for (const meal of maaltider) {
+                if (gemt.has(meal.id)) continue
+                if (await controller.markEaten(meal.id) !== true) {
+                  // En uafklaret registrering kan være gemt; den må ikke prøves blindt igen.
+                  const now = controller.snapshot()
+                  return now?.phase === 'uncertain' ? { note: { error: true, text: `${meal.name}: ${now.message || 'Registreringen er uafklaret.'} Se kostplanen under Vis detaljer.`,
+                    retry: () => { controller.load?.(); setNote(null) }, retryText: 'Hent dagen igen' } } : false
+                }
+                gemt.add(meal.id)
+                // Næste måltid venter, til kostplanen har hentet dagen igen og rækken har fået sit rigtige id.
+                const hentet = { subscribe: controller.subscribe, snapshot: controller.snapshot, ready: v => !!v?.meals?.find(item => item.id === meal.id)?.logId }
+                if (!await whenReady([...sources, hentet])) return false
+              }
+              planGruppeRef.current = { intent, mealIds: maaltider.map(meal => meal.id) }
+              return true
+            }, { gemt: `${maaltider.length} planmåltider gemt som planlagt.` })
+        } }, `Alt som planlagt (${open.length})`)),
     eaten.length > 0 && !kanRettePlan && h('p', { style: { margin: '8px 0 0' } }, `Spist: ${eaten.map(meal => meal.name).join(', ')}`),
     // 1924: tryk på et spist planmåltid åbner mængden udfyldt; Gem retter samme række.
     eaten.length > 0 && kanRettePlan && h('div', { style: row },
