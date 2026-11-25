@@ -14,7 +14,7 @@ const defaultClock = { now: () => Date.now(), setTimeout: (fn, ms) => setTimeout
  */
 export function createQuickController(options = {}) {
   if (options.enabled !== true) return null
-  const { athleteId, date, data, save: injectedSave = {}, storage, clock = defaultClock, currentDay } = options
+  const { athleteId, date, data, save: injectedSave = {}, storage, clock = defaultClock, currentDay, kortDagsform = false } = options
   requireId(athleteId); dayNumber(date)
   const save = Object.fromEntries(['readiness', 'weight', 'meal'].map(kind => [kind, injectedSave[kind]]))
   const listeners = new Set(), successful = new Map()
@@ -26,6 +26,8 @@ export function createQuickController(options = {}) {
       model = buildQuickModel({ athleteId, date, readinessRows: data.readinessRows,
         weightRows: data.weightRows, mealRows: data.mealRows })
       draft = structuredClone(model.draft)
+      // Ordre 2172: den korte Dagsform har sult som ekstra, valgfrit felt.
+      if (kortDagsform === true) draft.readiness.hunger = ''
       ;({ readinessSource, weightSource } = model)
       phase = 'ready'
       if (storage) {
@@ -96,7 +98,8 @@ export function createQuickController(options = {}) {
       if (!editable() || !model.canRepeat) return false
       // Missing yesterday values do not erase today's answers in another domain.
       if (Object.values(model.yesterdayDraft.readiness).some(value => value !== '')) {
-        draft.readiness = { ...model.yesterdayDraft.readiness }; readinessSource = 'yesterday'
+        draft.readiness = { ...model.yesterdayDraft.readiness,
+          ...(kortDagsform === true ? { hunger: draft.readiness.hunger ?? '' } : {}) }; readinessSource = 'yesterday'
       }
       if (model.yesterdayDraft.weight !== '') { draft.weight = model.yesterdayDraft.weight; weightSource = 'yesterday' }
       phase = 'ready'; message = 'Forslag fra i går er indsat. Kontrollér dem og tryk Gem.'; emit(); return true
@@ -116,7 +119,7 @@ export function createQuickController(options = {}) {
       let payload
       try {
         if (!sameDay()) throw new TypeError('Dagen er skiftet. Åbn dagens log igen.')
-        if (kind === 'readiness') payload = { athlete_id: athleteId, logged_date: date, ...readinessValue(draft.readiness) }
+        if (kind === 'readiness') payload = { athlete_id: athleteId, logged_date: date, ...readinessValue(draft.readiness, kortDagsform === true) }
         if (kind === 'weight') payload = { athlete_id: athleteId, logged_at: date, weight: weightValue(draft.weight) }
         if (kind === 'meal') {
           const meal = model.meals.find(item => item.key === selectedMeal)

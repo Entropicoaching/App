@@ -147,7 +147,8 @@ export default function TodayCard(props) {
       : last != null && typed == null ? h('p', { style: hint }, 'Samme som sidst. Skriv en ny vægt, eller ret med ±0,1.')
         : last != null ? h('p', { style: hint }, `Sidst ${formatKg(last)} kg`) : null)
 
-  const suggestion = readinessSuggestion({ athleteId, today, trackingData: props.trackingData,
+  // Ordre 2145: kostklientens korte Dagsform (søvn og energi) har ingen gamle motivation, stress og ømhed at låne; kortet åbner formen.
+  const suggestion = props.kortDagsform === true ? null : readinessSuggestion({ athleteId, today, trackingData: props.trackingData,
     readinessLog: props.readinessLog, readinessInput: props.readinessInput })
   const pick = energy => {
     if (busy || grace || !suggestion || !canReadiness) return
@@ -182,7 +183,7 @@ export default function TodayCard(props) {
       h('p', { style: hint }, `1 lav, 5 høj. Resten som ${shortDate(suggestion.from)}`))
       : h('div', null,
         h('button', { type: 'button', style: primary, disabled: busy, onClick: openFull }, 'Udfyld dagsform'),
-        h('p', { style: hint }, 'Fire korte svar. Næste gang er det ét tryk.')))
+        h('p', { style: hint }, props.kortDagsform === true ? 'Tre korte svar: søvn, energi og sult.' : 'Fire korte svar. Næste gang er det ét tryk.')))
 
   // Start bliver i "Dit næste pas" lige under kortet; her står kun status, så handlingen ikke findes to gange.
   const lines = planOn && trainingToday ? planWeightLines(exercises, lastByName, { topSet: u7Enabled('topSet', props.u7TopSet) }) : []
