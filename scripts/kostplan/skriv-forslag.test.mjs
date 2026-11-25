@@ -237,3 +237,7 @@ test('kommandolinjen kræver --fri og stopper over 30 eller ved ikke et tal', as
   assert.match(ok.stdout, /"fri_pct":15,/)
   assert.ok(ok.stdout.length < 20000)
 })
+
+test('en tekst med $uge$ kan ikke lukke SQL-blokken for tidligt', () => {
+  fejl(() => lavForslagSql(ugeplan({ rationale: "Uge $uge$; drop table x; do $uge$ begin" })), /må ikke indeholde \$uge\$/)
+})
