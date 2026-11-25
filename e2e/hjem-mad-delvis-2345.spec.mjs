@@ -27,13 +27,14 @@ const ingenScroll = async (page, hvor) => krav(await page.evaluate(() => documen
 const tema = (page, navn) => page.evaluate(v => (v === 'light' ? document.documentElement.setAttribute('data-tema', 'lys') : document.documentElement.removeAttribute('data-tema')), navn)
 let scheme = 'light'
 const trin = [
-  ['ét måltid logget: Mad mangler stadig, tæller og Log mad', 1, async (page, antal) => {
+  ['ét måltid logget: Mad mangler stadig, tæller og Åbn kost', 1, async (page, antal) => {
     await hjem(page).waitFor({ timeout: 20000 })
     await page.waitForFunction(n => document.querySelector('[data-u5-today]')?.textContent.includes(`1 af ${n} logget.`), antal, { timeout: 20000 })
     const tekst = await hjem(page).innerText()
     krav(!tekst.includes('Alt er logget i dag'), 'Hjem siger "Alt er logget i dag" med åbne planmåltider')
     krav(/Mangler i dag:.*mad/.test(tekst), `Overskriften mangler "mad": ${tekst.slice(0, 120)}`)
-    krav(await page.getByRole('button', { name: 'Log mad', exact: true }).count() > 0, 'Log mad mangler')
+    // Ordre 2370: kostklientens Hjem har Åbn kost i kortet over; Log mad-vejviseren er skjult.
+    krav(await page.getByRole('button', { name: 'Åbn kost', exact: true }).count() > 0, 'Åbn kost mangler')
     await ingenScroll(page, 'delvis')
   }],
   ['alle måltider loggede: Mad er klaret', null, async (page, antal) => {

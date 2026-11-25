@@ -126,9 +126,12 @@ export async function runStak(page, mock, today, outDir = OUT_DIR) {
     await page.waitForFunction(() => Object.keys(localStorage).some(k => k.startsWith('entropi2:water-intake:v1:') && /500/.test(localStorage.getItem(k))), null, { timeout: 5000 })
   })
   await handling('Vægt 82,4 kg', async () => {
-    await kost.getByLabel('Vægt i kg').fill('82,4')
-    await kost.getByRole('button', { name: 'Gem vægt' }).click()
-    await kost.getByText('Vægt gemt: 82.4 kg.').or(kost.getByText(/Vægt gemt/)).waitFor({ timeout: 10000 })
+    // Ordre 2370: Kost i dag har ikke længere en vægtrække; vægt gemmes under Vis detaljer (Din vægt) eller på Hjem.
+    await page.getByRole('button', { name: 'Vis detaljer' }).click()
+    const detaljer = page.locator('[data-kost-detaljer]')
+    await detaljer.getByLabel('Vægt (kg)').fill('82,4')
+    await detaljer.getByRole('button', { name: 'Gem vægt' }).click()
+    await detaljer.getByText(/Seneste vægt: 82,4 kg/).waitFor({ timeout: 10000 })
   })
   if (!mock.table('weight_logs').some(r => Number(r.weight) === 82.4)) throw new Error('Vægt 82,4 ikke i weight_logs')
 

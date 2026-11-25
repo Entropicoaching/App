@@ -230,7 +230,7 @@ export default function TodayCard(props) {
     : copy?.undoResult === 'partial' ? h('p', { key: 'meal-undone', role: 'alert', style: hint }, `${copy.undone} af ${copy.ids.length} måltider fra i går blev fortrudt. Resten er stadig gemt; se Kost.`) : null
   // Ordre 2370 (fund 3 og 5): kostklientens Hjem har allerede Åbn kost i kortet over; Log mad var kun en vejviser dertil.
   const mealVejviserSkjult = props.kortDagsform === true && !copyList.length
-  const mealRow = () => mealVejviserSkjult && !(planText && mealData?.today > 0) ? null : h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
+  const mealRow = () => mealVejviserSkjult && !copy && !(planText && mealData?.today > 0) ? null : h('div', { key: 'meal', style: row, 'data-u5-meal': '' },
     h('p', { style: label }, 'Mad'),
     copyList.length && !copy?.undoResult
       ? h('button', { type: 'button', style: primary, disabled: copy?.running || copy?.undoing, onClick: repeatYesterday },
