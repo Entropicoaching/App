@@ -24,7 +24,7 @@ const conversationHandoverFlags = new WeakMap()
 export function useVideoCoachBro({
   conversationRef, conversationHandover = false, videoSetRef, videoOptag2 = false,
   athlete, athleteVideoCoachClientsRef, athleteVideoCoachFrameRef, athleteVideoCoachRef, athleteVideoUploadAbortsRef, flashTimerRef, session, setAthleteVideoCoachInstant,
-  setAthleteVideoCoachOpen, setFlash,
+  setAthleteVideoCoachOpen, setFlash, onOpenMessages,
 }) {
   // Entropi 2: samtalen får kun bekræftet gemte indsendelser; en fejl i samtalen rører aldrig broen.
   // Er beskedfanen ikke monteret, overleveres client-id i samtalens egen ejer- og atletscopede
@@ -80,6 +80,15 @@ export function useVideoCoachBro({
         athleteVideoCoachClientsRef.current.delete(event.source)
         setAthleteVideoCoachOpen(false)
         setAthleteVideoCoachInstant(false)
+        return
+      }
+      if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:open-messages`) {
+        const frameWindow = athleteVideoCoachFrameRef.current?.contentWindow
+        if (event.source !== frameWindow && !athleteVideoCoachClientsRef.current.has(event.source)) return
+        athleteVideoCoachClientsRef.current.delete(event.source)
+        setAthleteVideoCoachOpen(false)
+        setAthleteVideoCoachInstant(false)
+        onOpenMessages?.()
         return
       }
       if (message.type === `${ATHLETE_VIDEOCOACH_PREFIX}:ready`) {
