@@ -125,7 +125,7 @@ export function todayItems({ weight, readiness, training, meal }) {
   if (readiness) items.push({ key: 'readiness', done: readiness.done === true })
   if (training?.kind === 'today' || training?.kind === 'done' && training.today === true)
     items.push({ key: 'training', done: training.kind === 'done' || training.total > 0 && training.logged >= training.total })
-  if (meal && meal.status === 'ready') items.push({ key: 'meal', done: meal.today > 0 })
+  if (meal && meal.status === 'ready') items.push({ key: 'meal', done: meal.today >= (Number.isSafeInteger(meal.planned) && meal.planned > 0 ? meal.planned : 1) })
   const missing = items.filter(item => !item.done).map(item => item.key)
   const done = items.filter(item => item.done).map(item => item.key)
   return { items, missing, done,
