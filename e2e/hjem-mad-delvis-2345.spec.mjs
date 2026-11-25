@@ -53,7 +53,7 @@ try {
     const mock = createMockSupabase({ users: s.users, tables: structuredClone(s.tables) }); await mock.listen(MOCK_PORT)
     const ctx = await browser.newContext({ viewport: MOBILE, colorScheme: sc }); const page = await ctx.newPage()
     page.on('pageerror', err => errors.push(`${navn} ${sc}: ${err.message}`))
-    try { await login(page); await run(page, antal); console.log(`OK ${navn} ${sc}`)
+    try { await login(page); await hjem(page).waitFor({ timeout: 20000 }); await tema(page, sc); await run(page, antal); console.log(`OK ${navn} ${sc}`)
       if (process.env.UD_MAPPE && loggede === 1) await page.screenshot({ path: `${process.env.UD_MAPPE}/2345-hjem-delvis-${sc}.png` }) }
     catch (e) { try { await page.screenshot({ path: `${process.env.TEMP}/2345-fejl-${sc}.png` }) } catch { /* ignoreret */ } throw new Error(`${navn} ${sc}: ${e.message}`) }
     finally { await ctx.close(); await mock.close() }
