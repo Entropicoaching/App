@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Ordre 1537a: node scripts/kostplan/lav-uge.mjs <uge-ind.json> --ud ugeplan.json
 // Bygger en ugeplan til skriv-forslag.mjs med generatoren (samme mønster som u10e-toer.test.mjs)
-// og skriver ugen som læsbar tekst til chatten. Ingen database, nøgler eller net.
+// og skriver ugen som læsbar tekst til chatten. Med --fri <0 til 30> viser teksten også de skalerede gram, atleten ser (2385). Ingen database, nøgler eller net.
 // uge-ind.json: { athleteId, goal, intensity, rationale, basisAsOf, calculationBasis?,
 //   targets: { kcal, protein, as_of }, carb, fat, start: 'ÅÅÅÅ-MM-DD',
 //   dagtyper: [[{ name, items: ['Havregryn', ...] }, ...], ...] }  (dag i bruger dagtyper[i % antal])
@@ -10,7 +10,8 @@ import { pathToFileURL } from 'node:url'
 import { generateGramPlan } from '../../src/entropi2/kostplan/generator/index.mjs'
 import { DANSKE_DAGLIGVARER, MAKRO_TOLERANCE } from '../../src/entropi2/kostplan/realisme.mjs'
 import { FOODS } from '../../src/entropi2/kostplan/foedevarer/index.mjs'
-import { ForslagFejl, tjekUgeplan } from './forslag.mjs'
+import { skalerMaaltider } from '../../src/entropi2/kostplan/friPulje.mjs'
+import { ForslagFejl, friProcent, tjekUgeplan } from './forslag.mjs'
 
 const stop = message => { throw new ForslagFejl(message) }
 const plusDage = (value, n) => new Date(Date.parse(value + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10)
@@ -60,7 +61,19 @@ function tjekDagMod(date, meals, plan, maal) {
     (fyldt.length ? `Måltid der mangler en tættere vare (fx nødder, olie, mejeri, kød): ${fyldt.join(', ')}.` : 'Tilføj en energi- eller proteintæt vare til et måltid.'))
 }
 
-export function lavUge(ind) {
+// Ordre 2385: med --fri skalerer atletens Kost i dag måltiderne til basen (skalerMaaltider, afrundet til 5 g).
+// Udskriften viser både de byggede og de skalerede gram, så Marc godkender de tal, atleten ser.
+function skalerDag(day, fri) {
+  const meals = day.meals.map((m, j) => ({ id: 'm' + j, name: m.name, foods: m.portions.map(p => {
+    const n = foodBy.get(p.foodId).nutrientsPer100g
+    return { id: p.foodId, name: navnPaa(p.foodId), grams: p.grams, kcal100: n.energyKcal, protein100: n.proteinG }
+  }) }))
+  const skaleret = skalerMaaltider(meals, fri).meals
+  const sum = (list, key) => Math.round(list.reduce((s, m) => s + m.foods.reduce((t, f) => t + f[key] * f.grams / 100, 0), 0))
+  return { meals: skaleret, dag: { kcal: sum(meals, 'kcal100'), protein: sum(meals, 'protein100') }, base: { kcal: sum(skaleret, 'kcal100'), protein: sum(skaleret, 'protein100') } }
+}
+
+export function lavUge(ind, { fri = 0 } = {}) {
   const { dagtyper, start, carb, fat, ...felter } = ind ?? {}
   if (!Array.isArray(dagtyper) || !dagtyper.length || dagtyper.some(d => !Array.isArray(d))) stop('dagtyper skal være en liste af dage med måltider.')
   if (!(carb >= 0) || !(fat >= 0)) stop('carb og fat skal være tal i gram.')
@@ -78,16 +91,23 @@ export function lavUge(ind) {
   const ugeplan = { ...felter, days }
   // Samme prøver som skriv-forslag: realisme, kontrakt og 5 %-grænsen.
   const tjekket = tjekUgeplan(ugeplan)
-  const tekst = tjekket.days.map((d, i) => [`${d.date}: ${Math.round(d.kcal)} kcal, ${Math.round(d.protein)} g protein`,
-    ...days[i].meals.map(m => `  ${m.name}: ${m.portions.map(p => `${navnPaa(p.foodId)} ${p.grams} g`).join(', ')}`)].join('\n')).join('\n')
+  const pct = friProcent(fri)
+  const tekst = tjekket.days.map((d, i) => {
+    if (!pct) return [`${d.date}: ${Math.round(d.kcal)} kcal, ${Math.round(d.protein)} g protein`,
+      ...days[i].meals.map(m => `  ${m.name}: ${m.portions.map(p => `${navnPaa(p.foodId)} ${p.grams} g`).join(', ')}`)].join('\n')
+    const s = skalerDag(days[i], pct)
+    return [`${d.date}: basen ${s.base.kcal} kcal, ${s.base.protein} g protein; hele dagen ${s.dag.kcal} kcal, ${s.dag.protein} g protein (fri pulje ${pct} %, ${s.dag.kcal - s.base.kcal} kcal)`,
+      ...s.meals.map((m, j) => `  ${m.name}: ${m.foods.map((f, k) => `${f.name} ${days[i].meals[j].portions[k].grams} g, atleten får ${f.grams} g`).join('; ')}`)].join('\n')
+  }).join('\n')
   return { ugeplan, tekst }
 }
 
 async function main(argv) {
-  const file = argv.find((arg, i) => !arg.startsWith('--') && argv[i - 1] !== '--ud')
+  const file = argv.find((arg, i) => !arg.startsWith('--') && argv[i - 1] !== '--ud' && argv[i - 1] !== '--fri')
   const ud = argv[argv.indexOf('--ud') + 1]
-  if (!file || !argv.includes('--ud') || !ud) stop('Brug: node scripts/kostplan/lav-uge.mjs <uge-ind.json> --ud ugeplan.json')
-  const { ugeplan, tekst } = lavUge(JSON.parse(readFileSync(file, 'utf8')))
+  const fri = argv.includes('--fri') ? friProcent(argv[argv.indexOf('--fri') + 1]) : 0
+  if (!file || !argv.includes('--ud') || !ud) stop('Brug: node scripts/kostplan/lav-uge.mjs <uge-ind.json> --ud ugeplan.json [--fri <0 til 30>]')
+  const { ugeplan, tekst } = lavUge(JSON.parse(readFileSync(file, 'utf8')), { fri })
   writeFileSync(ud, JSON.stringify(ugeplan, null, 1))
   process.stdout.write(tekst + '\n')
 }

@@ -3,6 +3,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { FOODS } from '../../src/entropi2/kostplan/foedevarer/index.mjs'
 import { lavUge } from './lav-uge.mjs'
+import { skalerMaaltider } from '../../src/entropi2/kostplan/friPulje.mjs'
 import { skrivForslag } from './skriv-forslag.mjs'
 
 const byId = new Map(FOODS.map(food => [food.id, food]))
@@ -51,4 +52,32 @@ test('ugen med lofter giver kompakt SQL med --fri 15, og databasens valid_meals 
   const { sql } = await skrivForslag(ugeplan, { send: false, fri: 15 })
   assert.ok(sql.length < 20000)
   assert.match(sql, /"fri_pct":\s*15/)
+})
+
+// Ordre 2385: Marc ser de gram, atleten ser. Med --fri skalerer udskriften med samme skalerMaaltider som Kost i dag.
+const gramLinjer = tekst => tekst.split('\n').filter(l => l.startsWith('  ')).map(l => l.trim())
+
+test('2385: uden fri vises kun de byggede gram', () => {
+  const { tekst } = lavUge(ind())
+  assert.doesNotMatch(tekst, /atleten får/)
+  assert.match(tekst, /Havregryn \d+ g/)
+})
+
+test('2385: med fri 15 viser udskriften byggede og skalerede gram, samme tal som skalerMaaltider', () => {
+  const { ugeplan, tekst } = lavUge(ind(), { fri: 15 })
+  const dag = ugeplan.days[0]
+  const meals = dag.meals.map((m, j) => ({ id: 'm' + j, name: m.name, foods: m.portions.map(p => {
+    const n = byId.get(p.foodId).nutrientsPer100g
+    return { id: p.foodId, name: navn(p.foodId), grams: p.grams, kcal100: n.energyKcal, protein100: n.proteinG, carb100: n.carbohydrateG, fat100: n.fatG }
+  }) }))
+  const skaleret = skalerMaaltider(meals, 15)
+  const linjer = tekst.split('\n')
+  const start = linjer.findIndex(l => l.startsWith(dag.date))
+  const dagTekst = linjer.slice(start + 1, linjer.findIndex((l, i) => i > start && /^\d{4}-/.test(l)) === -1 ? undefined : linjer.findIndex((l, i) => i > start && /^\d{4}-/.test(l))).join('\n')
+  meals.forEach((m, j) => m.foods.forEach((f, k) => {
+    const s = skaleret.meals[j].foods[k]
+    assert.ok(dagTekst.includes(`${f.name} ${f.grams} g, atleten får ${s.grams} g`), `${m.name}: ${f.name} ${f.grams} g -> ${s.grams} g mangler`)
+  }))
+  assert.ok(gramLinjer(tekst).some(l => /Havregryn \d+ g, atleten får \d+ g/.test(l)))
+  assert.match(linjer[start], /basen \d+ kcal, \d+ g protein; hele dagen \d+ kcal, \d+ g protein/)
 })
