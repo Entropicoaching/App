@@ -2,9 +2,10 @@ import * as React from 'react'
 import { kostvane, readDone, saveDone, KOSTDAGE_MAAL } from './kostvaneModel.mjs'
 import { useDayRow } from '../../u7/useDayRow.mjs'
 import { u7Enabled } from '../../u7/flag.mjs'
+import { iGaarMedPlannavne } from './kostIDagModel.mjs'
 
 const h = React.createElement
-const { useEffect, useState, useSyncExternalStore } = React
+const { useEffect, useRef, useState, useSyncExternalStore } = React
 const card = { margin: 16, padding: 16, borderRadius: 12, background: '#24241f', border: '1px solid #414139', color: '#edeae2' }
 const primary = { minHeight: 48, width: '100%', font: 'inherit', fontWeight: 600, background: '#edeae2', color: '#16160f', border: 0, borderRadius: 10, padding: '10px 14px', marginTop: 8 }
 const none = Object.freeze({ loaded: false })
@@ -28,7 +29,7 @@ function Dots({ dage }) {
 
 // Dagens kostvane: tre korte trin. Bruger kostloggens egen controller (log, snapshot),
 // så måltiderne gemmes i de samme logs som i dag. "Færdig for i dag" er kun lokal.
-export default function KostvaneCheckin({ tracker, athleteId, date, storage, client, u7DayData }) {
+export default function KostvaneCheckin({ tracker, athleteId, date, storage, client, u7DayData, planNames }) {
   const s = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || (() => none), tracker?.snapshot || (() => none))
   const device = storage === undefined ? (typeof localStorage === 'undefined' ? null : localStorage) : storage
   const [done, setDone] = useState(() => knownDone(device, athleteId, date))
@@ -46,17 +47,31 @@ export default function KostvaneCheckin({ tracker, athleteId, date, storage, cli
     if (dayReady && done && !serverDone) day.save({ kost_done_at: new Date().toISOString() })
   }, [dayReady, done, serverDone])
   const v = kostvane(s?.athleteId === athleteId && s?.date === date ? s : none, done)
+  // 2356: gårsdagens rækker får dagens plannavne (som Kost i dags "Alt fra i går"), så de tæller som base og ikke som fri mad.
+  // Rækkeiderne gemmes, så ét Fortryd kan fjerne hele gruppen, så længe den sidste rækkes fortrydelse (5 sekunder) gælder.
+  const group = useRef(null)
   const repeatYesterday = async () => {
     if (!tracker || copy?.running) return
-    const meals = v.yesterday
+    const meals = iGaarMedPlannavne(v.yesterday, planNames)
+    const ids = []
     setCopy({ running: true, saved: 0, total: meals.length })
-    let saved = 0
+    let saved = 0, intent = ''
     for (const [index, meal] of meals.entries()) {
-      if (await tracker.log(meal, `kostvane-i-gaar:${date}:${index}:${Date.now()}`) !== true) break
+      intent = `kostvane-i-gaar:${date}:${index}:${Date.now()}`
+      if (await tracker.log(meal, intent) !== true) break
       saved++
+      const undo = tracker.snapshot?.()?.undo
+      if (undo?.token === intent && undo.rowId) ids.push(undo.rowId)
       setCopy({ running: true, saved, total: meals.length })
     }
+    group.current = saved === meals.length && ids.length === saved ? { token: intent, ids } : null
     setCopy({ running: false, saved, total: meals.length })
+  }
+  const undoCopy = async () => {
+    const ids = group.current?.ids ?? []
+    const removed = ids.length ? await tracker.undoRows?.(ids, `kostvane-fortryd:${date}:${Date.now()}`) : 0
+    group.current = null
+    setCopy(removed === ids.length ? null : { running: false, saved: ids.length - removed, total: ids.length, undone: true })
   }
   // A failed local save still checks the day in for this open view.
   const finish = () => {
@@ -78,7 +93,10 @@ export default function KostvaneCheckin({ tracker, athleteId, date, storage, cli
 ),
     // Shown in every step: a partial copy leaves the day with some meals logged.
     copy && !copy.running && copy.saved < copy.total && h('p', { role: 'alert' },
-      `${copy.saved} af ${copy.total} måltider fra i går blev gemt. Log resten med Log mad herunder.`),
+      copy.undone ? `${copy.saved} af ${copy.total} måltider blev ikke fortrudt og er stadig gemt.`
+        : `${copy.saved} af ${copy.total} måltider fra i går blev gemt. Log resten med Log mad herunder.`),
+    group.current && s?.undo?.token === group.current.token && typeof tracker?.undoRows === 'function' && h('button', { type: 'button',
+      style: { ...primary, background: 'transparent', color: '#edeae2', border: '1px solid #6b6b60', minHeight: 44 }, onClick: undoCopy }, 'Fortryd'),
     v.mealsToday > 0 && h('div', null,
       h('p', { style: { margin: '4px 0' } }, `${v.mealsToday} ${v.mealsToday === 1 ? 'måltid' : 'måltider'} logget i dag.`),
       h('p', { 'data-kostvane-feedback': '', style: { margin: '4px 0', fontWeight: 600 } }, v.feedback),
