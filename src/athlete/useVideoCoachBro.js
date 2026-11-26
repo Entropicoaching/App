@@ -13,7 +13,7 @@ import { recordSilentFail, attachPendingSilentFails, clearPendingSilentFails, ma
 import { flushVideoCoachDraftQueue, isRetryableVideoCoachError,
   queueVideoCoachDraft, saveVideoCoachDraft } from '../videoCoachSubmission'
 import { buildAwaitingAnalysisRow, buildVideoUploadPath, validateVideoUploadRequest,
-  videoSendCoachLoginReason, videoUploadAlreadyExistsError, videoUploadMaxBytes, videoUploadReserveMulig, VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
+  videoSendCoachLoginReason, videoUploadAlreadyExistsError, videoUploadMaxBytes, videoUploadReserveFejl, videoUploadReserveMulig, VIDEOCOACH_UPLOAD_BUCKET } from '../videoCoachUpload'
 import { ATHLETE_VIDEOCOACH_PREFIX, ATHLETE_VIDEOCOACH_QUEUE_CHANGED,
   validateAthleteVideoCoachRow } from './videoCoachBro'
 
@@ -129,7 +129,8 @@ export function useVideoCoachBro({
         // ORDRE 1890v (Marc 19. nov.: "den siger bar fejl"): videolageret og databasen tager kun imod video
         // fra atletens eget login (worker.js:85, vc_upload_athlete_insert_own, entropi_vc3_athlete_insert_own_draft).
         // En coach, der træner på sin egen profil (ordre 1610v), afvises derfor; så står grunden på dansk.
-        const coachLoginReason = text => videoSendCoachLoginReason(text, currentAthlete, session?.user?.id)
+        // ORDRE 2399v (2367v fund 2): kun ved en egentlig login-afvisning (401, 403, RLS); ellers står årsagen alene.
+        const coachLoginReason = (text, error) => videoSendCoachLoginReason(text, currentAthlete, session?.user?.id, error)
         const selectionState = videoSetRef?.current
         const selectedSet = selectionState?.enabled === true ? selectionState.selected : null
         if (selectionState?.enabled === true && (!selectedSet || selectionState.athleteId !== currentAthlete.id)) {
@@ -186,7 +187,7 @@ export function useVideoCoachBro({
         // G16 (ordre 131): sat FØR selve overførslen, ryddet af reply() ovenfor
         // ved ethvert bekræftet udfald - se athleteSilentFailLog.js.
         markUploadInflight(currentAthlete.id, message.requestId)
-        let upload
+        let upload, lagerFejl = null
         try {
           // ORDRE 1537v0: med VITE_VIDEOLAGER_URL går klippet til videolageret (R2) i stedet for Supabase.
           // Klienten hentes først, når lageret er slået til; uden variablen er alt som før.
@@ -196,6 +197,7 @@ export function useVideoCoachBro({
             ? await lagerKlient.uploadTilVideolager({ base: lager, token: (await supabase.auth.getSession()).data?.session?.access_token,
               athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId, path, file, mimeType, signal: controller.signal })
             : null
+          lagerFejl = lagerSvar?.error ?? null
           // ORDRE 1610v: tager videolageret ikke imod klippet (og atleten ikke selv har afbrudt), sendes det
           // til Supabase som før, så en fejl i lageret aldrig alene stopper en indsendelse.
           // ORDRE 1616v: et klip over Supabases 50 MB har ingen reserve; så vises lagerets fejl, og atleten kan sende igen.
@@ -219,8 +221,10 @@ export function useVideoCoachBro({
             reply({ ok: false, aborted: true, error: 'Annulleret · intet blev sendt' })
             return
           }
+          // ORDRE 2399v (2367v fund 3): reservens engelske netfejl bliver til lagerets danske tekst.
+          upload = { ...upload, error: videoUploadReserveFejl(upload.error, lagerFejl) }
           if (!videoUploadAlreadyExistsError(upload.error)) {
-            reply({ ok: false, error: coachLoginReason(`Video kunne ikke uploades: ${upload.error.message || 'ukendt fejl'}`) })
+            reply({ ok: false, error: coachLoginReason(`Video kunne ikke uploades: ${upload.error.message || 'ukendt fejl'}`, upload.error) })
             return
           }
         }
@@ -240,7 +244,7 @@ export function useVideoCoachBro({
         if (saved.error) {
           // Videoen er allerede lagt i bucket'en (idempotent sti pr. client_analysis_id) -
           // kun selve rækken mangler. Et nyt tryk på "Prøv at sende igen" er nok.
-          reply({ ok: false, error: coachLoginReason(saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes. Prøv igen.') })
+          reply({ ok: false, error: coachLoginReason(saved.error.message || 'Videoen blev uploadet, men analysen kunne ikke oprettes. Prøv igen.', saved.error) })
           return
         }
         clearPendingSilentFails(currentAthlete.id)

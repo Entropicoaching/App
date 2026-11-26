@@ -76,9 +76,38 @@ export function videoUploadAlreadyExistsError(error) {
 // ORDRE 1890v (Marc 19. nov.: "den siger bar fejl"): en coach, der træner på sin egen profil (ordre 1610v),
 // er logget ind som coach. Lageret og databasen tager kun imod video fra atletens eget login, så
 // afvisningen får grunden med på dansk. Atletens eget login får teksten uændret.
-export function videoSendCoachLoginReason(text, athlete, userId) {
+// ORDRE 2399v (2367v fund 2): siden 1952 må coachen sende for sin egen atlet, så login-teksten står kun,
+// når svaret faktisk er en login-afvisning (401, 403 eller RLS). En netfejl viser sin egen årsag.
+export function videoSendLoginAfvist(error, text = '') {
+  const status = String(error?.status ?? ''), statusCode = String(error?.statusCode ?? '')
+  if (status === '401' || status === '403' || statusCode === '401' || statusCode === '403') return true
+  const code = String(error?.code ?? '')
+  if (code === '42501' || code.startsWith('PGRST30')) return true
+  return /row[- ]level security|unauthori[sz]ed|forbidden|Log ind igen|kan kun sende video|Kun atleter kan sende/i
+    .test(`${error?.message || ''} ${text}`)
+}
+
+export function videoSendCoachLoginReason(text, athlete, userId, error = null) {
   const coachLogin = typeof userId === 'string' && !!userId && athlete?.coach_id === userId && athlete?.user_id !== userId
-  return coachLogin ? `Du er logget ind som coach, og video kan kun sendes fra atletens eget login (${text})` : text
+  return coachLogin && videoSendLoginAfvist(error, text)
+    ? `Du er logget ind som coach, og video kan kun sendes fra atletens eget login (${text})` : text
+}
+
+// ORDRE 2399v (2367v fund 3): falder nettet, svarer browserens fetch på engelsk ("Failed to fetch",
+// "NetworkError when attempting to fetch resource.", "Load failed"), og Supabase-reserven gav den tekst
+// videre i stedet for lagerets danske. Ingen engelsk fejltekst må nå brugeren i sendvejen.
+export const VIDEO_UPLOAD_NETFEJL = 'Forbindelsen blev afbrudt. Prøv igen'
+const ENGELSK_NETFEJL = /failed to fetch|networkerror|network request failed|load failed|fetch failed|ERR_INTERNET_DISCONNECTED|ERR_NETWORK/i
+export function videoUploadNetfejl(error) {
+  if (!error) return false
+  if (Number(error.status ?? error.statusCode ?? 0) >= 400) return false
+  return ENGELSK_NETFEJL.test(String(error.message || '')) || error.name === 'StorageUnknownError'
+}
+// Reservens fejl på dansk: en netfejl får lagerets egen tekst, hvis lageret også faldt på nettet, ellers standardteksten.
+export function videoUploadReserveFejl(reserveError, lagerError = null) {
+  if (!reserveError || !videoUploadNetfejl(reserveError)) return reserveError
+  const lagerTekst = typeof lagerError?.message === 'string' ? lagerError.message : ''
+  return { ...reserveError, message: lagerTekst.startsWith('Forbindelsen blev afbrudt') ? lagerTekst : VIDEO_UPLOAD_NETFEJL }
 }
 
 // Defense-in-depth: samme tjekliste som databasens
