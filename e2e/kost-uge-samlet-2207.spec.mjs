@@ -21,8 +21,11 @@ const plus = (day, n) => new Date(Date.parse(day + 'T00:00:00Z') + n * 86400000)
 const krav = (ok, tekst) => { if (!ok) throw new Error(tekst) }
 const kr = n => new Intl.NumberFormat('da-DK').format(n)
 let nr = 0
+// Ordre 2387 og 2392: et planmåltid er kun fulgt (og "Alt fra i går" kun uden "andre retter"), når kcal og protein ligger inden for 10 % af planen;
+// planens måltider (450 og 600 kcal ved 0 %) har 15 kcal pr. g protein og skaleres til basen ved fri pulje.
+const PROTEIN_DEL = 15
 function raekke(athlete, dag, meal, kcal) {
-  return { id: `39000000-0000-4000-8000-${String(++nr).padStart(12, '0')}`, athlete_id: athlete, date: dag, meal, kcal, protein: Math.round(kcal / 5), carb: 60, fat: 20, created_at: `${dag}T12:00:00Z` }
+  return { id: `39000000-0000-4000-8000-${String(++nr).padStart(12, '0')}`, athlete_id: athlete, date: dag, meal, kcal, protein: Math.round(kcal / PROTEIN_DEL), carb: 60, fat: 20, created_at: `${dag}T12:00:00Z` }
 }
 function seed(pct) {
   const s = ugeSeed(), t = s.tables, i = d => plus(s.today, d)
@@ -35,11 +38,12 @@ function seed(pct) {
   for (const v of t.kostplan_v1_versions) { v.effective_from = foerste.valid_from; v.calculation_basis = { fri_pct: pct } }
   for (const a of t.kostplan_v1_approvals) a.approved_at = i(-16) + 'T10:00:00.000001Z'
   t.meal_logs = []
-  const L = (d, meal, kcal) => t.meal_logs.push(raekke(ATHLETE_ID, i(d), meal, kcal))
+  const base = kcal => Math.round(kcal * (100 - pct) / 100)
+  const L = (d, meal, kcal) => t.meal_logs.push(raekke(ATHLETE_ID, i(d), meal, /pizza/i.test(meal) ? kcal : base(kcal)))
   // dag -6: ingen log.
   L(-5, 'Frokost', 450); L(-5, 'Aftensmad', 600); L(-5, 'Ekstra pizza', 200)
   L(-4, 'frokost', 450); L(-4, '  AFTENSMAD ', 600); L(-4, 'Ekstra pizza', 200)
-  L(-3, 'Frokost', 300); L(-3, 'Aftensmad', 600); L(-3, 'Ekstra pizza', 200) // Frokost rettet til en mindre mængde
+  L(-3, 'Frokost', 430); L(-3, 'Aftensmad', 600); L(-3, 'Ekstra pizza', 200) // Frokost rettet til en lidt mindre mængde (inden for 10 %)
   L(-2, 'Frokost', 450); L(-2, 'Aftensmad', 600)
   L(-1, 'Frokost', 450); L(-1, 'Aftensmad', 600)
   return s
@@ -56,7 +60,7 @@ const ingenScroll = async (page, hvor) => krav(await page.evaluate(() => documen
 const PULJE_PLAN = { 15: 158, 30: 315 } // 15 % og 30 % af 1050 kcal, afrundet
 function forventet(pct, variant) {
   if (pct === 0) return null
-  const idag = variant === 'spist' ? 1 : 2
+    const idag = variant === 'spist' ? 1 : 2
   const over = PULJE_PLAN[pct] < 200 ? 3 : 0 // pizzaen på 200 kcal over puljen dag -5, -4 og -3
   return { basis: 10 + idag, basisAf: 14, vurderede: 6, holdt: 6 - over, signal: pct === 15 ? GRUND : null }
 }
@@ -68,7 +72,7 @@ try {
   for (const pct of [0, 15, 30]) for (const variant of ['spist', 'alt', 'igaar']) {
     const hvem = `${pct} % ${variant}`
     const s = seed(pct); const mock = createMockSupabase({ users: s.users, tables: structuredClone(s.tables) }); await mock.listen(MOCK_PORT)
-    const forv = forventet(pct, variant)
+    const forv = forventet(pct, variant) // 'alt' justeres nedenfor efter den rettede Frokost
     const ctxA = await browser.newContext({ viewport: MOBILE, colorScheme: 'light' }), ctxC = await browser.newContext({ viewport: MOBILE, colorScheme: 'light' })
     const pa = await ctxA.newPage(), pc = await ctxC.newPage()
     for (const [p, rolle] of [[pa, 'atlet'], [pc, 'coach']]) p.on('pageerror', err => errors.push(`${hvem} ${rolle}: ${err.message}`))
@@ -93,6 +97,12 @@ try {
       }
       const idagRaekker = mock.table('meal_logs').filter(r => r.date === plus(s.today, 0))
       krav(idagRaekker.length === (variant === 'spist' ? 1 : 2), `${hvem}: forventede ${variant === 'spist' ? 1 : 2} rækker i dag, fandt ${idagRaekker.length}`)
+      // Ordre 2392: den rettede Frokost tæller kun som fulgt, hvis kcal og protein ligger inden for 10 % af planmåltidet (450 kcal ved 0 %, skaleret til basen).
+      if (variant === 'alt' && forv) {
+        const r = idagRaekker.find(x => String(x.meal).trim() === 'Frokost'), maal = 450 * (100 - pct) / 100
+        const inden = (v, m) => Math.abs(v - m) <= Math.max(m * 0.1, 1)
+        if (!(inden(Number(r.kcal), maal) && inden(Number(r.protein), maal / PROTEIN_DEL))) forv.basis--
+      }
       krav(idagRaekker.every(r => ['Frokost', 'Aftensmad'].includes(String(r.meal).trim())), `${hvem}: dagens rækker skal have planens navne: ${idagRaekker.map(r => r.meal).join(', ')}`)
       // Atletens tal.
       let atlet = { pulje: null, status: null, uge: null }

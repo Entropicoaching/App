@@ -16,6 +16,8 @@ const GRUND = 'Følger ikke kostplanen'
 const LOGGER = 'Logger ikke maden'
 const plus = (day, n) => new Date(Date.parse(day + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10)
 const krav = (ok, tekst) => { if (!ok) throw new Error(tekst) }
+// Ordre 2392: "fulgt" kræver, at kcal og protein ligger inden for 10 % af planmåltidet (skaleret til basen ved 20 % fri pulje).
+const PLAN = { Frokost: [360, 24], Aftensmad: [480, 32] }
 // Planen gælder de seneste 15 dage med niveau 20 %; kost logges de seneste dage (dage = 4: 4 af 14 basemåltider fulgt; 7: alle).
 function seed({ maaltider, dage = 7, ekstra = 0 }) {
   const s = ugeSeed(), t = s.tables
@@ -31,7 +33,7 @@ function seed({ maaltider, dage = 7, ekstra = 0 }) {
   t.meal_logs = []
   let n = 0
   for (let i = 1; i <= dage; i++) for (const navn of maaltider) t.meal_logs.push({ id: `39000000-0000-4000-8000-${String(++n).padStart(12, '0')}`,
-    athlete_id: ATHLETE_ID, date: plus(s.today, -i), meal: navn, kcal: 700, protein: 150, carb: 60, fat: 20, created_at: `${plus(s.today, -i)}T12:00:00Z` })
+    athlete_id: ATHLETE_ID, date: plus(s.today, -i), meal: navn, kcal: PLAN[navn]?.[0] ?? 700, protein: PLAN[navn]?.[1] ?? 150, carb: 60, fat: 20, created_at: `${plus(s.today, -i)}T12:00:00Z` })
   // Ordre 2193: uplanlagt mad (ikke planmåltid, ikke "Fri: ") i kcal pr. dag.
   if (ekstra > 0) for (let i = 1; i <= dage; i++) t.meal_logs.push({ id: `39000000-0000-4000-8000-${String(++n).padStart(12, '0')}`,
     athlete_id: ATHLETE_ID, date: plus(s.today, -i), meal: 'Ekstra pizza', kcal: ekstra, protein: 20, carb: 90, fat: 40, created_at: `${plus(s.today, -i)}T20:00:00Z` })

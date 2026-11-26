@@ -26,8 +26,9 @@ async function login(page) {
   await page.locator('#athlete-auth-email').fill(ATHLETE_USER.email); await page.locator('#athlete-auth-password').fill(ATHLETE_USER.password)
   await page.getByRole('button', { name: 'Log ind' }).click()
 }
+// Ordre 2373: den sendte uge på 7 dage kan vælges helt, så dag 1 viser alle 7 (før kun 4).
 // Forskydning = dage siden ugens første dag. Dag 1 = 0, dag 7 = 6, dagen efter ugens slut = 7.
-const dage = [['dag 1', 0, 4], ['dag 7', 6, 1], ['dagen efter ugens slut', 7, 0]]
+const dage = [['dag 1', 0, 7], ['dag 7', 6, 1], ['dagen efter ugens slut', 7, 0]]
 const vite = await startVite(), browser = await launchBrowser(), errors = []
 let fejl = null
 try {
@@ -40,7 +41,8 @@ try {
       await knap(page, 'Åbn kost').waitFor({ timeout: 20000 }); await knap(page, 'Åbn kost').click()
       await knap(page, 'Vis detaljer').waitFor({ timeout: 20000 }); await knap(page, 'Vis detaljer').click()
       await page.getByText('Indkøb fra kostplanen').first().waitFor({ timeout: 20000 })
-      await page.locator('section[aria-label="Indkøb fra kostplanen"] [data-shopping-complete]').waitFor({ timeout: 20000 })
+      // Ordre 1546: uden aktiv kostplan (dagen efter ugens slut) er indkøb foldet ind i en lukket details, så elementet er i DOM, men ikke synligt.
+      await page.locator('section[aria-label="Indkøb fra kostplanen"] [data-shopping-complete]').waitFor({ state: 'attached', timeout: 20000 })
       await page.waitForFunction(() => !document.body.innerText.includes('Henter godkendte planer'), null, { timeout: 20000 })
       const boxe = await page.locator('fieldset input[type=checkbox][aria-label^="Indkøb "]').evaluateAll(els => els.map(e => e.getAttribute('aria-label').slice(7)))
       const synlig = await page.locator('section[aria-label="Indkøb fra kostplanen"]').innerText()
