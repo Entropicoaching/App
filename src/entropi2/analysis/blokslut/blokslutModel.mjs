@@ -109,11 +109,21 @@ export function blokslutModel(props = {}) {
           : !baseline || !current ? 'Mangler tunge sæt ved blokstart eller i den seneste blokuge.'
             : baseline.zone !== current.zone ? 'Sættene har forskellige rep-områder og sammenlignes ikke.' : null }
   })
+  // Ordre 2418: kropsvægt før og nu. Kun logs i blokkens første uge (før) og de sidste 7 dage (nu); mangler en af dem, udelades linjen.
+  const weight = (() => {
+    if (!Array.isArray(props.weightLogs)) return null
+    const rows = props.weightLogs.map(r => ({ date: day(r?.logged_at), value: parseInputNumber(r?.weight) }))
+      .filter(r => r.date && r.value !== null && r.value >= 20 && r.value <= 400 && r.date <= through)
+    const first = rows.filter(r => r.date >= start && r.date <= addCalendarDays(start, 6)).sort((a, b) => a.date.localeCompare(b.date))[0]
+    const last = rows.filter(r => r.date >= addCalendarDays(through, -6)).sort((a, b) => b.date.localeCompare(a.date))[0]
+    if (!first || !last || first.date === last.date) return null
+    return { before: first.value, now: last.value, delta: Number((last.value - first.value).toFixed(1)) || 0 }
+  })()
   const focus = !confirmed || uncertain
     ? 'Aftal med din coach, hvilke registreringer der mangler, før næste blok vurderes.'
     : completed < sessions.length ? 'Tal med din coach om, hvad der kan gøre passene lettere at gennemføre i næste blok.'
       : 'Tag én ting, der fungerede godt i denne blok, med i samtalen om den næste.'
   return { status: 'ready', start, end, through, completed, planned: sessions.length, confirmed, uncertain,
-    lifts, focus, weeks: weeks.filter(w => w.start <= through).map(w => ({ start: w.start,
+    lifts, weight, focus, weeks: weeks.filter(w => w.start <= through).map(w => ({ start: w.start,
       end: w.end < through ? w.end : through, sets: w.sets, tonnage: w.uncertain ? null : w.tonnage })) }
 }

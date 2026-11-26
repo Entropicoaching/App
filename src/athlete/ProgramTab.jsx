@@ -356,7 +356,7 @@ function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx }) {
   })()
   const skjulDato = blokslutCurrent?.api.blokhovedViserDatoen(hovedFase?.weeks, blokslutCurrent.model) === true
   return (blokslutCurrent && blokslutCurrent.api.renderProgramBlokslut(createElement, blokslutCurrent.model, {
-    open: blokslutCurrent.open, skjulDato, skjulPas: true,
+    open: blokslutCurrent.open, skjulDato,
     kortStil: { border: 'none', borderRadius: 12, background: programColors.surface, borderInlineStart: `4px solid ${programColors.accent}` },
     onToggle: event => {
       const open = event.currentTarget.open

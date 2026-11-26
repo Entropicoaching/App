@@ -80,6 +80,27 @@ export async function readBlokslutLogs(athleteId, block, readPage) {
   return rows
 }
 
+// Ordre 2418: kropsvægt til resultatkortet. Fejl eller mangler giver bare ingen vægtlinje.
+export async function readBlokslutWeights(athleteId, block, readPage) {
+  if (typeof athleteId !== 'string' || !athleteId) return null
+  try {
+    if (!readPage) {
+      const { supabase } = await import('../../../supabase.js')
+      readPage = (from, to) => supabase.from('weight_logs').select('weight,logged_at')
+        .eq('athlete_id', athleteId).gte('logged_at', block.start_date).lte('logged_at', block.end_date)
+        .order('logged_at', { ascending: true }).range(from, to)
+    }
+    const rows = []
+    for (let offset = 0; ; offset += 500) {
+      const result = await readPage(offset, offset + 499)
+      if (result?.error || !Array.isArray(result?.data)) return null
+      rows.push(...result.data)
+      if (result.data.length < 500) break
+    }
+    return rows
+  } catch { return null }
+}
+
 export const blokslutSeenKey = (athleteId, block) =>
   'entropi2:blokslut:v1:' + JSON.stringify([athleteId, block.start_date, block.end_date])
 export function wasBlokslutSeen(storage, key) {
@@ -88,12 +109,13 @@ export function wasBlokslutSeen(storage, key) {
 export function markBlokslutSeen(storage, key) {
   try { storage?.setItem(key, '1') } catch { /* Storage is optional; the report still works. */ }
 }
-export async function programBlokslutModel({ athleteId, block, now, programError, readPage }) {
+export async function programBlokslutModel({ athleteId, block, now, programError, readPage, readWeightPage }) {
   if (programError) return blokslutModel({ error: true })
   const plan = blokslutModel({ block, now })
   if (plan.status === 'error') return plan
   try {
-    return blokslutModel({ block, now, exerciseLogs: await readBlokslutLogs(athleteId, block, readPage) })
+    const exerciseLogs = await readBlokslutLogs(athleteId, block, readPage)
+    return blokslutModel({ block, now, exerciseLogs, weightLogs: await readBlokslutWeights(athleteId, block, readWeightPage) })
   } catch { return blokslutModel({ error: true }) }
 }
 
@@ -111,20 +133,24 @@ export function renderProgramBlokslut(h, model, { open, onToggle, onRetry, skjul
   // Ordre 1647: en ny atlets foerste uge (blok paa en uge, intet logget endnu) har intet at rapportere; ellers staar der "Sidste uge er i gang" og "Aftal med din coach" paa dag et.
   if (good && model.weeks.length === 1 && model.confirmed === 0 && model.through < model.end) return null
   const gains = good ? model.lifts.filter(row => row.delta > 0) : []
-  const strength = gains.length ? gains.map(row => `${row.lift}: +${number(row.delta)} kg beregnet e1RM`).join(' · ')
-    : good && model.lifts.some(row => row.delta !== null)
+  // Ordre 2418: før og nu pr. løft, kun hvor sættene kan sammenlignes.
+  const comparable = good ? model.lifts.filter(row => row.delta !== null) : []
+  const liftLine = row => `${row.lift}: ${number(row.baseline.value)} → ${number(row.current.value)} kg (${row.delta > 0 ? '+' : ''}${number(row.delta)})`
+  const strength = gains.length ? comparable.map(liftLine).join(' · ') + ' · beregnet e1RM'
+    : comparable.length
       ? 'Ingen sikker styrkefremgang i de sammenlignelige sæt.'
       : 'Styrkefremgang kan endnu ikke sammenlignes sikkert.'
-  return h('details', { 'aria-label': 'Din blok', 'data-program-blokslut': true, open, onToggle,
+  return h('details', { 'aria-label': 'Dine resultater', 'data-program-blokslut': true, open, onToggle,
     style: { marginBottom: 20, padding: 16, border: '1px solid #59564c', color: '#edeae2',
       width: '100%', minWidth: 0, boxSizing: 'border-box', overflowWrap: 'anywhere', lineHeight: 1.6, ...kortStil } },
-    h('summary', { style: { minHeight: 44, cursor: 'pointer', boxSizing: 'border-box', paddingTop: 8 } }, 'Din blok'),
+    h('summary', { style: { minHeight: 44, cursor: 'pointer', boxSizing: 'border-box', paddingTop: 8 } }, 'Dine resultater'),
     good ? h('div', null,
       // Ordre 1564: datoerne står i blokhovedet; her kun det, hovedet ikke viser.
       skjulDato ? (model.through < model.end ? h('p', null, 'Sidste uge er i gang.') : null)
         : h('p', null, `${model.start.split('-').reverse().join('.')}–${model.end.split('-').reverse().join('.')}${model.through < model.end ? ' · Sidste uge er i gang.' : ''}`),
       skjulPas ? null : h('p', null, `Gennemførte pas: ${number(model.completed)} af ${number(model.planned)}.`),
       h('p', null, model.confirmed === 0 ? 'Ingen bekræftede træningssæt i blokken endnu.' : strength),
+      model.weight && h('p', null, `Kropsvægt: ${number(model.weight.before)} → ${number(model.weight.now)} kg.`),
       model.uncertain && h('p', { role: 'status' }, 'Nogle sæt er afventende eller modstridende. Opgørelsen er ufuldstændig.'),
       h('p', null, h('strong', null, 'Ét fokuspunkt: '), model.focus),
       h('details', null, h('summary', { style: { minHeight: 44, cursor: 'pointer', paddingTop: 8 } }, 'Sådan tælles det'),

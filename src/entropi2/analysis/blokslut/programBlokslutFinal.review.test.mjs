@@ -23,7 +23,7 @@ test('independent exact-final review: dates, arithmetic, denominator and conflic
   const h = (type, props, ...children) => ({ type, props, children })
   const card = renderProgramBlokslut(h, ready, { open: false })
   assert.equal(card.type, 'details'); assert.equal(card.props.open, false)
-  assert.equal(card.props['aria-label'], 'Din blok')
+  assert.equal(card.props['aria-label'], 'Dine resultater')
 })
 test('independent exact-final review: partial failure discards accumulated rows', async () => {
   const block = selectProgramBlock(plan(), '2026-11-09'); let calls = 0

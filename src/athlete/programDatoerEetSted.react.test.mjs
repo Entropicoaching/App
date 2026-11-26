@@ -1,4 +1,4 @@
-// Ordre 1564: blokkens datoer står ét sted på Program, også første gang "Din blok" er åben.
+// Ordre 1564: blokkens datoer står ét sted på Program, også første gang "Dine resultater" er åben.
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createElement } from 'react'

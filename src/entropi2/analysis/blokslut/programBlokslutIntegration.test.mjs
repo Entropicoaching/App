@@ -46,7 +46,7 @@ test('actual copied Program: full block read, always folded; scoped backend quer
   const p = props(), screen = mount(Program, p)
   screen.render(); const tree = await settled(screen)
   assert.equal(card(tree).props.open, false)
-  assert.match(text(card(tree)), /Squat: \+11 kg/)
+  assert.match(text(card(tree)), /Squat: 110 → 121 kg \(\+11\)/)
   assert.equal(logCalls().length, 1)
   assert.deepEqual(logCalls()[0].eq, ['athlete_id', 'synthetic-a'])
   assert.match(logCalls()[0].select, /weight,reps_completed,skipped,logged_at/)
@@ -68,7 +68,7 @@ test('actual copied Program: empty, failed read and retry show honest output', a
   assert.match(text(card(tree)), /kunne ikke hentes/); assert.doesNotMatch(text(card(tree)), /raw synthetic|Gennemførte/)
   fixture.failure = false; fixture.rows = snapshot().exerciseLogs
   nodes(card(tree), n => n.type === 'button')[0].props.onClick()
-  failed.render(); assert.match(text(card(await settled(failed))), /Squat: \+11 kg/)
+  failed.render(); assert.match(text(card(await settled(failed))), /Squat: 110 → 121 kg \(\+11\)/)
 })
 test('actual copied Program: OFF and middle of block read no report data; following week uses completed block', async () => {
   for (const gate of [false, null, 0, 1, 'true']) {
@@ -86,7 +86,7 @@ test('actual copied Program: OFF and middle of block read no report data; follow
   screen = mount(Program, p); screen.render()
   // Ordre 1564: blokhovedet viser datoerne; kortet gentager dem ikke.
   const done = await settled(screen)
-  assert.match(text(card(done)), /Squat: \+11 kg/)
+  assert.match(text(card(done)), /Squat: 110 → 121 kg \(\+11\)/)
   assert.doesNotMatch(text(card(done)), /19\.10\.2026/)
   assert.equal((text(done).match(/19\. okt\.? til 8\. nov/g) || []).length, 1)
   assert.equal(logCalls().length, before + 1)
@@ -110,7 +110,7 @@ test('actual copied Program: a late previous athlete cannot render or mark the r
   assert.equal(card(screen.render(next)), undefined)
   await flushEffects(); fixture.wait = null; release()
   const tree = await settled(screen)
-  assert.match(text(card(tree)), /Squat: \+11 kg/)
+  assert.match(text(card(tree)), /Squat: 110 → 121 kg \(\+11\)/)
   assert.ok([...store.keys()].every(key => key.includes('synthetic-new')))
   assert.equal([...store.keys()].some(key => key.includes('synthetic-a')), false)
 })
