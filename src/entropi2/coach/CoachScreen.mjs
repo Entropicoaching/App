@@ -17,6 +17,7 @@ import { useCoachAttention } from './useCoachAttention.mjs'
 import { useKostKlienter } from './useKostKlienter.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { alsoLine, ATTENTION_UNAVAILABLE } from './coachAttention.mjs'
+import { idagVisible } from './coachIDag.mjs'
 import { gemKvitteringer, indlaesKvitteringer, medKvittering } from './smerteKvittering.mjs'
 import { adaptCoachState } from './coachModel.mjs'
 import TeamPatternsView from './TeamPatternsView.mjs'
@@ -167,6 +168,7 @@ export function CoachView(input = {}) {
   // Ordre 2005a: Kræver dit blik på forsiden er nu kun det, der venter på svar (beskeder og videoer), én række pr. atlet.
   const rows = inbox ? model.inbox : model.waiting
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
+  const idagRows = inbox ? [] : idagVisible(model.idag)
   // Marc 3. nov.: keep it simple. Kun det vigtigste staar aabent; resten er foldet ind.
   const fold = { marginBlock: 16, borderTop: '1px solid #414139', paddingTop: 8 }
   const foldSummary = { cursor: 'pointer', minHeight: 48, display: 'flex', alignItems: 'center', minWidth: 0, overflowWrap: 'anywhere' }
@@ -237,17 +239,15 @@ export function CoachView(input = {}) {
       // forsiden følger ugen. Check-in og ny uge sker i Claude-chatten; her står, hvem der mangler en ny uge,
       // hvad der venter på svar, og hvad der er sendt, hver række med ét tryk ind.
       h('div', { 'data-coach-uge': 'uge' },
-        model.state !== 'empty' && step('ny-uge', 'Mangler ny uge', model.uge.nyUge, 'Alle har en uge i appen.'),
         // Ordre 1547 (1544's fund): tom liste siger kun den rolige sætning, ikke "0 opgaver i alt".
         // Ordre 1707: "Vis resten (n)" bærer tallet over tre; indbakken beholder sit tal.
-        h('section', { 'aria-label': 'Atleter der kræver handling', 'data-u11-top': 'opgaver', 'data-coach-uge': 'venter' },
-          h('h2', null, 'Kræver dit blik'),
+        // Ordre 2417: én liste øverst, højst 5 rækker, hasteste først (smerte, ingen log i 3 dage, svar der venter, programuge der slutter).
+        h('section', { 'aria-label': 'Atleter der kræver handling', 'data-u11-top': 'opgaver', 'data-coach-uge': 'venter', 'data-coach-idag': true },
+          h('h2', null, 'Kræver dig i dag'),
           status,
-          rows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...firstRows.map((row, index) => rowButton(row, index))) :
-            calm && h('p', null, 'Ingen atleter kræver dit blik lige nu.'),
-          rows.length > 3 && h('details', { 'data-coach-fold': 'opgaver', style: fold },
-            h('summary', { style: foldSummary }, arrow, `Vis resten (${rows.length - 3})`),
-            h('ul', { style: { listStyle: 'none', padding: 0 } }, ...rows.slice(3).map((row, index) => rowButton(row, index + 3))))),
+          idagRows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...idagRows.map((row, index) => rowButton(row, index))) :
+            calm && h('p', { 'data-coach-idag-tom': true }, 'Ingen kræver dig i dag.')),
+        model.state !== 'empty' && step('ny-uge', 'Mangler ny uge', model.uge.nyUge, 'Alle har en uge i appen.'),
         model.state !== 'empty' && step('sendt', 'Sendt', model.uge.sendt, 'Ingen uge sendt til denne uge endnu.', true)),
     !inbox && coachRadarEnabled(props.coachRadarEnabled) && h(CoachRadar, { enabled: true, source: props, context: model }),
     !inbox && (model.nutritionState === 'error' || model.nutritionState === 'partial') && h('details', {

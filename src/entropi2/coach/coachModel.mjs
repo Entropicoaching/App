@@ -8,6 +8,8 @@ import { u3DataEnabled } from '../u3/flag.mjs'
 import { attentionCandidates } from './coachAttention.mjs'
 import { attentionFor } from './coachAttentionRead.mjs'
 import { erKostKlient, kostMangler } from './kostKlienter.mjs'
+import { inactiveTraining } from '../../dashboard/coachInactive.mjs'
+import { idagCandidates, idagRow, idagOrder } from './coachIDag.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
 // Ordre 2103/2113: coachens kostopslag lægger kun runtime-felter på atletkopien; intet gemmes.
@@ -81,7 +83,7 @@ export function adaptCoachState(props = {}, today = new Date()) {
 
 export function coachHomeModel(props = {}, today = new Date()) {
   const data = adaptCoachState(props, today)
-  const actions = [], inbox = [], waiting = [], signals = [], videoKeys = new Set()
+  const actions = [], inbox = [], waiting = [], signals = [], idag = [], videoKeys = new Set()
   const { day, athletes, plans, messages, videos, logs } = data
   const T = day ? ordinal(day) : null
   // U3 (afsnit 2): nye grunde kun med flaget. L1 skal være komplet for netop
@@ -92,8 +94,12 @@ export function coachHomeModel(props = {}, today = new Date()) {
     : source.complete === true ? 'ready' : 'unavailable'
   const u3Nutrition = u3 ? coachNutritionLines(props, day, athletes, data.rosterReady) : null
   const planEntries = u3 ? coachPlanEntries(props, day, data.rosterReady) : null
+  // Ordre 2417: ingen log i 3 dage fra den eksisterende aktivitetslæsning (samme regel som Inaktive atleter); ingen ny læsning.
+  const noLog = new Map(!day ? [] : inactiveTraining({ enabled: true, athletes, source: props.coachActionsStatus?.activity, today: day,
+    loading: data.isLoading, hasError: data.hasError }).rows.map(r => [r.athlete.id, r.days]))
   for (const athlete of athletes) {
     const candidates = []
+    let daysLeft = null
     if (messages.usable) for (const track of ['besked', 'teknik']) {
       const pending = data.pendingByTrack[athlete.id]?.[track]
       const n = count(data.noteSignalEnabled === true ? pending?.count : data.unreadByTrack[athlete.id]?.[track])
@@ -119,6 +125,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
       const entry = buildProgramOverblik({ athletes: [athlete], calendarWeeks: plans, today: day })[0]
       // An undated planned week makes the last date uncertain.
       const uncertain = hasUndatedPlannedWeek(plans[athlete.id])
+      if (!uncertain) daysLeft = entry?.daysLeft ?? null
       if (!uncertain && entry?.daysLeft !== null && entry?.daysLeft < 7) candidates.push({
         key: `program-${athlete.id}`, athlete, rank: 1, tab: 'program',
         reason: entry.daysLeft < 0 ? 'Programmet er udløbet' : `Programmet slutter om ${entry.daysLeft} ${antalOrd(entry.daysLeft, 'dag', 'dage')}` })
@@ -141,6 +148,8 @@ export function coachHomeModel(props = {}, today = new Date()) {
       weeks: data.calendarReady ? plans[athlete.id] : null,
       nutritionSource: props.coachNutrition, nutritionReady: u3Nutrition.has(athlete.id), planEntry: planEntries?.get(athlete.id), kvitteringer: props.smerteKvittering }))
     candidates.sort(order)
+    const idagEntry = idagRow(idagCandidates({ athlete, candidates, noLogDays: noLog.get(athlete.id), daysLeft }))
+    if (idagEntry) idag.push(idagEntry)
     const smerte = candidates.find(c => c.smerte)?.smerte
     const reasons = candidates.map(c => c.reason)
     if (candidates.length) actions.push({ ...candidates[0], reasons, ...(smerte ? { smerte } : {}) })
@@ -152,7 +161,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
     const rest = candidates.filter(c => !c.item && !c.key.startsWith('program-'))
     if (rest.length) signals.push({ ...rest[0], reasons: rest.map(c => c.reason), ...(smerte ? { smerte } : {}) })
   }
-  actions.sort(order); inbox.sort(order); waiting.sort(order); signals.sort(order)
+  actions.sort(order); inbox.sort(order); waiting.sort(order); signals.sort(order); idag.sort(idagOrder)
   const complete = data.rosterReady && data.calendarReady && messages.complete && videos.complete && logs.complete
   const nutrition = coachNutritionLines(props, day, athletes, data.rosterReady)
   // K-R3-ENTROPI-SAMLET fund 3: en fejlet eller ufuldstaendig kostlaesning maa ikke ligne fravaer.
@@ -162,7 +171,7 @@ export function coachHomeModel(props = {}, today = new Date()) {
   const summaries = coachAthleteSummaries(data, nutrition, inbox)
   const kostvane = kostvaneTal(props, day, athletes, data.rosterReady)
   const uge = coachWeekModel(data)
-  return { ...data, actions, inbox, waiting, signals, uge, complete, nutrition, nutritionState, summaries, kostvane, ...(u3 ? { u3: { attentionState } } : {}),
+  return { ...data, actions, inbox, waiting, signals, idag, uge, complete, nutrition, nutritionState, summaries, kostvane, ...(u3 ? { u3: { attentionState } } : {}),
     nutritionReload: typeof nutritionSource?.reload === 'function' ? nutritionSource.reload : null,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
 }

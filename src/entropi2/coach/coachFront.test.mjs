@@ -36,7 +36,7 @@ const all = tree => nodes(tree, () => true)
 const actions = tree => all(tree).filter(n => n.props['data-coach-action'])
 const fold = (tree, name) => all(tree).find(n => n.props['data-coach-fold'] === name)
 
-test('home shows 0, 1 or 3 tasks before a closed remainder; inbox starts with ten in model order', () => {
+test('home shows 0, 1 or at most 5 tasks; inbox starts with ten in model order', () => {
   for (const count of [0, 1, 10]) {
     const p = fixture(count), calls = []
     // Inbox can contain more than one task for the same athlete.
@@ -49,18 +49,12 @@ test('home shows 0, 1 or 3 tasks before a closed remainder; inbox starts with te
     // Ordre 1547 (genfanget bevidst, 1544's fund): tom liste siger ikke "0 opgaver i alt" eller "0 af 0"; den rolige sætning står alene.
     // Ordre 1707: forsiden siger aldrig "n opgaver i alt"; rækkerne og "Vis resten (n)" bærer tallet.
     assert.doesNotMatch(text(tree), /opgaver? i alt/)
-    assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), model.actions.map(r => r.key))
-    const rest = fold(tree, 'opgaver')
-    assert.equal(Boolean(rest), count > 3)
-    if (rest) {
-      assert.notEqual(rest.props.open, true)
-      assert.match(text(rest), /Vis resten \(7\)/)
-      assert.equal(actions(rest).length, 7)
-      assert.equal(actions(tree).length - actions(rest).length, 3)
-      assert.ok(all(rest).find(n => n.type === 'summary').props.style.minHeight >= 44)
-    }
+    // Ordre 2417: højst 5 rækker i Kræver dig i dag og ingen fold med rest; hver række åbner atleten med ét tryk.
+    const shown = model.idag.slice(0, 5)
+    assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), shown.map(r => r.key))
+    assert.equal(fold(tree, 'opgaver'), undefined)
     for (const [index, button] of actions(tree).entries()) {
-      button.props.onClick(); assert.deepEqual(calls.at(-1), [model.actions[index].item, 'list'])
+      button.props.onClick(); assert.deepEqual(calls.at(-1), [shown[index].item, 'list'])
     }
     const inbox = CoachView({ ...p, tab: 'inbox' })
     assert.equal(fold(inbox, 'opgaver'), undefined)
@@ -133,7 +127,7 @@ test('local controlled search preserves task list, scope, full names and profile
     assert.deepEqual(rowsOf(tree).map(n => n.props['data-u11-atlet']).sort(), expected.map(a => a.id).sort())
     assert.match(text(tree), new RegExp(`${expected.length} af 10`))
     assert.equal(text(tree).includes('Ingen match'), expected.length === 0)
-    assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), model.actions.map(r => r.key))
+    assert.deepEqual(actions(tree).map(n => n.props['data-coach-action']), model.idag.slice(0, 5).map(r => r.key))
     const input = searchBox(tree)
     assert.equal(input.props.type, 'search'); assert.ok(input.props.style.minHeight >= 44)
     input.props.onChange({ target: { value: 'ny søgning' } }); assert.equal(queries.at(-1), 'ny søgning')
@@ -151,7 +145,7 @@ test('actual enabled state boundary retains search across renders without storag
   input.props.onChange({ target: { value: 'ÆBLE' } })
   const filtered = app.render()
   assert.match(text(filtered), /1 af 10/)
-  assert.equal(actions(filtered).length, 10)
+  assert.equal(actions(filtered).length, 5)
   all(filtered).find(n => n.type === 'button' && text(n) === 'Nulstil søgning').props.onClick()
   assert.match(text(app.render()), /10 af 10/)
 })

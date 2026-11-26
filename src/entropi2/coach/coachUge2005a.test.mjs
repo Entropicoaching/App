@@ -58,9 +58,9 @@ test('ugen: uden færdig kalenderlæsning siger forsiden intet om ny uge eller s
   assert.deepEqual(coachWeekModel({}, []), { ready: false, nyUge: [], sendt: [] })
 })
 
-test('forsiden: Mangler ny uge, Kræver dit blik og Sendt i den rækkefølge, før Dine atleter og Mere', () => {
+test('forsiden: Kræver dig i dag, Mangler ny uge og Sendt i den rækkefølge, før Dine atleter og Mere', () => {
   const html = renderToStaticMarkup(CoachView(mandag()))
-  assert.deepEqual(sections(html), ['uge', 'ny-uge', 'venter', 'sendt'])
+  assert.deepEqual(sections(html), ['uge', 'venter', 'ny-uge', 'sendt'])
   const at = s => html.indexOf(s)
   assert.ok(at('data-coach-uge="sendt"') < at('aria-label="Dine atleter"'))
   assert.ok(at('aria-label="Dine atleter"') < at('data-coach-fold="mere"'))
