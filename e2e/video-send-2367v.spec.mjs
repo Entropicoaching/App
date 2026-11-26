@@ -9,6 +9,15 @@
 // Kriteriet pr. tilfælde: klippet lander præcis én gang (én række, ét klip), eller brugeren ser
 // "Ikke sendt · Prøv igen" med en Prøv igen-knap, og et tryk på den lander klippet én gang.
 //
+// ORDRE 2399v (fund 2, 3 og 4 i plan\2367v\TJEK.md): teksterne skal sige den rigtige fejl.
+//   a  årsagen ved netfald er lagerets danske "Forbindelsen blev afbrudt. Prøv igen"; intet engelsk
+//      "Failed to fetch", og coachen får ikke login-teksten for en netfejl
+//   f  lager og reserve svarer 403 (login-afvisning): coachen får login-teksten, atleten den rene årsag
+//   g  appen svarer først efter grænsen på 10 minutter (uret er forkortet 100 gange i browseren):
+//      teksten siger, at videoen muligvis stadig sendes, og at man skal vente før Prøv igen.
+//      Mocken har ingen unik client_analysis_id (2367v fund 5), så g trykker ikke Prøv igen; klippet
+//      skal alligevel lande præcis én gang, fordi appen sender færdig.
+//
 // Kørsel: node e2e/video-send-2367v.spec.mjs   (E2E_VITE_PORT, E2E_MOCK_PORT, VITE_SUPABASE_URL,
 // E2E_LAGER_PORT og OUT_2367V kan sættes; CASES_2367V=a,b vælger tilfælde; WHO_2367V=atlet vælger rolle.)
 
@@ -30,8 +39,20 @@ const CASES = {
   c: '10 s forsinkelse',
   d: 'dobbelttryk på Send',
   e: 'siden lukkes og åbnes under upload',
+  f: '403 fra lager og reserve (login-afvisning)',
+  g: 'appen svarer først efter 10 minutter (forkortet ur)',
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms))
+// ORDRE 2399v: forkortet ur til tilfælde g. Timere på 10 minutter eller mere kører 100 gange hurtigere
+// i alle rammer (iframen med videocoach.html også), så grænsen i vcV3RequestUploadAndGoRaw rammes efter 6 s.
+const FORKORTET_UR = `(() => {
+  const original = window.setTimeout
+  window.setTimeout = function (fn, ms, ...args) {
+    return original.call(window, fn, typeof ms === 'number' && ms >= 600000 ? Math.round(ms / 100) : ms, ...args)
+  }
+})()`
+const LOGIN_TEKST = /logget ind som coach/
+const ENGELSK = /Failed to fetch|NetworkError|Load failed|fetch failed/i
 
 function memoryBucket() {
   const store = new Map()
@@ -77,13 +98,20 @@ function installFaultRoute(page, fault, counts) {
           fault.worker500Left--
           return await route.fulfill({ status: 500, headers: cors, contentType: 'application/json', body: JSON.stringify({ error: 'Videolageret svarede ikke' }) })
         }
+        // Workerens egen 403-tekst (src/videolager/worker.js), som hvis coachen ikke måtte sende.
+        if (fault.forbudt) return await route.fulfill({ status: 403, headers: cors, contentType: 'application/json', body: JSON.stringify({ error: 'Du kan kun sende video for dig selv eller en atlet, du coacher' }) })
       }
       if (isLager(url) && url.includes('/blob/') && method === 'PUT') {
         counts.blobPut++
         if (fault.offlineAtPut) { fault.offlineAtPut = false; fault.offline = true }
         if (fault.delayMs) await sleep(fault.delayMs)
       }
-      if (isMock(url) && url.includes('/storage/v1/object/') && (method === 'POST' || method === 'PUT')) counts.reservePut++
+      if (isMock(url) && url.includes('/storage/v1/object/') && (method === 'POST' || method === 'PUT')) {
+        counts.reservePut++
+        // Supabase Storage afviser RLS med HTTP 400 og statusCode "403" i kroppen (mocken har ingen RLS).
+        if (fault.forbudt) return await route.fulfill({ status: 400, headers: cors, contentType: 'application/json',
+          body: JSON.stringify({ statusCode: '403', error: 'Unauthorized', message: 'new row violates row-level security policy' }) })
+      }
       if (isMock(url) && url.includes('/rest/v1/video_analyses') && method === 'POST') counts.rowInsert++
       if (fault.offline) return await route.abort('internetdisconnected')
       return await route.continue()
@@ -161,7 +189,7 @@ async function ventPaaUdfald(frame, timeout = 60000) {
 }
 
 async function skaerm(frame) {
-  const text = async sel => (await frame.locator(sel).innerText().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 220)
+  const text = async sel => (await frame.locator(sel).innerText().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 400)
   return {
     state: await frame.locator('body').evaluate(b => b.dataset.athleteState).catch(() => null),
     status: await text('#athleteStatus'),
@@ -173,7 +201,7 @@ async function skaerm(frame) {
 async function main() {
   const out = process.env.OUT_2367V || join(OUT_DIR, '2367v')
   mkdirSync(out, { recursive: true })
-  const wantedCases = (process.env.CASES_2367V || 'a,b,c,d,e').split(',').map(s => s.trim()).filter(Boolean)
+  const wantedCases = (process.env.CASES_2367V || 'a,b,c,d,e,f,g').split(',').map(s => s.trim()).filter(Boolean)
   const wantedWho = (process.env.WHO_2367V || 'atlet,coach').split(',').map(s => s.trim()).filter(Boolean)
   const { path: clipPath } = ensureCoachSporingClip('glat')
   const mock = createMockSupabase(buildSeed({}))
@@ -196,12 +224,13 @@ async function main() {
       for (const id of wantedCases) {
         const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true })
         const errors = []
-        const fault = { offline: false, offlineAtPut: false, worker500Left: 0, delayMs: 0 }
+        const fault = { offline: false, offlineAtPut: false, worker500Left: 0, delayMs: 0, forbudt: false }
         const counts = { uploadUrl: 0, blobPut: 0, reservePut: 0, rowInsert: 0 }
         const before = (await rowsFor()).map(r => r.id)
         const r = { who, case: id, titel: CASES[id], counts, errors }
         const t0 = Date.now()
         try {
+          if (id === 'g') await context.addInitScript(FORKORTET_UR)
           let page = await login(context, who)
           page.on('pageerror', err => errors.push(err.message))
           await installFaultRoute(page, fault, counts)
@@ -217,9 +246,46 @@ async function main() {
             r.raekkerEfterFejl = (await rowsFor()).filter(x => !before.includes(x.id)).length
             fault.offline = false
             assert.equal(r.udfald1, 'retry', `${who} a: ingen Prøv igen efter netfald (${JSON.stringify(r.skaerm1)})`)
+            // ORDRE 2399v fund 2 og 3: årsagen er lagerets danske tekst, ikke reservens engelske, og en
+            // netfejl kaldes ikke en login-fejl for coachen.
+            r.tekstFund = []
+            if (ENGELSK.test(r.skaerm1.panel)) r.tekstFund.push('engelsk fejltekst i årsagen')
+            if (!/Forbindelsen blev afbrudt/.test(r.skaerm1.panel)) r.tekstFund.push('årsagen siger ikke "Forbindelsen blev afbrudt"')
+            if (LOGIN_TEKST.test(r.skaerm1.panel)) r.tekstFund.push('netfejl kaldes login-fejl')
             await retryButton(frame).click()
             r.udfald2 = await ventPaaUdfald(frame)
             r.skaerm2 = await skaerm(frame)
+          } else if (id === 'f') {
+            fault.forbudt = true
+            await send.click()
+            r.udfald1 = await ventPaaUdfald(frame)
+            r.skaerm1 = await skaerm(frame)
+            await page.screenshot({ path: join(out, `${who}-f-fejl.png`) })
+            fault.forbudt = false
+            assert.equal(r.udfald1, 'retry', `${who} f: ingen Prøv igen efter 403 (${JSON.stringify(r.skaerm1)})`)
+            r.tekstFund = []
+            if (who === 'coach' && !LOGIN_TEKST.test(r.skaerm1.panel)) r.tekstFund.push('coachen får ikke login-teksten ved 403')
+            if (who !== 'coach' && LOGIN_TEKST.test(r.skaerm1.panel)) r.tekstFund.push('atleten får login-teksten')
+            if (!/Årsag:/.test(r.skaerm1.panel)) r.tekstFund.push('ingen årsag')
+            await retryButton(frame).click()
+            r.udfald2 = await ventPaaUdfald(frame)
+            r.skaerm2 = await skaerm(frame)
+          } else if (id === 'g') {
+            fault.delayMs = 15000
+            await send.click()
+            r.udfald1 = await ventPaaUdfald(frame, 30000)
+            r.skaerm1 = await skaerm(frame)
+            await page.screenshot({ path: join(out, `${who}-g-graense.png`) })
+            assert.equal(r.udfald1, 'retry', `${who} g: grænsen på 10 minutter (forkortet) gav ikke Prøv igen (${JSON.stringify(r.skaerm1)})`)
+            // ORDRE 2399v fund 4: teksten siger, at videoen muligvis stadig sendes, og at man skal vente.
+            r.tekstFund = []
+            if (!/muligvis stadig/.test(r.skaerm1.panel)) r.tekstFund.push('teksten siger ikke, at videoen muligvis stadig sendes')
+            if (!/vent/i.test(r.skaerm1.panel)) r.tekstFund.push('teksten beder ikke om at vente før Prøv igen')
+            // Appen sender færdig i baggrunden; klippet skal lande én gang uden tryk på Prøv igen.
+            const t1 = Date.now()
+            while (counts.rowInsert < 1 && Date.now() - t1 < 30000) await sleep(250)
+            await sleep(1000)
+            r.udfald2 = 'retry'
           } else if (id === 'b') {
             fault.worker500Left = 1
             await send.click()
@@ -294,7 +360,9 @@ async function main() {
     for (const r of results) {
       const sidste = r.udfald2 || r.udfald1
       if (r.fejl) fejl.push(`${r.who} ${r.case}: ${r.fejl}`)
-      if (sidste !== 'sent') fejl.push(`${r.who} ${r.case}: endte som ${sidste}`)
+      // g ender med vilje i Prøv igen (grænsen er nået), men klippet skal ligge der én gang.
+      if (sidste !== 'sent' && r.case !== 'g') fejl.push(`${r.who} ${r.case}: endte som ${sidste}`)
+      if (r.tekstFund?.length) fejl.push(`${r.who} ${r.case}: ${r.tekstFund.join('; ')} (panel: ${r.skaerm1?.panel})`)
       if (r.raekker !== 1) fejl.push(`${r.who} ${r.case}: ${r.raekker} rækker, ikke 1`)
       if (r.iLager + r.iReserve !== 1) fejl.push(`${r.who} ${r.case}: klippet ligger ${r.iLager} gange i lager og ${r.iReserve} i reserve`)
       if (r.case === 'e' && r.raekkerEfterLuk !== 0 && r.raekkerEfterLuk !== 1) fejl.push(`${r.who} e: ${r.raekkerEfterLuk} rækker efter lukning`)
