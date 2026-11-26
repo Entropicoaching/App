@@ -1,3 +1,4 @@
+import { markerKostGem } from './kostGemSignal.mjs'
 import * as React from 'react'
 import { NY_KOSTUGE_TEKST } from './nyKostuge.mjs'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
@@ -18,6 +19,8 @@ const { useEffect, useRef, useState, useSyncExternalStore } = React
 const card = { margin: '16px 0', padding: 16, borderRadius: 12, background: '#24241f', border: '1px solid #414139', color: '#edeae2' }
 const control = { minHeight: 44, minWidth: 44, maxWidth: '100%', font: 'inherit', whiteSpace: 'normal', boxSizing: 'border-box',
   background: '#1c1c18', color: '#edeae2', border: '1px solid #414139', borderRadius: 8, padding: '8px 12px', cursor: 'pointer' }
+// 2411: "Fjern" skal stå på én linje ved 390 px; rækken ombrydes i stedet.
+const fjernKnap = { ...control, whiteSpace: 'nowrap', flexShrink: 0 }
 const primary = { ...control, background: '#edeae2', color: '#16160f', border: 0, fontWeight: 600 }
 const row = { display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }
 const label = { margin: '12px 0 0', fontWeight: 600 }
@@ -51,7 +54,11 @@ function whenReady(sources, ms = 10000) {
 export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote, client, skjulVaegt = false }) {
   const t = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || noneState, tracker?.snapshot || noneState)
   const s = useSyncExternalStore(controller?.subscribe || noSubscribe, controller?.snapshot || idle, controller?.snapshot || idle)
-  const log = t?.athleteId === athleteId && t?.date === date ? t : none
+  // 2411: under en genhentning (efter gem) bliver loggen et øjeblik "ikke hentet"; behold den senest hentede for samme dag, så headeren ikke blinker til "Henter dagens tal…".
+  const sidsteLog = useRef(none)
+  const nu = t?.athleteId === athleteId && t?.date === date ? t : none
+  if (nu.loaded) sidsteLog.current = nu
+  const log = nu.loaded ? nu : sidsteLog.current.athleteId === athleteId && sidsteLog.current.date === date ? sidsteLog.current : none
   const [pending, setPending] = useState([])
   const [note, setNote] = useState(null)
   const [query, setQuery] = useState('')
@@ -84,6 +91,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       try { result = await whenReady(sources) ? await action(intent) : false } catch { result = false }
       const ok = result === true
       // Behold tallet som ventende, til kostloggen har hentet dagen igen, så linjen ikke blinker.
+      if (ok) markerKostGem(athleteId, date)
       if (ok) await whenReady(sources, 5000)
       if (!alive.current) return
       setPending(list => list.filter(item => item.id !== id))
@@ -339,8 +347,8 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
         `Spist: ${meal.name} · ${fmt(gramTotal(meal))} g`)
         const raekke = fjernbare.find(item => item.id === meal.logId)
         // 1940: Fjern i samme række som planmåltidets Ret.
-        return !raekke ? ret : h('span', { key: meal.id, style: { display: 'inline-flex', gap: 4 } }, ret,
-          h('button', { type: 'button', style: control, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${String(raekke.meal ?? '').trim()}`,
+        return !raekke ? ret : h('span', { key: meal.id, style: { display: 'inline-flex', flexWrap: 'wrap', gap: 4, maxWidth: '100%' } }, ret,
+          h('button', { type: 'button', style: fjernKnap, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${String(raekke.meal ?? '').trim()}`,
             onClick: () => fjern(raekke) }, 'Fjern'))
       })),
     retPlan && h('div', { role: 'group', 'aria-label': `Ret mængde: ${retPlan.name}`, style: { ...row, alignItems: 'center' } },
@@ -411,7 +419,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
             'aria-label': `Ret mængde: ${item.row.meal}`, 'aria-pressed': retItem?.id === item.id,
             onClick: () => setRet(retItem?.id === item.id ? null : { id: item.id, amount: String(item.grams) }) }, item.row.meal)
             : h('span', { style: { minWidth: 0, overflowWrap: 'anywhere' } }, navn),
-          fjernbarIds.has(raekke.id) && h('button', { type: 'button', style: control, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${navn}`,
+          fjernbarIds.has(raekke.id) && h('button', { type: 'button', style: fjernKnap, disabled: pending.length > 0, 'aria-label': `Fjern måltid: ${navn}`,
             onClick: () => fjern(raekke) }, 'Fjern'))
       })),
     retItem && h('div', { role: 'group', 'aria-label': `Ret mængde: ${retItem.name}`, style: { ...row, alignItems: 'center' } },

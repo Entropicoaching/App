@@ -1,3 +1,4 @@
+import { harNyKostGem } from '../../kostplan/atlet/kostGemSignal.mjs'
 import * as React from 'react'
 import { homeStyles as s } from '../homeStyles.mjs'
 import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, planTally, firstSetPrefill } from './todayModel.mjs'
@@ -50,12 +51,14 @@ export default function TodayCard(props) {
   // Ordre 1690: Mad-rækken kender dagens godkendte kostplan. Læses én gang pr. atlet og dag som
   // måltiderne. Prøver, der giver deres egen måltidslæser, får ingen planlæsning uden u5ReadPlan.
   const [plan, setPlan] = React.useState(null)
+  const [planLaest, setPlanLaest] = React.useState(null)
   const readPlan = props.u5ReadPlan ?? (props.u5ReadMeals ? null : readTodayPlan)
   React.useEffect(() => {
     if (!showMeals || typeof readPlan !== 'function') return
     let active = true
     Promise.resolve(readPlan({ athleteId, today, client: latest.current.u5Client }))
-      .then(data => { if (active) setPlan(data ? { line: planLine(data), planned: data.meals, names: Array.isArray(data.names) ? data.names : null, athleteId, day: today } : null) }, () => { if (active) setPlan(null) })
+      .then(data => { if (active) { setPlan(data ? { line: planLine(data), planned: data.meals, names: Array.isArray(data.names) ? data.names : null, athleteId, day: today } : null); setPlanLaest({ athleteId, day: today }) } },
+        () => { if (active) { setPlan(null); setPlanLaest({ athleteId, day: today }) } })
     return () => { active = false }
   }, [showMeals, athleteId, today, readPlan])
   const trainingToday = props.u5Training?.kind === 'today' && !props.sessionReadOnly && !!athleteId
@@ -113,6 +116,9 @@ export default function TodayCard(props) {
   const model = todayItems({ weight: canWeight ? { done: wDone } : null, readiness: canReadiness ? { done: rDone } : null,
     training: training ? { ...training, today: true } : null, meal: showMeals ? mealData : null })
   if (!model.headline) return null
+  // 2411: lige efter en gem i Kost monteres kortet igen; vent på måltider og plan, så "Klaret: mad" ikke mangler et øjeblik (kun efter en gem, så øvrige visninger er uændrede).
+  const venterMad = showMeals && harNyKostGem(athleteId, today) && (!(meals?.athleteId === athleteId && meals?.day === today) || (typeof readPlan === 'function' && !(planLaest?.athleteId === athleteId && planLaest?.day === today)))
+  if (venterMad && meals?.status !== 'error') return null
   const busy = Boolean(pending || props.savingWeight || props.savingReadiness)
 
   const last = latestWeight(props.weightLogs, athleteId, today)
