@@ -9,8 +9,8 @@ const render = (model, open = true) => renderToStaticMarkup(renderProgramBlokslu
 const model = rows => programBlokslutModel({ athleteId: 'synthetic', ...snapshot(), readPage: () => ({ data: rows }) })
 test('real React: compact report shows gains, completed sessions and one focus; later folded', async () => {
   const m = await model(snapshot().exerciseLogs), html = render(m)
-  assert.match(html, /aria-label="Din blok".*open=""/)
-  assert.match(html, /Gennemførte pas: 3 af 3.*Squat: \+11 kg.*Ét fokuspunkt:/)
+  assert.match(html, /aria-label="Dine resultater".*open=""/)
+  assert.match(html, /Gennemførte pas: 3 af 3.*Squat: 110 → 121 kg \(\+11\).*Ét fokuspunkt:/)
   assert.doesNotMatch(render(m, false), /open=""/)
 })
 test('real React: empty has no invented strength gains', async () => {

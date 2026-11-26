@@ -52,7 +52,7 @@ test('compact card: strengths, sessions and one focus; calculations folded; hone
   const m = await programBlokslutModel({ athleteId: 'synthetic', block: block(), now: '2026-11-10', readPage: () => ({ data: snapshot().exerciseLogs }) })
   const card = renderProgramBlokslut(h, m, { open: true })
   assert.equal(card.type, 'details'); assert.equal(card.props.open, true)
-  assert.match(text(card), /Din blok.*Gennemførte pas: 3 af 3.*Squat: \+11 kg.*Ét fokuspunkt:/)
+  assert.match(text(card), /Dine resultater.*Gennemførte pas: 3 af 3.*Squat: 110 → 121 kg \(\+11\).*Ét fokuspunkt:/)
   assert.equal(nodes(card).filter(n => n.type === 'details')[1].props.open, undefined)
   const empty = renderProgramBlokslut(h, { ...m, completed: 0, confirmed: 0 }, { open: false })
   assert.match(text(empty), /Ingen bekræftede/); assert.doesNotMatch(text(empty), /\+11/)
@@ -94,7 +94,7 @@ test('ny atlets foerste uge (ordre 1647): en blok paa een uge uden logget saet v
   const logget = await programBlokslutModel({ athleteId: 'synthetic', block: blok, now: '2026-11-18',
     readPage: () => ({ data: [{ id: 'l1', exercise_id: 'ex-0-0', set_number: 1, logged_at: '2026-11-17', weight: 100, reps_completed: 3 }] }) })
   assert.equal(logget.confirmed, 1)
-  assert.match(text(renderProgramBlokslut(h, logget, { open: true })), /Din blok.*Gennemførte pas/)
+  assert.match(text(renderProgramBlokslut(h, logget, { open: true })), /Dine resultater.*Gennemførte pas/)
   // en blok paa flere uger uden logs vises stadig (coach-aftalen om manglende registreringer)
   const flere = await programBlokslutModel({ athleteId: 'synthetic', block: block(), now: '2026-11-10', readPage: () => ({ data: [] }) })
   assert.match(text(renderProgramBlokslut(h, flere, { open: true })), /Ingen bekræftede/)

@@ -50,7 +50,7 @@ async function ready() {
   Object.assign(fixture, { weeks: p.allWeeks, rows: snapshot().exerciseLogs,
     calls: [], failure: false, planFailure: false, wait: null })
   const screen = mount(Program, p); screen.render()
-  const tree = await until(screen, tree => /Squat: \+11 kg/.test(text(card(tree))))
+  const tree = await until(screen, tree => /Squat: 110 → 121 kg \(\+11\)/.test(text(card(tree))))
   card(tree).props.onToggle({ currentTarget: { open: false } })
   return { p, screen, before: text(card(screen.render())), calls: reads() }
 }
@@ -122,9 +122,9 @@ test('expired reports disappear after confirmation and a different athlete never
   screen.render(); await tick(screen)
   assert.equal(card(screen.render()), undefined)
   instant = '2026-11-04T12:00:00Z'
-  screen.render(); await until(screen, tree => /Squat: \+11 kg/.test(text(card(tree))))
+  screen.render(); await until(screen, tree => /Squat: 110 → 121 kg \(\+11\)/.test(text(card(tree))))
   assert.equal(card(screen.render({ ...p, athlete: { id: 'synthetic-other' } })), undefined)
-  await until(screen, tree => /Squat: \+11 kg/.test(text(card(tree))))
+  await until(screen, tree => /Squat: 110 → 121 kg \(\+11\)/.test(text(card(tree))))
   assert.ok(fixture.calls.some(c => c.eq?.[1] === 'synthetic-other'))
 })
 test('a failed refresh is honest and explicit retry retains its fold until replacement data arrive', async () => {
@@ -142,7 +142,7 @@ test('a failed refresh is honest and explicit retry retains its fold until repla
     await until(screen, () => reads().length === calls.length + 4)
     assert.match(text(card(screen.render())), /kunne ikke hentes/)
     fixture.wait = null; release()
-    const retried = await until(screen, tree => /Squat: \+11 kg/.test(text(card(tree))))
+    const retried = await until(screen, tree => /Squat: 110 → 121 kg \(\+11\)/.test(text(card(tree))))
     assert.equal(card(retried).props.open, false)
     assert.deepEqual(reads(), [...calls, 'weeks', 'exercise_logs', 'weeks', 'exercise_logs'])
   } finally { fixture.wait = null; release() }
