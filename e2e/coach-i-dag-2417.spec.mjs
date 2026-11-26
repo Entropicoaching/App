@@ -15,7 +15,14 @@ function seedMed(scenarie) {
     set_number: 1, weight: 100, reps_completed: 5, note, rpe_actual: 7, rpe_planned: null, skipped: false, logged_at: dagsiden(ago) })
   if (scenarie === 'smerte') log(1, NOTE)
   if (scenarie === 'ingen-log') log(5, null)
-  if (scenarie === 'rolig') log(0, null)
+  if (scenarie === 'rolig') {
+    log(0, null)
+    // Fixturens uge starter mandag og ville faa programmet til at slutte inden for 2 dage fra fredag; en uge mere holder listen tom alle ugedage.
+    const w1 = t.weeks[0], start = new Date(w1.start_date + 'T00:00:00Z'); start.setUTCDate(start.getUTCDate() + 14)
+    t.weeks.push({ ...w1, id: 'dd000000-0000-4000-8000-000000000017', week_number: 3, start_date: start.toISOString().slice(0, 10) })
+    t.sessions.push({ ...t.sessions[0], id: 'dd000000-0000-4000-8000-000000000018', week_id: 'dd000000-0000-4000-8000-000000000017' })
+    t.exercises.push({ ...t.exercises[0], id: 'dd000000-0000-4000-8000-000000000019', session_id: 'dd000000-0000-4000-8000-000000000018' })
+  }
   return data
 }
 
