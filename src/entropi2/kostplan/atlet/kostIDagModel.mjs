@@ -13,9 +13,16 @@ export function statusLinje(snapshot, pending = []) {
   if (!snapshot.totals) return 'Dagens tal kan ikke lægges sammen. Se måltiderne under Vis detaljer.'
   const extra = key => pending.reduce((sum, item) => sum + (Number(item.values?.[key]) || 0), 0)
   const kcal = snapshot.totals.kcal + extra('kcal'), protein = snapshot.totals.protein + extra('protein')
-  const kcalMaal = positive(snapshot.targets?.kcal), proteinMaal = positive(snapshot.targets?.protein)
+  // 2387: målet i linjen er det faste mål (profilen); dagens plan står under (maalLinje), ikke som mål.
+  const kcalMaal = positive(snapshot.profileTargets?.kcal) ?? positive(snapshot.targets?.kcal), proteinMaal = positive(snapshot.profileTargets?.protein) ?? positive(snapshot.targets?.protein)
   const tekst = `I dag ${fmt(kcal)}${kcalMaal ? ` af ${fmt(kcalMaal)}` : ''} kcal · ${fmt(protein)}${proteinMaal ? ` af ${fmt(proteinMaal)}` : ''} g protein`
   return pending.length ? `${tekst} (gemmer)` : tekst
+}
+
+// 2387: "Mål 2.800 kcal · Dagens plan 2.761 kcal" under tallene, kun når dagens plan har et andet kcal end det faste mål.
+export function maalLinje(snapshot) {
+  const maal = positive(snapshot?.profileTargets?.kcal), plan = positive(snapshot?.targets?.kcal)
+  return maal && plan && Math.round(maal) !== Math.round(plan) ? `Mål ${fmt(maal)} kcal · Dagens plan ${fmt(plan)} kcal` : null
 }
 
 // 2369: én kort linje med varer og gram under et åbent planmåltid; samme gram som Vis detaljer (dayModel efter skalering).
@@ -95,4 +102,11 @@ export function spistIgenMedPlannavn(meal, aabne) {
     if (d < afstand) { bedst = plan; afstand = d }
   }
   return bedst ? { meal: { ...meal, meal: bedst.name }, plannavn: bedst.name } : { meal, plannavn: null }
+}
+
+// 2387: en logget række under et planmåltids navn, hvis kcal eller protein ligger uden for 10 % af planmåltidet, er andre retter end planen.
+export const andreRetterEndPlan = (row, meal) => !!meal?.values && (!inden10(Number(row?.kcal), Number(meal.values.kcal)) || !inden10(Number(row?.protein), Number(meal.values.protein)))
+export function iGaarAndreRetter(iGaar, planMeals) {
+  const meals = new Map((planMeals ?? []).map(meal => [String(meal.name ?? '').trim(), meal]))
+  return iGaarMedPlannavne(iGaar, [...meals.keys()]).some(row => meals.has(String(row.meal ?? '').trim()) && andreRetterEndPlan(row, meals.get(String(row.meal ?? '').trim())))
 }

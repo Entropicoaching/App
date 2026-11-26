@@ -43,7 +43,7 @@ export function KostplanAtletView(props = {}) {
   h('section', { 'aria-label': 'Dagens status' },
     h('h2', { style: heading }, 'Dagens status'),
     h('p', null, `${s.eatenCount} af ${s.meals.length} ${antalOrd(s.meals.length, 'måltid', 'måltider')} spist`),
-    h('p', { 'aria-live': 'polite' }, `Tilbage i dag: ${s.remaining.kcal === null ? 'kcal ukendt' : `${number(s.remaining.kcal)} kcal`} · ${s.remaining.protein === null ? 'protein ukendt' : `${number(s.remaining.protein)} g protein`}`),
+    h('p', { 'aria-live': 'polite' }, `Tilbage i dag: ${s.remaining.kcal === null ? 'kcal ukendt' : `${number(Math.round(s.remaining.kcal))} kcal`} · ${s.remaining.protein === null ? 'protein ukendt' : `${number(s.remaining.protein)} g protein`}`),
     h('details', null,
     h('summary', { style: { ...control, paddingBlock: 12, cursor: 'pointer' } }, 'Registreret og mål'),
     ...metricLabels.map(([key, label, unit]) => h('p', { key }, `${label}: ${s.totals[key] === null ? 'ukendt' : number(s.totals[key])} ${unit} / ${s.targets[key] === null ? 'mål mangler' : `${number(s.targets[key])} ${unit}`}`)),

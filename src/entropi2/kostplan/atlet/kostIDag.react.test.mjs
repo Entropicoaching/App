@@ -281,7 +281,7 @@ test('Kost i dag: et planmåltid, som coachen har navngivet "· N g", står kun 
 // 1933 (Marc 19. nov.): et fejltryk på "Alt fra i går" skal kunne fortrydes med ét tryk.
 test('Kost i dag: Alt fra i går kan fortrydes med ét tryk og fjerner præcis de rækker, knappen lavede', async t => {
   const r = await mount(t)
-  const alt = () => all(r.card(), 'button').find(n => /^Alt fra i går \(\d+\)$/.test(n.textContent))
+  const alt = () => all(r.card(), 'button').find(n => /^(Alt fra i går \(\d+\)|Spis som i går \(andre retter end planen\))$/.test(n.textContent))
   const idag = () => r.f.rows.filter(row => row.date === date)
   const foer = idag().map(row => row.id)
   await r.press(alt())
@@ -302,7 +302,7 @@ test('Kost i dag: Prøv igen efter delvis fejl på Alt fra i går logger kun de 
   let failing = true, inserts = 0
   const r = await mount(t, { extraRows: [{ ...meal('2026-11-04', 'Aftensmad med ris', 700, 40), id: 'y3', created_at: '2026-11-04T18:00:00Z' }],
     beforeLog: call => { if (call.action === 'insert' && ++inserts === 2 && failing) throw Error('Synthetic insert failure') } })
-  const alt = () => all(r.card(), 'button').find(n => /^Alt fra i går \(\d+\)$/.test(n.textContent))
+  const alt = () => all(r.card(), 'button').find(n => /^(Alt fra i går \(\d+\)|Spis som i går \(andre retter end planen\))$/.test(n.textContent))
   const idag = () => r.f.rows.filter(row => row.date === date)
   const foer = idag().map(row => row.id)
   await r.press(alt())
@@ -388,7 +388,7 @@ test('Kost i dag: et spist planmåltid fjernes direkte, står som åbent igen, o
 // 2154 (Marc 24. nov.): "Alt fra i går" skal tælle ærligt i Basemåltider fulgt, også når planens navne skifter mellem dage.
 async function altFraIGaar(t, options) {
   const r = await mount(t, options)
-  await r.press(all(r.card(), 'button').find(n => /^Alt fra i går \(\d+\)$/.test(n.textContent)))
+  await r.press(all(r.card(), 'button').find(n => /^(Alt fra i går \(\d+\)|Spis som i går \(andre retter end planen\))$/.test(n.textContent)))
   const idag = r.f.rows.filter(row => row.date === date)
   const plan = [options.lunchName ?? 'Frokost <syntetisk>', 'Aftensmad']
   const uge = friUge({ dage: [{ date, state: 'approved', friPct: 15, targets: { kcal: 2600 }, maaltider: plan }], raekker: idag })

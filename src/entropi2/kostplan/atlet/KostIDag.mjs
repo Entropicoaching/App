@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { NY_KOSTUGE_TEKST } from './nyKostuge.mjs'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
-import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, spistIgenMedPlannavn, laesDetaljer, gemDetaljer, planVarerLinje } from './kostIDagModel.mjs'
+import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, spistIgenMedPlannavn, laesDetaljer, gemDetaljer, planVarerLinje, maalLinje, andreRetterEndPlan, iGaarAndreRetter } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
 import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import { scaledMeal } from './dayModel.mjs'
@@ -102,6 +102,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   const blocked = planMeals.filter(meal => meal.blocked)
   const gentag = hurtigeMaaltider(log)
   const iGaar = log.loaded && (log.logs?.length ?? 0) === 0 && (log.yesterday?.length ?? 0) > 1 ? iGaarMedPlannavne(log.yesterday, planMeals.map(meal => meal.name)) : []
+  const iGaarAndre = iGaar.length > 0 && iGaarAndreRetter(log.yesterday, planMeals)
   const valg = forslag(log, query)
   const valgt = chosen && log.foods?.[chosen.index]?.name === chosen.name ? chosen : null
   const units = valgt ? unitsForFood(log.foods[valgt.index]) : []
@@ -240,6 +241,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   return h('section', { 'aria-label': 'Kost i dag', 'data-kost-i-dag': '', style: card },
     h('h2', { style: { margin: '0 0 4px', color: '#edeae2' } }, 'Kost i dag'),
     h('p', { 'data-kost-i-dag-tal': '', style: { margin: 0, fontSize: '1.05em' } }, statusLinje(log, pending)),
+    maalLinje(log) && h('p', { 'data-kost-i-dag-maal': '', style: { margin: '2px 0 0', opacity: 0.85 } }, maalLinje(log)),
     // 1916: en sendt uge, der starter senere, står som én linje; "Se planen" åbner den i laget.
     nyPlan && h('div', { 'data-kost-ny-plan': nyPlan.date, style: { ...row, alignItems: 'center' } },
       h('span', null, `Ny kostplan fra ${ugedagDato(nyPlan.date)}`),
@@ -320,6 +322,10 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
             }, { gemt: `${maaltider.length} planmåltider gemt som planlagt.` })
         } }, `Alt som planlagt (${open.length})`)),
     loggedeAlt.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `Logget: ${loggedeAlt.map(meal => meal.name).join(', ')}`),
+    // 2387: planmåltider, der er logget som andre retter end planen, beholder planens linje med varer.
+    ...loggedeAlt.filter(meal => (log.logs ?? []).some(row => String(row.meal ?? '').trim() === String(meal.name ?? '').trim() && andreRetterEndPlan(row, meal)))
+      .map(meal => h('p', { key: 'andre-' + meal.id, 'data-kost-andre-retter': meal.id, style: { margin: '4px 0 0', opacity: 0.85 } },
+        `${meal.name}: logget som andre retter end planen. Planen: ${planVarerLinje(meal) ?? fmt(meal.values.kcal) + ' kcal'}`)),
     eaten.length > 0 && !kanRettePlan && h('p', { style: { margin: '8px 0 0' } }, `Spist: ${eaten.map(meal => meal.name).join(', ')}`),
     // 1924: tryk på et spist planmåltid åbner mængden udfyldt; Gem retter samme række.
     eaten.length > 0 && kanRettePlan && h('div', { style: row },
@@ -380,7 +386,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
             return true
           })
         } },
-      `Alt fra i går (${iGaar.length})`),
+      iGaarAndre ? 'Spis som i går (andre retter end planen)' : `Alt fra i går (${iGaar.length})`),
       ...gentag.map(meal => {
         const anden = andenMaengde(log, meal)
         const igen = h('button', { key: JSON.stringify([meal.meal, meal.kcal, meal.protein]), type: 'button', style: control,
