@@ -44,3 +44,9 @@ test('2392 stop 4: mens planmåltider gemmes, tæller kun de gemte rækker med i
   // Et enkelt måltid vises stadig med det samme.
   assert.match(statusLinje(snap, [{ id: 2, navn: 'Banan', values: { kcal: 100, protein: 1 } }]), /I dag 700 af 2\.800 kcal/)
 })
+
+test('2392 stop 2: små måltider med urundede plantal tæller som fulgt, når det loggede er afrundet', () => {
+  const d = dag('2026-11-24', { maaltider: ['Snack'], maaltidTal: [{ kcal: 80.4, protein: 1.4 }] })
+  assert.equal(friUge({ dage: [d], raekker: [raekke('Snack', 80, 1)] }).basis, 1)
+  assert.equal(friUge({ dage: [d], raekker: [raekke('Snack', 200, 1)] }).basis, 0)
+})

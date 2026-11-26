@@ -1,7 +1,7 @@
 import { calendarTime, parseInputNumber, roundNutrition } from '../../../athlete/kostNumbers.mjs'
 import { isDayReceipt } from '../../../mealEvidence.mjs'
 import { retainedNutrition, plannedMicronutrients } from './plannedMicronutrients.mjs'
-import { friProcent, skalerMaaltider, erFriRaekke } from '../friPulje.mjs'
+import { friProcent, friKcalAf, skalerMaaltider, erFriRaekke } from '../friPulje.mjs'
 
 export const namespace = 'entropi2:kostplan:atlet:v1'
 export const metrics = ['kcal', 'protein', 'carb', 'fat']
@@ -86,7 +86,7 @@ export function readAthletePlan(value, athleteId, date) {
     const scaled = skalerMaaltider(meals, friPct)
     const sumMacro = key => Math.round(scaled.meals.flatMap(meal => meal.foods)
       .reduce((n, food) => n + (food[key + '100'] ?? 0) * food.grams / 100, 0))
-    const friKcal = Math.round(dagKcal * friPct / 100)
+    const friKcal = friKcalAf(dagKcal, friPct)
     const planned_ = plannedMicronutrients(scaled.meals)
     return { id: value.id, revision: value.revision, athlete_id: athleteId, date, meals: scaled.meals, portionGuidance,
       targets: { ...targets, kcal: dagKcal - friKcal, carb: sumMacro('carb'), fat: sumMacro('fat') },

@@ -150,7 +150,8 @@ export function friPost(stoerrelse, kcal) {
 
 // 2392: en logget række svarer til planmåltidet, når kcal (og protein, hvis begge kendes) ligger inden for 10 % af planen.
 // Uden planens tal (ældre dagsreferencer) tæller navnet alene som før.
-const inden10 = (value, maal) => maal > 0 && Math.abs(value - maal) <= maal * 0.1
+// Mindst 1 i spillerum, fordi det loggede er hele tal og planens tal ikke er rundet.
+const inden10 = (value, maal) => maal > 0 && Math.abs(value - maal) <= Math.max(maal * 0.1, 1)
 function svarerTilPlan(row, plan) {
   if (!plan) return true
   const kcal = kcalTal(row), protein = Number(row?.protein)
