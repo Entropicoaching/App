@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg?v=8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1e1912" />
-    <script>/* Ordre 1542a: mørk varm skærm er standard; lys huskes (Mig > Skærm, coachens Menu > Skærm (1547), eller ?tema=lys / ?tema=moerk). */try{var t=new URLSearchParams(location.search).get("tema");if(t==="lys"||t==="moerk")localStorage.setItem("entropi:tema",t);if(localStorage.getItem("entropi:tema")==="lys"){document.documentElement.setAttribute("data-tema","lys");document.querySelector('meta[name="theme-color"]').setAttribute("content","#f7f2e9")}}catch(e){}</script>
+    <script>/* Ordre 1542a: mørk varm skærm er standard; lys og System (følger telefonen) huskes (Mig > Tema, coachens Menu > Skærm (1547), eller ?tema=lys / ?tema=moerk). */try{var t=new URLSearchParams(location.search).get("tema");if(t==="lys"||t==="moerk")localStorage.setItem("entropi:tema",t);var v=localStorage.getItem("entropi:tema");if(v==="system")v=window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"lys":"moerk";if(v==="lys"){document.documentElement.setAttribute("data-tema","lys");document.querySelector('meta[name="theme-color"]').setAttribute("content","#f7f2e9")}}catch(e){}</script>
     <link rel="manifest" href="/manifest.webmanifest" />
     <script>
       // service worker: "Del til VideoCoach" + offline-app (se public/sw.js)

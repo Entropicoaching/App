@@ -97,7 +97,7 @@ test('menuen viser temavalget ved Log ud på mobil (begge menuark) og på deskto
 
 test('index.html sætter temaet før første tegning', () => {
   const html = read('index.html')
-  const tema = html.indexOf('localStorage.getItem("entropi:tema")==="lys"')
+  const tema = html.indexOf('if(v==="lys"){')
   assert.ok(tema > 0 && tema < html.indexOf('<script type="module"'))
   assert.ok(tema < html.indexOf('</head>'))
 })

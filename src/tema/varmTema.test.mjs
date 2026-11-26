@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { varmTemaKode, skalTemaes } from './varmTema.mjs'
-import { laesTema, saetTema, TEMA_NOEGLE } from './temaValg.mjs'
+import { laesTema, laesValg, saetTema, TEMA_NOEGLE } from './temaValg.mjs'
 
 test('faste mørke farver bliver til temavariabler', () => {
   const ud = varmTemaKode(`const s = { background: '#141410', color: '#EDEAE2', border: '1px solid rgba(237,234,226,0.07)' }`, '/src/x.jsx')
@@ -59,4 +59,32 @@ test('tema.css: mørk varm bund som standard, lys kun med data-tema="lys"', asyn
   assert.match(rod, /color-scheme: dark;/)
   assert.match(css, /:root\[data-tema="lys"\] \{\s+--e-bg: #f7f2e9;/)
   assert.doesNotMatch(css, /data-tema="moerk"/)
+})
+
+test('System / Mørkt / Lyst: valget gemmes lokalt, system følger telefonen, standard er mørk (2412)', () => {
+  const data = new Map()
+  const storage = { getItem: k => data.get(k) ?? null, setItem: (k, v) => data.set(k, v) }
+  const attrs = {}
+  const meta = { content: '' }
+  const doc = { documentElement: { setAttribute: (k, v) => { attrs[k] = v }, removeAttribute: k => { delete attrs[k] } },
+    querySelector: () => ({ setAttribute: (_k, v) => { meta.content = v } }) }
+  const lysTelefon = () => ({ matches: true }), moerkTelefon = () => ({ matches: false })
+  assert.equal(laesValg(storage), 'moerk', 'intet gemt valg giver mørk som i dag')
+  assert.equal(saetTema('system', { storage, doc, matchMedia: lysTelefon }), 'system')
+  assert.equal(data.get(TEMA_NOEGLE), 'system'); assert.equal(attrs['data-tema'], 'lys'); assert.equal(meta.content, '#f7f2e9')
+  assert.equal(laesValg(storage), 'system'); assert.equal(laesTema(storage, lysTelefon), 'lys'); assert.equal(laesTema(storage, moerkTelefon), 'moerk')
+  saetTema('system', { storage, doc, matchMedia: moerkTelefon })
+  assert.equal(attrs['data-tema'], undefined); assert.equal(meta.content, '#1e1912')
+  saetTema('lys', { storage, doc, matchMedia: moerkTelefon })
+  assert.equal(laesTema(storage, moerkTelefon), 'lys', 'fast lyst ignorerer telefonen')
+  assert.equal(saetTema('noget-andet', { storage, doc }), 'moerk')
+  assert.equal(laesValg({ getItem: () => { throw new Error('privat') } }), 'moerk')
+  assert.equal(saetTema('lys', { storage: { setItem: () => { throw new Error('fuld') } }, doc }), 'lys', 'gemning i try/catch')
+})
+
+test('index.html: system løses før første tegning', async () => {
+  const { readFile } = await import('node:fs/promises')
+  const html = await readFile(new URL('../../index.html', import.meta.url), 'utf8')
+  assert.match(html, /v==="system"[^;]*prefers-color-scheme: light/)
+  assert.ok(html.indexOf('v==="system"') < html.indexOf('<script type="module"'))
 })
