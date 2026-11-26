@@ -11,7 +11,8 @@ const positive = value => typeof value === 'number' && Number.isFinite(value) &&
 export function statusLinje(snapshot, pending = []) {
   if (!snapshot?.loaded) return 'Henter dagens tal…'
   if (!snapshot.totals) return 'Dagens tal kan ikke lægges sammen. Se måltiderne under Vis detaljer.'
-  const extra = key => pending.reduce((sum, item) => sum + (Number(item.values?.[key]) || 0), 0)
+  // 2392: ventende planmåltider (kunGemte) tælles ikke med, så summen aldrig går over målet, mens rækkerne gemmes.
+  const extra = key => pending.filter(item => !item.kunGemte).reduce((sum, item) => sum + (Number(item.values?.[key]) || 0), 0)
   const kcal = snapshot.totals.kcal + extra('kcal'), protein = snapshot.totals.protein + extra('protein')
   // 2387: målet i linjen er det faste mål (profilen); dagens plan står under (maalLinje), ikke som mål.
   const kcalMaal = positive(snapshot.profileTargets?.kcal) ?? positive(snapshot.targets?.kcal), proteinMaal = positive(snapshot.profileTargets?.protein) ?? positive(snapshot.targets?.protein)
@@ -26,9 +27,9 @@ export function maalLinje(snapshot) {
 }
 
 // 2369: én kort linje med varer og gram under et åbent planmåltid; samme gram som Vis detaljer (dayModel efter skalering).
-// Over 4 varer: de 3 første og "+ N mere". Ingen varer giver ingen linje.
+// 2392: højst 6 varer vises alle; over 6 vises de 5 første og "+ N mere". Ingen varer giver ingen linje.
 const gram = value => new Intl.NumberFormat('da-DK', { maximumFractionDigits: 1 }).format(value)
-export function planVarerLinje(meal, max = 4) {
+export function planVarerLinje(meal, max = 6) {
   const foods = (meal?.foods ?? []).filter(food => food?.name && Number(food.grams) > 0)
   if (!foods.length) return null
   const vis = foods.length > max ? foods.slice(0, max - 1) : foods

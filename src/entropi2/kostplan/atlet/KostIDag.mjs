@@ -76,7 +76,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
   // Optimistisk: tallet og "Gemmer …" vises straks; trykkene gemmes i rækkefølge.
   const run = (navn, values, action, tekst = {}) => {
     const id = ++seq.current
-    setPending(list => [...list, { id, navn, values }])
+    setPending(list => [...list, { id, navn, values, kunGemte: !!tekst.kunGemte }])
     setNote({ text: tekst.gemmer ?? `Gemmer ${navn}…` })
     queue.current = queue.current.then(async () => {
       const intent = `kost-i-dag:${date}:${Date.now()}:${id}`
@@ -319,7 +319,7 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
               }
               planGruppeRef.current = { intent, mealIds: maaltider.map(meal => meal.id) }
               return true
-            }, { gemt: `${maaltider.length} planmåltider gemt som planlagt.` })
+            }, { gemt: `${maaltider.length} planmåltider gemt som planlagt.`, kunGemte: true })
         } }, `Alt som planlagt (${open.length})`)),
     loggedeAlt.length > 0 && h('p', { style: { margin: '8px 0 0' } }, `Logget: ${loggedeAlt.map(meal => meal.name).join(', ')}`),
     // 2387: planmåltider, der er logget som andre retter end planen, beholder planens linje med varer.

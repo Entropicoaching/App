@@ -26,11 +26,14 @@ const num = value => typeof value === 'number' && Number.isFinite(value) ? value
 const kcalAf = food => num(food?.kcal100)
 const proteinKcalAf = food => (num(food?.protein100) ?? 0) * KCAL_PR_G_PROTEIN
 
+// 2392: puljens kcal afrundes ét sted, så skillen (lav-uge) og appen viser samme tal.
+export const friKcalAf = (kcal, pct) => Math.round(kcal * friProcent(pct) / 100)
+
 // Dagens kcal (planmåltiderne i dag) deles i base og pulje. Basen beholder dagens protein.
 export function fordelDag({ kcal, protein }, pct) {
   const p = friProcent(pct)
   if (num(kcal) === null || kcal <= 0) return { friPct: p, dagKcal: null, baseKcal: null, friKcal: 0, protein: num(protein) }
-  const friKcal = Math.round(kcal * p / 100)
+  const friKcal = friKcalAf(kcal, p)
   return { friPct: p, dagKcal: kcal, baseKcal: kcal - friKcal, friKcal, protein: num(protein) }
 }
 
@@ -145,6 +148,16 @@ export function friPost(stoerrelse, kcal) {
   return { meal: `${FRI_PREFIX}${valgt ? valgt.id : `${rundet} kcal`}`, kcal: rundet, protein: 0, carb: 0, fat: 0 }
 }
 
+// 2392: en logget række svarer til planmåltidet, når kcal (og protein, hvis begge kendes) ligger inden for 10 % af planen.
+// Uden planens tal (ældre dagsreferencer) tæller navnet alene som før.
+const inden10 = (value, maal) => maal > 0 && Math.abs(value - maal) <= maal * 0.1
+function svarerTilPlan(row, plan) {
+  if (!plan) return true
+  const kcal = kcalTal(row), protein = Number(row?.protein)
+  if (num(plan.kcal) !== null && !inden10(kcal, plan.kcal)) return false
+  return !(num(plan.protein) !== null && Number.isFinite(protein) && row?.protein != null && !inden10(protein, plan.protein))
+}
+
 // Ugens tal til coachen: basemåltider fulgt og dage med puljen holdt. Kun dage med en fri pulje tæller.
 export function friUge({ dage, raekker }) {
   const planDage = (dage ?? []).filter(d => d?.state === 'approved' && friProcent(d.friPct) > 0)
@@ -156,17 +169,18 @@ export function friUge({ dage, raekker }) {
     const logget = new Map()
     for (const row of dagens.filter(row => !erFriRaekke(row))) {
       const navn = navnNoegle(row.meal)
-      logget.set(navn, (logget.get(navn) ?? 0) + 1)
+      logget.set(navn, [...(logget.get(navn) ?? []), row])
     }
     const planNavne = Array.isArray(d.maaltider) ? d.maaltider : []
     basisAf += planNavne.length
-    for (const navn of planNavne) {
+    planNavne.forEach((navn, i) => {
       const n = navnNoegle(navn)
-      if ((logget.get(n) ?? 0) > 0) { basis++; logget.set(n, logget.get(n) - 1) }
-    }
+      const raekke = (logget.get(n) ?? []).find(r => svarerTilPlan(r, d.maaltidTal?.[i]))
+      if (raekke) { basis++; logget.get(n).splice(logget.get(n).indexOf(raekke), 1) }
+    })
     if (dagens.length) {
       vurderede++
-      const { over } = friStatus({ friKcal: Math.round(d.targets.kcal * friProcent(d.friPct) / 100), logs: dagens, planNavne: Array.isArray(d.maaltider) ? d.maaltider : undefined })
+      const { over } = friStatus({ friKcal: friKcalAf(d.targets.kcal, d.friPct), logs: dagens, planNavne: Array.isArray(d.maaltider) ? d.maaltider : undefined })
       if (!over) holdt++
     }
   }

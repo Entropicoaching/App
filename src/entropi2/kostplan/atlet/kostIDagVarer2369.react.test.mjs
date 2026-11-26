@@ -15,10 +15,11 @@ test('Varer 2369: linjen viser varer og gram som i Vis detaljer', () => {
   assert.equal(planVarerLinje({ foods: [mad('Havregryn', 30.4)] }), 'Havregryn 30,4 g')
 })
 
-test('Varer 2369: over 4 varer vises de 3 første og + N mere', () => {
+test('Varer 2369 (2392: grænsen er 6): over 6 varer vises de 5 første og + N mere', () => {
   const fire = [mad('A', 1), mad('B', 2), mad('C', 3), mad('D', 4)]
   assert.equal(planVarerLinje({ foods: fire }), 'A 1 g · B 2 g · C 3 g · D 4 g')
-  assert.equal(planVarerLinje({ foods: [...fire, mad('E', 5), mad('F', 6)] }), 'A 1 g · B 2 g · C 3 g + 3 mere')
+  assert.equal(planVarerLinje({ foods: [...fire, mad('E', 5), mad('F', 6)] }), 'A 1 g · B 2 g · C 3 g · D 4 g · E 5 g · F 6 g')
+  assert.equal(planVarerLinje({ foods: [...fire, mad('E', 5), mad('F', 6), mad('G', 7)] }), 'A 1 g · B 2 g · C 3 g · D 4 g · E 5 g + 2 mere')
 })
 
 test('Varer 2369: tomt måltid giver ingen linje', () => {

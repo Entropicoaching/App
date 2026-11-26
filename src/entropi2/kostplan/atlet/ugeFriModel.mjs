@@ -28,7 +28,7 @@ export async function readUgeFri({ client, athleteId, date, planDays = null, isC
   const days = planDays ?? refs.days
   if (!days.some(d => d?.state === 'approved' && d.friPct > 0)) return { dage: days, raekker: [] }
   const from = days.map(d => d.date).sort()[0]
-  const result = await client.from('meal_logs').select('date, meal, kcal').eq('athlete_id', athleteId)
+  const result = await client.from('meal_logs').select('date, meal, kcal, protein').eq('athlete_id', athleteId)
     .gte('date', from).lte('date', date).limit(1000)
   if (!isCurrent() || !result || result.error || !Array.isArray(result.data) || result.data.length >= 1000) return null
   return { dage: days, raekker: result.data }

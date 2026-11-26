@@ -10,7 +10,7 @@ import { pathToFileURL } from 'node:url'
 import { generateGramPlan } from '../../src/entropi2/kostplan/generator/index.mjs'
 import { DANSKE_DAGLIGVARER, MAKRO_TOLERANCE } from '../../src/entropi2/kostplan/realisme.mjs'
 import { FOODS } from '../../src/entropi2/kostplan/foedevarer/index.mjs'
-import { skalerMaaltider } from '../../src/entropi2/kostplan/friPulje.mjs'
+import { skalerMaaltider, fordelDag } from '../../src/entropi2/kostplan/friPulje.mjs'
 import { ForslagFejl, friProcent, tjekUgeplan } from './forslag.mjs'
 
 const stop = message => { throw new ForslagFejl(message) }
@@ -57,8 +57,11 @@ function tjekDagMod(date, meals, plan, maal) {
   }
   if (!mangler.length) return
   const fyldt = plan.meals.map((m, j) => ({ navn: m.name, fyldt: m.items.every((i, k) => i.grams >= meals[j].items[k].maxGrams) })).filter(m => m.fyldt).map(m => m.navn)
+  // 2392: kcal-hullet fordelt på de fyldte måltider (ellers alle), rundet til 5 kcal, så Claude kan se, hvor meget en tæt vare skal give.
+  const hul = maal.kcal - sum('energyKcal'), antal = fyldt.length || plan.meals.length
+  const pr = hul > 0 ? ` (ca. ${Math.max(5, Math.round(hul / antal / 5) * 5)} kcal)` : ''
   stop(`${date}: dagen når kun ${mangler.join(' og ')} med lofterne (højst ${MAX_VARE_GRAM} g pr. vare, ${MAX_OLIE_GRAM} g olie og ${MAX_MAALTID_GRAM} g pr. måltid). ` +
-    (fyldt.length ? `Måltid der mangler en tættere vare (fx nødder, olie, mejeri, kød): ${fyldt.join(', ')}.` : 'Tilføj en energi- eller proteintæt vare til et måltid.'))
+    (fyldt.length ? `Måltid der mangler en tættere vare (fx nødder, olie, mejeri, kød): ${fyldt.map(n => n + pr).join(', ')}.` : `Tilføj en energi- eller proteintæt vare til et måltid${pr ? ' (ca. ' + Math.max(5, Math.round(hul / antal / 5) * 5) + ' kcal pr. måltid)' : ''}.`))
 }
 
 // Ordre 2385: med --fri skalerer atletens Kost i dag måltiderne til basen (skalerMaaltider, afrundet til 5 g).
@@ -96,7 +99,7 @@ export function lavUge(ind, { fri = 0 } = {}) {
     if (!pct) return [`${d.date}: ${Math.round(d.kcal)} kcal, ${Math.round(d.protein)} g protein`,
       ...days[i].meals.map(m => `  ${m.name}: ${m.portions.map(p => `${navnPaa(p.foodId)} ${p.grams} g`).join(', ')}`)].join('\n')
     const s = skalerDag(days[i], pct)
-    return [`${d.date}: basen ${s.base.kcal} kcal, ${s.base.protein} g protein; hele dagen ${s.dag.kcal} kcal, ${s.dag.protein} g protein (fri pulje ${pct} %, ${s.dag.kcal - s.base.kcal} kcal)`,
+    return [`${d.date}: basen ${s.base.kcal} kcal, ${s.base.protein} g protein; hele dagen ${s.dag.kcal} kcal, ${s.dag.protein} g protein (fri pulje ${pct} %, ${fordelDag({ kcal: s.dag.kcal, protein: s.dag.protein }, pct).friKcal} kcal)`,
       ...s.meals.map((m, j) => `  ${m.name}: ${m.foods.map((f, k) => `${f.name} ${days[i].meals[j].portions[k].grams} g, atleten får ${f.grams} g`).join('; ')}`)].join('\n')
   }).join('\n')
   return { ugeplan, tekst }

@@ -2,7 +2,17 @@ import { createPlanSnapshot, summarizePlanSnapshot } from './planSnapshot.mjs'
 import { supportedFoodSnapshot, supportedPlanSnapshot } from './sqlSnapshot.mjs'
 import { retainedNutrition } from './atlet/plannedMicronutrients.mjs'
 import { catalogFoods, day, identifier, totals, portionGuidance } from './coach/model.mjs'
-import { friFraBasis } from './friPulje.mjs'
+import { friFraBasis, skalerMaaltider } from './friPulje.mjs'
+
+// 2392: dagsreferencens basemåltider med navn og kcal og protein, som atleten ser dem (skaleret til basen som i dayModel).
+// "Fulgt" i friUge sammenligner det loggede med disse tal. Ukendt tal giver null.
+function maaltidFelter(snapshot, friPct) {
+  const meals = snapshot.meals.map(meal => ({ name: meal.name, foods: meal.portions.map(p => ({ grams: p.grams,
+    kcal100: p.food.nutrientsPer100g.energyKcal, protein100: p.food.nutrientsPer100g.proteinG })) }))
+  const skaleret = skalerMaaltider(meals, friPct).meals
+  const sum = (meal, key) => meal.foods.some(f => f[key] === null || f[key] === undefined) ? null : meal.foods.reduce((n, f) => n + f[key] * f.grams / 100, 0)
+  return { maaltider: snapshot.meals.map(meal => meal.name), maaltidTal: skaleret.map(meal => ({ kcal: sum(meal, 'kcal100'), protein: sum(meal, 'protein100') })) }
+}
 
 const tables = ['kostplan_v1_plans', 'kostplan_v1_versions', 'kostplan_v1_approvals']
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
@@ -158,7 +168,7 @@ async function readDailyReferences(client, athleteId, date, options = {}) {
       const friPct = friFraBasis(first.v.calculation_basis)
       return { date: d, state: 'approved', reason: null, planId: first.p.id, versionId: first.v.id, targets: first.targets,
         goal: first.v.goal, intensity: first.v.intensity,
-        ...(friPct > 0 ? { friPct, maaltider: createPlanSnapshot(first.v).meals.map(meal => meal.name) } : {}) }
+        ...(friPct > 0 ? { friPct, ...maaltidFelter(createPlanSnapshot(first.v), friPct) } : {}) }
     })
     return { ...base, state: 'ready', reason: null, days }
   } catch (error) {
