@@ -535,7 +535,7 @@ export function lavProgramHandlinger({
     return { intensityPrefix: 'Fri tekst', intensity: stored }
   }
 
-  async function addExercise(sessionId) {
+  async function addExercise(sessionId, { next = false } = {}) {
     const week = weeks.find(w => w.sessions?.some(s => s.id === sessionId))
     const session = week?.sessions?.find(s => s.id === sessionId)
     const nextOrder = (session?.exercises || []).reduce((max, e) => Math.max(max, e.exercise_order ?? -1), -1) + 1
@@ -548,10 +548,12 @@ export function lavProgramHandlinger({
       note: exerciseForm.note || null,
       exercise_order: nextOrder,
     })
-    if (error) { visSkrivefejl('Øvelsen', error); return }
-    setAddingExercise(null)
+    if (error) { visSkrivefejl('Øvelsen', error); return false }
+    // "Tilføj og næste" lader formularen stå åben i samme pas, tom.
+    if (!next) setAddingExercise(null)
     setExerciseForm({ name: '', sets: '', reps: '', intensity: '', intensityPrefix: 'RPE', note: '' })
     fetchWeeks(selectedAthlete.id)
+    return true
   }
 
   async function updateExercise(exerciseId) {

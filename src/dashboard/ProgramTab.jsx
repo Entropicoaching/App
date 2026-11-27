@@ -1066,11 +1066,15 @@ export default function ProgramTab({
 
                                 {/* Add exercise */}
                                 {addingExercise === session.id ? (
-                                  <div style={{ paddingTop: '0.75rem' }}>
+                                  <div data-add-exercise={session.id} style={{ paddingTop: '0.75rem' }}>
                                     {exFormRow}
-                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
                                       <button style={s.btnGhost} onClick={() => setAddingExercise(null)}>Annuller</button>
                                       <button style={s.btnPrimary} onClick={() => addExercise(session.id)}>Tilføj</button>
+                                      <button style={s.btnPrimary} onClick={async () => {
+                                        if (!(await addExercise(session.id, { next: true }))) return
+                                        setTimeout(() => globalThis.document?.querySelector?.(`[data-add-exercise="${session.id}"] input[aria-label="Navn"]`)?.focus?.(), 0)
+                                      }}>Tilføj og næste</button>
                                     </div>
                                   </div>
                                 ) : (
