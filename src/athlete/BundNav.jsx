@@ -116,7 +116,9 @@ function BundNav({
             </svg>
             <span>Mere</span>
           </summary>
-          <div style={{ position: 'absolute', bottom: '100%', right: 8, width: 'min(280px, calc(100vw - 16px))',
+          {/* Safari/iOS flytter fokus til body ved tryk paa en knap (relatedTarget null), og onBlur
+              lukkede ellers menuen foer klikket naaede Volumen/Mobilitet. Tryk maa ikke tage fokus. */}
+          <div onMouseDown={event => event.preventDefault()} style={{ position: 'absolute', bottom: '100%', right: 8, width: 'min(280px, calc(100vw - 16px))',
             maxHeight: 'min(60vh, 24rem)', overflowY: 'auto', background: '#1c1c18',
             border: '1px solid #777267', borderRadius: '8px 8px 0 0', boxShadow: '0 -4px 20px #0006' }}>
             {more.map(item => itemButton(item, true))}

@@ -131,6 +131,16 @@ export function navigationCases(BundNav) {
     assert.equal(host.open, false)
   })
 
+  test('tryk paa et punkt i Mere tager ikke fokus (Safari/iOS lukkede ellers menuen foer klikket)', () => {
+    const details = nodes(nav(render())).find(n => n.type === 'details')
+    const panel = nodes(details).find(n => n.props && typeof n.props.onMouseDown === 'function')
+    assert.ok(panel)
+    let prevented = 0
+    panel.props.onMouseDown({ preventDefault() { prevented++ } })
+    assert.equal(prevented, 1)
+    assert.deepEqual(buttons(panel).map(text), ['Volumen', 'Mobilitet'])
+  })
+
   test('OFF keeps the legacy menu; only the existing athlete marker enables Entropi 2 styles', () => {
     const root = render()
     const css = text(nodes(root).find(n => n.type === 'style'))
