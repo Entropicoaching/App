@@ -44,8 +44,10 @@ test('et løft uden fremgang vises uden plus, og uden sammenlignelige sæt står
   m.lifts[0] = { ...m.lifts[0], delta: -5, current: { ...m.lifts[0].current, value: 105 } }
   assert.match(html(m), /Squat: 110 → 105 kg \(-5\)/)
   const none = html({ ...m, lifts: m.lifts.map(l => ({ ...l, delta: null })) })
-  assert.match(none, /Styrkefremgang kan endnu ikke sammenlignes sikkert/)
+  assert.match(none, /Styrkefremgang vises, når du har logget sæt i sidste uge/, 'sidste uge er i gang')
   assert.doesNotMatch(none, /→/)
+  const slut = html({ ...m, through: m.end, lifts: m.lifts.map(l => ({ ...l, delta: null })) })
+  assert.match(slut, /Styrkefremgang kan endnu ikke sammenlignes sikkert/, 'blokken er slut')
 })
 
 test('visningsvinduet: kortet findes kun i blokkens sidste uge og 7 dage efter', async () => {
