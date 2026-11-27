@@ -8984,6 +8984,8 @@ async function runFullAnalysis(barPt) {
 // mobilnet kan tage minutter, og det er den igangværende upload, ikke en
 // vilkårlig grænse, der skal afgøre, hvornår vi giver op.
 let vcUploadRetry = null;
+// ORDRE 2441v: fremgang under sendingen (public/vcSendFremgang.mjs), sættes af modulscriptet nederst.
+let vcSendFremgang = null;
 
 // U9 (Marc 11. nov.): har atleten selv sporet sættet, følger stangbanen med, så coachen ser
 // atletens sporing i stedet for "Spor nu". Kun en gældende bane for det valgte løft.
@@ -9059,6 +9061,10 @@ async function vcAthleteUploadAndGo() {
   if (saveBtn) { saveBtn.hidden = false; saveBtn.disabled = true; saveBtn.textContent = `Sender (${mb} MB) ...`; }
   if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = false;
   say(`Sender video (${mb} MB). Bliv på skærmen, til den er sendt.`);
+  // ORDRE 2441v (2437 tilfælde c): appens målte fremgang vises som "Sender video: 6,2 af 14,1 MB", højst
+  // hvert sekund; står den stille i 20 s, eller måles den ikke, står der, at nettet er langsomt. Uret
+  // standses i finally, så "Sendt" og "Ikke sendt · Prøv igen" aldrig overskrives.
+  const fremgang = vcSendFremgang ? vcSendFremgang({ total: file.size, vis: say }) : null;
   try {
     await vcV3RequestUploadAndGo({
       requestId, clientAnalysisId: vcAthleteClientAnalysisId, file, mimeType: file.type, lift, variation,
@@ -9067,7 +9073,9 @@ async function vcAthleteUploadAndGo() {
       // kalibrere skiven manuelt, uden at skulle spørge.
       plateCalibration: vcPlateCalibReason,
       barPath: vcAthleteTrackedBarPath(lift),
+      onProgress: fremgang ? fremgang.onProgress : null,
     });
+    fremgang?.stop();
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
     if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Send til coach'; }
@@ -9080,6 +9088,7 @@ async function vcAthleteUploadAndGo() {
     if (athleteStatusEl) athleteStatusEl.hidden = false;
     say('');
   } catch (error) {
+    fremgang?.stop();
     vcAthleteUploadRequestId = null;
     if (athleteUploadCancelBtn) athleteUploadCancelBtn.hidden = true;
     // ORDRE 61 · commit 2: en selv-annulleret upload er ikke en fejl - "Send
@@ -10644,8 +10653,9 @@ function vcV3RequestUploadAndGo(options) {
     : vcV3RequestUploadAndGoRaw(options);
 }
 
+// ORDRE 2441v: onProgress({ loaded, total }) får appens upload-progress-beskeder, mens sendingen venter.
 function vcV3RequestUploadAndGoRaw({ requestId = vcV3Uuid(), clientAnalysisId, file, mimeType,
-  lift, variation, loadKg = null, rpe = null, athleteNote = null, plateCalibration = null, barPath = null }) {
+  lift, variation, loadKg = null, rpe = null, athleteNote = null, plateCalibration = null, barPath = null, onProgress = null }) {
   if (!VC_V3_ATHLETE_BRIDGE || !VC_V3_HOST)
     return Promise.reject(new Error('VideoCoach er ikke forbundet til appen'));
   return new Promise((resolve, reject) => {
@@ -10655,7 +10665,7 @@ function vcV3RequestUploadAndGoRaw({ requestId = vcV3Uuid(), clientAnalysisId, f
       // teksten siger det og beder om at vente før Prøv igen. Tiden og logikken er uændret.
       reject(new Error('Appen har ikke bekræftet sendingen inden for 10 minutter. Videoen sendes muligvis stadig på et langsomt net. Vent et par minutter, før du trykker Prøv igen'));
     }, 10 * 60 * 1000);
-    vcV3UploadPending.set(requestId, { resolve, reject, timer });
+    vcV3UploadPending.set(requestId, { resolve, reject, timer, onProgress });
     VC_V3_HOST.postMessage({ type: `${VC_V3_MESSAGE_PREFIX}:upload-and-go`,
       requestId, clientAnalysisId, file, mimeType, lift, variation,
       loadKg, rpe, athleteNote, plateCalibration, barPath }, location.origin);
@@ -10824,6 +10834,12 @@ if (VC_V3_BRIDGE_ENABLED) {
       clearTimeout(pending.timer); vcV3Pending.delete(msg.requestId);
       if (msg.ok) pending.resolve(msg.data);
       else pending.reject(new Error(msg.error || 'Analysen kunne ikke gemmes'));
+      return;
+    }
+    // ORDRE 2441v: målt fremgang fra appen (src/athlete/useVideoCoachBro.js), kun mens sendingen venter.
+    if (msg.type === `${VC_V3_MESSAGE_PREFIX}:upload-progress`) {
+      const pending = vcV3UploadPending.get(msg.requestId);
+      if (pending && typeof pending.onProgress === 'function') pending.onProgress({ loaded: msg.loaded, total: msg.total });
       return;
     }
     if (msg.type === `${VC_V3_MESSAGE_PREFIX}:upload-result`) {
@@ -12685,7 +12701,10 @@ function appData2VideoCurrent(path, athleteId, id) {
 import { mountUploadFilmGuide } from './videoFilmGuide.mjs';
 import { bindInstantSend } from './vcInstantSend.mjs';
 import { mountUploadRetry } from './vcUploadRetry.mjs';
+import { createSendFremgang } from './vcSendFremgang.mjs';
 if (VC_V3_ATHLETE_BRIDGE) vcUploadRetry = mountUploadRetry(document, () => vcAthleteUploadAndGo());
+// ORDRE 2441v: fremgang under sendingen, se vcAthleteUploadAndGo.
+vcSendFremgang = createSendFremgang;
 bindInstantSend({
   saveButton: document.getElementById('athleteInstantSaveBtn'),
   discardButton: document.getElementById('athleteInstantDiscardBtn'),

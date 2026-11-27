@@ -68,6 +68,89 @@ test('upload: fejl bliver til { error } med en sætning, aldrig et kast', async 
   assert.equal(l.store.size, 0)
 })
 
+// ORDRE 2441v: med en modtager (onProgress) og XMLHttpRequest går PUT gennem XHR, så fremgangen måles.
+// Falsk XHR: samme form som browserens (open, setRequestHeader, upload.onprogress, send, abort, status).
+function falskXhr(l, { status = 200, fejl = false, haengOgVentPaaAbort = false, maaltLaengde = true } = {}) {
+  const set = []
+  class Xhr {
+    constructor() { this.upload = {}; this.status = 0; this.headers = {}; set.push(this) }
+    open(method, url) { this.method = method; this.url = url }
+    setRequestHeader(navn, vaerdi) { this.headers[navn] = vaerdi }
+    abort() { this.afbrudt = true; this.onabort?.() }
+    send(body) {
+      this.body = body
+      queueMicrotask(async () => {
+        if (this.afbrudt) return
+        if (fejl) { this.onerror?.(); return }
+        const total = body.size
+        for (const loaded of [Math.floor(total / 3), Math.floor(2 * total / 3), total]) {
+          this.upload.onprogress?.({ lengthComputable: maaltLaengde, loaded, total })
+        }
+        if (haengOgVentPaaAbort) return
+        // Klippet lander i det rigtige lager (worker.js), så prøven dækker hele vejen.
+        const svar = await l.fetchFn(this.url, { method: this.method, headers: this.headers, body })
+        this.status = status === 200 ? svar.status : status
+        this.onload?.()
+      })
+    }
+  }
+  return { Xhr, set }
+}
+
+test('2441v: XHR giver målt fremgang under PUT, og klippet lander som før', async () => {
+  const l = lager()
+  const { Xhr, set } = falskXhr(l)
+  const maalt = []
+  const svar = await upload(l, { onProgress: f => maalt.push(f), Xhr })
+  assert.deepEqual(svar, { data: { path: PATH }, error: null })
+  assert.deepEqual([...l.store.get(PATH)], [1, 2, 3, 4, 5, 6])
+  assert.deepEqual(maalt, [{ loaded: 2, total: 6 }, { loaded: 4, total: 6 }, { loaded: 6, total: 6 }])
+  assert.equal(set.length, 1)
+  assert.equal(set[0].method, 'PUT')
+  assert.match(set[0].url, /^https:\/\/videolager\.test\/blob\//)
+  assert.equal(set[0].headers['content-type'], 'video/mp4')
+  assert.equal(l.calls.filter(c => c.startsWith('PUT')).length, 1, 'PUT gik gennem XHR, ikke også gennem fetch')
+  // Samme klip igen: exists:true, ingen ny PUT og ingen fremgang.
+  const maalt2 = []
+  assert.deepEqual(await upload(l, { onProgress: f => maalt2.push(f), Xhr }), { data: { path: PATH }, error: null })
+  assert.deepEqual(maalt2, [])
+})
+
+test('2441v: uden XMLHttpRequest, eller uden modtager, bruges fetch som før, og intet opfindes', async () => {
+  const l = lager()
+  const maalt = []
+  assert.deepEqual(await upload(l, { onProgress: f => maalt.push(f), Xhr: undefined }), { data: { path: PATH }, error: null })
+  assert.deepEqual(maalt, [], 'ingen tal, der ikke er målt')
+  const l2 = lager()
+  const { Xhr, set } = falskXhr(l2)
+  assert.deepEqual(await upload(l2, { Xhr }), { data: { path: PATH }, error: null })
+  assert.equal(set.length, 0, 'uden modtager bruges XHR ikke')
+})
+
+test('2441v: XHR-fejl bliver til de samme danske tekster som fetch', async () => {
+  const l = lager()
+  assert.equal((await upload(l, { onProgress: () => {}, Xhr: falskXhr(l, { fejl: true }).Xhr })).error.message, 'Forbindelsen blev afbrudt. Prøv igen')
+  const l500 = lager()
+  assert.equal((await upload(l500, { onProgress: () => {}, Xhr: falskXhr(l500, { status: 500 }).Xhr })).error.message, 'Videolageret afviste klippet (500)')
+  const l409 = lager()
+  assert.deepEqual(await upload(l409, { onProgress: () => {}, Xhr: falskXhr(l409, { status: 409 }).Xhr }), { data: { path: PATH }, error: null })
+  // Afbrydelse undervejs: signal afbryder XHR, og svaret er "Annulleret".
+  const controller = new AbortController()
+  const { Xhr, set } = falskXhr(l, { haengOgVentPaaAbort: true })
+  const loefte = upload(l, { onProgress: f => { if (f.loaded === f.total) controller.abort() }, Xhr, signal: controller.signal })
+  assert.equal((await loefte).error.message, 'Annulleret')
+  assert.equal(set[0].afbrudt, true)
+  // Allerede afbrudt før PUT: intet sendes.
+  const c2 = new AbortController(); c2.abort()
+  const x2 = falskXhr(l, { haengOgVentPaaAbort: true })
+  assert.equal((await upload(l, { onProgress: () => {}, Xhr: x2.Xhr, signal: c2.signal })).error.message, 'Annulleret')
+  // Ikke-målbar længde giver ingen fremgang.
+  const maalt = []
+  const l3 = lager()
+  await upload(l3, { onProgress: f => maalt.push(f), Xhr: falskXhr(l3, { maaltLaengde: false }).Xhr })
+  assert.deepEqual(maalt, [])
+})
+
 test('hent: adresse for klip i lageret, null for ældre klip og ved fejl (så Supabase bruges)', async () => {
   const l = lager()
   assert.equal(await hentFraVideolager({ base: BASE, token: TOKEN, videoPath: PATH, fetchFn: l.fetchFn }), null)
