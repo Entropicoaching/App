@@ -302,7 +302,7 @@ function ExerciseTimer({ duration, label, accessible = false, context, entropi2 
 }
 
 // Mounted only for strict Entropi 2 ON; report state is separate from the legacy logger.
-function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx, samlet = false }) {
+function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx }) {
   const [blokslut, setBlokslut] = useState(null)
   const [blokslutRetry, setBlokslutRetry] = useState(0)
   // Lazy analysis owns its full-block reader. OFF never loads it or touches storage.
@@ -356,7 +356,7 @@ function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx, saml
   })()
   const skjulDato = blokslutCurrent?.api.blokhovedViserDatoen(hovedFase?.weeks, blokslutCurrent.model) === true
   return (blokslutCurrent && blokslutCurrent.api.renderProgramBlokslut(createElement, blokslutCurrent.model, {
-    open: blokslutCurrent.open, skjulDato, skjulPas: true, titel: samlet ? 'Rapport for blokken' : undefined,
+    open: blokslutCurrent.open, skjulDato, skjulPas: true,
     kortStil: { border: 'none', borderRadius: 12, background: programColors.surface, borderInlineStart: `4px solid ${programColors.accent}` },
     onToggle: event => {
       const open = event.currentTarget.open
@@ -622,7 +622,7 @@ export default function ProgramTab({
             logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
             goToWeek,
           }, programAppearanceOn)
-          const blokslutElement = entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} viewingWeekIdx={viewingWeekIdx} samlet={blokSamlet} />
+          const blokslutElement = entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} viewingWeekIdx={viewingWeekIdx} />
           // Ordre 2425: ugens intensitet er én linje (overskrift og mærker); i den samlede visning står blokkens navn på samme linje.
           const enLinje = blokSamlet && allWeeks.length <= 1
           const rpeTekst = programAppearanceOn && !programError && intensity.targets.some(target => /RPE/i.test(target))
@@ -1416,9 +1416,9 @@ export default function ProgramTab({
                       <summary style={{ minHeight: 44, cursor: 'pointer', boxSizing: 'border-box', paddingTop: 8, color: programColors.text, fontWeight: 600 }}>Din blok</summary>
                       {blokElement}
                       {blokOversigt}
-                      {blokslutElement}
                     </details>
                   )}
+                  {blokSamlet && blokslutElement}
                 </>
               )}
               {programAppearanceOn && <style>{programFocusCss}</style>}
