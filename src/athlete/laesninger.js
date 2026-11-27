@@ -5,6 +5,7 @@ import { rpeOrigin } from '../rpeEvidence.mjs'
 import { volumeWeeks, suggestionEvidence, repZone, prescribedRepZone } from '../dataEvidence.mjs'
 import { dataEnoughEnabled, dataAllowed } from '../dataEnough.mjs'
 import { openReadinessSurface } from './readinessShortcut.mjs'
+import { markFirstVisitAfterGuide } from '../entropi2/onboarding/firstVisitState.mjs'
 import { parseInputNumber, optionalInput } from '../inputValues.js'
 
 // Laesningerne (atlet, program, saet-logs, historik, parathed, PR, staevne,
@@ -735,6 +736,8 @@ export function lavLaesninger({
   // samme, saa guiden lukker uafhaengigt af skrivningens svar. Spring-over
   // kalder denne PRAECIS som "gennemfoert" gør, saa de to sætter samme tilstand.
   function completeOnboardingGuide() {
+    // Ordre 2421: guiden er den ene rundvisning; Hjem-turen markeres set (se firstVisitState.mjs).
+    markFirstVisitAfterGuide(athlete)
     queueWrite(() => supabase.rpc('complete_athlete_onboarding_v1'))
     setOnboardingDone(true)
     setGuideOpen(false)

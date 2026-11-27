@@ -42,3 +42,10 @@ export function welcomeTitle(name) {
   const first = typeof name === 'string' ? name.trim().split(/\s+/)[0] : ''
   return first ? `Velkommen, ${first}` : 'Velkommen'
 }
+
+// Ordre 2421: guiden er den ene rundvisning. Første gennemløb (eller spring over) markerer Hjem-turen som set lokalt, før
+// athlete-rækken er hentet igen; en atlet med onboarding_completed_at (genåbning, ældre atleter) røres ikke.
+export function markFirstVisitAfterGuide(athlete, supplied) {
+  if (athlete?.onboarding_completed_at != null) return false
+  return rememberFirstVisit(firstVisitKey(athlete?.id), supplied)
+}
