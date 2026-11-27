@@ -139,7 +139,8 @@ export function renderProgramBlokslut(h, model, { open, onToggle, onRetry, skjul
   const strength = gains.length ? comparable.map(liftLine).join(' · ') + ' · beregnet e1RM'
     : comparable.length
       ? 'Ingen sikker styrkefremgang i de sammenlignelige sæt.'
-      : 'Styrkefremgang kan endnu ikke sammenlignes sikkert.'
+      : model.through < model.end ? 'Styrkefremgang vises, når du har logget sæt i sidste uge.'
+        : 'Styrkefremgang kan endnu ikke sammenlignes sikkert.'
   return h('details', { 'aria-label': 'Dine resultater', 'data-program-blokslut': true, open, onToggle,
     style: { marginBottom: 20, padding: 16, border: '1px solid #59564c', color: '#edeae2',
       width: '100%', minWidth: 0, boxSizing: 'border-box', overflowWrap: 'anywhere', lineHeight: 1.6, ...kortStil } },
