@@ -188,6 +188,17 @@ export function useVideoCoachBro({
         // ved ethvert bekræftet udfald - se athleteSilentFailLog.js.
         markUploadInflight(currentAthlete.id, message.requestId)
         let upload, lagerFejl = null
+        // ORDRE 2441v (2437 tilfælde c): målt fremgang fra lagerets PUT går til videosiden som
+        // upload-progress, højst én gang i sekundet og altid den sidste, så teksten kan vise MB sendt.
+        // Kun det, der er målt (XHR upload.onprogress); reserven i Supabase giver ingen tal.
+        let sidstSendt = 0
+        const sendFremgang = ({ loaded, total }) => {
+          const nu = Date.now()
+          if (loaded < total && nu - sidstSendt < 1000) return
+          sidstSendt = nu
+          try { event.source.postMessage({ type: `${ATHLETE_VIDEOCOACH_PREFIX}:upload-progress`,
+            requestId: message.requestId, loaded, total }, event.origin) } catch { /* videosiden kan være lukket */ }
+        }
         try {
           // ORDRE 1537v0: med VITE_VIDEOLAGER_URL går klippet til videolageret (R2) i stedet for Supabase.
           // Klienten hentes først, når lageret er slået til; uden variablen er alt som før.
@@ -195,7 +206,8 @@ export function useVideoCoachBro({
           const lager = lagerKlient ? lagerKlient.videolagerUrl() : ''
           const lagerSvar = lager
             ? await lagerKlient.uploadTilVideolager({ base: lager, token: (await supabase.auth.getSession()).data?.session?.access_token,
-              athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId, path, file, mimeType, signal: controller.signal })
+              athleteId: currentAthlete.id, clientAnalysisId: message.clientAnalysisId, path, file, mimeType, signal: controller.signal,
+              onProgress: sendFremgang })
             : null
           lagerFejl = lagerSvar?.error ?? null
           // ORDRE 1610v: tager videolageret ikke imod klippet (og atleten ikke selv har afbrudt), sendes det
