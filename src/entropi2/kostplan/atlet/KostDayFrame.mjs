@@ -83,7 +83,7 @@ export default function KostDayFrame({ controller, tracker, athleteId, date, cli
     try { foodDayAvailable = currentDay() === date } catch { foodDayAvailable = false }
   }
   // 1899: "Kost i dag" øverst; alt herunder ligger uændret i laget "Vis detaljer" (KostLag ejer valget).
-  return React.createElement(KostLag, { quick: !!foodDayAvailable, preview, athleteId, date, checkin, controller: plan ? controller : null,
+  return React.createElement(KostLag, { quick: !!foodDayAvailable, preview, athleteId, date, checkin, controller: plan ? controller : null, planHenter: loading,
     weight, foodEntry, foodGate, trackerFold, noPlanToday, client, onShowPlan: showPlan, planSeen, onSeen, nyUge: nyUge === true && !preview, water: { enabled: !preview, athleteId, date, client, currentDay, gateRef: waterGate } },
     dates.length > 1 && React.createElement('label', { style: { display: 'block', padding: 16 } }, 'Vælg plandato',
       React.createElement('select', { value: selected, 'aria-label': 'Vælg plandato', style: { ...control, display: 'block', marginTop: 8, maxWidth: '100%' },

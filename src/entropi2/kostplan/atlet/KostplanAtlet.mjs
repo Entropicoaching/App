@@ -18,11 +18,12 @@ const heading = { color: '#edeae2' }
 const button = (text, onClick, disabled = false, props = {}) => h('button', { type: 'button', style: disabled ? { ...control, opacity: 0.6 } : control, onClick, disabled, ...props }, text)
 
 // React renders coach text literally, including angle brackets and line breaks.
+// 2461: uden råd i planversionen vises afsnittet slet ikke.
 export function PlanAdvice({ text }) {
+  if (typeof text !== 'string' || !text.trim()) return null
   return h('section', { 'aria-label': 'Planens råd', style: { marginTop: 24 } },
     h('h2', { style: heading }, 'Planens råd'),
-    h('p', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } },
-      text ?? 'Coachen har ikke tilføjet råd til denne planversion.'))
+    h('p', { style: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } }, text))
 }
 
 // Pure controlled React view: the same handlers are exercised in the synthetic

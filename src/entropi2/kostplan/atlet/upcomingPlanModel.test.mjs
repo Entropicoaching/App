@@ -49,7 +49,9 @@ test('advice boundary accepts null/exact 4000 codepoints, rejects malformed sele
   const f=seeded();f.data[tableNames[1]][0].portion_guidance=advice
   const c=open(f);try{assert.equal(await c.load(),false);assert.equal(c.snapshot().phase,'read-error');assert.equal(c.snapshot().plan,null)}finally{c.dispose()}
  }
- assert.match(renderToStaticMarkup(h(PlanAdvice,{text:null})),/ikke tilføjet råd/)
+ assert.equal(renderToStaticMarkup(h(PlanAdvice,{text:null})),'')
+ assert.equal(renderToStaticMarkup(h(PlanAdvice,{text:'  '})),'')
+ assert.match(renderToStaticMarkup(h(PlanAdvice,{text:'Spis i ro'})),/Planens råd[\s\S]*Spis i ro/)
 })
 test('empty, missing tables and transient read errors stay distinct; same retry really re-reads and recovers',async()=>{
  const empty=historyFixture(), e=open(empty)

@@ -51,7 +51,7 @@ function whenReady(sources, ms = 10000) {
   })
 }
 
-export default function KostIDag({ tracker, controller, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote, client, skjulVaegt = false }) {
+export default function KostIDag({ tracker, controller, planHenter = false, athleteId, date, weight = {}, water, onCustom, nyPlan, customNote, client, skjulVaegt = false }) {
   const t = useSyncExternalStore(tracker?.subscribe || noSubscribe, tracker?.snapshot || noneState, tracker?.snapshot || noneState)
   const s = useSyncExternalStore(controller?.subscribe || noSubscribe, controller?.snapshot || idle, controller?.snapshot || idle)
   // 2411: under en genhentning (efter gem) bliver loggen et øjeblik "ikke hentet"; behold den senest hentede for samme dag, så headeren ikke blinker til "Henter dagens tal…".
@@ -247,6 +247,11 @@ export default function KostIDag({ tracker, controller, athleteId, date, weight 
       : vaegt?.phase === 'error' ? 'Vægten blev ikke gemt. Prøv igen.'
         : vaegt?.phase === 'invalid' ? 'Skriv en vægt over 0 kg.' : ''
 
+  // 2461: mens dagen og planen hentes, vises en rolig pladsholder i stedet for "0 af ... kcal" og en tom liste.
+  const henter = !log.loaded || planHenter || (!!controller && (s?.phase === 'idle' || s?.phase === 'loading'))
+  if (henter) return h('section', { 'aria-label': 'Kost i dag', 'data-kost-i-dag': '', 'data-kost-i-dag-henter': '', style: card },
+    h('h2', { style: { margin: '0 0 4px', color: '#edeae2', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, lineHeight: 1.15, fontWeight: 400 } }, 'Kost i dag'),
+    h('p', { role: 'status', 'aria-busy': true, style: { margin: 0, minHeight: 120 } }, 'Henter dagens kost…'))
   return h('section', { 'aria-label': 'Kost i dag', 'data-kost-i-dag': '', style: card },
     // Ordre 2370 (fund 9): samme serif-overskrift som Hjem og Beskeder; tallet brydes jævnt, så protein ikke står alene.
     h('h2', { style: { margin: '0 0 4px', color: '#edeae2', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, lineHeight: 1.15, fontWeight: 400 } }, 'Kost i dag'),
@@ -470,7 +475,7 @@ const device = () => { try { return typeof localStorage === 'undefined' ? null :
 // Laget "Vis detaljer": alt det gamle står uændret og monteret i children; det
 // skjules kun. Valget huskes pr. atlet på enheden. Uden en skrivbar dag i dag
 // (fremtidig dato, anden dag) vises laget åbent som før.
-export function KostLag({ quick, preview, athleteId, date, checkin, controller, weight, foodEntry, foodGate, trackerFold, water,
+export function KostLag({ quick, preview, athleteId, date, checkin, controller, planHenter = false, weight, foodEntry, foodGate, trackerFold, water,
   noPlanToday = false, client, onShowPlan, planSeen = false, onSeen, nyUge = false, children }) {
   const [details, setDetails] = useState(() => ({ athleteId, open: laesDetaljer(device(), athleteId) }))
   const detailsOpen = details.athleteId === athleteId ? details.open : laesDetaljer(device(), athleteId)
@@ -513,7 +518,7 @@ export function KostLag({ quick, preview, athleteId, date, checkin, controller, 
     nyUge && h('section', { 'data-ny-kostuge': '', role: 'status', 'aria-label': NY_KOSTUGE_TEKST, style: card },
       h('h2', { style: { margin: '0 0 8px', fontSize: '1.15rem' } }, NY_KOSTUGE_TEKST),
       h('p', { style: { margin: 0 } }, 'Du kan stadig logge mad og vægt her, indtil den er sendt.')),
-    quick && h(KostIDag, { customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, skjulVaegt: true, client, water: layerOpen ? null : waterLog, nyPlan,
+    quick && h(KostIDag, { planHenter, customNote: notReady ? 'Kostloggen er ikke klar. Prøv igen om lidt.' : null, tracker: checkin, controller, athleteId, date, weight, skjulVaegt: true, client, water: layerOpen ? null : waterLog, nyPlan,
       onCustom: () => { if (!layerOpen) setOpen(true); setCustom(n => n + 1) } }),
     quick && h('div', { style: { padding: '0 16px 8px' } },
       h('button', { type: 'button', style: control, 'aria-expanded': layerOpen, 'aria-controls': `kost-detaljer-${athleteId}`,

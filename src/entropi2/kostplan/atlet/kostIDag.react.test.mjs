@@ -497,3 +497,23 @@ test('Planmåltid logget 2348: tre planmåltider hvor kun ét er logget under pl
   assert.deepEqual(idag2156(r).map(row => row.meal).sort(), ['Aftensmad', 'Frokost <syntetisk>', 'Mellemmåltid'])
   assert.equal(r.inserts().length, 2, 'den loggede Aftensmad logges ikke igen')
 })
+
+// 2461: ingen "0 af ... kcal" og ingen tom liste, mens dagen eller planen hentes.
+test('Kost i dag: rolig pladsholder, mens dagen og planen hentes, og tallet først bagefter', async () => {
+  const { renderToStaticMarkup } = await import('react-dom/server')
+  const { default: KostIDag } = await import('./KostIDag.mjs')
+  const sub = () => () => {}
+  const log = { athleteId, date, loaded: true, phase: 'ready', totals: { kcal: 0, protein: 0 }, targets: { kcal: 2600, protein: 160 }, logs: [] }
+  const vis = (tracker, plan) => renderToStaticMarkup(h(KostIDag, { athleteId, date, tracker: { subscribe: sub, snapshot: () => tracker },
+    controller: { subscribe: sub, snapshot: () => plan, load() {} }, weight: {}, client: null }))
+  for (const [tracker, plan] of [[log, { phase: 'loading' }], [log, { phase: 'idle' }], [{ ...log, loaded: false }, { phase: 'ready', mode: 'plan', meals: [] }]]) {
+    const html = vis(tracker, plan)
+    assert.match(html, /Henter dagens kost/)
+    assert.doesNotMatch(html, /0 af|Nyt måltid/)
+  }
+  assert.match(renderToStaticMarkup(h(KostIDag, { athleteId, date, planHenter: true, tracker: { subscribe: sub, snapshot: () => log }, controller: null, weight: {}, client: null })), /Henter dagens kost/)
+  const klar = vis(log, { phase: 'ready', mode: 'plan', meals: [] })
+  assert.doesNotMatch(klar, /Henter dagens kost/)
+  assert.match(klar, /I dag 0 af 2.600 kcal/)
+  assert.match(vis(log, { phase: 'load-error', message: 'x' }), /I dag 0 af 2.600 kcal/)
+})
