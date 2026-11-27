@@ -61,7 +61,7 @@ async function mount(node) {
   } }
 }
 
-test('U6 1/5: I dag-kortet viser "Squat 142,5 kg (+2,5)" og lægger planvægten i første sæt', gate, async () => {
+test('U6 1/5: planvægten lægges i første sæt (og står ikke igen i I dag-kortet, ordre 2425)', gate, async () => {
   const exercises = [{ id: 'ex-squat', name: 'Squat', reps: '5', recommended_weight: 142.5 },
     { id: 'ex-bench', name: 'Bænkpres', reps: '5', recommended_weight: null }]
   const last = async () => ({ squat: { weight: 140, reps_completed: 5 }, 'bænkpres': { weight: 92.5, reps_completed: 5 } })
@@ -70,9 +70,8 @@ test('U6 1/5: I dag-kortet viser "Squat 142,5 kg (+2,5)" og lægger planvægten 
     u5Training: { kind: 'today', logged: 0, total: 6, exercises }, logInputs: inputs, setLogInputs: f => { inputs = f(inputs) } }))
   try {
     await act(async () => new Promise(r => setTimeout(r, 0)))
-    assert.match(m.text(), /Squat 142,5 kg \(\+2,5\)/)
-    assert.match(m.text(), /Bænkpres 92,5 kg som sidst/)
-    assert.match(m.text(), /Coachens vægt står i første sæt/)
+    // Ordre 2425: planvægten står ikke længere som række i I dag (passet står i Dagens pas); den ligger i første sæt.
+    assert.doesNotMatch(m.text(), /Squat 142,5|Bænkpres 92,5|Coachens vægt/)
     assert.deepEqual(inputs, { 'ex-squat_1': { weight: '142,5', reps: '5' }, 'ex-bench_1': { weight: '92,5', reps: '5' } })
   } finally { await m.done() }
 })

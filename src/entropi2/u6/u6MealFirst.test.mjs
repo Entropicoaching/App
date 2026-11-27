@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 
-// U6 4/5: Mad-rækken står før træningsrækken i I dag-kortet. Kun syntetiske data.
+// U6 4/5: Mad-rækken står før vægtrækken (træning har siden 2425 ingen række her) i I dag-kortet. Kun syntetiske data.
 let React, render, TodayCard, missing = false
 try {
   React = await import('react')
@@ -27,7 +27,7 @@ async function rows(extra) {
   try {
     await act(async () => root.render(React.createElement(TodayCard, { athlete: { id: A }, today, setTab() {},
       u5ReadMeals: async () => ({ status: 'ready', today: 0, yesterday: [{ meal: 'Syntetisk grød', kcal: 400 }] }),
-      u5ReadLastWeights: async () => ({}), u5Training: { kind: 'today', logged: 0, total: 4, exercises: [] }, ...extra })))
+      u5ReadLastWeights: async () => ({}), logWeight() {}, setWeightInput() {}, u5Training: { kind: 'today', logged: 0, total: 4, exercises: [] }, ...extra })))
     await act(async () => new Promise(r => setTimeout(r, 0)))
     return elements(host).map(n => n.attributes ?? n.props ?? {}).map(a => Object.keys(a).find(k => /^data-u5-(weight|readiness|training|meal)$/.test(k))).filter(Boolean)
   } finally {
@@ -36,7 +36,7 @@ async function rows(extra) {
   }
 }
 
-test('U6 4/5: med flaget står Mad før Træning; uden flaget som i U5', gate, async () => {
-  assert.deepEqual(await rows({ u6MealFirst: true }), ['data-u5-meal', 'data-u5-training'])
-  assert.deepEqual(await rows({ u6MealFirst: false }), ['data-u5-training', 'data-u5-meal'])
+test('U6 4/5: med flaget står Mad før Vægt; uden flaget som i U5', gate, async () => {
+  assert.deepEqual(await rows({ u6MealFirst: true }), ['data-u5-meal', 'data-u5-weight'])
+  assert.deepEqual(await rows({ u6MealFirst: false }), ['data-u5-weight', 'data-u5-meal'])
 })

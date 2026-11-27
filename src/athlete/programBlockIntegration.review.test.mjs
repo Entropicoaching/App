@@ -43,7 +43,10 @@ test('review: actual shared default enables top summary, active block wins over 
   const original = JSON.stringify(props.allWeeks)
   const tree = render(props), block = summary(tree)
   assert.ok(block)
-  assert.equal(nodes(tree, n => n.type === 'section')[0], block)
+  // Ordre 2425: blokoversigten ligger i den samlede lukkede liste efter passene, ikke først på siden.
+  const samlet = nodes(tree, n => n.props['data-program-blok-samlet'] !== undefined)[0]
+  assert.ok(samlet && nodes(samlet, n => n === block).length === 1)
+  assert.equal(samlet.type, 'details'); assert.equal(samlet.props.open, undefined)
   assert.match(text(block), /Uge 2 af 2/)
   assert.doesNotMatch(text(block), /Næste test eller deload|Deload i programuge 13/)
   assert.doesNotMatch(text(block), /Test i programuge 14/)
@@ -127,7 +130,7 @@ test('round two: coach information and block navigation remain visible with eith
     assert.match(visible, /Syntetisk ugenote/)
     assert.match(visible, /Fra din coach.*Syntetisk coachbeskrivelse/)
     assert.doesNotMatch(text(tree), /aktiv uge .* af/)
-    assert.equal(nodes(tree, n => n.type === 'details').length, 2)
+    assert.equal(nodes(tree, n => n.type === 'details').length, 3) // ordre 2425: + den samlede Din blok-liste
     // Old circular week buttons must not duplicate the detailed weekly list.
     assert.equal(nodes(tree, n => n.type === 'button' && n.props.style?.borderRadius === '50%').length, 0)
     assert.equal(nodes(tree, n => n.type === 'button' && /‹|›/.test(text(n))).length > 0, true)

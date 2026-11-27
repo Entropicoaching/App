@@ -174,7 +174,7 @@ async function athleteShots(page, vp, outDir, mode) {
   await page.screenshot({ path: join(outDir, `u5-${mode}-atlet-${vp.name}-2-hele-forsiden.png`), fullPage: true })
   if (u5) {
     const text = await page.locator('[data-u5-today]').textContent()
-    if (!/Mangler i dag: vægt, dagsform, træning og mad/.test(text)) throw new Error('Overskriften mangler noget: ' + text)
+    if (!/Mangler i dag: vægt, dagsform og mad/.test(text) || /træning/i.test(text)) throw new Error('Overskriften mangler noget: ' + text)
     if (/Testatlet/.test(text)) throw new Error('Navn i I dag-kortet')
     // Skærmbillede med kortets bund lige over bundmenuen, som atleten ser det efter et lille ryk.
     await page.locator('[data-u5-today]').evaluate(el => { el.scrollIntoView({ block: 'end' }); window.scrollBy(0, 72) })
@@ -194,7 +194,8 @@ async function athleteDone(page, vp, outDir, mode, mock) {
   await FLOWS.meal(page, mock, u5, today)
   await page.waitForTimeout(500)
   const text = await page.locator('[data-u5-today]').textContent()
-  if (!/Mangler i dag: træning/.test(text) || !/Klaret: vægt, dagsform og mad/.test(text)) throw new Error('Efter logning: ' + text)
+  // Ordre 2425: træning står i Dagens pas, ikke i I dag.
+  if (!/Resten er logget i dag/.test(text) || /træning/i.test(text)) throw new Error('Efter logning: ' + text)
   await noSideScroll(page, vp.width)
   await freeOfNav(page, vp.width, '[data-u5-today], [data-u5-today] *')
   await page.screenshot({ path: join(outDir, `u5-${mode}-atlet-${vp.name}-4-efter-tre-logninger.png`) })

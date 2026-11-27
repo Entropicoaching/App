@@ -106,3 +106,17 @@ test('Kropsvægt: skrevet vægt tager komma og punktum, rundes til én decimal o
   assert.equal(parseKgText('30').kg, 30)
   assert.equal(parseKgText('250').kg, 250)
 })
+
+test('2425: med passKort står et åbent pas hverken som række eller mangel; klaret pas står som før', () => {
+  const open = { kind: 'today', logged: 0, total: 12 }
+  const alt = todayItems({ weight: { done: false }, readiness: { done: true }, training: open, meal: { status: 'ready', today: 0 } }, { passKort: true })
+  assert.deepEqual(alt.missing, ['weight', 'meal'])
+  assert.equal(alt.headline, 'Mangler i dag: vægt og mad')
+  assert.equal(alt.doneLine, 'Klaret: dagsform')
+  // Kun træning åben: intet at vise, og aldrig "Alt er logget".
+  assert.equal(todayItems({ training: open }, { passKort: true }).headline, null)
+  assert.equal(todayItems({ weight: { done: true }, training: open }, { passKort: true }).headline, 'Resten er logget i dag')
+  // Klaret pas tæller som klaret; uden passKort (påmindelsen) er træning en mangel som før.
+  assert.equal(todayItems({ weight: { done: false }, training: { kind: 'done', today: true } }, { passKort: true }).doneLine, 'Klaret: træning')
+  assert.deepEqual(todayItems({ weight: { done: false }, training: open }).missing, ['weight', 'training'])
+})

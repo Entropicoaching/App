@@ -4,8 +4,7 @@ import { homeStyles as s } from '../homeStyles.mjs'
 import { formatKg, stepKg, parseKgText, KG_MIN, KG_MAX, latestWeight, weightDone, readinessDone, readinessSuggestion, todayItems, planTally, firstSetPrefill } from './todayModel.mjs'
 import { readTodayMeals, copyYesterdayMeals, undoCopiedMeals, yesterdayToCopy, readLastWeights, readTodayPlan, planLine } from './todayRead.mjs'
 import { u6Enabled } from '../../u6/flag.mjs'
-import { planWeightLines, planWeightRows, planFirstSetPrefill } from '../../u6/planWeight.mjs'
-import { u7Enabled } from '../../u7/flag.mjs'
+import { planFirstSetPrefill } from '../../u6/planWeight.mjs'
 
 // Hooks hentes via navnerummet, som i U3's kort: lukkede prøveharnesser kan erstatte 'react'
 // for forsiden. Kortet skriver kun gennem værtens eksisterende logWeight og saveReadiness:
@@ -114,7 +113,7 @@ export default function TodayCard(props) {
   const copyList = mealData ? yesterdayToCopy(mealData.yesterday, planNames, mealData.todayNames) : []
   const training = props.u5Training
   const model = todayItems({ weight: canWeight ? { done: wDone } : null, readiness: canReadiness ? { done: rDone } : null,
-    training: training ? { ...training, today: true } : null, meal: showMeals ? mealData : null })
+    training: training ? { ...training, today: true } : null, meal: showMeals ? mealData : null }, { passKort: true })
   if (!model.headline) return null
   // 2411: lige efter en gem i Kost monteres kortet igen; vent på måltider og plan, så "Klaret: mad" ikke mangler et øjeblik (kun efter en gem, så øvrige visninger er uændrede).
   const venterMad = showMeals && harNyKostGem(athleteId, today) && (!(meals?.athleteId === athleteId && meals?.day === today) || (typeof readPlan === 'function' && !(planLaest?.athleteId === athleteId && planLaest?.day === today)))
@@ -191,19 +190,6 @@ export default function TodayCard(props) {
         h('button', { type: 'button', style: primary, disabled: busy, onClick: openFull }, 'Udfyld dagsform'),
         h('p', { style: hint }, props.kortDagsform === true ? 'Tre korte svar: søvn, energi og sult.' : 'Fire korte svar. Næste gang er det ét tryk.')))
 
-  // Start bliver i "Dit næste pas" lige under kortet; her står kun status, så handlingen ikke findes to gange.
-  const lines = planOn && trainingToday ? planWeightLines(exercises, lastByName, { topSet: u7Enabled('topSet', props.u7TopSet) }) : []
-  const planRows = planWeightRows(lines)
-  const planned = lines.some(line => line.source === 'plan')
-  const trainingRow = () => h('div', { key: 'training', style: row, 'data-u5-training': '' },
-    // Ordre 1542: antal sæt står kun i pas-kortet øverst ("3 af 4 sæt klaret"); her står planen.
-    h('p', { style: label }, 'Træning'),
-    planRows.length > 0 && h('ul', { 'data-u6-plan-weight': '', style: { ...hint, margin: '0 0 6px', paddingLeft: 18 } },
-      ...planRows.slice(0, 4).map(row => h('li', { key: row.id, 'data-u6-source': row.source }, row.text)),
-      planRows.length > 4 && h('li', { key: 'flere' }, `${planRows.length - 4} øvelser mere i passet`)),
-    h('p', { style: { ...hint, margin: 0 } }, planned
-      ? 'Coachens vægt står i første sæt. Ret den, hvis dagen siger noget andet.'
-      : 'Start dagens pas øverst. Første sæt står klar til ét tryk.'))
   const repeatYesterday = async () => {
     if (copy?.running || copy?.undoing || !copyList.length) return
     const list = copyList, withIds = !!planNames
@@ -250,12 +236,12 @@ export default function TodayCard(props) {
           : h('p', { style: hint, ...(planText ? { 'data-u5-meal-plan': '' } : {}) }, planText
             || (copyList.length ? 'Spiste du andet? Ret det under Kost.' : 'Søg eller vælg en favorit under Kost.')))
 
-  const rows = { weight: weightRow, readiness: readinessRow, training: trainingRow, meal: mealRow }
+  const rows = { weight: weightRow, readiness: readinessRow, meal: mealRow }
   // U6 (kontrollens U5-bemærkning): Mad står øverst i kortet, så knappen ses over bundmenuen ved åbning
   // på 390 px (ordre 2078: pas-kortet ligger over, så Mad efter vægt og dagsform lå under menuen).
-  // Træningsrækken er kun status; start sker i pas-kortet lige over.
+  // Ordre 2425: træning har ingen række her; passet står i "Dagens pas" lige over, og planvægten ligger i første sæt.
   const mealFirst = u6Enabled('mealFirst', props.u6MealFirst)
-  const shownOrder = keys => mealFirst ? ['meal', 'weight', 'readiness', 'training'].filter(key => keys.includes(key)) : keys
+  const shownOrder = keys => mealFirst ? ['meal', 'weight', 'readiness'].filter(key => keys.includes(key)) : keys
   return h('section', { style: { ...s.card, padding: 16 }, 'aria-label': 'I dag', 'data-u5-today': '' },
     h('p', { style: { ...s.eyebrow, margin: 0 } }, 'I dag'),
     h('h2', { style: { ...s.heading, fontSize: 20, margin: '4px 0 0' } }, model.headline),

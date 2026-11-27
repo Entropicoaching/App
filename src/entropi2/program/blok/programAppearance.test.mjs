@@ -106,7 +106,7 @@ test('existing session opener and set logging stay outside every details fold wi
   const secondary = nodes(tree, n => n.type === 'details' && n.props['data-program-session-actions'])
   assert.equal(secondary.length, 1)
   assert.equal(nodes(tree, n => n.type === 'details' && !n.props['data-program-session-actions']).length,
-    nodes(legacy, n => n.type === 'details').length + 1)
+    nodes(legacy, n => n.type === 'details').length + 2) // ordre 2425: + den samlede Din blok-liste
 })
 
 test('OFF/nonboolean gates have no new appearance, while read errors suppress status and intensity facts', () => {

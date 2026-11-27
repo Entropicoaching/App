@@ -157,7 +157,8 @@ test('U5 3/4: dagens pas: første sæt uden coachvægt får sidste pas i udkaste
   try {
     await act(async () => new Promise(r => setTimeout(r, 0)))
     // Ordre 1542: antal sæt står kun i pas-kortet.
-    assert.match(m.text(), /Træning/); assert.doesNotMatch(m.text(), /af 6 sæt/)
+    // Ordre 2425: træning står ikke i I dag, når passet står i Dagens pas.
+    assert.doesNotMatch(m.text(), /Træning/); assert.doesNotMatch(m.text(), /af 6 sæt/)
     assert.doesNotMatch(m.text(), /Start dagens pas</)
     assert.equal(elements(m.host).filter(n => n.tagName === 'BUTTON').length, 0)
     assert.deepEqual(inputs, { 'ex-bench_1': { weight: '' }, 'ex-squat_1': { weight: '140', reps: '5' } })
@@ -177,7 +178,7 @@ test('U5 4/4: flaget er tændt; kortet står øverst, Start og Log i dag findes 
   // U9 (Marc 11. nov.): passet står først, "I dag" lige under.
   const card = html.slice(html.indexOf('data-u5-today'), html.indexOf('data-home-quick-logs'))
   assert.ok(card.length > 0)
-  assert.match(card, />Træning</); assert.doesNotMatch(card, /af 2 sæt/)
+  assert.doesNotMatch(card, /Træning/); assert.doesNotMatch(card, /Mangler i dag: [^<]*træning/); assert.doesNotMatch(card, /af 2 sæt/) // ordre 2425
   assert.equal((html.match(/data-home-quick-logs=/g) ?? []).length, 1)
   assert.ok(html.indexOf('data-home-quick-logs') > html.indexOf('data-u5-today'))
 })

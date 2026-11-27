@@ -80,7 +80,8 @@ for (const [u7TopSet, expected] of [[true, /Squat 142,5 kg \(\+2,5\), 127,5 kg(?
       u5Training: { kind: 'today', logged: 0, total: 8, exercises }, logInputs: inputs, setLogInputs: f => { inputs = f(inputs) } }))
     try {
       await act(async () => new Promise(r => setTimeout(r, 0)))
-      assert.match(m.text(), expected)
+      // Ordre 2425: Hjem viser ikke længere planlinjerne; topsæt-teksten prøves direkte på planWeightLines ovenfor.
+      assert.doesNotMatch(m.text(), expected)
     } finally { await m.done() }
   })
 }

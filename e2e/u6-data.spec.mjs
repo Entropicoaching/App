@@ -81,7 +81,8 @@ async function home(page) {
   await page.locator('[data-home-quick-logs]').waitFor({ state: 'attached', timeout: 20000 }) // Ordre 1542: tomt element, når I dag-kortet viser vægt og dagsform
   await page.locator('[data-u5-meal]').waitFor({ state: 'visible', timeout: 20000 })
   await page.waitForTimeout(1200)
-  return (await page.locator('[data-u6-plan-weight]').count()) > 0
+  // Ordre 2425: planvægten står ikke længere som række i I dag; U6 er tændt, når første sæt får den (tjekkes i athlete()).
+  return true
 }
 
 async function athlete(page, vp, outDir, mode) {
@@ -100,7 +101,7 @@ async function athlete(page, vp, outDir, mode) {
   await page.evaluate(() => window.scrollTo(0, 0))
   let firstSet = null
   if (u6) {
-    if (!/Squat 87,5 kg \(\+2,5\)/.test(card)) throw new Error('Planvægten mangler: ' + card)
+    if (/Træning/.test(card)) throw new Error('Træning står igen i I dag-kortet: ' + card)
     // Ordre 2078: Mad-knappen skal ses over bundmenuen ved åbning, også med Dagens pas over I dag.
     if (!fit.firstVisible) throw new Error(`Mad-knappen står under bundmenuen ved åbning: bund ${fit.firstBottom}, menu ${fit.navTop}`)
     await page.getByRole('button', { name: /^Start (dagens|næste) pas$/ }).first().click()

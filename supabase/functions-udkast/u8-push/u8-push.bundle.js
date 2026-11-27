@@ -308,7 +308,7 @@ var names = {
 function joinDanish(words) {
 	return words.length < 2 ? words.join("") : `${words.slice(0, -1).join(", ")} og ${words[words.length - 1]}`;
 }
-function todayItems({ weight, readiness, training, meal }) {
+function todayItems({ weight, readiness, training, meal }, { passKort = false } = {}) {
 	const items = [];
 	if (weight) items.push({
 		key: "weight",
@@ -318,10 +318,15 @@ function todayItems({ weight, readiness, training, meal }) {
 		key: "readiness",
 		done: readiness.done === true
 	});
-	if (training?.kind === "today" || training?.kind === "done" && training.today === true) items.push({
-		key: "training",
-		done: training.kind === "done" || training.total > 0 && training.logged >= training.total
-	});
+	let openTraining = false;
+	if (training?.kind === "today" || training?.kind === "done" && training.today === true) {
+		const done = training.kind === "done" || training.total > 0 && training.logged >= training.total;
+		if (done || !passKort) items.push({
+			key: "training",
+			done
+		});
+		else openTraining = true;
+	}
 	if (meal && meal.status === "ready") items.push({
 		key: "meal",
 		done: (Number.isFinite(meal.planLogged) ? meal.planLogged : meal.today) >= (Number.isSafeInteger(meal.planned) && meal.planned > 0 ? meal.planned : 1),
@@ -333,7 +338,7 @@ function todayItems({ weight, readiness, training, meal }) {
 		items,
 		missing,
 		done,
-		headline: !items.length ? null : missing.length ? `Mangler i dag: ${joinDanish(missing.map((key) => names[key]))}` : "Alt er logget i dag",
+		headline: !items.length ? null : missing.length ? `Mangler i dag: ${joinDanish(missing.map((key) => names[key]))}` : openTraining ? "Resten er logget i dag" : "Alt er logget i dag",
 		doneLine: done.length && missing.length ? `Klaret: ${joinDanish(done.map((key) => names[key]))}` : null,
 		free: items.find((item) => item.key === "meal")?.free ?? 0
 	};

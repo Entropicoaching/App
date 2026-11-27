@@ -302,7 +302,7 @@ function ExerciseTimer({ duration, label, accessible = false, context, entropi2 
 }
 
 // Mounted only for strict Entropi 2 ON; report state is separate from the legacy logger.
-function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx }) {
+function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx, samlet = false }) {
   const [blokslut, setBlokslut] = useState(null)
   const [blokslutRetry, setBlokslutRetry] = useState(0)
   // Lazy analysis owns its full-block reader. OFF never loads it or touches storage.
@@ -356,7 +356,7 @@ function ProgramBlokslut({ allWeeks, athlete, programError, viewingWeekIdx }) {
   })()
   const skjulDato = blokslutCurrent?.api.blokhovedViserDatoen(hovedFase?.weeks, blokslutCurrent.model) === true
   return (blokslutCurrent && blokslutCurrent.api.renderProgramBlokslut(createElement, blokslutCurrent.model, {
-    open: blokslutCurrent.open, skjulDato, skjulPas: true,
+    open: blokslutCurrent.open, skjulDato, skjulPas: true, titel: samlet ? 'Rapport for blokken' : undefined,
     kortStil: { border: 'none', borderRadius: 12, background: programColors.surface, borderInlineStart: `4px solid ${programColors.accent}` },
     onToggle: event => {
       const open = event.currentTarget.open
@@ -613,6 +613,40 @@ export default function ProgramTab({
             </>
           ) : null
 
+          // Ordre 2425: i Entropi 2 står passet før blokoversigten; "Uge X af N", blokkortet og blokrapporten ligger i én lukket liste efter passene.
+          const blokSamlet = entropi2 === true && blockOverviewOn
+          const blokElement = blockOverviewOn && programBlockElement({
+            allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate, programError,
+            skjulNavn: entropi2 === true,
+            onRetry: () => fetchProgram(athlete.id),
+            logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
+            goToWeek,
+          }, programAppearanceOn)
+          const blokslutElement = entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} viewingWeekIdx={viewingWeekIdx} samlet={blokSamlet} />
+          // Ordre 2425: ugens intensitet er én linje (overskrift og mærker); i den samlede visning står blokkens navn på samme linje.
+          const enLinje = blokSamlet && allWeeks.length <= 1
+          const rpeTekst = programAppearanceOn && !programError && intensity.targets.some(target => /RPE/i.test(target))
+            && <p style={{ margin: blokSamlet ? '4px 0 0' : '8px 0 0', fontSize: blokSamlet ? '0.85rem' : undefined, color: programColors.muted }}>RPE er, hvor hårdt sættet føles. 10 er maks.</p>
+          const intensitetEl = programAppearanceOn && (
+            <div data-program-intensity="" style={{ marginTop: blokSamlet ? 0 : 16, color: programColors.muted, lineHeight: 1.6 }}>
+              {blokSamlet ? <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px 8px' }}>
+                <h2 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 500, color: programColors.text }}>Ugens intensitet · plan</h2>
+                {programError || intensity.unavailable ? <span>Intensiteten er ikke tilgængelig.</span> : intensity.targets.length
+                  ? intensity.targets.map(target => <span key={target} style={{ ...programLayout.badge, ...programTones.intensity }}>{target}</span>)
+                  : <span>Ikke angivet i planen.</span>}
+              </div> : <>
+                <h2 style={{ margin: '0 0 8px', fontSize: '0.95rem', fontWeight: 500, color: programColors.text }}>Ugens intensitet · plan</h2>
+                {programError || intensity.unavailable ? 'Intensiteten er ikke tilgængelig.' : intensity.targets.length ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {intensity.targets.map(target => <span key={target} style={{ ...programLayout.badge, ...programTones.intensity }}>{target}</span>)}
+                  </div>
+                ) : 'Ikke angivet i planen.'}
+              </>}
+              {!programError && intensity.missing && intensity.targets.length > 0 && <p style={{ margin: '8px 0 0' }}>Ikke angivet for alle øvelser.</p>}
+              {!enLinje && rpeTekst}
+            </div>
+          )
+
           const programContent = (
             <>
               {allWeeks.length === 0 ? (
@@ -670,14 +704,8 @@ export default function ProgramTab({
                       setProgOpenSession(nextSession.sessionId)
                       setPendingJump({ ...nextSession, athleteId: athlete?.id })
                     }}>Næste pas · {nextSession.title || 'Åbn pas'}</button>}
-                  {blockOverviewOn && programBlockElement({
-                    allWeeks, activeWeekIdx, viewingWeekIdx, weekStartDate, programError,
-                    skjulNavn: entropi2 === true,
-                    onRetry: () => fetchProgram(athlete.id),
-                    logs: blockStatus?.activeWeekIdx === activeWeekIdx && blockStatus?.weeks === allWeeks && blockStatus?.athleteId === athlete?.id ? blockStatus.logs : null,
-                    goToWeek,
-                  }, programAppearanceOn)}
-                  {entropi2 === true && <ProgramBlokslut allWeeks={allWeeks} athlete={athlete} programError={programError} viewingWeekIdx={viewingWeekIdx} />}
+                  {!blokSamlet && blokElement}
+                  {!blokSamlet && blokslutElement}
                   {/* Readiness → træning: ærlig autoregulerings-cue ud fra dagens parathed
                       (kun aktuel uge; readinessLog er allerede i state). */}
                   {isCurrentWeek && readinessLog && readinessLog.readiness_score != null && readinessLog.readiness_score < 75 && (() => {
@@ -704,7 +732,7 @@ export default function ProgramTab({
                     </button>
                   )}
 
-                  {!ugeFoerst && blokOversigt}
+                  {!ugeFoerst && !blokSamlet && blokOversigt}
 
                   {/* Week header — navigation only shown when multiple weeks exist */}
                   <div {...a11y({ 'data-program-week-navigation': true })} style={{ marginBottom: '1.25rem', ...(programAppearanceOn ? { ...programLayout.week } : {}) }}>
@@ -767,23 +795,21 @@ export default function ProgramTab({
                         {!(programAppearanceOn && blockOverviewOn) && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#c8923a', marginBottom: '0.4rem', ...(programAppearanceOn ? programLayout.weekText : {}) }}>
                           Uge {viewedWeek.week_number}
                         </div>}
-                        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
-                          {ugeFoerst ? 'Dit program' : viewedWeek.block_name || 'Dit program'}.
-                        </h1>
-                      </div>
-                    )}
-                    {programAppearanceOn && (
-                      <div data-program-intensity="" style={{ marginTop: 16, color: programColors.muted, lineHeight: 1.6 }}>
-                        <h2 style={{ margin: '0 0 8px', fontSize: '0.95rem', fontWeight: 500, color: programColors.text }}>Ugens intensitet · plan</h2>
-                        {programError || intensity.unavailable ? 'Intensiteten er ikke tilgængelig.' : intensity.targets.length ? (
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                            {intensity.targets.map(target => <span key={target} style={{ ...programLayout.badge, ...programTones.intensity }}>{target}</span>)}
+                        {/* Ordre 2425: blokkens navn og ugens intensitet står på én linje (kun i den samlede visning; ellers uændret). */}
+                        {enLinje && programAppearanceOn ? <>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '4px 16px' }}>
+                            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.4rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1, margin: 0 }}>
+                              {ugeFoerst ? 'Dit program' : viewedWeek.block_name || 'Dit program'}.
+                            </h1>
+                            {intensitetEl}
                           </div>
-                        ) : 'Ikke angivet i planen.'}
-                        {!programError && intensity.missing && intensity.targets.length > 0 && <p style={{ margin: '8px 0 0' }}>Ikke angivet for alle øvelser.</p>}
-                        {!programError && intensity.targets.some(target => /RPE/i.test(target)) && <p style={{ margin: '8px 0 0' }}>RPE er, hvor hårdt sættet føles. 10 er maks.</p>}
+                          {rpeTekst}
+                        </> : <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.8rem', fontWeight: 400, color: '#edeae2', lineHeight: 1.1 }}>
+                          {ugeFoerst ? 'Dit program' : viewedWeek.block_name || 'Dit program'}.
+                        </h1>}
                       </div>
                     )}
+                    {!enLinje && intensitetEl}
                   </div>
 
                   {!ugeFoerst && blokTekst}
@@ -1377,13 +1403,20 @@ export default function ProgramTab({
                       <div style={{ fontSize: '0.85rem', color: (programAppearanceOn ? programColors.muted : '#4a4844'), fontStyle: 'italic' }}>Ingen træninger i denne uge endnu.</div>
                     </div>
                   )}
-                  {ugeFoerst && (
+                  {ugeFoerst ? (
                     <details key={viewedWeek.id} style={{ marginTop: '1rem', marginBottom: '1.5rem' }}>
                       <summary style={{ cursor: 'pointer', minHeight: '44px', padding: '0.75rem', boxSizing: 'border-box', color: '#edeae2' }}>
                         Blokinfo: {viewedWeek.block_name || 'Dit program'}
                       </summary>
                       {blokOversigt}
                       {blokTekst}
+                    </details>
+                  ) : blokSamlet && (
+                    <details data-program-blok-samlet="" style={{ marginBottom: 20 }}>
+                      <summary style={{ minHeight: 44, cursor: 'pointer', boxSizing: 'border-box', paddingTop: 8, color: programColors.text, fontWeight: 600 }}>Din blok</summary>
+                      {blokElement}
+                      {blokOversigt}
+                      {blokslutElement}
                     </details>
                   )}
                 </>
