@@ -91,6 +91,7 @@ function ClockedCoach(props) {
 export const GRUND_TO_LINJER = 60
 // Ordre 2005a: et trin i ugen viser fem rækker; resten står i en lukket fold under trinnet.
 export const STEP_ROWS = 5
+export const SENDT_FOLD_ATLETER = 10
 export function reasonParts(name, reason) {
   const text = String(reason ?? '')
   if (`${name ?? ''} · ${text}`.length <= GRUND_TO_LINJER) return { head: text, rest: null }
@@ -209,11 +210,15 @@ export function CoachView(input = {}) {
         !model.complete && h('p', { role: 'status' }, 'Overblikket skal opdateres. ',
           reload && h('button', { type: 'button', style: button, onClick: reload }, 'Opdater overblikket'))
   // Ordre 2005a: ét trin i ugen. Rækkerne åbner atletens program med ét tryk; Sendt har ingen detaljer under sig.
-  const step = (key, title, list, empty, plain = false) => h('section', { 'aria-label': title, 'data-coach-uge': key },
+  // Ordre 2502: Sendt står foldet helt (kun overskrift med antal) ved over SENDT_FOLD_ATLETER atleter.
+  const step = (key, title, list, empty, plain = false, foldAll = false) => h('section', { 'aria-label': title, 'data-coach-uge': key },
     h('h2', null, title, list.length > 0 && h('span', { style: { color: '#b9b4a8', fontWeight: 400 } }, ` (${list.length})`)),
+    foldAll && list.length > 0 ? h('details', { 'data-coach-fold': `${key}-helt`, style: fold },
+      h('summary', { style: foldSummary }, arrow, 'Vis alle'),
+      h('ul', { style: { listStyle: 'none', padding: 0 } }, ...list.map(row => rowButton(row, -1, plain)))) :
     list.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...list.slice(0, STEP_ROWS).map(row => rowButton(row, -1, plain))) :
       model.uge.ready && calm && h('p', { style: { color: '#b9b4a8' } }, empty),
-    list.length > STEP_ROWS && h('details', { 'data-coach-fold': `${key}-resten`, style: fold },
+    !foldAll && list.length > STEP_ROWS && h('details', { 'data-coach-fold': `${key}-resten`, style: fold },
       h('summary', { style: foldSummary }, arrow, `Vis resten (${list.length - STEP_ROWS})`),
       h('ul', { style: { listStyle: 'none', padding: 0 } }, ...list.slice(STEP_ROWS).map(row => rowButton(row, -1, plain)))))
   const more = children => children.some(Boolean) && h('details', { 'aria-label': 'Mere', 'data-coach-fold': 'mere', style: fold },
@@ -254,7 +259,7 @@ export function CoachView(input = {}) {
             h('summary', { style: foldSummary }, arrow, `Vis resten (${idagRest.length})`),
             h('ul', { style: { listStyle: 'none', padding: 0 } }, ...idagRest.map(row => rowButton(row, -1))))),
         model.state !== 'empty' && step('ny-uge', 'Mangler ny uge', model.uge.nyUge, 'Alle har en uge i appen.'),
-        model.state !== 'empty' && step('sendt', 'Sendt', model.uge.sendt, 'Ingen uge sendt til denne uge endnu.', true)),
+        model.state !== 'empty' && step('sendt', 'Sendt', model.uge.sendt, 'Ingen uge sendt til denne uge endnu.', true, model.athletes.length > SENDT_FOLD_ATLETER)),
     !inbox && coachRadarEnabled(props.coachRadarEnabled) && h(CoachRadar, { enabled: true, source: props, context: model }),
     !inbox && (model.nutritionState === 'error' || model.nutritionState === 'partial') && h('details', {
       'aria-label': 'Kostoverblik', 'data-coach-fold': 'kost', 'data-coach-nutrition-state': model.nutritionState, open: true, style: fold },
