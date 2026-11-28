@@ -23,6 +23,17 @@ const h = React.createElement
 const meals = ['Morgenmad', 'Frokost', 'Aftensmad']
 const foods = catalogFoods(FOODS)
 
+// 2490: en sendt dags måltider som editorens rækker, så ét måltid kan rettes uden at bygge dagen forfra.
+// Kun når dagen har højst tre måltider og alle fødevarer findes i editorens katalog; ellers står editoren tom som før.
+export function dagTilRaekker(dag) {
+  const ids = new Set(FOODS.map(food => food.id))
+  const maaltider = dag?.meals
+  if (!Array.isArray(maaltider) || !maaltider.length || maaltider.length > meals.length) return null
+  const raekker = maaltider.map(meal => meal.portions.map(p => ({ foodId: p.foodId, grams: String(p.grams), minGrams: String(p.grams), maxGrams: String(p.grams) })))
+  if (raekker.some(items => !items.length || items.length > 12 || items.some(item => !ids.has(item.foodId) || !(Number(item.grams) > 0)))) return null
+  return meals.map((_, i) => raekker[i] ?? [{ foodId: '', grams: '' }])
+}
+
 // Mounted only in the enabled coach tab. The keyed parent resets all local UI
 // immediately on coach, athlete or date changes; opening does not write anything.
 export default function PortalPlan(props = {}) {
@@ -72,6 +83,8 @@ function ScopedPortalPlan(props) {
   const [retOpen, setRetOpen] = React.useState(false)
   const [referenceRequested, setReferenceRequested] = React.useState(false)
   const [extendedRequested, setExtendedRequested] = React.useState(false)
+  const [prefill, setPrefill] = React.useState(null)
+  const retRef = React.useRef(null)
   // The catalogue choice is made before any editor/controller is constructed.
   // A retained launch callback cannot replace an already opened session.
   const chosen = React.useRef(false)
@@ -83,7 +96,14 @@ function ScopedPortalPlan(props) {
   // callbacks synchronously at detachment, including StrictMode ref replays.
   // U10b: with the host's own client, Claude's week comes first and the manual
   // builder (and its local four-day overview) moves behind "Ret".
-  const week = props.weekClient && h(ClaudeWeek, { client: props.weekClient, athlete: props.athlete, today: props.date })
+  const week = props.weekClient && h(ClaudeWeek, { client: props.weekClient, athlete: props.athlete, today: props.date,
+    onRetDag: dag => {
+      if (!current.current) return
+      setPrefill({ date: dag.date, rows: dagTilRaekker(dag) })
+      setDate(dag.date); setRetOpen(true); retRef.current?.setAttribute('open', '')
+      if (!chosen.current) { chosen.current = true; setReferenceRequested(true) }
+      setExpanded(true); setOpened(true)
+    } })
   const builder = [
     opened && React.createElement(PlanDayOverview, { enabled: true, coachId: props.coachId, athleteId: props.athlete.id,
       today: props.date, selectedDate: date, onContinue: () => {
@@ -115,14 +135,14 @@ function ScopedPortalPlan(props) {
     } },
     h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Kostplan'),
     h('style', { dangerouslySetInnerHTML: { __html: formCss } }),
-    opened && h(extendedRequested ? ExtendedReferencePlanEditor : referenceRequested ? ReferencePlanEditor : PlanEditor, { ...props, active: expanded, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
-      key: JSON.stringify([date, props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
+    opened && h(extendedRequested ? ExtendedReferencePlanEditor : referenceRequested ? ReferencePlanEditor : PlanEditor, { ...props, prefillRows: prefill?.date === date ? prefill.rows : null, active: expanded, date, today: props.date, onDate: setDate, onActivated: () => setRefresh(value => value + 1),
+      key: JSON.stringify([date, prefill?.date === date ? prefill.rows : null, props.athlete.age, props.athlete.bodyweight, props.athlete.goal,
         profileCalculation(props.athlete, date)]) }))]
   const status = [
     date !== props.date && h('p', null, `Koststatus og registrering nedenfor gælder ${props.date}, ikke den valgte plandato.`),
     h(ActiveReport, { ...props, enabled: true, refresh, draftVisible: opened && expanded && (!week || retOpen) })]
   return React.createElement('div', { ref: node => { current.current = node !== null } },
-    ...(week ? [week, ...status, h('details', { 'data-ret': true, style: { marginTop: 16, textAlign: 'left' }, onToggle: event => setRetOpen(event.currentTarget.open) },
+    ...(week ? [week, ...status, h('details', { 'data-ret': true, ref: retRef, style: { marginTop: 16, textAlign: 'left' }, onToggle: event => setRetOpen(event.currentTarget.open) },
       h('summary', { style: { minHeight: 44, padding: '12px 0', cursor: 'pointer' } }, 'Ret'), ...builder)]
       : [...status, ...builder]))
 }
@@ -204,7 +224,7 @@ function ExtendedReferencePlanEditor(props) {
 
 function PlanEditor(props) {
   const [opened, setOpened] = React.useState(() => openPortalPlan({ enabled: true, ...props }))
-  const [rows, setRows] = React.useState(() => meals.map(() => [{ foodId: '', grams: '' }]))
+  const [rows, setRows] = React.useState(() => props.prefillRows ?? meals.map(() => [{ foodId: '', grams: '' }]))
   const [error, setError] = React.useState('')
   const [notes, setNotes] = React.useState({ preferences: '', allergies: '', budget: '' })
   const snapshot = React.useSyncExternalStore(opened.controller.subscribe, opened.controller.snapshot, opened.controller.snapshot)

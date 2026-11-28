@@ -71,7 +71,7 @@ export function weekModel({ plans = [], versions = [], approvals = [], seen = nu
     try {
       const snapshot = createPlanSnapshot(chosen.latest)
       meals = snapshot.meals.map(meal => ({ name: meal.name,
-        portions: meal.portions.map(p => ({ name: p.food.name, grams: p.grams })) }))
+        portions: meal.portions.map(p => ({ name: p.food.name, grams: p.grams, foodId: p.food.id })) }))
       if (meals.length) summary = summarizePlanSnapshot(snapshot).nutrients
     } catch { meals = []; summary = null; unreadable = true }
     return { date, label: dagNavn(date), planId: chosen.plan.id, versionId: chosen.latest.id,

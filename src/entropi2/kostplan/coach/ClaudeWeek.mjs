@@ -25,7 +25,7 @@ export function seenText(week) {
   return null
 }
 
-export function claudeWeekView(week, { onSend, onReload, onFri, sending = false, error = '' } = {}) {
+export function claudeWeekView(week, { onSend, onReload, onFri, onRetDag, sending = false, error = '' } = {}) {
   if (week.state === 'empty') return h('section', { 'data-claude-week': 'empty', style: { textAlign: 'left' } },
     h('h3', null, 'Forslag fra Claude'), h('p', null, 'Intet forslag endnu.'))
   const { kcal, protein } = week.targets
@@ -43,7 +43,10 @@ export function claudeWeekView(week, { onSend, onReload, onFri, sending = false,
           h('span', { 'aria-label': d.ok ? 'inden for målet' : 'advarsel' }, d.ok ? '✓' : '⚠')),
         d.mealCount ? h('ul', { style: { paddingLeft: 18, margin: '0 0 10px' } }, ...d.meals.map((meal, i) => h('li', { key: i },
           h('strong', null, meal.name), ': ', meal.portions.map(p => `${p.name} ${tal(p.grams)} g`).join(', '))))
-          : h('p', null, d.state === 'mangler' ? 'Ingen plan.' : d.unreadable ? 'Kan ikke læses.' : '0 måltider.'))))),
+          : h('p', null, d.state === 'mangler' ? 'Ingen plan.' : d.unreadable ? 'Kan ikke læses.' : '0 måltider.'),
+        // 2490: åbner kostplan-editoren på denne dag med dagens måltider udfyldt.
+        onRetDag && d.mealCount > 0 && h('button', { type: 'button', style: { ...button, margin: '0 0 10px' }, 'data-ret-dag': d.date,
+          onClick: () => onRetDag(d) }, 'Ret denne dag'))))),
     ugeMikronaeringView(h, week.mikro),
     // 2137: niveau for fri kcal-pulje; protein ligger altid i basen. Kan sættes, til ugen er sendt.
     h('div', { 'data-fri-niveau': week.friPct ?? 'blandet', role: 'group', 'aria-label': 'Fri pulje', style: { marginTop: 12 } },
@@ -61,7 +64,7 @@ export function claudeWeekView(week, { onSend, onReload, onFri, sending = false,
 }
 
 // Monteres kun med en eksplicit klient fra værten (coachens egen session).
-export default function ClaudeWeek({ client, athlete, today }) {
+export default function ClaudeWeek({ client, athlete, today, onRetDag }) {
   const [state, setState] = React.useState({ week: null, error: '', sending: false })
   const [attempt, setAttempt] = React.useState(0)
   React.useEffect(() => {
@@ -76,7 +79,7 @@ export default function ClaudeWeek({ client, athlete, today }) {
     state.error ? h('p', { role: 'alert' }, state.error, ' ',
       h('button', { type: 'button', style: button, onClick: () => setAttempt(n => n + 1) }, 'Prøv igen'))
       : h('p', { role: 'status' }, 'Henter ugen…'))
-  return claudeWeekView(state.week, { sending: state.sending, error: state.error, onReload: () => setAttempt(n => n + 1),
+  return claudeWeekView(state.week, { onRetDag, sending: state.sending, error: state.error, onReload: () => setAttempt(n => n + 1),
     onFri: async pct => {
       if (state.sending || state.week.friPct === pct) return
       setState(s => ({ ...s, sending: true, error: '' }))
