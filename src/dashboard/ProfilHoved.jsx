@@ -258,7 +258,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
                           onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#b8b4a8' }}
                           onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#7a7770' }}
                         >
-                          <span style={{ marginRight: '0.35rem' }}>{EMOJI[n.key]}</span>{n.label}
+                          {!(isMobile && coachTabCleanup) && <span style={{ marginRight: '0.35rem' }}>{EMOJI[n.key]}</span>}{n.label}
                           {n.key === 'beskeder' && unreadCounts[a.id] > 0 && (
                             <span style={{ position: 'absolute', top: '0.15rem', right: '0.05rem', background: '#c8923a', color: '#141410', borderRadius: '999px', fontSize: '0.7rem', minWidth: '0.85rem', height: '0.85rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, padding: '0 0.15rem' }}>{unreadCounts[a.id]}</span>
                           )}
