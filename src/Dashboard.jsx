@@ -701,6 +701,13 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
     open: item => { setSaveNextDone(false); openCoachPriorityItem(item, 'inbox') },
     complete: () => { setVideoAnalysisReview(null); setSaveNextDone(true) },
   })
+  // Ordre 2497: er svaret delt, og coachen kom fra en opgave på forsiden, fører Luk tilbage dertil (3 tryk pr. video i stedet for 4).
+  const closeVideoReviewMedRetur = () => {
+    const tilbage = videoAnalysisReview?.status === 'shared' && !videoAnalysisFeedbackDirty && profileReturnView === 'list' &&
+      typeof profilePriorityKey === 'string' && profilePriorityKey.startsWith('video-')
+    closeVideoAnalysisReview()
+    if (tilbage) setView(profileReturnView)
+  }
   const saveMessageAndNext = () => saveAndNext('message', messageInput)
   const saveVideoAndNext = () => saveAndNext('video',
     ['works', 'focus', 'next_set'].map(key => videoAnalysisFeedbackDraft?.[key] || '').join(' ').trim())
@@ -1053,7 +1060,7 @@ export default function Dashboard({ mobilitetCoach = false, mobilitetHjemme = fa
       {videoAnalysisReview && (() => {
         return (
           <VideoReviewModal coachId={session?.user?.id} videoReviewTemplates={videoReviewTemplates} {...{ coachRyd,
-            closeVideoAnalysisReview, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
+            closeVideoAnalysisReview: closeVideoReviewMedRetur, discardVideoAnalysisFeedback, isMobile, saveApproveShareVideoAnalysis, reviewVideoAnalysis, saveVideoAnalysisFeedback, selectedAthlete,
             saveNextAvailable, saveNextBusy, saveNextError, saveVideoAndNext,
             setVideoAnalysisBaselineFindingId, setVideoAnalysisCloseWarning, setVideoAnalysisFeedbackDirty, setVideoAnalysisFeedbackDraft, videoAnalyses, videoAnalysisBaselineFindingId,
             videoAnalysisCloseWarning, videoAnalysisFeedbackDirty, videoAnalysisFeedbackDraft, videoAnalysisReview, videoAnalysisUpdatingId, videoBaselines,
