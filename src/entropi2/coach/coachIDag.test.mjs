@@ -72,7 +72,7 @@ test('én række pr. atlet: den hasteste grund fører, resten kommer i reasons',
   assert.ok(rows[0].reasons.includes('Ingen log i 4 dage'))
 })
 
-test('højst 5 rækker i listen, og hver række åbner atleten med ét tryk', () => {
+test('højst 5 rækker åbne i listen (resten i Vis resten), og hver række åbner atleten med ét tryk', () => {
   const specs = 'abcdefg'.split('').map(id => ({ id, logAgo: 3 + 'abcdefg'.indexOf(id) % 2 }))
   assert.equal(idagVisible(coachHomeModel(build(specs), day).idag).length, IDAG_MAX)
   const opened = []
@@ -80,7 +80,9 @@ test('højst 5 rækker i listen, og hver række åbner atleten med ét tryk', ()
   for (const row of model.idag) openCoachRow(row, { openProfile: (a, tab, view) => opened.push([a.id, tab, view]), openCoachPriorityItem() {} })
   assert.ok(opened.every(o => o[1] === 'log' && o[2] === 'list'))
   const html = render(h(CoachView, build(specs)))
-  assert.equal((html.match(/data-coach-action="idag-log-/g) || []).length, 5)
+  assert.equal((html.match(/data-coach-action="idag-log-/g) || []).length, 7, '5 åbne og 2 i Vis resten')
+  assert.match(html, /data-coach-fold="idag-resten"/)
+  assert.match(html.replace(/<[^>]+>/g, ' '), /Vis resten \(2\)/)
   assert.match(html, /Kræver dig i dag/)
   assert.doesNotMatch(html, /Kræver dit blik/)
 })

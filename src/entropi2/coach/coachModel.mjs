@@ -9,7 +9,7 @@ import { attentionCandidates } from './coachAttention.mjs'
 import { attentionFor } from './coachAttentionRead.mjs'
 import { erKostKlient, kostMangler } from './kostKlienter.mjs'
 import { inactiveTraining } from '../../dashboard/coachInactive.mjs'
-import { idagCandidates, idagRow, idagOrder, idagVisible } from './coachIDag.mjs'
+import { idagCandidates, idagRow, idagOrder } from './coachIDag.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
 // Ordre 2103/2113: coachens kostopslag lægger kun runtime-felter på atletkopien; intet gemmes.
@@ -178,9 +178,9 @@ export function coachHomeModel(props = {}, today = new Date()) {
 
 // Ordre 2484 (Marc 28. nov.: "forbedre coach view"): en atlet står kun én gang blandt opgaverne på forsiden. Står atleten
 // blandt de synlige i Kræver dig i dag, flyttes grunden fra Mangler ny uge ind i hendes række (ugeGrund, vist i Detaljer),
-// så ingen opgave forsvinder. Atleter ud over de 5 synlige beholder deres række i Mangler ny uge.
+// så ingen opgave forsvinder. Ordre 2491: også atleter ud over de 5 første (under Vis resten) får grunden i rækken, så ingen står to steder.
 function samleForside(idag, uge) {
-  const synlige = new Set(idagVisible(idag).map(row => row.athlete.id))
+  const synlige = new Set(idag.map(row => row.athlete.id))
   if (!uge.ready || !synlige.size) return { idag, uge }
   const flyttet = new Map()
   const nyUge = uge.nyUge.filter(row => {

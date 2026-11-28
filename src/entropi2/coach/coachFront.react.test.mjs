@@ -28,10 +28,12 @@ test('real React: task limit, order, closed remainder and inbox portions for zer
     // Ordre 1547 (genfanget bevidst, 1544's fund): tom liste siger ikke "0 opgaver i alt" eller "0 af 0"; den rolige sætning står alene.
     // Ordre 1707: forsiden siger aldrig "n opgaver i alt"; rækkerne og "Vis resten (n)" bærer tallet.
     assert.doesNotMatch(html, /opgaver? i alt|0 af 0/)
-    // Ordre 2417: forsiden viser højst 5 rækker i Kræver dig i dag, ingen fold med rest.
-    assert.equal((html.match(/data-coach-action=/g) ?? []).length, Math.min(5, count))
-    assert.deepEqual([...html.matchAll(/data-coach-action="([^"]+)"/g)].map(m => m[1]), model.idag.slice(0, 5).map(r => r.key))
-    assert.doesNotMatch(html, /Vis resten|data-coach-fold="opgaver"/)
+    // Ordre 2417 og 2491: højst 5 åbne rækker i Kræver dig i dag; resten ligger i den lukkede fold Vis resten (rækkefølgen er uændret).
+    assert.equal((html.match(/data-coach-action=/g) ?? []).length, count)
+    assert.deepEqual([...html.matchAll(/data-coach-action="([^"]+)"/g)].map(m => m[1]), model.idag.map(r => r.key))
+    assert.equal(html.includes('data-coach-fold="idag-resten"'), count > 5)
+    if (count > 5) assert.match(html.replace(/<[^>]+>/g, ' '), new RegExp(`Vis resten \\(${count - 5}\\)`))
+    assert.doesNotMatch(html, /data-coach-fold="opgaver"/)
     const inbox = render(h(CoachScreen, { ...p, tab: 'inbox' }))
     assert.doesNotMatch(inbox, /Vis resten|type="search"/)
     assert.equal((inbox.match(/data-coach-action=/g) ?? []).length, Math.min(10, model.inbox.length))

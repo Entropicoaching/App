@@ -17,7 +17,7 @@ import { useCoachAttention } from './useCoachAttention.mjs'
 import { useKostKlienter } from './useKostKlienter.mjs'
 import { activityDay } from '../../dashboard/coachInactive.mjs'
 import { alsoLine, ATTENTION_UNAVAILABLE } from './coachAttention.mjs'
-import { idagVisible } from './coachIDag.mjs'
+import { idagVisible, IDAG_MAX } from './coachIDag.mjs'
 import { gemKvitteringer, indlaesKvitteringer, medKvittering } from './smerteKvittering.mjs'
 import { adaptCoachState } from './coachModel.mjs'
 import TeamPatternsView from './TeamPatternsView.mjs'
@@ -170,6 +170,8 @@ export function CoachView(input = {}) {
   const rows = inbox ? model.inbox : model.waiting
   const firstRows = rows.slice(0, inbox ? inboxLimit : 3)
   const idagRows = inbox ? [] : idagVisible(model.idag)
+  // Ordre 2491: med 15 atleter kræver flere end 5 coachen. Resten står i en lukket fold i samme liste, så ingen atlet kun findes bag Coach Briefing.
+  const idagRest = inbox || !Array.isArray(model.idag) ? [] : model.idag.slice(IDAG_MAX)
   // Marc 3. nov.: keep it simple. Kun det vigtigste staar aabent; resten er foldet ind.
   const fold = { marginBlock: 16, borderTop: '1px solid #414139', paddingTop: 8 }
   const foldSummary = { cursor: 'pointer', minHeight: 48, display: 'flex', alignItems: 'center', minWidth: 0, overflowWrap: 'anywhere' }
@@ -247,7 +249,10 @@ export function CoachView(input = {}) {
           h('h2', null, 'Kræver dig i dag'),
           status,
           idagRows.length ? h('ul', { style: { listStyle: 'none', padding: 0 } }, ...idagRows.map((row, index) => rowButton(row, index))) :
-            calm && h('p', { 'data-coach-idag-tom': true }, 'Ingen kræver dig i dag.')),
+            calm && h('p', { 'data-coach-idag-tom': true }, 'Ingen kræver dig i dag.'),
+          idagRest.length > 0 && h('details', { 'data-coach-fold': 'idag-resten', style: fold },
+            h('summary', { style: foldSummary }, arrow, `Vis resten (${idagRest.length})`),
+            h('ul', { style: { listStyle: 'none', padding: 0 } }, ...idagRest.map(row => rowButton(row, -1))))),
         model.state !== 'empty' && step('ny-uge', 'Mangler ny uge', model.uge.nyUge, 'Alle har en uge i appen.'),
         model.state !== 'empty' && step('sendt', 'Sendt', model.uge.sendt, 'Ingen uge sendt til denne uge endnu.', true)),
     !inbox && coachRadarEnabled(props.coachRadarEnabled) && h(CoachRadar, { enabled: true, source: props, context: model }),

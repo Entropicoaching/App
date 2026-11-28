@@ -37,7 +37,7 @@ test('2484: grunden fra Mangler ny uge følger med ind i rækken og vises i Deta
   assert.match(html.replace(/<[^>]+>/g, ' '), /Mangler ny uge: Ingen uge sendt til næste mandag/)
 })
 
-test('2484: en atlet ud over de 5 i Kræver dig i dag beholder sin række i Mangler ny uge', () => {
+test('2484 og 2491: en atlet ud over de 5 første står i Vis resten og ikke også i Mangler ny uge', () => {
   const p = fredag()
   const mere = ['f', 'g', 'h'].map(id => ({ id, name: `Atlet ${id.toUpperCase()}` }))
   p.athletes = [...p.athletes, ...mere]
@@ -47,6 +47,8 @@ test('2484: en atlet ud over de 5 i Kræver dig i dag beholder sin række i Mang
   p.coachMorningData.messages.ids = p.readContext.athleteIds
   const m = coachHomeModel(p, day)
   assert.equal(m.idag.length, 6)
-  const synlige = m.idag.slice(0, 5).map(r => r.athlete.id)
-  assert.deepEqual(ugeIds(m).sort(), ['c', 'a', 'd', 'e', 'f', 'g', 'h'].filter(id => !synlige.includes(id)).sort())
+  assert.equal(m.idag.filter(r => ugeIds(m).includes(r.athlete.id)).length, 0, 'ingen atlet står både i Kræver dig i dag og Mangler ny uge')
+  assert.ok(m.idag.slice(5).every(r => r.ugeGrund), 'også rækken i Vis resten bærer ugens grund')
+  const html = renderToStaticMarkup(CoachView(p))
+  assert.match(html.replace(/<[^>]+>/g, ' '), /Vis resten \(1\)/)
 })
