@@ -39,7 +39,7 @@ try {
       const dato = (await p.locator('[data-claude-week] li[data-day]').nth(1).getAttribute('data-day'))
       const li = p.locator(`li[data-day="${dato}"]`)
       await klik(li.locator('summary')); await klik(li.getByRole('button', { name: 'Ret denne dag' }))
-      await p.getByText('Plandato').waitFor({ timeout: 15000 }); await p.waitForTimeout(1500)
+      await p.getByText('Plandato', { exact: true }).waitFor({ timeout: 15000 }); await p.waitForTimeout(1500)
       assert.equal(await p.locator('input[name="plan-date"]').inputValue(), dato, 'editoren staar paa den rettede dag')
       const gram = p.locator('input[name^="template-grams-"]'); const udfyldt = await gram.evaluateAll(l => l.filter(e => e.value).length)
       if (ukendt) assert.equal(udfyldt, 0, 'ukendt foedevare: tom editor som foer')
