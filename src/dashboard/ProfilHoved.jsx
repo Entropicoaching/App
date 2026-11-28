@@ -196,7 +196,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
                   <input id="atlet-login-mail" type="email" inputMode="email" autoComplete="off" autoCapitalize="none" spellCheck={false}
                     value={mailUdkast} onChange={e => { setMailUdkast(e.target.value); setMailSvar(null) }}
                     style={{ ...s.fieldInput, flex: '1 1 12rem', width: 'auto', minWidth: 0, minHeight: 44, boxSizing: 'border-box' }} />
-                  <button type="submit" disabled={gemmerMail} style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }}>{gemmerMail ? 'Gemmer' : 'Gem'}</button>
+                  <button type="submit" disabled={gemmerMail} style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }}>{gemmerMail ? 'Gemmer' : 'Gem mail'}</button>
                 </div>
                 {mailSvar && <div role={mailSvar.ok ? 'status' : 'alert'} style={{ color: mailSvar.ok ? '#b8b4a8' : '#e0a555', fontSize: '0.75rem', lineHeight: 1.5, marginTop: '0.4rem' }}>{mailSvar.besked}</div>}
               </form>

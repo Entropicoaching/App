@@ -6,6 +6,14 @@ import { s, initials } from '../dashboardShared.js'
 import { holidayInfo, ferieBadgeLabel } from './coachKonstanter.js'
 import { signOutHard } from '../supabase.js'
 
+// Ordre 2487: fornavn alene; ved ens fornavn tilfoejes efternavnets forbogstav.
+function sidebarNavn(ath, athletes) {
+  const dele = String(ath.name || '').trim().split(/\s+/)
+  const fornavn = dele[0] || ''
+  const ens = athletes.some(x => x.id !== ath.id && String(x.name || '').trim().split(/\s+/)[0].toLowerCase() === fornavn.toLowerCase())
+  return ens && dele.length > 1 ? `${fornavn} ${dele[dele.length - 1][0].toUpperCase()}.` : fornavn
+}
+
 export default function Sidebar({ coachRyd = false, programOverblik = false,
   athletes, athleteWeekSummary, coachPriorityCount, exportBackup, exportingBackup, exportingTraening,
   exportTraeningsdata, goToMyProfile, hiddenAthleteIds, isMobile, lastBackup, onPreviewAthlete,
@@ -98,7 +106,7 @@ export default function Sidebar({ coachRyd = false, programOverblik = false,
                   {initials(ath.name)}
                 </div>
                 <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300, fontSize: '0.78rem', color: isActive ? '#c8923a' : '#d5d2c8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ath.name.split(' ')[0]}</div>
+                  <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 300, fontSize: '0.78rem', color: isActive ? '#c8923a' : '#d5d2c8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sidebarNavn(ath, athletes)}</div>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#5f5c55', marginTop: '0.05rem', letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {hol?.onHoliday ? ferieBadgeLabel(hol) : ws ? `Uge ${ws.week_number}${ws.session_count > 0 ? '' : ' · tom'}` : 'Intet program'}
                   </div>
