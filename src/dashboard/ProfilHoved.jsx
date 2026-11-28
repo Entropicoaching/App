@@ -94,6 +94,30 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
     const egne = styrkeLogs.filter(l => l.athlete_id === a.id)
     return egne.length ? styrkeLinje(egne) : null
   }, [styrkeLogs, a.id])
+  // Ordre 2486: login-mailen og invitationen (uaendret JSX). foldet=true skjuler den dobbelte besked, fordi den staar i overskriften.
+  const loginBlok = foldet => (
+    <>
+            {a.user_id === null && (
+              <form onSubmit={gemAtletMail} noValidate style={{ marginBottom: '0.75rem' }}>
+                <label htmlFor="atlet-login-mail" style={{ ...s.fieldLabel, display: 'block', color: '#b8b4a8' }}>Atletens login-mail</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <input id="atlet-login-mail" type="email" inputMode="email" autoComplete="off" autoCapitalize="none" spellCheck={false}
+                    value={mailUdkast} onChange={e => { setMailUdkast(e.target.value); setMailSvar(null) }}
+                    style={{ ...s.fieldInput, flex: '1 1 12rem', width: 'auto', minWidth: 0, minHeight: 44, boxSizing: 'border-box' }} />
+                  <button type="submit" disabled={gemmerMail} style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }}>{gemmerMail ? 'Gemmer' : 'Gem mail'}</button>
+                </div>
+                {mailSvar && <div role={mailSvar.ok ? 'status' : 'alert'} style={{ color: mailSvar.ok ? '#b8b4a8' : '#e0a555', fontSize: '0.75rem', lineHeight: 1.5, marginTop: '0.4rem' }}>{mailSvar.besked}</div>}
+              </form>
+            )}
+            {a.user_id === null && (String(a.email || '').trim() ? (
+              <div style={{ marginBottom: '1rem' }}>
+                <button type="button" style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }} onClick={kopierInvitationTekst}>Kopiér invitation</button>
+                {invitationSvar && !foldet && <div role={invitationSvar.ok ? 'status' : 'alert'} style={{ color: invitationSvar.ok ? '#b8b4a8' : '#e0a555', fontSize: '0.75rem', lineHeight: 1.5, marginTop: '0.4rem' }}>{invitationSvar.besked}</div>}
+              </div>
+            ) : <div style={{ color: '#7a7770', fontSize: '0.75rem', lineHeight: 1.5, marginBottom: '1rem' }}>Tilføj en mail til atleten for at få en invitation at kopiere.</div>)}
+
+    </>
+  )
   return (
     <>
       {mobilitetOpfoelgning === true ? adherenceContent : null}
@@ -152,7 +176,7 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
               </details>
             )}
 
-<div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: isMobile ? '1rem' : '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
+<div style={{ ...s.card, display: isMobile ? 'flex' : 'grid', gridTemplateColumns: isMobile ? undefined : 'auto 1fr auto', alignItems: 'center', gap: isMobile ? '0.85rem' : '1.5rem', marginBottom: isMobile && coachTabCleanup ? '1rem' : '1.5rem', ...(isMobile ? { flexWrap: 'wrap', padding: '0.85rem 1rem' } : {}) }}>
               <div style={{ ...s.avatar, width: isMobile ? '44px' : '56px', height: isMobile ? '44px' : '56px', fontSize: isMobile ? '1rem' : '1.3rem', flexShrink: 0 }}>{initials(a.name)}</div>
               <div style={isMobile ? { flex: 1, minWidth: 0 } : undefined}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 400, color: '#edeae2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'nowrap' : 'normal' }}>{a.name}</div>
@@ -190,30 +214,9 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
             </div>
 </CoachFold>
             {/* Ordre 2486: naar invitationen er kopieret, foldes login-mail og invitation til en linje (hovedet fylder mindre paa mobil). */}
-            {a.user_id === null && (() => {
-            const kopieret = invitationSvar?.ok === true && String(a.email || '').trim() !== ''
-            const indhold = (<>
-              <form onSubmit={gemAtletMail} noValidate style={{ marginBottom: '0.75rem' }}>
-                <label htmlFor="atlet-login-mail" style={{ ...s.fieldLabel, display: 'block', color: '#b8b4a8' }}>Atletens login-mail</label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <input id="atlet-login-mail" type="email" inputMode="email" autoComplete="off" autoCapitalize="none" spellCheck={false}
-                    value={mailUdkast} onChange={e => { setMailUdkast(e.target.value); setMailSvar(null) }}
-                    style={{ ...s.fieldInput, flex: '1 1 12rem', width: 'auto', minWidth: 0, minHeight: 44, boxSizing: 'border-box' }} />
-                  <button type="submit" disabled={gemmerMail} style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }}>{gemmerMail ? 'Gemmer' : 'Gem mail'}</button>
-                </div>
-                {mailSvar && <div role={mailSvar.ok ? 'status' : 'alert'} style={{ color: mailSvar.ok ? '#b8b4a8' : '#e0a555', fontSize: '0.75rem', lineHeight: 1.5, marginTop: '0.4rem' }}>{mailSvar.besked}</div>}
-              </form>
-            {(String(a.email || '').trim() ? (
-              <div style={{ marginBottom: '1rem' }}>
-                <button type="button" style={{ ...s.btnGhost, minHeight: 44, minWidth: 44 }} onClick={kopierInvitationTekst}>Kopiér invitation</button>
-                {invitationSvar && !kopieret && <div role={invitationSvar.ok ? 'status' : 'alert'} style={{ color: invitationSvar.ok ? '#b8b4a8' : '#e0a555', fontSize: '0.75rem', lineHeight: 1.5, marginTop: '0.4rem' }}>{invitationSvar.besked}</div>}
-              </div>
-            ) : <div style={{ color: '#7a7770', fontSize: '0.75rem', lineHeight: 1.5, marginBottom: '1rem' }}>Tilføj en mail til atleten for at få en invitation at kopiere.</div>)}
-            </>)
-            return kopieret
-              ? <details data-invitation-kopieret style={{ marginBottom: '1rem', color: '#7a7770', fontSize: '0.75rem' }}><summary style={{ minHeight: 44, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>{invitationSvar.besked}&nbsp;·&nbsp;Ret login-mail</summary>{indhold}</details>
-              : indhold
-            })()}
+            {a.user_id === null && invitationSvar?.ok === true && String(a.email || '').trim() !== ''
+              ? <details data-invitation-kopieret style={{ marginBottom: '1rem', color: '#7a7770', fontSize: '0.75rem' }}><summary style={{ minHeight: 44, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>{invitationSvar.besked}&nbsp;·&nbsp;Ret login-mail</summary>{loginBlok(true)}</details>
+              : loginBlok(false)}
 
             {/* Sektions-navigation: de sektioner man bruger dagligt står som
                 tydelige TEKST-faner; resten ligger i en "Mere"-menu. Erstatter den
@@ -232,18 +235,18 @@ export default function ProfilHoved({ mobilitetHjemme = false, mobilitetOpfoelgn
               const tabBtn = (active) => ({
                 position: 'relative', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem',
                 fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
-                padding: isMobile ? '0.6rem 0.3rem' : '0.65rem 1.1rem', cursor: 'pointer',
+                padding: isMobile ? (coachTabCleanup ? '0.6rem 0.3rem' : '0.6rem 0.7rem') : '0.65rem 1.1rem', cursor: 'pointer',
                 color: active ? '#c8923a' : '#7a7770', background: 'none', border: 'none',
                 borderBottom: active ? '2px solid #c8923a' : '2px solid transparent',
                 marginBottom: '-1px', whiteSpace: 'nowrap',
                 ...(coachTabCleanup ? { fontSize: 14, minHeight: 44, textTransform: 'none', letterSpacing: 'normal', whiteSpace: 'normal', overflowWrap: 'anywhere' } : {}),
               })
               return (
-                <div style={{ marginBottom: isMobile ? '1rem' : '1.5rem', position: 'relative' }}
+                <div style={{ marginBottom: isMobile && coachTabCleanup ? '1rem' : '1.5rem', position: 'relative' }}
                   {...(coachTabCleanup ? { onKeyDown: event => {
                     if (event.key === 'Escape' && navMenuOpen) { event.preventDefault(); event.stopPropagation(); closeMenu() }
                   } } : {})}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 0 : '0.1rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile && coachTabCleanup ? 0 : '0.1rem', borderBottom: '1px solid rgba(237,234,226,0.07)' }}>
                     {primary.map(n => {
                       const active = activeTab === n.key
                       return (
