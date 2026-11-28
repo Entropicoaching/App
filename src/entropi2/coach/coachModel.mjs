@@ -9,7 +9,7 @@ import { attentionCandidates } from './coachAttention.mjs'
 import { attentionFor } from './coachAttentionRead.mjs'
 import { erKostKlient, kostMangler } from './kostKlienter.mjs'
 import { inactiveTraining } from '../../dashboard/coachInactive.mjs'
-import { idagCandidates, idagRow, idagOrder } from './coachIDag.mjs'
+import { idagCandidates, idagRow, idagOrder, idagVisible } from './coachIDag.mjs'
 
 export const DEFAULT_ENTROPI2_COACH = false
 // Ordre 2103/2113: coachens kostopslag lægger kun runtime-felter på atletkopien; intet gemmes.
@@ -170,10 +170,27 @@ export function coachHomeModel(props = {}, today = new Date()) {
     : nutritionSource.state === 'partial' ? 'partial' : nutritionSource.state === 'error' ? 'error' : 'loading'
   const summaries = coachAthleteSummaries(data, nutrition, inbox)
   const kostvane = kostvaneTal(props, day, athletes, data.rosterReady)
-  const uge = coachWeekModel(data)
-  return { ...data, actions, inbox, waiting, signals, idag, uge, complete, nutrition, nutritionState, summaries, kostvane, ...(u3 ? { u3: { attentionState } } : {}),
+  const { idag: idagSynlig, uge } = samleForside(idag, coachWeekModel(data))
+  return { ...data, actions, inbox, waiting, signals, idag: idagSynlig, uge, complete, nutrition, nutritionState, summaries, kostvane, ...(u3 ? { u3: { attentionState } } : {}),
     nutritionReload: typeof nutritionSource?.reload === 'function' ? nutritionSource.reload : null,
     state: !data.rosterReady ? data.hasError ? 'error' : 'unknown' : athletes.length === 0 ? 'empty' : complete ? 'ready' : 'unknown' }
+}
+
+// Ordre 2484 (Marc 28. nov.: "forbedre coach view"): en atlet står kun én gang blandt opgaverne på forsiden. Står atleten
+// blandt de synlige i Kræver dig i dag, flyttes grunden fra Mangler ny uge ind i hendes række (ugeGrund, vist i Detaljer),
+// så ingen opgave forsvinder. Atleter ud over de 5 synlige beholder deres række i Mangler ny uge.
+function samleForside(idag, uge) {
+  const synlige = new Set(idagVisible(idag).map(row => row.athlete.id))
+  if (!uge.ready || !synlige.size) return { idag, uge }
+  const flyttet = new Map()
+  const nyUge = uge.nyUge.filter(row => {
+    if (!synlige.has(row.athlete.id)) return true
+    flyttet.set(row.athlete.id, row.reason)
+    return false
+  })
+  if (!flyttet.size) return { idag, uge }
+  return { idag: idag.map(row => flyttet.has(row.athlete.id) && synlige.has(row.athlete.id) ? { ...row, ugeGrund: flyttet.get(row.athlete.id) } : row),
+    uge: { ...uge, nyUge } }
 }
 
 function order(a, b) {

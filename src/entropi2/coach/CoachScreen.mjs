@@ -140,11 +140,12 @@ export function CoachView(input = {}) {
     const heavy = heavyWeek && rowAttention(row), draft = draftBlock(row)
     const long = reasonParts(row.athlete.name, row.reason).rest
     const kvitter = row.smerte && typeof props.onKvitterSmerte === 'function'
-    if (!also && !day && !heavy && !coachData && !draft && !long && !kvitter) return null
+    if (!also && !day && !heavy && !coachData && !draft && !long && !kvitter && !row.ugeGrund) return null
     return h('details', { 'data-u11-detaljer': row.athlete.id, style: { margin: '0 0 10px', paddingInline: 4 } },
       h('summary', { style: { cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center', color: '#b9b4a8' } },
-        arrow, long ? 'Hele grunden' + (also || day || heavy || coachData || draft ? ' og detaljer' : '') : draft ? 'Detaljer og udkast' : 'Detaljer'),
+        arrow, long ? 'Hele grunden' + (also || day || heavy || coachData || draft || row.ugeGrund ? ' og detaljer' : '') : draft ? 'Detaljer og udkast' : 'Detaljer'),
       long && h('span', { 'data-coach-hel-grund': true, style: { display: 'block', marginTop: 4, color: '#edeae2' } }, long),
+      row.ugeGrund && h('span', { 'data-coach-uge-grund': row.athlete.id, style: { display: 'block', marginTop: 4, color: '#edeae2' } }, `Mangler ny uge: ${row.ugeGrund}`),
       also && h('span', { 'data-coach-also': true, style: { display: 'block', marginTop: 4, color: '#b9b4a8' } }, also),
       day && h('span', { 'data-u7-day': row.athlete.id, style: { display: 'block', marginTop: 4, color: '#edeae2' } }, day),
       heavy && h(HeavyWeekLine, { key: `u6-heavy:${row.athlete.id}:${model.day}`, client: props.notesClient,
