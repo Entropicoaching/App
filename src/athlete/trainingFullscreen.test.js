@@ -5,6 +5,7 @@ import { withoutU2 } from './u2AthleteViewLine.mjs'
 import { withoutU3 } from './u3AthleteViewLine.mjs'
 import { withoutO2093 } from './o2093AthleteViewLine.mjs'
 import { withoutO2165 } from './o2165AthleteViewLine.mjs'
+import { withoutO2482 } from './o2482AthleteViewLine.mjs'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
@@ -65,7 +66,7 @@ test('rel1101 accepts only boolean true or one exact query value; default OFF', 
 test('OFF integration reconstructs exact base; only current Hjem entry changes', () => {
   // LF patches may be applied to a CRLF public copy. Keep the original SHA
   // guard's CRLF convention while checking the exact source and all deltas.
-  let candidate = invertCoachSelfTraining(withoutO2165(withoutO2093(withoutU3(withoutU2(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8'))))))
+  let candidate = invertCoachSelfTraining(withoutO2482(withoutO2165(withoutO2093(withoutU3(withoutU2(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')))))))
   // E2-PAS-REKORD-KOBL1: invert exactly the receipt inputs inside HomeSession;
   // retain the historic OFF source hashes and every previous delta guard.
   const recordDelta = '            rekordFejring={rekordFejring} rekordGrundlagFoer={rekordGrundlagFoer} setRekordFejring={setRekordFejring} fejredeRef={fejredeRef}\r\n'

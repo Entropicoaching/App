@@ -7,6 +7,7 @@ import { withoutU2 } from './u2AthleteViewLine.mjs'
 import { withoutU3 } from './u3AthleteViewLine.mjs'
 import { withoutO2093 } from './o2093AthleteViewLine.mjs'
 import { withoutO2165 } from './o2165AthleteViewLine.mjs'
+import { withoutO2482 } from './o2482AthleteViewLine.mjs'
 import { act, createElement as h, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -303,7 +304,7 @@ test('family error counterexamples: original nutrition reader rejects foreign/ma
 })
 
 test('family inversion: each new feature hunk is exact and unrelated legacy mutations remain detectable', () => {
-  const source = withoutO2165(withoutO2093(withoutU3(withoutU2(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8'))))).replace(/\r\n/g, '\n')
+  const source = withoutO2482(withoutO2165(withoutO2093(withoutU3(withoutU2(readFileSync(new URL('../AthleteView.jsx', import.meta.url), 'utf8')))))).replace(/\r\n/g, '\n')
   const hash = value => createHash('sha256').update(value.replace(/\r\n/g, '\n')).digest('hex')
   const publicBase = '0c03822be85862e06dcef14a9d664f4e50ccb86f34d6bb8f25a9d7ba4191c612'
   assert.equal(hash(invertPreviewInitialPresentation(source)), publicBase)

@@ -122,7 +122,7 @@ test('F4: med flaget tændt vises præcis én mobilitetsvisning; slukket er de g
   const lines = read('../AthleteView.jsx').split('\n')
     .filter(line => /^ {8}\{.*tab === 'mobilisering'.*&& \($/.test(line))
   assert.equal(lines.length, 3, lines.join('\n'))
-  const branches = lines.map(line => new Function('e2Atlet', 'tab', 'compactHomework', 'mobilityMode',
+  const branches = lines.map(line => new Function('mobilitetGuide', 'tab', 'compactHomework', 'mobilityMode',
     'return Boolean(' + line.trim().slice(1, -4) + ')'))
   const old = [
     (tab, compactHomework, mobilityMode) => compactHomework && tab === 'mobilisering' && mobilityMode === 'hjemmeoevelser',
@@ -131,13 +131,13 @@ test('F4: med flaget tændt vises præcis én mobilitetsvisning; slukket er de g
   for (const tab of ['mobilisering', 'hjem'])
     for (const compactHomework of [false, true])
       for (const mobilityMode of [null, 'hjemmeoevelser', 'andet']) {
-        const on = branches.filter(branch => branch(true, tab, compactHomework, mobilityMode)).length
+        const on = branches.filter(branch => branch(false, tab, compactHomework, mobilityMode)).length
         assert.equal(on, tab === 'mobilisering' ? 1 : 0, `ON ${tab} ${compactHomework} ${mobilityMode}`)
-        const off = branches.map(branch => branch(false, tab, compactHomework, mobilityMode))
-        assert.equal(off[0], false, 'Entropi 2-skærmen er slukket uden flaget')
+        const off = branches.map(branch => branch(true, tab, compactHomework, mobilityMode))
+        assert.equal(off[0], false, 'Entropi 2-skærmen er slukket, naar atletens guidede mobilitet vises (ordre 2482m)')
         assert.deepEqual(off.slice(1), old.map(branch => Boolean(branch(tab, compactHomework, mobilityMode))))
       }
-  assert.match(lines[0], /^ {8}\{e2Atlet && tab === 'mobilisering' && \($/)
+  assert.match(lines[0], /^ {8}\{!mobilitetGuide && tab === 'mobilisering' && \($/)
 })
 
 // K-R10 fund 4: en kalenderlæsning startet før midnat og afsluttet efter må ikke få den nye dags
