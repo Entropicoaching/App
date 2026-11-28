@@ -50,6 +50,14 @@ export function hurtigeMaaltider(snapshot, max = 4) {
   return out
 }
 
+// 2501: "Spist igen" skjuler et måltid, hvis navn er et planmåltid, der allerede er spist eller logget i dag. Kun visningen;
+// det, der gemmes i meal_logs, er uændret.
+export function udenSpisteIDag(meals, planMeals, loggedeIds) {
+  const spiste = new Set((Array.isArray(planMeals) ? planMeals : [])
+    .filter(plan => plan.eaten || loggedeIds?.has?.(plan.id)).map(plan => String(plan.name ?? '').trim().toLowerCase()))
+  return spiste.size ? meals.filter(meal => !spiste.has(String(meal.meal ?? '').trim().toLowerCase())) : meals
+}
+
 // Forslag til feltet "Nyt måltid": egne måltider (ét tryk) og basisfødevarer.
 // Frida-fødevarer bruges kun i detaljerne, hvor deres egen adgang gælder.
 export function forslag(snapshot, query, { maaltider = 3, foedevarer = 4 } = {}) {

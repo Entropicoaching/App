@@ -2,7 +2,7 @@ import { markerKostGem } from './kostGemSignal.mjs'
 import * as React from 'react'
 import { NY_KOSTUGE_TEKST } from './nyKostuge.mjs'
 import { foodPortion, unitsForFood } from '../../nutrition/controller.mjs'
-import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, spistIgenMedPlannavn, laesDetaljer, gemDetaljer, planVarerLinje, maalLinje, andreRetterEndPlan, iGaarAndreRetter } from './kostIDagModel.mjs'
+import { statusLinje, hurtigeMaaltider, forslag, iGaarMedPlannavne, spistIgenMedPlannavn, laesDetaljer, gemDetaljer, planVarerLinje, maalLinje, andreRetterEndPlan, iGaarAndreRetter, udenSpisteIDag } from './kostIDagModel.mjs'
 import { andenMaengde } from './andenMaengdeModel.mjs'
 import { loggetIDag, nyMaengde } from './retMaengdeModel.mjs'
 import { scaledMeal } from './dayModel.mjs'
@@ -108,7 +108,7 @@ export default function KostIDag({ tracker, controller, planHenter = false, athl
   const loggedeAlt = planMeals.filter(meal => loggedeIds.has(meal.id))
   const eaten = planMeals.filter(meal => meal.eaten)
   const blocked = planMeals.filter(meal => meal.blocked)
-  const gentag = hurtigeMaaltider(log)
+  const gentag = udenSpisteIDag(hurtigeMaaltider(log, 8), planMeals, loggedeIds).slice(0, 4)
   const iGaar = log.loaded && (log.logs?.length ?? 0) === 0 && (log.yesterday?.length ?? 0) > 1 ? iGaarMedPlannavne(log.yesterday, planMeals.map(meal => meal.name)) : []
   const iGaarAndre = iGaar.length > 0 && iGaarAndreRetter(log.yesterday, planMeals)
   const valg = forslag(log, query)
