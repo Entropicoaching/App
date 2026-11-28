@@ -42,6 +42,7 @@
     "e2e:timer-1459": "node e2e/timer-1459.spec.mjs",
     "e2e:ny-atlet-1469": "node e2e/ny-atlet-1469.spec.mjs",
     "e2e:tilfoej-naeste-2471": "node e2e/tilfoej-naeste-2471.spec.mjs",
+    "e2e:ret-uge-aaben-2483": "node e2e/ret-uge-aaben-2483.spec.mjs",
     "e2e:ny-klient-2059": "node e2e/ny-klient-2059.spec.mjs",
     "e2e:en-rundvisning-2421": "node e2e/en-rundvisning-2421.spec.mjs",
     "e2e:ny-klient-guide-2065": "node e2e/ny-klient-guide-2065.spec.mjs",

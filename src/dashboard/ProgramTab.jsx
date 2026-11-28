@@ -12,7 +12,7 @@ import { blockPurpose, withBlockPurposes } from '../periodizationAssistant.js'
 import { targetPrescriptionForExercise } from '../../supabase/functions/_shared/progressionState.js'
 import { BLOCK_NAMES, BLOCK_PRESETS, blockColor, computePhases, currentWeekNo, WEEKDAYS_LONG, s } from '../dashboardShared.js'
 import { nextWeekStartDate } from '../weekDates.js'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ProgramCopyOptions from './ProgramCopyOptions.jsx'
 import { DEFAULT_PROGRAM_COPY } from './programCopy.js'
 import CoachPlanCopy from './CoachPlanCopy.jsx'
@@ -82,6 +82,21 @@ export default function ProgramTab({
   }
   const [blockToCopy, setBlockToCopy] = useState('')
   const [toolsRequested, setToolsRequested] = useState(false)
+  // Ordre 2483 (Marc 28. nov.: forbedr coach view): åbner atletens aktuelle uge og dagens træning én gang pr. atlet,
+  // så en rettelse koster 3 tryk i stedet for 5. Lukker coachen ugen, åbnes den ikke igen.
+  const autoAabnet = useRef(null)
+  useEffect(() => {
+    const id = selectedAthlete?.id
+    if (!id || autoAabnet.current === id || openWeekId || !Array.isArray(allWeeks) || !allWeeks.length) return
+    if (allWeeks.some(w => w.athlete_id && w.athlete_id !== id)) return
+    const uge = allWeeks.find(w => w.start_date && w.week_number === currentWeekNo(allWeeks))
+    autoAabnet.current = id
+    if (!uge) return
+    setOpenWeekId(uge.id)
+    const iDag = (new Date().getDay() + 6) % 7
+    const traening = (uge.sessions || []).find(x => x.weekday === iDag)
+    if (traening) setOpenSessionId(traening.id)
+  }, [selectedAthlete?.id, allWeeks, openWeekId])
   const pendingIds = new Set((programCopyEnabled === true ? pendingWeekDeletes : []).map(entry => entry.weekId))
   const weeks = programCopyEnabled === true ? allWeeks.filter(w => !pendingIds.has(w.id)) : allWeeks
   const phases = computePhases(weeks)
