@@ -9,7 +9,7 @@ const { HUB_SECTIONS } = await import('./hubSektioner.jsx')
 
 test('real React: every active secondary tab stays named; More state and readable targets are scoped to ON', () => {
   for (const isMobile of [false, true]) for (const coachRyd of [false, true]) for (const navMenuOpen of [false, true]) {
-    for (const { key, label } of HUB_SECTIONS.filter(n => !(coachRyd ? ['program', 'log', 'beskeder'] : ['program', 'beskeder', 'kost']).includes(n.key))) {
+    for (const { key, label } of HUB_SECTIONS.filter(n => !(coachRyd ? ['program', 'log', 'beskeder'] : ['program', 'oversigt', 'beskeder', 'kost']).includes(n.key))) {
       const p = baseProps({ coachRyd, isMobile, navMenuOpen, activeTab: key, setNavMenuOpen() {} })
       const html = render(h(Profile, p))
       const trigger = html.match(/<button[^>]*aria-expanded="(?:true|false)"[^>]*>(.*?)<\/button>/s)

@@ -20,7 +20,7 @@ test('ON tabs and More choices retain every section, selection and readable touc
       assert.equal(more.props['aria-expanded'], true)
       assert.ok(more.props.style.minHeight >= 44); assert.equal(more.props.style.fontSize, 14)
       const label = HUB_SECTIONS.find(n => n.key === activeTab)?.label ?? 'Hjem'
-      if (!(coachRyd ? ['program', 'log', 'beskeder'] : ['program', 'beskeder', 'kost']).includes(activeTab)) assert.match(text(more.children), new RegExp(label))
+      if (!(coachRyd ? ['program', 'log', 'beskeder'] : ['program', 'oversigt', 'beskeder', 'kost']).includes(activeTab)) assert.match(text(more.children), new RegExp(label))
       more.props.ref.current = { focus() { calls.push(['focus']) } }
       for (const section of [{ key: 'hub', label: 'Hjem' }, ...HUB_SECTIONS]) {
         const primaryLabel = coachRyd ? { program: 'Plan', log: 'Log', beskeder: 'Svar' }[section.key] : null
