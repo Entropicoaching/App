@@ -610,6 +610,7 @@ export function lavProgramHandlinger({
       start_date: nextWeekStartDate(weeks),
     }).select().single()
     if (!newWeek) return
+    let foersteNyePas = null // ordre 2500: første pas i den nye uge står åbent, så første ret er ét tryk kortere
     for (const session of (week.sessions || [])) {
       const { data: newSession } = await supabase.from('sessions').insert({
         week_id: newWeek.id,
@@ -620,6 +621,7 @@ export function lavProgramHandlinger({
         weekday: session.weekday ?? null,
       }).select().single()
       if (newSession) {
+        if (!foersteNyePas || (session.session_order ?? 0) < foersteNyePas.order) foersteNyePas = { id: newSession.id, order: session.session_order ?? 0 }
         for (const ex of (session.exercises || [])) {
           await supabase.from('exercises').insert({
             session_id: newSession.id,
@@ -638,6 +640,7 @@ export function lavProgramHandlinger({
     }
     fetchWeeks(selectedAthlete.id)
     setOpenWeekId(newWeek.id)
+    if (foersteNyePas) setOpenSessionId?.(foersteNyePas.id)
   }
 
   async function copyWeek(weekId, progression = 'none') {
